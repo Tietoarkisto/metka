@@ -12,6 +12,7 @@
 		<script src="js/jquery.dataTables.min.js"></script>
 		<script src="js/jquery.fancybox.pack.js"></script>
 		<script src="js/jquery.tablesorter.pager.js"></script>
+		<script src="js/jquery.jstree.js"></script>
 		<script src="js/custom.js"></script>
 	</head>
 	<body>
@@ -33,8 +34,8 @@
 					<div style="clear:both;"></div>				
 				</nav>
 				<div class="searchContainer">
-					<a class="logoutLink" href="#">Kirjaudu ulos</a>
-					<form action="julkaisu.html" class="quickSearchForm">
+					<a class="logoutLink" href="#logout">Kirjaudu ulos</a>
+					<form action="aineisto.html" class="quickSearchForm">
 						<input type="text" autocomplete="off" dir="ltr" class="searchInput" placeholder="Aineiston id-nro" />
 						<input type="submit" value="Hae" class="searchButton"/>
 					</form>					
@@ -51,10 +52,10 @@
 							<div class="tabsContainer">
 								<div class="tabNavi">
 									<ul>
-										<li><a id="1" class="selected" href="#">Sanastot</a></li>
-										<li><a id="2" href="#">Vakiotekstit</a></li>
-										<li><a id="3" href="#">Käyttäjätiedot</a></li>
-										<li><a id="4" href="#">Pakolliset elementit</a></li>
+										<li><a id="1" class="selected" href="#vocabulary">Sanastot</a></li>
+										<li><a id="2" href="#standardTexts">Vakiotekstit</a></li>
+										<li><a id="3" href="#userInfo">Käyttäjätiedot</a></li>
+										<li><a id="4" href="#mandatoryElements">Pakolliset elementit</a></li>
 									</ul>
 								</div>
 								<div class="tabs tab1">

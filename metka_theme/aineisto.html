@@ -9,7 +9,10 @@
 		<script src="js/custom.js"></script>
 		<script src="js/jquery.dataTables.min.js"></script>
 		<script src="js/jquery.fancybox.pack.js"></script>
+		<script src="js/jquery.jstree.js"></script>
+		<script src="js/jquery.dataTables.rowReordering"></script>
 		<link rel="stylesheet" type="text/css" href="css/styles.css">
+		<link rel="stylesheet" type="text/css" href="css/jsTreeStyle.css">
 		<link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
 		<link rel="stylesheet" type="text/css" href="css/jquery.fancybox.css">
 	</head>
@@ -32,8 +35,8 @@
 					<div style="clear:both;"></div>				
 				</nav>
 				<div class="searchContainer">
-					<a class="logoutLink" href="#">Kirjaudu ulos</a>
-					<form action="julkaisu.html" class="quickSearchForm">
+					<a class="logoutLink" href="#logout">Kirjaudu ulos</a>
+					<form action="aineisto.html#general" class="quickSearchForm">
 						<input type="text" autocomplete="off" dir="ltr" class="searchInput" placeholder="Aineiston id-nro" />
 						<input type="submit" value="Hae" class="searchButton"/>
 					</form>					
@@ -45,132 +48,139 @@
 			<div class="wrapper">
 
 				<div class="content">
-					<h1 class="pageTitle">Aineiston tiedot</h1>
-						<div class="aineistoPrevNextContainer">
+					<h1 class="pageTitle">Aineiston tiedot - LUONNOS</h1>
+					<div class="aineistoPrevNextContainer">
 							<div class="aineistoTabNavi">
 								<ul>
-									<li><a id="1" class="selected" href="#">Yleiset tiedot</a></li>
-									<li><a id="2" href="#">Studylevel data</a></li>
-									<li><a id="3" href="#">Muuttujien käsittely</a></li>
-									<li><a id="4" href="#">Kustomoitu data</a></li>
-									<li><a id="5" href="#">Tiedostojen hallinta</a></li>
-									<li><a id="6" href="#">Koodikirja</a></li>
-									<li><a id="7" href="#">Virheet</a></li>
+									<li><a id="1" class="selected" href="#general">Yleiset tiedot</a></li>
+									<li><a id="2" href="#studylevel">Studylevel data</a></li>
+									<li><a id="3" href="#variables">Muuttujien käsittely</a></li>
+									<li><a id="4" href="#custom">Kustomoitu data</a></li>
+									<li><a id="5" href="#files">Tiedostojen hallinta</a></li>
+									<li><a id="6" href="#codebook">Koodikirja</a></li>
+									<li><a id="7" href="#errors">Virheet</a></li>
 								</ul>
 							</div>						
 							<!--<h1 class="next">></h1><h1 class="prev"><</h1>-->
 
 						</div>
-						<div class="tabs2 tab1">						
+					
+				<!-- General -->
+					<div class="tabs2 tab1">						
 						<div class="aineistoUpperContainer">
 				
-						<div class="aineistoRowContainer">
-							<div class="aineistoDataSetContainerTopRow"><label>Aineiston nimi*</label><input type="text" value="Eduskuntavaalitutkimukset 2003-2011: yhditetty aineisto." name="aineistonNimi" /></div>
-							<div class="aineistoDataSetContainerTopRow"><label>Eng.</label><input type="text" name="aineistonNimiEng" /></div>
-						</div>
-						<div class="aineistoRowContainer">
-							<div class="aineistoDataSetContainer"><label>Aineistonro</label><input readonly="readonly" type="text" name="aineistonro" value="F3D2556" /><!--<a class="fancyboxpopup fancybox.ajax" href="virhemerkinta.html"><img class="errorMarking" src="images/minus2.png"/></a>--></div>
-							<div class="aineistoDataSetContainer"><label>Julkaisu</label><select><option>Julkaistaan</option></select></div>
-							<div class="aineistoDataSetContainer"><label>Ehto 1:käyttöoikeus</label><select><option>opiskelu,opetus,tutkimus</option></select></div>
-							<div class="aineistoDataSetContainer"><label>Ark.sop.pvm</label><input type="text" class="datepicker" name="ark.sop.pvm"/></div>
-						</div>
-						<div class="aineistoRowContainer">
-							<div class="aineistoDataSetContainer"><label>Hank.ain.nro</label><input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/></div>
-							<div class="aineistoDataSetContainer"><label>FSD luovuttaa</label><select><option>Kyllä</option></select></div>
-							<div class="aineistoDataSetContainer"><label>Käyttöehdon muutospvm</label><input type="txt" class="datepicker" name="kayttoehdonmuutospvm" /></div>
-							<div class="aineistoDataSetContainer"><label>Valmis pvm</label><input type="text" class="datepicker" name="valmispvm"/></div>
-						</div>
-						<div class="aineistoRowContainer">
-							<div class="aineistoDataSetContainer"><label>Aineiston tyyppi*</label><select><option>Perusain.</option></select></div>
-							<div class="aineistoDataSetContainer"><label>Anonymisointi</label><select><option>Ei</option></select></div>
-							<div class="aineistoDataSetContainer"><label>Käyttöehto</label><input type="txt" class="" name="kayttoehdonmuutospvm" /></div>
-							<div class="aineistoDataSetContainer"><label>Mef julk.(fin)</label><input readonly="readonly" type="text" name="valmispvm"/></div>
-						</div>
-						<div class="aineistoRowContainer">
-							<div class="aineistoDataSetContainer"><label>Ain.laatu*</label><select><option>Perusain.</option></select></div>
-							<div class="aineistoDataSetContainer"><label>Luovutt.tyyppi*</label><select><option>Ei</option></select></div>
-							<div class="aineistoDataSetContainer"><label>Herätteen saaja</label><input type="txt" class="" name="kayttoehdonmuutospvm" /></div>
-							<div class="aineistoDataSetContainer"><label>Mef julk.(eng)</label><input readonly="readonly" type="text" class="" name="valmispvm"/></div>
-						</div>
-						<div class="aineistoRowContainer">
-							<div class="aineistoDataSetContainer"><label>Arkist.kategoria*</label><select><option>Perusain.</option></select></div>
-							<div class="aineistoDataSetContainer"><label>Ark.sop.tapa</label><select><option>Ei</option></select></div>
-							<div class="aineistoDataSetContainer"><label>Jos heräte,ilmoituspvm</label><input type="txt" class="datepicker" name="kayttoehdonmuutospvm" /></div>
-							<div class="aineistoDataSetContainer"><label>Erit.ehtoja,fin</label><input type="text" class="" name="valmispvm"/></div>
-						</div>
-						<div class="aineistoRowContainer">
-							<div class="aineistoDataSetContainer"><label>Käsitteltytaso</label><select><option>A</option></select></div>
-							<div class="aineistoDataSetContainer"><label>Ain.versio</label><select><option>Ei</option></select></div>
-							<div class="aineistoDataSetContainer"><label>Herätteen selite</label><input type="txt" class="" name="kayttoehdonmuutospvm" /></div>
-							<div class="aineistoDataSetContainer"><label>Huom.</label><input type="text" name="valmispvm"/></div>
-						</div>
-						<div class="aineistoRowContainer">
-							<div class="aineistoDataSetTextareaContainer">
-								<label>Lisätiedot koskien arkistointisopimusta</label><textarea></textarea>
-							</div>							
-							<div class="aineistoDataSetTextareaContainer aineistoDataSetTextareaContainerRight">	
-								<label>Menettely,jos luvanantajaa ei tavoiteta tai hän itse ei voi antaa lupaa.</label><textarea></textarea>
+							<div class="aineistoRowContainer">
+								<div class="aineistoDataSetContainerTopRow"><label>Aineiston nimi*</label><input type="text" value="Eduskuntavaalitutkimukset 2003-2011: yhditetty aineisto." name="aineistonNimi" /></div>
+								<div class="aineistoDataSetContainerTopRow"><label>Eng.</label><input type="text" name="aineistonNimiEng" /></div>
+							</div>
+							<div class="aineistoRowContainer">
+								<div class="aineistoDataSetContainer"><label>Aineistonro</label><input readonly="readonly" type="text" name="aineistonro" value="F3D2556" /><!--<a class="fancyboxpopup fancybox.ajax" href="virhemerkinta.html"><img class="errorMarking" src="images/minus2.png"/></a>--></div>
+								<div class="aineistoDataSetContainer"><label>Julkaisu</label><select><option>Julkaistaan</option></select></div>
+								<div class="aineistoDataSetContainer"><label>Ehto 1:käyttöoikeus</label><select><option>opiskelu,opetus,tutkimus</option></select></div>
+								<div class="aineistoDataSetContainer"><label>Ark.sop.pvm</label><input type="text" class="datepicker" name="ark.sop.pvm"/></div>
+							</div>
+							<div class="aineistoRowContainer">
+								<div class="aineistoDataSetContainer"><label>Hank.ain.nro</label><input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/></div>
+								<div class="aineistoDataSetContainer"><label>FSD luovuttaa</label><select><option>Kyllä</option></select></div>
+								<div class="aineistoDataSetContainer"><label>Käyttöehdon muutospvm</label><input type="txt" class="datepicker" name="kayttoehdonmuutospvm" /></div>
+								<div class="aineistoDataSetContainer"><label>Valmis pvm</label><input type="text" class="datepicker" name="valmispvm"/></div>
+							</div>
+							<div class="aineistoRowContainer">
+								<div class="aineistoDataSetContainer"><label>Aineiston tyyppi*</label><select><option>Perusain.</option></select></div>
+								<div class="aineistoDataSetContainer"><label>Anonymisointi</label><select><option>Ei</option></select></div>
+								<div class="aineistoDataSetContainer"><label>Käyttöehto</label><input type="txt" class="" name="kayttoehdonmuutospvm" /></div>
+								<div class="aineistoDataSetContainer"><label>Mef julk.(fin)</label><input readonly="readonly" type="text" name="valmispvm"/></div>
+							</div>
+							<div class="aineistoRowContainer">
+								<div class="aineistoDataSetContainer"><label>Ain.laatu*</label><select><option>Perusain.</option></select></div>
+								<div class="aineistoDataSetContainer"><label>Luovutt.tyyppi*</label><select><option>Ei</option></select></div>
+								<div class="aineistoDataSetContainer"><label>Herätteen saaja</label><input type="txt" class="" name="kayttoehdonmuutospvm" /></div>
+								<div class="aineistoDataSetContainer"><label>Mef julk.(eng)</label><input readonly="readonly" type="text" class="" name="valmispvm"/></div>
+							</div>
+							<div class="aineistoRowContainer">
+								<div class="aineistoDataSetContainer"><label>Arkist.kategoria*</label><select><option>Perusain.</option></select></div>
+								<div class="aineistoDataSetContainer"><label>Ark.sop.tapa</label><select><option>Ei</option></select></div>
+								<div class="aineistoDataSetContainer"><label>Jos heräte,ilmoituspvm</label><input type="txt" class="datepicker" name="kayttoehdonmuutospvm" /></div>
+								<div class="aineistoDataSetContainer"><label>Erit.ehtoja,fin</label><input type="text" class="" name="valmispvm"/></div>
+							</div>
+							<div class="aineistoRowContainer">
+								<div class="aineistoDataSetContainer"><label>Käsitteltytaso</label><select><option>A</option></select></div>
+								<div class="aineistoDataSetContainer"><label>Ain.versio</label><select><option>Ei</option></select></div>
+								<div class="aineistoDataSetContainer"><label>Herätteen selite</label><input type="txt" class="" name="kayttoehdonmuutospvm" /></div>
+								<div class="aineistoDataSetContainer"><label>Huom.</label><input type="text" name="valmispvm"/></div>
+							</div>
+							<div class="aineistoRowContainer">
+								<div class="aineistoDataSetTextareaContainer">
+									<label>Lisätiedot koskien arkistointisopimusta</label><textarea></textarea>
+								</div>							
+								<div class="aineistoDataSetTextareaContainer aineistoDataSetTextareaContainerRight">	
+									<label>Menettely,jos luvanantajaa ei tavoiteta tai hän itse ei voi antaa lupaa.</label><textarea></textarea>
+								</div>
 							</div>
 						</div>
-					</div>
-					<div class="aineistoRowContainer">
-						<div class="aineistoRowTitle">Aineiston sarja</div>
-						<table class="tablesorter" id="aineistoSarjaTable">
-							<thead>
-								<tr><th>Sarjan lyhenne</th><th>Sarjan nimi</th><th>Sarjan eng. nimi</th><th></th></tr>
-							</thead>
-							<tbody>
-								<tr><td>lorem</td><td>Yksittäiset aineistot</td><td>Individual datasets</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
-							</tbody>
+						<div class="aineistoRowContainer">
+							<div class="aineistoRowTitle">Aineiston sarja</div>
+							<table class="tablesorter" id="aineistoSarjaTable">
+								<thead>
+									<tr><th>Sarjan lyhenne</th><th>Sarjan nimi</th><th>Sarjan eng. nimi</th><th></th></tr>
+								</thead>
+								<tbody>
+									<tr><td>lorem</td><td>Yksittäiset aineistot</td><td>Individual datasets</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+								</tbody>
 
-						</table>		
-						<div class="aineistoTableActionLinkHolder"><a href="liita_sarja.html" class="fancyboxpopup fancybox.ajax">Vaihda</a></div>						
-					</div>
-					<div class="aineistoRowContainer">
-						<div class="aineistoRowTitle">Liittyvät henkilöt</div>
-						<table class="tablesorter sortableTable" id="aineistoPersonTable">
-							<thead>
-								<tr><th>Henkilön tyyppi</th><th>Sukunimi</th><th>Etunimi</th><th>Organisaatio</th><th>Laitos</th><th>Raportti</th><th></th></tr>
-							</thead>
-							<tbody>
-								<tr><td>luovuttaja</td><td>Borg</td><td>Sami</td><td>Tampereen yliopisto</td><td>Yhteiskuntatieteellinen tietoarkisto</td><td>Ei vuosirap.</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
-								<tr><td>luovuttaja</td><td>Berg</td><td>MAtias</td><td>Tampereen yliopisto</td><td>Yhteiskuntatieteellinen tietoarkisto</td><td>Ei vuosirap.</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
-							</tbody>
-						</table>	
-						<div class="aineistoTableActionLinkHolder"><a href="liita_henkilo.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>					
-					</div>
-					<div class="aineistoRowContainer">
-						<div class="aineistoRowTitle">Liittyvät julkaisut</div>
-						<table class="tablesorter sortableTable" id="aineistoJulkaisuTable">
-							<thead>
-								<tr><th>Julkaisunumero</th><th>Julkaisun nimi</th><th></th></tr>
-							</thead>
-							<tbody>
-								<tr><td>1234</td><td>Julkaisu1</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
-								<tr><td>2345</td><td>Julkaisu2</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
-							</tbody>
+							</table>		
+							<div class="aineistoTableActionLinkHolder"><a href="liita_sarja.html" class="fancyboxpopup fancybox.ajax">Vaihda</a></div>						
+						</div>
+						<div class="aineistoRowContainer">
+							<div class="aineistoRowTitle">Liittyvät henkilöt</div>
+							<table class="tablesorter sortableTable" id="aineistoPersonTable">
+								<thead>
+									<tr><th>Henkilön tyyppi</th><th>Sukunimi</th><th>Etunimi</th><th>Organisaatio</th><th>Laitos</th><th>Raportti</th><th></th></tr>
+								</thead>
+								<tbody>
+									<tr><td>luovuttaja</td><td>Borg</td><td>Sami</td><td>Tampereen yliopisto</td><td>Yhteiskuntatieteellinen tietoarkisto</td><td>Ei vuosirap.</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+									<tr><td>luovuttaja</td><td>Berg</td><td>MAtias</td><td>Tampereen yliopisto</td><td>Yhteiskuntatieteellinen tietoarkisto</td><td>Ei vuosirap.</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+								</tbody>
+							</table>	
+							<div class="aineistoTableActionLinkHolder"><a href="liita_henkilo.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>					
+						</div>
+						<div class="aineistoRowContainer">
+							<div class="aineistoRowTitle">Liittyvät julkaisut</div>
+							<table class="tablesorter sortableTable" id="aineistoJulkaisuTable">
+								<thead>
+									<tr><th>Julkaisunumero</th><th>Julkaisun nimi</th><th></th></tr>
+								</thead>
+								<tbody>
+									<tr><td>1234</td><td>Julkaisu1</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+									<tr><td>2345</td><td>Julkaisu2</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+								</tbody>
 
-						</table>
-						<div class="aineistoTableActionLinkHolder"><a href="liita_aineisto.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>					
-					</div>
-					<div class="aineistoRowContainer">
-						<div class="aineistoRowTitle">Liittyvät aineistot</div>
-						<table class="tablesorter sortableTable" id="aineistoAineistoTable">
-							<thead>
-								<tr><th>Aineistonumero</th><th>Aineiston nimi</th><th></th></tr>
-							</thead>
-							<tbody>
-								<tr><td>FDS3321</td><td>Vaaliaineisto1</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
-								<tr><td>FDS3322</td><td>Vaaliaineisto2</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
-							</tbody>
+							</table>
+							<div class="aineistoTableActionLinkHolder"><a href="liita_aineisto.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>					
+						</div>
+						<div class="aineistoRowContainer">
+							<div class="aineistoRowTitle">Liittyvät aineistot</div>
+							<table class="tablesorter sortableTable" id="aineistoAineistoTable">
+								<thead>
+									<tr><th>Aineistonumero</th><th>Aineiston nimi</th><th></th></tr>
+								</thead>
+								<tbody>
+									<tr><td>FDS3321</td><td>Vaaliaineisto1</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+									<tr><td>FDS3322</td><td>Vaaliaineisto2</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+								</tbody>
 
-						</table>
-						<div class="aineistoTableActionLinkHolder"><a href="liita_aineisto.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>					
+							</table>
+							<div class="aineistoTableActionLinkHolder"><a href="liita_aineisto.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>					
+						</div>
+						
+						<div class="sarjaSearchFormButtonsHolder" style="margin-bottom:20px;">
+							<input type="button" class="searchFormInput doSearch" value="Tallenna Luonnoksena" />
+							<input type="button" class="searchFormInput doSearch" value="Julkaise" />
+						</div>		
+					
 					</div>
-						<div class="sarjaSearchFormButtonsHolder" style="margin-bottom:20px;"><input type="button" class="searchFormInput doSearch" value="Tallenna" /></div>		
 
-					</div>
-
+				<!-- Studylevel -->
 					<div class="tabs2 tab2">
 						<div class="aineistoRowContainer">
 							<div class="aineistoDataSetContainerTopRow"><label>Lorem1 ipsum dolor sit amet</label><input type="text" value="" name="aineistonNimi" /></div>
@@ -198,14 +208,62 @@
 						</div>
 										
 					</div>
+					
+				<!-- Variables -->
 					<div class="tabs2 tab3">
-						Muuttujien käsittely		
+						<div id="aineistoVariables">
+							<div class="variableParent"><div class="variableParentTitle">Muuttujat</div>
+								<div class="variableChildren">
+									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="foo" name="aineistonNimi" /></div>
+									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="bar" name="aineistonNimi" /></div>
+									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="1" name="aineistonNimi" /></div>
+									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="3" name="aineistonNimi" /></div>
+									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="4" name="aineistonNimi" /></div>
+									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="1231" name="aineistonNimi" /></div>
+								</div>
+							</div>
+							<div class="variableParent"><div class="variableParentTitle">Foo</div>
+								<div class="variableChildren">
+									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="112" name="aineistonNimi" /></div>
+									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="foo" name="aineistonNimi" /></div>
+									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="lorem" name="aineistonNimi" /></div>
+								</div>
+							</div>
+							<div class="variableParent"><div class="variableParentTitle">Kysymykset</div>
+								<div class="variableChildren">
+									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="234kuh" name="aineistonNimi" /></div>
+									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="ipsum" name="aineistonNimi" /></div>
+									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="dolor sit amet" name="aineistonNimi" /></div>
+									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="foo bar" name="aineistonNimi" /></div>
+									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="" name="aineistonNimi" /></div>
+									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="" name="aineistonNimi" /></div>
+									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="" name="aineistonNimi" /></div>
+									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="" name="aineistonNimi" /></div>
+									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="" name="aineistonNimi" /></div>
+									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="" name="aineistonNimi" /></div>
+									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="" name="aineistonNimi" /></div>
+									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="" name="aineistonNimi" /></div>
+								</div>
+							</div>
+							<div class="variableParent"><div class="variableParentTitle">Bar</div>
+								<div class="variableChildren">
+									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="" name="aineistonNimi" /></div>
+									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="" name="aineistonNimi" /></div>
+									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="" name="aineistonNimi" /></div>
+									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="" name="aineistonNimi" /></div>
+									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="" name="aineistonNimi" /></div>
+									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="" name="aineistonNimi" /></div>
+								</div>
+							</div>
+						</div>
 					</div>		
 					
+				<!-- Kustomoitu data -->
 					<div class="tabs2 tab4">
 						Kustomoitu data
 					</div>	
 					
+				<!-- Tiedostojen hallinta -->
 					<div class="tabs2 tab5">
 						<table class="tablesorter sortableTable" id="aineistoFileTable">
 							<thead>
@@ -220,7 +278,8 @@
 					
 						<div id="aineistoFileInfoRow" style="display: none;">
 							<div id="aineistoFileInfoTitle"><a href="#"></a></div>
-							
+							<br/>
+							<div id="aineistoFileHistoryTitle">Tiedostohistoria</div>
 							<table class="tablesorter sortableTable" id="aineistoFileInfoTable">
 								<thead>
 									<tr><th>Muokkauspäivämäärä</th><th>Muokkaaja</th></tr>
@@ -233,10 +292,39 @@
 						</div>
 					</div>
 				
+				<!-- Codebook -->
 					<div class="tabs2 tab6">
-						Koodikirjat			
+						<div class="aineistoRowTitle">Tekijät</div>
+						<table class="tablesorter" id="aineistoCodebookAuthorTable">
+							<thead>
+								<tr><th>id</th><th>Nimi</th><th>Organisaatio</th><th></th></tr>
+							</thead>
+							<tbody>
+								<tr><td>1</td><td>Juuso Lähdekorpi</td><td>Proactum Oy</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+								<tr><td>2</td><td>Peter Mikula</td><td>Proactum Oy</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+							</tbody>
+						</table>
+						<div class="aineistoTableActionLinkHolder"><a href="liita_henkilo.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>
+						
+						
+						<div class="aineistoRowTitle">Tiedostot</div>
+						<table class="tablesorter sortableTable" id="aineistoCodebookFileTable">
+							<thead>
+								<tr><th>Tiedoston nimi</th><th>Tiedoston kuvaus</th><th></th></tr>
+							</thead>
+							<tbody>
+								<tr class="aineistoCodebookRow"><td class="aineistoCodebookFileName">data.zip</td><td>Datapaketti</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+								<tr class="aineistoCodebookRow"><td class="aineistoCodebookFileName">fooBar.docx</td><td>Dokumentaatio</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+							</tbody>
+						</table>
+						<div class="aineistoTableActionLinkHolder"><a href="liita_tiedosto.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>		
+					
+						<div id="aineistoCodebookRow" style="display: none;">
+							<div id="aineistoCodebookTitle"><a href="#"></a></div>
+						</div>
 					</div>	
 					
+				<!-- Errors -->
 					<div class="tabs2 tab7">
 						<table class="tablesorter sortableTable" id="aineistoVirheetTable">
 							<thead>
