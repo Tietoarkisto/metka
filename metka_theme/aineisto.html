@@ -54,6 +54,8 @@
 									<li><a id="3" href="#">Muuttujien käsittely</a></li>
 									<li><a id="4" href="#">Kustomoitu data</a></li>
 									<li><a id="5" href="#">Tiedostojen hallinta</a></li>
+									<li><a id="6" href="#">Koodikirja</a></li>
+									<li><a id="7" href="#">Virheet</a></li>
 								</ul>
 							</div>						
 							<!--<h1 class="next">></h1><h1 class="prev"><</h1>-->
@@ -197,34 +199,11 @@
 										
 					</div>
 					<div class="tabs2 tab3">
-						<div class="aineistoRowContainer">
-							<div class="aineistoDataSetContainerTopRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="" name="aineistonNimi" /></div>
-						</div>
-						<div class="aineistoRowContainer">
-							<div class="aineistoDataSetContainerTopRow"><label>Vivamus a ante laoreet</label><input type="text" name="aineistonNimiEng" /></div>
-						</div>
-						<div class="aineistoRowContainer">
-							<div class="aineistoDataSetContainerTopRow"><label>Maecenas elit elit,</label><input type="text" value="" name="aineistonNimi" /></div>
-						</div>
-						<div class="aineistoRowContainer">						
-							<div class="aineistoDataSetContainerTopRow"><label>Maecenas elementum </label><input type="text" name="aineistonNimiEng" /></div>
-						</div>
-						<div class="aineistoRowContainer">
-							<div class="aineistoDataSetContainerTopRow"><label>Pellentesque in condimentum nunc,</label><input type="text" value="" name="aineistonNimi" /></div>
-						</div>
-						<div class="aineistoRowContainer">					
-							<div class="aineistoDataSetContainerTopRow"><label> Maecenas pharetra lacus velit</label><input type="text" name="aineistonNimiEng" /></div>
-						</div>
-						<div class="aineistoRowContainer">
-							<div class="aineistoDataSetContainerTopRow"><label>Maecenas ut tortor purus.</label><input type="text" value="" name="aineistonNimi" /></div>
-						</div>
-						<div class="aineistoRowContainer">						
-							<div class="aineistoDataSetContainerTopRow"><label>Nam nec augue facilisis</label><input type="text" name="aineistonNimiEng" /></div>
-						</div>				
+						Muuttujien käsittely		
 					</div>		
 					
 					<div class="tabs2 tab4">
-									
+						Kustomoitu data
 					</div>	
 					
 					<div class="tabs2 tab5">
@@ -233,34 +212,35 @@
 								<tr><th>Tiedoston nimi</th><th>Tiedoston kuvaus</th><th></th></tr>
 							</thead>
 							<tbody>
-								<tr><td>data.zip</td><td>Datapaketti</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
-								<tr><td>fooBar.docx</td><td>Dokumentaatio</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+								<tr class="aineistoFileRow"><td class="aineistoFileName">data.zip</td><td>Datapaketti</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+								<tr class="aineistoFileRow"><td class="aineistoFileName">fooBar.docx</td><td>Dokumentaatio</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
 							</tbody>
 						</table>
-						<div id="aineistoAddNewFileContainer">
-							<div id="aineistoAddNewFileTitle">Lisää uusi: </div>
-							<div id="aineistoAddNewFile">
-								<table>
-									<tr>
-										<td class="aineistoAddNewFileTD"><div id="aineistoAddNewFileInput">Tiedosto: </td>
-										<td class="aineistoAddNewFileTD"><input type="file"></div></td>
-									</tr>
-									<tr>
-										<td class="aineistoAddNewFileTD"><div id="aineistoAddNewFileDescription">Kuvaus: </td>
-										<td class="aineistoAddNewFileTD"><textarea cols="44"></textarea></div></td>
-									</tr>
-									<tr>
-										<td class="aineistoAddNewFileTD"></td>
-										<td class="aineistoAddNewFileTD"><input type="button" id="aineistoAddNewFileButton" class="searchFormInput doSearch" value="Lähetä" /></td>
-									</tr>
-								</table>
-							</div>
+						<div class="aineistoTableActionLinkHolder"><a href="liita_tiedosto.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>		
+					
+						<div id="aineistoFileInfoRow" style="display: none;">
+							<div id="aineistoFileInfoTitle"><a href="#"></a></div>
+							<table class="tablesorter sortableTable" id="aineistoFileInfoTable">
+							<thead>
+								<tr><th>Muokkauspäivämäärä</th><th>Muokkaaja</th></tr>
+							</thead>
+							<tbody>
+								<tr><td>2.10.2013</td><td>Simo Häyhä</td></tr>
+								<tr><td>4.10.2013</td><td>Ville Iivonen</td></tr>
+							</tbody>
 						</div>
 					</div>
+				
+					<div class="tabs2 tab6">
+						Koodikirjat			
+					</div>	
+					
+					<div class="tabs2 tab7">
+						Virheet
+					</div>	
+					
 				</div>
 											
 			</div>
-		<footer>
-		</footer>
 	</body>
 </html>
