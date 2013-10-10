@@ -152,10 +152,9 @@ $(document).ready(function(){
 	});
 	
 	$('.variableParent').hover(function() {
-		 $(this).css('background-color', '#009EE0');
-		 $(this).find(".variableChildren").css("background-color", "#fffff");
+		 $(this).css('background-color', '#79CEF1');
 		}, function() { 
-			$(this).css('background-color', '#fffff');
+			$(this).css('background-color', '#009EE0');
 		}
 	);
 	

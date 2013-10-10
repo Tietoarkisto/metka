@@ -1023,12 +1023,15 @@ h1.next{
 }
 
 .variableParent {
-	padding: 5px
+	padding: 5px;
+	background-color: #009EE0;
+	border-bottom:2px solid #fff;
 }
 
 .variableChildren {
 	padding-top: 10px;
 	display: none;
+	background-color: #fff;
 }
 
 .variableRow {
