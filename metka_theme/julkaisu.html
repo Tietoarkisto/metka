@@ -1,0 +1,131 @@
+<!DOCTYPE HTML>
+<html lang="fi">
+	<head>
+		<meta charset="utf-8">
+		<title>YHTEISKUNTATIETEELLINEN TIETOARKISTO - Metka</title>
+		<script src="js/jquery-1.10.2.min.js"></script>
+  		<script src="js/jquery-ui.js"></script>
+		<script src="js/jquery.tablesorter.min.js"></script>
+		<script src="js/custom.js"></script>
+		<script src="js/jquery.fancybox.pack.js"></script>
+		<script src="js/jquery.dataTables.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/styles.css">
+		<link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
+		<link rel="stylesheet" type="text/css" href="css/jquery.fancybox.css">
+	</head>
+	<body>
+		<header>
+			<div class="headerContainer">
+				<h1 id="logo" >
+					<a href="desktop.html" title="Aineistohaku">Aineistohaku</a>
+				</h1>	
+						
+				<nav>
+					<ul class="mainNavUl">
+						<li><a href="desktop.html">Työpöytä</a></li>
+						<li><a href="aineistohaku.html">Aineistot</a></li>
+						<li><a href="julkaisuhaku.html">Julkaisut</a></li>
+						<li><a href="sarjahaku.html">Sarjat</a></li>
+						<li><a href="asetukset.html">Asetukset</a></li>
+					</ul>
+					
+					<div style="clear:both;"></div>				
+				</nav>
+				<div class="searchContainer">
+					<a class="logoutLink" href="#">Kirjaudu ulos</a>
+					<form action="julkaisu.html" class="quickSearchForm">
+						<input type="text" autocomplete="off" dir="ltr" class="searchInput" placeholder="Aineiston id-nro" />
+						<input type="submit" value="Hae" class="searchButton"/>
+					</form>					
+				</div>	
+			</div>
+			
+		</header>
+		
+			<div class="wrapper">
+
+				<div class="content">
+					<h1 class="pageTitle">Julkaisun tiedot</h1>
+						<div class="aineistoUpperContainer">
+						<div class="prevNextContainer"><h1 class="prev"><</h1><h1 class="next">></h1></div>
+						<div class="julkaisuRowContainer">
+							<div class="julkaisuDataSetContainer"><label>Julkaisuvuosi*</label><input type="text" name="julkaisuvuosi" value="2006" /></div>
+							<div class="julkaisuDataSetContainer"><label>Voiko julkaista</label><select><option>Kyllä</option></select></div>
+							<div class="julkaisuDataSetContainer"><label>Julkaisu id-nro</label><input type="text" name="julkaisuvuosi" value="2006" /></div>
+						</div>
+						<div class="julkaisuRowContainer">
+							<div class="julkaisuDataSetContainer"><label>Julkaisun ilmoitustapa</label><select><option>Ei tietoa</option></select></div>
+							<div class="julkaisuDataSetContainer"><label>Voiko julkaista</label><select><option>xxx</option></select></div>
+							<div class="julkaisuDataSetContainer"><label>1. Tallennuspvm</label><input type="text" name="julkaisuvuosi" value="2006" /></div>
+						</div>
+						<div class="julkaisuRowContainer">
+							<div class="julkaisuDataSetContainer"><label>Julkaisun kieli*</label><select><option>Suomi</option></select></div>
+							<div class="julkaisuDataSetContainer"><label>Viimeisin muutospvm</label><input type="text" name="julkaisuvuosi" value="2006" /></div>
+						</div>
+						<div class="julkaisuRowContainer">
+							<div class="julkaisuDataSetContainer"><label>Julkaisun otsikko*</label><textarea></textarea></div>
+						</div>
+						<div class="julkaisuRowContainer">
+							<div class="julkaisuDataSetContainer"><label>relPubl-tiedot*</label><textarea></textarea></div>
+						</div>
+					</div>
+					<div class="julkaisuRowContainer" style="display: inline-block; margin-top: 10px;">
+						<div class="julkaisuRowTitle">Liittyvät henkilöt</div>
+						<table id="julkaisuHenkiloTable" class="tablesorter sortableTable">
+							<thead>
+								<tr><th>Sukunimi</th><th>Etunimi</th><th></th></tr>
+							</thead>
+							<tbody>
+								<tr><td>Borg</td><td>Sami</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+							</tbody>
+						</table>	
+						<div class="aineistoTableActionLinkHolder"><a href="liita_henkilo.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>						
+					</div>
+					<div class="julkaisuRowContainer">
+						<div class="julkaisuRowTitle">Liittyvät aineistot</div>
+						<table id="julkaisuAineistoTable" class="tablesorter sortableTable">
+							<thead>
+								<tr><th>Aineiston numero</th><th>Aineiston nimi</th><th></th></tr>
+							</thead>
+							<tbody>
+								<tr><td>FSD1001</td><td>Puolueiden ajankohtaistutkimus 1974</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+								<tr><td>FSD1002</td><td>Puolueiden ajankohtaistutkimus 1975</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+								<tr><td>FSD1003</td><td>Puolueiden ajankohtaistutkimus 1976</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+							</tbody>
+						</table>	
+						<div class="aineistoTableActionLinkHolder"><a href="liita_aineisto.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>						
+					</div>
+					<div class="julkaisuRowContainer">
+						<div class="julkaisuRowTitle">Lupanumerot</div>
+						<table id="julkaisuLupaTable" class="tablesorter sortableTable">
+							<thead>
+								<tr><th>Numero</th><th>Jos tuplaklikkaa => lupanäytölle</th><th></th></tr>
+							</thead>
+							<tbody>
+								<tr><td>0</td><td>0</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+							</tbody>
+						</table>	
+						<div class="aineistoTableActionLinkHolder"><a href="liita_lupa.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>				
+					</div>
+					<div class="julkaisuRowContainer">
+						<div class="julkaisuRowTitle">Liittyvät sarjat</div>
+						<table id="julkaisuSarjaTable" class="tablesorter sortableTable">
+							<thead>
+								<tr><th>Lyhenne</th><th>Sarjan nimi</th><th></th></tr>
+							</thead>
+							<tbody>
+								<tr><td>foo</td><td>fooBar</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+							</tbody>
+
+						</table>	
+						<div class="aineistoTableActionLinkHolder"><a href="liita_sarja.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>						
+					</div>
+					
+						<div class="sarjaSearchFormButtonsHolder" style="margin-bottom:20px;"><input type="button" class="searchFormInput doSearch" value="Tallenna" /></div>					
+
+				</div>												
+			</div>
+		<footer>
+		</footer>
+	</body>
+</html>
