@@ -173,7 +173,14 @@ $(document).ready(function(){
 		"bPaginate": false,
         "bFilter": false, 
         "bInfo": false,	
-	});//.rowReordering();
+        "aoColumns": [
+		              {"bVisible": false},
+		              {sWidth: '35%'},
+		              {sWidth: '40%'},
+		              {sWidth: '20%'},
+		              {sWidth: '5%'}
+				  ]
+	}).rowReordering();
 	
 	//$("#variablesTree").jstree({ "plugins" : ["themes","html_data","ui"] })
 	        //.bind("loaded.jstree", function (event, data) { })
