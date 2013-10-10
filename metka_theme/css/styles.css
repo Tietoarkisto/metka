@@ -97,7 +97,7 @@ input, select {
 /*TABLE SORTER CSS*/
 table.tablesorter {
 
-	margin:10px 10px 0px 10px;
+	margin:0px 10px 0px 10px;
 	font-size: 8pt;
 	width: 940px;
 	text-align: left;
@@ -638,7 +638,7 @@ height: 470px;*/
 	-moz-box-shadow: 0 0 8px #005993;
 	
 }
-.tab2, .tab3, .tab4, .tab5{
+.tab2, .tab3, .tab4, .tab5, .tab6, .tab7{
 	display: none;
 }
 .tabNavi ul{
@@ -1008,4 +1008,33 @@ h1.next{
 
 #aineistoFileInfoTitle {
 	padding: 10px;
+}
+
+#aineistoFileHistoryTitle {
+	padding-left: 10px;
+}
+
+#aineistoCodebookTitle {
+	padding: 10px;
+}
+
+#aineistoVariables {
+	padding: 10px;
+}
+
+.variableParent {
+	padding: 5px
+}
+
+.variableChildren {
+	padding-top: 10px;
+	display: none;
+}
+
+.variableRow {
+	padding-left: 10px;
+}
+
+.variableRow label {
+	padding-right: 5px;
 }

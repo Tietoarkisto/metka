@@ -1,5 +1,6 @@
 $(document).ready(function(){
-	
+	$("#aineistoFileInfoRow").hide();
+	$("#aineistoCodebookRow").hide();
 	/** GENERAL **/
 	
 	$(".tabNavi ul li a").click(function(){
@@ -144,16 +145,44 @@ $(document).ready(function(){
 				  ]
 	});
 	
-	$('.aineistoFileRow').hover(function() {
+	$('.aineistoFileRow, .variableParent').hover(function() {
 		    $(this).css('cursor', 'pointer');
 		}, function() {
 		    $(this).css('cursor', 'auto');		    
-		});
+	});
+	
+	$('.variableParent').hover(function() {
+		 $(this).css('background-color', '#009EE0');
+		 $(this).find(".variableChildren").css("background-color", "#fffff");
+		}, function() { 
+			$(this).css('background-color', '#fffff');
+		}
+	);
 	
 	$(".aineistoFileRow").on("click", function() {
 		$("#aineistoFileInfoTitle a").html($(this).find(".aineistoFileName").html());
 		$("#aineistoFileInfoRow").show();
 	});
+	
+	$(".aineistoCodebookRow").on("click", function() {
+		$("#aineistoCodebookTitle a").html($(this).find(".aineistoCodebookFileName").html());
+		$("#aineistoCodebookRow").show();
+	});	
+	
+	$("#aineistoCodebookAuthorTable").dataTable({
+		"bPaginate": false,
+        "bFilter": false, 
+        "bInfo": false,	
+	});//.rowReordering();
+	
+	//$("#variablesTree").jstree({ "plugins" : ["themes","html_data","ui"] })
+	        //.bind("loaded.jstree", function (event, data) { })
+	        //.one("reopen.jstree", function (event, data) { })
+	        //.one("reselect.jstree", function (event, data) { });
+	        
+	 $(".variableParentTitle").on("click", function() {
+		$(this).parent().find(".variableChildren").toggle(); 
+	 });
 	
 	/*** JULKAISU ***/
 	
