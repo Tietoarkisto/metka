@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html lang="fi">
+	<head>
+		<meta charset="utf-8">
+		<title>YHTEISKUNTATIETEELLINEN TIETOARKISTO - Metka</title>
+		<script src="js/jquery-1.10.2.min.js"></script>
+  		<script src="js/jquery-ui.js"></script>
+		<script src="js/jquery.tablesorter.min.js"></script>
+		<script src="js/custom.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/styles.css">
+		<link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
+	</head>
+	<body>
+		<header>
+			<div class="headerContainer">
+				<h1 id="logo" >
+					<a href="desktop.html" title="Aineistohaku">Aineistohaku</a>
+				</h1>	
+						
+				<nav>
+					<ul class="mainNavUl">
+						<li><a href="desktop.html">Työpöytä</a></li>
+						<li><a href="aineistohaku.html">Aineistot</a></li>
+						<li><a href="julkaisuhaku.html">Julkaisut</a></li>
+						<li><a href="sarjahaku.html">Sarjat</a></li>
+						<li><a href="asetukset.html">Asetukset</a></li>
+					</ul>
+					
+					<div style="clear:both;"></div>				
+				</nav>
+				<div class="searchContainer">
+					<a class="logoutLink" href="#">Kirjaudu ulos</a>
+					<form action="julkaisu.html" class="quickSearchForm">
+						<input type="text" autocomplete="off" dir="ltr" class="searchInput" placeholder="Aineiston id-nro" />
+						<input type="submit" value="Hae" class="searchButton"/>
+					</form>					
+				</div>
+			</div>
+			
+		</header>
+		
+			<div class="wrapper">
+
+				<div class="content">
+					<h1 class="pageTitle">Sarjan tiedot</h1>
+					<div class="sarjaUpperContainer">
+						<div class="prevNextContainer"><h1 class="prev"><</h1><h1 class="next">></h1></div>				
+						<div class="sarjaRowContainer">
+							<div class="sarjaDataSetContainer"><label>Sarjannro</label><input type="text" value="16" name="aineistonNimi" /></div>
+						</div>						
+						<div class="sarjaRowContainer">							
+							<div class="sarjaDataSetContainer"><label>Sarjan lyhenne*</label><input type="text" name="aineistonNimiEng" /></div>
+						</div>
+						<div class="sarjaRowContainer">
+							<div class="sarjaDataSetContainer"><label>Kieli*</label><select><option></option></select></div>
+						</div>
+						<div class="sarjaRowContainer">
+							<div class="sarjaDataSetContainer"><label>Sarjan nimi*</label><input type="text" name="aineistonNimiEng" /></div>
+						</div>
+						<div class="sarjaRowContainer">
+							<div class="sarjaDataSetContainer"><label>Sarjan URL*</label><input type="text" name="aineistonNimiEng" /></div>
+						</div>
+						<div class="sarjaRowContainer">							
+							<div class="sarjaDataSetContainer"><label>Sarjan kuvaus</label><textarea></textarea></div>
+						</div>
+						<div class="sarjaSearchFormButtonsHolder" style="margin-bottom:20px;"><input type="button" class="searchFormInput doSearch" value="Tallenna" /></div>					
+
+					</div>
+
+				</div>												
+			</div>
+		<footer>
+		</footer>
+	</body>
+</html>
