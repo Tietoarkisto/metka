@@ -16,7 +16,6 @@ $(document).ready(function(){
 				$(".tab" + selectedId).show();
 			}
 		}
-
 	});
 
 	
@@ -143,6 +142,17 @@ $(document).ready(function(){
 		              {sWidth: '45%'},
 		              {sWidth: '5%'}
 				  ]
+	});
+	
+	$('.aineistoFileRow').hover(function() {
+		    $(this).css('cursor', 'pointer');
+		}, function() {
+		    $(this).css('cursor', 'auto');		    
+		});
+	
+	$(".aineistoFileRow").on("click", function() {
+		$("#aineistoFileInfoTitle a").html($(this).find(".aineistoFileName").html());
+		$("#aineistoFileInfoRow").show();
 	});
 	
 	/*** JULKAISU ***/

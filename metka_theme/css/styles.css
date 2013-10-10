@@ -993,17 +993,8 @@ h1.next{
 	padding: 5px;
 }
 
-#aineistoAddNewFileTitle {
-	padding: 5px;
-}
-
 #aineistoAddNewFile {
-	border: solid 1px;
 	padding: 5px;
-}
-
-#aineistoAddNewFileInput, #aineistoAddNewFileDescription {
-
 }
 
 .aineistoAddNewFileTD {
@@ -1015,4 +1006,6 @@ h1.next{
 	float: right;
 }
 
-
+#aineistoFileInfoTitle {
+	padding: 10px;
+}
