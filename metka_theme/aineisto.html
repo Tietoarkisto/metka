@@ -220,14 +220,16 @@
 					
 						<div id="aineistoFileInfoRow" style="display: none;">
 							<div id="aineistoFileInfoTitle"><a href="#"></a></div>
+							
 							<table class="tablesorter sortableTable" id="aineistoFileInfoTable">
-							<thead>
-								<tr><th>Muokkauspäivämäärä</th><th>Muokkaaja</th></tr>
-							</thead>
-							<tbody>
-								<tr><td>2.10.2013</td><td>Simo Häyhä</td></tr>
-								<tr><td>4.10.2013</td><td>Ville Iivonen</td></tr>
-							</tbody>
+								<thead>
+									<tr><th>Muokkauspäivämäärä</th><th>Muokkaaja</th></tr>
+								</thead>
+								<tbody>
+									<tr><td>2.10.2013</td><td>Simo Häyhä</td></tr>
+									<tr><td>4.10.2013</td><td>Ville Iivonen</td></tr>
+								</tbody>
+							</table>
 						</div>
 					</div>
 				
@@ -236,7 +238,25 @@
 					</div>	
 					
 					<div class="tabs2 tab7">
-						Virheet
+						<table class="tablesorter sortableTable" id="aineistoVirheetTable">
+							<thead>
+								<tr><th>PVM</th><th>Virheen merkitsijä</th><th>Virheen kuvaus</th><th>Pisteet</th><th>Merkitse tehdyksi</th></tr>
+							</thead>
+							<tbody>
+								<tr><td>23.9.2013</td><td>Ville Iivonen</td>
+									<td>Aineiston tyyppi on väärä</td>
+									<td>2</td>
+									<td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td>
+								</tr>
+								<tr><td>3.10.2013</td>
+									<td>Mikko Tanskanen</td>
+									<td>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas vel adipiscing urna. Ut sed malesuada eros, eu cursus mi. Proin bibendum nibh vitae lacinia volutpat. Morbi ac lacinia felis. Suspendisse sed lorem non nisl egestas ullamcorper. Nulla nec massa vel diam gravida aliquet a sit amet arcu. Fusce tempor diam erat, quis feugiat felis venenatis accumsan. Aenean mollis vulputate leo, vel ferme</td>
+									<td>4</td>
+									<td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td>
+								</tr>
+							</tbody>
+						</table>
+						<div class="aineistoTableActionLinkHolder"><a href="lisaa_virhe.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>
 					</div>	
 					
 				</div>
