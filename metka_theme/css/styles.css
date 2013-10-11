@@ -215,7 +215,7 @@ header{
 	width: 100%;
 	background-color: #fff;
 	margin-bottom: 10px;
-	height: 130px;
+	/*height: 130px;*/
 	border-top: 3px solid #005993;
 }
 .headerContainer{
@@ -388,7 +388,7 @@ footer{
 }
 .desktopUpComerBoxHeading h2{
 	color: #fff;
-	font-size: 20px;
+	font-size: 15px;
 }
 .BoxDataContainer{
 	border-left: 1px solid #009EE0;
@@ -396,6 +396,7 @@ footer{
 }
 .BoxDataRow{
 	border-bottom: 1px solid #009EE0;
+	font-size: 15px;
 }
 .BoxDataRow a{
 	display: block;
@@ -1019,22 +1020,20 @@ h1.next{
 }
 
 #aineistoVariables {
+	position: relative;
+}
+
+#variablesTree {
+	padding: 10px 10px 10px 20px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 200px;
+}
+
+#variablesDisplay {
 	padding: 10px;
-}
-
-.variableParent {
-	padding: 5px
-}
-
-.variableChildren {
-	padding-top: 10px;
-	display: none;
-}
-
-.variableRow {
-	padding-left: 10px;
-}
-
-.variableRow label {
-	padding-right: 5px;
+	position: absolute;
+	top: 0;
+	left: 200px;
 }
