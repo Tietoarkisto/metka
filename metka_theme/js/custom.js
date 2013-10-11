@@ -145,18 +145,11 @@ $(document).ready(function(){
 				  ]
 	});
 	
-	$('.aineistoFileRow, .variableParent').hover(function() {
+	$('.aineistoFileRow').hover(function() {
 		    $(this).css('cursor', 'pointer');
 		}, function() {
 		    $(this).css('cursor', 'auto');		    
 	});
-	
-	$('.variableParent').hover(function() {
-		 $(this).css('background-color', '#79CEF1');
-		}, function() { 
-			$(this).css('background-color', '#009EE0');
-		}
-	);
 	
 	$(".aineistoFileRow").on("click", function() {
 		$("#aineistoFileInfoTitle a").html($(this).find(".aineistoFileName").html());
@@ -181,14 +174,28 @@ $(document).ready(function(){
 				  ]
 	}).rowReordering();
 	
-	//$("#variablesTree").jstree({ "plugins" : ["themes","html_data","ui"] })
-	        //.bind("loaded.jstree", function (event, data) { })
-	        //.one("reopen.jstree", function (event, data) { })
-	        //.one("reselect.jstree", function (event, data) { });
-	        
-	 $(".variableParentTitle").on("click", function() {
-		$(this).parent().find(".variableChildren").toggle(); 
-	 });
+	$("#aineistoCodebookFileTable").dataTable({
+		"bPaginate": false,
+        "bFilter": false, 
+        "bInfo": false,
+        "aoColumns": [
+		              {sWidth: '50%'},
+		              {sWidth: '45%'},
+		              {sWidth: '5%'}
+				  ]
+	}).rowReordering();
+	
+	$("#variablesTree").jstree({ "plugins" : ["themes","html_data","ui"] })
+	        .bind("loaded.jstree", function (event, data) { })
+	        .one("reopen.jstree", function (event, data) { })
+	        .one("reselect.jstree", function (event, data) { })
+	        .bind("select_node.jstree", function (event, data) {
+				$("#variablesDisplay").html(data.rslt.obj.attr("id") + " :" + data.rslt.obj.find("a").html());
+			});
+	
+	$("#approveChanges").on("click", function() {
+		confirm("Oletko varma?");
+	});        
 	
 	/*** JULKAISU ***/
 	

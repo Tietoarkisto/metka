@@ -55,10 +55,9 @@
 									<li><a id="1" class="selected" href="#general">Yleiset tiedot</a></li>
 									<li><a id="2" href="#studylevel">Studylevel data</a></li>
 									<li><a id="3" href="#variables">Muuttujien käsittely</a></li>
-									<li><a id="4" href="#custom">Kustomoitu data</a></li>
-									<li><a id="5" href="#files">Tiedostojen hallinta</a></li>
-									<li><a id="6" href="#codebook">Koodikirja</a></li>
-									<li><a id="7" href="#errors">Virheet</a></li>
+									<li><a id="4" href="#files">Tiedostojen hallinta</a></li>
+									<li><a id="5" href="#codebook">Koodikirja</a></li>
+									<li><a id="6" href="#errors">Virheet</a></li>
 								</ul>
 							</div>						
 							<!--<h1 class="next">></h1><h1 class="prev"><</h1>-->
@@ -66,7 +65,7 @@
 						</div>
 					
 				<!-- General -->
-					<div class="tabs2 tab1">						
+					<div id="aineistoGeneral" class="tabs2 tab1">						
 						<div class="aineistoUpperContainer">
 				
 							<div class="aineistoRowContainer">
@@ -174,14 +173,15 @@
 						</div>
 						
 						<div class="sarjaSearchFormButtonsHolder" style="margin-bottom:20px;">
-							<input type="button" class="searchFormInput doSearch" value="Tallenna Luonnoksena" />
-							<input type="button" class="searchFormInput doSearch" value="Julkaise" />
+							<input type="button" id="startWorking" class="searchFormInput doSearch" value="Varaa aineisto itsellesi" />
+							<input type="button" id="approveChanges" class="searchFormInput doSearch" value="Hyväksy muutokset" />
+							<input type="button" id="saveAsDraft" class="searchFormInput doSearch" value="Tallenna Luonnoksena" />
 						</div>		
 					
 					</div>
 
 				<!-- Studylevel -->
-					<div class="tabs2 tab2">
+					<div id="aineistoStudyLevel" class="tabs2 tab2">
 						<div class="aineistoRowContainer">
 							<div class="aineistoDataSetContainerTopRow"><label>Lorem1 ipsum dolor sit amet</label><input type="text" value="" name="aineistonNimi" /></div>
 						</div>
@@ -210,60 +210,89 @@
 					</div>
 					
 				<!-- Variables -->
-					<div class="tabs2 tab3">
-						<div id="aineistoVariables">
-							<div class="variableParent"><div class="variableParentTitle">Muuttujat</div>
-								<div class="variableChildren">
-									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="foo" name="aineistonNimi" /></div>
-									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="bar" name="aineistonNimi" /></div>
-									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="1" name="aineistonNimi" /></div>
-									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="3" name="aineistonNimi" /></div>
-									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="4" name="aineistonNimi" /></div>
-									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="1231" name="aineistonNimi" /></div>
-								</div>
-							</div>
-							<div class="variableParent"><div class="variableParentTitle">Foo</div>
-								<div class="variableChildren">
-									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="112" name="aineistonNimi" /></div>
-									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="foo" name="aineistonNimi" /></div>
-									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="lorem" name="aineistonNimi" /></div>
-								</div>
-							</div>
-							<div class="variableParent"><div class="variableParentTitle">Kysymykset</div>
-								<div class="variableChildren">
-									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="234kuh" name="aineistonNimi" /></div>
-									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="ipsum" name="aineistonNimi" /></div>
-									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="dolor sit amet" name="aineistonNimi" /></div>
-									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="foo bar" name="aineistonNimi" /></div>
-									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="" name="aineistonNimi" /></div>
-									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="" name="aineistonNimi" /></div>
-									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="" name="aineistonNimi" /></div>
-									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="" name="aineistonNimi" /></div>
-									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="" name="aineistonNimi" /></div>
-									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="" name="aineistonNimi" /></div>
-									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="" name="aineistonNimi" /></div>
-									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="" name="aineistonNimi" /></div>
-								</div>
-							</div>
-							<div class="variableParent"><div class="variableParentTitle">Bar</div>
-								<div class="variableChildren">
-									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="" name="aineistonNimi" /></div>
-									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="" name="aineistonNimi" /></div>
-									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="" name="aineistonNimi" /></div>
-									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="" name="aineistonNimi" /></div>
-									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="" name="aineistonNimi" /></div>
-									<div class="variableRow"><label>Lorem2 ipsum dolor sit amet</label><input type="text" value="" name="aineistonNimi" /></div>
-								</div>
-							</div>
+					<div id="aineistoVariables" class="tabs2 tab3">
+						<div id="variablesTree">
+							<ul id="variableList">
+								<li class="parentVariableGroup" id="root">
+									<a class="variableGroup" href="#">Muuttujat</a>
+									<ul>
+										<li class="parentVariableGroup" id="var1">
+											<a class="variableGroup" href="#">Parent1</a>
+											<ul class="childVariableGroupList">
+												<li class="childVariableGroup" id="var1.1">
+													<a class="variable" id="1.1" href="#">Child1</a>
+												</li>
+												<li class="childVariableGroup" id="var1.2">
+													<a class="variable" href="#">Child2</a>
+												</li>
+												<li class="childVariableGroup" id="var1.3">
+													<a class="variableGroup" href="#">Child3</a>
+													<ul class="childVariableGroupList">
+														<li class="childVariableGroup" id="var1.3.1">
+															<a class="variable" href="#">Child3.1</a>
+														</li>
+														<li class="childVariableGroup" id="var1.3.2">
+															<a class="variable" href="#">Child3.2</a>
+														</li>
+													</ul>
+												</li>
+											</ul>
+										</li>
+										<li class="parentVariableGroup" id="var2">
+											<a class="variableGroup" href="#">Parent2</a>
+											<ul class="childVariableGroupList">
+												<li class="childVariableGroup" id="var2.1" >
+													<a class="variable"href="#">Child1</a>
+												</li>
+												<li class="childVariableGroup" id="var2.2">
+													<a class="variable" href="#">Child2</a>
+												</li>
+												<li class="childVariableGroup" id="var2.3">
+													<a class="variable" href="#">Child3</a>
+												</li>
+												<li class="childVariableGroup" id="var2.4">
+													<a class="variable" href="#">Child4</a>
+												</li>
+												<li class="childVariableGroup" id="var2.5">
+													<a class="variable" href="#">Child5</a>
+												</li>
+												<li class="childVariableGroup" id="var2.6">
+													<a class="variable" href="#">Child6</a>
+												</li>
+											</ul>
+										</li>
+										<li class="parentVariableGroup" id="var3">
+											<a class="variableGroup" href="#">Parent3</a>
+											<ul class="childVariableGroupList">
+												<li class="childVariableGroup" id="var3.1">
+													<a class="variable" href="#">Child1</a>
+												</li>
+											</ul>
+										</li>
+										<li class="parentVariableGroup" id="var4">
+											<a class="variableGroup" href="#">Parent4</a>
+											<ul class="childVariableGroupList">
+												<li class="childVariableGroup" id="var4.1">
+													<a class="variable" href="#">Child1</a>
+												</li>
+												<li class="childVariableGroup" id="var4.2">
+													<a class="variable" href="#">Child2</a>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+							</ul>
 						</div>
-					</div>		
-					
-				<!-- Kustomoitu data -->
-					<div class="tabs2 tab4">
-					</div>	
+						<div id="variablesDisplay">
+							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec congue lobortis sem, et sagittis libero. Suspendisse a neque tempor, placerat lacus sed, ornare nisl. Nullam nec lorem leo. Donec tincidunt justo odio, dignissim rutrum mi egestas a. Nam id porttitor erat. Donec metus augue, sagittis id leo sed, pellentesque porta risus. Quisque ac bibendum nunc. Etiam viverra, justo eu tincidunt interdum, eros ligula tempus risus, nec viverra elit justo quis turpis.</p>							
+							<br/>
+							<p>Nullam non tempor enim. Curabitur porttitor, mauris non viverra euismod, leo lorem lobortis massa, vitae ultricies mauris massa nec ligula. Donec quis elit ut augue vehicula viverra et in tellus. Cras rhoncus molestie nibh. Nunc dapi</p>
+						</div>
+					</div>							
 					
 				<!-- Tiedostojen hallinta -->
-					<div class="tabs2 tab5">
+					<div id="aineistoFiles" class="tabs2 tab4">
 						<table class="tablesorter sortableTable" id="aineistoFileTable">
 							<thead>
 								<tr><th>Tiedoston nimi</th><th>Tiedoston kuvaus</th><th></th></tr>
@@ -292,7 +321,7 @@
 					</div>
 				
 				<!-- Codebook -->
-					<div class="tabs2 tab6">
+					<div id="aineistoCodebook" class="tabs2 tab5">
 						<div class="aineistoRowTitle">Tekijät</div>
 						<table class="tablesorter" id="aineistoCodebookAuthorTable">
 							<thead>
@@ -310,7 +339,7 @@
 						
 						
 						<div class="aineistoRowTitle">Tiedostot</div>
-						<table class="tablesorter sortableTable" id="aineistoCodebookFileTable">
+						<table class="tablesorter" id="aineistoCodebookFileTable">
 							<thead>
 								<tr><th>Tiedoston nimi</th><th>Tiedoston kuvaus</th><th></th></tr>
 							</thead>
@@ -327,7 +356,7 @@
 					</div>	
 					
 				<!-- Errors -->
-					<div class="tabs2 tab7">
+					<div id="aineistoErrors" class="tabs2 tab6">
 						<table class="tablesorter sortableTable" id="aineistoVirheetTable">
 							<thead>
 								<tr><th>PVM</th><th>Virheen merkitsijä</th><th>Virheen kuvaus</th><th>Pisteet</th><th>Merkitse tehdyksi</th></tr>
