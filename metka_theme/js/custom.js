@@ -1,6 +1,6 @@
 $(document).ready(function(){
-	$("#aineistoFileInfoRow").hide();
-	$("#aineistoCodebookRow").hide();
+	$("#materialFileInfoRow").hide();
+	$("#materialCodebookRow").hide();
 	/** GENERAL **/
 	
 	$(".tabNavi ul li a").click(function(){
@@ -60,7 +60,7 @@ $(document).ready(function(){
 	
 	/** ASETUKSET **/
 	
-    $('#sanastoTable').dataTable( {
+    $('#vocabularyTable').dataTable( {
 		"bJQueryUI": true,
         "bPaginate": false,
         "bLengthChange": false,
@@ -70,7 +70,7 @@ $(document).ready(function(){
         "bAutoWidth": false
     });
     
-    $('#vakiotekstiTable').dataTable( {
+    $('#standardTextTable').dataTable( {
 		"bJQueryUI": true,
         "bPaginate": false,
         "bLengthChange": false,
@@ -83,11 +83,11 @@ $(document).ready(function(){
     
     /*** AINEISTO ***/
     
-	$(".aineistoTabNavi ul li a").click(function(){
+	$(".materialTabNavi ul li a").click(function(){
 		console.log("1");		
 		if(!$(this).hasClass("selected")){		
-			var currentId = $(".aineistoTabNavi ul li a.selected").attr("id"); 
-			$(".aineistoTabNavi ul li a").removeClass("selected");
+			var currentId = $(".materialTabNavi ul li a.selected").attr("id"); 
+			$(".materialTabNavi ul li a").removeClass("selected");
 			$(this).addClass("selected");
 			var selectedId = $(this).attr("id");
 			if(currentId > selectedId){ 
@@ -100,30 +100,22 @@ $(document).ready(function(){
 		}
 	});
 	
-	$("#aineistoHenkiloTable").dataTable({
+	$("#materialPersonTable").dataTable({
 		"bPaginate": false,
         "bFilter": false, 
         "bInfo": false,
         "aoColumns": [
 		              {sWidth: '15%'},
+		              {sWidth: '15%'},
+		              {sWidth: '10%'},
 		              {sWidth: '20%'},
-		              {sWidth: '20%'},
+		              {sWidth: '25%'},
+		              {sWidth: '10%'},
 		              {sWidth: '5%'}
 				  ]
-		
 	});
-	$("#aineistoJulkaisuTable").dataTable({
-		"bPaginate": false,
-        "bFilter": false, 
-        "bInfo": false,
-        "aoColumns": [
-		              {sWidth: '50%'},
-		              {sWidth: '45%'},
-		              {sWidth: '5%'}
-				  ]
-		
-	});
-	$("#aineistoAineistoTable").dataTable({
+	
+	$("#materialPublicationTable").dataTable({
 		"bPaginate": false,
         "bFilter": false, 
         "bInfo": false,
@@ -134,7 +126,7 @@ $(document).ready(function(){
 				  ]
 	});
 	
-	$("#aineistoFileTable").dataTable({
+	$("#materialMaterialTable").dataTable({
 		"bPaginate": false,
         "bFilter": false, 
         "bInfo": false,
@@ -145,23 +137,34 @@ $(document).ready(function(){
 				  ]
 	});
 	
-	$('.aineistoFileRow').hover(function() {
+	$("#materialFileTable").dataTable({
+		"bPaginate": false,
+        "bFilter": false, 
+        "bInfo": false,
+        "aoColumns": [
+		              {sWidth: '50%'},
+		              {sWidth: '45%'},
+		              {sWidth: '5%'}
+				  ]
+	});
+	
+	$('.materialFileRow').hover(function() {
 		    $(this).css('cursor', 'pointer');
 		}, function() {
 		    $(this).css('cursor', 'auto');		    
 	});
 	
-	$(".aineistoFileRow").on("click", function() {
-		$("#aineistoFileInfoTitle a").html($(this).find(".aineistoFileName").html());
-		$("#aineistoFileInfoRow").show();
+	$(".materialFileRow").on("click", function() {
+		$("#materialFileInfoTitle a").html($(this).find(".materialFileName").html());
+		$("#materialFileInfoRow").show();
 	});
 	
-	$(".aineistoCodebookRow").on("click", function() {
-		$("#aineistoCodebookTitle a").html($(this).find(".aineistoCodebookFileName").html());
-		$("#aineistoCodebookRow").show();
+	$(".materialCodebookRow").on("click", function() {
+		$("#materialCodebookTitle a").html($(this).find(".materialCodebookFileName").html());
+		$("#materialCodebookRow").show();
 	});	
 	
-	$("#aineistoCodebookAuthorTable").dataTable({
+	$("#materialCodebookAuthorTable").dataTable({
 		"bPaginate": false,
         "bFilter": false, 
         "bInfo": false,	
@@ -174,7 +177,7 @@ $(document).ready(function(){
 				  ]
 	}).rowReordering();
 	
-	$("#aineistoCodebookFileTable").dataTable({
+	$("#materialCodebookFileTable").dataTable({
 		"bPaginate": false,
         "bFilter": false, 
         "bInfo": false,
@@ -190,16 +193,23 @@ $(document).ready(function(){
 	        .one("reopen.jstree", function (event, data) { })
 	        .one("reselect.jstree", function (event, data) { })
 	        .bind("select_node.jstree", function (event, data) {
-				$("#variablesDisplay").html(data.rslt.obj.attr("id") + " :" + data.rslt.obj.find("a").html());
+				$("#variableDataContent").html(data.rslt.obj.attr("id") + " :" + data.rslt.obj.find("a").html());
+				$(".selectedVariableId").attr("id", data.rslt.obj.attr("id"));
+				//$(".variablePrev").attr("id", );
+				//$(".variableNext").attr("id", );
 			});
 	
 	$("#approveChanges").on("click", function() {
 		confirm("Oletko varma?");
 	});        
 	
+	$("#variableNext").on("click", function() {
+		//alert($(".selectedVariableId").attr("id"));
+	});
+	
 	/*** JULKAISU ***/
 	
-	$("#julkaisuHenkiloTable").dataTable({
+	$("#publicationPersonTable").dataTable({
 		"bPaginate": false,
         "bFilter": false, 
         "bInfo": false,
@@ -210,7 +220,7 @@ $(document).ready(function(){
 				  ]
 		
 	});
-	$("#julkaisuAineistoTable").dataTable({
+	$("#publicationMaterialTable").dataTable({
 		"bPaginate": false,
         "bFilter": false, 
         "bInfo": false,
@@ -221,7 +231,7 @@ $(document).ready(function(){
 				  ]
 		
 	});
-	$("#julkaisuSarjaTable").dataTable({
+	$("#publicationSeriesTable").dataTable({
 		"bPaginate": false,
         "bFilter": false, 
         "bInfo": false,
@@ -232,7 +242,7 @@ $(document).ready(function(){
 				  ]
 		
 	});
-	$("#julkaisuLupaTable").dataTable({
+	$("#publicationPermitTable").dataTable({
 		"bPaginate": false,
         "bFilter": false, 
         "bInfo": false,
