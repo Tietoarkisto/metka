@@ -7,9 +7,20 @@
 		<div class="popupContainer">
 			<h1 class="pageTitle">Virheen merkintä</h1>
 			<div class="popupRowHolder">
-				Pisteet: <select><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select><br/>
-				Virheen kuvaus:
-				<textarea cols="50"></textarea>
+				<label>Pisteet</label>
+				<select><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+			</div>
+			<div class="popupRowHolder">
+				<label>Aineiston osa</label>
+				<select><option>Lomake</option><option>Arkistointisopimus</option><option>Koodikirja</option></select>
+			</div>
+			<div class="popupRowHolder">
+				<label>Selite</label>
+				<input type="text" />			
+			</div>
+			<div class="popupRowHolder">
+				<label>Pitkä selite</label>
+				<textarea cols="42" rows="5"></textarea>
 			</div>
 			<div class="popupButtonsHolder">				
 				<input type="button" class="searchFormInput" value="Peruuta">

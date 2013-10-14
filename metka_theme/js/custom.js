@@ -105,8 +105,8 @@ $(document).ready(function(){
         "bFilter": false, 
         "bInfo": false,
         "aoColumns": [
-		              {sWidth: '15%'},
-		              {sWidth: '15%'},
+		              {sWidth: '10%'},
+		              {sWidth: '10%'},
 		              {sWidth: '10%'},
 		              {sWidth: '20%'},
 		              {sWidth: '25%'},
@@ -137,18 +137,7 @@ $(document).ready(function(){
 				  ]
 	});
 	
-	$("#materialFileTable").dataTable({
-		"bPaginate": false,
-        "bFilter": false, 
-        "bInfo": false,
-        "aoColumns": [
-		              {sWidth: '50%'},
-		              {sWidth: '45%'},
-		              {sWidth: '5%'}
-				  ]
-	});
-	
-	$('.materialFileRow').hover(function() {
+	$('.materialFileRow, .materialCodebookFileRow').hover(function() {
 		    $(this).css('cursor', 'pointer');
 		}, function() {
 		    $(this).css('cursor', 'auto');		    
@@ -164,7 +153,7 @@ $(document).ready(function(){
 		$("#materialCodebookRow").show();
 	});	
 	
-	$("#materialCodebookAuthorTable").dataTable({
+	$("#materialAuthorTable").dataTable({
 		"bPaginate": false,
         "bFilter": false, 
         "bInfo": false,	
@@ -182,8 +171,11 @@ $(document).ready(function(){
         "bFilter": false, 
         "bInfo": false,
         "aoColumns": [
-		              {sWidth: '50%'},
-		              {sWidth: '45%'},
+		              {sWidth: '30%'},
+		              {sWidth: '10%'},
+		              {sWidth: '30%'},
+		              {sWidth: '10%'},
+		              {sWidth: '15%'},
 		              {sWidth: '5%'}
 				  ]
 	}).rowReordering();

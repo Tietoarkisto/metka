@@ -50,24 +50,27 @@
 						<div class="publicationUpperContainer">
 						<div class="prevNextContainer"><h1 class="prev"><</h1><h1 class="next">></h1></div>
 						<div class="publicationRowContainer">
-							<div class="publicationDataSetContainer"><label>Julkaisuvuosi*</label><input type="text" name="publicationvuosi" value="2006" /></div>
+							<div class="publicationDataSetContainer"><label>Julkaisuvuosi</label><input type="text" name="publicationvuosi" value="2006" /></div>
 							<div class="publicationDataSetContainer"><label>Voiko julkaista</label><select><option>Kyllä</option></select></div>
 							<div class="publicationDataSetContainer"><label>Julkaisu id-nro</label><input type="text" name="publicationvuosi" value="2006" /></div>
 						</div>
 						<div class="publicationRowContainer">
-							<div class="publicationDataSetContainer"><label>Julkaisun ilmoitustapa</label><select><option>Ei tietoa</option></select></div>
-							<div class="publicationDataSetContainer"><label>Voiko julkaista</label><select><option>xxx</option></select></div>
 							<div class="publicationDataSetContainer"><label>1. Tallennuspvm</label><input type="text" name="publicationvuosi" value="2006" /></div>
+							<div class="publicationDataSetContainer"><label>Julkaisun ilmoitustapa</label><select><option>Ei tietoa</option></select></div>
+							<div class="publicationDataSetContainer"><label>Julkaisun kieli</label><select><option>Suomi</option></select></div>
 						</div>
 						<div class="publicationRowContainer">
-							<div class="publicationDataSetContainer"><label>Julkaisun kieli*</label><select><option>Suomi</option></select></div>
 							<div class="publicationDataSetContainer"><label>Viimeisin muutospvm</label><input type="text" name="publicationvuosi" value="2006" /></div>
+							<div class="publicationDataSetContainer"><label>Käsittelijä</label><input type="text" name="handler" value="mat" /></div>
 						</div>
 						<div class="publicationRowContainer">
-							<div class="publicationDataSetContainer"><label>Julkaisun otsikko*</label><textarea></textarea></div>
+							<div class="publicationDataSetContainer"><label>Julkaisun otsikko</label><textarea></textarea></div>
 						</div>
 						<div class="publicationRowContainer">
-							<div class="publicationDataSetContainer"><label>relPubl-tiedot*</label><textarea></textarea></div>
+							<div class="publicationDataSetContainer"><label>relPubl-tiedot</label><textarea></textarea></div>
+						</div>
+						<div class="publicationRowContainer">
+							<div class="publicationDataSetContainer"><label>Julkaisun huomautukset</label><textarea></textarea></div>
 						</div>
 					</div>
 					<div class="publicationRowContainer" style="display: inline-block; margin-top: 10px;">
@@ -83,6 +86,19 @@
 						<div class="publicationTableActionLinkHolder"><a href="attachPersonDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>						
 					</div>
 					<div class="publicationRowContainer">
+						<div class="publicationRowTitle">Pysyvät tunnisteet</div>
+						<table id="publicationIdentificationTable" class="tablesorter sortableTable">
+							<thead>
+								<tr><th>Pysyvä tunniste</th><th>Tunnisteen tyyppi</th><th></th></tr>
+							</thead>
+							<tbody>
+								<tr><td>Doi</td><td>DOI</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+								<tr><td>Urn</td><td>URN</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+							</tbody>
+						</table>	
+						<div class="publicationTableActionLinkHolder"><a href="attachIndentificationDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>						
+					</div>		
+					<div class="publicationRowContainer">
 						<div class="publicationRowTitle">Liittyvät aineistot</div>
 						<table id="publicationMaterialTable" class="tablesorter sortableTable">
 							<thead>
@@ -95,19 +111,7 @@
 							</tbody>
 						</table>	
 						<div class="publicationTableActionLinkHolder"><a href="attachMaterialDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>						
-					</div>
-					<div class="publicationRowContainer">
-						<div class="publicationRowTitle">Lupanumerot</div>
-						<table id="publicationLupaTable" class="tablesorter sortableTable">
-							<thead>
-								<tr><th>Numero</th><th>Jos tuplaklikkaa => lupanäytölle</th><th></th></tr>
-							</thead>
-							<tbody>
-								<tr><td>0</td><td>0</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
-							</tbody>
-						</table>	
-						<div class="publicationTableActionLinkHolder"><a href="attachPermitDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>				
-					</div>
+					</div>					
 					<div class="publicationRowContainer">
 						<div class="publicationRowTitle">Liittyvät sarjat</div>
 						<table id="publicationSarjaTable" class="tablesorter sortableTable">
