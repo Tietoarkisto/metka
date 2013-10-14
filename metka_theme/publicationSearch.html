@@ -1,0 +1,143 @@
+<!DOCTYPE HTML>
+<html lang="fi">
+	<head>
+		<meta charset="utf-8">
+		<title>YHTEISKUNTATIETEELLINEN TIETOARKISTO - Metka</title>
+		<link rel="stylesheet" type="text/css" href="css/styles.css">
+		<script src="js/jquery-1.10.2.min.js"></script>
+  		<script src="js/jquery-ui.js"></script>
+		<script src="js/jquery.tablesorter.min.js"></script>
+		<script src="js/custom.js"></script>
+		<script src="js/jquery.fancybox.pack.js"></script>
+		<script src="js/jquery.dataTables.min.js"></script>
+		<script src="js/jquery.dataTables.rowReordering.js"></script>
+		<script src="js/jquery.jstree.js"></script>
+	</head>
+	<body>
+		<header>
+			<div class="headerContainer">
+				<h1 id="logo" >
+					<a href="desktop.html" title="Työpöytä">Työpöytä</a>
+				</h1>	
+						
+				<nav>
+					<ul class="mainNavUl">
+						<li><a href="desktop.html">Työpöytä</a></li>
+						<li><a href="materialSearch.html">Aineistot</a></li>
+						<li><a href="publicationSearch.html" class="selected">Julkaisut</a></li>
+						<li><a href="seriesSearch.html">Sarjat</a></li>	
+						<li><a href="settings.html">Asetukset</a></li>						
+					</ul>
+					
+					<div style="clear:both;"></div>				
+				</nav>
+				<div class="searchContainer">
+					<a class="logoutLink" href="#">Kirjaudu ulos</a>
+					<form action="material.html" class="quickSearchForm">
+						<input type="text" autocomplete="off" dir="ltr" class="searchInput" placeholder="Aineiston id-nro" />
+						<input type="submit" value="Hae" class="searchButton"/>
+					</form>					
+				</div>	
+			</div>
+			
+		</header>
+		
+			<div class="wrapper">
+
+				<div class="content">
+					<h1 class="pageTitle">Julkaisuhaku</h1>
+					<div class="searchFormContainer">
+						<div class="tabsContainer">
+							<div class="tabNavi">
+								<ul>
+									<li><a id="1" class="selected" href="#">Perushaku</a></li>
+									<li><a id="2" href="#">Experttihaku</a></li>
+								</ul>
+							</div>
+							<div class="tab1 tabs">
+								<!--<div class="helpperBox">
+									<img class="helpperBoxImage" src="images/info-sign.png" />
+									<p>Mauris convallis lectus in iaculis ornare. Nulla ac nibh ligula. Nunc augue erat, molestie et tortor eget, placerat blandit nisl. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam auctor elit vel enim pulvinar tempor. Vivamus id rhoncus ligula. Mauris placerat feugiat egestas. In dignissim odio vel aliquet laoreet. Aenean eu imperdiet nisi, a ultrices lacus. Quisque et sem vitae diam malesuada ultrices. Morbi bibendum aliquam cursus. Proin eget ornare augue, eget rutrum est. Etiam non orci eget tellus consectetur imperdiet sed sed libero. Sed ornare luctus consequat. Aliquam interdum, ipsum quis pharetra hendrerit, metus elit fermentum dui, quis tristique lacus massa sit amet risus.</p> 
+								</div>-->							
+								<form action="#">
+									<div class="searchFormRowHolder"><label>Julkaisu id-nro</label><input type="text" class="shorhtSearchInput" name="julkaisuId" /> <label class="shortLabel">&nbsp;/ Aineiston numerot</label><input type="text" class="shorhtSearchInput" name="julkaisuId" /><div style="clear:both;"></div></div>		
+									<div class="searchFormRowHolder"><label>Aineiston nimi</label><input type="text" class="searchInput" name="julkaisuId" /></div>
+									<div class="searchFormRowHolder"><label>Sarjan nimi</label><select class="formSelect" name="sarjanNimi"><option></option></select></div>
+									<div class="searchFormRowHolder"><label>Tekijän sukunimi</label><input type="text" class="shorhtSearchInput" name="sukunimi" /><label class="shortLabel">Etunimi</label><input type="text" class="shorhtSearchInput" name="etunimi" /><div style="clear:both;"></div></div>
+									<div class="searchFormRowHolder"><label>Julkaisun otsikko</label><input type="text" class="searchInput" name="julkaisuId" /></div>
+									<div class="searchFormRowHolder"><label>relPubl</label><input type="text" class="searchInput" name="julkaisuId" /></div>
+									<div class="searchFormRowHolder"><label>Julkaisun kieli</label><select  class="formSelect" name="sarjanNimi"><option></option></select></div>
+									<div class="searchFormRowHolder"><label>Voiko julkaista</label><select  class="formSelect" name="sarjanNimi"><option></option></select></div>
+									<div class="searchFormRowHolder"><label>Julkaisun ilmoitustapa</label><select class="formSelect" name="sarjanNimi"><option></option></select></div>
+									<div class="searchFormRowHolder"><label>Käsitteljä</label><input type="text" class="searchInput" name="julkaisuId" /></div>
+									<div class="searchFormRowHolder"><label>K-lupanumerot</label><input type="text" class="searchInput" name="julkaisuId" /></div>
+									<div class="searchFormButtonsHolder"><input type="button" class="searchFormInput doSearch" value="Tee haku"><input class="searchFormInput" type="reset" value="Tyhjennä"></div>
+								</form>
+	
+							</div>
+							<div class="tabs tab2">
+								<div class="queryLibraryContainer">
+								<div class="queryLibrary">
+									<h1>Tallennetut haut</h1>
+									<ul>
+										<li><a href="#">Haku 1</a></li>
+										<li><a href="#">Haku 2</a></li>								
+										<li><a href="#">Haku 3</a></li>								
+									</ul>
+								</div>
+								<div class="saveNewQuery">
+									<h1>Tallenna uusi haku</h1>
+									<form action="#">
+										<label>Haun nimi</label>
+										<input class="queryName" type="text">
+										<input class="querySaveBtn" type="button" value="Tallenna" />
+									</form>
+									<div style="clear:both;"></div>
+								</div>	
+							</div>	
+								<form action="#">
+									<div class="searchFormRowHolder"><label>Hakulause</label><textarea class="sqlSearch"></textarea></div>
+									<div class="searchFormButtonsHolder"><input type="button" class="searchFormInput doSearch" value="Tee haku"><input class="searchFormInput" type="reset" value="Tyhjennä"><input type="button" class="searchFormInput saveNewQueryButton" value="Tallenna haku"></div>
+								</form>
+							</div>
+							<div style="clear:both;"></div>
+						</div>
+					</div>
+					<div class="searchResult">
+						<h1 class="pageTitle">Hakutulos</h1>
+						<div class="searchResultDataContainer">					
+							<table id="myTable" class="tablesorter sortableTable"> 
+								<thead> 
+								<tr> 
+								    <th>Julkaisun nro</th> 
+								    <th>Julkaisun nimi</th> 
+								</tr> 
+								</thead> 
+								<tbody> 
+									<tr> 
+									    <td><a href="publicationView.html">1</a></td> 
+									    <td><a href="publicationView.html">0Lorem ipsum dolor sit amet</a></td> 
+									</tr> 
+									<tr> 
+									    <td><a href="publicationView.html">2</a></td> 
+									    <td><a href="publicationView.html">1Lorem ipsum dolor sit amet</a></td> 
+									</tr>  
+									<tr> 
+									    <td><a href="publicationView.html">3</a></td> 
+									    <td><a href="publicationView.html">2Lorem ipsum dolor sit amet</a></td> 
+									</tr> 
+									<tr> 
+									    <td><a href="publicationView.html">4</a></td> 
+									    <td><a href="publicationView.html">3Lorem ipsum dolor sit amet</a></td> 
+									</tr> 
+								</tbody> 
+							</table>
+						</div>							
+					</div>
+				</div>
+					
+			</div>
+		<footer>
+		</footer>
+	</body>
+</html>
