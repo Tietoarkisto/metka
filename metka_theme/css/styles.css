@@ -972,7 +972,7 @@ h1.next{
 	padding-top: 5px;
 	width: 180px;
 }
-.popupRowHolder input{
+.popupRowHolder input, .popupRowHolder select, .popupRowHolder textarea {
 	width: 300px;
 	padding: 5px;
 }
@@ -1030,7 +1030,7 @@ h1.next{
 	width: 200px;
 }
 
-#variablesDisplay {
+#variablesData {
 	padding: 10px;
 	position: absolute;
 	top: 0;
