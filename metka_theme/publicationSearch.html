@@ -4,12 +4,13 @@
 		<meta charset="utf-8">
 		<title>YHTEISKUNTATIETEELLINEN TIETOARKISTO - Metka</title>
 		<link rel="stylesheet" type="text/css" href="css/styles.css">
-		<script src="js/jquery-1.10.2.min.js"></script>		
+		<script src="js/jquery-1.10.2.min.js"></script>
   		<script src="js/jquery-ui.js"></script>
 		<script src="js/jquery.tablesorter.min.js"></script>
 		<script src="js/custom.js"></script>
 		<script src="js/jquery.fancybox.pack.js"></script>
 		<script src="js/jquery.dataTables.min.js"></script>
+		<script src="js/jquery.dataTables.rowReordering.js"></script>
 		<script src="js/jquery.jstree.js"></script>
 	</head>
 	<body>
@@ -22,17 +23,17 @@
 				<nav>
 					<ul class="mainNavUl">
 						<li><a href="desktop.html">Työpöytä</a></li>
-						<li><a href="aineistohaku.html">Aineistot</a></li>
-						<li><a href="julkaisuhaku.html">Julkaisut</a></li>
-						<li><a class="selected" href="sarjahaku.html">Sarjat</a></li>
-						<li><a href="asetukset.html">Asetukset</a></li>						
+						<li><a href="materialSearch.html">Aineistot</a></li>
+						<li><a href="publicationSearch.html" class="selected">Julkaisut</a></li>
+						<li><a href="seriesSearch.html">Sarjat</a></li>	
+						<li><a href="settings.html">Asetukset</a></li>						
 					</ul>
 					
 					<div style="clear:both;"></div>				
 				</nav>
 				<div class="searchContainer">
 					<a class="logoutLink" href="#">Kirjaudu ulos</a>
-					<form action="aineisto.html" class="quickSearchForm">
+					<form action="material.html" class="quickSearchForm">
 						<input type="text" autocomplete="off" dir="ltr" class="searchInput" placeholder="Aineiston id-nro" />
 						<input type="submit" value="Hae" class="searchButton"/>
 					</form>					
@@ -44,7 +45,7 @@
 			<div class="wrapper">
 
 				<div class="content">
-					<h1 class="pageTitle">Sarjahaku</h1>
+					<h1 class="pageTitle">Julkaisuhaku</h1>
 					<div class="searchFormContainer">
 						<div class="tabsContainer">
 							<div class="tabNavi">
@@ -59,11 +60,18 @@
 									<p>Mauris convallis lectus in iaculis ornare. Nulla ac nibh ligula. Nunc augue erat, molestie et tortor eget, placerat blandit nisl. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam auctor elit vel enim pulvinar tempor. Vivamus id rhoncus ligula. Mauris placerat feugiat egestas. In dignissim odio vel aliquet laoreet. Aenean eu imperdiet nisi, a ultrices lacus. Quisque et sem vitae diam malesuada ultrices. Morbi bibendum aliquam cursus. Proin eget ornare augue, eget rutrum est. Etiam non orci eget tellus consectetur imperdiet sed sed libero. Sed ornare luctus consequat. Aliquam interdum, ipsum quis pharetra hendrerit, metus elit fermentum dui, quis tristique lacus massa sit amet risus.</p> 
 								</div>-->							
 								<form action="#">
-									<div class="searchFormRowHolder"><label>Sarjan numero</label><input type="text" class="searchInput" name="julkaisuId" /></div>
-									<div class="searchFormRowHolder"><label>Sarjan nimi</label><input type="text" class="searchInput" name="julkaisuId" /></div><div class="searchFormRowHolder"><label>Sarjan nimi</label><input type="text" class="searchInput" name="julkaisuId" /></div>
-									<div class="searchFormRowHolder"><label>Sarjan lyhenne</label><select class="formSelect" name="sarjanNimi"><option></option></select></div>
+									<div class="searchFormRowHolder"><label>Julkaisu id-nro</label><input type="text" class="shorhtSearchInput" name="julkaisuId" /> <label class="shortLabel">&nbsp;/ Aineiston numerot</label><input type="text" class="shorhtSearchInput" name="julkaisuId" /><div style="clear:both;"></div></div>		
+									<div class="searchFormRowHolder"><label>Aineiston nimi</label><input type="text" class="searchInput" name="julkaisuId" /></div>
+									<div class="searchFormRowHolder"><label>Sarjan nimi</label><select class="formSelect" name="sarjanNimi"><option></option></select></div>
+									<div class="searchFormRowHolder"><label>Tekijän sukunimi</label><input type="text" class="shorhtSearchInput" name="sukunimi" /><label class="shortLabel">Etunimi</label><input type="text" class="shorhtSearchInput" name="etunimi" /><div style="clear:both;"></div></div>
+									<div class="searchFormRowHolder"><label>Julkaisun otsikko</label><input type="text" class="searchInput" name="julkaisuId" /></div>
+									<div class="searchFormRowHolder"><label>relPubl</label><input type="text" class="searchInput" name="julkaisuId" /></div>
+									<div class="searchFormRowHolder"><label>Julkaisun kieli</label><select  class="formSelect" name="sarjanNimi"><option></option></select></div>
+									<div class="searchFormRowHolder"><label>Voiko julkaista</label><select  class="formSelect" name="sarjanNimi"><option></option></select></div>
+									<div class="searchFormRowHolder"><label>Julkaisun ilmoitustapa</label><select class="formSelect" name="sarjanNimi"><option></option></select></div>
+									<div class="searchFormRowHolder"><label>Käsitteljä</label><input type="text" class="searchInput" name="julkaisuId" /></div>
+									<div class="searchFormRowHolder"><label>K-lupanumerot</label><input type="text" class="searchInput" name="julkaisuId" /></div>
 									<div class="searchFormButtonsHolder"><input type="button" class="searchFormInput doSearch" value="Tee haku"><input class="searchFormInput" type="reset" value="Tyhjennä"></div>
-								
 								</form>
 	
 							</div>
@@ -101,41 +109,26 @@
 							<table id="myTable" class="tablesorter sortableTable"> 
 								<thead> 
 								<tr> 
-								    <th>Sarjannro</th> 
-								    <th>Sarjan lyhenne</th> 
-								    <th>Kieli</th> 
-								    <th>Sarjan nimi</th> 
-								    <th>Sarjan URL</th> 
+								    <th>Julkaisun nro</th> 
+								    <th>Julkaisun nimi</th> 
 								</tr> 
 								</thead> 
 								<tbody> 
 									<tr> 
-									    <td><a href="sarja.html">0Lorem ipsum dolor sit amet</a></td> 
-									    <td><a href="sarja.html">0Lorem ipsum dolor sit amet</a></td> 
-									    <td><a href="sarja.html">0Lorem ipsum dolor sit amet</a></td> 
-									    <td><a href="sarja.html">0Lorem ipsum dolor sit amet</a></td> 
-									    <td><a href="sarja.html">0Lorem ipsum dolor sit amet</a></td> 
+									    <td><a href="publicationView.html">1</a></td> 
+									    <td><a href="publicationView.html">0Lorem ipsum dolor sit amet</a></td> 
 									</tr> 
 									<tr> 
-									    <td><a href="sarja.html">1Lorem ipsum dolor sit amet</a></td> 
-									    <td><a href="sarja.html">1Lorem ipsum dolor sit amet</a></td> 
-									    <td><a href="sarja.html">1Lorem ipsum dolor sit amet</a></td> 
-									    <td><a href="sarja.html">1Lorem ipsum dolor sit amet</a></td> 
-									    <td><a href="sarja.html">1Lorem ipsum dolor sit amet</a></td> 
+									    <td><a href="publicationView.html">2</a></td> 
+									    <td><a href="publicationView.html">1Lorem ipsum dolor sit amet</a></td> 
 									</tr>  
 									<tr> 
-									    <td><a href="sarja.html">2Lorem ipsum dolor sit amet</a></td> 
-									    <td><a href="sarja.html">2Lorem ipsum dolor sit amet</a></td> 
-									    <td><a href="sarja.html">2Lorem ipsum dolor sit amet</a></td> 
-									    <td><a href="sarja.html">2Lorem ipsum dolor sit amet</a></td> 
-									    <td><a href="sarja.html">2Lorem ipsum dolor sit amet</a></td> 
+									    <td><a href="publicationView.html">3</a></td> 
+									    <td><a href="publicationView.html">2Lorem ipsum dolor sit amet</a></td> 
 									</tr> 
 									<tr> 
-									    <td><a href="sarja.html">3Lorem ipsum dolor sit amet</a></td> 
-									    <td><a href="sarja.html">3Lorem ipsum dolor sit amet</a></td> 
-									    <td><a href="sarja.html">3Lorem ipsum dolor sit amet</a></td> 
-									    <td><a href="sarja.html">3Lorem ipsum dolor sit amet</a></td> 
-									    <td><a href="sarja.html">3Lorem ipsum dolor sit amet</a></td> 
+									    <td><a href="publicationView.html">4</a></td> 
+									    <td><a href="publicationView.html">3Lorem ipsum dolor sit amet</a></td> 
 									</tr> 
 								</tbody> 
 							</table>

@@ -93,6 +93,14 @@ hr {
 input, select {
     vertical-align:middle;
 }
+
+.floatLeft {
+	float: left; 
+}
+.floatRight {
+	float: right; 
+}
+
 /* /RESET CSS */
 /*TABLE SORTER CSS*/
 table.tablesorter {
@@ -105,7 +113,7 @@ table.tablesorter {
 	border-left: solid 1px #009EE0;
 	border-right: solid 1px #009EE0;
 }
-.sanastoTablesorter{
+.vocabularyTablesorter{
 	border-bottom: 1px solid #CCCCCC;
 	border-left: 1px solid #CCCCCC;
 	border-right: 1px solid #CCCCCC;
@@ -114,7 +122,7 @@ table.tablesorter {
 	text-align: left;
 	width: 100%;
 }
-.sanasto a{
+.vocabulary a{
 	text-decoration: none;
 	color: #000;
 }
@@ -122,7 +130,7 @@ table.tablesorter {
 	text-decoration: none;
 	color: #000;
 }
-.sanastoTablesorter a{
+.vocabularyTablesorter a{
 	text-decoration: none;
 	color: #000;
 }
@@ -133,7 +141,7 @@ table.tablesorter thead tr th, table.tablesorter tfoot tr th {
 	padding: 4px;
 	color: #ffF;
 }
-table.sanastoTablesorter thead tr th, table.sanastoTablesorter tfoot tr th {
+table.vocabularyTablesorter thead tr th, table.vocabularyTablesorter tfoot tr th {
 	background-color: #009EE0;
 
 	font-size: 15px;
@@ -146,7 +154,7 @@ table.tablesorter thead tr .header {
 	background-position: center right;
 	cursor: pointer;
 }
-table.sanastoTablesorter thead tr .header {
+table.vocabularyTablesorter thead tr .header {
 	background-image: url(../images/bg.gif);
 	background-repeat: no-repeat;
 	background-position: center right;
@@ -155,7 +163,7 @@ table.sanastoTablesorter thead tr .header {
 table.tablesorter tbody tr:hover {
 	background-color: #eaeaea;
 }
-table.sanastoTablesorter tbody tr:hover {
+table.vocabularyTablesorter tbody tr:hover {
 	background-color: #eaeaea;
 }
 table.tablesorter tbody td {
@@ -164,7 +172,7 @@ table.tablesorter tbody td {
 	
 	vertical-align: top;
 }
-table.sanastoTablesorter tbody td {
+table.vocabularyTablesorter tbody td {
 	color: #000;
 	padding: 4px;
 	
@@ -173,25 +181,25 @@ table.sanastoTablesorter tbody td {
 table.tablesorter tbody tr.odd td {
 	background-color:#EAEAEA;
 }
-table.sanastoTablesorter tbody tr.odd td {
+table.vocabularyTablesorter tbody tr.odd td {
 	background-color:#EAEAEA;
 }
 table.tablesorter thead tr .headerSortUp {
 	background-image: url(../images/asc.gif);
 }
-table.sanastoTablesorter thead tr .headerSortUp {
+table.vocabularyTablesorter thead tr .headerSortUp {
 	background-image: url(../images/asc.gif);
 }
 table.tablesorter thead tr .headerSortDown {
 	background-image: url(../images/desc.gif);
 }
-table.sanastoTablesorter thead tr .headerSortDown {
+table.vocabularyTablesorter thead tr .headerSortDown {
 	background-image: url(../images/desc.gif);
 }
 table.tablesorter thead tr .headerSortDown, table.tablesorter thead tr .headerSortUp {
 background-color: #8dbdd8;
 }
-table.sanastoTablesorter thead tr .headerSortDown, table.sanastoTablesorter thead tr .headerSortUp {
+table.vocabularyTablesorter thead tr .headerSortDown, table.vocabularyTablesorter thead tr .headerSortUp {
 background-color: #8dbdd8;
 }
 /* /TABLE SORTER CSS*/
@@ -286,8 +294,8 @@ footer{
 }
 .content{
 	margin: 0 auto;
-    	padding:0;
-    	width: 960px;
+	padding: 0;
+	width: 960px;
 	height: 100%;
 	min-height: 600px;
 	background-color: #fff;
@@ -513,7 +521,9 @@ footer{
 	padding-bottom: 10px;
 	padding-top: 10px;
 	padding-left: 20px;
+	padding-right: 20px;
 	background-color: #009EE0;
+	height: 20px;
 }
 
 .searchFormInput{
@@ -649,7 +659,7 @@ height: 470px;*/
 	margin-top: -10px;
 	margin-left: -20px;
 }
-.aineistoTabNavi ul{
+.materialTabNavi ul{
 	display: inline-block;
 	float: left;
 	list-style: none outside none;
@@ -659,7 +669,7 @@ height: 470px;*/
 .tabNavi ul li{
 	float: left;
 }
-.aineistoTabNavi ul li{
+.materialTabNavi ul li{
 	float: left;
 }
 .tabNavi ul li a {
@@ -670,7 +680,7 @@ height: 470px;*/
 	text-decoration: none;
 	cursor:pointer;
 }
-.aineistoTabNavi ul li a {
+.materialTabNavi ul li a {
 	background-color: #FFFFFF;
 	color: #005993;
 	display: block;
@@ -683,7 +693,7 @@ height: 470px;*/
 	color: #fff;
 	cursor: default;
 }
-.aineistoTabNavi ul li a.selected{
+.materialTabNavi ul li a.selected{
 	background-color: #009EE0;
 	color: #fff;
 	cursor: default;
@@ -698,128 +708,118 @@ height: 470px;*/
 .searchResult{
 	display:none;
 }
-.aineistoUpperContainer{
+.materialUpperContainer, .publicationUpperContainer {
 	margin:10px;
 	font-size:12px;
 }
-.sarjaUpperContainer{
+.seriesUpperContainer{
 	margin:10px;
 
 } 
-.aineistoDataSetTextareaContainer{
+.materialDataSetTextareaContainer{
 	float: left;
 	margin-top: 10px;
 	margin-bottom: 10px;
 }
-.aineistoDataSetTextareaContainerRight{
+.materialDataSetTextareaContainerRight{
 	margin-left: 46px;
 }
-.aineistoDataSetTextareaContainer label{
+.materialDataSetTextareaContainer label{
 	width: 400px;
 	clear: both;
 	display:block;
 }
-.aineistoDataSetTextareaContainer textarea{
+.materialDataSetTextareaContainer textarea{
 	width: 440px;
 	height: 60px;
 }
-.aineistoRowContainer, .julkaisuRowContainer, .sarjaRowContainer{
+.materialRowContainer, .publicationRowContainer, .seriesRowContainer{
 	clear: both;
 	padding-bottom: 5px;
 	display: block;
 }
-.aineistoDataSetContainer,.julkaisuDataSetContainer, .sarjaDataSetContainer{
+.materialDataSetContainer,.publicationDataSetContainer, .seriesDataSetContainer{
 	float: left;
 }
-.aineistoDataSetContainer label{
+.materialDataSetContainer label{
 	display: block;
 	float: left;
 	margin-bottom: 10px;
 	width: 138px;
 }
-.julkaisuDataSetContainer label{
+.publicationDataSetContainer label{
 	display: block;
 	float: left;
 	margin-bottom: 10px;
 	width: 146px;
 	font-size: 12px;
 }
-.sarjaDataSetContainer label{
+.seriesDataSetContainer label{
 	display: block;
 	float: left;
 	margin-bottom: 20px;
 	width: 146px;
 }
-.aineistoDataSetContainer input{
+.materialDataSetContainer input{
 	width: 80px;
 	font-size:12px;
 	margin-right: 10px;
 }
-.julkaisuDataSetContainer input{
+.publicationDataSetContainer input{
 	width: 150px;
 	font-size:12px;
 	margin-bottom: 10px;
 }
-.sarjaDataSetContainer input{
+.seriesDataSetContainer input{
 	width: 450px;
 	margin-right: 10px;
 	padding: 5px;
 }
-.aineistoDataSetContainer select{
+.materialDataSetContainer select{
 	font-size: 12px;
 	width: 85px;
 	margin-right: 10px;
 }
-.julkaisuDataSetContainer select{
+.publicationDataSetContainer select{
 	font-size: 12px;
 	width: 155px;
 	margin-right: 10px;
 }
-.sarjaDataSetContainer select{
+.seriesDataSetContainer select{
 	width: 465px;
 	margin-right: 10px;
 	padding: 5px;
 }
-.julkaisuDataSetContainer textarea{
+.publicationDataSetContainer textarea{
 	font-size: 12px;
 	width: 775px;
 	height: 50px;
 }
-.aineistoDataSetContainerTopRow{
+.materialDataSetContainerTopRow{
 	float: left;
 }
-.aineistoDataSetContainerTopRow label{
+.materialDataSetContainerTopRow label{
 	display: block;
 	float: left;
 	margin-bottom: 10px;
 	width: 130px;
 }
-.tab2 .aineistoDataSetContainerTopRow label{
+.tab4 .materialDataSetContainerTopRow label{
 	display: block;
 	float: left;
 	margin-bottom: 20px;
 	width: 250px;
-	margin-left: 20px;
+	margin-left: 10px;
 }
-.tab2 .aineistoDataSetContainerTopRow input{
+.tab4 .materialDataSetContainerTopRow input{
 	padding: 5px;
 }
-.tab3 .aineistoDataSetContainerTopRow label{
-	display: block;
-	float: left;
-	margin-bottom: 20px;
-	width: 250px;
-	margin-left: 20px;
-}
-.tab3 .aineistoDataSetContainerTopRow input{
-	padding: 5px;
-}
-.sarjaDataSetContainer textarea{
+.seriesDataSetContainer textarea{
 	font-size: 12px;
 	width: 460px;
 	height: 200px;
 }
-.aineistoDataSetContainerTopRow input{
+.materialDataSetContainerTopRow input{
 	width: 321px;
 	margin-right: 10px;
 }
@@ -829,14 +829,14 @@ height: 470px;*/
 	margin-bottom: 20px;
 	margin-right: 20px;
 }
-.aineistoPrevNextContainer{
+.materialPrevNextContainer{
 	display: inline-block;
 	float: right;
 	margin-bottom: 20px;
 	margin-right: 20px;
 	width:900px;
 }
-.aineistoPrevNextContainer h1.prev{
+.materialPrevNextContainer h1.prev{
 	font-size: 22px;
 	float:right;
 	background: #009EE0;
@@ -853,7 +853,7 @@ h1.prev{
 	padding: 10px;
 	cursor: pointer;
 }
-.aineistoPrevNextContainer h1.next{
+.materialPrevNextContainer h1.next{
 	font-size: 22px;
 	float:right;
 	background: #009EE0;
@@ -873,25 +873,25 @@ h1.next{
 	margin-left: 10px;
 }
 
-.sarjaSearchFormButtonsHolder{
+.viewFormButtonsHolder{
     clear: left;
     display: inline-block;
     margin-top: 20px;
     text-align: right;
-    width: 920px;
+    width: 950px;
 }
-.sarjaSearchFormButtonsHolder input{
+.viewFormButtonsHolder input{
 	margin-left: 20px;
 }
 
-.aineistoTableButtonsHolder {
+.materialTableButtonsHolder {
     clear: left;
     display: inline-block;
     text-align: right;
     width: 920px;
 }
 
-.aineistoTableActionLinkHolder {
+.materialTableActionLinkHolder, .publicationTableActionLinkHolder {
     clear: left;
     display: inline-block;
     text-align: right;
@@ -907,19 +907,18 @@ h1.next{
 	text-align: right;
 	width: 160px;
 }
-#sanastoTable, #vakiotekstiTable{
+#vocabularyTable, #standardTextTable{
 	width: 100%;
 }
-#sanastoTable tbody tr, #vakiotekstiTable tbody tr{
+#vocabularyTable tbody tr, #standardTextTable tbody tr{
 	border: solid 1px #009EE0;
 }
-#sanastoTable tbody tr td, #vakiotekstiTable tbody tr td{
+#vocabularyTable tbody tr td, #standardTextTable tbody tr td{
 	padding: 5px;
 }
-#sanastoTable tbody tr td a, #vakiotekstiTable tbody tr td a{
+#vocabularyTable tbody tr td a, #standardTextTable tbody tr td a{
 	display: block;
 }
-
 
 .dataTables_filter{
 	text-align: right;
@@ -949,7 +948,7 @@ h1.next{
     *zoom: 1;
   }
 /* /POPUP CSS*/
-.sanastoContainer{
+.vocabularyContainer{
 	width: 500px;
 	height: 630px;
 }
@@ -978,48 +977,48 @@ h1.next{
 	padding: 5px;
 }
 
-.aineistoRowTitle, .julkaisuRowTitle {
+.materialRowTitle, .publicationRowTitle {
 	font-size: 12px;
 	padding-left: 10px;
 }
 
-#vakiotekstiTable td {
+#standardTextTable td {
 	vertical-align: middle;
 	padding: 10px;
 }
 
-#aineistoAddNewFileContainer {
+#materialAddNewFileContainer {
 	display: block;
 	float: right;
 	padding: 5px;
 }
 
-#aineistoAddNewFile {
+#materialAddNewFile {
 	padding: 5px;
 }
 
-.aineistoAddNewFileTD {
+.materialAddNewFileTD {
 	padding: 3px;
 }
 
-#aineistoAddNewFileButton {
+#materialAddNewFileButton {
 	position: relative;
 	float: right;
 }
 
-#aineistoFileInfoTitle {
+#materialCodebookTitle {
 	padding: 10px;
 }
 
-#aineistoFileHistoryTitle {
+#materialFileInfoRow {
+	padding-bottom: 20px;
+}
+
+#materialFileHistoryTitle {
 	padding-left: 10px;
 }
 
-#aineistoCodebookTitle {
-	padding: 10px;
-}
-
-#aineistoVariables {
+#materialVariables {
 	position: relative;
 }
 
