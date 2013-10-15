@@ -230,7 +230,10 @@ $(document).ready(function(){
         ]
 	});
 
-	$('.materialFileRow, .materialCodebookFileRow, .materialErrorRow').hover(function() {
+	$(".materialFileRow, .materialCodebookFileRow, .materialErrorRow, " +
+		".materialSearchResultRow, .publicationSearchResultRow, .seriesSearchResultRow, " + 
+		".materialSeriesRow, .materialPublicationRow, .materialMaterialRow, " + 
+		".publicationSeriesRow, .publicationMaterialRow").hover(function() {
 		    $(this).css('cursor', 'pointer');
 		}, function() {
 		    $(this).css('cursor', 'auto');		    
@@ -264,6 +267,17 @@ $(document).ready(function(){
 			$("#materialErrorInfoRow").hide();
 		}	
 	});
+
+	$(".materialSearchResultRow, .publicationMaterialRow, .materialMaterialRow").on("click", function() {
+		window.location = "materialView.html";
+	});
+	$(".publicationSearchResultRow, .materialPublicationRow").on("click", function() {
+		window.location = "publicationView.html";
+	});
+	$(".seriesSearchResultRow, .materialSeriesRow, .publicationSeriesRow").on("click", function() {
+		window.location = "seriesView.html";
+	});
+
 
 	$(".materialCodebookRow").on("click", function() {
 		$("#materialCodebookTitle a").html($(this).find(".materialCodebookFileName").html());
