@@ -116,11 +116,11 @@ $(document).ready(function(){
         "bInfo": false,
         "bAutoWidth": false,
         "aoColumns": [
-		              {sWidth: '10%'},
+		              {sWidth: '15%'},
 		              {sWidth: '10%'},
 		              {sWidth: '10%'},
 		              {sWidth: '20%'},
-		              {sWidth: '25%'},
+		              {sWidth: '20%'},
 		              {sWidth: '10%'},
 		              {sWidth: '5%'}
 				  ]
