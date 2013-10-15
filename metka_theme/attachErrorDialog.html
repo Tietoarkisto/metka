@@ -2,6 +2,7 @@
 <html lang="fi">
 	<head>
 		<script src="js/popup.js"></script>
+		<script src="js/attachError.js"></script>
 	</head>
 	<body>	
 		<div class="popupContainer">
@@ -12,7 +13,22 @@
 			</div>
 			<div class="popupRowHolder">
 				<label>Aineiston osa</label>
-				<select><option>Lomake</option><option>Arkistointisopimus</option><option>Koodikirja</option></select>
+				<select id="errorTypeSelect">
+					<option id="basicError">Perustiedot</option>
+					<option id="binderError">Mapit</option>
+					<option id="filingError">Arkistointisopimus</option>
+					<option id="studyLevelError">Studylevel</option>
+					<option id="variableError">Muuttujat</option>
+					<option id="fileError">Tiedostot</option>
+					<option id="codeBookError">Koodikirja</option>
+				</select>
+			</div>
+			<div class="popupRowHolder" id="fileNameErrorRow">
+				<label>Tiedosto</label>
+				<select>
+					<option>data.zip</option>
+					<option>fooBar.docx</option>
+				</select>
 			</div>
 			<div class="popupRowHolder">
 				<label>Selite</label>
@@ -21,6 +37,14 @@
 			<div class="popupRowHolder">
 				<label>Pitkä selite</label>
 				<textarea cols="42" rows="5"></textarea>
+			</div>
+				<div class="popupRowHolder">
+				<label>Herätepäivämäärä</label>
+				<input type="text" class="datepicker"/>
+			</div>
+			<div class="popupRowHolder">
+				<label>Herätteen saaja</label>
+				<input type="text"/>
 			</div>
 			<div class="popupButtonsHolder">				
 				<input type="button" class="searchFormInput" value="Peruuta">
