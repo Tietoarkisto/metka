@@ -76,56 +76,68 @@
 						<div class="materialUpperContainer">
 				
 							<div class="materialRowContainer">
-								<div class="materialDataSetContainerTopRow"><label>Aineiston nimi*</label><input tabIndex="1" type="text" value="Eduskuntavaalitutkimukset 2003-2011: yhditetty aieneisto." name="aineistonNimi" /></div>
+								<div class="materialDataSetContainerTopRow"><label class="required">Aineiston nimi</label><input tabIndex="1" type="text" value="Eduskuntavaalitutkimukset 2003-2011: yhditetty aieneisto." name="aineistonNimi" /></div>
 								<div class="materialDataSetContainerTopRow"><label>Eng.</label><input tabIndex="1" type="text" name="materialnNimiEng" /></div>
 							</div>
 							<div class="materialRowContainer">
-								<div class="materialDataSetContainer"><label>Aineistonro</label><input tabIndex="5" readonly="readonly" type="text" name="materialnro" value="F3D2556" /></div>
-								<div class="materialDataSetContainer"><label>Julkaisu</label><select><option>Julkaistaan</option></select></div>
+								<div class="materialDataSetContainer"><label class="required">Aineistonro</label><input tabIndex="5" readonly="readonly" type="text" name="materialnro" value="F3D2556" /></div>
+								<div class="materialDataSetContainer"><label class="required">Hank.ain.nro</label><input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/></div>
+								<div class="materialDataSetContainer"><label class="required">Aineiston tyyppi</label>
+									<select><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
+								</div>
 							</div>
 							<div class="materialRowContainer">
-								<div class="materialDataSetContainer"><label>Hank.ain.nro</label><input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/></div>
-								<div class="materialDataSetContainer"><label>FSD luovuttaa</label><select><option>Kyllä</option></select></div>
-								<div class="materialDataSetContainer"><label>Valmis pvm</label><input type="text" class="datepicker" name="valmispvm"/></div>
-							</div>
-							<div class="materialRowContainer">
-								<div class="materialDataSetContainer"><label>Aineiston tyyppi*</label><select><option>Perusain.</option></select></div>
-								<div class="materialDataSetContainer"><label>Anonymisointi</label><select><option>Ei</option></select></div>
 								<div class="materialDataSetContainer"><label>Mef julk.(fin)</label><input readonly="readonly" type="text" name="valmispvm"/></div>
-							</div>
-							<div class="materialRowContainer">
-								<div class="materialDataSetContainer"><label>Ain.laatu*</label><select><option>Perusain.</option></select></div>
-								<div class="materialDataSetContainer"><label>Luovutt.tyyppi*</label><select><option>Ei</option></select></div>
 								<div class="materialDataSetContainer"><label>Mef julk.(eng)</label><input readonly="readonly" type="text" class="" name="valmispvm"/></div>
+								<div class="materialDataSetContainer"><label class="required">Arkist.kategoria</label><select><option>Arkistoitu</option><option>Poistettu</option></select></div>
 							</div>
 							<div class="materialRowContainer">
-								<div class="materialDataSetContainer"><label>Arkist.kategoria*</label><select><option>Perusain.</option></select></div>
+								<div class="materialDataSetContainer"><label>FSD luovuttaa</label><select><option>Kyllä</option><option>Ei</option><option>Ei tietoa</option></select></div>
+								<div class="materialDataSetContainer"><label>Valmis pvm</label><input type="text" class="datepicker" name="valmispvm"/></div>
+								<div class="materialDataSetContainer"><label>Julkaisu</label><select><option>Kyllä</option><option>Ei</option><option>Ei tietoa</option></select></div>
 							</div>
 							<div class="materialRowContainer">
-								<div class="materialDataSetContainer"><label>Käsitteltytaso</label><select><option>A</option></select></div>
-								<div class="materialDataSetContainer"><label>Ain.versio</label><select><option>Ei</option></select></div>
-								<div class="materialDataSetContainer"><label>Huom.</label><input type="text" name="valmispvm"/></div>
+								<div class="materialDataSetContainer"><label>Alkuper. sijainti</label><input type="text"/></div>
+								<div class="materialDataSetContainer"><label>Anonymisointi</label><select><option>Ei</option></select></div>
+								<div class="materialDataSetContainer"><label class="required">Ain.laatu</label>
+									<select><option>Ei tietoa</option><option>Kvanti</option><option>Kvali</option><option>Kvanti&Kvali</option></select>
+								</div>
 							</div>
 							<div class="materialRowContainer">
-								<div class="materialDataSetTextareaContainer">
-									<label>Lisätiedot koskien arkistointisopimusta</label><textarea tabIndex="3"></textarea>
-								</div>							
-								<div class="materialDataSetTextareaContainer materialDataSetTextareaContainerRight">	
-									<label>Menettely,jos luvanantajaa ei tavoiteta tai hän itse ei voi antaa lupaa.</label><textarea tabIndex="4"></textarea>
+								<div class="materialDataSetContainer"><label>Muuttujakuvailun julkaisu</label>
+									<select><option>Kyllä</option><option>Ei</option><option>Ei tietoa</option></select>
+								</div>
+								<div class="materialDataSetContainer"><label>Aineiston kuvailun julkaisu</label>
+									<select><option>Kyllä</option><option>Ei</option><option>Ei tietoa</option></select>
 								</div>
 							</div>
 						</div>
+						<br/>
 						<div class="materialRowContainer">
-							<div class="materialRowTitle">Aineiston sarja</div>
-							<table class="tablesorter" id="materialSeriesTable">
+							<div class="materialRowTitle">Huomautukset</div>
+							<table class="tablesorter" id="materialNotificationTable">
 								<thead>
-									<tr><th>Sarjan lyhenne</th><th>Sarjan nimi</th><th>Sarjan eng. nimi</th><th></th></tr>
+									<tr><th>Huomautus</th><th>Päivämäärä</th><th>Huomauttaja</th></tr>
 								</thead>
 								<tbody>
-									<tr><td>lorem</td><td>Yksittäiset materialt</td><td>Individual datasets</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+									<tr><td>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce consequat elit non dui euismod elementum. Aliquam erat volutpat. Etiam feugiat diam ut urna mollis, eu sollicitudin velit tincidunt. Pr</td><td>12.10.2013</td><td>Mikko Tanskanen</td></tr>
+									<tr><td>Nulla sed libero sed erat venenatis dignissim. Sed vehicula urna a egestas imperdiet. Nam a turpis nisi. Proin eget dignissim risus.</td><td>2.10.2013</td><td>Pekka Tanskanen</td></tr>
 								</tbody>
 
 							</table>		
+							<div class="materialTableActionLinkHolder"><a href="attachNotificationDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>						
+						</div>
+
+						<div class="materialRowContainer">
+							<div class="materialRowTitle">Aineiston sarja</div>
+							<table class="tablesorter" id="materialSeriesTable">
+                                    <thead>
+                                           <tr><th>Sarjan lyhenne</th><th>Sarjan nimi</th><th>Sarjan eng. nimi</th><th></th></tr>
+                                    </thead>
+                                    <tbody>
+                                           <tr><td>lorem</td><td>Yksittäiset materialt</td><td>Individual datasets</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+                                    </tbody>
+                            </table>         
 							<div class="materialTableActionLinkHolder"><a href="attachSeriesDialog.html" class="fancyboxpopup fancybox.ajax">Vaihda</a></div>						
 						</div>
 						
@@ -168,7 +180,6 @@
 
 					<!-- Binder -->
 					<div id="materialBinders" class="tabs2 tab2">
-						<div class="materialRowTitle">Mapit</div>
 						<table class="tablesorter sortableTable" id="materialBinderTable">
 							<thead>
 								<tr><th>Mappinumero</th><th>Mapin kuvaus</th><th></th></tr>
@@ -185,19 +196,18 @@
 					<div id="materialFilingContract" class="tabs2 tab3">
 						<div class="materialUpperContainer">
 							<div class="materialRowContainer">
-								<div class="materialDataSetContainer"><label>Ehto 1:käyttöoikeus</label><select><option>opiskelu,opetus,tutkimus</option></select></div>								
+								<div class="materialDataSetContainer"><label>Ehto 1:käyttöoikeus</label>
+									<select><option>Avoin</option><option>opiskelu,opetus,tutkimus</option><option>Tutkimus</option><option>Lupa</option><option>Embargo</option></select>
+								</div>								
 								<div class="materialDataSetContainer"><label>Ark.sop.pvm</label><input type="text" class="datepicker" name="ark.sop.pvm"/></div>
-								<div class="materialDataSetContainer"><label>Ark.sop.tapa</label><select><option>Ei</option></select></div>
-							</div>
-							<div class="materialRowContainer">
-								<div class="materialDataSetContainer"><label>Käyttöehto</label><input type="txt" class="" name="kayttoehto" /></div>
-								<div class="materialDataSetContainer"><label>Käyttöehdon muutospvm</label><input type="txt" class="datepicker" name="kayttoehdonmuutospvm" /></div>
-								<div class="materialDataSetContainer"><label>Käyttöehto muutospvm jälkeen</label><input type="txt" class="" name="kayttoehdonmuutospvm" /></div>
+								<div class="materialDataSetContainer"><label>Luovuttajan tyyppi</label>
+									<select><option>Ei tietoa</option><option>Yrit.yht.</option><option>Tutkija(t)</option></select>
+								</div>
 							</div>
 							<div class="materialRowContainer">
 								<div class="materialDataSetContainer"><label>Jos heräte,ilmoituspvm</label><input type="txt" class="datepicker" name="ilmoituspvm" /></div>
-								<div class="materialDataSetContainer"><label>Herätteen selite</label><input type="txt" class="" name="herateselite" /></div>
 								<div class="materialDataSetContainer"><label>Herätteen saaja</label><input type="txt" class="" name="kayttoehdonmuutospvm" /></div>
+								<div class="materialDataSetContainer"><label>Herätteen selite</label><input type="txt" class="" name="herateselite" /></div>
 							</div>
 							<div class="materialRowContainer">
 								<div class="materialDataSetContainer"><label>Erit.ehtoja,fin</label><input type="text" class="" name="valmispvm"/></div>
@@ -206,8 +216,27 @@
 							</div>
 							<div class="materialRowContainer">
 								<div class="materialDataSetContainer"><label>Ark.sopimustiedosto</label><input type="txt" class="" name="kayttoehto" /></div>
-								<div class="materialDataSetContainer"><label>Luovuttajan tyyppi</label><input type="txt" class="" name="kayttoehto" /></div>
+								<div class="materialDataSetContainer"><label>Ark.sopimuksen tapa</label>
+									<select><option>Ei tietoa</option><option>Ei tarvita sopimusta</option><option>Könttäsopimus</option><option>Norm+puite</option><option>On sopimus</option></select>
+								</div>
+								<div class="materialDataSetContainer"><label>Ark.sopimuksen pvm</label><input type="txt" class="datepicker" name="kayttoehto" /></div>
+
 							</div>
+							<div class="materialRowContainer">
+								<div class="materialDataSetContainer"><label>Käyttöehdon muutospvm</label><input type="txt" class="datepicker" name="kayttoehdonmuutospvm" /></div>
+								<div class="materialDataSetContainer"><label>Käyttöehto muutospvm jälkeen</label>
+									<select><option>Avoin</option><option>opiskelu,opetus,tutkimus</option><option>Tutkimus</option><option>Lupa</option><option>Embargo</option></select>
+								</div>
+							</div>
+							<div class="materialRowContainer">
+								<div class="materialDataSetTextareaContainer">
+                                    <label>Lisätiedot koskien arkistointisopimusta</label><textarea tabIndex="3"></textarea>
+                               </div>
+                               <div class="materialDataSetTextareaContainer">
+                                    <label>Menettely, jos luvanantajaa ei tavoiteta tai hän ei itse voi antaa lupaa</label><textarea tabIndex="3"></textarea>
+                               </div>        
+							</div>
+
 						</div>
 
 						<div class="materialRowContainer">
@@ -292,7 +321,7 @@
 											<a class="variableGroup" href="#">Parent2</a>
 											<ul class="childVariableGroupList">
 												<li class="childVariableGroup" id="var2.1" >
-													<a class="variable"href="#">Child1</a>
+													<a class="variable" href="#">Child1</a>
 												</li>
 												<li class="childVariableGroup" id="var2.2">
 													<a class="variable" href="#">Child2</a>
@@ -352,32 +381,51 @@
 						<div class="materialRowTitle">Liitetyt tiedostot</div>
 						<table class="tablesorter sortableTable" id="materialFileTable">
 							<thead>
-								<tr><th>Tiedoston nimi</th><th>Tiedoston kuvaus</th><th>Tallentaja</th><th></th></tr>
+								<tr><th>Tiedoston nimi</th><th>Tallentaja</th><th>Kieli</th><th></th></tr>
 							</thead>
 							<tbody>
-								<tr class="materialFileRow"><td class="materialFileName">data.zip</td><td>Datapaketti</td><td>Mikko Tanskanen</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
-								<tr class="materialFileRow"><td class="materialFileName">fooBar.docx</td><td>Dokumentaatio</td><td>Tiina Isotalo</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+								<tr class="materialFileRow" id="1"><td class="materialFileName">data.zip</td><td>Mikko Tanskanen</td><td>Englanti</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+								<tr class="materialFileRow" id="2"><td class="materialFileName">fooBar.docx</td><td>Tiina Isotalo</td><td>Suomi</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
 							</tbody>
 						</table>
 						<div class="materialTableActionLinkHolder"><a href="attachFileDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>		
 					
 						<div id="materialFileInfoRow" style="display: none;">
-							<div id="materialFileInfoTitle" class="materialRowTitle">Tiedostohistoria (<a href="#"></a>)</div>
+							<div id="materialFileInfoContent">
+								<table>
+									<thead><tr><th class="fileInfoLabel"></th><th class="fileInfoContent"></th></tr></thead>
+									<tbody>
+										<tr><td class="fileInfoLabel">Tiedosto</td><td class="fileInfoContent"><a id="" class="fileInfoContentFileName" href="#"></a></td>
+										<tr><td class="fileInfoLabel">Virallinen selite</td><td class="fileInfoContent">Nullam non tempor enim. Curabitur porttitor, mauris non viverra euismod, leo lorem lobortis massa, vitae ultricies mauris massa nec ligula. Donec quis elit ut augue vehicula viverra et in tellus</td></tr>
+										<tr><td class="fileInfoLabel">Erpävirallinen Selite</td><td class="fileInfoContent">Nullam non tempor enim. Curabitur porttitor, mauris non viverra euismod, leo lorem lobortis massa, vitae ultricies mauris massa nec ligula. Donec quis elit ut augue vehicula viverra et in tellus</td></tr>
+										<tr><td class="fileInfoLabel">Kommentti</td><td class="fileInfoContent">Ajattelin tämän lisätä tänne</td></tr>
+										<tr><td class="fileInfoLabel">Tallentaja</td><td class="fileInfoContent">Mikko Tanskanen</td></tr>
+										<tr><td class="fileInfoLabel">PAS</td><td class="fileInfoContent">Ei tietoa</td></tr>
+										<tr><td class="fileInfoLabel">Kieli</td><td class="fileInfoContent">Suomi</td></tr>
+										<tr><td class="fileInfoLabel">Alkuperä</td><td class="fileInfoContent">Ei tietoa</td></tr>
+										<tr><td class="fileInfoLabel">Ulosluovutus</td><td class="fileInfoContent">Ei tietoa</td></tr>
+										<tr><td class="fileInfoLabel">WWW</td><td class="fileInfoContent">x</td></tr>
+										<tr><td class="fileInfoLabel">Muutospvm</td><td class="fileInfoContent">3.10.2013</td></tr>
+									</tbody>
+								</table>
+							</div>
+
+							<div class="materialRowTitle">Tiedostohistoria</div>
 							<table class="tablesorter sortableTable" id="materialFileInfoTable">
 								<thead>
-									<tr><th>Muokkauspäivämäärä</th><th>Muokkaaja</th></tr>
+									<tr><th>Muokkauspäivämäärä</th><th>Muokkaaja</th><th>Selite</th></tr>
 								</thead>
 								<tbody>
-									<tr><td>2.10.2013</td><td>Simo Häyhä</td></tr>
-									<tr><td>4.10.2013</td><td>Ville Iivonen</td></tr>
+									<tr><td>2.10.2013</td><td>Simo Häyhä</td><td>Muokkasin vähän</td></tr>
+									<tr><td>4.10.2013</td><td>Ville Iivonen</td><td>Lisäsin pari kohtaa</td></tr>
 								</tbody>
 							</table>
 						</div>
-						
+					
 						<div class="materialRowTitle">Poistetut tiedostot</div>
-						<table class="tablesorter sortableTable" id="materialFileTable">
+						<table class="tablesorter sortableTable" id="materialRemovedFileTable">
 							<thead>
-								<tr><th>Tiedoston nimi</th><th>Tiedoston kuvaus</th><th>Kommentti</th></tr>
+								<tr><th>Tiedoston nimi</th><th>Tiedoston kuvaus</th><th>Selite</th></tr>
 							</thead>
 							<tbody>
 								<tr class="materialFileRow"><td class="materialFileName">wrongData.zip</td><td>Datapaketti</td><td>Tämä lisättiin vahingossa</td></tr>
@@ -398,12 +446,12 @@
 								<tr class="materialCodebookFileRow">
 									<td class="materialCodebookFileName">data.zip</td><td>Suomi</td><td>Datapaketti</td><td>3.10.2013</td><td>Mikko Tanskanen</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td>
 								</tr>
-								<tr class="materialCodebookRow">
+								<tr class="materialCodebookFileRow">
 									<td class="materialCodebookFileName">fooBar.docx</td><td>Englanti</td><td>Dokumentaatio</td><td>12.10.2013</td><td>Peter Mikula</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td>
 								</tr>
 							</tbody>
 						</table>
-						<div class="materialTableActionLinkHolder"><a href="attachFileDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>		
+						<div class="materialTableActionLinkHolder"><a href="attachFileCodeBookDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>		
 					
 						<div id="materialCodebookRow" style="display: none;">
 							<div id="materialCodebookTitle"><a href="#"></a></div>
@@ -414,28 +462,50 @@
 					<div id="materialErrors" class="tabs2 tab8">
 						<table class="tablesorter sortableTable" id="materialErrorsTable">
 							<thead>
-								<tr><th>PVM</th><th>Merkitsijä</th><th>Aineiston osa</th><th>Selite</th><th>Pitkä selite</th><th>Pisteet</th><th>Merkitse tehdyksi</th></tr>
+								<tr><th>PVM</th><th>Merkitsijä</th><th>Aineiston osa</th><th>Selite</th><th>Pisteet</th><th>Merkitse tehdyksi</th></tr>
 							</thead>
 							<tbody>
-								<tr><td>23.9.2013</td>
+								<tr id="1" class="materialErrorRow"><td>23.9.2013</td>
 									<td>Ville Iivonen</td>
 									<td>Lomake</td>
 									<td>Aineiston tyyppi</td>
-									<td>Aineiston tyyppi on väärä</td>
 									<td>2</td>
 									<td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td>
 								</tr>
-								<tr><td>3.10.2013</td>
+								<tr id="2" class="materialErrorRow"><td>3.10.2013</td>
 									<td>Mikko Tanskanen</td>
 									<td>Arkistointisopimus</td>
 									<td>Lorem ipsum lyhyesti</td>
-									<td>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas vel adipiscing urna. Ut sed malesuada eros, eu cursus mi. Proin bibendum nibh vitae lacinia volutpat. Morbi ac lacinia felis. Suspendisse sed lorem non nisl egestas ullamcorper. Nulla nec massa vel diam gravida aliquet a sit amet arcu. Fusce tempor diam erat, quis feugiat felis venenatis accumsan. Aenean mollis vulputate leo, vel ferme</td>
 									<td>4</td>
+									<td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td>
+								</tr>
+								<tr id="3" class="materialErrorRow"><td>12.10.2013</td>
+									<td>Mikko Tanskanen</td>
+									<td>Tiedostot (<a href="#">fooBar.docx</a>)</td>
+									<td>Väärä tiedosto</td>
+									<td>5</td>
 									<td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td>
 								</tr>
 							</tbody>
 						</table>
+
 						<div class="materialTableActionLinkHolder"><a href="attachErrorDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>
+
+						<div id="materialErrorInfoRow">
+							<div id="materialErrorInfoContent">
+								<table>
+									<thead><tr id=""><th class="errorInfoLabel"></th><th class="errorInfoContent"></th></tr></thead>
+									<tbody>
+										<tr><td class="errorInfoLabel">Päivämäärä</td><td class="errorInfoContent">12.10.2013</td>
+										<tr><td class="errorInfoLabel">Selite</td><td class="errorInfoContent">Nullam non tempor enim.</td></tr>
+										<tr><td class="errorInfoLabel">Pitkä Selite</td><td class="errorInfoContent">Nullam non tempor enim. Curabitur porttitor, mauris non viverra euismod, leo lorem lobortis massa, vitae ultricies mauris massa nec ligula. Donec quis elit ut augue vehicula viverra et in tellus</td></tr>
+										<tr><td class="errorInfoLabel">Tallentaja</td><td class="errorInfoContent">Mikko Tanskanen</td></tr>
+										<tr><td class="errorInfoLabel">Pisteet</td><td class="errorInfoContent">4</td></tr>
+										<tr><td class="errorInfoLabel">Herätepvm</td><td class="errorInfoContent">16.10.2013</td></tr>
+										<tr><td class="errorInfoLabel">Herätteen saaja</td><td class="errorInfoContent">Tiina Isotalo</td></tr>
+									</tbody>
+								</table>
+							</div>
 					</div>	
 					
 				</div>

@@ -6,27 +6,46 @@
 	<body>	
 		<div class="popupContainer">
 			<h1 class="pageTitle">Liitä tiedosto</h1>
-			<div id="materialAddNewFileContainer">
-				<div id="materialAddNewFile">
-					<table>
-						<tr>
-							<td class="materialAddNewFileTD"><div id="materialAddNewFileInput">Tiedosto: </td>
-							<td class="materialAddNewFileTD"><input type="file"></div></td>
-						</tr>
-						<tr>
-							<td class="materialAddNewFileTD"><div id="materialAddNewFileDescription">Kieli: </td>
-							<td class="materialAddNewFileTD"><select><option>Suomi</option><option>Englanti</option><option>Ruotsi</option></div></td>
-						</tr>
-						<tr>
-							<td class="materialAddNewFileTD"><div id="materialAddNewFileDescription">Kuvaus: </td>
-							<td class="materialAddNewFileTD"><textarea cols="44"></textarea></div></td>
-						</tr>
-						<tr>
-							<td class="materialAddNewFileTD"></td>
-							<td class="materialAddNewFileTD"><input type="button" id="materialAddNewFileButton" class="searchFormInput doSearch" value="Lähetä" /></td>
-						</tr>
-					</table>
-				</div>
+			<div class="popupRowHolder">
+				<label>Tiedosto</label>
+				<input type="file"/>
+			</div>
+			<div class="popupRowHolder">
+				<label>Virallinen selite</label>
+				<textarea></textarea>
+			</div>
+			<div class="popupRowHolder">
+				<label>Epävirallinen selite</label>
+				<textarea></textarea>
+			</div>
+			<div class="popupRowHolder">
+				<label>Kommentti</label>
+				<textarea></textarea>
+			</div>
+			<div class="popupRowHolder">
+				<label>PAS</label>
+				<select><option>Ei tietoa</option><option>Ei</option><option>Kyllä</option></select>
+			</div>
+			<div class="popupRowHolder">
+				<label>Kieli</label>
+				<select><option>Suomi</option><option>Englanti</option><option>Ruotsi</option></select>
+			</div>
+			<div class="popupRowHolder">
+				<label>Alkuperä</label>
+				<select><option>Kyllä</option><option>Ei</option><option>Ei relevantti</option></select>
+			</div>
+			<div class="popupRowHolder">
+				<label>WWW</label>
+				<select><option>x</option><option>y</option><option>z</option></select>
+			</div>
+			<div class="popupRowHolder">
+				<label>Ulosluovutus</label>
+				<select><option>Ei tietoa</option><option>Kyllä</option><option>Ei</option></select>
+			</div>
+
+			<div class="popupButtonsHolder">
+				<input type="button" class="searchFormInput" value="Peruuta">
+				<input type="button" class="searchFormInput" value="OK">
 			</div>
 		</div>	
 	</body>
