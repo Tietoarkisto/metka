@@ -103,12 +103,9 @@ $(document).ready(function(){
         "bInfo": false,
         "bAutoWidth": false,
         "aoColumns": [
-					  {sWidth: '10%'},
-		              {sWidth: '10%'},
-		              {sWidth: '10%'},
-		              {sWidth: '20%'},
-		              {sWidth: '25%'},
-		              {sWidth: '20%'},
+					  {sWidth: '15%'},
+		              {sWidth: '40%'},
+		              {sWidth: '40%'},
 		              {sWidth: '5%'}
         ]
      });
@@ -135,8 +132,8 @@ $(document).ready(function(){
         "bInfo": false,
         "bAutoWidth": false,
         "aoColumns": [
-		              {sWidth: '50%'},
-		              {sWidth: '45%'},
+		              {sWidth: '15%'},
+		              {sWidth: '80%'},
 		              {sWidth: '5%'}
 				  ]
 	});
@@ -213,10 +210,9 @@ $(document).ready(function(){
         "bAutoWidth": false,
         "aoColumns": [
 		              {sWidth: '5%'},
-		              {sWidth: '10%'},
 		              {sWidth: '15%'},
-		              {sWidth: '10%'},
-		              {sWidth: '40%'},
+		              {sWidth: '15%'},
+		              {sWidth: '45%'},
 		              {sWidth: '10%'},
 		              {sWidth: '10%'}
         ]
@@ -234,7 +230,7 @@ $(document).ready(function(){
         ]
 	});
 
-	$('.materialFileRow, .materialCodebookFileRow').hover(function() {
+	$('.materialFileRow, .materialCodebookFileRow, .materialErrorRow').hover(function() {
 		    $(this).css('cursor', 'pointer');
 		}, function() {
 		    $(this).css('cursor', 'auto');		    
@@ -256,6 +252,19 @@ $(document).ready(function(){
 		}	
 	});
 	
+	$(".materialErrorRow").on("click", function() {
+		var id = $(this).attr("id");
+		var selectedId = $("#materialErrorInfoContent table thead tr").attr("id");
+
+		if ( selectedId != id ) {
+			$("#materialErrorInfoContent table thead tr").attr("id", id);
+			$("#materialErrorInfoRow").show();
+		} else {
+			$("#materialErrorInfoContent table thead tr").attr("id", "");
+			$("#materialErrorInfoRow").hide();
+		}	
+	});
+
 	$(".materialCodebookRow").on("click", function() {
 		$("#materialCodebookTitle a").html($(this).find(".materialCodebookFileName").html());
 		$("#materialCodebookRow").show();

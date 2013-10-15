@@ -1004,20 +1004,20 @@ h1.next{
 	left: 200px;
 }
 
-#materialFileInfoContent {
+#materialFileInfoContent, #materialErrorInfoContent {
 	padding: 10px;
 	font-size: 12px;
 }
-#materialFileInfoContent th.fileInfoLabel{
+#materialFileInfoContent th.fileInfoLabel, #materialErrorInfoContent th.errorInfoLabel {
 	width: 120px;
 }
-#materialFileInfoContent tbody td{
+#materialFileInfoContent tbody td, #materialErrorInfoContent tbody td {
 	padding: 3px;
 }
-#materialFileInfoContent tbody .fileInfoLabel {
+#materialFileInfoContent tbody .fileInfoLabel, #materialErrorInfoContent tbody .errorInfoLabel {
 	font-weight: bold;
 }
 
-#fileNameErrorRow, #materialFileInfoRow, #materialCodebookRow {
+#fileNameErrorRow, #materialFileInfoRow, #materialCodebookRow, #materialErrorInfoRow {
 	display: none;
 }

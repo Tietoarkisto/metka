@@ -131,14 +131,13 @@
 						<div class="materialRowContainer">
 							<div class="materialRowTitle">Aineiston sarja</div>
 							<table class="tablesorter" id="materialSeriesTable">
-								<thead>
-									<tr><th>Sarjanro</th><th>Lyhenne</th><th>Kieli</th><th>Nimi</th><th>URI</th><th>Kuvaus</th><th></th></tr>
-								</thead>
-								<tbody>
-									<tr><td>1234</td><td>lorem</td><td>Suomi</td><td>Yksittäiset aineistot</td><td>www.tietoarkisto.fi</td><td>Tämmönen sarja kyseessä</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
-								</tbody>
-
-							</table>		
+                                    <thead>
+                                           <tr><th>Sarjan lyhenne</th><th>Sarjan nimi</th><th>Sarjan eng. nimi</th><th></th></tr>
+                                    </thead>
+                                    <tbody>
+                                           <tr><td>lorem</td><td>Yksittäiset materialt</td><td>Individual datasets</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+                                    </tbody>
+                            </table>         
 							<div class="materialTableActionLinkHolder"><a href="attachSeriesDialog.html" class="fancyboxpopup fancybox.ajax">Vaihda</a></div>						
 						</div>
 						
@@ -463,30 +462,27 @@
 					<div id="materialErrors" class="tabs2 tab8">
 						<table class="tablesorter sortableTable" id="materialErrorsTable">
 							<thead>
-								<tr><th>PVM</th><th>Merkitsijä</th><th>Aineiston osa</th><th>Selite</th><th>Pitkä selite</th><th>Pisteet</th><th>Merkitse tehdyksi</th></tr>
+								<tr><th>PVM</th><th>Merkitsijä</th><th>Aineiston osa</th><th>Selite</th><th>Pisteet</th><th>Merkitse tehdyksi</th></tr>
 							</thead>
 							<tbody>
-								<tr><td>23.9.2013</td>
+								<tr id="1" class="materialErrorRow"><td>23.9.2013</td>
 									<td>Ville Iivonen</td>
 									<td>Lomake</td>
 									<td>Aineiston tyyppi</td>
-									<td>Aineiston tyyppi on väärä</td>
 									<td>2</td>
 									<td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td>
 								</tr>
-								<tr><td>3.10.2013</td>
+								<tr id="2" class="materialErrorRow"><td>3.10.2013</td>
 									<td>Mikko Tanskanen</td>
 									<td>Arkistointisopimus</td>
 									<td>Lorem ipsum lyhyesti</td>
-									<td>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas vel adipiscing urna. Ut sed malesuada eros, eu cursus mi. Proin bibendum nibh vitae lacinia volutpat. Morbi ac lacinia felis. Suspendisse sed lorem non nisl egestas ullamcorper. Nulla nec massa vel diam gravida aliquet a sit amet arcu. Fusce tempor diam erat, quis feugiat felis venenatis accumsan. Aenean mollis vulputate leo, vel ferme</td>
 									<td>4</td>
 									<td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td>
 								</tr>
-								<tr><td>12.10.2013</td>
+								<tr id="3" class="materialErrorRow"><td>12.10.2013</td>
 									<td>Mikko Tanskanen</td>
 									<td>Tiedostot (<a href="#">fooBar.docx</a>)</td>
 									<td>Väärä tiedosto</td>
-									<td>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas vel adipiscing urna. Ut sed malesuada eros, eu cursus mi. Proin bibendum nibh vitae lacinia volutpat. Morbi ac lacinia felis. Suspendisse </td>
 									<td>5</td>
 									<td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td>
 								</tr>
@@ -494,6 +490,22 @@
 						</table>
 
 						<div class="materialTableActionLinkHolder"><a href="attachErrorDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>
+
+						<div id="materialErrorInfoRow">
+							<div id="materialErrorInfoContent">
+								<table>
+									<thead><tr id=""><th class="errorInfoLabel"></th><th class="errorInfoContent"></th></tr></thead>
+									<tbody>
+										<tr><td class="errorInfoLabel">Päivämäärä</td><td class="errorInfoContent">12.10.2013</td>
+										<tr><td class="errorInfoLabel">Selite</td><td class="errorInfoContent">Nullam non tempor enim.</td></tr>
+										<tr><td class="errorInfoLabel">Pitkä Selite</td><td class="errorInfoContent">Nullam non tempor enim. Curabitur porttitor, mauris non viverra euismod, leo lorem lobortis massa, vitae ultricies mauris massa nec ligula. Donec quis elit ut augue vehicula viverra et in tellus</td></tr>
+										<tr><td class="errorInfoLabel">Tallentaja</td><td class="errorInfoContent">Mikko Tanskanen</td></tr>
+										<tr><td class="errorInfoLabel">Pisteet</td><td class="errorInfoContent">4</td></tr>
+										<tr><td class="errorInfoLabel">Herätepvm</td><td class="errorInfoContent">16.10.2013</td></tr>
+										<tr><td class="errorInfoLabel">Herätteen saaja</td><td class="errorInfoContent">Tiina Isotalo</td></tr>
+									</tbody>
+								</table>
+							</div>
 					</div>	
 					
 				</div>
