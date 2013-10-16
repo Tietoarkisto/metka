@@ -77,21 +77,21 @@
 				
 							<div class="materialRowContainer">
 								<div class="materialDataSetContainerTopRow">
-									<label id="materialName" class="required">Aineiston nimi</label>
+									<label id="materialName" class="required leftSide">Aineiston nimi</label>
 									<input tabIndex="1" type="text" value="Eduskuntavaalitutkimukset 2003-2011: yhditetty aieneisto." name="aineistonNimi" />
 								</div>
 								<div class="materialDataSetContainerTopRow">
-									<label id="materialNameEng">Eng.</label>
+									<label id="materialNameEng" class="rightSide">Eng.</label>
 									<input tabIndex="2" type="text" name="materialnNimiEng" />
 								</div>
 							</div>
 							<div class="materialRowContainer">
 								<div class="materialDataSetContainer">
-									<label id="materialNumber" class="required">Aineistonro</label>
+									<label id="materialNumber" class="required">Aineistonumero</label>
 									<input readonly="readonly" type="text" name="materialnro" value="F3D2556" />
 								</div>
 								<div class="materialDataSetContainer">
-									<label id="acquisitiedMaterialNumber" class="required">Hank.ain.nro</label>
+									<label id="acquisitiedMaterialNumber" class="required">Hankinta-aineistonumero</label>
 									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
 								</div>
 								<div class="materialDataSetContainer">
@@ -101,15 +101,15 @@
 							</div>
 							<div class="materialRowContainer">
 								<div class="materialDataSetContainer">
-									<label id="materiaMefFin" >Mef julk.(fin)</label>
+									<label id="materiaMefFin" >Mef julkinen (fin)</label>
 									<input readonly="readonly" type="text" name="valmispvm"/>
 								</div>
 								<div class="materialDataSetContainer">
-									<label id="materialMefEng" >Mef julk.(eng)</label>
+									<label id="materialMefEng" >Mef julkinen (eng)</label>
 									<input readonly="readonly" type="text" class="" name="valmispvm"/>
 								</div>
 								<div class="materialDataSetContainer">
-									<label id="materialFilingCategory" class="required">Arkist.kategoria</label>
+									<label id="materialFilingCategory" class="required">Arkistointikategoria</label>
 									<select tabIndex="5"><option>Arkistoitu</option><option>Poistettu</option></select>
 								</div>
 							</div>
@@ -129,7 +129,7 @@
 							</div>
 							<div class="materialRowContainer">
 								<div class="materialDataSetContainer">
-									<label id="materialOriginalLocation">Alkuper. sijainti</label>
+									<label id="materialOriginalLocation">Alkuperäinen sijainti</label>
 									<input tabIndex="4" type="text"/>
 								</div>
 								<div class="materialDataSetContainer">
@@ -137,7 +137,7 @@
 									<select><option>Kyllä</option><option>Ei</option><option>Ei tietoa</option></select>
 								</div>
 								<div class="materialDataSetContainer">
-									<label  id="materialQuality" class="required">Ain.laatu</label>
+									<label  id="materialQuality" class="required">Aineiston laatu</label>
 									<select id="materialQualitySelect"><option id="unknown">Ei tietoa</option><option id="quantitative">Kvanti</option><option id="qualitative">Kvali</option><option id="both">Kvanti&Kvali</option></select>
 								</div>
 							</div>
@@ -214,8 +214,10 @@
 						
 						<div class="viewFormButtonsHolder" style="margin-bottom:20px;">
 							<input type="button" id="startWorking" class="searchFormInput doSearch" value="Varaa aineisto itsellesi" />
+							<input type="button" id="versionHistoryButton" class="searchFormInput doSearch" value="Versiohistoria" />
 							<input type="button" id="approveChanges" class="searchFormInput doSearch" value="Hyväksy muutokset" />
 							<input type="button" id="saveAsDraft" class="searchFormInput doSearch" value="Tallenna Luonnoksena" />
+							<a style="display: hidden;" id="versionHistoryLink" href="versionHistoryDialog.html" class="fancyboxpopup fancybox.ajax"></a>
 						</div>		
 					
 					</div>
@@ -238,30 +240,30 @@
 					<div id="materialFilingContract" class="tabs2 tab3">
 						<div class="materialUpperContainer">
 							<div class="materialRowContainer">
-								<div class="materialDataSetContainer"><label>Ehto 1:käyttöoikeus</label>
+								<div class="materialDataSetContainer"><label>Ehto 1: käyttöoikeus</label>
 									<select><option>Avoin</option><option>opiskelu,opetus,tutkimus</option><option>Tutkimus</option><option>Lupa</option><option>Embargo</option></select>
 								</div>								
-								<div class="materialDataSetContainer"><label>Ark.sop.pvm</label><input type="text" class="datepicker" name="ark.sop.pvm"/></div>
+								<div class="materialDataSetContainer"><label>Arkistointisopimuksen pvm</label><input type="text" class="datepicker" name="ark.sop.pvm"/></div>
 								<div class="materialDataSetContainer"><label>Luovuttajan tyyppi</label>
 									<select><option>Ei tietoa</option><option>Yrit.yht.</option><option>Tutkija(t)</option></select>
 								</div>
 							</div>
 							<div class="materialRowContainer">
-								<div class="materialDataSetContainer"><label>Jos heräte,ilmoituspvm</label><input type="txt" class="datepicker" name="ilmoituspvm" /></div>
+								<div class="materialDataSetContainer"><label>Jos heräte, ilmoituspvm</label><input type="txt" class="datepicker" name="ilmoituspvm" /></div>
 								<div class="materialDataSetContainer"><label>Herätteen saaja</label><input type="txt" class="" name="kayttoehdonmuutospvm" /></div>
 								<div class="materialDataSetContainer"><label>Herätteen selite</label><input type="txt" class="" name="herateselite" /></div>
 							</div>
 							<div class="materialRowContainer">
-								<div class="materialDataSetContainer"><label>Erit.ehtoja,fin</label><input type="text" class="" name="valmispvm"/></div>
-								<div class="materialDataSetContainer"><label>Erit.ehtoja,eng</label><input type="text" class="" name="valmispvm"/></div>
-								<div class="materialDataSetContainer"><label>Erit.ehtoja,swe</label><input type="text" class="" name="valmispvm"/></div>
+								<div class="materialDataSetContainer"><label>Erityisehtoja, fin</label><input type="text" class="" name="valmispvm"/></div>
+								<div class="materialDataSetContainer"><label>Erityisehtoja, eng</label><input type="text" class="" name="valmispvm"/></div>
+								<div class="materialDataSetContainer"><label>Erityisehtoja, swe</label><input type="text" class="" name="valmispvm"/></div>
 							</div>
 							<div class="materialRowContainer">
-								<div class="materialDataSetContainer"><label>Ark.sopimustiedosto</label><input type="txt" class="" name="kayttoehto" /></div>
-								<div class="materialDataSetContainer"><label>Ark.sopimuksen tapa</label>
+								<div class="materialDataSetContainer"><label>Arkistointisopimustiedosto</label><input type="txt" class="" name="kayttoehto" /></div>
+								<div class="materialDataSetContainer"><label>Arkistointisopimuksen tapa</label>
 									<select><option>Ei tietoa</option><option>Ei tarvita sopimusta</option><option>Könttäsopimus</option><option>Norm+puite</option><option>On sopimus</option></select>
 								</div>
-								<div class="materialDataSetContainer"><label>Ark.sopimuksen pvm</label><input type="txt" class="datepicker" name="kayttoehto" /></div>
+								<div class="materialDataSetContainer"><label>Arkistointisopimuksen pvm</label><input type="txt" class="datepicker" name="kayttoehto" /></div>
 
 							</div>
 							<div class="materialRowContainer">
@@ -319,11 +321,11 @@
 									<tr><th>id</th><th>Nimi</th><th>Organisaatio</th><th>Titteli</th><th></th></tr>
 								</thead>
 								<tbody>
-									<tr><td>1</td><td>Juuso Lähdekorpi</td><td>Proactum Oy</td><td>Arkkitehti</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
-									<tr><td>2</td><td>Peter Mikula</td><td>Proactum Oy</td><td>Arkkitehti</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
-									<tr><td>3</td><td>Sami Borg</td><td>Tietoarkisto</td><td>Tutkija</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
-									<tr><td>4</td><td>Pekka Pouta</td><td>YLE</td><td>Meteorologi</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
-									<tr><td>5</td><td>Mikko Tanskanen</td><td>Proactum Oy</td><td>Sovelluskehittäjä</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+									<tr class="materialAuthor"><td>1</td><td>Juuso Lähdekorpi</td><td>Proactum Oy</td><td>Arkkitehti</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+									<tr class="materialAuthor"><td>2</td><td>Peter Mikula</td><td>Proactum Oy</td><td>Arkkitehti</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+									<tr class="materialAuthor"><td>3</td><td>Sami Borg</td><td>Tietoarkisto</td><td>Tutkija</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+									<tr class="materialAuthor"><td>4</td><td>Pekka Pouta</td><td>YLE</td><td>Meteorologi</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+									<tr class="materialAuthor"><td>5</td><td>Mikko Tanskanen</td><td>Proactum Oy</td><td>Sovelluskehittäjä</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
 								</tbody>
 							</table>
 							<div class="materialTableActionLinkHolder"><a href="attachPersonStudyLevelDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>			
