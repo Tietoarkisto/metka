@@ -507,21 +507,19 @@ height: 470px;*/
 	color: #fff;
 	font-size: 15px;
 }
-.BoxDataContainer{
+.desktopDataContainer{
 	border-left: 1px solid #009EE0;
 	border-right: 1px solid #009EE0;
 }
-.BoxDataRow{
+.desktopDataRow{
 	border-bottom: 1px solid #009EE0;
 	font-size: 15px;
-}
-.BoxDataRow a{
 	display: block;
 	color: #005993;
 	text-decoration: none;
 	padding: 10px 10px 10px 20px;
 }
-.BoxDataRow a:hover{
+.desktopDataRow:hover{
 	background-color: #EAEAEA;
 	transition: all 0.15s ease-in-out;
 	-webkit-transition: all 0.15s ease-in-out;

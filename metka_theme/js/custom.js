@@ -230,7 +230,7 @@ $(document).ready(function(){
         ]
 	});
 
-	$(".materialFileRow, .materialCodebookFileRow, .materialErrorRow, " +
+	$(".materialFileRow, .materialCodebookFileRow, .materialErrorRow, .desktopDataRow, " +
 		".materialSearchResultRow, .publicationSearchResultRow, .seriesSearchResultRow, " + 
 		".materialSeriesRow, .materialPublicationRow, .materialMaterialRow, " + 
 		".publicationSeriesRow, .publicationMaterialRow").hover(function() {
@@ -268,7 +268,7 @@ $(document).ready(function(){
 		}	
 	});
 
-	$(".materialSearchResultRow, .publicationMaterialRow, .materialMaterialRow").on("click", function() {
+	$(".materialSearchResultRow, .publicationMaterialRow, .materialMaterialRow, .desktopDataRow").on("click", function() {
 		window.location = "materialView.html";
 	});
 	$(".publicationSearchResultRow, .materialPublicationRow").on("click", function() {
