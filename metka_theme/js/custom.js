@@ -116,11 +116,11 @@ $(document).ready(function(){
         "bInfo": false,
         "bAutoWidth": false,
         "aoColumns": [
-		              {sWidth: '10%'},
+		              {sWidth: '15%'},
 		              {sWidth: '10%'},
 		              {sWidth: '10%'},
 		              {sWidth: '20%'},
-		              {sWidth: '25%'},
+		              {sWidth: '20%'},
 		              {sWidth: '10%'},
 		              {sWidth: '5%'}
 				  ]
@@ -230,7 +230,10 @@ $(document).ready(function(){
         ]
 	});
 
-	$('.materialFileRow, .materialCodebookFileRow, .materialErrorRow').hover(function() {
+	$(".materialFileRow, .materialCodebookFileRow, .materialErrorRow, .desktopWidgetDataRow, " +
+		".materialSearchResultRow, .publicationSearchResultRow, .seriesSearchResultRow, " + 
+		".materialSeriesRow, .materialPublicationRow, .materialMaterialRow, " + 
+		".publicationSeriesRow, .publicationMaterialRow").hover(function() {
 		    $(this).css('cursor', 'pointer');
 		}, function() {
 		    $(this).css('cursor', 'auto');		    
@@ -265,6 +268,16 @@ $(document).ready(function(){
 		}	
 	});
 
+	$(".materialSearchResultRow, .publicationMaterialRow, .materialMaterialRow, .desktopWidgetDataRow").on("click", function() {
+		window.location = "materialView.html";
+	});
+	$(".publicationSearchResultRow, .materialPublicationRow").on("click", function() {
+		window.location = "publicationView.html";
+	});
+	$(".seriesSearchResultRow, .materialSeriesRow, .publicationSeriesRow").on("click", function() {
+		window.location = "seriesView.html";
+	});
+
 	$(".materialCodebookRow").on("click", function() {
 		$("#materialCodebookTitle a").html($(this).find(".materialCodebookFileName").html());
 		$("#materialCodebookRow").show();
@@ -285,6 +298,25 @@ $(document).ready(function(){
 		confirm("Oletko varma?");
 	});        
 
+	$("#materialQualitySelect").on("change", function() {
+		var materialQuality = $(this).children(":selected").attr("id");
+
+		if ( materialQuality == "quantitative" ) {
+			$("#materialType").removeClass("required");
+			$("#materialFilingCategory").removeClass("required");
+			$("#materialFSDCedes").addClass("required");
+
+		} else if ( materialQuality == "qualitative" ) {
+			$("#materialType").addClass("required");
+			$("#materialFilingCategory").addClass("required");
+			$("#materialFSDCedes").removeClass("required");
+		
+		} else if ( materialQuality == "both" ) {
+		
+		} else if ( materialQuality == "unknown" ) {
+			$(".materialRowContainer label").removeClass("required");
+		}
+	});
 	
 	/*** JULKAISU ***/
 	
