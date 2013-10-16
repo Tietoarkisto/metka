@@ -472,6 +472,20 @@ height: 470px;*/
 	padding: 5px;
 }
 
+/* Version history popups */
+.popupRowHolder .versionName, .popupRowHolder .versionPublishedDate, .popupRowHolder .versionCompareLink {
+	width: 150px;
+	float: left;
+	padding: 5px;
+}
+.popupRowHolder .versionProperty, .popupRowHolder .versionOldValue, .popupRowHolder .versionNewValue {
+	width: 200px;
+	float: left;
+	padding: 5px;
+}
+.popupRowHolder .versionOldValue, .popupRowHolder .versionNewValue {
+	width: 400px;
+}
 
 /** DATATABLES **/
 
@@ -783,12 +797,24 @@ height: 470px;*/
 .materialDataSetContainer,.publicationDataSetContainer, .seriesDataSetContainer{
 	float: left;
 }
+
 .materialDataSetContainer label{
 	display: block;
 	float: left;
 	margin-bottom: 10px;
-	width: 138px;
+	width: 180px;
 }
+.materialDataSetContainer input {
+	font-size:12px;
+	width: 100px;
+	margin-right: 10px;
+}
+.materialDataSetContainer select{
+	font-size: 12px;
+	width: 105px;
+	margin-right: 10px;
+}
+
 .publicationDataSetContainer label{
 	display: block;
 	float: left;
@@ -796,47 +822,44 @@ height: 470px;*/
 	width: 146px;
 	font-size: 12px;
 }
-.seriesDataSetContainer label{
-	display: block;
-	float: left;
-	margin-bottom: 20px;
-	width: 146px;
-}
-.materialDataSetContainer input{
-	width: 80px;
-	font-size:12px;
-	margin-right: 10px;
-}
 .publicationDataSetContainer input{
 	width: 150px;
 	font-size:12px;
 	margin-bottom: 10px;
-}
-.seriesDataSetContainer input{
-	width: 450px;
-	margin-right: 10px;
-	padding: 5px;
-}
-.materialDataSetContainer select{
-	font-size: 12px;
-	width: 85px;
-	margin-right: 10px;
 }
 .publicationDataSetContainer select{
 	font-size: 12px;
 	width: 155px;
 	margin-right: 10px;
 }
-.seriesDataSetContainer select{
-	width: 465px;
-	margin-right: 10px;
-	padding: 5px;
-}
 .publicationDataSetContainer textarea{
 	font-size: 12px;
 	width: 775px;
 	height: 50px;
 }
+
+.seriesDataSetContainer label{
+	display: block;
+	float: left;
+	margin-bottom: 20px;
+	width: 146px;
+}
+.seriesDataSetContainer input{
+	width: 450px;
+	margin-right: 10px;
+	padding: 5px;
+}
+.seriesDataSetContainer select{
+	margin-right: 10px;
+	width: 465px;
+	padding: 5px;
+}
+.seriesDataSetContainer textarea{
+	font-size: 12px;
+	width: 460px;
+	height: 200px;
+}
+
 .materialDataSetContainerTopRow{
 	float: left;
 }
@@ -844,8 +867,20 @@ height: 470px;*/
 	display: block;
 	float: left;
 	margin-bottom: 10px;
-	width: 130px;
 }
+.materialDataSetContainerTopRow label.rightSide {
+	width: 100px;
+	margin-right: 10px;
+}
+.materialDataSetContainerTopRow label.leftSide {
+	width: 180px;
+}
+.materialDataSetContainerTopRow input{
+	width: 282px;
+	margin-right: 10px;
+}
+
+/* Myöhemmin turha, kun studylevel-kunnossa */
 .tab4 .materialDataSetContainerTopRow label{
 	display: block;
 	float: left;
@@ -856,15 +891,8 @@ height: 470px;*/
 .tab4 .materialDataSetContainerTopRow input{
 	padding: 5px;
 }
-.seriesDataSetContainer textarea{
-	font-size: 12px;
-	width: 460px;
-	height: 200px;
-}
-.materialDataSetContainerTopRow input{
-	width: 321px;
-	margin-right: 10px;
-}
+
+
 .prevNextContainer{
 	display: inline-block;
 	float: right;
