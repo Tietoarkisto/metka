@@ -4,6 +4,14 @@
 		<meta charset="utf-8">
 		<title>YHTEISKUNTATIETEELLINEN TIETOARKISTO - Metka</title>
 		<link rel="stylesheet" type="text/css" href="css/styles.css">
+		<script src="js/jquery-1.10.2.js"></script>
+  		<script src="js/jquery-ui.js"></script>
+		<script src="js/jquery.tablesorter.min.js"></script>
+		<script src="js/custom.js"></script>
+		<script src="js/jquery.dataTables.min.js"></script>
+		<script src="js/jquery.fancybox.pack.js"></script>
+		<script src="js/jquery.jstree.js"></script>
+		<script src="js/jquery.dataTables.rowReordering.js"></script>
 	</head>
 	<body>
 		<header>
@@ -38,37 +46,36 @@
 
 				<div class="content" style="padding-bottom: 10px;">
 					<h1 class="pageTitle">Työpöytä</h1>
-					<div class="desktopUpComerBox">
-						<div class="desktopUpComerBoxHeading"><h2>Vapaat aineistot</h2></div>
-						<div class="BoxDataContainer">
-							<div class="BoxDataRow"><a href="materialView.html">Eduskuntavaalitutkimukset 2003-2011: yhditetty aineisto.</a></div>
-							<div class="BoxDataRow"><a href="materialView.html">Eduskuntavaalitutkimukset 2003-2011: yhditetty aineisto.</a></div>
-							<div class="BoxDataRow"><a href="materialView.html">Eduskuntavaalitutkimukset 2003-2011: yhditetty aineisto.</a></div>
-							<div class="BoxDataRow"><a href="materialView.html">Eduskuntavaalitutkimukset 2003-2011: yhditetty aineisto.</a></div>
-							<div class="BoxDataRow"><a href="materialView.html">Eduskuntavaalitutkimukset 2003-2011: yhditetty aineisto.</a></div>
-							<div class="BoxDataRow"><a href="materialView.html">Eduskuntavaalitutkimukset 2003-2011: yhditetty aineisto.</a></div>
+					<div class="desktopWidget">
+						<div class="desktopWidgetHeading"><h2>Vapaat aineistot</h2></div>
+						<div class="desktopWidgetDataContainer">
+							<div class="desktopWidgetDataRow">Eduskuntavaalitutkimukset 2003-2008: yhditetty aineisto.</div>
+							<div class="desktopWidgetDataRow">Eduskuntavaalitutkimukset 2004-2009: yhditetty aineisto.</div>
+							<div class="desktopWidgetDataRow">Eduskuntavaalitutkimukset 2005-2010: yhditetty aineisto.</div>
+							<div class="desktopWidgetDataRow">Eduskuntavaalitutkimukset 2006-2011: yhditetty aineisto.</div>
+							<div class="desktopWidgetDataRow">Eduskuntavaalitutkimukset 2007-2012: yhditetty aineisto.</div>
+							<div class="desktopWidgetDataRow">Eduskuntavaalitutkimukset 2008-2013: yhditetty aineisto.</div>
 						</div>
 					</div>
-					<div class="desktopUpComerBox">
-						<div class="desktopUpComerBoxHeading"><h2>Omat keskeneräiset aineistot</h2></div>
-						<div class="BoxDataContainer">
-							<div class="BoxDataRow"><a href="materialView.html">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</a></div>
-							<div class="BoxDataRow"><a href="materialView.html">Vestibulum sollicitudin quam vel ultricies lobortis.</a></div>
-							<div class="BoxDataRow"><a href="materialView.html">Curabitur sem ante, hendrerit in est eget, adipiscing fringilla justo.</a></div>
+					<div class="desktopWidgetContainer">
+						<div class="widgetInContainer onTheLeft">
+							<div class="desktopWidgetHeading"><h2>Omat keskeneräiset aineistot</h2></div>
+							<div class="desktopWidgetDataContainer">
+								<div class="desktopWidgetDataRow">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
+								<div class="desktopWidgetDataRow">Vestibulum sollicitudin quam vel ultricies lobortis.</div>
+								<div class="desktopWidgetDataRow">Curabitur sem ante, hendrerit in est eget, adipiscing fringilla justo.</div>
+							</div>
 						</div>
-					</div>
-					<div class="desktopUpComerBox">
-						<div class="desktopUpComerBoxHeading"><h2>Kaikki keskeneräiset aineistot</h2></div>
-						<div class="BoxDataContainer">
-							<div class="BoxDataRow"><a href="#">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</a></div>
-							<div class="BoxDataRow"><a href="#">Vestibulum sollicitudin quam vel ultricies lobortis.</a></div>
-							<div class="BoxDataRow"><a href="#">Curabitur sem ante, hendrerit in est eget, adipiscing fringilla justo.</a></div>
-							<div class="BoxDataRow"><a href="#">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</a></div>
-							<div class="BoxDataRow"><a href="#">Vestibulum sollicitudin quam vel ultricies lobortis.</a></div>
-							<div class="BoxDataRow"><a href="#">Curabitur sem ante, hendrerit in est eget, adipiscing fringilla justo.</a></div>
-							<div class="BoxDataRow"><a href="#">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</a></div>
-							<div class="BoxDataRow"><a href="#">Vestibulum sollicitudin quam vel ultricies lobortis.</a></div>
-							<div class="BoxDataRow"><a href="#">Curabitur sem ante, hendrerit in est eget, adipiscing fringilla justo.</a></div>
+						<div class="widgetInContainer onTheRight">
+							<div class="desktopWidgetHeading"><h2>Kaikki keskeneräiset aineistot</h2></div>
+							<div class="desktopWidgetDataContainer">
+								<div class="desktopWidgetDataRow">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
+								<div class="desktopWidgetDataRow">Vestibulum sollicitudin quam vel ultricies lobortis.</div>
+								<div class="desktopWidgetDataRow">Curabitur sem ante, hendrerit in est eget, adipiscing fringilla justo.</div>
+								<div class="desktopWidgetDataRow">Vestibulum sollicitudin quam vel ultricies lobortis.</div>
+								<div class="desktopWidgetDataRow">Curabitur sem ante, hendrerit in est eget, adipiscing fringilla justo.</div>
+								<div class="desktopWidgetDataRow">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
+							</div>
 						</div>
 					</div>
 				</div>
