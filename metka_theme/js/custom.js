@@ -269,7 +269,11 @@ $(document).ready(function(){
 	});
 
 	$(".materialSearchResultRow, .publicationMaterialRow, .materialMaterialRow, .desktopWidgetDataRow").on("click", function() {
-		window.location = "materialView.html";
+		if ( $(this).hasClass("published") ) {
+			window.location = "materialViewPUBLISHED.html";
+		} else {
+			window.location = "materialView.html";
+		}
 	});
 	$(".publicationSearchResultRow, .materialPublicationRow").on("click", function() {
 		window.location = "publicationView.html";
@@ -316,6 +320,10 @@ $(document).ready(function(){
 		} else if ( materialQuality == "unknown" ) {
 			$(".materialRowContainer label").removeClass("required");
 		}
+	});
+
+	$("#versionHistoryButton").on("click", function() {
+		$("#versionHistoryLink").click();
 	});
 	
 	/*** JULKAISU ***/
