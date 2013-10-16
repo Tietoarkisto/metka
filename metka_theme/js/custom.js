@@ -230,7 +230,7 @@ $(document).ready(function(){
         ]
 	});
 
-	$(".materialFileRow, .materialCodebookFileRow, .materialErrorRow, .desktopDataRow, " +
+	$(".materialFileRow, .materialCodebookFileRow, .materialErrorRow, .desktopWidgetDataRow, " +
 		".materialSearchResultRow, .publicationSearchResultRow, .seriesSearchResultRow, " + 
 		".materialSeriesRow, .materialPublicationRow, .materialMaterialRow, " + 
 		".publicationSeriesRow, .publicationMaterialRow").hover(function() {
@@ -268,7 +268,7 @@ $(document).ready(function(){
 		}	
 	});
 
-	$(".materialSearchResultRow, .publicationMaterialRow, .materialMaterialRow, .desktopDataRow").on("click", function() {
+	$(".materialSearchResultRow, .publicationMaterialRow, .materialMaterialRow, .desktopWidgetDataRow").on("click", function() {
 		window.location = "materialView.html";
 	});
 	$(".publicationSearchResultRow, .materialPublicationRow").on("click", function() {
@@ -277,7 +277,6 @@ $(document).ready(function(){
 	$(".seriesSearchResultRow, .materialSeriesRow, .publicationSeriesRow").on("click", function() {
 		window.location = "seriesView.html";
 	});
-
 
 	$(".materialCodebookRow").on("click", function() {
 		$("#materialCodebookTitle a").html($(this).find(".materialCodebookFileName").html());
@@ -299,6 +298,25 @@ $(document).ready(function(){
 		confirm("Oletko varma?");
 	});        
 
+	$("#materialQualitySelect").on("change", function() {
+		var materialQuality = $(this).children(":selected").attr("id");
+
+		if ( materialQuality == "quantitative" ) {
+			$("#materialType").removeClass("required");
+			$("#materialFilingCategory").removeClass("required");
+			$("#materialFSDCedes").addClass("required");
+
+		} else if ( materialQuality == "qualitative" ) {
+			$("#materialType").addClass("required");
+			$("#materialFilingCategory").addClass("required");
+			$("#materialFSDCedes").removeClass("required");
+		
+		} else if ( materialQuality == "both" ) {
+		
+		} else if ( materialQuality == "unknown" ) {
+			$(".materialRowContainer label").removeClass("required");
+		}
+	});
 	
 	/*** JULKAISU ***/
 	

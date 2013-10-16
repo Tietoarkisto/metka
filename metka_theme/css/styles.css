@@ -495,31 +495,44 @@ height: 470px;*/
 
 
 /** DESKTOP **/
-.desktopUpComerBox{
-	margin: 20px;
+.desktopWidget, .widgetInContainer{
+	margin: 20px 20px 10px 20px;
 }
-.desktopUpComerBoxHeading{
+.desktopWidgetContainer {
+	position: relative;
+}
+.widgetInContainer {
+	width: 450px;
+	position: absolute;
+}
+.onTheRight {
+	right: 0;
+}
+.onTheLeft {
+	left: 0;
+}
+.desktopWidgetHeading{
 	background-color: #009EE0;
 	padding: 10px 0 10px 20px;
 	border: solid 1px #009EE0;
 }
-.desktopUpComerBoxHeading h2{
+.desktopWidgetHeading h2 {
 	color: #fff;
 	font-size: 15px;
 }
-.desktopDataContainer{
+.desktopWidgetDataContainer{
 	border-left: 1px solid #009EE0;
 	border-right: 1px solid #009EE0;
 }
-.desktopDataRow{
+.desktopWidgetDataRow {
 	border-bottom: 1px solid #009EE0;
-	font-size: 15px;
+	font-size: 12px;
 	display: block;
 	color: #005993;
 	text-decoration: none;
-	padding: 10px 10px 10px 20px;
+	padding: 7px 10px 7px 20px;
 }
-.desktopDataRow:hover{
+.desktopWidgetDataRow:hover{
 	background-color: #EAEAEA;
 	transition: all 0.15s ease-in-out;
 	-webkit-transition: all 0.15s ease-in-out;

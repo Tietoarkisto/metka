@@ -76,38 +76,78 @@
 						<div class="materialUpperContainer">
 				
 							<div class="materialRowContainer">
-								<div class="materialDataSetContainerTopRow"><label class="required">Aineiston nimi</label><input tabIndex="1" type="text" value="Eduskuntavaalitutkimukset 2003-2011: yhditetty aieneisto." name="aineistonNimi" /></div>
-								<div class="materialDataSetContainerTopRow"><label>Eng.</label><input tabIndex="2" type="text" name="materialnNimiEng" /></div>
+								<div class="materialDataSetContainerTopRow">
+									<label id="materialName" class="required">Aineiston nimi</label>
+									<input tabIndex="1" type="text" value="Eduskuntavaalitutkimukset 2003-2011: yhditetty aieneisto." name="aineistonNimi" />
+								</div>
+								<div class="materialDataSetContainerTopRow">
+									<label id="materialNameEng">Eng.</label>
+									<input tabIndex="2" type="text" name="materialnNimiEng" />
+								</div>
 							</div>
 							<div class="materialRowContainer">
-								<div class="materialDataSetContainer"><label class="required">Aineistonro</label><input readonly="readonly" type="text" name="materialnro" value="F3D2556" /></div>
-								<div class="materialDataSetContainer"><label class="required">Hank.ain.nro</label><input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/></div>
-								<div class="materialDataSetContainer"><label class="required">Aineiston tyyppi</label>
+								<div class="materialDataSetContainer">
+									<label id="materialNumber" class="required">Aineistonro</label>
+									<input readonly="readonly" type="text" name="materialnro" value="F3D2556" />
+								</div>
+								<div class="materialDataSetContainer">
+									<label id="acquisitiedMaterialNumber" class="required">Hank.ain.nro</label>
+									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
+								</div>
+								<div class="materialDataSetContainer">
+									<label id="materialType" class="required">Aineiston tyyppi</label>
 									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
 								</div>
 							</div>
 							<div class="materialRowContainer">
-								<div class="materialDataSetContainer"><label>Mef julk.(fin)</label><input readonly="readonly" type="text" name="valmispvm"/></div>
-								<div class="materialDataSetContainer"><label>Mef julk.(eng)</label><input readonly="readonly" type="text" class="" name="valmispvm"/></div>
-								<div class="materialDataSetContainer"><label class="required">Arkist.kategoria</label><select tabIndex="5"><option>Arkistoitu</option><option>Poistettu</option></select></div>
-							</div>
-							<div class="materialRowContainer">
-								<div class="materialDataSetContainer"><label>FSD luovuttaa</label><select><option>Kyllä</option><option>Ei</option><option>Ei tietoa</option></select></div>
-								<div class="materialDataSetContainer"><label>Valmis pvm</label><input type="text" class="datepicker" name="valmispvm"/></div>
-								<div class="materialDataSetContainer"><label>Julkaisu</label><select><option>Kyllä</option><option>Ei</option><option>Ei tietoa</option></select></div>
-							</div>
-							<div class="materialRowContainer">
-								<div class="materialDataSetContainer"><label>Alkuper. sijainti</label><input tabIndex="4" type="text"/></div>
-								<div class="materialDataSetContainer"><label>Anonymisointi</label><select><option>Kyllä</option><option>Ei</option><option>Ei tietoa</option></select></div>
-								<div class="materialDataSetContainer"><label class="required">Ain.laatu</label>
-									<select><option>Ei tietoa</option><option>Kvanti</option><option>Kvali</option><option>Kvanti&Kvali</option></select>
+								<div class="materialDataSetContainer">
+									<label id="materiaMefFin" >Mef julk.(fin)</label>
+									<input readonly="readonly" type="text" name="valmispvm"/>
+								</div>
+								<div class="materialDataSetContainer">
+									<label id="materialMefEng" >Mef julk.(eng)</label>
+									<input readonly="readonly" type="text" class="" name="valmispvm"/>
+								</div>
+								<div class="materialDataSetContainer">
+									<label id="materialFilingCategory" class="required">Arkist.kategoria</label>
+									<select tabIndex="5"><option>Arkistoitu</option><option>Poistettu</option></select>
 								</div>
 							</div>
 							<div class="materialRowContainer">
-								<div class="materialDataSetContainer"><label>Muuttujakuvailun julkaisu</label>
+								<div class="materialDataSetContainer">
+									<label id="materialFSDCedes">FSD luovuttaa</label>
 									<select><option>Kyllä</option><option>Ei</option><option>Ei tietoa</option></select>
 								</div>
-								<div class="materialDataSetContainer"><label>Aineiston kuvailun julkaisu</label>
+								<div class="materialDataSetContainer">
+									<label id="materialReadyDate">Valmis pvm</label>
+									<input type="text" class="datepicker" name="valmispvm"/>
+								</div>
+								<div class="materialDataSetContainer">
+									<label id="materialPublishing">Julkaisu</label>
+									<select><option>Kyllä</option><option>Ei</option><option>Ei tietoa</option></select>
+								</div>
+							</div>
+							<div class="materialRowContainer">
+								<div class="materialDataSetContainer">
+									<label id="materialOriginalLocation">Alkuper. sijainti</label>
+									<input tabIndex="4" type="text"/>
+								</div>
+								<div class="materialDataSetContainer">
+									<label id="materialAnonymized">Anonymisointi</label>
+									<select><option>Kyllä</option><option>Ei</option><option>Ei tietoa</option></select>
+								</div>
+								<div class="materialDataSetContainer">
+									<label  id="materialQuality" class="required">Ain.laatu</label>
+									<select id="materialQualitySelect"><option id="unknown">Ei tietoa</option><option id="quantitative">Kvanti</option><option id="qualitative">Kvali</option><option id="both">Kvanti&Kvali</option></select>
+								</div>
+							</div>
+							<div class="materialRowContainer">
+								<div class="materialDataSetContainer">
+									<label id="materialVariableDepictionPublishing">Muuttujakuvailun julkaisu</label>
+									<select><option>Kyllä</option><option>Ei</option><option>Ei tietoa</option></select>
+								</div>
+								<div class="materialDataSetContainer">
+									<label id="materialDepictionPublishing">Aineiston kuvailun julkaisu</label>
 									<select><option>Kyllä</option><option>Ei</option><option>Ei tietoa</option></select>
 								</div>
 							</div>
