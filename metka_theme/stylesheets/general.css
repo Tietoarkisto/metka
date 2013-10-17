@@ -1,0 +1,198 @@
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  background-color: #4a4647;
+  color: #242424;
+  font-family: "PT Sans Regular","Trebuchet MS",Helvetica,"Helvetica Neue",sans-serif;
+  font-size: 100%;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1.2em;
+  min-width: 960px;
+  position: relative;
+}
+
+header {
+  width: 100%;
+  background-color: white;
+  margin-bottom: 10px;
+  /*height: 130px;*/
+  border-top: 3px solid #005993;
+}
+header .headerContainer {
+  margin: 0 auto;
+  padding: 0;
+  width: 960px;
+}
+header .headerContainer #logo {
+  background: url("../images/img_fsd_logo_fi.png") no-repeat scroll 0 0 transparent;
+  clear: left;
+  float: left;
+  height: 46px;
+  margin: 15px 25px 10px 0;
+  text-indent: -9999px;
+  width: 207px;
+}
+
+footer {
+  width: 100%;
+  height: 150px;
+  border-top: 3px solid white;
+}
+
+.wrapper {
+  width: 100%;
+  min-height: 600px;
+  height: auto;
+  background-color: #e1dfdc;
+  display: inline-block;
+  padding: 20px 0;
+}
+
+.content {
+  margin: 0 auto;
+  padding: 0;
+  width: 960px;
+  height: 100%;
+  min-height: 600px;
+  background-color: white;
+  display: block;
+  box-shadow: 10px 10px 5px #888;
+}
+
+.pageTitle {
+  font-size: 25px;
+  color: white;
+  border-bottom: solid 1px;
+  padding: 10px 20px 10px 20px;
+  background-color: #009ee0;
+  height: 20px;
+}
+.pageTitle .floatLeft {
+  float: left;
+}
+.pageTitle .floatRight {
+  float: right;
+}
+
+.required:after {
+  content: " *";
+}
+
+/** POPUP **/
+.popup_background {
+  z-index: 2000;
+}
+
+.popup_wrapper {
+  z-index: 2001;
+}
+
+.popup_align, .popup_content {
+  *display: inline;
+  *zoom: 1;
+}
+
+.popupContainer .ui-state-default {
+  padding: 0 15px !important;
+}
+.popupContainer .popupRowHolder {
+  margin: 10px 0;
+}
+.popupContainer .popupRowHolder label {
+  display: block;
+  float: left;
+  padding-top: 5px;
+  width: 140px;
+}
+.popupContainer .popupRowHolder input, .popupContainer .popupRowHolder select, .popupContainer .popupRowHolder textarea {
+  width: 310px;
+  padding: 5px;
+}
+.popupContainer .popupRowHolder .versionName, .popupContainer .popupRowHolder .versionPublishedDate, .popupContainer .popupRowHolder .versionCompareLink {
+  width: 150px;
+  float: left;
+  padding: 5px;
+}
+.popupContainer .popupRowHolder .versionProperty, .popupContainer .popupRowHolder .versionOldValue, .popupContainer .popupRowHolder .versionNewValue {
+  width: 200px;
+  float: left;
+  padding: 5px;
+}
+.popupContainer .popupRowHolder .versionOldValue, .popupContainer .popupRowHolder .versionNewValue {
+  width: 400px;
+}
+.popupContainer .popupButtonsHolder {
+  margin-top: 20px;
+  text-align: right;
+}
+
+/** DATATABLES **/
+.dataTables_filter {
+  text-align: right;
+  padding: 5px;
+}
+.dataTables_filter label {
+  color: white;
+}
+
+.DataTables_sort_wrapper {
+  text-align: left;
+  padding-left: 5px;
+  color: #000;
+}
+
+.ui-state-disabled {
+  color: #ccc !important;
+  opacity: 1 !important;
+}
+
+/*TABLE SORTER CSS*/
+table.tablesorter {
+  border-bottom: solid 1px #009ee0;
+  border-left: solid 1px #009ee0;
+  border-right: solid 1px #009ee0;
+  margin: 0px 10px 0px 10px;
+  font-size: 8pt;
+  width: 940px;
+  text-align: left;
+}
+table.tablesorter a {
+  text-decoration: none;
+  color: #000;
+}
+table.tablesorter thead tr th, table.tablesorter thead tfoot tr th {
+  background-color: #009ee0;
+  font-size: 15px;
+  padding: 4px;
+  color: white;
+}
+table.tablesorter thead tr .header {
+  background-image: url(../images/bg.gif);
+  background-repeat: no-repeat;
+  background-position: center right;
+  cursor: pointer;
+}
+table.tablesorter thead tr .headerSortUp {
+  background-color: #8dbdd8;
+  background-image: url(../images/asc.gif);
+}
+table.tablesorter thead tr .headerSortDown {
+  background-color: #8dbdd8;
+  background-image: url(../images/desc.gif);
+}
+table.tablesorter tbody tr:hover {
+  background-color: #eaeaea;
+}
+table.tablesorter tbody td {
+  color: #000;
+  padding: 4px;
+  vertical-align: top;
+}
+table.tablesorter tbody tr.odd td {
+  background-color: #EAEAEA;
+}
