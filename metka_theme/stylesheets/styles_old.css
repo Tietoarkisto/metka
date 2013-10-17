@@ -114,53 +114,41 @@ table.tablesorter {
 	width: 940px;
 	text-align: left;
 }
-.vocabularyTablesorter{
-	border-bottom: 1px solid #CCCCCC;
-	border-left: 1px solid #CCCCCC;
-	border-right: 1px solid #CCCCCC;
-	font-size: 8pt;
-	margin: 0;
-	text-align: left;
-	width: 100%;
-}
-.vocabulary a, .tablesorter a, .vocabularyTablesorter a{
+.tablesorter a{
 	text-decoration: none;
 	color: #000;
 }
-table.tablesorter thead tr th, table.tablesorter tfoot tr th, 
-table.vocabularyTablesorter thead tr th, table.vocabularyTablesorter tfoot tr th {
+table.tablesorter thead tr th, table.tablesorter tfoot tr th {
 	background-color: #009EE0;
 
 	font-size: 15px;
 	padding: 4px;
 	color: #ffF;
 }
-table.tablesorter thead tr .header,  table.vocabularyTablesorter thead tr .header{
+table.tablesorter thead tr .header{
 	background-image: url(../images/bg.gif);
 	background-repeat: no-repeat;
 	background-position: center right;
 	cursor: pointer;
 }
-table.tablesorter tbody tr:hover, table.vocabularyTablesorter tbody tr:hover {
+table.tablesorter tbody tr:hover {
 	background-color: #eaeaea;
 }
-table.tablesorter tbody td, table.vocabularyTablesorter tbody td {
+table.tablesorter tbody td {
 	color: #000;
-	padding: 4px;
-	
+	padding: 4px;	
 	vertical-align: top;
 }
-table.tablesorter tbody tr.odd td, table.vocabularyTablesorter tbody tr.odd td {
+table.tablesorter tbody tr.odd td{
 	background-color:#EAEAEA;
 }
-table.tablesorter thead tr .headerSortUp, table.vocabularyTablesorter thead tr .headerSortUp  {
+table.tablesorter thead tr .headerSortUp  {
 	background-image: url(../images/asc.gif);
 }
-table.tablesorter thead tr .headerSortDown, table.vocabularyTablesorter thead tr .headerSortDown {
+table.tablesorter thead tr .headerSortDown {
 	background-image: url(../images/desc.gif);
 }
-table.tablesorter thead tr .headerSortDown, table.tablesorter thead tr .headerSortUp, 
-table.vocabularyTablesorter thead tr .headerSortDown, table.vocabularyTablesorter thead tr .headerSortUp {
+table.tablesorter thead tr .headerSortDown, table.tablesorter thead tr .headerSortUp {
 	background-color: #8dbdd8;
 }
 
@@ -487,6 +475,7 @@ height: 470px;*/
 	width: 400px;
 }
 
+
 /** DATATABLES **/
 
 .dataTables_filter{
@@ -509,13 +498,13 @@ height: 470px;*/
 
 
 /** DESKTOP **/
-.desktopWidget, .widgetInContainer{
+.desktopWidget, .desktopWidgetInContainer{
 	margin: 20px 20px 10px 20px;
 }
 .desktopWidgetContainer {
 	position: relative;
 }
-.widgetInContainer {
+.desktopWidgetInContainer {
 	width: 450px;
 	position: absolute;
 }

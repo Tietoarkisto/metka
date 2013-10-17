@@ -1,0 +1,25 @@
+@import "global";
+
+#vocabularyTable, #standardTextTable{
+	width: 100%;
+
+	tr {
+		border: solid 1px $pageColorB;
+		td {
+			padding: 5px;
+
+			a {
+				display: block;
+			}
+		}
+	}
+}
+.vocabularyContainer{
+	width: 500px;
+	height: 630px;
+}
+
+#standardTextTable td {
+	vertical-align: middle;
+	padding: 10px;
+}
