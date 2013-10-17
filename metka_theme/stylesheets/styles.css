@@ -205,7 +205,7 @@ footer {
   width: 140px;
 }
 .popupContainer .popupRowHolder input, .popupContainer .popupRowHolder select, .popupContainer .popupRowHolder textarea {
-  width: 300px;
+  width: 310px;
   padding: 5px;
 }
 .popupContainer .popupRowHolder .versionName, .popupContainer .popupRowHolder .versionPublishedDate, .popupContainer .popupRowHolder .versionCompareLink {
@@ -347,7 +347,7 @@ nav .mainNavUl li a:hover {
   list-style: none outside none;
   margin-bottom: 20px;
   margin-top: -10px;
-  margin-left: -20px;
+  margin-left: 10px;
   float: left;
 }
 .tabNavi ul li {
