@@ -1,0 +1,249 @@
+#fileNameErrorRow, #materialFileInfoRow, #materialCodebookRow, #materialErrorInfoRow {
+  display: none;
+}
+
+.materialUpperContainer, .publicationUpperContainer, .seriesUpperContainer {
+  margin: 10px;
+  font-size: 12px;
+}
+
+.materialRowContainer, .publicationRowContainer, .seriesRowContainer {
+  clear: both;
+  padding-bottom: 5px;
+  display: block;
+}
+
+.materialDataSetTextareaContainer {
+  float: left;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.materialDataSetTextareaContainer label {
+  width: 400px;
+  clear: both;
+  display: block;
+}
+.materialDataSetTextareaContainer textarea {
+  width: 440px;
+  height: 60px;
+}
+
+.materialDataSetContainer {
+  float: left;
+}
+.materialDataSetContainer label {
+  display: block;
+  float: left;
+  margin-bottom: 10px;
+  width: 180px;
+}
+.materialDataSetContainer input {
+  font-size: 12px;
+  width: 100px;
+  margin-right: 10px;
+}
+.materialDataSetContainer select {
+  font-size: 12px;
+  width: 105px;
+  margin-right: 10px;
+}
+
+/* Yläosan leveämmät fieldit */
+.materialDataSetContainerTopRow {
+  float: left;
+}
+.materialDataSetContainerTopRow label {
+  display: block;
+  float: left;
+  margin-bottom: 10px;
+}
+.materialDataSetContainerTopRow label.rightSide {
+  width: 100px;
+  margin-right: 10px;
+}
+.materialDataSetContainerTopRow label.leftSide {
+  width: 180px;
+}
+.materialDataSetContainerTopRow input {
+  width: 282px;
+  margin-right: 10px;
+}
+
+.publicationDataSetContainer {
+  float: left;
+}
+.publicationDataSetContainer label {
+  display: block;
+  float: left;
+  margin-bottom: 10px;
+  width: 146px;
+  font-size: 12px;
+}
+.publicationDataSetContainer input {
+  width: 150px;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+.publicationDataSetContainer select {
+  font-size: 12px;
+  width: 155px;
+  margin-right: 10px;
+}
+.publicationDataSetContainer textarea {
+  font-size: 12px;
+  width: 775px;
+  height: 50px;
+}
+
+.seriesDataSetContainer {
+  float: left;
+}
+.seriesDataSetContainer label {
+  display: block;
+  float: left;
+  margin-bottom: 20px;
+  width: 150px;
+}
+.seriesDataSetContainer input {
+  width: 450px;
+  margin-right: 10px;
+  padding: 5px;
+}
+.seriesDataSetContainer select {
+  width: 465px;
+  margin-right: 10px;
+  padding: 5px;
+}
+.seriesDataSetContainer textarea {
+  font-size: 12px;
+  width: 460px;
+  height: 200px;
+}
+
+/* Myöhemmin turha, kun studylevel-kunnossa */
+.tab4 .materialDataSetContainerTopRow label {
+  display: block;
+  float: left;
+  margin-bottom: 20px;
+  width: 250px;
+  margin-left: 10px;
+}
+.tab4 .materialDataSetContainerTopRow input {
+  padding: 5px;
+}
+
+.prevNextContainer {
+  display: inline-block;
+  float: right;
+  margin-bottom: 20px;
+  margin-right: 20px;
+}
+.prevNextContainer h1.prev {
+  font-size: 22px;
+  float: left;
+  background: #009ee0;
+  color: white;
+  padding: 10px;
+  cursor: pointer;
+}
+.prevNextContainer h1.next {
+  font-size: 22px;
+  float: right;
+  background: #009ee0;
+  color: white;
+  padding: 10px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+/* naming */
+.materialPrevNextContainer {
+  display: inline-block;
+  float: right;
+  margin-bottom: 20px;
+  margin-right: 20px;
+  width: 900px;
+}
+
+.viewFormButtonsHolder {
+  clear: left;
+  display: inline-block;
+  margin-top: 20px;
+  text-align: right;
+  width: 950px;
+}
+.viewFormButtonsHolder input {
+  margin-left: 20px;
+}
+
+.materialTableButtonsHolder {
+  clear: left;
+  display: inline-block;
+  text-align: right;
+  width: 920px;
+}
+
+.materialTableActionLinkHolder, .publicationTableActionLinkHolder {
+  clear: left;
+  display: inline-block;
+  text-align: right;
+  width: 920px;
+  font-size: 12px;
+}
+
+.materialRowTitle, .publicationRowTitle {
+  font-size: 12px;
+  padding-left: 10px;
+}
+
+#materialAddNewFileContainer {
+  display: block;
+  float: right;
+  padding: 5px;
+}
+
+#materialAddNewFileButton {
+  position: relative;
+  float: right;
+}
+
+#materialCodebookTitle {
+  padding: 10px;
+}
+
+#materialFileInfoRow {
+  padding-bottom: 20px;
+}
+
+#materialVariables {
+  position: relative;
+}
+
+#variablesTree {
+  padding: 10px 10px 10px 20px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200px;
+}
+
+#variablesData {
+  padding: 10px;
+  position: absolute;
+  top: 0;
+  left: 200px;
+}
+
+#materialFileInfoContent, #materialErrorInfoContent {
+  padding: 10px;
+  font-size: 12px;
+}
+#materialFileInfoContent th.errorInfoLabel, #materialErrorInfoContent th.errorInfoLabel {
+  width: 120px;
+}
+#materialFileInfoContent tbody td, #materialErrorInfoContent tbody td {
+  padding: 3px;
+}
+#materialFileInfoContent tbody .fileInfoLabel, #materialFileInfoContent tbody .errorInfoLabel, #materialErrorInfoContent tbody .fileInfoLabel, #materialErrorInfoContent tbody .errorInfoLabel {
+  font-weight: bold;
+}
