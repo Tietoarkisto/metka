@@ -298,10 +298,6 @@ $(document).ready(function(){
 				//$(".variableNext").attr("id", );
 			});
 	
-	$("#approveChanges").on("click", function() {
-		confirm("Oletko varma?");
-	});        
-
 	$("#materialQualitySelect").on("change", function() {
 		var materialQuality = $(this).children(":selected").attr("id");
 
@@ -325,6 +321,10 @@ $(document).ready(function(){
 	$("#versionHistoryButton").on("click", function() {
 		$("#versionHistoryLink").click();
 	});
+	$("#approveChangesButton").on("click", function() {
+		$("#approveChangesLink").click();
+	});        
+
 	
 	/*** JULKAISU ***/
 	
