@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html lang="fi">
+	<head>
+		<meta charset="utf-8">
+		<title>YHTEISKUNTATIETEELLINEN TIETOARKISTO - Metka</title>		
+		<link rel="stylesheet" type="text/css" href="../stylesheets/styles.css">
+		<link rel="stylesheet" type="text/css" href="../stylesheets/jquery-ui.css">
+		<script src="../js/jquery-1.10.2.js"></script>
+  		<script src="../js/jquery-ui.js"></script>
+		<script src="../js/jquery.tablesorter.min.js"></script>
+		<script src="../js/jquery.dataTables.min.js"></script>
+		<script src="../js/jquery.fancybox.pack.js"></script>
+		<script src="../js/jquery.tablesorter.pager.js"></script>
+		<script src="../js/jquery.jstree.js"></script>
+		<script src="../js/custom.js"></script>
+		<script src="../js/jquery.dataTables.rowReordering.js"></script>
+	</head>
+	<body>
+		<header>
+			<div class="headerContainer">
+				<h1 id="logo" >
+					<a href="desktop.html" title="Aineistohaku">Aineistohaku</a>
+				</h1>	
+						
+				<nav>
+					<ul class="mainNavUl">
+						<li><a href="desktop.html">Työpöytä</a></li>
+						<li><a href="materialSearch.html">Aineistot</a></li>
+						<li><a href="publicationSearch.html">Julkaisut</a></li>
+						<li><a href="seriesSearch.html">Sarjat</a></li>	
+						<li><a href="settings.html">Asetukset</a></li>						
+					</ul>
+					
+					<div style="clear:both;"></div>				
+				</nav>
+				<div class="searchContainer">
+					<a class="logoutLink" href="#">Kirjaudu ulos</a>
+					<form action="material.html" class="quickSearchForm">
+						<input type="text" autocomplete="off" dir="ltr" class="searchInput" placeholder="Aineiston id-nro" />
+						<input type="submit" value="Hae" class="searchButton"/>
+					</form>					
+				</div>
+			</div>
+			
+		</header>
+		
+			<div class="wrapper">
+
+				<div class="content">
+					<h1 class="pageTitle">Sarjan tiedot</h1>
+					<div class="seriesUpperContainer">
+						<div class="prevNextContainer"><h1 class="prev"><</h1><h1 class="next">></h1></div>				
+						<div class="seriesRowContainer">
+							<div class="seriesDataSetContainer"><label>Sarjan numero</label><input type="text" value="16" name="aineistonNimi" /></div>
+						</div>						
+						<div class="seriesRowContainer">							
+							<div class="seriesDataSetContainer"><label>Sarjan lyhenne</label><input type="text" name="aineistonNimiEng" /></div>
+						</div>
+						<div class="seriesRowContainer">
+							<div class="seriesDataSetContainer"><label>Kieli</label><select><option></option></select></div>
+						</div>
+						<div class="seriesRowContainer">
+							<div class="seriesDataSetContainer"><label>Sarjan nimi</label><input type="text" name="aineistonNimiEng" /></div>
+						</div>
+						<div class="seriesRowContainer">
+							<div class="seriesDataSetContainer"><label>Sarjan URL</label><input type="text" name="aineistonNimiEng" /></div>
+						</div>
+						<div class="seriesRowContainer">							
+							<div class="seriesDataSetContainer"><label>Sarjan kuvaus</label><textarea></textarea></div>
+						</div>		
+					</div>
+
+					<div class="viewFormButtonsHolder" style="margin-bottom:20px;width: 630px;"><input type="button" class="searchFormInput doSearch" value="Tallenna" /></div>			
+				</div>												
+			</div>
+		<footer>
+		</footer>
+	</body>
+</html>

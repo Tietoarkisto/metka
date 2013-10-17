@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html lang="fi">
+	<head>
+		<script src="js/popup.js"></script>
+		<script src="js/attachError.js"></script>
+	</head>
+	<body>	
+		<div class="popupContainer">
+			<h1 class="pageTitle">Virheen merkintä</h1>
+			<div class="popupRowHolder">
+				<label>Pisteet</label>
+				<select><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+			</div>
+			<div class="popupRowHolder">
+				<label>Aineiston osa</label>
+				<select id="errorTypeSelect">
+					<option id="basicError">Perustiedot</option>
+					<option id="binderError">Mapit</option>
+					<option id="filingError">Arkistointisopimus</option>
+					<option id="studyLevelError">Studylevel</option>
+					<option id="variableError">Muuttujat</option>
+					<option id="fileError">Tiedostot</option>
+					<option id="codeBookError">Koodikirja</option>
+				</select>
+			</div>
+			<div class="popupRowHolder" id="fileNameErrorRow">
+				<label>Tiedosto</label>
+				<select>
+					<option>data.zip</option>
+					<option>fooBar.docx</option>
+				</select>
+			</div>
+			<div class="popupRowHolder">
+				<label>Selite</label>
+				<input type="text" />			
+			</div>
+			<div class="popupRowHolder">
+				<label>Pitkä selite</label>
+				<textarea cols="42" rows="5"></textarea>
+			</div>
+				<div class="popupRowHolder">
+				<label>Herätepäivämäärä</label>
+				<input type="text" class="datepicker"/>
+			</div>
+			<div class="popupRowHolder">
+				<label>Herätteen saaja</label>
+				<input type="text"/>
+			</div>
+			<div class="popupButtonsHolder">				
+				<input type="button" class="searchFormInput" value="Peruuta">
+				<input type="button" class="searchFormInput" value="OK">
+			</div>
+		
+		</div>	
+	</body>
+</html>

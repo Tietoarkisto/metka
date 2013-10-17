@@ -1,0 +1,99 @@
+<!DOCTYPE HTML>
+<html lang="fi">
+	<head>
+		<meta charset="utf-8">
+		<title>YHTEISKUNTATIETEELLINEN TIETOARKISTO - Metka</title>
+		<link rel="stylesheet" type="text/css" href="../stylesheets/styles.css">
+		<link rel="stylesheet" type="text/css" href="../stylesheets/jquery-ui.css">
+		<link rel="stylesheet" type="text/css" href="../stylesheets/jquery.fancybox.css">
+		<script src="../js/jquery-1.10.2.js"></script>
+  		<script src="../js/jquery-ui.js"></script>
+		<script src="../js/jquery.tablesorter.min.js"></script>
+		<script src="../js/jquery.dataTables.min.js"></script>
+		<script src="../js/jquery.fancybox.pack.js"></script>
+		<script src="../js/jquery.tablesorter.pager.js"></script>
+		<script src="../js/jquery.jstree.js"></script>
+		<script src="../js/custom.js"></script>
+		<script src="../js/jquery.dataTables.rowReordering.js"></script>
+	</head>
+	<body>
+		<header>
+			<div class="headerContainer">
+				<h1 id="logo" >
+					<a href="desktop.html" title="Työpöytä">Työpöytä</a>
+				</h1>	
+						
+				<nav>
+					<ul class="mainNavUl">
+						<li><a href="desktop.html">Työpöytä</a></li>
+						<li><a href="materialSearch.html">Aineistot</a></li>
+						<li><a href="publicationSearch.html">Julkaisut</a></li>
+						<li><a href="seriesSearch.html">Sarjat</a></li>	
+						<li><a href="settings.html" class="selected">Asetukset</a></li>						
+					</ul>
+					
+					<div style="clear:both;"></div>				
+				</nav>
+				<div class="searchContainer">
+					<a class="logoutLink" href="#logout">Kirjaudu ulos</a>
+					<form action="aineisto.html" class="quickSearchForm">
+						<input type="text" autocomplete="off" dir="ltr" class="searchInput" placeholder="Aineiston id-nro" />
+						<input type="submit" value="Hae" class="searchButton"/>
+					</form>					
+				</div>	
+			</div>
+			
+		</header>
+		
+			<div class="wrapper">
+
+				<div class="content">
+					<h1 class="pageTitle">Asetukset</h1>
+					<div class="searchFormContainer">
+						<div class="tabsContainer">
+							<div class="tabNavi">
+								<ul>
+									<li><a id="1" class="selected" href="#vocabulary">Sanastot</a></li>
+									<li><a id="2" href="#standardTexts">Vakiotekstit</a></li>
+									<li><a id="3" href="#userInfo">Käyttäjätiedot</a></li>
+									<li><a id="4" href="#mandatoryElements">Pakolliset elementit</a></li>
+								</ul>
+							</div>
+							<div class="tabs tab1">
+								<table id="vocabularyTable">
+									<thead>
+										<tr><th>Sanasto</th></tr>
+									</thead>
+									<tbody>
+										<tr><td><a href="dialogs/vocabularyDialog.html" class="fancyboxpopup fancybox.ajax" >Tieteenala</a></td></tr>
+										<tr><td><a href="dialogs/vocabularyDialog.html" class="fancyboxpopup fancybox.ajax" >Keruutapa</a></td></tr>
+										<tr><td><a href="dialogs/vocabularyDialog.html" class="fancyboxpopup fancybox.ajax" >Maa</a></td></tr>
+										<tr><td><a href="dialogs/vocabularyDialog.html" class="fancyboxpopup fancybox.ajax" >Havaintoyksiköt</a></td></tr>											
+									</tbody>
+								</table>
+							</div>
+							<div class="tabs tab2">
+								<table id="standardTextTable">
+									<thead>
+										<tr><th>Nimi</th><th>Kuvaus</th><th>Vakioteksti</th></tr>
+									</thead>
+									<tbody>
+										<tr><td><a href="dialogs/standardTextDialog.html" class="fancyboxpopup fancybox.ajax" >Copyright</a></td><td>Tekijänoikeusteksti</td><td>(C) Tässä on tekijänoikeusteksti..loren ipsum dolor sit amet</td></tr>
+										<tr><td><a href="dialogs/standardTextDialog.html" class="fancyboxpopup fancybox.ajax" >Vakioteksti2</a></td><td>Vakioteksti2</td><td>Vakioteksti2</td></tr>
+										<tr><td><a href="dialogs/standardTextDialog.html" class="fancyboxpopup fancybox.ajax" >Vakioteksti3</a></td><td>Vakioteksti3</td><td>Vakioteksti2</td></tr>
+									</tbody>
+								</table>
+							</div>
+							<div class="tabs tab3">
+							</div>
+							<div class="tabs tab4">
+							</div>
+						</div>
+					</div>
+				</div>
+					
+			</div>
+		<footer>
+		</footer>
+	</body>
+</html>
