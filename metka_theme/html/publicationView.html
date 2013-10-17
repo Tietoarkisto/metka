@@ -3,17 +3,18 @@
 	<head>
 		<meta charset="utf-8">
 		<title>YHTEISKUNTATIETEELLINEN TIETOARKISTO - Metka</title>
-		<link rel="stylesheet" type="text/css" href="stylesheets/styles.css">
-		<link rel="stylesheet" type="text/css" href="stylesheets/jquery-ui.css">
-		<link rel="stylesheet" type="text/css" href="stylesheets/jquery.fancybox.css">
-		<script src="js/jquery-1.10.2.js"></script>
-  		<script src="js/jquery-ui.js"></script>
-		<script src="js/jquery.tablesorter.min.js"></script>
-		<script src="js/custom.js"></script>
-		<script src="js/jquery.fancybox.pack.js"></script>
-		<script src="js/jquery.dataTables.min.js"></script>
-		<script src="js/jquery.dataTables.rowReordering.js"></script>
-		<script src="js/jquery.jstree.js"></script>
+		<link rel="stylesheet" type="text/css" href="../stylesheets/styles.css">
+		<link rel="stylesheet" type="text/css" href="../stylesheets/jquery-ui.css">
+		<link rel="stylesheet" type="text/css" href="../stylesheets/jquery.fancybox.css">
+		<script src="../js/jquery-1.10.2.js"></script>
+  		<script src="../js/jquery-ui.js"></script>
+		<script src="../js/jquery.tablesorter.min.js"></script>
+		<script src="../js/jquery.dataTables.min.js"></script>
+		<script src="../js/jquery.fancybox.pack.js"></script>
+		<script src="../js/jquery.tablesorter.pager.js"></script>
+		<script src="../js/jquery.jstree.js"></script>
+		<script src="../js/custom.js"></script>
+		<script src="../js/jquery.dataTables.rowReordering.js"></script>
 	</head>
 	<body>
 		<header>
@@ -81,10 +82,10 @@
 								<tr><th>Sukunimi</th><th>Etunimi</th><th></th></tr>
 							</thead>
 							<tbody>
-								<tr><td>Borg</td><td>Sami</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+								<tr><td>Borg</td><td>Sami</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
 							</tbody>
 						</table>	
-						<div class="publicationTableActionLinkHolder"><a href="attachPersonDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>						
+						<div class="publicationTableActionLinkHolder"><a href="dialogs/attachPersonPublicationDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>						
 					</div>
 					<div class="publicationRowContainer">
 						<div class="publicationRowTitle">Pysyvät tunnisteet</div>
@@ -93,11 +94,11 @@
 								<tr><th>Pysyvä tunniste</th><th>Tunnisteen tyyppi</th><th></th></tr>
 							</thead>
 							<tbody>
-								<tr><td>Doi</td><td>DOI</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
-								<tr><td>Urn</td><td>URN</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+								<tr><td>Doi</td><td>DOI</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+								<tr><td>Urn</td><td>URN</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
 							</tbody>
 						</table>	
-						<div class="publicationTableActionLinkHolder"><a href="attachIndentificationDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>						
+						<div class="publicationTableActionLinkHolder"><a href="dialogs/attachIndentificationDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>						
 					</div>		
 					<div class="publicationRowContainer">
 						<div class="publicationRowTitle">Liittyvät aineistot</div>
@@ -106,12 +107,12 @@
 								<tr><th>Aineiston numero</th><th>Aineiston nimi</th><th></th></tr>
 							</thead>
 							<tbody>
-								<tr class="publicationMaterialRow"><td>FSD1001</td><td>Puolueiden ajankohtaistutkimus 1974</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
-								<tr class="publicationMaterialRow"><td>FSD1002</td><td>Puolueiden ajankohtaistutkimus 1975</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
-								<tr class="publicationMaterialRow"><td>FSD1003</td><td>Puolueiden ajankohtaistutkimus 1976</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+								<tr class="publicationMaterialRow"><td>FSD1001</td><td>Puolueiden ajankohtaistutkimus 1974</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+								<tr class="publicationMaterialRow"><td>FSD1002</td><td>Puolueiden ajankohtaistutkimus 1975</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+								<tr class="publicationMaterialRow"><td>FSD1003</td><td>Puolueiden ajankohtaistutkimus 1976</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
 							</tbody>
 						</table>	
-						<div class="publicationTableActionLinkHolder"><a href="attachMaterialDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>						
+						<div class="publicationTableActionLinkHolder"><a href="dialogs/attachMaterialDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>						
 					</div>					
 					<div class="publicationRowContainer">
 						<div class="publicationRowTitle">Liittyvät sarjat</div>
@@ -120,11 +121,11 @@
 								<tr><th>Lyhenne</th><th>Sarjan nimi</th><th></th></tr>
 							</thead>
 							<tbody>
-								<tr class="publicationSeriesRow"><td>foo</td><td>fooBar</td><td><a href="#"><img title="Poista" src="images/cancel.png"/></a></td></tr>
+								<tr class="publicationSeriesRow"><td>foo</td><td>fooBar</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
 							</tbody>
 
 						</table>	
-						<div class="publicationTableActionLinkHolder"><a href="attachSeriesDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>						
+						<div class="publicationTableActionLinkHolder"><a href="dialogs/attachSeriesDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>						
 					</div>
 					
 					<div class="viewFormButtonsHolder" style="margin-bottom:20px;"><input type="button" class="searchFormInput doSearch" value="Tallenna" /></div>					
