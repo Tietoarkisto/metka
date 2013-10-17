@@ -1,0 +1,65 @@
+@import "global";
+
+.login{
+	margin: 50px auto;	
+	height: 300px;
+	width: 500px;
+	border: solid 1px #000;
+	background-color: $pageColorA;
+	border-radius: 10px;
+	box-shadow: 10px 10px 5px #888; 
+
+	.loginHeader{
+		background-color: $pageColorE;
+		text-align: center;
+		padding-top: 10px;
+		padding-bottom: 10px;
+		border: solid 1px $pageColorE;
+		border-radius: 9px 9px 0 0; 
+		
+		h1{
+			color: $pageColorA;
+		}
+	}
+	.loginBoxContainer{
+		padding:20px;
+
+		.loginHelperText{
+			margin: 10px 0 40px 0;
+		}
+		
+		.loginFormRowHolder label{
+			width: 150px;
+			display: block;
+			float: left;
+
+			.loginFormInput{
+				padding: 5px;
+				outline:none;
+				@include transition(0.25s);
+				@include radius(8px);
+				border:1px solid $pageColorD;
+
+				:focus {
+					@include boxShadow($pageColorE);
+				}
+			}
+
+			.loginFormSubmit{
+				float: right;
+				margin-right: 65px;
+				padding: 3px 10px;
+				@include transition(0.25s);
+				@include radius(3px);
+				border:1px solid $pageColorD;
+				cursor: pointer;
+
+				:focus{
+					box-shadow: 0 0 10px $pageColorE;
+					-webkit-box-shadow: 0 0 10px $pageColorE; 
+					-moz-box-shadow: 0 0 10px $pageColorE;
+				}
+			}
+		}
+	}
+}

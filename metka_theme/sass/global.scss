@@ -1,0 +1,25 @@
+$pageWidth: 960px;
+$pageColorA: #fff;
+$pageColorB: #009EE0;
+$pageColorC: #E1DFDC;
+$pageColorD: #4A4647;
+$pageColorE: #005993;
+
+
+@mixin boxShadow($color) {
+	box-shadow: 0 0 8px $color;
+	-webkit-box-shadow: 0 0 8px $color; 
+	-moz-box-shadow: 0 0 8px $color;
+}
+
+@mixin transition($duration) {
+	transition: all $duration ease-in-out;
+	-webkit-transition: all $duration ease-in-out;
+	-moz-transition: all $duration ease-in-out;
+}
+
+@mixin radius($pixels) {
+	border-radius: $pixels;
+	-webkit-border-radius: $pixels;
+	-moz-border-radius: $pixels;
+}
