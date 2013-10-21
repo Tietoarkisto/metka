@@ -296,7 +296,7 @@ $(document).ready(function(){
 				$(".selectedVariableId").attr("id", data.rslt.obj.attr("id"));
 				//$(".variablePrev").attr("id", );
 				//$(".variableNext").attr("id", );
-			});
+	});	
 	
 	$("#materialQualitySelect").on("change", function() {
 		var materialQuality = $(this).children(":selected").attr("id");

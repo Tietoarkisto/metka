@@ -1,1 +1,8 @@
-metka_theme/.sass_cache
+metka_theme/.sass_cache/**/*
+metka/target/**/*
+.classpath
+.project
+.settings
+.springBeans
+Servers
+.metadata
