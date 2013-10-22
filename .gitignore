@@ -1,4 +1,4 @@
-metka_theme/.sass_cache/**/*
+.sass-cache
 metka/target/**/*
 .classpath
 .project
