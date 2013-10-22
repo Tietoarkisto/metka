@@ -6,15 +6,18 @@
 		<link rel="stylesheet" type="text/css" href="../stylesheets/styles.css">
 		<link rel="stylesheet" type="text/css" href="../stylesheets/jquery-ui.css">
 		<link rel="stylesheet" type="text/css" href="../stylesheets/jquery.fancybox.css">
+		<link rel="stylesheet" type="text/css" href="../stylesheets/ui.fancytree.css">
 		<script src="../js/jquery-1.10.2.js"></script>
   		<script src="../js/jquery-ui.js"></script>
 		<script src="../js/jquery.tablesorter.min.js"></script>
 		<script src="../js/jquery.dataTables.min.js"></script>
 		<script src="../js/jquery.fancybox.pack.js"></script>
 		<script src="../js/jquery.tablesorter.pager.js"></script>
-		<script src="../js/jquery.jstree.js"></script>
 		<script src="../js/custom.js"></script>
 		<script src="../js/jquery.dataTables.rowReordering.js"></script>
+		<script src="../js/jquery.fancytree.js"></script>
+  		<script src="../js/jquery.fancytree.dnd.js" type="text/javascript"></script>
+  		<script src="../js/jquery.fancytree.filter.js" type="text/javascript"></script>
 	</head>
 	<body>
 		<header>
@@ -213,14 +216,14 @@
 					</div>
 					
 					<div class="viewFormButtonsHolder" style="margin-bottom:20px;">
-						<input type="button" id="startWorkingButton" class="searchFormInput doSearch" value="Varaa aineisto itsellesi" />
-						<input type="button" id="versionHistoryButton" class="searchFormInput doSearch" value="Versiohistoria">
+						<input type="button" id="startWorkingButton" class="searchFormInput" value="Varaa aineisto itsellesi" />
+						<input type="button" id="versionHistoryButton" class="searchFormInput" value="Versiohistoria">
 							<a style="display: hidden;" id="versionHistoryLink" href="dialogs/versionHistoryDialog.html" class="fancyboxpopup fancybox.ajax"></a>
 						</input>
-						<input type="button" id="approveChangesButton" class="searchFormInput doSearch" value="Hyväksy muutokset" >
+						<input type="button" id="approveChangesButton" class="searchFormInput" value="Hyväksy muutokset" >
 							<a style="display: hidden;" id="approveChangesLink" href="dialogs/confirmDialog.html" class="fancyboxpopup fancybox.ajax"></a>
 						</input>
-						<input type="button" id="saveAsDraftButton" class="searchFormInput doSearch" value="Tallenna Luonnoksena" />
+						<input type="button" id="saveAsDraftButton" class="searchFormInput" value="Tallenna Luonnoksena" />
 					</div>		
 				
 				</div>
@@ -337,87 +340,122 @@
 				
 				<!-- Variables -->
 				<div id="materialVariables" class="tabs2 tab5">
-					<div id="variablesTree">
+					
+					<div id="variablesTreeSelection">
+						<div class="variableTreeRadioSelect"><input type="radio" name="variableTreeType" id="basicVariableTree" checked autocomplete="off" />Perusnäkymä</div>
+						<div class="variableTreeRadioSelect"><input type="radio" name="variableTreeType" id="groupedVariableTree" autocomplete="off" />Ryhmitelty näkymä</div>
+					</div>
+
+					<div id="variablesTreeBasic" class="variablesTree">
+						<div id="variableFilter"><input name="variableFilter" placeholder="Filter..."></div>
+						<ul id="variablesListBasic">
+							<li id="var2.1b">[q1] Sukupuolenne?</li>
+							<li id="var2.2b">[q2] Oma poliittinen kiinnostus</li>
+							<li id="var2.3b">[q3_1] Vas./oik. oma sijoittuminen</li>
+							<li id="var2.4b">[q2] Ikä</li>
+							<li id="var2.5b">[q4_1] Vastaajan ammattiryhmä</li>
+							<li id="var2.6b">[q4_2] Jos vastaaja eläkeläinen, entinen ammattiryhmä</li>
+							<li id="var2.1c">[q1] Sukupuolenne?</li>
+							<li id="var2.2c">[q2] Oma poliittinen kiinnostus</li>
+							<li id="var2.3c">[q3_1] Vas./oik. oma sijoittuminen</li>
+							<li id="var2.4c">[q3] Onko vastaaja perheen päähenkilö</li>
+							<li id="var2.5c">[q4_1] Vastaajan ammattiryhmä</li>
+							<li id="var2.6c">[q4_2] Jos vastaaja eläkeläinen, entinen ammattiryhmä</li>
+						</ul>
+					</div>
+
+					<div id="variablesTreeGrouped" class="variablesTree">
+						<div id="newFolder"><input type="text" id="newFolderName"/><input type="button" id="addFolderButton" class="searchFormInput" value="Lisää ryhmä"/></div>
 						<ul id="variableList">
-							<li class="parentVariableGroup" id="root">
-								<a class="variableGroup" href="#">Muuttujat</a>
-								<ul>
-									<li class="parentVariableGroup" id="var1">
-										<a class="variableGroup" href="#">Parent1</a>
-										<ul class="childVariableGroupList">
-											<li class="childVariableGroup" id="var1.1">
-												<a class="variable" id="1.1" href="#">Child1</a>
-											</li>
-											<li class="childVariableGroup" id="var1.2">
-												<a class="variable" href="#">Child2</a>
-											</li>
-											<li class="childVariableGroup" id="var1.3">
-												<a class="variableGroup" href="#">Child3</a>
-												<ul class="childVariableGroupList">
-													<li class="childVariableGroup" id="var1.3.1">
-														<a class="variable" href="#">Child3.1</a>
-													</li>
-													<li class="childVariableGroup" id="var1.3.2">
-														<a class="variable" href="#">Child3.2</a>
-													</li>
-												</ul>
-											</li>
-										</ul>
-									</li>
-									<li class="parentVariableGroup" id="var2">
-										<a class="variableGroup" href="#">Parent2</a>
-										<ul class="childVariableGroupList">
-											<li class="childVariableGroup" id="var2.1" >
-												<a class="variable" href="#">Child1</a>
-											</li>
-											<li class="childVariableGroup" id="var2.2">
-												<a class="variable" href="#">Child2</a>
-											</li>
-											<li class="childVariableGroup" id="var2.3">
-												<a class="variable" href="#">Child3</a>
-											</li>
-											<li class="childVariableGroup" id="var2.4">
-												<a class="variable" href="#">Child4</a>
-											</li>
-											<li class="childVariableGroup" id="var2.5">
-												<a class="variable" href="#">Child5</a>
-											</li>
-											<li class="childVariableGroup" id="var2.6">
-												<a class="variable" href="#">Child6</a>
-											</li>
-										</ul>
-									</li>
-									<li class="parentVariableGroup" id="var3">
-										<a class="variableGroup" href="#">Parent3</a>
-										<ul class="childVariableGroupList">
-											<li class="childVariableGroup" id="var3.1">
-												<a class="variable" href="#">Child1</a>
-											</li>
-										</ul>
-									</li>
-									<li class="parentVariableGroup" id="var4">
-										<a class="variableGroup" href="#">Parent4</a>
-										<ul class="childVariableGroupList">
-											<li class="childVariableGroup" id="var4.1">
-												<a class="variable" href="#">Child1</a>
-											</li>
-											<li class="childVariableGroup" id="var4.2">
-												<a class="variable" href="#">Child2</a>
-											</li>
-										</ul>
-									</li>
+							<li class="parentVariableGroup folder" id="var1">Nyt pyytäisin Teitä vertailemaan eräiden ominaisuuksien suht...
+								<ul class="childVariableGroupList">
+									<li id="var1.1">[q1] Sukupuolenne?</li>
+									<li id="var1.2">[q2] Oma poliittinen kiinnostus</li>
+									<li id="var1.3">[q2] Ikä</li>
+								</ul>
+							</li>
+							<li class="parentVariableGroup folder" id="var2g">Onko olemassa jokin tai joitakin asioita, joista Te itse olette...
+								<ul class="childVariableGroupList">
+									<li id="var2.1">[q1] Sukupuolenne?</li>
+									<li id="var2.2">[q2] Oma poliittinen kiinnostus</li>
+									<li id="var2.3">[q3_1] Vas./oik. oma sijoittuminen</li>
+									<li id="var2.4">[q3] Onko vastaaja perheen päähenkilö</li>
+									<li id="var2.5">[q4_1] Vastaajan ammattiryhmä</li>
+									<li id="var2.6">[q4_2] Jos vastaaja eläkeläinen, entinen ammattiryhmä</li>
+								</ul>
+							</li>
+							<li class="parentVariableGroup folder" id="var3">Kuinka paljon seurasitte eduskuntavaaleja eri tiedotusvälineistä?
+								<ul class="childVariableGroupList">
+									<li id="var3.1">[q1] Sukupuolenne?</li>
+								</ul>
+							</li>
+							<li class="parentVariableGroup folder" id="var4">Entä jos ajattelemme edellisessä presidentinvaaleissa ehdok...
+								<ul class="childVariableGroupList">
+									<li id="var4.1">[q1] Sukupuolenne?</li>
+									<li id="var4.2">[q2] Oma poliittinen kiinnostus</li>
 								</ul>
 							</li>
 						</ul>
 					</div>
+
 					<div id="variablesData">
-						<div id="" class="variablePrev"></div>
-						<div id="" class="variableNext"></div>
-						<div id="" class="selectedVariableId" style="display: none;"></div>
+						
 						<div id="variableDataContent">
-							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec congue lobortis sem, et sagittis libero. Suspendisse a neque tempor, placerat lacus sed, ornare nisl. Nullam nec lorem leo. Donec tincidunt justo odio, dignissim rutrum mi egestas a. Nam id porttitor erat. Donec metus augue, sagittis id leo sed, pellentesque porta risus. Quisque ac bibendum nunc. Etiam viverra, justo eu tincidunt interdum, eros ligula tempus risus, nec viverra elit justo quis turpis.</p>							
-							<br/>
-							<p>Nullam non tempor enim. Curabitur porttitor, mauris non viverra euismod, leo lorem lobortis massa, vitae ultricies mauris massa nec ligula. Donec quis elit ut augue vehicula viverra et in tellus. Cras rhoncus molestie nibh. Nunc dapi</p>
+							<div id="variablesPrevNextContainer"><h1 class="prev"><</h1><h1 class="next">></h1></div>
+							<div class="variableDataTable">
+								<table>
+									<thead>
+										<tr><th class="variableName"></th><th class="variableContent"></th></tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>Muuttuja</td>
+											<td><input type="text" id="var2" value="[q2] Oma poliittinen kiinnostus"/></td>
+										</tr>
+										<tr>
+											<td>Kysymysteksti</td>
+											<td><input type="text" value="Kuinka paljon politiikka Teitä kiinnostaa? Oletteko hyvin kiinnostunut, jonkin verran kiinnostunut, vain vähän kiinnostunut vai ei ollenkaan kiinnostunut?"/></td>
+										</tr>
+										<tr>
+											<td>Esiteksti</td>
+											<td><input type="text" value="Aluksi muutama Teitä ja kotitalouttanne koskeva kysymys: Rengastakaa mielestänne sopivinta vaihtoehtoa vastaava numero tai kirjoittakaa vastauksenne sille varattuun tilaan."/></td>
+										</tr>
+										<tr>
+											<td>Jälkiteksti</td>
+											<td><input type="text" value="Seuraavaksi muutama yhteiskuntaa yleisesti koskeva kysymys:"/></td>
+										</tr>
+										<tr>
+											<td>Haastattelijan ohje</td>
+											<td><input type="text" value="Valitse näistä sopivin vaihtoehto"/></td>
+										</tr>
+										<tr>
+											<td>Vaihtoehdot</td>
+											<td>
+												<input type="text" value="Hyvin kiinnostunut"/><br/>
+												<input type="text" value="Jonkin verran kiinnostunut"/><br/>
+												<input type="text" value="Vain vähän kiinnostunut"/><br/>
+												<input type="text" value="Ei ollenkaan kiinnostunut"/><br/>
+												<input type="text" value="Ei osaa sanoa"/><br/>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div id="variableGroupDataContent">
+							<div id="variablesPrevNextContainer"><h1 class="prev"><</h1><h1 class="next">></h1></div>
+							<div class="variableDataTable">
+								<table>
+									<thead>
+										<tr><th class="variableName"></th><th class="variableContent"></th></tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td id="variableGroupName">Ryhmän nimi</td>
+											<td><textarea cols="50" rows="5"></textarea></td>
+									</tbody>
+								</table>
+							</div>
 						</div>
 					</div>
 				</div>							

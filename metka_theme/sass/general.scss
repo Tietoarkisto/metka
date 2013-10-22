@@ -216,3 +216,18 @@ table.tablesorter {
 		}
 	}
 }
+
+// RENAME 
+.searchFormInput{
+	padding: 5px;
+	outline:none;
+	@include transition(0.25s);
+	background-color: $pageColorB;
+	color: $pageColorA;
+	border:1px solid $pageColorB;
+	cursor: pointer;
+	
+	:focus {
+		@include boxShadow($pageColorE);
+	}
+}
