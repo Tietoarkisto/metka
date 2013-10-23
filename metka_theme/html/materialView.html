@@ -6,15 +6,18 @@
 		<link rel="stylesheet" type="text/css" href="../stylesheets/styles.css">
 		<link rel="stylesheet" type="text/css" href="../stylesheets/jquery-ui.css">
 		<link rel="stylesheet" type="text/css" href="../stylesheets/jquery.fancybox.css">
+		<link rel="stylesheet" type="text/css" href="../stylesheets/ui.fancytree.css">
 		<script src="../js/jquery-1.10.2.js"></script>
   		<script src="../js/jquery-ui.js"></script>
 		<script src="../js/jquery.tablesorter.min.js"></script>
 		<script src="../js/jquery.dataTables.min.js"></script>
 		<script src="../js/jquery.fancybox.pack.js"></script>
 		<script src="../js/jquery.tablesorter.pager.js"></script>
-		<script src="../js/jquery.jstree.js"></script>
 		<script src="../js/custom.js"></script>
 		<script src="../js/jquery.dataTables.rowReordering.js"></script>
+		<script src="../js/jquery.fancytree.js"></script>
+  		<script src="../js/jquery.fancytree.dnd.js" type="text/javascript"></script>
+  		<script src="../js/jquery.fancytree.filter.js" type="text/javascript"></script>
 	</head>
 	<body>
 		<header>
@@ -58,13 +61,13 @@
 					<div class="materialTabNavi">
 						<ul>
 							<li><a id="1" class="selected" href="#general">Perustiedot</a></li>
-							<li><a id="2" href="#binders">Mapit</a></li>
-							<li><a id="3" href="#filing">Arkistointisopimus</a></li>
-							<li><a id="4" href="#studylevel">Studylevel</a></li>
-							<li><a id="5" href="#variables">Muuttujat</a></li>
-							<li><a id="6" href="#files">Tiedostojen hallinta</a></li>
-							<li><a id="7" href="#codebook">Koodikirja</a></li>
-							<li><a id="8" href="#errors">Virheet</a></li>
+							<li><a id="2" href="#filing">Arkistointisopimus</a></li>
+							<li><a id="3" href="#studylevel">Kuvailu</a></li>
+							<li><a id="4" href="#variables">Muuttujat</a></li>
+							<li><a id="5" href="#files">Tiedostojen hallinta</a></li>
+							<li><a id="6" href="#codebook">Koodikirja</a></li>
+							<li><a id="7" href="#errors">Virheet</a></li>
+							<li><a id="8" href="#packages">Paketointi</a></li>
 						</ul>
 					</div>						
 					<!--<h1 class="next">></h1><h1 class="prev"><</h1>-->
@@ -101,12 +104,12 @@
 						</div>
 						<div class="materialRowContainer">
 							<div class="materialDataSetContainer">
-								<label id="materiaMefFin" >Mef julkinen (fin)</label>
-								<input readonly="readonly" type="text" name="valmispvm"/>
+								<label id="materiaMefFin" >Mef julkaisupvm (fin)</label>
+								<input readonly="readonly" type="text" name="valmispvm" value="12.10.2013"/>
 							</div>
 							<div class="materialDataSetContainer">
-								<label id="materialMefEng" >Mef julkinen (eng)</label>
-								<input readonly="readonly" type="text" class="" name="valmispvm"/>
+								<label id="materialMefEng" >Mef julkaisupvm (eng)</label>
+								<input readonly="readonly" type="text" name="valmispvm" value="13.10.2013"/>
 							</div>
 							<div class="materialDataSetContainer">
 								<label id="materialFilingCategory" class="required">Arkistointikategoria</label>
@@ -211,36 +214,35 @@
 						</table>
 						<div class="materialTableActionLinkHolder"><a href="dialogs/attachMaterialDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>					
 					</div>
+					<div class="materialRowContainer">
+						<div class="materialRowTitle">Liittyvät mapit</div>
+						<table class="tablesorter sortableTable" id="materialBinderTable">
+							<thead>
+								<tr><th>Mappinumero</th><th>Mapin kuvaus</th><th></th></tr>
+							</thead>
+							<tbody>
+								<tr><td>1290</td><td>Mappi, jossa tavanomaisia aineistoja</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+								<tr><td>1291</td><td>Lisämappi</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+							</tbody>
+						</table>	
+						<div class="materialTableActionLinkHolder"><a href="dialogs/attachBinderDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>
+					</div>
 					
 					<div class="viewFormButtonsHolder" style="margin-bottom:20px;">
-						<input type="button" id="startWorkingButton" class="searchFormInput doSearch" value="Varaa aineisto itsellesi" />
-						<input type="button" id="versionHistoryButton" class="searchFormInput doSearch" value="Versiohistoria">
+						<input type="button" id="startWorkingButton" class="searchFormInput" value="Varaa aineisto itsellesi" />
+						<input type="button" id="versionHistoryButton" class="searchFormInput" value="Versiohistoria">
 							<a style="display: hidden;" id="versionHistoryLink" href="dialogs/versionHistoryDialog.html" class="fancyboxpopup fancybox.ajax"></a>
 						</input>
-						<input type="button" id="approveChangesButton" class="searchFormInput doSearch" value="Hyväksy muutokset" >
+						<input type="button" id="approveChangesButton" class="searchFormInput" value="Hyväksy muutokset" >
 							<a style="display: hidden;" id="approveChangesLink" href="dialogs/confirmDialog.html" class="fancyboxpopup fancybox.ajax"></a>
 						</input>
-						<input type="button" id="saveAsDraftButton" class="searchFormInput doSearch" value="Tallenna Luonnoksena" />
+						<input type="button" id="saveAsDraftButton" class="searchFormInput" value="Tallenna Luonnoksena" />
 					</div>		
 				
 				</div>
 
-				<!-- Binder -->
-				<div id="materialBinders" class="tabs2 tab2">
-					<table class="tablesorter sortableTable" id="materialBinderTable">
-						<thead>
-							<tr><th>Mappinumero</th><th>Mapin kuvaus</th><th></th></tr>
-						</thead>
-						<tbody>
-							<tr><td>1290</td><td>Mappi, jossa tavanomaisia aineistoja</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-							<tr><td>1291</td><td>Lisämappi</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-						</tbody>
-					</table>	
-					<div class="materialTableActionLinkHolder"><a href="dialogs/attachBinderDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>
-				</div>
-
 				<!-- Filing Contract -->
-				<div id="materialFilingContract" class="tabs2 tab3">
+				<div id="materialFilingContract" class="tabs2 tab2">
 					<div class="materialUpperContainer">
 						<div class="materialRowContainer">
 							<div class="materialDataSetContainer"><label>Ehto 1: käyttöoikeus</label>
@@ -281,6 +283,10 @@
                            </div>
                            <div class="materialDataSetTextareaContainer">
                                 <label>Menettely, jos luvanantajaa ei tavoiteta tai hän ei itse voi antaa lupaa</label><textarea></textarea>
+                           </div>      
+
+                           <div class="materialDataSetTextareaContainer">
+                                <label>Erityisehdot</label><textarea></textarea>
                            </div>        
 						</div>
 
@@ -303,18 +309,40 @@
 				</div>
 
 				<!-- Studylevel -->
-				<div id="materialStudyLevel" class="tabs2 tab4">
-					<div class="materialRowContainer">
-						<div class="materialDataSetContainerTopRow"><label>Lorem1 ipsum dolor sit amet</label><input type="text" value="" name="materialName" /></div>
-					</div>
-					<div class="materialRowContainer">
-						<div class="materialDataSetContainerTopRow"><label>Vivamus a ante laoreet</label><input type="text" name="materialnNameEn" /></div>
-					</div>
-					<div class="materialRowContainer">
-						<div class="materialDataSetContainerTopRow"><label>Maecenas elit elit,</label><input type="text" value="" name="materialName" /></div>
-					</div>
-					<div class="materialRowContainer">						
-						<div class="materialDataSetContainerTopRow"><label>Maecenas elementum </label><input type="text" name="materialnNimiEng" /></div>
+				<div id="materialStudyLevel" class="tabs2 tab3">
+					<div id="studyLevelData">
+						<label class="studyLevelTitle">Perustiedot (docDscr/citation/titlStmt + docDscr/citation/prodStmt/verStmt)</label>
+						<div>
+							
+						</div>
+						<label class="studyLevelTitle">Kuvailutiedot (stdyDscr/citation/rspStmt)</label>
+						<div>
+						
+						</div>
+						<label class="studyLevelTitle">Tuottajatiedot (stdyDscr/citation/prodStmt)</label>
+						<div>
+							
+						</div>
+						<label class="studyLevelTitle">stdyDscr/stdyInfo/subject, stdyDscr/stdyInfo/abstract</label>
+						<div>
+							
+						</div>
+						<label class="studyLevelTitle">stdyDscr/stdyInfo/sumDscr</label>
+						<div>
+
+						</div>
+						<label class="studyLevelTitle">stdyDscr/method/dataColl, stdyDscr/method/anlyInfo</label>
+						<div>
+
+						</div>
+						<label class="studyLevelTitle">stdyDscr/dataAccs/setAvail, stdyDscr/dataAccs/useStmt, stdyDscr/dataAccs/notes, stdyDscr/othrStdyMat, otherMat</label>
+						<div>
+
+						</div>
+						<label class="studyLevelTitle">Tekijät (siirretään tänne?)</label>
+						<div>
+
+						</div>
 					</div>
 					
 					<div class="materialRowContainer">
@@ -336,94 +364,135 @@
 				</div>
 				
 				<!-- Variables -->
-				<div id="materialVariables" class="tabs2 tab5">
-					<div id="variablesTree">
+				<div id="materialVariables" class="tabs2 tab4">
+					
+					<div id="variablesTreeSelection">
+						<div class="variableTreeRadioSelect"><input type="radio" name="variableTreeType" id="basicVariableTree" checked autocomplete="off" />Perusnäkymä</div>
+						<div class="variableTreeRadioSelect"><input type="radio" name="variableTreeType" id="groupedVariableTree" autocomplete="off" />Ryhmitelty näkymä</div>in
+						<div class="variableTreeRadioSelect"><input type="radio" name="variableTreeType" id="groupingtrvl" autocomplete="off" />Muuttujien ryhmittely</div>
+					</div>
+
+					<div id="variablesTreeBasic" class="variablesTree">
+						<div id="variableFilter"><input name="variableFilter" placeholder="Filter..."></div>
+						<ul id="variablesListBasic">
+							<li id="var2.1b">[q1] Sukupuolenne?</li>
+							<li id="var2.2b">[q2] Oma poliittinen kiinnostus</li>
+							<li id="var2.3b">[q3_1] Vas./oik. oma sijoittuminen</li>
+							<li id="var2.4b">[q2] Ikä</li>
+							<li id="var2.5b">[q4_1] Vastaajan ammattiryhmä</li>
+							<li id="var2.6b">[q4_2] Jos vastaaja eläkeläinen, entinen ammattiryhmä</li>
+							<li id="var2.1c">[q1] Sukupuolenne?</li>
+							<li id="var2.2c">[q2] Oma poliittinen kiinnostus</li>
+							<li id="var2.3c">[q3_1] Vas./oik. oma sijoittuminen</li>
+							<li id="var2.4c">[q3] Onko vastaaja perheen päähenkilö</li>
+							<li id="var2.5c">[q4_1] Vastaajan ammattiryhmä</li>
+							<li id="var2.6c">[q4_2] Jos vastaaja eläkeläinen, entinen ammattiryhmä</li>
+						</ul>
+					</div>
+
+					<div id="variablesTreeGrouped" class="variablesTree">
+						<div id="newFolder"><input type="text" id="newFolderName"/><input type="button" id="addFolderButton" class="searchFormInput" value="Lisää ryhmä"/></div>
 						<ul id="variableList">
-							<li class="parentVariableGroup" id="root">
-								<a class="variableGroup" href="#">Muuttujat</a>
-								<ul>
-									<li class="parentVariableGroup" id="var1">
-										<a class="variableGroup" href="#">Parent1</a>
-										<ul class="childVariableGroupList">
-											<li class="childVariableGroup" id="var1.1">
-												<a class="variable" id="1.1" href="#">Child1</a>
-											</li>
-											<li class="childVariableGroup" id="var1.2">
-												<a class="variable" href="#">Child2</a>
-											</li>
-											<li class="childVariableGroup" id="var1.3">
-												<a class="variableGroup" href="#">Child3</a>
-												<ul class="childVariableGroupList">
-													<li class="childVariableGroup" id="var1.3.1">
-														<a class="variable" href="#">Child3.1</a>
-													</li>
-													<li class="childVariableGroup" id="var1.3.2">
-														<a class="variable" href="#">Child3.2</a>
-													</li>
-												</ul>
-											</li>
-										</ul>
-									</li>
-									<li class="parentVariableGroup" id="var2">
-										<a class="variableGroup" href="#">Parent2</a>
-										<ul class="childVariableGroupList">
-											<li class="childVariableGroup" id="var2.1" >
-												<a class="variable" href="#">Child1</a>
-											</li>
-											<li class="childVariableGroup" id="var2.2">
-												<a class="variable" href="#">Child2</a>
-											</li>
-											<li class="childVariableGroup" id="var2.3">
-												<a class="variable" href="#">Child3</a>
-											</li>
-											<li class="childVariableGroup" id="var2.4">
-												<a class="variable" href="#">Child4</a>
-											</li>
-											<li class="childVariableGroup" id="var2.5">
-												<a class="variable" href="#">Child5</a>
-											</li>
-											<li class="childVariableGroup" id="var2.6">
-												<a class="variable" href="#">Child6</a>
-											</li>
-										</ul>
-									</li>
-									<li class="parentVariableGroup" id="var3">
-										<a class="variableGroup" href="#">Parent3</a>
-										<ul class="childVariableGroupList">
-											<li class="childVariableGroup" id="var3.1">
-												<a class="variable" href="#">Child1</a>
-											</li>
-										</ul>
-									</li>
-									<li class="parentVariableGroup" id="var4">
-										<a class="variableGroup" href="#">Parent4</a>
-										<ul class="childVariableGroupList">
-											<li class="childVariableGroup" id="var4.1">
-												<a class="variable" href="#">Child1</a>
-											</li>
-											<li class="childVariableGroup" id="var4.2">
-												<a class="variable" href="#">Child2</a>
-											</li>
-										</ul>
-									</li>
+							<li class="parentVariableGroup folder" id="var1">Nyt pyytäisin Teitä vertailemaan eräiden ominaisuuksien suht...
+								<ul class="childVariableGroupList">
+									<li id="var1.1">[q1] Sukupuolenne?</li>
+									<li id="var1.2">[q2] Oma poliittinen kiinnostus</li>
+									<li id="var1.3">[q2] Ikä</li>
+								</ul>
+							</li>
+							<li class="parentVariableGroup folder" id="var2g">Onko olemassa jokin tai joitakin asioita, joista Te itse olette...
+								<ul class="childVariableGroupList">
+									<li id="var2.1">[q1] Sukupuolenne?</li>
+									<li id="var2.2">[q2] Oma poliittinen kiinnostus</li>
+									<li id="var2.3">[q3_1] Vas./oik. oma sijoittuminen</li>
+									<li id="var2.4">[q3] Onko vastaaja perheen päähenkilö</li>
+									<li id="var2.5">[q4_1] Vastaajan ammattiryhmä</li>
+									<li id="var2.6">[q4_2] Jos vastaaja eläkeläinen, entinen ammattiryhmä</li>
+								</ul>
+							</li>
+							<li class="parentVariableGroup folder" id="var3">Kuinka paljon seurasitte eduskuntavaaleja eri tiedotusvälineistä?
+								<ul class="childVariableGroupList">
+									<li id="var3.1">[q1] Sukupuolenne?</li>
+								</ul>
+							</li>
+							<li class="parentVariableGroup folder" id="var4">Entä jos ajattelemme edellisessä presidentinvaaleissa ehdok...
+								<ul class="childVariableGroupList">
+									<li id="var4.1">[q1] Sukupuolenne?</li>
+									<li id="var4.2">[q2] Oma poliittinen kiinnostus</li>
 								</ul>
 							</li>
 						</ul>
 					</div>
+
 					<div id="variablesData">
-						<div id="" class="variablePrev"></div>
-						<div id="" class="variableNext"></div>
-						<div id="" class="selectedVariableId" style="display: none;"></div>
+						
 						<div id="variableDataContent">
-							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec congue lobortis sem, et sagittis libero. Suspendisse a neque tempor, placerat lacus sed, ornare nisl. Nullam nec lorem leo. Donec tincidunt justo odio, dignissim rutrum mi egestas a. Nam id porttitor erat. Donec metus augue, sagittis id leo sed, pellentesque porta risus. Quisque ac bibendum nunc. Etiam viverra, justo eu tincidunt interdum, eros ligula tempus risus, nec viverra elit justo quis turpis.</p>							
-							<br/>
-							<p>Nullam non tempor enim. Curabitur porttitor, mauris non viverra euismod, leo lorem lobortis massa, vitae ultricies mauris massa nec ligula. Donec quis elit ut augue vehicula viverra et in tellus. Cras rhoncus molestie nibh. Nunc dapi</p>
+							<div id="variablesPrevNextContainer"><h1 class="prev"><</h1><h1 class="next">></h1></div>
+							<div class="variableDataTable">
+								<table>
+									<thead>
+										<tr><th class="variableName"></th><th class="variableContent"></th></tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>Muuttuja</td>
+											<td><input type="text" id="var" value="[q2] Oma poliittinen kiinnostus"/></td>
+										</tr>
+										<tr>
+											<td>Kysymysteksti</td>
+											<td><input type="text" value="Kuinka paljon politiikka Teitä kiinnostaa? Oletteko hyvin kiinnostunut, jonkin verran kiinnostunut, vain vähän kiinnostunut vai ei ollenkaan kiinnostunut?"/></td>
+										</tr>
+										<tr>
+											<td>Esiteksti</td>
+											<td><input type="text" value="Aluksi muutama Teitä ja kotitalouttanne koskeva kysymys: Rengastakaa mielestänne sopivinta vaihtoehtoa vastaava numero tai kirjoittakaa vastauksenne sille varattuun tilaan."/></td>
+										</tr>
+										<tr>
+											<td>Jälkiteksti</td>
+											<td><input type="text" value="Seuraavaksi muutama yhteiskuntaa yleisesti koskeva kysymys:"/></td>
+										</tr>
+										<tr>
+											<td>Haastattelijan ohje</td>
+											<td><input type="text" value="Valitse näistä sopivin vaihtoehto"/></td>
+										</tr>
+										<tr>
+											<td>Vaihtoehdot</td>
+											<td>
+												<input type="text" value="Hyvin kiinnostunut"/><br/>
+												<input type="text" value="Jonkin verran kiinnostunut"/><br/>
+												<input type="text" value="Vain vähän kiinnostunut"/><br/>
+												<input type="text" value="Ei ollenkaan kiinnostunut"/><br/>
+												<input type="text" value="Ei osaa sanoa"/><br/>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<div id="translations">
+									<img class="translationFlag" id="translationFlagFi" src="../images/fi.png"/>
+									<img class="translationFlag" id="translationFlagSe" src="../images/se.png"/>
+									<img class="translationFlag" id="translationFlagEn" src="../images/gb.png"/>
+								</div>
+							</div>
+						</div>
+						<div id="variableGroupDataContent">
+							<div id="variablesPrevNextContainer"><h1 class="prev"><</h1><h1 class="next">></h1></div>
+							<div class="variableDataTable">
+								<table>
+									<thead>
+										<tr><th class="variableName"></th><th class="variableContent"></th></tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td id="variableGroupName">Ryhmän nimi</td>
+											<td><textarea cols="50" rows="5"></textarea></td>
+									</tbody>
+								</table>
+							</div>
 						</div>
 					</div>
 				</div>							
 				
 				<!-- File handling -->
-				<div id="materialFiles" class="tabs2 tab6">
+				<div id="materialFiles" class="tabs2 tab5">
 					
 					<div class="materialRowTitle">Liitetyt tiedostot</div>
 					<table class="tablesorter sortableTable" id="materialFileTable">
@@ -482,9 +551,9 @@
 				</div>
 			
 				<!-- Codebook -->
-				<div id="materialCodebook" class="tabs2 tab7">
+				<div id="materialCodebook" class="tabs2 tab6">
 					
-					<div class="materialRowTitle">Tiedostot</div>
+					<div class="materialRowTitle">Koodikirjan liitteet</div>
 					<table class="tablesorter" id="materialCodebookFileTable">
 						<thead>
 							<tr><th>Tiedoston nimi</th><th>Kieli</th><th>Kuvaus</th><th>PVM</th><th>Tallentaja</th><th></th></tr>
@@ -506,7 +575,7 @@
 				</div>	
 				
 				<!-- Errors -->
-				<div id="materialErrors" class="tabs2 tab8">
+				<div id="materialErrors" class="tabs2 tab7">
 					<table class="tablesorter sortableTable" id="materialErrorsTable">
 						<thead>
 							<tr><th>PVM</th><th>Merkitsijä</th><th>Aineiston osa</th><th>Selite</th><th>Pisteet</th><th>Merkitse tehdyksi</th></tr>
@@ -556,6 +625,21 @@
 					</div>
 				</div>	
 				
+
+				<!-- Packaging -->
+				<div id="materialBinders" class="tabs2 tab8">
+					<table class="tablesorter sortableTable" id="materialBinderTable">
+						<thead>
+							<tr><th>Mappinumero</th><th>Mapin kuvaus</th><th></th></tr>
+						</thead>
+						<tbody>
+							<tr><td>1290</td><td>Mappi, jossa tavanomaisia aineistoja</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+							<tr><td>1291</td><td>Lisämappi</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+						</tbody>
+					</table>	
+					<div class="materialTableActionLinkHolder"><a href="dialogs/attachBinderDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>
+				</div>
+
 <!-- 				<div id="materialFormButtons">
 					
 				</div> -->

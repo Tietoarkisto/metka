@@ -11,7 +11,6 @@
 		<script src="../js/jquery.dataTables.min.js"></script>
 		<script src="../js/jquery.fancybox.pack.js"></script>
 		<script src="../js/jquery.tablesorter.pager.js"></script>
-		<script src="../js/jquery.jstree.js"></script>
 		<script src="../js/custom.js"></script>
 		<script src="../js/jquery.dataTables.rowReordering.js"></script>
 	</head>
@@ -51,26 +50,23 @@
 					<div class="seriesUpperContainer">
 						<div class="prevNextContainer"><h1 class="prev"><</h1><h1 class="next">></h1></div>				
 						<div class="seriesRowContainer">
-							<div class="seriesDataSetContainer"><label>Sarjan numero</label><input type="text" value="16" name="aineistonNimi" /></div>
+							<div class="seriesDataSetContainer"><label>Sarjan numero</label><input type="text" value="16" name="seriesNumber" /></div>
 						</div>						
 						<div class="seriesRowContainer">							
-							<div class="seriesDataSetContainer"><label>Sarjan lyhenne</label><input type="text" name="aineistonNimiEng" /></div>
+							<div class="seriesDataSetContainer"><label>Sarjan lyhenne</label><input type="text" name="seriesAbbr" /></div>
 						</div>
 						<div class="seriesRowContainer">
-							<div class="seriesDataSetContainer"><label>Kieli</label><select><option></option></select></div>
-						</div>
-						<div class="seriesRowContainer">
-							<div class="seriesDataSetContainer"><label>Sarjan nimi</label><input type="text" name="aineistonNimiEng" /></div>
-						</div>
-						<div class="seriesRowContainer">
-							<div class="seriesDataSetContainer"><label>Sarjan URL</label><input type="text" name="aineistonNimiEng" /></div>
+							<div class="seriesDataSetContainer"><label>Sarjan nimi</label><input type="text" name="seriesName" /></div>
 						</div>
 						<div class="seriesRowContainer">							
-							<div class="seriesDataSetContainer"><label>Sarjan kuvaus</label><textarea></textarea></div>
+							<div class="seriesDataSetContainer"><label>Sarjan kuvaus</label><textarea name="seriesDescr"></textarea></div>
 						</div>		
 					</div>
 
-					<div class="viewFormButtonsHolder" style="margin-bottom:20px;width: 630px;"><input type="button" class="searchFormInput doSearch" value="Tallenna" /></div>			
+					<div class="viewFormButtonsHolder" style="margin-bottom:20px;width: 630px;">
+						<input type="button" class="searchFormInput" value="Poista" />
+						<input type="button" class="searchFormInput" value="Tallenna" />
+					</div>
 				</div>												
 			</div>
 		<footer>

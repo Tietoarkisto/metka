@@ -1,4 +1,4 @@
-#fileNameErrorRow, #materialFileInfoRow, #materialCodebookRow, #materialErrorInfoRow {
+#fileNameErrorRow, #materialFileInfoRow, #materialCodebookRow, #materialErrorInfoRow, #variablesTreeGrouped, #variableDataContent, #variablesData, #variableGroupDataContent {
   display: none;
 }
 
@@ -121,15 +121,11 @@
 }
 
 /* Myöhemmin turha, kun studylevel-kunnossa */
-.tab4 .materialDataSetContainerTopRow label {
-  display: block;
-  float: left;
-  margin-bottom: 20px;
-  width: 250px;
-  margin-left: 10px;
+#materialStudyLevel #studyLevelData {
+  padding: 10px;
 }
-.tab4 .materialDataSetContainerTopRow input {
-  padding: 5px;
+#materialStudyLevel label {
+  font-size: 15px;
 }
 
 .prevNextContainer {
@@ -156,11 +152,35 @@
   cursor: pointer;
 }
 
+#variablesPrevNextContainer {
+  display: inline;
+  float: top;
+  margin-bottom: 0px;
+  margin-right: 0px;
+}
+#variablesPrevNextContainer h1.prev {
+  font-size: 12px;
+  float: left;
+  background: #009ee0;
+  color: white;
+  padding: 5px;
+  cursor: pointer;
+}
+#variablesPrevNextContainer h1.next {
+  font-size: 12px;
+  float: right;
+  background: #009ee0;
+  color: white;
+  padding: 5px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
 /* naming */
 .materialPrevNextContainer {
   display: inline-block;
   float: right;
-  margin-bottom: 20px;
+  margin-bottom: 0px;
   margin-right: 20px;
   width: 900px;
 }
@@ -218,20 +238,58 @@
 #materialVariables {
   position: relative;
 }
-
-#variablesTree {
-  padding: 10px 10px 10px 20px;
-  position: absolute;
+#materialVariables #variablesTreeSelection {
+  text-align: center;
+}
+#materialVariables #variablesTreeSelection .variableTreeRadioSelect {
   top: 0;
+  display: inline-block;
+  padding-bottom: 20px;
+  padding-right: 20px;
+}
+#materialVariables .variablesTree {
+  position: absolute;
+  top: 40;
   left: 0;
+  width: 420px;
+  font-size: 12px;
+  min-height: 400px;
+}
+#materialVariables #variablesTreeGrouped #newFolder {
+  padding-left: 10px;
+}
+#materialVariables #variablesTreeGrouped #newFolderName {
+  width: 150px;
+}
+#materialVariables #variablesTreeBasic #variableFilter {
+  padding-left: 20px;
+}
+#materialVariables #variablesData {
+  position: absolute;
+  top: 40;
+  right: 0;
+  width: 500px;
+}
+#materialVariables #variablesData #variableDataContent, #materialVariables #variablesData #variableGroupDataContent {
+  padding-right: 10px;
+}
+#materialVariables #variablesData #variableDataContent thead .variableName, #materialVariables #variablesData #variableGroupDataContent thead .variableName {
   width: 200px;
 }
-
-#variablesData {
-  padding: 10px;
+#materialVariables #variablesData #variableDataContent thead .variableContent, #materialVariables #variablesData #variableGroupDataContent thead .variableContent {
+  width: 300px;
+}
+#materialVariables #variablesData #variableDataContent .variableDataTable, #materialVariables #variablesData #variableGroupDataContent .variableDataTable {
   position: absolute;
-  top: 0;
-  left: 200px;
+  float: top;
+  top: 30px;
+  padding-right: 10px;
+}
+#materialVariables #variablesData #variableDataContent .variableDataTable input, #materialVariables #variablesData #variableGroupDataContent .variableDataTable input {
+  width: 250px;
+}
+#materialVariables #variablesData #variableGroupDataContent #variableGroupName {
+  vertical-align: middle;
 }
 
 #materialFileInfoContent, #materialErrorInfoContent {

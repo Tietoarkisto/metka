@@ -1,6 +1,6 @@
 @import "global";
 
-#fileNameErrorRow, #materialFileInfoRow, #materialCodebookRow, #materialErrorInfoRow {
+#fileNameErrorRow, #materialFileInfoRow, #materialCodebookRow, #materialErrorInfoRow, #variablesTreeGrouped, #variableDataContent, #variablesData, #variableGroupDataContent {
 	display: none;
 }
 
@@ -127,51 +127,57 @@
 }
 
 /* Myöhemmin turha, kun studylevel-kunnossa */
-.tab4 .materialDataSetContainerTopRow {
+#materialStudyLevel {
+	#studyLevelData {
+		padding: 10px;
+	}
 	label{
-		display: block;
-		float: left;
-		margin-bottom: 20px;
-		width: 250px;
-		margin-left: 10px;
-	}
-	input{
-		padding: 5px;
+		font-size: 15px;
 	}
 }
 
-@mixin prevNextContainer {
-	display: inline-block;
-	float: right;
-	margin-bottom: 20px;
-	margin-right: 20px;
+@mixin prevNextContainer($display, $float, $margin-bottom, $margin-right) {
+	display: $display;
+	float: $float;
+	margin-bottom: $margin-bottom;
+	margin-right: $margin-right;
 }
 
-.prevNextContainer{
-	@include prevNextContainer;	
-
+@mixin prevNextButtons($font-size, $floatPrev, $floatNext, $padding) {
 	h1.prev{
-		font-size: 22px;
-		float:left;
+		font-size: $font-size;
+		float:$floatPrev;
 		background: $pageColorB;
 		color: $pageColorA;
-		padding: 10px;
+		padding: $padding;
 		cursor: pointer;
 	}
 	h1.next{
-		font-size: 22px;
-		float:right;
+		font-size: $font-size;
+		float:$floatNext;
 		background: $pageColorB;
 		color: $pageColorA;
-		padding: 10px;
+		padding: $padding;
 		margin-left: 10px;
 		cursor: pointer;
 	}
+}
+
+.prevNextContainer{
+	@include prevNextContainer(inline-block, right, 20px, 20px);	
+
+	@include prevNextButtons(22px, left, right, 10px);
+}
+
+#variablesPrevNextContainer {
+	@include prevNextContainer(inline, top, 0px, 0px);
+
+	@include prevNextButtons(12px, left, right, 5px);
 }
 
 /* naming */
 .materialPrevNextContainer{
-	@include prevNextContainer;
+	@include prevNextContainer(inline-block, right, 0px, 20px);
 	width:900px;
 }
 
@@ -228,21 +234,77 @@
 
 #materialVariables {
 	position: relative;
-}
 
-#variablesTree {
-	padding: 10px 10px 10px 20px;
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 200px;
-}
+	#variablesTreeSelection {
+		text-align: center;
 
-#variablesData {
-	padding: 10px;
-	position: absolute;
-	top: 0;
-	left: 200px;
+		.variableTreeRadioSelect {
+			top: 0;
+			display: inline-block;
+			padding-bottom: 20px;
+			padding-right: 20px;
+		}
+	}
+
+	.variablesTree {
+		position: absolute;
+		top: 40;
+		left: 0;
+		width: 420px;
+		font-size: 12px;
+		min-height: 400px;
+	}
+
+	#variablesTreeGrouped {
+		#newFolder {
+			padding-left: 10px;
+		}
+		#newFolderName {
+			width: 150px;
+		}
+	}
+
+	#variablesTreeBasic {
+		#variableFilter {
+			padding-left: 20px;
+		}
+	}
+
+	#variablesData {
+		position: absolute;
+		top: 40;
+		right: 0;
+		width: 500px;
+
+		#variableDataContent, #variableGroupDataContent {
+			thead {
+				.variableName {
+					width: 200px;
+				}
+				.variableContent {
+					width: 300px;
+				}
+			}
+			padding-right: 10px;
+
+			.variableDataTable {
+				position: absolute;
+				float: top;
+				top: 30px;
+				padding-right: 10px;
+
+				input {
+					width: 250px;
+				}
+			}
+		}
+
+		#variableGroupDataContent {
+			#variableGroupName {
+				vertical-align: middle;
+			}
+		}
+	}
 }
 
 #materialFileInfoContent, #materialErrorInfoContent {
