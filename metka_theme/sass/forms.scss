@@ -127,16 +127,12 @@
 }
 
 /* Myöhemmin turha, kun studylevel-kunnossa */
-.tab4 .materialDataSetContainerTopRow {
-	label{
-		display: block;
-		float: left;
-		margin-bottom: 20px;
-		width: 250px;
-		margin-left: 10px;
+#materialStudyLevel {
+	#studyLevelData {
+		padding: 10px;
 	}
-	input{
-		padding: 5px;
+	label{
+		font-size: 15px;
 	}
 }
 
@@ -296,6 +292,10 @@
 				float: top;
 				top: 30px;
 				padding-right: 10px;
+
+				input {
+					width: 250px;
+				}
 			}
 		}
 

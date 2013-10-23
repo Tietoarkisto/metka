@@ -61,13 +61,13 @@
 					<div class="materialTabNavi">
 						<ul>
 							<li><a id="1" class="selected" href="#general">Perustiedot</a></li>
-							<li><a id="2" href="#binders">Mapit</a></li>
-							<li><a id="3" href="#filing">Arkistointisopimus</a></li>
-							<li><a id="4" href="#studylevel">Studylevel</a></li>
-							<li><a id="5" href="#variables">Muuttujat</a></li>
-							<li><a id="6" href="#files">Tiedostojen hallinta</a></li>
-							<li><a id="7" href="#codebook">Koodikirja</a></li>
-							<li><a id="8" href="#errors">Virheet</a></li>
+							<li><a id="2" href="#filing">Arkistointisopimus</a></li>
+							<li><a id="3" href="#studylevel">Kuvailu</a></li>
+							<li><a id="4" href="#variables">Muuttujat</a></li>
+							<li><a id="5" href="#files">Tiedostojen hallinta</a></li>
+							<li><a id="6" href="#codebook">Koodikirja</a></li>
+							<li><a id="7" href="#errors">Virheet</a></li>
+							<li><a id="8" href="#packages">Paketointi</a></li>
 						</ul>
 					</div>						
 					<!--<h1 class="next">></h1><h1 class="prev"><</h1>-->
@@ -104,12 +104,12 @@
 						</div>
 						<div class="materialRowContainer">
 							<div class="materialDataSetContainer">
-								<label id="materiaMefFin" >Mef julkinen (fin)</label>
-								<input readonly="readonly" type="text" name="valmispvm"/>
+								<label id="materiaMefFin" >Mef julkaisupvm (fin)</label>
+								<input readonly="readonly" type="text" name="valmispvm" value="12.10.2013"/>
 							</div>
 							<div class="materialDataSetContainer">
-								<label id="materialMefEng" >Mef julkinen (eng)</label>
-								<input readonly="readonly" type="text" class="" name="valmispvm"/>
+								<label id="materialMefEng" >Mef julkaisupvm (eng)</label>
+								<input readonly="readonly" type="text" name="valmispvm" value="13.10.2013"/>
 							</div>
 							<div class="materialDataSetContainer">
 								<label id="materialFilingCategory" class="required">Arkistointikategoria</label>
@@ -214,6 +214,19 @@
 						</table>
 						<div class="materialTableActionLinkHolder"><a href="dialogs/attachMaterialDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>					
 					</div>
+					<div class="materialRowContainer">
+						<div class="materialRowTitle">Liittyvät mapit</div>
+						<table class="tablesorter sortableTable" id="materialBinderTable">
+							<thead>
+								<tr><th>Mappinumero</th><th>Mapin kuvaus</th><th></th></tr>
+							</thead>
+							<tbody>
+								<tr><td>1290</td><td>Mappi, jossa tavanomaisia aineistoja</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+								<tr><td>1291</td><td>Lisämappi</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+							</tbody>
+						</table>	
+						<div class="materialTableActionLinkHolder"><a href="dialogs/attachBinderDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>
+					</div>
 					
 					<div class="viewFormButtonsHolder" style="margin-bottom:20px;">
 						<input type="button" id="startWorkingButton" class="searchFormInput" value="Varaa aineisto itsellesi" />
@@ -228,22 +241,8 @@
 				
 				</div>
 
-				<!-- Binder -->
-				<div id="materialBinders" class="tabs2 tab2">
-					<table class="tablesorter sortableTable" id="materialBinderTable">
-						<thead>
-							<tr><th>Mappinumero</th><th>Mapin kuvaus</th><th></th></tr>
-						</thead>
-						<tbody>
-							<tr><td>1290</td><td>Mappi, jossa tavanomaisia aineistoja</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-							<tr><td>1291</td><td>Lisämappi</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-						</tbody>
-					</table>	
-					<div class="materialTableActionLinkHolder"><a href="dialogs/attachBinderDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>
-				</div>
-
 				<!-- Filing Contract -->
-				<div id="materialFilingContract" class="tabs2 tab3">
+				<div id="materialFilingContract" class="tabs2 tab2">
 					<div class="materialUpperContainer">
 						<div class="materialRowContainer">
 							<div class="materialDataSetContainer"><label>Ehto 1: käyttöoikeus</label>
@@ -284,6 +283,10 @@
                            </div>
                            <div class="materialDataSetTextareaContainer">
                                 <label>Menettely, jos luvanantajaa ei tavoiteta tai hän ei itse voi antaa lupaa</label><textarea></textarea>
+                           </div>      
+
+                           <div class="materialDataSetTextareaContainer">
+                                <label>Erityisehdot</label><textarea></textarea>
                            </div>        
 						</div>
 
@@ -306,18 +309,40 @@
 				</div>
 
 				<!-- Studylevel -->
-				<div id="materialStudyLevel" class="tabs2 tab4">
-					<div class="materialRowContainer">
-						<div class="materialDataSetContainerTopRow"><label>Lorem1 ipsum dolor sit amet</label><input type="text" value="" name="materialName" /></div>
-					</div>
-					<div class="materialRowContainer">
-						<div class="materialDataSetContainerTopRow"><label>Vivamus a ante laoreet</label><input type="text" name="materialnNameEn" /></div>
-					</div>
-					<div class="materialRowContainer">
-						<div class="materialDataSetContainerTopRow"><label>Maecenas elit elit,</label><input type="text" value="" name="materialName" /></div>
-					</div>
-					<div class="materialRowContainer">						
-						<div class="materialDataSetContainerTopRow"><label>Maecenas elementum </label><input type="text" name="materialnNimiEng" /></div>
+				<div id="materialStudyLevel" class="tabs2 tab3">
+					<div id="studyLevelData">
+						<label class="studyLevelTitle">Perustiedot (docDscr/citation/titlStmt + docDscr/citation/prodStmt/verStmt)</label>
+						<div>
+							
+						</div>
+						<label class="studyLevelTitle">Kuvailutiedot (stdyDscr/citation/rspStmt)</label>
+						<div>
+						
+						</div>
+						<label class="studyLevelTitle">Tuottajatiedot (stdyDscr/citation/prodStmt)</label>
+						<div>
+							
+						</div>
+						<label class="studyLevelTitle">stdyDscr/stdyInfo/subject, stdyDscr/stdyInfo/abstract</label>
+						<div>
+							
+						</div>
+						<label class="studyLevelTitle">stdyDscr/stdyInfo/sumDscr</label>
+						<div>
+
+						</div>
+						<label class="studyLevelTitle">stdyDscr/method/dataColl, stdyDscr/method/anlyInfo</label>
+						<div>
+
+						</div>
+						<label class="studyLevelTitle">stdyDscr/dataAccs/setAvail, stdyDscr/dataAccs/useStmt, stdyDscr/dataAccs/notes, stdyDscr/othrStdyMat, otherMat</label>
+						<div>
+
+						</div>
+						<label class="studyLevelTitle">Tekijät (siirretään tänne?)</label>
+						<div>
+
+						</div>
 					</div>
 					
 					<div class="materialRowContainer">
@@ -339,11 +364,12 @@
 				</div>
 				
 				<!-- Variables -->
-				<div id="materialVariables" class="tabs2 tab5">
+				<div id="materialVariables" class="tabs2 tab4">
 					
 					<div id="variablesTreeSelection">
 						<div class="variableTreeRadioSelect"><input type="radio" name="variableTreeType" id="basicVariableTree" checked autocomplete="off" />Perusnäkymä</div>
-						<div class="variableTreeRadioSelect"><input type="radio" name="variableTreeType" id="groupedVariableTree" autocomplete="off" />Ryhmitelty näkymä</div>
+						<div class="variableTreeRadioSelect"><input type="radio" name="variableTreeType" id="groupedVariableTree" autocomplete="off" />Ryhmitelty näkymä</div>in
+						<div class="variableTreeRadioSelect"><input type="radio" name="variableTreeType" id="groupingtrvl" autocomplete="off" />Muuttujien ryhmittely</div>
 					</div>
 
 					<div id="variablesTreeBasic" class="variablesTree">
@@ -410,7 +436,7 @@
 									<tbody>
 										<tr>
 											<td>Muuttuja</td>
-											<td><input type="text" id="var2" value="[q2] Oma poliittinen kiinnostus"/></td>
+											<td><input type="text" id="var" value="[q2] Oma poliittinen kiinnostus"/></td>
 										</tr>
 										<tr>
 											<td>Kysymysteksti</td>
@@ -440,6 +466,11 @@
 										</tr>
 									</tbody>
 								</table>
+								<div id="translations">
+									<img class="translationFlag" id="translationFlagFi" src="../images/fi.png"/>
+									<img class="translationFlag" id="translationFlagSe" src="../images/se.png"/>
+									<img class="translationFlag" id="translationFlagEn" src="../images/gb.png"/>
+								</div>
 							</div>
 						</div>
 						<div id="variableGroupDataContent">
@@ -461,7 +492,7 @@
 				</div>							
 				
 				<!-- File handling -->
-				<div id="materialFiles" class="tabs2 tab6">
+				<div id="materialFiles" class="tabs2 tab5">
 					
 					<div class="materialRowTitle">Liitetyt tiedostot</div>
 					<table class="tablesorter sortableTable" id="materialFileTable">
@@ -520,9 +551,9 @@
 				</div>
 			
 				<!-- Codebook -->
-				<div id="materialCodebook" class="tabs2 tab7">
+				<div id="materialCodebook" class="tabs2 tab6">
 					
-					<div class="materialRowTitle">Tiedostot</div>
+					<div class="materialRowTitle">Koodikirjan liitteet</div>
 					<table class="tablesorter" id="materialCodebookFileTable">
 						<thead>
 							<tr><th>Tiedoston nimi</th><th>Kieli</th><th>Kuvaus</th><th>PVM</th><th>Tallentaja</th><th></th></tr>
@@ -544,7 +575,7 @@
 				</div>	
 				
 				<!-- Errors -->
-				<div id="materialErrors" class="tabs2 tab8">
+				<div id="materialErrors" class="tabs2 tab7">
 					<table class="tablesorter sortableTable" id="materialErrorsTable">
 						<thead>
 							<tr><th>PVM</th><th>Merkitsijä</th><th>Aineiston osa</th><th>Selite</th><th>Pisteet</th><th>Merkitse tehdyksi</th></tr>
@@ -594,6 +625,21 @@
 					</div>
 				</div>	
 				
+
+				<!-- Packaging -->
+				<div id="materialBinders" class="tabs2 tab8">
+					<table class="tablesorter sortableTable" id="materialBinderTable">
+						<thead>
+							<tr><th>Mappinumero</th><th>Mapin kuvaus</th><th></th></tr>
+						</thead>
+						<tbody>
+							<tr><td>1290</td><td>Mappi, jossa tavanomaisia aineistoja</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+							<tr><td>1291</td><td>Lisämappi</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+						</tbody>
+					</table>	
+					<div class="materialTableActionLinkHolder"><a href="dialogs/attachBinderDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>
+				</div>
+
 <!-- 				<div id="materialFormButtons">
 					
 				</div> -->

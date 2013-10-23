@@ -121,15 +121,11 @@
 }
 
 /* Myöhemmin turha, kun studylevel-kunnossa */
-.tab4 .materialDataSetContainerTopRow label {
-  display: block;
-  float: left;
-  margin-bottom: 20px;
-  width: 250px;
-  margin-left: 10px;
+#materialStudyLevel #studyLevelData {
+  padding: 10px;
 }
-.tab4 .materialDataSetContainerTopRow input {
-  padding: 5px;
+#materialStudyLevel label {
+  font-size: 15px;
 }
 
 .prevNextContainer {
@@ -288,6 +284,9 @@
   float: top;
   top: 30px;
   padding-right: 10px;
+}
+#materialVariables #variablesData #variableDataContent .variableDataTable input, #materialVariables #variablesData #variableGroupDataContent .variableDataTable input {
+  width: 250px;
 }
 #materialVariables #variablesData #variableGroupDataContent #variableGroupName {
   vertical-align: middle;

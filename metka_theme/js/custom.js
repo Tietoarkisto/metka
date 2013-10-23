@@ -268,6 +268,10 @@ $(document).ready(function(){
 		}	
 	});
 
+	 $(".errorTypeSelect").on("change", function() {
+	 	$("#fileNameErrorRow").show();
+	 });
+
 	$(".materialSearchResultRow, .publicationMaterialRow, .materialMaterialRow, .desktopWidgetDataRow").on("click", function() {
 		if ( $(this).hasClass("published") ) {
 			window.location = "materialViewPUBLISHED.html";
@@ -308,7 +312,7 @@ $(document).ready(function(){
 			$("#variablesData").show();
 			$("#variableDataContent").show();
 			$("#variableGroupDataContent").hide();
-			$("#var2").val(node.title);
+			$("#var").val(node.title);
 		}
     });
 
@@ -323,7 +327,7 @@ $(document).ready(function(){
 				$("#variablesData").show();
 				$("#variableDataContent").show();
 				$("#variableGroupDataContent").hide();
-				$("#var2").val(node.title);
+				$("#var").val(node.title);
 			} else {
 				$("#variablesData").show();
 				$("#variableGroupDataContent").show();
@@ -399,6 +403,7 @@ $(document).ready(function(){
 		$("#approveChangesLink").click();
 	});        
 
+	$("#studyLevelData").accordion();
 	
 	/*** JULKAISU ***/
 	
