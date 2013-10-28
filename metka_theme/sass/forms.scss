@@ -1,54 +1,19 @@
 @import "global";
 
-#fileNameErrorRow, #materialFileInfoRow, #materialCodebookRow, #materialErrorInfoRow, #variablesTreeGrouped, #variableDataContent, #variablesData, #variableGroupDataContent {
+#fileNameErrorRow, #materialFileInfoRow, #materialCodebookRow, #materialErrorInfoRow, 
+#groupedVariableTreeDiv, #variableDataContent, #variablesData, #variableGroupDataContent, 
+#variablesGroupingDiv {
 	display: none;
 }
 
-.materialUpperContainer, .publicationUpperContainer, .seriesUpperContainer {
+.upperContainer {
 	margin:10px;
 	font-size:12px;
 }
 
-.materialRowContainer, .publicationRowContainer, .seriesRowContainer{
+.rowContainer{
 	clear: both;
-	padding-bottom: 5px;
 	display: block;
-}
-
-.materialDataSetTextareaContainer{
-	float: left;
-	margin-top: 10px;
-	margin-bottom: 10px;
-
-	label {
-		width: 400px;
-		clear: both;
-		display:block;
-	}
-	textarea {
-		width: 440px;
-		height: 60px;
-	}
-}
-
-.materialDataSetContainer {
-	float: left;
-	label {
-		display: block;
-		float: left;
-		margin-bottom: 10px;
-		width: 180px;
-	}
-	input {
-		font-size:12px;
-		width: 100px;
-		margin-right: 10px;
-	}
-	select {
-		font-size: 12px;
-		width: 105px;
-		margin-right: 10px;
-	}
 }
 
 /* Yläosan leveämmät fieldit */
@@ -75,30 +40,55 @@
 	}
 }
 
-.publicationDataSetContainer {
+.materialDataSetTextareaContainer{
+	float: left;
+	margin-top: 10px;
+	margin-bottom: 10px;
+
+	label {
+		width: 400px;
+		clear: both;
+		display:block;
+	}
+	textarea {
+		width: 440px;
+		height: 60px;
+	}
+}
+
+@mixin dataSetContainer($labelWidth, $inputWidth, $selectWidth, $textareaWidth, $textAreaHeight, $font-size) {
 	float: left;
 	label {
 		display: block;
 		float: left;
 		margin-bottom: 10px;
-		width: 146px;
-		font-size: 12px;
+		font-size: $font-size;
+		width: $labelWidth;
 	}
 	input {
-		width: 150px;
-		font-size:12px;
-		margin-bottom: 10px;
+		font-size:$font-size;
+		width: $inputWidth;
+		margin-right: 10px;
 	}
 	select {
-		font-size: 12px;
-		width: 155px;
+		font-size: $font-size;
+		width: $selectWidth;
 		margin-right: 10px;
 	}
 	textarea {
-		font-size: 12px;
-		width: 775px;
-		height: 50px;
+		font-size: $font-size;
+		width: $textareaWidth;
+		height: $textAreaHeight;
 	}
+}
+
+.materialDataSetContainer {
+	font-size: 12px;
+	@include dataSetContainer(180px, 100px, 105px, 700px, 50px, 12px);
+}
+
+.publicationDataSetContainer {
+	@include dataSetContainer(146px, 150px, 155px, 775px, 50px, 12px);
 }
 
 .seriesDataSetContainer {
@@ -126,10 +116,44 @@
 	}
 }
 
-/* Myöhemmin turha, kun studylevel-kunnossa */
+@mixin actionLinkHolder($width, $font-size) {
+	clear: left;
+    display: inline-block;
+    text-align: right;
+    width: $width;
+    font-size: $font-size;
+}
+
 #materialStudyLevel {
+	#toggleAccordion {
+		margin-left: 10px;
+	}
+	
 	#studyLevelData {
 		padding: 10px;
+
+		.studyLevelTitle {
+			&:hover {
+				background: $pageColorB;
+				color: #fff;
+			}
+			&.ui-state-active {
+				background: $pageColorB;	
+			}
+		}
+
+		.accordionTableActionLinkHolder {
+			@include actionLinkHolder(850px, 12px);
+		}
+
+
+		table {
+			width: 850px;
+		}
+
+		.dataSetContainer {
+			@include dataSetContainer(150px, 100px, 105px, 300px, 40px, 12px);
+		}
 	}
 	label{
 		font-size: 15px;
@@ -201,11 +225,7 @@
 }
 
 .materialTableActionLinkHolder, .publicationTableActionLinkHolder {
-    clear: left;
-    display: inline-block;
-    text-align: right;
-    width: 920px;
-    font-size: 12px;
+    @include actionLinkHolder(920px, 12px);
 }
 
 .materialRowTitle, .publicationRowTitle {
@@ -228,7 +248,7 @@
 	padding: 10px;
 }
 
-#materialFileInfoRow {
+#materialFileInfoRow, #materialRemovedFileInfoRow {
 	padding-bottom: 20px;
 }
 
@@ -255,7 +275,7 @@
 		min-height: 400px;
 	}
 
-	#variablesTreeGrouped {
+	#groupedVariableTreeDiv {
 		#newFolder {
 			padding-left: 10px;
 		}
@@ -264,9 +284,18 @@
 		}
 	}
 
-	#variablesTreeBasic {
+	#basicVariableTreeDiv {
 		#variableFilter {
 			padding-left: 20px;
+		}
+		ul {
+			padding-left: 20px;
+			list-style: none;
+		}
+
+		.selectedVariable {
+			font-weight: bold;
+			color: #5CAFDF;
 		}
 	}
 
@@ -299,15 +328,62 @@
 			}
 		}
 
+		#translations {
+			.translationLink {
+				float: left;
+				padding-left: 5px;
+			}
+		}
+
 		#variableGroupDataContent {
 			#variableGroupName {
 				vertical-align: middle;
 			}
 		}
 	}
+
+	#variablesGroupingDiv {
+		padding: 10px;
+		position: relative;
+
+		$groupingBoxWidth: 440px;
+
+		.variablesGroupingBox {
+			border-style: solid;
+			border-width: 1px;
+			height: 420px;
+			width: $groupingBoxWidth;
+		}
+
+		#variablesBox {
+			float: left;
+			padding: 5px;
+			
+			ul {
+				list-style: none;
+			}
+		}
+		#variablesToGroupArrowBox {
+			float: left;
+			left: $groupingBoxWidth;
+			padding: 150px 10px 0 10px;
+
+			#variablesToGroupArrow {
+				font-size: 15px;
+				background: $pageColorB;
+				color: $pageColorA;
+				padding: 3px;
+				cursor: pointer;
+			}
+		}
+		#variableGroupsBox {
+			float: right;
+			padding: 5px;
+		}
+	}
 }
 
-#materialFileInfoContent, #materialErrorInfoContent {
+#materialFileInfoContent, #materialRemovedFileInfoContent, #materialErrorInfoContent {
 	padding: 10px;
 	font-size: 12px;
 
@@ -325,16 +401,3 @@
 		}
 	}
 }
-
-// #materialFormButtons {
-// 	position: fixed;
-// 	z-index: 999;
-// 	height: 50px;
-// 	bottom: 0%;
-// 	width: 960px;
-// 	background: $pageColorA;
-
-// 	input {
-// 		margin-left: 10px;
-// 	}
-// }

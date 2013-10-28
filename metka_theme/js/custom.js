@@ -56,6 +56,16 @@ $(document).ready(function(){
 	    $.datepicker.setDefaults($.datepicker.regional['fi']);
 	}); 
 	
+	$(".materialFileRow, .materialCodebookFileRow, .materialErrorRow, .desktopWidgetDataRow, " +
+		".materialSearchResultRow, .publicationSearchResultRow, .seriesSearchResultRow, " + 
+		".materialSeriesRow, .materialPublicationRow, .materialMaterialRow, #variablesListBasic li, " +
+		".publicationSeriesRow, .publicationMaterialRow, .materialBinderRow, .binderRow, .translationLink, " + 
+		".materialRemovedFileRow").hover(function() {
+		    $(this).css('cursor', 'pointer');
+		}, function() {
+		    $(this).css('cursor', 'auto');		    
+	});
+
 	/** ASETUKSET **/
 	
     $('#vocabularyTable').dataTable( {
@@ -229,31 +239,30 @@ $(document).ready(function(){
 		              {sWidth: '10%'}
         ]
 	});
-
-	$(".materialFileRow, .materialCodebookFileRow, .materialErrorRow, .desktopWidgetDataRow, " +
-		".materialSearchResultRow, .publicationSearchResultRow, .seriesSearchResultRow, " + 
-		".materialSeriesRow, .materialPublicationRow, .materialMaterialRow, " + 
-		".publicationSeriesRow, .publicationMaterialRow").hover(function() {
-		    $(this).css('cursor', 'pointer');
-		}, function() {
-		    $(this).css('cursor', 'auto');		    
-	});
 	
 	$(".materialFileRow").on("click", function() {
-		var id = $(this).attr("id");
-		var fileName = $(this).find(".materialFileName").html();
-		var selectedId = $("#materialFileInfoContent table .fileInfoContentFileName").attr("id");
+		showFileInfo($(this), "#materialFileInfoContent", "#materialFileInfoRow");	
+	});
+
+	$(".materialRemovedFileRow").on("click", function() {
+		showFileInfo($(this), "#materialRemovedFileInfoContent", "#materialRemovedFileInfoRow");	
+	});
+
+	function showFileInfo(fileElement, fileInfoTableId, fileInfoRowId) {
+		var id = $(fileElement).attr("id");
+		var fileName = $(fileElement).find(".materialFileName").html();
+		var selectedId = $(fileInfoTableId + " table .fileInfoContentFileName").attr("id");
 
 		if ( selectedId != id ) {
-			$("#materialFileInfoContent table .fileInfoContentFileName").html(fileName);
-			$("#materialFileInfoContent table .fileInfoContentFileName").attr("id", id);
-			$("#materialFileInfoRow").show();
+			$(fileInfoTableId + " table .fileInfoContentFileName").html(fileName);
+			$(fileInfoTableId + " table .fileInfoContentFileName").attr("id", id);
+			$(fileInfoRowId).show();
 		} else {
-			$("#materialFileInfoTitle table .fileInfoContentFileName").html("");
-			$("#materialFileInfoContent table .fileInfoContentFileName").attr("id", "");
-			$("#materialFileInfoRow").hide();
+			$(fileInfoTableId + " table .fileInfoContentFileName").html("");
+			$(fileInfoTableId + " table .fileInfoContentFileName").attr("id", "");
+			$(fileInfoRowId).hide();
 		}	
-	});
+	}
 	
 	$(".materialErrorRow").on("click", function() {
 		var id = $(this).attr("id");
@@ -268,10 +277,6 @@ $(document).ready(function(){
 		}	
 	});
 
-	 $(".errorTypeSelect").on("change", function() {
-	 	$("#fileNameErrorRow").show();
-	 });
-
 	$(".materialSearchResultRow, .publicationMaterialRow, .materialMaterialRow, .desktopWidgetDataRow").on("click", function() {
 		if ( $(this).hasClass("published") ) {
 			window.location = "materialViewPUBLISHED.html";
@@ -279,6 +284,7 @@ $(document).ready(function(){
 			window.location = "materialView.html";
 		}
 	});
+
 	$(".publicationSearchResultRow, .materialPublicationRow").on("click", function() {
 		window.location = "publicationView.html";
 	});
@@ -292,35 +298,45 @@ $(document).ready(function(){
 	});	
 	
 	$("#basicVariableTree").on("click", function() {
-		$("#variablesTreeBasic").show();
-		$("#variablesTreeGrouped").hide();
+		$("#basicVariableTreeDiv").show();
 
+		$("#groupedVariableTreeDiv").hide();
+		$("#variableDataContent").hide();
+		$("#variablesGroupingDiv").hide();
+	});
+
+	$("#groupedVariableTree").on("click", function() {
+		$("#groupedVariableTreeDiv").show();
+
+		$("#basicVariableTreeDiv").hide();
+		$("#variablesGroupingDiv").hide();
 		$("#variableDataContent").hide();
 		$("#variableGroupDataContent").hide();
 	});
 
-	$("#groupedVariableTree").on("click", function() {
-		$("#variablesTreeGrouped").show();
-		$("#variablesTreeBasic").hide();
+	$("#variablesGrouping").on("click", function() {
+		$("#variablesGroupingDiv").show();
 
+		$("#basicVariableTreeDiv").hide();
+		$("#groupedVariableTreeDiv").hide();
 		$("#variableDataContent").hide();
+		$("#variableGroupDataContent").hide();
 	});
 
-	$("#variablesTreeBasic").fancytree({ 
-		activate: function(event, data) {
-	        var node = data.node;
-			$("#variablesData").show();
-			$("#variableDataContent").show();
-			$("#variableGroupDataContent").hide();
-			$("#var").val(node.title);
-		}
-    });
+	$('#variableFilterInput').fastLiveFilter('#variablesListBasic');
 
-    $("#variablesTreeGrouped").fancytree({ 
-    	extensions: ["dnd", "filter"],
-    	filter: {
-    		mode: "hide"
-	    },
+	$("#variablesListBasic li").on("click", function() {
+		$("#variablesData").show();
+		$("#variableDataContent").show();
+		$("#variableGroupDataContent").hide();
+		$("#variablesListBasic li").each(function() {
+			$(this).removeClass("selectedVariable");
+		});
+		$(this).addClass("selectedVariable");
+		$("#var").val($(this).html());
+	});
+
+    $("#groupedVariableTreeDiv").fancytree({ 
 		activate: function(event, data) {
 			if ( data.node.children == null || data.node.children.length == 0 ) {
 		        var node = data.node;
@@ -334,41 +350,45 @@ $(document).ready(function(){
 				$("#variableGroupDataContent").find("textarea").html(data.node.title);
 				$("#variableDataContent").hide();
 			}
-		}, 
-		dnd: {
-	        preventVoidMoves: true, 
-	        preventRecursiveMoves: true, 
-	        autoExpandMS: 400,
-	        onDragStart: function(node) {
-	          return true;
-	        },
-	        onDragEnter: function(node, sourceNode) {
-	           return true;
-	        },
-	        onDrop: function(node, sourceNode, hitMode, ui, draggable) {
-	          sourceNode.moveTo(node, hitMode);
-	        }
 		}
     });
 
-    // $("input[name=variableFilter]").keyup(function(e){
-    // 	var tree = $("#variablesTreeBasic").fancytree("getTree");
+    $("#variableGroupsBox").fancytree({
+    	checkbox: true,
+    	selectMode: 1, 
+    	beforeExpand: function(event, data) {
+    		// TODO
+    		//alert(data.node.title);
+    		//for ( var i = 0; i < data.node.children; i++ ) {
+    		//	alert(data.node.children[i]);
+    		//}
+        	
+        	//$("#variableGroupsBox ul.fancytree-container ul li span").each(function() {
+        	//	alert("parent: " + $(this).parent().attr("class") + " this.class: " + $(this).attr("class") + " this.html" + $(this).html());
+        		//$(this).parent().find(".fancytree-checkbox").remove();
+        	//});
+        }
+    });
 
-    // 	if(e && e.which === $.ui.keyCode.ESCAPE || $.trim(match) === ""){
-    // 		$("input[name=variableFilter]").val("")
-    // 		tree.clearFilter();
-    // 	}
-    // 	var match = $(this).val();
-    // 	var n = tree.applyFilter(match);
-    // }).focus();
+    $("#variablesToGroupArrowBox").on("click", function() {
+    	$("#variablesBox li input:checked").each(function() {
+    		var tree = $("#variableGroupsBox").fancytree("getTree");
+    		$(this).parent().remove();
+    	});
+    });
 
+	$('#variablesGroupingFilterInput').fastLiveFilter('#variablesGroupingVariablesList');
+
+	$("#variablesGroupingVariablesList li").on("click", function() {
+		$(this).find("input[type=checkbox]").attr("checked", "checked");
+	});
 	
 	$("#addFolderButton").on("click", function() {
 		var title = $("#newFolderName").val();
 		if ( title == "" ) {
 			alert("Aseta nimi");
 		} else {
-			var rootNode = $("#variablesTreeGrouped").fancytree("getRootNode");
+			var rootNode = $("#variableGroupsBox").fancytree("getRootNode");
 		    var childNode = rootNode.addChildren({
 		        title: title,
 		        folder: true
@@ -403,7 +423,30 @@ $(document).ready(function(){
 		$("#approveChangesLink").click();
 	});        
 
-	$("#studyLevelData").accordion();
+	$("#studyLevelData").accordion({
+		heightStyle: "content",
+		collapsible: true
+	});
+
+	var allVisible = false;
+
+	$("#toggleAccordion").on("click", function() {
+		if ( !allVisible ) {
+			$('#studyLevelData .ui-accordion-content').show();
+			allVisible = true;
+			$(this).val("Sulje kaikki");
+		} else {
+			$('#studyLevelData .ui-accordion-content').hide();
+			allVisible = false;
+			$(this).val("Avaa kaikki");
+		}
+	});
+
+	$(".materialBinderRow, .binderRow").on("click", function(e) {
+		if($(e.target.nodeName).is('TD')){
+			$(this).find(".showBinderInfo").click();
+		}
+	});
 	
 	/*** JULKAISU ***/
 	
@@ -429,6 +472,67 @@ $(document).ready(function(){
 		              {sWidth: '75%'},
 		              {sWidth: '5%'}
 				  ]
-		
+	});
+
+	$("#addNewPublicationButton").on("click", function() {
+		window.location = "publicationView.html";
+	});
+
+
+	/* SARJAT */
+
+	$("#addNewSeriesButton").on("click", function() {
+		window.location = "seriesView.html";
+	});
+
+	// createDataTable("publicationMaterialTable", ['20%','75%','5%']);
+
+	// function creataDataTable(tableId, columnWidths) {
+	// 	alert("foo");
+	// 	var columns = [];
+	// 	for ( var i = 0; i < columnWidths; i++ ) {
+	// 		alert(columnWidths[i]);
+	// 		columns[i] = {sWidth: columnWidths[i]};
+	// 	}
+	// 	var foo = [{sWidth: '20%'},{sWidth: '25%'},{sWidth: '55%'}];
+	// 	$("#" + tableId).dataTable({
+	// 		"bPaginate": false,
+	//         "bFilter": false, 
+	//         "bInfo": false,
+	//         "bAutoWidth": false,
+	//         "aoColumns": foo
+	// 	});
+	// }
+
+	/** MAPIT **/
+
+	$("#binderTable").dataTable({
+        "bFilter": false, 
+        "bInfo": true,
+        "bPaginate": true,
+        "bAutoWidth": false, 
+        "sPaginationType": "full_numbers",
+        "aoColumns": [
+        	{sWidth: '20%'},
+        	{sWidth: '75%'},
+        	{sWidth: '5%'}
+        ], 
+        "oLanguage": {
+		    "sProcessing":   "Hetkinen...",
+		    "sLengthMenu":   "Näytä kerralla _MENU_ riviä",
+		    "sZeroRecords":  "Tietoja ei löytynyt",
+		    "sInfo":         "Näytetään rivit _START_ - _END_ (yhteensä _TOTAL_ )",
+		    "sInfoEmpty":    "Näytetään 0 - 0 (yhteensä 0)",
+		    "sInfoFiltered": "(suodatettu _MAX_ tuloksen joukosta)",
+		    "sInfoPostFix":  "",
+		    "sSearch":       "Etsi:",
+		    "sUrl":          "",
+		    "oPaginate": {
+		        "sFirst":    "Ensimmäinen",
+		        "sPrevious": "Edellinen",
+		        "sNext":     "Seuraava",
+		        "sLast":     "Viimeinen"
+		    }
+		}
 	});
 });

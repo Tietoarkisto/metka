@@ -1,0 +1,147 @@
+<!DOCTYPE HTML>
+<html lang="fi">
+	<head>
+		<meta charset="utf-8">
+		<title>YHTEISKUNTATIETEELLINEN TIETOARKISTO - Metka</title>		
+		<link rel="stylesheet" type="text/css" href="../stylesheets/styles.css">
+		<link rel="stylesheet" type="text/css" href="../stylesheets/jquery-ui.css">
+		<link rel="stylesheet" type="text/css" href="../stylesheets/jquery.fancybox.css">
+		<script src="../js/custom.js"></script>
+		<script src="../js/jquery-1.10.2.js"></script>
+  		<script src="../js/jquery-ui.js"></script>
+		<script src="../js/jquery.tablesorter.min.js"></script>
+		<script src="../js/jquery.dataTables.min.js"></script>
+		<script src="../js/jquery.fancybox.pack.js"></script>
+		<script src="../js/jquery.tablesorter.pager.js"></script>
+		<script src="../js/jquery.dataTables.rowReordering.js"></script>
+		<script src="../js/jquery.fancytree.js"></script>
+  		<script src="../js/jquery.fancytree.dnd.js" type="text/javascript"></script>
+  		<script src="../js/jquery.fancytree.filter.js" type="text/javascript"></script>
+  		<script src="../js/jquery.fastLiveFilter.js"></script>
+	</head>
+	<body>
+		<header>
+			<div class="headerContainer">
+				<h1 id="logo" >
+					<a href="desktop.html" title="Aineistohaku">Aineistohaku</a>
+				</h1>	
+						
+				<nav>
+					<ul class="mainNavUl">
+						<li><a href="desktop.html">Työpöytä</a></li>
+						<li><a href="expertSearch.html">Eksperttihaku</a></li>	
+						<li><a href="materialSearch.html">Aineistot</a></li>
+						<li><a href="publicationSearch.html">Julkaisut</a></li>
+						<li><a href="seriesSearch.html">Sarjat</a></li>	
+						<li><a href="binders.html" class="selected">Mapit</a></li>	
+						<li><a href="settings.html">Asetukset</a></li>						
+					</ul>
+					
+					<div style="clear:both;"></div>				
+				</nav>
+				<div class="searchContainer">
+					<a class="logoutLink" href="#">Kirjaudu ulos</a>
+					<form action="material.html" class="quickSearchForm">
+						<input type="text" autocomplete="off" dir="ltr" class="searchInput" placeholder="Aineiston id-nro" />
+						<input type="submit" value="Hae" class="searchButton"/>
+					</form>					
+				</div>
+			</div>
+			
+		</header>
+		
+			<div class="wrapper">
+
+				<div class="content">
+					<h1 class="pageTitle">Mapit</h1>
+					<div class="upperContainer">
+						<table class="tablesorter sortableTable" id="binderTable">
+							<thead>
+								<tr><th>Mappinumero</th><th>Mapin kuvaus</th><th></th></tr>
+							</thead>
+							<tbody>
+								<tr class="binderRow">
+									<td>1290<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="showBinderInfo fancyboxpopup fancybox.ajax"></a></td>
+									<td>Mappi, jossa tavanomaisia aineistoja</td>
+									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>									
+								</tr>
+								<tr class="binderRow">
+									<td>1291<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="showBinderInfo fancyboxpopup fancybox.ajax"></a></td>
+									<td>Lisämappi</td>
+									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
+								</tr>
+								<tr class="binderRow">
+									<td>1292<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="showBinderInfo fancyboxpopup fancybox.ajax"></a></td>
+									<td>Lisämappi2</td>
+									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
+								</tr>
+								<tr class="binderRow">
+									<td>1293<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="showBinderInfo fancyboxpopup fancybox.ajax"></a></td>
+									<td>Lisämappi3</td>
+									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
+								</tr>
+								<tr class="binderRow">
+									<td>1294<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="showBinderInfo fancyboxpopup fancybox.ajax"></a></td>
+									<td>Lisämappi4</td>
+									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
+								</tr>
+								<tr class="binderRow">
+									<td>1295<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="showBinderInfo fancyboxpopup fancybox.ajax"></a></td>
+									<td>Lisämappi5</td>
+									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
+								</tr>
+								<tr class="binderRow">
+									<td>1296<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="showBinderInfo fancyboxpopup fancybox.ajax"></a></td>
+									<td>Lisämappi6</td>
+									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
+								</tr>
+								<tr class="binderRow">
+									<td>1297<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="showBinderInfo fancyboxpopup fancybox.ajax"></a></td>
+									<td>Lisämappi7</td>
+									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
+								</tr>
+								<tr class="binderRow">
+									<td>1298<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="showBinderInfo fancyboxpopup fancybox.ajax"></a></td>
+									<td>Lisämappi8</td>
+									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
+								</tr>
+								<tr class="binderRow">
+									<td>1299<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="showBinderInfo fancyboxpopup fancybox.ajax"></a></td>
+									<td>Lisämappi9</td>
+									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
+								</tr>
+								<tr class="binderRow">
+									<td>1300<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="showBinderInfo fancyboxpopup fancybox.ajax"></a></td>
+									<td>Lisämappi10</td>
+									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
+								</tr>
+								<tr class="binderRow">
+									<td>1301<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="showBinderInfo fancyboxpopup fancybox.ajax"></a></td>
+									<td>Lisämappi10</td>
+									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
+								</tr>
+								<tr class="binderRow">
+									<td>1302<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="showBinderInfo fancyboxpopup fancybox.ajax"></a></td>
+									<td>Lisämappi10</td>
+									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
+								</tr>
+								<tr class="binderRow">
+									<td>1303<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="showBinderInfo fancyboxpopup fancybox.ajax"></a></td>
+									<td>Lisämappi10</td>
+									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
+								</tr>
+								<tr class="binderRow">
+									<td>1304<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="showBinderInfo fancyboxpopup fancybox.ajax"></a></td>
+									<td>Lisämappi10</td>
+									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
+								</tr>
+							</tbody>
+						</table>	
+						<div class="materialTableActionLinkHolder"><a href="dialogs/addBinderDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>
+					</div>
+				</div>							
+			</div>
+		<footer>
+		</footer>
+	</body>
+</html>
