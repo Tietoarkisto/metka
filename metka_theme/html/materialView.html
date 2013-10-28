@@ -20,6 +20,8 @@
   		<script src="../js/jquery.fancytree.filter.js" type="text/javascript"></script>
   		<script src="../js/jquery.fastLiveFilter.js"></script>
 	</head>
+
+	<!-- TÄMÄ OSIIN KUN JSP:KSI -->
 	<body>
 		<header>
 			<div class="headerContainer">
@@ -70,7 +72,7 @@
 							<li><a id="5" href="#files">Tiedostojen hallinta</a></li>
 							<li><a id="6" href="#codebook">Koodikirja</a></li>
 							<li><a id="7" href="#errors">Virheet</a></li>
-							<li><a id="8" href="#packages">Paketointi</a></li>
+							<li><a id="8" href="#packages">Tunnisteet</a></li>
 						</ul>
 					</div>						
 					<!--<h1 class="next">></h1><h1 class="prev"><</h1>-->
@@ -80,6 +82,13 @@
 				<!-- General -->
 				<div id="materialGeneral" class="tabs2 tab1">						
 					<div class="upperContainer">
+						<div class="rowContainer">
+							<div class="materialDataSetContainerTopRow">
+								<div class="translations">
+									<div class="translationLink">sv</div><div class="translationLink">en</div>
+								</div>
+							</div>
+						</div>
 						<div class="rowContainer">
 							<div class="materialDataSetContainerTopRow">
 								<label id="materialName" class="required leftSide">Aineiston nimi</label>
@@ -239,6 +248,7 @@
 					</div>
 					
 					<div class="viewFormButtonsHolder" style="margin-bottom:20px;">
+						<input type="button" id="ddi2Export" class="searchFormInput" value="DDI2-Export" />
 						<input type="button" id="htmlView" class="searchFormInput" value="HTML-näkymä" />
 						<input type="button" id="startWorkingButton" class="searchFormInput" value="Varaa aineisto itsellesi" />
 						<input type="button" id="versionHistoryButton" class="searchFormInput" value="Versiohistoria">
@@ -255,6 +265,11 @@
 				<!-- Filing Contract -->
 				<div id="materialFilingContract" class="tabs2 tab2">
 					<div class="upperContainer">
+						<div class="rowContainer">
+							<div class="translations">
+								<div class="translationLink">sv</div><div class="translationLink">en</div>
+							</div>
+						</div>
 						<div class="rowContainer">
 							<div class="materialDataSetContainer"><label>Ehto 1: käyttöoikeus</label>
 								<select><option>Avoin</option><option>opiskelu,opetus,tutkimus</option><option>Tutkimus</option><option>Lupa</option><option>Embargo</option></select>
@@ -275,12 +290,14 @@
 							<div class="materialDataSetContainer"><label>Erityisehtoja, swe</label><input type="text" class="" name="valmispvm"/></div>
 						</div>
 						<div class="rowContainer">
-							<div class="materialDataSetContainer"><label>Arkistointisopimustiedosto</label><input type="txt" class="" name="kayttoehto" /></div>
+							<div class="materialDataSetContainer"><label id="filingContractFile">Arkistointisopimustiedosto</label><input type="txt" class="" name="kayttoehto" /></div>
 							<div class="materialDataSetContainer"><label>Arkistointisopimuksen tapa</label>
 								<select><option>Ei tietoa</option><option>Ei tarvita sopimusta</option><option>Könttäsopimus</option><option>Norm+puite</option><option>On sopimus</option></select>
 							</div>
 							<div class="materialDataSetContainer"><label>Arkistointisopimuksen pvm</label><input type="txt" class="datepicker" name="kayttoehto" /></div>
-
+						</div>						
+						<div class="rowContainer" id="additionalFilingContractFile" style="display: hidden;">
+							<div class="materialDataSetContainer"><label>Arkistointisopimustiedosto</label><input type="txt" class="" name="kayttoehto" /></div>
 						</div>
 						<div class="rowContainer">
 							<div class="materialDataSetContainer"><label>Käyttöehdon muutospvm</label><input type="txt" class="datepicker" name="kayttoehdonmuutospvm" /></div>
@@ -317,11 +334,30 @@
 						</table>	
 						<div class="materialTableActionLinkHolder"><a href="dialogs/attachPersonFilingDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>
 					</div>
+
+					
+					<div class="viewFormButtonsHolder" style="margin-bottom:20px;">
+						<input type="button" id="ddi2Export" class="searchFormInput" value="DDI2-Export" />
+						<input type="button" id="htmlView" class="searchFormInput" value="HTML-näkymä" />
+						<input type="button" id="startWorkingButton" class="searchFormInput" value="Varaa aineisto itsellesi" />
+						<input type="button" id="versionHistoryButton" class="searchFormInput" value="Versiohistoria">
+							<a style="display: hidden;" id="versionHistoryLink" href="dialogs/versionHistoryDialog.html" class="fancyboxpopup fancybox.ajax"></a>
+						</input>
+						<input type="button" id="approveChangesButton" class="searchFormInput" value="Hyväksy muutokset" >
+							<a style="display: hidden;" id="approveChangesLink" href="dialogs/confirmDialog.html" class="fancyboxpopup fancybox.ajax"></a>
+						</input>
+						<input type="button" id="saveAsDraftButton" class="searchFormInput" value="Tallenna Luonnoksena" />
+					</div>	
 				</div>
 
 				<!-- Studylevel -->
 				<div id="materialStudyLevel" class="tabs2 tab3">
-					<input type="button" id="toggleAccordion" class="searchFormInput" value="Avaa kaikki"/>
+					<div id="studyLevelTopRow">
+						<input type="button" id="toggleAccordion" class="searchFormInput" value="Avaa kaikki"/>
+						<div class="translations">
+							<div class="translationLink">sv</div><div class="translationLink">en</div>
+						</div>
+					</div>
 					<div id="studyLevelData">
 						<label class="studyLevelTitle">Perustiedot (docDscr/citation/titlStmt + docDscr/citation/prodStmt/verStmt)</label>
 						<div class="accordionContent">
@@ -653,6 +689,19 @@
 							<div class="accordionTableActionLinkHolder"><a href="dialogs/attachPersonStudyLevelDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>	
 						</div>
 					</div>
+					
+					<div class="viewFormButtonsHolder" style="margin-bottom:20px;">
+						<input type="button" id="ddi2Export" class="searchFormInput" value="DDI2-Export" />
+						<input type="button" id="htmlView" class="searchFormInput" value="HTML-näkymä" />
+						<input type="button" id="startWorkingButton" class="searchFormInput" value="Varaa aineisto itsellesi" />
+						<input type="button" id="versionHistoryButton" class="searchFormInput" value="Versiohistoria">
+							<a style="display: hidden;" id="versionHistoryLink" href="dialogs/versionHistoryDialog.html" class="fancyboxpopup fancybox.ajax"></a>
+						</input>
+						<input type="button" id="approveChangesButton" class="searchFormInput" value="Hyväksy muutokset" >
+							<a style="display: hidden;" id="approveChangesLink" href="dialogs/confirmDialog.html" class="fancyboxpopup fancybox.ajax"></a>
+						</input>
+						<input type="button" id="saveAsDraftButton" class="searchFormInput" value="Tallenna Luonnoksena" />
+					</div>	
 				</div>
 				
 				<!-- Variables -->
@@ -812,7 +861,7 @@
 										</tr>
 									</tbody>
 								</table>
-								<div id="translations">
+								<div class="translations">
 									<div class="translationLink">sv</div>
 									<div class="translationLink">en</div>
 								</div>
@@ -883,6 +932,19 @@
 								</li>
 							</ul>
 						</div>
+					</div>	
+					
+					<div class="viewFormButtonsHolder" style="margin-bottom:20px;">
+						<input type="button" id="ddi2Export" class="searchFormInput" value="DDI2-Export" />
+						<input type="button" id="htmlView" class="searchFormInput" value="HTML-näkymä" />
+						<input type="button" id="startWorkingButton" class="searchFormInput" value="Varaa aineisto itsellesi" />
+						<input type="button" id="versionHistoryButton" class="searchFormInput" value="Versiohistoria">
+							<a style="display: hidden;" id="versionHistoryLink" href="dialogs/versionHistoryDialog.html" class="fancyboxpopup fancybox.ajax"></a>
+						</input>
+						<input type="button" id="approveChangesButton" class="searchFormInput" value="Hyväksy muutokset" >
+							<a style="display: hidden;" id="approveChangesLink" href="dialogs/confirmDialog.html" class="fancyboxpopup fancybox.ajax"></a>
+						</input>
+						<input type="button" id="saveAsDraftButton" class="searchFormInput" value="Tallenna Luonnoksena" />
 					</div>	
 				</div>							
 				
@@ -975,6 +1037,19 @@
 							</tbody>
 						</table>
 					</div>
+					
+					<div class="viewFormButtonsHolder" style="margin-bottom:20px;">
+						<input type="button" id="ddi2Export" class="searchFormInput" value="DDI2-Export" />
+						<input type="button" id="htmlView" class="searchFormInput" value="HTML-näkymä" />
+						<input type="button" id="startWorkingButton" class="searchFormInput" value="Varaa aineisto itsellesi" />
+						<input type="button" id="versionHistoryButton" class="searchFormInput" value="Versiohistoria">
+							<a style="display: hidden;" id="versionHistoryLink" href="dialogs/versionHistoryDialog.html" class="fancyboxpopup fancybox.ajax"></a>
+						</input>
+						<input type="button" id="approveChangesButton" class="searchFormInput" value="Hyväksy muutokset" >
+							<a style="display: hidden;" id="approveChangesLink" href="dialogs/confirmDialog.html" class="fancyboxpopup fancybox.ajax"></a>
+						</input>
+						<input type="button" id="saveAsDraftButton" class="searchFormInput" value="Tallenna Luonnoksena" />
+					</div>	
 				</div>
 			
 				<!-- Codebook -->
@@ -999,6 +1074,19 @@
 					<div id="materialCodebookRow" style="display: none;">
 						<div id="materialCodebookTitle"><a href="#"></a></div>
 					</div>
+					
+					<div class="viewFormButtonsHolder" style="margin-bottom:20px;">
+						<input type="button" id="ddi2Export" class="searchFormInput" value="DDI2-Export" />
+						<input type="button" id="htmlView" class="searchFormInput" value="HTML-näkymä" />
+						<input type="button" id="startWorkingButton" class="searchFormInput" value="Varaa aineisto itsellesi" />
+						<input type="button" id="versionHistoryButton" class="searchFormInput" value="Versiohistoria">
+							<a style="display: hidden;" id="versionHistoryLink" href="dialogs/versionHistoryDialog.html" class="fancyboxpopup fancybox.ajax"></a>
+						</input>
+						<input type="button" id="approveChangesButton" class="searchFormInput" value="Hyväksy muutokset" >
+							<a style="display: hidden;" id="approveChangesLink" href="dialogs/confirmDialog.html" class="fancyboxpopup fancybox.ajax"></a>
+						</input>
+						<input type="button" id="saveAsDraftButton" class="searchFormInput" value="Tallenna Luonnoksena" />
+					</div>	
 				</div>	
 				
 				<!-- Errors -->
@@ -1050,12 +1138,37 @@
 							</table>
 						</div>
 					</div>
+					
+					<div class="viewFormButtonsHolder" style="margin-bottom:20px;">
+						<input type="button" id="ddi2Export" class="searchFormInput" value="DDI2-Export" />
+						<input type="button" id="htmlView" class="searchFormInput" value="HTML-näkymä" />
+						<input type="button" id="startWorkingButton" class="searchFormInput" value="Varaa aineisto itsellesi" />
+						<input type="button" id="versionHistoryButton" class="searchFormInput" value="Versiohistoria">
+							<a style="display: hidden;" id="versionHistoryLink" href="dialogs/versionHistoryDialog.html" class="fancyboxpopup fancybox.ajax"></a>
+						</input>
+						<input type="button" id="approveChangesButton" class="searchFormInput" value="Hyväksy muutokset" >
+							<a style="display: hidden;" id="approveChangesLink" href="dialogs/confirmDialog.html" class="fancyboxpopup fancybox.ajax"></a>
+						</input>
+						<input type="button" id="saveAsDraftButton" class="searchFormInput" value="Tallenna Luonnoksena" />
+					</div>	
 				</div>	
 				
 
 				<!-- Packaging -->
 				<div id="materialPackaging" class="tabs2 tab8">
 					
+					<div class="viewFormButtonsHolder" style="margin-bottom:20px;">
+						<input type="button" id="ddi2Export" class="searchFormInput" value="DDI2-Export" />
+						<input type="button" id="htmlView" class="searchFormInput" value="HTML-näkymä" />
+						<input type="button" id="startWorkingButton" class="searchFormInput" value="Varaa aineisto itsellesi" />
+						<input type="button" id="versionHistoryButton" class="searchFormInput" value="Versiohistoria">
+							<a style="display: hidden;" id="versionHistoryLink" href="dialogs/versionHistoryDialog.html" class="fancyboxpopup fancybox.ajax"></a>
+						</input>
+						<input type="button" id="approveChangesButton" class="searchFormInput" value="Hyväksy muutokset" >
+							<a style="display: hidden;" id="approveChangesLink" href="dialogs/confirmDialog.html" class="fancyboxpopup fancybox.ajax"></a>
+						</input>
+						<input type="button" id="saveAsDraftButton" class="searchFormInput" value="Tallenna Luonnoksena" />
+					</div>	
 				</div>
 			</div>						
 		</div>

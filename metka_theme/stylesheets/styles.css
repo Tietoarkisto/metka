@@ -179,12 +179,10 @@ footer {
     width: 150px;
     float: left;
     padding: 5px; }
-  .popupContainer .popupRowHolder .versionProperty, .popupContainer .popupRowHolder .versionOldValue, .popupContainer .popupRowHolder .versionNewValue {
-    width: 200px;
+  .popupContainer .popupRowHolder .versionProperty, .popupContainer .popupRowHolder .versionChange {
+    width: 500px;
     float: left;
     padding: 5px; }
-  .popupContainer .popupRowHolder .versionOldValue, .popupContainer .popupRowHolder .versionNewValue {
-    width: 400px; }
 .popupContainer .popupButtonsHolder {
   margin-top: 20px;
   text-align: right; }
@@ -427,6 +425,10 @@ nav {
     color: #005993;
     text-decoration: none;
     padding: 7px 10px 7px 20px; }
+    .desktopWidgetDataContainer .desktopWidgetDataRow .desktopWidgetDataName {
+      left: 0px; }
+    .desktopWidgetDataContainer .desktopWidgetDataRow .desktopWidgetDataOwner {
+      right: 0px; }
     .desktopWidgetDataContainer .desktopWidgetDataRow:hover {
       background-color: #EAEAEA;
       transition: all 0.15s ease-in-out;
@@ -450,6 +452,17 @@ nav {
 #standardTextTable td {
   vertical-align: middle;
   padding: 10px; }
+
+#userInfo {
+  position: relative; }
+  #userInfo .userPropertyRow {
+    padding-top: 25px; }
+    #userInfo .userPropertyRow .userProperty, #userInfo .userPropertyRow .userValue {
+      float: left;
+      padding-left: 10px;
+      position: absolute; }
+    #userInfo .userPropertyRow .userValue {
+      left: 200px; }
 
 .searchContainer {
   float: right;
@@ -634,7 +647,7 @@ nav {
 /** MATERIAL, PUBLICATION, SERIES **/
 #fileNameErrorRow, #materialFileInfoRow, #materialCodebookRow, #materialErrorInfoRow,
 #groupedVariableTreeDiv, #variableDataContent, #variablesData, #variableGroupDataContent,
-#variablesGroupingDiv {
+#variablesGroupingDiv, #additionalFilingContractFile {
   display: none; }
 
 .upperContainer {
@@ -644,6 +657,12 @@ nav {
 .rowContainer {
   clear: both;
   display: block; }
+  .rowContainer .translations .translationLink {
+    float: left;
+    padding-right: 10px;
+    font-size: 15px;
+    font-size: 15px;
+    padding-bottom: 10px; }
 
 /* Yläosan leveämmät fieldit */
 .materialDataSetContainerTopRow {
@@ -736,8 +755,20 @@ nav {
     width: 460px;
     height: 200px; }
 
-#materialStudyLevel #toggleAccordion {
-  margin-left: 10px; }
+#materialStudyLevel #studyLevelTopRow {
+  position: relative;
+  padding-bottom: 25px; }
+  #materialStudyLevel #studyLevelTopRow #toggleAccordion {
+    position: absolute;
+    margin-left: 10px; }
+  #materialStudyLevel #studyLevelTopRow .translations {
+    position: absolute;
+    left: 120px; }
+    #materialStudyLevel #studyLevelTopRow .translations .translationLink {
+      padding-top: 5px;
+      float: left;
+      padding-right: 10px;
+      font-size: 15px; }
 #materialStudyLevel #studyLevelData {
   padding: 10px; }
   #materialStudyLevel #studyLevelData .studyLevelTitle:hover {
@@ -913,9 +944,10 @@ nav {
         padding-right: 10px; }
         #materialVariables #variablesData #variableDataContent .variableDataTable input, #materialVariables #variablesData #variableGroupDataContent .variableDataTable input {
           width: 250px; }
-    #materialVariables #variablesData #translations .translationLink {
+    #materialVariables #variablesData .translations .translationLink {
       float: left;
-      padding-left: 5px; }
+      padding-right: 10px;
+      font-size: 15px; }
     #materialVariables #variablesData #variableGroupDataContent #variableGroupName {
       vertical-align: middle; }
   #materialVariables #variablesGroupingDiv {

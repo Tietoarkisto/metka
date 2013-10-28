@@ -2,7 +2,7 @@
 
 #fileNameErrorRow, #materialFileInfoRow, #materialCodebookRow, #materialErrorInfoRow, 
 #groupedVariableTreeDiv, #variableDataContent, #variablesData, #variableGroupDataContent, 
-#variablesGroupingDiv {
+#variablesGroupingDiv, #additionalFilingContractFile {
 	display: none;
 }
 
@@ -11,9 +11,23 @@
 	font-size:12px;
 }
 
+@mixin translationLink {
+	float: left;
+	padding-right: 10px;
+	font-size: 15px;
+}
+
 .rowContainer{
 	clear: both;
 	display: block;
+
+	.translations {
+		.translationLink {
+			@include translationLink;
+			font-size: 15px;
+			padding-bottom: 10px;	
+		}
+	}
 }
 
 /* Yläosan leveämmät fieldit */
@@ -125,8 +139,23 @@
 }
 
 #materialStudyLevel {
-	#toggleAccordion {
-		margin-left: 10px;
+	#studyLevelTopRow {
+		position: relative;
+		padding-bottom: 25px;
+
+		#toggleAccordion {
+			position: absolute;
+			margin-left: 10px;
+		}
+		.translations {
+			position: absolute;
+			left: 120px;
+
+			.translationLink {
+				padding-top: 5px;
+				@include translationLink;
+			}
+		}
 	}
 	
 	#studyLevelData {
@@ -328,10 +357,9 @@
 			}
 		}
 
-		#translations {
+		.translations {
 			.translationLink {
-				float: left;
-				padding-left: 5px;
+				@include translationLink;
 			}
 		}
 

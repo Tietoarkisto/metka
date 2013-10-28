@@ -123,13 +123,10 @@ footer{
 			float: left;
 			padding: 5px;
 		}
-		.versionProperty, .versionOldValue, .versionNewValue {
-			width: 200px;
+		.versionProperty, .versionChange {
+			width: 500px;
 			float: left;
 			padding: 5px;
-		}
-		.versionOldValue, .versionNewValue {
-			width: 400px;
 		}
 	}
 

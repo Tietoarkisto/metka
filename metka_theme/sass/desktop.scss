@@ -42,6 +42,15 @@
 		text-decoration: none;
 		padding: 7px 10px 7px 20px;
 
+		.desktopWidgetDataName {
+		//	float: left;
+			left: 0px;
+		}
+		 .desktopWidgetDataOwner {
+		// 	float: right;
+		 	right: 0px;
+		 }
+
 		&:hover{
 			background-color: #EAEAEA;
 			@include transition(0.15s);

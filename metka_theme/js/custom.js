@@ -60,7 +60,7 @@ $(document).ready(function(){
 		".materialSearchResultRow, .publicationSearchResultRow, .seriesSearchResultRow, " + 
 		".materialSeriesRow, .materialPublicationRow, .materialMaterialRow, #variablesListBasic li, " +
 		".publicationSeriesRow, .publicationMaterialRow, .materialBinderRow, .binderRow, .translationLink, " + 
-		".materialRemovedFileRow").hover(function() {
+		".materialRemovedFileRow, #filingContractFile").hover(function() {
 		    $(this).css('cursor', 'pointer');
 		}, function() {
 		    $(this).css('cursor', 'auto');		    
@@ -448,6 +448,10 @@ $(document).ready(function(){
 		}
 	});
 	
+	$("#filingContractFile").on("click", function() {
+		$("#additionalFilingContractFile").toggle();
+	});
+
 	/*** JULKAISU ***/
 	
 	$("#publicationPersonTable, #publicationIdentificationTable").dataTable({
