@@ -17,11 +17,12 @@
 		height: 29px;
 		position: absolute;
 		right: -3px;
-		top: 1px;
+		//top: 1px;
 	}
 }
 .searchFormContainer {
 	margin: 20px;
+	position: relative;
 
 	.searchFormRowHolder{
 		padding-bottom: 10px;
@@ -46,6 +47,19 @@
 		input{
 			margin-left: 20px;
 		}
+	}
+
+	.expertSearchContainer {
+		position: relative;
+		display: block;
+		clear:both;
+		min-height: 275px;
+	}
+
+	#addNewSeriesButton, #addNewPublicationButton {
+		position: absolute;
+		right: 0px;
+		top: 0px;
 	}
 }
 

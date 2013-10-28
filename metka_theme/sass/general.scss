@@ -65,7 +65,7 @@ footer{
 	box-shadow: 10px 10px 5px #888; 
 }
 .pageTitle{
-	font-size: 25px;
+	font-size: 17px;
 	color: $pageColorA;
 	border-bottom: solid 1px;
 	padding: 10px 20px 10px 20px;
@@ -123,13 +123,10 @@ footer{
 			float: left;
 			padding: 5px;
 		}
-		.versionProperty, .versionOldValue, .versionNewValue {
-			width: 200px;
+		.versionProperty, .versionChange {
+			width: 500px;
 			float: left;
 			padding: 5px;
-		}
-		.versionOldValue, .versionNewValue {
-			width: 400px;
 		}
 	}
 

@@ -18,7 +18,10 @@
 		<script src="../js/jquery.fancytree.js"></script>
   		<script src="../js/jquery.fancytree.dnd.js" type="text/javascript"></script>
   		<script src="../js/jquery.fancytree.filter.js" type="text/javascript"></script>
+  		<script src="../js/jquery.fastLiveFilter.js"></script>
 	</head>
+
+	<!-- TÄMÄ OSIIN KUN JSP:KSI -->
 	<body>
 		<header>
 			<div class="headerContainer">
@@ -29,9 +32,11 @@
 				<nav>
 					<ul class="mainNavUl">
 						<li><a href="desktop.html">Työpöytä</a></li>
+						<li><a href="expertSearch.html">Eksperttihaku</a></li>	
 						<li><a href="materialSearch.html">Aineistot</a></li>
 						<li><a href="publicationSearch.html">Julkaisut</a></li>
 						<li><a href="seriesSearch.html">Sarjat</a></li>	
+						<li><a href="binders.html">Mapit</a></li>
 						<li><a href="settings.html">Asetukset</a></li>						
 					</ul>
 					
@@ -52,7 +57,7 @@
 
 			<div class="content">
 				<h1 class="pageTitle">
-					<div class="floatLeft">Aineiston tiedot&nbsp;-&nbsp;</div>
+					<div class="floatLeft">Eduskuntavaalitutkimukset 2003-2011: yhditetty aieneisto&nbsp;-&nbsp;</div>
 					<div class="floatLeft">LUONNOS</div>
 					<div class="floatRight">Mikko Tanskanen</div>
 					<div class="floatRight">Käsittelijä:&nbsp;</div>
@@ -67,7 +72,7 @@
 							<li><a id="5" href="#files">Tiedostojen hallinta</a></li>
 							<li><a id="6" href="#codebook">Koodikirja</a></li>
 							<li><a id="7" href="#errors">Virheet</a></li>
-							<li><a id="8" href="#packages">Paketointi</a></li>
+							<li><a id="8" href="#packages">Tunnisteet</a></li>
 						</ul>
 					</div>						
 					<!--<h1 class="next">></h1><h1 class="prev"><</h1>-->
@@ -76,9 +81,15 @@
 				
 				<!-- General -->
 				<div id="materialGeneral" class="tabs2 tab1">						
-					<div class="materialUpperContainer">
-			
-						<div class="materialRowContainer">
+					<div class="upperContainer">
+						<div class="rowContainer">
+							<div class="materialDataSetContainerTopRow">
+								<div class="translations">
+									<div class="translationLink">sv</div><div class="translationLink">en</div>
+								</div>
+							</div>
+						</div>
+						<div class="rowContainer">
 							<div class="materialDataSetContainerTopRow">
 								<label id="materialName" class="required leftSide">Aineiston nimi</label>
 								<input tabIndex="1" type="text" value="Eduskuntavaalitutkimukset 2003-2011: yhditetty aieneisto." name="aineistonNimi" />
@@ -88,10 +99,10 @@
 								<input tabIndex="2" type="text" name="materialnNimiEng" />
 							</div>
 						</div>
-						<div class="materialRowContainer">
+						<div class="rowContainer">
 							<div class="materialDataSetContainer">
 								<label id="materialNumber" class="required">Aineistonumero</label>
-								<input readonly="readonly" type="text" name="materialnro" value="F3D2556" />
+								<input readonly="readonly" type="text" name="materialnro" value="FSD2556" />
 							</div>
 							<div class="materialDataSetContainer">
 								<label id="acquisitiedMaterialNumber" class="required">Hankinta-aineistonumero</label>
@@ -102,7 +113,7 @@
 								<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
 							</div>
 						</div>
-						<div class="materialRowContainer">
+						<div class="rowContainer">
 							<div class="materialDataSetContainer">
 								<label id="materiaMefFin" >Mef julkaisupvm (fin)</label>
 								<input readonly="readonly" type="text" name="valmispvm" value="12.10.2013"/>
@@ -116,7 +127,7 @@
 								<select tabIndex="5"><option>Arkistoitu</option><option>Poistettu</option></select>
 							</div>
 						</div>
-						<div class="materialRowContainer">
+						<div class="rowContainer">
 							<div class="materialDataSetContainer">
 								<label id="materialFSDCedes">FSD luovuttaa</label>
 								<select><option>Kyllä</option><option>Ei</option><option>Ei tietoa</option></select>
@@ -130,7 +141,7 @@
 								<select><option>Kyllä</option><option>Ei</option><option>Ei tietoa</option></select>
 							</div>
 						</div>
-						<div class="materialRowContainer">
+						<div class="rowContainer">
 							<div class="materialDataSetContainer">
 								<label id="materialOriginalLocation">Alkuperäinen sijainti</label>
 								<input tabIndex="4" type="text"/>
@@ -144,7 +155,7 @@
 								<select id="materialQualitySelect"><option id="unknown">Ei tietoa</option><option id="quantitative">Kvanti</option><option id="qualitative">Kvali</option><option id="both">Kvanti&Kvali</option></select>
 							</div>
 						</div>
-						<div class="materialRowContainer">
+						<div class="rowContainer">
 							<div class="materialDataSetContainer">
 								<label id="materialVariableDepictionPublishing">Muuttujakuvailun julkaisu</label>
 								<select><option>Kyllä</option><option>Ei</option><option>Ei tietoa</option></select>
@@ -156,7 +167,7 @@
 						</div>
 					</div>
 					<br/>
-					<div class="materialRowContainer">
+					<div class="rowContainer">
 						<div class="materialRowTitle">Huomautukset</div>
 						<table class="tablesorter" id="materialNotificationTable">
 							<thead>
@@ -171,7 +182,7 @@
 						<div class="materialTableActionLinkHolder"><a href="dialogs/attachNotificationDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>						
 					</div>
 
-					<div class="materialRowContainer">
+					<div class="rowContainer">
 						<div class="materialRowTitle">Aineiston sarja</div>
 						<table class="tablesorter" id="materialSeriesTable">
                                 <thead>
@@ -186,7 +197,7 @@
 						<div class="materialTableActionLinkHolder"><a href="dialogs/attachSeriesDialog.html" class="fancyboxpopup fancybox.ajax">Vaihda</a></div>						
 					</div>
 					
-					<div class="materialRowContainer">
+					<div class="rowContainer">
 						<div class="materialRowTitle">Liittyvät julkaisut</div>
 						<table class="tablesorter sortableTable" id="materialPublicationTable">
 							<thead>
@@ -200,7 +211,7 @@
 						</table>
 						<div class="materialTableActionLinkHolder"><a href="dialogs/attachPublicationDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>					
 					</div>
-					<div class="materialRowContainer">
+					<div class="rowContainer">
 						<div class="materialRowTitle">Liittyvät aineistot</div>
 						<table class="tablesorter sortableTable" id="materialMaterialTable">
 							<thead>
@@ -214,21 +225,31 @@
 						</table>
 						<div class="materialTableActionLinkHolder"><a href="dialogs/attachMaterialDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>					
 					</div>
-					<div class="materialRowContainer">
+					<div class="rowContainer">
 						<div class="materialRowTitle">Liittyvät mapit</div>
 						<table class="tablesorter sortableTable" id="materialBinderTable">
 							<thead>
 								<tr><th>Mappinumero</th><th>Mapin kuvaus</th><th></th></tr>
 							</thead>
 							<tbody>
-								<tr><td>1290</td><td>Mappi, jossa tavanomaisia aineistoja</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-								<tr><td>1291</td><td>Lisämappi</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+								<tr class="materialBinderRow">
+									<td>1290<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="showBinderInfo fancyboxpopup fancybox.ajax"></a></td>
+									<td>Mappi, jossa tavanomaisia aineistoja</td>
+									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
+								</tr>
+								<tr class="materialBinderRow">
+									<td>1291<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="showBinderInfo fancyboxpopup fancybox.ajax"></a></td>
+									<td>Lisämappi</td>
+									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
+								</tr>
 							</tbody>
 						</table>	
 						<div class="materialTableActionLinkHolder"><a href="dialogs/attachBinderDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>
 					</div>
 					
 					<div class="viewFormButtonsHolder" style="margin-bottom:20px;">
+						<input type="button" id="ddi2Export" class="searchFormInput" value="DDI2-Export" />
+						<input type="button" id="htmlView" class="searchFormInput" value="HTML-näkymä" />
 						<input type="button" id="startWorkingButton" class="searchFormInput" value="Varaa aineisto itsellesi" />
 						<input type="button" id="versionHistoryButton" class="searchFormInput" value="Versiohistoria">
 							<a style="display: hidden;" id="versionHistoryLink" href="dialogs/versionHistoryDialog.html" class="fancyboxpopup fancybox.ajax"></a>
@@ -243,8 +264,13 @@
 
 				<!-- Filing Contract -->
 				<div id="materialFilingContract" class="tabs2 tab2">
-					<div class="materialUpperContainer">
-						<div class="materialRowContainer">
+					<div class="upperContainer">
+						<div class="rowContainer">
+							<div class="translations">
+								<div class="translationLink">sv</div><div class="translationLink">en</div>
+							</div>
+						</div>
+						<div class="rowContainer">
 							<div class="materialDataSetContainer"><label>Ehto 1: käyttöoikeus</label>
 								<select><option>Avoin</option><option>opiskelu,opetus,tutkimus</option><option>Tutkimus</option><option>Lupa</option><option>Embargo</option></select>
 							</div>								
@@ -253,31 +279,33 @@
 								<select><option>Ei tietoa</option><option>Yrit.yht.</option><option>Tutkija(t)</option></select>
 							</div>
 						</div>
-						<div class="materialRowContainer">
+						<div class="rowContainer">
 							<div class="materialDataSetContainer"><label>Jos heräte, ilmoituspvm</label><input type="txt" class="datepicker" name="ilmoituspvm" /></div>
 							<div class="materialDataSetContainer"><label>Herätteen saaja</label><input type="txt" class="" name="kayttoehdonmuutospvm" /></div>
 							<div class="materialDataSetContainer"><label>Herätteen selite</label><input type="txt" class="" name="herateselite" /></div>
 						</div>
-						<div class="materialRowContainer">
+						<div class="rowContainer">
 							<div class="materialDataSetContainer"><label>Erityisehtoja, fin</label><input type="text" class="" name="valmispvm"/></div>
 							<div class="materialDataSetContainer"><label>Erityisehtoja, eng</label><input type="text" class="" name="valmispvm"/></div>
 							<div class="materialDataSetContainer"><label>Erityisehtoja, swe</label><input type="text" class="" name="valmispvm"/></div>
 						</div>
-						<div class="materialRowContainer">
-							<div class="materialDataSetContainer"><label>Arkistointisopimustiedosto</label><input type="txt" class="" name="kayttoehto" /></div>
+						<div class="rowContainer">
+							<div class="materialDataSetContainer"><label id="filingContractFile">Arkistointisopimustiedosto</label><input type="txt" class="" name="kayttoehto" /></div>
 							<div class="materialDataSetContainer"><label>Arkistointisopimuksen tapa</label>
 								<select><option>Ei tietoa</option><option>Ei tarvita sopimusta</option><option>Könttäsopimus</option><option>Norm+puite</option><option>On sopimus</option></select>
 							</div>
 							<div class="materialDataSetContainer"><label>Arkistointisopimuksen pvm</label><input type="txt" class="datepicker" name="kayttoehto" /></div>
-
+						</div>						
+						<div class="rowContainer" id="additionalFilingContractFile" style="display: hidden;">
+							<div class="materialDataSetContainer"><label>Arkistointisopimustiedosto</label><input type="txt" class="" name="kayttoehto" /></div>
 						</div>
-						<div class="materialRowContainer">
+						<div class="rowContainer">
 							<div class="materialDataSetContainer"><label>Käyttöehdon muutospvm</label><input type="txt" class="datepicker" name="kayttoehdonmuutospvm" /></div>
 							<div class="materialDataSetContainer"><label>Käyttöehto muutospvm jälkeen</label>
 								<select><option>Avoin</option><option>opiskelu,opetus,tutkimus</option><option>Tutkimus</option><option>Lupa</option><option>Embargo</option></select>
 							</div>
 						</div>
-						<div class="materialRowContainer">
+						<div class="rowContainer">
 							<div class="materialDataSetTextareaContainer">
                                 <label>Lisätiedot koskien arkistointisopimusta</label><textarea></textarea>
                            </div>
@@ -292,7 +320,7 @@
 
 					</div>
 
-					<div class="materialRowContainer">
+					<div class="rowContainer">
 						<br/>
 						<div class="materialRowTitle">Liittyvät henkilöt</div>
 						<table class="tablesorter sortableTable" id="materialPersonTable">
@@ -306,61 +334,374 @@
 						</table>	
 						<div class="materialTableActionLinkHolder"><a href="dialogs/attachPersonFilingDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>
 					</div>
+
+					
+					<div class="viewFormButtonsHolder" style="margin-bottom:20px;">
+						<input type="button" id="ddi2Export" class="searchFormInput" value="DDI2-Export" />
+						<input type="button" id="htmlView" class="searchFormInput" value="HTML-näkymä" />
+						<input type="button" id="startWorkingButton" class="searchFormInput" value="Varaa aineisto itsellesi" />
+						<input type="button" id="versionHistoryButton" class="searchFormInput" value="Versiohistoria">
+							<a style="display: hidden;" id="versionHistoryLink" href="dialogs/versionHistoryDialog.html" class="fancyboxpopup fancybox.ajax"></a>
+						</input>
+						<input type="button" id="approveChangesButton" class="searchFormInput" value="Hyväksy muutokset" >
+							<a style="display: hidden;" id="approveChangesLink" href="dialogs/confirmDialog.html" class="fancyboxpopup fancybox.ajax"></a>
+						</input>
+						<input type="button" id="saveAsDraftButton" class="searchFormInput" value="Tallenna Luonnoksena" />
+					</div>	
 				</div>
 
 				<!-- Studylevel -->
 				<div id="materialStudyLevel" class="tabs2 tab3">
+					<div id="studyLevelTopRow">
+						<input type="button" id="toggleAccordion" class="searchFormInput" value="Avaa kaikki"/>
+						<div class="translations">
+							<div class="translationLink">sv</div><div class="translationLink">en</div>
+						</div>
+					</div>
 					<div id="studyLevelData">
 						<label class="studyLevelTitle">Perustiedot (docDscr/citation/titlStmt + docDscr/citation/prodStmt/verStmt)</label>
-						<div>
-							
+						<div class="accordionContent">
+							<div class="rowContainer">
+								<div class="dataSetContainer">
+									<label>Otsikko</label>
+									<input type="text" name="materialnro" value="F3D2556" />
+								</div>
+								<div class="dataSetContainer">
+									<label>ID-tunnus</label>
+									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
+								</div>
+								<div class="dataSetContainer">
+									<label>Versionumero</label>
+									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
+								</div>
+							</div>
 						</div>
-						<label class="studyLevelTitle">Kuvailutiedot (stdyDscr/citation/rspStmt)</label>
-						<div>
+						<label class="studyLevelTitle">Versiotiedot</label>
+						<div class="accordionContent">
+							<div class="rowContainer">
+								<div class="dataSetContainer">
+									<label>version</label>
+									<input type="text" name="" value="3.0" />
+								</div>
+								<div class="dataSetContainer">
+									<label>labl</label>
+									<input type="text" name="hank.ain.nro" value="Foo bar lorem ipsum dolor sit amet"/>
+								</div>
+								<div class="dataSetContainer">
+									<label>publText</label
+									><input type="text" name="hank.ain.nro" value="Foo bar lorem ipsum dolor sit amet"/>
+								</div>
+							</div>
+							<div class="rowContainer">
+								<div class="dataSetContainer">
+									<label>text</label>
+									<input type="text" name="" value="Foo bar lorem ipsum dolor sit amet" />
+								</div>
+								<div class="dataSetContainer">
+									<label>@date</label>
+									<input type="text" class="datepicker" name="hank.ain.nro" value="10.10.2013"/>
+								</div>
+								<div class="dataSetContainer">
+									<label>Tallentaja</label
+									><input type="text" name="" value="Mikko Tanskanen"/>
+								</div>
+							</div>
 						
 						</div>
-						<label class="studyLevelTitle">Tuottajatiedot (stdyDscr/citation/prodStmt)</label>
-						<div>
+						<label class="studyLevelTitle">Viittaustiedot</label>
+						<div class="accordionContent">
+							<div class="rowContainer">
+								<div class="dataSetContainer">
+									<label>altTitl</label>
+									<input type="text" name="" value="Toinen otsikko" />
+								</div>
+								<div class="dataSetContainer">
+									<label>altTitl</label>
+									<input type="text" name="" value="Kolmas otsikko" />
+								</div>
+								<div class="dataSetContainer">
+									<label>Versionumero</label>
+									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
+								</div>
+							</div>
 							
 						</div>
-						<label class="studyLevelTitle">stdyDscr/stdyInfo/subject, stdyDscr/stdyInfo/abstract</label>
-						<div>
+						<label class="studyLevelTitle">Muut nimet</label>
+						<div class="accordionContent">
+							<div class="rowContainer">
+								<div class="dataSetContainer">
+									<label>Otsikko</label>
+									<input type="text" name="materialnro" value="F3D2556" />
+								</div>
+								<div class="dataSetContainer">
+									<label>ID-tunnus</label>
+									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
+								</div>
+								<div class="dataSetContainer">
+									<label>Versionumero</label>
+									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
+								</div>
+							</div>
 							
 						</div>
-						<label class="studyLevelTitle">stdyDscr/stdyInfo/sumDscr</label>
-						<div>
+						<label class="studyLevelTitle">Tekijät ja tuottajat</label>
+						<div class="accordionContent">
+							<div class="rowContainer">
+								<div class="dataSetContainer">
+									<label>Otsikko</label>
+									<input type="text" name="materialnro" value="F3D2556" />
+								</div>
+								<div class="dataSetContainer">
+									<label>ID-tunnus</label>
+									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
+								</div>
+								<div class="dataSetContainer">
+									<label>Versionumero</label>
+									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
+								</div>
+							</div>
 
 						</div>
-						<label class="studyLevelTitle">stdyDscr/method/dataColl, stdyDscr/method/anlyInfo</label>
-						<div>
+						<label class="studyLevelTitle">Viittaustiedot stdyDscr/method/dataColl, stdyDscr/method/anlyInfo</label>
+						<div class="accordionContent">
+							<div class="rowContainer">
+								<div class="dataSetContainer">
+									<label>Otsikko</label>
+									<input type="text" name="materialnro" value="F3D2556" />
+								</div>
+								<div class="dataSetContainer">
+									<label>ID-tunnus</label>
+									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
+								</div>
+								<div class="dataSetContainer">
+									<label>Versionumero</label>
+									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
+								</div>
+							</div>
 
 						</div>
-						<label class="studyLevelTitle">stdyDscr/dataAccs/setAvail, stdyDscr/dataAccs/useStmt, stdyDscr/dataAccs/notes, stdyDscr/othrStdyMat, otherMat</label>
-						<div>
+						<label class="studyLevelTitle">Asiasanat, tieteenala ja abstrakti</label>
+						<div class="accordionContent">
+							<div class="rowContainer">
+								<div class="dataSetContainer">
+									<label>Otsikko</label>
+									<input type="text" name="materialnro" value="F3D2556" />
+								</div>
+								<div class="dataSetContainer">
+									<label>ID-tunnus</label>
+									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
+								</div>
+								<div class="dataSetContainer">
+									<label>Versionumero</label>
+									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
+								</div>
+							</div>
+							<div class="rowContainer">
+								<div class="dataSetContainer">
+									<label>Otsikko</label>
+									<input type="text" name="materialnro" value="F3D2556" />
+								</div>
+								<div class="dataSetContainer">
+									<label>ID-tunnus</label>
+									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
+								</div>
+								<div class="dataSetContainer">
+									<label>Versionumero</label>
+									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
+								</div>
+							</div>
 
 						</div>
-						<label class="studyLevelTitle">Tekijät (siirretään tänne?)</label>
-						<div>
+						<label class="studyLevelTitle">Kattavuus</label>
+						<div class="accordionContent">
+							<div class="rowContainer">
+								<div class="dataSetContainer">
+									<label>Otsikko</label>
+									<input type="text" name="materialnro" value="F3D2556" />
+								</div>
+								<div class="dataSetContainer">
+									<label>ID-tunnus</label>
+									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
+								</div>
+								<div class="dataSetContainer">
+									<label>Versionumero</label>
+									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
+								</div>
+							</div>
+							<div class="rowContainer">
+								<div class="dataSetContainer">
+									<label>Otsikko</label>
+									<input type="text" name="materialnro" value="F3D2556" />
+								</div>
+								<div class="dataSetContainer">
+									<label>ID-tunnus</label>
+									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
+								</div>
+								<div class="dataSetContainer">
+									<label>Versionumero</label>
+									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
+								</div>
+							</div>
 
+						</div>
+						<label class="studyLevelTitle">Aineistonkeruu</label>
+						<div class="accordionContent">
+							<div class="rowContainer">
+								<div class="dataSetContainer">
+									<label>Otsikko</label>
+									<input type="text" name="materialnro" value="F3D2556" />
+								</div>
+								<div class="dataSetContainer">
+									<label>ID-tunnus</label>
+									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
+								</div>
+								<div class="dataSetContainer">
+									<label>Versionumero</label>
+									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
+								</div>
+							</div>
+							<div class="rowContainer">
+								<div class="dataSetContainer">
+									<label>Otsikko</label>
+									<input type="text" name="materialnro" value="F3D2556" />
+								</div>
+								<div class="dataSetContainer">
+									<label>ID-tunnus</label>
+									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
+								</div>
+								<div class="dataSetContainer">
+									<label>Versionumero</label>
+									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
+								</div>
+							</div>
+
+						</div>
+						<label class="studyLevelTitle">Kattavuus</label>
+						<div class="accordionContent">
+							<div class="rowContainer">
+								<div class="dataSetContainer">
+									<label>Otsikko</label>
+									<input type="text" name="materialnro" value="F3D2556" />
+								</div>
+								<div class="dataSetContainer">
+									<label>ID-tunnus</label>
+									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
+								</div>
+								<div class="dataSetContainer">
+									<label>Versionumero</label>
+									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
+								</div>
+							</div>
+							<div class="rowContainer">
+								<div class="dataSetContainer">
+									<label>Otsikko</label>
+									<input type="text" name="materialnro" value="F3D2556" />
+								</div>
+								<div class="dataSetContainer">
+									<label>ID-tunnus</label>
+									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
+								</div>
+								<div class="dataSetContainer">
+									<label>Versionumero</label>
+									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
+								</div>
+							</div>
+
+						</div>
+						<label class="studyLevelTitle">Aineiston käyttö</label>
+						<div class="accordionContent">
+							<div class="rowContainer">
+								<div class="dataSetContainer">
+									<label>Otsikko</label>
+									<input type="text" name="materialnro" value="F3D2556" />
+								</div>
+								<div class="dataSetContainer">
+									<label>ID-tunnus</label>
+									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
+								</div>
+								<div class="dataSetContainer">
+									<label>Versionumero</label>
+									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
+								</div>
+							</div>
+							<div class="rowContainer">
+								<div class="dataSetContainer">
+									<label>Otsikko</label>
+									<input type="text" name="materialnro" value="F3D2556" />
+								</div>
+								<div class="dataSetContainer">
+									<label>ID-tunnus</label>
+									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
+								</div>
+								<div class="dataSetContainer">
+									<label>Versionumero</label>
+									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
+								</div>
+							</div>
+
+						</div>
+						<label class="studyLevelTitle">Muut materiaalit</label>
+						<div class="accordionContent">
+							<div class="rowContainer">
+								<div class="dataSetContainer">
+									<label>Otsikko</label>
+									<input type="text" name="materialnro" value="F3D2556" />
+								</div>
+								<div class="dataSetContainer">
+									<label>ID-tunnus</label>
+									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
+								</div>
+								<div class="dataSetContainer">
+									<label>Versionumero</label>
+									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
+								</div>
+							</div>
+							<div class="rowContainer">
+								<div class="dataSetContainer">
+									<label>Otsikko</label>
+									<input type="text" name="materialnro" value="F3D2556" />
+								</div>
+								<div class="dataSetContainer">
+									<label>ID-tunnus</label>
+									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
+								</div>
+								<div class="dataSetContainer">
+									<label>Versionumero</label>
+									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
+								</div>
+							</div>
+
+						</div>
+						<label class="studyLevelTitle">Tekijät</label>
+						<div class="accordionContent">
+							<table class="tablesorter" id="materialAuthorTable">
+								<thead>
+									<tr><th>id</th><th>Nimi</th><th>Organisaatio</th><th>Titteli</th><th></th></tr>
+								</thead>
+								<tbody>
+									<tr class="materialAuthor"><td>1</td><td>Mikko Tanskanen</td><td>Proactum Oy</td><td>Arkkitehti</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+									<tr class="materialAuthor"><td>2</td><td>Mikko Tanskanen</td><td>Proactum Oy</td><td>Arkkitehti</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+									<tr class="materialAuthor"><td>3</td><td>Sami Borg</td><td>Tietoarkisto</td><td>Tutkija</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+									<tr class="materialAuthor"><td>4</td><td>Pekka Pouta</td><td>YLE</td><td>Meteorologi</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+									<tr class="materialAuthor"><td>5</td><td>Mikko Tanskanen</td><td>Proactum Oy</td><td>Sovelluskehittäjä</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+								</tbody>
+							</table>
+							<div class="accordionTableActionLinkHolder"><a href="dialogs/attachPersonStudyLevelDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>	
 						</div>
 					</div>
 					
-					<div class="materialRowContainer">
-						<div class="materialRowTitle">Tekijät</div>
-						<table class="tablesorter" id="materialAuthorTable">
-							<thead>
-								<tr><th>id</th><th>Nimi</th><th>Organisaatio</th><th>Titteli</th><th></th></tr>
-							</thead>
-							<tbody>
-								<tr class="materialAuthor"><td>1</td><td>Juuso Lähdekorpi</td><td>Proactum Oy</td><td>Arkkitehti</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-								<tr class="materialAuthor"><td>2</td><td>Peter Mikula</td><td>Proactum Oy</td><td>Arkkitehti</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-								<tr class="materialAuthor"><td>3</td><td>Sami Borg</td><td>Tietoarkisto</td><td>Tutkija</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-								<tr class="materialAuthor"><td>4</td><td>Pekka Pouta</td><td>YLE</td><td>Meteorologi</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-								<tr class="materialAuthor"><td>5</td><td>Mikko Tanskanen</td><td>Proactum Oy</td><td>Sovelluskehittäjä</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-							</tbody>
-						</table>
-						<div class="materialTableActionLinkHolder"><a href="dialogs/attachPersonStudyLevelDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>			
-					</div>
+					<div class="viewFormButtonsHolder" style="margin-bottom:20px;">
+						<input type="button" id="ddi2Export" class="searchFormInput" value="DDI2-Export" />
+						<input type="button" id="htmlView" class="searchFormInput" value="HTML-näkymä" />
+						<input type="button" id="startWorkingButton" class="searchFormInput" value="Varaa aineisto itsellesi" />
+						<input type="button" id="versionHistoryButton" class="searchFormInput" value="Versiohistoria">
+							<a style="display: hidden;" id="versionHistoryLink" href="dialogs/versionHistoryDialog.html" class="fancyboxpopup fancybox.ajax"></a>
+						</input>
+						<input type="button" id="approveChangesButton" class="searchFormInput" value="Hyväksy muutokset" >
+							<a style="display: hidden;" id="approveChangesLink" href="dialogs/confirmDialog.html" class="fancyboxpopup fancybox.ajax"></a>
+						</input>
+						<input type="button" id="saveAsDraftButton" class="searchFormInput" value="Tallenna Luonnoksena" />
+					</div>	
 				</div>
 				
 				<!-- Variables -->
@@ -368,57 +709,105 @@
 					
 					<div id="variablesTreeSelection">
 						<div class="variableTreeRadioSelect"><input type="radio" name="variableTreeType" id="basicVariableTree" checked autocomplete="off" />Perusnäkymä</div>
-						<div class="variableTreeRadioSelect"><input type="radio" name="variableTreeType" id="groupedVariableTree" autocomplete="off" />Ryhmitelty näkymä</div>in
-						<div class="variableTreeRadioSelect"><input type="radio" name="variableTreeType" id="groupingtrvl" autocomplete="off" />Muuttujien ryhmittely</div>
+						<div class="variableTreeRadioSelect"><input type="radio" name="variableTreeType" id="groupedVariableTree" autocomplete="off" />Ryhmitelty näkymä</div>
+						<div class="variableTreeRadioSelect"><input type="radio" name="variableTreeType" id="variablesGrouping" autocomplete="off" />Muuttujien ryhmittely</div>
 					</div>
 
-					<div id="variablesTreeBasic" class="variablesTree">
-						<div id="variableFilter"><input name="variableFilter" placeholder="Filter..."></div>
+					<div id="basicVariableTreeDiv" class="variablesTree">
+						<div id="variableFilter"><input id="variableFilterInput" placeholder="Filter..."></div>
 						<ul id="variablesListBasic">
-							<li id="var2.1b">[q1] Sukupuolenne?</li>
-							<li id="var2.2b">[q2] Oma poliittinen kiinnostus</li>
-							<li id="var2.3b">[q3_1] Vas./oik. oma sijoittuminen</li>
-							<li id="var2.4b">[q2] Ikä</li>
-							<li id="var2.5b">[q4_1] Vastaajan ammattiryhmä</li>
-							<li id="var2.6b">[q4_2] Jos vastaaja eläkeläinen, entinen ammattiryhmä</li>
-							<li id="var2.1c">[q1] Sukupuolenne?</li>
-							<li id="var2.2c">[q2] Oma poliittinen kiinnostus</li>
-							<li id="var2.3c">[q3_1] Vas./oik. oma sijoittuminen</li>
-							<li id="var2.4c">[q3] Onko vastaaja perheen päähenkilö</li>
-							<li id="var2.5c">[q4_1] Vastaajan ammattiryhmä</li>
-							<li id="var2.6c">[q4_2] Jos vastaaja eläkeläinen, entinen ammattiryhmä</li>
+							<li>[q1] Sukupuolenne?</li>
+							<li>[q2] Oma poliittinen kiinnostus</li>
+							<li>[q3_1] Vas./oik. oma sijoittuminen</li>
+							<li>[q2] Ikä</li>
+							<li>[q4_1] Vastaajan ammattiryhmä</li>
+							<li>[q4_2] Jos vastaaja eläkeläinen, entinen ammattiryhmä</li>
+							<li>[q1] Sukupuolenne?</li>
+							<li>[q2] Oma poliittinen kiinnostus</li>
+							<li>[q3_1] Vas./oik. oma sijoittuminen</li>
+							<li>[q3] Onko vastaaja perheen päähenkilö</li>
+							<li>[q4_1] Vastaajan ammattiryhmä</li>
+							<li>[q4_2] Jos vastaaja eläkeläinen, entinen ammattiryhmä</li>
+							<li>[q2] Ikä</li>
+							<li>[q4_1] Vastaajan ammattiryhmä</li>
+							<li>[q4_2] Jos vastaaja eläkeläinen, entinen ammattiryhmä</li>
+							<li>[q1] Sukupuolenne?</li>
+							<li>[q2] Oma poliittinen kiinnostus</li>
+							<li>[q3_1] Vas./oik. oma sijoittuminen</li>
+							<li>[q3] Onko vastaaja perheen päähenkilö</li>
 						</ul>
 					</div>
 
-					<div id="variablesTreeGrouped" class="variablesTree">
-						<div id="newFolder"><input type="text" id="newFolderName"/><input type="button" id="addFolderButton" class="searchFormInput" value="Lisää ryhmä"/></div>
+					<div id="groupedVariableTreeDiv" class="variablesTree">
 						<ul id="variableList">
-							<li class="parentVariableGroup folder" id="var1">Nyt pyytäisin Teitä vertailemaan eräiden ominaisuuksien suht...
+							<li class="parentVariableGroup folder">Nyt pyytäisin Teitä vertailemaan eräiden ominaisuuksien suht...
 								<ul class="childVariableGroupList">
-									<li id="var1.1">[q1] Sukupuolenne?</li>
-									<li id="var1.2">[q2] Oma poliittinen kiinnostus</li>
-									<li id="var1.3">[q2] Ikä</li>
+									<li>[q1] Sukupuolenne?</li>
+									<li>[q2] Oma poliittinen kiinnostus</li>
+									<li>[q2] Ikä</li>
 								</ul>
 							</li>
-							<li class="parentVariableGroup folder" id="var2g">Onko olemassa jokin tai joitakin asioita, joista Te itse olette...
+							<li class="parentVariableGroup folder">Onko olemassa jokin tai joitakin asioita, joista Te itse olette...
 								<ul class="childVariableGroupList">
-									<li id="var2.1">[q1] Sukupuolenne?</li>
-									<li id="var2.2">[q2] Oma poliittinen kiinnostus</li>
-									<li id="var2.3">[q3_1] Vas./oik. oma sijoittuminen</li>
-									<li id="var2.4">[q3] Onko vastaaja perheen päähenkilö</li>
-									<li id="var2.5">[q4_1] Vastaajan ammattiryhmä</li>
-									<li id="var2.6">[q4_2] Jos vastaaja eläkeläinen, entinen ammattiryhmä</li>
+									<li>[q1] Sukupuolenne?</li>
+									<li>[q2] Oma poliittinen kiinnostus</li>
+									<li>[q3_1] Vas./oik. oma sijoittuminen</li>
+									<li>[q3] Onko vastaaja perheen päähenkilö</li>
+									<li>[q4_1] Vastaajan ammattiryhmä</li>
+									<li>[q4_2] Jos vastaaja eläkeläinen, entinen ammattiryhmä</li>
 								</ul>
 							</li>
-							<li class="parentVariableGroup folder" id="var3">Kuinka paljon seurasitte eduskuntavaaleja eri tiedotusvälineistä?
+							<li class="parentVariableGroup folder">Kuinka paljon seurasitte eduskuntavaaleja eri tiedotusvälineistä?
 								<ul class="childVariableGroupList">
-									<li id="var3.1">[q1] Sukupuolenne?</li>
+									<li>[q1] Sukupuolenne?</li>
 								</ul>
 							</li>
-							<li class="parentVariableGroup folder" id="var4">Entä jos ajattelemme edellisessä presidentinvaaleissa ehdok...
+							<li class="parentVariableGroup folder">Entä jos ajattelemme edellisessä presidentinvaaleissa ehdok...
 								<ul class="childVariableGroupList">
-									<li id="var4.1">[q1] Sukupuolenne?</li>
-									<li id="var4.2">[q2] Oma poliittinen kiinnostus</li>
+									<li>[q1] Sukupuolenne?</li>
+									<li>[q2] Oma poliittinen kiinnostus</li>
+								</ul>
+							</li>
+							<li class="parentVariableGroup folder">Onko olemassa jokin tai joitakin asioita, joista Te itse olette...
+								<ul class="childVariableGroupList">
+									<li>[q1] Sukupuolenne?</li>
+									<li>[q2] Oma poliittinen kiinnostus</li>
+									<li>[q3_1] Vas./oik. oma sijoittuminen</li>
+									<li>[q3] Onko vastaaja perheen päähenkilö</li>
+									<li>[q4_1] Vastaajan ammattiryhmä</li>
+									<li>[q4_2] Jos vastaaja eläkeläinen, entinen ammattiryhmä</li>
+								</ul>
+							</li>
+							<li class="parentVariableGroup folder">Kuinka paljon seurasitte eduskuntavaaleja eri tiedotusvälineistä?
+								<ul class="childVariableGroupList">
+									<li>[q1] Sukupuolenne?</li>
+								</ul>
+							</li>
+							<li class="parentVariableGroup folder">Entä jos ajattelemme edellisessä presidentinvaaleissa ehdok...
+								<ul class="childVariableGroupList">
+									<li>[q1] Sukupuolenne?</li>
+									<li>[q2] Oma poliittinen kiinnostus</li>
+								</ul>
+							</li>
+							<li class="parentVariableGroup folder">Onko olemassa jokin tai joitakin asioita, joista Te itse olette...
+								<ul class="childVariableGroupList">
+									<li>[q1] Sukupuolenne?</li>
+									<li>[q2] Oma poliittinen kiinnostus</li>
+									<li>[q3_1] Vas./oik. oma sijoittuminen</li>
+									<li>[q3] Onko vastaaja perheen päähenkilö</li>
+									<li>[q4_1] Vastaajan ammattiryhmä</li>
+									<li>[q4_2] Jos vastaaja eläkeläinen, entinen ammattiryhmä</li>
+								</ul>
+							</li>
+							<li class="parentVariableGroup folder">Kuinka paljon seurasitte eduskuntavaaleja eri tiedotusvälineistä?
+								<ul class="childVariableGroupList">
+									<li>[q1] Sukupuolenne?</li>
+								</ul>
+							</li>
+							<li class="parentVariableGroup folder">Entä jos ajattelemme edellisessä presidentinvaaleissa ehdok...
+								<ul class="childVariableGroupList">
+									<li>[q1] Sukupuolenne?</li>
+									<li>[q2] Oma poliittinen kiinnostus</li>
 								</ul>
 							</li>
 						</ul>
@@ -440,11 +829,17 @@
 										</tr>
 										<tr>
 											<td>Kysymysteksti</td>
-											<td><input type="text" value="Kuinka paljon politiikka Teitä kiinnostaa? Oletteko hyvin kiinnostunut, jonkin verran kiinnostunut, vain vähän kiinnostunut vai ei ollenkaan kiinnostunut?"/></td>
+											<td>
+												<input type="text" value="Kuinka paljon politiikka Teitä kiinnostaa? Oletteko hyvin kiinnostunut, jonkin verran kiinnostunut, vain vähän kiinnostunut vai ei ollenkaan kiinnostunut?"/>
+												<input type="text" value="Kuinka paljon politiikka Teitä kiinnostaa? Oletteko hyvin kiinnostunut, jonkin verran kiinnostunut, vain vähän kiinnostunut vai ei ollenkaan kiinnostunut?"/>
+											</td>
 										</tr>
 										<tr>
 											<td>Esiteksti</td>
-											<td><input type="text" value="Aluksi muutama Teitä ja kotitalouttanne koskeva kysymys: Rengastakaa mielestänne sopivinta vaihtoehtoa vastaava numero tai kirjoittakaa vastauksenne sille varattuun tilaan."/></td>
+											<td>
+												<input type="text" value="Aluksi muutama Teitä ja kotitalouttanne koskeva kysymys: Rengastakaa mielestänne sopivinta vaihtoehtoa vastaava numero tai kirjoittakaa vastauksenne sille varattuun tilaan."/>
+												<input type="text" value="Aluksi muutama Teitä ja kotitalouttanne koskeva kysymys: Rengastakaa mielestänne sopivinta vaihtoehtoa vastaava numero tai kirjoittakaa vastauksenne sille varattuun tilaan."/>
+											</td>
 										</tr>
 										<tr>
 											<td>Jälkiteksti</td>
@@ -466,10 +861,9 @@
 										</tr>
 									</tbody>
 								</table>
-								<div id="translations">
-									<img class="translationFlag" id="translationFlagFi" src="../images/fi.png"/>
-									<img class="translationFlag" id="translationFlagSe" src="../images/se.png"/>
-									<img class="translationFlag" id="translationFlagEn" src="../images/gb.png"/>
+								<div class="translations">
+									<div class="translationLink">sv</div>
+									<div class="translationLink">en</div>
 								</div>
 							</div>
 						</div>
@@ -482,13 +876,76 @@
 									</thead>
 									<tbody>
 										<tr>
-											<td id="variableGroupName">Ryhmän nimi</td>
-											<td><textarea cols="50" rows="5"></textarea></td>
+											<td id="variableGroupName">Ryhmän teksti</td>
+											<td><textarea cols="40" rows="5"></textarea>
+												<textarea cols="40" rows="5"></textarea>
+												<textarea cols="40" rows="5"></textarea>
+											</td>
 									</tbody>
 								</table>
 							</div>
-						</div>
+						</div>						
 					</div>
+
+					<div id="variablesGroupingDiv">
+						<div id="variablesBox" class="variablesGroupingBox">
+						<div id="variablesGroupingVariableFilter"><input id="variablesGroupingFilterInput" placeholder="Filter..."></div>
+							<ul id="variablesGroupingVariablesList">
+								<li><input type="checkbox"/>[q1] Sukupuolenne?</li>
+								<li><input type="checkbox"/>[q2] Oma poliittinen kiinnostus</li>
+								<li><input type="checkbox"/>[q3_1] Vas./oik. oma sijoittuminen</li>
+								<li><input type="checkbox"/>[q2] Ikä</li>
+								<li><input type="checkbox"/>[q4_1] Vastaajan ammattiryhmä</li>
+								<li><input type="checkbox"/>[q4_2] Jos vastaaja eläkeläinen, entinen ammattiryhmä</li>
+								<li><input type="checkbox"/>[q1] Sukupuolenne?</li>
+								<li><input type="checkbox"/>[q2] Oma poliittinen kiinnostus</li>
+								<li><input type="checkbox"/>[q3_1] Vas./oik. oma sijoittuminen</li>
+								<li><input type="checkbox"/>[q3] Onko vastaaja perheen päähenkilö</li>
+								<li><input type="checkbox"/>[q4_1] Vastaajan ammattiryhmä</li>
+								<li><input type="checkbox"/>[q4_2] Jos vastaaja eläkeläinen, entinen ammattiryhmä</li>								
+								<li><input type="checkbox"/>[q3_1] Vas./oik. oma sijoittuminen</li>
+								<li><input type="checkbox"/>[q2] Ikä</li>
+								<li><input type="checkbox"/>[q4_1] Vastaajan ammattiryhmä</li>
+								<li><input type="checkbox"/>[q4_2] Jos vastaaja eläkeläinen, entinen ammattiryhmä</li>
+								<li><input type="checkbox"/>[q1] Sukupuolenne?</li>
+							</ul>
+						</div>
+						<div id="variablesToGroupArrowBox" class="">
+							<div id="variablesToGroupArrow">&gt;</div>
+						</div>
+						<div id="variableGroupsBox" class="variablesGroupingBox fancytree-radio">
+							<div id="newFolder"><input type="text" id="newFolderName"/><input type="button" id="addFolderButton" class="searchFormInput" value="Lisää ryhmä"/></div>
+							<ul id="variableGroupRoot">
+								<li class="parentVariableGroup folder">Nyt pyytäisin Teitä vertailemaan eräiden ominai...
+									<ul class="childVariableGroupList">
+										<li>[q1] Sukupuolenne?</li>
+										<li>[q2] Oma poliittinen kiinnostus</li>
+										<li>[q2] Ikä</li>
+									</ul>
+								</li>
+								<li class="parentVariableGroup folder">Foo bar lorem ipsum dolor sit amet
+									<ul class="childVariableGroupList">
+										<li>[q1] Sukupuolenne?</li>
+										<li>[q2] Oma poliittinen kiinnostus</li>
+										<li>[q2] Ikä</li>
+									</ul>
+								</li>
+							</ul>
+						</div>
+					</div>	
+					
+					<div class="viewFormButtonsHolder" style="margin-bottom:20px;">
+						<input type="button" id="ddi2Export" class="searchFormInput" value="DDI2-Export" />
+						<input type="button" id="htmlView" class="searchFormInput" value="HTML-näkymä" />
+						<input type="button" id="startWorkingButton" class="searchFormInput" value="Varaa aineisto itsellesi" />
+						<input type="button" id="versionHistoryButton" class="searchFormInput" value="Versiohistoria">
+							<a style="display: hidden;" id="versionHistoryLink" href="dialogs/versionHistoryDialog.html" class="fancyboxpopup fancybox.ajax"></a>
+						</input>
+						<input type="button" id="approveChangesButton" class="searchFormInput" value="Hyväksy muutokset" >
+							<a style="display: hidden;" id="approveChangesLink" href="dialogs/confirmDialog.html" class="fancyboxpopup fancybox.ajax"></a>
+						</input>
+						<input type="button" id="saveAsDraftButton" class="searchFormInput" value="Tallenna Luonnoksena" />
+					</div>	
 				</div>							
 				
 				<!-- File handling -->
@@ -518,7 +975,7 @@
 									<tr><td class="fileInfoLabel">Tallentaja</td><td class="fileInfoContent">Mikko Tanskanen</td></tr>
 									<tr><td class="fileInfoLabel">PAS</td><td class="fileInfoContent">Ei tietoa</td></tr>
 									<tr><td class="fileInfoLabel">Kieli</td><td class="fileInfoContent">Suomi</td></tr>
-									<tr><td class="fileInfoLabel">Alkuperä</td><td class="fileInfoContent">Ei tietoa</td></tr>
+									<tr><td class="fileInfoLabel">Alkuperäinen kieli</td><td class="fileInfoContent">Ei tietoa</td></tr>
 									<tr><td class="fileInfoLabel">Ulosluovutus</td><td class="fileInfoContent">Ei tietoa</td></tr>
 									<tr><td class="fileInfoLabel">WWW</td><td class="fileInfoContent">x</td></tr>
 									<tr><td class="fileInfoLabel">Muutospvm</td><td class="fileInfoContent">3.10.2013</td></tr>
@@ -544,10 +1001,55 @@
 							<tr><th>Tiedoston nimi</th><th>Tiedoston kuvaus</th><th>Selite</th></tr>
 						</thead>
 						<tbody>
-							<tr class="materialFileRow"><td class="materialFileName">wrongData.zip</td><td>Datapaketti</td><td>Tämä lisättiin vahingossa</td></tr>
-							<tr class="materialFileRow"><td class="materialFileName">bar.docx</td><td>Dokumentaatio</td><td>Aivan väärä tiedosto, muuttunut</td></tr>
+							<tr class="materialRemovedFileRow"><td class="materialFileName">wrongData.zip</td><td>Datapaketti</td><td>Tämä lisättiin vahingossa</td></tr>
+							<tr class="materialRemovedFileRow"><td class="materialFileName">bar.docx</td><td>Dokumentaatio</td><td>Aivan väärä tiedosto, muuttunut</td></tr>
 						</tbody>
 					</table>
+
+					<div id="materialRemovedFileInfoRow" style="display: none;">
+						<div id="materialRemovedFileInfoContent">
+							<table>
+								<thead><tr><th class="fileInfoLabel"></th><th class="fileInfoContent"></th></tr></thead>
+								<tbody>
+									<tr><td class="fileInfoLabel">Tiedosto</td><td class="fileInfoContent"><a id="" class="fileInfoContentFileName" href="#"></a></td>
+									<tr><td class="fileInfoLabel">Virallinen selite</td><td class="fileInfoContent">Nullam non tempor enim. Curabitur porttitor, mauris non viverra euismod, leo lorem lobortis massa, vitae ultricies mauris massa nec ligula. Donec quis elit ut augue vehicula viverra et in tellus</td></tr>
+									<tr><td class="fileInfoLabel">Erpävirallinen Selite</td><td class="fileInfoContent">Nullam non tempor enim. Curabitur porttitor, mauris non viverra euismod, leo lorem lobortis massa, vitae ultricies mauris massa nec ligula. Donec quis elit ut augue vehicula viverra et in tellus</td></tr>
+									<tr><td class="fileInfoLabel">Kommentti</td><td class="fileInfoContent">Ajattelin tämän lisätä tänne</td></tr>
+									<tr><td class="fileInfoLabel">Tallentaja</td><td class="fileInfoContent">Mikko Tanskanen</td></tr>
+									<tr><td class="fileInfoLabel">PAS</td><td class="fileInfoContent">Ei tietoa</td></tr>
+									<tr><td class="fileInfoLabel">Kieli</td><td class="fileInfoContent">Suomi</td></tr>
+									<tr><td class="fileInfoLabel">Alkuperäinen kieli</td><td class="fileInfoContent">Ei tietoa</td></tr>
+									<tr><td class="fileInfoLabel">Ulosluovutus</td><td class="fileInfoContent">Ei tietoa</td></tr>
+									<tr><td class="fileInfoLabel">WWW</td><td class="fileInfoContent">x</td></tr>
+									<tr><td class="fileInfoLabel">Muutospvm</td><td class="fileInfoContent">3.10.2013</td></tr>
+								</tbody>
+							</table>
+						</div>
+
+						<div class="materialRowTitle">Tiedostohistoria</div>
+						<table class="tablesorter sortableTable" id="materialFileInfoTable">
+							<thead>
+								<tr><th>Muokkauspäivämäärä</th><th>Muokkaaja</th><th>Selite</th></tr>
+							</thead>
+							<tbody>
+								<tr><td>2.10.2013</td><td>Simo Häyhä</td><td>Muokkasin vähän</td></tr>
+								<tr><td>4.10.2013</td><td>Ville Iivonen</td><td>Lisäsin pari kohtaa</td></tr>
+							</tbody>
+						</table>
+					</div>
+					
+					<div class="viewFormButtonsHolder" style="margin-bottom:20px;">
+						<input type="button" id="ddi2Export" class="searchFormInput" value="DDI2-Export" />
+						<input type="button" id="htmlView" class="searchFormInput" value="HTML-näkymä" />
+						<input type="button" id="startWorkingButton" class="searchFormInput" value="Varaa aineisto itsellesi" />
+						<input type="button" id="versionHistoryButton" class="searchFormInput" value="Versiohistoria">
+							<a style="display: hidden;" id="versionHistoryLink" href="dialogs/versionHistoryDialog.html" class="fancyboxpopup fancybox.ajax"></a>
+						</input>
+						<input type="button" id="approveChangesButton" class="searchFormInput" value="Hyväksy muutokset" >
+							<a style="display: hidden;" id="approveChangesLink" href="dialogs/confirmDialog.html" class="fancyboxpopup fancybox.ajax"></a>
+						</input>
+						<input type="button" id="saveAsDraftButton" class="searchFormInput" value="Tallenna Luonnoksena" />
+					</div>	
 				</div>
 			
 				<!-- Codebook -->
@@ -563,7 +1065,7 @@
 								<td class="materialCodebookFileName">data.zip</td><td>Suomi</td><td>Datapaketti</td><td>3.10.2013</td><td>Mikko Tanskanen</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
 							</tr>
 							<tr class="materialCodebookFileRow">
-								<td class="materialCodebookFileName">fooBar.docx</td><td>Englanti</td><td>Dokumentaatio</td><td>12.10.2013</td><td>Peter Mikula</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
+								<td class="materialCodebookFileName">fooBar.docx</td><td>Englanti</td><td>Dokumentaatio</td><td>12.10.2013</td><td>Mikko Tanskanen</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
 							</tr>
 						</tbody>
 					</table>
@@ -572,6 +1074,19 @@
 					<div id="materialCodebookRow" style="display: none;">
 						<div id="materialCodebookTitle"><a href="#"></a></div>
 					</div>
+					
+					<div class="viewFormButtonsHolder" style="margin-bottom:20px;">
+						<input type="button" id="ddi2Export" class="searchFormInput" value="DDI2-Export" />
+						<input type="button" id="htmlView" class="searchFormInput" value="HTML-näkymä" />
+						<input type="button" id="startWorkingButton" class="searchFormInput" value="Varaa aineisto itsellesi" />
+						<input type="button" id="versionHistoryButton" class="searchFormInput" value="Versiohistoria">
+							<a style="display: hidden;" id="versionHistoryLink" href="dialogs/versionHistoryDialog.html" class="fancyboxpopup fancybox.ajax"></a>
+						</input>
+						<input type="button" id="approveChangesButton" class="searchFormInput" value="Hyväksy muutokset" >
+							<a style="display: hidden;" id="approveChangesLink" href="dialogs/confirmDialog.html" class="fancyboxpopup fancybox.ajax"></a>
+						</input>
+						<input type="button" id="saveAsDraftButton" class="searchFormInput" value="Tallenna Luonnoksena" />
+					</div>	
 				</div>	
 				
 				<!-- Errors -->
@@ -582,7 +1097,7 @@
 						</thead>
 						<tbody>
 							<tr id="1" class="materialErrorRow"><td>23.9.2013</td>
-								<td>Ville Iivonen</td>
+								<td>Mikko Tanskanen</td>
 								<td>Lomake</td>
 								<td>Aineiston tyyppi</td>
 								<td>2</td>
@@ -618,32 +1133,43 @@
 									<tr><td class="errorInfoLabel">Tallentaja</td><td class="errorInfoContent">Mikko Tanskanen</td></tr>
 									<tr><td class="errorInfoLabel">Pisteet</td><td class="errorInfoContent">4</td></tr>
 									<tr><td class="errorInfoLabel">Herätepvm</td><td class="errorInfoContent">16.10.2013</td></tr>
-									<tr><td class="errorInfoLabel">Herätteen saaja</td><td class="errorInfoContent">Tiina Isotalo</td></tr>
+									<tr><td class="errorInfoLabel">Herätteen saaja</td><td class="errorInfoContent">Mikko Tanskanen</td></tr>
 								</tbody>
 							</table>
 						</div>
 					</div>
+					
+					<div class="viewFormButtonsHolder" style="margin-bottom:20px;">
+						<input type="button" id="ddi2Export" class="searchFormInput" value="DDI2-Export" />
+						<input type="button" id="htmlView" class="searchFormInput" value="HTML-näkymä" />
+						<input type="button" id="startWorkingButton" class="searchFormInput" value="Varaa aineisto itsellesi" />
+						<input type="button" id="versionHistoryButton" class="searchFormInput" value="Versiohistoria">
+							<a style="display: hidden;" id="versionHistoryLink" href="dialogs/versionHistoryDialog.html" class="fancyboxpopup fancybox.ajax"></a>
+						</input>
+						<input type="button" id="approveChangesButton" class="searchFormInput" value="Hyväksy muutokset" >
+							<a style="display: hidden;" id="approveChangesLink" href="dialogs/confirmDialog.html" class="fancyboxpopup fancybox.ajax"></a>
+						</input>
+						<input type="button" id="saveAsDraftButton" class="searchFormInput" value="Tallenna Luonnoksena" />
+					</div>	
 				</div>	
 				
 
 				<!-- Packaging -->
-				<div id="materialBinders" class="tabs2 tab8">
-					<table class="tablesorter sortableTable" id="materialBinderTable">
-						<thead>
-							<tr><th>Mappinumero</th><th>Mapin kuvaus</th><th></th></tr>
-						</thead>
-						<tbody>
-							<tr><td>1290</td><td>Mappi, jossa tavanomaisia aineistoja</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-							<tr><td>1291</td><td>Lisämappi</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-						</tbody>
-					</table>	
-					<div class="materialTableActionLinkHolder"><a href="dialogs/attachBinderDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>
-				</div>
-
-<!-- 				<div id="materialFormButtons">
+				<div id="materialPackaging" class="tabs2 tab8">
 					
-				</div> -->
-
+					<div class="viewFormButtonsHolder" style="margin-bottom:20px;">
+						<input type="button" id="ddi2Export" class="searchFormInput" value="DDI2-Export" />
+						<input type="button" id="htmlView" class="searchFormInput" value="HTML-näkymä" />
+						<input type="button" id="startWorkingButton" class="searchFormInput" value="Varaa aineisto itsellesi" />
+						<input type="button" id="versionHistoryButton" class="searchFormInput" value="Versiohistoria">
+							<a style="display: hidden;" id="versionHistoryLink" href="dialogs/versionHistoryDialog.html" class="fancyboxpopup fancybox.ajax"></a>
+						</input>
+						<input type="button" id="approveChangesButton" class="searchFormInput" value="Hyväksy muutokset" >
+							<a style="display: hidden;" id="approveChangesLink" href="dialogs/confirmDialog.html" class="fancyboxpopup fancybox.ajax"></a>
+						</input>
+						<input type="button" id="saveAsDraftButton" class="searchFormInput" value="Tallenna Luonnoksena" />
+					</div>	
+				</div>
 			</div>						
 		</div>
 	</body>

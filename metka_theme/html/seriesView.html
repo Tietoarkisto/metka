@@ -13,6 +13,8 @@
 		<script src="../js/jquery.tablesorter.pager.js"></script>
 		<script src="../js/custom.js"></script>
 		<script src="../js/jquery.dataTables.rowReordering.js"></script>
+  		<script src="../js/jquery.fastLiveFilter.js"></script>
+		<script src="../js/jquery.fancytree.js"></script>
 	</head>
 	<body>
 		<header>
@@ -24,9 +26,11 @@
 				<nav>
 					<ul class="mainNavUl">
 						<li><a href="desktop.html">Työpöytä</a></li>
+						<li><a href="expertSearch.html">Eksperttihaku</a></li>	
 						<li><a href="materialSearch.html">Aineistot</a></li>
 						<li><a href="publicationSearch.html">Julkaisut</a></li>
 						<li><a href="seriesSearch.html">Sarjat</a></li>	
+						<li><a href="binders.html">Mapit</a></li>	
 						<li><a href="settings.html">Asetukset</a></li>						
 					</ul>
 					
@@ -47,18 +51,23 @@
 
 				<div class="content">
 					<h1 class="pageTitle">Sarjan tiedot</h1>
-					<div class="seriesUpperContainer">
-						<div class="prevNextContainer"><h1 class="prev"><</h1><h1 class="next">></h1></div>				
-						<div class="seriesRowContainer">
+					<div class="upperContainer">
+						<div class="prevNextContainer"><h1 class="prev"><</h1><h1 class="next">></h1></div>	
+						<div class="rowContainer">
+							<div class="translations">
+								<div class="translationLink">sv</div><div class="translationLink">en</div>
+							</div>
+						</div>			
+						<div class="rowContainer">
 							<div class="seriesDataSetContainer"><label>Sarjan numero</label><input type="text" value="16" name="seriesNumber" /></div>
 						</div>						
-						<div class="seriesRowContainer">							
+						<div class="rowContainer">							
 							<div class="seriesDataSetContainer"><label>Sarjan lyhenne</label><input type="text" name="seriesAbbr" /></div>
 						</div>
-						<div class="seriesRowContainer">
+						<div class="rowContainer">
 							<div class="seriesDataSetContainer"><label>Sarjan nimi</label><input type="text" name="seriesName" /></div>
 						</div>
-						<div class="seriesRowContainer">							
+						<div class="rowContainer">							
 							<div class="seriesDataSetContainer"><label>Sarjan kuvaus</label><textarea name="seriesDescr"></textarea></div>
 						</div>		
 					</div>

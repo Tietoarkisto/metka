@@ -23,3 +23,20 @@
 	vertical-align: middle;
 	padding: 10px;
 }
+
+#userInfo {
+	position: relative;
+
+	.userPropertyRow {
+		padding-top: 25px;
+
+		.userProperty, .userValue {
+			float: left;
+			padding-left: 10px;
+			position: absolute;
+		}
+		.userValue {
+			left: 200px;
+		}
+	}
+}
