@@ -6,3 +6,5 @@ metka/target/**/*
 .springBeans
 Servers
 .metadata
+*.iml
+.idea
