@@ -666,8 +666,8 @@ nav {
 
 /** MATERIAL, PUBLICATION, SERIES **/
 #fileNameErrorRow, #materialFileInfoRow, #materialCodebookRow, #materialErrorInfoRow,
-#groupedVariableTreeDiv, #variableDataContent, #variablesData, #variableGroupDataContent,
-#variablesGroupingDiv, #additionalFilingContractFile, .translationEn, .translationSv {
+#groupedVariableTreeContainer, #variableDataContainer, #variableData, #variableGroupData,
+#variablesGroupingContainer, #additionalFilingContractFile, .translationEn, .translationSv {
   display: none; }
 
 .upperContainer {
@@ -930,78 +930,78 @@ nav {
     display: inline-block;
     padding-bottom: 20px;
     padding-right: 20px; }
-#materialVariables #variablesMainDiv {
+#materialVariables #variablesMainContainer {
   position: relative; }
-  #materialVariables #variablesMainDiv .variablesTree {
+  #materialVariables #variablesMainContainer .variablesTree {
     top: 40;
     left: 0;
     width: 420px;
     font-size: 12px;
     min-height: 400px;
     float: left; }
-  #materialVariables #variablesMainDiv #groupedVariableTreeDiv #newFolder {
+  #materialVariables #variablesMainContainer #groupedVariableTreeContainer #newFolder {
     padding-left: 10px; }
-  #materialVariables #variablesMainDiv #groupedVariableTreeDiv #newFolderName {
+  #materialVariables #variablesMainContainer #groupedVariableTreeContainer #newFolderName {
     width: 150px; }
-  #materialVariables #variablesMainDiv #basicVariableTreeDiv #variableFilter {
+  #materialVariables #variablesMainContainer #basicVariableTreeContainer #variableFilter {
     padding-left: 20px; }
-  #materialVariables #variablesMainDiv #basicVariableTreeDiv ul {
+  #materialVariables #variablesMainContainer #basicVariableTreeContainer ul {
     padding-left: 20px;
     list-style: none; }
-  #materialVariables #variablesMainDiv #basicVariableTreeDiv .selectedVariable {
+  #materialVariables #variablesMainContainer #basicVariableTreeContainer .selectedVariable {
     font-weight: bold;
     color: #5CAFDF; }
-  #materialVariables #variablesMainDiv #variablesData {
+  #materialVariables #variablesMainContainer #variableDataContainer {
     top: 40;
     right: 0;
     width: 500px;
     float: left; }
-    #materialVariables #variablesMainDiv #variablesData #variableDataContent, #materialVariables #variablesMainDiv #variablesData #variableGroupDataContent {
+    #materialVariables #variablesMainContainer #variableDataContainer #variableData, #materialVariables #variablesMainContainer #variableDataContainer #variableGroupData {
       padding-right: 10px; }
-      #materialVariables #variablesMainDiv #variablesData #variableDataContent thead .variableName, #materialVariables #variablesMainDiv #variablesData #variableGroupDataContent thead .variableName {
+      #materialVariables #variablesMainContainer #variableDataContainer #variableData thead .variableName, #materialVariables #variablesMainContainer #variableDataContainer #variableGroupData thead .variableName {
         width: 200px; }
-      #materialVariables #variablesMainDiv #variablesData #variableDataContent thead .variableContent, #materialVariables #variablesMainDiv #variablesData #variableGroupDataContent thead .variableContent {
+      #materialVariables #variablesMainContainer #variableDataContainer #variableData thead .variableContent, #materialVariables #variablesMainContainer #variableDataContainer #variableGroupData thead .variableContent {
         width: 300px; }
-      #materialVariables #variablesMainDiv #variablesData #variableDataContent .variableDataTable, #materialVariables #variablesMainDiv #variablesData #variableGroupDataContent .variableDataTable {
+      #materialVariables #variablesMainContainer #variableDataContainer #variableData .variableDataTable, #materialVariables #variablesMainContainer #variableDataContainer #variableGroupData .variableDataTable {
         position: absolute;
         float: top;
         top: 30px;
         padding-right: 10px; }
-        #materialVariables #variablesMainDiv #variablesData #variableDataContent .variableDataTable input, #materialVariables #variablesMainDiv #variablesData #variableGroupDataContent .variableDataTable input {
+        #materialVariables #variablesMainContainer #variableDataContainer #variableData .variableDataTable input, #materialVariables #variablesMainContainer #variableDataContainer #variableGroupData .variableDataTable input {
           width: 250px; }
-    #materialVariables #variablesMainDiv #variablesData .translations .translationLinkSv, #materialVariables #variablesMainDiv #variablesData .translations .translationLinkEn, #materialVariables #variablesMainDiv #variablesData .translations .translationLinkFi {
+    #materialVariables #variablesMainContainer #variableDataContainer .translations .translationLinkSv, #materialVariables #variablesMainContainer #variableDataContainer .translations .translationLinkEn, #materialVariables #variablesMainContainer #variableDataContainer .translations .translationLinkFi {
       float: left;
       margin-right: 10px;
       font-size: 15px;
       padding: 2px;
       border-style: solid;
       border-width: 1px; }
-    #materialVariables #variablesMainDiv #variablesData #variableGroupDataContent #variableGroupName {
+    #materialVariables #variablesMainContainer #variableDataContainer #variableGroupData #variableGroupName {
       vertical-align: middle; }
-  #materialVariables #variablesMainDiv #variablesGroupingDiv {
+  #materialVariables #variablesMainContainer #variablesGroupingContainer {
     padding: 10px;
     position: relative; }
-    #materialVariables #variablesMainDiv #variablesGroupingDiv .variablesGroupingBox {
+    #materialVariables #variablesMainContainer #variablesGroupingContainer .variablesGroupingBox {
       border-style: solid;
       border-width: 1px;
       height: 420px;
       width: 440px; }
-    #materialVariables #variablesMainDiv #variablesGroupingDiv #variablesBox {
+    #materialVariables #variablesMainContainer #variablesGroupingContainer #variablesBox {
       float: left;
       padding: 5px; }
-      #materialVariables #variablesMainDiv #variablesGroupingDiv #variablesBox ul {
+      #materialVariables #variablesMainContainer #variablesGroupingContainer #variablesBox ul {
         list-style: none; }
-    #materialVariables #variablesMainDiv #variablesGroupingDiv #variablesToGroupArrowBox {
+    #materialVariables #variablesMainContainer #variablesGroupingContainer #variablesToGroupArrowBox {
       float: left;
       left: 440px;
       padding: 150px 10px 0 10px; }
-      #materialVariables #variablesMainDiv #variablesGroupingDiv #variablesToGroupArrowBox #variablesToGroupArrow {
+      #materialVariables #variablesMainContainer #variablesGroupingContainer #variablesToGroupArrowBox #variablesToGroupArrow {
         font-size: 15px;
         background: #009ee0;
         color: white;
         padding: 3px;
         cursor: pointer; }
-    #materialVariables #variablesMainDiv #variablesGroupingDiv #variableGroupsBox {
+    #materialVariables #variablesMainContainer #variablesGroupingContainer #variableGroupsBox {
       float: right;
       padding: 5px; }
 
