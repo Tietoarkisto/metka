@@ -11,13 +11,6 @@
 	font-size:12px;
 }
 
-@mixin translationLink {
-	@extend .link;
-	float: left;
-	padding-right: 10px;
-	font-size: 15px;
-}
-
 .rowContainer{
 	clear: both;
 	display: block;
@@ -26,9 +19,13 @@
 		.translationLinkEn, .translationLinkSv, .translationLinkFi {
 			@include translationLink;
 			font-size: 15px;
-			padding-bottom: 10px;	
+			margin-bottom: 10px;	
 		}
 	}
+}
+
+.translations .clicked {
+	background-color: $pageColorB;
 }
 
 /* Yläosan leveämmät fieldit */
@@ -40,14 +37,6 @@
 		float: left;
 		margin-bottom: 10px;
 		width: 180px;
-
-		// &.rightSide {
-		// 	width: 110px;
-		// 	margin-right: 10px;
-		// }
-		// &.leftSide {
-		// 	width: 180px;
-		// }
 	}
 
 	input {
@@ -154,7 +143,7 @@
 			left: 120px;
 
 			.translationLinkSv, .translationLinkEn, .translationLinkFi {
-				padding-top: 5px;
+				margin-top: 5px;
 				@include translationLink;
 			}
 		}
@@ -299,7 +288,6 @@
 	#variablesMainDiv {
 		position: relative;
 		.variablesTree {
-			//position: absolute;
 			top: 40;
 			left: 0;
 			width: 420px;
@@ -333,7 +321,6 @@
 		}
 
 		#variablesData {
-			//position: absolute;
 			top: 40;
 			right: 0;
 			width: 500px;

@@ -1,12 +1,40 @@
 <!DOCTYPE HTML>
 <html lang="fi">
 	<head>
-		<script src="../js/popup.js"></script>
-		<script src="../js/attachError.js"></script>
+		<script type="text/javascript">
+			$(".translations div").hover(function() {
+				$(this).css('cursor', 'pointer');
+			},function() {
+				$(this).css('cursor', 'auto');
+			});
+
+			$(".translationLinkSv").on("click", function() {
+				toggleClick($(this), ".translationSv");				
+			});
+			$(".translationLinkEn").on("click", function() {
+				toggleClick($(this), ".translationEn");
+			});
+
+			function toggleClick(clickedElement, clickedClass) {
+				$(clickedElement).parent().parent().parent().find(clickedClass).toggle();
+
+				if ( $(clickedElement).hasClass("clicked")) {
+					$(clickedElement).removeClass("clicked");
+				} else {
+					$(clickedElement).addClass("clicked");
+				}
+			}
+		</script>
 	</head>
 	<body>	
 		<div class="popupContainer">
 			<h1 class="pageTitle">Uusi versio</h1>
+			<div class="popupRowHolder">
+				<div class="translations">
+					<div class="translationLinkSv">sv</div>
+					<div class="translationLinkEn">en</div>
+				</div>
+			</div><br/>
 			<div class="popupRowHolder">
 				<label class="inputRowLabel">Versio</label>
 				<input type="text" value="2.1" readonly="true" />
@@ -33,7 +61,15 @@
 				<label class="inputRowLabel">Selite</label>
 				<textarea cols="42" rows="5" readonly="true">lorem ipsum foo bar dolor sit amet</textarea>
 			</div>
-				<div class="popupRowHolder">
+			<div class="popupRowHolder translationSv">
+				<label class="inputRowLabel">Selite (sv)</label>
+				<textarea cols="42" rows="5" readonly="true">lorem ipsum foo bar dolor sit amet</textarea>
+			</div>
+			<div class="popupRowHolder translationEn">
+				<label class="inputRowLabel">Selite (en)</label>
+				<textarea cols="42" rows="5" readonly="true">lorem ipsum foo bar dolor sit amet</textarea>
+			</div>
+			<div class="popupRowHolder">
 				<label class="inputRowLabel">Ei-julkinen selite</label>
 				<textarea cols="42" rows="5" readonly="true">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce consequat elit non dui euismod elementum. Aliquam erat volutpat. Etiam feugiat diam ut urna mollis, eu sollicitudin velit tincidunt. Pr</textarea>
 			</div>
