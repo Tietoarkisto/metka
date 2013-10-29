@@ -23,3 +23,12 @@ $pageColorE: #005993;
 	-webkit-border-radius: $pixels;
 	-moz-border-radius: $pixels;
 }
+
+@mixin translationLink {
+	float: left;
+	margin-right: 10px;
+	font-size: 15px;
+	padding: 2px;
+	border-style: solid;
+	border-width: 1px;
+}

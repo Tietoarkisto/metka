@@ -16,8 +16,8 @@
 		<script src="../js/custom.js"></script>
 		<script src="../js/jquery.dataTables.rowReordering.js"></script>
 		<script src="../js/jquery.fancytree.js"></script>
-  		<script src="../js/jquery.fancytree.dnd.js" type="text/javascript"></script>
-  		<script src="../js/jquery.fancytree.filter.js" type="text/javascript"></script>
+  		<script src="../js/jquery.fancytree.dnd.js"></script>
+  		<script src="../js/jquery.fancytree.filter.js"></script>
   		<script src="../js/jquery.fastLiveFilter.js"></script>
 	</head>
 
@@ -182,7 +182,7 @@
 					<br/>
 					<div class="rowContainer">
 						<div class="materialRowTitle">Huomautukset</div>
-						<table class="tablesorter" id="materialNotificationTable">
+						<table class="metkaTable" id="materialNotificationTable">
 							<thead>
 								<tr><th>Huomautus</th><th>Päivämäärä</th><th>Huomauttaja</th><th></th></tr>
 							</thead>
@@ -196,7 +196,7 @@
 					</div>
 					<div class="rowContainer containsTranslations">
 						<div class="materialRowTitle">Versiot</div>
-						<table class="tablesorter" id="materialVersionTable">
+						<table class="metkaTable" id="materialVersionTable">
 							<thead>
 								<tr><th>Versionumero</th><th>Päivämäärä</th><th>Käsittelijä</th><th>Lyhyt selite</th><th></th></tr>
 							</thead>
@@ -212,7 +212,7 @@
 
 					<div class="rowContainer">
 						<div class="materialRowTitle">Aineiston sarja</div>
-						<table class="tablesorter" id="materialSeriesTable">
+						<table class="metkaTable" id="materialSeriesTable">
                                 <thead>
                                        <tr><th>Sarjan lyhenne</th><th>Sarjan nimi</th><th>Sarjan eng. nimi</th><th></th></tr>
                                 </thead>
@@ -227,7 +227,7 @@
 					
 					<div class="rowContainer">
 						<div class="materialRowTitle">Liittyvät julkaisut</div>
-						<table class="tablesorter sortableTable" id="materialPublicationTable">
+						<table class="metkaTable sortableTable" id="materialPublicationTable">
 							<thead>
 								<tr><th>Julkaisunumero</th><th>Julkaisun nimi</th><th></th></tr>
 							</thead>
@@ -241,7 +241,7 @@
 					</div>
 					<div class="rowContainer">
 						<div class="materialRowTitle">Liittyvät aineistot</div>
-						<table class="tablesorter sortableTable" id="materialMaterialTable">
+						<table class="metkaTable sortableTable" id="materialMaterialTable">
 							<thead>
 								<tr><th>Aineistonumero</th><th>Aineiston nimi</th><th></th></tr>
 							</thead>
@@ -255,7 +255,7 @@
 					</div>
 					<div class="rowContainer">
 						<div class="materialRowTitle">Liittyvät mapit</div>
-						<table class="tablesorter sortableTable" id="materialBinderTable">
+						<table class="metkaTable sortableTable" id="materialBinderTable">
 							<thead>
 								<tr><th>Mappinumero</th><th>Mapin kuvaus</th><th></th></tr>
 							</thead>
@@ -369,7 +369,7 @@
 					<div class="rowContainer">
 						<br/>
 						<div class="materialRowTitle">Liittyvät henkilöt</div>
-						<table class="tablesorter sortableTable" id="materialPersonTable">
+						<table class="metkaTable sortableTable" id="materialPersonTable">
 							<thead>
 								<tr><th>Henkilön tyyppi</th><th>Sukunimi</th><th>Etunimi</th><th>Organisaatio</th><th>Laitos</th><th>Raportti</th><th></th></tr>
 							</thead>
@@ -721,7 +721,7 @@
 						</div>
 						<label class="studyLevelTitle">Tekijät</label>
 						<div class="accordionContent">
-							<table class="tablesorter" id="materialAuthorTable">
+							<table class="metkaTable" id="materialAuthorTable">
 								<thead>
 									<tr><th>id</th><th>Nimi</th><th>Organisaatio</th><th>Titteli</th><th></th></tr>
 								</thead>
@@ -1019,7 +1019,7 @@
 				<div id="materialFiles" class="tabs2 tab5">
 					
 					<div class="materialRowTitle">Liitetyt tiedostot</div>
-					<table class="tablesorter sortableTable" id="materialFileTable">
+					<table class="metkaTable sortableTable" id="materialFileTable">
 						<thead>
 							<tr><th>Tiedoston nimi</th><th>Tallentaja</th><th>Kieli</th><th></th></tr>
 						</thead>
@@ -1051,7 +1051,7 @@
 						</div>
 
 						<div class="materialRowTitle">Tiedostohistoria</div>
-						<table class="tablesorter sortableTable" id="materialFileInfoTable">
+						<table class="metkaTable sortableTable" id="materialFileInfoTable">
 							<thead>
 								<tr><th>Muokkauspäivämäärä</th><th>Muokkaaja</th><th>Selite</th></tr>
 							</thead>
@@ -1063,7 +1063,7 @@
 					</div>
 				
 					<div class="materialRowTitle">Poistetut tiedostot</div>
-					<table class="tablesorter sortableTable" id="materialRemovedFileTable">
+					<table class="metkaTable sortableTable" id="materialRemovedFileTable">
 						<thead>
 							<tr><th>Tiedoston nimi</th><th>Tiedoston kuvaus</th><th>Selite</th></tr>
 						</thead>
@@ -1094,7 +1094,7 @@
 						</div>
 
 						<div class="materialRowTitle">Tiedostohistoria</div>
-						<table class="tablesorter sortableTable" id="materialFileInfoTable">
+						<table class="metkaTable sortableTable" id="materialFileInfoTable">
 							<thead>
 								<tr><th>Muokkauspäivämäärä</th><th>Muokkaaja</th><th>Selite</th></tr>
 							</thead>
@@ -1130,7 +1130,7 @@
 					</div>
 					<div class="rowContainer containsTranslations">
 						<div class="materialRowTitle">Koodikirjan liitteet</div>
-						<table class="tablesorter" id="materialCodebookFileTable">
+						<table class="metkaTable" id="materialCodebookFileTable">
 							<thead>
 								<tr><th>Tiedoston nimi</th><th>Kuvaus</th><th>PVM</th><th>Tallentaja</th><th></th></tr>
 							</thead>
@@ -1147,7 +1147,7 @@
 
 						<div class="translationSv">
 							<div class="materialRowTitle">Koodikirjan liitteet (sv)</div>
-							<table class="tablesorter" id="materialCodebookFileTable">
+							<table class="metkaTable" id="materialCodebookFileTable">
 								<thead>
 									<tr><th>Tiedoston nimi</th><th>Kuvaus</th><th>PVM</th><th>Tallentaja</th><th></th></tr>
 								</thead>
@@ -1165,7 +1165,7 @@
 
 						<div class="translationEn">
 							<div class="materialRowTitle">Koodikirjan liitteet (en)</div>
-							<table class="tablesorter" id="materialCodebookFileTable">
+							<table class="metkaTable" id="materialCodebookFileTable">
 								<thead>
 									<tr><th>Tiedoston nimi</th><th>Kuvaus</th><th>PVM</th><th>Tallentaja</th><th></th></tr>
 								</thead>
@@ -1198,7 +1198,7 @@
 				
 				<!-- Errors -->
 				<div id="materialErrors" class="tabs2 tab7">
-					<table class="tablesorter sortableTable" id="materialErrorsTable">
+					<table class="metkaTable sortableTable" id="materialErrorsTable">
 						<thead>
 							<tr><th>PVM</th><th>Merkitsijä</th><th>Aineiston osa</th><th>Selite</th><th>Pisteet</th><th>Merkitse tehdyksi</th></tr>
 						</thead>
@@ -1264,6 +1264,19 @@
 				<!-- Packaging -->
 				<div id="materialPackaging" class="tabs2 tab8">
 					
+					<table class="metkaTable sortableTable" >
+						<thead>
+							<tr><th>OUTPUT</th><th>Versio</th><th>Päivämäärä</th><th>URN</th></tr>
+						</thead>
+						<tbody>
+							<tr><td>DDI-xml-fi</td><td>1.2</td><td>12.10.2013</td><td>urn:nbn:fi:fsd:&lt;NS&gt;</td></tr>
+							<tr><td>DDI-xml-en</td><td>1.2</td><td>12.10.2013</td><td>urn:nbn:fi:fsd:&lt;NS&gt;</td></tr>
+							<tr><td>DDI-xml-sv</td><td>1.2</td><td>12.10.2013</td><td>urn:nbn:fi:fsd:&lt;NS&gt;</td></tr>
+							<tr><td>AIP</td><td>2.2.0.3</td><td>14.10.2013</td><td>urn:nbn:fi:fsd:&lt;NS&gt;</td></tr>
+							<tr><td>DIP</td><td>1.2.0</td><td>15.10.2013</td><td>urn:nbn:fi:fsd:&lt;NS&gt;</td></tr>
+						</tbody>
+					</table>
+
 					<div class="viewFormButtonsHolder" style="margin-bottom:20px;">
 						<input type="button" id="ddi2Export" class="searchFormInput" value="DDI2-Export" />
 						<input type="button" id="htmlView" class="searchFormInput" value="HTML-näkymä" />
