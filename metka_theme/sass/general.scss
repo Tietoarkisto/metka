@@ -84,6 +84,10 @@ footer{
 	content: " *";
 }
 
+.link {
+	text-decoration: underline;
+	color: #0000EE;
+}
 
 /** POPUP **/ 
 
@@ -106,7 +110,7 @@ footer{
 	.popupRowHolder{
 		margin: 10px 0; 
 
-		label {
+		.inputRowLabel {
 			display: block;
 			float: left;
 			padding-top: 5px;
