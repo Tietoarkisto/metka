@@ -915,12 +915,12 @@ nav {
 #materialVariables #variablesMainDiv {
   position: relative; }
   #materialVariables #variablesMainDiv .variablesTree {
-    position: absolute;
     top: 40;
     left: 0;
     width: 420px;
     font-size: 12px;
-    min-height: 400px; }
+    min-height: 400px;
+    float: left; }
   #materialVariables #variablesMainDiv #groupedVariableTreeDiv #newFolder {
     padding-left: 10px; }
   #materialVariables #variablesMainDiv #groupedVariableTreeDiv #newFolderName {
@@ -934,10 +934,10 @@ nav {
     font-weight: bold;
     color: #5CAFDF; }
   #materialVariables #variablesMainDiv #variablesData {
-    position: absolute;
     top: 40;
     right: 0;
-    width: 500px; }
+    width: 500px;
+    float: left; }
     #materialVariables #variablesMainDiv #variablesData #variableDataContent, #materialVariables #variablesMainDiv #variablesData #variableGroupDataContent {
       padding-right: 10px; }
       #materialVariables #variablesMainDiv #variablesData #variableDataContent thead .variableName, #materialVariables #variablesMainDiv #variablesData #variableGroupDataContent thead .variableName {

@@ -299,12 +299,13 @@
 	#variablesMainDiv {
 		position: relative;
 		.variablesTree {
-			position: absolute;
+			//position: absolute;
 			top: 40;
 			left: 0;
 			width: 420px;
 			font-size: 12px;
 			min-height: 400px;
+			float: left;
 		}
 
 		#groupedVariableTreeDiv {
@@ -332,10 +333,11 @@
 		}
 
 		#variablesData {
-			position: absolute;
+			//position: absolute;
 			top: 40;
 			right: 0;
 			width: 500px;
+			float: left;
 
 			#variableDataContent, #variableGroupDataContent {
 				thead {
