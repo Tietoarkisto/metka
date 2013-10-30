@@ -543,7 +543,7 @@ $(document).ready(function(){
 		}
 	});
 
-	$("#studyLevelAltTitle, #studyLevelAppraisal").on("click", function() {
+	$("#studyLevelAltTitle, #studyLevelAppraisal, #studyLevelDataSource").on("click", function() {
 		var newRow = $(this).parent().parent().clone(true);
 		$(newRow).find(".link").attr("id", "");
 		$(newRow).find("label").removeClass("link");
