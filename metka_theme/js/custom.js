@@ -61,7 +61,8 @@ $(document).ready(function(){
 		".materialSeriesRow, .materialPublicationRow, .materialMaterialRow, #variablesListBasic li, " +
 		".publicationSeriesRow, .publicationMaterialRow, .materialBinderRow, .binderRow, " + 
 		".materialRemovedFileRow, #filingContractFile, .versionRow, " + 
-		".link, .translationLink, .translationLinkEn, .translationLinkSv, .translationLinkFi, .variableTranslationLink").hover(function() {
+		".link, .translationLink, .translationLinkEn, .translationLinkSv, .translationLinkFi, .variableTranslationLink, " + 
+		".removeAddedElement").hover(function() {
 		    $(this).css('cursor', 'pointer');
 		}, function() {
 		    $(this).css('cursor', 'auto');		    
@@ -291,6 +292,12 @@ $(document).ready(function(){
 		              {sWidth: '5%'}
         ]
 	});
+
+	$(".studyLevelOrderedTable").dataTable({
+		"bPaginate": false,
+        "bFilter": false, 
+        "bInfo": false
+	}).rowReordering();
 
 	$(".materialFileRow").on("click", function() {
 		showFileInfo($(this), "#materialFileInfoContent", "#materialFileInfoRow");	
@@ -547,7 +554,12 @@ $(document).ready(function(){
 		var newRow = $(this).parent().parent().clone(true);
 		$(newRow).find(".link").attr("id", "");
 		$(newRow).find("label").removeClass("link");
+		$(newRow).find("img").show();
 		$(newRow).insertAfter($(this).parent().parent());
+	});
+
+	$(".removeAddedElement").on("click", function() {
+		$(this).parent().parent().remove();
 	});
 
 	/*** JULKAISU ***/

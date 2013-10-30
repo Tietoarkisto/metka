@@ -410,11 +410,11 @@
 						<div class="accordionContent">
 							<div class="rowContainer">
 								<div class="studyLevelDataSetContainer">
-									<label>lang</label>
+									<label>Kieli</label>
 									<select><option>fi</option><option>en</option><option>sv</option></select>
 								</div>
 								<div class="studyLevelDataSetContainer">
-									<label>desctitle</label>
+									<label>Otsikko</label>
 									<input type="text" name="" value="Kuvailun otsikko" />
 								</div>
 								<div class="studyLevelDataSetContainer">
@@ -435,29 +435,29 @@
 						<div class="accordionContent">
 							<div class="rowContainer">
 								<div class="studyLevelDataSetContainer">
-									<label>descversion</label>
+									<label>Versionumero</label>
 									<input type="text" name="" value="3.0" />
 								</div>
 								<div class="studyLevelDataSetContainer">
-									<label>desclabel</label>
+									<label>Selite</label>
 									<input type="text" name="" value="Foo bar lorem ipsum dolor sit amet"/>
 								</div>
 								<div class="studyLevelDataSetContainer">
-									<label>descdate</label>
+									<label>Päivämäärä</label>
 									<input type="text" name="" class="datepicker" value="30.10.2013"/>
 								</div>
 								<div class="studyLevelDataSetContainer">
-									<label>descpro</label>
+									<label>Tallentaja</label>
 									<input type="text" name="" value="mta"/>
 								</div>
 							</div>
 							<div class="rowContainer">
 								<div class="studyLevelDataSetTextareaContainer">
-									<label>desclabellong</label>
+									<label>Julkaistava vapaamuotoinen selite</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
 								<div class="studyLevelDataSetTextareaContainer">
-									<label>descnote</label>
+									<label>Vapaamuotoinen selite</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
 							</div>						
@@ -466,15 +466,15 @@
 						<div class="accordionContent">
 							<div class="rowContainer">
 								<div class="studyLevelDataSetContainer">
-									<label class="link" id="studyLevelAltTitle">alttitle</label>
-									<input type="text" name="" value="toinen nimi" />
+									<label class="link" id="studyLevelAltTitle">Rinnakkainen nimi</label>
+									<input type="text" name="" value="toinen nimi" /><img class="removeAddedElement" style="display:none;" title="Poista" src="../images/cancel.png"/>
 								</div>
 							</div>
 							<div class="rowContainer">
 								<div class="studyLevelTableTitle">Muunkieliset nimet</div>
 								<table class="metkaTable">
 									<thead>
-										<tr><th>partitle</th><th>partitlelang</th><th></th></tr>
+										<tr><th>Nimi</th><th>Kieli</th><th></th></tr>
 									</thead>
 									<tbody>
 										<tr><td>Another title</td><td>en</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
@@ -488,28 +488,28 @@
 						<div class="accordionContent">
 							<div class="rowContainer">
 								<div class="studyLevelTableTitle">Tekijät</div>
-								<table class="metkaTable">
+								<table class="metkaTable studyLevelOrderedTable" id="studyLevelAuthors">
 									<thead>
-										<tr><th>author</th><th>affiliation</th><th>affiliationid</th><th>affiliationidtype</th><th>Päätekijä</th><th></th></tr>
+										<tr><th>Tekijä</th><th>Taustaorganisaatio</th><th>Organisaation tunniste</th><th>Organisaation tunnistetyyppi</th><th></th></tr>
 									</thead>
 									<tbody>
-										<tr><td>Mikko Tanskanen</td><td>Proactum Oy</td><td>123<br/>234</td><td>foo<br/>bar</td><td>Kyllä</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-										<tr><td>Mikko Tanskanen2</td><td>Proactum Oy</td><td>123<br/>234</td><td>foo<br/>bar</td><td>Ei</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-										<tr><td>Mikko Tanskanen3</td><td>Proactum Oy</td><td>123<br/>234</td><td>foo<br/>bar</td><td>Ei</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>Mikko Tanskanen</td><td>Proactum Oy</td><td>123<br/>234</td><td>foo<br/>bar</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>Mikko Tanskanen2</td><td>Proactum Oy</td><td>123<br/>234</td><td>foo<br/>bar</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>Proactum Oy (pro)</td><td></td><td>123<br/>234</td><td>foo<br/>bar</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
 									</tbody>
 								</table>
 								<div class="accordionTableActionLinkHolder"><a href="#" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
 							</div>
 							<div class="rowContainer">
 								<div class="studyLevelTableTitle">Muut tekijät</div>
-								<table class="metkaTable">
+								<table class="metkaTable studyLevelOrderedTable" id="studyLevelOtherAuthors">
 									<thead>
-										<tr><th>author</th><th>authoabbr</th><th>authorid</th><th>authoridtype</th><th>Päätekijä</th><th></th></tr>
+										<tr><th>Tekijä</th><th>Taustaorganisaatio</th><th>Organisaation tunniste</th><th>Organisaation tunnistetyyppi</th><th></th></tr>
 									</thead>
 									<tbody>
-										<tr><td>Proactum Oy</td><td>pro</td><td>123<br/>234<br/></td><td>foo<br/>bar</td><td>Kyllä</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-										<tr><td>Proactum Oy2</td><td></td><td>123<br/>234<br/></td><td>foo<br/>bar</td><td>Ei</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-										<tr><td>Proactum Oy3</td><td></td><td>123<br/>234<br/></td><td>foo<br/>bar</td><td>Ei</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>Mikko Tanskanen</td><td>Proactum Oy</td><td>123<br/>234</td><td>foo<br/>bar</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>Mikko Tanskanen2</td><td>Proactum Oy</td><td>123<br/>234</td><td>foo<br/>bar</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>Proactum Oy (pro)</td><td></td><td>123<br/>234</td><td>foo<br/>bar</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
 									</tbody>
 								</table>
 								<div class="accordionTableActionLinkHolder"><a href="#" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
@@ -517,13 +517,13 @@
 
 							<div class="rowContainer">
 								<div class="studyLevelTableTitle">Organisaatiotuottajat</div>
-								<table class="metkaTable">
+								<table class="metkaTable studyLevelOrderedTable" id="studyLevelProducers">
 									<thead>
-										<tr><th>producer</th><th>producerid</th><th>produceridtype</th><th>producerrole</th><th>projectnr</th><th>producerabbr</th><th></th></tr>
+										<tr><th>Tuottaja</th><th>Tunniste</th><th>Tunnistetyyppi</th><th>Rooli</th><th>Projektinumero</th><th>Lyhenne</th><th></th></tr>
 									</thead>
 									<tbody>
-										<tr><td>Mikko Tanskanen</td><td>123<br/>234</td><td>Perus-id<br/>Toinen-id</td><td>Rahoittaja</td><td>123-s<br/>234-r</td><td>mta</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-										<tr><td>Mikko Tanskanen</td><td>123</td><td>Perus-id</td><td>Rahoittaja</td><td>123-s</td><td>mta</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>Proactum Oy</td><td>123<br/>234</td><td>Perus-id<br/>Toinen-id</td><td>Rahoittaja</td><td>123-s<br/>234-r</td><td>pro</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>Proactum Oy</td><td>123</td><td>Perus-id</td><td>Rahoittaja</td><td>123-s</td><td>pro</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
 									</tbody>
 								</table>
 								<div class="accordionTableActionLinkHolder"><a href="#" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
@@ -535,7 +535,7 @@
 								<div class="studyLevelTableTitle">Asiasanat</div>
 								<table class="metkaTable">
 									<thead>
-										<tr><th>keywordvocab</th><th>keyword</th><th>uri</th><th>source</th><th></th></tr>
+										<tr><th>Sanasto</th><th>Avainsana</th><th>Uri</th><th>Tunniste/osoite</th><th></th></tr>
 									</thead>
 									<tbody>
 										<tr><td>FSD</td><td>eduskuntavaalit</td><td>http://vesa.lib.helsinki.fi/</td><td>foo</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
@@ -548,7 +548,7 @@
 								<div class="studyLevelTableTitle">Tieteenalat</div>
 								<table class="metkaTable">
 									<thead>
-										<tr><th>topicvocab</th><th>topic</th><th>uri</th><th>source</th><th></th></tr>
+										<tr><th>Sanasto</th><th>Tieteenala</th><th>Uri</th><th>Tunniste/osoite</th><th></th></tr>
 									</thead>
 									<tbody>
 										<tr><td>FSD</td><td>poliittinen käyttäytyminen</td><td>http://vesa.lib.helsinki.fi/</td><td>foo</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
@@ -559,7 +559,7 @@
 							</div>
 							<div class="rowContainer">
 								<div class="studyLevelDataSetTextareaContainer">
-									<label>abstract</label>
+									<label>Tiivistelmä</label>
 									<textarea>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras imperdiet tincidunt sapien nec pretium. Aliquam erat volutpat. Pellentesque faucibus velit et iaculis ullamcorper. Proin eu urna magna. Nam sed mauris posuere, bibendum nunc sed, rhoncus purus. Phasellus nisi est, blandit sit amet tristique non, posuere vel magna. Nulla pharetra, nisl nec hendrerit laoreet, neque mauris posuere justo, sed fermentum dolor lorem </textarea>
 								</div>
 							</div>
@@ -571,7 +571,7 @@
 								<div class="studyLevelTableTitle">Ajalliset kattavuudet</div>
 								<table class="metkaTable">
 									<thead>
-										<tr><th>timeperiod</th><th>timeperiodevent</th><th></th></tr>
+										<tr><th>Päivämäärä</th><th>timeperiodevent</th><th></th></tr>
 									</thead>
 									<tbody>
 										<tr><td>12.10.2013</td><td>start</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
@@ -584,7 +584,7 @@
 								<div class="studyLevelTableTitle">Maat</div>
 								<table class="metkaTable">
 									<thead>
-										<tr><th>country</th><th>countryabbr</th><th></th></tr>
+										<tr><th>Maa</th><th>Lyhene</th><th></th></tr>
 									</thead>
 									<tbody>
 										<tr><td>Suomi</td><td>FIN</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
@@ -597,7 +597,7 @@
 								<div class="studyLevelTableTitle">Kohdealueet</div>
 								<table class="metkaTable">
 									<thead>
-										<tr><th>geocover</th><th></th></tr>
+										<tr><th>Kohdealue</th><th></th></tr>
 									</thead>
 									<tbody>
 										<tr><td>Suomi</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
@@ -610,7 +610,7 @@
 								<div class="studyLevelTableTitle">Perusjoukot</div>
 								<table class="metkaTable">
 									<thead>
-										<tr><th>universe</th><th>universeclusion</th><th></th></tr>
+										<tr><th>Perusjoukko</th><th>Rajaus</th><th></th></tr>
 									</thead>
 									<tbody>
 										<tr><td>Foo</td><td>E</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
@@ -625,7 +625,7 @@
 								<div class="studyLevelTableTitle">Ajankohdat</div>
 								<table class="metkaTable">
 									<thead>
-										<tr><th>colldate</th><th>colldateevent</th></tr>
+										<tr><th>Ajankohta</th><th>colldateevent</th></tr>
 									</thead>
 									<tbody>
 										<tr><td>12.10.2013</td><td>start</td></tr>
@@ -636,10 +636,26 @@
 							</div>
 
 							<div class="rowContainer">
+								<div class="studyLevelTableTitle">Kerääjät</div>
+								<table class="metkaTable studyLevelOrderedTable">
+									<thead>
+										<tr><th>Kerääjä</th><th>Tunniste</th><th>Tunnistetyyppi</th><th>Taustaorg.</th><th>Taustaorg. tunniste</th><th>Taustaorg. tunnistetyyppi</th><th></th></tr>
+									</thead>
+									<tbody>
+										<tr><td>Mikko Tanskanen</td><td>123<br/>234</td><td>Perus-id<br/>Toinen-id</td><td>Proactum Oy</td><td>123-s</td><td>Tyyppi</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>Proactum Oy (pro)</td><td>123-s</td><td>Tyyppi</td><td></td><td></td><td></td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>Mikko Tanskanen</td><td>123<br/>234</td><td>Perus-id<br/>Toinen-id</td><td>Proactum Oy</td><td>123-s</td><td>Tyyppi</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>Proactum Oy (pro)</td><td>123-s</td><td>Tyyppi</td><td></td><td></td><td></td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+									</tbody>
+								</table>
+								<div class="accordionTableActionLinkHolder"><a href="#" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
+							</div>
+
+							<div class="rowContainer">
 								<div class="studyLevelTableTitle">Havaintoyksikkö-/aineistoyksikkökategoriat</div>
 								<table class="metkaTable">
 									<thead>
-										<tr><th>analysisunit</th><th>analysisvocab</th><th>analysisuri</th><th>analysissource</th><th></th></tr>
+										<tr><th>Havaintoyksillö/kategoria</th><th>Sanasto</th><th>Uri</th><th>Tunniste/osoite</th><th></th></tr>
 									</thead>
 									<tbody>
 										<tr><td>FFHT</td><td>?</td><td>http://vesa.lib.helsinki.fi/</td><td>http://vesa.lib.helsinki.fi/</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
@@ -653,7 +669,7 @@
 								<div class="studyLevelTableTitle">Aikaulottuvuudet</div>
 								<table class="metkaTable">
 									<thead>
-										<tr><th>timemethod</th><th>timemethodvocab</th><th>timemethoduri</th><th>timemethodsource</th><th></th></tr>
+										<tr><th>Aikaulottuvuus</th><th>Sanasto</th><th>Uri</th><th>Tunniste/osoite</th><th></th></tr>
 									</thead>
 									<tbody>
 										<tr><td>Pitkittäisaineisto</td><td>?</td><td>http://vesa.lib.helsinki.fi/</td><td>foo</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
@@ -663,36 +679,10 @@
 							</div>
 
 							<div class="rowContainer">
-								<div class="studyLevelTableTitle">Henkilökerääjät</div>
-								<table class="metkaTable">
-									<thead>
-										<tr><th>collector</th><th>collectorid</th><th>collectoridtype</th><th>collectoraffiliation</th><th>collectotaffiliationid</th><th>collectoraffilicationidtype</th><th></th></tr>
-									</thead>
-									<tbody>
-										<tr><td>Mikko Tanskanen</td><td>123<br/>234</td><td>Perus-id<br/>Toinen-id</td><td>Proactum Oy</td><td>123-s</td><td>Tyyppi</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-									</tbody>
-								</table>
-								<div class="accordionTableActionLinkHolder"><a href="#" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
-							</div>
-
-							<div class="rowContainer">
-								<div class="studyLevelTableTitle">Organisaatiokerääjät</div>
-								<table class="metkaTable">
-									<thead>
-										<tr><th>collector</th><th>collectorid</th><th>collectoridtype</th><th>collectorabbr</th><th></th></tr>
-									</thead>
-									<tbody>
-										<tr><td>Proactum Oy</td><td>123-s</td><td>Tyyppi</td><td>pro</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-									</tbody>
-								</table>
-								<div class="accordionTableActionLinkHolder"><a href="#" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
-							</div>
-
-							<div class="rowContainer">
 								<div class="studyLevelTableTitle">Otantamenetelmät/Aineiston valintatavat</div>
 								<table class="metkaTable">
 									<thead>
-										<tr><th>sampproc</th><th>sampprocvocab</th><th>sampprocuri</th><th>sampprocsource</th><th>sampproctext</th><th></th></tr>
+										<tr><th>Otantamenetelmä/valintatapa</th><th>Sanasto</th><th>Uri</th><th>Tunniste/osoite</th><th>sampproctext</th><th></th></tr>
 									</thead>
 									<tbody>
 										<tr><td>Foo</td><td></td><td>http://vesa.lib.helsinki.fi/</td><td>foo</td><td></td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
@@ -706,7 +696,7 @@
 								<div class="studyLevelTableTitle">Keruumenetelmät/keruutekniikat</div>
 								<table class="metkaTable">
 									<thead>
-										<tr><th>collmode</th><th>collmodevocab</th><th>collmodeuri</th><th>collmodesource</th><th></th></tr>
+										<tr><th>Keruumenetelmä</th><th>Sanasto</th><th>Uri</th><th>Tunniste/osoite</th><th></th></tr>
 									</thead>
 									<tbody>
 										<tr><td>Foo</td><td></td><td>http://vesa.lib.helsinki.fi/</td><td>foo</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
@@ -720,7 +710,7 @@
 								<div class="studyLevelTableTitle">Keruuvälineet/Ohjeistukset</div>
 								<table class="metkaTable">
 									<thead>
-										<tr><th>instrument</th><th>instrumentvocab</th><th>instrumenturi</th><th>instrumentsource</th><th></th></tr>
+										<tr><th>Keruuväline</th><th>Sanasto</th><th>Uri</th><th>Tunniste/osoite</th><th></th></tr>
 									</thead>
 									<tbody>
 										<tr><td>Foo</td><td></td><td>http://vesa.lib.helsinki.fi/</td><td>foo</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
@@ -732,14 +722,14 @@
 
 							<div class="rowContainer">
 								<div class="studyLevelDataSetContainer">
-									<label>resprate</label>
+									<label>Vastausprosentti</label>
 									<input type="text" name="" value="67%"/>
 								</div>
 							</div>
 							<div class="rowContainer">
 								<div class="studyLevelDataSetTextareaContainer">
-									<label class="link" id="studyLevelDataSource">datasource</label>
-									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
+									<label class="link" id="studyLevelDataSource">Lähdeaineisto</label>
+									<textarea>Foo bar lorem ipsum dolor sit amet</textarea><img class="removeAddedElement" style="display:none;" title="Poista" src="../images/cancel.png"/>
 								</div>
 							</div>
 						</div>					
@@ -747,38 +737,38 @@
 						<div class="accordionContent">
 							<div class="rowContainer">
 								<div class="studyLevelDataSetTextareaContainer">
-									<label>weight</label>
+									<label>Painokertoinet</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
 								<div class="studyLevelDataSetTextareaContainer">
-									<label>dataprocessing</label>
-									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
-								</div>
-							</div>
-							<div class="rowContainer">
-								<div class="studyLevelDataSetTextareaContainer">
-									<label>collSize</label>
-									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
-								</div>
-								<div class="studyLevelDataSetTextareaContainer">
-									<label>complete</label>
+									<label>Sisällöllinen muokkaus</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
 							</div>
 							<div class="rowContainer">
 								<div class="studyLevelDataSetTextareaContainer">
-									<label>disclaimer</label>
+									<label>Tiedostot</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
 								<div class="studyLevelDataSetTextareaContainer">
-									<label>datasetnotes</label>
+									<label>Täydellisyys</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
 							</div>
 							<div class="rowContainer">
 								<div class="studyLevelDataSetTextareaContainer">
-									<label class="link" id="studyLevelAppraisal">appraisal</label>
+									<label>Lisävarauma</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
+								</div>
+								<div class="studyLevelDataSetTextareaContainer">
+									<label>Huomioitavaa</label>
+									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
+								</div>
+							</div>
+							<div class="rowContainer">
+								<div class="studyLevelDataSetTextareaContainer">
+									<label class="link" id="studyLevelAppraisal">Arviointia</label>
+									<textarea>Foo bar lorem ipsum dolor sit amet</textarea><img class="removeAddedElement" style="display:none;" title="Poista" src="../images/cancel.png"/>
 								</div>
 							</div>
 						</div>
@@ -788,7 +778,7 @@
 								<div class="studyLevelTableTitle">Oheismateriaali</div>
 								<table class="metkaTable">
 									<thead>
-										<tr><th>relatedmaterial</th><th></th></tr>
+										<tr><th>Oheismateriaali</th><th></th></tr>
 									</thead>
 									<tbody>
 										<tr><td>g in odio in, condimentum gravida turpis. Mauris cursus dapibus velit vitae placerat. Vivamus consequat non orci eu pretium. Vestibulum quam justo, auctor sed venenatis at, dignissim et lacus. Aliquam ultricies lacus non nunc pulvinar, ac hendrerit nibh euismod.</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
@@ -802,7 +792,7 @@
 								<div class="studyLevelTableTitle">Muu materiaali</div>
 								<table class="metkaTable">
 									<thead>
-										<tr><th>uri</th><th>othermateriallabel</th><th>othermaterialtext</th><th></th></tr>
+										<tr><th>Uri</th><th>Lyhyt kuvaus</th><th>Tarkka kuvaus</th><th></th></tr>
 									</thead>
 									<tbody>
 										<tr><td>http://vesa.lib.helsinki.fi/</td><td>foo bar</td><td>g in odio in, condimentum gravida turpis. Mauris cursus dapibus velit vitae placerat. Vivamus consequat non orci eu pretium. Vestibulum quam justo, auctor sed venenatis at, dignissim et lacus. Aliquam ultricies lacus non nunc pulvinar, ac hendrerit nibh euismod.</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
@@ -817,7 +807,7 @@
 						<div class="accordionContent">
 							<table class="metkaTable" id="materialAuthorTable">
 								<thead>
-									<tr><th>id</th><th>Nimi</th><th>Organisaatio</th><th>Titteli</th><th></th></tr>
+									<tr><th>Tunniste</th><th>Nimi</th><th>Organisaatio</th><th>Titteli</th><th></th></tr>
 								</thead>
 								<tbody>
 									<tr class="materialAuthor"><td>1</td><td>Mikko Tanskanen</td><td>Proactum Oy</td><td>Arkkitehti</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
