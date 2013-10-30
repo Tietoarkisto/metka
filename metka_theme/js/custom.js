@@ -349,37 +349,37 @@ $(document).ready(function(){
 	});	
 	
 	$("#basicVariableTree").on("click", function() {
-		$("#basicVariableTreeDiv").show();
+		$("#basicVariableTreeContainer").show();
 
-		$("#groupedVariableTreeDiv").hide();
-		$("#variableDataContent").hide();
-		$("#variablesGroupingDiv").hide();
+		$("#groupedVariableTreeContainer").hide();
+		$("#variableDataContainer").hide();
+		$("#variablesGroupingContainer").hide();
 	});
 
 	$("#groupedVariableTree").on("click", function() {
-		$("#groupedVariableTreeDiv").show();
+		$("#groupedVariableTreeContainer").show();
 
-		$("#basicVariableTreeDiv").hide();
-		$("#variablesGroupingDiv").hide();
-		$("#variableDataContent").hide();
-		$("#variableGroupDataContent").hide();
+		$("#basicVariableTreeContainer").hide();
+		$("#variablesGroupingContainer").hide();
+		$("#variableDataContainer").hide();
+		$("#variableGroupData").hide();
 	});
 
 	$("#variablesGrouping").on("click", function() {
-		$("#variablesGroupingDiv").show();
+		$("#variablesGroupingContainer").show();
 
-		$("#basicVariableTreeDiv").hide();
-		$("#groupedVariableTreeDiv").hide();
-		$("#variableDataContent").hide();
-		$("#variableGroupDataContent").hide();
+		$("#basicVariableTreeContainer").hide();
+		$("#groupedVariableTreeContainer").hide();
+		$("#variableDataContainer").hide();
+		$("#variableGroupData").hide();
 	});
 
 	$('#variableFilterInput').fastLiveFilter('#variablesListBasic');
 
 	$("#variablesListBasic li").on("click", function() {
-		$("#variablesData").show();
-		$("#variableDataContent").show();
-		$("#variableGroupDataContent").hide();
+		$("#variableDataContainer").show();
+		$("#variableData").show();
+		$("#variableGroupData").hide();
 		$("#variablesListBasic li").each(function() {
 			$(this).removeClass("selectedVariable");
 		});
@@ -387,19 +387,19 @@ $(document).ready(function(){
 		$("#var").val($(this).html());
 	});
 
-    $("#groupedVariableTreeDiv").fancytree({ 
+    $("#groupedVariableTreeContainer").fancytree({ 
 		activate: function(event, data) {
 			if ( data.node.children == null || data.node.children.length == 0 ) {
 		        var node = data.node;
-				$("#variablesData").show();
-				$("#variableDataContent").show();
-				$("#variableGroupDataContent").hide();
+				$("#variableDataContainer").show();
+				$("#variableData").show();
+				$("#variableGroupData").hide();
 				$("#var").val(node.title);
 			} else {
-				$("#variablesData").show();
-				$("#variableGroupDataContent").show();
-				$("#variableGroupDataContent").find("textarea").html(data.node.title);
-				$("#variableDataContent").hide();
+				$("#variableDataContainer").show();
+				$("#variableData").hide();
+				$("#variableGroupData").show();
+				$("#variableGroupData").find("textarea").html(data.node.title);
 			}
 		}
     });

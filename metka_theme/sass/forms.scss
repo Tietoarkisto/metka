@@ -1,8 +1,8 @@
 @import "global";
 
 #fileNameErrorRow, #materialFileInfoRow, #materialCodebookRow, #materialErrorInfoRow, 
-#groupedVariableTreeDiv, #variableDataContent, #variablesData, #variableGroupDataContent, 
-#variablesGroupingDiv, #additionalFilingContractFile, .translationEn, .translationSv {
+#groupedVariableTreeContainer, #variableDataContainer, #variableData, #variableGroupData, 
+#variablesGroupingContainer, #additionalFilingContractFile, .translationEn, .translationSv {
 	display: none;
 }
 
@@ -285,7 +285,7 @@
 		}
 	}
 
-	#variablesMainDiv {
+	#variablesMainContainer {
 		position: relative;
 		.variablesTree {
 			top: 40;
@@ -296,7 +296,7 @@
 			float: left;
 		}
 
-		#groupedVariableTreeDiv {
+		#groupedVariableTreeContainer {
 			#newFolder {
 				padding-left: 10px;
 			}
@@ -305,7 +305,7 @@
 			}
 		}
 
-		#basicVariableTreeDiv {
+		#basicVariableTreeContainer {
 			#variableFilter {
 				padding-left: 20px;
 			}
@@ -320,13 +320,13 @@
 			}
 		}
 
-		#variablesData {
+		#variableDataContainer {
 			top: 40;
 			right: 0;
 			width: 500px;
 			float: left;
 
-			#variableDataContent, #variableGroupDataContent {
+			#variableData, #variableGroupData {
 				thead {
 					.variableName {
 						width: 200px;
@@ -355,14 +355,14 @@
 				}
 			}
 
-			#variableGroupDataContent {
+			#variableGroupData {
 				#variableGroupName {
 					vertical-align: middle;
 				}
 			}
 		}
 
-		#variablesGroupingDiv {
+		#variablesGroupingContainer {
 			padding: 10px;
 			position: relative;
 

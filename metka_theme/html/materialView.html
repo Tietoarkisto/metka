@@ -760,8 +760,8 @@
 						<div class="variableTreeRadioSelect"><input type="radio" name="variableTreeType" id="variablesGrouping" autocomplete="off" />Muuttujien ryhmittely</div>
 					</div>
 
-					<div id="variablesMainDiv">
-						<div id="basicVariableTreeDiv" class="variablesTree">
+					<div id="variablesMainContainer">
+						<div id="basicVariableTreeContainer" class="variablesTree">
 							<div id="variableFilter"><input id="variableFilterInput" placeholder="Filter..."></div>
 							<ul id="variablesListBasic">
 								<li>[q1] Sukupuolenne?</li>
@@ -775,19 +775,7 @@
 								<li>[q3_1] Vas./oik. oma sijoittuminen</li>
 								<li>[q3] Onko vastaaja perheen päähenkilö</li>
 								<li>[q4_1] Vastaajan ammattiryhmä</li>
-								<li>[q4_2] Jos vastaaja eläkeläinen, entinen ammattiryhmä</li>
-								<li>[q2] Ikä</li>
-								<li>[q4_1] Vastaajan ammattiryhmä</li>
-								<li>[q4_2] Jos vastaaja eläkeläinen, entinen ammattiryhmä</li>
-								<li>[q1] Sukupuolenne?</li>
-								<li>[q2] Oma poliittinen kiinnostus</li>
-								<li>[q3_1] Vas./oik. oma sijoittuminen</li>
 								<li>[q3] Onko vastaaja perheen päähenkilö</li>
-								<li>[q3_1] Vas./oik. oma sijoittuminen</li>
-								<li>[q3] Onko vastaaja perheen päähenkilö</li>
-								<li>[q4_1] Vastaajan ammattiryhmä</li>
-								<li>[q4_2] Jos vastaaja eläkeläinen, entinen ammattiryhmä</li>
-								<li>[q2] Ikä</li>
 								<li>[q4_1] Vastaajan ammattiryhmä</li>
 								<li>[q4_2] Jos vastaaja eläkeläinen, entinen ammattiryhmä</li>
 								<li>[q1] Sukupuolenne?</li>
@@ -797,7 +785,7 @@
 							</ul>
 						</div>
 
-						<div id="groupedVariableTreeDiv" class="variablesTree">
+						<div id="groupedVariableTreeContainer" class="variablesTree">
 							<ul id="variableList">
 								<li class="parentVariableGroup folder">Nyt pyytäisin Teitä vertailemaan eräiden ominaisuuksien suht...
 									<ul class="childVariableGroupList">
@@ -872,9 +860,9 @@
 							</ul>
 						</div>
 
-						<div id="variablesData">
+						<div id="variableDataContainer">
 							
-							<div id="variableDataContent">
+							<div id="variableData">
 								<div id="variablesPrevNextContainer"><h1 class="prev"><</h1><h1 class="next">></h1></div>
 								<div class="variableDataTable">
 									<table>
@@ -926,7 +914,8 @@
 									</div>
 								</div>
 							</div>
-							<div id="variableGroupDataContent">
+							
+							<div id="variableGroupData">
 								<div id="variablesPrevNextContainer"><h1 class="prev"><</h1><h1 class="next">></h1></div>
 								<div class="variableDataTable">
 									<table>
@@ -946,7 +935,7 @@
 							</div>						
 						</div>
 
-						<div id="variablesGroupingDiv">
+						<div id="variablesGroupingContainer">
 							<div id="variablesBox" class="variablesGroupingBox">
 							<div id="variablesGroupingVariableFilter"><input id="variablesGroupingFilterInput" placeholder="Filter..."></div>
 								<ul id="variablesGroupingVariablesList">
@@ -957,14 +946,6 @@
 									<li><input type="checkbox"/>[q4_1] Vastaajan ammattiryhmä</li>
 									<li><input type="checkbox"/>[q4_2] Jos vastaaja eläkeläinen, entinen ammattiryhmä</li>
 									<li><input type="checkbox"/>[q1] Sukupuolenne?</li>
-									<li><input type="checkbox"/>[q2] Oma poliittinen kiinnostus</li>
-									<li><input type="checkbox"/>[q3_1] Vas./oik. oma sijoittuminen</li>
-									<li><input type="checkbox"/>[q3] Onko vastaaja perheen päähenkilö</li>
-									<li><input type="checkbox"/>[q4_1] Vastaajan ammattiryhmä</li>
-									<li><input type="checkbox"/>[q4_2] Jos vastaaja eläkeläinen, entinen ammattiryhmä</li>								
-									<li><input type="checkbox"/>[q3_1] Vas./oik. oma sijoittuminen</li>
-									<li><input type="checkbox"/>[q2] Ikä</li>
-									<li><input type="checkbox"/>[q4_1] Vastaajan ammattiryhmä</li>
 									<li><input type="checkbox"/>[q4_2] Jos vastaaja eläkeläinen, entinen ammattiryhmä</li>
 									<li><input type="checkbox"/>[q1] Sukupuolenne?</li>
 									<li><input type="checkbox"/>[q4_1] Vastaajan ammattiryhmä</li>
@@ -979,6 +960,7 @@
 							<div id="variablesToGroupArrowBox" class="">
 								<div id="variablesToGroupArrow">&gt;</div>
 							</div>
+							
 							<div id="variableGroupsBox" class="variablesGroupingBox fancytree-radio">
 								<div id="newFolder"><input type="text" id="newFolderName"/><input type="button" id="addFolderButton" class="searchFormInput" value="Lisää ryhmä"/></div>
 								<ul id="variableGroupRoot">
@@ -999,19 +981,20 @@
 								</ul>
 							</div>
 						</div>	
-					<div style="clear:both;"></div>
-					<div class="viewFormButtonsHolder" style="margin-bottom:20px;">
-						<input type="button" id="ddi2Export" class="searchFormInput" value="DDI2-Export" />
-						<input type="button" id="htmlView" class="searchFormInput" value="HTML-näkymä" />
-						<input type="button" id="startWorkingButton" class="searchFormInput" value="Varaa aineisto itsellesi" />
-						<input type="button" id="versionHistoryButton" class="searchFormInput" value="Versiohistoria">
-							<a style="display: hidden;" id="versionHistoryLink" href="dialogs/versionHistoryDialog.html" class="fancyboxpopup fancybox.ajax"></a>
-						</input>
-						<input type="button" id="approveChangesButton" class="searchFormInput" value="Hyväksy muutokset" >
-							<a style="display: hidden;" id="approveChangesLink" href="dialogs/confirmDialog.html" class="fancyboxpopup fancybox.ajax"></a>
-						</input>
-						<input type="button" id="saveAsDraftButton" class="searchFormInput" value="Tallenna Luonnoksena" />
-					</div>	
+
+						<div style="clear:both;"></div>
+						<div class="viewFormButtonsHolder" style="margin-bottom:20px;">
+							<input type="button" id="ddi2Export" class="searchFormInput" value="DDI2-Export" />
+							<input type="button" id="htmlView" class="searchFormInput" value="HTML-näkymä" />
+							<input type="button" id="startWorkingButton" class="searchFormInput" value="Varaa aineisto itsellesi" />
+							<input type="button" id="versionHistoryButton" class="searchFormInput" value="Versiohistoria">
+								<a style="display: hidden;" id="versionHistoryLink" href="dialogs/versionHistoryDialog.html" class="fancyboxpopup fancybox.ajax"></a>
+							</input>
+							<input type="button" id="approveChangesButton" class="searchFormInput" value="Hyväksy muutokset" >
+								<a style="display: hidden;" id="approveChangesLink" href="dialogs/confirmDialog.html" class="fancyboxpopup fancybox.ajax"></a>
+							</input>
+							<input type="button" id="saveAsDraftButton" class="searchFormInput" value="Tallenna Luonnoksena" />
+						</div>	
 					</div>
 				</div>							
 				
