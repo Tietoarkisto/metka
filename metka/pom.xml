@@ -212,9 +212,9 @@
 
 	</dependencies>
     <build>
-<!--     	<filters> -->
-<!-- 			<filter>src/profile/filter-${env}.properties</filter> -->
-<!-- 		</filters> -->
+       	<filters>
+ 			<filter>src/profile/filter-${env}.properties</filter>
+ 		</filters>
 		<resources>
 			<resource>
 				<filtering>true</filtering>
@@ -290,7 +290,8 @@
             </plugin>
         </plugins>
     </build>
-    
+
+    <!-- Build profiles -->
     <profiles>
 		<profile>
 			<id>Development profile</id>
