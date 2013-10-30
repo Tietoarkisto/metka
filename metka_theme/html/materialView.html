@@ -761,6 +761,7 @@
 					</div>
 
 					<div id="variablesMainContainer">
+
 						<div id="basicVariableTreeContainer" class="variablesTree">
 							<div id="variableFilter"><input id="variableFilterInput" placeholder="Filter..."></div>
 							<ul id="variablesListBasic">
@@ -783,6 +784,97 @@
 								<li>[q3_1] Vas./oik. oma sijoittuminen</li>
 								<li>[q3] Onko vastaaja perheen päähenkilö</li>
 							</ul>
+						</div>
+
+						<div class="variableDataTable variableTranslationTable" id="variableTranslationSv">
+							<table>
+								<thead>
+									<tr><th class="variableName"></th><th class="variableContent"></th></tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>Muuttuja</td>
+										<td><input type="text" id="var" value="[q2] Oma poliittinen kiinnostus"/></td>
+									</tr>
+									<tr>
+										<td>Kysymysteksti</td>
+										<td>
+											<input type="text" value="Kuinka paljon politiikka Teitä kiinnostaa? Oletteko hyvin kiinnostunut, jonkin verran kiinnostunut, vain vähän kiinnostunut vai ei ollenkaan kiinnostunut?"/>
+											<input type="text" value="Kuinka paljon politiikka Teitä kiinnostaa? Oletteko hyvin kiinnostunut, jonkin verran kiinnostunut, vain vähän kiinnostunut vai ei ollenkaan kiinnostunut?"/>
+										</td>
+									</tr>
+									<tr>
+										<td>Esiteksti</td>
+										<td>
+											<input type="text" value="Aluksi muutama Teitä ja kotitalouttanne koskeva kysymys: Rengastakaa mielestänne sopivinta vaihtoehtoa vastaava numero tai kirjoittakaa vastauksenne sille varattuun tilaan."/>
+											<input type="text" value="Aluksi muutama Teitä ja kotitalouttanne koskeva kysymys: Rengastakaa mielestänne sopivinta vaihtoehtoa vastaava numero tai kirjoittakaa vastauksenne sille varattuun tilaan."/>
+										</td>
+									</tr>
+									<tr>
+										<td>Jälkiteksti</td>
+										<td><input type="text" value="Seuraavaksi muutama yhteiskuntaa yleisesti koskeva kysymys:"/></td>
+									</tr>
+									<tr>
+										<td>Haastattelijan ohje</td>
+										<td><input type="text" value="Valitse näistä sopivin vaihtoehto"/></td>
+									</tr>
+									<tr>
+										<td>Vaihtoehdot</td>
+										<td>
+											<input type="text" value="Hyvin kiinnostunut"/><br/>
+											<input type="text" value="Jonkin verran kiinnostunut"/><br/>
+											<input type="text" value="Vain vähän kiinnostunut"/><br/>
+											<input type="text" value="Ei ollenkaan kiinnostunut"/><br/>
+											<input type="text" value="Ei osaa sanoa"/><br/>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="variableDataTable variableTranslationTable" id="variableTranslationEn">
+							<table>
+								<thead>
+									<tr><th class="variableName"></th><th class="variableContent"></th></tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>Muuttuja</td>
+										<td><input type="text" id="var" value="[q2] Oma poliittinen kiinnostus"/></td>
+									</tr>
+									<tr>
+										<td>Kysymysteksti</td>
+										<td>
+											<input type="text" value="Kuinka paljon politiikka Teitä kiinnostaa? Oletteko hyvin kiinnostunut, jonkin verran kiinnostunut, vain vähän kiinnostunut vai ei ollenkaan kiinnostunut?"/>
+											<input type="text" value="Kuinka paljon politiikka Teitä kiinnostaa? Oletteko hyvin kiinnostunut, jonkin verran kiinnostunut, vain vähän kiinnostunut vai ei ollenkaan kiinnostunut?"/>
+										</td>
+									</tr>
+									<tr>
+										<td>Esiteksti</td>
+										<td>
+											<input type="text" value="Aluksi muutama Teitä ja kotitalouttanne koskeva kysymys: Rengastakaa mielestänne sopivinta vaihtoehtoa vastaava numero tai kirjoittakaa vastauksenne sille varattuun tilaan."/>
+											<input type="text" value="Aluksi muutama Teitä ja kotitalouttanne koskeva kysymys: Rengastakaa mielestänne sopivinta vaihtoehtoa vastaava numero tai kirjoittakaa vastauksenne sille varattuun tilaan."/>
+										</td>
+									</tr>
+									<tr>
+										<td>Jälkiteksti</td>
+										<td><input type="text" value="Seuraavaksi muutama yhteiskuntaa yleisesti koskeva kysymys:"/></td>
+									</tr>
+									<tr>
+										<td>Haastattelijan ohje</td>
+										<td><input type="text" value="Valitse näistä sopivin vaihtoehto"/></td>
+									</tr>
+									<tr>
+										<td>Vaihtoehdot</td>
+										<td>
+											<input type="text" value="Hyvin kiinnostunut"/><br/>
+											<input type="text" value="Jonkin verran kiinnostunut"/><br/>
+											<input type="text" value="Vain vähän kiinnostunut"/><br/>
+											<input type="text" value="Ei ollenkaan kiinnostunut"/><br/>
+											<input type="text" value="Ei osaa sanoa"/><br/>
+										</td>
+									</tr>
+								</tbody>
+							</table>
 						</div>
 
 						<div id="groupedVariableTreeContainer" class="variablesTree">
@@ -909,8 +1001,8 @@
 										</tbody>
 									</table>
 									<div class="translations">
-										<div class="variableTranslationLink translationLinkSv">sv</div>
-										<div class="variableTranslationLink translationLinkEn">en</div>
+										<div class="variableTranslationLink" id="variableTranslationLinkSv">sv</div>
+										<div class="variableTranslationLink" id="variableTranslationLinkEn">en</div>
 									</div>
 								</div>
 							</div>

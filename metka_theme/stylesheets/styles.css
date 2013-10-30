@@ -667,7 +667,8 @@ nav {
 /** MATERIAL, PUBLICATION, SERIES **/
 #fileNameErrorRow, #materialFileInfoRow, #materialCodebookRow, #materialErrorInfoRow,
 #groupedVariableTreeContainer, #variableDataContainer, #variableData, #variableGroupData,
-#variablesGroupingContainer, #additionalFilingContractFile, .translationEn, .translationSv {
+#variablesGroupingContainer, #additionalFilingContractFile, .translationEn, .translationSv,
+.variableTranslationTable {
   display: none; }
 
 .upperContainer {
@@ -935,10 +936,23 @@ nav {
   #materialVariables #variablesMainContainer .variablesTree {
     top: 40;
     left: 0;
-    width: 420px;
+    width: 450px;
     font-size: 12px;
     min-height: 400px;
     float: left; }
+  #materialVariables #variablesMainContainer .variableTranslationTable {
+    padding-top: 30px;
+    font-size: 15px;
+    padding-left: 20px;
+    width: 430px;
+    min-height: 400px;
+    float: left; }
+    #materialVariables #variablesMainContainer .variableTranslationTable thead .variableName {
+      width: 190px; }
+    #materialVariables #variablesMainContainer .variableTranslationTable thead .variableContent {
+      width: 240px; }
+    #materialVariables #variablesMainContainer .variableTranslationTable input {
+      width: 240px; }
   #materialVariables #variablesMainContainer #groupedVariableTreeContainer #newFolder {
     padding-left: 10px; }
   #materialVariables #variablesMainContainer #groupedVariableTreeContainer #newFolderName {
@@ -954,14 +968,15 @@ nav {
   #materialVariables #variablesMainContainer #variableDataContainer {
     top: 40;
     right: 0;
-    width: 500px;
-    float: left; }
+    width: 450px;
+    float: left;
+    margin-left: 10px; }
     #materialVariables #variablesMainContainer #variableDataContainer #variableData, #materialVariables #variablesMainContainer #variableDataContainer #variableGroupData {
       padding-right: 10px; }
       #materialVariables #variablesMainContainer #variableDataContainer #variableData thead .variableName, #materialVariables #variablesMainContainer #variableDataContainer #variableGroupData thead .variableName {
         width: 200px; }
       #materialVariables #variablesMainContainer #variableDataContainer #variableData thead .variableContent, #materialVariables #variablesMainContainer #variableDataContainer #variableGroupData thead .variableContent {
-        width: 300px; }
+        width: 250px; }
       #materialVariables #variablesMainContainer #variableDataContainer #variableData .variableDataTable, #materialVariables #variablesMainContainer #variableDataContainer #variableGroupData .variableDataTable {
         position: absolute;
         float: top;
@@ -969,7 +984,7 @@ nav {
         padding-right: 10px; }
         #materialVariables #variablesMainContainer #variableDataContainer #variableData .variableDataTable input, #materialVariables #variablesMainContainer #variableDataContainer #variableGroupData .variableDataTable input {
           width: 250px; }
-    #materialVariables #variablesMainContainer #variableDataContainer .translations .translationLinkSv, #materialVariables #variablesMainContainer #variableDataContainer .translations .translationLinkEn, #materialVariables #variablesMainContainer #variableDataContainer .translations .translationLinkFi {
+    #materialVariables #variablesMainContainer #variableDataContainer .translations .variableTranslationLink {
       float: left;
       margin-right: 10px;
       font-size: 15px;

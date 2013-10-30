@@ -60,7 +60,7 @@ $(document).ready(function(){
 		".materialSearchResultRow, .publicationSearchResultRow, .seriesSearchResultRow, " + 
 		".materialSeriesRow, .materialPublicationRow, .materialMaterialRow, #variablesListBasic li, " +
 		".publicationSeriesRow, .publicationMaterialRow, .materialBinderRow, .binderRow, .translationLink, " + 
-		".materialRemovedFileRow, #filingContractFile, .versionRow, .translationLinkEn, .translationLinkSv, .translationLinkFi").hover(function() {
+		".materialRemovedFileRow, #filingContractFile, .versionRow, .translationLinkEn, .translationLinkSv, .translationLinkFi, .variableTranslationLink").hover(function() {
 		    $(this).css('cursor', 'pointer');
 		}, function() {
 		    $(this).css('cursor', 'auto');		    
@@ -374,6 +374,39 @@ $(document).ready(function(){
 		$("#variableGroupData").hide();
 	});
 
+	$("#variableTranslationLinkSv").on("click", function() {
+		if ( $(this).hasClass("clicked")) {
+			$(this).removeClass("clicked");
+			$("#basicVariableTreeContainer").show();
+			$("#variableTranslationSv").hide();
+		} else {			
+			$(this).addClass("clicked");
+			$("#basicVariableTreeContainer").hide();
+
+			if ( $("#variableTranslationLinkEn").hasClass("clicked") ) {
+				$("#variableTranslationLinkEn").removeClass("clicked");
+				$("#variableTranslationEn").hide();
+			}
+			$("#variableTranslationSv").show();
+		}
+	});
+
+	$("#variableTranslationLinkEn").on("click", function() {
+		if ( $(this).hasClass("clicked")) {
+			$(this).removeClass("clicked");
+			$("#basicVariableTreeContainer").show();
+			$("#variableTranslationEn").hide();
+		} else {			
+			$(this).addClass("clicked");
+			$("#basicVariableTreeContainer").hide();			
+			if ( $("#variableTranslationLinkSv").hasClass("clicked") ) {
+				$("#variableTranslationLinkSv").removeClass("clicked");
+				$("#variableTranslationSv").hide();
+			}
+			$("#variableTranslationEn").show();
+		}
+	});
+
 	$('#variableFilterInput').fastLiveFilter('#variablesListBasic');
 
 	$("#variablesListBasic li").on("click", function() {
@@ -508,6 +541,7 @@ $(document).ready(function(){
 			$(this).find(".showVersionInfo").click();
 		}
 	});
+
 
 	/*** JULKAISU ***/
 	
