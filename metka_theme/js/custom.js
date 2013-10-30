@@ -60,11 +60,48 @@ $(document).ready(function(){
 		".materialSearchResultRow, .publicationSearchResultRow, .seriesSearchResultRow, " + 
 		".materialSeriesRow, .materialPublicationRow, .materialMaterialRow, #variablesListBasic li, " +
 		".publicationSeriesRow, .publicationMaterialRow, .materialBinderRow, .binderRow, .translationLink, " + 
-		".materialRemovedFileRow, #filingContractFile").hover(function() {
+		".materialRemovedFileRow, #filingContractFile, .versionRow, .translationLinkEn, .translationLinkSv, .translationLinkFi").hover(function() {
 		    $(this).css('cursor', 'pointer');
 		}, function() {
 		    $(this).css('cursor', 'auto');		    
 	});
+
+
+	$(".translationLinkSv").on("click", function() {
+		$(".translationSv").toggle();
+		
+		if ( $(this).hasClass("clicked")) {
+			$(".translationLinkSv").removeClass("clicked");
+		} else {
+			$(".translationLinkSv").addClass("clicked");
+		}
+		toggleTranslationVisibility($(this));
+	});
+ 
+	$(".translationLinkEn").on("click", function() {
+		$(".translationEn").toggle();
+		if ( $(this).hasClass("clicked")) {
+			$(".translationLinkEn").removeClass("clicked");
+		} else {
+			$(".translationLinkEn").addClass("clicked");
+		}
+		toggleTranslationVisibility($(this));
+	});
+
+	function toggleTranslationVisibility(linkElement) {
+		var translationSvVisible = $(linkElement).parent().find(".translationLinkSv").hasClass("clicked");
+		var translationEnVisible = $(linkElement).parent().find(".translationLinkEn").hasClass("clicked");
+
+		if ( !translationEnVisible && !translationSvVisible ) {
+			$(".rowContainer:not(.containsTranslations)").show();
+			$(".materialDataSetContainer:not(.translated), .materialDataSetTextareaContainer:not(.translated)").show();
+			// Jos toinen tiedosto, näytä tämä
+			$("#additionalFilingContractFile").hide();
+		} else {
+			$(".rowContainer:not(.containsTranslations)").hide();
+			$(".materialDataSetContainer:not(.translated), .materialDataSetTextareaContainer:not(.translated)").hide();
+		}
+	}
 
 	/** ASETUKSET **/
 	
@@ -179,8 +216,7 @@ $(document).ready(function(){
         "bInfo": false,
         "bAutoWidth": false,
         "aoColumns": [
-		              {sWidth: '30%'},
-		              {sWidth: '10%'},
+		              {sWidth: '40%'},
 		              {sWidth: '30%'},
 		              {sWidth: '10%'},
 		              {sWidth: '15%'},
@@ -234,12 +270,27 @@ $(document).ready(function(){
         "bInfo": false, 
         "bAutoWidth": false,
         "aoColumns": [
-		              {sWidth: '80%'},
+		              {sWidth: '75%'},
 		              {sWidth: '10%'},
-		              {sWidth: '10%'}
+		              {sWidth: '10%'},
+		              {sWidth: '5%'}
         ]
 	});
 	
+	$("#materialVersionTable").dataTable({
+		"bPaginate": false,
+        "bFilter": false, 
+        "bInfo": false, 
+        "bAutoWidth": false,
+        "aoColumns": [
+		              {sWidth: '15%'},
+		              {sWidth: '15%'},
+		              {sWidth: '20%'},
+		              {sWidth: '45%'},
+		              {sWidth: '5%'}
+        ]
+	});
+
 	$(".materialFileRow").on("click", function() {
 		showFileInfo($(this), "#materialFileInfoContent", "#materialFileInfoRow");	
 	});
@@ -298,37 +349,37 @@ $(document).ready(function(){
 	});	
 	
 	$("#basicVariableTree").on("click", function() {
-		$("#basicVariableTreeDiv").show();
+		$("#basicVariableTreeContainer").show();
 
-		$("#groupedVariableTreeDiv").hide();
-		$("#variableDataContent").hide();
-		$("#variablesGroupingDiv").hide();
+		$("#groupedVariableTreeContainer").hide();
+		$("#variableDataContainer").hide();
+		$("#variablesGroupingContainer").hide();
 	});
 
 	$("#groupedVariableTree").on("click", function() {
-		$("#groupedVariableTreeDiv").show();
+		$("#groupedVariableTreeContainer").show();
 
-		$("#basicVariableTreeDiv").hide();
-		$("#variablesGroupingDiv").hide();
-		$("#variableDataContent").hide();
-		$("#variableGroupDataContent").hide();
+		$("#basicVariableTreeContainer").hide();
+		$("#variablesGroupingContainer").hide();
+		$("#variableDataContainer").hide();
+		$("#variableGroupData").hide();
 	});
 
 	$("#variablesGrouping").on("click", function() {
-		$("#variablesGroupingDiv").show();
+		$("#variablesGroupingContainer").show();
 
-		$("#basicVariableTreeDiv").hide();
-		$("#groupedVariableTreeDiv").hide();
-		$("#variableDataContent").hide();
-		$("#variableGroupDataContent").hide();
+		$("#basicVariableTreeContainer").hide();
+		$("#groupedVariableTreeContainer").hide();
+		$("#variableDataContainer").hide();
+		$("#variableGroupData").hide();
 	});
 
 	$('#variableFilterInput').fastLiveFilter('#variablesListBasic');
 
 	$("#variablesListBasic li").on("click", function() {
-		$("#variablesData").show();
-		$("#variableDataContent").show();
-		$("#variableGroupDataContent").hide();
+		$("#variableDataContainer").show();
+		$("#variableData").show();
+		$("#variableGroupData").hide();
 		$("#variablesListBasic li").each(function() {
 			$(this).removeClass("selectedVariable");
 		});
@@ -336,19 +387,19 @@ $(document).ready(function(){
 		$("#var").val($(this).html());
 	});
 
-    $("#groupedVariableTreeDiv").fancytree({ 
+    $("#groupedVariableTreeContainer").fancytree({ 
 		activate: function(event, data) {
 			if ( data.node.children == null || data.node.children.length == 0 ) {
 		        var node = data.node;
-				$("#variablesData").show();
-				$("#variableDataContent").show();
-				$("#variableGroupDataContent").hide();
+				$("#variableDataContainer").show();
+				$("#variableData").show();
+				$("#variableGroupData").hide();
 				$("#var").val(node.title);
 			} else {
-				$("#variablesData").show();
-				$("#variableGroupDataContent").show();
-				$("#variableGroupDataContent").find("textarea").html(data.node.title);
-				$("#variableDataContent").hide();
+				$("#variableDataContainer").show();
+				$("#variableData").hide();
+				$("#variableGroupData").show();
+				$("#variableGroupData").find("textarea").html(data.node.title);
 			}
 		}
     });
@@ -397,7 +448,7 @@ $(document).ready(function(){
 	});
 	
 	$("#materialQualitySelect").on("change", function() {
-		var materialQuality = $(this).children(":selected").attr("id");
+		var materialQuality = $(this).children(":selected").attr("class");
 
 		if ( materialQuality == "quantitative" ) {
 			$("#materialType").removeClass("required");
@@ -450,6 +501,12 @@ $(document).ready(function(){
 	
 	$("#filingContractFile").on("click", function() {
 		$("#additionalFilingContractFile").toggle();
+	});
+
+	$(".versionRow").on("click", function(e) {
+		if($(e.target.nodeName).is('TD')){
+			$(this).find(".showVersionInfo").click();
+		}
 	});
 
 	/*** JULKAISU ***/
@@ -510,6 +567,7 @@ $(document).ready(function(){
 
 	/** MAPIT **/
 
+// Käännökset fileen ja haku sUrlilla
 	$("#binderTable").dataTable({
         "bFilter": false, 
         "bInfo": true,

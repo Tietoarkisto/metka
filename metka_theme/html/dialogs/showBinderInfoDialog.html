@@ -2,15 +2,46 @@
 <html lang="fi">
 	<head>
 		<link rel="stylesheet" type="text/css" href="../stylesheets/jquery-ui.css">
+		<link rel="stylesheet" type="text/css" href="../../stylesheets/styles.css">
+		<link rel="stylesheet" type="text/css" href="../../stylesheets/jquery.fancybox.css">
 		<script src="../js/popup.js"></script>
-		<script src="../js/binderInfo.js"></script>
 		<script src="../js/jquery.dataTables.min.js"></script>
+		<script type="text/javascript">
+			$("#binderRelatedMaterialsTable").dataTable({
+				"bPaginate": true,
+		        "bFilter": false, 
+		        "bInfo": true, 
+		        "bAutoWidth": false,
+       			"sPaginationType": "full_numbers",
+		        "aoColumns": [
+				              {sWidth: '15%'},
+				              {sWidth: '85%'}
+		        ], 
+		        "oLanguage": {
+				    "sProcessing":   "Hetkinen...",
+				    "sLengthMenu":   "Näytä kerralla _MENU_ riviä",
+				    "sZeroRecords":  "Tietoja ei löytynyt",
+				    "sInfo":         "Näytetään rivit _START_ - _END_ (yhteensä _TOTAL_ )",
+				    "sInfoEmpty":    "Näytetään 0 - 0 (yhteensä 0)",
+				    "sInfoFiltered": "(suodatettu _MAX_ tuloksen joukosta)",
+				    "sInfoPostFix":  "",
+				    "sSearch":       "Etsi:",
+				    "sUrl":          "",
+				    "oPaginate": {
+				        "sFirst":    "Ensimmäinen",
+				        "sPrevious": "Edellinen",
+				        "sNext":     "Seuraava",
+				        "sLast":     "Viimeinen"
+				    }
+				}
+			});
+		</script>
 	</head>
 	<body>	
 		<div class="popupContainer">
 			<h1 class="pageTitle">Mappiin 1290 liittyvät aineistot</h1>
 			<div class="popupRowHolder">
-				<table id="binderRelatedMaterialsTable">
+				<table id="binderRelatedMaterialsTable" class="sortableTable metkaTable">
 					<thead>
 						<tr><th>Aineistonumero</th><th>Aineiston nimi</th></tr>
 					</thead>

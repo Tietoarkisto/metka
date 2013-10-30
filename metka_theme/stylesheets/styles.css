@@ -152,6 +152,10 @@ footer {
 .required:after {
   content: " *"; }
 
+.link {
+  text-decoration: underline;
+  color: #0000EE; }
+
 /** POPUP **/
 .popup_background {
   z-index: 2000; }
@@ -167,7 +171,7 @@ footer {
   padding: 0 15px !important; }
 .popupContainer .popupRowHolder {
   margin: 10px 0; }
-  .popupContainer .popupRowHolder label {
+  .popupContainer .popupRowHolder .inputRowLabel {
     display: block;
     float: left;
     padding-top: 5px;
@@ -186,6 +190,15 @@ footer {
 .popupContainer .popupButtonsHolder {
   margin-top: 20px;
   text-align: right; }
+.popupContainer .translations {
+  display: block; }
+  .popupContainer .translations div {
+    float: left;
+    margin-right: 10px;
+    font-size: 15px;
+    padding: 2px;
+    border-style: solid;
+    border-width: 1px; }
 
 /** DATATABLES **/
 .dataTables_filter {
@@ -204,7 +217,7 @@ footer {
   opacity: 1 !important; }
 
 /*TABLE SORTER CSS*/
-table.tablesorter {
+table.metkaTable {
   border-bottom: solid 1px #009ee0;
   border-left: solid 1px #009ee0;
   border-right: solid 1px #009ee0;
@@ -212,32 +225,32 @@ table.tablesorter {
   font-size: 8pt;
   width: 940px;
   text-align: left; }
-  table.tablesorter a {
+  table.metkaTable a {
     text-decoration: none;
     color: #000; }
-  table.tablesorter thead tr th, table.tablesorter thead tfoot tr th {
+  table.metkaTable thead tr th, table.metkaTable thead tfoot tr th {
     background-color: #009ee0;
     font-size: 15px;
     padding: 4px;
     color: white; }
-  table.tablesorter thead tr .header {
+  table.metkaTable thead tr .header {
     background-image: url(../images/bg.gif);
     background-repeat: no-repeat;
     background-position: center right;
     cursor: pointer; }
-  table.tablesorter thead tr .headerSortUp {
+  table.metkaTable thead tr .headerSortUp {
     background-color: #8dbdd8;
     background-image: url(../images/asc.gif); }
-  table.tablesorter thead tr .headerSortDown {
+  table.metkaTable thead tr .headerSortDown {
     background-color: #8dbdd8;
     background-image: url(../images/desc.gif); }
-  table.tablesorter tbody tr:hover {
+  table.metkaTable tbody tr:hover {
     background-color: #eaeaea; }
-  table.tablesorter tbody td {
+  table.metkaTable tbody td {
     color: #000;
     padding: 4px;
     vertical-align: top; }
-  table.tablesorter tbody tr.odd td {
+  table.metkaTable tbody tr.odd td {
     background-color: #EAEAEA; }
 
 .searchFormInput {
@@ -424,11 +437,18 @@ nav {
     display: block;
     color: #005993;
     text-decoration: none;
-    padding: 7px 10px 7px 20px; }
+    padding: 7px 10px 7px 20px;
+    position: relative; }
     .desktopWidgetDataContainer .desktopWidgetDataRow .desktopWidgetDataName {
-      left: 0px; }
+      float: left;
+      left: 10px;
+      bottom: 8px;
+      position: absolute; }
     .desktopWidgetDataContainer .desktopWidgetDataRow .desktopWidgetDataOwner {
-      right: 0px; }
+      float: right;
+      right: 10px;
+      bottom: 8px;
+      position: absolute; }
     .desktopWidgetDataContainer .desktopWidgetDataRow:hover {
       background-color: #EAEAEA;
       transition: all 0.15s ease-in-out;
@@ -646,8 +666,8 @@ nav {
 
 /** MATERIAL, PUBLICATION, SERIES **/
 #fileNameErrorRow, #materialFileInfoRow, #materialCodebookRow, #materialErrorInfoRow,
-#groupedVariableTreeDiv, #variableDataContent, #variablesData, #variableGroupDataContent,
-#variablesGroupingDiv, #additionalFilingContractFile {
+#groupedVariableTreeContainer, #variableDataContainer, #variableData, #variableGroupData,
+#variablesGroupingContainer, #additionalFilingContractFile, .translationEn, .translationSv {
   display: none; }
 
 .upperContainer {
@@ -657,12 +677,18 @@ nav {
 .rowContainer {
   clear: both;
   display: block; }
-  .rowContainer .translations .translationLink {
+  .rowContainer .translations .translationLinkEn, .rowContainer .translations .translationLinkSv, .rowContainer .translations .translationLinkFi {
     float: left;
-    padding-right: 10px;
+    margin-right: 10px;
     font-size: 15px;
+    padding: 2px;
+    border-style: solid;
+    border-width: 1px;
     font-size: 15px;
-    padding-bottom: 10px; }
+    margin-bottom: 10px; }
+
+.translations .clicked {
+  background-color: #009ee0; }
 
 /* Yläosan leveämmät fieldit */
 .materialDataSetContainerTopRow {
@@ -670,14 +696,10 @@ nav {
   .materialDataSetContainerTopRow label {
     display: block;
     float: left;
-    margin-bottom: 10px; }
-    .materialDataSetContainerTopRow label.rightSide {
-      width: 100px;
-      margin-right: 10px; }
-    .materialDataSetContainerTopRow label.leftSide {
-      width: 180px; }
+    margin-bottom: 10px;
+    width: 180px; }
   .materialDataSetContainerTopRow input {
-    width: 282px;
+    width: 690px;
     margin-right: 10px; }
 
 .materialDataSetTextareaContainer {
@@ -753,7 +775,7 @@ nav {
   .seriesDataSetContainer textarea {
     font-size: 12px;
     width: 460px;
-    height: 200px; }
+    height: 100px; }
 
 #materialStudyLevel #studyLevelTopRow {
   position: relative;
@@ -764,11 +786,14 @@ nav {
   #materialStudyLevel #studyLevelTopRow .translations {
     position: absolute;
     left: 120px; }
-    #materialStudyLevel #studyLevelTopRow .translations .translationLink {
-      padding-top: 5px;
+    #materialStudyLevel #studyLevelTopRow .translations .translationLinkSv, #materialStudyLevel #studyLevelTopRow .translations .translationLinkEn, #materialStudyLevel #studyLevelTopRow .translations .translationLinkFi {
+      margin-top: 5px;
       float: left;
-      padding-right: 10px;
-      font-size: 15px; }
+      margin-right: 10px;
+      font-size: 15px;
+      padding: 2px;
+      border-style: solid;
+      border-width: 1px; }
 #materialStudyLevel #studyLevelData {
   padding: 10px; }
   #materialStudyLevel #studyLevelData .studyLevelTitle:hover {
@@ -898,82 +923,85 @@ nav {
 #materialFileInfoRow, #materialRemovedFileInfoRow {
   padding-bottom: 20px; }
 
-#materialVariables {
+#materialVariables #variablesTreeSelection {
+  text-align: center; }
+  #materialVariables #variablesTreeSelection .variableTreeRadioSelect {
+    top: 0;
+    display: inline-block;
+    padding-bottom: 20px;
+    padding-right: 20px; }
+#materialVariables #variablesMainContainer {
   position: relative; }
-  #materialVariables #variablesTreeSelection {
-    text-align: center; }
-    #materialVariables #variablesTreeSelection .variableTreeRadioSelect {
-      top: 0;
-      display: inline-block;
-      padding-bottom: 20px;
-      padding-right: 20px; }
-  #materialVariables .variablesTree {
-    position: absolute;
+  #materialVariables #variablesMainContainer .variablesTree {
     top: 40;
     left: 0;
     width: 420px;
     font-size: 12px;
-    min-height: 400px; }
-  #materialVariables #groupedVariableTreeDiv #newFolder {
+    min-height: 400px;
+    float: left; }
+  #materialVariables #variablesMainContainer #groupedVariableTreeContainer #newFolder {
     padding-left: 10px; }
-  #materialVariables #groupedVariableTreeDiv #newFolderName {
+  #materialVariables #variablesMainContainer #groupedVariableTreeContainer #newFolderName {
     width: 150px; }
-  #materialVariables #basicVariableTreeDiv #variableFilter {
+  #materialVariables #variablesMainContainer #basicVariableTreeContainer #variableFilter {
     padding-left: 20px; }
-  #materialVariables #basicVariableTreeDiv ul {
+  #materialVariables #variablesMainContainer #basicVariableTreeContainer ul {
     padding-left: 20px;
     list-style: none; }
-  #materialVariables #basicVariableTreeDiv .selectedVariable {
+  #materialVariables #variablesMainContainer #basicVariableTreeContainer .selectedVariable {
     font-weight: bold;
     color: #5CAFDF; }
-  #materialVariables #variablesData {
-    position: absolute;
+  #materialVariables #variablesMainContainer #variableDataContainer {
     top: 40;
     right: 0;
-    width: 500px; }
-    #materialVariables #variablesData #variableDataContent, #materialVariables #variablesData #variableGroupDataContent {
+    width: 500px;
+    float: left; }
+    #materialVariables #variablesMainContainer #variableDataContainer #variableData, #materialVariables #variablesMainContainer #variableDataContainer #variableGroupData {
       padding-right: 10px; }
-      #materialVariables #variablesData #variableDataContent thead .variableName, #materialVariables #variablesData #variableGroupDataContent thead .variableName {
+      #materialVariables #variablesMainContainer #variableDataContainer #variableData thead .variableName, #materialVariables #variablesMainContainer #variableDataContainer #variableGroupData thead .variableName {
         width: 200px; }
-      #materialVariables #variablesData #variableDataContent thead .variableContent, #materialVariables #variablesData #variableGroupDataContent thead .variableContent {
+      #materialVariables #variablesMainContainer #variableDataContainer #variableData thead .variableContent, #materialVariables #variablesMainContainer #variableDataContainer #variableGroupData thead .variableContent {
         width: 300px; }
-      #materialVariables #variablesData #variableDataContent .variableDataTable, #materialVariables #variablesData #variableGroupDataContent .variableDataTable {
+      #materialVariables #variablesMainContainer #variableDataContainer #variableData .variableDataTable, #materialVariables #variablesMainContainer #variableDataContainer #variableGroupData .variableDataTable {
         position: absolute;
         float: top;
         top: 30px;
         padding-right: 10px; }
-        #materialVariables #variablesData #variableDataContent .variableDataTable input, #materialVariables #variablesData #variableGroupDataContent .variableDataTable input {
+        #materialVariables #variablesMainContainer #variableDataContainer #variableData .variableDataTable input, #materialVariables #variablesMainContainer #variableDataContainer #variableGroupData .variableDataTable input {
           width: 250px; }
-    #materialVariables #variablesData .translations .translationLink {
+    #materialVariables #variablesMainContainer #variableDataContainer .translations .translationLinkSv, #materialVariables #variablesMainContainer #variableDataContainer .translations .translationLinkEn, #materialVariables #variablesMainContainer #variableDataContainer .translations .translationLinkFi {
       float: left;
-      padding-right: 10px;
-      font-size: 15px; }
-    #materialVariables #variablesData #variableGroupDataContent #variableGroupName {
+      margin-right: 10px;
+      font-size: 15px;
+      padding: 2px;
+      border-style: solid;
+      border-width: 1px; }
+    #materialVariables #variablesMainContainer #variableDataContainer #variableGroupData #variableGroupName {
       vertical-align: middle; }
-  #materialVariables #variablesGroupingDiv {
+  #materialVariables #variablesMainContainer #variablesGroupingContainer {
     padding: 10px;
     position: relative; }
-    #materialVariables #variablesGroupingDiv .variablesGroupingBox {
+    #materialVariables #variablesMainContainer #variablesGroupingContainer .variablesGroupingBox {
       border-style: solid;
       border-width: 1px;
       height: 420px;
       width: 440px; }
-    #materialVariables #variablesGroupingDiv #variablesBox {
+    #materialVariables #variablesMainContainer #variablesGroupingContainer #variablesBox {
       float: left;
       padding: 5px; }
-      #materialVariables #variablesGroupingDiv #variablesBox ul {
+      #materialVariables #variablesMainContainer #variablesGroupingContainer #variablesBox ul {
         list-style: none; }
-    #materialVariables #variablesGroupingDiv #variablesToGroupArrowBox {
+    #materialVariables #variablesMainContainer #variablesGroupingContainer #variablesToGroupArrowBox {
       float: left;
       left: 440px;
       padding: 150px 10px 0 10px; }
-      #materialVariables #variablesGroupingDiv #variablesToGroupArrowBox #variablesToGroupArrow {
+      #materialVariables #variablesMainContainer #variablesGroupingContainer #variablesToGroupArrowBox #variablesToGroupArrow {
         font-size: 15px;
         background: #009ee0;
         color: white;
         padding: 3px;
         cursor: pointer; }
-    #materialVariables #variablesGroupingDiv #variableGroupsBox {
+    #materialVariables #variablesMainContainer #variablesGroupingContainer #variableGroupsBox {
       float: right;
       padding: 5px; }
 

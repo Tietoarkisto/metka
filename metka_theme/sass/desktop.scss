@@ -41,14 +41,19 @@
 		color: $pageColorE;
 		text-decoration: none;
 		padding: 7px 10px 7px 20px;
+		position: relative;
 
 		.desktopWidgetDataName {
-		//	float: left;
-			left: 0px;
+			float: left;
+			left: 10px;
+			bottom: 8px;
+			position: absolute;
 		}
 		 .desktopWidgetDataOwner {
-		// 	float: right;
-		 	right: 0px;
+		 	float: right;
+		 	right: 10px;
+			bottom: 8px;
+			position: absolute;
 		 }
 
 		&:hover{

@@ -1,8 +1,8 @@
 @import "global";
 
 #fileNameErrorRow, #materialFileInfoRow, #materialCodebookRow, #materialErrorInfoRow, 
-#groupedVariableTreeDiv, #variableDataContent, #variablesData, #variableGroupDataContent, 
-#variablesGroupingDiv, #additionalFilingContractFile {
+#groupedVariableTreeContainer, #variableDataContainer, #variableData, #variableGroupData, 
+#variablesGroupingContainer, #additionalFilingContractFile, .translationEn, .translationSv {
 	display: none;
 }
 
@@ -11,23 +11,21 @@
 	font-size:12px;
 }
 
-@mixin translationLink {
-	float: left;
-	padding-right: 10px;
-	font-size: 15px;
-}
-
 .rowContainer{
 	clear: both;
 	display: block;
 
 	.translations {
-		.translationLink {
+		.translationLinkEn, .translationLinkSv, .translationLinkFi {
 			@include translationLink;
 			font-size: 15px;
-			padding-bottom: 10px;	
+			margin-bottom: 10px;	
 		}
 	}
+}
+
+.translations .clicked {
+	background-color: $pageColorB;
 }
 
 /* Yläosan leveämmät fieldit */
@@ -38,18 +36,11 @@
 		display: block;
 		float: left;
 		margin-bottom: 10px;
-
-		&.rightSide {
-			width: 100px;
-			margin-right: 10px;
-		}
-		&.leftSide {
-			width: 180px;
-		}
+		width: 180px;
 	}
 
 	input {
-		width: 282px;
+		width: 690px;
 		margin-right: 10px;
 	}
 }
@@ -126,7 +117,7 @@
 	textarea {
 		font-size: 12px;
 		width: 460px;
-		height: 200px;
+		height: 100px;
 	}
 }
 
@@ -151,8 +142,8 @@
 			position: absolute;
 			left: 120px;
 
-			.translationLink {
-				padding-top: 5px;
+			.translationLinkSv, .translationLinkEn, .translationLinkFi {
+				margin-top: 5px;
 				@include translationLink;
 			}
 		}
@@ -282,7 +273,6 @@
 }
 
 #materialVariables {
-	position: relative;
 
 	#variablesTreeSelection {
 		text-align: center;
@@ -295,118 +285,121 @@
 		}
 	}
 
-	.variablesTree {
-		position: absolute;
-		top: 40;
-		left: 0;
-		width: 420px;
-		font-size: 12px;
-		min-height: 400px;
-	}
-
-	#groupedVariableTreeDiv {
-		#newFolder {
-			padding-left: 10px;
-		}
-		#newFolderName {
-			width: 150px;
-		}
-	}
-
-	#basicVariableTreeDiv {
-		#variableFilter {
-			padding-left: 20px;
-		}
-		ul {
-			padding-left: 20px;
-			list-style: none;
-		}
-
-		.selectedVariable {
-			font-weight: bold;
-			color: #5CAFDF;
-		}
-	}
-
-	#variablesData {
-		position: absolute;
-		top: 40;
-		right: 0;
-		width: 500px;
-
-		#variableDataContent, #variableGroupDataContent {
-			thead {
-				.variableName {
-					width: 200px;
-				}
-				.variableContent {
-					width: 300px;
-				}
-			}
-			padding-right: 10px;
-
-			.variableDataTable {
-				position: absolute;
-				float: top;
-				top: 30px;
-				padding-right: 10px;
-
-				input {
-					width: 250px;
-				}
-			}
-		}
-
-		.translations {
-			.translationLink {
-				@include translationLink;
-			}
-		}
-
-		#variableGroupDataContent {
-			#variableGroupName {
-				vertical-align: middle;
-			}
-		}
-	}
-
-	#variablesGroupingDiv {
-		padding: 10px;
+	#variablesMainContainer {
 		position: relative;
-
-		$groupingBoxWidth: 440px;
-
-		.variablesGroupingBox {
-			border-style: solid;
-			border-width: 1px;
-			height: 420px;
-			width: $groupingBoxWidth;
+		.variablesTree {
+			top: 40;
+			left: 0;
+			width: 420px;
+			font-size: 12px;
+			min-height: 400px;
+			float: left;
 		}
 
-		#variablesBox {
-			float: left;
-			padding: 5px;
-			
+		#groupedVariableTreeContainer {
+			#newFolder {
+				padding-left: 10px;
+			}
+			#newFolderName {
+				width: 150px;
+			}
+		}
+
+		#basicVariableTreeContainer {
+			#variableFilter {
+				padding-left: 20px;
+			}
 			ul {
+				padding-left: 20px;
 				list-style: none;
 			}
-		}
-		#variablesToGroupArrowBox {
-			float: left;
-			left: $groupingBoxWidth;
-			padding: 150px 10px 0 10px;
 
-			#variablesToGroupArrow {
-				font-size: 15px;
-				background: $pageColorB;
-				color: $pageColorA;
-				padding: 3px;
-				cursor: pointer;
+			.selectedVariable {
+				font-weight: bold;
+				color: #5CAFDF;
 			}
 		}
-		#variableGroupsBox {
-			float: right;
-			padding: 5px;
+
+		#variableDataContainer {
+			top: 40;
+			right: 0;
+			width: 500px;
+			float: left;
+
+			#variableData, #variableGroupData {
+				thead {
+					.variableName {
+						width: 200px;
+					}
+					.variableContent {
+						width: 300px;
+					}
+				}
+				padding-right: 10px;
+
+				.variableDataTable {
+					position: absolute;
+					float: top;
+					top: 30px;
+					padding-right: 10px;
+
+					input {
+						width: 250px;
+					}
+				}
+			}
+
+			.translations {
+				.translationLinkSv, .translationLinkEn, .translationLinkFi {
+					@include translationLink;
+				}
+			}
+
+			#variableGroupData {
+				#variableGroupName {
+					vertical-align: middle;
+				}
+			}
+		}
+
+		#variablesGroupingContainer {
+			padding: 10px;
+			position: relative;
+
+			$groupingBoxWidth: 440px;
+
+			.variablesGroupingBox {
+				border-style: solid;
+				border-width: 1px;
+				height: 420px;
+				width: $groupingBoxWidth;
+			}
+
+			#variablesBox {
+				float: left;
+				padding: 5px;
+				
+				ul {
+					list-style: none;
+				}
+			}
+			#variablesToGroupArrowBox {
+				float: left;
+				left: $groupingBoxWidth;
+				padding: 150px 10px 0 10px;
+
+				#variablesToGroupArrow {
+					font-size: 15px;
+					background: $pageColorB;
+					color: $pageColorA;
+					padding: 3px;
+					cursor: pointer;
+				}
+			}
+			#variableGroupsBox {
+				float: right;
+				padding: 5px;
+			}
 		}
 	}
 }
