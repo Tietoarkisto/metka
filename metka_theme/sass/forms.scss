@@ -46,8 +46,8 @@
 	}
 }
 
-.materialDataSetTextareaContainer, .studyLevelDataSetTextareaContainer{
-	font: 12px;
+.materialDataSetTextareaContainer {
+	font-size: 12px;
 	float: left;
 	margin-top: 10px;
 	margin-bottom: 10px;
@@ -173,8 +173,22 @@
 			width: 850px;
 		}
 
-		.dataSetContainer {
-			@include dataSetContainer(150px, 100px, 105px, 300px, 40px, 12px);
+		.studyLevelTableTitle {
+			font-size: 12px;
+			padding-top: 10px;
+		}
+		.metkaTable {
+			@extend table.metkaTable;
+			margin:0px 10px 0px 0px;
+			width: 850px;
+		}
+
+		.studyLevelDataSetTextareaContainer {
+			@extend .materialDataSetTextareaContainer;
+
+			textarea {
+				width: 400px;
+			}
 		}
 	}
 }

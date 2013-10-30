@@ -216,8 +216,8 @@ footer {
   color: #ccc !important;
   opacity: 1 !important; }
 
-/*TABLE SORTER CSS*/
-table.metkaTable {
+/*TABLE CSS*/
+table.metkaTable, #materialStudyLevel #studyLevelData .metkaTable {
   border-bottom: solid 1px #009ee0;
   border-left: solid 1px #009ee0;
   border-right: solid 1px #009ee0;
@@ -225,32 +225,32 @@ table.metkaTable {
   font-size: 8pt;
   width: 940px;
   text-align: left; }
-  table.metkaTable a {
+  table.metkaTable a, #materialStudyLevel #studyLevelData .metkaTable a {
     text-decoration: none;
     color: #000; }
-  table.metkaTable thead tr th, table.metkaTable thead tfoot tr th {
+  table.metkaTable thead tr th, #materialStudyLevel #studyLevelData .metkaTable thead tr th, table.metkaTable thead tfoot tr th, #materialStudyLevel #studyLevelData .metkaTable thead tfoot tr th {
     background-color: #009ee0;
     font-size: 15px;
     padding: 4px;
     color: white; }
-  table.metkaTable thead tr .header {
+  table.metkaTable thead tr .header, #materialStudyLevel #studyLevelData .metkaTable thead tr .header {
     background-image: url(../images/bg.gif);
     background-repeat: no-repeat;
     background-position: center right;
     cursor: pointer; }
-  table.metkaTable thead tr .headerSortUp {
+  table.metkaTable thead tr .headerSortUp, #materialStudyLevel #studyLevelData .metkaTable thead tr .headerSortUp {
     background-color: #8dbdd8;
     background-image: url(../images/asc.gif); }
-  table.metkaTable thead tr .headerSortDown {
+  table.metkaTable thead tr .headerSortDown, #materialStudyLevel #studyLevelData .metkaTable thead tr .headerSortDown {
     background-color: #8dbdd8;
     background-image: url(../images/desc.gif); }
-  table.metkaTable tbody tr:hover {
+  table.metkaTable tbody tr:hover, #materialStudyLevel #studyLevelData .metkaTable tbody tr:hover {
     background-color: #eaeaea; }
-  table.metkaTable tbody td {
+  table.metkaTable tbody td, #materialStudyLevel #studyLevelData .metkaTable tbody td {
     color: #000;
     padding: 4px;
     vertical-align: top; }
-  table.metkaTable tbody tr.odd td {
+  table.metkaTable tbody tr.odd td, #materialStudyLevel #studyLevelData .metkaTable tbody tr.odd td {
     background-color: #EAEAEA; }
 
 .searchFormInput {
@@ -703,16 +703,16 @@ nav {
     width: 690px;
     margin-right: 10px; }
 
-.materialDataSetTextareaContainer, .studyLevelDataSetTextareaContainer {
-  font: 12px;
+.materialDataSetTextareaContainer, #materialStudyLevel #studyLevelData .studyLevelDataSetTextareaContainer {
+  font-size: 12px;
   float: left;
   margin-top: 10px;
   margin-bottom: 10px; }
-  .materialDataSetTextareaContainer label, .studyLevelDataSetTextareaContainer label {
+  .materialDataSetTextareaContainer label, #materialStudyLevel #studyLevelData .studyLevelDataSetTextareaContainer label {
     width: 400px;
     clear: both;
     display: block; }
-  .materialDataSetTextareaContainer textarea, .studyLevelDataSetTextareaContainer textarea {
+  .materialDataSetTextareaContainer textarea, #materialStudyLevel #studyLevelData .studyLevelDataSetTextareaContainer textarea {
     width: 440px;
     height: 60px; }
 
@@ -811,26 +811,14 @@ nav {
     font-size: 12px; }
   #materialStudyLevel #studyLevelData table {
     width: 850px; }
-  #materialStudyLevel #studyLevelData .dataSetContainer {
-    float: left; }
-    #materialStudyLevel #studyLevelData .dataSetContainer label {
-      display: block;
-      float: left;
-      margin-bottom: 10px;
-      font-size: 12px;
-      width: 150px; }
-    #materialStudyLevel #studyLevelData .dataSetContainer input {
-      font-size: 12px;
-      width: 100px;
-      margin-right: 10px; }
-    #materialStudyLevel #studyLevelData .dataSetContainer select {
-      font-size: 12px;
-      width: 105px;
-      margin-right: 10px; }
-    #materialStudyLevel #studyLevelData .dataSetContainer textarea {
-      font-size: 12px;
-      width: 300px;
-      height: 40px; }
+  #materialStudyLevel #studyLevelData .studyLevelTableTitle {
+    font-size: 12px;
+    padding-top: 10px; }
+  #materialStudyLevel #studyLevelData .metkaTable {
+    margin: 0px 10px 0px 0px;
+    width: 850px; }
+  #materialStudyLevel #studyLevelData .studyLevelDataSetTextareaContainer textarea {
+    width: 400px; }
 
 .prevNextContainer {
   display: inline-block;
