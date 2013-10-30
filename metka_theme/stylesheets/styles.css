@@ -703,36 +703,37 @@ nav {
     width: 690px;
     margin-right: 10px; }
 
-.materialDataSetTextareaContainer {
+.materialDataSetTextareaContainer, .studyLevelDataSetTextareaContainer {
+  font: 12px;
   float: left;
   margin-top: 10px;
   margin-bottom: 10px; }
-  .materialDataSetTextareaContainer label {
+  .materialDataSetTextareaContainer label, .studyLevelDataSetTextareaContainer label {
     width: 400px;
     clear: both;
     display: block; }
-  .materialDataSetTextareaContainer textarea {
+  .materialDataSetTextareaContainer textarea, .studyLevelDataSetTextareaContainer textarea {
     width: 440px;
     height: 60px; }
 
-.materialDataSetContainer {
+.materialDataSetContainer, .studyLevelDataSetContainer {
   font-size: 12px;
   float: left; }
-  .materialDataSetContainer label {
+  .materialDataSetContainer label, .studyLevelDataSetContainer label {
     display: block;
     float: left;
     margin-bottom: 10px;
     font-size: 12px;
     width: 180px; }
-  .materialDataSetContainer input {
+  .materialDataSetContainer input, .studyLevelDataSetContainer input {
     font-size: 12px;
     width: 100px;
     margin-right: 10px; }
-  .materialDataSetContainer select {
+  .materialDataSetContainer select, .studyLevelDataSetContainer select {
     font-size: 12px;
     width: 105px;
     margin-right: 10px; }
-  .materialDataSetContainer textarea {
+  .materialDataSetContainer textarea, .studyLevelDataSetContainer textarea {
     font-size: 12px;
     width: 700px;
     height: 50px; }
@@ -830,8 +831,6 @@ nav {
       font-size: 12px;
       width: 300px;
       height: 40px; }
-#materialStudyLevel label {
-  font-size: 15px; }
 
 .prevNextContainer {
   display: inline-block;
@@ -875,7 +874,7 @@ nav {
     margin-left: 10px;
     cursor: pointer; }
 
-/* naming */
+/* RENAME */
 .materialPrevNextContainer {
   display: inline-block;
   float: right;

@@ -59,8 +59,9 @@ $(document).ready(function(){
 	$(".materialFileRow, .materialCodebookFileRow, .materialErrorRow, .desktopWidgetDataRow, " +
 		".materialSearchResultRow, .publicationSearchResultRow, .seriesSearchResultRow, " + 
 		".materialSeriesRow, .materialPublicationRow, .materialMaterialRow, #variablesListBasic li, " +
-		".publicationSeriesRow, .publicationMaterialRow, .materialBinderRow, .binderRow, .translationLink, " + 
-		".materialRemovedFileRow, #filingContractFile, .versionRow, .translationLinkEn, .translationLinkSv, .translationLinkFi, .variableTranslationLink").hover(function() {
+		".publicationSeriesRow, .publicationMaterialRow, .materialBinderRow, .binderRow, " + 
+		".materialRemovedFileRow, #filingContractFile, .versionRow, " + 
+		".link, .translationLink, .translationLinkEn, .translationLinkSv, .translationLinkFi, .variableTranslationLink").hover(function() {
 		    $(this).css('cursor', 'pointer');
 		}, function() {
 		    $(this).css('cursor', 'auto');		    
@@ -542,6 +543,12 @@ $(document).ready(function(){
 		}
 	});
 
+	$("#studyLevelAltTitle, #studyLevelAppraisal").on("click", function() {
+		var newRow = $(this).parent().parent().clone(true);
+		$(newRow).find(".link").attr("id", "");
+		$(newRow).find("label").removeClass("link");
+		$(newRow).insertAfter($(this).parent().parent());
+	});
 
 	/*** JULKAISU ***/
 	

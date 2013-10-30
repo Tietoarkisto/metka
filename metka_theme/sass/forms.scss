@@ -46,7 +46,8 @@
 	}
 }
 
-.materialDataSetTextareaContainer{
+.materialDataSetTextareaContainer, .studyLevelDataSetTextareaContainer{
+	font: 12px;
 	float: left;
 	margin-top: 10px;
 	margin-bottom: 10px;
@@ -88,7 +89,7 @@
 	}
 }
 
-.materialDataSetContainer {
+.materialDataSetContainer, .studyLevelDataSetContainer {
 	font-size: 12px;
 	@include dataSetContainer(180px, 100px, 105px, 700px, 50px, 12px);
 }
@@ -175,9 +176,6 @@
 		.dataSetContainer {
 			@include dataSetContainer(150px, 100px, 105px, 300px, 40px, 12px);
 		}
-	}
-	label{
-		font-size: 15px;
 	}
 }
 
