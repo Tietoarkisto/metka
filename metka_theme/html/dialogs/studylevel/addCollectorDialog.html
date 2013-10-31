@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html lang="fi">
+	<head>
+		<script type="text/javascript">
+			$("#authorTypeSelect").on("change", function() {
+				var authorType = $(this).children(":selected").attr("id");
+
+				if ( authorType == "personCollector") {
+					$(".organizationCollector").hide();
+					$(".personCollector").show();
+				} else if ( authorType == "organizationCollector" ) {
+					$(".personCollector").hide();
+					$(".organizationCollector").show();
+				} 
+			});	
+
+			$(".link").on("click", function() {
+				var newRow = $(this).parent().clone(true);
+				$(newRow).find("label").removeClass("link");
+				$(newRow).find("img").css('visibility', 'visible');
+				$(newRow).insertAfter($(this).parent());
+			});
+
+			$("img").on("click", function() {
+				$(this).parent().remove();
+			});
+		</script>
+	</head>
+	<body>	
+		<div class="popupContainer">
+			<h1 class="pageTitle">Lisää kerääjä</h1>
+			<div class="popupRowHolder">
+				<label class="inputRowLabel">Tyyppi</label>
+				<select id="authorTypeSelect"><option id="personCollector">Henkilö</option><option id="organizationCollector">Organisaatio</option></select>
+			</div>
+			<div class="popupRowHolder personCollector">
+				<label class="inputRowLabel">Nimi</label><input type="text" value=""/>
+			</div>
+			<div class="popupRowHolder personCollector">
+				<label class="inputRowLabel link">Henkilön tunniste</label>
+				<input type="text" value=""/><select><option>Tyyppi1</option><option>Tyyppi2</option><option>Tyyppi3</option></select><img style="visibility: hidden;" title="Poista" src="../images/cancel.png"/>
+			</div>
+			<div class="popupRowHolder organizationCollector">
+				<label class="inputRowLabel">Organisaatio</label><input type="text" value=""/>
+			</div>
+			<div class="popupRowHolder personCollector">
+				<label class="inputRowLabel">Taustaorganisaatio</label><input type="text" value=""/>
+			</div>
+			<div class="popupRowHolder personCollector">
+				<label class="inputRowLabel link">Taustaorganisaation tunniste</label>
+				<input type="text" value=""/><select><option>Tyyppi1</option><option>Tyyppi2</option><option>Tyyppi3</option></select><img style="visibility: hidden;" title="Poista" src="../images/cancel.png"/>
+			</div>
+			<div class="popupRowHolder organizationCollector">
+				<label class="inputRowLabel link">Organisaation tunniste</label>
+				<input type="text" value=""/><select><option>Tyyppi1</option><option>Tyyppi2</option><option>Tyyppi3</option></select><img style="visibility: hidden;" title="Poista" src="../images/cancel.png"/>
+			</div>
+			<div class="popupButtonsHolder">
+				<input type="button" class="searchFormInput" value="Peruuta">
+				<input type="button" class="searchFormInput" value="OK">
+			</div>
+		
+		</div>	
+	</body>
+</html>

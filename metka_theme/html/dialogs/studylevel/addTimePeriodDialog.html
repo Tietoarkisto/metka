@@ -1,13 +1,17 @@
 <!DOCTYPE HTML>
 <html lang="fi">
 	<head>
-		<script src="js/popup.js"></script>
 	</head>
 	<body>	
 		<div class="popupContainer">
-			<h1 class="pageTitle">Liitä mappi</h1>
+			<h1 class="pageTitle">Lisää ajallinen kattavuus</h1>
 			<div class="popupRowHolder">
-				<label class="inputRowLabel">Mappinumero</label><input type="text" value=""/>
+				<label class="inputRowLabel">Päivämäärä</label>
+				<input type="text" class="datepicker"/>
+			</div>
+			<div class="popupRowHolder">
+				<label class="inputRowLabel">timeperiodevent</label>
+				<select><option>Start</option><option>End</option></select>
 			</div>
 			<div class="popupButtonsHolder">
 				<input type="button" class="searchFormInput" value="Peruuta">

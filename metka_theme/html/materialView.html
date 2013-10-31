@@ -406,155 +406,162 @@
 						</div>
 					</div>
 					<div id="studyLevelData">
-						<label class="studyLevelTitle">Perustiedot (docDscr/citation/titlStmt + docDscr/citation/prodStmt/verStmt)</label>
+						<label class="studyLevelTitle">Perustiedot</label>
 						<div class="accordionContent">
 							<div class="rowContainer">
-								<div class="dataSetContainer">
+								<div class="studyLevelDataSetContainer">
+									<label>Kieli</label>
+									<select><option>fi</option><option>en</option><option>sv</option></select>
+								</div>
+								<div class="studyLevelDataSetContainer">
 									<label>Otsikko</label>
-									<input type="text" name="materialnro" value="F3D2556" />
+									<input type="text" name="" value="Kuvailun otsikko" />
 								</div>
-								<div class="dataSetContainer">
-									<label>ID-tunnus</label>
-									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
-								</div>
-								<div class="dataSetContainer">
-									<label>Versionumero</label>
-									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
+								<div class="studyLevelDataSetContainer">
+									<div class="studyLevelTableTitle">ID-tunnisteet</div>
+									<table class="metkaTable">
+										<thead>
+											<tr><th>Tunniste</th><th>Myöntänyt taho</th><th></th></tr>
+										</thead>
+										<tbody>
+											<tr class="materialAuthor"><td>FSD123</td><td>Mikko Tanskanen</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+											<tr class="materialAuthor"><td>FSD321</td><td>Mikko Tanskanen</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										</tbody>
+									</table>
+									<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addIdDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
 								</div>
 							</div>
 						</div>
 						<label class="studyLevelTitle">Versiotiedot</label>
 						<div class="accordionContent">
 							<div class="rowContainer">
-								<div class="dataSetContainer">
-									<label>version</label>
+								<div class="studyLevelDataSetContainer">
+									<label>Versionumero</label>
 									<input type="text" name="" value="3.0" />
 								</div>
-								<div class="dataSetContainer">
-									<label>labl</label>
-									<input type="text" name="hank.ain.nro" value="Foo bar lorem ipsum dolor sit amet"/>
+								<div class="studyLevelDataSetContainer">
+									<label>Selite</label>
+									<input type="text" name="" value="Foo bar lorem ipsum dolor sit amet"/>
 								</div>
-								<div class="dataSetContainer">
-									<label>publText</label
-									><input type="text" name="hank.ain.nro" value="Foo bar lorem ipsum dolor sit amet"/>
+								<div class="studyLevelDataSetContainer">
+									<label>Päivämäärä</label>
+									<input type="text" name="" class="datepicker" value="30.10.2013"/>
+								</div>
+								<div class="studyLevelDataSetContainer">
+									<label>Tallentaja</label>
+									<input type="text" name="" value="mta"/>
 								</div>
 							</div>
 							<div class="rowContainer">
-								<div class="dataSetContainer">
-									<label>text</label>
-									<input type="text" name="" value="Foo bar lorem ipsum dolor sit amet" />
+								<div class="studyLevelDataSetTextareaContainer">
+									<label>Julkaistava vapaamuotoinen selite</label>
+									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
-								<div class="dataSetContainer">
-									<label>@date</label>
-									<input type="text" class="datepicker" name="hank.ain.nro" value="10.10.2013"/>
+								<div class="studyLevelDataSetTextareaContainer">
+									<label>Vapaamuotoinen selite</label>
+									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
-								<div class="dataSetContainer">
-									<label>Tallentaja</label
-									><input type="text" name="" value="Mikko Tanskanen"/>
-								</div>
-							</div>
-						
-						</div>
-						<label class="studyLevelTitle">Viittaustiedot</label>
-						<div class="accordionContent">
-							<div class="rowContainer">
-								<div class="dataSetContainer">
-									<label>altTitl</label>
-									<input type="text" name="" value="Toinen otsikko" />
-								</div>
-								<div class="dataSetContainer">
-									<label>altTitl</label>
-									<input type="text" name="" value="Kolmas otsikko" />
-								</div>
-								<div class="dataSetContainer">
-									<label>Versionumero</label>
-									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
-								</div>
-							</div>
-							
+							</div>						
 						</div>
 						<label class="studyLevelTitle">Muut nimet</label>
 						<div class="accordionContent">
 							<div class="rowContainer">
-								<div class="dataSetContainer">
-									<label>Otsikko</label>
-									<input type="text" name="materialnro" value="F3D2556" />
-								</div>
-								<div class="dataSetContainer">
-									<label>ID-tunnus</label>
-									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
-								</div>
-								<div class="dataSetContainer">
-									<label>Versionumero</label>
-									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
+								<div class="studyLevelDataSetContainer">
+									<label class="link" id="studyLevelAltTitle">Rinnakkainen nimi</label>
+									<input type="text" name="" value="toinen nimi" /><img class="removeAddedElement" style="display:none;" title="Poista" src="../images/cancel.png"/>
 								</div>
 							</div>
-							
+							<div class="rowContainer">
+								<div class="studyLevelTableTitle">Muunkieliset nimet</div>
+								<table class="metkaTable">
+									<thead>
+										<tr><th>Nimi</th><th>Kieli</th><th></th></tr>
+									</thead>
+									<tbody>
+										<tr><td>Another title</td><td>Norja</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>Andra title</td><td>Espanja</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+									</tbody>
+								</table>
+								<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addParTitleDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>	
+							</div>							
 						</div>
 						<label class="studyLevelTitle">Tekijät ja tuottajat</label>
 						<div class="accordionContent">
 							<div class="rowContainer">
-								<div class="dataSetContainer">
-									<label>Otsikko</label>
-									<input type="text" name="materialnro" value="F3D2556" />
-								</div>
-								<div class="dataSetContainer">
-									<label>ID-tunnus</label>
-									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
-								</div>
-								<div class="dataSetContainer">
-									<label>Versionumero</label>
-									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
-								</div>
+								<div class="studyLevelTableTitle">Tekijät</div>
+								<table class="metkaTable studyLevelOrderedTable" id="studyLevelAuthors">
+									<thead>
+										<tr><th>Tekijä</th><th>Taustaorganisaatio</th><th>Organisaation tunniste</th><th>Organisaation tunnistetyyppi</th><th></th></tr>
+									</thead>
+									<tbody>
+										<tr><td>Mikko Tanskanen</td><td>Proactum Oy</td><td>123<br/>234</td><td>foo<br/>bar</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>Mikko Tanskanen2</td><td>Proactum Oy</td><td>123<br/>234</td><td>foo<br/>bar</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>Proactum Oy (pro)</td><td></td><td>123<br/>234</td><td>foo<br/>bar</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+									</tbody>
+								</table>
+								<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addAuthorDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
 							</div>
-
-						</div>
-						<label class="studyLevelTitle">Viittaustiedot stdyDscr/method/dataColl, stdyDscr/method/anlyInfo</label>
-						<div class="accordionContent">
 							<div class="rowContainer">
-								<div class="dataSetContainer">
-									<label>Otsikko</label>
-									<input type="text" name="materialnro" value="F3D2556" />
-								</div>
-								<div class="dataSetContainer">
-									<label>ID-tunnus</label>
-									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
-								</div>
-								<div class="dataSetContainer">
-									<label>Versionumero</label>
-									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
-								</div>
+								<div class="studyLevelTableTitle">Muut tekijät</div>
+								<table class="metkaTable studyLevelOrderedTable" id="studyLevelOtherAuthors">
+									<thead>
+										<tr><th>Tekijä</th><th>Taustaorganisaatio</th><th>Organisaation tunniste</th><th>Organisaation tunnistetyyppi</th><th></th></tr>
+									</thead>
+									<tbody>
+										<tr><td>Mikko Tanskanen</td><td>Proactum Oy</td><td>123<br/>234</td><td>foo<br/>bar</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>Mikko Tanskanen2</td><td>Proactum Oy</td><td>123<br/>234</td><td>foo<br/>bar</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>Proactum Oy (pro)</td><td></td><td>123<br/>234</td><td>foo<br/>bar</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+									</tbody>
+								</table>
+								<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addAuthorDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
 							</div>
 
+							<div class="rowContainer">
+								<div class="studyLevelTableTitle">Organisaatiotuottajat</div>
+								<table class="metkaTable studyLevelOrderedTable" id="studyLevelProducers">
+									<thead>
+										<tr><th>Tuottaja</th><th>Tunniste</th><th>Tunnistetyyppi</th><th>Rooli</th><th>Projektinumero</th><th>Lyhenne</th><th></th></tr>
+									</thead>
+									<tbody>
+										<tr><td>Proactum Oy</td><td>123<br/>234</td><td>Perus-id<br/>Toinen-id</td><td>Rahoittaja</td><td>123-s<br/>234-r</td><td>pro</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>Proactum Oy</td><td>123</td><td>Perus-id</td><td>Rahoittaja</td><td>123-s</td><td>pro</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+									</tbody>
+								</table>
+								<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addProducerDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
+							</div>
 						</div>
 						<label class="studyLevelTitle">Asiasanat, tieteenala ja abstrakti</label>
 						<div class="accordionContent">
 							<div class="rowContainer">
-								<div class="dataSetContainer">
-									<label>Otsikko</label>
-									<input type="text" name="materialnro" value="F3D2556" />
-								</div>
-								<div class="dataSetContainer">
-									<label>ID-tunnus</label>
-									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
-								</div>
-								<div class="dataSetContainer">
-									<label>Versionumero</label>
-									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
-								</div>
+								<div class="studyLevelTableTitle">Asiasanat</div>
+								<table class="metkaTable">
+									<thead>
+										<tr><th>Sanasto</th><th>Avainsana</th><th>Uri</th><th>Tunniste/osoite</th><th></th></tr>
+									</thead>
+									<tbody>
+										<tr><td>FSD</td><td>eduskuntavaalit</td><td>http://vesa.lib.helsinki.fi/</td><td>foo</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>ONKI</td><td>äänestäminen</td><td>http://vesa.lib.helsinki.fi/</td><td>bar</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+									</tbody>
+								</table>
+								<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addKeywordDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
 							</div>
 							<div class="rowContainer">
-								<div class="dataSetContainer">
-									<label>Otsikko</label>
-									<input type="text" name="materialnro" value="F3D2556" />
-								</div>
-								<div class="dataSetContainer">
-									<label>ID-tunnus</label>
-									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
-								</div>
-								<div class="dataSetContainer">
-									<label>Versionumero</label>
-									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
+								<div class="studyLevelTableTitle">Tieteenalat</div>
+								<table class="metkaTable">
+									<thead>
+										<tr><th>Sanasto</th><th>Tieteenala</th><th>Uri</th><th>Tunniste/osoite</th><th></th></tr>
+									</thead>
+									<tbody>
+										<tr><td>FSD</td><td>poliittinen käyttäytyminen</td><td>http://vesa.lib.helsinki.fi/</td><td>foo</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>CESSDA</td><td>vaalit</td><td>http://vesa.lib.helsinki.fi/</td><td>bar</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+									</tbody>
+								</table>
+								<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addTopicDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
+							</div>
+							<div class="rowContainer">
+								<div class="studyLevelDataSetTextareaContainer">
+									<label>Tiivistelmä</label>
+									<textarea>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras imperdiet tincidunt sapien nec pretium. Aliquam erat volutpat. Pellentesque faucibus velit et iaculis ullamcorper. Proin eu urna magna. Nam sed mauris posuere, bibendum nunc sed, rhoncus purus. Phasellus nisi est, blandit sit amet tristique non, posuere vel magna. Nulla pharetra, nisl nec hendrerit laoreet, neque mauris posuere justo, sed fermentum dolor lorem </textarea>
 								</div>
 							</div>
 
@@ -562,168 +569,246 @@
 						<label class="studyLevelTitle">Kattavuus</label>
 						<div class="accordionContent">
 							<div class="rowContainer">
-								<div class="dataSetContainer">
-									<label>Otsikko</label>
-									<input type="text" name="materialnro" value="F3D2556" />
-								</div>
-								<div class="dataSetContainer">
-									<label>ID-tunnus</label>
-									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
-								</div>
-								<div class="dataSetContainer">
-									<label>Versionumero</label>
-									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
-								</div>
+								<div class="studyLevelTableTitle">Ajalliset kattavuudet</div>
+								<table class="metkaTable">
+									<thead>
+										<tr><th>Päivämäärä</th><th>timeperiodevent</th><th></th></tr>
+									</thead>
+									<tbody>
+										<tr><td>12.10.2013</td><td>start</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>22.10.2013</td><td>end</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+									</tbody>
+								</table>
+								<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addTimePeriodDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
 							</div>
 							<div class="rowContainer">
-								<div class="dataSetContainer">
-									<label>Otsikko</label>
-									<input type="text" name="materialnro" value="F3D2556" />
-								</div>
-								<div class="dataSetContainer">
-									<label>ID-tunnus</label>
-									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
-								</div>
-								<div class="dataSetContainer">
-									<label>Versionumero</label>
-									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
-								</div>
+								<div class="studyLevelTableTitle">Maat</div>
+								<table class="metkaTable">
+									<thead>
+										<tr><th>Maa</th><th>Lyhene</th><th></th></tr>
+									</thead>
+									<tbody>
+										<tr><td>Suomi</td><td>FIN</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>Venäjä</td><td>RUS</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+									</tbody>
+								</table>
+								<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addCountryDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
 							</div>
-
+							<div class="rowContainer">
+								<div class="studyLevelTableTitle">Kohdealueet</div>
+								<table class="metkaTable">
+									<thead>
+										<tr><th>Kohdealue</th><th></th></tr>
+									</thead>
+									<tbody>
+										<tr><td>Suomi</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>Venäjä</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+									</tbody>
+								</table>
+								<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addGeoCoverDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
+							</div>
+							<div class="rowContainer">
+								<div class="studyLevelTableTitle">Perusjoukot</div>
+								<table class="metkaTable">
+									<thead>
+										<tr><th>Perusjoukko</th><th>Rajaus</th><th></th></tr>
+									</thead>
+									<tbody>
+										<tr><td>Foo</td><td>E</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+									</tbody>
+								</table>
+								<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addUniverseDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
+							</div>
 						</div>
 						<label class="studyLevelTitle">Aineistonkeruu</label>
 						<div class="accordionContent">
 							<div class="rowContainer">
-								<div class="dataSetContainer">
-									<label>Otsikko</label>
-									<input type="text" name="materialnro" value="F3D2556" />
-								</div>
-								<div class="dataSetContainer">
-									<label>ID-tunnus</label>
-									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
-								</div>
-								<div class="dataSetContainer">
-									<label>Versionumero</label>
-									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
-								</div>
-							</div>
-							<div class="rowContainer">
-								<div class="dataSetContainer">
-									<label>Otsikko</label>
-									<input type="text" name="materialnro" value="F3D2556" />
-								</div>
-								<div class="dataSetContainer">
-									<label>ID-tunnus</label>
-									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
-								</div>
-								<div class="dataSetContainer">
-									<label>Versionumero</label>
-									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
-								</div>
+								<div class="studyLevelTableTitle">Ajankohdat</div>
+								<table class="metkaTable">
+									<thead>
+										<tr><th>Ajankohta</th><th>colldateevent</th><th></th></tr>
+									</thead>
+									<tbody>
+										<tr><td>12.10.2013</td><td>start</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>22.10.2013</td><td>end</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+									</tbody>
+								</table>
+								<div class="accordionTableActionLinkHolder"><a href="#" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
 							</div>
 
-						</div>
-						<label class="studyLevelTitle">Kattavuus</label>
-						<div class="accordionContent">
 							<div class="rowContainer">
-								<div class="dataSetContainer">
-									<label>Otsikko</label>
-									<input type="text" name="materialnro" value="F3D2556" />
-								</div>
-								<div class="dataSetContainer">
-									<label>ID-tunnus</label>
-									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
-								</div>
-								<div class="dataSetContainer">
-									<label>Versionumero</label>
-									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
-								</div>
-							</div>
-							<div class="rowContainer">
-								<div class="dataSetContainer">
-									<label>Otsikko</label>
-									<input type="text" name="materialnro" value="F3D2556" />
-								</div>
-								<div class="dataSetContainer">
-									<label>ID-tunnus</label>
-									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
-								</div>
-								<div class="dataSetContainer">
-									<label>Versionumero</label>
-									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
-								</div>
+								<div class="studyLevelTableTitle">Kerääjät</div>
+								<table class="metkaTable studyLevelOrderedTable">
+									<thead>
+										<tr><th>Kerääjä</th><th>Tunniste</th><th>Tunnistetyyppi</th><th>Taustaorg.</th><th>Taustaorg. tunniste</th><th>Taustaorg. tunnistetyyppi</th><th></th></tr>
+									</thead>
+									<tbody>
+										<tr><td>Mikko Tanskanen</td><td>123<br/>234</td><td>Perus-id<br/>Toinen-id</td><td>Proactum Oy</td><td>123-s</td><td>Tyyppi</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>Proactum Oy (pro)</td><td>123-s</td><td>Tyyppi</td><td></td><td></td><td></td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>Mikko Tanskanen</td><td>123<br/>234</td><td>Perus-id<br/>Toinen-id</td><td>Proactum Oy</td><td>123-s</td><td>Tyyppi</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>Proactum Oy (pro)</td><td>123-s</td><td>Tyyppi</td><td></td><td></td><td></td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+									</tbody>
+								</table>
+								<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addCollectorDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
 							</div>
 
-						</div>
+							<div class="rowContainer">
+								<div class="studyLevelTableTitle">Havaintoyksikkö-/aineistoyksikkökategoriat</div>
+								<table class="metkaTable">
+									<thead>
+										<tr><th>Havaintoyksillö/kategoria</th><th>Sanasto</th><th>Uri</th><th>Tunniste/osoite</th><th></th></tr>
+									</thead>
+									<tbody>
+										<tr><td>FFHT</td><td>?</td><td>http://vesa.lib.helsinki.fi/</td><td>http://vesa.lib.helsinki.fi/</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>Maantieteellinen alue</td><td>Pirkanmaa</td><td>http://vesa.lib.helsinki.fi/</td><td>http://vesa.lib.helsinki.fi/</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+									</tbody>
+								</table>
+								<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addCollectionDataDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
+							</div>
+
+							<div class="rowContainer">
+								<div class="studyLevelTableTitle">Aikaulottuvuudet</div>
+								<table class="metkaTable">
+									<thead>
+										<tr><th>Aikaulottuvuus</th><th>Sanasto</th><th>Uri</th><th>Tunniste/osoite</th><th></th></tr>
+									</thead>
+									<tbody>
+										<tr><td>Pitkittäisaineisto</td><td>?</td><td>http://vesa.lib.helsinki.fi/</td><td>foo</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+									</tbody>
+								</table>
+								<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addCollectionDataDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
+							</div>
+
+							<div class="rowContainer">
+								<div class="studyLevelTableTitle">Otantamenetelmät/Aineiston valintatavat</div>
+								<table class="metkaTable">
+									<thead>
+										<tr><th>Otantamenetelmä/valintatapa</th><th>Sanasto</th><th>Uri</th><th>Tunniste/osoite</th><th>Kuvaus</th><th></th></tr>
+									</thead>
+									<tbody>
+										<tr><td>Foo</td><td></td><td>http://vesa.lib.helsinki.fi/</td><td>foo</td><td></td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>Muu</td><td>Tekstiä</td><td>http://vesa.lib.helsinki.fi/</td><td>bar</td><td></td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+									</tbody>
+								</table>
+								<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addCollectionDataDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
+							</div>
+
+							<div class="rowContainer">
+								<div class="studyLevelTableTitle">Keruumenetelmät/keruutekniikat</div>
+								<table class="metkaTable">
+									<thead>
+										<tr><th>Keruumenetelmä</th><th>Sanasto</th><th>Uri</th><th>Tunniste/osoite</th><th></th></tr>
+									</thead>
+									<tbody>
+										<tr><td>Foo</td><td></td><td>http://vesa.lib.helsinki.fi/</td><td>foo</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>Muu</td><td>Tekstiä</td><td>http://vesa.lib.helsinki.fi/</td><td>bar</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+									</tbody>
+								</table>
+								<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addCollectionDataDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
+							</div>
+
+							<div class="rowContainer">
+								<div class="studyLevelTableTitle">Keruuvälineet/Ohjeistukset</div>
+								<table class="metkaTable">
+									<thead>
+										<tr><th>Keruuväline</th><th>Sanasto</th><th>Uri</th><th>Tunniste/osoite</th><th></th></tr>
+									</thead>
+									<tbody>
+										<tr><td>Foo</td><td></td><td>http://vesa.lib.helsinki.fi/</td><td>foo</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>Muu</td><td>Tekstiä</td><td>http://vesa.lib.helsinki.fi/</td><td>bar</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+									</tbody>
+								</table>
+								<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addCollectionDataDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
+							</div>
+
+							<div class="rowContainer">
+								<div class="studyLevelDataSetContainer">
+									<label>Vastausprosentti</label>
+									<input type="text" name="" value="67%"/>
+								</div>
+							</div>
+							<div class="rowContainer">
+								<div class="studyLevelDataSetTextareaContainer">
+									<label class="link" id="studyLevelDataSource">Lähdeaineisto</label>
+									<textarea>Foo bar lorem ipsum dolor sit amet</textarea><img class="removeAddedElement" style="display:none;" title="Poista" src="../images/cancel.png"/>
+								</div>
+							</div>
+						</div>					
 						<label class="studyLevelTitle">Aineiston käyttö</label>
 						<div class="accordionContent">
 							<div class="rowContainer">
-								<div class="dataSetContainer">
-									<label>Otsikko</label>
-									<input type="text" name="materialnro" value="F3D2556" />
+								<div class="studyLevelDataSetTextareaContainer">
+									<label>Painokertoinet</label>
+									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
-								<div class="dataSetContainer">
-									<label>ID-tunnus</label>
-									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
-								</div>
-								<div class="dataSetContainer">
-									<label>Versionumero</label>
-									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
+								<div class="studyLevelDataSetTextareaContainer">
+									<label>Sisällöllinen muokkaus</label>
+									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
 							</div>
 							<div class="rowContainer">
-								<div class="dataSetContainer">
-									<label>Otsikko</label>
-									<input type="text" name="materialnro" value="F3D2556" />
+								<div class="studyLevelDataSetTextareaContainer">
+									<label>Tiedostot</label>
+									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
-								<div class="dataSetContainer">
-									<label>ID-tunnus</label>
-									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
-								</div>
-								<div class="dataSetContainer">
-									<label>Versionumero</label>
-									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
+								<div class="studyLevelDataSetTextareaContainer">
+									<label>Täydellisyys</label>
+									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
 							</div>
-
+							<div class="rowContainer">
+								<div class="studyLevelDataSetTextareaContainer">
+									<label>Lisävarauma</label>
+									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
+								</div>
+								<div class="studyLevelDataSetTextareaContainer">
+									<label>Huomioitavaa</label>
+									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
+								</div>
+							</div>
+							<div class="rowContainer">
+								<div class="studyLevelDataSetTextareaContainer">
+									<label class="link" id="studyLevelAppraisal">Arviointia</label>
+									<textarea>Foo bar lorem ipsum dolor sit amet</textarea><img class="removeAddedElement" style="display:none;" title="Poista" src="../images/cancel.png"/>
+								</div>
+							</div>
 						</div>
 						<label class="studyLevelTitle">Muut materiaalit</label>
 						<div class="accordionContent">
 							<div class="rowContainer">
-								<div class="dataSetContainer">
-									<label>Otsikko</label>
-									<input type="text" name="materialnro" value="F3D2556" />
-								</div>
-								<div class="dataSetContainer">
-									<label>ID-tunnus</label>
-									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
-								</div>
-								<div class="dataSetContainer">
-									<label>Versionumero</label>
-									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
-								</div>
+								<div class="studyLevelTableTitle">Oheismateriaali</div>
+								<table class="metkaTable">
+									<thead>
+										<tr><th>Oheismateriaali</th><th></th></tr>
+									</thead>
+									<tbody>
+										<tr><td>g in odio in, condimentum gravida turpis. Mauris cursus dapibus velit vitae placerat. Vivamus consequat non orci eu pretium. Vestibulum quam justo, auctor sed venenatis at, dignissim et lacus. Aliquam ultricies lacus non nunc pulvinar, ac hendrerit nibh euismod.</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>g in odio in, condimentum gravida turpis. Mauris cursus dapibus velit vitae placerat. Vivamus consequat non orci eu pretium. Vestibulum quam justo, auctor sed venenatis at, dignissim et lacus. Aliquam ultricies lacus non nunc pulvinar, ac hendrerit nibh euismod.</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>g in odio in, condimentum gravida turpis. Mauris cursus dapibus velit vitae placerat. Vivamus consequat non orci eu pretium. Vestibulum quam justo, auctor sed venenatis at, dignissim et lacus. Aliquam ultricies lacus non nunc pulvinar, ac hendrerit nibh euismod.</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+									</tbody>
+								</table>
+								<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addRelatedMaterialDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
 							</div>
 							<div class="rowContainer">
-								<div class="dataSetContainer">
-									<label>Otsikko</label>
-									<input type="text" name="materialnro" value="F3D2556" />
-								</div>
-								<div class="dataSetContainer">
-									<label>ID-tunnus</label>
-									<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
-								</div>
-								<div class="dataSetContainer">
-									<label>Versionumero</label>
-									<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
-								</div>
+								<div class="studyLevelTableTitle">Muu materiaali</div>
+								<table class="metkaTable">
+									<thead>
+										<tr><th>Uri</th><th>Lyhyt kuvaus</th><th>Tarkka kuvaus</th><th></th></tr>
+									</thead>
+									<tbody>
+										<tr><td>http://vesa.lib.helsinki.fi/</td><td>foo bar</td><td>g in odio in, condimentum gravida turpis. Mauris cursus dapibus velit vitae placerat. Vivamus consequat non orci eu pretium. Vestibulum quam justo, auctor sed venenatis at, dignissim et lacus. Aliquam ultricies lacus non nunc pulvinar, ac hendrerit nibh euismod.</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>http://vesa.lib.helsinki.fi/</td><td>bar foo</td><td>g in odio in, condimentum gravida turpis. Mauris cursus dapibus velit vitae placerat. Vivamus consequat non orci eu pretium. Vestibulum quam justo, auctor sed venenatis at, dignissim et lacus. Aliquam ultricies lacus non nunc pulvinar, ac hendrerit nibh euismod.</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+									</tbody>
+								</table>
+								<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addOtherMaterialDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
 							</div>
-
 						</div>
+						
 						<label class="studyLevelTitle">Tekijät</label>
 						<div class="accordionContent">
 							<table class="metkaTable" id="materialAuthorTable">
 								<thead>
-									<tr><th>id</th><th>Nimi</th><th>Organisaatio</th><th>Titteli</th><th></th></tr>
+									<tr><th>Tunniste</th><th>Nimi</th><th>Organisaatio</th><th>Titteli</th><th></th></tr>
 								</thead>
 								<tbody>
 									<tr class="materialAuthor"><td>1</td><td>Mikko Tanskanen</td><td>Proactum Oy</td><td>Arkkitehti</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
@@ -735,6 +820,8 @@
 							</table>
 							<div class="accordionTableActionLinkHolder"><a href="dialogs/attachPersonStudyLevelDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>	
 						</div>
+
+						
 					</div>
 					
 					<div class="viewFormButtonsHolder" style="margin-bottom:20px;">
@@ -761,6 +848,7 @@
 					</div>
 
 					<div id="variablesMainContainer">
+
 						<div id="basicVariableTreeContainer" class="variablesTree">
 							<div id="variableFilter"><input id="variableFilterInput" placeholder="Filter..."></div>
 							<ul id="variablesListBasic">
@@ -783,6 +871,97 @@
 								<li>[q3_1] Vas./oik. oma sijoittuminen</li>
 								<li>[q3] Onko vastaaja perheen päähenkilö</li>
 							</ul>
+						</div>
+
+						<div class="variableDataTable variableTranslationTable" id="variableTranslationSv">
+							<table>
+								<thead>
+									<tr><th class="variableName"></th><th class="variableContent"></th></tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>Muuttuja</td>
+										<td><input type="text" id="var" value="[q2] Oma poliittinen kiinnostus"/></td>
+									</tr>
+									<tr>
+										<td>Kysymysteksti</td>
+										<td>
+											<input type="text" value="Kuinka paljon politiikka Teitä kiinnostaa? Oletteko hyvin kiinnostunut, jonkin verran kiinnostunut, vain vähän kiinnostunut vai ei ollenkaan kiinnostunut?"/>
+											<input type="text" value="Kuinka paljon politiikka Teitä kiinnostaa? Oletteko hyvin kiinnostunut, jonkin verran kiinnostunut, vain vähän kiinnostunut vai ei ollenkaan kiinnostunut?"/>
+										</td>
+									</tr>
+									<tr>
+										<td>Esiteksti</td>
+										<td>
+											<input type="text" value="Aluksi muutama Teitä ja kotitalouttanne koskeva kysymys: Rengastakaa mielestänne sopivinta vaihtoehtoa vastaava numero tai kirjoittakaa vastauksenne sille varattuun tilaan."/>
+											<input type="text" value="Aluksi muutama Teitä ja kotitalouttanne koskeva kysymys: Rengastakaa mielestänne sopivinta vaihtoehtoa vastaava numero tai kirjoittakaa vastauksenne sille varattuun tilaan."/>
+										</td>
+									</tr>
+									<tr>
+										<td>Jälkiteksti</td>
+										<td><input type="text" value="Seuraavaksi muutama yhteiskuntaa yleisesti koskeva kysymys:"/></td>
+									</tr>
+									<tr>
+										<td>Haastattelijan ohje</td>
+										<td><input type="text" value="Valitse näistä sopivin vaihtoehto"/></td>
+									</tr>
+									<tr>
+										<td>Vaihtoehdot</td>
+										<td>
+											<input type="text" value="Hyvin kiinnostunut"/><br/>
+											<input type="text" value="Jonkin verran kiinnostunut"/><br/>
+											<input type="text" value="Vain vähän kiinnostunut"/><br/>
+											<input type="text" value="Ei ollenkaan kiinnostunut"/><br/>
+											<input type="text" value="Ei osaa sanoa"/><br/>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="variableDataTable variableTranslationTable" id="variableTranslationEn">
+							<table>
+								<thead>
+									<tr><th class="variableName"></th><th class="variableContent"></th></tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>Muuttuja</td>
+										<td><input type="text" id="var" value="[q2] Oma poliittinen kiinnostus"/></td>
+									</tr>
+									<tr>
+										<td>Kysymysteksti</td>
+										<td>
+											<input type="text" value="Kuinka paljon politiikka Teitä kiinnostaa? Oletteko hyvin kiinnostunut, jonkin verran kiinnostunut, vain vähän kiinnostunut vai ei ollenkaan kiinnostunut?"/>
+											<input type="text" value="Kuinka paljon politiikka Teitä kiinnostaa? Oletteko hyvin kiinnostunut, jonkin verran kiinnostunut, vain vähän kiinnostunut vai ei ollenkaan kiinnostunut?"/>
+										</td>
+									</tr>
+									<tr>
+										<td>Esiteksti</td>
+										<td>
+											<input type="text" value="Aluksi muutama Teitä ja kotitalouttanne koskeva kysymys: Rengastakaa mielestänne sopivinta vaihtoehtoa vastaava numero tai kirjoittakaa vastauksenne sille varattuun tilaan."/>
+											<input type="text" value="Aluksi muutama Teitä ja kotitalouttanne koskeva kysymys: Rengastakaa mielestänne sopivinta vaihtoehtoa vastaava numero tai kirjoittakaa vastauksenne sille varattuun tilaan."/>
+										</td>
+									</tr>
+									<tr>
+										<td>Jälkiteksti</td>
+										<td><input type="text" value="Seuraavaksi muutama yhteiskuntaa yleisesti koskeva kysymys:"/></td>
+									</tr>
+									<tr>
+										<td>Haastattelijan ohje</td>
+										<td><input type="text" value="Valitse näistä sopivin vaihtoehto"/></td>
+									</tr>
+									<tr>
+										<td>Vaihtoehdot</td>
+										<td>
+											<input type="text" value="Hyvin kiinnostunut"/><br/>
+											<input type="text" value="Jonkin verran kiinnostunut"/><br/>
+											<input type="text" value="Vain vähän kiinnostunut"/><br/>
+											<input type="text" value="Ei ollenkaan kiinnostunut"/><br/>
+											<input type="text" value="Ei osaa sanoa"/><br/>
+										</td>
+									</tr>
+								</tbody>
+							</table>
 						</div>
 
 						<div id="groupedVariableTreeContainer" class="variablesTree">
@@ -909,8 +1088,8 @@
 										</tbody>
 									</table>
 									<div class="translations">
-										<div class="variableTranslationLink translationLinkSv">sv</div>
-										<div class="variableTranslationLink translationLinkEn">en</div>
+										<div class="variableTranslationLink" id="variableTranslationLinkSv">sv</div>
+										<div class="variableTranslationLink" id="variableTranslationLinkEn">en</div>
 									</div>
 								</div>
 							</div>

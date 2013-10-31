@@ -2,7 +2,10 @@
 
 #fileNameErrorRow, #materialFileInfoRow, #materialCodebookRow, #materialErrorInfoRow, 
 #groupedVariableTreeContainer, #variableDataContainer, #variableData, #variableGroupData, 
-#variablesGroupingContainer, #additionalFilingContractFile, .translationEn, .translationSv {
+#variablesGroupingContainer, #additionalFilingContractFile, .translationEn, .translationSv, 
+.variableTranslationTable, .organizationAuthor, .organizationCollector, 
+.keywordFields, .vocabularyFields, .noVocabulary, .topicFields, .otherWord, .wordFields, 
+.countrySelectContainer, .countryFields, .geoCoverSelectContainer, .geoCoverFields {
 	display: none;
 }
 
@@ -45,7 +48,8 @@
 	}
 }
 
-.materialDataSetTextareaContainer{
+.materialDataSetTextareaContainer {
+	font-size: 12px;
 	float: left;
 	margin-top: 10px;
 	margin-bottom: 10px;
@@ -87,7 +91,7 @@
 	}
 }
 
-.materialDataSetContainer {
+.materialDataSetContainer, .studyLevelDataSetContainer {
 	font-size: 12px;
 	@include dataSetContainer(180px, 100px, 105px, 700px, 50px, 12px);
 }
@@ -171,12 +175,23 @@
 			width: 850px;
 		}
 
-		.dataSetContainer {
-			@include dataSetContainer(150px, 100px, 105px, 300px, 40px, 12px);
+		.studyLevelTableTitle {
+			font-size: 12px;
+			padding-top: 10px;
 		}
-	}
-	label{
-		font-size: 15px;
+		.metkaTable {
+			@extend table.metkaTable;
+			margin:0px 10px 0px 0px;
+			width: 850px;
+		}
+
+		.studyLevelDataSetTextareaContainer {
+			@extend .materialDataSetTextareaContainer;
+
+			textarea {
+				width: 400px;
+			}
+		}
 	}
 }
 
@@ -219,7 +234,7 @@
 	@include prevNextButtons(12px, left, right, 5px);
 }
 
-/* naming */
+/* RENAME */
 .materialPrevNextContainer{
 	@include prevNextContainer(inline-block, right, 0px, 20px);
 	width:900px;
@@ -287,13 +302,35 @@
 
 	#variablesMainContainer {
 		position: relative;
+
 		.variablesTree {
 			top: 40;
 			left: 0;
-			width: 420px;
+			width: 450px;
 			font-size: 12px;
 			min-height: 400px;
 			float: left;
+		}
+
+		.variableTranslationTable {
+			padding-top: 30px;
+			font-size: 15px;
+			padding-left: 20px;
+			width: 430px;
+			min-height: 400px;
+			float: left;
+
+			thead {
+				.variableName {
+					width: 190px;
+				}
+				.variableContent {
+					width: 240px;
+				}
+			}
+			input {
+				width: 240px;
+			}
 		}
 
 		#groupedVariableTreeContainer {
@@ -323,8 +360,9 @@
 		#variableDataContainer {
 			top: 40;
 			right: 0;
-			width: 500px;
+			width: 450px;
 			float: left;
+			margin-left: 10px;
 
 			#variableData, #variableGroupData {
 				thead {
@@ -332,7 +370,7 @@
 						width: 200px;
 					}
 					.variableContent {
-						width: 300px;
+						width: 250px;
 					}
 				}
 				padding-right: 10px;
@@ -350,7 +388,7 @@
 			}
 
 			.translations {
-				.translationLinkSv, .translationLinkEn, .translationLinkFi {
+				.variableTranslationLink {
 					@include translationLink;
 				}
 			}

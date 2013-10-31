@@ -59,8 +59,10 @@ $(document).ready(function(){
 	$(".materialFileRow, .materialCodebookFileRow, .materialErrorRow, .desktopWidgetDataRow, " +
 		".materialSearchResultRow, .publicationSearchResultRow, .seriesSearchResultRow, " + 
 		".materialSeriesRow, .materialPublicationRow, .materialMaterialRow, #variablesListBasic li, " +
-		".publicationSeriesRow, .publicationMaterialRow, .materialBinderRow, .binderRow, .translationLink, " + 
-		".materialRemovedFileRow, #filingContractFile, .versionRow, .translationLinkEn, .translationLinkSv, .translationLinkFi").hover(function() {
+		".publicationSeriesRow, .publicationMaterialRow, .materialBinderRow, .binderRow, " + 
+		".materialRemovedFileRow, #filingContractFile, .versionRow, " + 
+		".link, .translationLink, .translationLinkEn, .translationLinkSv, .translationLinkFi, .variableTranslationLink, " + 
+		".removeAddedElement").hover(function() {
 		    $(this).css('cursor', 'pointer');
 		}, function() {
 		    $(this).css('cursor', 'auto');		    
@@ -291,6 +293,12 @@ $(document).ready(function(){
         ]
 	});
 
+	$(".studyLevelOrderedTable").dataTable({
+		"bPaginate": false,
+        "bFilter": false, 
+        "bInfo": false
+	}).rowReordering();
+
 	$(".materialFileRow").on("click", function() {
 		showFileInfo($(this), "#materialFileInfoContent", "#materialFileInfoRow");	
 	});
@@ -372,6 +380,39 @@ $(document).ready(function(){
 		$("#groupedVariableTreeContainer").hide();
 		$("#variableDataContainer").hide();
 		$("#variableGroupData").hide();
+	});
+
+	$("#variableTranslationLinkSv").on("click", function() {
+		if ( $(this).hasClass("clicked")) {
+			$(this).removeClass("clicked");
+			$("#basicVariableTreeContainer").show();
+			$("#variableTranslationSv").hide();
+		} else {			
+			$(this).addClass("clicked");
+			$("#basicVariableTreeContainer").hide();
+
+			if ( $("#variableTranslationLinkEn").hasClass("clicked") ) {
+				$("#variableTranslationLinkEn").removeClass("clicked");
+				$("#variableTranslationEn").hide();
+			}
+			$("#variableTranslationSv").show();
+		}
+	});
+
+	$("#variableTranslationLinkEn").on("click", function() {
+		if ( $(this).hasClass("clicked")) {
+			$(this).removeClass("clicked");
+			$("#basicVariableTreeContainer").show();
+			$("#variableTranslationEn").hide();
+		} else {			
+			$(this).addClass("clicked");
+			$("#basicVariableTreeContainer").hide();			
+			if ( $("#variableTranslationLinkSv").hasClass("clicked") ) {
+				$("#variableTranslationLinkSv").removeClass("clicked");
+				$("#variableTranslationSv").hide();
+			}
+			$("#variableTranslationEn").show();
+		}
 	});
 
 	$('#variableFilterInput').fastLiveFilter('#variablesListBasic');
@@ -507,6 +548,18 @@ $(document).ready(function(){
 		if($(e.target.nodeName).is('TD')){
 			$(this).find(".showVersionInfo").click();
 		}
+	});
+
+	$("#studyLevelAltTitle, #studyLevelAppraisal, #studyLevelDataSource").on("click", function() {
+		var newRow = $(this).parent().parent().clone(true);
+		$(newRow).find(".link").attr("id", "");
+		$(newRow).find("label").removeClass("link");
+		$(newRow).find("img").show();
+		$(newRow).insertAfter($(this).parent().parent());
+	});
+
+	$(".removeAddedElement").on("click", function() {
+		$(this).parent().parent().remove();
 	});
 
 	/*** JULKAISU ***/

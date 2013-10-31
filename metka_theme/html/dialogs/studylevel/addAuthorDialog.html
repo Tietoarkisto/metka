@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html lang="fi">
+	<head>
+		<script type="text/javascript">
+			$("#authorType").on("change", function() {
+				var authorType = $(this).children(":selected").attr("id");
+
+				if ( authorType == "personAuthor") {
+					$(".organizationAuthor").hide();
+					$(".personAuthor").show();
+				} else if ( authorType == "organizationAuthor" ) {
+					$(".personAuthor").hide();
+					$(".organizationAuthor").show();
+				} 
+			});	
+
+			$(".link").on("click", function() {
+				var newRow = $(this).parent().clone(true);
+				$(newRow).find("label").removeClass("link");
+				$(newRow).find("img").css('visibility', 'visible');
+				$(newRow).insertAfter($(this).parent());
+			});
+
+			$("img").on("click", function() {
+				$(this).parent().remove();
+			});
+		</script>
+	</head>
+	<body>	
+		<div class="popupContainer">
+			<h1 class="pageTitle">Lisää tekijä</h1>
+			<div class="popupRowHolder">
+				<label class="inputRowLabel">Tyyppi</label>
+				<select id="authorType"><option id="personAuthor">Henkilö</option><option id="organizationAuthor">Organisaatio</option></select>
+			</div>
+			<div class="popupRowHolder personAuthor">
+				<label class="inputRowLabel">Nimi</label><input type="text" value=""/>
+			</div>
+			<div class="popupRowHolder organizationAuthor">
+				<label class="inputRowLabel">Organisaatio</label><input type="text" value=""/>
+			</div>
+			<div class="popupRowHolder personAuthor">
+				<label class="inputRowLabel">Taustaorganisaatio</label><input type="text" value=""/>
+			</div>
+			<div class="popupRowHolder personAuthor">
+				<label class="inputRowLabel link">Taustaorganisaation tunniste</label>
+				<input type="text" value=""/><select><option>Tyyppi1</option><option>Tyyppi2</option><option>Tyyppi3</option></select><img style="visibility: hidden;" title="Poista" src="../images/cancel.png"/>
+			</div>
+			<div class="popupRowHolder organizationAuthor">
+				<label class="inputRowLabel link">Organisaation tunniste</label>
+				<input type="text" value=""/><select><option>Tyyppi1</option><option>Tyyppi2</option><option>Tyyppi3</option></select><img style="visibility: hidden;" title="Poista" src="../images/cancel.png"/>
+			</div>
+			<div class="popupButtonsHolder">
+				<input type="button" class="searchFormInput" value="Peruuta">
+				<input type="button" class="searchFormInput" value="OK">
+			</div>
+		
+		</div>	
+	</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html lang="fi">
+	<head>
+		<script type="text/javascript">
+			$("#vocabularySelect").on("change", function() {
+				var vocabularyType = $(this).children(":selected").attr("id");
+
+				if ( vocabularyType == "chooseVocabulary") {
+					$(".vocabularyFields").hide();
+					$(".otherWord").hide();
+				} else if ( vocabularyType == "otherColl" ) {
+					$(".otherWord").show();
+					$(".vocabularyFields").hide();
+				} else {
+					$(".vocabularyFields").show();
+					$(".otherWord").hide();
+				}
+			});	
+
+			$("#collSelect").on("change", function() {
+				var topic = $(this).children(":selected").attr("id");
+
+				if ( topic == "chooseColl") {
+					$(".wordFields").hide();
+				} else {
+					$(".wordFields").show();
+				} 
+			});	
+		</script>
+	</head>
+	<body>	
+		<div class="popupContainer">
+			<h1 class="pageTitle">Lisää havaintoyks./aikaulott./otantamen./keruumen./keruuväline (samantyyppinen kaikille)</h1>
+			<div class="popupRowHolder">
+				<label class="inputRowLabel">Sanasto</label>
+				<select id="vocabularySelect"><option id="chooseVocabulary">Valitse sanasto...</option><option>DDI CV</option><option id="otherColl">Muu</option></select>
+			</div>
+			<div class="popupRowHolder vocabularyFields">
+				<label class="inputRowLabel">Sana</label>
+				<select id="collSelect"><option id="chooseColl">Valitse...</option><option>Foo1</option><option>Foo2</option><option>Foo3</option></select>
+			</div>
+			<div class="popupRowHolder otherWord">
+				<label class="inputRowLabel">Sana</label><input style="width: 290px" type="text" value=""/>
+			</div>
+			<div class="popupRowHolder vocabularyFields">
+				<label class="inputRowLabel">Uri</label><input style="width: 290px" type="text" value="http://www.foo.bar.fi" disabled="true" />
+			</div>
+			<div class="popupRowHolder wordFields">
+				<label class="inputRowLabel">Tunniste/osoite</label><input style="width: 290px" type="text" value="FooBar" disabled="true" />
+			</div>
+			<div class="popupButtonsHolder">
+				<input type="button" class="searchFormInput" value="Peruuta">
+				<input type="button" class="searchFormInput" value="OK">
+			</div>
+		
+		</div>	
+	</body>
+</html>
