@@ -61,7 +61,8 @@ $(document).ready(function(){
 		".materialSeriesRow, .materialPublicationRow, .materialMaterialRow, #variablesListBasic li, " +
 		".publicationSeriesRow, .publicationMaterialRow, .materialBinderRow, .binderRow, " + 
 		".materialRemovedFileRow, #filingContractFile, .versionRow, " + 
-		".link, .translationLink, .translationLinkEn, .translationLinkSv, .translationLinkFi, .variableTranslationLink, " + 
+		".link, .translationLink, .translationLinkEn, .translationLinkSv, .translationLinkFi, .variableTranslationLink, " +
+		".studyLevelIdRow, .parTitleRow, .otherMaterialRow, .relatedMaterialRow" + 
 		".removeAddedElement").hover(function() {
 		    $(this).css('cursor', 'pointer');
 		}, function() {
@@ -97,11 +98,13 @@ $(document).ready(function(){
 		if ( !translationEnVisible && !translationSvVisible ) {
 			$(".rowContainer:not(.containsTranslations)").show();
 			$(".materialDataSetContainer:not(.translated), .materialDataSetTextareaContainer:not(.translated)").show();
+			$(".studyLevelDataSetContainer:not(.translated), .studyLevelDataSetTextareaContainer:not(.translated)").show();
 			// Jos toinen tiedosto, näytä tämä
 			$("#additionalFilingContractFile").hide();
 		} else {
 			$(".rowContainer:not(.containsTranslations)").hide();
 			$(".materialDataSetContainer:not(.translated), .materialDataSetTextareaContainer:not(.translated)").hide();
+			$(".studyLevelDataSetContainer:not(.translated), .studyLevelDataSetContainer:not(.translated)").hide();
 		}
 	}
 
@@ -534,9 +537,9 @@ $(document).ready(function(){
 		}
 	});
 
-	$(".materialBinderRow, .binderRow").on("click", function(e) {
+	$(".materialBinderRow, .binderRow, .versionRow, .studyLevelIdRow, .parTitleRow, .otherMaterialRow, .relatedMaterialRow").on("click", function(e) {
 		if($(e.target.nodeName).is('TD')){
-			$(this).find(".showBinderInfo").click();
+			$(this).find("a").click();
 		}
 	});
 	
@@ -544,11 +547,6 @@ $(document).ready(function(){
 		$("#additionalFilingContractFile").toggle();
 	});
 
-	$(".versionRow").on("click", function(e) {
-		if($(e.target.nodeName).is('TD')){
-			$(this).find(".showVersionInfo").click();
-		}
-	});
 
 	$("#studyLevelAltTitle, #studyLevelAppraisal, #studyLevelDataSource").on("click", function() {
 		var newRow = $(this).parent().parent().clone(true);

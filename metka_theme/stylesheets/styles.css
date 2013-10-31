@@ -718,24 +718,46 @@ nav {
     width: 440px;
     height: 60px; }
 
-.materialDataSetContainer, .studyLevelDataSetContainer {
+.materialDataSetContainer {
   font-size: 12px;
   float: left; }
-  .materialDataSetContainer label, .studyLevelDataSetContainer label {
+  .materialDataSetContainer label {
     display: block;
     float: left;
     margin-bottom: 10px;
     font-size: 12px;
     width: 180px; }
-  .materialDataSetContainer input, .studyLevelDataSetContainer input {
+  .materialDataSetContainer input {
     font-size: 12px;
     width: 100px;
     margin-right: 10px; }
-  .materialDataSetContainer select, .studyLevelDataSetContainer select {
+  .materialDataSetContainer select {
     font-size: 12px;
     width: 105px;
     margin-right: 10px; }
-  .materialDataSetContainer textarea, .studyLevelDataSetContainer textarea {
+  .materialDataSetContainer textarea {
+    font-size: 12px;
+    width: 700px;
+    height: 50px; }
+
+.studyLevelDataSetContainer {
+  font-size: 12px;
+  float: left; }
+  .studyLevelDataSetContainer label {
+    display: block;
+    float: left;
+    margin-bottom: 10px;
+    font-size: 12px;
+    width: 150px; }
+  .studyLevelDataSetContainer input {
+    font-size: 12px;
+    width: 100px;
+    margin-right: 10px; }
+  .studyLevelDataSetContainer select {
+    font-size: 12px;
+    width: 105px;
+    margin-right: 10px; }
+  .studyLevelDataSetContainer textarea {
     font-size: 12px;
     width: 700px;
     height: 50px; }

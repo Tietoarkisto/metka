@@ -24,11 +24,7 @@
 	<!-- TÄMÄ OSIIN KUN JSP:KSI -->
 	<body>
 		<header>
-			<div class="headerContainer">
-				<h1 id="logo" >
-					<a href="desktop.html" title="Aineistohaku">Aineistohaku</a>
-				</h1>	
-						
+			<div class="headerContainer">	
 				<nav>
 					<ul class="mainNavUl">
 						<li><a href="desktop.html">Työpöytä</a></li>
@@ -37,6 +33,7 @@
 						<li><a href="publicationSearch.html">Julkaisut</a></li>
 						<li><a href="seriesSearch.html">Sarjat</a></li>	
 						<li><a href="binders.html">Mapit</a></li>
+						<li><a href="reports.html">Raportit</a></li>
 						<li><a href="settings.html">Asetukset</a></li>						
 					</ul>
 					
@@ -187,8 +184,8 @@
 								<tr><th>Huomautus</th><th>Päivämäärä</th><th>Huomauttaja</th><th></th></tr>
 							</thead>
 							<tbody>
-								<tr><td>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce consequat elit non dui euismod elementum. Aliquam erat volutpat. Etiam feugiat diam ut urna mollis, eu sollicitudin velit tincidunt. Pr</td><td>12.10.2013</td><td>Mikko Tanskanen</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-								<tr><td>Nulla sed libero sed erat venenatis dignissim. Sed vehicula urna a egestas imperdiet. Nam a turpis nisi. Proin eget dignissim risus.</td><td>2.10.2013</td><td>Pekka Tanskanen</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+								<tr class="materialNotificationRow"><td>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce consequat elit non dui euismod elementum. Aliquam erat volutpat. Etiam feugiat diam ut urna mollis, eu sollicitudin velit tincidunt. Pr<a href="dialogs/attachNotificationDialog.html" class="fancyboxpopup fancybox.ajax"/></td><td>12.10.2013</td><td>Mikko Tanskanen</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+								<tr class="materialNotificationRow"><td>Nulla sed libero sed erat venenatis dignissim. Sed vehicula urna a egestas imperdiet. Nam a turpis nisi. Proin eget dignissim risus.<a href="dialogs/attachNotificationDialog.html" class="fancyboxpopup fancybox.ajax"/></td><td>2.10.2013</td><td>Pekka Tanskanen</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
 							</tbody>
 
 						</table>		
@@ -261,12 +258,12 @@
 							</thead>
 							<tbody>
 								<tr class="materialBinderRow">
-									<td>1290<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="showBinderInfo fancyboxpopup fancybox.ajax"></a></td>
+									<td>1290<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="fancyboxpopup fancybox.ajax"/></td>
 									<td>Mappi, jossa tavanomaisia aineistoja</td>
 									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
 								</tr>
 								<tr class="materialBinderRow">
-									<td>1291<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="showBinderInfo fancyboxpopup fancybox.ajax"></a></td>
+									<td>1291<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="fancyboxpopup fancybox.ajax"/></td>
 									<td>Lisämappi</td>
 									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
 								</tr>
@@ -408,81 +405,201 @@
 					<div id="studyLevelData">
 						<label class="studyLevelTitle">Perustiedot</label>
 						<div class="accordionContent">
-							<div class="rowContainer">
+							<div class="rowContainer containsTranslations">
 								<div class="studyLevelDataSetContainer">
 									<label>Kieli</label>
 									<select><option>fi</option><option>en</option><option>sv</option></select>
 								</div>
-								<div class="studyLevelDataSetContainer">
+								<div class="studyLevelDataSetContainer translated">
 									<label>Otsikko</label>
 									<input type="text" name="" value="Kuvailun otsikko" />
 								</div>
-								<div class="studyLevelDataSetContainer">
+								<div class="studyLevelDataSetContainer translated translationSv">
+									<label>Otsikko (sv)</label>
+									<input type="text" name="" value="Kuvailun åtsikko" />
+								</div>
+								<div class="studyLevelDataSetContainer translated translationEn">
+									<label>Otsikko (en)</label>
+									<input type="text" name="" value="Kuvailun otsikko" />
+								</div>
+							</div>
+							<div class="rowContainer containsTranslations">
+								<div class="studyLevelDataSetContainer translated">
 									<div class="studyLevelTableTitle">ID-tunnisteet</div>
 									<table class="metkaTable">
 										<thead>
 											<tr><th>Tunniste</th><th>Myöntänyt taho</th><th></th></tr>
 										</thead>
 										<tbody>
-											<tr class="materialAuthor"><td>FSD123</td><td>Mikko Tanskanen</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-											<tr class="materialAuthor"><td>FSD321</td><td>Mikko Tanskanen</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+											<tr class="studyLevelIdRow"><td>FSD123<a href="dialogs/studylevel/addIdDialog.html" class="fancyboxpopup fancybox.ajax link"/></td><td>Mikko Tanskanen</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+											<tr class="studyLevelIdRow"><td>FSD321<a href="dialogs/studylevel/addIdDialog.html" class="fancyboxpopup fancybox.ajax link"/></td><td>Mikko Tanskanen</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
 										</tbody>
 									</table>
 									<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addIdDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
+									<div class="studyLevelDataSetContainer translated translationSv">
+										<div class="studyLevelTableTitle">ID-tunnisteet (sv)</div>
+										<table class="metkaTable">
+											<thead>
+												<tr><th>Tunniste</th><th>Myöntänyt taho</th><th></th></tr>
+											</thead>
+											<tbody>
+												<tr class="studyLevelIdRow"><td>FSD123<a href="dialogs/studylevel/addIdDialog.html" class="fancyboxpopup fancybox.ajax link"/></td><td>Mikko Tanskanen</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+												<tr class="studyLevelIdRow"><td>FSD321<a href="dialogs/studylevel/addIdDialog.html" class="fancyboxpopup fancybox.ajax link"/></td><td>Mikko Tanskanen</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+											</tbody>
+										</table>
+										<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addIdDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
+									</div>
+									<div class="studyLevelDataSetContainer translated translationEn">
+										<div class="studyLevelTableTitle">ID-tunnisteet (en)</div>
+										<table class="metkaTable">
+											<thead>
+												<tr><th>Tunniste</th><th>Myöntänyt taho</th><th></th></tr>
+											</thead>
+											<tbody>
+												<tr class="studyLevelIdRow"><td>FSD123<a href="dialogs/studylevel/addIdDialog.html" class="fancyboxpopup fancybox.ajax link"/></td><td>Mikko Tanskanen</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+												<tr class="studyLevelIdRow"><td>FSD321<a href="dialogs/studylevel/addIdDialog.html" class="fancyboxpopup fancybox.ajax link"/></td><td>Mikko Tanskanen</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+											</tbody>
+										</table>
+										<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addIdDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
+									</div>
 								</div>
 							</div>
 						</div>
 						<label class="studyLevelTitle">Versiotiedot</label>
 						<div class="accordionContent">
-							<div class="rowContainer">
-								<div class="studyLevelDataSetContainer">
+							<div class="rowContainer containsTranslations">
+								<div class="studyLevelDataSetContainer translated">
 									<label>Versionumero</label>
 									<input type="text" name="" value="3.0" />
 								</div>
-								<div class="studyLevelDataSetContainer">
+								<div class="studyLevelDataSetContainer translated translationSv">
+									<label>Versionumero (sv)</label>
+									<input type="text" name="" value="3.0" />
+								</div>
+								<div class="studyLevelDataSetContainer translated translationEn">
+									<label>Versionumero (en)</label>
+									<input type="text" name="" value="3.0" />
+								</div>
+								<div class="studyLevelDataSetContainer translated">
 									<label>Selite</label>
 									<input type="text" name="" value="Foo bar lorem ipsum dolor sit amet"/>
 								</div>
-								<div class="studyLevelDataSetContainer">
+								<div class="studyLevelDataSetContainer translated translationSv">
+									<label>Selite (sv)</label>
+									<input type="text" name="" value="Foo bar lorem ipsum dolor sit amet"/>
+								</div>
+								<div class="studyLevelDataSetContainer translated translationEn">
+									<label>Selite (en)</label>
+									<input type="text" name="" value="Foo bar lorem ipsum dolor sit amet"/>
+								</div>
+								<div class="studyLevelDataSetContainer translated">
 									<label>Päivämäärä</label>
 									<input type="text" name="" class="datepicker" value="30.10.2013"/>
 								</div>
-								<div class="studyLevelDataSetContainer">
+								<div class="studyLevelDataSetContainer translated translationSv">
+									<label>Päivämäärä (sv)</label>
+									<input type="text" name="" class="datepicker" value="30.10.2013"/>
+								</div>
+								<div class="studyLevelDataSetContainer translated translationEn">
+									<label>Päivämäärä (en)</label>
+									<input type="text" name="" class="datepicker" value="30.10.2013"/>
+								</div>
+								<div class="studyLevelDataSetContainer translated">
 									<label>Tallentaja</label>
 									<input type="text" name="" value="mta"/>
 								</div>
+								<div class="studyLevelDataSetContainer translated translationSv">
+									<label>Tallentaja (sv)</label>
+									<input type="text" name="" value="mta"/>
+								</div>
+								<div class="studyLevelDataSetContainer translated translationEn">
+									<label>Tallentaja (en)</label>
+									<input type="text" name="" value="mta"/>
+								</div>
 							</div>
-							<div class="rowContainer">
-								<div class="studyLevelDataSetTextareaContainer">
+							<div class="rowContainer containsTranslations">
+								<div class="studyLevelDataSetTextareaContainer translated">
 									<label>Julkaistava vapaamuotoinen selite</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
-								<div class="studyLevelDataSetTextareaContainer">
+								<div class="studyLevelDataSetTextareaContainer translated translationSv">
+									<label>Julkaistava vapaamuotoinen selite (sv)</label>
+									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
+								</div>
+								<div class="studyLevelDataSetTextareaContainer translated translationEn">
+									<label>Julkaistava vapaamuotoinen selite (en)</label>
+									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
+								</div>
+								<div class="studyLevelDataSetTextareaContainer translated">
 									<label>Vapaamuotoinen selite</label>
+									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
+								</div>
+								<div class="studyLevelDataSetTextareaContainer translated translationSv">
+									<label>Vapaamuotoinen selite (sv)</label>
+									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
+								</div>
+								<div class="studyLevelDataSetTextareaContainer translated translationEn">
+									<label>Vapaamuotoinen selite (en)</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
 							</div>						
 						</div>
 						<label class="studyLevelTitle">Muut nimet</label>
 						<div class="accordionContent">
-							<div class="rowContainer">
-								<div class="studyLevelDataSetContainer">
+							<div class="rowContainer containsTranslations">
+								<div class="studyLevelDataSetContainer translated">
 									<label class="link" id="studyLevelAltTitle">Rinnakkainen nimi</label>
 									<input type="text" name="" value="toinen nimi" /><img class="removeAddedElement" style="display:none;" title="Poista" src="../images/cancel.png"/>
 								</div>
+								<div class="studyLevelDataSetContainer translated translationSv">
+									<label class="link" id="studyLevelAltTitle">Rinnakkainen nimi (sv)</label>
+									<input type="text" name="" value="toinen nimi" /><img class="removeAddedElement" style="display:none;" title="Poista" src="../images/cancel.png"/>
+								</div>
+								<div class="studyLevelDataSetContainer translated translationEn">
+									<label class="link" id="studyLevelAltTitle">Rinnakkainen nimi (en)</label>
+									<input type="text" name="" value="toinen nimi" /><img class="removeAddedElement" style="display:none;" title="Poista" src="../images/cancel.png"/>
+								</div>
 							</div>
-							<div class="rowContainer">
-								<div class="studyLevelTableTitle">Muunkieliset nimet</div>
-								<table class="metkaTable">
-									<thead>
-										<tr><th>Nimi</th><th>Kieli</th><th></th></tr>
-									</thead>
-									<tbody>
-										<tr><td>Another title</td><td>Norja</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-										<tr><td>Andra title</td><td>Espanja</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-									</tbody>
-								</table>
-								<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addParTitleDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>	
+							<div class="rowContainer containsTranslations">
+								<div class="studyLevelDataSetContainer translated">
+									<div class="studyLevelTableTitle">Muunkieliset nimet</div>
+									<table class="metkaTable">
+										<thead>
+											<tr><th>Nimi</th><th>Kieli</th><th></th></tr>
+										</thead>
+										<tbody>
+											<tr class="parTitleRow"><td>Another title<a href="dialogs/studylevel/addParTitleDialog.html" class="fancyboxpopup fancybox.ajax link"/></td><td>Norja</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+											<tr class="parTitleRow"><td>Andra title<a href="dialogs/studylevel/addParTitleDialog.html" class="fancyboxpopup fancybox.ajax link"/></td><td>Espanja</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										</tbody>
+									</table>
+									<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addParTitleDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>	
+								</div>
+								<div class="studyLevelDataSetContainer translated translationSv">
+									<div class="studyLevelTableTitle">Muunkieliset nimet (sv)</div>
+									<table class="metkaTable">
+										<thead>
+											<tr><th>Nimi</th><th>Kieli</th><th></th></tr>
+										</thead>
+										<tbody>
+											<tr class="parTitleRow"><td>Another title<a href="dialogs/studylevel/addParTitleDialog.html" class="fancyboxpopup fancybox.ajax link"/></td><td>Norja</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+											<tr class="parTitleRow"><td>Andra title<a href="dialogs/studylevel/addParTitleDialog.html" class="fancyboxpopup fancybox.ajax link"/></td><td>Espanja</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										</tbody>
+									</table>
+									<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addParTitleDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>	
+								</div>
+								<div class="studyLevelDataSetContainer translated translationEn">
+									<div class="studyLevelTableTitle">Muunkieliset nimet (en)</div>
+									<table class="metkaTable">
+										<thead>
+											<tr><th>Nimi</th><th>Kieli</th><th></th></tr>
+										</thead>
+										<tbody>
+											<tr class="parTitleRow"><td>Another title<a href="dialogs/studylevel/addParTitleDialog.html" class="fancyboxpopup fancybox.ajax link"/></td><td>Norja</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+											<tr class="parTitleRow"><td>Andra title<a href="dialogs/studylevel/addParTitleDialog.html" class="fancyboxpopup fancybox.ajax link"/></td><td>Espanja</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										</tbody>
+									</table>
+									<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addParTitleDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>	
+								</div>
 							</div>							
 						</div>
 						<label class="studyLevelTitle">Tekijät ja tuottajat</label>
@@ -736,71 +853,185 @@
 						</div>					
 						<label class="studyLevelTitle">Aineiston käyttö</label>
 						<div class="accordionContent">
-							<div class="rowContainer">
-								<div class="studyLevelDataSetTextareaContainer">
+							<div class="rowContainer containsTranslations">
+								<div class="studyLevelDataSetTextareaContainer translated">
 									<label>Painokertoinet</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
-								<div class="studyLevelDataSetTextareaContainer">
+								<div class="studyLevelDataSetTextareaContainer translated translationSv">
+									<label>Painokertoinet (sv)</label>
+									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
+								</div>
+								<div class="studyLevelDataSetTextareaContainer translated translationEn">
+									<label>Painokertoinet (en)</label>
+									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
+								</div>
+								<div class="studyLevelDataSetTextareaContainer translated">
 									<label>Sisällöllinen muokkaus</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
+								<div class="studyLevelDataSetTextareaContainer translated translationSv">
+									<label>Sisällöllinen muokkaus (sv)</label>
+									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
+								</div>
+								<div class="studyLevelDataSetTextareaContainer translated translationEn">
+									<label>Sisällöllinen muokkaus (en)</label>
+									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
+								</div>
 							</div>
-							<div class="rowContainer">
-								<div class="studyLevelDataSetTextareaContainer">
+							<div class="rowContainer containsTranslations">
+								<div class="studyLevelDataSetTextareaContainer translated">
 									<label>Tiedostot</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
-								<div class="studyLevelDataSetTextareaContainer">
+								<div class="studyLevelDataSetTextareaContainer translated translationSv">
+									<label>Tiedostot (sv)</label>
+									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
+								</div>
+								<div class="studyLevelDataSetTextareaContainer translated translationEn">
+									<label>Tiedostot (en)</label>
+									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
+								</div>
+								<div class="studyLevelDataSetTextareaContainer translated">
 									<label>Täydellisyys</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
+								<div class="studyLevelDataSetTextareaContainer translated translationSv">
+									<label>Täydellisyys (sv)</label>
+									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
+								</div>
+								<div class="studyLevelDataSetTextareaContainer translated translationEn">
+									<label>Täydellisyys (en)</label>
+									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
+								</div>
 							</div>
-							<div class="rowContainer">
-								<div class="studyLevelDataSetTextareaContainer">
+							<div class="rowContainer containsTranslations">
+								<div class="studyLevelDataSetTextareaContainer translated">
 									<label>Lisävarauma</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
-								<div class="studyLevelDataSetTextareaContainer">
+								<div class="studyLevelDataSetTextareaContainer translated translationSv">
+									<label>Lisävarauma (sv)</label>
+									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
+								</div>
+								<div class="studyLevelDataSetTextareaContainer translated translationEn">
+									<label>Lisävarauma (en)</label>
+									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
+								</div>
+								<div class="studyLevelDataSetTextareaContainer translated">
 									<label>Huomioitavaa</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
+								<div class="studyLevelDataSetTextareaContainer translated translationSv">
+									<label>Huomioitavaa (sv)</label>
+									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
+								</div>
+								<div class="studyLevelDataSetTextareaContainer translated translationEn">
+									<label>Huomioitavaa (en)</label>
+									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
+								</div>
 							</div>
-							<div class="rowContainer">
-								<div class="studyLevelDataSetTextareaContainer">
+							<div class="rowContainer containsTranslations">
+								<div class="studyLevelDataSetTextareaContainer translated">
 									<label class="link" id="studyLevelAppraisal">Arviointia</label>
+									<textarea>Foo bar lorem ipsum dolor sit amet</textarea><img class="removeAddedElement" style="display:none;" title="Poista" src="../images/cancel.png"/>
+								</div>
+								<div class="studyLevelDataSetTextareaContainer translated translationSv">
+									<label class="link" id="studyLevelAppraisal">Arviointia (sv)</label>
+									<textarea>Foo bar lorem ipsum dolor sit amet</textarea><img class="removeAddedElement" style="display:none;" title="Poista" src="../images/cancel.png"/>
+								</div>
+								<div class="studyLevelDataSetTextareaContainer translated translationEn">
+									<label class="link" id="studyLevelAppraisal">Arviointia (en)</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea><img class="removeAddedElement" style="display:none;" title="Poista" src="../images/cancel.png"/>
 								</div>
 							</div>
 						</div>
 						<label class="studyLevelTitle">Muut materiaalit</label>
 						<div class="accordionContent">
-							<div class="rowContainer">
-								<div class="studyLevelTableTitle">Oheismateriaali</div>
-								<table class="metkaTable">
-									<thead>
-										<tr><th>Oheismateriaali</th><th></th></tr>
-									</thead>
-									<tbody>
-										<tr><td>g in odio in, condimentum gravida turpis. Mauris cursus dapibus velit vitae placerat. Vivamus consequat non orci eu pretium. Vestibulum quam justo, auctor sed venenatis at, dignissim et lacus. Aliquam ultricies lacus non nunc pulvinar, ac hendrerit nibh euismod.</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-										<tr><td>g in odio in, condimentum gravida turpis. Mauris cursus dapibus velit vitae placerat. Vivamus consequat non orci eu pretium. Vestibulum quam justo, auctor sed venenatis at, dignissim et lacus. Aliquam ultricies lacus non nunc pulvinar, ac hendrerit nibh euismod.</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-										<tr><td>g in odio in, condimentum gravida turpis. Mauris cursus dapibus velit vitae placerat. Vivamus consequat non orci eu pretium. Vestibulum quam justo, auctor sed venenatis at, dignissim et lacus. Aliquam ultricies lacus non nunc pulvinar, ac hendrerit nibh euismod.</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-									</tbody>
-								</table>
-								<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addRelatedMaterialDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
+							<div class="rowContainer containsTranslations">
+								<div class="studyLevelDataSetContainer translated">
+									<div class="studyLevelTableTitle">Oheismateriaali</div>
+									<table class="metkaTable">
+										<thead>
+											<tr><th>Oheismateriaali</th><th></th></tr>
+										</thead>
+										<tbody>
+											<tr class="relatedMaterialRow"><td>g in odio in, condimentum gravida turpis. Mauris cursus dapibus velit vitae placerat. Vivamus consequat non orci eu pretium. Vestibulum quam justo, auctor sed venenatis at, dignissim et lacus. Aliquam ultricies lacus non nunc pulvinar, ac hendrerit nibh euismod.<a href="dialogs/studylevel/addRelatedMaterialDialog.html" class="fancyboxpopup fancybox.ajax"/></td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+											<tr class="relatedMaterialRow"><td>g in odio in, condimentum gravida turpis. Mauris cursus dapibus velit vitae placerat. Vivamus consequat non orci eu pretium. Vestibulum quam justo, auctor sed venenatis at, dignissim et lacus. Aliquam ultricies lacus non nunc pulvinar, ac hendrerit nibh euismod.<a href="dialogs/studylevel/addRelatedMaterialDialog.html" class="fancyboxpopup fancybox.ajax"/></td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+											<tr class="relatedMaterialRow"><td>g in odio in, condimentum gravida turpis. Mauris cursus dapibus velit vitae placerat. Vivamus consequat non orci eu pretium. Vestibulum quam justo, auctor sed venenatis at, dignissim et lacus. Aliquam ultricies lacus non nunc pulvinar, ac hendrerit nibh euismod.<a href="dialogs/studylevel/addRelatedMaterialDialog.html" class="fancyboxpopup fancybox.ajax"/></td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										</tbody>
+									</table>
+									<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addRelatedMaterialDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
+								</div>
+								<div class="studyLevelDataSetContainer translated translationSv">
+									<div class="studyLevelTableTitle">Oheismateriaali (sv)</div>
+									<table class="metkaTable">
+										<thead>
+											<tr><th>Oheismateriaali</th><th></th></tr>
+										</thead>
+										<tbody>
+											<tr class="relatedMaterialRow"><td>g in odio in, condimentum gravida turpis. Mauris cursus dapibus velit vitae placerat. Vivamus consequat non orci eu pretium. Vestibulum quam justo, auctor sed venenatis at, dignissim et lacus. Aliquam ultricies lacus non nunc pulvinar, ac hendrerit nibh euismod.<a href="dialogs/studylevel/addRelatedMaterialDialog.html" class="fancyboxpopup fancybox.ajax"/></td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+											<tr class="relatedMaterialRow"><td>g in odio in, condimentum gravida turpis. Mauris cursus dapibus velit vitae placerat. Vivamus consequat non orci eu pretium. Vestibulum quam justo, auctor sed venenatis at, dignissim et lacus. Aliquam ultricies lacus non nunc pulvinar, ac hendrerit nibh euismod.<a href="dialogs/studylevel/addRelatedMaterialDialog.html" class="fancyboxpopup fancybox.ajax"/></td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+											<tr class="relatedMaterialRow"><td>g in odio in, condimentum gravida turpis. Mauris cursus dapibus velit vitae placerat. Vivamus consequat non orci eu pretium. Vestibulum quam justo, auctor sed venenatis at, dignissim et lacus. Aliquam ultricies lacus non nunc pulvinar, ac hendrerit nibh euismod.<a href="dialogs/studylevel/addRelatedMaterialDialog.html" class="fancyboxpopup fancybox.ajax"/></td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										</tbody>
+									</table>
+									<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addRelatedMaterialDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
+								</div>
+								<div class="studyLevelDataSetContainer translated translationEn">
+									<div class="studyLevelTableTitle">Oheismateriaali (en)</div>
+									<table class="metkaTable">
+										<thead>
+											<tr><th>Oheismateriaali</th><th></th></tr>
+										</thead>
+										<tbody>
+											<tr class="relatedMaterialRow"><td>g in odio in, condimentum gravida turpis. Mauris cursus dapibus velit vitae placerat. Vivamus consequat non orci eu pretium. Vestibulum quam justo, auctor sed venenatis at, dignissim et lacus. Aliquam ultricies lacus non nunc pulvinar, ac hendrerit nibh euismod.<a href="dialogs/studylevel/addRelatedMaterialDialog.html" class="fancyboxpopup fancybox.ajax"/></td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+											<tr class="relatedMaterialRow"><td>g in odio in, condimentum gravida turpis. Mauris cursus dapibus velit vitae placerat. Vivamus consequat non orci eu pretium. Vestibulum quam justo, auctor sed venenatis at, dignissim et lacus. Aliquam ultricies lacus non nunc pulvinar, ac hendrerit nibh euismod.<a href="dialogs/studylevel/addRelatedMaterialDialog.html" class="fancyboxpopup fancybox.ajax"/></td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+											<tr class="relatedMaterialRow"><td>g in odio in, condimentum gravida turpis. Mauris cursus dapibus velit vitae placerat. Vivamus consequat non orci eu pretium. Vestibulum quam justo, auctor sed venenatis at, dignissim et lacus. Aliquam ultricies lacus non nunc pulvinar, ac hendrerit nibh euismod.<a href="dialogs/studylevel/addRelatedMaterialDialog.html" class="fancyboxpopup fancybox.ajax"/></td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										</tbody>
+									</table>
+									<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addRelatedMaterialDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
+								</div>
 							</div>
-							<div class="rowContainer">
-								<div class="studyLevelTableTitle">Muu materiaali</div>
-								<table class="metkaTable">
-									<thead>
-										<tr><th>Uri</th><th>Lyhyt kuvaus</th><th>Tarkka kuvaus</th><th></th></tr>
-									</thead>
-									<tbody>
-										<tr><td>http://vesa.lib.helsinki.fi/</td><td>foo bar</td><td>g in odio in, condimentum gravida turpis. Mauris cursus dapibus velit vitae placerat. Vivamus consequat non orci eu pretium. Vestibulum quam justo, auctor sed venenatis at, dignissim et lacus. Aliquam ultricies lacus non nunc pulvinar, ac hendrerit nibh euismod.</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-										<tr><td>http://vesa.lib.helsinki.fi/</td><td>bar foo</td><td>g in odio in, condimentum gravida turpis. Mauris cursus dapibus velit vitae placerat. Vivamus consequat non orci eu pretium. Vestibulum quam justo, auctor sed venenatis at, dignissim et lacus. Aliquam ultricies lacus non nunc pulvinar, ac hendrerit nibh euismod.</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-									</tbody>
-								</table>
-								<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addOtherMaterialDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
+							<div class="rowContainer containsTranslations">
+								<div class="studyLevelDataSetContainer translated">
+									<div class="studyLevelTableTitle">Muu materiaali</div>
+									<table class="metkaTable">
+										<thead>
+											<tr><th>Uri</th><th>Lyhyt kuvaus</th><th>Tarkka kuvaus</th><th></th></tr>
+										</thead>
+										<tbody>
+											<tr class="otherMaterialRow"><td>http://vesa.lib.helsinki.fi/<a href="dialogs/studylevel/addOtherMaterialDialog.html" class="fancyboxpopup fancybox.ajax"/></td><td>foo bar</td><td>g in odio in, condimentum gravida turpis. Mauris cursus dapibus velit vitae placerat. Vivamus consequat non orci eu pretium. Vestibulum quam justo, auctor sed venenatis at, dignissim et lacus. Aliquam ultricies lacus non nunc pulvinar, ac hendrerit nibh euismod.</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+											<tr class="otherMaterialRow"><td>http://vesa.lib.helsinki.fi/<a href="dialogs/studylevel/addOtherMaterialDialog.html" class="fancyboxpopup fancybox.ajax"/></td><td>bar foo</td><td>g in odio in, condimentum gravida turpis. Mauris cursus dapibus velit vitae placerat. Vivamus consequat non orci eu pretium. Vestibulum quam justo, auctor sed venenatis at, dignissim et lacus. Aliquam ultricies lacus non nunc pulvinar, ac hendrerit nibh euismod.</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										</tbody>
+									</table>
+									<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addOtherMaterialDialog.html" class="fancyboxpopup fancybox.ajax link">	Lisää</a></div>
+								</div>
+								<div class="studyLevelDataSetContainer translated translationSv">
+									<div class="studyLevelTableTitle">Muu materiaali (sv)</div>
+									<table class="metkaTable">
+										<thead>
+											<tr><th>Uri</th><th>Lyhyt kuvaus</th><th>Tarkka kuvaus</th><th></th></tr>
+										</thead>
+										<tbody>
+											<tr class="otherMaterialRow"><td>http://vesa.lib.helsinki.fi/<a href="dialogs/studylevel/addOtherMaterialDialog.html" class="fancyboxpopup fancybox.ajax"/></td><td>foo bar</td><td>g in odio in, condimentum gravida turpis. Mauris cursus dapibus velit vitae placerat. Vivamus consequat non orci eu pretium. Vestibulum quam justo, auctor sed venenatis at, dignissim et lacus. Aliquam ultricies lacus non nunc pulvinar, ac hendrerit nibh euismod.</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+											<tr class="otherMaterialRow"><td>http://vesa.lib.helsinki.fi/<a href="dialogs/studylevel/addOtherMaterialDialog.html" class="fancyboxpopup fancybox.ajax"/></td><td>bar foo</td><td>g in odio in, condimentum gravida turpis. Mauris cursus dapibus velit vitae placerat. Vivamus consequat non orci eu pretium. Vestibulum quam justo, auctor sed venenatis at, dignissim et lacus. Aliquam ultricies lacus non nunc pulvinar, ac hendrerit nibh euismod.</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										</tbody>
+									</table>
+									<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addOtherMaterialDialog.html" class="fancyboxpopup fancybox.ajax link">	Lisää</a></div>
+								</div>
+								<div class="studyLevelDataSetContainer translated translationEn">
+									<div class="studyLevelTableTitle">Muu materiaali (en)</div>
+									<table class="metkaTable">
+										<thead>
+											<tr><th>Uri</th><th>Lyhyt kuvaus</th><th>Tarkka kuvaus</th><th></th></tr>
+										</thead>
+										<tbody>
+											<tr class="otherMaterialRow"><td>http://vesa.lib.helsinki.fi/<a href="dialogs/studylevel/addOtherMaterialDialog.html" class="fancyboxpopup fancybox.ajax"/></td><td>foo bar</td><td>g in odio in, condimentum gravida turpis. Mauris cursus dapibus velit vitae placerat. Vivamus consequat non orci eu pretium. Vestibulum quam justo, auctor sed venenatis at, dignissim et lacus. Aliquam ultricies lacus non nunc pulvinar, ac hendrerit nibh euismod.</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+											<tr class="otherMaterialRow"><td>http://vesa.lib.helsinki.fi/<a href="dialogs/studylevel/addOtherMaterialDialog.html" class="fancyboxpopup fancybox.ajax"/></td><td>bar foo</td><td>g in odio in, condimentum gravida turpis. Mauris cursus dapibus velit vitae placerat. Vivamus consequat non orci eu pretium. Vestibulum quam justo, auctor sed venenatis at, dignissim et lacus. Aliquam ultricies lacus non nunc pulvinar, ac hendrerit nibh euismod.</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										</tbody>
+									</table>
+									<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addOtherMaterialDialog.html" class="fancyboxpopup fancybox.ajax link">	Lisää</a></div>
+								</div>
 							</div>
 						</div>
 						
