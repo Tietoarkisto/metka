@@ -2,25 +2,53 @@
 <html lang="fi">
 	<head>
 		<script type="text/javascript">
-		$("#countrySelect").on("change", function() {
-			var country = $(this).children(":selected").attr("id");
-			if ( country == "chooseCountry") {
-				$(".countryFields").hide();
-			} else {
-				$(".countryFields").show();
-			}
+			$("#vocabularySelect").on("change", function() {
+				var country = $(this).children(":selected").attr("id");
 
-		});
+				if ( country == "chooseVocabulary") {
+					$(".countryFields").hide();
+					$(".countrySelectContainer").hide();
+				} else if ( country == "otherCountry" ) { 
+					$(".countryFields").show();
+					$(".countrySelectContainer").hide();
+					$(".countryAbbrContainer").find("input").removeAttr("disabled");
+					$(".countryAbbrContainer").find("input").val("");
+				} else {
+					$(".countrySelectContainer").show();
+					$(".countryFields").hide();
+				}
+			});
+
+			$("#countrySelect").on("change", function() {
+				var country = $(this).children(":selected").attr("id");
+
+				if ( country == "chooseCountry") {
+					$(".countryFields").hide();
+				} else {
+					$(".countryAbbrContainer").show();
+					$(".countryAbbrContainer").attr("disabled", "true");
+					$(".countryAbbrContainer").find("input").val("RUS");
+				}
+			});
+
 		</script>
 	</head>
 	<body>	
 		<div class="popupContainer">
 			<h1 class="pageTitle">Lisää Maa</h1>
 			<div class="popupRowHolder">
+				<label class="inputRowLabel">Sanasto</label>
+				<select id="vocabularySelect"><option id="chooseVocabulary">Valitse sanasto..</option><option>EU27</option><option>G20</option><option>AU</option><option id="otherCountry">Muu</option></select>
+			</div>
+			<div class="popupRowHolder countrySelectContainer">
 				<label class="inputRowLabel">Maa</label>
 				<select id="countrySelect"><option id="chooseCountry">Valitse maa..</option><option>Venäjä</option><option>Espanja</option><option>Portugali</option><option>Alankomaat</option></select>
 			</div>
-			<div class="popupRowHolder countryFields">
+			<div class="popupRowHolder countryFields countryFieldContainer">
+				<label class="inputRowLabel">Maa</label>
+				<input type="text" value="" style="width: 290px;"/>
+			</div>
+			<div class="popupRowHolder countryFields countryAbbrContainer">
 				<label class="inputRowLabel">Lyhenne</label>
 				<input type="text" disabled="true" value="RUS" style="width: 290px;"/>
 			</div>
