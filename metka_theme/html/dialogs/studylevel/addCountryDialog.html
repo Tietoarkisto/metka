@@ -1,0 +1,34 @@
+<!DOCTYPE HTML>
+<html lang="fi">
+	<head>
+		<script type="text/javascript">
+		$("#countrySelect").on("change", function() {
+			var country = $(this).children(":selected").attr("id");
+			if ( country == "chooseCountry") {
+				$(".countryFields").hide();
+			} else {
+				$(".countryFields").show();
+			}
+
+		});
+		</script>
+	</head>
+	<body>	
+		<div class="popupContainer">
+			<h1 class="pageTitle">Lisää Maa</h1>
+			<div class="popupRowHolder">
+				<label class="inputRowLabel">Maa</label>
+				<select id="countrySelect"><option id="chooseCountry">Valitse maa..</option><option>Venäjä</option><option>Espanja</option><option>Portugali</option><option>Alankomaat</option></select>
+			</div>
+			<div class="popupRowHolder countryFields">
+				<label class="inputRowLabel">Lyhenne</label>
+				<input type="text" disabled="true" value="RUS" style="width: 290px;"/>
+			</div>
+			<div class="popupButtonsHolder">
+				<input type="button" class="searchFormInput" value="Peruuta">
+				<input type="button" class="searchFormInput" value="OK">
+			</div>
+		
+		</div>	
+	</body>
+</html>

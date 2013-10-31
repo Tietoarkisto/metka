@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html lang="fi">
+	<head>
+		<script type="text/javascript">
+
+			$(".link").on("click", function() {
+				var newRow = $(this).parent().clone(true);
+				$(newRow).find("label").removeClass("link");
+				$(newRow).find("img").css('visibility', 'visible');
+				$(newRow).insertAfter($(this).parent());
+			});
+
+			$("img").on("click", function() {
+				$(this).parent().remove();
+			});
+		</script>
+	</head>
+	<body>	
+		<div class="popupContainer">
+			<h1 class="pageTitle">Lisää tuottaja</h1>
+			<div class="popupRowHolder personAuthor">
+				<label class="inputRowLabel">Tuottaja</label><input type="text" value=""/>
+			</div>
+			<div class="popupRowHolder">
+				<label class="inputRowLabel">Lyhenne</label><input type="text" value=""/>
+			</div>
+			<div class="popupRowHolder">
+				<label class="inputRowLabel link">Tunniste</label>
+				<input type="text" value=""/><select><option>Tyyppi1</option><option>Tyyppi2</option><option>Tyyppi3</option></select><img style="visibility: hidden;" title="Poista" src="../images/cancel.png"/>
+			</div>
+			<div class="popupRowHolder">
+				<label class="inputRowLabel link">Projektinumero</label>
+				<input type="text" value=""/><img style="visibility: hidden;" title="Poista" src="../images/cancel.png"/>
+			</div>
+			<div class="popupRowHolder">
+				<label class="inputRowLabel">Rooli</label>
+				<select><option>Rahoittaja</option><option>Projekti</option><option>Tyyppi3</option></select>
+			</div>
+			<div class="popupButtonsHolder">
+				<input type="button" class="searchFormInput" value="Peruuta">
+				<input type="button" class="searchFormInput" value="OK">
+			</div>
+		
+		</div>	
+	</body>
+</html>
