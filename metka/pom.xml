@@ -227,83 +227,16 @@
                     <showDeprecation>true</showDeprecation>
                 </configuration>
             </plugin>
-            <!--<plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>appassembler-maven-plugin</artifactId>
-                <version>1.1.1</version>
-                <configuration>
-                    <assembleDirectory>target</assembleDirectory>
-                    <programs>
-                        <program>
-                            <mainClass>fi.uta.fsd.metka.launch.Main</mainClass>
-                            <name>webapp</name>
-                        </program>
-                    </programs>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>assemble</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>-->
         </plugins>
     </build>
 
     <!-- Build profiles -->
     <profiles>
 		<profile>
-			<id>Development</id>
-			<!--<activation>
-				<property>
-					<name>env</name>
-					<value>dev</value>
-				</property>
-
-			</activation>-->
-            <properties>
-                <tomcat.version>7.0.42</tomcat.version>
+			<id>Bootstrap</id>
+			<properties>
+                <env>dev</env>
             </properties>
-            <dependencies>
-                <!-- Tomcat -->
-                <!--<dependency>
-                    <groupId>org.apache.tomcat.embed</groupId>
-                    <artifactId>tomcat-embed-core</artifactId>
-                    <version>${tomcat.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.tomcat.embed</groupId>
-                    <artifactId>tomcat-embed-logging-log4j</artifactId>
-                    <version>${tomcat.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.tomcat.embed</groupId>
-                    <artifactId>tomcat-embed-jasper</artifactId>
-                    <version>${tomcat.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.tomcat</groupId>
-                    <artifactId>tomcat-jasper</artifactId>
-                    <version>${tomcat.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.tomcat</groupId>
-                    <artifactId>tomcat-jasper-el</artifactId>
-                    <version>${tomcat.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.tomcat</groupId>
-                    <artifactId>tomcat-jsp-api</artifactId>
-                    <version>${tomcat.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.tomcat</groupId>
-                    <artifactId>tomcat-catalina</artifactId>
-                    <version>${tomcat.version}</version>
-                </dependency>-->
-            </dependencies>
             <build>
                 <plugins>
                     <plugin>
@@ -323,29 +256,21 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <!--<plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>1.2.1</version>
-                        <executions>
-                            <execution>
-                                <id>dev-exec</id>
-                                <phase>install</phase>
-                                <goals>
-                                    <goal>
-                                        java
-                                    </goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <mainClass>fi.uta.fsd.metka.launch.Main</mainClass>
-                        </configuration>
-                    </plugin>-->
                 </plugins>
             </build>
 		</profile>
-		<!--<profile>
+        <profile>
+			<id>Development</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>dev</value>
+				</property>
+
+                <activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
 			<id>Production</id>
 			<activation>
 				<property>
@@ -371,6 +296,6 @@
 					<value>qa</value>
 				</property>
 			</activation>
-		</profile>-->
+		</profile>
 	</profiles>
 </project>
