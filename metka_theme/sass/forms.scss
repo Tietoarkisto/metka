@@ -91,11 +91,14 @@
 	}
 }
 
-.materialDataSetContainer, .studyLevelDataSetContainer {
+.materialDataSetContainer {
 	font-size: 12px;
 	@include dataSetContainer(180px, 100px, 105px, 700px, 50px, 12px);
 }
-
+.studyLevelDataSetContainer {
+	font-size: 12px;
+	@include dataSetContainer(150px, 100px, 105px, 700px, 50px, 12px);
+}
 .publicationDataSetContainer {
 	@include dataSetContainer(146px, 150px, 155px, 775px, 50px, 12px);
 }
