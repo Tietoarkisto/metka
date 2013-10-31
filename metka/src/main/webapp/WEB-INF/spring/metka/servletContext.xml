@@ -23,7 +23,7 @@
 	
 	<context:component-scan base-package="fi.uta.fsd.metka" />
 	
-	<context:property-placeholder location="classpath*:site.properties" />
+	<context:property-placeholder location="classpath:site.properties" />
 	
     <beans:bean id="site.properties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
         <beans:property name="locations">
@@ -47,7 +47,7 @@
         <beans:property name="persistenceUnitName" value="metka"/>
     </beans:bean>
 
-    <beans:bean id="sessionFactory" factory-bean="entityManagerFactory" factory-method="getSessionFactory"/>
+    <!--<beans:bean id="sessionFactory" factory-bean="entityManagerFactory" factory-method="getSessionFactory"/>-->
 
     <beans:bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
         <beans:property name="driverClassName" value="${database.driver}"/>
