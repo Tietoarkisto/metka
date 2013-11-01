@@ -1,0 +1,42 @@
+@import "global";
+
+#vocabularyTable, #standardTextTable{
+	width: 100%;
+
+	tr {
+		border: solid 1px $pageColorB;
+		td {
+			padding: 5px;
+
+			a {
+				display: block;
+			}
+		}
+	}
+}
+.vocabularyContainer{
+	width: 500px;
+	height: 630px;
+}
+
+#standardTextTable td {
+	vertical-align: middle;
+	padding: 10px;
+}
+
+#userInfo {
+	position: relative;
+
+	.userPropertyRow {
+		padding-top: 25px;
+
+		.userProperty, .userValue {
+			float: left;
+			padding-left: 10px;
+			position: absolute;
+		}
+		.userValue {
+			left: 200px;
+		}
+	}
+}

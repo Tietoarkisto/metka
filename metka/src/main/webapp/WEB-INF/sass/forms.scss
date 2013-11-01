@@ -1,0 +1,465 @@
+@import "global";
+
+#fileNameErrorRow, #materialFileInfoRow, #materialCodebookRow, #materialErrorInfoRow, 
+#groupedVariableTreeContainer, #variableDataContainer, #variableData, #variableGroupData, 
+#variablesGroupingContainer, #additionalFilingContractFile, .translationEn, .translationSv, 
+.variableTranslationTable, .organizationAuthor, .organizationCollector, 
+.keywordFields, .vocabularyFields, .noVocabulary, .topicFields, .otherWord, .wordFields, 
+.countrySelectContainer, .countryFields, .geoCoverSelectContainer, .geoCoverFields {
+	display: none;
+}
+
+.upperContainer {
+	margin:10px;
+	font-size:12px;
+}
+
+.rowContainer{
+	clear: both;
+	display: block;
+
+	.translations {
+		.translationLinkEn, .translationLinkSv, .translationLinkFi {
+			@include translationLink;
+			font-size: 15px;
+			margin-bottom: 10px;	
+		}
+	}
+}
+
+.translations .clicked {
+	background-color: $pageColorB;
+}
+
+/* Yläosan leveämmät fieldit */
+.materialDataSetContainerTopRow{
+	float: left;
+
+	label {
+		display: block;
+		float: left;
+		margin-bottom: 10px;
+		width: 180px;
+	}
+
+	input {
+		width: 690px;
+		margin-right: 10px;
+	}
+}
+
+.materialDataSetTextareaContainer {
+	font-size: 12px;
+	float: left;
+	margin-top: 10px;
+	margin-bottom: 10px;
+
+	label {
+		width: 400px;
+		clear: both;
+		display:block;
+	}
+	textarea {
+		width: 440px;
+		height: 60px;
+	}
+}
+
+@mixin dataSetContainer($labelWidth, $inputWidth, $selectWidth, $textareaWidth, $textAreaHeight, $font-size) {
+	float: left;
+	label {
+		display: block;
+		float: left;
+		margin-bottom: 10px;
+		font-size: $font-size;
+		width: $labelWidth;
+	}
+	input {
+		font-size:$font-size;
+		width: $inputWidth;
+		margin-right: 10px;
+	}
+	select {
+		font-size: $font-size;
+		width: $selectWidth;
+		margin-right: 10px;
+	}
+	textarea {
+		font-size: $font-size;
+		width: $textareaWidth;
+		height: $textAreaHeight;
+	}
+}
+
+.materialDataSetContainer {
+	font-size: 12px;
+	@include dataSetContainer(180px, 100px, 105px, 700px, 50px, 12px);
+}
+.studyLevelDataSetContainer {
+	font-size: 12px;
+	@include dataSetContainer(150px, 100px, 105px, 700px, 50px, 12px);
+}
+.publicationDataSetContainer {
+	@include dataSetContainer(146px, 150px, 155px, 775px, 50px, 12px);
+}
+
+.seriesDataSetContainer {
+	float: left;
+	label {
+		display: block;
+		float: left;
+		margin-bottom: 20px;
+		width: 150px;
+	}
+	input {
+		width: 450px;
+		margin-right: 10px;
+		padding: 5px;
+	}
+	select {
+		width: 465px;
+		margin-right: 10px;
+		padding: 5px;
+	}
+	textarea {
+		font-size: 12px;
+		width: 460px;
+		height: 100px;
+	}
+}
+
+@mixin actionLinkHolder($width, $font-size) {
+	clear: left;
+    display: inline-block;
+    text-align: right;
+    width: $width;
+    font-size: $font-size;
+}
+
+#materialStudyLevel {
+	#studyLevelTopRow {
+		position: relative;
+		padding-bottom: 25px;
+
+		#toggleAccordion {
+			position: absolute;
+			margin-left: 10px;
+		}
+		.translations {
+			position: absolute;
+			left: 120px;
+
+			.translationLinkSv, .translationLinkEn, .translationLinkFi {
+				margin-top: 5px;
+				@include translationLink;
+			}
+		}
+	}
+	
+	#studyLevelData {
+		padding: 10px;
+
+		.studyLevelTitle {
+			&:hover {
+				background: $pageColorB;
+				color: #fff;
+			}
+			&.ui-state-active {
+				background: $pageColorB;	
+			}
+		}
+
+		.accordionTableActionLinkHolder {
+			@include actionLinkHolder(850px, 12px);
+		}
+
+
+		table {
+			width: 850px;
+		}
+
+		.studyLevelTableTitle {
+			font-size: 12px;
+			padding-top: 10px;
+		}
+		.metkaTable {
+			@extend table.metkaTable;
+			margin:0px 10px 0px 0px;
+			width: 850px;
+		}
+
+		.studyLevelDataSetTextareaContainer {
+			@extend .materialDataSetTextareaContainer;
+
+			textarea {
+				width: 400px;
+			}
+		}
+	}
+}
+
+@mixin prevNextContainer($display, $float, $margin-bottom, $margin-right) {
+	display: $display;
+	float: $float;
+	margin-bottom: $margin-bottom;
+	margin-right: $margin-right;
+}
+
+@mixin prevNextButtons($font-size, $floatPrev, $floatNext, $padding) {
+	h1.prev{
+		font-size: $font-size;
+		float:$floatPrev;
+		background: $pageColorB;
+		color: $pageColorA;
+		padding: $padding;
+		cursor: pointer;
+	}
+	h1.next{
+		font-size: $font-size;
+		float:$floatNext;
+		background: $pageColorB;
+		color: $pageColorA;
+		padding: $padding;
+		margin-left: 10px;
+		cursor: pointer;
+	}
+}
+
+.prevNextContainer{
+	@include prevNextContainer(inline-block, right, 20px, 20px);	
+
+	@include prevNextButtons(22px, left, right, 10px);
+}
+
+#variablesPrevNextContainer {
+	@include prevNextContainer(inline, top, 0px, 0px);
+
+	@include prevNextButtons(12px, left, right, 5px);
+}
+
+/* RENAME */
+.materialPrevNextContainer{
+	@include prevNextContainer(inline-block, right, 0px, 20px);
+	width:900px;
+}
+
+.viewFormButtonsHolder{
+    clear: left;
+    display: inline-block;
+    margin-top: 20px;
+    text-align: right;
+    width: 950px;
+
+    input {
+		margin-left: 20px;
+	}
+}
+
+.materialTableButtonsHolder {
+    clear: left;
+    display: inline-block;
+    text-align: right;
+    width: 920px;
+}
+
+.materialTableActionLinkHolder, .publicationTableActionLinkHolder {
+    @include actionLinkHolder(920px, 12px);
+}
+
+.materialRowTitle, .publicationRowTitle {
+	font-size: 12px;
+	padding-left: 10px;
+}
+
+#materialAddNewFileContainer {
+	display: block;
+	float: right;
+	padding: 5px;
+}
+
+#materialAddNewFileButton {
+	position: relative;
+	float: right;
+}
+
+#materialCodebookTitle {
+	padding: 10px;
+}
+
+#materialFileInfoRow, #materialRemovedFileInfoRow {
+	padding-bottom: 20px;
+}
+
+#materialVariables {
+
+	#variablesTreeSelection {
+		text-align: center;
+
+		.variableTreeRadioSelect {
+			top: 0;
+			display: inline-block;
+			padding-bottom: 20px;
+			padding-right: 20px;
+		}
+	}
+
+	#variablesMainContainer {
+		position: relative;
+
+		.variablesTree {
+			top: 40;
+			left: 0;
+			width: 450px;
+			font-size: 12px;
+			min-height: 400px;
+			float: left;
+		}
+
+		.variableTranslationTable {
+			padding-top: 30px;
+			font-size: 15px;
+			padding-left: 20px;
+			width: 430px;
+			min-height: 400px;
+			float: left;
+
+			thead {
+				.variableName {
+					width: 190px;
+				}
+				.variableContent {
+					width: 240px;
+				}
+			}
+			input {
+				width: 240px;
+			}
+		}
+
+		#groupedVariableTreeContainer {
+			#newFolder {
+				padding-left: 10px;
+			}
+			#newFolderName {
+				width: 150px;
+			}
+		}
+
+		#basicVariableTreeContainer {
+			#variableFilter {
+				padding-left: 20px;
+			}
+			ul {
+				padding-left: 20px;
+				list-style: none;
+			}
+
+			.selectedVariable {
+				font-weight: bold;
+				color: #5CAFDF;
+			}
+		}
+
+		#variableDataContainer {
+			top: 40;
+			right: 0;
+			width: 450px;
+			float: left;
+			margin-left: 10px;
+
+			#variableData, #variableGroupData {
+				thead {
+					.variableName {
+						width: 200px;
+					}
+					.variableContent {
+						width: 250px;
+					}
+				}
+				padding-right: 10px;
+
+				.variableDataTable {
+					position: absolute;
+					float: top;
+					top: 30px;
+					padding-right: 10px;
+
+					input {
+						width: 250px;
+					}
+				}
+			}
+
+			.translations {
+				.variableTranslationLink {
+					@include translationLink;
+				}
+			}
+
+			#variableGroupData {
+				#variableGroupName {
+					vertical-align: middle;
+				}
+			}
+		}
+
+		#variablesGroupingContainer {
+			padding: 10px;
+			position: relative;
+
+			$groupingBoxWidth: 440px;
+
+			.variablesGroupingBox {
+				border-style: solid;
+				border-width: 1px;
+				height: 420px;
+				width: $groupingBoxWidth;
+			}
+
+			#variablesBox {
+				float: left;
+				padding: 5px;
+				
+				ul {
+					list-style: none;
+				}
+			}
+			#variablesToGroupArrowBox {
+				float: left;
+				left: $groupingBoxWidth;
+				padding: 150px 10px 0 10px;
+
+				#variablesToGroupArrow {
+					font-size: 15px;
+					background: $pageColorB;
+					color: $pageColorA;
+					padding: 3px;
+					cursor: pointer;
+				}
+			}
+			#variableGroupsBox {
+				float: right;
+				padding: 5px;
+			}
+		}
+	}
+}
+
+#materialFileInfoContent, #materialRemovedFileInfoContent, #materialErrorInfoContent {
+	padding: 10px;
+	font-size: 12px;
+
+	th.errorInfoLabel {
+		width: 120px;
+	}
+
+	tbody {
+		td {
+			padding: 3px;
+		}		
+
+		.fileInfoLabel, .errorInfoLabel {
+			font-weight: bold;
+		}
+	}
+}

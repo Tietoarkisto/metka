@@ -1,0 +1,90 @@
+@import "global";
+
+nav {
+	display: inline-block;
+
+	.mainNavUl{
+		li {
+			float: left;
+
+			a {
+				padding: 60px 8px 20px 10px;
+				display: block;
+				background-color: $pageColorA;
+				text-decoration: none;
+				color: $pageColorE;
+
+				&.selected {
+					background-color: $pageColorB;
+					color: $pageColorA;
+				}
+
+				&:hover {
+					text-decoration: underline;
+					@include transition(0.25s);
+				}
+			}
+		}
+	}	
+}
+
+.logoutLink{
+	text-decoration: none;
+	color: #000;
+	margin-bottom: 10px !important;
+	display: inline-block;
+	text-align: right;
+	width: 160px;
+}
+
+.tabs{
+	position: relative;
+	display: block;
+	clear:both;
+	min-height: 275px;
+}
+.tabs2{
+	display: block;
+	clear:both;
+	min-height: 275px;
+}
+.tab2, .tab3, .tab4, .tab5, .tab6, .tab7, .tab8 {
+	display: none;
+}
+
+@mixin tabNavi($bottomMargin, $topMargin, $leftMargin) {
+	display: inline-block;
+	list-style: none outside none;
+	margin-bottom: $bottomMargin;
+	margin-top: $topMargin;
+	margin-left: $leftMargin;
+	float: left;
+
+	li {
+		float: left;
+
+		a {
+			background-color: $pageColorA;
+			color: $pageColorE;
+			display: block;
+			padding: 10px;
+			text-decoration: none;
+			cursor:pointer;
+
+			&.selected {
+				background-color: $pageColorB;
+				color: $pageColorA;
+				cursor: default;
+			}
+		}
+	}
+}
+
+.tabNavi ul {
+	@include tabNavi(20px, -10px, 10px); 
+}
+
+.materialTabNavi ul {
+	@include tabNavi(20px, 10px, -20px); 
+}
+
