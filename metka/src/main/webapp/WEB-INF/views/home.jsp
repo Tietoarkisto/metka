@@ -11,5 +11,18 @@
 </h1>
 
 <P>  <spring:message code="time.is"/> ${serverTime}. </P>
+<h1>
+    <spring:message code="materials.title" />
+</h1>
+<table>
+    <tbody>
+        <c:forEach var="material" items="${materials}">
+            <tr>
+                <td>${material.id}</td>
+                <td>${material.name}</td>
+            </tr>
+        </c:forEach>
+    </tbody>
+</table>
 </body>
 </html>

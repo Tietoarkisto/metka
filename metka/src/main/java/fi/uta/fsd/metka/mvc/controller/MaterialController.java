@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Locale;
 
 import fi.uta.fsd.metka.data.entity.MaterialEntity;
+import fi.uta.fsd.metka.mvc.domain.DomainFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,16 +15,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import fi.uta.fsd.metka.service.MaterialService;
-
 /**
  * Handles requests for the application home page.
  */
-@Controller
+@Controller("materialController")
 public class MaterialController {
 	
 	@Autowired
-	private MaterialService materialService;
+	private DomainFacade domain;
 	
 	private static final Logger logger = LoggerFactory.getLogger(MaterialController.class);
 	
@@ -37,9 +36,9 @@ public class MaterialController {
 		Date date = new Date();
 		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
 		
-		MaterialEntity material = materialService.getMaterialService(1l);
+		//MaterialEntity material = materialService.getMaterialService(1l);
 
-        List<MaterialEntity> materials = materialService.getAllMaterials();
+        List<MaterialEntity> materials = domain.findAllMaterials();
 		String formattedDate = dateFormat.format(date);
 		
 //		model.addAttribute("materialName", material.getName());

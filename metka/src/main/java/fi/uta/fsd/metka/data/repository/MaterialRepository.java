@@ -1,6 +1,6 @@
 package fi.uta.fsd.metka.data.repository;
 
-import fi.uta.fsd.metka.entity.MaterialEntity;
+import fi.uta.fsd.metka.data.entity.MaterialEntity;
 
 import java.util.List;
 
