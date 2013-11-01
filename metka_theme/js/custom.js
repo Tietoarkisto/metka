@@ -59,8 +59,11 @@ $(document).ready(function(){
 	$(".materialFileRow, .materialCodebookFileRow, .materialErrorRow, .desktopWidgetDataRow, " +
 		".materialSearchResultRow, .publicationSearchResultRow, .seriesSearchResultRow, " + 
 		".materialSeriesRow, .materialPublicationRow, .materialMaterialRow, #variablesListBasic li, " +
-		".publicationSeriesRow, .publicationMaterialRow, .materialBinderRow, .binderRow, .translationLink, " + 
-		".materialRemovedFileRow, #filingContractFile, .versionRow, .translationLinkEn, .translationLinkSv, .translationLinkFi").hover(function() {
+		".publicationSeriesRow, .publicationMaterialRow, .materialBinderRow, .binderRow, " + 
+		".materialRemovedFileRow, #filingContractFile, .versionRow, " + 
+		".link, .translationLink, .translationLinkEn, .translationLinkSv, .translationLinkFi, .variableTranslationLink, " +
+		".studyLevelIdRow, .parTitleRow, .otherMaterialRow, .relatedMaterialRow" + 
+		".removeAddedElement").hover(function() {
 		    $(this).css('cursor', 'pointer');
 		}, function() {
 		    $(this).css('cursor', 'auto');		    
@@ -95,11 +98,13 @@ $(document).ready(function(){
 		if ( !translationEnVisible && !translationSvVisible ) {
 			$(".rowContainer:not(.containsTranslations)").show();
 			$(".materialDataSetContainer:not(.translated), .materialDataSetTextareaContainer:not(.translated)").show();
+			$(".studyLevelDataSetContainer:not(.translated), .studyLevelDataSetTextareaContainer:not(.translated)").show();
 			// Jos toinen tiedosto, näytä tämä
 			$("#additionalFilingContractFile").hide();
 		} else {
 			$(".rowContainer:not(.containsTranslations)").hide();
 			$(".materialDataSetContainer:not(.translated), .materialDataSetTextareaContainer:not(.translated)").hide();
+			$(".studyLevelDataSetContainer:not(.translated), .studyLevelDataSetContainer:not(.translated)").hide();
 		}
 	}
 
@@ -291,6 +296,12 @@ $(document).ready(function(){
         ]
 	});
 
+	$(".studyLevelOrderedTable").dataTable({
+		"bPaginate": false,
+        "bFilter": false, 
+        "bInfo": false
+	}).rowReordering();
+
 	$(".materialFileRow").on("click", function() {
 		showFileInfo($(this), "#materialFileInfoContent", "#materialFileInfoRow");	
 	});
@@ -372,6 +383,39 @@ $(document).ready(function(){
 		$("#groupedVariableTreeContainer").hide();
 		$("#variableDataContainer").hide();
 		$("#variableGroupData").hide();
+	});
+
+	$("#variableTranslationLinkSv").on("click", function() {
+		if ( $(this).hasClass("clicked")) {
+			$(this).removeClass("clicked");
+			$("#basicVariableTreeContainer").show();
+			$("#variableTranslationSv").hide();
+		} else {			
+			$(this).addClass("clicked");
+			$("#basicVariableTreeContainer").hide();
+
+			if ( $("#variableTranslationLinkEn").hasClass("clicked") ) {
+				$("#variableTranslationLinkEn").removeClass("clicked");
+				$("#variableTranslationEn").hide();
+			}
+			$("#variableTranslationSv").show();
+		}
+	});
+
+	$("#variableTranslationLinkEn").on("click", function() {
+		if ( $(this).hasClass("clicked")) {
+			$(this).removeClass("clicked");
+			$("#basicVariableTreeContainer").show();
+			$("#variableTranslationEn").hide();
+		} else {			
+			$(this).addClass("clicked");
+			$("#basicVariableTreeContainer").hide();			
+			if ( $("#variableTranslationLinkSv").hasClass("clicked") ) {
+				$("#variableTranslationLinkSv").removeClass("clicked");
+				$("#variableTranslationSv").hide();
+			}
+			$("#variableTranslationEn").show();
+		}
 	});
 
 	$('#variableFilterInput').fastLiveFilter('#variablesListBasic');
@@ -493,9 +537,9 @@ $(document).ready(function(){
 		}
 	});
 
-	$(".materialBinderRow, .binderRow").on("click", function(e) {
+	$(".materialBinderRow, .binderRow, .versionRow, .studyLevelIdRow, .parTitleRow, .otherMaterialRow, .relatedMaterialRow").on("click", function(e) {
 		if($(e.target.nodeName).is('TD')){
-			$(this).find(".showBinderInfo").click();
+			$(this).find("a").click();
 		}
 	});
 	
@@ -503,10 +547,17 @@ $(document).ready(function(){
 		$("#additionalFilingContractFile").toggle();
 	});
 
-	$(".versionRow").on("click", function(e) {
-		if($(e.target.nodeName).is('TD')){
-			$(this).find(".showVersionInfo").click();
-		}
+
+	$("#studyLevelAltTitle, #studyLevelAppraisal, #studyLevelDataSource").on("click", function() {
+		var newRow = $(this).parent().parent().clone(true);
+		$(newRow).find(".link").attr("id", "");
+		$(newRow).find("label").removeClass("link");
+		$(newRow).find("img").show();
+		$(newRow).insertAfter($(this).parent().parent());
+	});
+
+	$(".removeAddedElement").on("click", function() {
+		$(this).parent().parent().remove();
 	});
 
 	/*** JULKAISU ***/

@@ -216,8 +216,8 @@ footer {
   color: #ccc !important;
   opacity: 1 !important; }
 
-/*TABLE SORTER CSS*/
-table.metkaTable {
+/*TABLE CSS*/
+table.metkaTable, #materialStudyLevel #studyLevelData .metkaTable {
   border-bottom: solid 1px #009ee0;
   border-left: solid 1px #009ee0;
   border-right: solid 1px #009ee0;
@@ -225,32 +225,32 @@ table.metkaTable {
   font-size: 8pt;
   width: 940px;
   text-align: left; }
-  table.metkaTable a {
+  table.metkaTable a, #materialStudyLevel #studyLevelData .metkaTable a {
     text-decoration: none;
     color: #000; }
-  table.metkaTable thead tr th, table.metkaTable thead tfoot tr th {
+  table.metkaTable thead tr th, #materialStudyLevel #studyLevelData .metkaTable thead tr th, table.metkaTable thead tfoot tr th, #materialStudyLevel #studyLevelData .metkaTable thead tfoot tr th {
     background-color: #009ee0;
     font-size: 15px;
     padding: 4px;
     color: white; }
-  table.metkaTable thead tr .header {
+  table.metkaTable thead tr .header, #materialStudyLevel #studyLevelData .metkaTable thead tr .header {
     background-image: url(../images/bg.gif);
     background-repeat: no-repeat;
     background-position: center right;
     cursor: pointer; }
-  table.metkaTable thead tr .headerSortUp {
+  table.metkaTable thead tr .headerSortUp, #materialStudyLevel #studyLevelData .metkaTable thead tr .headerSortUp {
     background-color: #8dbdd8;
     background-image: url(../images/asc.gif); }
-  table.metkaTable thead tr .headerSortDown {
+  table.metkaTable thead tr .headerSortDown, #materialStudyLevel #studyLevelData .metkaTable thead tr .headerSortDown {
     background-color: #8dbdd8;
     background-image: url(../images/desc.gif); }
-  table.metkaTable tbody tr:hover {
+  table.metkaTable tbody tr:hover, #materialStudyLevel #studyLevelData .metkaTable tbody tr:hover {
     background-color: #eaeaea; }
-  table.metkaTable tbody td {
+  table.metkaTable tbody td, #materialStudyLevel #studyLevelData .metkaTable tbody td {
     color: #000;
     padding: 4px;
     vertical-align: top; }
-  table.metkaTable tbody tr.odd td {
+  table.metkaTable tbody tr.odd td, #materialStudyLevel #studyLevelData .metkaTable tbody tr.odd td {
     background-color: #EAEAEA; }
 
 .searchFormInput {
@@ -667,7 +667,10 @@ nav {
 /** MATERIAL, PUBLICATION, SERIES **/
 #fileNameErrorRow, #materialFileInfoRow, #materialCodebookRow, #materialErrorInfoRow,
 #groupedVariableTreeContainer, #variableDataContainer, #variableData, #variableGroupData,
-#variablesGroupingContainer, #additionalFilingContractFile, .translationEn, .translationSv {
+#variablesGroupingContainer, #additionalFilingContractFile, .translationEn, .translationSv,
+.variableTranslationTable, .organizationAuthor, .organizationCollector,
+.keywordFields, .vocabularyFields, .noVocabulary, .topicFields, .otherWord, .wordFields,
+.countrySelectContainer, .countryFields, .geoCoverSelectContainer, .geoCoverFields {
   display: none; }
 
 .upperContainer {
@@ -702,15 +705,16 @@ nav {
     width: 690px;
     margin-right: 10px; }
 
-.materialDataSetTextareaContainer {
+.materialDataSetTextareaContainer, #materialStudyLevel #studyLevelData .studyLevelDataSetTextareaContainer {
+  font-size: 12px;
   float: left;
   margin-top: 10px;
   margin-bottom: 10px; }
-  .materialDataSetTextareaContainer label {
+  .materialDataSetTextareaContainer label, #materialStudyLevel #studyLevelData .studyLevelDataSetTextareaContainer label {
     width: 400px;
     clear: both;
     display: block; }
-  .materialDataSetTextareaContainer textarea {
+  .materialDataSetTextareaContainer textarea, #materialStudyLevel #studyLevelData .studyLevelDataSetTextareaContainer textarea {
     width: 440px;
     height: 60px; }
 
@@ -732,6 +736,28 @@ nav {
     width: 105px;
     margin-right: 10px; }
   .materialDataSetContainer textarea {
+    font-size: 12px;
+    width: 700px;
+    height: 50px; }
+
+.studyLevelDataSetContainer {
+  font-size: 12px;
+  float: left; }
+  .studyLevelDataSetContainer label {
+    display: block;
+    float: left;
+    margin-bottom: 10px;
+    font-size: 12px;
+    width: 150px; }
+  .studyLevelDataSetContainer input {
+    font-size: 12px;
+    width: 100px;
+    margin-right: 10px; }
+  .studyLevelDataSetContainer select {
+    font-size: 12px;
+    width: 105px;
+    margin-right: 10px; }
+  .studyLevelDataSetContainer textarea {
     font-size: 12px;
     width: 700px;
     height: 50px; }
@@ -809,28 +835,14 @@ nav {
     font-size: 12px; }
   #materialStudyLevel #studyLevelData table {
     width: 850px; }
-  #materialStudyLevel #studyLevelData .dataSetContainer {
-    float: left; }
-    #materialStudyLevel #studyLevelData .dataSetContainer label {
-      display: block;
-      float: left;
-      margin-bottom: 10px;
-      font-size: 12px;
-      width: 150px; }
-    #materialStudyLevel #studyLevelData .dataSetContainer input {
-      font-size: 12px;
-      width: 100px;
-      margin-right: 10px; }
-    #materialStudyLevel #studyLevelData .dataSetContainer select {
-      font-size: 12px;
-      width: 105px;
-      margin-right: 10px; }
-    #materialStudyLevel #studyLevelData .dataSetContainer textarea {
-      font-size: 12px;
-      width: 300px;
-      height: 40px; }
-#materialStudyLevel label {
-  font-size: 15px; }
+  #materialStudyLevel #studyLevelData .studyLevelTableTitle {
+    font-size: 12px;
+    padding-top: 10px; }
+  #materialStudyLevel #studyLevelData .metkaTable {
+    margin: 0px 10px 0px 0px;
+    width: 850px; }
+  #materialStudyLevel #studyLevelData .studyLevelDataSetTextareaContainer textarea {
+    width: 400px; }
 
 .prevNextContainer {
   display: inline-block;
@@ -874,7 +886,7 @@ nav {
     margin-left: 10px;
     cursor: pointer; }
 
-/* naming */
+/* RENAME */
 .materialPrevNextContainer {
   display: inline-block;
   float: right;
@@ -935,10 +947,23 @@ nav {
   #materialVariables #variablesMainContainer .variablesTree {
     top: 40;
     left: 0;
-    width: 420px;
+    width: 450px;
     font-size: 12px;
     min-height: 400px;
     float: left; }
+  #materialVariables #variablesMainContainer .variableTranslationTable {
+    padding-top: 30px;
+    font-size: 15px;
+    padding-left: 20px;
+    width: 430px;
+    min-height: 400px;
+    float: left; }
+    #materialVariables #variablesMainContainer .variableTranslationTable thead .variableName {
+      width: 190px; }
+    #materialVariables #variablesMainContainer .variableTranslationTable thead .variableContent {
+      width: 240px; }
+    #materialVariables #variablesMainContainer .variableTranslationTable input {
+      width: 240px; }
   #materialVariables #variablesMainContainer #groupedVariableTreeContainer #newFolder {
     padding-left: 10px; }
   #materialVariables #variablesMainContainer #groupedVariableTreeContainer #newFolderName {
@@ -954,14 +979,15 @@ nav {
   #materialVariables #variablesMainContainer #variableDataContainer {
     top: 40;
     right: 0;
-    width: 500px;
-    float: left; }
+    width: 450px;
+    float: left;
+    margin-left: 10px; }
     #materialVariables #variablesMainContainer #variableDataContainer #variableData, #materialVariables #variablesMainContainer #variableDataContainer #variableGroupData {
       padding-right: 10px; }
       #materialVariables #variablesMainContainer #variableDataContainer #variableData thead .variableName, #materialVariables #variablesMainContainer #variableDataContainer #variableGroupData thead .variableName {
         width: 200px; }
       #materialVariables #variablesMainContainer #variableDataContainer #variableData thead .variableContent, #materialVariables #variablesMainContainer #variableDataContainer #variableGroupData thead .variableContent {
-        width: 300px; }
+        width: 250px; }
       #materialVariables #variablesMainContainer #variableDataContainer #variableData .variableDataTable, #materialVariables #variablesMainContainer #variableDataContainer #variableGroupData .variableDataTable {
         position: absolute;
         float: top;
@@ -969,7 +995,7 @@ nav {
         padding-right: 10px; }
         #materialVariables #variablesMainContainer #variableDataContainer #variableData .variableDataTable input, #materialVariables #variablesMainContainer #variableDataContainer #variableGroupData .variableDataTable input {
           width: 250px; }
-    #materialVariables #variablesMainContainer #variableDataContainer .translations .translationLinkSv, #materialVariables #variablesMainContainer #variableDataContainer .translations .translationLinkEn, #materialVariables #variablesMainContainer #variableDataContainer .translations .translationLinkFi {
+    #materialVariables #variablesMainContainer #variableDataContainer .translations .variableTranslationLink {
       float: left;
       margin-right: 10px;
       font-size: 15px;
