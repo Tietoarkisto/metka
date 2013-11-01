@@ -1,9 +1,11 @@
-package fi.uta.fsd.metka;
+package fi.uta.fsd.metka.mvc.controller;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
+import fi.uta.fsd.metka.data.entity.MaterialEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +14,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import fi.uta.fsd.metka.domain.Material;
 import fi.uta.fsd.metka.service.MaterialService;
 
 /**
@@ -36,12 +37,14 @@ public class MaterialController {
 		Date date = new Date();
 		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
 		
-		Material material = materialService.getMaterialService(1l);
-		
+		MaterialEntity material = materialService.getMaterialService(1l);
+
+        List<MaterialEntity> materials = materialService.getAllMaterials();
 		String formattedDate = dateFormat.format(date);
 		
 //		model.addAttribute("materialName", material.getName());
 		model.addAttribute("serverTime", formattedDate );
+        model.addAttribute("materials", materials);
 		
 		return "home";
 	}
