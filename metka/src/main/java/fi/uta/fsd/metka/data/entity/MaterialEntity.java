@@ -1,44 +1,38 @@
 package fi.uta.fsd.metka.data.entity;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
-@Table(name = "materials")
+@Table(name = "MATERIAL")
 public class MaterialEntity {
 
     @Id
-    @SequenceGenerator(name="materials_id_seq", sequenceName="materials_id_seq", allocationSize=1)
-    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="materials_id_seq")
-    @Column(name="id", updatable = false)
-    private Long id;
+    @Column(name="MATERIAL_ID", updatable = false, length = 30)
+    private String id;
 
-    @Column(name="name")
-    private String name;
+    @Column(name = "ARCHIVED")
+    private Boolean archived;
 
-    @Column(name="description")
-    private String description;
+    @OneToMany(mappedBy = "material", cascade = CascadeType.ALL)
+    private List<MaterialDataEntity> materialDataEntityList;
 
-    public Long getId() {
+    @ManyToMany
+    @JoinTable(
+            name = "BINDER_MATERIAL",
+            joinColumns = {@JoinColumn(name = "MATERIAL_ID", referencedColumnName = "MATERIAL_ID")},
+            inverseJoinColumns = {@JoinColumn(name = "BINDER_ID", referencedColumnName = "BINDER_ID")}
+    )
+    private List<BinderEntity> binderList;
+
+    @OneToMany(mappedBy = "targetMaterial")
+    private List<MaterialErrorEntity> errorList;
+
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 }

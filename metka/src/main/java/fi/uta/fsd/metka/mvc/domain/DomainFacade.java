@@ -19,12 +19,12 @@ public class DomainFacade {
     @Autowired
     MaterialRepository materialRepository;
 
-    public MaterialEntity createMaterial(MaterialEntity material) {
+    /*public MaterialEntity createMaterial(MaterialEntity material) {
         if(material.getId() == null) {
             material.setId(materialRepository.create(material));
         }
         return material;
-    }
+    }*/
 
     public List<MaterialEntity> findAllMaterials() {
         return materialRepository.findAll();

@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface MaterialRepository {
     public MaterialEntity update(MaterialEntity material);
-    public Long create(MaterialEntity material);
+    //public String create(MaterialEntity material);
     public void delete(MaterialEntity material);
 
     public List<MaterialEntity> findAll();

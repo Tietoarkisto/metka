@@ -7,15 +7,15 @@ $(document).ready(function(){
 			$(".tabNavi ul li a").removeClass("selected");
 			$(this).addClass("selected");
 			var selectedId = $(this).attr("id");
-			if(currentId > selectedId){ 
-				$(".tabs").hide();
-				$(".tab" + selectedId).show();
-			}else{
-				$(".tabs").hide();
-				$(".tab" + selectedId).show();
-			}
-		}
-	});
+            if(currentId > selectedId){
+                $(".tabs").hide();
+                $(".tab" + selectedId).show();
+            }else{
+                $(".tabs").hide();
+                $(".tab" + selectedId).show();
+            }
+        }
+    });
 
 	
 	$(".saveNewQueryButton").click(function(){

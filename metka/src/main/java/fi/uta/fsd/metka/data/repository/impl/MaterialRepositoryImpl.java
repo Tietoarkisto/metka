@@ -25,11 +25,11 @@ public class MaterialRepositoryImpl implements MaterialRepository {
         return em.merge(material);
     }
 
-    @Override
-    public Long create(MaterialEntity material) {
+    /*@Override
+    public String create(MaterialEntity material) {
         em.persist(material);
         return material.getId();
-    }
+    }*/
 
     @Override
     public void delete(MaterialEntity material) {
