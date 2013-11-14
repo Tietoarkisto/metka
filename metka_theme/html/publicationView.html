@@ -25,7 +25,7 @@
 						<li><a href="desktop.html">Työpöytä</a></li>
 						<li><a href="expertSearch.html">Eksperttihaku</a></li>	
 						<li><a href="materialSearch.html">Aineistot</a></li>
-						<li><a href="publicationSearch.html">Julkaisut</a></li>
+						<li><a href="publicationSearch.html" class="selected">Julkaisut</a></li>
 						<li><a href="seriesSearch.html">Sarjat</a></li>	
 						<li><a href="binders.html">Mapit</a></li>	
 						<li><a href="reports.html">Raportit</a></li>
@@ -35,12 +35,18 @@
 					<div style="clear:both;"></div>				
 				</nav>
 				<div class="searchContainer">
-					<a class="logoutLink" href="#">Kirjaudu ulos</a>
+					<a class="logoutLink" href="../index.html">Kirjaudu ulos</a>
 					<form action="material.html" class="quickSearchForm">
 						<input type="text" autocomplete="off" dir="ltr" class="searchInput" placeholder="Aineiston id-nro" />
 						<input type="submit" value="Hae" class="searchButton"/>
 					</form>					
 				</div>	
+
+				<div class="languageSelect">
+					<input type="radio" name="language" value="fi"/>fi
+					<input type="radio" name="language" value="en"/>en
+					<input type="radio" name="language" value="sv"/>sv
+				</div>
 			</div>
 			
 		</header>
@@ -54,25 +60,25 @@
 						<div class="rowContainer">
 							<div class="publicationDataSetContainer"><label>Julkaisuvuosi</label><input type="text" name="publicationvuosi" value="2006" /></div>
 							<div class="publicationDataSetContainer"><label>Voiko julkaista</label><select><option>Kyllä</option></select></div>
-							<div class="publicationDataSetContainer"><label>Julkaisu id-nro</label><input type="text" name="publicationvuosi" value="2006" /></div>
+							<div class="publicationDataSetContainer"><label>Julkaisu id-nro</label><input type="text" name="publicationvuosi" value="1234" /></div>
 						</div>
 						<div class="rowContainer">
-							<div class="publicationDataSetContainer"><label>1. Tallennuspvm</label><input type="text" name="publicationvuosi" value="2006" /></div>
+							<div class="publicationDataSetContainer"><label>1. Tallennuspvm</label><input type="text" name="publicationvuosi" value="12.10.2013" /></div>
 							<div class="publicationDataSetContainer"><label>Julkaisun ilmoitustapa</label><select><option>Ei tietoa</option></select></div>
 							<div class="publicationDataSetContainer"><label>Julkaisun kieli</label><select><option>Suomi</option></select></div>
 						</div>
 						<div class="rowContainer">
-							<div class="publicationDataSetContainer"><label>Viimeisin muutospvm</label><input type="text" name="publicationvuosi" value="2006" /></div>
+							<div class="publicationDataSetContainer"><label>Viimeisin muutospvm</label><input type="text" name="publicationvuosi" value="12.10.2013" /></div>
 							<div class="publicationDataSetContainer"><label>Käsittelijä</label><input type="text" name="handler" value="mat" /></div>
 						</div>
 						<div class="rowContainer">
-							<div class="publicationDataSetContainer"><label>Julkaisun otsikko</label><textarea></textarea></div>
+							<div class="publicationDataSetContainer"><label>Julkaisun otsikko</label><textarea>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce consequat elit non dui euismod elementum. Aliquam erat volutpat. Etiam feugiat diam ut urna mollis, eu sollicitudin velit tincidun</textarea></div>
 						</div>
 						<div class="rowContainer">
-							<div class="publicationDataSetContainer"><label>relPubl-tiedot</label><textarea></textarea></div>
+							<div class="publicationDataSetContainer"><label>relPubl-tiedot</label><textarea>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce consequat elit non dui euismod elementum. Aliquam erat volutpat. Etiam feugiat diam ut urna mollis, eu sollicitudin velit tincidun</textarea></div>
 						</div>
 						<div class="rowContainer">
-							<div class="publicationDataSetContainer"><label>Julkaisun huomautukset</label><textarea></textarea></div>
+							<div class="publicationDataSetContainer"><label>Julkaisun huomautukset</label><textarea>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce consequat elit non dui euismod elementum. Aliquam erat volutpat. Etiam feugiat diam ut urna mollis, eu sollicitudin velit tincidun</textarea></div>
 						</div>
 					</div>
 					<div class="rowContainer" style="display: inline-block; margin-top: 10px;">
@@ -115,7 +121,7 @@
 						<div class="publicationTableActionLinkHolder"><a href="dialogs/attachMaterialDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>						
 					</div>					
 					<div class="rowContainer">
-						<div class="publicationRowTitle">Liittyvät sarjat</div>
+						<div class="publicationRowTitle">Liittyvä sarja</div>
 						<table id="publicationSeriesTable" class="metkaTable sortableTable">
 							<thead>
 								<tr><th>Lyhenne</th><th>Sarjan nimi</th><th></th></tr>
@@ -125,7 +131,7 @@
 							</tbody>
 
 						</table>	
-						<div class="publicationTableActionLinkHolder"><a href="dialogs/attachSeriesDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>						
+						<div class="publicationTableActionLinkHolder"><a href="dialogs/attachSeriesDialog.html" class="fancyboxpopup fancybox.ajax">Vaihda</a></div>						
 					</div>
 					
 					<div class="viewFormButtonsHolder" style="margin-bottom:20px;">

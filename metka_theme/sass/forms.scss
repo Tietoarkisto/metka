@@ -5,7 +5,7 @@
 #variablesGroupingContainer, #additionalFilingContractFile, .translationEn, .translationSv, 
 .variableTranslationTable, .organizationAuthor, .organizationCollector, 
 .keywordFields, .vocabularyFields, .noVocabulary, .topicFields, .otherWord, .wordFields, 
-.countrySelectContainer, .countryFields, .geoCoverSelectContainer, .geoCoverFields {
+.countrySelectContainer, .countryFields, .geoCoverSelectContainer, .geoCoverFields, .errorneous {
 	display: none;
 }
 
@@ -39,33 +39,37 @@
 		display: block;
 		float: left;
 		margin-bottom: 10px;
-		width: 180px;
+		width: $topRowLabelWidth;
 	}
 
 	input {
-		width: 690px;
+		width: $topRowInputWidth;
 		margin-right: 10px;
+	}
+
+	.plainTextInputTopRow {
+		float: left;
+		width: $topRowInputWidth;
 	}
 }
 
+// Suhde alempaan?
 .materialDataSetTextareaContainer {
 	font-size: 12px;
 	float: left;
-	margin-top: 10px;
-	margin-bottom: 10px;
 
 	label {
-		width: 400px;
+		width: $materialDataSetTextAreaLabelWidth;
 		clear: both;
 		display:block;
 	}
 	textarea {
-		width: 440px;
+		width: $materialDataSetTextAreaWidth;
 		height: 60px;
 	}
 }
 
-@mixin dataSetContainer($labelWidth, $inputWidth, $selectWidth, $textareaWidth, $textAreaHeight, $font-size) {
+@mixin dataSetContainer($labelWidth, $inputWidth, $selectWidth, $textareaWidth, $textareaHeight, $font-size) {
 	float: left;
 	label {
 		display: block;
@@ -87,56 +91,47 @@
 	textarea {
 		font-size: $font-size;
 		width: $textareaWidth;
-		height: $textAreaHeight;
+		height: $textareaHeight;
+	}
+	.plainTextInput {
+		float: left;
+		font-size: $font-size;
+		width: $inputWidth;
+		margin-right: 10px;
+	}
+	.plainTextTextarea {
+		float: left;
+		font-size: $font-size;
+		width: $textareaWidth;
+		//margin-right: 10px;	
 	}
 }
 
 .materialDataSetContainer {
 	font-size: 12px;
-	@include dataSetContainer(180px, 100px, 105px, 700px, 50px, 12px);
+	@include dataSetContainer($materialLabelWidth, $materialInputWidth, $materialSelectWidth, $materialTextAreaWidth, $materialTextAreaHeigth, 12px);
 }
 .studyLevelDataSetContainer {
 	font-size: 12px;
-	@include dataSetContainer(150px, 100px, 105px, 700px, 50px, 12px);
+	@include dataSetContainer($studyLevelLabelWidth, $studyLevelInputWidth, $studyLevelSelectWidth, $studyLevelTextAreaWidth, $studyLevelTextAreaHeigth, 12px);
 }
 .publicationDataSetContainer {
-	@include dataSetContainer(146px, 150px, 155px, 775px, 50px, 12px);
+	@include dataSetContainer($publicationLabelWidth, $publicationInputWidth, $publicationSelectWidth, $publicationTextAreaWidth, $publicationTextAreaHeigth, 12px);
 }
 
 .seriesDataSetContainer {
-	float: left;
+	@include dataSetContainer($seriesLabelWidth, $seriesInputWidth, $seriesSelectWidth, $seriesTextAreaWidth, $seriesTextAreaHeigth, 15px);
 	label {
-		display: block;
-		float: left;
 		margin-bottom: 20px;
-		width: 150px;
 	}
 	input {
-		width: 450px;
 		margin-right: 10px;
 		padding: 5px;
 	}
-	select {
-		width: 465px;
-		margin-right: 10px;
-		padding: 5px;
-	}
-	textarea {
-		font-size: 12px;
-		width: 460px;
-		height: 100px;
-	}
-}
-
-@mixin actionLinkHolder($width, $font-size) {
-	clear: left;
-    display: inline-block;
-    text-align: right;
-    width: $width;
-    font-size: $font-size;
 }
 
 #materialStudyLevel {
+
 	#studyLevelTopRow {
 		position: relative;
 		padding-bottom: 25px;
@@ -170,12 +165,12 @@
 		}
 
 		.accordionTableActionLinkHolder {
-			@include actionLinkHolder(850px, 12px);
+			@include actionLinkHolder($accordionTableLinkHolderWidth, 12px);
 		}
 
 
 		table {
-			width: 850px;
+			width: $accordionTableWidth;
 		}
 
 		.studyLevelTableTitle {
@@ -185,7 +180,7 @@
 		.metkaTable {
 			@extend table.metkaTable;
 			margin:0px 10px 0px 0px;
-			width: 850px;
+			width: $accordionTableWidth;
 		}
 
 		.studyLevelDataSetTextareaContainer {
@@ -203,6 +198,7 @@
 	float: $float;
 	margin-bottom: $margin-bottom;
 	margin-right: $margin-right;
+	width: $pageWidth - 40px;
 }
 
 @mixin prevNextButtons($font-size, $floatPrev, $floatNext, $padding) {
@@ -226,9 +222,9 @@
 }
 
 .prevNextContainer{
-	@include prevNextContainer(inline-block, right, 20px, 20px);	
+	@include prevNextContainer(inline-block, right, 10px, 10px);
 
-	@include prevNextButtons(22px, left, right, 10px);
+	@include prevNextButtons(15px, left, right, 5px);
 }
 
 #variablesPrevNextContainer {
@@ -255,15 +251,8 @@
 	}
 }
 
-.materialTableButtonsHolder {
-    clear: left;
-    display: inline-block;
-    text-align: right;
-    width: 920px;
-}
-
 .materialTableActionLinkHolder, .publicationTableActionLinkHolder {
-    @include actionLinkHolder(920px, 12px);
+    @include actionLinkHolder($actionLinkHolderWidth, 12px);
 }
 
 .materialRowTitle, .publicationRowTitle {
@@ -291,6 +280,11 @@
 }
 
 #materialVariables {
+	$groupingBoxWidth: 470px;
+	$dataContainerWidth: $tableWidth / 2;
+	$variableTreeWidth: $tableWidth / 2;
+	$variableTranslationTableWidth: 470px;
+	$containerMinHeight: 400px;
 
 	#variablesTreeSelection {
 		text-align: center;
@@ -309,9 +303,9 @@
 		.variablesTree {
 			top: 40;
 			left: 0;
-			width: 450px;
+			width: $variableTreeWidth;
 			font-size: 12px;
-			min-height: 400px;
+			min-height: $containerMinHeight;
 			float: left;
 		}
 
@@ -319,8 +313,8 @@
 			padding-top: 30px;
 			font-size: 15px;
 			padding-left: 20px;
-			width: 430px;
-			min-height: 400px;
+			width: $variableTranslationTableWidth;
+			min-height: $containerMinHeight;
 			float: left;
 
 			thead {
@@ -363,17 +357,21 @@
 		#variableDataContainer {
 			top: 40;
 			right: 0;
-			width: 450px;
+			width: $dataContainerWidth;
 			float: left;
 			margin-left: 10px;
+
+			.inline {
+				float: left;
+			}
 
 			#variableData, #variableGroupData {
 				thead {
 					.variableName {
-						width: 200px;
+						width: 250px;
 					}
 					.variableContent {
-						width: 250px;
+						width: 350px;
 					}
 				}
 				padding-right: 10px;
@@ -384,6 +382,9 @@
 					top: 30px;
 					padding-right: 10px;
 
+					textarea {
+						width: 300px;
+					}
 					input {
 						width: 250px;
 					}
@@ -407,12 +408,10 @@
 			padding: 10px;
 			position: relative;
 
-			$groupingBoxWidth: 440px;
-
 			.variablesGroupingBox {
 				border-style: solid;
 				border-width: 1px;
-				height: 420px;
+				height: $containerMinHeight + 20px;
 				width: $groupingBoxWidth;
 			}
 
@@ -429,7 +428,7 @@
 				left: $groupingBoxWidth;
 				padding: 150px 10px 0 10px;
 
-				#variablesToGroupArrow {
+				#variablesToGroupArrow, #groupToVariablesArrow {
 					font-size: 15px;
 					background: $pageColorB;
 					color: $pageColorA;

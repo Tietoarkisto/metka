@@ -5,7 +5,7 @@
 	</head>
 	<body>	
 		<div class="popupContainer">
-			<h1 class="pageTitle">Liitä tiedosto</h1>
+			<h1 class="pageTitle">Muokkaa tiedostoa</h1>
 			<div class="popupRowHolder">
 				<label class="inputRowLabel">Tiedosto</label>
 				<input type="file"/>
@@ -46,6 +46,21 @@
 				<label class="inputRowLabel">Ulosluovutus</label>
 				<select><option>Ei tietoa</option><option>Kyllä</option><option>Ei</option></select>
 			</div>
+			<div class="popupRowHolder">
+				<label class="inputRowLabel">Muutoksen selite</label>
+				<textarea></textarea>
+			</div>
+
+			<div class="materialRowTitle">Tiedostohistoria</div>
+			<table class="metkaTable sortableTable" id="materialFileInfoTable">
+				<thead>
+					<tr><th>Muokkauspäivämäärä</th><th>Muokkaaja</th><th>Selite</th></tr>
+				</thead>
+				<tbody>
+					<tr><td>2.10.2013</td><td>Simo Häyhä</td><td>Muokkasin vähän</td></tr>
+					<tr><td>4.10.2013</td><td>Ville Iivonen</td><td>Lisäsin pari kohtaa</td></tr>
+				</tbody>
+			</table>
 
 			<div class="popupButtonsHolder">
 				<input type="button" class="searchFormInput" value="Peruuta">
