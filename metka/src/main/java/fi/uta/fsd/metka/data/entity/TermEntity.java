@@ -27,6 +27,7 @@ public class TermEntity {
     @Column(name = "DEFAULT_VALUE", length = 1000)
     private String defaultValue;
 
+    // TODO: If possible try to get Map annotations to work...
     @OneToMany(mappedBy = "targetTerm")
     private List<TermLocalisationEntity> localisationList;
 

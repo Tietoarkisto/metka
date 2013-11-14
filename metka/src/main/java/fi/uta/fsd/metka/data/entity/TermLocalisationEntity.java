@@ -9,10 +9,10 @@ import java.util.Locale;
  * Date: 11/14/13
  * Time: 1:59 PM
  */
-// TODO: Use Locale as key, change to embeddable and use http://hwellmann.blogspot.ie/2010/07/jpa-20-mapping-map.html
 @Entity
 @Table(name = "TERM_LOCALISATION")
 public class TermLocalisationEntity {
+
     @Id
     @SequenceGenerator(name="TERM_LOCALISATION_ID_SEQ", sequenceName="TERM_LOCALISATION_ID_SEQ", allocationSize=1)
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="TERM_LOCALISATION_ID_SEQ")
@@ -20,16 +20,16 @@ public class TermLocalisationEntity {
     private Integer id;
 
     @Column(name = "LOCALE")
-    private String locale;
+    private Locale locale;
 
     /**
      * Localised version of defaultValue from TermEntity
      */
-    @Column(name = "VALUE", length = 1000)
+    @Column(name = "VALUE")
     private String value;
 
     @ManyToOne
-    @JoinColumn(name = "TARGET_TERM")
+    @JoinColumn(name = "TARGET_TERM_ID")
     private TermEntity targetTerm;
 
     @Override

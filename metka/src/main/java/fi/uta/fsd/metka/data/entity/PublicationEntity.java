@@ -34,7 +34,7 @@ public class PublicationEntity {
     private Date lastModified;
 
     @ManyToOne
-    @Column(name = "LAST_MODIFIED_BY")
+    @JoinColumn(name = "LAST_MODIFIED_BY")
     private PersonEntity lastModifiedBy;
 
     // TODO: Julkaisun ilmoitustapa

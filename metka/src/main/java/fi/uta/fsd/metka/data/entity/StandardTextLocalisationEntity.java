@@ -1,6 +1,7 @@
 package fi.uta.fsd.metka.data.entity;
 
 import javax.persistence.*;
+import java.util.Locale;
 
 /**
  * Created with IntelliJ IDEA.
@@ -8,7 +9,6 @@ import javax.persistence.*;
  * Date: 11/14/13
  * Time: 2:29 PM
  */
-// TODO: Use Locale as key, change to embeddable and use http://hwellmann.blogspot.ie/2010/07/jpa-20-mapping-map.html
 @Entity
 @Table(name = "STANDARD_TEXT_LOCALISATION")
 public class StandardTextLocalisationEntity {
@@ -17,6 +17,9 @@ public class StandardTextLocalisationEntity {
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="STANDARD_TEXT_LOCALISATION_ID_SEQ")
     @Column(name = "STANDARD_TEXT_LOCALISATION_ID", updatable = false)
     private Integer id;
+
+    @Column(name = "LOCALE")
+    private Locale locale;
 
     @Column(name = "DESCRIPTION", length = 1000)
     private String description;

@@ -23,6 +23,12 @@ public class StandardTextEntity {
     @Column(name = "DEFAULT_VALUE", length = 1000)
     private String defaultValue;
 
+    // TODO: If possible try to get Map annotations to work...
     @OneToMany(mappedBy = "targetStandardText")
     private List<StandardTextLocalisationEntity> localisationList;
+
+    @Override
+    public String toString() {
+        return "Entity[name="+this.getClass().getSimpleName()+", id="+standardTextId+"]";
+    }
 }

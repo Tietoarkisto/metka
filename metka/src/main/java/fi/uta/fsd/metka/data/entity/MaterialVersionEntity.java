@@ -30,7 +30,7 @@ public class MaterialVersionEntity {
     private Date date;
 
     @ManyToOne
-    @Column(name = "SAVED_BY")
+    @JoinColumn(name = "SAVED_BY")
     private PersonEntity savedBy;
 
     // TODO: If this differs between version types then this class needs to be split after all. If not, then enumerate.
