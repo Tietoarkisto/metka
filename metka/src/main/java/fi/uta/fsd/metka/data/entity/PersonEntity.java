@@ -14,12 +14,21 @@ import java.util.List;
 public class PersonEntity {
 
     @Id
-    @Column(name = "PERSON_ID")
-    private String personId;
+    @Column(name = "PERSON_ID", length = 10)
+    private String id;
+
+    // TODO: Person name from LDAP either as one field or as separate fields.
+
+    // TODO: Person role from LDAP
 
     @OneToMany(mappedBy = "modifiedBy")
     private List<MaterialDataEntity> modifiedList;
 
     @OneToMany(mappedBy = "handler")
     private List<MaterialDataEntity> handlingList;
+
+    @Override
+    public String toString() {
+        return "Entity[name="+this.getClass().getSimpleName()+", id="+id+"]";
+    }
 }

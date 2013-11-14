@@ -51,4 +51,9 @@ public class BinderEntity {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    @Override
+    public String toString() {
+        return "Entity[name="+this.getClass().getSimpleName()+", id="+id+"]";
+    }
 }

@@ -28,11 +28,51 @@ public class MaterialEntity {
     @OneToMany(mappedBy = "targetMaterial")
     private List<MaterialErrorEntity> errorList;
 
+    @OneToMany(mappedBy = "targetMaterial")
+    private List<MaterialVersionEntity> materialVersionList;
+
     public String getId() {
         return id;
     }
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public Boolean getArchived() {
+        return archived;
+    }
+
+    public void setArchived(Boolean archived) {
+        this.archived = archived;
+    }
+
+    public List<MaterialDataEntity> getMaterialDataEntityList() {
+        return materialDataEntityList;
+    }
+
+    public void setMaterialDataEntityList(List<MaterialDataEntity> materialDataEntityList) {
+        this.materialDataEntityList = materialDataEntityList;
+    }
+
+    public List<BinderEntity> getBinderList() {
+        return binderList;
+    }
+
+    public void setBinderList(List<BinderEntity> binderList) {
+        this.binderList = binderList;
+    }
+
+    public List<MaterialErrorEntity> getErrorList() {
+        return errorList;
+    }
+
+    public void setErrorList(List<MaterialErrorEntity> errorList) {
+        this.errorList = errorList;
+    }
+
+    @Override
+    public String toString() {
+        return "Entity[name="+this.getClass().getSimpleName()+", id="+id+"]";
     }
 }

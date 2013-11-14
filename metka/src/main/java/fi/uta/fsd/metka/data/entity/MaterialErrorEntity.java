@@ -30,7 +30,7 @@ public class MaterialErrorEntity{
     @JoinColumn(name = "NOTED_BY")
     private PersonEntity notedBy;
 
-    // TODO: Lisää 'aineiston osa'
+    // TODO: Lisää 'aineiston osa' kun termistö on toimitettu
 
     @Column(name = "DESCRIPTION", length = 1000)
     private String description;
@@ -86,5 +86,10 @@ public class MaterialErrorEntity{
 
     public void setScore(Short score) {
         this.score = score;
+    }
+
+    @Override
+    public String toString() {
+        return "Entity[name="+this.getClass().getSimpleName()+", id="+id+"]";
     }
 }

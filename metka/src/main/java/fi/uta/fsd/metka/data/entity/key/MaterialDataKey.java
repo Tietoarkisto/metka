@@ -11,7 +11,7 @@ import java.io.Serializable;
  * Time: 10:39 AM
  */
 @Embeddable
-public class MaterialDataEntityKey implements Serializable {
+public class MaterialDataKey implements Serializable {
     static final long serialVersionUID = 1L;
 
     @Column(name = "MATERIAL_ID", nullable = false, length = 30)
@@ -20,10 +20,10 @@ public class MaterialDataEntityKey implements Serializable {
     @Column(name = "REVISION", nullable = false)
     private Integer revision;
 
-    public MaterialDataEntityKey() {
+    public MaterialDataKey() {
     }
 
-    public MaterialDataEntityKey(String materialId, Integer revision) {
+    public MaterialDataKey(String materialId, Integer revision) {
         this.materialId = materialId;
         this.revision = revision;
     }
@@ -42,5 +42,10 @@ public class MaterialDataEntityKey implements Serializable {
 
     public void setRevision(Integer revision) {
         this.revision = revision;
+    }
+
+    @Override
+    public String toString() {
+        return "Key[name="+this.getClass().getSimpleName()+", keys={materialId: "+materialId+", revision]";
     }
 }

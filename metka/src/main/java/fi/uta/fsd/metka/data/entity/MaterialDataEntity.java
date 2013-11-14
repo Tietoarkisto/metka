@@ -1,6 +1,6 @@
 package fi.uta.fsd.metka.data.entity;
 
-import fi.uta.fsd.metka.data.entity.key.MaterialDataEntityKey;
+import fi.uta.fsd.metka.data.entity.key.MaterialDataKey;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -15,7 +15,7 @@ import java.util.Date;
 @Table(name="MATERIAL_DATA")
 public class MaterialDataEntity {
     @EmbeddedId
-    private MaterialDataEntityKey key;
+    private MaterialDataKey key;
 
     @ManyToOne
     @JoinColumn(name = "MATERIAL_ID", insertable = false, updatable = false)
@@ -43,6 +43,17 @@ public class MaterialDataEntity {
     @Column(name = "DATA")
     @Lob
     private String data;
+
+    // TODO: Link to different material is still hazy
+
+    @ManyToOne
+    @JoinColumn(name = "TARGET_SERIES_ID")
+    private SeriesEntity targetSeries;
+
+    @Override
+    public String toString() {
+        return "Entity[name="+this.getClass().getSimpleName()+", key="+key+"]";
+    }
 
     public static enum MaterialState {
         DRAFT,
