@@ -1,26 +1,5 @@
 @import "global";
 
-.searchContainer{
-	float: right;
-	margin-top: 20px;
-
-	.searchInput {
-		width: 150px;
-		padding: 5px;
-	}
-
-	.searchButton{
-		background-color: $pageColorB;
-		border: 1px solid $pageColorB;
-		border-radius: 0 7px 7px 0;
-		color: $pageColorA;
-		height: 29px;
-		position: absolute;
-		right: -3px;
-		//top: 1px;
-	}
-}
-
 // Nimeäminen, käytetään muuallakin kuin hakusivuilla
 .searchFormContainer {
 	margin: 20px;

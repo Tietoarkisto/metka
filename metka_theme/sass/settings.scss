@@ -14,9 +14,9 @@
 		}
 	}
 }
-.vocabularyContainer{
-	width: 500px;
-	height: 630px;
+
+#vocabularyDialogTable {
+	width: 600px;
 }
 
 #standardTextTable td {
@@ -24,7 +24,7 @@
 	padding: 10px;
 }
 
-#userInfo {
+#userInfoContainer {
 	position: relative;
 
 	.userPropertyRow {
@@ -39,4 +39,8 @@
 			left: 200px;
 		}
 	}
+}
+
+.settingsTableActionLinkHolder {
+	@include actionLinkHolder($settingsTableActionLinkHolderWidth, 15px)
 }

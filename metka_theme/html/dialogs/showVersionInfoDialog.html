@@ -2,27 +2,26 @@
 <html lang="fi">
 	<head>
 		<script type="text/javascript">
-			$(".translations div").hover(function() {
-				$(this).css('cursor', 'pointer');
-			},function() {
-				$(this).css('cursor', 'auto');
-			});
+			$("input[type=radio][name=language]").on("click", function() {
+				var language = $(this).val();
+					$(".translationSv").hide();
+					$(".translationEn").hide();
 
-			$(".translationLinkSv").on("click", function() {
-				toggleClick($(this), ".translationSv");				
-			});
-			$(".translationLinkEn").on("click", function() {
-				toggleClick($(this), ".translationEn");
-			});
-
-			function toggleClick(clickedElement, clickedClass) {
-				$(clickedElement).parent().parent().parent().find(clickedClass).toggle();
-
-				if ( $(clickedElement).hasClass("clicked")) {
-					$(clickedElement).removeClass("clicked");
-				} else {
-					$(clickedElement).addClass("clicked");
+				if ( language == "fi" ) {
+					toggleFinnishTranslations(false);
+				} else if ( language == "en" ) {
+					$(".translationEn").show();
+					toggleFinnishTranslations(true);
+				} else if ( language == "sv" ) {
+					$(".translationSv").show();
+					toggleFinnishTranslations(true);
 				}
+			});
+
+			function toggleFinnishTranslations(hide) {
+				$(".translationFi").find("input").attr("disabled", hide);
+				$(".translationFi").find("textarea").attr("disabled", hide);
+				$(".translationFi").find("select").attr("disabled", hide);
 			}
 		</script>
 	</head>
@@ -30,11 +29,13 @@
 		<div class="popupContainer">
 			<h1 class="pageTitle">Uusi versio</h1>
 			<div class="popupRowHolder">
-				<div class="translations">
-					<div class="translationLinkSv">sv</div>
-					<div class="translationLinkEn">en</div>
+				<div class="languageSelectPopup">
+					<input type="radio" name="language" value="fi"/>fi
+					<input type="radio" name="language" value="en"/>en
+					<input type="radio" name="language" value="sv"/>sv
 				</div>
-			</div><br/>
+			</div>
+			<br/>
 			<div class="popupRowHolder">
 				<label class="inputRowLabel">Versio</label>
 				<input type="text" value="2.1" readonly="true" />
@@ -57,21 +58,29 @@
 					<option>Selite5</option>
 				</select>
 			</div>
-			<div class="popupRowHolder">
-				<label class="inputRowLabel">Selite</label>
+			<div class="popupRowHolder translationFi">
+				<label class="inputRowLabel">Julkinen selite</label>
 				<textarea cols="42" rows="5" readonly="true">lorem ipsum foo bar dolor sit amet</textarea>
 			</div>
 			<div class="popupRowHolder translationSv">
-				<label class="inputRowLabel">Selite (sv)</label>
-				<textarea cols="42" rows="5" readonly="true">lorem ipsum foo bar dolor sit amet</textarea>
+				<label class="inputRowLabel">Julkinen selite</label>
+				<textarea cols="42" rows="5">lorem ipsum foo bar dolor sit amet</textarea>
 			</div>
 			<div class="popupRowHolder translationEn">
-				<label class="inputRowLabel">Selite (en)</label>
-				<textarea cols="42" rows="5" readonly="true">lorem ipsum foo bar dolor sit amet</textarea>
+				<label class="inputRowLabel">Julkinen selite</label>
+				<textarea cols="42" rows="5">lorem ipsum foo bar dolor sit amet</textarea>
 			</div>
-			<div class="popupRowHolder">
+			<div class="popupRowHolder translationFi">
 				<label class="inputRowLabel">Ei-julkinen selite</label>
 				<textarea cols="42" rows="5" readonly="true">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce consequat elit non dui euismod elementum. Aliquam erat volutpat. Etiam feugiat diam ut urna mollis, eu sollicitudin velit tincidunt. Pr</textarea>
+			</div>
+			<div class="popupRowHolder translationSv">
+				<label class="inputRowLabel">Ei-julkinen selite</label>
+				<textarea cols="42" rows="5">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce consequat elit non dui euismod elementum. Aliquam erat volutpat. Etiam feugiat diam ut urna mollis, eu sollicitudin velit tincidunt.</textarea>
+			</div>
+			<div class="popupRowHolder translationEn">
+				<label class="inputRowLabel">Ei-julkinen selite</label>
+				<textarea cols="42" rows="5">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce consequat elit non dui euismod elementum. Aliquam erat volutpat. Etiam feugiat diam ut urna mollis, eu sollicitudin velit tincidunt.</textarea>
 			</div>
 			<div class="popupButtonsHolder">				
 				<input type="button" class="searchFormInput" value="Peruuta">

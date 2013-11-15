@@ -2,10 +2,40 @@
 <html lang="fi">
 	<head>
 		<script src="js/popup.js"></script>
+		<script type="text/javascript">
+			$("input[type=radio][name=language]").on("click", function() {
+				var language = $(this).val();
+					$(".translationSv").hide();
+					$(".translationEn").hide();
+
+				if ( language == "fi" ) {
+					toggleFinnishTranslations(false);
+				} else if ( language == "en" ) {
+					$(".translationEn").show();
+					toggleFinnishTranslations(true);
+				} else if ( language == "sv" ) {
+					$(".translationSv").show();
+					toggleFinnishTranslations(true);
+				}
+			});
+
+			function toggleFinnishTranslations(hide) {
+				$(".translationFi").find("input").attr("disabled", hide);
+				$(".translationFi").find("textarea").attr("disabled", hide);
+				$(".translationFi").find("select").attr("disabled", hide);
+			}
+		</script>
 	</head>
 	<body>	
 		<div class="popupContainer">
 			<h1 class="pageTitle">Vakiotekstin hallinta: Copyright</h1>
+			<div class="popupRowHolder">
+				<div class="languageSelectPopup">
+					<input type="radio" name="language" value="fi"/>fi
+					<input type="radio" name="language" value="en"/>en
+					<input type="radio" name="language" value="sv"/>sv
+				</div>
+			</div>
 			<table> 
 				<thead> 
 				<tr> 
@@ -15,11 +45,21 @@
 				</tr> 
 				</thead> 
 				<tbody> 
-					<tr id="standardTextTable"> 
+					<tr id="standardTextTable" class="translationFi"> 
 					    <td><span>Copyright</span></td> 
 					    <td><textarea cols="50">Tekijänoikeusteksti</textarea></td> 
 						<td><textarea cols="50">(C) Tässä on tekijänoikeusteksti..loren ipsum dolor sit amet</textarea></td> 
 					</tr> 
+					<tr id="standardTextTable" class="translationEn" style="display: none;"> 
+						<td><span>Copyright</span></td>
+						<td><textarea cols="50">Tekijänoikeusteksti</textarea></td> 
+						<td><textarea cols="50">(C) Tässä on tekijänoikeusteksti..loren ipsum dolor sit amet</textarea></td> 
+					</tr>
+					<tr id="standardTextTable" class="translationSv" style="display: none;"> 
+						<td><span>Copyright</span></td>
+						<td><textarea cols="50">Tekijänoikeusteksti</textarea></td> 
+						<td><textarea cols="50">(C) Tässä on tekijänoikeusteksti..loren ipsum dolor sit amet</textarea></td> 
+					</tr>
 				</tbody> 
 			</table>
 			<div class="popupButtonsHolder">

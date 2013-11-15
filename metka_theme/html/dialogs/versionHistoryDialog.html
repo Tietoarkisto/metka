@@ -1,7 +1,16 @@
 <!DOCTYPE HTML>
 <html lang="fi">
 	<head>
-		<script src="js/popup.js"></script>
+		<script type="text/javascript">
+			$("#compareVersionsButton").on("click", function() {
+				$("#compareVersionsLink").click();
+			});
+
+			$("input[type=checkbox][name=version]").click(function() {
+				var bol = $("input[type=checkbox][name=version]:checked").length >= 2;     
+		    	$("input[type=checkbox][name=version]").not(":checked").attr("disabled",bol);
+			});
+	</script>
 	</head>
 	<body>	
 		<div class="popupContainer">
@@ -15,22 +24,30 @@
 				<div class="versionHistoryDialogRow">
 					<div class="versionName">Versio 1</div>
 					<div class="versionPublishedDate">2.10.2013</div>
-					<div class="versionCompareLink"><a href="dialogs/compareVersionsDialog.html" class="fancyboxpopup fancybox.ajax">Vertaa</a></div>
+					<div class="versionCompareLink"><input type="checkbox" name="version"/></div>
 				</div>
 				<div class="versionHistoryDialogRow">
 					<div class="versionName">Versio 2</div>
 					<div class="versionPublishedDate">12.10.2013</div>
-					<div class="versionCompareLink"><a href="dialogs/compareVersionsDialog.html" class="fancyboxpopup fancybox.ajax">Vertaa</a></div>
+					<div class="versionCompareLink"><input type="checkbox" name="version"/ name="version"></div>
 				</div>
 				<div class="versionHistoryDialogRow">
 					<div class="versionName">Versio 3</div>
 					<div class="versionPublishedDate">22.10.2013</div>
-					<div class="versionCompareLink"><a href="dialogs/compareVersionsDialog.html" class="fancyboxpopup fancybox.ajax">Vertaa</a></div>
+					<div class="versionCompareLink"><input type="checkbox" name="version"/></div>
+				</div>
+				<div class="versionHistoryDialogRow">
+					<div class="versionName">LUONNOS</div>
+					<div class="versionPublishedDate"></div>
+					<div class="versionCompareLink"><input type="checkbox" name="version"/></div>
 				</div>
 			</div>
 
 			<div class="popupButtonsHolder">
-				<input type="button" class="searchFormInput" value="Sulje">
+				<input type="button" class="searchFormInput" value="Sulje"/>
+				<input type="button" id="compareVersionsButton" class="searchFormInput" value="Vertaa">
+					<a href="dialogs/compareVersionsDialog.html" id="compareVersionsLink" class="fancyboxpopup fancybox.ajax"/>
+				</input>
 			</div>
 		</div>	
 	</body>

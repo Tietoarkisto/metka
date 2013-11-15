@@ -25,7 +25,7 @@
 						<li><a href="expertSearch.html">Eksperttihaku</a></li>	
 						<li><a href="materialSearch.html">Aineistot</a></li>
 						<li><a href="publicationSearch.html">Julkaisut</a></li>
-						<li><a href="seriesSearch.html">Sarjat</a></li>	
+						<li><a href="seriesSearch.html" class="selected">Sarjat</a></li>	
 						<li><a href="binders.html">Mapit</a></li>	
 						<li><a href="reports.html">Raportit</a></li>
 						<li><a href="settings.html">Asetukset</a></li>						
@@ -34,11 +34,17 @@
 					<div style="clear:both;"></div>				
 				</nav>
 				<div class="searchContainer">
-					<a class="logoutLink" href="#">Kirjaudu ulos</a>
+					<a class="logoutLink" href="../index.html">Kirjaudu ulos</a>
 					<form action="material.html" class="quickSearchForm">
 						<input type="text" autocomplete="off" dir="ltr" class="searchInput" placeholder="Aineiston id-nro" />
 						<input type="submit" value="Hae" class="searchButton"/>
 					</form>					
+				</div>
+
+				<div class="languageSelect">
+					<input type="radio" name="language" value="fi"/>fi
+					<input type="radio" name="language" value="en"/>en
+					<input type="radio" name="language" value="sv"/>sv
 				</div>
 			</div>
 			
@@ -49,27 +55,22 @@
 				<div class="content">
 					<h1 class="pageTitle">Sarjan tiedot</h1>
 					<div class="upperContainer">
-						<div class="prevNextContainer"><h1 class="prev"><</h1><h1 class="next">></h1></div>	
+						<div class="prevNextContainer"><h1 class="prev">&lt;</h1><h1 class="next">&gt;</h1></div>		
 						<div class="rowContainer containsTranslations">
-							<div class="translations">
-								<div class="translationLinkSv">sv</div><div class="translationLinkEn">en</div>
-							</div>
-						</div>			
-						<div class="rowContainer containsTranslations">
-							<div class="seriesDataSetContainer"><label>Sarjan numero</label><input type="text" value="16" name="seriesNumber" /></div>
+							<div class="seriesDataSetContainer"><label>Sarjan numero</label><input type="text" value="16" name="seriesNumber" disabled="disabled" /></div>
 						</div>						
 						<div class="rowContainer containsTranslations">							
-							<div class="seriesDataSetContainer"><label>Sarjan lyhenne</label><input type="text" name="seriesAbbr" /></div>
+							<div class="seriesDataSetContainer"><label>Sarjan lyhenne</label><input type="text" name="seriesAbbr" disabled="disabled" /></div>
 						</div>
 						<div class="rowContainer containsTranslations">
-							<div class="seriesDataSetContainer translated"><label>Sarjan nimi</label><input type="text" name="seriesName" /></div>
-							<div class="seriesDataSetContainer translationSv"><label>Sarjan nimi (sv)</label><input type="text" name="seriesName" /></div>
-							<div class="seriesDataSetContainer translationEn"><label>Sarjan nimi (en)</label><input type="text" name="seriesName" /></div>
+							<div class="seriesDataSetContainer translated translationFi"><label>Sarjan nimi</label><input type="text" name="seriesName" /></div>
+							<div class="seriesDataSetContainer translationSv"><label>Sarjan nimi</label><input type="text" name="seriesName" /></div>
+							<div class="seriesDataSetContainer translationEn"><label>Sarjan nimi</label><input type="text" name="seriesName" /></div>
 						</div>
 						<div class="rowContainer containsTranslations">							
-							<div class="seriesDataSetContainer translated"><label>Sarjan kuvaus</label><textarea name="seriesDescr"></textarea></div>
-							<div class="seriesDataSetContainer translationSv"><label>Sarjan kuvaus (sv)</label><textarea name="seriesDescr"></textarea></div>
-							<div class="seriesDataSetContainer translationEn"><label>Sarjan kuvaus (en)</label><textarea name="seriesDescr"></textarea></div>
+							<div class="seriesDataSetContainer translated translationFi"><label>Sarjan kuvaus</label><textarea name="seriesDescr"></textarea></div>
+							<div class="seriesDataSetContainer translationSv"><label>Sarjan kuvaus</label><textarea name="seriesDescr"></textarea></div>
+							<div class="seriesDataSetContainer translationEn"><label>Sarjan kuvaus</label><textarea name="seriesDescr"></textarea></div>
 						</div>		
 					</div>
 

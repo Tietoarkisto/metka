@@ -21,7 +21,6 @@
   		<script src="../js/jquery.fastLiveFilter.js"></script>
 	</head>
 
-	<!-- TÄMÄ OSIIN KUN JSP:KSI -->
 	<body>
 		<header>
 			<div class="headerContainer">	
@@ -29,7 +28,7 @@
 					<ul class="mainNavUl">
 						<li><a href="desktop.html">Työpöytä</a></li>
 						<li><a href="expertSearch.html">Eksperttihaku</a></li>	
-						<li><a href="materialSearch.html">Aineistot</a></li>
+						<li><a href="materialSearch.html" class="selected">Aineistot</a></li>
 						<li><a href="publicationSearch.html">Julkaisut</a></li>
 						<li><a href="seriesSearch.html">Sarjat</a></li>	
 						<li><a href="binders.html">Mapit</a></li>
@@ -39,13 +38,20 @@
 					
 					<div style="clear:both;"></div>				
 				</nav>
+
 				<div class="searchContainer">
-					<a class="logoutLink" href="#logout">Kirjaudu ulos</a>
+					<a class="logoutLink" href="../index.html">Kirjaudu ulos</a>
 					<form action="material.html#general" class="quickSearchForm">
 						<input type="text" autocomplete="off" dir="ltr" class="searchInput" placeholder="Aineiston id-nro" />
 						<input type="submit" value="Hae" class="searchButton"/>
 					</form>					
 				</div>	
+
+				<div class="languageSelect">
+					<input type="radio" name="language" value="fi"/>fi
+					<input type="radio" name="language" value="en"/>en
+					<input type="radio" name="language" value="sv"/>sv
+				</div>
 			</div>
 			
 		</header>
@@ -54,7 +60,7 @@
 
 			<div class="content">
 				<h1 class="pageTitle">
-					<div class="floatLeft">Eduskuntavaalitutkimukset 2003-2011: yhditetty aieneisto&nbsp;-&nbsp;</div>
+					<div class="floatLeft">FSD10001 - Eduskuntavaalitutkimukset 2003-2011: yhditetty aieneisto&nbsp;-&nbsp;</div>
 					<div class="floatLeft">LUONNOS</div>
 					<div class="floatRight">Mikko Tanskanen</div>
 					<div class="floatRight">Käsittelijä:&nbsp;</div>
@@ -62,42 +68,37 @@
 				<div class="materialPrevNextContainer">
 					<div class="materialTabNavi">
 						<ul>
-							<li><a id="1" class="selected" href="#general">Perustiedot</a></li>
-							<li><a id="2" href="#filing">Arkistointisopimus</a></li>
-							<li><a id="3" href="#studylevel">Kuvailu</a></li>
-							<li><a id="4" href="#variables">Muuttujat</a></li>
-							<li><a id="5" href="#files">Tiedostojen hallinta</a></li>
-							<li><a id="6" href="#codebook">Koodikirja</a></li>
-							<li><a id="7" href="#errors">Virheet</a></li>
-							<li><a id="8" href="#packages">Tunnisteet</a></li>
+							<li><a id="general" class="selected" href="#general">Perustiedot</a></li>
+							<li><a id="filing" href="#filing">Arkistointisopimus</a></li>
+							<li><a id="studylevel" href="#studylevel">Kuvailu</a></li>
+							<li><a id="variables" href="#variables">Muuttujat</a></li>
+							<li><a id="files" href="#files">Tiedostojen hallinta</a></li>
+							<li><a id="codebook" href="#codebook">Koodikirja</a></li>
+							<li><a id="errors" href="#errors">Virheet</a></li>
+							<li><a id="packages" href="#packages">Tunnisteet</a></li>
 						</ul>
-					</div>						
-					<!--<h1 class="next">></h1><h1 class="prev"><</h1>-->
-
+					</div>
 				</div>
 				
 				<!-- General -->
-				<div id="materialGeneral" class="tabs2 tab1">						
+				<div id="materialGeneral" class="tabs2 general">						
 					<div class="upperContainer">
 						<div class="rowContainer containsTranslations">
 							<div class="materialDataSetContainerTopRow">
-								<div class="translations">
-									<div class="translationLinkSv">sv</div>
-									<div class="translationLinkEn">en</div>
-								</div>
 							</div>
 						</div>
 						<div class="rowContainer containsTranslations">
-							<div class="materialDataSetContainerTopRow translated">
+							<div class="materialDataSetContainerTopRow translated translationFi">
 								<label id="materialName" class="required leftSide">Aineiston nimi</label>
 								<input tabIndex="1" type="text" value="Eduskuntavaalitutkimukset 2003-2011: yhditetty aieneisto." name="aineistonNimi" />
 							</div>
-							<div class="materialDataSetContainerTopRow translationSv">
-								<label id="materialNameEng" class="rightSide">Aineiston nimi (sv)</label>
-								<input tabIndex="2" type="text" name="materialnNimiEng" />
+							<!-- Not actually fi but must be seen on the finnish section -->
+							<div class="materialDataSetContainerTopRow translated translationFi">
+								<label id="materialNameEn" class="rightSide">Aineiston nimi (en)</label>
+								<input id="materialNameEnInput" tabIndex="2" type="text" name="materialnNimiEng" />
 							</div>
-							<div class="materialDataSetContainerTopRow translationEn">
-								<label id="materialNameEng" class="rightSide">Aineiston nimi (en)</label>
+							<div class="materialDataSetContainerTopRow translationSv">
+								<label id="materialNameSv" class="rightSide">Aineiston nimi (sv)</label>
 								<input tabIndex="2" type="text" name="materialnNimiEng" />
 							</div>
 						</div>
@@ -110,37 +111,19 @@
 								<label id="acquisitiedMaterialNumber" class="required">Hankinta-aineistonumero</label>
 								<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
 							</div>
-							<div class="materialDataSetContainer">
-								<label id="materialType" class="required">Aineiston tyyppi</label>
-								<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
-							</div>
 						</div>
 						<div class="rowContainer">
-							<div class="materialDataSetContainer">
-								<label id="materiaMefFin" >Mef julkaisupvm (fin)</label>
-								<input readonly="readonly" type="text" name="valmispvm" value="12.10.2013"/>
-							</div>
-							<div class="materialDataSetContainer">
-								<label id="materialMefEng" >Mef julkaisupvm (eng)</label>
-								<input readonly="readonly" type="text" name="valmispvm" value="13.10.2013"/>
-							</div>
-							<div class="materialDataSetContainer">
-								<label id="materialFilingCategory" class="required">Arkistointikategoria</label>
-								<select tabIndex="5"><option>Arkistoitu</option><option>Poistettu</option></select>
-							</div>
-						</div>
-						<div class="rowContainer">
-							<div class="materialDataSetContainer">
-								<label id="materialFSDCedes">FSD luovuttaa</label>
-								<select><option>Kyllä</option><option>Ei</option><option>Ei tietoa</option></select>
-							</div>
 							<div class="materialDataSetContainer">
 								<label id="materialReadyDate">Valmis pvm</label>
-								<input type="text" class="datepicker" name="valmispvm"/>
+								<input type="text" readonly="readonly" name="valmispvm" value=""/>
 							</div>
 							<div class="materialDataSetContainer">
 								<label id="materialPublishing">Julkaisu</label>
 								<select><option>Kyllä</option><option>Ei</option><option>Ei tietoa</option></select>
+							</div>
+							<div class="materialDataSetContainer">
+								<label id="materialSeries">Sarja</label>
+								<select><option>Valitse...</option><option>Yksittäiset aineistot</option><option>Sosiaalibarometrit</option><option></option></select>
 							</div>
 						</div>
 						<div class="rowContainer containsTranslations">
@@ -149,10 +132,10 @@
 								<input tabIndex="4" type="text"/>
 							</div>
 							<div class="materialDataSetContainer">
-								<label id="materialAnonymized">Anonymisointi</label>
+								<label id="materialAnonymized">Tietosuoja</label>
 								<select><option>Kyllä</option><option>Ei</option><option>Ei tietoa</option></select>
 							</div>
-							<div class="materialDataSetContainer translated">
+							<div class="materialDataSetContainer translated translationFi">
 								<label class="materialQuality" class="required">Aineiston laatu</label>
 								<select id="materialQualitySelect"><option class="unknown">Ei tietoa</option><option class="quantitative">Kvanti</option><option class="qualitative">Kvali</option><option class="both">Kvanti&Kvali</option></select>
 							</div>
@@ -174,6 +157,16 @@
 								<label id="materialDepictionPublishing">Aineiston kuvailun julkaisu</label>
 								<select><option>Kyllä</option><option>Ei</option><option>Ei tietoa</option></select>
 							</div>
+							<div class="materialDataSetContainer">
+								<label id="materialAnonymized">Anonymisointi</label>
+								<select><option>Anonymisoidaan FSD:ssä</option><option>Ei vaadi anonymisointia</option><option>Ei tietoa</option></select>
+							</div>
+						</div>
+						<div class="rowContainer">
+							<div class="materialDataSetTextareaContainer">
+                                <label>Huomautuksia prosessiin</label>
+                                <textarea></textarea>
+                           </div>      
 						</div>
 					</div>
 					<br/>
@@ -192,34 +185,32 @@
 						<div class="materialTableActionLinkHolder"><a href="dialogs/attachNotificationDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>		
 					</div>
 					<div class="rowContainer containsTranslations">
-						<div class="materialRowTitle">Versiot</div>
-						<table class="metkaTable" id="materialVersionTable">
+						<div class="materialRowTitle">Datan versiot</div>
+						<table class="metkaTable materialVersionTable">
 							<thead>
-								<tr><th>Versionumero</th><th>Päivämäärä</th><th>Käsittelijä</th><th>Lyhyt selite</th><th></th></tr>
+								<tr><th>Versionumero</th><th>Päivämäärä</th><th>Käsittelijä</th><th>Lyhyt selite</th></tr>
 							</thead>
 							<tbody>
-								<tr class="versionRow"><td>1.0<a style="display: hidden;" href="dialogs/showVersionInfoDialog.html" class="showVersionInfo fancyboxpopup fancybox.ajax"></a></td><td>12.10.2013</td><td>Mikko Tanskanen</td><td>Selite1</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-								<tr class="versionRow"><td>2.0<a style="display: hidden;" href="dialogs/showVersionInfoDialog.html" class="showVersionInfo fancyboxpopup fancybox.ajax"></a></td><td>14.10.2013</td><td>Mikko Tanskanen</td><td>Selite1</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-								<tr class="versionRow"><td>2.1<a style="display: hidden;" href="dialogs/showVersionInfoDialog.html" class="showVersionInfo fancyboxpopup fancybox.ajax"></a></td><td>14.10.2013</td><td>Mikko Tanskanen</td><td>Selite1</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-								<tr class="versionRow"><td>3.0<a style="display: hidden;" href="dialogs/showVersionInfoDialog.html" class="showVersionInfo fancyboxpopup fancybox.ajax"></a></td><td>16.10.2013</td><td>Mikko Tanskanen</td><td>Selite1</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+								<tr class="versionRow"><td>1.0<a style="display: hidden;" href="dialogs/showVersionInfoDialog.html" class="showVersionInfo fancyboxpopup fancybox.ajax"></a></td><td>12.10.2013</td><td>Mikko Tanskanen</td><td>Selite1</td></tr>
+								<tr class="versionRow"><td>2.0<a style="display: hidden;" href="dialogs/showVersionInfoDialog.html" class="showVersionInfo fancyboxpopup fancybox.ajax"></a></td><td>14.10.2013</td><td>Mikko Tanskanen</td><td>Selite1</td></tr>
+								<tr class="versionRow"><td>2.1<a style="display: hidden;" href="dialogs/showVersionInfoDialog.html" class="showVersionInfo fancyboxpopup fancybox.ajax"></a></td><td>14.10.2013</td><td>Mikko Tanskanen</td><td>Selite1</td></tr>
+								<tr class="versionRow"><td>3.0<a style="display: hidden;" href="dialogs/showVersionInfoDialog.html" class="showVersionInfo fancyboxpopup fancybox.ajax"></a></td><td>16.10.2013</td><td>Mikko Tanskanen</td><td>Selite1</td></tr>
 							</tbody>
-						</table>		
-						<div class="materialTableActionLinkHolder"><a href="dialogs/newVersionDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>			
+						</table>			
 					</div>
-
-					<div class="rowContainer">
-						<div class="materialRowTitle">Aineiston sarja</div>
-						<table class="metkaTable" id="materialSeriesTable">
-                                <thead>
-                                       <tr><th>Sarjan lyhenne</th><th>Sarjan nimi</th><th>Sarjan eng. nimi</th><th></th></tr>
-                                </thead>
-                                <tbody>
-                                  	<tr class="materialSeriesRow">
-                                   		<td>lorem</td><td>Yksittäiset materialt</td><td>Individual datasets</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
-                                    </tr>
-                                </tbody>
-                        </table>         
-						<div class="materialTableActionLinkHolder"><a href="dialogs/attachSeriesDialog.html" class="fancyboxpopup fancybox.ajax">Vaihda</a></div>						
+					<div class="rowContainer containsTranslations">
+						<div class="materialRowTitle">Kuvailun versiot</div>
+						<table class="metkaTable materialVersionTable">
+							<thead>
+								<tr><th>Versionumero</th><th>Päivämäärä</th><th>Käsittelijä</th><th>Lyhyt selite</th></tr>
+							</thead>
+							<tbody>
+								<tr class="versionRow"><td>1.0<a style="display: hidden;" href="dialogs/showVersionInfoDialog.html" class="showVersionInfo fancyboxpopup fancybox.ajax"></a></td><td>12.10.2013</td><td>Mikko Tanskanen</td><td>Selite1</td></tr>
+								<tr class="versionRow"><td>2.0<a style="display: hidden;" href="dialogs/showVersionInfoDialog.html" class="showVersionInfo fancyboxpopup fancybox.ajax"></a></td><td>14.10.2013</td><td>Mikko Tanskanen</td><td>Selite1</td></tr>
+								<tr class="versionRow"><td>2.1<a style="display: hidden;" href="dialogs/showVersionInfoDialog.html" class="showVersionInfo fancyboxpopup fancybox.ajax"></a></td><td>14.10.2013</td><td>Mikko Tanskanen</td><td>Selite1</td></tr>
+								<tr class="versionRow"><td>3.0<a style="display: hidden;" href="dialogs/showVersionInfoDialog.html" class="showVersionInfo fancyboxpopup fancybox.ajax"></a></td><td>16.10.2013</td><td>Mikko Tanskanen</td><td>Selite1</td></tr>
+							</tbody>
+						</table>			
 					</div>
 					
 					<div class="rowContainer">
@@ -254,22 +245,19 @@
 						<div class="materialRowTitle">Liittyvät mapit</div>
 						<table class="metkaTable sortableTable" id="materialBinderTable">
 							<thead>
-								<tr><th>Mappinumero</th><th>Mapin kuvaus</th><th></th></tr>
+								<tr><th>Mappinumero</th><th>Mapitetun aineiston kuvaus</th></tr>
 							</thead>
 							<tbody>
 								<tr class="materialBinderRow">
-									<td>1290<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="fancyboxpopup fancybox.ajax"/></td>
-									<td>Mappi, jossa tavanomaisia aineistoja</td>
-									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
+									<td>1290</td>
+									<td>5kpl haastatteludokumentteja</td>
 								</tr>
 								<tr class="materialBinderRow">
-									<td>1291<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="fancyboxpopup fancybox.ajax"/></td>
-									<td>Lisämappi</td>
-									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
+									<td>1291</td>
+									<td>Muut aineiston paperimateriaali</td>
 								</tr>
 							</tbody>
 						</table>	
-						<div class="materialTableActionLinkHolder"><a href="dialogs/attachBinderDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>
 					</div>
 					
 					<div class="viewFormButtonsHolder" style="margin-bottom:20px;">
@@ -280,7 +268,7 @@
 							<a style="display: hidden;" id="versionHistoryLink" href="dialogs/versionHistoryDialog.html" class="fancyboxpopup fancybox.ajax"></a>
 						</input>
 						<input type="button" id="approveChangesButton" class="searchFormInput" value="Hyväksy muutokset" >
-							<a style="display: hidden;" id="approveChangesLink" href="dialogs/confirmDialog.html" class="fancyboxpopup fancybox.ajax"></a>
+							<a style="display: hidden;" id="approveChangesLink" href="dialogs/approveMaterialDialog.html" class="fancyboxpopup fancybox.ajax"></a>
 						</input>
 						<input type="button" id="saveAsDraftButton" class="searchFormInput" value="Tallenna Luonnoksena" />
 					</div>		
@@ -288,16 +276,10 @@
 				</div>
 
 				<!-- Filing Contract -->
-				<div id="materialFilingContract" class="tabs2 tab2">
+				<div id="materialFilingContract" class="tabs2 filing">
 					<div class="upperContainer">
 						<div class="rowContainer containsTranslations">
-							<div class="translations">
-								<div class="translationLinkSv">sv</div>
-								<div class="translationLinkEn">en</div>
-							</div>
-						</div>
-						<div class="rowContainer containsTranslations">
-							<div class="materialDataSetContainer translated"><label>Ehto 1: käyttöoikeus</label>
+							<div class="materialDataSetContainer translated translationFi"><label>Ehto 1: käyttöoikeus</label>
 								<select><option>Avoin</option><option>opiskelu,opetus,tutkimus</option><option>Tutkimus</option><option>Lupa</option><option>Embargo</option></select>
 							</div>	
 							<div class="materialDataSetContainer translated translationSv"><label>Ehto 1: käyttöoikeus (sv)</label>
@@ -317,16 +299,10 @@
 							<div class="materialDataSetContainer"><label>Herätteen selite</label><input type="txt" class="" name="herateselite" /></div>
 						</div>
 						<div class="rowContainer">
-							<div class="materialDataSetContainer"><label>Erityisehtoja, fin</label><input type="text" class="" name="valmispvm"/></div>
-							<div class="materialDataSetContainer"><label>Erityisehtoja, eng</label><input type="text" class="" name="valmispvm"/></div>
-							<div class="materialDataSetContainer"><label>Erityisehtoja, swe</label><input type="text" class="" name="valmispvm"/></div>
-						</div>
-						<div class="rowContainer">
 							<div class="materialDataSetContainer"><label id="filingContractFile" class="link">Arkistointisopimustiedosto</label><input type="txt" class="" name="kayttoehto" /></div>
 							<div class="materialDataSetContainer"><label>Arkistointisopimuksen tapa</label>
 								<select><option>Ei tietoa</option><option>Ei tarvita sopimusta</option><option>Könttäsopimus</option><option>Norm+puite</option><option>On sopimus</option></select>
 							</div>
-							<div class="materialDataSetContainer"><label>Arkistointisopimuksen pvm</label><input type="txt" class="datepicker" name="kayttoehto" /></div>
 						</div>						
 						<div class="rowContainer" id="additionalFilingContractFile" style="display: hidden;">
 							<div class="materialDataSetContainer"><label>Arkistointisopimustiedosto</label><input type="txt" class="" name="kayttoehto" /></div>
@@ -347,7 +323,7 @@
                                 <textarea></textarea>
                            </div>      
 
-                           <div class="materialDataSetTextareaContainer translated">
+                           <div class="materialDataSetTextareaContainer translated translationFi">
                                 <label>Erityisehdot</label>
                                 <textarea></textarea>
                            </div>
@@ -362,22 +338,6 @@
 						</div>
 
 					</div>
-
-					<div class="rowContainer">
-						<br/>
-						<div class="materialRowTitle">Liittyvät henkilöt</div>
-						<table class="metkaTable sortableTable" id="materialPersonTable">
-							<thead>
-								<tr><th>Henkilön tyyppi</th><th>Sukunimi</th><th>Etunimi</th><th>Organisaatio</th><th>Laitos</th><th>Raportti</th><th></th></tr>
-							</thead>
-							<tbody>
-								<tr><td>luovuttaja</td><td>Borg</td><td>Sami</td><td>Tampereen yliopisto</td><td>Yhteiskuntatieteellinen tietoarkisto</td><td>Ei vuosirap.</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-								<tr><td>luovuttaja</td><td>Berg</td><td>Matias</td><td>Tampereen yliopisto</td><td>Yhteiskuntatieteellinen tietoarkisto</td><td>Ei vuosirap.</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-							</tbody>
-						</table>	
-						<div class="materialTableActionLinkHolder"><a href="dialogs/attachPersonFilingDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>
-					</div>
-
 					
 					<div class="viewFormButtonsHolder" style="margin-bottom:20px;">
 						<input type="button" id="ddi2Export" class="searchFormInput" value="DDI2-Export" />
@@ -394,174 +354,29 @@
 				</div>
 
 				<!-- Studylevel -->
-				<div id="materialStudyLevel" class="tabs2 tab3">
+				<div id="materialStudyLevel" class="tabs2 studylevel">
 					<div id="studyLevelTopRow">
 						<input type="button" id="toggleAccordion" class="searchFormInput" value="Avaa kaikki"/>
-						<div class="translations">
-							<div class="translationLinkSv">sv</div>
-							<div class="translationLinkEn">en</div>
-						</div>
 					</div>
-					<div id="studyLevelData">
-						<label class="studyLevelTitle">Perustiedot</label>
-						<div class="accordionContent">
-							<div class="rowContainer containsTranslations">
-								<div class="studyLevelDataSetContainer">
-									<label>Kieli</label>
-									<select><option>fi</option><option>en</option><option>sv</option></select>
-								</div>
-								<div class="studyLevelDataSetContainer translated">
-									<label>Otsikko</label>
-									<input type="text" name="" value="Kuvailun otsikko" />
-								</div>
-								<div class="studyLevelDataSetContainer translated translationSv">
-									<label>Otsikko (sv)</label>
-									<input type="text" name="" value="Kuvailun åtsikko" />
-								</div>
-								<div class="studyLevelDataSetContainer translated translationEn">
-									<label>Otsikko (en)</label>
-									<input type="text" name="" value="Kuvailun otsikko" />
-								</div>
-							</div>
-							<div class="rowContainer containsTranslations">
-								<div class="studyLevelDataSetContainer translated">
-									<div class="studyLevelTableTitle">ID-tunnisteet</div>
-									<table class="metkaTable">
-										<thead>
-											<tr><th>Tunniste</th><th>Myöntänyt taho</th><th></th></tr>
-										</thead>
-										<tbody>
-											<tr class="studyLevelIdRow"><td>FSD123<a href="dialogs/studylevel/addIdDialog.html" class="fancyboxpopup fancybox.ajax link"/></td><td>Mikko Tanskanen</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-											<tr class="studyLevelIdRow"><td>FSD321<a href="dialogs/studylevel/addIdDialog.html" class="fancyboxpopup fancybox.ajax link"/></td><td>Mikko Tanskanen</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-										</tbody>
-									</table>
-									<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addIdDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
-									<div class="studyLevelDataSetContainer translated translationSv">
-										<div class="studyLevelTableTitle">ID-tunnisteet (sv)</div>
-										<table class="metkaTable">
-											<thead>
-												<tr><th>Tunniste</th><th>Myöntänyt taho</th><th></th></tr>
-											</thead>
-											<tbody>
-												<tr class="studyLevelIdRow"><td>FSD123<a href="dialogs/studylevel/addIdDialog.html" class="fancyboxpopup fancybox.ajax link"/></td><td>Mikko Tanskanen</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-												<tr class="studyLevelIdRow"><td>FSD321<a href="dialogs/studylevel/addIdDialog.html" class="fancyboxpopup fancybox.ajax link"/></td><td>Mikko Tanskanen</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-											</tbody>
-										</table>
-										<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addIdDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
-									</div>
-									<div class="studyLevelDataSetContainer translated translationEn">
-										<div class="studyLevelTableTitle">ID-tunnisteet (en)</div>
-										<table class="metkaTable">
-											<thead>
-												<tr><th>Tunniste</th><th>Myöntänyt taho</th><th></th></tr>
-											</thead>
-											<tbody>
-												<tr class="studyLevelIdRow"><td>FSD123<a href="dialogs/studylevel/addIdDialog.html" class="fancyboxpopup fancybox.ajax link"/></td><td>Mikko Tanskanen</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-												<tr class="studyLevelIdRow"><td>FSD321<a href="dialogs/studylevel/addIdDialog.html" class="fancyboxpopup fancybox.ajax link"/></td><td>Mikko Tanskanen</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-											</tbody>
-										</table>
-										<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addIdDialog.html" class="fancyboxpopup fancybox.ajax link">Lisää</a></div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<label class="studyLevelTitle">Versiotiedot</label>
-						<div class="accordionContent">
-							<div class="rowContainer containsTranslations">
-								<div class="studyLevelDataSetContainer translated">
-									<label>Versionumero</label>
-									<input type="text" name="" value="3.0" />
-								</div>
-								<div class="studyLevelDataSetContainer translated translationSv">
-									<label>Versionumero (sv)</label>
-									<input type="text" name="" value="3.0" />
-								</div>
-								<div class="studyLevelDataSetContainer translated translationEn">
-									<label>Versionumero (en)</label>
-									<input type="text" name="" value="3.0" />
-								</div>
-								<div class="studyLevelDataSetContainer translated">
-									<label>Selite</label>
-									<input type="text" name="" value="Foo bar lorem ipsum dolor sit amet"/>
-								</div>
-								<div class="studyLevelDataSetContainer translated translationSv">
-									<label>Selite (sv)</label>
-									<input type="text" name="" value="Foo bar lorem ipsum dolor sit amet"/>
-								</div>
-								<div class="studyLevelDataSetContainer translated translationEn">
-									<label>Selite (en)</label>
-									<input type="text" name="" value="Foo bar lorem ipsum dolor sit amet"/>
-								</div>
-								<div class="studyLevelDataSetContainer translated">
-									<label>Päivämäärä</label>
-									<input type="text" name="" class="datepicker" value="30.10.2013"/>
-								</div>
-								<div class="studyLevelDataSetContainer translated translationSv">
-									<label>Päivämäärä (sv)</label>
-									<input type="text" name="" class="datepicker" value="30.10.2013"/>
-								</div>
-								<div class="studyLevelDataSetContainer translated translationEn">
-									<label>Päivämäärä (en)</label>
-									<input type="text" name="" class="datepicker" value="30.10.2013"/>
-								</div>
-								<div class="studyLevelDataSetContainer translated">
-									<label>Tallentaja</label>
-									<input type="text" name="" value="mta"/>
-								</div>
-								<div class="studyLevelDataSetContainer translated translationSv">
-									<label>Tallentaja (sv)</label>
-									<input type="text" name="" value="mta"/>
-								</div>
-								<div class="studyLevelDataSetContainer translated translationEn">
-									<label>Tallentaja (en)</label>
-									<input type="text" name="" value="mta"/>
-								</div>
-							</div>
-							<div class="rowContainer containsTranslations">
-								<div class="studyLevelDataSetTextareaContainer translated">
-									<label>Julkaistava vapaamuotoinen selite</label>
-									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
-								</div>
-								<div class="studyLevelDataSetTextareaContainer translated translationSv">
-									<label>Julkaistava vapaamuotoinen selite (sv)</label>
-									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
-								</div>
-								<div class="studyLevelDataSetTextareaContainer translated translationEn">
-									<label>Julkaistava vapaamuotoinen selite (en)</label>
-									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
-								</div>
-								<div class="studyLevelDataSetTextareaContainer translated">
-									<label>Vapaamuotoinen selite</label>
-									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
-								</div>
-								<div class="studyLevelDataSetTextareaContainer translated translationSv">
-									<label>Vapaamuotoinen selite (sv)</label>
-									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
-								</div>
-								<div class="studyLevelDataSetTextareaContainer translated translationEn">
-									<label>Vapaamuotoinen selite (en)</label>
-									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
-								</div>
-							</div>						
-						</div>
+					<div id="studyLevelData">						
 						<label class="studyLevelTitle">Muut nimet</label>
 						<div class="accordionContent">
 							<div class="rowContainer containsTranslations">
-								<div class="studyLevelDataSetContainer translated">
-									<label class="link" id="studyLevelAltTitle">Rinnakkainen nimi</label>
+								<div class="studyLevelDataSetContainer translated translationFi">
+									<label id="studyLevelAltTitle">Rinnakkainen nimi<img title="Lisää" class="addNewElement" id="addAltTitle" src="../images/add.png"/></label>
 									<input type="text" name="" value="toinen nimi" /><img class="removeAddedElement" style="display:none;" title="Poista" src="../images/cancel.png"/>
 								</div>
 								<div class="studyLevelDataSetContainer translated translationSv">
-									<label class="link" id="studyLevelAltTitle">Rinnakkainen nimi (sv)</label>
-									<input type="text" name="" value="toinen nimi" /><img class="removeAddedElement" style="display:none;" title="Poista" src="../images/cancel.png"/>
+									<label id="studyLevelAltTitle">Rinnakkainen nimi (sv)</label>
+									<input type="text" name="" value="toinen nimi" />
 								</div>
 								<div class="studyLevelDataSetContainer translated translationEn">
-									<label class="link" id="studyLevelAltTitle">Rinnakkainen nimi (en)</label>
-									<input type="text" name="" value="toinen nimi" /><img class="removeAddedElement" style="display:none;" title="Poista" src="../images/cancel.png"/>
+									<label id="studyLevelAltTitle">Rinnakkainen nimi (en)</label>
+									<input type="text" name="" value="toinen nimi" />
 								</div>
 							</div>
 							<div class="rowContainer containsTranslations">
-								<div class="studyLevelDataSetContainer translated">
+								<div class="studyLevelDataSetContainer translated translationFi">
 									<div class="studyLevelTableTitle">Muunkieliset nimet</div>
 									<table class="metkaTable">
 										<thead>
@@ -846,7 +661,7 @@
 							</div>
 							<div class="rowContainer">
 								<div class="studyLevelDataSetTextareaContainer">
-									<label class="link" id="studyLevelDataSource">Lähdeaineisto</label>
+									<label id="studyLevelDataSource">Lähdeaineisto<img title="Lisää" class="addNewElement" id="addDataSource" src="../images/add.png"/></label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea><img class="removeAddedElement" style="display:none;" title="Poista" src="../images/cancel.png"/>
 								</div>
 							</div>
@@ -854,7 +669,7 @@
 						<label class="studyLevelTitle">Aineiston käyttö</label>
 						<div class="accordionContent">
 							<div class="rowContainer containsTranslations">
-								<div class="studyLevelDataSetTextareaContainer translated">
+								<div class="studyLevelDataSetTextareaContainer translated translationFi">
 									<label>Painokertoinet</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
@@ -866,7 +681,7 @@
 									<label>Painokertoinet (en)</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
-								<div class="studyLevelDataSetTextareaContainer translated">
+								<div class="studyLevelDataSetTextareaContainer translated translationFi">
 									<label>Sisällöllinen muokkaus</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
@@ -880,7 +695,7 @@
 								</div>
 							</div>
 							<div class="rowContainer containsTranslations">
-								<div class="studyLevelDataSetTextareaContainer translated">
+								<div class="studyLevelDataSetTextareaContainer translated translationFi">
 									<label>Tiedostot</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
@@ -892,7 +707,7 @@
 									<label>Tiedostot (en)</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
-								<div class="studyLevelDataSetTextareaContainer translated">
+								<div class="studyLevelDataSetTextareaContainer translated translationFi">
 									<label>Täydellisyys</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
@@ -906,7 +721,7 @@
 								</div>
 							</div>
 							<div class="rowContainer containsTranslations">
-								<div class="studyLevelDataSetTextareaContainer translated">
+								<div class="studyLevelDataSetTextareaContainer translated translationFi">
 									<label>Lisävarauma</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
@@ -918,7 +733,7 @@
 									<label>Lisävarauma (en)</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
-								<div class="studyLevelDataSetTextareaContainer translated">
+								<div class="studyLevelDataSetTextareaContainer translated translationFi">
 									<label>Huomioitavaa</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
@@ -932,24 +747,24 @@
 								</div>
 							</div>
 							<div class="rowContainer containsTranslations">
-								<div class="studyLevelDataSetTextareaContainer translated">
-									<label class="link" id="studyLevelAppraisal">Arviointia</label>
+								<div class="studyLevelDataSetTextareaContainer translated translationFi">
+									<label id="studyLevelAppraisal">Arviointia<img title="Lisää" class="addNewElement" id="addAppraisal" src="../images/add.png"/></label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea><img class="removeAddedElement" style="display:none;" title="Poista" src="../images/cancel.png"/>
 								</div>
 								<div class="studyLevelDataSetTextareaContainer translated translationSv">
-									<label class="link" id="studyLevelAppraisal">Arviointia (sv)</label>
-									<textarea>Foo bar lorem ipsum dolor sit amet</textarea><img class="removeAddedElement" style="display:none;" title="Poista" src="../images/cancel.png"/>
+									<label id="studyLevelAppraisal">Arviointia (sv)</label>
+									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
 								<div class="studyLevelDataSetTextareaContainer translated translationEn">
-									<label class="link" id="studyLevelAppraisal">Arviointia (en)</label>
-									<textarea>Foo bar lorem ipsum dolor sit amet</textarea><img class="removeAddedElement" style="display:none;" title="Poista" src="../images/cancel.png"/>
+									<label id="studyLevelAppraisal">Arviointia (en)</label>
+									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
 							</div>
 						</div>
 						<label class="studyLevelTitle">Muut materiaalit</label>
 						<div class="accordionContent">
 							<div class="rowContainer containsTranslations">
-								<div class="studyLevelDataSetContainer translated">
+								<div class="studyLevelDataSetContainer translated translationFi">
 									<div class="studyLevelTableTitle">Oheismateriaali</div>
 									<table class="metkaTable">
 										<thead>
@@ -993,7 +808,7 @@
 								</div>
 							</div>
 							<div class="rowContainer containsTranslations">
-								<div class="studyLevelDataSetContainer translated">
+								<div class="studyLevelDataSetContainer translated translationFi">
 									<div class="studyLevelTableTitle">Muu materiaali</div>
 									<table class="metkaTable">
 										<thead>
@@ -1033,25 +848,7 @@
 									<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addOtherMaterialDialog.html" class="fancyboxpopup fancybox.ajax link">	Lisää</a></div>
 								</div>
 							</div>
-						</div>
-						
-						<label class="studyLevelTitle">Tekijät</label>
-						<div class="accordionContent">
-							<table class="metkaTable" id="materialAuthorTable">
-								<thead>
-									<tr><th>Tunniste</th><th>Nimi</th><th>Organisaatio</th><th>Titteli</th><th></th></tr>
-								</thead>
-								<tbody>
-									<tr class="materialAuthor"><td>1</td><td>Mikko Tanskanen</td><td>Proactum Oy</td><td>Arkkitehti</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-									<tr class="materialAuthor"><td>2</td><td>Mikko Tanskanen</td><td>Proactum Oy</td><td>Arkkitehti</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-									<tr class="materialAuthor"><td>3</td><td>Sami Borg</td><td>Tietoarkisto</td><td>Tutkija</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-									<tr class="materialAuthor"><td>4</td><td>Pekka Pouta</td><td>YLE</td><td>Meteorologi</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-									<tr class="materialAuthor"><td>5</td><td>Mikko Tanskanen</td><td>Proactum Oy</td><td>Sovelluskehittäjä</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-								</tbody>
-							</table>
-							<div class="accordionTableActionLinkHolder"><a href="dialogs/attachPersonStudyLevelDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>	
-						</div>
-
+						</div>					
 						
 					</div>
 					
@@ -1070,7 +867,7 @@
 				</div>
 				
 				<!-- Variables -->
-				<div id="materialVariables" class="tabs2 tab4">
+				<div id="materialVariables" class="tabs2 variables">
 					
 					<div id="variablesTreeSelection">
 						<div class="variableTreeRadioSelect"><input type="radio" name="variableTreeType" id="basicVariableTree" checked autocomplete="off" />Perusnäkymä</div>
@@ -1078,7 +875,7 @@
 						<div class="variableTreeRadioSelect"><input type="radio" name="variableTreeType" id="variablesGrouping" autocomplete="off" />Muuttujien ryhmittely</div>
 					</div>
 
-					<div id="variablesMainContainer">
+					<div id="variablesMainContainer" class="translationBorder">
 
 						<div id="basicVariableTreeContainer" class="variablesTree">
 							<div id="variableFilter"><input id="variableFilterInput" placeholder="Filter..."></div>
@@ -1101,98 +898,31 @@
 								<li>[q2] Oma poliittinen kiinnostus</li>
 								<li>[q3_1] Vas./oik. oma sijoittuminen</li>
 								<li>[q3] Onko vastaaja perheen päähenkilö</li>
+								<li>[q4_1] Vastaajan ammattiryhmä</li>
+								<li>[q4_2] Jos vastaaja eläkeläinen, entinen ammattiryhmä</li>
+								<li>[q1] Sukupuolenne?</li>
+								<li>[q2] Oma poliittinen kiinnostus</li>
+								<li>[q3_1] Vas./oik. oma sijoittuminen</li>
+								<li>[q3] Onko vastaaja perheen päähenkilö</li>
+								<li>[q4_1] Vastaajan ammattiryhmä</li>
+								<li>[q4_2] Jos vastaaja eläkeläinen, entinen ammattiryhmä</li>
+								<li>[q1] Sukupuolenne?</li>
+								<li>[q2] Oma poliittinen kiinnostus</li>
+								<li>[q3_1] Vas./oik. oma sijoittuminen</li>
+								<li>[q3] Onko vastaaja perheen päähenkilö</li>
+								<li>[q4_1] Vastaajan ammattiryhmä</li>
+								<li>[q4_2] Jos vastaaja eläkeläinen, entinen ammattiryhmä</li>
+								<li>[q1] Sukupuolenne?</li>
+								<li>[q2] Oma poliittinen kiinnostus</li>
+								<li>[q3_1] Vas./oik. oma sijoittuminen</li>
+								<li>[q3] Onko vastaaja perheen päähenkilö</li>
+								<li>[q4_1] Vastaajan ammattiryhmä</li>
+								<li>[q4_2] Jos vastaaja eläkeläinen, entinen ammattiryhmä</li>
+								<li>[q1] Sukupuolenne?</li>
+								<li>[q2] Oma poliittinen kiinnostus</li>
+								<li>[q3_1] Vas./oik. oma sijoittuminen</li>
+								<li>[q3] Onko vastaaja perheen päähenkilö</li>
 							</ul>
-						</div>
-
-						<div class="variableDataTable variableTranslationTable" id="variableTranslationSv">
-							<table>
-								<thead>
-									<tr><th class="variableName"></th><th class="variableContent"></th></tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td>Muuttuja</td>
-										<td><input type="text" id="var" value="[q2] Oma poliittinen kiinnostus"/></td>
-									</tr>
-									<tr>
-										<td>Kysymysteksti</td>
-										<td>
-											<input type="text" value="Kuinka paljon politiikka Teitä kiinnostaa? Oletteko hyvin kiinnostunut, jonkin verran kiinnostunut, vain vähän kiinnostunut vai ei ollenkaan kiinnostunut?"/>
-											<input type="text" value="Kuinka paljon politiikka Teitä kiinnostaa? Oletteko hyvin kiinnostunut, jonkin verran kiinnostunut, vain vähän kiinnostunut vai ei ollenkaan kiinnostunut?"/>
-										</td>
-									</tr>
-									<tr>
-										<td>Esiteksti</td>
-										<td>
-											<input type="text" value="Aluksi muutama Teitä ja kotitalouttanne koskeva kysymys: Rengastakaa mielestänne sopivinta vaihtoehtoa vastaava numero tai kirjoittakaa vastauksenne sille varattuun tilaan."/>
-											<input type="text" value="Aluksi muutama Teitä ja kotitalouttanne koskeva kysymys: Rengastakaa mielestänne sopivinta vaihtoehtoa vastaava numero tai kirjoittakaa vastauksenne sille varattuun tilaan."/>
-										</td>
-									</tr>
-									<tr>
-										<td>Jälkiteksti</td>
-										<td><input type="text" value="Seuraavaksi muutama yhteiskuntaa yleisesti koskeva kysymys:"/></td>
-									</tr>
-									<tr>
-										<td>Haastattelijan ohje</td>
-										<td><input type="text" value="Valitse näistä sopivin vaihtoehto"/></td>
-									</tr>
-									<tr>
-										<td>Vaihtoehdot</td>
-										<td>
-											<input type="text" value="Hyvin kiinnostunut"/><br/>
-											<input type="text" value="Jonkin verran kiinnostunut"/><br/>
-											<input type="text" value="Vain vähän kiinnostunut"/><br/>
-											<input type="text" value="Ei ollenkaan kiinnostunut"/><br/>
-											<input type="text" value="Ei osaa sanoa"/><br/>
-										</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-						<div class="variableDataTable variableTranslationTable" id="variableTranslationEn">
-							<table>
-								<thead>
-									<tr><th class="variableName"></th><th class="variableContent"></th></tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td>Muuttuja</td>
-										<td><input type="text" id="var" value="[q2] Oma poliittinen kiinnostus"/></td>
-									</tr>
-									<tr>
-										<td>Kysymysteksti</td>
-										<td>
-											<input type="text" value="Kuinka paljon politiikka Teitä kiinnostaa? Oletteko hyvin kiinnostunut, jonkin verran kiinnostunut, vain vähän kiinnostunut vai ei ollenkaan kiinnostunut?"/>
-											<input type="text" value="Kuinka paljon politiikka Teitä kiinnostaa? Oletteko hyvin kiinnostunut, jonkin verran kiinnostunut, vain vähän kiinnostunut vai ei ollenkaan kiinnostunut?"/>
-										</td>
-									</tr>
-									<tr>
-										<td>Esiteksti</td>
-										<td>
-											<input type="text" value="Aluksi muutama Teitä ja kotitalouttanne koskeva kysymys: Rengastakaa mielestänne sopivinta vaihtoehtoa vastaava numero tai kirjoittakaa vastauksenne sille varattuun tilaan."/>
-											<input type="text" value="Aluksi muutama Teitä ja kotitalouttanne koskeva kysymys: Rengastakaa mielestänne sopivinta vaihtoehtoa vastaava numero tai kirjoittakaa vastauksenne sille varattuun tilaan."/>
-										</td>
-									</tr>
-									<tr>
-										<td>Jälkiteksti</td>
-										<td><input type="text" value="Seuraavaksi muutama yhteiskuntaa yleisesti koskeva kysymys:"/></td>
-									</tr>
-									<tr>
-										<td>Haastattelijan ohje</td>
-										<td><input type="text" value="Valitse näistä sopivin vaihtoehto"/></td>
-									</tr>
-									<tr>
-										<td>Vaihtoehdot</td>
-										<td>
-											<input type="text" value="Hyvin kiinnostunut"/><br/>
-											<input type="text" value="Jonkin verran kiinnostunut"/><br/>
-											<input type="text" value="Vain vähän kiinnostunut"/><br/>
-											<input type="text" value="Ei ollenkaan kiinnostunut"/><br/>
-											<input type="text" value="Ei osaa sanoa"/><br/>
-										</td>
-									</tr>
-								</tbody>
-							</table>
 						</div>
 
 						<div id="groupedVariableTreeContainer" class="variablesTree">
@@ -1281,47 +1011,89 @@
 										</thead>
 										<tbody>
 											<tr>
-												<td>Muuttuja</td>
-												<td><input type="text" id="var" value="[q2] Oma poliittinen kiinnostus"/></td>
+												<td>Nimi</td>
+												<td>[q2] Oma poliittinen kiinnostus</td>
 											</tr>
 											<tr>
-												<td>Kysymysteksti</td>
+												<td>Selite</td>
+												<td>[q2] Oma poliittinen kiinnostus</td>
+											</tr>
+											<tr>
+												<td class="cellValignMiddle">Kysymysteksti</td>
 												<td>
-													<input type="text" value="Kuinka paljon politiikka Teitä kiinnostaa? Oletteko hyvin kiinnostunut, jonkin verran kiinnostunut, vain vähän kiinnostunut vai ei ollenkaan kiinnostunut?"/>
-													<input type="text" value="Kuinka paljon politiikka Teitä kiinnostaa? Oletteko hyvin kiinnostunut, jonkin verran kiinnostunut, vain vähän kiinnostunut vai ei ollenkaan kiinnostunut?"/>
+													<textarea>Kuinka paljon politiikka Teitä kiinnostaa? Oletteko hyvin kiinnostunut, jonkin verran kiinnostunut, vain vähän kiinnostunut vai ei ollenkaan kiinnostunut?</textarea><img title="Poista" src="../images/add.png"/>
 												</td>
 											</tr>
 											<tr>
-												<td>Esiteksti</td>
+												<td class="cellValignMiddle">Kysymysteksti</td>
 												<td>
-													<input type="text" value="Aluksi muutama Teitä ja kotitalouttanne koskeva kysymys: Rengastakaa mielestänne sopivinta vaihtoehtoa vastaava numero tai kirjoittakaa vastauksenne sille varattuun tilaan."/>
-													<input type="text" value="Aluksi muutama Teitä ja kotitalouttanne koskeva kysymys: Rengastakaa mielestänne sopivinta vaihtoehtoa vastaava numero tai kirjoittakaa vastauksenne sille varattuun tilaan."/>
+													<textarea>Kuinka paljon politiikka Teitä kiinnostaa? Oletteko hyvin kiinnostunut, jonkin verran kiinnostunut, vain vähän kiinnostunut vai ei ollenkaan kiinnostunut?</textarea><img title="Poista" src="../images/cancel.png"/>
 												</td>
 											</tr>
 											<tr>
-												<td>Jälkiteksti</td>
-												<td><input type="text" value="Seuraavaksi muutama yhteiskuntaa yleisesti koskeva kysymys:"/></td>
-											</tr>
-											<tr>
-												<td>Haastattelijan ohje</td>
-												<td><input type="text" value="Valitse näistä sopivin vaihtoehto"/></td>
-											</tr>
-											<tr>
-												<td>Vaihtoehdot</td>
+												<td class="cellValignMiddle">Esiteksti</td>
 												<td>
-													<input type="text" value="Hyvin kiinnostunut"/><br/>
-													<input type="text" value="Jonkin verran kiinnostunut"/><br/>
-													<input type="text" value="Vain vähän kiinnostunut"/><br/>
-													<input type="text" value="Ei ollenkaan kiinnostunut"/><br/>
-													<input type="text" value="Ei osaa sanoa"/><br/>
+													<textarea>Aluksi muutama Teitä ja kotitalouttanne koskeva kysymys: Rengastakaa mielestänne sopivinta vaihtoehtoa vastaava numero tai kirjoittakaa vastauksenne sille varattuun tilaan.</textarea><img title="Poista" src="../images/add.png"/>
 												</td>
+											</tr>
+											<tr>
+												<td class="cellValignMiddle">Esiteksti</td>
+												<td>
+													<textarea>Aluksi muutama Teitä ja kotitalouttanne koskeva kysymys: Rengastakaa mielestänne sopivinta vaihtoehtoa vastaava numero tai kirjoittakaa vastauksenne sille varattuun tilaan.</textarea><img title="Poista" src="../images/cancel.png"/>
+												</td>
+											</tr>
+											<tr>
+												<td class="cellValignMiddle">Jälkiteksti</td>
+												<td><textarea>Seuraavaksi muutama yhteiskuntaa yleisesti koskeva kysymys:</textarea><img title="Poista" src="../images/add.png"/></td>
+											</tr>
+											<tr>
+												<td class="cellValignMiddle">Haastattelijan ohje</td>
+												<td><textarea>Valitse näistä sopivin vaihtoehto</textarea><img title="Poista" src="../images/add.png"/></td>
+											</tr>
+											<tr>
+												<td class="cellValignMiddle">Huomiot</td>
+												<td><textarea>Valitse näistä sopivin vaihtoehto</textarea></td>
+											</tr>
+											<tr>
+												<td class="cellValignMiddle">Lisätiedot</td>
+												<td><textarea>Valitse näistä sopivin vaihtoehto</textarea></td>
+											</tr>
+											<tr>
+												<td class="cellValignMiddle">Tietosuoja-asiat</td>
+												<td><textarea>Valitse näistä sopivin vaihtoehto</textarea></td>
+											</tr>
+											<tr>
+												<td>Arvojen selitteet</td>
+												<td>
+													1:<input class="variableNameInput" type="text" value="Hyvin kiinnostunut"/>12<br/>
+													2:<input class="variableNameInput" type="text" value="Jonkin verran kiinnostunut"/>11<br/>
+													3:<input class="variableNameInput" type="text" value="Vain vähän kiinnostunut"/>4<br/>
+													4:<input class="variableNameInput" type="text" value="Ei ollenkaan kiinnostunut"/>19<br/>
+													5:<input class="variableNameInput" type="text" value="Ei osaa sanoa"/>2<br/>
+												</td>
+											</tr>
+											<tr>
+												<td>Lukumäärä</td>
+												<td>56</td>
+											</tr>
+											<tr>
+												<td>Minimi</td>
+												<td>1</td>
+											</tr>
+											<tr>
+												<td>Maksimi</td>
+												<td>5</td>
+											</tr>
+											<tr>
+												<td>Keskiarvo</td>
+												<td>3</td>
+											</tr>
+											<tr>
+												<td>Keskihajonta</td>
+												<td>0.5</td>
 											</tr>
 										</tbody>
 									</table>
-									<div class="translations">
-										<div class="variableTranslationLink" id="variableTranslationLinkSv">sv</div>
-										<div class="variableTranslationLink" id="variableTranslationLinkEn">en</div>
-									</div>
 								</div>
 							</div>
 							
@@ -1335,10 +1107,12 @@
 										<tbody>
 											<tr>
 												<td id="variableGroupName">Ryhmän teksti</td>
-												<td><textarea cols="40" rows="5"></textarea>
-													<textarea cols="40" rows="5"></textarea>
-													<textarea cols="40" rows="5"></textarea>
-												</td>
+												<td><textarea cols="40" rows="5"></textarea><img title="Poista" src="../images/add.png"/></td>
+											</tr>
+											<tr>
+												<td id="variableGroupName">Ryhmän teksti</td>
+												<td><textarea cols="40" rows="5"></textarea><img title="Poista" src="../images/cancel.png"/></td>
+											</tr>
 										</tbody>
 									</table>
 								</div>
@@ -1369,19 +1143,21 @@
 							</div>
 							<div id="variablesToGroupArrowBox" class="">
 								<div id="variablesToGroupArrow">&gt;</div>
+								<br/>
+								<div id="groupToVariablesArrow">&lt;</div>
 							</div>
 							
 							<div id="variableGroupsBox" class="variablesGroupingBox fancytree-radio">
 								<div id="newFolder"><input type="text" id="newFolderName"/><input type="button" id="addFolderButton" class="searchFormInput" value="Lisää ryhmä"/></div>
 								<ul id="variableGroupRoot">
-									<li class="parentVariableGroup folder">Nyt pyytäisin Teitä vertailemaan eräiden ominai...
+									<li class="parentVariableGroup folder">Nyt pyytäisin Teitä vertailemaan eräiden ominai...<img title="Poista" src="../images/cancel.png"/>
 										<ul class="childVariableGroupList">
 											<li>[q1] Sukupuolenne?</li>
 											<li>[q2] Oma poliittinen kiinnostus</li>
 											<li>[q2] Ikä</li>
 										</ul>
 									</li>
-									<li class="parentVariableGroup folder">Foo bar lorem ipsum dolor sit amet
+									<li class="parentVariableGroup folder">Foo bar lorem ipsum dolor sit amet<img title="Poista" src="../images/cancel.png"/>
 										<ul class="childVariableGroupList">
 											<li>[q1] Sukupuolenne?</li>
 											<li>[q2] Oma poliittinen kiinnostus</li>
@@ -1409,7 +1185,7 @@
 				</div>							
 				
 				<!-- File handling -->
-				<div id="materialFiles" class="tabs2 tab5">
+				<div id="materialFiles" class="tabs2 files">
 					
 					<div class="materialRowTitle">Liitetyt tiedostot</div>
 					<table class="metkaTable sortableTable" id="materialFileTable">
@@ -1417,43 +1193,11 @@
 							<tr><th>Tiedoston nimi</th><th>Tallentaja</th><th>Kieli</th><th></th></tr>
 						</thead>
 						<tbody>
-							<tr class="materialFileRow" id="1"><td class="materialFileName">data.zip</td><td>Mikko Tanskanen</td><td>Englanti</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-							<tr class="materialFileRow" id="2"><td class="materialFileName">fooBar.docx</td><td>Tiina Isotalo</td><td>Suomi</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+							<tr class="materialFileRow"><td class="materialFileName">data.zip<a href="dialogs/attachFileEditDialog.html" class="fancyboxpopup fancybox.ajax"/></td><td>Mikko Tanskanen</td><td>Englanti</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+							<tr class="materialFileRow"><td class="materialFileName">fooBar.docx<a href="dialogs/attachFileEditDialog.html" class="fancyboxpopup fancybox.ajax"/></td><td>Tiina Isotalo</td><td>Suomi</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
 						</tbody>
 					</table>
-					<div class="materialTableActionLinkHolder"><a href="dialogs/attachFileDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>		
-				
-					<div id="materialFileInfoRow" style="display: none;">
-						<div id="materialFileInfoContent">
-							<table>
-								<thead><tr><th class="fileInfoLabel"></th><th class="fileInfoContent"></th></tr></thead>
-								<tbody>
-									<tr><td class="fileInfoLabel">Tiedosto</td><td class="fileInfoContent"><a id="" class="fileInfoContentFileName" href="#"></a></td>
-									<tr><td class="fileInfoLabel">Virallinen selite</td><td class="fileInfoContent">Nullam non tempor enim. Curabitur porttitor, mauris non viverra euismod, leo lorem lobortis massa, vitae ultricies mauris massa nec ligula. Donec quis elit ut augue vehicula viverra et in tellus</td></tr>
-									<tr><td class="fileInfoLabel">Erpävirallinen Selite</td><td class="fileInfoContent">Nullam non tempor enim. Curabitur porttitor, mauris non viverra euismod, leo lorem lobortis massa, vitae ultricies mauris massa nec ligula. Donec quis elit ut augue vehicula viverra et in tellus</td></tr>
-									<tr><td class="fileInfoLabel">Kommentti</td><td class="fileInfoContent">Ajattelin tämän lisätä tänne</td></tr>
-									<tr><td class="fileInfoLabel">Tallentaja</td><td class="fileInfoContent">Mikko Tanskanen</td></tr>
-									<tr><td class="fileInfoLabel">PAS</td><td class="fileInfoContent">Ei tietoa</td></tr>
-									<tr><td class="fileInfoLabel">Kieli</td><td class="fileInfoContent">Suomi</td></tr>
-									<tr><td class="fileInfoLabel">Alkuperäinen kieli</td><td class="fileInfoContent">Ei tietoa</td></tr>
-									<tr><td class="fileInfoLabel">Ulosluovutus</td><td class="fileInfoContent">Ei tietoa</td></tr>
-									<tr><td class="fileInfoLabel">WWW</td><td class="fileInfoContent">x</td></tr>
-									<tr><td class="fileInfoLabel">Muutospvm</td><td class="fileInfoContent">3.10.2013</td></tr>
-								</tbody>
-							</table>
-						</div>
-
-						<div class="materialRowTitle">Tiedostohistoria</div>
-						<table class="metkaTable sortableTable" id="materialFileInfoTable">
-							<thead>
-								<tr><th>Muokkauspäivämäärä</th><th>Muokkaaja</th><th>Selite</th></tr>
-							</thead>
-							<tbody>
-								<tr><td>2.10.2013</td><td>Simo Häyhä</td><td>Muokkasin vähän</td></tr>
-								<tr><td>4.10.2013</td><td>Ville Iivonen</td><td>Lisäsin pari kohtaa</td></tr>
-							</tbody>
-						</table>
-					</div>
+					<div class="materialTableActionLinkHolder"><a href="dialogs/attachFileDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>						
 				
 					<div class="materialRowTitle">Poistetut tiedostot</div>
 					<table class="metkaTable sortableTable" id="materialRemovedFileTable">
@@ -1513,26 +1257,21 @@
 				</div>
 			
 				<!-- Codebook -->
-				<div id="materialCodebook" class="tabs2 tab6">
+				<div id="materialCodebook" class="tabs2 codebook">
 					<div class="rowContainer containsTranslations">
-						<div class="materialDataSetContainerTopRow">
-							<div class="translations">
-								<div class="translationLinkSv">sv</div><div class="translationLinkEn">en</div>
-							</div>
-						</div>
 					</div>
 					<div class="rowContainer containsTranslations">
 						<div class="materialRowTitle">Koodikirjan liitteet</div>
 						<table class="metkaTable" id="materialCodebookFileTable">
 							<thead>
-								<tr><th>Tiedoston nimi</th><th>Kuvaus</th><th>PVM</th><th>Tallentaja</th><th></th></tr>
+								<tr><th>Tiedosto</th><th>Otsikko</th><th>Tyyppi</th><th>Kuvaus</th><th>PVM</th><th>Tallentaja</th><th></th></tr>
 							</thead>
 							<tbody>
 								<tr class="materialCodebookFileRow">
-									<td class="materialCodebookFileName">data.zip</td><td>Datapaketti</td><td>3.10.2013</td><td>Mikko Tanskanen</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
+									<td class="materialCodebookFileName">x/foo/bar.zip</td><td>Datapaketti</td><td>Datatiedosto</td><td>Datapaketti</td><td>3.10.2013</td><td>Mikko Tanskanen</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
 								</tr>
 								<tr class="materialCodebookFileRow">
-									<td class="materialCodebookFileName">fooBar.docx</td><td>Dokumentaatio</td><td>12.10.2013</td><td>Mikko Tanskanen</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
+									<td class="materialCodebookFileName">x/bar/fooBar.docx</td><td>Datapaketti</td><td>Datatiedosto</td><td>Dokumentaatio</td><td>12.10.2013</td><td>Mikko Tanskanen</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
 								</tr>
 							</tbody>
 						</table>
@@ -1590,28 +1329,28 @@
 				</div>	
 				
 				<!-- Errors -->
-				<div id="materialErrors" class="tabs2 tab7">
+				<div id="materialErrors" class="tabs2 errors">
 					<table class="metkaTable sortableTable" id="materialErrorsTable">
 						<thead>
 							<tr><th>PVM</th><th>Merkitsijä</th><th>Aineiston osa</th><th>Selite</th><th>Pisteet</th><th>Merkitse tehdyksi</th></tr>
 						</thead>
 						<tbody>
-							<tr id="1" class="materialErrorRow"><td>23.9.2013</td>
-								<td>Mikko Tanskanen</td>
+							<tr class="materialErrorRow"><td>23.9.2013</td>
+								<td>Mikko Tanskanen<a href="dialogs/attachErrorDialog.html" class="fancyboxpopup fancybox.ajax"/></td>
 								<td>Lomake</td>
 								<td>Aineiston tyyppi</td>
 								<td>2</td>
 								<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
 							</tr>
-							<tr id="2" class="materialErrorRow"><td>3.10.2013</td>
-								<td>Mikko Tanskanen</td>
+							<tr class="materialErrorRow"><td>3.10.2013</td>
+								<td>Mikko Tanskanen<a href="dialogs/attachErrorDialog.html" class="fancyboxpopup fancybox.ajax"/></td>
 								<td>Arkistointisopimus</td>
 								<td>Lorem ipsum lyhyesti</td>
 								<td>4</td>
 								<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
 							</tr>
-							<tr id="3" class="materialErrorRow"><td>12.10.2013</td>
-								<td>Mikko Tanskanen</td>
+							<tr class="materialErrorRow"><td>12.10.2013</td>
+								<td>Mikko Tanskanen<a href="dialogs/attachErrorDialog.html" class="fancyboxpopup fancybox.ajax"/></td>
 								<td>Tiedostot (<a href="#">fooBar.docx</a>)</td>
 								<td>Väärä tiedosto</td>
 								<td>5</td>
@@ -1621,23 +1360,6 @@
 					</table>
 
 					<div class="materialTableActionLinkHolder"><a href="dialogs/attachErrorDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>
-
-					<div id="materialErrorInfoRow">
-						<div id="materialErrorInfoContent">
-							<table>
-								<thead><tr id=""><th class="errorInfoLabel"></th><th class="errorInfoContent"></th></tr></thead>
-								<tbody>
-									<tr><td class="errorInfoLabel">Päivämäärä</td><td class="errorInfoContent">12.10.2013</td>
-									<tr><td class="errorInfoLabel">Selite</td><td class="errorInfoContent">Nullam non tempor enim.</td></tr>
-									<tr><td class="errorInfoLabel">Pitkä Selite</td><td class="errorInfoContent">Nullam non tempor enim. Curabitur porttitor, mauris non viverra euismod, leo lorem lobortis massa, vitae ultricies mauris massa nec ligula. Donec quis elit ut augue vehicula viverra et in tellus</td></tr>
-									<tr><td class="errorInfoLabel">Tallentaja</td><td class="errorInfoContent">Mikko Tanskanen</td></tr>
-									<tr><td class="errorInfoLabel">Pisteet</td><td class="errorInfoContent">4</td></tr>
-									<tr><td class="errorInfoLabel">Herätepvm</td><td class="errorInfoContent">16.10.2013</td></tr>
-									<tr><td class="errorInfoLabel">Herätteen saaja</td><td class="errorInfoContent">Mikko Tanskanen</td></tr>
-								</tbody>
-							</table>
-						</div>
-					</div>
 					
 					<div class="viewFormButtonsHolder" style="margin-bottom:20px;">
 						<input type="button" id="ddi2Export" class="searchFormInput" value="DDI2-Export" />
@@ -1655,7 +1377,7 @@
 				
 
 				<!-- Packaging -->
-				<div id="materialPackaging" class="tabs2 tab8">
+				<div id="materialPackaging" class="tabs2 packages">
 					
 					<table class="metkaTable sortableTable" >
 						<thead>
