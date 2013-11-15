@@ -175,7 +175,7 @@
 
 		.studyLevelTableTitle {
 			font-size: 12px;
-			padding-top: 10px;
+			margin-top: 10px;
 		}
 		.metkaTable {
 			@extend table.metkaTable;
@@ -309,27 +309,6 @@
 			float: left;
 		}
 
-		.variableTranslationTable {
-			padding-top: 30px;
-			font-size: 15px;
-			padding-left: 20px;
-			width: $variableTranslationTableWidth;
-			min-height: $containerMinHeight;
-			float: left;
-
-			thead {
-				.variableName {
-					width: 190px;
-				}
-				.variableContent {
-					width: 240px;
-				}
-			}
-			input {
-				width: 240px;
-			}
-		}
-
 		#groupedVariableTreeContainer {
 			#newFolder {
 				padding-left: 10px;
@@ -388,12 +367,6 @@
 					input {
 						width: 250px;
 					}
-				}
-			}
-
-			.translations {
-				.variableTranslationLink {
-					@include translationLink;
 				}
 			}
 

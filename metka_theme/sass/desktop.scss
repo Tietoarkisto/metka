@@ -1,5 +1,9 @@
 @import "global";
 
+#translatorDesktop {
+	display: none;
+}
+
 .desktopWidget, .desktopWidgetInContainer{
 	margin: 20px 20px 10px 20px;
 }
@@ -8,7 +12,7 @@
 	position: relative;
 
 	.desktopWidgetInContainer {
-		width: 450px;
+		width: $desktopWidgetContainerWidth;
 		position: absolute;
 
 		&.onTheRight {

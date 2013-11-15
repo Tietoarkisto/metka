@@ -94,11 +94,11 @@
 							</div>
 							<!-- Not actually fi but must be seen on the finnish section -->
 							<div class="materialDataSetContainerTopRow translated translationFi">
-								<label id="materialNameEng" class="rightSide">Aineiston nimi (en)</label>
-								<input tabIndex="2" type="text" name="materialnNimiEng" />
+								<label id="materialNameEn" class="rightSide">Aineiston nimi (en)</label>
+								<input id="materialNameEnInput" tabIndex="2" type="text" name="materialnNimiEng" />
 							</div>
 							<div class="materialDataSetContainerTopRow translationSv">
-								<label id="materialNameEng" class="rightSide">Aineiston nimi (sv)</label>
+								<label id="materialNameSv" class="rightSide">Aineiston nimi (sv)</label>
 								<input tabIndex="2" type="text" name="materialnNimiEng" />
 							</div>
 						</div>
@@ -186,7 +186,7 @@
 					</div>
 					<div class="rowContainer containsTranslations">
 						<div class="materialRowTitle">Datan versiot</div>
-						<table class="metkaTable" id="materialVersionTable">
+						<table class="metkaTable materialVersionTable">
 							<thead>
 								<tr><th>Versionumero</th><th>Päivämäärä</th><th>Käsittelijä</th><th>Lyhyt selite</th></tr>
 							</thead>
@@ -200,7 +200,7 @@
 					</div>
 					<div class="rowContainer containsTranslations">
 						<div class="materialRowTitle">Kuvailun versiot</div>
-						<table class="metkaTable" id="materialVersionTable">
+						<table class="metkaTable materialVersionTable">
 							<thead>
 								<tr><th>Versionumero</th><th>Päivämäärä</th><th>Käsittelijä</th><th>Lyhyt selite</th></tr>
 							</thead>
@@ -299,11 +299,6 @@
 							<div class="materialDataSetContainer"><label>Herätteen selite</label><input type="txt" class="" name="herateselite" /></div>
 						</div>
 						<div class="rowContainer">
-							<div class="materialDataSetContainer"><label>Erityisehtoja, fin</label><input type="text" class="" name="valmispvm"/></div>
-							<div class="materialDataSetContainer"><label>Erityisehtoja, eng</label><input type="text" class="" name="valmispvm"/></div>
-							<div class="materialDataSetContainer"><label>Erityisehtoja, swe</label><input type="text" class="" name="valmispvm"/></div>
-						</div>
-						<div class="rowContainer">
 							<div class="materialDataSetContainer"><label id="filingContractFile" class="link">Arkistointisopimustiedosto</label><input type="txt" class="" name="kayttoehto" /></div>
 							<div class="materialDataSetContainer"><label>Arkistointisopimuksen tapa</label>
 								<select><option>Ei tietoa</option><option>Ei tarvita sopimusta</option><option>Könttäsopimus</option><option>Norm+puite</option><option>On sopimus</option></select>
@@ -328,7 +323,7 @@
                                 <textarea></textarea>
                            </div>      
 
-                           <div class="materialDataSetTextareaContainer translated">
+                           <div class="materialDataSetTextareaContainer translated translationFi">
                                 <label>Erityisehdot</label>
                                 <textarea></textarea>
                            </div>
@@ -367,7 +362,7 @@
 						<label class="studyLevelTitle">Muut nimet</label>
 						<div class="accordionContent">
 							<div class="rowContainer containsTranslations">
-								<div class="studyLevelDataSetContainer translated">
+								<div class="studyLevelDataSetContainer translated translationFi">
 									<label id="studyLevelAltTitle">Rinnakkainen nimi<img title="Lisää" class="addNewElement" id="addAltTitle" src="../images/add.png"/></label>
 									<input type="text" name="" value="toinen nimi" /><img class="removeAddedElement" style="display:none;" title="Poista" src="../images/cancel.png"/>
 								</div>
@@ -381,7 +376,7 @@
 								</div>
 							</div>
 							<div class="rowContainer containsTranslations">
-								<div class="studyLevelDataSetContainer translated">
+								<div class="studyLevelDataSetContainer translated translationFi">
 									<div class="studyLevelTableTitle">Muunkieliset nimet</div>
 									<table class="metkaTable">
 										<thead>
@@ -674,7 +669,7 @@
 						<label class="studyLevelTitle">Aineiston käyttö</label>
 						<div class="accordionContent">
 							<div class="rowContainer containsTranslations">
-								<div class="studyLevelDataSetTextareaContainer translated">
+								<div class="studyLevelDataSetTextareaContainer translated translationFi">
 									<label>Painokertoinet</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
@@ -686,7 +681,7 @@
 									<label>Painokertoinet (en)</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
-								<div class="studyLevelDataSetTextareaContainer translated">
+								<div class="studyLevelDataSetTextareaContainer translated translationFi">
 									<label>Sisällöllinen muokkaus</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
@@ -700,7 +695,7 @@
 								</div>
 							</div>
 							<div class="rowContainer containsTranslations">
-								<div class="studyLevelDataSetTextareaContainer translated">
+								<div class="studyLevelDataSetTextareaContainer translated translationFi">
 									<label>Tiedostot</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
@@ -712,7 +707,7 @@
 									<label>Tiedostot (en)</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
-								<div class="studyLevelDataSetTextareaContainer translated">
+								<div class="studyLevelDataSetTextareaContainer translated translationFi">
 									<label>Täydellisyys</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
@@ -726,7 +721,7 @@
 								</div>
 							</div>
 							<div class="rowContainer containsTranslations">
-								<div class="studyLevelDataSetTextareaContainer translated">
+								<div class="studyLevelDataSetTextareaContainer translated translationFi">
 									<label>Lisävarauma</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
@@ -738,7 +733,7 @@
 									<label>Lisävarauma (en)</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
-								<div class="studyLevelDataSetTextareaContainer translated">
+								<div class="studyLevelDataSetTextareaContainer translated translationFi">
 									<label>Huomioitavaa</label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 								</div>
@@ -752,7 +747,7 @@
 								</div>
 							</div>
 							<div class="rowContainer containsTranslations">
-								<div class="studyLevelDataSetTextareaContainer translated">
+								<div class="studyLevelDataSetTextareaContainer translated translationFi">
 									<label id="studyLevelAppraisal">Arviointia<img title="Lisää" class="addNewElement" id="addAppraisal" src="../images/add.png"/></label>
 									<textarea>Foo bar lorem ipsum dolor sit amet</textarea><img class="removeAddedElement" style="display:none;" title="Poista" src="../images/cancel.png"/>
 								</div>
@@ -769,7 +764,7 @@
 						<label class="studyLevelTitle">Muut materiaalit</label>
 						<div class="accordionContent">
 							<div class="rowContainer containsTranslations">
-								<div class="studyLevelDataSetContainer translated">
+								<div class="studyLevelDataSetContainer translated translationFi">
 									<div class="studyLevelTableTitle">Oheismateriaali</div>
 									<table class="metkaTable">
 										<thead>
@@ -813,7 +808,7 @@
 								</div>
 							</div>
 							<div class="rowContainer containsTranslations">
-								<div class="studyLevelDataSetContainer translated">
+								<div class="studyLevelDataSetContainer translated translationFi">
 									<div class="studyLevelTableTitle">Muu materiaali</div>
 									<table class="metkaTable">
 										<thead>
@@ -880,7 +875,7 @@
 						<div class="variableTreeRadioSelect"><input type="radio" name="variableTreeType" id="variablesGrouping" autocomplete="off" />Muuttujien ryhmittely</div>
 					</div>
 
-					<div id="variablesMainContainer">
+					<div id="variablesMainContainer" class="translationBorder">
 
 						<div id="basicVariableTreeContainer" class="variablesTree">
 							<div id="variableFilter"><input id="variableFilterInput" placeholder="Filter..."></div>
@@ -928,97 +923,6 @@
 								<li>[q3_1] Vas./oik. oma sijoittuminen</li>
 								<li>[q3] Onko vastaaja perheen päähenkilö</li>
 							</ul>
-						</div>
-
-						<div class="variableDataTable variableTranslationTable" id="variableTranslationSv">
-							<table>
-								<thead>
-									<tr><th class="variableName"></th><th class="variableContent"></th></tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td>Muuttuja</td>
-										<td><input type="text" id="var" value="[q2] Oma poliittinen kiinnostus"/></td>
-									</tr>
-									<tr>
-										<td>Kysymysteksti</td>
-										<td>
-											<textarea>Kuinka paljon politiikka Teitä kiinnostaa? Oletteko hyvin kiinnostunut, jonkin verran kiinnostunut, vain vähän kiinnostunut vai ei ollenkaan kiinnostunut?</textarea>
-											<textarea>Kuinka paljon politiikka Teitä kiinnostaa? Oletteko hyvin kiinnostunut, jonkin verran kiinnostunut, vain vähän kiinnostunut vai ei ollenkaan kiinnostunut?</textarea>
-										</td>
-									</tr>
-									<tr>
-										<td>Esiteksti</td>
-										<td>
-											<textarea>Aluksi muutama Teitä ja kotitalouttanne koskeva kysymys: Rengastakaa mielestänne sopivinta vaihtoehtoa vastaava numero tai kirjoittakaa vastauksenne sille varattuun tilaan.</textarea>
-											<textarea>Aluksi muutama Teitä ja kotitalouttanne koskeva kysymys: Rengastakaa mielestänne sopivinta vaihtoehtoa vastaava numero tai kirjoittakaa vastauksenne sille varattuun tilaan.</textarea>
-										</td>
-									</tr>
-									<tr>
-										<td>Jälkiteksti</td>
-										<td><textarea>Seuraavaksi muutama yhteiskuntaa yleisesti koskeva kysymys:</textarea></td>
-									</tr>
-									<tr>
-										<td>Haastattelijan ohje</td>
-										<td><textarea>Valitse näistä sopivin vaihtoehto</textarea></td>
-									</tr>
-									<tr>
-										<td>Vaihtoehdot</td>
-										<td>
-											1<input type="text" value="Hyvin kiinnostunut"/><br/>
-											2<input type="text" value="Jonkin verran kiinnostunut"/><br/>
-											3<input type="text" value="Vain vähän kiinnostunut"/><br/>
-											4<input type="text" value="Ei ollenkaan kiinnostunut"/><br/>
-											5<input type="text" value="Ei osaa sanoa"/><br/>
-										</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-						<div class="variableDataTable variableTranslationTable" id="variableTranslationEn">
-							<table>
-								<thead>
-									<tr><th class="variableName"></th><th class="variableContent"></th></tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td>Muuttuja</td>
-										<td><input type="text" id="var" value="[q2] Oma poliittinen kiinnostus"/></td>
-									</tr>
-									<tr>
-										<td>Kysymysteksti</td>
-										<td>
-											<textarea>Kuinka paljon politiikka Teitä kiinnostaa? Oletteko hyvin kiinnostunut, jonkin verran kiinnostunut, vain vähän kiinnostunut vai ei ollenkaan kiinnostunut?</textarea>
-											<textarea>Kuinka paljon politiikka Teitä kiinnostaa? Oletteko hyvin kiinnostunut, jonkin verran kiinnostunut, vain vähän kiinnostunut vai ei ollenkaan kiinnostunut?</textarea>
-										</td>
-									</tr>
-									<tr>
-										<td>Esiteksti</td>
-										<td>
-											<textarea>Aluksi muutama Teitä ja kotitalouttanne koskeva kysymys: Rengastakaa mielestänne sopivinta vaihtoehtoa vastaava numero tai kirjoittakaa vastauksenne sille varattuun tilaan.</textarea>
-											<textarea>Aluksi muutama Teitä ja kotitalouttanne koskeva kysymys: Rengastakaa mielestänne sopivinta vaihtoehtoa vastaava numero tai kirjoittakaa vastauksenne sille varattuun tilaan.</textarea>
-										</td>
-									</tr>
-									<tr>
-										<td>Jälkiteksti</td>
-										<td><textarea>Seuraavaksi muutama yhteiskuntaa yleisesti koskeva kysymys:</textarea></td>
-									</tr>
-									<tr>
-										<td>Haastattelijan ohje</td>
-										<td><textarea>Valitse näistä sopivin vaihtoehto</textarea></td>
-									</tr>
-									<tr>
-										<td>Vaihtoehdot</td>
-										<td>
-											1<input type="text" value="Hyvin kiinnostunut"/><br/>
-											2<input type="text" value="Jonkin verran kiinnostunut"/><br/>
-											3<input type="text" value="Vain vähän kiinnostunut"/><br/>
-											4<input type="text" value="Ei ollenkaan kiinnostunut"/><br/>
-											5<input type="text" value="Ei osaa sanoa"/><br/>
-										</td>
-									</tr>
-								</tbody>
-							</table>
 						</div>
 
 						<div id="groupedVariableTreeContainer" class="variablesTree">

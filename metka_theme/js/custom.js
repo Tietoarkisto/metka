@@ -55,52 +55,59 @@ $(document).ready(function(){
 	$(".materialFileRow, .materialCodebookFileRow, .materialErrorRow, .desktopWidgetDataRow, " +
 		".errorneousMaterialRow, .materialSearchResultRow, .publicationSearchResultRow, .seriesSearchResultRow, " + 
 		".materialSeriesRow, .materialPublicationRow, .materialMaterialRow, #variablesListBasic li, " +
-		".publicationSeriesRow, .publicationMaterialRow, .materialBinderRow, .binderRow, " + 
-		".materialRemovedFileRow, #filingContractFile, .versionRow, " + 
-		".link, .translationLink, .translationLinkEn, .translationLinkSv, .translationLinkFi, .variableTranslationLink, " +
+		".publicationSeriesRow, .publicationMaterialRow, .materialBinderRow, .binderRow, .link, " +
 		".studyLevelIdRow, .parTitleRow, .otherMaterialRow, .relatedMaterialRow" + 
-		".removeAddedElement").hover(function() {
+		".removeAddedElement, .versionRow, .materialNotificationRow").hover(function() {
 		    $(this).css('cursor', 'pointer');
 		}, function() {
 		    $(this).css('cursor', 'auto');		    
 	});
 
+	$("input[type=radio][name=language]").on("click", function() {
+		var language = $(this).val();
+			$(".translationSv").hide();
+			$(".translationEn").hide();
 
-	$(".translationLinkSv").on("click", function() {
-		$(".translationSv").toggle();
-		
-		if ( $(this).hasClass("clicked")) {
-			$(".translationLinkSv").removeClass("clicked");
-		} else {
-			$(".translationLinkSv").addClass("clicked");
+		if ( language == "fi" ) {
+			toggleFinnishTranslations(false);
+		} else if ( language == "en" ) {
+			$(".translationEn").show();
+			toggleFinnishTranslations(true);
+			$(".translationBorder").addClass("translationEnBorder");
+			$("#materialNameEnInput").attr("disabled", false);
+		} else if ( language == "sv" ) {
+			$(".translationSv").show();
+			toggleFinnishTranslations(true);
+			$(".translationBorder").addClass("translationSvBorder");
 		}
-		toggleTranslationVisibility($(this));
-	});
- 
-	$(".translationLinkEn").on("click", function() {
-		$(".translationEn").toggle();
-		if ( $(this).hasClass("clicked")) {
-			$(".translationLinkEn").removeClass("clicked");
-		} else {
-			$(".translationLinkEn").addClass("clicked");
-		}
-		toggleTranslationVisibility($(this));
 	});
 
-	function toggleTranslationVisibility(linkElement) {
-		var translationSvVisible = $(linkElement).parent().find(".translationLinkSv").hasClass("clicked");
-		var translationEnVisible = $(linkElement).parent().find(".translationLinkEn").hasClass("clicked");
-
-		if ( !translationEnVisible && !translationSvVisible ) {
-			$(".rowContainer:not(.containsTranslations)").show();
-			$(".materialDataSetContainer:not(.translated), .materialDataSetTextareaContainer:not(.translated)").show();
-			$(".studyLevelDataSetContainer:not(.translated), .studyLevelDataSetTextareaContainer:not(.translated)").show();
-			// Jos toinen tiedosto, näytä tämä
-			$("#additionalFilingContractFile").hide();
-		} else {
+	function toggleFinnishTranslations(hide) {
+		$(".translationFi").find("input").attr("disabled", hide);
+		$(".translationFi").find("textarea").attr("disabled", hide);
+		$(".translationFi").find("select").attr("disabled", hide);
+		if ( hide ) {
 			$(".rowContainer:not(.containsTranslations)").hide();
 			$(".materialDataSetContainer:not(.translated), .materialDataSetTextareaContainer:not(.translated)").hide();
 			$(".studyLevelDataSetContainer:not(.translated), .studyLevelDataSetContainer:not(.translated)").hide();
+			$("#normalDesktop").hide();
+			$("#translatorDesktop").show();
+			$(".translationBorder").removeClass("translationEnBorder");
+			$(".translationBorder").removeClass("translationSvBorder");
+			$("#studyLevelData").find(".translationFi").find("a").hide();
+			$("#studyLevelData").find(".translationFi").find(".addNewElement").hide();
+			$("#studyLevelData").find(".translationFi").find(".removeAddedElement").hide();
+		} else {
+			$(".rowContainer:not(.containsTranslations)").show();
+			$(".materialDataSetContainer:not(.translated), .materialDataSetTextareaContainer:not(.translated)").show();
+			$(".studyLevelDataSetContainer:not(.translated), .studyLevelDataSetTextareaContainer:not(.translated)").show();
+			$("#normalDesktop").show();
+			$("#translatorDesktop").hide();
+			$(".translationBorder").removeClass("translationSvBorder");
+			$(".translationBorder").removeClass("translationEnBorder");
+			$("#studyLevelData").find(".translationFi").find("a").show();
+			$("#studyLevelData").find(".translationFi").find(".addNewElement").show();
+			$("#studyLevelData").find(".translationFi").find(".removeAddedElement").show();
 		}
 	}
 
@@ -292,7 +299,7 @@ $(document).ready(function(){
         ]
 	});
 	
-	$("#materialVersionTable").dataTable({
+	$(".materialVersionTable").dataTable({
 		"bPaginate": false,
         "bFilter": false, 
         "bInfo": false, 
@@ -375,39 +382,6 @@ $(document).ready(function(){
 		$("#groupedVariableTreeContainer").hide();
 		$("#variableDataContainer").hide();
 		$("#variableGroupData").hide();
-	});
-
-	$("#variableTranslationLinkSv").on("click", function() {
-		if ( $(this).hasClass("clicked")) {
-			$(this).removeClass("clicked");
-			$("#basicVariableTreeContainer").show();
-			$("#variableTranslationSv").hide();
-		} else {			
-			$(this).addClass("clicked");
-			$("#basicVariableTreeContainer").hide();
-
-			if ( $("#variableTranslationLinkEn").hasClass("clicked") ) {
-				$("#variableTranslationLinkEn").removeClass("clicked");
-				$("#variableTranslationEn").hide();
-			}
-			$("#variableTranslationSv").show();
-		}
-	});
-
-	$("#variableTranslationLinkEn").on("click", function() {
-		if ( $(this).hasClass("clicked")) {
-			$(this).removeClass("clicked");
-			$("#basicVariableTreeContainer").show();
-			$("#variableTranslationEn").hide();
-		} else {			
-			$(this).addClass("clicked");
-			$("#basicVariableTreeContainer").hide();			
-			if ( $("#variableTranslationLinkSv").hasClass("clicked") ) {
-				$("#variableTranslationLinkSv").removeClass("clicked");
-				$("#variableTranslationSv").hide();
-			}
-			$("#variableTranslationEn").show();
-		}
 	});
 
 	$('#variableFilterInput').fastLiveFilter('#variablesListBasic');

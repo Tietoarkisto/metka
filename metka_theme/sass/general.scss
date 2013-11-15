@@ -96,6 +96,26 @@ footer{
 .cellValignMiddle {
 	vertical-align: middle;
 }
+
+.translationSv label, .translationSv .studyLevelTableTitle, .translationSv span {
+	background-color: $svColor;
+}
+.translationEn label, .translationEn .studyLevelTableTitle, #materialNameEn, .translationEn span {
+	background-color: $enColor;
+	color: white;
+}
+
+.translationEnBorder, .translationSvBorder {
+	border-style: solid;
+	border-width: 4px;
+}
+.translationEnBorder {
+	border-color: $enColor;
+}
+.translationSvBorder {
+	border-color: $svColor;
+}
+
 /** POPUP **/ 
 
 .popup_background {
@@ -161,6 +181,15 @@ footer{
 		display: block;		
 		div {
 			@include translationLink;
+		}
+	}
+
+	.languageSelectPopup {
+		float: left;
+		padding-bottom: 10px;
+		padding-left: 30px;
+		input {
+			margin-left: 80px;
 		}
 	}
 }
