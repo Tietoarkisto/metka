@@ -23,7 +23,13 @@
 				$(".translationFi").find("input").attr("disabled", hide);
 				$(".translationFi").find("textarea").attr("disabled", hide);
 				$(".translationFi").find("select").attr("disabled", hide);
-			}
+				if ( hide ) {
+					$(".translationFi").find("a").hide();
+				} else {
+					$(".translationFi").find("a").show();
+				}
+			} 
+
 		</script>
 	</head>
 	<body>	
@@ -40,19 +46,24 @@
 			<div class="popupRowHolder translationFi">
 				<label class="inputRowLabel">Sanaston nimi</label><input type="text" value="Havaintoyksiköt"/>
 			</div>
+			<div class="popupRowHolder translationFi">
+				<label class="inputRowLabel">Sanaston URI</label><input type="text" value=""/>
+			</div>
 			<table id="vocabularyDialogTable"> 
 				<thead> 
 				<tr> 
 				    <th align="middle">Avain</th> 
 				    <th align="middle">Arvo</th> 
 				    <th align="middle">Lisätekstikenttä</th>
+				    <th align="middle">Poista</th>
 				</tr> 
 				</thead> 
-				<tbody> 
+				<tbody id="vocabularyBody"> 
 					<tr class="translationFi"> 
 					    <td align="middle"><span>Lorem</span></td> 
 					    <td align="middle"><input type="text" value="Lorem ipsum"></td> 
 					    <td align="middle"><input type="checkbox"/></td>
+					    <td align="middle"><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
 					</tr> 	
 					<tr class="translationEn"> 
 					    <td align="middle"><span>Lorem</span></td> 
@@ -68,6 +79,7 @@
 					    <td align="middle"><span>Ipsum</span></td> 
 					    <td align="middle"><input type="text" value="dolor sit amet"></td> 
 					    <td align="middle"><input type="checkbox"/></td>
+					    <td align="middle"><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
 					</tr> 
 					<tr class="translationEn"> 
 					    <td align="middle"><span>Ipsum</span></td> 
@@ -83,6 +95,7 @@
 					    <td align="middle"><span>Foo</span></td> 
 					    <td align="middle"><input type="text" value="Foo bar"></td> 
 					    <td align="middle"><input type="checkbox"/></td>
+					    <td align="middle"><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
 					</tr> 	
 					<tr class="translationEn"> 
 					    <td align="middle"><span>Foo</span></td> 
@@ -98,6 +111,7 @@
 					    <td align="middle"><span>Dolor</span></td> 
 					    <td align="middle"><input type="text" value="Foo bar bar"></td> 
 					    <td align="middle"><input type="checkbox"/></td>
+					    <td align="middle"><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
 					</tr> 
 					<tr class="translationEn"> 
 					    <td align="middle"><span>Dolor</span></td> 
@@ -113,6 +127,7 @@
 					    <td align="middle"><span>Amet</span></td> 
 					    <td align="middle"><input type="text" value="Foo bar"></td> 
 					    <td align="middle"><input type="checkbox"/></td>
+					    <td align="middle"><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
 					</tr> 		
 					<tr class="translationEn"> 
 					    <td align="middle"><span>Amet</span></td> 
@@ -128,6 +143,7 @@
 					    <td align="middle"><span>Foobar</span></td> 
 					    <td align="middle"><input type="text" value="Foo bar bar"></td> 
 					    <td align="middle"><input type="checkbox"/></td>
+					    <td align="middle"><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
 					</tr> 
 					<tr class="translationEn"> 
 					    <td align="middle"><span>Foobar</span></td> 
@@ -138,14 +154,15 @@
 					    <td align="middle"><span>Foobar</span></td> 
 					    <td align="middle"><input type="text" value="Lorem ipsum"></td> 
 					    <td align="middle"></td>
-					</tr> 	
-					
+					</tr> 
 				</tbody> 
 			</table>
 			<div class="popupButtonsHolder translationFi">
 				<div style="margin-bottom: 10px;">
 					<input type="checkbox" id="checkbox1" checked="checked" /><label for="checkbox1">Sanaston uudet arvot muutetaan vanhoihin aineistoihin.<label>
 				</div>
+				<input type="button" class="searchFormInput" value="Peruuta">
+				<input type="button" class="searchFormInput" id="addTermToVocabulary" value="Lisää sana">
 				<input type="button" class="searchFormInput" value="Tallenna">
 			</div>
 		

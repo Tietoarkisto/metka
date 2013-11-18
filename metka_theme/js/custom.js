@@ -55,7 +55,7 @@ $(document).ready(function(){
 	$(".materialFileRow, .materialCodebookFileRow, .materialErrorRow, .desktopWidgetDataRow, " +
 		".errorneousMaterialRow, .materialSearchResultRow, .publicationSearchResultRow, .seriesSearchResultRow, " + 
 		".materialSeriesRow, .materialPublicationRow, .materialMaterialRow, #variablesListBasic li, " +
-		".publicationSeriesRow, .publicationMaterialRow, .materialBinderRow, .binderRow, .link, " +
+		".publicationSeriesRow, .publicationMaterialRow, .binderRow, .link, " +
 		".studyLevelIdRow, .parTitleRow, .otherMaterialRow, .relatedMaterialRow" + 
 		".removeAddedElement, .versionRow, .materialNotificationRow").hover(function() {
 		    $(this).css('cursor', 'pointer');
@@ -165,6 +165,21 @@ $(document).ready(function(){
 		        "sLast":     "Viimeinen"
 		    }
 		}
+    });
+
+    $("#savedQueries").dataTable( {
+		"bPaginate": false,
+        "bLengthChange": false,
+        "bFilter": false,
+        "bSort": false,
+        "bInfo": false,
+        "bAutoWidth": false,
+        "aoColumns": [
+        	{sWidth: "60%"},
+        	{sWidth: "20%"},
+        	{sWidth: "10%"},
+        	{sWidth: "10%"},
+        ]
     });
     
     
@@ -338,19 +353,26 @@ $(document).ready(function(){
 		}	
 	}
 
-	$(".errorneousMaterialRow, .materialSearchResultRow, .publicationMaterialRow, .materialMaterialRow, .desktopWidgetDataRow").on("click", function() {
-		if ( $(this).hasClass("published") ) {
-			window.location = "materialViewPUBLISHED.html";
-		} else {
-			window.location = "materialView.html";
-		}
+	$(".errorneousMaterialRow, .materialSearchResultRow, .desktopWidgetDataRow").on("click", function() {
+		window.location = "materialView.html";
 	});
 
-	$(".publicationSearchResultRow, .materialPublicationRow").on("click", function() {
+	$(".materialMaterialRow, .publicationMaterialRow").on("click", function() {
+		window.open("materialView.html");
+	});
+
+	$(".publicationSearchResultRow").on("click", function() {
 		window.location = "publicationView.html";
 	});
+	$(".materialPublicationRow").on("click", function() {
+		window.open("publicationView.html");
+	});
+
 	$(".seriesSearchResultRow, .materialSeriesRow, .publicationSeriesRow").on("click", function() {
 		window.location = "seriesView.html";
+	});
+	$("materialSeriesRow, .publicationSeriesRow").on("click", function() {
+		window.open("seriesView.html");
 	});
 
 	$(".materialCodebookRow").on("click", function() {
