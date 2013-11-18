@@ -58,11 +58,15 @@
 							<div class="queryLibraryContainer">
 								<div class="queryLibrary">
 									<h1>Tallennetut haut</h1>
-									<ul>
-										<li><a href="#">Haku 1</a></li>
-										<li><a href="#">Haku 2</a></li>								
-										<li><a href="#">Haku 3</a></li>								
-									</ul>
+									<table id="savedQueries">
+										<thead><tr><th></th><th></th><th></th><th></th></thead>
+										<tbody>
+											<tr><td>Tämä hakee liittyvät aineistot</td><td>Mikko T</td><td>24.12.2012</td><td align="center"><img title="Poista" src="../images/cancel.png"/></td></tr>
+											<tr><td>Haku2</td><td>Mikko T</td><td>24.12.2012</td><td align="center"><img title="Poista" src="../images/cancel.png"/></td></tr>
+											<tr><td>Haku3</td><td>Mikko T</td><td>24.12.2012</td><td align="center"><img title="Poista" src="../images/cancel.png"/></td></tr>
+											<tr><td>Haku4</td><td>Mikko T</td><td>24.12.2012</td><td align="center"><img title="Poista" src="../images/cancel.png"/></td></tr>
+										</tbody>
+									</table>
 								</div>
 								<div class="saveNewQuery">
 									<h1>Tallenna uusi haku</h1>
@@ -75,8 +79,12 @@
 								</div>	
 							</div>	
 							<form action="#">
-								<div class="searchFormRowHolder"><label>Hakulause</label><textarea class="sqlSearch"></textarea></div>
-								<div class="searchFormButtonsHolder"><input type="button" class="searchFormInput doSearch" value="Tee haku"><input class="searchFormInput" type="reset" value="Tyhjennä"><input type="button" class="searchFormInput saveNewQueryButton" value="Tallenna haku"></div>
+								<div class="expertSearchFormRowHolder"><label>Hakulause</label><textarea class="sqlSearch"></textarea></div>
+								<div class="expertSearchFormButtonsHolder">
+									<input type="button" class="searchFormInput doSearch" value="Tee haku">
+									<input class="searchFormInput" type="reset" value="Tyhjennä">
+									<input type="button" class="searchFormInput saveNewQueryButton" value="Tallenna haku">
+								</div>
 							</form>
 						</div>
 						<div style="clear:both;"></div>

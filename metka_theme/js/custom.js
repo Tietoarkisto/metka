@@ -166,6 +166,21 @@ $(document).ready(function(){
 		    }
 		}
     });
+
+    $("#savedQueries").dataTable( {
+		"bPaginate": false,
+        "bLengthChange": false,
+        "bFilter": false,
+        "bSort": false,
+        "bInfo": false,
+        "bAutoWidth": false,
+        "aoColumns": [
+        	{sWidth: "60%"},
+        	{sWidth: "20%"},
+        	{sWidth: "10%"},
+        	{sWidth: "10%"},
+        ]
+    });
     
     
     /*** AINEISTO ***/

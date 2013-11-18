@@ -20,6 +20,16 @@
 			float: left;
 		}
 	}
+	.expertSearchFormRowHolder {
+		padding-bottom: 10px;
+		clear:both;
+
+		label {
+			width: 100px;
+			display: block;
+			float: left;
+		}
+	}
 
 	.searchFormButtonsHolder{
 		text-align: right;
@@ -28,6 +38,15 @@
 		input{
 			margin-left: 20px;
 		}
+	}
+
+	.expertSearchFormButtonsHolder {
+		text-align: right;
+		width: 545px; 
+
+		input{
+			margin-left: 20px;
+		}	
 	}
 
 	.expertSearchContainer {
@@ -102,7 +121,7 @@
 	right: 0;
 }
 .queryLibrary {
-	width: 200px;
+	width: 400px;
 	background-color: $pageColorA;
 	border: solid 1px $pageColorB;
 	font-size: 12px;
@@ -127,17 +146,25 @@
 			}
 			
 			a {
+				float: left;
 				text-decoration: none;
 				color: $pageColorE;
-				display:block;
-				width: 100%;
+			}
+
+			a, .searchName, .searchSaver, .searchSaveDate {
+				float: left;
+				margin-right: 10px;
+			}
+
+			.deleteSearch {
+				float: right;
 			}
 		}
 	}
 }
 .saveNewQuery{
 	display: none;
-	width: 200px;
+	width: 400px;
 	background-color: $pageColorA;
 	border: solid 1px $pageColorB;
 	font-size: 12px;
@@ -185,4 +212,9 @@
 .searchResult{
 	margin-top: 20px;
 	display:none;
+}
+
+.searchTableActionLinkHolder {
+    @include actionLinkHolder($actionLinkHolderWidth, 12px);
+    margin-top: 10px;
 }

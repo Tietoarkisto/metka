@@ -115,6 +115,6 @@ nav {
 }
 
 .materialTabNavi ul {
-	@include tabNavi(10px, 10px, -20px); 
+	@include tabNavi(10px, 0px, -20px); 
 }
 

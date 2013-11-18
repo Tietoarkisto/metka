@@ -60,10 +60,10 @@
 						<div class="rowContainer">
 							<div class="publicationDataSetContainer"><label>Julkaisuvuosi</label><input type="text" name="publicationvuosi" value="2006" /></div>
 							<div class="publicationDataSetContainer"><label>Voiko julkaista</label><select><option>Kyllä</option></select></div>
-							<div class="publicationDataSetContainer"><label>Julkaisu id-nro</label><input type="text" name="publicationvuosi" value="1234" /></div>
+							<div class="publicationDataSetContainer"><label>Julkaisu id-nro</label><input type="text" disabled="disabled" name="publicationvuosi" value="1234" /></div>
 						</div>
 						<div class="rowContainer">
-							<div class="publicationDataSetContainer"><label>1. Tallennuspvm</label><input type="text" name="publicationvuosi" value="12.10.2013" /></div>
+							<div class="publicationDataSetContainer"><label>1. Tallennuspvm</label><input type="text" disabled="disabled" name="publicationvuosi" value="12.10.2013" /></div>
 							<div class="publicationDataSetContainer"><label>Julkaisun ilmoitustapa</label><select><option>Ei tietoa</option></select></div>
 							<div class="publicationDataSetContainer"><label>Julkaisun kieli</label><select><option>Suomi</option></select></div>
 						</div>
@@ -121,7 +121,7 @@
 						<div class="publicationTableActionLinkHolder"><a href="dialogs/attachMaterialDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>						
 					</div>					
 					<div class="rowContainer">
-						<div class="publicationRowTitle">Liittyvä sarja</div>
+						<div class="publicationRowTitle">Liittyvät sarjat</div>
 						<table id="publicationSeriesTable" class="metkaTable sortableTable">
 							<thead>
 								<tr><th>Lyhenne</th><th>Sarjan nimi</th><th></th></tr>
@@ -131,11 +131,12 @@
 							</tbody>
 
 						</table>	
-						<div class="publicationTableActionLinkHolder"><a href="dialogs/attachSeriesDialog.html" class="fancyboxpopup fancybox.ajax">Vaihda</a></div>						
+						<div class="publicationTableActionLinkHolder"><a href="dialogs/attachSeriesDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>						
 					</div>
 					
 					<div class="viewFormButtonsHolder" style="margin-bottom:20px;">
 						<input type="button" class="searchFormInput" value="Poista" />
+						<input type="button" id="versionHistoryButton" class="searchFormInput" value="Versiohistoria">
 						<input type="button" class="searchFormInput" value="Tallenna" />
 					</div>
 				</div>												

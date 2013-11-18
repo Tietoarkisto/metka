@@ -202,8 +202,15 @@ footer {
   .popupContainer .popupRowHolder input, .popupContainer .popupRowHolder select, .popupContainer .popupRowHolder textarea {
     width: 310px;
     padding: 5px; }
-  .popupContainer .popupRowHolder .versionName, .popupContainer .popupRowHolder .versionPublishedDate, .popupContainer .popupRowHolder .versionCompareLink {
-    width: 150px;
+  .popupContainer .popupRowHolder input[type="button"] {
+    width: 75px !important;
+    padding: 5px; }
+  .popupContainer .popupRowHolder .versionName, .popupContainer .popupRowHolder .versionPublishedDate, .popupContainer .popupRowHolder .versionCompare {
+    width: 120px;
+    float: left;
+    padding: 5px; }
+  .popupContainer .popupRowHolder .versionReplace {
+    width: 50px;
     float: left;
     padding: 5px; }
   .popupContainer .popupRowHolder .versionProperty, .popupContainer .popupRowHolder .versionChange {
@@ -390,7 +397,7 @@ nav {
   display: inline-block;
   list-style: none outside none;
   margin-bottom: 10px;
-  margin-top: 10px;
+  margin-top: 0px;
   margin-left: -20px;
   float: left; }
   .materialTabNavi ul li {
@@ -562,10 +569,22 @@ nav {
       width: 200px;
       display: block;
       float: left; }
+  .searchFormContainer .expertSearchFormRowHolder {
+    padding-bottom: 10px;
+    clear: both; }
+    .searchFormContainer .expertSearchFormRowHolder label {
+      width: 100px;
+      display: block;
+      float: left; }
   .searchFormContainer .searchFormButtonsHolder {
     text-align: right;
     width: 645px; }
     .searchFormContainer .searchFormButtonsHolder input {
+      margin-left: 20px; }
+  .searchFormContainer .expertSearchFormButtonsHolder {
+    text-align: right;
+    width: 545px; }
+    .searchFormContainer .expertSearchFormButtonsHolder input {
       margin-left: 20px; }
   .searchFormContainer .expertSearchContainer {
     position: relative;
@@ -647,7 +666,7 @@ nav {
   right: 0; }
 
 .queryLibrary {
-  width: 200px;
+  width: 400px;
   background-color: white;
   border: solid 1px #009ee0;
   font-size: 12px; }
@@ -666,14 +685,18 @@ nav {
       .queryLibrary ul li:hover {
         background: #eaeaea; }
       .queryLibrary ul li a {
+        float: left;
         text-decoration: none;
-        color: #005993;
-        display: block;
-        width: 100%; }
+        color: #005993; }
+      .queryLibrary ul li a, .queryLibrary ul li .searchName, .queryLibrary ul li .searchSaver, .queryLibrary ul li .searchSaveDate {
+        float: left;
+        margin-right: 10px; }
+      .queryLibrary ul li .deleteSearch {
+        float: right; }
 
 .saveNewQuery {
   display: none;
-  width: 200px;
+  width: 400px;
   background-color: white;
   border: solid 1px #009ee0;
   font-size: 12px;
@@ -713,6 +736,14 @@ nav {
 .searchResult {
   margin-top: 20px;
   display: none; }
+
+.searchTableActionLinkHolder {
+  clear: left;
+  display: inline-block;
+  text-align: right;
+  width: 984px;
+  font-size: 12px;
+  margin-top: 10px; }
 
 /** MATERIAL, PUBLICATION, SERIES **/
 #fileNameErrorRow, #materialFileInfoRow, #materialCodebookRow, #materialErrorInfoRow,
