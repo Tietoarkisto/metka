@@ -77,7 +77,7 @@ nav {
 	clear:both;
 	min-height: 275px;
 }
-.filing, .studylevel, .variables, .files, .codebook, .errors, .packages, 
+.filing, .studylevel, .variables, .files, .codebook, .errors, .packages, .importExport,
 .standardTexts, .userInfo {
 	display: none;
 }
@@ -115,6 +115,6 @@ nav {
 }
 
 .materialTabNavi ul {
-	@include tabNavi(10px, 0px, -20px); 
+	@include tabNavi(10px, 0px, 10px); 
 }
 

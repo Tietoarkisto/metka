@@ -368,7 +368,7 @@ nav {
   clear: both;
   min-height: 275px; }
 
-.filing, .studylevel, .variables, .files, .codebook, .errors, .packages,
+.filing, .studylevel, .variables, .files, .codebook, .errors, .packages, .importExport,
 .standardTexts, .userInfo {
   display: none; }
 
@@ -398,7 +398,7 @@ nav {
   list-style: none outside none;
   margin-bottom: 10px;
   margin-top: 0px;
-  margin-left: -20px;
+  margin-left: 10px;
   float: left; }
   .materialTabNavi ul li {
     float: left; }
@@ -750,8 +750,14 @@ nav {
 #groupedVariableTreeContainer, #variableDataContainer, #variableData, #variableGroupData,
 #variablesGroupingContainer, #additionalFilingContractFile, .translationEn, .translationSv,
 .variableTranslationTable, .organizationAuthor, .organizationCollector,
-.keywordFields, .vocabularyFields, .noVocabulary, .topicFields, .otherWord, .wordFields,
+.vocabularyFields, .noVocabulary, .topicFields,
 .countrySelectContainer, .countryFields, .geoCoverSelectContainer, .geoCoverFields, .errorneous {
+  display: none; }
+
+.handlerInfo, .draftInfo {
+  display: none; }
+
+.materialContent .addRow, .materialContent .removeRow, .materialContent .editButton, .materialContent .reservedButton {
   display: none; }
 
 .upperContainer {
@@ -830,6 +836,8 @@ nav {
     float: left;
     font-size: 12px;
     width: 730px; }
+  .materialDataSetContainer #materialSeriesSelect {
+    width: 320px; }
 
 .studyLevelDataSetContainer {
   font-size: 12px;
@@ -1019,7 +1027,7 @@ nav {
   margin-bottom: 0px;
   margin-right: 20px;
   width: 984px;
-  width: 900px; }
+  width: 979px; }
 
 .viewFormButtonsHolder {
   clear: left;

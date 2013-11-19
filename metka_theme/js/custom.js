@@ -55,9 +55,9 @@ $(document).ready(function(){
 	$(".materialFileRow, .materialCodebookFileRow, .materialErrorRow, .desktopWidgetDataRow, " +
 		".errorneousMaterialRow, .materialSearchResultRow, .publicationSearchResultRow, .seriesSearchResultRow, " + 
 		".materialSeriesRow, .materialPublicationRow, .materialMaterialRow, #variablesListBasic li, " +
-		".publicationSeriesRow, .publicationMaterialRow, .binderRow, .link, " +
-		".studyLevelIdRow, .parTitleRow, .otherMaterialRow, .relatedMaterialRow" + 
-		".removeAddedElement, .versionRow, .materialNotificationRow").hover(function() {
+		".publicationSeriesRow, .publicationMaterialRow, .binderRow, .link, #removeAdditionalFilingContractFile, " +
+		".studyLevelIdRow, .parTitleRow, .otherMaterialRow, .relatedMaterialRow, #addAltTitle, #removeAltTitle, " + 
+		".removeAddedElement, .versionRow, .materialNotificationRow, .helpImage").hover(function() {
 		    $(this).css('cursor', 'pointer');
 		}, function() {
 		    $(this).css('cursor', 'auto');		    
@@ -95,8 +95,6 @@ $(document).ready(function(){
 			$(".translationBorder").removeClass("translationEnBorder");
 			$(".translationBorder").removeClass("translationSvBorder");
 			$("#studyLevelData").find(".translationFi").find("a").hide();
-			$("#studyLevelData").find(".translationFi").find(".addNewElement").hide();
-			$("#studyLevelData").find(".translationFi").find(".removeAddedElement").hide();
 		} else {
 			$(".rowContainer:not(.containsTranslations)").show();
 			$(".materialDataSetContainer:not(.translated), .materialDataSetTextareaContainer:not(.translated)").show();
@@ -106,10 +104,12 @@ $(document).ready(function(){
 			$(".translationBorder").removeClass("translationSvBorder");
 			$(".translationBorder").removeClass("translationEnBorder");
 			$("#studyLevelData").find(".translationFi").find("a").show();
-			$("#studyLevelData").find(".translationFi").find(".addNewElement").show();
-			$("#studyLevelData").find(".translationFi").find(".removeAddedElement").show();
 		}
 	}
+
+	$(".helpImage").on("click", function() {
+		window.open("help.html");
+	});
 
 	/** ASETUKSET **/
 	
@@ -499,14 +499,14 @@ $(document).ready(function(){
 		}
 	});
 
-	$("#versionHistoryButton").on("click", function() {
-		$("#versionHistoryLink").click();
+	$(".versionHistoryButton").on("click", function() {
+		$(this).find("a").click();
 	});
-	$("#approveChangesButton").on("click", function() {
-		$("#approveChangesLink").click();
+	$(".approveChangesButton").on("click", function() {
+		$(this).find("a").click();
 	});        
-	$("#publishMaterialButton").on("click", function() {
-		$("#publishMaterialLink").click();
+	$(".publishMaterialButton").on("click", function() {
+		$(this).find("a").click();
 	});
 
 	$("#studyLevelData").accordion({
@@ -535,14 +535,19 @@ $(document).ready(function(){
 		}
 	});
 	
-	$("#filingContractFile").on("click", function() {
+	$("#addFilingContractFile").on("click", function() {
 		$("#additionalFilingContractFile").toggle();
+		$("#addFilingContractFile").toggle();
+	});
+	$("#removeAdditionalFilingContractFile").on("click", function() {
+		$("#additionalFilingContractFile").toggle();
+		$("#addFilingContractFile").toggle();
 	});
 
 	$("#addAltTitle, #addAppraisal, #addDataSource").on("click", function() {
 		var newRow = $(this).parent().parent().parent().clone(true);
-		$(newRow).find(".addNewElement").hide();
-		$(newRow).find(".removeAddedElement").show();
+		$(newRow).find(".addRow").hide();
+		$(newRow).find(".removeRow").show();
 		$(newRow).insertAfter($(this).parent().parent().parent());
 	});
 
@@ -550,32 +555,41 @@ $(document).ready(function(){
 		$(this).parent().parent().remove();
 	});
 
+	$(".materialContent").find("select, input[type=text], textarea, input[type=checkbox]").attr("disabled", true);
 
-    $("#startWorkingButton").on("click", function() {
-    	$(".shownButton").hide();
-    	$(".additionalButton").show();
-    	$(".draft").show();
-    	$(".handler").show();
-    	$(".version").hide();
-    	$(".editButton").show();
+
+    $(".reserveMaterialButton").on("click", function() {
+    	$(".reservedButton").show();
+    	$(".previewButton").hide();
+    	$(".handlerInfo").show();
     });
-    $("#startTranslatingButton").on("click", function() {
-    	$(".shownButton").hide();
-    	$(".additionalButton").show();
-    	$(".draft").show();
-    	$(".handler").show();
-    	$(".version").hide();
-    	$(".translatorButton").show();
-    	$(".editButton").hide();
-    	// $(".rowContainer").hide();
-    	// $(".containsTranslations").show();
+    $(".releaseMaterialButton").on("click", function() {
+    	$(".reservedButton").hide();
+    	$(".previewButton").show();
+    	$(".handlerInfo").hide();
     });
+    $(".editMaterialButton").on("click", function() {
+    	$(".materialContent .reservedButton, .materialContent .previewButton, .publishedInfo, .materialContent .prevNextContainer").hide();
+    	$(".materialContent .addRow, .materialContent .removeRow, .materialContent .editButton, .draftInfo").show();
+    	$(".materialContent").find("select, input[type=text], textarea, input[type=checkbox]").attr("disabled", false);
+    	$(".weightCoefficient").attr("disabled", true);
+    	$("#weightCoefficientToggle").attr("checked", true);
+    });
+	$(".saveAsDraftButton").on("click", function() {
+		$(".reservedButton, .materialContent .prevNextContainer").show();
+    	$(".materialContent .addRow, .materialContent .removeRow, .materialContent .editButton").hide();
+    	$(".materialContent").find("select, input[type=text], textarea, input[type=checkbox]").attr("disabled", true);
+	});
+	// $(".approveChangesButton").on("click", function() {
+	// 	$(".reservedButton").show();
+ //    	$(".materialContent .addRow, .materialContent .removeRow, .materialContent .editButton").hide();
+ //    	$(".materialContent").find("select, input[type=text], textarea").attr("disabled", true);
+	// });
 
-
-    // $("#toggle").on("click", function() {
-  		// $(".readOnly").toggle();
-  		// $(".materialDataSetContainer input, .materialDataSetContainer select, .materialDataSetContainerTopRow input").toggle();	
-    // });
+	$("#weightCoefficientToggle").on("click", function() {
+		var checked = $(this).is(":checked");
+		$(".weightCoefficient").attr("disabled", checked);
+	});
 
 	/*** JULKAISU ***/
 	
@@ -607,6 +621,11 @@ $(document).ready(function(){
 		window.location = "publicationView.html";
 	});
 
+	// $("#editPublicationButton").on("click", function() {
+	// 	$(".publicationContent").find("textarea").attr("disabled", false);
+	// 	$(".publicationContent").find(".removeRow, .addRow, .editButton").show();
+	// 	$(".publicationContent").find(".previewButton").hide();
+	// });
 
 	/* SARJAT */
 
