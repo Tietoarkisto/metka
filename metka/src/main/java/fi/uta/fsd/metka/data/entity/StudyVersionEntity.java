@@ -11,7 +11,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "STUDY_LEVEL_VERSION")
-public class MaterialVersionEntity {
+public class StudyVersionEntity {
     @Id
     @SequenceGenerator(name="STUDY_LEVEL_VERSION_ID_SEQ", sequenceName="STUDY_LEVEL_VERSION_ID_SEQ", allocationSize=1)
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="STUDY_LEVEL_VERSION_ID_SEQ")
@@ -44,8 +44,8 @@ public class MaterialVersionEntity {
     private String privateDescription;
 
     @ManyToOne
-    @JoinColumn(name = "TARGET_MATERIAL_ID")
-    private MaterialEntity targetMaterial;
+    @JoinColumn(name = "TARGET_STUDY_ID")
+    private StudyEntity targetStudy;
 
     @Override
     public String toString() {

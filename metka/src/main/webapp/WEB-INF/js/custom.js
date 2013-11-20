@@ -594,7 +594,7 @@ $(document).ready(function(){
 	/* SARJAT */
 
 	$("#addNewSeriesButton").on("click", function() {
-		window.location = "seriesView.html";
+		window.location = "/series/view";
 	});
 
 	// createDataTable("publicationMaterialTable", ['20%','75%','5%']);

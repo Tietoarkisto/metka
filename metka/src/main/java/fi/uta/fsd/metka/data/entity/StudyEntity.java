@@ -4,32 +4,32 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "MATERIAL")
-public class MaterialEntity {
+@Table(name = "STUDY")
+public class StudyEntity {
 
     @Id
-    @Column(name="MATERIAL_ID", updatable = false, length = 30)
+    @Column(name="STUDY_ID", updatable = false, length = 30)
     private String id;
 
     @Column(name = "ARCHIVED")
     private Boolean archived;
 
-    @OneToMany(mappedBy = "material", cascade = CascadeType.ALL)
-    private List<MaterialDataEntity> materialDataEntityList;
+    @OneToMany(mappedBy = "study", cascade = CascadeType.ALL)
+    private List<StudyDataEntity> studyDataEntityList;
 
     @ManyToMany
     @JoinTable(
-            name = "BINDER_MATERIAL",
-            joinColumns = {@JoinColumn(name = "MATERIAL_ID", referencedColumnName = "MATERIAL_ID")},
+            name = "BINDER_STUDY",
+            joinColumns = {@JoinColumn(name = "STUDY_ID", referencedColumnName = "STUDY_ID")},
             inverseJoinColumns = {@JoinColumn(name = "BINDER_ID", referencedColumnName = "BINDER_ID")}
     )
     private List<BinderEntity> binderList;
 
-    @OneToMany(mappedBy = "targetMaterial")
-    private List<MaterialErrorEntity> errorList;
+    @OneToMany(mappedBy = "targetStudy")
+    private List<StudyErrorEntity> errorList;
 
-    @OneToMany(mappedBy = "targetMaterial")
-    private List<MaterialVersionEntity> materialVersionList;
+    @OneToMany(mappedBy = "targetStudy")
+    private List<StudyVersionEntity> studyVersionList;
 
     public String getId() {
         return id;
@@ -47,12 +47,12 @@ public class MaterialEntity {
         this.archived = archived;
     }
 
-    public List<MaterialDataEntity> getMaterialDataEntityList() {
-        return materialDataEntityList;
+    public List<StudyDataEntity> getStudyDataEntityList() {
+        return studyDataEntityList;
     }
 
-    public void setMaterialDataEntityList(List<MaterialDataEntity> materialDataEntityList) {
-        this.materialDataEntityList = materialDataEntityList;
+    public void setStudyDataEntityList(List<StudyDataEntity> studyDataEntityList) {
+        this.studyDataEntityList = studyDataEntityList;
     }
 
     public List<BinderEntity> getBinderList() {
@@ -63,11 +63,11 @@ public class MaterialEntity {
         this.binderList = binderList;
     }
 
-    public List<MaterialErrorEntity> getErrorList() {
+    public List<StudyErrorEntity> getErrorList() {
         return errorList;
     }
 
-    public void setErrorList(List<MaterialErrorEntity> errorList) {
+    public void setErrorList(List<StudyErrorEntity> errorList) {
         this.errorList = errorList;
     }
 

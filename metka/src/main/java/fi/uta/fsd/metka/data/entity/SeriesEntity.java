@@ -1,5 +1,7 @@
 package fi.uta.fsd.metka.data.entity;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -15,7 +17,7 @@ public class SeriesEntity {
     @Id
     @SequenceGenerator(name="SERIES_ID_SEQ", sequenceName="SERIES_ID_SEQ", allocationSize=1)
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="SERIES_ID_SEQ")
-    @Column(name = "SERIES_ID", updatable = false)
+    @Column(name = "SERIES_ID", insertable = false, updatable = false)
     private Integer id;
 
     @Column(name = "ABBREVIATION")
@@ -34,6 +36,46 @@ public class SeriesEntity {
             inverseJoinColumns = {@JoinColumn(name = "PUBLICATION_ID", referencedColumnName = "PUBLICATION_ID")}
     )
     private List<PublicationEntity> publicationList;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getAbbreviation() {
+        return abbreviation;
+    }
+
+    public void setAbbreviation(String abbreviation) {
+        this.abbreviation = abbreviation;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public List<PublicationEntity> getPublicationList() {
+        return publicationList;
+    }
+
+    public void setPublicationList(List<PublicationEntity> publicationList) {
+        this.publicationList = publicationList;
+    }
 
     @Override
     public String toString() {

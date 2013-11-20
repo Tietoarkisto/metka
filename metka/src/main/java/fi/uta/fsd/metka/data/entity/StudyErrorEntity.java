@@ -10,17 +10,17 @@ import java.util.Date;
  * Time: 1:36 PM
  */
 @Entity
-@Table(name = "MATERIAL_ERROR")
-public class MaterialErrorEntity{
+@Table(name = "STUDY_ERROR")
+public class StudyErrorEntity {
     @Id
-    @SequenceGenerator(name="MATERIAL_ERROR_ID_SEQ", sequenceName="MATERIAL_ERROR_ID_SEQ", allocationSize=1)
-    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="MATERIAL_ERROR_ID_SEQ")
-    @Column(name = "MATERIAL_ERROR_ID", updatable = false)
+    @SequenceGenerator(name="STUDY_ERROR_ID_SEQ", sequenceName="STUDY_ERROR_ID_SEQ", allocationSize=1)
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="STUDY_ERROR_ID_SEQ")
+    @Column(name = "STUDY_ERROR_ID", updatable = false)
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "TARGET_MATERIAL_ID")
-    private MaterialEntity targetMaterial;
+    @JoinColumn(name = "TARGET_STUDY_ID")
+    private StudyEntity targetStudy;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "DATE")
@@ -48,12 +48,12 @@ public class MaterialErrorEntity{
         this.id = id;
     }
 
-    public MaterialEntity getTargetMaterial() {
-        return targetMaterial;
+    public StudyEntity getTargetStudy() {
+        return targetStudy;
     }
 
-    public void setTargetMaterial(MaterialEntity targetMaterial) {
-        this.targetMaterial = targetMaterial;
+    public void setTargetStudy(StudyEntity targetStudy) {
+        this.targetStudy = targetStudy;
     }
 
     public Date getDate() {

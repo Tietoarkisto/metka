@@ -73,6 +73,8 @@ public class PublicationEntity {
     private String relatedPersons;
 
     // TODO: Pysyvät tunnisteet todennäköisesti
+    @OneToMany(mappedBy = "targetPublication")
+    private List<PublicationPidEntity> identifierList;
 
     @Override
     public String toString() {

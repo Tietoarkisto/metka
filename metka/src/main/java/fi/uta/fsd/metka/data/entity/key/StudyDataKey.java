@@ -11,29 +11,29 @@ import java.io.Serializable;
  * Time: 10:39 AM
  */
 @Embeddable
-public class MaterialDataKey implements Serializable {
+public class StudyDataKey implements Serializable {
     static final long serialVersionUID = 1L;
 
-    @Column(name = "MATERIAL_ID", nullable = false, length = 30)
-    private String materialId;
+    @Column(name = "STUDY_ID", nullable = false, length = 30)
+    private String studyId;
 
     @Column(name = "REVISION", nullable = false)
     private Integer revision;
 
-    public MaterialDataKey() {
+    public StudyDataKey() {
     }
 
-    public MaterialDataKey(String materialId, Integer revision) {
-        this.materialId = materialId;
+    public StudyDataKey(String studyId, Integer revision) {
+        this.studyId = studyId;
         this.revision = revision;
     }
 
-    public String getMaterialId() {
-        return materialId;
+    public String getStudyId() {
+        return studyId;
     }
 
-    public void setMaterialId(String materialId) {
-        this.materialId = materialId;
+    public void setStudyId(String studyId) {
+        this.studyId = studyId;
     }
 
     public Integer getRevision() {
@@ -46,6 +46,6 @@ public class MaterialDataKey implements Serializable {
 
     @Override
     public String toString() {
-        return "Key[name="+this.getClass().getSimpleName()+", keys={materialId: "+materialId+", revision]";
+        return "Key[name="+this.getClass().getSimpleName()+", keys={studyId: "+studyId+", revision: "+revision+"}]";
     }
 }

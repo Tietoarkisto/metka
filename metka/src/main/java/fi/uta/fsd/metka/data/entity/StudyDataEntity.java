@@ -1,6 +1,6 @@
 package fi.uta.fsd.metka.data.entity;
 
-import fi.uta.fsd.metka.data.entity.key.MaterialDataKey;
+import fi.uta.fsd.metka.data.entity.key.StudyDataKey;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -12,21 +12,21 @@ import java.util.Date;
  * Time: 10:39 AM
  */
 @Entity
-@Table(name="MATERIAL_DATA")
-public class MaterialDataEntity {
+@Table(name="STUDY_DATA")
+public class StudyDataEntity {
     @EmbeddedId
-    private MaterialDataKey key;
+    private StudyDataKey key;
 
     @ManyToOne
-    @JoinColumn(name = "MATERIAL_ID", insertable = false, updatable = false)
-    private MaterialEntity material;
+    @JoinColumn(name = "STUDY_ID", insertable = false, updatable = false)
+    private StudyEntity study;
 
     @Column(name = "TITLE")
     private String title;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "STATE")
-    private MaterialState state;
+    private StudyState state;
 
     @Column(name = "LAST_MODIFIED")
     @Temporal(TemporalType.DATE)
@@ -44,7 +44,7 @@ public class MaterialDataEntity {
     @Lob
     private String data;
 
-    // TODO: Link to different material is still hazy
+    // TODO: Link to different studies is still hazy
 
     @ManyToOne
     @JoinColumn(name = "TARGET_SERIES_ID")
@@ -55,7 +55,7 @@ public class MaterialDataEntity {
         return "Entity[name="+this.getClass().getSimpleName()+", key="+key+"]";
     }
 
-    public static enum MaterialState {
+    public static enum StudyState {
         DRAFT,
         APPROVED,
         PUBLISHED,

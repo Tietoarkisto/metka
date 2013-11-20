@@ -1,7 +1,9 @@
 package fi.uta.fsd.metka.mvc.domain;
 
-import fi.uta.fsd.metka.data.entity.MaterialEntity;
-import fi.uta.fsd.metka.data.repository.MaterialRepository;
+import fi.uta.fsd.metka.data.entity.StudyEntity;
+import fi.uta.fsd.metka.data.entity.SeriesEntity;
+import fi.uta.fsd.metka.data.entity.VocabularyEntity;
+import fi.uta.fsd.metka.data.repository.CRUDRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,16 +19,35 @@ import java.util.List;
 public class DomainFacade {
 
     @Autowired
-    MaterialRepository materialRepository;
+    private CRUDRepository<StudyEntity, String> studyRepository;
 
-    /*public MaterialEntity createMaterial(MaterialEntity material) {
-        if(material.getId() == null) {
-            material.setId(materialRepository.create(material));
-        }
-        return material;
-    }*/
+    @Autowired
+    private CRUDRepository<VocabularyEntity, String> vocabularyRepository;
 
-    public List<MaterialEntity> findAllMaterials() {
-        return materialRepository.findAll();
+    @Autowired
+    private CRUDRepository<SeriesEntity, Integer> seriesRepository;
+
+    public List<StudyEntity> listAllStudies() {
+        return studyRepository.listAll();
+    }
+
+    public SeriesEntity createSeries(SeriesEntity entity) {
+        return seriesRepository.create(entity);
+    }
+
+    public List<SeriesEntity> listAllSeries() {
+        return seriesRepository.listAll();
+    }
+
+    public void removeSeries(Integer seriesId) {
+        seriesRepository.delete(seriesId);
+    }
+
+    public VocabularyEntity createVocabulary(VocabularyEntity vocabulary) {
+        return vocabularyRepository.create(vocabulary);
+    }
+
+    public void removeVocabulary(String vocabularyId) {
+        vocabularyRepository.delete(vocabularyId);
     }
 }

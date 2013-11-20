@@ -26,7 +26,7 @@ public class BinderEntity {
     private String description;
 
     @ManyToMany(mappedBy = "binderList")
-    private List<MaterialEntity> materialList;
+    private List<StudyEntity> studyList;
 
     public Integer getId() {
         return id;

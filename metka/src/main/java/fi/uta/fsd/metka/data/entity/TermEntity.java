@@ -27,6 +27,10 @@ public class TermEntity {
     @Column(name = "DEFAULT_VALUE", length = 1000)
     private String defaultValue;
 
+    @ManyToOne
+    @JoinColumn(name = "TARGET_VOCABULARY")
+    private VocabularyEntity targetVocabulary;
+
     // TODO: If possible try to get Map annotations to work...
     @OneToMany(mappedBy = "targetTerm")
     private List<TermLocalisationEntity> localisationList;

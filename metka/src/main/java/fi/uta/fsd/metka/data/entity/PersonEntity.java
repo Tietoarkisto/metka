@@ -13,19 +13,36 @@ import java.util.List;
 @Table(name = "PERSON")
 public class PersonEntity {
 
+    // eduPersonPrincipalName (eppn, yksilöivä tunniste, esim. matti.heinonen@fsd.uta.fi)
     @Id
-    @Column(name = "PERSON_ID", length = 10)
+    @Column(name = "PERSON_ID")
     private String id;
 
-    // TODO: Person name from LDAP either as one field or as separate fields.
+    // cn eli commonName (koko nimi, esim. Matti Heinonen)
+    @Column(name = "COMMON_NAME")
+    private String commonName;
 
-    // TODO: Person role from LDAP
+    // sn eli surname (sukunimi, esim. Heinonen)
+    @Column(name = "SURNAME")
+    private String surname;
+
+    // displayName (kutsumanimi, esim. Matti)
+    @Column(name = "DISPLAY_NAME")
+    private String displayName;
+
+    // schacHomeOrganization eli (kotiorganisaatio, aina fsd.uta.fi)
+    @Column(name = "SCHAC_HOME_ORGANIZATION")
+    private String schacHomeOrganization;
+
+    // group membership (ryhmäjäsenyydet, esim. metka:admin;metka:user;aila:operator)
+    @Column(name = "GROUP_MEMBERSHIP")
+    private String groupMembership;
 
     @OneToMany(mappedBy = "modifiedBy")
-    private List<MaterialDataEntity> modifiedList;
+    private List<StudyDataEntity> modifiedList;
 
     @OneToMany(mappedBy = "handler")
-    private List<MaterialDataEntity> handlingList;
+    private List<StudyDataEntity> handlingList;
 
     @Override
     public String toString() {
