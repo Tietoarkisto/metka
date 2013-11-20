@@ -544,13 +544,12 @@ $(document).ready(function(){
 		}
 	});
 
-	$(".versionHistoryButton").on("click", function() {
-		$(this).find("a").click();
+	$("#addVocabularyButton").on("click", function() {
+		alert("foo");
+		alert($(this).find(".fancyboxpopup").attr("class"));
 	});
-	$(".approveChangesButton").on("click", function() {
-		$(this).find("a").click();
-	});        
-	$(".publishMaterialButton").on("click", function() {
+
+	$(".versionHistoryButton, .publishMaterialButton, .approveChangesButton").on("click", function() {
 		$(this).find("a").click();
 	});
 
@@ -573,7 +572,7 @@ $(document).ready(function(){
 		}
 	});
 
-	$(".materialFileRow, .materialErrorRow, .materialBinderRow, .binderRow, .versionRow, " + 
+	$(".materialFileRow, .materialErrorRow, .materialBinderRow, .versionRow, " + 
 		".studyLevelIdRow, .parTitleRow, .otherMaterialRow, .relatedMaterialRow").on("click", function(e) {
 		if($(e.target.nodeName).is('TD')){
 			$(this).find("a").click();
@@ -602,16 +601,13 @@ $(document).ready(function(){
 
 	$(".materialContent").find("select, input[type=text], textarea, input[type=checkbox]").attr("disabled", true);
 
-
     $(".reserveMaterialButton").on("click", function() {
-    	$(".reservedButton").show();
+    	$(".reservedButton, .handlerInfo").show();
     	$(".previewButton").hide();
-    	$(".handlerInfo").show();
     });
     $(".releaseMaterialButton").on("click", function() {
-    	$(".reservedButton").hide();
+    	$(".reservedButton, .handlerInfo").hide();
     	$(".previewButton").show();
-    	$(".handlerInfo").hide();
     });
     $(".editMaterialButton").on("click", function() {
     	$(".materialContent .reservedButton, .materialContent .previewButton, .publishedInfo, .materialContent .prevNextContainer").hide();
@@ -666,11 +662,19 @@ $(document).ready(function(){
 		window.location = "publicationView.html";
 	});
 
-	// $("#editPublicationButton").on("click", function() {
-	// 	$(".publicationContent").find("textarea").attr("disabled", false);
-	// 	$(".publicationContent").find(".removeRow, .addRow, .editButton").show();
-	// 	$(".publicationContent").find(".previewButton").hide();
-	// });
+	$(".publicationContent").find("select, input[type=text], textarea, input[type=checkbox]").attr("disabled", true);
+
+	$("#editPublicationButton").on("click", function() {
+		$(".publicationContent .previewButton, .publicationContent .prevNextContainer").hide();
+    	$(".publicationContent .editButton, .publicationContent .addRow, .publicationContent .removeRow, .publicationContent .editButton").show();
+    	$(".publicationContent").find("select, input[type=text], textarea, input[type=checkbox]").attr("disabled", false);
+	});
+
+	$("#savePublicationChangesButton").on("click", function() {
+		$(".publicationContent").find("select, input[type=text], textarea, input[type=checkbox]").attr("disabled", true);
+		$(".publicationContent .prevNextContainer, .publicationContent .previewButton").show();
+    	$(".publicationContent .addRow, .publicationContent .removeRow, .publicationContent .editButton").hide();
+	});
 
 	/* SARJAT */
 
@@ -678,28 +682,23 @@ $(document).ready(function(){
 		window.location = "seriesView.html";
 	});
 
-	// createDataTable("publicationMaterialTable", ['20%','75%','5%']);
+	$(".seriesContent").find("select, input[type=text], textarea, input[type=checkbox]").attr("disabled", true);
 
-	// function creataDataTable(tableId, columnWidths) {
-	// 	alert("foo");
-	// 	var columns = [];
-	// 	for ( var i = 0; i < columnWidths; i++ ) {
-	// 		alert(columnWidths[i]);
-	// 		columns[i] = {sWidth: columnWidths[i]};
-	// 	}
-	// 	var foo = [{sWidth: '20%'},{sWidth: '25%'},{sWidth: '55%'}];
-	// 	$("#" + tableId).dataTable({
-	// 		"bPaginate": false,
-	//         "bFilter": false, 
-	//         "bInfo": false,
-	//         "bAutoWidth": false,
-	//         "aoColumns": foo
-	// 	});
-	// }
+	$("#editSeriesButton").on("click", function() {
+		$(".seriesContent .previewButton, .seriesContent .prevNextContainer").hide();
+    	$(".seriesContent .addRow, .seriesContent .removeRow, .seriesContent .editButton").show();
+    	$(".seriesContent").find("select, input[type=text], textarea, input[type=checkbox]").attr("disabled", false);
+	});
+
+	$("#saveSeriesChangesButton").on("click", function() {
+		$(".seriesContent").find("select, input[type=text], textarea, input[type=checkbox]").attr("disabled", true);
+		$(".seriesContent .prevNextContainer, .seriesContent .previewButton").show();
+    	$(".seriesContent .addRow, .seriesContent .removeRow, .seriesContent .editButton").hide();
+	});
 
 	/** MAPIT **/
 
-// Käännökset fileen ja haku sUrlilla
+	// Käännökset fileen ja haku sUrlilla
 	$("#binderTable").dataTable({
         "bFilter": true, 
         "bInfo": true,

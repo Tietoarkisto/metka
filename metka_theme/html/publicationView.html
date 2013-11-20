@@ -60,10 +60,10 @@
 						<div class="rowContainer">
 							<div class="publicationDataSetContainer"><label>Julkaisuvuosi</label><input type="text" name="publicationvuosi" value="2006" /></div>
 							<div class="publicationDataSetContainer"><label>Voiko julkaista</label><select><option>Kyllä</option></select></div>
-							<div class="publicationDataSetContainer"><label>Julkaisu id-nro</label><input type="text" disabled="disabled" name="publicationvuosi" value="1234" /></div>
+							<div class="publicationDataSetContainer"><label>Julkaisu id-nro</label><input type="text" class="unModifiable" readonly="readonly" name="publicationvuosi" value="1234" /></div>
 						</div>
 						<div class="rowContainer">
-							<div class="publicationDataSetContainer"><label>1. Tallennuspvm</label><input type="text" disabled="disabled" name="publicationvuosi" value="12.10.2013" /></div>
+							<div class="publicationDataSetContainer"><label>1. Tallennuspvm</label><input type="text" class="unModifiable" readonly="readonly" name="publicationvuosi" value="12.10.2013" /></div>
 							<div class="publicationDataSetContainer"><label>Julkaisun ilmoitustapa</label><select><option>Ei tietoa</option></select></div>
 							<div class="publicationDataSetContainer"><label>Julkaisun kieli</label><select><option>Suomi</option></select></div>
 						</div>
@@ -136,9 +136,9 @@
 					
 					<div class="viewFormButtonsHolder" style="margin-bottom:20px;">
 						<input type="button" class="editButton searchFormInput" value="Poista" />
-						<input type="button" id="versionHistoryButton" class="searchFormInput" value="Versiohistoria">
-						<input type="button" class="editButton searchFormInput" value="Tallenna" />
-						<!-- <input type="button" id="editPublicationButton" class="previewButton searchFormInput" value="Muokkaa" /> -->		
+						<a href="dialogs/versionHistoryDialog.html" class="versionHistoryButton fancyboxpopup fancybox.ajax button">Versiohistoria</a>
+						<input type="button" id="savePublicationChangesButton" class="editButton searchFormInput" value="Tallenna" />
+						<input type="button" id="editPublicationButton" class="previewButton searchFormInput" value="Muokkaa" />		
 					</div>
 				</div>												
 			</div>
