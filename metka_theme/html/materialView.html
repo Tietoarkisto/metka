@@ -397,7 +397,7 @@
 							<div class="rowContainer containsTranslations">
 								<div class="studyLevelDataSetContainer translated translationFi">
 									<div class="studyLevelTableTitle">Muunkieliset nimet</div>
-									<table class="metkaTable">
+									<table class="metkaTable studyLevelTwoHeadersTable">
 										<thead>
 											<tr><th>Nimi</th><th>Kieli</th><th></th></tr>
 										</thead>
@@ -442,7 +442,6 @@
 							</div>
 
 							<div class="rowContainer">
-								<div class="studyLevelTableTitle">Organisaatiotuottajat</div>
 								<table class="metkaTable studyLevelOrderedTable" id="studyLevelProducers">
 									<thead>
 										<tr><th>Tuottaja</th><th>Tunniste</th><th>Tunnistetyyppi</th><th>Rooli</th><th>Projektinumero</th><th>Lyhenne</th><th></th></tr>
@@ -459,20 +458,20 @@
 						<div class="accordionContent">
 							<div class="rowContainer">
 								<div class="studyLevelTableTitle">Asiasanat</div>
-								<table class="metkaTable">
+								<table class="metkaTable studyLevelVocabularyTable">
 									<thead>
-										<tr><th>Asiasana</th><th>Uri</th><th>Tunniste/osoite</th><th></th></tr>
+										<tr><th>Sanasto</th><th>Asiasana</th><th>Uri</th><th>Tunniste/osoite</th><th></th></tr>
 									</thead>
 									<tbody>
-										<tr><td>eduskuntavaalit</td><td>http://vesa.lib.helsinki.fi/</td><td>foo</td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-										<tr><td>äänestäminen</td><td>http://vesa.lib.helsinki.fi/</td><td>bar</td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>YSA</td><td>eduskuntavaalit</td><td>http://vesa.lib.helsinki.fi/</td><td>foo</td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>YSA</td><td>äänestäminen</td><td>http://vesa.lib.helsinki.fi/</td><td>bar</td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
 									</tbody>
 								</table>
 								<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addKeywordDialog.html" class="addRow fancyboxpopup fancybox.ajax link">Lisää</a></div>
 							</div>
 							<div class="rowContainer">
 								<div class="studyLevelTableTitle">Tieteenalat</div>
-								<table class="metkaTable">
+								<table class="metkaTable studyLevelVocabularyTable">
 									<thead>
 										<tr><th>Sanasto</th><th>Tieteenala</th><th>Uri</th><th>Tunniste/osoite</th><th></th></tr>
 									</thead>
@@ -502,7 +501,7 @@
 						<div class="accordionContent">
 							<div class="rowContainer">
 								<div class="studyLevelTableTitle">Ajalliset kattavuudet</div>
-								<table class="metkaTable">
+								<table class="metkaTable studyLevelTwoHeadersTable">
 									<thead>
 										<tr><th>Päivämäärä</th><th>timeperiodevent</th><th></th></tr>
 									</thead>
@@ -514,10 +513,9 @@
 								<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addTimePeriodDialog.html" class="addRow fancyboxpopup fancybox.ajax link">Lisää</a></div>
 							</div>
 							<div class="rowContainer">
-								<div class="studyLevelTableTitle">Maat</div>
-								<table class="metkaTable">
+								<table class="metkaTable studyLevelTwoHeadersTable">
 									<thead>
-										<tr><th>Maa</th><th>Lyhene</th><th></th></tr>
+										<tr><th>Maa</th><th>Lyhenne</th><th></th></tr>
 									</thead>
 									<tbody>
 										<tr><td>Suomi</td><td>FIN</td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
@@ -527,7 +525,18 @@
 								<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addCountryDialog.html" class="addRow fancyboxpopup fancybox.ajax link">Lisää</a></div>
 							</div>
 							<div class="rowContainer">
-								<div class="studyLevelTableTitle">Kohdealueet</div>
+								<table class="metkaTable studyLevelTwoHeadersTable">
+									<thead>
+										<tr><th>Perusjoukko</th><th>Rajaus</th><th></th></tr>
+									</thead>
+									<tbody>
+										<tr><td>Foo</td><td>E</td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+									</tbody>
+								</table>
+								<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addUniverseDialog.html" class="addRow fancyboxpopup fancybox.ajax link">Lisää</a></div>
+							</div>
+
+							<div class="rowContainer">
 								<table class="metkaTable">
 									<thead>
 										<tr><th>Kohdealue</th><th></th></tr>
@@ -539,24 +548,11 @@
 								</table>
 								<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addGeoCoverDialog.html" class="addRow fancyboxpopup fancybox.ajax link">Lisää</a></div>
 							</div>
-							<div class="rowContainer">
-								<div class="studyLevelTableTitle">Perusjoukot</div>
-								<table class="metkaTable">
-									<thead>
-										<tr><th>Perusjoukko</th><th>Rajaus</th><th></th></tr>
-									</thead>
-									<tbody>
-										<tr><td>Foo</td><td>E</td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-									</tbody>
-								</table>
-								<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addUniverseDialog.html" class="addRow fancyboxpopup fancybox.ajax link">Lisää</a></div>
-							</div>
 						</div>
 						<label class="studyLevelTitle">Aineistonkeruu&nbsp;<img src="../images/info-sign.png" class="helpImage"/></label>
 						<div class="accordionContent">
 							<div class="rowContainer">
-								<div class="studyLevelTableTitle">Ajankohdat</div>
-								<table class="metkaTable">
+								<table class="metkaTable studyLevelTwoHeadersTable">
 									<thead>
 										<tr><th>Ajankohta</th><th>colldateevent</th><th></th></tr>
 									</thead>
@@ -569,7 +565,6 @@
 							</div>
 
 							<div class="rowContainer">
-								<div class="studyLevelTableTitle">Kerääjät</div>
 								<table class="metkaTable studyLevelOrderedTable">
 									<thead>
 										<tr><th>Kerääjä</th><th>Tunniste</th><th>Tunnistetyyppi</th><th>Taustaorg.</th><th>Taustaorg. tunniste</th><th>Taustaorg. tunnistetyyppi</th><th></th></tr>
@@ -585,51 +580,34 @@
 							</div>
 
 							<div class="rowContainer">
-								<div class="studyLevelTableTitle">Havaintoyksikkö-/aineistoyksikkökategoriat</div>
-								<table class="metkaTable">
+								<table class="metkaTable studyLevelCollectingTable">
 									<thead>
-										<tr><th>Havaintoyksillö/kategoria</th><th>Sanasto</th><th>Uri</th><th>Tunniste/osoite</th><th></th></tr>
+										<tr><th>Havaintoyksikkö/Aineistoyks.kategoria</th><th>Uri</th><th>Tunniste/osoite</th><th></th></tr>
 									</thead>
 									<tbody>
-										<tr><td>FFHT</td><td>?</td><td>http://vesa.lib.helsinki.fi/</td><td>http://vesa.lib.helsinki.fi/</td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-										<tr><td>Maantieteellinen alue</td><td>Pirkanmaa</td><td>http://vesa.lib.helsinki.fi/</td><td>http://vesa.lib.helsinki.fi/</td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>FooBar</td><td>http://vesa.lib.helsinki.fi/</td><td>http://vesa.lib.helsinki.fi/</td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>Pirkanmaa</td><td>http://vesa.lib.helsinki.fi/</td><td>http://vesa.lib.helsinki.fi/</td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
 									</tbody>
 								</table>
 								<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addCollectionDataDialog.html" class="addRow fancyboxpopup fancybox.ajax link">Lisää</a></div>
 							</div>
 
 							<div class="rowContainer">
-								<div class="studyLevelTableTitle">Aikaulottuvuudet</div>
-								<table class="metkaTable">
+								<table class="metkaTable studyLevelCollectingTable">
 									<thead>
-										<tr><th>Aikaulottuvuus</th><th>Sanasto</th><th>Uri</th><th>Tunniste/osoite</th><th></th></tr>
+										<tr><th>Aikaulottuvuus</th><th>Uri</th><th>Tunniste/osoite</th><th></th></tr>
 									</thead>
 									<tbody>
-										<tr><td>Pitkittäisaineisto</td><td>?</td><td>http://vesa.lib.helsinki.fi/</td><td>foo</td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>Pitkittäisaineisto</td><td>http://vesa.lib.helsinki.fi/</td><td>foo</td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
 									</tbody>
 								</table>
 								<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addCollectionDataDialog.html" class="addRow fancyboxpopup fancybox.ajax link">Lisää</a></div>
 							</div>
 
 							<div class="rowContainer">
-								<div class="studyLevelTableTitle">Otantamenetelmät/Aineiston valintatavat</div>
-								<table class="metkaTable">
+								<table class="metkaTable studyLevelCollectingTable">
 									<thead>
-										<tr><th>Otantamenetelmä/valintatapa</th><th>Sanasto</th><th>Uri</th><th>Tunniste/osoite</th><th>Kuvaus</th><th></th></tr>
-									</thead>
-									<tbody>
-										<tr><td>Foo</td><td></td><td>http://vesa.lib.helsinki.fi/</td><td>foo</td><td></td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-										<tr><td>Muu</td><td>Tekstiä</td><td>http://vesa.lib.helsinki.fi/</td><td>bar</td><td></td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-									</tbody>
-								</table>
-								<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addCollectionDataDialog.html" class="addRow fancyboxpopup fancybox.ajax link">Lisää</a></div>
-							</div>
-
-							<div class="rowContainer">
-								<div class="studyLevelTableTitle">Keruumenetelmät/keruutekniikat</div>
-								<table class="metkaTable">
-									<thead>
-										<tr><th>Keruumenetelmä</th><th>Uri</th><th>Tunniste/osoite</th><th></th></tr>
+										<tr><th>Keruumenetelmä/-tekniikka</th><th>Uri</th><th>Tunniste/osoite</th><th></th></tr>
 									</thead>
 									<tbody>
 										<tr><td>Foo</td><td>http://vesa.lib.helsinki.fi/</td><td>foo</td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
@@ -640,14 +618,26 @@
 							</div>
 
 							<div class="rowContainer">
-								<div class="studyLevelTableTitle">Keruuvälineet/Ohjeistukset</div>
-								<table class="metkaTable">
+								<table class="metkaTable studyLevelCollectingTable">
 									<thead>
-										<tr><th>Keruuväline</th><th>Sanasto</th><th>Uri</th><th>Tunniste/osoite</th><th></th></tr>
+										<tr><th>Keruuväline/Ohjeistu</th><th>Uri</th><th>Tunniste/osoite</th><th></th></tr>
 									</thead>
 									<tbody>
-										<tr><td>Foo</td><td></td><td>http://vesa.lib.helsinki.fi/</td><td>foo</td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-										<tr><td>Muu</td><td>Tekstiä</td><td>http://vesa.lib.helsinki.fi/</td><td>bar</td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>Foo</td><td>http://vesa.lib.helsinki.fi/</td><td>foo</td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>Muu</td><td>http://vesa.lib.helsinki.fi/</td><td>bar</td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+									</tbody>
+								</table>
+								<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addCollectionDataDialog.html" class="addRow fancyboxpopup fancybox.ajax link">Lisää</a></div>
+							</div>
+
+							<div class="rowContainer">
+								<table class="metkaTable">
+									<thead>
+										<tr><th>Otantamenetelmä/Aineiston valintatapa</th><th>Uri</th><th>Tunniste/osoite</th><th>Kuvaus</th><th></th></tr>
+									</thead>
+									<tbody>
+										<tr><td>Foo</td><td>http://vesa.lib.helsinki.fi/</td><td>foo</td><td></td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+										<tr><td>Muu</td><td>http://vesa.lib.helsinki.fi/</td><td>bar</td><td></td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
 									</tbody>
 								</table>
 								<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addCollectionDataDialog.html" class="addRow fancyboxpopup fancybox.ajax link">Lisää</a></div>

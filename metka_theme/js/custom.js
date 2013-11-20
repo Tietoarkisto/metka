@@ -339,6 +339,45 @@ $(document).ready(function(){
         "bInfo": false
 	}).rowReordering();
 
+	$(".studyLevelCollectingTable").dataTable({
+		"bPaginate": false,
+        "bFilter": false, 
+        "bInfo": false, 
+        "bAutoWidth": false,
+        "aoColumns": [
+		              {sWidth: '35%'},
+		              {sWidth: '30%'},
+		              {sWidth: '30%'},
+		              {sWidth: '5%'}
+        ]
+	});
+
+	$(".studyLevelTwoHeadersTable").dataTable({
+		"bPaginate": false,
+        "bFilter": false, 
+        "bInfo": false, 
+        "bAutoWidth": false,
+        "aoColumns": [
+		              {sWidth: '55%'},
+		              {sWidth: '45%'},
+		              {sWidth: '5%'}
+        ]
+	});
+
+	$(".studyLevelVocabularyTable").dataTable({
+		"bPaginate": false,
+        "bFilter": false, 
+        "bInfo": false, 
+        "bAutoWidth": false,
+        "aoColumns": [
+		              {sWidth: '10%'},
+		              {sWidth: '45%'},
+		              {sWidth: '20%'},
+		              {sWidth: '20%'},
+		              {sWidth: '5%'}
+        ]
+	});
+
 	$(".materialRemovedFileRow").on("click", function() {
 		showFileInfo($(this), "#materialRemovedFileInfoContent", "#materialRemovedFileInfoRow");	
 	});
