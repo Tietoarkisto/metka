@@ -149,9 +149,18 @@ footer{
 			width: 310px;
 			padding: 5px;
 		}
+		input[type="button"] {
+			width: 75px !important;
+			padding: 5px;
+		}
 
-		.versionName, .versionPublishedDate, .versionCompareLink {
-			width: 150px;
+		.versionName, .versionPublishedDate, .versionCompare {
+			width: 120px;
+			float: left;
+			padding: 5px;
+		}
+		.versionReplace {
+			width: 50px;
 			float: left;
 			padding: 5px;
 		}

@@ -202,8 +202,15 @@ footer {
   .popupContainer .popupRowHolder input, .popupContainer .popupRowHolder select, .popupContainer .popupRowHolder textarea {
     width: 310px;
     padding: 5px; }
-  .popupContainer .popupRowHolder .versionName, .popupContainer .popupRowHolder .versionPublishedDate, .popupContainer .popupRowHolder .versionCompareLink {
-    width: 150px;
+  .popupContainer .popupRowHolder input[type="button"] {
+    width: 75px !important;
+    padding: 5px; }
+  .popupContainer .popupRowHolder .versionName, .popupContainer .popupRowHolder .versionPublishedDate, .popupContainer .popupRowHolder .versionCompare {
+    width: 120px;
+    float: left;
+    padding: 5px; }
+  .popupContainer .popupRowHolder .versionReplace {
+    width: 50px;
     float: left;
     padding: 5px; }
   .popupContainer .popupRowHolder .versionProperty, .popupContainer .popupRowHolder .versionChange {
@@ -361,7 +368,7 @@ nav {
   clear: both;
   min-height: 275px; }
 
-.filing, .studylevel, .variables, .files, .codebook, .errors, .packages,
+.filing, .studylevel, .variables, .files, .codebook, .errors, .packages, .importExport,
 .standardTexts, .userInfo {
   display: none; }
 
@@ -390,8 +397,8 @@ nav {
   display: inline-block;
   list-style: none outside none;
   margin-bottom: 10px;
-  margin-top: 10px;
-  margin-left: -20px;
+  margin-top: 0px;
+  margin-left: 10px;
   float: left; }
   .materialTabNavi ul li {
     float: left; }
@@ -546,7 +553,7 @@ nav {
   clear: left;
   display: inline-block;
   text-align: right;
-  width: 960px;
+  width: 984px;
   font-size: 15px; }
 
 .searchFormContainer {
@@ -562,10 +569,22 @@ nav {
       width: 200px;
       display: block;
       float: left; }
+  .searchFormContainer .expertSearchFormRowHolder {
+    padding-bottom: 10px;
+    clear: both; }
+    .searchFormContainer .expertSearchFormRowHolder label {
+      width: 100px;
+      display: block;
+      float: left; }
   .searchFormContainer .searchFormButtonsHolder {
     text-align: right;
     width: 645px; }
     .searchFormContainer .searchFormButtonsHolder input {
+      margin-left: 20px; }
+  .searchFormContainer .expertSearchFormButtonsHolder {
+    text-align: right;
+    width: 545px; }
+    .searchFormContainer .expertSearchFormButtonsHolder input {
       margin-left: 20px; }
   .searchFormContainer .expertSearchContainer {
     position: relative;
@@ -647,7 +666,7 @@ nav {
   right: 0; }
 
 .queryLibrary {
-  width: 200px;
+  width: 400px;
   background-color: white;
   border: solid 1px #009ee0;
   font-size: 12px; }
@@ -666,14 +685,18 @@ nav {
       .queryLibrary ul li:hover {
         background: #eaeaea; }
       .queryLibrary ul li a {
+        float: left;
         text-decoration: none;
-        color: #005993;
-        display: block;
-        width: 100%; }
+        color: #005993; }
+      .queryLibrary ul li a, .queryLibrary ul li .searchName, .queryLibrary ul li .searchSaver, .queryLibrary ul li .searchSaveDate {
+        float: left;
+        margin-right: 10px; }
+      .queryLibrary ul li .deleteSearch {
+        float: right; }
 
 .saveNewQuery {
   display: none;
-  width: 200px;
+  width: 400px;
   background-color: white;
   border: solid 1px #009ee0;
   font-size: 12px;
@@ -714,13 +737,27 @@ nav {
   margin-top: 20px;
   display: none; }
 
+.searchTableActionLinkHolder {
+  clear: left;
+  display: inline-block;
+  text-align: right;
+  width: 984px;
+  font-size: 12px;
+  margin-top: 10px; }
+
 /** MATERIAL, PUBLICATION, SERIES **/
 #fileNameErrorRow, #materialFileInfoRow, #materialCodebookRow, #materialErrorInfoRow,
 #groupedVariableTreeContainer, #variableDataContainer, #variableData, #variableGroupData,
 #variablesGroupingContainer, #additionalFilingContractFile, .translationEn, .translationSv,
 .variableTranslationTable, .organizationAuthor, .organizationCollector,
-.keywordFields, .vocabularyFields, .noVocabulary, .topicFields, .otherWord, .wordFields,
+.vocabularyFields, .noVocabulary, .topicFields,
 .countrySelectContainer, .countryFields, .geoCoverSelectContainer, .geoCoverFields, .errorneous {
+  display: none; }
+
+.handlerInfo, .draftInfo {
+  display: none; }
+
+.materialContent .addRow, .materialContent .removeRow, .materialContent .editButton, .materialContent .reservedButton {
   display: none; }
 
 .upperContainer {
@@ -799,6 +836,8 @@ nav {
     float: left;
     font-size: 12px;
     width: 730px; }
+  .materialDataSetContainer #materialSeriesSelect {
+    width: 320px; }
 
 .studyLevelDataSetContainer {
   font-size: 12px;
@@ -924,16 +963,16 @@ nav {
     clear: left;
     display: inline-block;
     text-align: right;
-    width: 920px;
+    width: 924px;
     font-size: 12px; }
   #materialStudyLevel #studyLevelData table {
-    width: 920px; }
+    width: 924px; }
   #materialStudyLevel #studyLevelData .studyLevelTableTitle {
     font-size: 12px;
     margin-top: 10px; }
   #materialStudyLevel #studyLevelData .metkaTable {
     margin: 0px 10px 0px 0px;
-    width: 920px; }
+    width: 924px; }
   #materialStudyLevel #studyLevelData .studyLevelDataSetTextareaContainer textarea {
     width: 400px; }
 
@@ -988,14 +1027,14 @@ nav {
   margin-bottom: 0px;
   margin-right: 20px;
   width: 984px;
-  width: 900px; }
+  width: 979px; }
 
 .viewFormButtonsHolder {
   clear: left;
   display: inline-block;
   margin-top: 20px;
   text-align: right;
-  width: 950px; }
+  width: 1014px; }
   .viewFormButtonsHolder input {
     margin-left: 20px; }
 

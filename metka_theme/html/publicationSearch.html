@@ -56,7 +56,9 @@
 					<h1 class="pageTitle">Julkaisuhaku</h1>
 					<div class="searchFormContainer">					
 						<form action="#">
-							<div class="searchFormRowHolder"><label>Julkaisu id-nro</label><input type="text" class="shortSearchInput" name="julkaisuId" /> <label class="shortLabel">&nbsp;/ Aineiston numerot</label><input type="text" class="shortSearchInput" name="julkaisuId" /><div style="clear:both;"></div></div>		
+							<div class="searchFormRowHolder"><label>Julkaisu id-nro</label><input type="text" class="shortSearchInput" name="julkaisuId" /> <label class="shortLabel">&nbsp;/ Aineiston numerot</label><input type="text" class="shortSearchInput" name="julkaisuId" /><div style="clear:both;"></div></div>	
+							<div class="searchFormRowHolder"><label>Julkaisun lisäyspvm</label><input type="text" class="shortSearchInput datepicker" name="startdate" /><label class="shortLabel">&nbsp;-</label><input type="text" class="shortSearchInput datepicker" name="enddate" /><div style="clear:both;"></div></div>	
+							<div class="searchFormRowHolder"><label>Julkaisuvuosi</label><input type="text" class="shortSearchInput" name="publishyear" /><div style="clear:both;"></div></div>
 							<div class="searchFormRowHolder"><label>Aineiston nimi</label><input type="text" class="searchInput" name="julkaisuId" /></div>
 							<div class="searchFormRowHolder"><label>Sarjan nimi</label><select class="formSelect" name="sarjanNimi"><option></option></select></div>
 							<div class="searchFormRowHolder"><label>Tekijän sukunimi</label><input type="text" class="shortSearchInput" name="sukunimi" /><label class="shortLabel">Etunimi</label><input type="text" class="shortSearchInput" name="etunimi" /><div style="clear:both;"></div></div>
@@ -64,9 +66,7 @@
 							<div class="searchFormRowHolder"><label>relPubl</label><input type="text" class="searchInput" name="julkaisuId" /></div>
 							<div class="searchFormRowHolder"><label>Julkaisun kieli</label><select  class="formSelect" name="sarjanNimi"><option></option></select></div>
 							<div class="searchFormRowHolder"><label>Voiko julkaista</label><select  class="formSelect" name="sarjanNimi"><option></option></select></div>
-							<div class="searchFormRowHolder"><label>Julkaisun ilmoitustapa</label><select class="formSelect" name="sarjanNimi"><option></option></select></div>
 							<div class="searchFormRowHolder"><label>Käsitteljä</label><input type="text" class="searchInput" name="julkaisuId" /></div>
-							<div class="searchFormRowHolder"><label>K-lupanumerot</label><input type="text" class="searchInput" name="julkaisuId" /></div>
 							<div class="searchFormButtonsHolder"><input type="button" class="searchFormInput doSearch" value="Tee haku"><input class="searchFormInput" type="reset" value="Tyhjennä"></div>
 						</form>
 						<div id="addNewButton">
@@ -103,6 +103,7 @@
 									</tr> 
 								</tbody> 
 							</table>
+							<div class="searchTableActionLinkHolder"><input type="submit" class="searchFormInput" value="Lataa CSV"/></div>	
 						</div>							
 					</div>
 				</div>

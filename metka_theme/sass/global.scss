@@ -11,10 +11,14 @@ $enColor: blue;
 
 $tableWidth: $pageWidth - 20px;
 
+$viewFormButtonsHolderWidth: $pageWidth - 10px;
+
 $desktopWidgetContainerWidth: $pageWidth / 2 - 30px;;
 
 $topRowLabelWidth: 180px;
 $topRowInputWidth: 750px;
+
+$materialPrevNextContainerWidth: $pageWidth - 45px;
 
 $materialDataSetTextAreaLabelWidth: 400px;
 $materialDataSetTextAreaWidth: 470px;
@@ -43,12 +47,12 @@ $seriesSelectWidth: 450px;
 $seriesTextAreaWidth: 460px;
 $seriesTextAreaHeigth: 100px;
 
-$accordionTableLinkHolderWidth: 920px;
-$accordionTableWidth: 920px;
+$accordionTableLinkHolderWidth: $pageWidth - 100px;
+$accordionTableWidth: $pageWidth - 100px;
 
 $actionLinkHolderWidth: $pageWidth - 40px;
 
-$settingsTableActionLinkHolderWidth: 960px;
+$settingsTableActionLinkHolderWidth: $pageWidth - 40px;
 
 @mixin boxShadow($color) {
 	box-shadow: 0 0 8px $color;

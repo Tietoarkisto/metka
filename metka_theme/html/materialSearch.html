@@ -65,10 +65,11 @@
 								<form action="#">
 									<div class="searchFormRowHolder"><label>Aineiston numero</label><input type="text" class="searchInput" name="julkaisuId" /></div>
 									<div class="searchFormRowHolder"><label>Aineiston nimi</label><input type="text" class="searchInput" name="julkaisuId" /></div>
-									<div class="searchFormRowHolder"><label>Luovuttajan ym. sukunimi</label><input type="text" class="searchInput" name="julkaisuId" /></div>
-									<div class="searchFormRowHolder"><label>Luovuttajan ym. etunimi</label><input type="text" class="searchInput" name="julkaisuId" /></div>
-									<div class="searchFormRowHolder"><label>Luovuttajan ym. organisaatio</label><input type="text" class="searchInput" name="julkaisuId" /></div>
+									<div class="searchFormRowHolder"><label>Luovuttajan ym. sukunimi</label><input type="text" class="shortSearchInput" name="sukunimi" /><label class="shortLabel">Etunimi</label><input type="text" class="shortSearchInput" name="etunimi" /><div style="clear:both;"></div></div>
+									<div class="searchFormRowHolder"><label>Luovuttajan ym. org.</label><select class="formSelect" name="sarjanNimi"><option></option></select></div>
 									<div class="searchFormRowHolder"><label>Luovuttajan ym. laitos</label><input type="text" class="searchInput" name="julkaisuId" /></div>
+									<div class="searchFormRowHolder"><label>Tuottajan ym. sukunimi</label><input type="text" class="shortSearchInput" name="sukunimi" /><label class="shortLabel">Etunimi</label><input type="text" class="shortSearchInput" name="etunimi" /><div style="clear:both;"></div></div>
+									<div class="searchFormRowHolder"><label>Sarjan nimi</label><select class="formSelect" name="sarjanNimi"><option></option></select></div>
 									
 									<div class="searchFormButtonsHolder">
 										<input type="button" class="searchFormInput doSearch" value="Tee haku">
@@ -102,6 +103,7 @@
 											</tr>
 										</tbody>
 									</table>
+									<div class="searchTableActionLinkHolder"><input type="submit" class="searchFormInput" value="Lataa CSV"/></div>	
 								</div>
 							</div>
 						</div>
@@ -115,6 +117,7 @@
 								    <th>Aineistonumero</th> 
 								    <th>Aineiston nimi</th> 
 								    <th>Julkaisu</th> 
+								    <th>Sarja</th> 
 								    <th>Hank.ain.nro</th> 
 								    <th>FSD luovuttaa</th> 
 								</tr> 
@@ -126,17 +129,20 @@
 									    <td>0Lorem ipsum dolor sit amet</td> 
 									    <td>0Lorem ipsum dolor sit amet</td> 
 									    <td>0Lorem ipsum dolor sit amet</td> 
+									    <td>0Lorem ipsum dolor sit amet</td> 
 									</tr> 
 									<tr class="materialSearchResultRow"> 
 									    <td>FSD1235</a></td> 
 									    <td>1Lorem ipsum dolor sit amet</td> 
 									    <td>1Lorem ipsum dolor sit amet</td> 
+									    <td>0Lorem ipsum dolor sit amet</td> 
 									    <td>1Lorem ipsum dolor sit amet</td> 
 									    <td>1Lorem ipsum dolor sit amet</td> 
 									</tr> 
 									<tr class="materialSearchResultRow"> 
 									    <td>FSD1236</a></td> 
 									    <td>2Lorem ipsum dolor sit amet</td> 
+									    <td>0Lorem ipsum dolor sit amet</td> 
 									    <td>2Lorem ipsum dolor sit amet</td> 
 									    <td>2Lorem ipsum dolor sit amet</td> 
 									    <td>2Lorem ipsum dolor sit amet</td> 
@@ -145,11 +151,13 @@
 									    <td>FSD1237</a></td> 
 									    <td>3Lorem ipsum dolor sit amet</td> 
 									    <td>3Lorem ipsum dolor sit amet</td> 
+									    <td>0Lorem ipsum dolor sit amet</td> 
 									    <td>3Lorem ipsum dolor sit amet</td> 
 									    <td>3Lorem ipsum dolor sit amet</td> 
 									</tr> 
 								</tbody> 
 							</table>
+							<div class="searchTableActionLinkHolder"><input type="submit" class="searchFormInput" value="Lataa CSV"/></div>	
 						</div>							
 					</div>
 				</div>				
