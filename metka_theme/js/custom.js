@@ -61,9 +61,9 @@ $(document).ready(function(){
 	$(".materialFileRow, .materialCodebookFileRow, .materialErrorRow, .desktopWidgetDataRow, " +
 		".errorneousMaterialRow, .materialSearchResultRow, .publicationSearchResultRow, .seriesSearchResultRow, " + 
 		".materialSeriesRow, .materialPublicationRow, .materialMaterialRow, #variablesListBasic li, " +
-		".publicationSeriesRow, .publicationMaterialRow, .binderRow, .link, #removeAdditionalFilingContractFile, " +
+		".publicationSeriesRow, .publicationMaterialRow, .link, #removeAdditionalFilingContractFile, " +
 		".studyLevelIdRow, .parTitleRow, .otherMaterialRow, .relatedMaterialRow, #addAltTitle, #removeAltTitle, " + 
-		".removeAddedElement, .versionRow, .materialNotificationRow, .helpImage").hover(function() {
+		".removeAddedElement, .versionRow, .materialNotificationRow, .helpImage, .binderNumber, .packagingRow").hover(function() {
 		    $(this).css('cursor', 'pointer');
 		}, function() {
 		    $(this).css('cursor', 'auto');		    
@@ -621,15 +621,14 @@ $(document).ready(function(){
     	$(".materialContent .addRow, .materialContent .removeRow, .materialContent .editButton").hide();
     	$(".materialContent").find("select, input[type=text], textarea, input[type=checkbox]").attr("disabled", true);
 	});
-	// $(".approveChangesButton").on("click", function() {
-	// 	$(".reservedButton").show();
- //    	$(".materialContent .addRow, .materialContent .removeRow, .materialContent .editButton").hide();
- //    	$(".materialContent").find("select, input[type=text], textarea").attr("disabled", true);
-	// });
 
 	$("#weightCoefficientToggle").on("click", function() {
 		var checked = $(this).is(":checked");
 		$(".weightCoefficient").attr("disabled", checked);
+	});
+
+	$(".packagingRow").on("click", function() {
+		$("#packagingHistoryContainer").toggle();
 	});
 
 	/*** JULKAISU ***/
@@ -730,5 +729,14 @@ $(document).ready(function(){
 		        "sLast":     "Viimeinen"
 		    }
 		}
+	});
+
+	$(".binderNumber").on("click", function() {
+		$("#binderList").hide();
+		$("#binderInfo").show();
+	});
+	$("#backToBinderList").on("click", function() {
+		$("#binderList").show();
+		$("#binderInfo").hide();
 	});
 });

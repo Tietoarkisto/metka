@@ -426,7 +426,7 @@
 	}
 }
 
-#materialFileInfoContent, #materialRemovedFileInfoContent, #materialErrorInfoContent {
+#materialRemovedFileInfoContent, #materialErrorInfoContent {
 	padding: 10px;
 	font-size: 12px;
 
@@ -443,4 +443,8 @@
 			font-weight: bold;
 		}
 	}
+}
+
+#packagingHistoryContainer {
+	padding: 10px;
 }

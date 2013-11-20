@@ -288,7 +288,6 @@ table.metkaTable, #materialStudyLevel #studyLevelData .metkaTable {
   table.metkaTable tbody tr:hover, #materialStudyLevel #studyLevelData .metkaTable tbody tr:hover {
     background-color: #eaeaea; }
   table.metkaTable tbody td, #materialStudyLevel #studyLevelData .metkaTable tbody td {
-    color: #000;
     padding: 4px;
     vertical-align: top; }
   table.metkaTable tbody tr.odd td, #materialStudyLevel #studyLevelData .metkaTable tbody tr.odd td {
@@ -1164,12 +1163,15 @@ nav {
       float: right;
       padding: 5px; }
 
-#materialFileInfoContent, #materialRemovedFileInfoContent, #materialErrorInfoContent {
+#materialRemovedFileInfoContent, #materialErrorInfoContent {
   padding: 10px;
   font-size: 12px; }
-  #materialFileInfoContent th.errorInfoLabel, #materialRemovedFileInfoContent th.errorInfoLabel, #materialErrorInfoContent th.errorInfoLabel {
+  #materialRemovedFileInfoContent th.errorInfoLabel, #materialErrorInfoContent th.errorInfoLabel {
     width: 120px; }
-  #materialFileInfoContent tbody td, #materialRemovedFileInfoContent tbody td, #materialErrorInfoContent tbody td {
+  #materialRemovedFileInfoContent tbody td, #materialErrorInfoContent tbody td {
     padding: 3px; }
-  #materialFileInfoContent tbody .fileInfoLabel, #materialFileInfoContent tbody .errorInfoLabel, #materialRemovedFileInfoContent tbody .fileInfoLabel, #materialRemovedFileInfoContent tbody .errorInfoLabel, #materialErrorInfoContent tbody .fileInfoLabel, #materialErrorInfoContent tbody .errorInfoLabel {
+  #materialRemovedFileInfoContent tbody .fileInfoLabel, #materialRemovedFileInfoContent tbody .errorInfoLabel, #materialErrorInfoContent tbody .fileInfoLabel, #materialErrorInfoContent tbody .errorInfoLabel {
     font-weight: bold; }
+
+#packagingHistoryContainer {
+  padding: 10px; }
