@@ -5,17 +5,8 @@
 			.newOrganizationField, .organizationField {
 				display: none;
 			}
-		</style>
-		
+		</style>		
 		<script type="text/javascript">
-
-			$(".link").on("click", function() {
-				var newRow = $(this).parent().clone(true);
-				$(newRow).find("label").removeClass("link");
-				$(newRow).find("img").css('visibility', 'visible');
-				$(newRow).insertAfter($(this).parent());
-			});
-
 			$("#organizationSelect").on("change", function() {
 				var organization = $(this).children(":selected").attr("id");
 				if ( organization == "chooseOrganization") {

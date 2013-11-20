@@ -12,7 +12,7 @@
 	display: none;
 }
 
-.materialContent {
+.materialContent, .publicationContent, .seriesContent {
 	.addRow, .removeRow, .editButton, .reservedButton {
 		display: none;
 	}
@@ -253,19 +253,15 @@
 }
 
 .viewFormButtonsHolder{
-    clear: left;
-    display: inline-block;
-    margin-top: 20px;
-    text-align: right;
-    width: $viewFormButtonsHolderWidth;
-
-    input {
-		margin-left: 20px;
-	}
+   @include buttonsHolder($viewFormButtonsHolderWidth);
 }
 
 .materialTableActionLinkHolder, .publicationTableActionLinkHolder {
     @include actionLinkHolder($actionLinkHolderWidth, 12px);
+}
+
+.binderButtonsHolder {
+	@include buttonsHolder($binderButtonsHolderWidth);	
 }
 
 .materialRowTitle, .publicationRowTitle {
@@ -430,7 +426,7 @@
 	}
 }
 
-#materialFileInfoContent, #materialRemovedFileInfoContent, #materialErrorInfoContent {
+#materialRemovedFileInfoContent, #materialErrorInfoContent {
 	padding: 10px;
 	font-size: 12px;
 
@@ -447,4 +443,8 @@
 			font-weight: bold;
 		}
 	}
+}
+
+#packagingHistoryContainer {
+	padding: 10px;
 }

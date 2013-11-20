@@ -288,13 +288,12 @@ table.metkaTable, #materialStudyLevel #studyLevelData .metkaTable {
   table.metkaTable tbody tr:hover, #materialStudyLevel #studyLevelData .metkaTable tbody tr:hover {
     background-color: #eaeaea; }
   table.metkaTable tbody td, #materialStudyLevel #studyLevelData .metkaTable tbody td {
-    color: #000;
     padding: 4px;
     vertical-align: top; }
   table.metkaTable tbody tr.odd td, #materialStudyLevel #studyLevelData .metkaTable tbody tr.odd td {
     background-color: #EAEAEA; }
 
-.searchFormInput {
+.searchFormInput, .button {
   padding: 5px;
   outline: none;
   transition: all 0.25s ease-in-out;
@@ -303,8 +302,11 @@ table.metkaTable, #materialStudyLevel #studyLevelData .metkaTable {
   background-color: #009ee0;
   color: white;
   border: 1px solid #009ee0;
-  cursor: pointer; }
-  .searchFormInput :focus {
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 15px;
+  margin-left: 20px; }
+  .searchFormInput :focus, .button :focus {
     box-shadow: 0 0 8px #005993;
     -webkit-box-shadow: 0 0 8px #005993;
     -moz-box-shadow: 0 0 8px #005993; }
@@ -556,6 +558,15 @@ nav {
   width: 984px;
   font-size: 15px; }
 
+.settingsButtonsHolder {
+  clear: left;
+  display: inline-block;
+  margin-top: 20px;
+  text-align: right;
+  width: 984px; }
+  .settingsButtonsHolder input {
+    margin-left: 20px; }
+
 .searchFormContainer {
   margin: 20px;
   position: relative; }
@@ -749,15 +760,14 @@ nav {
 #fileNameErrorRow, #materialFileInfoRow, #materialCodebookRow, #materialErrorInfoRow,
 #groupedVariableTreeContainer, #variableDataContainer, #variableData, #variableGroupData,
 #variablesGroupingContainer, #additionalFilingContractFile, .translationEn, .translationSv,
-.variableTranslationTable, .organizationAuthor, .organizationCollector,
-.vocabularyFields, .noVocabulary, .topicFields,
-.countrySelectContainer, .countryFields, .geoCoverSelectContainer, .geoCoverFields, .errorneous {
+.variableTranslationTable, .vocabularyFields, .noVocabulary,
+.errorneous {
   display: none; }
 
 .handlerInfo, .draftInfo {
   display: none; }
 
-.materialContent .addRow, .materialContent .removeRow, .materialContent .editButton, .materialContent .reservedButton {
+.materialContent .addRow, .materialContent .removeRow, .materialContent .editButton, .materialContent .reservedButton, .publicationContent .addRow, .publicationContent .removeRow, .publicationContent .editButton, .publicationContent .reservedButton, .seriesContent .addRow, .seriesContent .removeRow, .seriesContent .editButton, .seriesContent .reservedButton {
   display: none; }
 
 .upperContainer {
@@ -1045,6 +1055,15 @@ nav {
   width: 984px;
   font-size: 12px; }
 
+.binderButtonsHolder {
+  clear: left;
+  display: inline-block;
+  margin-top: 20px;
+  text-align: right;
+  width: 1004px; }
+  .binderButtonsHolder input {
+    margin-left: 20px; }
+
 .materialRowTitle, .publicationRowTitle {
   font-size: 12px;
   padding-left: 10px; }
@@ -1144,12 +1163,15 @@ nav {
       float: right;
       padding: 5px; }
 
-#materialFileInfoContent, #materialRemovedFileInfoContent, #materialErrorInfoContent {
+#materialRemovedFileInfoContent, #materialErrorInfoContent {
   padding: 10px;
   font-size: 12px; }
-  #materialFileInfoContent th.errorInfoLabel, #materialRemovedFileInfoContent th.errorInfoLabel, #materialErrorInfoContent th.errorInfoLabel {
+  #materialRemovedFileInfoContent th.errorInfoLabel, #materialErrorInfoContent th.errorInfoLabel {
     width: 120px; }
-  #materialFileInfoContent tbody td, #materialRemovedFileInfoContent tbody td, #materialErrorInfoContent tbody td {
+  #materialRemovedFileInfoContent tbody td, #materialErrorInfoContent tbody td {
     padding: 3px; }
-  #materialFileInfoContent tbody .fileInfoLabel, #materialFileInfoContent tbody .errorInfoLabel, #materialRemovedFileInfoContent tbody .fileInfoLabel, #materialRemovedFileInfoContent tbody .errorInfoLabel, #materialErrorInfoContent tbody .fileInfoLabel, #materialErrorInfoContent tbody .errorInfoLabel {
+  #materialRemovedFileInfoContent tbody .fileInfoLabel, #materialRemovedFileInfoContent tbody .errorInfoLabel, #materialErrorInfoContent tbody .fileInfoLabel, #materialErrorInfoContent tbody .errorInfoLabel {
     font-weight: bold; }
+
+#packagingHistoryContainer {
+  padding: 10px; }

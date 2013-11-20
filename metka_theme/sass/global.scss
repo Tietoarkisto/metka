@@ -12,6 +12,8 @@ $enColor: blue;
 $tableWidth: $pageWidth - 20px;
 
 $viewFormButtonsHolderWidth: $pageWidth - 10px;
+$settingsButtonsHolderWidth: $pageWidth - 40px;
+$binderButtonsHolderWidth: $pageWidth - 20px;
 
 $desktopWidgetContainerWidth: $pageWidth / 2 - 30px;;
 
@@ -87,4 +89,16 @@ $settingsTableActionLinkHolderWidth: $pageWidth - 40px;
     text-align: right;
     width: $width;
     font-size: $font-size;
+}
+
+@mixin buttonsHolder($buttonsHolderWidth) {
+	clear: left;
+    display: inline-block;
+    margin-top: 20px;
+    text-align: right;
+    width: $buttonsHolderWidth;
+
+    input {
+		margin-left: 20px;
+	}
 }

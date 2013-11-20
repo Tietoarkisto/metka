@@ -44,3 +44,7 @@
 .settingsTableActionLinkHolder {
 	@include actionLinkHolder($settingsTableActionLinkHolderWidth, 15px)
 }
+
+.settingsButtonsHolder {
+	@include buttonsHolder($settingsButtonsHolderWidth);
+}
