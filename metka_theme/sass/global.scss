@@ -1,10 +1,58 @@
-$pageWidth: 960px;
+$pageWidth: 1024px;
+
 $pageColorA: #fff;
 $pageColorB: #009EE0;
 $pageColorC: #E1DFDC;
 $pageColorD: #4A4647;
 $pageColorE: #005993;
 
+$svColor: yellow;
+$enColor: blue;
+
+$tableWidth: $pageWidth - 20px;
+
+$viewFormButtonsHolderWidth: $pageWidth - 10px;
+
+$desktopWidgetContainerWidth: $pageWidth / 2 - 30px;;
+
+$topRowLabelWidth: 180px;
+$topRowInputWidth: 750px;
+
+$materialPrevNextContainerWidth: $pageWidth - 45px;
+
+$materialDataSetTextAreaLabelWidth: 400px;
+$materialDataSetTextAreaWidth: 470px;
+
+$materialLabelWidth: 180px;
+$materialInputWidth: 130px;
+$materialSelectWidth: 135px;
+$materialTextAreaWidth: 730px;
+$materialTextAreaHeigth: 50px;
+
+$studyLevelLabelWidth: 150px;
+$studyLevelInputWidth: 100px;
+$studyLevelSelectWidth: 105px;
+$studyLevelTextAreaWidth: 700px;
+$studyLevelTextAreaHeigth: 50px;
+
+$publicationLabelWidth: 146px;
+$publicationInputWidth: 150px;
+$publicationSelectWidth: 155px;
+$publicationTextAreaWidth: 775px;
+$publicationTextAreaHeigth: 50px;
+
+$seriesLabelWidth: 150px;
+$seriesInputWidth: 450px;
+$seriesSelectWidth: 450px;
+$seriesTextAreaWidth: 460px;
+$seriesTextAreaHeigth: 100px;
+
+$accordionTableLinkHolderWidth: $pageWidth - 100px;
+$accordionTableWidth: $pageWidth - 100px;
+
+$actionLinkHolderWidth: $pageWidth - 40px;
+
+$settingsTableActionLinkHolderWidth: $pageWidth - 40px;
 
 @mixin boxShadow($color) {
 	box-shadow: 0 0 8px $color;
@@ -31,4 +79,12 @@ $pageColorE: #005993;
 	padding: 2px;
 	border-style: solid;
 	border-width: 1px;
+}
+
+@mixin actionLinkHolder($width, $font-size) {
+	clear: left;
+    display: inline-block;
+    text-align: right;
+    width: $width;
+    font-size: $font-size;
 }

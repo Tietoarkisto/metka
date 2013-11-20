@@ -37,11 +37,17 @@
 					<div style="clear:both;"></div>				
 				</nav>
 				<div class="searchContainer">
-					<a class="logoutLink" href="#">Kirjaudu ulos</a>
+					<a class="logoutLink" href="../index.html">Kirjaudu ulos</a>
 					<form action="material.html" class="quickSearchForm">
 						<input type="text" autocomplete="off" dir="ltr" class="searchInput" placeholder="Aineiston id-nro" />
 						<input type="submit" value="Hae" class="searchButton"/>
 					</form>					
+				</div>
+
+				<div class="languageSelect">
+					<input type="radio" name="language" value="fi"/>fi
+					<input type="radio" name="language" value="en"/>en
+					<input type="radio" name="language" value="sv"/>sv
 				</div>
 			</div>
 			
@@ -54,87 +60,37 @@
 					<div class="upperContainer">
 						<table class="metkaTable sortableTable" id="binderTable">
 							<thead>
-								<tr><th>Mappinumero</th><th>Mapin kuvaus</th><th></th></tr>
+								<tr><th>Aineistonro</th><th>Aineiston nimi</th><th>Käsittelijä</th><th>Mappinro</th><th>Mapitettu aineisto</th></tr>
 							</thead>
 							<tbody>
 								<tr class="binderRow">
-									<td>1290<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="fancyboxpopup fancybox.ajax"></a></td>
-									<td>Mappi, jossa tavanomaisia aineistoja</td>
-									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>									
-								</tr>
-								<tr class="binderRow">
-									<td>1291<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="fancyboxpopup fancybox.ajax"></a></td>
-									<td>Lisämappi</td>
-									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
-								</tr>
-								<tr class="binderRow">
-									<td>1292<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="fancyboxpopup fancybox.ajax"></a></td>
-									<td>Lisämappi2</td>
-									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
-								</tr>
-								<tr class="binderRow">
-									<td>1293<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="fancyboxpopup fancybox.ajax"></a></td>
-									<td>Lisämappi3</td>
-									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
-								</tr>
-								<tr class="binderRow">
-									<td>1294<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="fancyboxpopup fancybox.ajax"></a></td>
-									<td>Lisämappi4</td>
-									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
-								</tr>
-								<tr class="binderRow">
-									<td>1295<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="fancyboxpopup fancybox.ajax"></a></td>
-									<td>Lisämappi5</td>
-									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
-								</tr>
-								<tr class="binderRow">
-									<td>1296<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="fancyboxpopup fancybox.ajax"></a></td>
-									<td>Lisämappi6</td>
-									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
-								</tr>
-								<tr class="binderRow">
-									<td>1297<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="fancyboxpopup fancybox.ajax"></a></td>
-									<td>Lisämappi7</td>
-									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
-								</tr>
-								<tr class="binderRow">
-									<td>1298<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="fancyboxpopup fancybox.ajax"></a></td>
-									<td>Lisämappi8</td>
-									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
-								</tr>
-								<tr class="binderRow">
-									<td>1299<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="fancyboxpopup fancybox.ajax"></a></td>
-									<td>Lisämappi9</td>
-									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
-								</tr>
-								<tr class="binderRow">
-									<td>1300<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="fancyboxpopup fancybox.ajax"></a></td>
-									<td>Lisämappi10</td>
-									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
-								</tr>
-								<tr class="binderRow">
-									<td>1301<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="fancyboxpopup fancybox.ajax"></a></td>
-									<td>Lisämappi10</td>
-									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
-								</tr>
-								<tr class="binderRow">
-									<td>1302<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="fancyboxpopup fancybox.ajax"></a></td>
-									<td>Lisämappi10</td>
-									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
-								</tr>
-								<tr class="binderRow">
-									<td>1303<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="fancyboxpopup fancybox.ajax"></a></td>
-									<td>Lisämappi10</td>
-									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
-								</tr>
-								<tr class="binderRow">
-									<td>1304<a style="display: hidden;" href="dialogs/showBinderInfoDialog.html" class="fancyboxpopup fancybox.ajax"></a></td>
-									<td>Lisämappi10</td>
-									<td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
+									<td>FSD10001</td><td>Eduskuntavaalitutkimukset 2001-2011: yhdistetty aineisto</td><td>Mikko Tanskanen</td><td>34</td><td>5kpl haastatteluja, 3kpl ohjeita</td></tr>
+									<td>FSD10002</td><td>Eduskuntavaalitutkimukset 2003-2012: yhdistetty aineisto</td><td>Mikko Tanskanen</td><td>34</td><td>5kpl haastatteluja, 3kpl ohjeita</td></tr>
+									<td>FSD10003</td><td>Eduskuntavaalitutkimukset 2003-2011: yhdistetty aineisto</td><td>Mikko Tanskanen</td><td>32</td><td>5kpl haastatteluja, 3kpl ohjeita</td></tr>
+									<td>FSD10004</td><td>Eduskuntavaalitutkimukset 2003-2013: yhdistetty aineisto</td><td>Mikko Tanskanen</td><td>32</td><td>5kpl haastatteluja, 3kpl ohjeita</td></tr>
+									<td>FSD10005</td><td>Eduskuntavaalitutkimukset 2003-2011: yhdistetty aineisto</td><td>Mikko Tanskanen</td><td>32</td><td>5kpl haastatteluja, 3kpl ohjeita</td></tr>
+									<td>FSD10006</td><td>Eduskuntavaalitutkimukset 2004-2011: yhdistetty aineisto</td><td>Mikko Tanskanen</td><td>34</td><td>5kpl haastatteluja, 3kpl ohjeita</td></tr>
+									<td>FSD10007</td><td>Eduskuntavaalitutkimukset 2006-2010: yhdistetty aineisto</td><td>Mikko Tanskanen</td><td>34</td><td>5kpl haastatteluja, 3kpl ohjeita</td></tr>
+									<td>FSD10008</td><td>Eduskuntavaalitutkimukset 2003-2011: yhdistetty aineisto</td><td>Mikko Tanskanen</td><td>34</td><td>5kpl haastatteluja, 3kpl ohjeita</td></tr>
+									<td>FSD10009</td><td>Eduskuntavaalitutkimukset 2003-2011: yhdistetty aineisto</td><td>Mikko Tanskanen</td><td>34</td><td>5kpl haastatteluja, 3kpl ohjeita</td></tr>
+									<td>FSD10010</td><td>Eduskuntavaalitutkimukset 2005-2012: yhdistetty aineisto</td><td>Mikko Tanskanen</td><td>34</td><td>5kpl haastatteluja, 3kpl ohjeita</td></tr>
+									<td>FSD10011</td><td>Eduskuntavaalitutkimukset 2003-2014: yhdistetty aineisto</td><td>Mikko Tanskanen</td><td>33</td><td>5kpl haastatteluja, 3kpl ohjeita</td></tr>
+									<td>FSD10012</td><td>Eduskuntavaalitutkimukset 2003-2011: yhdistetty aineisto</td><td>Mikko Tanskanen</td><td>33</td><td>5kpl haastatteluja, 3kpl ohjeita</td></tr>
+									<td>FSD10013</td><td>Eduskuntavaalitutkimukset 2004-2011: yhdistetty aineisto</td><td>Mikko Tanskanen</td><td>33</td><td>5kpl haastatteluja, 3kpl ohjeita</td></tr>
+									<td>FSD10014</td><td>Eduskuntavaalitutkimukset 2003-2011: yhdistetty aineisto</td><td>Mikko Tanskanen</td><td>33</td><td>5kpl haastatteluja, 3kpl ohjeita</td></tr>
+									<td>FSD10015</td><td>Eduskuntavaalitutkimukset 2003-2013: yhdistetty aineisto</td><td>Mikko Tanskanen</td><td>34</td><td>5kpl haastatteluja, 3kpl ohjeita</td></tr>
+									<td>FSD10016</td><td>Eduskuntavaalitutkimukset 2002-2011: yhdistetty aineisto</td><td>Mikko Tanskanen</td><td>34</td><td>5kpl haastatteluja, 3kpl ohjeita</td></tr>
+									<td>FSD10017</td><td>Eduskuntavaalitutkimukset 2003-2012: yhdistetty aineisto</td><td>Mikko Tanskanen</td><td>34</td><td>5kpl haastatteluja, 3kpl ohjeita</td></tr>
+									<td>FSD10018</td><td>Eduskuntavaalitutkimukset 2001-2011: yhdistetty aineisto</td><td>Mikko Tanskanen</td><td>34</td><td>5kpl haastatteluja, 3kpl ohjeita</td></tr>
+									<td>FSD10019</td><td>Eduskuntavaalitutkimukset 2003-2010: yhdistetty aineisto</td><td>Mikko Tanskanen</td><td>34</td><td>5kpl haastatteluja, 3kpl ohjeita</td></tr>
+									<td>FSD10020</td><td>Eduskuntavaalitutkimukset 2003-2011: yhdistetty aineisto</td><td>Mikko Tanskanen</td><td>32</td><td>5kpl haastatteluja, 3kpl ohjeita</td></tr>
+									<td>FSD10021</td><td>Eduskuntavaalitutkimukset 2002-2013: yhdistetty aineisto</td><td>Mikko Tanskanen</td><td>32</td><td>5kpl haastatteluja, 3kpl ohjeita</td></tr>
+									<td>FSD10022</td><td>Eduskuntavaalitutkimukset 2001-2011: yhdistetty aineisto</td><td>Mikko Tanskanen</td><td>31</td><td>5kpl haastatteluja, 3kpl ohjeita</td></tr>
 								</tr>
 							</tbody>
 						</table>	
-						<div class="materialTableActionLinkHolder"><a href="dialogs/addBinderDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>
+						<div class="materialTableActionLinkHolder"><a href="dialogs/addMaterialToBinderDialog.html" class="fancyboxpopup fancybox.ajax">Lisää aineisto mappiin</a></div>
+						<div class="searchTableActionLinkHolder"><input type="submit" class="searchFormInput" value="Lataa CSV"/></div>		
 					</div>
 				</div>							
 			</div>

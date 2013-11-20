@@ -25,7 +25,7 @@
 						<li><a href="desktop.html">Työpöytä</a></li>
 						<li><a href="expertSearch.html">Eksperttihaku</a></li>	
 						<li><a href="materialSearch.html">Aineistot</a></li>
-						<li><a href="publicationSearch.html">Julkaisut</a></li>
+						<li><a href="publicationSearch.html" class="selected">Julkaisut</a></li>
 						<li><a href="seriesSearch.html">Sarjat</a></li>	
 						<li><a href="binders.html">Mapit</a></li>	
 						<li><a href="reports.html">Raportit</a></li>
@@ -35,102 +35,110 @@
 					<div style="clear:both;"></div>				
 				</nav>
 				<div class="searchContainer">
-					<a class="logoutLink" href="#">Kirjaudu ulos</a>
+					<a class="logoutLink" href="../index.html">Kirjaudu ulos</a>
 					<form action="material.html" class="quickSearchForm">
 						<input type="text" autocomplete="off" dir="ltr" class="searchInput" placeholder="Aineiston id-nro" />
 						<input type="submit" value="Hae" class="searchButton"/>
 					</form>					
 				</div>	
+
+				<div class="languageSelect">
+					<input type="radio" name="language" value="fi"/>fi
+					<input type="radio" name="language" value="en"/>en
+					<input type="radio" name="language" value="sv"/>sv
+				</div>
 			</div>
 			
 		</header>
 		
 			<div class="wrapper">
 
-				<div class="content">
+				<div class="content publicationContent">
 					<h1 class="pageTitle">Julkaisun tiedot</h1>
 					<div class="upperContainer">
 						<div class="prevNextContainer"><h1 class="prev"><</h1><h1 class="next">></h1></div>
 						<div class="rowContainer">
 							<div class="publicationDataSetContainer"><label>Julkaisuvuosi</label><input type="text" name="publicationvuosi" value="2006" /></div>
 							<div class="publicationDataSetContainer"><label>Voiko julkaista</label><select><option>Kyllä</option></select></div>
-							<div class="publicationDataSetContainer"><label>Julkaisu id-nro</label><input type="text" name="publicationvuosi" value="2006" /></div>
+							<div class="publicationDataSetContainer"><label>Julkaisu id-nro</label><input type="text" disabled="disabled" name="publicationvuosi" value="1234" /></div>
 						</div>
 						<div class="rowContainer">
-							<div class="publicationDataSetContainer"><label>1. Tallennuspvm</label><input type="text" name="publicationvuosi" value="2006" /></div>
+							<div class="publicationDataSetContainer"><label>1. Tallennuspvm</label><input type="text" disabled="disabled" name="publicationvuosi" value="12.10.2013" /></div>
 							<div class="publicationDataSetContainer"><label>Julkaisun ilmoitustapa</label><select><option>Ei tietoa</option></select></div>
 							<div class="publicationDataSetContainer"><label>Julkaisun kieli</label><select><option>Suomi</option></select></div>
 						</div>
 						<div class="rowContainer">
-							<div class="publicationDataSetContainer"><label>Viimeisin muutospvm</label><input type="text" name="publicationvuosi" value="2006" /></div>
+							<div class="publicationDataSetContainer"><label>Viimeisin muutospvm</label><input type="text" name="publicationvuosi" value="12.10.2013" /></div>
 							<div class="publicationDataSetContainer"><label>Käsittelijä</label><input type="text" name="handler" value="mat" /></div>
 						</div>
 						<div class="rowContainer">
-							<div class="publicationDataSetContainer"><label>Julkaisun otsikko</label><textarea></textarea></div>
+							<div class="publicationDataSetContainer"><label>Julkaisun otsikko</label><textarea>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce consequat elit non dui euismod elementum. Aliquam erat volutpat. Etiam feugiat diam ut urna mollis, eu sollicitudin velit tincidun</textarea></div>
 						</div>
 						<div class="rowContainer">
-							<div class="publicationDataSetContainer"><label>relPubl-tiedot</label><textarea></textarea></div>
+							<div class="publicationDataSetContainer"><label>relPubl-tiedot</label><textarea>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce consequat elit non dui euismod elementum. Aliquam erat volutpat. Etiam feugiat diam ut urna mollis, eu sollicitudin velit tincidun</textarea></div>
 						</div>
 						<div class="rowContainer">
-							<div class="publicationDataSetContainer"><label>Julkaisun huomautukset</label><textarea></textarea></div>
+							<div class="publicationDataSetContainer"><label>Julkaisun huomautukset</label><textarea>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce consequat elit non dui euismod elementum. Aliquam erat volutpat. Etiam feugiat diam ut urna mollis, eu sollicitudin velit tincidun</textarea></div>
 						</div>
 					</div>
 					<div class="rowContainer" style="display: inline-block; margin-top: 10px;">
-						<div class="publicationRowTitle">Liittyvät henkilöt</div>
+						<div class="publicationRowTitle">Liittyvät henkilöt&nbsp;<img src="../images/info-sign.png" class="helpImage"/></div>
 						<table id="publicationPersonTable" class="metkaTable sortableTable">
 							<thead>
 								<tr><th>Sukunimi</th><th>Etunimi</th><th></th></tr>
 							</thead>
 							<tbody>
-								<tr><td>Borg</td><td>Sami</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+								<tr><td>Borg</td><td>Sami</td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
 							</tbody>
 						</table>	
-						<div class="publicationTableActionLinkHolder"><a href="dialogs/attachPersonPublicationDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>						
+						<div class="publicationTableActionLinkHolder"><a href="dialogs/attachPersonPublicationDialog.html" class="addRow fancyboxpopup fancybox.ajax">Lisää</a></div>						
 					</div>
 					<div class="rowContainer">
-						<div class="publicationRowTitle">Pysyvät tunnisteet</div>
+						<div class="publicationRowTitle">Pysyvät tunnisteet&nbsp;<img src="../images/info-sign.png" class="helpImage"/></div>
 						<table id="publicationIdentificationTable" class="metkaTable sortableTable">
 							<thead>
 								<tr><th>Pysyvä tunniste</th><th>Tunnisteen tyyppi</th><th></th></tr>
 							</thead>
 							<tbody>
-								<tr><td>Doi</td><td>DOI</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-								<tr><td>Urn</td><td>URN</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+								<tr><td>Doi</td><td>DOI</td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+								<tr><td>Urn</td><td>URN</td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
 							</tbody>
 						</table>	
-						<div class="publicationTableActionLinkHolder"><a href="dialogs/attachIndentificationDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>						
+						<div class="publicationTableActionLinkHolder"><a href="dialogs/attachIndentificationDialog.html" class="addRow fancyboxpopup fancybox.ajax">Lisää</a></div>						
 					</div>		
 					<div class="rowContainer">
-						<div class="publicationRowTitle">Liittyvät aineistot</div>
+						<div class="publicationRowTitle">Liittyvät aineistot&nbsp;<img src="../images/info-sign.png" class="helpImage"/></div>
 						<table id="publicationMaterialTable" class="metkaTable sortableTable">
 							<thead>
 								<tr><th>Aineiston numero</th><th>Aineiston nimi</th><th></th></tr>
 							</thead>
 							<tbody>
-								<tr class="publicationMaterialRow"><td>FSD1001</td><td>Puolueiden ajankohtaistutkimus 1974</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-								<tr class="publicationMaterialRow"><td>FSD1002</td><td>Puolueiden ajankohtaistutkimus 1975</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-								<tr class="publicationMaterialRow"><td>FSD1003</td><td>Puolueiden ajankohtaistutkimus 1976</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+								<tr class="publicationMaterialRow"><td>FSD1001</td><td>Puolueiden ajankohtaistutkimus 1974</td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+								<tr class="publicationMaterialRow"><td>FSD1002</td><td>Puolueiden ajankohtaistutkimus 1975</td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+								<tr class="publicationMaterialRow"><td>FSD1003</td><td>Puolueiden ajankohtaistutkimus 1976</td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
 							</tbody>
 						</table>	
-						<div class="publicationTableActionLinkHolder"><a href="dialogs/attachMaterialDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>						
+						<div class="publicationTableActionLinkHolder"><a href="dialogs/attachMaterialDialog.html" class="addRow fancyboxpopup fancybox.ajax">Lisää</a></div>						
 					</div>					
 					<div class="rowContainer">
-						<div class="publicationRowTitle">Liittyvät sarjat</div>
+						<div class="publicationRowTitle">Liittyvät sarjat&nbsp;<img src="../images/info-sign.png" class="helpImage"/></div>
 						<table id="publicationSeriesTable" class="metkaTable sortableTable">
 							<thead>
 								<tr><th>Lyhenne</th><th>Sarjan nimi</th><th></th></tr>
 							</thead>
 							<tbody>
-								<tr class="publicationSeriesRow"><td>foo</td><td>fooBar</td><td><a href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+								<tr class="publicationSeriesRow"><td>foo</td><td>fooBar</td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
 							</tbody>
 
 						</table>	
-						<div class="publicationTableActionLinkHolder"><a href="dialogs/attachSeriesDialog.html" class="fancyboxpopup fancybox.ajax">Lisää</a></div>						
+						<div class="publicationTableActionLinkHolder"><a href="dialogs/attachSeriesDialog.html" class="addRow fancyboxpopup fancybox.ajax">Lisää</a></div>						
 					</div>
 					
 					<div class="viewFormButtonsHolder" style="margin-bottom:20px;">
-						<input type="button" class="searchFormInput" value="Poista" />
-						<input type="button" class="searchFormInput" value="Tallenna" />
+						<input type="button" class="editButton searchFormInput" value="Poista" />
+						<input type="button" id="versionHistoryButton" class="searchFormInput" value="Versiohistoria">
+						<input type="button" class="editButton searchFormInput" value="Tallenna" />
+						<!-- <input type="button" id="editPublicationButton" class="previewButton searchFormInput" value="Muokkaa" /> -->		
 					</div>
 				</div>												
 			</div>

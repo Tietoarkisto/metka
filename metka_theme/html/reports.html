@@ -16,6 +16,7 @@
 		<script src="../js/jquery.dataTables.rowReordering.js"></script>
   		<script src="../js/jquery.fastLiveFilter.js"></script>
 		<script src="../js/jquery.fancytree.js"></script>
+  		<script src="../js/jquery.jeditable.js"></script>
 	</head>
 	<body>
 		<header>
@@ -35,12 +36,18 @@
 					<div style="clear:both;"></div>				
 				</nav>
 				<div class="searchContainer">
-					<a class="logoutLink" href="#logout">Kirjaudu ulos</a>
+					<a class="logoutLink" href="../index.html">Kirjaudu ulos</a>
 					<form action="aineisto.html" class="quickSearchForm">
 						<input type="text" autocomplete="off" dir="ltr" class="searchInput" placeholder="Aineiston id-nro" />
 						<input type="submit" value="Hae" class="searchButton"/>
 					</form>					
 				</div>	
+
+				<div class="languageSelect">
+					<input type="radio" name="language" value="fi"/>fi
+					<input type="radio" name="language" value="en"/>en
+					<input type="radio" name="language" value="sv"/>sv
+				</div>
 			</div>
 			
 		</header>
@@ -50,8 +57,66 @@
 				<div class="content">
 					<h1 class="pageTitle">Raportit</h1>
 					<div class="searchFormContainer">
-						Tänne tulee raportit
+						<div class="rowContainer containsTranslations">
+							<div class="materialDataSetContainerTopRow translated">
+								<label id="materialName" class="required leftSide">Aineiston nimi</label>
+								<span class="readOnly">Eduskuntavaalitutkimukset 2003-2011: yhditetty aieneisto.</span>
+								<input tabIndex="1" type="text" value="Eduskuntavaalitutkimukset 2003-2011: yhditetty aieneisto." name="aineistonNimi" />
+							</div>
+						</div>
+						<div class="rowContainer">
+							<div class="materialDataSetContainer">
+								<label id="materialNumber" class="required">Aineistonumero</label>
+								<span class="readOnly">FSD2556</span>
+								<input readonly="readonly" type="text" name="materialnro" value="FSD2556" />
+							</div>
+							<div class="materialDataSetContainer">
+								<label id="acquisitiedMaterialNumber" class="required">Hankinta-aineistonumero</label>
+								<span class="readOnly">1465</span>
+								<input type="text" readonly="readonly" name="hank.ain.nro" value="1465"/>
+							</div>
+							<div class="materialDataSetContainer">
+								<label id="materialType" class="required">Aineiston tyyppi</label>
+								<span class="readOnly">Opetus</span>
+								<select tabIndex="3"><option>Perus</option><option>Opetus</option><option>Yhdistelmä</option></select>
+							</div>
+						</div>
+						<div class="rowContainer">
+							<div class="materialDataSetContainer">
+								<label id="materiaMefFin" >Mef julkaisupvm (fin)</label>
+								<span class="readOnly">12.10.2013</span>
+								<input readonly="readonly" type="text" name="valmispvm" value="12.10.2013"/>
+							</div>
+							<div class="materialDataSetContainer">
+								<label id="materialMefEng" >Mef julkaisupvm (eng)</label>
+								<span class="readOnly">13.10.2013</span>
+								<input readonly="readonly" type="text" name="valmispvm" value="13.10.2013"/>
+							</div>
+							<div class="materialDataSetContainer">
+								<label id="materialFilingCategory" class="required">Arkistointikategoria</label>
+								<span class="readOnly">Arkistoitu</span>
+								<select tabIndex="5"><option>Arkistoitu</option><option>Poistettu</option></select>
+							</div>
+						</div>
+						<div class="rowContainer">
+							<div class="materialDataSetContainer">
+								<label id="materialFSDCedes">FSD luovuttaa</label>
+								<span class="readOnly">Kyllä</span>
+								<select><option>Kyllä</option><option>Ei</option><option>Ei tietoa</option></select>
+							</div>
+							<div class="materialDataSetContainer">
+								<label id="materialReadyDate">Valmis pvm</label>
+								<span class="readOnly">22.10.2013</span>
+								<input type="text" class="datepicker" name="valmispvm" value="22.10.2013"/>
+							</div>
+							<div class="materialDataSetContainer">
+								<label id="materialPublishing">Julkaisu</label>
+								<span class="readOnly">Kyllä</span>
+								<select><option>Kyllä</option><option>Ei</option><option>Ei tietoa</option></select>
+							</div>
+						</div>
 					</div>
+					<input type="submit" id="toggle" value="toggle"/>
 				</div>
 					
 			</div>

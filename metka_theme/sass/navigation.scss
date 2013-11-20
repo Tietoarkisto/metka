@@ -13,6 +13,7 @@ nav {
 				background-color: $pageColorA;
 				text-decoration: none;
 				color: $pageColorE;
+				margin-right: 1px;
 
 				&.selected {
 					background-color: $pageColorB;
@@ -26,6 +27,34 @@ nav {
 			}
 		}
 	}	
+}
+
+// Nimeäminen
+.searchContainer{
+	float: right;
+	margin-top: 20px;
+
+	.searchInput {
+		width: 150px;
+		padding: 5px;
+	}
+
+	.searchButton{
+		background-color: $pageColorB;
+		border: 1px solid $pageColorB;
+		border-radius: 0 7px 7px 0;
+		color: $pageColorA;
+		height: 29px;
+		position: absolute;
+		right: -3px;
+		//top: 1px;
+	}
+}
+
+.languageSelect {
+	float: right;
+	margin-top: 55px;
+	padding-right: 15px;
 }
 
 .logoutLink{
@@ -43,12 +72,13 @@ nav {
 	clear:both;
 	min-height: 275px;
 }
-.tabs2{
+.tabs2 {
 	display: block;
 	clear:both;
 	min-height: 275px;
 }
-.tab2, .tab3, .tab4, .tab5, .tab6, .tab7, .tab8 {
+.filing, .studylevel, .variables, .files, .codebook, .errors, .packages, .importExport,
+.standardTexts, .userInfo {
 	display: none;
 }
 
@@ -81,10 +111,10 @@ nav {
 }
 
 .tabNavi ul {
-	@include tabNavi(20px, -10px, 10px); 
+	@include tabNavi(10px, -10px, 10px); 
 }
 
 .materialTabNavi ul {
-	@include tabNavi(20px, 10px, -20px); 
+	@include tabNavi(10px, 0px, 10px); 
 }
 

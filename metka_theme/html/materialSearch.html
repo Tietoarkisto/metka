@@ -32,11 +32,17 @@
 					<div style="clear:both;"></div>				
 				</nav>
 				<div class="searchContainer">
-					<a class="logoutLink" href="#">Kirjaudu ulos</a>
+					<a class="logoutLink" href="../index.html">Kirjaudu ulos</a>
 					<form action="material.html" class="quickSearchForm">
 						<input type="text" autocomplete="off" dir="ltr" class="searchInput" placeholder="Aineiston id-nro" />
 						<input type="submit" value="Hae" class="searchButton"/>
 					</form>					
+				</div>
+
+				<div class="languageSelect">
+					<input type="radio" name="language" value="fi"/>fi
+					<input type="radio" name="language" value="en"/>en
+					<input type="radio" name="language" value="sv"/>sv
 				</div>
 		
 			</div>
@@ -46,20 +52,61 @@
 			<div class="wrapper">
 
 				<div class="content">
-					<h1 class="pageTitle">Aineistohaku</h1>
+					<h1 class="pageTitle">Aineistot</h1>
 					<div class="searchFormContainer">
-						
-						<form action="#">
-							<div class="searchFormRowHolder"><label>Aineiston numero</label><input type="text" class="searchInput" name="julkaisuId" /></div>
-							<div class="searchFormRowHolder"><label>Aineiston nimi</label><input type="text" class="searchInput" name="julkaisuId" /></div>
-							<div class="searchFormRowHolder"><label>Luovuttajan ym. sukunimi</label><input type="text" class="searchInput" name="julkaisuId" /></div>
-							<div class="searchFormRowHolder"><label>Luovuttajan ym. etunimi</label><input type="text" class="searchInput" name="julkaisuId" /></div>
-							<div class="searchFormRowHolder"><label>Luovuttajan ym. organisaatio</label><input type="text" class="searchInput" name="julkaisuId" /></div>
-							<div class="searchFormRowHolder"><label>Luovuttajan ym. laitos</label><input type="text" class="searchInput" name="julkaisuId" /></div>
-							
-							<div class="searchFormButtonsHolder"><input type="button" class="searchFormInput doSearch" value="Tee haku"><input class="searchFormInput" type="reset" value="Tyhjennä"></div>
-						</form>
-
+						<div class="tabsContainer">
+                            <div class="tabNavi">
+                                <ul>
+                                    <li><a id="search" class="selected" href="#">Aineistohaku</a></li>
+                                    <li><a id="errorneous" href="#">Virheelliset</a></li>
+                                </ul>
+                            </div>
+                            <div class="tabs search">
+								<form action="#">
+									<div class="searchFormRowHolder"><label>Aineiston numero</label><input type="text" class="searchInput" name="julkaisuId" /></div>
+									<div class="searchFormRowHolder"><label>Aineiston nimi</label><input type="text" class="searchInput" name="julkaisuId" /></div>
+									<div class="searchFormRowHolder"><label>Luovuttajan ym. sukunimi</label><input type="text" class="shortSearchInput" name="sukunimi" /><label class="shortLabel">Etunimi</label><input type="text" class="shortSearchInput" name="etunimi" /><div style="clear:both;"></div></div>
+									<div class="searchFormRowHolder"><label>Luovuttajan ym. org.</label><select class="formSelect" name="sarjanNimi"><option></option></select></div>
+									<div class="searchFormRowHolder"><label>Luovuttajan ym. laitos</label><input type="text" class="searchInput" name="julkaisuId" /></div>
+									<div class="searchFormRowHolder"><label>Tuottajan ym. sukunimi</label><input type="text" class="shortSearchInput" name="sukunimi" /><label class="shortLabel">Etunimi</label><input type="text" class="shortSearchInput" name="etunimi" /><div style="clear:both;"></div></div>
+									<div class="searchFormRowHolder"><label>Sarjan nimi</label><select class="formSelect" name="sarjanNimi"><option></option></select></div>
+									
+									<div class="searchFormButtonsHolder">
+										<input type="button" class="searchFormInput doSearch" value="Tee haku">
+										<input class="searchFormInput" type="reset" value="Tyhjennä">
+									</div>
+								</form>
+							</div>
+							<div class="tabs errorneous">
+								<div class="searchResultDataContainer">	
+									<table class="metkaTable sortableTable">
+										<thead>
+											<th>Aineistonumero</th>
+									    	<th>Aineiston nimi</th> 
+									    	<th>Virhepisteet</th>
+										</thead>
+										<tbody>
+											<tr class="errorneousMaterialRow">
+												<td>FSD1234</td>
+												<td>Foo bar Lorem ipsum dolor sit amet</td>
+												<td>12</td>
+											</tr>
+											<tr class="errorneousMaterialRow">
+												<td>FSD2234</td>
+												<td>Foo bar Lorem ipsum dolor sit amet</td>
+												<td>21</td>
+											</tr>
+											<tr class="errorneousMaterialRow">
+												<td>FSD3234</td>
+												<td>Foo bar Lorem ipsum dolor sit amet</td>
+												<td>5</td>
+											</tr>
+										</tbody>
+									</table>
+									<div class="searchTableActionLinkHolder"><input type="submit" class="searchFormInput" value="Lataa CSV"/></div>	
+								</div>
+							</div>
+						</div>
 					</div>
 					<div class="searchResult">
 						<h1 class="pageTitle">Hakutulos</h1>
@@ -70,6 +117,7 @@
 								    <th>Aineistonumero</th> 
 								    <th>Aineiston nimi</th> 
 								    <th>Julkaisu</th> 
+								    <th>Sarja</th> 
 								    <th>Hank.ain.nro</th> 
 								    <th>FSD luovuttaa</th> 
 								</tr> 
@@ -81,17 +129,20 @@
 									    <td>0Lorem ipsum dolor sit amet</td> 
 									    <td>0Lorem ipsum dolor sit amet</td> 
 									    <td>0Lorem ipsum dolor sit amet</td> 
+									    <td>0Lorem ipsum dolor sit amet</td> 
 									</tr> 
 									<tr class="materialSearchResultRow"> 
 									    <td>FSD1235</a></td> 
 									    <td>1Lorem ipsum dolor sit amet</td> 
 									    <td>1Lorem ipsum dolor sit amet</td> 
+									    <td>0Lorem ipsum dolor sit amet</td> 
 									    <td>1Lorem ipsum dolor sit amet</td> 
 									    <td>1Lorem ipsum dolor sit amet</td> 
 									</tr> 
 									<tr class="materialSearchResultRow"> 
 									    <td>FSD1236</a></td> 
 									    <td>2Lorem ipsum dolor sit amet</td> 
+									    <td>0Lorem ipsum dolor sit amet</td> 
 									    <td>2Lorem ipsum dolor sit amet</td> 
 									    <td>2Lorem ipsum dolor sit amet</td> 
 									    <td>2Lorem ipsum dolor sit amet</td> 
@@ -100,11 +151,13 @@
 									    <td>FSD1237</a></td> 
 									    <td>3Lorem ipsum dolor sit amet</td> 
 									    <td>3Lorem ipsum dolor sit amet</td> 
+									    <td>0Lorem ipsum dolor sit amet</td> 
 									    <td>3Lorem ipsum dolor sit amet</td> 
 									    <td>3Lorem ipsum dolor sit amet</td> 
 									</tr> 
 								</tbody> 
 							</table>
+							<div class="searchTableActionLinkHolder"><input type="submit" class="searchFormInput" value="Lataa CSV"/></div>	
 						</div>							
 					</div>
 				</div>				
