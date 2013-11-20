@@ -1,37 +1,13 @@
 <!DOCTYPE HTML>
 <html lang="fi">
 	<head>
-		<script type="text/javascript">
-			$("#vocabularySelect").on("change", function() {
-				var country = $(this).children(":selected").attr("id");
-
-				if ( country == "chooseVocabulary") {
-					$(".geoCoverFields").hide();
-					$(".geoCoverSelectContainer").hide();
-				} else if ( country == "otherGeoCover" ) { 
-					$(".geoCoverFields").show();
-					$(".geoCoverSelectContainer").hide();
-				} else {
-					$(".geoCoverSelectContainer").show();
-					$(".geoCoverFields").hide();
-				}
-			});
-		</script>
 	</head>
 	<body>	
 		<div class="popupContainer">
 			<h1 class="pageTitle">Lisää Kohdealue</h1>
 			<div class="popupRowHolder">
-				<label class="inputRowLabel">Sanasto</label>
-				<select id="vocabularySelect"><option id="chooseVocabulary">Valitse sanasto..</option><option>EU27</option><option>G20</option><option>AU</option><option id="otherGeoCover">Muu</option></select>
-			</div>
-			<div class="popupRowHolder geoCoverSelectContainer">
 				<label class="inputRowLabel">Kohdealue</label>
-				<select><option>Venäjä</option><option>Espanja</option><option>Portugali</option><option>Alankomaat</option></select>
-			</div>
-			<div class="popupRowHolder geoCoverFields">
-				<label class="inputRowLabel">Kohdealue</label>
-				<input type="text" value="" style="width: 290px;"/>
+				<input type="text"/>
 			</div>
 			<div class="popupButtonsHolder">
 				<input type="button" class="searchFormInput" value="Peruuta">

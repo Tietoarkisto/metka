@@ -30,7 +30,13 @@ $(document).ready(function(){
 
 	$( ".datepicker" ).datepicker();
 
-	$(".fancyboxpopup").fancybox();
+	$(".fancyboxpopup").fancybox({
+		helpers: {
+		    overlay: {
+		    	locked: false
+		    }
+		}
+	});
 
 	jQuery(function($){
 	    $.datepicker.regional['fi'] = {
