@@ -7,15 +7,11 @@ $(document).ready(function(){
 			$(".tabNavi ul li a").removeClass("selected");
 			$(this).addClass("selected");
 			var selectedId = $(this).attr("id");
-            if(currentId > selectedId){
-                $(".tabs").hide();
-                $(".tab" + selectedId).show();
-            }else{
-                $(".tabs").hide();
-                $(".tab" + selectedId).show();
-            }
-        }
-    });
+			$(".tabs").hide();
+			$("." + selectedId).show();
+			$(".searchResult").hide();
+		}
+	});
 
 	
 	$(".saveNewQueryButton").click(function(){
@@ -34,7 +30,13 @@ $(document).ready(function(){
 
 	$( ".datepicker" ).datepicker();
 
-	$(".fancyboxpopup").fancybox();
+	$(".fancyboxpopup").fancybox({
+		helpers: {
+		    overlay: {
+		    	locked: false
+		    }
+		}
+	});
 
 	jQuery(function($){
 	    $.datepicker.regional['fi'] = {
@@ -57,56 +59,63 @@ $(document).ready(function(){
 	}); 
 	
 	$(".materialFileRow, .materialCodebookFileRow, .materialErrorRow, .desktopWidgetDataRow, " +
-		".materialSearchResultRow, .publicationSearchResultRow, .seriesSearchResultRow, " + 
+		".errorneousMaterialRow, .materialSearchResultRow, .publicationSearchResultRow, .seriesSearchResultRow, " + 
 		".materialSeriesRow, .materialPublicationRow, .materialMaterialRow, #variablesListBasic li, " +
-		".publicationSeriesRow, .publicationMaterialRow, .materialBinderRow, .binderRow, " + 
-		".materialRemovedFileRow, #filingContractFile, .versionRow, " + 
-		".link, .translationLink, .translationLinkEn, .translationLinkSv, .translationLinkFi, .variableTranslationLink, " +
-		".studyLevelIdRow, .parTitleRow, .otherMaterialRow, .relatedMaterialRow" + 
-		".removeAddedElement").hover(function() {
+		".publicationSeriesRow, .publicationMaterialRow, .binderRow, .link, #removeAdditionalFilingContractFile, " +
+		".studyLevelIdRow, .parTitleRow, .otherMaterialRow, .relatedMaterialRow, #addAltTitle, #removeAltTitle, " + 
+		".removeAddedElement, .versionRow, .materialNotificationRow, .helpImage").hover(function() {
 		    $(this).css('cursor', 'pointer');
 		}, function() {
 		    $(this).css('cursor', 'auto');		    
 	});
 
+	$("input[type=radio][name=language]").on("click", function() {
+		var language = $(this).val();
+			$(".translationSv").hide();
+			$(".translationEn").hide();
 
-	$(".translationLinkSv").on("click", function() {
-		$(".translationSv").toggle();
-		
-		if ( $(this).hasClass("clicked")) {
-			$(".translationLinkSv").removeClass("clicked");
-		} else {
-			$(".translationLinkSv").addClass("clicked");
+		if ( language == "fi" ) {
+			toggleFinnishTranslations(false);
+		} else if ( language == "en" ) {
+			$(".translationEn").show();
+			toggleFinnishTranslations(true);
+			$(".translationBorder").addClass("translationEnBorder");
+			$("#materialNameEnInput").attr("disabled", false);
+		} else if ( language == "sv" ) {
+			$(".translationSv").show();
+			toggleFinnishTranslations(true);
+			$(".translationBorder").addClass("translationSvBorder");
 		}
-		toggleTranslationVisibility($(this));
-	});
- 
-	$(".translationLinkEn").on("click", function() {
-		$(".translationEn").toggle();
-		if ( $(this).hasClass("clicked")) {
-			$(".translationLinkEn").removeClass("clicked");
-		} else {
-			$(".translationLinkEn").addClass("clicked");
-		}
-		toggleTranslationVisibility($(this));
 	});
 
-	function toggleTranslationVisibility(linkElement) {
-		var translationSvVisible = $(linkElement).parent().find(".translationLinkSv").hasClass("clicked");
-		var translationEnVisible = $(linkElement).parent().find(".translationLinkEn").hasClass("clicked");
-
-		if ( !translationEnVisible && !translationSvVisible ) {
-			$(".rowContainer:not(.containsTranslations)").show();
-			$(".materialDataSetContainer:not(.translated), .materialDataSetTextareaContainer:not(.translated)").show();
-			$(".studyLevelDataSetContainer:not(.translated), .studyLevelDataSetTextareaContainer:not(.translated)").show();
-			// Jos toinen tiedosto, näytä tämä
-			$("#additionalFilingContractFile").hide();
-		} else {
+	function toggleFinnishTranslations(hide) {
+		$(".translationFi").find("input").attr("disabled", hide);
+		$(".translationFi").find("textarea").attr("disabled", hide);
+		$(".translationFi").find("select").attr("disabled", hide);
+		if ( hide ) {
 			$(".rowContainer:not(.containsTranslations)").hide();
 			$(".materialDataSetContainer:not(.translated), .materialDataSetTextareaContainer:not(.translated)").hide();
 			$(".studyLevelDataSetContainer:not(.translated), .studyLevelDataSetContainer:not(.translated)").hide();
+			$("#normalDesktop").hide();
+			$("#translatorDesktop").show();
+			$(".translationBorder").removeClass("translationEnBorder");
+			$(".translationBorder").removeClass("translationSvBorder");
+			$("#studyLevelData").find(".translationFi").find("a").hide();
+		} else {
+			$(".rowContainer:not(.containsTranslations)").show();
+			$(".materialDataSetContainer:not(.translated), .materialDataSetTextareaContainer:not(.translated)").show();
+			$(".studyLevelDataSetContainer:not(.translated), .studyLevelDataSetTextareaContainer:not(.translated)").show();
+			$("#normalDesktop").show();
+			$("#translatorDesktop").hide();
+			$(".translationBorder").removeClass("translationSvBorder");
+			$(".translationBorder").removeClass("translationEnBorder");
+			$("#studyLevelData").find(".translationFi").find("a").show();
 		}
 	}
+
+	$(".helpImage").on("click", function() {
+		window.open("help.html");
+	});
 
 	/** ASETUKSET **/
 	
@@ -117,7 +126,24 @@ $(document).ready(function(){
         "bFilter": true,
         "bSort": true,
         "bInfo": false,
-        "bAutoWidth": false
+        "bAutoWidth": false,
+        "oLanguage": {
+		    "sProcessing":   "Hetkinen...",
+		    "sLengthMenu":   "Näytä kerralla _MENU_ riviä",
+		    "sZeroRecords":  "Tietoja ei löytynyt",
+		    "sInfo":         "Näytetään rivit _START_ - _END_ (yhteensä _TOTAL_ )",
+		    "sInfoEmpty":    "Näytetään 0 - 0 (yhteensä 0)",
+		    "sInfoFiltered": "(suodatettu _MAX_ tuloksen joukosta)",
+		    "sInfoPostFix":  "",
+		    "sSearch":       "Etsi:",
+		    "sUrl":          "",
+		    "oPaginate": {
+		        "sFirst":    "Ensimmäinen",
+		        "sPrevious": "Edellinen",
+		        "sNext":     "Seuraava",
+		        "sLast":     "Viimeinen"
+		    }
+		}
     });
     
     $('#standardTextTable').dataTable( {
@@ -127,7 +153,39 @@ $(document).ready(function(){
         "bFilter": true,
         "bSort": true,
         "bInfo": false,
-        "bAutoWidth": false
+        "bAutoWidth": false,
+        "oLanguage": {
+		    "sProcessing":   "Hetkinen...",
+		    "sLengthMenu":   "Näytä kerralla _MENU_ riviä",
+		    "sZeroRecords":  "Tietoja ei löytynyt",
+		    "sInfo":         "Näytetään rivit _START_ - _END_ (yhteensä _TOTAL_ )",
+		    "sInfoEmpty":    "Näytetään 0 - 0 (yhteensä 0)",
+		    "sInfoFiltered": "(suodatettu _MAX_ tuloksen joukosta)",
+		    "sInfoPostFix":  "",
+		    "sSearch":       "Etsi:",
+		    "sUrl":          "",
+		    "oPaginate": {
+		        "sFirst":    "Ensimmäinen",
+		        "sPrevious": "Edellinen",
+		        "sNext":     "Seuraava",
+		        "sLast":     "Viimeinen"
+		    }
+		}
+    });
+
+    $("#savedQueries").dataTable( {
+		"bPaginate": false,
+        "bLengthChange": false,
+        "bFilter": false,
+        "bSort": false,
+        "bInfo": false,
+        "bAutoWidth": false,
+        "aoColumns": [
+        	{sWidth: "60%"},
+        	{sWidth: "20%"},
+        	{sWidth: "10%"},
+        	{sWidth: "10%"},
+        ]
     });
     
     
@@ -139,13 +197,8 @@ $(document).ready(function(){
 			$(".materialTabNavi ul li a").removeClass("selected");
 			$(this).addClass("selected");
 			var selectedId = $(this).attr("id");
-			if(currentId > selectedId){ 
-				$(".tabs2").hide();
-				$(".tab" + selectedId).fadeIn("normal");
-			}else{
-				$(".tabs2").hide();
-				$(".tab" + selectedId).fadeIn("normal");
-			}
+			$(".tabs2").hide();
+			$("." + selectedId).fadeIn("normal");
 		}
 	});
 
@@ -161,22 +214,6 @@ $(document).ready(function(){
 		              {sWidth: '5%'}
         ]
      });
-	
-	$("#materialPersonTable").dataTable({
-		"bPaginate": false,
-        "bFilter": false, 
-        "bInfo": false,
-        "bAutoWidth": false,
-        "aoColumns": [
-		              {sWidth: '15%'},
-		              {sWidth: '10%'},
-		              {sWidth: '10%'},
-		              {sWidth: '20%'},
-		              {sWidth: '20%'},
-		              {sWidth: '10%'},
-		              {sWidth: '5%'}
-				  ]
-	});
 	
 	$("#materialPublicationTable, #materialMaterialTable").dataTable({
 		"bPaginate": false,
@@ -196,9 +233,8 @@ $(document).ready(function(){
         "bInfo": false,
         "bAutoWidth": false,
         "aoColumns": [
-		              {sWidth: '15%'},
-		              {sWidth: '80%'},
-		              {sWidth: '5%'}
+		              {sWidth: '20%'},
+		              {sWidth: '80%'}
 				  ]
 	});
 	
@@ -221,10 +257,12 @@ $(document).ready(function(){
         "bInfo": false,
         "bAutoWidth": false,
         "aoColumns": [
-		              {sWidth: '40%'},
+		              {sWidth: '15%'},
+		              {sWidth: '15%'},
+		              {sWidth: '10%'},
 		              {sWidth: '30%'},
 		              {sWidth: '10%'},
-		              {sWidth: '15%'},
+		              {sWidth: '10%'},
 		              {sWidth: '5%'}
 				  ]
 	}).rowReordering();
@@ -282,17 +320,16 @@ $(document).ready(function(){
         ]
 	});
 	
-	$("#materialVersionTable").dataTable({
+	$(".materialVersionTable").dataTable({
 		"bPaginate": false,
         "bFilter": false, 
         "bInfo": false, 
         "bAutoWidth": false,
         "aoColumns": [
-		              {sWidth: '15%'},
-		              {sWidth: '15%'},
+		              {sWidth: '10%'},
+		              {sWidth: '10%'},
 		              {sWidth: '20%'},
-		              {sWidth: '45%'},
-		              {sWidth: '5%'}
+		              {sWidth: '60%'}
         ]
 	});
 
@@ -301,10 +338,6 @@ $(document).ready(function(){
         "bFilter": false, 
         "bInfo": false
 	}).rowReordering();
-
-	$(".materialFileRow").on("click", function() {
-		showFileInfo($(this), "#materialFileInfoContent", "#materialFileInfoRow");	
-	});
 
 	$(".materialRemovedFileRow").on("click", function() {
 		showFileInfo($(this), "#materialRemovedFileInfoContent", "#materialRemovedFileInfoRow");	
@@ -325,33 +358,27 @@ $(document).ready(function(){
 			$(fileInfoRowId).hide();
 		}	
 	}
-	
-	$(".materialErrorRow").on("click", function() {
-		var id = $(this).attr("id");
-		var selectedId = $("#materialErrorInfoContent table thead tr").attr("id");
 
-		if ( selectedId != id ) {
-			$("#materialErrorInfoContent table thead tr").attr("id", id);
-			$("#materialErrorInfoRow").show();
-		} else {
-			$("#materialErrorInfoContent table thead tr").attr("id", "");
-			$("#materialErrorInfoRow").hide();
-		}	
+	$(".errorneousMaterialRow, .materialSearchResultRow, .desktopWidgetDataRow").on("click", function() {
+		window.location = "materialView.html";
 	});
 
-	$(".materialSearchResultRow, .publicationMaterialRow, .materialMaterialRow, .desktopWidgetDataRow").on("click", function() {
-		if ( $(this).hasClass("published") ) {
-			window.location = "materialViewPUBLISHED.html";
-		} else {
-			window.location = "materialView.html";
-		}
+	$(".materialMaterialRow, .publicationMaterialRow").on("click", function() {
+		window.open("materialView.html");
 	});
 
-	$(".publicationSearchResultRow, .materialPublicationRow").on("click", function() {
+	$(".publicationSearchResultRow").on("click", function() {
 		window.location = "publicationView.html";
 	});
+	$(".materialPublicationRow").on("click", function() {
+		window.open("publicationView.html");
+	});
+
 	$(".seriesSearchResultRow, .materialSeriesRow, .publicationSeriesRow").on("click", function() {
 		window.location = "seriesView.html";
+	});
+	$("materialSeriesRow, .publicationSeriesRow").on("click", function() {
+		window.open("seriesView.html");
 	});
 
 	$(".materialCodebookRow").on("click", function() {
@@ -383,39 +410,6 @@ $(document).ready(function(){
 		$("#groupedVariableTreeContainer").hide();
 		$("#variableDataContainer").hide();
 		$("#variableGroupData").hide();
-	});
-
-	$("#variableTranslationLinkSv").on("click", function() {
-		if ( $(this).hasClass("clicked")) {
-			$(this).removeClass("clicked");
-			$("#basicVariableTreeContainer").show();
-			$("#variableTranslationSv").hide();
-		} else {			
-			$(this).addClass("clicked");
-			$("#basicVariableTreeContainer").hide();
-
-			if ( $("#variableTranslationLinkEn").hasClass("clicked") ) {
-				$("#variableTranslationLinkEn").removeClass("clicked");
-				$("#variableTranslationEn").hide();
-			}
-			$("#variableTranslationSv").show();
-		}
-	});
-
-	$("#variableTranslationLinkEn").on("click", function() {
-		if ( $(this).hasClass("clicked")) {
-			$(this).removeClass("clicked");
-			$("#basicVariableTreeContainer").show();
-			$("#variableTranslationEn").hide();
-		} else {			
-			$(this).addClass("clicked");
-			$("#basicVariableTreeContainer").hide();			
-			if ( $("#variableTranslationLinkSv").hasClass("clicked") ) {
-				$("#variableTranslationLinkSv").removeClass("clicked");
-				$("#variableTranslationSv").hide();
-			}
-			$("#variableTranslationEn").show();
-		}
 	});
 
 	$('#variableFilterInput').fastLiveFilter('#variablesListBasic');
@@ -511,12 +505,15 @@ $(document).ready(function(){
 		}
 	});
 
-	$("#versionHistoryButton").on("click", function() {
-		$("#versionHistoryLink").click();
+	$(".versionHistoryButton").on("click", function() {
+		$(this).find("a").click();
 	});
-	$("#approveChangesButton").on("click", function() {
-		$("#approveChangesLink").click();
+	$(".approveChangesButton").on("click", function() {
+		$(this).find("a").click();
 	});        
+	$(".publishMaterialButton").on("click", function() {
+		$(this).find("a").click();
+	});
 
 	$("#studyLevelData").accordion({
 		heightStyle: "content",
@@ -537,27 +534,67 @@ $(document).ready(function(){
 		}
 	});
 
-	$(".materialBinderRow, .binderRow, .versionRow, .studyLevelIdRow, .parTitleRow, .otherMaterialRow, .relatedMaterialRow").on("click", function(e) {
+	$(".materialFileRow, .materialErrorRow, .materialBinderRow, .binderRow, .versionRow, " + 
+		".studyLevelIdRow, .parTitleRow, .otherMaterialRow, .relatedMaterialRow").on("click", function(e) {
 		if($(e.target.nodeName).is('TD')){
 			$(this).find("a").click();
 		}
 	});
 	
-	$("#filingContractFile").on("click", function() {
+	$("#addFilingContractFile").on("click", function() {
 		$("#additionalFilingContractFile").toggle();
+		$("#addFilingContractFile").toggle();
+	});
+	$("#removeAdditionalFilingContractFile").on("click", function() {
+		$("#additionalFilingContractFile").toggle();
+		$("#addFilingContractFile").toggle();
 	});
 
-
-	$("#studyLevelAltTitle, #studyLevelAppraisal, #studyLevelDataSource").on("click", function() {
-		var newRow = $(this).parent().parent().clone(true);
-		$(newRow).find(".link").attr("id", "");
-		$(newRow).find("label").removeClass("link");
-		$(newRow).find("img").show();
-		$(newRow).insertAfter($(this).parent().parent());
+	$("#addAltTitle, #addAppraisal, #addDataSource").on("click", function() {
+		var newRow = $(this).parent().parent().parent().clone(true);
+		$(newRow).find(".addRow").hide();
+		$(newRow).find(".removeRow").show();
+		$(newRow).insertAfter($(this).parent().parent().parent());
 	});
 
 	$(".removeAddedElement").on("click", function() {
 		$(this).parent().parent().remove();
+	});
+
+	$(".materialContent").find("select, input[type=text], textarea, input[type=checkbox]").attr("disabled", true);
+
+
+    $(".reserveMaterialButton").on("click", function() {
+    	$(".reservedButton").show();
+    	$(".previewButton").hide();
+    	$(".handlerInfo").show();
+    });
+    $(".releaseMaterialButton").on("click", function() {
+    	$(".reservedButton").hide();
+    	$(".previewButton").show();
+    	$(".handlerInfo").hide();
+    });
+    $(".editMaterialButton").on("click", function() {
+    	$(".materialContent .reservedButton, .materialContent .previewButton, .publishedInfo, .materialContent .prevNextContainer").hide();
+    	$(".materialContent .addRow, .materialContent .removeRow, .materialContent .editButton, .draftInfo").show();
+    	$(".materialContent").find("select, input[type=text], textarea, input[type=checkbox]").attr("disabled", false);
+    	$(".weightCoefficient").attr("disabled", true);
+    	$("#weightCoefficientToggle").attr("checked", true);
+    });
+	$(".saveAsDraftButton").on("click", function() {
+		$(".reservedButton, .materialContent .prevNextContainer").show();
+    	$(".materialContent .addRow, .materialContent .removeRow, .materialContent .editButton").hide();
+    	$(".materialContent").find("select, input[type=text], textarea, input[type=checkbox]").attr("disabled", true);
+	});
+	// $(".approveChangesButton").on("click", function() {
+	// 	$(".reservedButton").show();
+ //    	$(".materialContent .addRow, .materialContent .removeRow, .materialContent .editButton").hide();
+ //    	$(".materialContent").find("select, input[type=text], textarea").attr("disabled", true);
+	// });
+
+	$("#weightCoefficientToggle").on("click", function() {
+		var checked = $(this).is(":checked");
+		$(".weightCoefficient").attr("disabled", checked);
 	});
 
 	/*** JULKAISU ***/
@@ -590,11 +627,16 @@ $(document).ready(function(){
 		window.location = "publicationView.html";
 	});
 
+	// $("#editPublicationButton").on("click", function() {
+	// 	$(".publicationContent").find("textarea").attr("disabled", false);
+	// 	$(".publicationContent").find(".removeRow, .addRow, .editButton").show();
+	// 	$(".publicationContent").find(".previewButton").hide();
+	// });
 
 	/* SARJAT */
 
 	$("#addNewSeriesButton").on("click", function() {
-		window.location = "/series/view";
+		window.location = "seriesView.html";
 	});
 
 	// createDataTable("publicationMaterialTable", ['20%','75%','5%']);
@@ -620,16 +662,19 @@ $(document).ready(function(){
 
 // Käännökset fileen ja haku sUrlilla
 	$("#binderTable").dataTable({
-        "bFilter": false, 
+        "bFilter": true, 
         "bInfo": true,
         "bPaginate": true,
         "bAutoWidth": false, 
         "sPaginationType": "full_numbers",
         "aoColumns": [
-        	{sWidth: '20%'},
-        	{sWidth: '75%'},
-        	{sWidth: '5%'}
+        	{sWidth: '10%'},
+        	{sWidth: '30%'},
+        	{sWidth: '15%'},
+        	{sWidth: '10%'},
+        	{sWidth: '35%'}
         ], 
+        "aLengthMenu": [[10, 25, 50, 100, -1],[10, 25, 50, 100, "Kaikki"]],
         "oLanguage": {
 		    "sProcessing":   "Hetkinen...",
 		    "sLengthMenu":   "Näytä kerralla _MENU_ riviä",

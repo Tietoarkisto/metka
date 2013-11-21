@@ -2,6 +2,7 @@ package fi.uta.fsd.metka.data.repository.impl;
 
 import fi.uta.fsd.metka.data.entity.SeriesEntity;
 import fi.uta.fsd.metka.data.repository.CRUDRepository;
+import fi.uta.fsd.metka.data.repository.SeriesRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -15,7 +16,7 @@ import java.util.List;
  * Time: 1:14 PM
  */
 @Repository("seriesRepository")
-public class SeriesRepositoryImpl implements CRUDRepository<SeriesEntity, Integer> {
+public class SeriesRepositoryImpl implements SeriesRepository {
     
     @PersistenceContext
     private EntityManager em;
@@ -46,5 +47,10 @@ public class SeriesRepositoryImpl implements CRUDRepository<SeriesEntity, Intege
     @Override
     public List<SeriesEntity> listAll() {
         return em.createQuery("SELECT s FROM SeriesEntity s", SeriesEntity.class).getResultList();
+    }
+
+    @Override
+    public List<String> listAllAbbreviations() {
+        return em.createQuery("SELECT DISTINCT s.abbreviation FROM SeriesEntity s").getResultList();
     }
 }

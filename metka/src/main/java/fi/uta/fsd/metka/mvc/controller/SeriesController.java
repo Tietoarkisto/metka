@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -32,8 +33,15 @@ public class SeriesController {
     private DomainFacade domain;
 
     @RequestMapping(value="search", method = RequestMethod.GET)
-    public String basicHandler(Model model) {
+    public String basicHandler(Model model, @ModelAttribute("Series")SeriesEntity series, BindingResult result) {
         model.addAttribute("page", "series");
+
+        List<String> abbs = domain.listAllSeriesAbbreviations();
+        model.addAttribute("abbreviations", abbs);
+
+        if(series.getId() != null || series.getName() != null || series.getAbbreviation() != null) {
+
+        }
 
         return "seriesSearch";
     }

@@ -33,25 +33,23 @@
                 <div class="searchFormContainer">
                     <form:form method="post" action="/series/search" modelAttribute="Series">
                         <div class="searchFormRowHolder">
-                            <label>Sarjan numero</label>
-                            <form:input path="id" class="searchInput" />
+                            <form:label path="id">Sarjan numero</form:label>
+                            <form:input path="id" cssClass="searchInput" />
                         </div>
                         <div class="searchFormRowHolder">
-                            <label>Sarjan lyhenne</label>
-                            <select class="formSelect" name="sarjanNimi">
-                                <option></option>
-                            </select>
+                            <form:label path="name">Sarjan nimi</form:label>
+                            <form:input path="name" cssClass="searchInput" />
                         </div>
                         <div class="searchFormRowHolder">
-                            <label>Sarjan nimi</label>
-                            <input type="text" class="searchInput" name="julkaisuId" />
+                            <form:label path="abbreviation">Sarjan lyhenne</form:label>
+                            <form:select path="abbreviation" class="formSelect" name="sarjanNimi" items="${abbreviations}" />
                         </div>
                         <div class="searchFormButtonsHolder">
                             <input type="submit" class="searchFormInput doSearch" value="Tee haku">
-                            <input class="searchFormInput" type="reset" value="Tyhjennä">
+                            <input type="reset" class="searchFormInput" value="Tyhjennä">
                         </div>
 
-                        <div id="addNewButton"><div id="addNewSeriesButton" class="searchFormInput" />Lisää</div></div>
+                        <div id="addNewButton"><input type="button" id="addNewSeriesButton" class="searchFormInput" value="Lisää uusi"/></div>
                     </form:form>
                 </div>
             </div>

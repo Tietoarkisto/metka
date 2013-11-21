@@ -4,6 +4,7 @@ import fi.uta.fsd.metka.data.entity.StudyEntity;
 import fi.uta.fsd.metka.data.entity.SeriesEntity;
 import fi.uta.fsd.metka.data.entity.VocabularyEntity;
 import fi.uta.fsd.metka.data.repository.CRUDRepository;
+import fi.uta.fsd.metka.data.repository.SeriesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +26,7 @@ public class DomainFacade {
     private CRUDRepository<VocabularyEntity, String> vocabularyRepository;
 
     @Autowired
-    private CRUDRepository<SeriesEntity, Integer> seriesRepository;
+    private SeriesRepository seriesRepository;
 
     public List<StudyEntity> listAllStudies() {
         return studyRepository.listAll();
@@ -33,6 +34,10 @@ public class DomainFacade {
 
     public SeriesEntity createSeries(SeriesEntity entity) {
         return seriesRepository.create(entity);
+    }
+
+    public List<String> listAllSeriesAbbreviations() {
+        return seriesRepository.listAllAbbreviations();
     }
 
     public List<SeriesEntity> listAllSeries() {
@@ -50,4 +55,5 @@ public class DomainFacade {
     public void removeVocabulary(String vocabularyId) {
         vocabularyRepository.delete(vocabularyId);
     }
+
 }
