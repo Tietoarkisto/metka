@@ -114,7 +114,7 @@ footer{
 }
 .translationSvBorder {
 	border-color: $svColor;
-}
+}   
 
 /** POPUP **/ 
 
@@ -271,7 +271,7 @@ table.metkaTable {
 			background-color: #eaeaea;
 		}
 		td {
-			color: #000;
+			//color: #000;
 			padding: 4px;	
 			vertical-align: top;
 		}
@@ -282,7 +282,7 @@ table.metkaTable {
 }
 
 // RENAME 
-.searchFormInput{
+.searchFormInput, .button{
 	padding: 5px;
 	outline:none;
 	@include transition(0.25s);
@@ -290,6 +290,9 @@ table.metkaTable {
 	color: $pageColorA;
 	border:1px solid $pageColorB;
 	cursor: pointer;
+	text-decoration: none;
+	font-size: 15px;
+	margin-left: 20px;
 	
 	:focus {
 		@include boxShadow($pageColorE);

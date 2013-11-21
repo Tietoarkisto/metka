@@ -61,9 +61,9 @@ $(document).ready(function(){
 	$(".materialFileRow, .materialCodebookFileRow, .materialErrorRow, .desktopWidgetDataRow, " +
 		".errorneousMaterialRow, .materialSearchResultRow, .publicationSearchResultRow, .seriesSearchResultRow, " + 
 		".materialSeriesRow, .materialPublicationRow, .materialMaterialRow, #variablesListBasic li, " +
-		".publicationSeriesRow, .publicationMaterialRow, .binderRow, .link, #removeAdditionalFilingContractFile, " +
+		".publicationSeriesRow, .publicationMaterialRow, .link, #removeAdditionalFilingContractFile, " +
 		".studyLevelIdRow, .parTitleRow, .otherMaterialRow, .relatedMaterialRow, #addAltTitle, #removeAltTitle, " + 
-		".removeAddedElement, .versionRow, .materialNotificationRow, .helpImage").hover(function() {
+		".removeAddedElement, .versionRow, .materialNotificationRow, .helpImage, .binderNumber, .packagingRow").hover(function() {
 		    $(this).css('cursor', 'pointer');
 		}, function() {
 		    $(this).css('cursor', 'auto');		    
@@ -339,6 +339,45 @@ $(document).ready(function(){
         "bInfo": false
 	}).rowReordering();
 
+	$(".studyLevelCollectingTable").dataTable({
+		"bPaginate": false,
+        "bFilter": false, 
+        "bInfo": false, 
+        "bAutoWidth": false,
+        "aoColumns": [
+		              {sWidth: '35%'},
+		              {sWidth: '30%'},
+		              {sWidth: '30%'},
+		              {sWidth: '5%'}
+        ]
+	});
+
+	$(".studyLevelTwoHeadersTable").dataTable({
+		"bPaginate": false,
+        "bFilter": false, 
+        "bInfo": false, 
+        "bAutoWidth": false,
+        "aoColumns": [
+		              {sWidth: '55%'},
+		              {sWidth: '45%'},
+		              {sWidth: '5%'}
+        ]
+	});
+
+	$(".studyLevelVocabularyTable").dataTable({
+		"bPaginate": false,
+        "bFilter": false, 
+        "bInfo": false, 
+        "bAutoWidth": false,
+        "aoColumns": [
+		              {sWidth: '10%'},
+		              {sWidth: '45%'},
+		              {sWidth: '20%'},
+		              {sWidth: '20%'},
+		              {sWidth: '5%'}
+        ]
+	});
+
 	$(".materialRemovedFileRow").on("click", function() {
 		showFileInfo($(this), "#materialRemovedFileInfoContent", "#materialRemovedFileInfoRow");	
 	});
@@ -505,13 +544,12 @@ $(document).ready(function(){
 		}
 	});
 
-	$(".versionHistoryButton").on("click", function() {
-		$(this).find("a").click();
+	$("#addVocabularyButton").on("click", function() {
+		alert("foo");
+		alert($(this).find(".fancyboxpopup").attr("class"));
 	});
-	$(".approveChangesButton").on("click", function() {
-		$(this).find("a").click();
-	});        
-	$(".publishMaterialButton").on("click", function() {
+
+	$(".versionHistoryButton, .publishMaterialButton, .approveChangesButton").on("click", function() {
 		$(this).find("a").click();
 	});
 
@@ -534,7 +572,7 @@ $(document).ready(function(){
 		}
 	});
 
-	$(".materialFileRow, .materialErrorRow, .materialBinderRow, .binderRow, .versionRow, " + 
+	$(".materialFileRow, .materialErrorRow, .materialBinderRow, .versionRow, " + 
 		".studyLevelIdRow, .parTitleRow, .otherMaterialRow, .relatedMaterialRow").on("click", function(e) {
 		if($(e.target.nodeName).is('TD')){
 			$(this).find("a").click();
@@ -563,16 +601,13 @@ $(document).ready(function(){
 
 	$(".materialContent").find("select, input[type=text], textarea, input[type=checkbox]").attr("disabled", true);
 
-
     $(".reserveMaterialButton").on("click", function() {
-    	$(".reservedButton").show();
+    	$(".reservedButton, .handlerInfo").show();
     	$(".previewButton").hide();
-    	$(".handlerInfo").show();
     });
     $(".releaseMaterialButton").on("click", function() {
-    	$(".reservedButton").hide();
+    	$(".reservedButton, .handlerInfo").hide();
     	$(".previewButton").show();
-    	$(".handlerInfo").hide();
     });
     $(".editMaterialButton").on("click", function() {
     	$(".materialContent .reservedButton, .materialContent .previewButton, .publishedInfo, .materialContent .prevNextContainer").hide();
@@ -586,15 +621,14 @@ $(document).ready(function(){
     	$(".materialContent .addRow, .materialContent .removeRow, .materialContent .editButton").hide();
     	$(".materialContent").find("select, input[type=text], textarea, input[type=checkbox]").attr("disabled", true);
 	});
-	// $(".approveChangesButton").on("click", function() {
-	// 	$(".reservedButton").show();
- //    	$(".materialContent .addRow, .materialContent .removeRow, .materialContent .editButton").hide();
- //    	$(".materialContent").find("select, input[type=text], textarea").attr("disabled", true);
-	// });
 
 	$("#weightCoefficientToggle").on("click", function() {
 		var checked = $(this).is(":checked");
 		$(".weightCoefficient").attr("disabled", checked);
+	});
+
+	$(".packagingRow").on("click", function() {
+		$("#packagingHistoryContainer").toggle();
 	});
 
 	/*** JULKAISU ***/
@@ -627,11 +661,19 @@ $(document).ready(function(){
 		window.location = "publicationView.html";
 	});
 
-	// $("#editPublicationButton").on("click", function() {
-	// 	$(".publicationContent").find("textarea").attr("disabled", false);
-	// 	$(".publicationContent").find(".removeRow, .addRow, .editButton").show();
-	// 	$(".publicationContent").find(".previewButton").hide();
-	// });
+	$(".publicationContent").find("select, input[type=text], textarea, input[type=checkbox]").attr("disabled", true);
+
+	$("#editPublicationButton").on("click", function() {
+		$(".publicationContent .previewButton, .publicationContent .prevNextContainer").hide();
+    	$(".publicationContent .editButton, .publicationContent .addRow, .publicationContent .removeRow, .publicationContent .editButton").show();
+    	$(".publicationContent").find("select, input[type=text], textarea, input[type=checkbox]").attr("disabled", false);
+	});
+
+	$("#savePublicationChangesButton").on("click", function() {
+		$(".publicationContent").find("select, input[type=text], textarea, input[type=checkbox]").attr("disabled", true);
+		$(".publicationContent .prevNextContainer, .publicationContent .previewButton").show();
+    	$(".publicationContent .addRow, .publicationContent .removeRow, .publicationContent .editButton").hide();
+	});
 
 	/* SARJAT */
 
@@ -639,28 +681,23 @@ $(document).ready(function(){
 		window.location = "seriesView.html";
 	});
 
-	// createDataTable("publicationMaterialTable", ['20%','75%','5%']);
+	$(".seriesContent").find("select, input[type=text], textarea, input[type=checkbox]").attr("disabled", true);
 
-	// function creataDataTable(tableId, columnWidths) {
-	// 	alert("foo");
-	// 	var columns = [];
-	// 	for ( var i = 0; i < columnWidths; i++ ) {
-	// 		alert(columnWidths[i]);
-	// 		columns[i] = {sWidth: columnWidths[i]};
-	// 	}
-	// 	var foo = [{sWidth: '20%'},{sWidth: '25%'},{sWidth: '55%'}];
-	// 	$("#" + tableId).dataTable({
-	// 		"bPaginate": false,
-	//         "bFilter": false, 
-	//         "bInfo": false,
-	//         "bAutoWidth": false,
-	//         "aoColumns": foo
-	// 	});
-	// }
+	$("#editSeriesButton").on("click", function() {
+		$(".seriesContent .previewButton, .seriesContent .prevNextContainer").hide();
+    	$(".seriesContent .addRow, .seriesContent .removeRow, .seriesContent .editButton").show();
+    	$(".seriesContent").find("select, input[type=text], textarea, input[type=checkbox]").attr("disabled", false);
+	});
+
+	$("#saveSeriesChangesButton").on("click", function() {
+		$(".seriesContent").find("select, input[type=text], textarea, input[type=checkbox]").attr("disabled", true);
+		$(".seriesContent .prevNextContainer, .seriesContent .previewButton").show();
+    	$(".seriesContent .addRow, .seriesContent .removeRow, .seriesContent .editButton").hide();
+	});
 
 	/** MAPIT **/
 
-// Käännökset fileen ja haku sUrlilla
+	// Käännökset fileen ja haku sUrlilla
 	$("#binderTable").dataTable({
         "bFilter": true, 
         "bInfo": true,
@@ -692,5 +729,14 @@ $(document).ready(function(){
 		        "sLast":     "Viimeinen"
 		    }
 		}
+	});
+
+	$(".binderNumber").on("click", function() {
+		$("#binderList").hide();
+		$("#binderInfo").show();
+	});
+	$("#backToBinderList").on("click", function() {
+		$("#binderList").show();
+		$("#binderInfo").hide();
 	});
 });
