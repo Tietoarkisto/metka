@@ -1,22 +1,6 @@
 <!DOCTYPE HTML>
 <html lang="fi">
 	<head>
-		<script type="text/javascript">
-			$("#approveVariables").on("click", function() {
-				if ( $(this).is(":checked")) {
-					$(".variableDesc").css("visibility", "visible");
-				} else {
-					$(".variableDesc").css("visibility", "hidden");
-				}
-			});
-			$("#approveData").on("click", function() {
-				if ( $(this).is(":checked")) {
-					$(".dataDesc").css("visibility", "visible");
-				} else {
-					$(".dataDesc").css("visibility", "hidden");
-				}
-		});
-		</script>
 	</head>
 	<body>	
 		<div class="popupContainer">
@@ -26,32 +10,27 @@
 				<div class="approveLanguage"><input type="checkbox">en</div>
 				<div class="approveLanguage"><input type="checkbox">sv</div>
 			</div>
-			<div class="popupRowHolder" style="padding-top: 30px;">
-				<table>
-					<thead><tr><th></th><th></th></tr></thead>
-					<tbody>
-						<tr>
-							<td align="middle"><input id="approveVariables" type="checkbox">Muuttujakuvailu</td>
-							<td align="middle"><input id="approveData" type="checkbox">Aineiston kuvailu</td>
-						</tr>
-						<tr>
-							<td><div class="variableDesc">Versionumero</div><input class="variableDesc" type="text"/></td>
-							<td><div class="dataDesc">Versionumero</div><input class="dataDesc" type="text"/></td>
-						</tr>
-						<tr>
-							<td><div class="variableDesc">Selite</div><select class="variableDesc"><option>Kirjoitusvirhe</option><option>Syy kaksi</option></select></td>
-							<td><div class="dataDesc">Selite</div><select class="dataDesc"><option>Kirjoitusvirhe</option><option>Syy kaksi</option></select></td>
-						</tr>
-						<tr>
-							<td><div class="variableDesc">Julkinen selite</div><textarea class="variableDesc"></textarea></td>
-							<td><div class="dataDesc">Julkinen selite</div><textarea class="dataDesc"></textarea></td>
-						</tr>
-						<tr>
-							<td><div class="variableDesc">Ei-julkinen selite</div><textarea class="variableDesc"></textarea></td>
-							<td><div class="dataDesc">Ei-julkinen selite</div><textarea class="dataDesc"></textarea></td>
-						</tr>
-					</tbody>
-				</table>
+			<div class="popupRowHolder">
+				<label class="inputRowLabel">Versionumero</label>
+				<input type="text"/>
+			</div>
+			<div class="popupRowHolder">
+				<label class="inputRowLabel">Selite</label>
+				<select id="errorTypeSelect">
+					<option>Selite1</option>
+					<option>Selite2</option>
+					<option>Selite3</option>
+					<option>Selite4</option>
+					<option>Selite5</option>
+				</select>
+			</div>
+			<div class="popupRowHolder">
+				<label class="inputRowLabel">Julkinen selite</label>
+				<textarea></textarea>
+			</div>
+			<div class="popupRowHolder">
+				<label class="inputRowLabel">Ei-julkinen selite</label>
+				<textarea></textarea>
 			</div>
 			<div class="popupButtonsHolder">
 				<input type="button" class="searchFormInput" value="Peruuta">
