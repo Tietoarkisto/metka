@@ -1,5 +1,10 @@
 package fi.uta.fsd.metka.data.entity;
 
+import fi.uta.fsd.metka.data.entity.key.RevisionDataKey;
+import fi.uta.fsd.metka.data.enums.RevisionDataType;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -8,14 +13,23 @@ import java.util.List;
 public class StudyEntity {
 
     @Id
-    @Column(name="STUDY_ID", updatable = false, length = 30)
-    private String id;
+    @SequenceGenerator(name="STUDY_ID_SEQ", sequenceName="STUDY_ID_SEQ", allocationSize=1)
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="STUDY_ID_SEQ")
+    @Column(name = "STUDY_ID", updatable = false)
+    private Integer id;
 
-    @Column(name = "ARCHIVED")
-    private Boolean archived;
+    @Column(name = "REMOVED")
+    private Boolean removed;
 
-    @OneToMany(mappedBy = "study", cascade = CascadeType.ALL)
-    private List<StudyDataEntity> studyDataEntityList;
+    /**
+     * Shortcut to currently published revision.
+     */
+    @Column(name = "CURRENT_PUBLISHED_REVISION")
+    private Integer currentPublishedRevision;
+
+    @OneToMany
+    @JoinColumn(name = "STUDY_ID", referencedColumnName = "TARGET_ID", insertable = false, updatable = false)
+    private List<StudyRevisionEntity> revisionDataList;
 
     @ManyToMany
     @JoinTable(
@@ -28,32 +42,21 @@ public class StudyEntity {
     @OneToMany(mappedBy = "targetStudy")
     private List<StudyErrorEntity> errorList;
 
-    @OneToMany(mappedBy = "targetStudy")
-    private List<StudyVersionEntity> studyVersionList;
+    /*
+    * All information that can change from revision to revision should be inside the data clob in revision data.
+     */
+    /*@OneToMany(mappedBy = "targetStudy")
+    private List<StudyVersionEntity> studyVersionList;*/
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public Boolean getArchived() {
-        return archived;
-    }
 
-    public void setArchived(Boolean archived) {
-        this.archived = archived;
-    }
-
-    public List<StudyDataEntity> getStudyDataEntityList() {
-        return studyDataEntityList;
-    }
-
-    public void setStudyDataEntityList(List<StudyDataEntity> studyDataEntityList) {
-        this.studyDataEntityList = studyDataEntityList;
-    }
 
     public List<BinderEntity> getBinderList() {
         return binderList;

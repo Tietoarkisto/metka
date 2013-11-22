@@ -7,7 +7,6 @@
     <script src="/js/jquery-ui.js"></script>
     <script src="/js/jquery.tablesorter.min.js"></script>
     <script src="/js/jquery.dataTables.min.js"></script>
-    <script src="/js/jquery.fancybox.pack.js"></script>
     <script src="/js/jquery.tablesorter.pager.js"></script>
     <script src="/js/jquery.dataTables.rowReordering.js"></script>
     <script src="/js/jquery.fastLiveFilter.js"></script>

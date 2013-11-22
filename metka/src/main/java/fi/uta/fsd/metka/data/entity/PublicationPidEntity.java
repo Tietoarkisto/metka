@@ -12,6 +12,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "PUBLICATION_PID")
+@Deprecated
 public class PublicationPidEntity {
     @EmbeddedId
     private PublicationPidKey key;

@@ -11,6 +11,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "STUDY_LEVEL_VERSION")
+@Deprecated
 public class StudyVersionEntity {
     @Id
     @SequenceGenerator(name="STUDY_LEVEL_VERSION_ID_SEQ", sequenceName="STUDY_LEVEL_VERSION_ID_SEQ", allocationSize=1)
@@ -18,9 +19,9 @@ public class StudyVersionEntity {
     @Column(name = "STUDY_LEVEL_VERSION_ID", updatable = false)
     private Integer id;
 
-    @Enumerated(EnumType.STRING)
+    /*@Enumerated(EnumType.STRING)
     @Column(name = "VERSION_TYPE")
-    private VersionType versionType;
+    private VersionType versionType;*/
 
     @Column(name = "VERSION")
     private String version;
@@ -29,9 +30,9 @@ public class StudyVersionEntity {
     @Column(name = "DATE")
     private Date date;
 
-    @ManyToOne
+    /*@ManyToOne
     @JoinColumn(name = "SAVED_BY")
-    private PersonEntity savedBy;
+    private PersonEntity savedBy;*/
 
     // TODO: If this differs between version types then this class needs to be split after all. If not, then enumerate.
     @Column(name = "DESCRIPTION_TYPE")
@@ -43,9 +44,9 @@ public class StudyVersionEntity {
     @Column(name = "PRIVATE_DESCRIPTION")
     private String privateDescription;
 
-    @ManyToOne
+    /*@ManyToOne
     @JoinColumn(name = "TARGET_STUDY_ID")
-    private StudyEntity targetStudy;
+    private StudyEntity targetStudy;*/
 
     @Override
     public String toString() {

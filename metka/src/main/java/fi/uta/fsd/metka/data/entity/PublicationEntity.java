@@ -19,7 +19,11 @@ public class PublicationEntity {
     @Column(name = "PUBLICATION_ID", updatable = false)
     private Integer id;
 
-    @Column(name = "RELEASE_YEAR")
+    @OneToMany
+    @JoinColumn(name = "PUBLICATION_ID", referencedColumnName = "TARGET_ID")
+    private List<PublicationRevisionEntity> revisionDataList;
+
+    /*@Column(name = "RELEASE_YEAR")
     private Integer releaseYear;
 
     @Column(name = "CAN_BE_PUBLISHED")
@@ -52,7 +56,7 @@ public class PublicationEntity {
     private String notes;
 
     @ManyToMany(mappedBy = "publicationList")
-    private List<SeriesEntity> seriesList;
+    private List<SeriesEntity> seriesList;*/
 
     /**
      * XML containing all persons relating to this publication.
@@ -69,12 +73,12 @@ public class PublicationEntity {
      * }
      * </pre>
      */
-    @Column(name = "RELATED_PERSONS", length = 1000)
+    /*@Column(name = "RELATED_PERSONS", length = 1000)
     private String relatedPersons;
 
     // TODO: Pysyvät tunnisteet todennäköisesti
     @OneToMany(mappedBy = "targetPublication")
-    private List<PublicationPidEntity> identifierList;
+    private List<PublicationPidEntity> identifierList;*/
 
     @Override
     public String toString() {

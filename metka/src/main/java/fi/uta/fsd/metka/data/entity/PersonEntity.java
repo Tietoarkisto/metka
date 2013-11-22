@@ -39,10 +39,10 @@ public class PersonEntity {
     private String groupMembership;
 
     @OneToMany(mappedBy = "modifiedBy")
-    private List<StudyDataEntity> modifiedList;
+    private List<RevisionDataEntity> modifiedList;
 
     @OneToMany(mappedBy = "handler")
-    private List<StudyDataEntity> handlingList;
+    private List<RevisionDataEntity> handlingList;
 
     @Override
     public String toString() {

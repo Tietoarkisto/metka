@@ -9,7 +9,7 @@
         <jsp:include page="../inc/topMenu.jsp" />
         <div class="wrapper">
             <div class="content">
-
+                <a href="/dialogs/compareVersionsDialog" id="compareVersionsLink" class="fancyboxpopup fancybox.ajax fancybox.iframe">versiot</a>
             </div>
         </div>
     </body>

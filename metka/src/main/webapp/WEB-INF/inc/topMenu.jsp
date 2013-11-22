@@ -21,5 +21,11 @@
                 <input type="submit" value="Hae" class="searchButton"/>
             </form>
         </div>
+
+        <div class="languageSelect">
+            <input type="radio" name="language" value="fi"/>fi
+            <input type="radio" name="language" value="en"/>en
+            <input type="radio" name="language" value="sv"/>sv
+        </div>
     </div>
 </header>
