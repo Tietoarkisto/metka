@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html lang="fi">
+	<head>
+		<script type="text/javascript">
+			$("#vocabularySelect").on("change", function() {
+				var vocabularyType = $(this).children(":selected").attr("id");
+
+				if ( vocabularyType == "chooseVocabulary") {
+					$(".vocabularyFields").hide();
+					$(".keywordFields").hide();
+					$(".otherKeywordInput").hide();
+				} else if ( vocabularyType == "noVocabulary") {
+					$(".otherKeywordInput").show();
+					$(".vocabularyFields").hide();
+				} else {
+					$(".vocabularyFields").show();
+				} 
+			});	
+
+			$("#keywordSelect").on("change", function() {
+				var keywordType = $(this).children(":selected").attr("id");
+
+				if ( keywordType == "chooseKeyword") {
+					$(".keywordFields").hide();
+					$(".otherKeywordInput").hide();
+				}
+				else {
+					$(".keywordFields").show();
+					$(".otherKeywordInput").hide();
+				} 
+			});	
+		</script>
+	</head>
+	<body>	
+		<div class="popupContainer">
+			<h1 class="pageTitle">Lisää Asiasana</h1>
+			<div class="popupRowHolder">
+				<label class="inputRowLabel">Sanasto</label>
+				<select id="vocabularySelect"><option id="chooseVocabulary">Valitse sanasto...</option><option>YSA</option><option>ELSST</option><option id="noVocabulary">Ei sanastoa</option></select>
+			</div>
+			<div id="keywordSelectContainer" class="popupRowHolder vocabularyFields">
+				<label class="inputRowLabel">Asiasana</label>
+				<select id="keywordSelect" multiple><option id="chooseKeyword">Valitse asiasana...</option><option>Sana1</option><option>Sana2</option></select>
+			</div>
+			<div class="popupRowHolder otherKeywordInput" style="display: none;">
+				<label class="inputRowLabel">Muu asiasana</label>
+				<input style="width: 290px" type="text" value=""/>
+			</div>
+			<div class="popupRowHolder vocabularyFields">
+				<label class="inputRowLabel">Uri</label><input style="width: 290px" type="text" value="http://www.foo.bar.fi" disabled="true" />
+			</div>
+			<div class="popupRowHolder keywordFields" style="display: none;">
+				<label class="inputRowLabel">Tunniste/osoite</label><input style="width: 290px" type="text" value="FooBar" disabled="true" />
+			</div>
+			<div class="popupButtonsHolder">
+				<input type="button" class="searchFormInput" value="Peruuta">
+				<input type="button" class="searchFormInput" value="OK">
+			</div>
+		
+		</div>	
+	</body>
+</html>

@@ -4,12 +4,14 @@
 <%@ page session="false" %>
 <!DOCTYPE HTML>
 <html lang="fi">
-    <jsp:include page="../inc/head.jsp" />
+	<head>
+    	<jsp:include page="../inc/head.jsp" />
+    </head>
     <body>
         <jsp:include page="../inc/topMenu.jsp" />
         <div class="wrapper">
             <div class="content">
-
+				<h1 class="pageTitle"><spring:message code="reports.title"/></h1>
             </div>
         </div>
     </body>
