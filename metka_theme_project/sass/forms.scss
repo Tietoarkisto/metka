@@ -1,0 +1,450 @@
+@import "global";
+
+#fileNameErrorRow, #materialFileInfoRow, #materialCodebookRow, #materialErrorInfoRow, 
+#groupedVariableTreeContainer, #variableDataContainer, #variableData, #variableGroupData, 
+#variablesGroupingContainer, #additionalFilingContractFile, .translationEn, .translationSv, 
+.variableTranslationTable, .vocabularyFields, .noVocabulary, 
+.errorneous {
+	display: none;
+}
+
+.handlerInfo, .draftInfo {
+	display: none;
+}
+
+.materialContent, .publicationContent, .seriesContent {
+	.addRow, .removeRow, .editButton, .reservedButton {
+		display: none;
+	}
+}
+
+.upperContainer {
+	margin:10px;
+	font-size:12px;
+}
+
+.rowContainer{
+	clear: both;
+	display: block;
+
+	.translations {
+		.translationLinkEn, .translationLinkSv, .translationLinkFi {
+			@include translationLink;
+			font-size: 15px;
+			margin-bottom: 10px;	
+		}
+	}
+}
+
+.translations .clicked {
+	background-color: $pageColorB;
+}
+
+/* Yläosan leveämmät fieldit */
+.materialDataSetContainerTopRow{
+	float: left;
+
+	label {
+		display: block;
+		float: left;
+		margin-bottom: 10px;
+		width: $topRowLabelWidth;
+	}
+
+	input {
+		width: $topRowInputWidth;
+		margin-right: 10px;
+	}
+
+	.plainTextInputTopRow {
+		float: left;
+		width: $topRowInputWidth;
+	}
+}
+
+// Suhde alempaan?
+.materialDataSetTextareaContainer {
+	font-size: 12px;
+	float: left;
+
+	label {
+		width: $materialDataSetTextAreaLabelWidth;
+		clear: both;
+		display:block;
+	}
+	textarea {
+		width: $materialDataSetTextAreaWidth;
+		height: 60px;
+	}
+}
+
+@mixin dataSetContainer($labelWidth, $inputWidth, $selectWidth, $textareaWidth, $textareaHeight, $font-size) {
+	float: left;
+	label {
+		display: block;
+		float: left;
+		margin-bottom: 10px;
+		font-size: $font-size;
+		width: $labelWidth;
+	}
+	input {
+		font-size:$font-size;
+		width: $inputWidth;
+		margin-right: 10px;
+	}
+	select {
+		font-size: $font-size;
+		width: $selectWidth;
+		margin-right: 10px;
+	}
+	textarea {
+		font-size: $font-size;
+		width: $textareaWidth;
+		height: $textareaHeight;
+	}
+	.plainTextInput {
+		float: left;
+		font-size: $font-size;
+		width: $inputWidth;
+		margin-right: 10px;
+	}
+	.plainTextTextarea {
+		float: left;
+		font-size: $font-size;
+		width: $textareaWidth;
+		//margin-right: 10px;	
+	}
+}
+
+.materialDataSetContainer {
+	font-size: 12px;
+	@include dataSetContainer($materialLabelWidth, $materialInputWidth, $materialSelectWidth, $materialTextAreaWidth, $materialTextAreaHeigth, 12px);
+
+	#materialSeriesSelect {
+		width: 320px;
+	}
+}
+.studyLevelDataSetContainer {
+	font-size: 12px;
+	@include dataSetContainer($studyLevelLabelWidth, $studyLevelInputWidth, $studyLevelSelectWidth, $studyLevelTextAreaWidth, $studyLevelTextAreaHeigth, 12px);
+}
+.publicationDataSetContainer {
+	@include dataSetContainer($publicationLabelWidth, $publicationInputWidth, $publicationSelectWidth, $publicationTextAreaWidth, $publicationTextAreaHeigth, 12px);
+}
+
+.seriesDataSetContainer {
+	@include dataSetContainer($seriesLabelWidth, $seriesInputWidth, $seriesSelectWidth, $seriesTextAreaWidth, $seriesTextAreaHeigth, 15px);
+	label {
+		margin-bottom: 20px;
+	}
+	input {
+		margin-right: 10px;
+		padding: 5px;
+	}
+}
+
+#materialStudyLevel {
+
+	#studyLevelTopRow {
+		position: relative;
+		padding-bottom: 25px;
+
+		#toggleAccordion {
+			position: absolute;
+			margin-left: 10px;
+		}
+		.translations {
+			position: absolute;
+			left: 120px;
+
+			.translationLinkSv, .translationLinkEn, .translationLinkFi {
+				margin-top: 5px;
+				@include translationLink;
+			}
+		}
+	}
+	
+	#studyLevelData {
+		padding: 10px;
+
+		.studyLevelTitle {
+			&:hover {
+				background: $pageColorB;
+				color: #fff;
+			}
+			&.ui-state-active {
+				background: $pageColorB;	
+			}
+		}
+
+		.accordionTableActionLinkHolder {
+			@include actionLinkHolder($accordionTableLinkHolderWidth, 12px);
+		}
+
+
+		table {
+			width: $accordionTableWidth;
+		}
+
+		.studyLevelTableTitle {
+			font-size: 12px;
+			margin-top: 10px;
+		}
+		.metkaTable {
+			@extend table.metkaTable;
+			margin:0px 10px 0px 0px;
+			width: $accordionTableWidth;
+		}
+
+		.studyLevelDataSetTextareaContainer {
+			@extend .materialDataSetTextareaContainer;
+
+			textarea {
+				width: 400px;
+			}
+		}
+	}
+}
+
+@mixin prevNextContainer($display, $float, $margin-bottom, $margin-right) {
+	display: $display;
+	float: $float;
+	margin-bottom: $margin-bottom;
+	margin-right: $margin-right;
+	width: $pageWidth - 40px;
+}
+
+@mixin prevNextButtons($font-size, $floatPrev, $floatNext, $padding) {
+	h1.prev{
+		font-size: $font-size;
+		float:$floatPrev;
+		background: $pageColorB;
+		color: $pageColorA;
+		padding: $padding;
+		cursor: pointer;
+	}
+	h1.next{
+		font-size: $font-size;
+		float:$floatNext;
+		background: $pageColorB;
+		color: $pageColorA;
+		padding: $padding;
+		margin-left: 10px;
+		cursor: pointer;
+	}
+}
+
+.prevNextContainer{
+	@include prevNextContainer(inline-block, right, 10px, 10px);
+
+	@include prevNextButtons(15px, left, right, 5px);
+}
+
+#variablesPrevNextContainer {
+	@include prevNextContainer(inline, top, 0px, 0px);
+
+	@include prevNextButtons(12px, left, right, 5px);
+}
+
+/* RENAME */
+.materialPrevNextContainer{
+	@include prevNextContainer(inline-block, right, 0px, 20px);
+	width:$materialPrevNextContainerWidth;
+}
+
+.viewFormButtonsHolder{
+   @include buttonsHolder($viewFormButtonsHolderWidth);
+}
+
+.materialTableActionLinkHolder, .publicationTableActionLinkHolder {
+    @include actionLinkHolder($actionLinkHolderWidth, 12px);
+}
+
+.binderButtonsHolder {
+	@include buttonsHolder($binderButtonsHolderWidth);	
+}
+
+.materialRowTitle, .publicationRowTitle {
+	font-size: 12px;
+	padding-left: 10px;
+}
+
+#materialAddNewFileContainer {
+	display: block;
+	float: right;
+	padding: 5px;
+}
+
+#materialAddNewFileButton {
+	position: relative;
+	float: right;
+}
+
+#materialCodebookTitle {
+	padding: 10px;
+}
+
+#materialFileInfoRow, #materialRemovedFileInfoRow {
+	padding-bottom: 20px;
+}
+
+#materialVariables {
+	$groupingBoxWidth: 470px;
+	$dataContainerWidth: $tableWidth / 2;
+	$variableTreeWidth: $tableWidth / 2;
+	$variableTranslationTableWidth: 470px;
+	$containerMinHeight: 400px;
+
+	#variablesTreeSelection {
+		text-align: center;
+
+		.variableTreeRadioSelect {
+			top: 0;
+			display: inline-block;
+			padding-bottom: 20px;
+			padding-right: 20px;
+		}
+	}
+
+	#variablesMainContainer {
+		position: relative;
+
+		.variablesTree {
+			top: 40;
+			left: 0;
+			width: $variableTreeWidth;
+			font-size: 12px;
+			min-height: $containerMinHeight;
+			float: left;
+		}
+
+		#groupedVariableTreeContainer {
+			#newFolder {
+				padding-left: 10px;
+			}
+			#newFolderName {
+				width: 150px;
+			}
+		}
+
+		#basicVariableTreeContainer {
+			#variableFilter {
+				padding-left: 20px;
+			}
+			ul {
+				padding-left: 20px;
+				list-style: none;
+			}
+
+			.selectedVariable {
+				font-weight: bold;
+				color: #5CAFDF;
+			}
+		}
+
+		#variableDataContainer {
+			top: 40;
+			right: 0;
+			width: $dataContainerWidth;
+			float: left;
+			margin-left: 10px;
+
+			.inline {
+				float: left;
+			}
+
+			#variableData, #variableGroupData {
+				thead {
+					.variableName {
+						width: 250px;
+					}
+					.variableContent {
+						width: 350px;
+					}
+				}
+				padding-right: 10px;
+
+				.variableDataTable {
+					position: absolute;
+					float: top;
+					top: 30px;
+					padding-right: 10px;
+
+					textarea {
+						width: 300px;
+					}
+					input {
+						width: 250px;
+					}
+				}
+			}
+
+			#variableGroupData {
+				#variableGroupName {
+					vertical-align: middle;
+				}
+			}
+		}
+
+		#variablesGroupingContainer {
+			padding: 10px;
+			position: relative;
+
+			.variablesGroupingBox {
+				border-style: solid;
+				border-width: 1px;
+				height: $containerMinHeight + 20px;
+				width: $groupingBoxWidth;
+			}
+
+			#variablesBox {
+				float: left;
+				padding: 5px;
+				
+				ul {
+					list-style: none;
+				}
+			}
+			#variablesToGroupArrowBox {
+				float: left;
+				left: $groupingBoxWidth;
+				padding: 150px 10px 0 10px;
+
+				#variablesToGroupArrow, #groupToVariablesArrow {
+					font-size: 15px;
+					background: $pageColorB;
+					color: $pageColorA;
+					padding: 3px;
+					cursor: pointer;
+				}
+			}
+			#variableGroupsBox {
+				float: right;
+				padding: 5px;
+			}
+		}
+	}
+}
+
+#materialRemovedFileInfoContent, #materialErrorInfoContent {
+	padding: 10px;
+	font-size: 12px;
+
+	th.errorInfoLabel {
+		width: 120px;
+	}
+
+	tbody {
+		td {
+			padding: 3px;
+		}		
+
+		.fileInfoLabel, .errorInfoLabel {
+			font-weight: bold;
+		}
+	}
+}
+
+#packagingHistoryContainer {
+	padding: 10px;
+}
