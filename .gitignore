@@ -11,3 +11,4 @@ Servers
 tomcat.*
 *.war
 hsql.*
+metka_theme_project/*

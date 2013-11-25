@@ -4,13 +4,29 @@
 <%@ page session="false" %>
 <!DOCTYPE HTML>
 <html lang="fi">
-    <jsp:include page="../inc/head.jsp" />
+	<head>
+    	<jsp:include page="../inc/head.jsp" />
+    </head>
     <body>
         <jsp:include page="../inc/topMenu.jsp" />
         <div class="wrapper">
             <div class="content">
-                <a href="/dialogs/compareVersionsDialog" id="compareVersionsLink" class="fancyboxpopup fancybox.ajax fancybox.iframe">versiot</a>
-            </div>
+	            <h1 class="pageTitle"><spring:message code="help.title"/></h1>
+				<div class="helpContainer">
+					<div class="help1">
+						foo
+					</div>
+					<div class="help2">
+						bar
+					</div>
+					<div class="help3">
+						foobar
+					</div>
+					<div class="help4">
+						foo
+					</div>
+	            </div>
+        	</div>
         </div>
     </body>
 </html>
