@@ -20,7 +20,7 @@ public class PublicationEntity {
     private Integer id;
 
     @OneToMany
-    @JoinColumn(name = "PUBLICATION_ID", referencedColumnName = "TARGET_ID")
+    @JoinColumn(name = "PUBLICATION_ID", referencedColumnName = "TARGET_ID", insertable = false, updatable = false)
     private List<PublicationRevisionEntity> revisionDataList;
 
     /*@Column(name = "RELEASE_YEAR")

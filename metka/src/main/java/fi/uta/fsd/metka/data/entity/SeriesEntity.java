@@ -21,7 +21,7 @@ public class SeriesEntity {
     private Integer id;
 
     @OneToMany
-    @JoinColumn(name = "SERIES_ID", referencedColumnName = "TARGET_ID")
+    @JoinColumn(name = "SERIES_ID", referencedColumnName = "TARGET_ID", insertable = false, updatable = false)
     private List<SeriesRevisionEntity> revisionDataList;
 
     // All versionable data is inside Revision data clob

@@ -18,6 +18,13 @@ public class StudyEntity {
     @Column(name = "STUDY_ID", updatable = false)
     private Integer id;
 
+    /**
+     * This is an unchanging value both here and the revision clob. First revision should be added at the same time
+     * when this is created
+     */
+    @Column(name = "STUDY_NRO", updatable = false, unique = true)
+    private String studyNro;
+
     @Column(name = "REMOVED")
     private Boolean removed;
 
@@ -31,13 +38,13 @@ public class StudyEntity {
     @JoinColumn(name = "STUDY_ID", referencedColumnName = "TARGET_ID", insertable = false, updatable = false)
     private List<StudyRevisionEntity> revisionDataList;
 
-    @ManyToMany
+    /*@ManyToMany
     @JoinTable(
             name = "BINDER_STUDY",
             joinColumns = {@JoinColumn(name = "STUDY_ID", referencedColumnName = "STUDY_ID")},
             inverseJoinColumns = {@JoinColumn(name = "BINDER_ID", referencedColumnName = "BINDER_ID")}
     )
-    private List<BinderEntity> binderList;
+    private List<BinderEntity> binderList;*/
 
     @OneToMany(mappedBy = "targetStudy")
     private List<StudyErrorEntity> errorList;
@@ -56,15 +63,13 @@ public class StudyEntity {
         this.id = id;
     }
 
-
-
-    public List<BinderEntity> getBinderList() {
+    /*public List<BinderEntity> getBinderList() {
         return binderList;
     }
 
     public void setBinderList(List<BinderEntity> binderList) {
         this.binderList = binderList;
-    }
+    }*/
 
     public List<StudyErrorEntity> getErrorList() {
         return errorList;

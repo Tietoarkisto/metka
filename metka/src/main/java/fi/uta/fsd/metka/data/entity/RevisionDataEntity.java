@@ -83,6 +83,7 @@ public abstract class RevisionDataEntity {
     public static enum DataState {
         DRAFT,
         PUBLISHED,
-        REMOVED
+        REMOVED,
+        REVISION
     }
 }
