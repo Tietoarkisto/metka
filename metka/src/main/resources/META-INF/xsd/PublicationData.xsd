@@ -10,14 +10,14 @@
     <xs:complexType name="publicationType">
         <xs:sequence>
             <xs:element name="id" type="dat:idType"/>
-            <!-- Julkaisuvuosi -->
+            <xs:element name="publicationYear" type="xs:int"/>
             <!-- Voiko julkaista -->
             <!-- Julkaisu id-nro, voiko olla sama kuin id vai onko joku muu -->
-            <!-- 1. Tallennuspvm -->
             <!-- Julkaisun ilmoitustapa -->
             <!-- Julkaisun kieli -->
-            <!-- Viimeisin muutospvm, onko sama kuin revisioData taulussa -->
-            <!-- Käsittelijä, onko sama kuin revisioData taulussa -->
+            <!-- 1. Tallennuspvm, onko sama kuin ensimmäisen revision modified date, tarvitaanko datan sisällä -->
+            <!-- Viimeisin muutospvm, onko sama kuin uusimman revision modified date, tarvitaanko datan sisällä -->
+            <!-- Käsittelijä, onko uusin muokkaaja, tällä hetkellä muutoksia tekevä vai jokun muu -->
             <!-- Julkaisun otsikko, käännökset? -->
             <!-- relPubl-tiedot, käännökset? -->
             <!-- Julkaisun huomautukset, käännökset? -->

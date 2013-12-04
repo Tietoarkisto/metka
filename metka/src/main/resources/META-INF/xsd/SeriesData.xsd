@@ -21,28 +21,28 @@
     <!-- Names -->
     <xs:complexType name="namesType">
         <xs:sequence>
-            <xs:element name="name" type="srs:nameType" maxOccurs="unbounded" minOccurs="0"/>
+            <xs:element name="name" type="dat:translationType" maxOccurs="unbounded" minOccurs="0"/>
         </xs:sequence>
     </xs:complexType>
-    <xs:complexType name="nameType">
+    <!--<xs:complexType name="nameType">
         <xs:sequence>
             <xs:element name="locale" type="dat:localeType"/>
             <xs:element name="value" type="xs:string" />
         </xs:sequence>
-    </xs:complexType>
+    </xs:complexType>-->
 
     <!-- Descriptions -->
     <xs:complexType name="descriptionsType">
         <xs:sequence>
-            <xs:element name="description" type="srs:descriptionType" maxOccurs="unbounded" minOccurs="0"/>
+            <xs:element name="description" type="dat:translationType" maxOccurs="unbounded" minOccurs="0"/>
         </xs:sequence>
     </xs:complexType>
-    <xs:complexType name="descriptionType">
+    <!--<xs:complexType name="descriptionType">
         <xs:sequence>
             <xs:element name="locale" type="dat:localeType"/>
             <xs:element name="value" type="xs:string" />
         </xs:sequence>
-    </xs:complexType>
+    </xs:complexType>-->
 
     <!-- Relations -->
     <xs:complexType name="studyLinksType">

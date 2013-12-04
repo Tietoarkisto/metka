@@ -20,10 +20,11 @@ public class StudyEntity {
 
     /**
      * This is an unchanging value both here and the revision clob. First revision should be added at the same time
-     * when this is created
+     * when this is created.
+     * Is this actually needed as a database field?
      */
-    @Column(name = "STUDY_NRO", updatable = false, unique = true)
-    private String studyNro;
+    /*@Column(name = "STUDY_NRO", updatable = false, unique = true)
+    private String studyNro;*/
 
     @Column(name = "REMOVED")
     private Boolean removed;

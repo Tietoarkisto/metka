@@ -2,7 +2,8 @@
 <xs:schema attributeFormDefault="unqualified"
            elementFormDefault="qualified"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           targetNamespace="http://www.fsd.uta.fi/metka/dataShared">
+           targetNamespace="http://www.fsd.uta.fi/metka/dataShared"
+           xmlns:dat="http://www.fsd.uta.fi/metka/dataShared">
 
     <!-- Sequence based database id -->
     <xs:simpleType name="idType">
@@ -10,6 +11,14 @@
             <xs:minInclusive value="0" />
         </xs:restriction>
     </xs:simpleType>
+
+    <!-- TranslatedValue -->
+    <xs:complexType name="translationType">
+        <xs:sequence>
+            <xs:element name="locale" type="dat:localeType" />
+            <xs:element name="value" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
 
     <!-- Locale -->
     <xs:simpleType name="localeType">
