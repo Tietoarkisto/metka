@@ -1,0 +1,141 @@
+{
+	"key": {
+		"version": "1",
+		"type": "PUBLICATION"
+	},
+    "choiselists": [
+		{
+			"key": "yes_no",
+			"options": [
+				{
+					"value": "1",
+					"test": "Kyllä"
+				},
+				{
+					"value": "0",
+					"test": "Ei"
+				}
+			]
+		},
+		{
+			"key": "langs",
+			"options": [
+				{
+					"value": "0",
+					"test": "Suomi"
+				},
+				{
+					"value": "1",
+					"test": "Englanti"
+				}
+			]
+		},
+		{
+			"key": "notification_way",
+			"options": [
+				{
+					"value": "0",
+					"test": "Ei tietoa"
+				}
+			]
+		}
+	],
+	"fields": [
+		{
+			"key": "id",
+			"translateable": "false",
+			"final": "true",
+			"type": "INTEGER"
+		},
+		{
+			"key": "publication_year",
+			"translateable": "false",
+			"type": "INTEGER"
+		},
+		{
+			"key": "can_publish",
+			"translateable": "false",
+			"type": "CHOISE",
+			"choiselist": "yes_no"
+		},
+		{
+			"key": "publication_lang",
+			"translateable": "false",
+			"type": "CHOISE",
+			"choiselist": "langs"
+		},
+		{
+			"key": "notification_way",
+			"translateable": "false",
+			"type": "CHOISE",
+			"choiselist": "notification_way"
+		},
+		{
+			"key": "publication_title",
+			"type": "STRING"
+		},
+		{
+			"key": "relPubl",
+			"type": "STRING"
+		},
+		{
+			"key": "notices",
+			"type": "STRING"
+		},
+		{
+			"key": "persons",
+			"maxValues": "0",
+			"type": "COMBINATION"
+		},
+		{
+			"key": "surname",
+			"type": "STRING",
+			"subfieldTo": "persons"
+		},
+		{
+			"key": "first_name",
+			"type": "STRING",
+			"subfieldTo": "persons"
+		},
+		{
+			"key": "pids",
+			"maxValues": "0",
+			"type": "COMBINATION"
+		},
+		{
+			"key": "pid",
+			"type": "STRING",
+			"subfieldTo": "pids"
+		},
+		{
+			"key": "pid_type",
+			"type": "COMPUTED",
+			"subfieldTo": "pids"
+		},
+		{
+			"key": "studies",
+			"maxValues": "0",
+			"type": "LINK"
+		},
+		{
+			"key": "series",
+			"maxValues": "0",
+			"type": "LINK"
+		},
+		{
+			"_comment": "This can be computed from the revision history and might not be required as part of the datamodel."
+			"key": "first_saved",
+			"type": "DATE"
+		},
+		{
+			"_comment": "This can be computed from the revision history and might not be required as part of the datamodel."
+			"key": "last_modified",
+			"type": "DATE"
+		},
+		{
+			"_comment": "This can be computed from the revision history and might not be required as part of the datamodel."
+			"key": "handler",
+			"type": "LINK"
+		}
+	]
+}
