@@ -5,10 +5,10 @@
 <!DOCTYPE HTML>
 <html lang="fi">
 	<head>
-    	<jsp:include page="../inc/head.jsp" />
+    	<jsp:include page="../../inc/head.jsp" />
     </head>
     <body>
-        <jsp:include page="../inc/topMenu.jsp" />
+        <jsp:include page="../../inc/topMenu.jsp" />
         <div class="wrapper">
             <div class="content">
             	<h1 class="pageTitle"><spring:message code="publication.view.title"/></h1>
@@ -25,7 +25,7 @@
 						<div class="publicationDataSetContainer"><label><spring:message code="publication.view.publicationLanguage"/></label><select name="language"><option>Suomi</option></select></div>
 					</div>
 					<div class="rowContainer">
-						<div class="publicationDataSetContainer"><label><spring:message code="publication.view.latestChangeDay"/></label><input type="text" name="latestChangeDay" value="" /></div>
+						<div class="publicationDataSetContainer"><label><spring:message code="publication.view.latestModificationDay"/></label><input type="text" name="latestChangeDay" value="" /></div>
 						<div class="publicationDataSetContainer"><label><spring:message code="general.handler"/></label><input type="text" name="handler" value="" /></div>
 					</div>
 					<div class="rowContainer">

@@ -40,9 +40,9 @@
 				
 				<jsp:include page="depositAgreement.jsp"/>
 				
-				<jsp:include page="description.jsp"/>
+				<jsp:include page="description/description.jsp"/>
 				
-				<jsp:include page="variables.jsp"/>
+				<jsp:include page="variables/variables.jsp"/>
 				
 				<jsp:include page="fileManagement.jsp"/>
 				
