@@ -5,10 +5,10 @@
 <!DOCTYPE HTML>
 <html lang="fi">
 	<head>
-    	<jsp:include page="../inc/head.jsp" />
+    	<jsp:include page="../../inc/head.jsp" />
     </head>
     <body>
-        <jsp:include page="../inc/topMenu.jsp" />
+        <jsp:include page="../../inc/topMenu.jsp" />
         <div class="wrapper">
             <div class="content">
 				<h1 class="pageTitle"><spring:message code="settings.title"/></h1>
@@ -24,7 +24,7 @@
 							<div class="tabs vocabulary">
 								<table id="vocabularyTable">
 									<thead>
-										<tr><th><spring:message code="settings.vocabularies.tableTitle.vocabulary"/></th><th></th></tr>
+										<tr><th><spring:message code="settings.vocabularies.vocabulary"/></th><th></th></tr>
 									</thead>
 									<tbody>
 										<c:forEach items="${vocabularies}" var="vocabulary">
@@ -43,9 +43,9 @@
 							<div class="tabs standardTexts">
 								<table id="standardTextTable">
 									<thead>
-										<tr><th><spring:message code="settings.standardTexts.tableTitle.name"/></th>
-										<th><spring:message code="settings.standardTexts.tableTitle.description"/></th>
-										<th><spring:message code="settings.standardTexts.tableTitle.standardText"/></th><th></th></tr>
+										<tr><th><spring:message code="settings.standardTexts.name"/></th>
+										<th><spring:message code="settings.standardTexts.description"/></th>
+										<th><spring:message code="settings.standardTexts.standardText"/></th><th></th></tr>
 									</thead>
 									<tbody>
 										<c:forEach items="${standardTexts}" var="standardText">

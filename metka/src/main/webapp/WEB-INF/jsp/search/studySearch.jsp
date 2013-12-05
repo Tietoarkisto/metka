@@ -5,10 +5,10 @@
 <!DOCTYPE HTML>
 <html lang="fi">
 	<head>
-    	<jsp:include page="../inc/head.jsp" />
+    	<jsp:include page="../../inc/head.jsp" />
     </head>
     <body>
-        <jsp:include page="../inc/topMenu.jsp" />
+        <jsp:include page="../../inc/topMenu.jsp" />
         <div class="wrapper">
             <div class="content">
 				<h1 class="pageTitle"><spring:message code="study.search.title"/></h1>

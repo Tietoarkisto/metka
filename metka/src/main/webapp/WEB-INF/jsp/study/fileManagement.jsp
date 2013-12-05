@@ -1,25 +1,41 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <div id="materialFiles" class="tabs2 files">
 					
-	<div class="materialRowTitle">Liitetyt tiedostot&nbsp;<img src="../images/info-sign.png" class="helpImage"/></div>
+	<div class="materialRowTitle"><spring:message code="study.view.files.title"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></div>
 	<table class="metkaTable sortableTable" id="materialFileTable">
 		<thead>
-			<tr><th>Tiedosto</th><th>Tallentaja</th><th>Kieli</th><th></th></tr>
+			<tr><th><spring:message code="general.file"/></th>
+			<th><spring:message code="study.view.files.saver"/></th>
+			<th><spring:message code="general.language"/></th>
+			<th></th></tr>
 		</thead>
 		<tbody>
-			<tr class="materialFileRow"><td class="materialFileName">x/foo/bar/data.zip<a href="dialogs/attachFileEditDialog.html" class="fancyboxpopup fancybox.ajax"/></td><td>Mikko Tanskanen</td><td>Englanti</td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
-			<tr class="materialFileRow"><td class="materialFileName">x/bar/foo/fooBar.docx<a href="dialogs/attachFileEditDialog.html" class="fancyboxpopup fancybox.ajax"/></td><td>Tiina Isotalo</td><td>Suomi</td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td></tr>
+			<c:forEach items="${study.data.files}" var="file">
+				<tr class="materialFileRow">
+				<td class="materialFileName">${file.path}<a href="dialogs/attachFileEditDialog.html" class="fancyboxpopup fancybox.ajax"></a></td>
+				<td>${file.saver}</td>
+				<td>${file.language}</td>
+				<td><a class="removeRow" href="#"><img title="<spring:message code='general.buttons.remove'/>" src="../images/cancel.png" /></a></td></tr>
+			</c:forEach>
 		</tbody>
 	</table>
-	<div class="materialTableActionLinkHolder"><a href="dialogs/attachFileDialog.html" class="addRow fancyboxpopup fancybox.ajax">Lis‰‰</a></div>						
+	<div class="materialTableActionLinkHolder"><a href="dialogs/attachFileDialog.html" class="addRow fancyboxpopup fancybox.ajax"><spring:message code="general.buttons.add"/></a></div>						
 	
-	<div class="materialRowTitle">Poistetut tiedostot&nbsp;<img src="../images/info-sign.png" class="helpImage"/></div>
+	<div class="materialRowTitle"><spring:message code="study.view.files.removedFiles.title"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></div>
 	<table class="metkaTable sortableTable" id="materialRemovedFileTable">
 		<thead>
-			<tr><th>Tiedosto</th><th>Tiedoston kuvaus</th><th>Selite</th></tr>
+			<tr><th><spring:message code="general.file"/></th>
+			<th><spring:message code="study.view.files.fileDescription"/></th>
+			<th><spring:message code="study.view.files.descrpition"/></th></tr>
 		</thead>
 		<tbody>
-			<tr class="materialRemovedFileRow" id="r1"><td class="materialFileName">x/foo/bar/wrongData.zip</td><td>Datapaketti</td><td>T‰m‰ lis‰ttiin vahingossa</td></tr>
-			<tr class="materialRemovedFileRow" id="r2"><td class="materialFileName">x/bar/foo/bar.docx</td><td>Dokumentaatio</td><td>Aivan v‰‰r‰ tiedosto, muuttunut</td></tr>
+			<c:forEach items="${study.data.removedFiles}" var="file">
+				<tr class="materialRemovedFileRow">
+				<td class="materialFileName">${file.path}</td>
+				<td>${file.fileDescription}</td>
+				<td>${file.description}</td></tr>
+			</c:forEach>
 		</tbody>
 	</table>
 	
@@ -28,29 +44,33 @@
 			<table>
 				<thead><tr><th class="fileInfoLabel"></th><th class="fileInfoContent"></th></tr></thead>
 				<tbody>
-					<tr><td class="fileInfoLabel">Tiedosto</td><td class="fileInfoContent"><a id="" class="fileInfoContentFileName" href="#"></a></td>
-					<tr><td class="fileInfoLabel">Virallinen selite</td><td class="fileInfoContent">Nullam non tempor enim. Curabitur porttitor, mauris non viverra euismod, leo lorem lobortis massa, vitae ultricies mauris massa nec ligula. Donec quis elit ut augue vehicula viverra et in tellus</td></tr>
-					<tr><td class="fileInfoLabel">Erp‰virallinen Selite</td><td class="fileInfoContent">Nullam non tempor enim. Curabitur porttitor, mauris non viverra euismod, leo lorem lobortis massa, vitae ultricies mauris massa nec ligula. Donec quis elit ut augue vehicula viverra et in tellus</td></tr>
-					<tr><td class="fileInfoLabel">Kommentti</td><td class="fileInfoContent">Ajattelin t‰m‰n lis‰t‰ t‰nne</td></tr>
-					<tr><td class="fileInfoLabel">Tallentaja</td><td class="fileInfoContent">Mikko Tanskanen</td></tr>
-					<tr><td class="fileInfoLabel">PAS</td><td class="fileInfoContent">Ei tietoa</td></tr>
-					<tr><td class="fileInfoLabel">Kieli</td><td class="fileInfoContent">Suomi</td></tr>
-					<tr><td class="fileInfoLabel">Alkuper‰inen kieli</td><td class="fileInfoContent">Ei tietoa</td></tr>
-					<tr><td class="fileInfoLabel">Ulosluovutus</td><td class="fileInfoContent">Ei tietoa</td></tr>
-					<tr><td class="fileInfoLabel">WWW</td><td class="fileInfoContent">x</td></tr>
-					<tr><td class="fileInfoLabel">Muutospvm</td><td class="fileInfoContent">3.10.2013</td></tr>
+					<%-- valitun tiedoston tiedot --%>
+					<tr><td class="fileInfoLabel"><spring:message code="general.file"/></td><td class="fileInfoContent"><a id="" class="fileInfoContentFileName" href="#">${selectedFile.path}</a></td>
+					<tr><td class="fileInfoLabel"><spring:message code="study.view.files.officialDescription"/></td><td class="fileInfoContent">${selectedFile.officialDescription}</td></tr>
+					<tr><td class="fileInfoLabel"><spring:message code="study.view.files.unofficialDescription"/></td><td class="fileInfoContent">${selectedFile.unofficialDescription}</td></tr>
+					<tr><td class="fileInfoLabel"><spring:message code="study.view.files.comment"/></td><td class="fileInfoContent">${selectedFile.comment}</td></tr>
+					<tr><td class="fileInfoLabel"><spring:message code="study.view.files.saver"/></td><td class="fileInfoContent">${selectedFile.saver}</td></tr>
+					<tr><td class="fileInfoLabel"><spring:message code="study.view.files.pas"/></td><td class="fileInfoContent">${selectedFile.pas}</td></tr>
+					<tr><td class="fileInfoLabel"><spring:message code="general.language"/></td><td class="fileInfoContent">${selectedFile.language}</td></tr>
+					<tr><td class="fileInfoLabel"><spring:message code="study.view.files.origin"/></td><td class="fileInfoContent">${selectedFile.origin}</td></tr>
+					<tr><td class="fileInfoLabel"><spring:message code="study.view.files.delivery"/></td><td class="fileInfoContent">${selectedFile.delivery}</td></tr>
+					<tr><td class="fileInfoLabel"><spring:message code="study.view.files.www"/></td><td class="fileInfoContent">${selectedFile.www}</td></tr>
+					<tr><td class="fileInfoLabel"><spring:message code="study.view.files.modificationDate"/></td><td class="fileInfoContent">${selectedFile.modified}</td></tr>
 				</tbody>
 			</table>
 		</div>
 	
-		<div class="materialRowTitle">Tiedostohistoria</div>
+		<div class="materialRowTitle"><spring:message code="study.view.files.removedFiles.title"/></div>
 		<table class="metkaTable sortableTable" id="materialFileInfoTable">
 			<thead>
-				<tr><th>Muokkausp‰iv‰m‰‰r‰</th><th>Muokkaaja</th><th>Selite</th></tr>
+				<tr><th><spring:message code="study.view.files.editDate"/></th>
+				<th><spring:message code="study.view.files.editor"/></th>
+				<th><spring:message code="study.view.files.description"/></th></tr>
 			</thead>
 			<tbody>
-				<tr><td>2.10.2013</td><td>Simo H‰yh‰</td><td>Muokkasin v‰h‰n</td></tr>
-				<tr><td>4.10.2013</td><td>Ville Iivonen</td><td>Lis‰sin pari kohtaa</td></tr>
+				<c:forEach items="${selectedFile.historyItems}" var="historyItem">
+					<tr><td>${historyItem.editDate}</td><td>${historyItem.editor}</td><td>${historyItem.description}</td></tr>
+				</c:forEach>
 			</tbody>
 		</table>
 	</div>

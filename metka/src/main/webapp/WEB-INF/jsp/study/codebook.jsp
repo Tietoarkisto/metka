@@ -1,57 +1,89 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <div id="materialCodebook" class="tabs2 codebook">
 	<div class="rowContainer containsTranslations">
 	</div>
 	<div class="rowContainer containsTranslations">
-		<div class="materialRowTitle">Koodikirjan liitteet&nbsp;<img src="../images/info-sign.png" class="helpImage"/></div>
+		<div class="materialRowTitle"><spring:message code="study.view.codebook.tableTitle"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></div>
 		<table class="metkaTable" id="materialCodebookFileTable">
 			<thead>
-				<tr><th>Tiedosto</th><th>Otsikko</th><th>Tyyppi</th><th>Kuvaus</th><th>PVM</th><th>Tallentaja</th><th></th></tr>
+				<tr><th><spring:message code="general.file"/></th>
+					<th><spring:message code="study.view.codebook.title"/></th>
+					<th><spring:message code="study.view.codebook.type"/></th>
+					<th><spring:message code="study.view.codebook.description"/></th>
+					<th><spring:message code="general.date.short"/></th>
+					<th><spring:message code="study.view.codebook.saver"/></th><th></th></tr>
 			</thead>
 			<tbody>
-				<tr class="materialCodebookFileRow">
-					<td class="materialCodebookFileName">x/foo/bar.zip</td><td>Datapaketti</td><td>Datatiedosto</td><td>Datapaketti</td><td>3.10.2013</td><td>Mikko Tanskanen</td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
-				</tr>
-				<tr class="materialCodebookFileRow">
-					<td class="materialCodebookFileName">x/bar/fooBar.docx</td><td>Datapaketti</td><td>Datatiedosto</td><td>Dokumentaatio</td><td>12.10.2013</td><td>Mikko Tanskanen</td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
-				</tr>
+				<c:forEach items="${study.data.codebook.files}" var="file">
+					<tr class="materialCodebookFileRow">
+						<td class="materialCodebookFileName">${file.path}</td>
+						<td>${file.title}</td>
+						<td>${file.type}</td>
+						<td>${file.description}</td>
+						<td>${file.date}</td>
+						<td>${file.saver}</td>
+						<td><a class="removeRow" href="#"><img title="<spring:message code='general.buttons.remove'/>" src="../images/cancel.png" /></a></td>
+					</tr>
+				</c:forEach>
 			</tbody>
 		</table>
-		<div class="materialTableActionLinkHolder"><a href="dialogs/attachFileCodeBookDialog.html" class="addRow fancyboxpopup fancybox.ajax">Lis‰‰</a></div>		
+		<div class="materialTableActionLinkHolder"><a href="dialogs/attachFileCodeBookDialog.html" class="addRow fancyboxpopup fancybox.ajax"><spring:message code="general.buttons.add"/></a></div>		
 
 		<div class="translationSv">
-			<div class="materialRowTitle">Koodikirjan liitteet (sv)</div>
+			<div class="materialRowTitle"><spring:message code="study.view.codebook.tableTitle"/></div>
 			<table class="metkaTable" id="materialCodebookFileTable">
-				<thead>
-					<tr><th>Tiedoston nimi</th><th>Kuvaus</th><th>PVM</th><th>Tallentaja</th><th></th></tr>
+				<thead>					
+					<tr><th><spring:message code="study.view.codebook.file"/></th>
+					<th><spring:message code="study.view.codebook.title"/></th>
+					<th><spring:message code="study.view.codebook.type"/></th>
+					<th><spring:message code="study.view.codebook.description"/></th>
+					<th><spring:message code="general.date.short"/></th>
+					<th><spring:message code="study.view.codebook.saver"/></th><th></th></tr>
 				</thead>
 				<tbody>
-					<tr class="materialCodebookFileRow">
-						<td class="materialCodebookFileName">data.zip</td><td>Datapaketti</td><td>3.10.2013</td><td>Mikko Tanskanen</td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
-					</tr>
-					<tr class="materialCodebookFileRow">
-						<td class="materialCodebookFileName">fooBar.docx</td><td>Dokumentaatio</td><td>12.10.2013</td><td>Mikko Tanskanen</td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
-					</tr>
+					<c:forEach items="${study.data.codebook.files}" var="file">
+						<tr class="materialCodebookFileRow">
+							<td class="materialCodebookFileName">${file.path}</td>
+							<td>${file.title}</td>
+							<td>${file.type}</td>
+							<td>${file.description}</td>
+							<td>${file.date}</td>
+							<td>${file.saver}</td>
+							<td><a class="removeRow" href="#"><img title="<spring:message code='general.buttons.remove'/>" src="../images/cancel.png" /></a></td>
+						</tr>
+					</c:forEach>
 				</tbody>
 			</table>
-			<div class="materialTableActionLinkHolder"><a href="dialogs/attachFileCodeBookDialog.html" class="addRow fancyboxpopup fancybox.ajax">Lis‰‰</a></div>		
+			<div class="materialTableActionLinkHolder"><a href="dialogs/attachFileCodeBookDialog.html" class="addRow fancyboxpopup fancybox.ajax"><spring:message code="general.buttons.add"/></a></div>		
 		</div>
 
 		<div class="translationEn">
-			<div class="materialRowTitle">Koodikirjan liitteet (en)</div>
+			<div class="materialRowTitle"><spring:message code="study.view.codebook.tableTitle"/></div>
 			<table class="metkaTable" id="materialCodebookFileTable">
 				<thead>
-					<tr><th>Tiedoston nimi</th><th>Kuvaus</th><th>PVM</th><th>Tallentaja</th><th></th></tr>
+					<tr><th><spring:message code="study.view.codebook.file"/></th>
+					<th><spring:message code="study.view.codebook.title"/></th>
+					<th><spring:message code="study.view.codebook.type"/></th>
+					<th><spring:message code="study.view.codebook.description"/></th>
+					<th><spring:message code="general.date.short"/></th>
+					<th><spring:message code="study.view.codebook.saver"/></th><th></th></tr>
 				</thead>
 				<tbody>
-					<tr class="materialCodebookFileRow">
-						<td class="materialCodebookFileName">data.zip</td><td>Datapaketti</td><td>3.10.2013</td><td>Mikko Tanskanen</td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
-					</tr>
-					<tr class="materialCodebookFileRow">
-						<td class="materialCodebookFileName">fooBar.docx</td><td>Dokumentaatio</td><td>12.10.2013</td><td>Mikko Tanskanen</td><td><a class="removeRow" href="#"><img title="Poista" src="../images/cancel.png"/></a></td>
-					</tr>
+					<c:forEach items="${study.data.codebook.files}" var="file">
+						<tr class="materialCodebookFileRow">
+							<td class="materialCodebookFileName">${file.path}</td>
+							<td>${file.title}</td>
+							<td>${file.type}</td>
+							<td>${file.description}</td>
+							<td>${file.date}</td>
+							<td>${file.saver}</td>
+							<td><a class="removeRow" href="#"><img title="<spring:message code='general.buttons.remove'/>" src="../images/cancel.png" /></a></td>
+						</tr>
+					</c:forEach>
 				</tbody>
 			</table>
-			<div class="materialTableActionLinkHolder"><a href="dialogs/attachFileCodeBookDialog.html" class="addRow fancyboxpopup fancybox.ajax">Lis‰‰</a></div>		
+			<div class="materialTableActionLinkHolder"><a href="dialogs/attachFileCodeBookDialog.html" class="addRow fancyboxpopup fancybox.ajax"><spring:message code="general.buttons.add"/></a></div>		
 		</div>
 	</div>
 	
