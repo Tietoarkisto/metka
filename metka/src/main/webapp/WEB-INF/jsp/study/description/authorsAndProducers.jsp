@@ -4,6 +4,7 @@
 <label class="studyLevelTitle"><spring:message code="study.view.description.authorsAndProducers"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></label>
 <div class="accordionContent">
 	<div class="rowContainer">
+	<%-- authorDialog --%>
 		<table class="metkaTable studyLevelOrderedTable" id="studyLevelAuthors">
 			<thead>
 				<tr><th><spring:message code="study.view.description.authorsAndProducers.author"/></th>
@@ -42,9 +43,10 @@
 				</c:forEach>
 			</tbody>									
 		</table>
-		<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addAuthorDialog.html" class="addRow fancyboxpopup fancybox.ajax link"><spring:message code='general.buttons.add'/></a></div>
+		<div class="accordionTableActionLinkHolder"><spring:message code='general.buttons.add'/></div>
 	</div>
 	<div class="rowContainer">
+		<%-- authorDialog --%>
 		<table class="metkaTable studyLevelOrderedTable" id="studyLevelOtherAuthors">
 			<thead>
 				<tr><th><spring:message code="study.view.description.authorsAndProducers.otherAuthor"/></th>
@@ -83,10 +85,11 @@
 				</c:forEach>
 			</tbody>
 		</table>
-		<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addAuthorDialog.html" class="addRow fancyboxpopup fancybox.ajax link"><spring:message code='general.buttons.add'/></a></div>
+		<div class="accordionTableActionLinkHolder"><spring:message code='general.buttons.add'/></div>
 	</div>
 
 	<div class="rowContainer">
+		<%-- producerDialog --%>
 		<table class="metkaTable studyLevelOrderedTable" id="studyLevelProducers">
 			<thead>
 				<tr><th><spring:message code="study.view.description.authorsAndProducers.producer"/></th>
@@ -121,6 +124,6 @@
 				</c:forEach>
 			</tbody>
 		</table>
-		<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addProducerDialog.html" class="addRow fancyboxpopup fancybox.ajax link"><spring:message code='general.buttons.add'/></a></div>
+		<div class="accordionTableActionLinkHolder"><spring:message code='general.buttons.add'/></div>
 	</div>
 </div>

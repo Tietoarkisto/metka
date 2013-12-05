@@ -27,6 +27,7 @@
 		</c:forEach>
 	</div>
 	<div class="rowContainer containsTranslations">
+		<%-- parTitleDialog --%>
 		<div class="studyLevelDataSetContainer translated translationFi">
 			<div class="studyLevelTableTitle"><spring:message code="study.view.description.parTitles"/></div>
 			<table class="metkaTable studyLevelTwoHeadersTable">
@@ -36,14 +37,14 @@
 				<tbody>
 					<c:forEach items="${study.data.description.otherLanguageTitles}" var="title">
 						<tr class="parTitleRow">
-							<td>${title.name}<a class="removeRow" href="dialogs/studylevel/addParTitleDialog.html" class="fancyboxpopup fancybox.ajax link"></a></td>
+							<td>${title.name}</td>
 							<td>${title.language}</td>
 							<td><a class="removeRow" href="#"><img title="<spring:message code='general.buttons.remove'/>" src="../images/cancel.png" /></a></td>
 						</tr>
 					</c:forEach>
 				</tbody>
 			</table>
-			<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addParTitleDialog.html" class="addRow fancyboxpopup fancybox.ajax link"><spring:message code='general.buttons.add'/></a></div>	
+			<div class="accordionTableActionLinkHolder"><spring:message code='general.buttons.add'/></div>	
 		</div>
 	</div>							
 </div>

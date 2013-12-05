@@ -4,6 +4,7 @@
 <label class="studyLevelTitle"><spring:message code="study.view.description.keywords"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></label>
 <div class="accordionContent">
 	<div class="rowContainer">
+		<%-- keywordDialog --%>
 		<div class="studyLevelTableTitle"><spring:message code="study.view.description.keywords.keywords"/></div>
 		<table class="metkaTable studyLevelVocabularyTable">
 			<thead>
@@ -24,9 +25,10 @@
 				</c:forEach>
 			</tbody>
 		</table>
-		<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addKeywordDialog.html" class="addRow fancyboxpopup fancybox.ajax link"><spring:message code='general.buttons.add'/></a></div>
+		<div class="accordionTableActionLinkHolder"><spring:message code='general.buttons.add'/></div>
 	</div>
 	<div class="rowContainer">
+		<%-- topicDialog --%>
 		<div class="studyLevelTableTitle"><spring:message code="study.view.description.keywords.topics"/></div>
 		<table class="metkaTable studyLevelVocabularyTable">
 			<thead>
@@ -47,6 +49,6 @@
 				</c:forEach>
 			</tbody>
 		</table>
-		<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addTopicDialog.html" class="addRow fancyboxpopup fancybox.ajax link"><spring:message code='general.buttons.add'/></a></div>
+		<div class="accordionTableActionLinkHolder"><spring:message code='general.buttons.add'/></div>
 	</div>						
 </div>

@@ -30,28 +30,6 @@ $(document).ready(function(){
 		}	
 	}
 
-	$(".errorneousMaterialRow, .materialSearchResultRow, .desktopWidgetDataRow").on("click", function() {
-		window.location = "materialView.html";
-	});
-
-	$(".materialMaterialRow, .publicationMaterialRow").on("click", function() {
-		window.open("materialView.html");
-	});
-
-	$(".publicationSearchResultRow").on("click", function() {
-		window.location = "publicationView.html";
-	});
-	$(".materialPublicationRow").on("click", function() {
-		window.open("publicationView.html");
-	});
-
-	$(".seriesSearchResultRow, .materialSeriesRow, .publicationSeriesRow").on("click", function() {
-		window.location = "seriesView.html";
-	});
-	$("materialSeriesRow, .publicationSeriesRow").on("click", function() {
-		window.open("seriesView.html");
-	});
-
 	$(".materialCodebookRow").on("click", function() {
 		$("#materialCodebookTitle a").html($(this).find(".materialCodebookFileName").html());
 		$("#materialCodebookRow").show();
@@ -176,12 +154,8 @@ $(document).ready(function(){
 		}
 	});
 
-	$("#addVocabularyButton").on("click", function() {
-		alert($(this).find(".fancyboxpopup").attr("class"));
-	});
-
 	$(".versionHistoryButton, .publishMaterialButton, .approveChangesButton").on("click", function() {
-		$(this).find("a").click();
+		// Show dialog
 	});
 
 	$("#studyLevelData").accordion({
@@ -206,7 +180,7 @@ $(document).ready(function(){
 	$(".materialFileRow, .materialErrorRow, .materialBinderRow, .versionRow, " + 
 		".studyLevelIdRow, .parTitleRow, .otherMaterialRow, .relatedMaterialRow").on("click", function(e) {
 		if($(e.target.nodeName).is('TD')){
-			$(this).find("a").click();
+			// Show dialog
 		}
 	});
 	

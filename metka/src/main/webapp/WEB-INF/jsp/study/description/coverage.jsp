@@ -4,6 +4,7 @@
 <label class="studyLevelTitle"><spring:message code="study.view.description.coverage"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></label>
 <div class="accordionContent">
 	<div class="rowContainer">
+		<%-- timePeriodDialog --%>
 		<div class="studyLevelTableTitle"><spring:message code="study.view.description.coverage.timePeriods"/></div>
 		<table class="metkaTable studyLevelTwoHeadersTable">
 			<thead>
@@ -19,9 +20,10 @@
 				</c:forEach>
 			</tbody>
 		</table>
-		<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addTimePeriodDialog.html" class="addRow fancyboxpopup fancybox.ajax link"><spring:message code='general.buttons.add'/></a></div>
+		<div class="accordionTableActionLinkHolder"><spring:message code='general.buttons.add'/></div>
 	</div>
 	<div class="rowContainer">
+		<%-- countryDialog --%>
 		<table class="metkaTable studyLevelTwoHeadersTable">
 			<thead>
 				<tr><th><spring:message code="study.view.description.coverage.country"/></th>
@@ -36,9 +38,10 @@
 				</c:forEach>
 			</tbody>
 		</table>
-		<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addCountryDialog.html" class="addRow fancyboxpopup fancybox.ajax link"><spring:message code='general.buttons.add'/></a></div>
+		<div class="accordionTableActionLinkHolder"><spring:message code='general.buttons.add'/></div>
 	</div>
 	<div class="rowContainer">
+		<%-- universeDialog --%>
 		<table class="metkaTable studyLevelTwoHeadersTable">
 			<thead>
 				<tr><th><spring:message code="study.view.description.coverage.universe"/></th>
@@ -53,10 +56,11 @@
 				</c:forEach>
 			</tbody>
 		</table>
-		<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addUniverseDialog.html" class="addRow fancyboxpopup fancybox.ajax link"><spring:message code='general.buttons.add'/></a></div>
+		<div class="accordionTableActionLinkHolder"><spring:message code='general.buttons.add'/></div>
 	</div>
 
 	<div class="rowContainer">
+		<%-- geoCoverDialog --%>
 		<table class="metkaTable">
 			<thead>
 				<tr><th><spring:message code="study.view.description.coverage.geoCover"/></th>
@@ -69,6 +73,6 @@
 				</c:forEach>
 			</tbody>
 		</table>
-		<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addGeoCoverDialog.html" class="addRow fancyboxpopup fancybox.ajax link"><spring:message code='general.buttons.add'/></a></div>
+		<div class="accordionTableActionLinkHolder"><spring:message code='general.buttons.add'/></div>
 	</div>
 </div>

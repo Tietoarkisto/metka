@@ -2,6 +2,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 
 <div id="materialErrors" class="tabs2 errors">
+	<%-- errorDialog --%>
 	<div class="materialRowTitle"><img src="../images/info-sign.png" class="helpImage"/></div>
 	<table class="metkaTable sortableTable" id="materialErrorsTable">
 		<thead>
@@ -16,7 +17,7 @@
 			<c:forEach items="${study.errors}" var="error">
 				<tr class="materialErrorRow">
 					<td>${error.date}</td>
-					<td>${error.marker}<a href="dialogs/attachErrorDialog.html" class="fancyboxpopup fancybox.ajax"></a></td>
+					<td>${error.marker}</td>
 					<td>${error.studySection}</td>
 					<td>${error.shortDescription}</td>
 					<td>${error.points}</td>
@@ -26,7 +27,7 @@
 		</tbody>
 	</table>
 
-	<div class="materialTableActionLikHolder"><a href="dialogs/attachErrorDialog.html" class="fancyboxpopup fancybox.ajax"><spring:message code="general.add"/></a></div>
+	<div class="materialTableActionLikHolder"><spring:message code="general.add"/></div>
 	
 	<jsp:include page="buttons.jsp"/>
 </div>	

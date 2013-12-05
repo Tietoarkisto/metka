@@ -1,7 +1,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+
 <div id="materialFiles" class="tabs2 files">
-					
+	<%-- fileDialog --%>					
 	<div class="materialRowTitle"><spring:message code="study.view.files.title"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></div>
 	<table class="metkaTable sortableTable" id="materialFileTable">
 		<thead>
@@ -13,14 +14,14 @@
 		<tbody>
 			<c:forEach items="${study.data.files}" var="file">
 				<tr class="materialFileRow">
-				<td class="materialFileName">${file.path}<a href="dialogs/attachFileEditDialog.html" class="fancyboxpopup fancybox.ajax"></a></td>
+				<td class="materialFileName">${file.path}</td>
 				<td>${file.saver}</td>
 				<td>${file.language}</td>
 				<td><a class="removeRow" href="#"><img title="<spring:message code='general.buttons.remove'/>" src="../images/cancel.png" /></a></td></tr>
 			</c:forEach>
 		</tbody>
 	</table>
-	<div class="materialTableActionLinkHolder"><a href="dialogs/attachFileDialog.html" class="addRow fancyboxpopup fancybox.ajax"><spring:message code="general.buttons.add"/></a></div>						
+	<div class="materialTableActionLinkHolder"><spring:message code="general.buttons.add"/></div>						
 	
 	<div class="materialRowTitle"><spring:message code="study.view.files.removedFiles.title"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></div>
 	<table class="metkaTable sortableTable" id="materialRemovedFileTable">

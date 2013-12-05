@@ -92,6 +92,7 @@
 	</div>
 	<br/>
 	<div class="rowContainer">
+		<%-- notificationDialog --%>
 		<div class="materialRowTitle"><spring:message code="study.view.basic.notifications"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></div>
 		<table class="metkaTable" id="materialNotificationTable">
 			<thead>
@@ -101,7 +102,7 @@
 			</thead>
 			<tbody>
 				<c:forEach items="${study.data.notifications}" var="notification">
-					<tr class="materialNotificationRow"><td>${notification.notificationText}<a href="dialogs/attachNotificationDialog.html" class="fancyboxpopup fancybox.ajax"></a></td>
+					<tr class="materialNotificationRow"><td>${notification.notificationText}</td>
 					<td>${notification.date}</td>
 					<td>${notification.modifier}</td>
 					<td><a class="removeRow" href="#"><img title="<spring:message code='general.buttons.remove'/>" src="../images/cancel.png" /></a></td></tr>
@@ -109,20 +110,21 @@
 			</tbody>
 
 		</table>		
-		<div class="materialTableActionLinkHolder"><a href="dialogs/attachNotificationDialog.html" class="addRow fancyboxpopup fancybox.ajax"><spring:message code="general.buttons.add"/></a></div>		
+		<div class="materialTableActionLinkHolder"><spring:message code="general.buttons.add"/></div>		
 	</div>
 	<div class="rowContainer containsTranslations">
+		<%-- versionInfoDialog (not done)--%>
 		<div class="materialRowTitle"><spring:message code="study.view.basic.dataVersions"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></div>
 		<table class="metkaTable materialVersionTable">
 			<thead>
-				<tr><th><spring:message code="study.view.basic.versionNumber"/></th>
+				<tr><th><spring:message code="general.versions.versionNumber"/></th>
 				<th><spring:message code="general.date"/></th>
 				<th><spring:message code="general.handler"/></th>
-				<th><spring:message code="study.view.basic.shortDescription"/></th></tr>
+				<th><spring:message code="general.versions.shortDescription"/></th></tr>
 			</thead>
 			<tbody>
 				<c:forEach items="${study.dataVersions}" var="version">
-					<tr class="versionRow"><td>${version.number}<a style="display: hidden;" href="dialogs/showVersionInfoDialog.html" class="showVersionInfo fancyboxpopup fancybox.ajax"></a></td>
+					<tr class="versionRow"><td>${version.number}</td>
 					<td>${version.date}</td>
 					<td>${version.handler}</td>
 					<td>${version.shortDescription}</td></tr>
@@ -131,17 +133,18 @@
 		</table>			
 	</div>
 	<div class="rowContainer containsTranslations">
+		<%-- versionInfoDialog (not done)--%>
 		<div class="materialRowTitle"><spring:message code="study.view.basic.descriptionVersions"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></div>
 		<table class="metkaTable materialVersionTable">
 			<thead>
-				<tr><th><spring:message code="study.view.basic.versionNumber"/></th>
+				<tr><th><spring:message code="general.versions.versionNumber"/></th>
 				<th><spring:message code="general.date"/></th>
 				<th><spring:message code="general.handler"/></th>
-				<th><spring:message code="study.view.basic.shortDescription"/></th></tr>
+				<th><spring:message code="general.versions.shortDescription"/></th></tr>
 			</thead>
 			<tbody>
 				<c:forEach items="${study.descriptionVersions}" var="version">
-					<tr class="versionRow"><td>${version.number}<a style="display: hidden;" href="dialogs/showVersionInfoDialog.html" class="showVersionInfo fancyboxpopup fancybox.ajax"></a></td>
+					<tr class="versionRow"><td>${version.number}</td>
 					<td>${version.date}</td>
 					<td>${version.handler}</td>
 					<td>${version.shortDescription}</td></tr>
@@ -151,6 +154,7 @@
 	</div>
 	
 	<div class="rowContainer">
+		<%-- relatedPublicationDialog --%>
 		<div class="materialRowTitle"><spring:message code="study.view.basic.relatedPublications"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></div>
 		<table class="metkaTable sortableTable" id="materialPublicationTable">
 			<thead>
@@ -166,10 +170,11 @@
 			</tbody>
 
 		</table>
-		<div class="materialTableActionLinkHolder"><a href="dialogs/attachPublicationDialog.html" class="addRow fancyboxpopup fancybox.ajax"><spring:message code="general.buttons.add"/></a></div>					
+		<div class="materialTableActionLinkHolder"><spring:message code="general.buttons.add"/></div>					
 	</div>
 	<div class="rowContainer">
-		<div class="materialRowTitle"><spring:message code="study.view.basic.realtedStudies"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></div>
+		<%-- relatedStudyDialog --%>
+		<div class="materialRowTitle"><spring:message code="study.view.basic.relatedStudies"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></div>
 		<table class="metkaTable sortableTable" id="materialMaterialTable">
 			<thead>
 				<tr><th><spring:message code="study.view.basic.number"/></th>
@@ -184,7 +189,7 @@
 			</tbody>
 
 		</table>
-		<div class="materialTableActionLinkHolder"><a href="dialogs/attachMaterialDialog.html" class="addRow fancyboxpopup fancybox.ajax"><spring:message code="general.buttons.add"/></a></div>					
+		<div class="materialTableActionLinkHolder"><spring:message code="general.buttons.add"/></div>					
 	</div>
 	<div class="rowContainer">
 		<div class="materialRowTitle"><spring:message code="study.view.basic.relatedBinders"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></div>

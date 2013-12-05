@@ -27,7 +27,6 @@ $(document).ready(function(){
 		var organization = $(this).children(":selected").attr("class");
 
 		if ( organization == "otherOrganization") {
-			alert("foo");
 			$(".newOrganizationField").show();
 		} else {
 			$(".newOrganizationField").hide();
@@ -173,7 +172,7 @@ $(document).ready(function(){
 	});
 
 	$("#compareVersionsButton").on("click", function() {
-		$("#compareVersionsLink").click();
+		// show compare dialog
 	});
 
 	$("input[type=checkbox][name=version]").click(function() {

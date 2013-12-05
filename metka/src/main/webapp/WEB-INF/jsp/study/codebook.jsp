@@ -4,6 +4,7 @@
 	<div class="rowContainer containsTranslations">
 	</div>
 	<div class="rowContainer containsTranslations">
+		<%-- codeBookFileDialog --%>
 		<div class="materialRowTitle"><spring:message code="study.view.codebook.tableTitle"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></div>
 		<table class="metkaTable" id="materialCodebookFileTable">
 			<thead>
@@ -28,7 +29,7 @@
 				</c:forEach>
 			</tbody>
 		</table>
-		<div class="materialTableActionLinkHolder"><a href="dialogs/attachFileCodeBookDialog.html" class="addRow fancyboxpopup fancybox.ajax"><spring:message code="general.buttons.add"/></a></div>		
+		<div class="materialTableActionLinkHolder"><spring:message code="general.buttons.add"/></div>		
 
 		<div class="translationSv">
 			<div class="materialRowTitle"><spring:message code="study.view.codebook.tableTitle"/></div>
@@ -55,7 +56,7 @@
 					</c:forEach>
 				</tbody>
 			</table>
-			<div class="materialTableActionLinkHolder"><a href="dialogs/attachFileCodeBookDialog.html" class="addRow fancyboxpopup fancybox.ajax"><spring:message code="general.buttons.add"/></a></div>		
+			<div class="materialTableActionLinkHolder"><spring:message code="general.buttons.add"/></div>		
 		</div>
 
 		<div class="translationEn">
@@ -83,7 +84,7 @@
 					</c:forEach>
 				</tbody>
 			</table>
-			<div class="materialTableActionLinkHolder"><a href="dialogs/attachFileCodeBookDialog.html" class="addRow fancyboxpopup fancybox.ajax"><spring:message code="general.buttons.add"/></a></div>		
+			<div class="materialTableActionLinkHolder"><spring:message code="general.buttons.add"/></div>		
 		</div>
 	</div>
 	

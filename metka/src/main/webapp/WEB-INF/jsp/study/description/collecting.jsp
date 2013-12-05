@@ -4,6 +4,7 @@
 <label class="studyLevelTitle"><spring:message code="study.view.description.collecting"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></label>
 <div class="accordionContent">
 	<div class="rowContainer">
+		<%-- collectingDateDialog --%>
 		<table class="metkaTable studyLevelTwoHeadersTable">
 			<thead>
 				<tr>
@@ -22,10 +23,11 @@
 				</c:forEach>
 			</tbody>
 		</table>
-		<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addTimePeriodDialog.html" class="addRow fancyboxpopup fancybox.ajax link"><spring:message code='general.buttons.add'/></a></div>
+		<div class="accordionTableActionLinkHolder"><spring:message code='general.buttons.add'/></div>
 	</div>
 
 	<div class="rowContainer">
+		<%-- collectorDialog --%>
 		<table class="metkaTable studyLevelOrderedTable">
 			<thead>
 				<tr>
@@ -68,10 +70,11 @@
 				</c:forEach>
 			</tbody>
 		</table>
-		<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addCollectorDialog.html" class="addRow fancyboxpopup fancybox.ajax link"><spring:message code='general.buttons.add'/></a></div>
+		<div class="accordionTableActionLinkHolder"><spring:message code='general.buttons.add'/></div>
 	</div>
 
 	<div class="rowContainer">
+		<%-- collectingDataDialog --%>
 		<table class="metkaTable studyLevelCollectingTable">
 			<thead>
 				<tr>
@@ -92,10 +95,11 @@
 				</c:forEach>
 			</tbody>
 		</table>
-		<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addCollectionDataDialog.html" class="addRow fancyboxpopup fancybox.ajax link"><spring:message code='general.buttons.add'/></a></div>
+		<div class="accordionTableActionLinkHolder"><spring:message code='general.buttons.add'/></div>
 	</div>
 
 	<div class="rowContainer">
+		<%-- collectingDataDialog --%>
 		<table class="metkaTable studyLevelCollectingTable">
 			<thead>
 				<tr>
@@ -116,10 +120,11 @@
 				</c:forEach>
 			</tbody>
 		</table>
-		<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addCollectionDataDialog.html" class="addRow fancyboxpopup fancybox.ajax link"><spring:message code='general.buttons.add'/></a></div>
+		<div class="accordionTableActionLinkHolder"><spring:message code='general.buttons.add'/></div>
 	</div>
 
 	<div class="rowContainer">
+		<%-- collectingDataDialog --%>
 		<table class="metkaTable studyLevelCollectingTable">
 			<thead>
 				<tr>
@@ -140,10 +145,11 @@
 				</c:forEach>
 			</tbody>
 		</table>
-		<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addCollectionDataDialog.html" class="addRow fancyboxpopup fancybox.ajax link"><spring:message code='general.buttons.add'/></a></div>
+		<div class="accordionTableActionLinkHolder"><spring:message code='general.buttons.add'/></div>
 	</div>
 
 	<div class="rowContainer">
+		<%-- collectingDataDialog --%>
 		<table class="metkaTable studyLevelCollectingTable">
 			<thead>
 				<tr>
@@ -164,10 +170,11 @@
 				</c:forEach>
 			</tbody>
 		</table>
-		<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addCollectionDataDialog.html" class="addRow fancyboxpopup fancybox.ajax link"><spring:message code='general.buttons.add'/></a></div>
+		<div class="accordionTableActionLinkHolder"><spring:message code='general.buttons.add'/></div>
 	</div>
 
 	<div class="rowContainer">
+		<%-- collectingDataDialog --%>
 		<table class="metkaTable">
 			<thead>
 				<tr>
@@ -190,7 +197,7 @@
 				</c:forEach>
 			</tbody>
 		</table>
-		<div class="accordionTableActionLinkHolder"><a href="dialogs/studylevel/addCollectionDataDialog.html" class="addRow fancyboxpopup fancybox.ajax link"><spring:message code='general.buttons.add'/></a></div>
+		<div class="accordionTableActionLinkHolder"><spring:message code='general.buttons.add'/></div>
 	</div>
 
 	<div class="rowContainer">
