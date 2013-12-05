@@ -1,0 +1,29 @@
+{
+	"key": {
+		"version": "1",
+		"type": "SERIES"
+	},
+	"fields": [
+		{
+			"key": "id",
+			"translateable": "false",
+			"final": "true",
+			"show": "true",
+			"type": "INTEGER"
+		},
+		{
+			"key": "name",
+			"translateable": "true",
+			"final": "false",
+			"show": "true",
+			"type": "STRING"
+		},
+		{
+			"key": "description",
+			"translateable": "true",
+			"final": "false",
+			"show": "true",
+			"type": "STRING"
+		}
+	]
+}

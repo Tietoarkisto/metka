@@ -51,6 +51,6 @@ public class SeriesRepositoryImpl implements SeriesRepository {
 
     @Override
     public List<String> listAllAbbreviations() {
-        return em.createQuery("SELECT DISTINCT s.abbreviation FROM SeriesEntity s").getResultList();
+        return em.createQuery("SELECT DISTINCT s.abbreviation FROM SeriesEntity s", String.class).getResultList();
     }
 }

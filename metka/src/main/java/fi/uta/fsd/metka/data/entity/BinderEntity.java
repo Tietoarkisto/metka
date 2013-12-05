@@ -22,7 +22,11 @@ public class BinderEntity {
     @Column(name = "BINDER_NUM")
     private String binderNum;
 
-    @Column(name = "DESCRIPTION")
+    @OneToMany
+    @JoinColumn(name = "BINDER_ID", referencedColumnName = "TARGET_ID", insertable = false, updatable = false)
+    private List<BinderRevisionEntity> revisionDataList;
+
+    /*@Column(name = "DESCRIPTION")
     private String description;
 
     @ManyToMany(mappedBy = "binderList")
@@ -50,7 +54,7 @@ public class BinderEntity {
 
     public void setDescription(String description) {
         this.description = description;
-    }
+    }*/
 
     @Override
     public String toString() {

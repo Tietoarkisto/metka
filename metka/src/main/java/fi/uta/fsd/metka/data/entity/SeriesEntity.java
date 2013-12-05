@@ -20,7 +20,12 @@ public class SeriesEntity {
     @Column(name = "SERIES_ID", insertable = false, updatable = false)
     private Integer id;
 
-    @Column(name = "ABBREVIATION")
+    @OneToMany
+    @JoinColumn(name = "SERIES_ID", referencedColumnName = "TARGET_ID", insertable = false, updatable = false)
+    private List<SeriesRevisionEntity> revisionDataList;
+
+    // All versionable data is inside Revision data clob
+    /*@Column(name = "ABBREVIATION")
     private String abbreviation;
 
     @Column(name = "NAME")
@@ -75,7 +80,7 @@ public class SeriesEntity {
 
     public void setPublicationList(List<PublicationEntity> publicationList) {
         this.publicationList = publicationList;
-    }
+    }*/
 
     @Override
     public String toString() {

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified"
+           elementFormDefault="qualified"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://www.fsd.uta.fi/metka/series"
+           xmlns:srs="http://www.fsd.uta.fi/metka/series"
+           xmlns:dat="http://www.fsd.uta.fi/metka/dataShared">
+    <xs:import namespace="http://www.fsd.uta.fi/metka/dataShared" schemaLocation="DataShared.xsd" />
+
+    <xs:complexType name="seriesType">
+        <xs:sequence>
+            <xs:element name="id" type="dat:idType"/>
+            <xs:element name="abbreviation" type="xs:string"/>
+            <xs:element name="names" type="srs:namesType"/>
+            <xs:element name="descriptions" type="srs:descriptionsType"/>
+            <xs:element name="publicationLinks" type="srs:publicationLinksType"/>
+            <xs:element name="studyLinks" type="srs:studyLinksType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Names -->
+    <xs:complexType name="namesType">
+        <xs:sequence>
+            <xs:element name="name" type="dat:translationType" maxOccurs="unbounded" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <!--<xs:complexType name="nameType">
+        <xs:sequence>
+            <xs:element name="locale" type="dat:localeType"/>
+            <xs:element name="value" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>-->
+
+    <!-- Descriptions -->
+    <xs:complexType name="descriptionsType">
+        <xs:sequence>
+            <xs:element name="description" type="dat:translationType" maxOccurs="unbounded" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <!--<xs:complexType name="descriptionType">
+        <xs:sequence>
+            <xs:element name="locale" type="dat:localeType"/>
+            <xs:element name="value" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>-->
+
+    <!-- Relations -->
+    <xs:complexType name="studyLinksType">
+        <xs:sequence>
+            <xs:element name="studyLink" type="dat:idType" maxOccurs="unbounded" minOccurs="0" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="publicationLinksType">
+        <xs:sequence>
+            <xs:element name="publicationLink" type="dat:idType" maxOccurs="unbounded" minOccurs="0" />
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
