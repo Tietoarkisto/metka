@@ -13,3 +13,4 @@ tomcat.*
 hsql.*
 metka_theme_project/*
 *.uxf
+*.*~

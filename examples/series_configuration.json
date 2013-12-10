@@ -1,28 +1,24 @@
 {
 	"key": {
-		"version": "1",
+		"version": 1,
 		"type": "SERIES"
 	},
 	"fields": [
 		{
 			"key": "id",
-			"translateable": "false",
-			"final": "true",
-			"show": "true",
+			"translateable": false,
+			"final": true,
+			"maxValues": 1,
 			"type": "INTEGER"
 		},
 		{
 			"key": "name",
-			"translateable": "true",
-			"final": "false",
-			"show": "true",
+			"maxValues": 1,
 			"type": "STRING"
 		},
 		{
 			"key": "description",
-			"translateable": "true",
-			"final": "false",
-			"show": "true",
+			"maxValues": 1,
 			"type": "STRING"
 		}
 	]
