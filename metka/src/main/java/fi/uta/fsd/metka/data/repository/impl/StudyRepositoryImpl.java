@@ -1,7 +1,7 @@
 package fi.uta.fsd.metka.data.repository.impl;
 
 import fi.uta.fsd.metka.data.repository.CRUDRepository;
-import fi.uta.fsd.metka.data.entity.StudyEntity;
+import fi.uta.fsd.metka.data.deprecated.StudyEntity;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;

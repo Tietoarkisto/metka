@@ -5,8 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import fi.uta.fsd.metka.data.entity.StudyEntity;
-import fi.uta.fsd.metka.data.entity.SeriesEntity;
+import fi.uta.fsd.metka.data.deprecated.StudyEntity;
+import fi.uta.fsd.metka.data.deprecated.SeriesEntity;
 import fi.uta.fsd.metka.mvc.domain.DomainFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

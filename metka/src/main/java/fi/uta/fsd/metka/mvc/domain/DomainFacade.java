@@ -1,8 +1,8 @@
 package fi.uta.fsd.metka.mvc.domain;
 
-import fi.uta.fsd.metka.data.entity.StudyEntity;
-import fi.uta.fsd.metka.data.entity.SeriesEntity;
-import fi.uta.fsd.metka.data.entity.VocabularyEntity;
+import fi.uta.fsd.metka.data.deprecated.StudyEntity;
+import fi.uta.fsd.metka.data.deprecated.SeriesEntity;
+import fi.uta.fsd.metka.data.deprecated.VocabularyEntity;
 import fi.uta.fsd.metka.data.repository.CRUDRepository;
 import fi.uta.fsd.metka.data.repository.SeriesRepository;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,6 @@
 package fi.uta.fsd.metka.data.repository;
 
-import fi.uta.fsd.metka.data.entity.SeriesEntity;
+import fi.uta.fsd.metka.data.deprecated.SeriesEntity;
 
 import java.util.List;
 

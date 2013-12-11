@@ -1,11 +1,9 @@
 package fi.uta.fsd.metka.mvc.controller;
 
-import fi.uta.fsd.metka.data.entity.PersonEntity;
 import fi.uta.fsd.metka.mvc.domain.DomainFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

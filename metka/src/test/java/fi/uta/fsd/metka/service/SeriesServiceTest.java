@@ -1,6 +1,6 @@
 package fi.uta.fsd.metka.service;
 
-import fi.uta.fsd.metka.data.entity.SeriesEntity;
+import fi.uta.fsd.metka.data.deprecated.SeriesEntity;
 import fi.uta.fsd.metka.mvc.domain.DomainFacade;
 import org.junit.Ignore;
 import org.junit.Test;

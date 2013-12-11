@@ -1,6 +1,6 @@
 package fi.uta.fsd.metka.data.repository.impl;
 
-import fi.uta.fsd.metka.data.entity.StandardTextEntity;
+import fi.uta.fsd.metka.data.deprecated.StandardTextEntity;
 import fi.uta.fsd.metka.data.repository.CRUDRepository;
 import org.springframework.stereotype.Repository;
 

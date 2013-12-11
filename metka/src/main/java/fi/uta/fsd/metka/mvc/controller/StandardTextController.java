@@ -1,6 +1,6 @@
 package fi.uta.fsd.metka.mvc.controller;
 
-import fi.uta.fsd.metka.data.entity.StandardTextEntity;
+import fi.uta.fsd.metka.data.deprecated.StandardTextEntity;
 import fi.uta.fsd.metka.mvc.domain.DomainFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

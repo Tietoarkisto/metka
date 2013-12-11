@@ -14,3 +14,4 @@ hsql.*
 metka_theme_project/*
 *.uxf
 *.*~
+deprecated/

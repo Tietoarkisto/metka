@@ -1,6 +1,6 @@
 package fi.uta.fsd.metka.data.repository.impl;
 
-import fi.uta.fsd.metka.data.entity.VocabularyEntity;
+import fi.uta.fsd.metka.data.deprecated.VocabularyEntity;
 import fi.uta.fsd.metka.data.repository.CRUDRepository;
 import org.springframework.stereotype.Repository;
 
