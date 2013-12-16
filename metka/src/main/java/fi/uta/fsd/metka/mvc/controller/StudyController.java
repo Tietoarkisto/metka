@@ -5,8 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import fi.uta.fsd.metka.data.deprecated.StudyEntity;
-import fi.uta.fsd.metka.data.deprecated.SeriesEntity;
 import fi.uta.fsd.metka.mvc.domain.DomainFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller("studyController")
 public class StudyController {
 
-    @ModelAttribute("Series")
+    /*@ModelAttribute("Series")
     public SeriesEntity getSeriesEntity() {
         return new SeriesEntity();
     }
@@ -31,12 +29,12 @@ public class StudyController {
 	@Autowired
 	private DomainFacade domain;
 	
-	private static final Logger logger = LoggerFactory.getLogger(StudyController.class);
+	private static final Logger logger = LoggerFactory.getLogger(StudyController.class);*/
 	
 	/**
 	 * Simply selects the home view to render by returning its name.
 	 */
-	@RequestMapping(value = "/", method = RequestMethod.GET)
+	/*@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home(Locale locale, Model model, @ModelAttribute("Series")SeriesEntity series) {
 		logger.info("Welcome home! The client locale is {}.", locale);
 		
@@ -53,5 +51,5 @@ public class StudyController {
         model.addAttribute("page", "series");
 
 		return "home";
-	}
+	}*/
 }

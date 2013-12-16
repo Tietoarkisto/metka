@@ -6,7 +6,7 @@ package fi.uta.fsd.metka.data.enums;
  * Date: 11/22/13
  * Time: 10:09 AM
  */
-public enum VersionableType {
+public enum RevisionableType {
     STUDY,
     PUBLICATION,
     SERIES

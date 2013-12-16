@@ -1,10 +1,10 @@
 package fi.uta.fsd.metka.mvc.domain;
 
-import fi.uta.fsd.metka.data.deprecated.StudyEntity;
-import fi.uta.fsd.metka.data.deprecated.SeriesEntity;
-import fi.uta.fsd.metka.data.deprecated.VocabularyEntity;
+import fi.uta.fsd.metka.data.entity.RevisionEntity;
+import fi.uta.fsd.metka.data.entity.RevisionableEntity;
+import fi.uta.fsd.metka.data.entity.impl.StudyEntity;
+import fi.uta.fsd.metka.data.entity.key.RevisionKey;
 import fi.uta.fsd.metka.data.repository.CRUDRepository;
-import fi.uta.fsd.metka.data.repository.SeriesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,40 +20,29 @@ import java.util.List;
 public class DomainFacade {
 
     @Autowired
+    private CRUDRepository<RevisionableEntity, Integer> revisionableRepository;
+    @Autowired
     private CRUDRepository<StudyEntity, String> studyRepository;
-
     @Autowired
-    private CRUDRepository<VocabularyEntity, String> vocabularyRepository;
+    private CRUDRepository<RevisionEntity, RevisionKey> revisionRepository;
 
-    @Autowired
-    private SeriesRepository seriesRepository;
+    public StudyEntity createStudy() {
+        return studyRepository.create(new StudyEntity());
+    }
 
     public List<StudyEntity> listAllStudies() {
         return studyRepository.listAll();
     }
 
-    public SeriesEntity createSeries(SeriesEntity entity) {
-        return seriesRepository.create(entity);
+    public RevisionEntity addDraft(RevisionableEntity revisionable) {
+        if(revisionable.getLatestRevisionId() != revisionable.getCurApprovedId()) {
+            return revisionRepository.read((new RevisionKey(revisionable.getId(), revisionable.getLatestRevisionId())));
+        } else {
+            RevisionEntity revision = new RevisionEntity(new RevisionKey(revisionable.getId(), revisionable.getLatestRevisionId()+1));
+            revisionRepository.create(revision);
+            revisionable.setLatestRevisionId(revision.getKey().getRevisionNo());
+            revisionableRepository.update(revisionable);
+            return revision;
+        }
     }
-
-    public List<String> listAllSeriesAbbreviations() {
-        return seriesRepository.listAllAbbreviations();
-    }
-
-    public List<SeriesEntity> listAllSeries() {
-        return seriesRepository.listAll();
-    }
-
-    public void removeSeries(Integer seriesId) {
-        seriesRepository.delete(seriesId);
-    }
-
-    public VocabularyEntity createVocabulary(VocabularyEntity vocabulary) {
-        return vocabularyRepository.create(vocabulary);
-    }
-
-    public void removeVocabulary(String vocabularyId) {
-        vocabularyRepository.delete(vocabularyId);
-    }
-
 }

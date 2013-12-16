@@ -1,6 +1,5 @@
 package fi.uta.fsd.metka.mvc.controller;
 
-import fi.uta.fsd.metka.data.deprecated.SeriesEntity;
 import fi.uta.fsd.metka.mvc.domain.DomainFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,15 +22,15 @@ import java.util.List;
 @RequestMapping("/series")
 public class SeriesController {
 
-    @ModelAttribute("Series")
+    /*@ModelAttribute("Series")
     public SeriesEntity getSeriesEntity() {
         return new SeriesEntity();
-    }
+    }*/
 
     @Autowired
     private DomainFacade domain;
 
-    @RequestMapping(value="search", method = RequestMethod.GET)
+    /*@RequestMapping(value="search", method = RequestMethod.GET)
     public String basicHandler(Model model, @ModelAttribute("Series")SeriesEntity series, BindingResult result) {
         model.addAttribute("page", "series");
 
@@ -55,5 +54,5 @@ public class SeriesController {
     public String removeSeries(@PathVariable Integer seriesId) {
         domain.removeSeries(seriesId);
         return "redirect:/";
-    }
+    }*/
 }

@@ -21,6 +21,29 @@ public class RevisionEntity {
     @Column(name = "STATE")
     private RevisionState state;
 
+    public RevisionEntity() {
+    }
+
+    public RevisionEntity(RevisionKey key) {
+        this.key = key;
+    }
+
+    public RevisionKey getKey() {
+        return key;
+    }
+
+    public void setKey(RevisionKey key) {
+        this.key = key;
+    }
+
+    public RevisionState getState() {
+        return state;
+    }
+
+    public void setState(RevisionState state) {
+        this.state = state;
+    }
+
     @Override
     public String toString() {
         return "Entity[name="+this.getClass().getSimpleName()+", key="+key+"]";

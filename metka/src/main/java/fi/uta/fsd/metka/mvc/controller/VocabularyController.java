@@ -1,6 +1,5 @@
 package fi.uta.fsd.metka.mvc.controller;
 
-import fi.uta.fsd.metka.data.deprecated.VocabularyEntity;
 import fi.uta.fsd.metka.mvc.domain.DomainFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller("vocabularyController")
 @RequestMapping("/vocabulary")
 public class VocabularyController {
-    @ModelAttribute("Vocabulary")
+    /*@ModelAttribute("Vocabulary")
     public VocabularyEntity getVocabularyEntity() {
         return new VocabularyEntity();
     }
@@ -36,5 +35,5 @@ public class VocabularyController {
     public String removeVocabulary(@PathVariable String vocabularyId) {
         domain.removeVocabulary(vocabularyId);
         return "redirect:/";
-    }
+    }*/
 }

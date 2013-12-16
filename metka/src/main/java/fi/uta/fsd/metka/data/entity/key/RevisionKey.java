@@ -12,14 +12,38 @@ import java.io.Serializable;
  */
 @Embeddable
 public class RevisionKey implements Serializable {
-    @Column(name = "VERSIONABLE_ID", updatable = false)
-    private Integer versionableId;
+    @Column(name = "REVISIONABLE_ID", updatable = false)
+    private Integer revisionableId;
 
     @Column(name = "REVISION_NO", updatable = false)
     private Integer revisionNo;
 
+    public RevisionKey() {
+    }
+
+    public RevisionKey(Integer versionableId, Integer revisionNo) {
+        this.revisionableId = versionableId;
+        this.revisionNo = revisionNo;
+    }
+
+    public Integer getRevisionableId() {
+        return revisionableId;
+    }
+
+    public void setRevisionableId(Integer revisionableId) {
+        this.revisionableId = revisionableId;
+    }
+
+    public Integer getRevisionNo() {
+        return revisionNo;
+    }
+
+    public void setRevisionNo(Integer revisionNo) {
+        this.revisionNo = revisionNo;
+    }
+
     @Override
     public String toString() {
-        return "Key[name="+this.getClass().getSimpleName()+", keys={versionableId: "+versionableId+", revisionNo: "+revisionNo+"}]";
+        return "Key[name="+this.getClass().getSimpleName()+", keys={revisionableId: "+revisionableId+", revisionNo: "+revisionNo+"}]";
     }
 }
