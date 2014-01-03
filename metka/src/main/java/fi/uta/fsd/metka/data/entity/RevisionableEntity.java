@@ -17,20 +17,33 @@ import javax.persistence.*;
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING, length = 30)
 public abstract class RevisionableEntity {
     @Id
-    @SequenceGenerator(name="VERSIONABLE_ID_SEQ", sequenceName="VERSIONABLE_ID_SEQ", allocationSize=1)
-    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="VERSIONABLE_ID_SEQ")
-    @Column(name = "VERSIONABLE_ID", updatable = false)
+    @SequenceGenerator(name="REVISIONABLE_ID_SEQ", sequenceName="REVISIONABLE_ID_SEQ", allocationSize=1)
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="REVISIONABLE_ID_SEQ")
+    @Column(name = "REVISIONABLE_ID", updatable = false)
     private Integer id;
 
     @Column(name = "TYPE", insertable=false, updatable = false)
-    @Enumerated(EnumType.STRING)
-    private RevisionableType type;
+    private String type;
 
-    @Column(name = "CUR_APPROVED_ID")
-    private Integer curApprovedId;
+    @Column(name = "CUR_APPROVED_NO")
+    private Integer curApprovedNo;
 
-    @Column(name = "LATEST_REVISION_ID")
-    private Integer latestRevisionId;
+    @Column(name = "LATEST_REVISION_NO")
+    private Integer latestRevisionNo;
+
+    @OneToOne
+    @JoinColumns({
+            @JoinColumn(name = "REVISIONABLE_ID", referencedColumnName = "REVISIONABLE_ID", insertable = false, updatable = false),
+            @JoinColumn(name = "CUR_APPROVED_NO", referencedColumnName = "REVISION_NO", insertable = false, updatable = false)
+    })
+    private RevisionEntity curApprovedRev;
+
+    @OneToOne
+    @JoinColumns({
+            @JoinColumn(name = "REVISIONABLE_ID", referencedColumnName = "REVISIONABLE_ID", insertable = false, updatable = false),
+            @JoinColumn(name = "LATEST_REVISION_NO", referencedColumnName = "REVISION_NO", insertable = false, updatable = false)
+    })
+    private RevisionEntity latestRevision;
 
     public Integer getId() {
         return id;
@@ -40,28 +53,53 @@ public abstract class RevisionableEntity {
         this.id = id;
     }
 
-    public RevisionableType getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(RevisionableType type) {
+    public void setType(String type) {
         this.type = type;
     }
 
-    public Integer getCurApprovedId() {
-        return curApprovedId;
+    public Integer getCurApprovedNo() {
+        return curApprovedNo;
     }
 
-    public void setCurApprovedId(Integer curApprovedId) {
-        this.curApprovedId = curApprovedId;
+    public void setCurApprovedNo(Integer curApprovedNo) {
+        this.curApprovedNo = curApprovedNo;
     }
 
-    public Integer getLatestRevisionId() {
-        return latestRevisionId;
+    public Integer getLatestRevisionNo() {
+        return latestRevisionNo;
     }
 
-    public void setLatestRevisionId(Integer latestRevisionId) {
-        this.latestRevisionId = latestRevisionId;
+    public void setLatestRevisionNo(Integer latestRevisionNo) {
+        this.latestRevisionNo = latestRevisionNo;
+    }
+
+    public RevisionEntity getCurApprovedRev() {
+        return curApprovedRev;
+    }
+
+    public RevisionEntity getLatestRevision() {
+        return latestRevision;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RevisionableEntity that = (RevisionableEntity) o;
+
+        if (!id.equals(that.id)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 
     @Override

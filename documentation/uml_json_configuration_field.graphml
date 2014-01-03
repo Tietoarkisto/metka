@@ -32,7 +32,7 @@
             <y:AttributeLabel>+key : String {id}
 +translateable : Boolean = true
 +immutable : Boolean = false
-+shown : Boolean = true
++display : Boolean = true
 +maxValues : Integer [0..1]
 +choiselist : String [0..1]
 +section : String [0..1]</y:AttributeLabel>
@@ -60,7 +60,7 @@ FieldType<y:LabelModel>
             <y:AttributeLabel>STRING
 INTEGER
 REAL
-LINK
+REFERENCE
 DERIVED
 CONTAINER
 CHOISE
@@ -93,7 +93,7 @@ in json clobs.</y:NodeLabel>
           <y:Geometry height="606.0" width="360.0" x="897.2249999999999" y="744.4208333333333"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="590.6875" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="352.43359375" x="4.0" y="4.0">key: identifies the field inside this configuration.
+          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="590.6875" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="354.771484375" x="4.0" y="4.0">key: identifies the field inside this configuration.
     all versionable objects use only one configuration
     so there should be no clashes.
  
@@ -105,7 +105,7 @@ immutable: If true then value can not change once given.
     value realted to this field through the program
     fail automatically. Default = false.
  
-show: is this field show to user on the ui. Default = true.
+display: is this field show to user on the ui. Default = true.
  
 maxValues: how many values can this field contain.
     If maxValues is not present then it's unbounded.
@@ -114,7 +114,7 @@ type: what kind of field is this field.
     STRING: contains text values.
     INTEGER: contains whole number values.
     REAL: contains real number values.
-    LINK: contains a link to a versionable object.
+    REFERENCE: contains a link to a versionable object.
     DERIVED: value is derived from given parameters.
     CONTAINER: value contains multiple fields.
     CHOISE: Value is chosen from given options.
@@ -124,8 +124,8 @@ type: what kind of field is this field.
  
 subfieldTo: subfields define parts of multifield values.
     This is a two tier construct where subfields can not be
-    COMBINATION fields also and all COMBINATION fields
-    have to have at least one subfield.
+    CONTAINER fields also and all CONTAINER fields
+    have to have at least two subfields.
 
 choiselist: Key of the choiselist used to select values for
     this field.

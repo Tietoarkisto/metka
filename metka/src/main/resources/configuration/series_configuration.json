@@ -1,0 +1,25 @@
+{
+	"key": {
+		"version": 1,
+		"type": "SERIES"
+	},
+	"fields": {
+		"id": {
+			"key": "id",
+			"translateable": false,
+			"immutable": true,
+			"maxValues": 1,
+			"type": "INTEGER"
+		},
+		"name": {
+			"key": "name",
+			"maxValues": 1,
+			"type": "STRING"
+		},
+		"description": {
+			"key": "description",
+			"maxValues": 1,
+			"type": "STRING"
+		}
+	}
+}

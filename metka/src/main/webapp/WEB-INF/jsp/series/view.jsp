@@ -15,7 +15,7 @@
 				<div class="upperContainer">
 					<div class="prevNextContainer"><h1 class="prev">&lt;</h1><h1 class="next">&gt;</h1></div>		
 					<div class="rowContainer containsTranslations">
-						<div class="seriesDataSetContainer"><label><spring:message code="series.view.id"/></label><input type="text" value="16" class="unModifiable" name="seriesId" readonly="readonly" /></div>
+						<div class="seriesDataSetContainer"><label><spring:message code="series.view.id"/></label><input type="text" value="${id}" class="unModifiable" name="seriesId" readonly="readonly" /></div>
 					</div>						
 					<div class="rowContainer containsTranslations">							
 						<div class="seriesDataSetContainer"><label><spring:message code="series.view.abbreviation"/></label><input type="text" class="unModifiable" name="seriesAbbr" readonly="readonly" /></div>

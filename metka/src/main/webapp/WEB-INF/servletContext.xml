@@ -10,7 +10,15 @@
 	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
 	
 	<!-- Enables the Spring MVC @Controller programming model -->
-	<mvc:annotation-driven />
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+            <beans:bean
+                    class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                <beans:property name="objectMapper" ref="metkaObjectMapper" />
+
+            </beans:bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
 
     <context:component-scan base-package="fi.uta.fsd.metka" use-default-filters="false">
         <context:include-filter expression="org.springframework.stereotype.Controller" type="annotation" />

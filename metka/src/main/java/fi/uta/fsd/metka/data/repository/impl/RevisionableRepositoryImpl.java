@@ -33,13 +33,12 @@ public class RevisionableRepositoryImpl implements CRUDRepository<RevisionableEn
 
     @Override
     public RevisionableEntity update(RevisionableEntity entity) {
-        em.merge(entity);
-        return entity;
+        return em.merge(entity);
     }
 
     @Override
     public void delete(Integer id) {
-        em.remove(em.find(RevisionableEntity.class, id));
+        em.remove(read(id));
     }
 
     @Override

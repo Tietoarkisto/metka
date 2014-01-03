@@ -18,7 +18,7 @@
       <data key="d4"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="60.0" width="170.0" x="572.0" y="664.75"/>
+          <y:Geometry height="49.0" width="170.0" x="572.0" y="664.75"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="111.5673828125" x="29.21630859375" y="3.0">FieldContainer<y:LabelModel>
@@ -29,8 +29,7 @@
             </y:ModelParameter>
           </y:NodeLabel>
           <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="" use3DEffect="true">
-            <y:AttributeLabel>+id : Field {id}
-+value : Value</y:AttributeLabel>
+            <y:AttributeLabel>+fieldKey : Field {id}</y:AttributeLabel>
             <y:MethodLabel/>
           </y:UML>
         </y:UMLClassNode>
@@ -61,18 +60,19 @@
       <data key="d4"/>
       <data key="d6">
         <y:UMLNoteNode>
-          <y:Geometry height="151.25" width="372.0" x="572.0" y="760.5"/>
+          <y:Geometry height="163.25" width="324.0" x="572.0" y="760.5"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="143.6875" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="361.66796875" x="4.0" y="4.0">{context FieldContainer inv:
-  id.maxValues &gt; 0 implies values-&gt;size &lt;= id.maxValues}
+          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="157.65625" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="318.923828125" x="4.0" y="4.0">{context FieldContainer inv:
+  fieldKey.maxValues &gt; 0 implies
+  values-&gt;size &lt;= fieldKey.maxValues}
  
 {context FieldContainer inv:
-  id.type = FieldType::CONTAINER implies
+  fieldKey.type = FieldType::CONTAINER implies
     values-&gt;forAll(v | v conforms to ContainerValue)}
  
 {context FieldContainer inv:
-  id.type = FieldType::DERIVED implies
+  fieldKey.type = FieldType::DERIVED implies
   values-&gt;forAll(v | v conforms to DerivedValue)}</y:NodeLabel>
         </y:UMLNoteNode>
       </data>
@@ -81,10 +81,10 @@
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="-1.8888888888889397" sy="-15.245901639344263" tx="0.0" ty="0.0"/>
+          <y:Path sx="-68.0" sy="-9.5" tx="0.0" ty="0.0"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="diamond" target="none"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="31.9375" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="78.162109375" x="112.7066650390625" y="2.1258684358566597">+values 0..*
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="31.9375" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="78.162109375" x="112.68988037109375" y="2.0">+values 0..*
 {ordered}<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
           </y:EdgeLabel>
           <y:BendStyle smoothed="false"/>
@@ -95,7 +95,7 @@
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="-101.0" sy="17.125" tx="0.0" ty="0.0"/>
+          <y:Path sx="-77.0" sy="22.875" tx="0.0" ty="0.0"/>
           <y:LineStyle color="#000000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="none"/>
           <y:BendStyle smoothed="false"/>

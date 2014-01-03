@@ -1,0 +1,147 @@
+{
+	"key": {
+		"version": 1,
+		"type": "PUBLICATION"
+	},
+    "choiselists": {
+		"yes_no": {
+			"key": "yes_no",
+			"options": [
+				{
+					"value": 1
+				},
+				{
+					"value": 0
+				}
+			]
+		},
+		"langs": {
+			"key": "langs",
+			"options": [
+				{
+					"value": 0
+				},
+				{
+					"value": 1
+				}
+			]
+		},
+		"notification_way": {
+			"key": "notification_way",
+			"options": [
+				{
+					"value": 0
+				}
+			]
+		}
+	},
+	"fields": {
+		"id": {
+			"key": "id",
+			"translateable": false,
+			"immutable": true,
+			"maxValues": 1,
+			"type": "INTEGER"
+		},
+		"publication_year": {
+			"key": "publication_year",
+			"translateable": false,
+			"maxValues": 1,
+			"type": "INTEGER"
+		},
+		"can_publish": {
+			"key": "can_publish",
+			"translateable": false,
+			"type": "CHOISE",
+			"maxValues": 1,
+			"choiselist": "yes_no"
+		},
+		"publication_lang": {
+			"key": "publication_lang",
+			"translateable": false,
+			"type": "CHOISE",
+			"maxValues": 1,
+			"choiselist": "langs"
+		},
+		"notification_way": {
+			"key": "notification_way",
+			"translateable": false,
+			"type": "CHOISE",
+			"maxValues": 1,
+			"choiselist": "notification_way"
+		},
+		"publication_title": {
+			"key": "publication_title",
+			"maxValues": 1,
+			"type": "STRING"
+		},
+		"relPubl": {
+			"key": "relPubl",
+			"maxValues": 1,
+			"type": "STRING"
+		},
+		"notices": {
+			"key": "notices",
+			"maxValues": 1,
+			"type": "STRING"
+		},
+		"persons": {
+			"key": "persons",
+			"type": "CONTAINER"
+		},
+		"surname": {
+			"key": "surname",
+			"type": "STRING",
+			"maxValues": 1,
+			"subfieldTo": "persons"
+		},
+		"first_name": {
+			"key": "first_name",
+			"type": "STRING",
+			"maxValues": 1,
+			"subfieldTo": "persons"
+		},
+		"pids": {
+			"key": "pids",
+			"type": "CONTAINER"
+		},
+		"pid": {
+			"key": "pid",
+			"type": "STRING",
+			"maxValues": 1,
+			"subfieldTo": "pids"
+		},
+		"pid_type": {
+			"key": "pid_type",
+			"type": "DERIVED",
+			"maxValues": 1,
+			"subfieldTo": "pids"
+		},
+		"studies": {
+			"key": "studies",
+			"type": "REFERENCE"
+		},
+		"series": {
+			"key": "series",
+			"type": "REFERENCE"
+		},
+		"first_saved": {
+			"_comment": "This can be computed from the revision history and might not be required as part of the datamodel.",
+			"key": "first_saved",
+			"maxValues": 1,
+			"type": "DATE"
+		},
+		"last_modified": {
+			"_comment": "This can be computed from the revision history and might not be required as part of the datamodel.",
+			"key": "last_modified",
+			"maxValues": 1,
+			"type": "DATE"
+		},
+		"handler": {
+			"_comment": "This can be computed from the revision history and might not be required as part of the datamodel.",
+			"key": "handler",
+			"maxValues": 1,
+			"type": "REFERENCE"
+		}
+	}
+}

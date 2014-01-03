@@ -1,6 +1,7 @@
 package fi.uta.fsd.metka.data.entity;
 
 import fi.uta.fsd.metka.data.entity.key.RevisionKey;
+import fi.uta.fsd.metka.data.enums.RevisionState;
 
 import javax.persistence.*;
 
@@ -47,12 +48,5 @@ public class RevisionEntity {
     @Override
     public String toString() {
         return "Entity[name="+this.getClass().getSimpleName()+", key="+key+"]";
-    }
-
-    public static enum RevisionState {
-        DRAFT,
-        PUBLISHED,
-        REMOVED,
-        REVISION
     }
 }

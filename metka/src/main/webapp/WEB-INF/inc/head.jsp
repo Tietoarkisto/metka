@@ -2,8 +2,7 @@
 <meta charset="utf-8">
 <title><spring:message code="page.title"/></title>
 <link rel="stylesheet" type="text/css" href="/css/styles.css">
-<link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
-<link rel="stylesheet" type="text/css" href="css/jquery.fancybox.css">
+<link rel="stylesheet" type="text/css" href="/css/jquery-ui.css">
 <script src="/js/custom.js"></script>
 <script src="/js/studies.js"></script>
 <script src="/js/series.js"></script>
