@@ -1,4 +1,4 @@
-package fi.uta.fsd.metka.mvc.domain.model.data;
+package fi.uta.fsd.metka.model.data;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

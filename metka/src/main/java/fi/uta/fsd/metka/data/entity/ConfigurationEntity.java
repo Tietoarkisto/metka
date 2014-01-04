@@ -1,7 +1,6 @@
 package fi.uta.fsd.metka.data.entity;
 
-import fi.uta.fsd.metka.mvc.domain.model.configuration.ConfigurationKey;
-import org.hibernate.annotations.Type;
+import fi.uta.fsd.metka.data.enums.ConfigurationType;
 
 import javax.persistence.*;
 
@@ -23,7 +22,7 @@ public class ConfigurationEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "TYPE")
-    private ConfigurationKey.ConfigurationType type;
+    private ConfigurationType type;
 
     @Column(name = "VERSION")
     private Integer version;
@@ -41,11 +40,11 @@ public class ConfigurationEntity {
         this.id = id;
     }
 
-    public ConfigurationKey.ConfigurationType getType() {
+    public ConfigurationType getType() {
         return type;
     }
 
-    public void setType(ConfigurationKey.ConfigurationType type) {
+    public void setType(ConfigurationType type) {
         this.type = type;
     }
 

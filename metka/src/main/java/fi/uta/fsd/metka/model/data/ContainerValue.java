@@ -1,12 +1,10 @@
-package fi.uta.fsd.metka.mvc.domain.model.data;
+package fi.uta.fsd.metka.model.data;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,7 +14,7 @@ import java.util.Set;
  * To change this template use File | Settings | File Templates.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ContainerValue {
+public class ContainerValue extends Value {
     @XmlElement
     private Map<String, FieldContainer> fields = new HashMap<String, FieldContainer>();
 }

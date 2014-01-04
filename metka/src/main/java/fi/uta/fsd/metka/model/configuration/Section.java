@@ -1,4 +1,7 @@
-package fi.uta.fsd.metka.mvc.domain.model.configuration;
+package fi.uta.fsd.metka.model.configuration;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -13,21 +16,15 @@ import javax.xml.bind.annotation.XmlElement;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Section {
-    @XmlElement private String key;
+    @XmlElement private final String key;
 
-    public Section() {
-    }
-
-    public Section(String key) {
+    @JsonCreator
+    public Section(@JsonProperty("key")String key) {
         this.key = key;
     }
 
     public String getKey() {
         return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
     }
 
     @Override

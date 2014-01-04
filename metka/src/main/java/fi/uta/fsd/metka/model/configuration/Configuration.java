@@ -1,7 +1,6 @@
-package fi.uta.fsd.metka.mvc.domain.model.configuration;
+package fi.uta.fsd.metka.model.configuration;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.joda.time.DateTime;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

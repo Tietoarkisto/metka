@@ -1,23 +1,17 @@
 package fi.uta.fsd.metka.data.automation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fi.uta.fsd.metka.data.entity.ConfigurationEntity;
-import fi.uta.fsd.metka.data.repository.CRUDRepository;
 import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.mvc.domain.model.configuration.Configuration;
-import fi.uta.fsd.metka.mvc.domain.model.configuration.ConfigurationKey;
+import fi.uta.fsd.metka.model.configuration.Configuration;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * Created with IntelliJ IDEA.

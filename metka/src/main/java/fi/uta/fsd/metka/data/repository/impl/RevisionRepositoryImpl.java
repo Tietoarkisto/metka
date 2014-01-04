@@ -44,6 +44,6 @@ public class RevisionRepositoryImpl implements CRUDRepository<RevisionEntity, Re
 
     @Override
     public List<RevisionEntity> listAll() {
-        return em.createQuery("SELECT r FROM RevisionEntity r").getResultList();
+        return em.createQuery("SELECT r FROM RevisionEntity r", RevisionEntity.class).getResultList();
     }
 }

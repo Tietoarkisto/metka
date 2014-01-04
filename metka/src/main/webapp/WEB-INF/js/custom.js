@@ -8,7 +8,8 @@ $(document).ready(function(){
 			var selectedId = $(this).attr("id");
 			$(".tabs").hide();
 			$("." + selectedId).show();
-			$(".searchResult").hide();
+            /*var results = "${info.results}"
+			if(results.length == 0) $(".searchResult").hide();*/
 		}
 	});
 	
@@ -19,9 +20,6 @@ $(document).ready(function(){
 	$(".querySaveBtn").click(function(){
 		$(".saveNewQuery").fadeOut("slow");		
 
-	});
-	$(".doSearch").click(function(){
-		$(".searchResult").fadeIn("slow");
 	});
 
 	$(".sortableTable").tablesorter();
@@ -114,5 +112,4 @@ $(document).ready(function(){
 	$(".helpImage").on("click", function() {
 		window.open("help.html");
 	});
-
 });

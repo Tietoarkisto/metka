@@ -1,6 +1,8 @@
 package fi.uta.fsd.metka.mvc.controller;
 
-import fi.uta.fsd.metka.mvc.domain.SeriesFacade;
+import fi.uta.fsd.metka.data.enums.RevisionState;
+import fi.uta.fsd.metka.mvc.domain.ConfigurationService;
+import fi.uta.fsd.metka.mvc.domain.SeriesService;
 import fi.uta.fsd.metka.mvc.domain.simple.SeriesInfo;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchSO;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSingleSO;
@@ -23,38 +25,60 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping("/series")
 public class SeriesController {
 
+    private static final String VIEW = "series/view";
+    private static final String SEARCH = "series/search";
+    private static final String MODIFY = "series/modify";
+
     @Autowired
-    private SeriesFacade facade;
+    private SeriesService seriesService;
+    @Autowired
+    private ConfigurationService configurationService;
 
     @RequestMapping(value = "view/{id}", method = RequestMethod.GET)
-    public String viewSeries(Model model, @PathVariable Integer id) {
+    public String view(Model model, @ModelAttribute("info")SeriesInfo info, @PathVariable Integer id) {
         model.addAttribute("page", "series");
-
-        SeriesInfo info = new SeriesInfo();
 
         SeriesSearchSO query = new SeriesSearchSO();
         query.setId(id);
-        SeriesSingleSO single = facade.findSeries(query);
+        SeriesSingleSO single = seriesService.findSingleSeries(query);
 
         info.setSingle(single);
         model.addAttribute("info", info);
-
-        return "series/view";
+        if(single.getState() == RevisionState.DRAFT) {
+            // TODO: this should check if the user is the handler for this revision.
+            return MODIFY;
+        } else {
+            return VIEW;
+        }
     }
 
     @RequestMapping(value="search", method = {RequestMethod.GET, RequestMethod.POST})
-    public String basicHandler(Model model, @ModelAttribute("info")SeriesInfo info, BindingResult result) {
+    public String search(Model model, @ModelAttribute("info")SeriesInfo info, BindingResult result) {
         model.addAttribute("page", "series");
 
-        System.err.println(info.getQuery());
-
-        info.setAbbreviations(facade.findAbbreviations());
-        info.setResults(facade.searchForSeries(info.getQuery()));
+        info.setAbbreviations(seriesService.findAbbreviations());
+        info.setResults(seriesService.searchForSeries(info.getQuery()));
+        if(info.getQuery() != null)info.getResults().add(info.getQuery());
         info.setQuery(info.getQuery());
 
         model.addAttribute("info", info);
 
-        return "series/search";
+        return SEARCH;
+    }
+
+    @RequestMapping(value="add", method = {RequestMethod.GET})
+    public String add(Model model, @ModelAttribute("info")SeriesInfo info, BindingResult result) {
+        model.addAttribute("page", "series");
+
+        SeriesSingleSO single = seriesService.newSeries();
+        // TODO: Show error if no new series could be created
+        if(single == null) {
+            return SEARCH;
+        }
+        info.setSingle(single);
+
+
+        return MODIFY;
     }
 
     /*@RequestMapping(value = "add", method = RequestMethod.POST)

@@ -1,5 +1,6 @@
 package fi.uta.fsd.metka.mvc.search;
 
+import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchSO;
 
 import java.util.List;
@@ -13,5 +14,5 @@ import java.util.List;
  */
 public interface SeriesSearch {
     public List<String> findAbbreviations();
-    public List<SeriesSearchSO> findSeries(SeriesSearchSO query);
+    public List<RevisionData> findSeries(SeriesSearchSO query);
 }

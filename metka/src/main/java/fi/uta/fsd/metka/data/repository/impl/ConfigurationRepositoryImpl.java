@@ -5,9 +5,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.uta.fsd.metka.data.entity.ConfigurationEntity;
+import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.mvc.domain.model.configuration.Configuration;
-import fi.uta.fsd.metka.mvc.domain.model.configuration.ConfigurationKey;
+import fi.uta.fsd.metka.model.configuration.Configuration;
+import fi.uta.fsd.metka.model.configuration.ConfigurationKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
@@ -36,7 +37,10 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
 
     @Override
     public void insert(Configuration configuration) throws JsonProcessingException {
-        List<ConfigurationEntity> list = em.createQuery("SELECT c FROM ConfigurationEntity c WHERE c.type = :type AND c.version = :version")
+        List<ConfigurationEntity> list =
+                em.createQuery(
+                        "SELECT c FROM ConfigurationEntity c WHERE c.type = :type AND c.version = :version",
+                        ConfigurationEntity.class)
                 .setParameter("type", configuration.getKey().getType())
                 .setParameter("version", configuration.getKey().getVersion())
                 .getResultList();
@@ -56,9 +60,32 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
 
     public Configuration findConfiguration(ConfigurationKey key)
             throws IncorrectResultSizeDataAccessException, JsonParseException, JsonMappingException, IOException {
-        List<ConfigurationEntity> list = em.createQuery("SELECT c FROM ConfigurationEntity c WHERE c.type = :type AND c.version = :version")
+        List<ConfigurationEntity> list =
+                em.createQuery(
+                        "SELECT c FROM ConfigurationEntity c WHERE c.type = :type AND c.version = :version",
+                        ConfigurationEntity.class)
                 .setParameter("type", key.getType())
                 .setParameter("version", key.getVersion())
+                .getResultList();
+        ConfigurationEntity entity = null;
+        try {
+            entity = DataAccessUtils.requiredSingleResult(list);
+        } catch(EmptyResultDataAccessException ex) {
+            return null;
+        }
+
+        Configuration configuration = metkaObjectMapper.readValue(entity.getData(), Configuration.class);
+        return configuration;
+    }
+
+    public Configuration findLatestConfiguration(ConfigurationType type)
+            throws IncorrectResultSizeDataAccessException, JsonMappingException, IOException {
+        List<ConfigurationEntity> list =
+                em.createQuery(
+                    "SELECT c FROM ConfigurationEntity c WHERE c.type = :type ORDER BY c.version DESC",
+                    ConfigurationEntity.class)
+                .setParameter("type", type)
+                .setMaxResults(1)
                 .getResultList();
         ConfigurationEntity entity = null;
         try {

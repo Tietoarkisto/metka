@@ -1,13 +1,10 @@
 package fi.uta.fsd.metka.service;
 
 import fi.uta.fsd.metka.MetkaTestModel;
-import fi.uta.fsd.metka.data.entity.ConfigurationEntity;
 import fi.uta.fsd.metka.data.entity.RevisionEntity;
 import fi.uta.fsd.metka.data.entity.impl.StudyEntity;
-import fi.uta.fsd.metka.mvc.domain.DomainFacade;
-import org.junit.Ignore;
+import fi.uta.fsd.metka.data.enums.RevisionState;
 import org.junit.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.util.List;
 
@@ -40,7 +37,7 @@ public class StudyServiceTest extends MetkaTestModel {
         assertEquals(revisions.size(), revSize+1);
 
         facade.approveDraft(revisions.get(0));
-        assertEquals(revisions.get(0).getState(), RevisionEntity.RevisionState.APPROVED);
+        assertEquals(revisions.get(0).getState(), RevisionState.APPROVED);
         facade.addDraft(study);
 
         revisions = facade.listAllRevisions();

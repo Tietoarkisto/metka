@@ -43,6 +43,6 @@ public class RevisionableRepositoryImpl implements CRUDRepository<RevisionableEn
 
     @Override
     public List<RevisionableEntity> listAll() {
-        return em.createQuery("SELECT r FROM RevisionableEntity r").getResultList();
+        return em.createQuery("SELECT r FROM RevisionableEntity r", RevisionableEntity.class).getResultList();
     }
 }

@@ -1,5 +1,7 @@
 package fi.uta.fsd.metka.mvc.domain.simple.series;
 
+import fi.uta.fsd.metka.data.enums.RevisionState;
+
 /**
  * Created with IntelliJ IDEA.
  * User: lasseku
@@ -9,9 +11,10 @@ package fi.uta.fsd.metka.mvc.domain.simple.series;
  */
 public class SeriesSingleSO {
     private Integer id;
-    private String abbrevation;
+    private String abbreviation;
     private String name;
     private String description;
+    private RevisionState state;
 
     public Integer getId() {
         return id;
@@ -21,12 +24,12 @@ public class SeriesSingleSO {
         this.id = id;
     }
 
-    public String getAbbrevation() {
-        return abbrevation;
+    public String getAbbreviation() {
+        return abbreviation;
     }
 
-    public void setAbbrevation(String abbrevation) {
-        this.abbrevation = abbrevation;
+    public void setAbbreviation(String abbreviation) {
+        this.abbreviation = abbreviation;
     }
 
     public String getName() {
@@ -43,5 +46,13 @@ public class SeriesSingleSO {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public RevisionState getState() {
+        return state;
+    }
+
+    public void setState(RevisionState state) {
+        this.state = state;
     }
 }

@@ -1,4 +1,7 @@
-package fi.uta.fsd.metka.mvc.domain.model.configuration;
+package fi.uta.fsd.metka.model.configuration;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -13,22 +16,16 @@ import javax.xml.bind.annotation.XmlElement;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Option {
-    @XmlElement private Integer value;
+    @XmlElement private final Integer value;
     @XmlElement private Boolean deprecated = false;
 
-    public Option() {
-    }
-
-    public Option(Integer value) {
+    @JsonCreator
+    public Option(@JsonProperty("value")Integer value) {
         this.value = value;
     }
 
     public Integer getValue() {
         return value;
-    }
-
-    public void setValue(Integer value) {
-        this.value = value;
     }
 
     public Boolean getDeprecated() {

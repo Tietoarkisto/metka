@@ -746,7 +746,8 @@ nav {
 
 .searchResult {
   margin-top: 20px;
-  display: none; }
+  display: block;
+}
 
 .searchTableActionLinkHolder {
   clear: left;

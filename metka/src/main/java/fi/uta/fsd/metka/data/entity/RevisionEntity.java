@@ -22,6 +22,11 @@ public class RevisionEntity {
     @Column(name = "STATE")
     private RevisionState state;
 
+    @Lob
+    @Column(name = "DATA", length = 10000)
+    // Length defined because HSQL has problems for some reason, should be removed.
+    private String data;
+
     public RevisionEntity() {
     }
 
@@ -43,6 +48,14 @@ public class RevisionEntity {
 
     public void setState(RevisionState state) {
         this.state = state;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
     }
 
     @Override

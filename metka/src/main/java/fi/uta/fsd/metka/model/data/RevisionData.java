@@ -1,15 +1,16 @@
-package fi.uta.fsd.metka.mvc.domain.model.data;
+package fi.uta.fsd.metka.model.data;
 
-import fi.uta.fsd.metka.mvc.domain.model.configuration.ConfigurationKey;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import fi.uta.fsd.metka.data.enums.RevisionState;
+import fi.uta.fsd.metka.model.configuration.ConfigurationKey;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,19 +22,14 @@ import java.util.Set;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "revisionData")
 public class RevisionData {
-    @XmlElement private RevisionKey key;
-    @XmlElement private ConfigurationKey configuration;
+    @XmlElement private final RevisionKey key;
+    @XmlElement private final ConfigurationKey configuration;
     @XmlElement private Map<String, Change> changes = new HashMap<String, Change>();
     @XmlElement private Map<String, FieldContainer> fields = new HashMap<String, FieldContainer>();
+    @XmlElement private RevisionState state;
 
-    public RevisionData() {
-    }
-
-    public RevisionData(RevisionKey key) {
-        this.key = key;
-    }
-
-    public RevisionData(RevisionKey key, ConfigurationKey configuration) {
+    @JsonCreator
+    public RevisionData(@JsonProperty("key")RevisionKey key, @JsonProperty("configuration")ConfigurationKey configuration) {
         this.key = key;
         this.configuration = configuration;
     }
@@ -42,16 +38,8 @@ public class RevisionData {
         return key;
     }
 
-    public void setKey(RevisionKey key) {
-        this.key = key;
-    }
-
     public ConfigurationKey getConfiguration() {
         return configuration;
-    }
-
-    public void setConfiguration(ConfigurationKey configuration) {
-        this.configuration = configuration;
     }
 
     public Map<String, Change> getChanges() {
@@ -60,6 +48,14 @@ public class RevisionData {
 
     public Map<String, FieldContainer> getFields() {
         return fields;
+    }
+
+    public RevisionState getState() {
+        return state;
+    }
+
+    public void setState(RevisionState state) {
+        this.state = state;
     }
 
     @Override

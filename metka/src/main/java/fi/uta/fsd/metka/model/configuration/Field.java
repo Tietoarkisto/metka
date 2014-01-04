@@ -1,6 +1,8 @@
-package fi.uta.fsd.metka.mvc.domain.model.configuration;
+package fi.uta.fsd.metka.model.configuration;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.data.enums.FieldType;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -17,7 +19,7 @@ import javax.xml.bind.annotation.XmlElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonIgnoreProperties("_comment")
 public class Field {
-    @XmlElement private String key;
+    @XmlElement private final String key;
     @XmlElement private Boolean translateable = true;
     @XmlElement private Boolean immutable = false;
     @XmlElement private Boolean display = true;
@@ -27,19 +29,13 @@ public class Field {
     @XmlElement private FieldType type;
     @XmlElement private String subfieldTo;
 
-    public Field() {
-    }
-
-    public Field(String key) {
+    @JsonCreator
+    public Field(@JsonProperty("key")String key) {
         this.key = key;
     }
 
     public String getKey() {
         return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
     }
 
     public Boolean getTranslateable() {

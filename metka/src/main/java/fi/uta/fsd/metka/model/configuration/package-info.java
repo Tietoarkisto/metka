@@ -3,7 +3,7 @@
         @XmlJavaTypeAdapter(type = LocalDate.class, value = LocalDateAdapter.class),
         @XmlJavaTypeAdapter(type = LocalTime.class, value = LocalTimeAdapter.class)
 })
-package fi.uta.fsd.metka.mvc.domain.model.data;
+package fi.uta.fsd.metka.model.configuration;
 
 import fi.uta.fsd.metka.mvc.adapters.DateTimeAdapter;
 import fi.uta.fsd.metka.mvc.adapters.LocalDateAdapter;

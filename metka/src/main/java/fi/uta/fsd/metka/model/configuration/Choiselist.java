@@ -1,5 +1,6 @@
-package fi.uta.fsd.metka.mvc.domain.model.configuration;
+package fi.uta.fsd.metka.model.configuration;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -17,23 +18,17 @@ import java.util.Set;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Choiselist {
-    @XmlElement private String key;
+    @XmlElement private final String key;
     @XmlElement(name = "default") @JsonProperty("default") private Integer def = 0;
     @XmlElement private Set<Option> options = new HashSet<Option>();
 
-    public Choiselist() {
-    }
-
-    public Choiselist(String key) {
+    @JsonCreator
+    public Choiselist(@JsonProperty("key")String key) {
         this.key = key;
     }
 
     public String getKey() {
         return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
     }
 
     public Integer getDef() {

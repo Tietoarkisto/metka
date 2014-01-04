@@ -11,21 +11,21 @@
         <jsp:include page="../../inc/topMenu.jsp" />
         <div class="wrapper">
             <div class="content">
-                <h1 class="pageTitle">Sarjahaku</h1>
+                <h1 class="pageTitle"><spring:message code="series.search.title"/></h1>
 
                 <div class="searchFormContainer">
                     <form:form method="post" action="/series/search" modelAttribute="info.query">
                         <div class="searchFormRowHolder">
-                            <form:label path="id">Sarjan numero</form:label>
+                            <form:label path="id"><spring:message code="series.search.form.id"/></form:label>
                             <form:input path="id" cssClass="searchInput" />
                         </div>
                         <div class="searchFormRowHolder">
-                            <form:label path="name">Sarjan nimi</form:label>
+                            <form:label path="name"><spring:message code="series.search.form.name"/></form:label>
                             <form:input path="name" cssClass="searchInput" />
                         </div>
                         <div class="searchFormRowHolder">
-                            <form:label path="abbreviation">Sarjan lyhenne</form:label>
-                            <form:select path="abbreviation" class="formSelect" name="sarjanNimi" items="${info.abbreviations}" />
+                            <form:label path="abbreviation"><spring:message code="series.search.form.abbreviation"/></form:label>
+                            <form:select path="abbreviation" class="formSelect" items="${info.abbreviations}" />
                         </div>
                         <div class="searchFormButtonsHolder">
                             <input type="submit" class="searchFormInput doSearch" value="Tee haku">
@@ -39,6 +39,33 @@
                         </div>
                     </form:form>
                 </div>
+                <c:if test="${not empty info.results}">
+                    <div class="searchResult">
+                        <h1 class="pageTitle"><spring:message code="general.searchResult"/></h1>
+                        <div class="searchResultDataContainer">
+                            <table id="myTable" class="metkaTable sortableTable">
+                                <thead>
+                                    <tr>
+                                        <th><spring:message code="series.search.form.id"/></th>
+                                        <th><spring:message code="series.search.form.abbreviation"/></th>
+                                        <th><spring:message code="series.search.form.name"/></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:forEach var="r" items="${info.results}">
+                                        <tr class="seriesSearchResultRow" onclick="location.href='/series/view/${r.id}'">
+                                            <td>${r.id}</td>
+                                            <td>${r.abbreviation}</td>
+                                            <td>${r.name}</td>
+                                        </tr>
+                                    </c:forEach>
+                                </tbody>
+                            </table>
+                            <!-- TODO: implement search result csv-export
+                            <div class="searchTableActionLinkHolder"><input type="submit" class="searchFormInput" value="Lataa CSV"/></div>-->
+                        </div>
+                    </div>
+                </c:if>
             </div>
         </div>
     </body>

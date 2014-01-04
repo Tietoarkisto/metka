@@ -1,4 +1,7 @@
-package fi.uta.fsd.metka.mvc.domain.model.data;
+package fi.uta.fsd.metka.model.data;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -15,22 +18,16 @@ import java.util.ArrayList;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FieldContainer {
-    @XmlElement private String fieldKey;
+    @XmlElement(name="key") @JsonProperty("key") private final String fieldKey;
     @XmlElement private List<Value> values = new ArrayList<Value>();
 
-    public FieldContainer() {
-    }
-
-    public FieldContainer(String fieldKey) {
+    @JsonCreator
+    public FieldContainer(@JsonProperty("key")String fieldKey) {
         this.fieldKey = fieldKey;
     }
 
     public String getFieldKey() {
         return fieldKey;
-    }
-
-    public void setFieldKey(String fieldKey) {
-        this.fieldKey = fieldKey;
     }
 
     public List<Value> getValues() {

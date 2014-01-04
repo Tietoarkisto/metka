@@ -1,5 +1,7 @@
-package fi.uta.fsd.metka.mvc.domain.model.configuration;
+package fi.uta.fsd.metka.model.configuration;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -16,13 +18,11 @@ import javax.xml.bind.annotation.XmlElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ConfigurationKey {
 
-    @XmlElement private Integer version;
-    @XmlElement private ConfigurationType type;
+    @XmlElement private final Integer version;
+    @XmlElement private final ConfigurationType type;
 
-    public ConfigurationKey() {
-    }
-
-    public ConfigurationKey(ConfigurationType type, Integer version) {
+    @JsonCreator
+    public ConfigurationKey(@JsonProperty("type")ConfigurationType type, @JsonProperty("version")Integer version) {
         this.type = type;
         this.version = version;
     }
@@ -31,16 +31,8 @@ public class ConfigurationKey {
         return version;
     }
 
-    public void setVersion(Integer version) {
-        this.version = version;
-    }
-
     public ConfigurationType getType() {
         return type;
-    }
-
-    public void setType(ConfigurationType type) {
-        this.type = type;
     }
 
     @Override
