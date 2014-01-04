@@ -16,24 +16,26 @@
                 <div class="searchFormContainer">
                     <form:form method="post" action="/series/search" modelAttribute="info.query">
                         <div class="searchFormRowHolder">
-                            <form:label path="id"><spring:message code="series.search.form.id"/></form:label>
+                            <form:label path="id"><spring:message code="series.form.id"/></form:label>
                             <form:input path="id" cssClass="searchInput" />
                         </div>
                         <div class="searchFormRowHolder">
-                            <form:label path="name"><spring:message code="series.search.form.name"/></form:label>
+                            <form:label path="name"><spring:message code="series.form.name"/></form:label>
                             <form:input path="name" cssClass="searchInput" />
                         </div>
                         <div class="searchFormRowHolder">
-                            <form:label path="abbreviation"><spring:message code="series.search.form.abbreviation"/></form:label>
+                            <form:label path="abbreviation"><spring:message code="series.form.abbreviation"/></form:label>
                             <form:select path="abbreviation" class="formSelect" items="${info.abbreviations}" />
                         </div>
                         <div class="searchFormButtonsHolder">
+                            <!-- TODO: translation -->
                             <input type="submit" class="searchFormInput doSearch" value="Tee haku">
                             <!-- TODO: Fix this reset button
                             <input type="reset" class="searchFormInput" value="Tyhjennä">-->
                         </div>
 
                         <div id="addNewButton">
+                            <!-- TODO: translation -->
                             <input type="button" id="addNewSeriesBtn" class="searchFormInput" value="Lisää uusi"
                                     onclick="location.href='/series/add'"/>
                         </div>
@@ -46,9 +48,9 @@
                             <table id="myTable" class="metkaTable sortableTable">
                                 <thead>
                                     <tr>
-                                        <th><spring:message code="series.search.form.id"/></th>
-                                        <th><spring:message code="series.search.form.abbreviation"/></th>
-                                        <th><spring:message code="series.search.form.name"/></th>
+                                        <th><spring:message code="series.form.id"/></th>
+                                        <th><spring:message code="series.form.abbreviation"/></th>
+                                        <th><spring:message code="series.form.name"/></th>
                                     </tr>
                                 </thead>
                                 <tbody>

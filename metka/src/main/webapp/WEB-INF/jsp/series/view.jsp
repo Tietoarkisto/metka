@@ -16,19 +16,19 @@
 					<div class="prevNextContainer"><h1 class="prev">&lt;</h1><h1 class="next">&gt;</h1></div>		
 					<div class="rowContainer containsTranslations">
 						<div class="seriesDataSetContainer">
-                            <label><spring:message code="series.view.id"/></label>
+                            <label><spring:message code="series.form.id"/></label>
                             <input type="text" value="${info.single.id}" name="seriesId" readonly="readonly" />
                         </div>
 					</div>						
 					<div class="rowContainer containsTranslations">							
 						<div class="seriesDataSetContainer">
-                            <label><spring:message code="series.view.abbreviation"/></label>
-                            <input type="text" value="${info.single.abbrevation}" name="seriesAbbr" readonly="readonly" />
+                            <label><spring:message code="series.form.abbreviation"/></label>
+                            <input type="text" value="${info.single.abbreviation}" name="seriesAbbr" readonly="readonly" />
                         </div>
 					</div>
 					<div class="rowContainer containsTranslations">
 						<div class="seriesDataSetContainer translated translationFi">
-                            <label><spring:message code="series.view.name"/></label>
+                            <label><spring:message code="series.form.name"/></label>
                             <input type="text" name="seriesNameFi" value="${info.single.name}" readonly="readonly" />
                         </div>
 						<%-- TODO: Implement translatiopn functionality
@@ -37,7 +37,7 @@
 					</div>
 					<div class="rowContainer containsTranslations">							
 						<div class="seriesDataSetContainer translated translationFi">
-                            <label><spring:message code="series.view.description"/></label>
+                            <label><spring:message code="series.form.description"/></label>
                             <textarea id="seriesDescriptionFi" name="seriesDescrFi" readonly="readonly" >${info.single.description}</textarea>
                         </div>
 						<%-- TODO: Implement translation functionality
@@ -51,10 +51,6 @@
 					<input type="button" class="ediButton searchFormInput" value="<spring:message code='general.buttons.remove'/>" />--%>
 					<%-- TODO: Implement series version history display functionality
 					<a href="dialogs/versionHistoryDialog.html" class="versionHistoryButton fancyboxpopup fancybox.ajax button"><spring:message code='general.buttons.versionHistory'/></a>--%>
-					<%-- TODO: Only applicable when editing draft, move there
-					<input type="button" id="approvePublcationButton" class="editButton searchFormInput" value="<spring:message code='general.buttons.approve'/>" />--%>
-					<%-- TODO: Only applicable when editing draft, move there
-					<input type="button" id="saveSeriesChangesButton" class="editButton searchFormInput" value="<spring:message code='general.buttons.save'/>" />--%>
 					<%-- TODO: Implement add new draft and draft modification for series --%>
                     <input type="button" id="editSeriesButton" class="previewButton searchFormInput" value="<spring:message code='general.buttons.edit'/>" />
 				</div>

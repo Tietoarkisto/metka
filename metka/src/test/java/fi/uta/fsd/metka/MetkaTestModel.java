@@ -11,9 +11,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = { "classpath:testApplicationContext.xml"})
 public class MetkaTestModel {
 
-    @Autowired
-    protected DomainService facade;
-
 	@Before
 	public void before() {
 		
