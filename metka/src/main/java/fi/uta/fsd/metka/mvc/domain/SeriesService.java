@@ -17,6 +17,8 @@ import org.springframework.util.NumberUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
+
 /**
  * Created with IntelliJ IDEA.
  * User: lasseku
@@ -105,40 +107,5 @@ public class SeriesService {
         so.setName(extractStringValue(getContainerFromRevisionData(data, "name")));
 
         return so;
-    }
-
-    private FieldContainer getContainerFromRevisionData(RevisionData data, String key) {
-        FieldContainer container = null;
-        if(data.getState() == RevisionState.DRAFT) {
-            Change change = data.getChanges().get(key);
-            if(change.getNewField() != null) {
-                container = change.getNewField();
-            } else {
-                container = change.getOriginalField();
-            }
-        } else {
-            container = data.getFields().get(key);
-        }
-
-        return container;
-    }
-
-    private Integer extractIntegerValue(FieldContainer field) {
-        Integer integer = null;
-        if(field != null && field.getValues().size() > 0) {
-            String value = ((SimpleValue) field.getValues().get(0)).getValue();
-            integer = NumberUtils.parseNumber(value, Integer.class);
-        }
-
-        return integer;
-    }
-
-    private String extractStringValue(FieldContainer field) {
-        String string = null;
-        if(field != null && field.getValues().size() > 0) {
-            string = ((SimpleValue) field.getValues().get(0)).getValue();
-        }
-
-        return string;
     }
 }

@@ -18,7 +18,7 @@
                     <form:form method="post" action="/series/save" modelAttribute="info.single">
                         <div class="seriesDataSetContainer">
                             <form:label path="id"><spring:message code="series.form.id"/></form:label>
-                            <form:input path="id" readonly="readonly"/>
+                            <form:input path="id" readonly="true"/>
                         </div>
                         <div class="seriesDataSetContainer">
                             <form:label path="abbreviation"><spring:message code="series.form.abbreviation"/></form:label>
@@ -27,7 +27,7 @@
                                     <form:input path="abbreviation" />
                                 </c:when>
                                 <c:otherwise>
-                                    <form:input path="abbreviation" readonly="readonly" />
+                                    <form:input path="abbreviation" readonly="true" />
                                 </c:otherwise>
                             </c:choose>
                         </div>
@@ -46,14 +46,15 @@
                             <div class="seriesDataSetContainer translationEn"><label><spring:message code="series.view.description"/></label><textarea name="seriesDescrEn"></textarea></div>--%>
                         </div>
                         <div class="viewFormButtonsHolder">
-                            <input type="submit" class="searchFormInput" value="Tallenna">
+                            <spring:message code="series.modify.title" var="general_buttons_save"/>
+                            <input type="submit" class="searchFormInput" value="${general_buttons_save}">
                             <!-- TODO: Fix this reset button
                             <input type="reset" class="searchFormInput" value="Tyhjennä">-->
                         </div>
                     </form:form>
 				</div>
 
-				<div class="viewFormButtonsHolder" style="margin-bottom:20px;width: 630px;">
+				<%--<div class="viewFormButtonsHolder" style="margin-bottom:20px;width: 630px;">--%>
 					<%-- TODO: Implement series remove functionality
 					<input type="button" class="ediButton searchFormInput" value="<spring:message code='general.buttons.remove'/>" />--%>
 					<%-- TODO: Implement series version history display functionality
@@ -62,7 +63,7 @@
 					<input type="button" id="approvePublcationButton" class="editButton searchFormInput" value="<spring:message code='general.buttons.approve'/>" />--%>
 					<%-- TODO: Only applicable when editing draft, move there
 					<input type="button" id="saveSeriesChangesButton" class="editButton searchFormInput" value="<spring:message code='general.buttons.save'/>" />--%>
-				</div>
+				<%--</div>--%>
             </div>
         </div>
     </body>

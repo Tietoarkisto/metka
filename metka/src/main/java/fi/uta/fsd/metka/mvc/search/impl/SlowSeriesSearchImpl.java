@@ -1,12 +1,22 @@
 package fi.uta.fsd.metka.mvc.search.impl;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import fi.uta.fsd.metka.data.entity.impl.SeriesEntity;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchSO;
 import fi.uta.fsd.metka.mvc.search.SeriesSearch;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -17,12 +27,32 @@ import java.util.List;
  */
 @Repository("seriesSearch")
 public class SlowSeriesSearchImpl implements SeriesSearch {
+
+    @PersistenceContext(name = "entityManager")
+    private EntityManager em;
+
+    @Autowired
+    private ObjectMapper metkaObjectMapper;
+
     @Override
-    public List<String> findAbbreviations() {
+    public List<String> findAbbreviations() throws JsonParseException, JsonMappingException, IOException {
         List<String> list = new ArrayList<String>();
+
+        List<SeriesEntity> entities = em.createQuery("SELECT s FROM SeriesEntity s", SeriesEntity.class).getResultList();
+        for(SeriesEntity entity : entities) {
+            String data = null;
+            if(entity.getCurApprovedRev() == null) {
+                data = entity.getCurApprovedRev().getData();
+            } else {
+                data = entity.getLatestRevision().getData();
+            }
+
+            RevisionData revData = metkaObjectMapper.readValue(data, RevisionData.class);
+            //FormContainer form = getContainerFromRevisionData(revData, "abbreviation");
+        }
         /* TODO:
          * Get all series revisionables.
-         * Get their newest approved revision.
+         * Get their newest approved revision or if none then their latest revision.
          * For each revisionable deserialize their revision data,
          * get the abbreaviation field and add its value to the set if it is not yet there.
          * Return list

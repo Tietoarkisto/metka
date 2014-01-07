@@ -56,6 +56,7 @@ public class SeriesFactory {
         DateTime time = new DateTime();
 
         RevisionData data = createRevisionData(entity, conf);
+        data.setState(RevisionState.DRAFT);
 
         Change change;
         FieldContainer field;

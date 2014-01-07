@@ -48,6 +48,8 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         RevisionData data = factory.newData(revision);
         em.persist(revision);
 
+        entity.setLatestRevisionNo(revision.getKey().getRevisionNo());
+
         return data;
     }
 }
