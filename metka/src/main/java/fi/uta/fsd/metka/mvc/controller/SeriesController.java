@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  * User: MetkaDev1
@@ -57,8 +59,11 @@ public class SeriesController {
         model.addAttribute("page", "series");
 
         info.setAbbreviations(seriesService.findAbbreviations());
-        info.setResults(seriesService.searchForSeries(info.getQuery()));
-        if(info.getQuery() != null)info.getResults().add(info.getQuery());
+        List<SeriesSearchSO> results = seriesService.searchForSeries(info.getQuery());
+        if(results.size() == 1) {
+            return "redirect:/series/view/"+results.get(0).getId();
+        }
+        info.setResults(results);
         info.setQuery(info.getQuery());
 
         model.addAttribute("info", info);
@@ -77,6 +82,16 @@ public class SeriesController {
         }
         info.setSingle(single);
 
+
+        return MODIFY;
+    }
+
+    @RequestMapping(value="save", method = {RequestMethod.POST})
+    public String save(Model model, @ModelAttribute("info")SeriesInfo info, BindingResult result) {
+        model.addAttribute("page", "series");
+
+        boolean success = seriesService.saveSeries(info.getSingle());
+        model.addAttribute("success", success);
 
         return MODIFY;
     }

@@ -18,6 +18,7 @@ import java.util.List;
  */
 @Transactional(readOnly = true)
 public interface SeriesSearch {
-    public List<String> findAbbreviations() throws JsonParseException, JsonMappingException, IOException;
-    public List<RevisionData> findSeries(SeriesSearchSO query);
+    public List<String> findAbbreviations() throws IOException;
+    public List<RevisionData> findSeries(SeriesSearchSO query) throws IOException;
+    public RevisionData findSingleSeries(Integer id) throws IOException;
 }

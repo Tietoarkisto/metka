@@ -13,6 +13,9 @@
             <div class="content">
            	<h1 class="pageTitle"><spring:message code="series.modify.title"/></h1>
 				<div class="upperContainer">
+                    <c:if test="${success}">
+                        <p>Tallennus onnistui</p>
+                    </c:if>
 					<%-- TODO: Implement prev next functionality
 					<div class="prevNextContainer"><h1 class="prev">&lt;</h1><h1 class="next">&gt;</h1></div>--%>
                     <form:form method="post" action="/series/save" modelAttribute="info.single">
@@ -46,7 +49,7 @@
                             <div class="seriesDataSetContainer translationEn"><label><spring:message code="series.view.description"/></label><textarea name="seriesDescrEn"></textarea></div>--%>
                         </div>
                         <div class="viewFormButtonsHolder">
-                            <spring:message code="series.modify.title" var="general_buttons_save"/>
+                            <spring:message code="general.buttons.save" var="general_buttons_save"/>
                             <input type="submit" class="searchFormInput" value="${general_buttons_save}">
                             <!-- TODO: Fix this reset button
                             <input type="reset" class="searchFormInput" value="Tyhjennä">-->

@@ -64,19 +64,21 @@ public class SeriesFactory {
 
         change = createSimpleChange("id", time);
         field = new FieldContainer(change.getKey());
-        sv = new SimpleValue(entity.getKey().getRevisionableId()+"");
-        field.getValues().add(sv);
+        setSimpleValue(field, entity.getKey().getRevisionableId()+"");
         change.setOriginalField(field);
         change.setOperation(ChangeOperation.UNCHANGED);
         data.getChanges().put(change.getKey(), change);
 
         change = createSimpleChange("abbreviation", time);
+        change.setOperation(ChangeOperation.UNCHANGED);
         data.getChanges().put(change.getKey(), change);
 
         change = createSimpleChange("name", time);
+        change.setOperation(ChangeOperation.UNCHANGED);
         data.getChanges().put(change.getKey(), change);
 
         change = createSimpleChange("description", time);
+        change.setOperation(ChangeOperation.UNCHANGED);
         data.getChanges().put(change.getKey(), change);
 
         entity.setData(metkaObjectMapper.writeValueAsString(data));
@@ -91,10 +93,21 @@ public class SeriesFactory {
         );
     }
 
-    private Change createSimpleChange(String key, DateTime time) {
+    public Change createSimpleChange(String key, DateTime time) {
         Change change = new Change(key);
         change.setChangeTime(time);
 
         return change;
+    }
+
+    /*
+    * This clears existing values from given fields and inserts a new SimpleValue with the given
+    * value.
+    * WARNING: This does not in any way check what type of value this field is supposed to have
+     *         so you can easily insert illegal values with this.
+     */
+    public void setSimpleValue(FieldContainer field, String value) {
+        field.getValues().clear();
+        field.getValues().add(new SimpleValue(value));
     }
 }

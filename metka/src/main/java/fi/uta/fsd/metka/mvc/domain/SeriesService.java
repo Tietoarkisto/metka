@@ -3,10 +3,8 @@ package fi.uta.fsd.metka.mvc.domain;
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.data.repository.SeriesRepository;
-import fi.uta.fsd.metka.model.data.Change;
-import fi.uta.fsd.metka.model.data.FieldContainer;
-import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.SimpleValue;
+import fi.uta.fsd.metka.model.configuration.ConfigurationKey;
+import fi.uta.fsd.metka.model.data.*;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchSO;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSingleSO;
 import fi.uta.fsd.metka.mvc.search.SeriesSearch;
@@ -14,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.NumberUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,12 +35,29 @@ public class SeriesService {
     private SeriesRepository repository;
 
     public List<String> findAbbreviations() {
-        return search.findAbbreviations();
+        List<String> list = null;
+        try {
+            list = search.findAbbreviations();
+        } catch(Exception ex) {
+            // TODO: better exception handling with messages to the user
+            ex.printStackTrace();
+            list = new ArrayList<String>();
+        } finally {
+            return list;
+        }
     }
 
     public List<SeriesSearchSO> searchForSeries(SeriesSearchSO query) {
-        List<RevisionData> datas = search.findSeries(query);
         List<SeriesSearchSO> seriesList = new ArrayList<SeriesSearchSO>();
+        List<RevisionData> datas = null;
+        try {
+            datas = search.findSeries(query);
+        } catch(Exception ex) {
+            // TODO: better exception handling with messages to the user
+            ex.printStackTrace();
+            return seriesList;
+        }
+
         for(RevisionData data : datas) {
             SeriesSearchSO series = searchSOFromRevisionData(data);
             if(series != null) {
@@ -52,12 +68,20 @@ public class SeriesService {
     }
 
     public SeriesSingleSO findSingleSeries(SeriesSearchSO query) {
-        // TODO: Actually find the series from database
-        SeriesSingleSO series = new SeriesSingleSO();
-        series.setId(query.getId());
-        series.setAbbreviation("S1");
-        series.setDescription("Testisarja id:llä "+query.getId());
-        series.setName("Testisarja");
+        RevisionData data = null;
+        try {
+            data = search.findSingleSeries(query.getId());
+        } catch(IOException ex) {
+            // TODO: better exception handling with messages to the user
+            ex.printStackTrace();
+            return null;
+        }
+
+        if(data == null) {
+            return null;
+        }
+
+        SeriesSingleSO series = singleSOFromRevisionData(data);
 
         return series;
     }
@@ -77,7 +101,33 @@ public class SeriesService {
         return single;
     }
 
+    public boolean saveSeries(SeriesSingleSO so) {
+        try {
+            return repository.saveSeries(so);
+        } catch(Exception ex) {
+            // TODO: better exception handling with messages to the user
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     // Helper functions
+
     private SeriesSingleSO singleSOFromRevisionData(RevisionData data) {
         // check if data is for series
         if(data == null || data.getConfiguration().getType() != ConfigurationType.SERIES) {
@@ -90,7 +140,7 @@ public class SeriesService {
         so.setAbbreviation(extractStringValue(getContainerFromRevisionData(data, "abbreviation")));
         so.setName(extractStringValue(getContainerFromRevisionData(data, "name")));
         so.setDescription(extractStringValue(getContainerFromRevisionData(data, "description")));
-
+        so.setState(data.getState());
         return so;
     }
 

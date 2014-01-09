@@ -1,5 +1,7 @@
 package fi.uta.fsd.metka.model.data;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
@@ -11,5 +13,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
  * To change this template use File | Settings | File Templates.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
+@JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 public class Value {
 }

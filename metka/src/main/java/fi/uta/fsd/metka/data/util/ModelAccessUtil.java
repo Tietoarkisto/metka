@@ -20,7 +20,9 @@ public class ModelAccessUtil {
         FieldContainer container = null;
         if(data.getState() == RevisionState.DRAFT) {
             Change change = data.getChanges().get(key);
-            if(change.getNewField() != null) {
+            if(change == null) {
+                container = data.getFields().get(key);
+            } else if(change.getNewField() != null) {
                 container = change.getNewField();
             } else {
                 container = change.getOriginalField();

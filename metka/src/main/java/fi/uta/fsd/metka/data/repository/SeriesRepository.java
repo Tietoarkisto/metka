@@ -3,6 +3,7 @@ package fi.uta.fsd.metka.data.repository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSingleSO;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
@@ -16,6 +17,6 @@ import java.io.IOException;
  */
 @Transactional(readOnly = true)
 public interface SeriesRepository {
-    public RevisionData getNew()
-            throws JsonProcessingException, JsonMappingException, IOException;
+    @Transactional(readOnly = false) public RevisionData getNew() throws IOException;
+    @Transactional(readOnly = false) public boolean saveSeries(SeriesSingleSO so) throws IOException;
 }
