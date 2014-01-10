@@ -29,22 +29,21 @@ public class RevisionRepositoryImpl implements CRUDRepository<RevisionEntity, Re
 
     @Override
     public RevisionEntity read(RevisionKey id) {
-        return (RevisionEntity)em.find(RevisionEntity.class, id);
+        return em.find(RevisionEntity.class, id);
     }
 
     @Override
     public RevisionEntity update(RevisionEntity entity) {
-        em.merge(entity);
-        return entity;
+        return em.merge(entity);
     }
 
     @Override
     public void delete(RevisionKey id) {
-        em.remove(em.find(RevisionEntity.class, id));
+        em.remove(read(id));
     }
 
     @Override
     public List<RevisionEntity> listAll() {
-        return em.createQuery("SELECT r FROM RevisionEntity r").getResultList();
+        return em.createQuery("SELECT r FROM RevisionEntity r", RevisionEntity.class).getResultList();
     }
 }

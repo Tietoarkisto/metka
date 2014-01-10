@@ -10,4 +10,5 @@ public enum RevisionableType {
     STUDY,
     PUBLICATION,
     SERIES
+    // Add more as needed
 }

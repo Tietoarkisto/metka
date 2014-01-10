@@ -5,10 +5,10 @@
 <!DOCTYPE HTML>
 <html lang="fi">
 	<head>
-    	<jsp:include page="../../inc/head.jsp" />
+    	<jsp:include page="../inc/head.jsp" />
     </head>
     <body>
-        <jsp:include page="../../inc/topMenu.jsp" />
+        <jsp:include page="../inc/topMenu.jsp" />
         <div class="wrapper">
             <div class="content">
                 <a href="/dialogs/compareVersionsDialog" id="compareVersionsLink" class="fancyboxpopup fancybox.ajax fancybox.iframe">versiot</a>

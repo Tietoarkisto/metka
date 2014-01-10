@@ -12,6 +12,8 @@ import java.io.Serializable;
  */
 @Embeddable
 public class RevisionKey implements Serializable {
+    public static final long serialVersionUID = 1L;
+
     @Column(name = "REVISIONABLE_ID", updatable = false)
     private Integer revisionableId;
 
@@ -40,6 +42,26 @@ public class RevisionKey implements Serializable {
 
     public void setRevisionNo(Integer revisionNo) {
         this.revisionNo = revisionNo;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RevisionKey that = (RevisionKey) o;
+
+        if (!revisionNo.equals(that.revisionNo)) return false;
+        if (!revisionableId.equals(that.revisionableId)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = revisionableId.hashCode();
+        result = 31 * result + revisionNo.hashCode();
+        return result;
     }
 
     @Override

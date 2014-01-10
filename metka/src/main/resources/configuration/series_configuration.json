@@ -1,0 +1,32 @@
+{
+	"key": {
+		"version": 1,
+		"type": "SERIES"
+	},
+	"fields": {
+		"id": {
+			"key": "id",
+			"translateable": false,
+			"immutable": true,
+			"maxValues": 1,
+			"type": "INTEGER"
+		},
+		"abbreviation": {
+			"key": "abbreviation",
+			"maxValues": 1,
+			"immutable": true,
+			"translateable": false,
+			"type": "STRING"
+		},
+		"name": {
+			"key": "name",
+			"maxValues": 1,
+			"type": "STRING"
+		},
+		"description": {
+			"key": "description",
+			"maxValues": 1,
+			"type": "STRING"
+		}
+	}
+}

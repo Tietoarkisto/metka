@@ -1,6 +1,7 @@
 package fi.uta.fsd.metka.data.entity;
 
 import fi.uta.fsd.metka.data.entity.key.RevisionKey;
+import fi.uta.fsd.metka.data.enums.RevisionState;
 
 import javax.persistence.*;
 
@@ -20,6 +21,11 @@ public class RevisionEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "STATE")
     private RevisionState state;
+
+    @Lob
+    @Column(name = "DATA", length = 10000)
+    // Length defined because HSQL has problems for some reason, should be removed.
+    private String data;
 
     public RevisionEntity() {
     }
@@ -44,15 +50,16 @@ public class RevisionEntity {
         this.state = state;
     }
 
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
+    }
+
     @Override
     public String toString() {
         return "Entity[name="+this.getClass().getSimpleName()+", key="+key+"]";
-    }
-
-    public static enum RevisionState {
-        DRAFT,
-        PUBLISHED,
-        REMOVED,
-        REVISION
     }
 }
