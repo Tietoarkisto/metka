@@ -11,6 +11,7 @@ import fi.uta.fsd.metka.data.enums.RevisionState;
  */
 public class SeriesSingleSO {
     private Integer id;
+    private Integer revision;
     private String abbreviation;
     private String name;
     private String description;
@@ -22,6 +23,14 @@ public class SeriesSingleSO {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getRevision() {
+        return revision;
+    }
+
+    public void setRevision(Integer revision) {
+        this.revision = revision;
     }
 
     public String getAbbreviation() {

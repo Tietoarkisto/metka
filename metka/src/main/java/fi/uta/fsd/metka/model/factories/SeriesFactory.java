@@ -9,6 +9,7 @@ import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.model.configuration.Configuration;
+import fi.uta.fsd.metka.model.configuration.ConfigurationKey;
 import fi.uta.fsd.metka.model.data.*;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,8 +56,7 @@ public class SeriesFactory {
 
         DateTime time = new DateTime();
 
-        RevisionData data = createRevisionData(entity, conf);
-        data.setState(RevisionState.DRAFT);
+        RevisionData data = createRevisionData(entity, conf.getKey());
 
         Change change;
         FieldContainer field;
@@ -86,16 +86,27 @@ public class SeriesFactory {
         return data;
     }
 
-    private RevisionData createRevisionData(RevisionEntity entity, Configuration configuration) {
-        return new RevisionData(
+    public RevisionData createRevisionData(RevisionEntity entity, ConfigurationKey configuration) {
+        RevisionData data = new RevisionData(
                 new RevisionKey(entity.getKey().getRevisionableId(), entity.getKey().getRevisionNo()),
-                configuration.getKey()
+                configuration
         );
+        data.setState(entity.getState());
+        return data;
     }
 
     public Change createSimpleChange(String key, DateTime time) {
         Change change = new Change(key);
         change.setChangeTime(time);
+
+        return change;
+    }
+
+    public Change createNewRevisionChange(String key, DateTime time, FieldContainer field) {
+        Change change = new Change(key);
+        change.setChangeTime(time);
+        change.setOperation(ChangeOperation.UNCHANGED);
+        change.setOriginalField(field);
 
         return change;
     }

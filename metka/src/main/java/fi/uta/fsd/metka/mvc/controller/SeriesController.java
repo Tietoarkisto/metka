@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.io.OutputStream;
 import java.util.List;
 
 /**
@@ -36,13 +37,18 @@ public class SeriesController {
     @Autowired
     private ConfigurationService configurationService;
 
+    /*
+    * View single series
+    * Use search functions to find the requested series.
+    * Service will form a viewable object that can be added to the model.
+    * If the returned single object is in DRAFT state then show modify page,
+    * otherwise show view page.
+    */
     @RequestMapping(value = "view/{id}", method = RequestMethod.GET)
     public String view(Model model, @ModelAttribute("info")SeriesInfo info, @PathVariable Integer id) {
         model.addAttribute("page", "series");
 
-        SeriesSearchSO query = new SeriesSearchSO();
-        query.setId(id);
-        SeriesSingleSO single = seriesService.findSingleSeries(query);
+        SeriesSingleSO single = seriesService.findSingleSeries(id);
 
         info.setSingle(single);
         model.addAttribute("info", info);
@@ -54,6 +60,12 @@ public class SeriesController {
         }
     }
 
+    /*
+    * Search for series using query
+    * Use search functions to get a list of series matching the user defined query.
+    * If there is only one result then redirect to view.
+    * Otherwise show search page with the result in the model.
+    */
     @RequestMapping(value="search", method = {RequestMethod.GET, RequestMethod.POST})
     public String search(Model model, @ModelAttribute("info")SeriesInfo info, BindingResult result) {
         model.addAttribute("page", "series");
@@ -71,6 +83,12 @@ public class SeriesController {
         return SEARCH;
     }
 
+    /*
+    * Add new series
+    * Request a new series from the service then display MODIFY page for that series.
+    * Only a DRAFT revision can be edited and only the newest revision can be a draft revision
+    * so you can always modify by using only the id for the series.
+    */
     @RequestMapping(value="add", method = {RequestMethod.GET})
     public String add(Model model, @ModelAttribute("info")SeriesInfo info, BindingResult result) {
         model.addAttribute("page", "series");
@@ -86,25 +104,67 @@ public class SeriesController {
         return MODIFY;
     }
 
+    /*
+    * Save series
+    * Tell service to save given series. It will be validated and checked for changes
+    * further along the line so on this point the assumption can be made that changes exist.
+    * Return to the modify page after including the success status of the operation.
+    */
     @RequestMapping(value="save", method = {RequestMethod.POST})
     public String save(Model model, @ModelAttribute("info")SeriesInfo info, BindingResult result) {
         model.addAttribute("page", "series");
 
         boolean success = seriesService.saveSeries(info.getSingle());
-        model.addAttribute("success", success);
+        model.addAttribute("saveFail", !success);
 
         return MODIFY;
     }
 
-    /*@RequestMapping(value = "add", method = RequestMethod.POST)
-    public String addSeries(@ModelAttribute("Series")SeriesEntity series, BindingResult result) {
-        domain.createSeries(series);
-        return "redirect:/";
+    /*
+    * Approve series
+    * First makes sure that series is saved and if successful then requests series approval.
+    * Since only DRAFTs can be approved and only the latest revision can be a DRAFT
+    * only the series id is needed for the approval process. All required validation is done
+    * later in the approval process.
+    */
+    @RequestMapping(value="approve", method = {RequestMethod.POST})
+    public String approve(Model model, @ModelAttribute("info")SeriesInfo info, BindingResult result) {
+        model.addAttribute("page", "series");
+
+        boolean success = seriesService.saveSeries(info.getSingle());
+
+        if(!success) {
+            model.addAttribute("saveFail", !success);
+            return MODIFY;
+        }
+
+        success = seriesService.approveSeries(info.getSingle().getId());
+
+        if(!success) {
+            model.addAttribute("approveFail", !success);
+            return MODIFY;
+        }
+
+        return "redirect:/series/view/"+info.getSingle().getId();
     }
 
-    @RequestMapping(value = "remove/{seriesId}")
-    public String removeSeries(@PathVariable Integer seriesId) {
-        domain.removeSeries(seriesId);
-        return "redirect:/";
-    }*/
+    /*
+    * Edit series
+    * Requests an editable revision for the series. Everything required to get an editable
+    * revision for the user is done further down the line (e.g. checking if new revision is
+    * actually required or is there already an open DRAFT revision).
+    */
+    @RequestMapping(value = "edit/{id}", method = {RequestMethod.GET})
+    public String edit(Model model, @ModelAttribute("info")SeriesInfo info, @PathVariable Integer id) {
+        model.addAttribute("page", "series");
+
+        SeriesSingleSO single = seriesService.editSeries(id);
+        if(single != null) {
+            info.setSingle(single);
+            return MODIFY;
+        } else {
+            // TODO: Notify user that no editable revision could be found
+            return "redirect:/series/view/"+id;
+        }
+    }
 }
