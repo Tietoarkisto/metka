@@ -11,14 +11,17 @@
         <jsp:include page="../../inc/topMenu.jsp" />
         <div class="wrapper">
             <div class="content">
-           	<h1 class="pageTitle"><spring:message code="series.modify.title"/></h1>
+                <h1 class="pageTitle"><spring:message code="general.series"/> ${info.single.id} - <spring:message code="general.revision"/> ${info.single.revision} - <spring:message code="general.draft"/></h1>
 				<div class="upperContainer">
-                    <c:if test="${success}">
-                        <p>Tallennus onnistui</p>
+                    <c:if test="${saveFail}">
+                        <p>Tallennus epäonnistui</p>
+                    </c:if>
+                    <c:if test="${approveFail}">
+                        <p>Hyväksyminen epäonnistui</p>
                     </c:if>
 					<%-- TODO: Implement prev next functionality
 					<div class="prevNextContainer"><h1 class="prev">&lt;</h1><h1 class="next">&gt;</h1></div>--%>
-                    <form:form method="post" action="/series/save" modelAttribute="info.single">
+                    <form:form id="modifyForm" method="post" action="/series/save" modelAttribute="info.single">
                         <div class="seriesDataSetContainer">
                             <form:label path="id"><spring:message code="series.form.id"/></form:label>
                             <form:input path="id" readonly="true"/>
@@ -49,8 +52,8 @@
                             <div class="seriesDataSetContainer translationEn"><label><spring:message code="series.view.description"/></label><textarea name="seriesDescrEn"></textarea></div>--%>
                         </div>
                         <div class="viewFormButtonsHolder">
-                            <spring:message code="general.buttons.save" var="general_buttons_save"/>
-                            <input type="submit" class="searchFormInput" value="${general_buttons_save}">
+                            <input type="button" id="seriesSave" class="searchFormInput" value="<spring:message code="general.buttons.save" />">
+                            <input type="button" id="seriesApprove" class="searchFormInput" value="<spring:message code='general.buttons.approve'/>" />
                             <!-- TODO: Fix this reset button
                             <input type="reset" class="searchFormInput" value="Tyhjennä">-->
                         </div>
@@ -62,10 +65,6 @@
 					<input type="button" class="ediButton searchFormInput" value="<spring:message code='general.buttons.remove'/>" />--%>
 					<%-- TODO: Implement series version history display functionality
 					<a href="dialogs/versionHistoryDialog.html" class="versionHistoryButton fancyboxpopup fancybox.ajax button"><spring:message code='general.buttons.versionHistory'/></a>--%>
-					<%-- TODO: Only applicable when editing draft, move there
-					<input type="button" id="approvePublcationButton" class="editButton searchFormInput" value="<spring:message code='general.buttons.approve'/>" />--%>
-					<%-- TODO: Only applicable when editing draft, move there
-					<input type="button" id="saveSeriesChangesButton" class="editButton searchFormInput" value="<spring:message code='general.buttons.save'/>" />--%>
 				<%--</div>--%>
             </div>
         </div>

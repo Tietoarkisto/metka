@@ -2,6 +2,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ page session="false" %>
+<c:set var="contextPath" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE HTML>
 <html lang="fi">
 	<head>
@@ -37,7 +38,7 @@
                         <div id="addNewButton">
                             <!-- TODO: translation -->
                             <input type="button" id="addNewSeriesBtn" class="searchFormInput" value="Lisää uusi"
-                                    onclick="location.href='/series/add'"/>
+                                    onclick="location.href='${contextPath}/series/add'"/>
                         </div>
                     </form:form>
                 </div>
@@ -55,7 +56,7 @@
                                 </thead>
                                 <tbody>
                                     <c:forEach var="r" items="${info.results}">
-                                        <tr class="seriesSearchResultRow" onclick="location.href='/series/view/${r.id}'">
+                                        <tr class="seriesSearchResultRow pointerClass" onclick="location.href='${contextPath}/series/view/${r.id}'">
                                             <td>${r.id}</td>
                                             <td>${r.abbreviation}</td>
                                             <td>${r.name}</td>

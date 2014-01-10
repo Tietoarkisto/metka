@@ -74,4 +74,9 @@ public class RevisionData {
     public int hashCode() {
         return key.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return "Json[name="+this.getClass().getSimpleName()+", key="+key+"]";
+    }
 }

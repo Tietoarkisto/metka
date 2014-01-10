@@ -1,3 +1,5 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<c:set var="contextPath" value="${pageContext.request.contextPath}"/>
 <header>
     <div class="headerContainer">
         <nav>
@@ -6,7 +8,7 @@
                 <li><a href="/expertSearch" ${page == "expertSearch" ? 'class="selected"': ''}>Eksperttihaku</a></li>
                 <li><a href="/study/search" ${page == "study" ? 'class="selected"': ''}>Aineistot</a></li>
                 <li><a href="/publication/search" ${page == "publication" ? 'class="selected"': ''}>Julkaisut</a></li>
-                <li><a href="/series/search" ${page == "series" ? 'class="selected"': ''}>Sarjat</a></li>
+                <li><a href="${contextPath}/series/search" ${page == "series" ? 'class="selected"': ''}>Sarjat</a></li>
                 <li><a href="/binder/all" ${page == "binder" ? 'class="selected"': ''}>Mapit</a></li>
                 <li><a href="/report/all" ${page == "report" ? 'class="selected"': ''}>Raportit</a></li>
                 <li><a href="/settings" ${page == "settings" ? 'class="selected"': ''}>Asetukset</a></li>

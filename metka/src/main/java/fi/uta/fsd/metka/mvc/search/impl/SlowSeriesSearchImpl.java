@@ -140,7 +140,7 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
             return null;
         }
 
-        RevisionData data = metkaObjectMapper.readValue(entity.getLatestRevision().getData(), RevisionData.class);
+        RevisionData data = metkaObjectMapper.readValue(revEntity.getData(), RevisionData.class);
 
         return data;
     }

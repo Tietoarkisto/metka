@@ -15,8 +15,11 @@ import java.io.IOException;
  * Time: 4:04 PM
  * To change this template use File | Settings | File Templates.
  */
-@Transactional(readOnly = true)
+@Transactional
 public interface SeriesRepository {
-    @Transactional(readOnly = false) public RevisionData getNew() throws IOException;
-    @Transactional(readOnly = false) public boolean saveSeries(SeriesSingleSO so) throws IOException;
+    public RevisionData getNew() throws IOException;
+    public boolean saveSeries(SeriesSingleSO so) throws IOException;
+    public boolean approveSeries(Integer id) throws IOException;
+
+    public RevisionData editSeries(Integer id) throws IOException;
 }

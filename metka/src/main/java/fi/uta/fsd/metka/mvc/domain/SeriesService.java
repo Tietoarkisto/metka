@@ -67,10 +67,10 @@ public class SeriesService {
         return seriesList;
     }
 
-    public SeriesSingleSO findSingleSeries(SeriesSearchSO query) {
+    public SeriesSingleSO findSingleSeries(Integer id) {
         RevisionData data = null;
         try {
-            data = search.findSingleSeries(query.getId());
+            data = search.findSingleSeries(id);
         } catch(IOException ex) {
             // TODO: better exception handling with messages to the user
             ex.printStackTrace();
@@ -84,6 +84,10 @@ public class SeriesService {
         SeriesSingleSO series = singleSOFromRevisionData(data);
 
         return series;
+    }
+
+    public SeriesSingleSO findDraftRevision(SeriesSearchSO query) {
+        return null;  //To change body of created methods use File | Settings | File Templates.
     }
 
     public SeriesSingleSO newSeries() {
@@ -111,8 +115,26 @@ public class SeriesService {
         }
     }
 
+    public boolean approveSeries(Integer id) {
+        try {
+            return repository.approveSeries(id);
+        } catch(Exception ex) {
+            // TODO: better exception handling with messages to the user
+            ex.printStackTrace();
+            return false;
+        }
+    }
 
-
+    public SeriesSingleSO editSeries(Integer id) {
+        try {
+            RevisionData data = repository.editSeries(id);
+            return singleSOFromRevisionData(data);
+        } catch(Exception ex) {
+            // TODO: better exception handling with messages to the user
+            ex.printStackTrace();
+            return null;
+        }
+    }
 
 
 
@@ -137,6 +159,7 @@ public class SeriesService {
         SeriesSingleSO so = new SeriesSingleSO();
         // TODO: this should be automated as much as possible using configuration in the future.
         so.setId(extractIntegerValue(getContainerFromRevisionData(data, "id")));
+        so.setRevision(data.getKey().getRevision());
         so.setAbbreviation(extractStringValue(getContainerFromRevisionData(data, "abbreviation")));
         so.setName(extractStringValue(getContainerFromRevisionData(data, "name")));
         so.setDescription(extractStringValue(getContainerFromRevisionData(data, "description")));

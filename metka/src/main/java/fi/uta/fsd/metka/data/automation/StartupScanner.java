@@ -30,7 +30,8 @@ public class StartupScanner {
 
     @PostConstruct
     public void scanForConfigurations() throws IOException {
-        File file = new File("src/main/resources/configuration");
+        //File file = new File("src/main/resources/configuration"); // Development
+        File file = new File("/usr/share/metka/config"); // QA-server
         Collection<File> files = FileUtils.listFiles(file, FileFilterUtils.suffixFileFilter(".json"), TrueFileFilter.TRUE);
 
         for (File file1 : files) {

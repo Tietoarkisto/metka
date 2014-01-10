@@ -52,4 +52,9 @@ public class RevisionKey {
         result = 31 * result + revision.hashCode();
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "JsonKey[name="+this.getClass().getSimpleName()+", keys={id: "+id+", revision: "+revision+"}]";
+    }
 }

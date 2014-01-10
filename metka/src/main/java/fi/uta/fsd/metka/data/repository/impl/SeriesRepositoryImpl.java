@@ -23,7 +23,10 @@ import org.springframework.util.StringUtils;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
 
@@ -77,8 +80,6 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         // Check state
         // Deserialize revision data and check that data agrees with entity.
 
-        List<SeriesEntity> temp = em.createQuery("SELECT s FROM SeriesEntity s", SeriesEntity.class).getResultList();
-
         SeriesEntity series = em.find(SeriesEntity.class, so.getId());
         if(series == null) {
             // There has to be a series so you can save
@@ -101,7 +102,8 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         RevisionData data = metkaObjectMapper.readValue(revEntity.getData(), RevisionData.class);
 
         // Validate SeriesSingleSO against revision data:
-        // Id should match id in revision data.
+        // Id should match id in revision data and key.
+        // Revision should match revision in key
         // If previous abbreviation exists then so should match that, otherwise abort.
         // If name field has changed record the change otherwise do no change to name field.
         // Id description field has changed record the change otherwise do no change to description field.
@@ -165,6 +167,178 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         return true;
     }
 
+    /*
+    * Approve series.
+    * Modifies the revision data so that it is a correct approved data set, changes state to APPROVED
+    * and then saves it back to database.
+    *
+    * TODO: change to use as much configuration as is possible e.g. check that immutable fields have not been changed
+    *       or removed.
+    */
+    @Override
+    public boolean approveSeries(Integer id) throws IOException {
+        // Get series entity
+        // Compare current approved and latest revision no, if they are the same there is nothing to approve.
+        // If latest revision is larger than current approved then get the revision.
+        // If latest revision is not in DRAFT state log exception and return false.
+        // Deserialize revision data.
+
+        SeriesEntity series = em.find(SeriesEntity.class, id);
+
+        if(series == null) {
+            // TODO: log suitable error
+            return false;
+        }
+
+        if(series.getCurApprovedRev() == null && series.getLatestRevision() == null) {
+            // TODO: log suitable error
+            System.err.println("No revision found when approving series "+id);
+            return false;
+        }
+
+        if(series.getCurApprovedRev() != null && series.getCurApprovedNo().equals(series.getLatestRevisionNo())) {
+            // Assume no DRAFT exists in this case. Add confirmation if necessary but it will still be an exception and
+            // approval will not be done anyway.
+            return true;
+        }
+
+        if(series.getCurApprovedRev() != null && series.getCurApprovedNo().compareTo(series.getLatestRevisionNo()) > 0) {
+            // TODO: log exception since data is out of sync
+            System.err.println("Current approved is larger than latest revision on series "+id+". This should not happen.");
+            return false;
+        }
+
+        RevisionEntity entity = series.getLatestRevision();
+        if(entity.getState() != RevisionState.DRAFT) {
+            // TODO: log exception since data is out of sync
+            System.err.println("Latest revision should be DRAFT but is not on series "+id);
+            return false;
+        }
+
+        RevisionData data = metkaObjectMapper.readValue(entity.getData(), RevisionData.class);
+
+        // Check that data is also in DRAFT state and that id and revision match.
+        // For each change:
+        //          If the operation is unchanged then take the original value.
+        //          If the operation is removed then take no value.
+        //          If the operation is modified take the new value.
+        // TODO: Validate change
+        //      Put the result into fields map.
+        //      If the operation is unchanged then remove the change object from the changes map.
+
+        if(data.getState() != RevisionState.DRAFT) {
+            // TODO: log exception since data is out of sync
+            System.err.println("Revision data on series "+id+" was not in DRAFT state even though should have been.");
+            return false;
+        }
+
+        if(!data.getKey().getId().equals(entity.getKey().getRevisionableId())
+                || !data.getKey().getRevision().equals(entity.getKey().getRevisionNo())) {
+            // TODO: log exception since data and entity keys don't match
+            System.err.println("RevisionEntity and RevisionData keys do not match");
+            System.err.println(data.getKey());
+            System.err.println(entity.getKey());
+
+            return false;
+        }
+
+        List<String> unchangedKeys = new ArrayList<String>();
+        for(String key : data.getChanges().keySet()) {
+            Change change = data.getChanges().get(key);
+            FieldContainer field = null;
+            if(change.getOperation() == ChangeOperation.UNCHANGED) {
+                unchangedKeys.add(key);
+                field = change.getOriginalField();
+            } else if(change.getOperation() == ChangeOperation.MODIFIED) {
+                field = change.getNewField();
+            }
+            if(field != null) {
+                data.getFields().put(field.getFieldKey(), field);
+            }
+        }
+        for(String key : unchangedKeys) {
+            data.getChanges().remove(key);
+        }
+
+        // Change state in revision data to approved.
+        // Serialize data back to revision entity.
+        // Change state of entity to approved.
+        // Update current approved revision number on series entity
+        // Entities should still be managed so no merge necessary.
+        data.setState(RevisionState.APPROVED);
+        entity.setData(metkaObjectMapper.writeValueAsString(data));
+        entity.setState(RevisionState.APPROVED);
+        series.setCurApprovedNo(series.getLatestRevisionNo());
+
+        return true;
+    }
+
+    @Override
+    public RevisionData editSeries(Integer id) throws IOException {
+        // Get series entity
+        // Do the usual checking
+        // If latest revision differs from current approved get that
+        // Do the usual checking
+        // Return deserialized revision data from the already existing DRAFT
+        SeriesEntity series = em.find(SeriesEntity.class, id);
+
+        if(series == null) {
+            // TODO: log suitable error
+            return null;
+        }
+        if(series.getCurApprovedRev() == null && series.getLatestRevision() == null) {
+            // TODO: log suitable error
+            System.err.println("No revision found when trying to edit series "+id);
+            return null;
+        }
+
+        RevisionEntity latestRevision = series.getLatestRevision();
+        RevisionData oldData = metkaObjectMapper.readValue(latestRevision.getData(), RevisionData.class);
+        if(series.getCurApprovedRev() == null || series.getCurApprovedNo().compareTo(series.getLatestRevisionNo()) < 0) {
+            if(latestRevision.getState() != RevisionState.DRAFT) {
+                // TODO: log exception since data is out of sync
+                System.err.println("Latest revision should be DRAFT but is not on series "+id);
+                return null;
+            }
+            if(oldData.getState() != RevisionState.DRAFT) {
+                // TODO: log exception since data is out of sync
+                System.err.println("Revision data on series "+id+" was not in DRAFT state even though should have been.");
+                return null;
+            }
+            return oldData;
+        }
+
+        // If not then create new revision
+        // Increase revision number from latest revision
+        // Set state to DRAFT
+        // Generate initial data
+        // Get latest revision
+        // Go through fields map
+        // For each field generate change with operation UNCHANGED and put the field to original value
+        // Add changes to new dataset
+        RevisionEntity newRevision = new RevisionEntity(new RevisionKey(latestRevision.getKey().getRevisionableId(),
+                latestRevision.getKey().getRevisionNo()+1));
+        newRevision.setState(RevisionState.DRAFT);
+        RevisionData newData = factory.createRevisionData(newRevision, oldData.getConfiguration());
+        DateTime time = new DateTime();
+        for(Map.Entry<String, FieldContainer> field : oldData.getFields().entrySet()) {
+            Change change = factory.createNewRevisionChange(field.getKey(), time, field.getValue());
+            newData.getChanges().put(change.getKey(), change);
+        }
+
+        // Serialize new dataset to the new revision entity
+        // Persist new entity
+        newRevision.setData(metkaObjectMapper.writeValueAsString(newData));
+        em.persist(newRevision);
+
+        // Set latest revision number to new revisions revision number
+        // No merge needed since entity still managed
+        // Return new revision data
+        series.setLatestRevisionNo(newRevision.getKey().getRevisionNo());
+        return newData;
+    }
+
+    // Helper functions
     private Change updateValue(RevisionData data, DateTime time, String key, String newValue) {
         Change change = data.getChanges().get(key);
         if(change == null) {
