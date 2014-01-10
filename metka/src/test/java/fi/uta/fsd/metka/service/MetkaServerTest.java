@@ -1,13 +1,10 @@
 package fi.uta.fsd.metka.service;
 
-import com.rabbitmq.client.QueueingConsumer;
-import org.junit.Ignore;
-import org.junit.Test;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Channel;
-
-
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.QueueingConsumer;
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -29,7 +26,7 @@ public class MetkaServerTest {
 
     // Basic test of RabbitMQ connection,
 
-    @Ignore
+//    @Ignore
     @Test
     public void testChannel() throws  Exception {
         // Test connection
@@ -48,6 +45,7 @@ public class MetkaServerTest {
         System.out.println("Starting Rabbit message test");
         channel.basicPublish("", QUEUE_NAME, null, MESSAGE.getBytes());
 
+
         // Test receiving of message.
         System.out.println("Trying to read Rabbit message");
         QueueingConsumer consumer = new QueueingConsumer(channel);
@@ -61,7 +59,9 @@ public class MetkaServerTest {
 
         // Cleanup
         System.out.println("Cleaning the test queue.");
+        channel.queuePurge(QUEUE_NAME);
         channel.queueDelete(QUEUE_NAME);
+
         channel.close();
         connection.close();
     }
