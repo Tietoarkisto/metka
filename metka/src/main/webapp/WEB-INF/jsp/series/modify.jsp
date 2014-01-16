@@ -2,13 +2,24 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ page session="false" %>
+<c:set var="contextPath" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE HTML>
 <html lang="fi">
 	<head>
+        <%@include file="../../inc/jsInit.jsp"%>
     	<jsp:include page="../../inc/head.jsp" />
+        <script>
+            var revisionableId = ${info.single.id};
+            var isDraft = true;
+            var contextPath = "${pageContext.request.contextPath}";
+        </script>
+        <script src="${contextPath}/js/custom/history.js"></script>
     </head>
     <body>
         <jsp:include page="../../inc/topMenu.jsp" />
+        <jsp:include page="../../dialogs/versionHistoryDialog.jsp">
+            <jsp:param name="isDraft" value="true" />
+        </jsp:include>
         <div class="wrapper">
             <div class="content">
                 <h1 class="pageTitle"><spring:message code="general.series"/> ${info.single.id} - <spring:message code="general.revision"/> ${info.single.revision} - <spring:message code="general.draft"/></h1>
@@ -51,20 +62,19 @@
                             <div class="seriesDataSetContainer translationSv"><label><spring:message code="series.view.description"/></label><textarea name="seriesDescrSv"></textarea></div>
                             <div class="seriesDataSetContainer translationEn"><label><spring:message code="series.view.description"/></label><textarea name="seriesDescrEn"></textarea></div>--%>
                         </div>
-                        <div class="viewFormButtonsHolder">
-                            <input type="button" id="seriesSave" class="searchFormInput" value="<spring:message code="general.buttons.save" />">
-                            <input type="button" id="seriesApprove" class="searchFormInput" value="<spring:message code='general.buttons.approve'/>" />
-                            <!-- TODO: Fix this reset button
-                            <input type="reset" class="searchFormInput" value="Tyhjennä">-->
-                        </div>
                     </form:form>
-				</div>
+                </div>
+                <div class="viewFormButtonsHolder" style="margin-bottom:20px;width: 630px;">
+                    <input type="button" id="seriesSave" class="searchFormInput" value="<spring:message code="general.buttons.save" />">
+                    <input type="button" id="seriesApprove" class="searchFormInput" value="<spring:message code='general.buttons.approve'/>" />
+                    <input type="button" id="showRevisions" class="searchFormInput" value="<spring:message code='general.buttons.versionHistory'/>" />
+                    <!-- TODO: Fix this reset button
+                    <input type="reset" class="searchFormInput" value="Tyhjennä">-->
+                </div>
 
 				<%--<div class="viewFormButtonsHolder" style="margin-bottom:20px;width: 630px;">--%>
 					<%-- TODO: Implement series remove functionality
 					<input type="button" class="ediButton searchFormInput" value="<spring:message code='general.buttons.remove'/>" />--%>
-					<%-- TODO: Implement series version history display functionality
-					<a href="dialogs/versionHistoryDialog.html" class="versionHistoryButton fancyboxpopup fancybox.ajax button"><spring:message code='general.buttons.versionHistory'/></a>--%>
 				<%--</div>--%>
             </div>
         </div>

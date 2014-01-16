@@ -48,11 +48,7 @@ $(document).ready(function(){
             $(this).css('cursor', 'auto');
         });*/
 
-    $(".pointerClass").hover(function() {
-            $(this).css('cursor', 'pointer');
-        }, function() {
-            $(this).css('cursor', 'auto');
-        });
+
 
     $("input[type=radio][name=language]").on("click", function() {
         var language = $(this).val();
@@ -101,4 +97,14 @@ $(document).ready(function(){
     $(".helpImage").on("click", function() {
         window.open("help.html");
     });
+
+    // Clean code here
+    $(".pointerClass").hover(
+        function() {
+            $(this).css('cursor', 'pointer');
+        },
+        function() {
+            $(this).css('cursor', 'auto');
+        }
+    );
 });

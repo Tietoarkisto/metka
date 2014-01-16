@@ -2,6 +2,7 @@ package fi.uta.fsd.metka.data.entity;
 
 import fi.uta.fsd.metka.data.entity.key.RevisionKey;
 import fi.uta.fsd.metka.data.enums.RevisionState;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 
@@ -24,6 +25,7 @@ public class RevisionEntity {
 
     @Lob
     @Column(name = "DATA", length = 10000)
+    @Type(type="org.hibernate.type.StringClobType")
     // Length defined because HSQL has problems for some reason, should be removed.
     private String data;
 

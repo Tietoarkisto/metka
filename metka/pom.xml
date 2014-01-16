@@ -312,7 +312,7 @@
                                 </goals>
                                 <phase>package</phase>
                                 <configuration>
-                                    <path>/</path>
+                                    <path>/metka</path>
                                     <uriEncoding>UTF-8</uriEncoding>
                                 </configuration>
                             </execution>

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.model.configuration.ConfigurationKey;
+import org.joda.time.LocalDate;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -27,6 +28,7 @@ public class RevisionData {
     @XmlElement private Map<String, Change> changes = new HashMap<String, Change>();
     @XmlElement private Map<String, FieldContainer> fields = new HashMap<String, FieldContainer>();
     @XmlElement private RevisionState state;
+    @XmlElement private LocalDate approvalDate;
 
     @JsonCreator
     public RevisionData(@JsonProperty("key")RevisionKey key, @JsonProperty("configuration")ConfigurationKey configuration) {
@@ -56,6 +58,14 @@ public class RevisionData {
 
     public void setState(RevisionState state) {
         this.state = state;
+    }
+
+    public LocalDate getApprovalDate() {
+        return approvalDate;
+    }
+
+    public void setApprovalDate(LocalDate approvalDate) {
+        this.approvalDate = approvalDate;
     }
 
     @Override

@@ -16,6 +16,7 @@ import fi.uta.fsd.metka.model.factories.SeriesFactory;
 import fi.uta.fsd.metka.mvc.MetkaObjectMapper;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSingleSO;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -266,6 +267,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         // Update current approved revision number on series entity
         // Entities should still be managed so no merge necessary.
         data.setState(RevisionState.APPROVED);
+        data.setApprovalDate(new LocalDate());
         entity.setData(metkaObjectMapper.writeValueAsString(data));
         entity.setState(RevisionState.APPROVED);
         series.setCurApprovedNo(series.getLatestRevisionNo());

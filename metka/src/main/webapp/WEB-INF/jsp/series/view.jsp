@@ -3,13 +3,23 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ page session="false" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
+<c:set var="isDraft" value="false" />
 <!DOCTYPE HTML>
 <html lang="fi">
 	<head>
-    	<jsp:include page="../../inc/head.jsp" />
+        <jsp:include page="../../inc/head.jsp" />
+        <script>
+            var revisionableId = ${info.single.id};
+            var isDraft = false;
+            var contextPath = "${pageContext.request.contextPath}";
+        </script>
+        <script src="${contextPath}/js/custom/history.js"></script>
     </head>
     <body>
         <jsp:include page="../../inc/topMenu.jsp" />
+        <jsp:include page="../../dialogs/versionHistoryDialog.jsp">
+            <jsp:param name="isDraft" value="false" />
+        </jsp:include>
         <div class="wrapper">
             <div class="content">
            	<h1 class="pageTitle"><spring:message code="general.series"/> ${info.single.id} - <spring:message code="general.revision"/> ${info.single.revision}</h1>
@@ -50,11 +60,13 @@
 				<div class="viewFormButtonsHolder" style="margin-bottom:20px;width: 630px;">
 					<%-- TODO: Implement series remove functionality
 					<input type="button" class="ediButton searchFormInput" value="<spring:message code='general.buttons.remove'/>" />--%>
-					<%-- TODO: Implement series version history display functionality
-					<a href="dialogs/versionHistoryDialog.html" class="versionHistoryButton fancyboxpopup fancybox.ajax button"><spring:message code='general.buttons.versionHistory'/></a>--%>
 
-                    <input type="button" class="previewButton searchFormInput" value="<spring:message code='general.buttons.edit'/>"
-                           onclick="location.href='${contextPath}/series/edit/${info.single.id}'"/>
+					<input type="button" id="showRevisions" class="searchFormInput"
+                           value="<spring:message code='general.buttons.versionHistory'/>" />
+
+                    <input type="button" class="previewButton searchFormInput"
+                            value="<spring:message code='general.buttons.edit'/>"
+                            onclick="location.href='${contextPath}/series/edit/${info.single.id}'"/>
 				</div>
             </div>
         </div>

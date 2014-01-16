@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 
-<div class="popupContainer" id="compareVersionsDialog">
+<div class="popupContainer" id="revisionCompareDialog">
 	<h1 class="pageTitle"><spring:message code="general.versions.compare.title" arguments="${version1.versionNumber}, ${version2.versionNumber}"/></h1>
 	<div class="popupRowHolder">
 		<div class="versionHistoryCompareRow">
@@ -21,15 +21,15 @@
 <!-- 		</div> -->
 <!-- 		<div class="versionHistoryCompareRow"> -->
 <!-- 			<div class="versionProperty">Perustiedot: Aineiston tyyppi</div> -->
-<!-- 			<div class="versionChange">Yhdistelmä -> Opetus</div> -->
+<!-- 			<div class="versionChange">Yhdistelmï¿½ -> Opetus</div> -->
 <!-- 		</div> -->
 <!-- 		<div class="versionHistoryCompareRow"> -->
 <!-- 			<div class="versionProperty">Perustiedot: Aineiston sarja</div> -->
-<!-- 			<div class="versionChange">"Väärä sarjanimi" -> "Yksittäiset materiaalit"</div> -->
+<!-- 			<div class="versionChange">"Vï¿½ï¿½rï¿½ sarjanimi" -> "Yksittï¿½iset materiaalit"</div> -->
 <!-- 		</div> -->
 <!-- 		<div class="versionHistoryCompareRow"> -->
-<!-- 			<div class="versionProperty">Perustiedot: Liittyvät julkaisut</div> -->
-<!-- 			<div class="versionChange">Lisätty: "2345 (Julkaisu2)"</div> -->
+<!-- 			<div class="versionProperty">Perustiedot: Liittyvï¿½t julkaisut</div> -->
+<!-- 			<div class="versionChange">Lisï¿½tty: "2345 (Julkaisu2)"</div> -->
 <!-- 		</div>				 -->
 <!-- 		<div class="versionHistoryCompareRow"> -->
 <!-- 			<div class="versionProperty">Koodikirja: liitteet</div> -->
@@ -37,27 +37,27 @@
 <!-- 		</div> -->
 <!-- 		<div class="versionHistoryCompareRow"> -->
 <!-- 			<div class="versionProperty">Tiedostojen hallinta: foobar.docx: PAS</div> -->
-<!-- 			<div class="versionChange">Ei tietoa -> Kyllä</div> -->
+<!-- 			<div class="versionChange">Ei tietoa -> Kyllï¿½</div> -->
 <!-- 		</div> -->
 <!-- 		<div class="versionHistoryCompareRow"> -->
 <!-- 			<div class="versionProperty">Tiedostojen hallinta: foobar.docx: Virallinen selite</div> -->
-<!-- 			<div class="versionChange">Lisätty: "Tässä virallinen selite"</div> -->
+<!-- 			<div class="versionChange">Lisï¿½tty: "Tï¿½ssï¿½ virallinen selite"</div> -->
 <!-- 		</div> -->
 <!-- 		<div class="versionHistoryCompareRow"> -->
 <!-- 			<div class="versionProperty">Tiedostojen hallinta</div> -->
 <!-- 			<div class="versionChange">Poistettu: removed.zip</div> -->
 <!-- 		</div> -->
 <!-- 		<div class="versionHistoryCompareRow"> -->
-<!-- 			<div class="versionProperty">Muuttujat: "[q4_1] Vastaajan ammattiryhmä": Haastattelijan ohje</div> -->
+<!-- 			<div class="versionProperty">Muuttujat: "[q4_1] Vastaajan ammattiryhmï¿½": Haastattelijan ohje</div> -->
 <!-- 			<div class="versionChange">"Vanha ohje" -> "Uusi ohje"</div> -->
 <!-- 		</div> -->
 <!-- 		<div class="versionHistoryCompareRow"> -->
-<!-- 			<div class="versionProperty">Muuttujat: "[q4_1] Vastaajan ammattiryhmä": Vaihtoehdot</div> -->
-<!-- 			<div class="versionChange">"Jonkin verran kiinnostunut" -> "Vähän kiinnostunut"</div> -->
+<!-- 			<div class="versionProperty">Muuttujat: "[q4_1] Vastaajan ammattiryhmï¿½": Vaihtoehdot</div> -->
+<!-- 			<div class="versionChange">"Jonkin verran kiinnostunut" -> "Vï¿½hï¿½n kiinnostunut"</div> -->
 <!-- 		</div> -->
 <!-- 		<div class="versionHistoryCompareRow"> -->
-<!-- 			<div class="versionProperty">Muuttujat: Ryhmät</div> -->
-<!-- 			<div class="versionChange">"Kuinka paljon seurasitte eduskuntavaaleja eri tiedotusvälineistä?" -> "Kuinka paljon seurasitte eduskuntavaaleja eri mediasta?"</div> -->
+<!-- 			<div class="versionProperty">Muuttujat: Ryhmï¿½t</div> -->
+<!-- 			<div class="versionChange">"Kuinka paljon seurasitte eduskuntavaaleja eri tiedotusvï¿½lineistï¿½?" -> "Kuinka paljon seurasitte eduskuntavaaleja eri mediasta?"</div> -->
 <!-- 		</div> -->
 
 	</div>

@@ -2,6 +2,7 @@ package fi.uta.fsd.metka.service;
 
 import fi.uta.fsd.metka.messaging.AmqpConnector;
 import fi.uta.fsd.metka.messaging.Logger;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.OutputStream;
@@ -42,6 +43,7 @@ public class LoggerTest {
     }
 
     @Test
+    @Ignore
     public void TestLogSuccess() {
         OutputTestStream stream = new OutputTestStream();
 
@@ -51,6 +53,7 @@ public class LoggerTest {
     }
 
     @Test
+    @Ignore
     public void TestLogFail() {
         String rabbitIP = AmqpConnector.getAmqpHost();
         AmqpConnector.setAmqpHost("127.0.0.0");

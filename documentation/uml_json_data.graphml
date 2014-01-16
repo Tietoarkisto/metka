@@ -29,7 +29,8 @@
             </y:ModelParameter>
           </y:NodeLabel>
           <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="" use3DEffect="true">
-            <y:AttributeLabel>+isComplete : Boolean</y:AttributeLabel>
+            <y:AttributeLabel>+state : RevisionState
++approvalDate : Date</y:AttributeLabel>
             <y:MethodLabel/>
           </y:UML>
         </y:UMLClassNode>
@@ -102,19 +103,20 @@
       <data key="d4"/>
       <data key="d6">
         <y:UMLNoteNode>
-          <y:Geometry height="149.0" width="589.0" x="432.0" y="572.0"/>
+          <y:Geometry height="162.0" width="589.0" x="432.0" y="564.2143416171709"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="143.6875" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="582.61328125" x="4.0" y="4.0">isComplete: When draft is marked as approved all computed fields have their values inserted
+          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="157.65625" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="565.404296875" x="4.0" y="4.0">state: When draft is marked as approved all computed fields have their values inserted
     into the data to finalize the dataset. In a complete data there is no need for any outside
     dataset save for the configuration to be able to understand the meaning of every field and
     have all the values present. For all intents and purposes a data marked isComplete should
     be considered read only save anything done because of batch processing.
  
 {context RevisionData inv:
-  isComplete = false implies fields-&gt;size() = 0
+  state = RevisionState::DRAFT implies fields-&gt;size() = 0
 and
-  isComplete = true implies not fields-&gt;exists(changeOperation = ChangeOperation::ORIGINAL}</y:NodeLabel>
+  state &lt;&gt; RevisionState::DRAFT implies
+  not fields-&gt;exists(changeOperation = ChangeOperation::ORIGINAL}</y:NodeLabel>
         </y:UMLNoteNode>
       </data>
     </node>
@@ -170,7 +172,7 @@ and
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="7.2999999999999545" sy="122.73562300319472" tx="-164.5" ty="14.735623003194746"/>
+          <y:Path sx="7.2999999999999545" sy="122.73562300319472" tx="-164.5" ty="16.021281386023816"/>
           <y:LineStyle color="#000000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="none"/>
           <y:BendStyle smoothed="false"/>

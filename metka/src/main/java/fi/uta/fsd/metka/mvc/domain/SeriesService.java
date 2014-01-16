@@ -42,9 +42,9 @@ public class SeriesService {
             // TODO: better exception handling with messages to the user
             ex.printStackTrace();
             list = new ArrayList<String>();
-        } finally {
-            return list;
+            list.add("");
         }
+        return list;
     }
 
     public List<SeriesSearchSO> searchForSeries(SeriesSearchSO query) {

@@ -40,6 +40,7 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
     @Override
     public List<String> findAbbreviations() throws JsonParseException, JsonMappingException, IOException {
         List<String> list = new ArrayList<String>();
+        list.add("");
 
         List<SeriesEntity> entities = em.createQuery("SELECT s FROM SeriesEntity s", SeriesEntity.class).getResultList();
         for(SeriesEntity entity : entities) {
@@ -104,14 +105,14 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
                 if(!StringUtils.isEmpty(query.getAbbreviation())) {
                     FieldContainer field = getContainerFromRevisionData(data, "abbreviation");
                     String value = extractStringValue(field);
-                    if(!value.equals(query.getAbbreviation())) {
+                    if(StringUtils.isEmpty(value) || !value.equals(query.getAbbreviation())) {
                         continue;
                     }
                 }
                 if(!StringUtils.isEmpty(query.getName())) {
                     FieldContainer field = getContainerFromRevisionData(data, "name");
                     String value = extractStringValue(field);
-                    if(!value.equals(query.getName())) {
+                    if(StringUtils.isEmpty(value) || !value.contains(query.getName())) {
                         continue;
                     }
                 }

@@ -310,6 +310,9 @@ table.metkaTable, #materialStudyLevel #studyLevelData .metkaTable {
     box-shadow: 0 0 8px #005993;
     -webkit-box-shadow: 0 0 8px #005993;
     -moz-box-shadow: 0 0 8px #005993; }
+  .searchFormInput:disabled, .button:disabled {
+      background-color: #c8c8c8;
+  }
 
 nav {
   display: inline-block; }
@@ -1176,3 +1179,10 @@ nav {
 
 #packagingHistoryContainer {
   padding: 10px; }
+
+/* Clean css */
+.revisionTableColumn {
+    padding: 5px;
+    min-width: 120px;
+    text-align: left;
+}
