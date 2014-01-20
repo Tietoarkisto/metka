@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlElement;
  * To change this template use File | Settings | File Templates.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RevisionKey {
+public class RevisionKey implements Comparable<RevisionKey> {
     @XmlElement private final Integer id;
     @XmlElement private final Integer revision;
 
@@ -51,6 +51,14 @@ public class RevisionKey {
         int result = id.hashCode();
         result = 31 * result + revision.hashCode();
         return result;
+    }
+
+    @Override
+    public int compareTo(RevisionKey o) {
+        int result = id.compareTo(o.id);
+        if(result == 0) {
+            return revision.compareTo(o.revision);
+        } else return result;
     }
 
     @Override

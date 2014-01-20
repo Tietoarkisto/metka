@@ -12,20 +12,20 @@
         <jsp:include page="../../inc/topMenu.jsp" />
         <div class="wrapper">
             <div class="content">
-                <h1 class="pageTitle"><spring:message code="series.search.title"/></h1>
+                <h1 class="pageTitle"><spring:message code="SERIES.search.title"/></h1>
 
                 <div class="searchFormContainer">
                     <form:form method="post" action="/series/search" modelAttribute="info.query">
                         <div class="searchFormRowHolder">
-                            <form:label path="id"><spring:message code="series.form.id"/></form:label>
+                            <form:label path="id"><spring:message code="SERIES.field.id"/></form:label>
                             <form:input path="id" cssClass="searchInput" />
                         </div>
                         <div class="searchFormRowHolder">
-                            <form:label path="name"><spring:message code="series.form.name"/></form:label>
+                            <form:label path="name"><spring:message code="SERIES.field.name"/></form:label>
                             <form:input path="name" cssClass="searchInput" />
                         </div>
                         <div class="searchFormRowHolder">
-                            <form:label path="abbreviation"><spring:message code="series.form.abbreviation"/></form:label>
+                            <form:label path="abbreviation"><spring:message code="SERIES.field.abbreviation"/></form:label>
                             <form:select path="abbreviation" class="formSelect" items="${info.abbreviations}" />
                         </div>
                         <div class="searchFormButtonsHolder">
@@ -49,9 +49,9 @@
                             <table id="myTable" class="metkaTable sortableTable">
                                 <thead>
                                     <tr>
-                                        <th><spring:message code="series.form.id"/></th>
-                                        <th><spring:message code="series.form.abbreviation"/></th>
-                                        <th><spring:message code="series.form.name"/></th>
+                                        <th><spring:message code="SERIES.field.id"/></th>
+                                        <th><spring:message code="SERIES.field.abbreviation"/></th>
+                                        <th><spring:message code="SERIES.field.name"/></th>
                                     </tr>
                                 </thead>
                                 <tbody>

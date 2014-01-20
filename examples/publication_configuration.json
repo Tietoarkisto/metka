@@ -3,150 +3,145 @@
 		"version": 1,
 		"type": "PUBLICATION"
 	},
-    "choiselists": [
-		{
+    "choiselists": {
+		"yes_no": {
 			"key": "yes_no",
 			"options": [
 				{
-					"value": 1,
-					"test": "Kyllä"
+					"value": 1
 				},
 				{
-					"value": 0,
-					"test": "Ei"
+					"value": 0
 				}
 			]
 		},
-		{
+		"langs": {
 			"key": "langs",
 			"options": [
 				{
-					"value": 0,
-					"test": "Suomi"
+					"value": 0
 				},
 				{
-					"value": 1,
-					"test": "Englanti"
+					"value": 1
 				}
 			]
 		},
-		{
+		"notification_way": {
 			"key": "notification_way",
 			"options": [
 				{
-					"value": 0,
-					"test": "Ei tietoa"
+					"value": 0
 				}
 			]
 		}
-	],
-	"fields": [
-		{
+	},
+	"fields": {
+		"id": {
 			"key": "id",
 			"translateable": false,
-			"final": true,
+			"immutable": true,
 			"maxValues": 1,
 			"type": "INTEGER"
 		},
-		{
+		"publication_year": {
 			"key": "publication_year",
 			"translateable": false,
 			"maxValues": 1,
 			"type": "INTEGER"
 		},
-		{
+		"can_publish": {
 			"key": "can_publish",
 			"translateable": false,
 			"type": "CHOISE",
 			"maxValues": 1,
 			"choiselist": "yes_no"
 		},
-		{
+		"publication_lang": {
 			"key": "publication_lang",
 			"translateable": false,
 			"type": "CHOISE",
 			"maxValues": 1,
 			"choiselist": "langs"
 		},
-		{
+		"notification_way": {
 			"key": "notification_way",
 			"translateable": false,
 			"type": "CHOISE",
 			"maxValues": 1,
 			"choiselist": "notification_way"
 		},
-		{
+		"publication_title": {
 			"key": "publication_title",
 			"maxValues": 1,
 			"type": "STRING"
 		},
-		{
+		"relPubl": {
 			"key": "relPubl",
 			"maxValues": 1,
 			"type": "STRING"
 		},
-		{
+		"notices": {
 			"key": "notices",
 			"maxValues": 1,
 			"type": "STRING"
 		},
-		{
+		"persons": {
 			"key": "persons",
-			"type": "COMBINATION"
+			"type": "CONTAINER"
 		},
-		{
+		"surname": {
 			"key": "surname",
 			"type": "STRING",
 			"maxValues": 1,
 			"subfieldTo": "persons"
 		},
-		{
+		"first_name": {
 			"key": "first_name",
 			"type": "STRING",
 			"maxValues": 1,
 			"subfieldTo": "persons"
 		},
-		{
+		"pids": {
 			"key": "pids",
-			"type": "COMBINATION"
+			"type": "CONTAINER"
 		},
-		{
+		"pid": {
 			"key": "pid",
 			"type": "STRING",
 			"maxValues": 1,
 			"subfieldTo": "pids"
 		},
-		{
+		"pid_type": {
 			"key": "pid_type",
-			"type": "COMPUTED",
+			"type": "DERIVED",
 			"maxValues": 1,
 			"subfieldTo": "pids"
 		},
-		{
+		"studies": {
 			"key": "studies",
-			"type": "LINK"
+			"type": "REFERENCE"
 		},
-		{
+		"series": {
 			"key": "series",
-			"type": "LINK"
+			"type": "REFERENCE"
 		},
-		{
+		"first_saved": {
 			"_comment": "This can be computed from the revision history and might not be required as part of the datamodel.",
 			"key": "first_saved",
 			"maxValues": 1,
 			"type": "DATE"
 		},
-		{
+		"last_modified": {
 			"_comment": "This can be computed from the revision history and might not be required as part of the datamodel.",
 			"key": "last_modified",
 			"maxValues": 1,
 			"type": "DATE"
 		},
-		{
+		"handler": {
 			"_comment": "This can be computed from the revision history and might not be required as part of the datamodel.",
 			"key": "handler",
 			"maxValues": 1,
-			"type": "LINK"
+			"type": "REFERENCE"
 		}
-	]
+	}
 }

@@ -1,12 +1,16 @@
 package fi.uta.fsd.metka.mvc.controller;
 
 import fi.uta.fsd.metka.mvc.domain.HistoryService;
+import fi.uta.fsd.metka.mvc.domain.requests.ChangeCompareRequest;
+import fi.uta.fsd.metka.mvc.domain.simple.history.ChangeCompareSO;
+import fi.uta.fsd.metka.mvc.domain.simple.history.ChangeSO;
 import fi.uta.fsd.metka.mvc.domain.simple.history.RevisionSO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -23,10 +27,18 @@ public class HistoryController {
     private HistoryService service;
 
     // Handle requests for revision history
-    @RequestMapping(value = "revisions/{id}", method = {RequestMethod.GET, RequestMethod.POST},
+    @RequestMapping(value = "revisions/{id}", method = {RequestMethod.GET},
         produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<RevisionSO> getRevisions(@PathVariable Integer id) {
         return service.getRevisionHistory(id);
+    }
+
+    // Handle requests for revision changes
+    @RequestMapping(value = "revisions/compare", method = {RequestMethod.GET, RequestMethod.POST},
+            produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody ChangeCompareSO getChanges(@RequestBody ChangeCompareRequest request) {
+        ChangeCompareSO c = service.compareRevisions(request);
+        return c;
     }
 
     // Show revision history for revisionable

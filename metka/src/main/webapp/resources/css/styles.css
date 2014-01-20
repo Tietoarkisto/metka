@@ -1184,5 +1184,12 @@ nav {
 .revisionTableColumn {
     padding: 5px;
     min-width: 120px;
+    max-width: 300px;
+    text-align: left;
+}
+.changeTableColumn {
+    padding: 5px;
+    min-width: 300px;
+    max-width: 500px;
     text-align: left;
 }

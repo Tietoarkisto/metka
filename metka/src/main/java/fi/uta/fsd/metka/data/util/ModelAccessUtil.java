@@ -1,5 +1,6 @@
 package fi.uta.fsd.metka.data.util;
 
+import fi.uta.fsd.metka.data.enums.FieldType;
 import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.model.data.Change;
 import fi.uta.fsd.metka.model.data.FieldContainer;

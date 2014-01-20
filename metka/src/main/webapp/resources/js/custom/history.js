@@ -6,17 +6,66 @@ $(document).ready(function(){
         if(beginVal == undefined || endVal == undefined) {
             return;
         }
+        var request = new Object();
+        request.id = revisionableId;
+        request.begin = parseInt(beginVal);
+        request.end = parseInt(endVal);
+        request.type = type;
         $.ajax({
             type: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
             dataType: "json",
             url: contextPath+"/history/revisions/compare",
-            data: "{\"id\":"+revisionableId+",\"begin\":"+beginVal+",\"end\":"+endVal+"}",
+            data: JSON.stringify(request),
             success: function(response) {
                 // Fill compare dialog
 
+                var changesTable = $("#revisionChangesTable");
+                var titleRow = changesTable.children().first();
+                changesTable.empty();
+                changesTable.append(titleRow);
+
+                var tbody = $("<tbody>");
+                for(var i = 0; i < response.changes.length; i++) {
+                    var rowData = response.changes[i];
+                    var row = $("<tr>", {class: "revisionHistoryDialogRow"});
+                    var prop = "";
+                    if(rowData["section"] != null) {
+                        prop += strings[type+".section."+rowData["section"]];
+                        prop += ": ";
+                    }
+                    prop += strings[type+".field."+rowData["property"]];
+                    row.append($("<td>", {cass: "revisionTableColumn", text: prop}));
+
+                    if(rowData.maxValues != 1) {
+                        // TODO: handle display of multiline values
+                    } else {
+                        if(rowData["oldValue"].length > 0) {
+                            row.append($("<td>", {cass: "revisionTableColumn", text: rowData["oldValue"][0]}));
+                        }
+                        if(rowData["newValue"].length > 0) {
+                            row.append($("<td>", {cass: "revisionTableColumn", text: rowData["newValue"][0]}));
+                        }
+                    }
+
+                    tbody.append(row);
+                }
+
+                changesTable.append(tbody);
+
                 // close version dialog
+                $("#revisionHistoryDialog").dialog("close");
 
                 // show compare dialog
+                var str = strings["general.revision.compare.title"];
+                str = str.replace("{0}", response["begin"]);
+                str = str.replace("{1}", response["end"]);
+
+                $("#revisionCompareDialog").dialog("option", "title", str);
+                $("#revisionCompareDialog").dialog("open");
             },
             error: function(e) {
                 alert("Error: "+JSON.stringify(e, null, 4));
@@ -36,7 +85,7 @@ $(document).ready(function(){
                 var tbody = $("<tbody>");
                 for(var i = 0; i < response.length; i++) {
                     var rowData = response[i];
-                    var row = $("<tr>", {class: "versionHistoryDialogRow"});
+                    var row = $("<tr>", {class: "revisionHistoryDialogRow"});
                     row.append($("<td>", {cass: "revisionTableColumn", text: rowData["revision"]}));
                     if(rowData["state"]=="DRAFT") {
                         row.append($("<td>", {cass: "revisionTableColumn", text: rowData["state"]}));

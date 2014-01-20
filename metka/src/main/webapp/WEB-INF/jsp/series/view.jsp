@@ -8,38 +8,47 @@
 <html lang="fi">
 	<head>
         <jsp:include page="../../inc/head.jsp" />
+        <!--    Initialization for revision history viewing and comparison. All of these things have to be included when this
+                functionality is required including a component with id: showRevisions. -->
         <script>
             var revisionableId = ${info.single.id};
             var isDraft = false;
             var contextPath = "${pageContext.request.contextPath}";
+            var type = "SERIES";
         </script>
+        <c:set var="type" value="SERIES" />
+        <!--    jsInit.jsp contains javascript initialisation actions such as initialising strings array for localization.
+                Include as needed. Usually it is required as part of revision history comparison. JSP variable type
+                has to be set before including this file. -->
+        <%@include file="../../inc/jsInit.jsp"%>
         <script src="${contextPath}/js/custom/history.js"></script>
+        <!--    End of revision history component requirements. -->
     </head>
     <body>
         <jsp:include page="../../inc/topMenu.jsp" />
-        <jsp:include page="../../dialogs/versionHistoryDialog.jsp">
+        <jsp:include page="../../dialogs/revisionHistoryDialog.jsp">
             <jsp:param name="isDraft" value="false" />
         </jsp:include>
         <div class="wrapper">
             <div class="content">
-           	<h1 class="pageTitle"><spring:message code="general.series"/> ${info.single.id} - <spring:message code="general.revision"/> ${info.single.revision}</h1>
+           	<h1 class="pageTitle"><spring:message code="SERIES"/> ${info.single.id} - <spring:message code="general.revision"/> ${info.single.revision}</h1>
 				<div class="upperContainer">
 					<div class="prevNextContainer"><h1 class="prev">&lt;</h1><h1 class="next">&gt;</h1></div>		
 					<div class="rowContainer containsTranslations">
 						<div class="seriesDataSetContainer">
-                            <label><spring:message code="series.form.id"/></label>
+                            <label><spring:message code="SERIES.field.id"/></label>
                             <input type="text" value="${info.single.id}" name="seriesId" readonly="readonly" />
                         </div>
 					</div>
 					<div class="rowContainer containsTranslations">							
 						<div class="seriesDataSetContainer">
-                            <label><spring:message code="series.form.abbreviation"/></label>
+                            <label><spring:message code="SERIES.field.abbreviation"/></label>
                             <input type="text" value="${info.single.abbreviation}" name="seriesAbbr" readonly="readonly" />
                         </div>
 					</div>
 					<div class="rowContainer containsTranslations">
 						<div class="seriesDataSetContainer translated translationFi">
-                            <label><spring:message code="series.form.name"/></label>
+                            <label><spring:message code="SERIES.field.name"/></label>
                             <input type="text" name="seriesNameFi" value="${info.single.name}" readonly="readonly" />
                         </div>
 						<%-- TODO: Implement translatiopn functionality
@@ -48,7 +57,7 @@
 					</div>
 					<div class="rowContainer containsTranslations">							
 						<div class="seriesDataSetContainer translated translationFi">
-                            <label><spring:message code="series.form.description"/></label>
+                            <label><spring:message code="SERIES.field.description"/></label>
                             <textarea id="seriesDescriptionFi" name="seriesDescrFi" readonly="readonly" >${info.single.description}</textarea>
                         </div>
 						<%-- TODO: Implement translation functionality

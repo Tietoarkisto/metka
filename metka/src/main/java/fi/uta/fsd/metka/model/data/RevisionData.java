@@ -22,7 +22,7 @@ import java.util.Map;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "revisionData")
-public class RevisionData {
+public class RevisionData implements Comparable<RevisionData> {
     @XmlElement private final RevisionKey key;
     @XmlElement private final ConfigurationKey configuration;
     @XmlElement private Map<String, Change> changes = new HashMap<String, Change>();
@@ -83,6 +83,11 @@ public class RevisionData {
     @Override
     public int hashCode() {
         return key.hashCode();
+    }
+
+    @Override
+    public int compareTo(RevisionData o) {
+        return key.compareTo(o.key);
     }
 
     @Override
