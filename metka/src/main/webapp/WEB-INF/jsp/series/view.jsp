@@ -71,7 +71,7 @@
 					<input type="button" class="ediButton searchFormInput" value="<spring:message code='general.buttons.remove'/>" />--%>
 
 					<input type="button" id="showRevisions" class="searchFormInput"
-                           value="<spring:message code='general.buttons.versionHistory'/>" />
+                           value="<spring:message code='general.buttons.revisionHistory'/>" />
 
                     <input type="button" class="previewButton searchFormInput"
                             value="<spring:message code='general.buttons.edit'/>"

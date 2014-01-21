@@ -1,5 +1,13 @@
 $(document).ready(function(){
 
+    $("#revisionsCloseBtn").click(function() {
+        $("#revisionHistoryDialog").dialog("close");
+    });
+
+    $("#compareCloseBtn").click(function() {
+        $("#revisionCompareDialog").dialog("close");
+    });
+
     $("#compareRevisions").click(function() {
         var beginVal = $("input[name='beginGrp']:checked").val();
         var endVal = $("input[name='endGrp']:checked").val();

@@ -108,7 +108,8 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         // If previous abbreviation exists then so should match that, otherwise abort.
         // If name field has changed record the change otherwise do no change to name field.
         // Id description field has changed record the change otherwise do no change to description field.
-
+        // TODO: automate validation using configuration, since all needed information is there.
+        
         boolean changes = false;
 
         DateTime time = new DateTime();
@@ -116,43 +117,53 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         FieldContainer field;
         Integer intValue;
         String stringValue;
-
+        
+        // Check ID
         field = getContainerFromRevisionData(data, "id");
         intValue = extractIntegerValue(field);
         if(!so.getId().equals(intValue)) {
-            // TODO: data is out of sync, log error
+            // TODO: data is out of sync or someone tried to change the id, log error
             // Return false since save can not continue.
             return false;
         }
-
-        field = getContainerFromRevisionData(data, "abbreviation");
+        
+        // Check abbreviation.
+        field = getContainerFromRevisionData(data, "abbreviation"); // Since we are in a DRAFT this returns a field only if one exists in changes
         stringValue = extractStringValue(field);
         if(!StringUtils.isEmpty(stringValue) && !so.getAbbreviation().equals(stringValue)) {
-            // TODO: someone tried to change existing abbreviation, log error
+            // TODO: data is out of sync or someone tried to change the abbreviation, log error
             return false;
         }
 
-        if(!so.getAbbreviation().equals(stringValue)) {
+        if(!StringUtils.isEmpty(so.getAbbreviation()) && StringUtils.isEmpty(stringValue)) {
             changes = true;
             Change change = updateValue(data, time, "abbreviation", so.getAbbreviation());
             data.getChanges().put(change.getKey(), change);
         }
-
+        
+        // Check name
         field = getContainerFromRevisionData(data, "name");
         stringValue = extractStringValue(field);
-        if(!so.getName().equals(stringValue)) {
+        String name = so.getName();
+        if((StringUtils.isEmpty(stringValue) && !StringUtils.isEmpty(name))     // New value
+            || (!StringUtils.isEmpty(stringValue) && StringUtils.isEmpty(name)) // Value removed
+            || (!StringUtils.isEmpty(stringValue) && !StringUtils.isEmpty(name) && !name.equals(stringValue))) { // Existing value changed
             changes = true;
 
-            Change change = updateValue(data, time, "name", so.getName());
+            Change change = updateValue(data, time, "name", name);
             data.getChanges().put(change.getKey(), change);
         }
-
+        
+        // Check description
         field = getContainerFromRevisionData(data, "description");
         stringValue = extractStringValue(field);
-        if(!so.getDescription().equals(stringValue)) {
+        String description = so.getDescription();
+        if((StringUtils.isEmpty(stringValue) && !StringUtils.isEmpty(description))     // New value
+                || (!StringUtils.isEmpty(stringValue) && StringUtils.isEmpty(description)) // Value removed
+                || (!StringUtils.isEmpty(stringValue) && !StringUtils.isEmpty(description) && !description.equals(stringValue))) { // Existing value changed
             changes = true;
 
-            Change change = updateValue(data, time, "description", so.getDescription());
+            Change change = updateValue(data, time, "description", description);
             data.getChanges().put(change.getKey(), change);
         }
 
@@ -223,7 +234,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         //          If the operation is unchanged then take the original value.
         //          If the operation is removed then take no value.
         //          If the operation is modified take the new value.
-        // TODO: Validate change
+        // TODO: Validate changed value where necessary
         //      Put the result into fields map.
         //      If the operation is unchanged then remove the change object from the changes map.
 

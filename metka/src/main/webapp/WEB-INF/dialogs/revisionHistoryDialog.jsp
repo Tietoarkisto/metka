@@ -18,7 +18,7 @@
 	
 	<br/>
 	<div class="popupButtonsHolder">
-		<input type="button" class="searchFormInput" value="<spring:message code='general.buttons.close'/>" />
+		<input id="revisionsCloseBtn" type="button" class="searchFormInput" value="<spring:message code='general.buttons.close'/>" />
 		<input type="button" id="compareRevisions" class="searchFormInput" value="<spring:message code="general.revision.compare"/>"/>
 	</div>
 </div>
@@ -35,6 +35,6 @@
     </table>
 
     <div class="popupButtonsHolder">
-        <input type="button" class="searchFormInput" value="<spring:message code='general.buttons.close'/>" />
+        <input id="compareCloseBtn" type="button" class="searchFormInput" value="<spring:message code='general.buttons.close'/>" />
     </div>
 </div>

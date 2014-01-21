@@ -76,7 +76,7 @@
                 <div class="viewFormButtonsHolder" style="margin-bottom:20px;width: 630px;">
                     <input type="button" id="seriesSave" class="searchFormInput" value="<spring:message code="general.buttons.save" />">
                     <input type="button" id="seriesApprove" class="searchFormInput" value="<spring:message code='general.buttons.approve'/>" />
-                    <input type="button" id="showRevisions" class="searchFormInput" value="<spring:message code='general.buttons.versionHistory'/>" />
+                    <input type="button" id="showRevisions" class="searchFormInput" value="<spring:message code='general.buttons.revisionHistory'/>" />
                     <!-- TODO: Fix this reset button
                     <input type="reset" class="searchFormInput" value="Tyhjennä">-->
                 </div>

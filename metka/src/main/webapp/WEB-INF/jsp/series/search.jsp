@@ -21,12 +21,12 @@
                             <form:input path="id" cssClass="searchInput" />
                         </div>
                         <div class="searchFormRowHolder">
-                            <form:label path="name"><spring:message code="SERIES.field.name"/></form:label>
-                            <form:input path="name" cssClass="searchInput" />
-                        </div>
-                        <div class="searchFormRowHolder">
                             <form:label path="abbreviation"><spring:message code="SERIES.field.abbreviation"/></form:label>
                             <form:select path="abbreviation" class="formSelect" items="${info.abbreviations}" />
+                        </div>
+                        <div class="searchFormRowHolder">
+                            <form:label path="name"><spring:message code="SERIES.field.name"/></form:label>
+                            <form:input path="name" cssClass="searchInput" />
                         </div>
                         <div class="searchFormButtonsHolder">
                             <!-- TODO: translation -->

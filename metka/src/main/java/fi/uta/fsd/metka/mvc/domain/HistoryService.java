@@ -6,6 +6,7 @@ import fi.uta.fsd.metka.data.util.ModelAccessUtil;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.Change;
+import fi.uta.fsd.metka.model.data.FieldContainer;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.mvc.domain.requests.ChangeCompareRequest;
 import fi.uta.fsd.metka.mvc.domain.simple.history.ChangeCompareSO;
@@ -93,19 +94,25 @@ public class HistoryService {
             for(Map.Entry<String, Change> change : data.getChanges().entrySet()) {
                 if(change.getValue().getOperation() != ChangeOperation.UNCHANGED) {
                     ChangeSO so = changesSO.get(change.getKey());
+                    FieldContainer field;
                     if(so == null) {
                         so = new ChangeSO();
                         so.setProperty(change.getKey());
                         Field cfgField = config.getFields().get(change.getKey());
                         so.setSection(cfgField.getSection());
                         so.setType(cfgField.getType());
-                        ChangeSO.ValueStringBuilder.buildValueString(
-                                cfgField.getType(), original.getFields().get(cfgField.getKey()), so.getOldValue());
+                        field = original.getFields().get(cfgField.getKey());
+                        if(field != null) {
+                            ChangeSO.ValueStringBuilder.buildValueString(
+                                    cfgField.getType(), original.getFields().get(cfgField.getKey()), so.getOldValue());
+                        }
                         so.setMaxValues(cfgField.getMaxValues());
                         changesSO.put(cfgField.getKey(), so);
                     }
-                    ChangeSO.ValueStringBuilder.buildValueString(
-                            so.getType(), change.getValue().getNewField(), so.getNewValue());
+                    if(change.getValue().getOperation() != ChangeOperation.REMOVED) {
+                        ChangeSO.ValueStringBuilder.buildValueString(
+                                so.getType(), change.getValue().getNewField(), so.getNewValue());
+                    }
                     so.setOperation(change.getValue().getOperation());
                 }
             }
