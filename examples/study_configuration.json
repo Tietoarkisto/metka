@@ -1,0 +1,266 @@
+{
+	"key": {
+		"version": 1,
+		"type": "STUDY"
+	},
+	"sections": {
+		"basic_information": {
+			"key": "basic_information"
+		},
+		"deposit_agreement": {
+			"key": "deposit_agreement"
+		},
+		"study_description": {
+			"key": "study_description"
+		},
+		"variables": {
+			"key": "variables"
+		},
+		"file_management": {
+			"key": "file_management"
+		},
+		"codebook": {
+			"key": "codebook"
+		},
+		"study_errors": {
+			"key": "study_errors"
+		},
+		"identifiers": {
+			"key": "identifiers"
+		},
+		"import_export": {
+			"key": "import_export"
+		}
+	},
+	"choiselists": {
+		"study_type_list": {
+			"key": "study_type_list",
+			"options": [
+				{
+			]
+		}
+	},
+	"fields": {
+		"study_name": {
+			"key": "study_name",
+			"maxValues": 1,
+			"type": "STRING",
+			"section": "basic_information"
+		},
+		"study_id": {
+			"_comment": "TODO: use combination of values to form this",
+			"key": "study_id",
+			"translateable": false,
+			"immutable": true,
+			"maxValues": 1,
+			"type": "STRING",
+			"section": "basic_information"
+		},
+		"aquisition_number": {
+			"key": "aquisition_number",
+			"translateable": false,
+			"immutable": true,
+			"maxValues": 1,
+			"type": "INTEGER",
+			"section": "basic_information"
+		},
+		"ready_date": {
+			"key": "ready_date",
+			"translateable": false,
+			"immutable": true,
+			"maxValues": 1,
+			"type": "DATE",
+			"section": "basic_information"
+		},
+		"study_type": {
+			"key": "study_type",
+			"translateable": false,
+			"immutable": true,
+			"maxValues": 1,
+			"type": "CHOISE",
+			"choiselist": "study_type_list",
+			"section": "basic_information"
+		},
+		anonymisointi
+		tietosuoja
+		julkaisu
+		aineiston_kuvailun_julkaisu
+		muuttujakuvailun_julkaisu
+		sarja
+		alkuper‰inen_sijainti
+		huomautuksia_prosessiin
+		huomautukset
+		huomautukset::huomautus
+		huomautukset::p‰iv‰m‰‰r‰
+		huomautukset::huomauttaja
+		datan_versiot
+		datan_versiot::versionumero
+		datan_versiot::p‰iv‰m‰‰r‰
+		datan_versiot::k‰sittelij‰
+		datan_versiot::lyhyt_selite
+		datan_versiot::julkinen_selite
+		datan_versiot::ei_julkinen_selite
+		kuvailun_Versiot
+		kuvailun_Versiot::versionumero
+		kuvailun_Versiot::p‰iv‰m‰‰r‰
+		kuvailun_Versiot::k‰sittelij‰
+		kuvailun_Versiot::lyhyt_selite
+		kuvailun_Versiot::julkinen_selite
+		kuvailun_Versiot::ei_julkinen_selite
+		liittyv‰t_julkaisut
+		liittyv‰t_aineistot
+		liittyv‰t_mapit
+		"deposit_agreement"
+		k‰yttˆoikeus
+		k‰yttˆehdon_muutos_pvm
+		k‰yttˆehto_muutospvm_j‰lkeen
+		arkistointisopimuksen_pvm
+		luovuttajan_tyyppi
+		arkistointisopimuksen_tapa
+		jos_her‰te_ilmoitus_pvm
+		her‰tteen_saaja
+		her‰tteen_selite
+		arkistointisopimustiedosto
+		lis‰tiedot_koskien_arkistointisopimusta
+		menettely_jos_luvanantajaa_ei_tavoiteta
+		erityisehdot
+		muuta_kommentoitavaa
+		"study_description"
+		rinnakkainen_nimi
+		muunkieliset_nimet
+		muunkieliset_nimet::nimi
+		muunkieliset_nimet::kieli
+		tekij‰t (organisaatioihmeellisyyksi‰, vaatii tarkennusta)
+		tekij‰t::tekij‰
+		tekij‰t::tunniste
+		tekij‰t::tyyppi
+		tekij‰t::taustaorg
+		tekij‰t::taustaorg_tunniste
+		tekij‰t::taustaorg_tunnistetyyppi
+		muut_tekij‰t (organisaatioihmeellisyyksi‰, vaatii tarkennusta)
+		muut_tekij‰t::muu_tekij‰
+		muut_tekij‰t::tunniste
+		muut_tekij‰t::tyyppi
+		muut_tekij‰t::taustaorg
+		muut_tekij‰t::taustaorg_tunniste
+		muut_tekij‰t::taustaorg_tunnistetyyppi
+		tuottajat (organisaatioihmeellisyyksi‰, vaatii tarkennusta)
+		tuottajat::tuottaja
+		tuottajat::tunniste
+		tuottajat::tunnistetyyppi
+		tuottajat::rooli
+		tuottajat::projektinumero
+		tuottajat::lyhenne
+		asiasanat
+		asiasanat::sanasto
+		asiasanat::asiasana
+		asiasanat::uri
+		asiasanat::tunniste/osoite
+		tieteenala
+		tieteenala::sanasto
+		tieteenala::tieteenala
+		tieteenala::uri
+		tieteenala::tunniste/osoite
+		tiivistelm‰
+		viittaustiedot
+		ajalliset_kattavuudet
+		ajalliset_kattavuudet::pvm
+		ajalliset_kattavuudet::lis‰ys_dialogin_toinen_kentt‰
+		ajalliset_kattavuudet::tapahtuma
+		maat
+		maat::maa
+		maat::lyhenne
+		perusjoukot
+		perusjoukot::perusjoukko
+		perusjoukot::rajaus
+		kohdealueet
+		keruutapahtumat
+		keruutapahtumat::ajankohta
+		keruutapahtumat::lis‰ys_dialogin_toinen_kentt‰
+		keruutapahtumat::tapahtuma
+		ker‰‰j‰t (organisaatioihmeellisyyksi‰, vaatii tarkennusta)
+		ker‰‰j‰t::ker‰‰j‰
+		ker‰‰j‰t::tunniste
+		ker‰‰j‰t::tunnistetyyppi
+		ker‰‰j‰t::taustaorg
+		ker‰‰j‰t::taustaorg_tunniste
+		ker‰‰j‰t::taustaorg_tunnistetyyppi
+		havaintoyksikˆt
+		aikaulottuvuudet
+		keruumenetelm‰t
+		keruuv‰lineet
+		otantamenetelm‰t
+		otantamenetelm‰t::otantamenetelm‰
+		otantamenetelm‰t::kuvaus
+		vastausprosentti
+		l‰hdeaineisto
+		painokertoimet
+		painokertoimet::ei_painokertoimia
+		painokertoimet::painokertoimet
+		sis‰llˆllinen_muokkaus
+		tiedostot
+		t‰ydellisyys
+		lis‰varauma
+		huomioitavaa
+		arviointia
+		oheismateriaali
+		muut_materiaalit
+		muut_materiaalit::uri
+		muut_materiaalit::lyhyt_kuvaus
+		muut_materiaalit::tarkka_kuvaus
+		julkaisuihin_liittyv‰t_huomiot
+		"variables"
+		muuttujat
+		muuttujat::nimi
+		muuttujat::selite
+		muuttujat::kysymysteksti
+		muuttujat::esiteksti
+		muuttujat::j‰lkiteksti
+		muuttujat::haastattelijan_ohje
+		muuttujat::huomiot
+		muuttujat::lis‰tiedot
+		muuttujat::tietosuoja-asiat
+		muuttujat::arvojen_selitteet (vaatii s‰‰tˆ‰)
+		muuttujat::lukum‰‰r‰
+		muuttujat::minimi
+		muuttujat::maksimi
+		muuttujat::keskiarvo
+		muuttujat::keskihajonta
+		muuttujat::muuttujaryhm‰_id
+		muuttujaryhm‰t
+		muuttujaryhm‰t::id
+		muuttujaryhm‰t::nimi
+		"file_management"
+		liitetyt_tiedostot
+		liitetyt_tiedostot::tiedoston_polku
+		liitetyt_tiedostot::virallinen_selite
+		liitetyt_tiedostot::ep‰virallinen_selite
+		liitetyt_tiedostot::kommentti
+		liitetyt_tiedostot::tyyppi
+		liitetyt_tiedostot::pas
+		liitetyt_tiedostot::kieli
+		liitetyt_tiedostot::alkuper‰inen_kieli
+		liitetyt_tiedostot::www
+		liitetyt_tiedostot::ulosluovutus
+		liitetyt_tiedostot::muutokset_selite
+		liitetyt_tiedostot::poistettu
+		"codebook"
+		koodikirjat
+		koodikirjat::tiedosto
+		koodikirjat::otsikko
+		koodikirjat::tyyppi
+		koodikirjat::kuvaus
+		koodikirjat::pvm
+		koodikirjat::tallentaja
+		"study_errors"
+		(menev‰t todenn‰kˆisesti omaan tauluun)
+		"identifiers"
+		tunnisteet
+		tunnisteet::output
+		tunnisteet::versio
+		tunnisteet::p‰iv‰m‰‰r‰
+		tunnisteet::urn
+		"import_export"
+		(vain toimintoja, ei kentti‰)
+	}
+}

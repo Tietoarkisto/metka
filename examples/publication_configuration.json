@@ -40,6 +40,8 @@
 			"key": "id",
 			"translateable": false,
 			"immutable": true,
+			"unique": true,
+			"required": true,
 			"maxValues": 1,
 			"type": "INTEGER"
 		},

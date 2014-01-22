@@ -17,6 +17,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
@@ -56,7 +57,7 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
             String value = extractStringValue(field);
             if(!StringUtils.isEmpty(value)) list.add(value);
         }
-
+        Collections.sort(list);
         return list;
     }
 

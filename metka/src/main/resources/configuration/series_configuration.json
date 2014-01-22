@@ -8,6 +8,8 @@
 			"key": "id",
 			"translateable": false,
 			"immutable": true,
+			"unique": true,
+			"required": true,
 			"maxValues": 1,
 			"type": "INTEGER"
 		},
@@ -15,6 +17,8 @@
 			"key": "abbreviation",
 			"maxValues": 1,
 			"immutable": true,
+			"unique": true,
+			"required": true,
 			"translateable": false,
 			"type": "STRING"
 		},
