@@ -35,9 +35,58 @@
 	"choiselists": {
 		"study_type_list": {
 			"key": "study_type_list",
+			"default": 0,
 			"options": [
 				{
+					"value": 0
+				},
+				{
+					"value": 1
+				},
+				{
+					"value": 2
+				},
+				{
+					"value": 3
+				}
 			]
+		},
+		"anonymity_list": {
+			"key": "anonymity_list",
+			"options": [
+				{
+					"value": 0
+				},
+				{
+					"value": 1
+				},
+				{
+					"value": 2
+				}
+			]
+		},
+		"yes_no_na": {
+			"key": "yes_no_na",
+			"options": [
+				{
+					"value": 0
+				},
+				{
+					"value": 1
+				},
+				{
+					"value": 2
+				}
+			]
+		},
+		"series_list": {
+			"key": "series_list",
+			"options": [],
+			"reference": {
+				"targetType": "SERIES",
+				"valueField": "id",
+				"titleField": "name"
+			}
 		}
 	},
 	"fields": {
@@ -52,6 +101,8 @@
 			"key": "study_id",
 			"translateable": false,
 			"immutable": true,
+			"unique": true,
+			"required": true,
 			"maxValues": 1,
 			"type": "STRING",
 			"section": "basic_information"
@@ -60,11 +111,14 @@
 			"key": "aquisition_number",
 			"translateable": false,
 			"immutable": true,
+			"unique": true,
+			"required": true,
 			"maxValues": 1,
 			"type": "INTEGER",
 			"section": "basic_information"
 		},
 		"ready_date": {
+			"_comment": "This can be gained straight from ApprovalDate and doesn't need a field",
 			"key": "ready_date",
 			"translateable": false,
 			"immutable": true,
@@ -75,24 +129,79 @@
 		"study_type": {
 			"key": "study_type",
 			"translateable": false,
-			"immutable": true,
 			"maxValues": 1,
 			"type": "CHOISE",
 			"choiselist": "study_type_list",
 			"section": "basic_information"
 		},
-		anonymisointi
-		tietosuoja
-		julkaisu
-		aineiston_kuvailun_julkaisu
-		muuttujakuvailun_julkaisu
-		sarja
-		alkuper‰inen_sijainti
-		huomautuksia_prosessiin
+		"anonymity": {
+			"key": "anonymity",
+			"translateable": false,
+			"maxValues": 1,
+			"type": "CHOISE",
+			"choiselist": "anonymity_list",
+			"section": "basic_information"
+		},
+		"confidentiality": {
+			"key": "confidentiality",
+			"translateable": false,
+			"maxValues": 1,
+			"type": "CHOISE",
+			"choiselist": "yes_no_na",
+			"section": "basic_information"
+		},
+		"approved": {
+			"_comment": "Approval for study is done through this choice. Can this be avoided?",
+			"key": "approved",
+			"translateable": false,
+			"maxValues": 1,
+			"type": "CHOISE",
+			"choiselist": "yes_no_na",
+			"section": "basic_information"
+		},
+		"description_approved": {
+			"_comment": "What does this do?",
+			"key": "description_approved",
+			"translateable": false,
+			"maxValues": 1,
+			"type": "CHOISE",
+			"choiselist": "yes_no_na",
+			"section": "basic_information"
+		},
+		"variables_approved": {
+			"_comment": "What does this do?",
+			"key": "variables_approved",
+			"translateable": false,
+			"maxValues": 1,
+			"type": "CHOISE",
+			"choiselist": "yes_no_na",
+			"section": "basic_information"
+		},
+		"series_ref": {
+			"_comment": "Configuration for collecting series-references to a choiselist needs to be figured out",
+			"key": "series_ref",
+			"translateable": false,
+			"maxValues": 1,
+			"type": "REFERENCE"
+		},
+		"original_location": {
+			"key": "original_location",
+			"translateable": false,
+			"maxValues": 1,
+			"type": "STRING"
+		},
+		"process_notes": {
+			"key": "process_notes",
+			"translateable": false,
+			"maxValues": 1,
+			"type": "STRING"
+		},
+		"_comment": "Does this require separate fields or can this be done using the change information. Most likely yes at least automatically.",
 		huomautukset
 		huomautukset::huomautus
 		huomautukset::p‰iv‰m‰‰r‰
 		huomautukset::huomauttaja
+		
 		datan_versiot
 		datan_versiot::versionumero
 		datan_versiot::p‰iv‰m‰‰r‰
