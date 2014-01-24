@@ -20,8 +20,6 @@ import javax.xml.bind.annotation.XmlElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Change {
     @XmlElement private final String key;
-    @XmlElement private DateTime changeTime;
-    @XmlElement private String user;
     @XmlElement private FieldContainer originalField;
     @XmlElement private FieldContainer newField;
     @XmlElement private ChangeOperation operation;
@@ -33,22 +31,6 @@ public class Change {
 
     public String getKey() {
         return key;
-    }
-
-    public DateTime getChangeTime() {
-        return changeTime;
-    }
-
-    public void setChangeTime(DateTime changeTime) {
-        this.changeTime = changeTime;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
     }
 
     public FieldContainer getOriginalField() {

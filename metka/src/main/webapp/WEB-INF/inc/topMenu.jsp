@@ -1,6 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
 <header>
+    <jsp:include page="../dialogs/alertDialog.jsp" />
     <div class="headerContainer">
         <nav>
             <ul class="mainNavUl">

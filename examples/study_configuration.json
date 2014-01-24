@@ -35,11 +35,25 @@
 	"choiselists": {
 		"study_type_list": {
 			"key": "study_type_list",
-			"default": 0,
+			"default": 1,
 			"options": [
 				{
-					"value": 0
+					"value": 1
 				},
+				{
+					"value": 2
+				},
+				{
+					"value": 3
+				},
+				{
+					"value": 4
+				}
+			]
+		},
+		"anonymity_list": {
+			"key": "anonymity_list",
+			"options": [
 				{
 					"value": 1
 				},
@@ -51,36 +65,43 @@
 				}
 			]
 		},
-		"anonymity_list": {
-			"key": "anonymity_list",
-			"options": [
-				{
-					"value": 0
-				},
-				{
-					"value": 1
-				},
-				{
-					"value": 2
-				}
-			]
-		},
 		"yes_no_na": {
 			"key": "yes_no_na",
 			"options": [
 				{
-					"value": 0
+					"value": 1
 				},
+				{
+					"value": 2
+				},
+				{
+					"value": 3
+				}
+			]
+		},
+		"usability_permission_list": {
+			"key": "yes_no_na",
+			"options": [
 				{
 					"value": 1
 				},
 				{
 					"value": 2
+				},
+				{
+					"value": 3
+				},
+				{
+					"value": 4
+				},
+				{
+					"value": 5
 				}
 			]
 		},
 		"series_list": {
 			"key": "series_list",
+			"type": "REFERENCE",
 			"options": [],
 			"reference": {
 				"targetType": "SERIES",
@@ -178,57 +199,147 @@
 			"section": "basic_information"
 		},
 		"series_ref": {
-			"_comment": "Configuration for collecting series-references to a choiselist needs to be figured out",
 			"key": "series_ref",
 			"translateable": false,
 			"maxValues": 1,
-			"type": "REFERENCE"
+			"type": "CHOISE",
+			"choiselist": "series_list",
+			"section": "basic_information"
 		},
 		"original_location": {
 			"key": "original_location",
 			"translateable": false,
 			"maxValues": 1,
-			"type": "STRING"
+			"type": "STRING",
+			"section": "basic_information"
 		},
 		"process_notes": {
 			"key": "process_notes",
 			"translateable": false,
 			"maxValues": 1,
-			"type": "STRING"
+			"type": "STRING",
+			"section": "basic_information"
 		},
-		"_comment": "Does this require separate fields or can this be done using the change information. Most likely yes at least automatically.",
-		huomautukset
-		huomautukset::huomautus
-		huomautukset::päivämäärä
-		huomautukset::huomauttaja
-		
-		datan_versiot
+		"notes": {
+			"key": "notes",
+			"translateable": false,
+			"type": "STRING",
+			"section": "basic_information"
+		},
+		"data_versions": {
+			"key": "data_versions",
+			"translateable": false,
+			"type": "CONTAINER",
+			"section": "basic_information"
+		},
 		datan_versiot::versionumero
 		datan_versiot::päivämäärä
 		datan_versiot::käsittelijä
 		datan_versiot::lyhyt_selite
 		datan_versiot::julkinen_selite
 		datan_versiot::ei_julkinen_selite
-		kuvailun_Versiot
+		"description_versions": {
+			"key": "description_versions",
+			"translateable": false,
+			"type": "CONTAINER",
+			"section": "basic_information"
+		},
 		kuvailun_Versiot::versionumero
 		kuvailun_Versiot::päivämäärä
 		kuvailun_Versiot::käsittelijä
 		kuvailun_Versiot::lyhyt_selite
 		kuvailun_Versiot::julkinen_selite
 		kuvailun_Versiot::ei_julkinen_selite
-		liittyvät_julkaisut
-		liittyvät_aineistot
-		liittyvät_mapit
+		"publication_references": {
+			"_comment": "TODO: Should reference values be configured more fully to take to account all fields that are fetched from the reference end?",
+			"key": "publication_references",
+			"translateable": false,
+			"type": "REFERENCE",
+			"section": "basic_information"
+		},
+		"study_references": {
+			"_comment": "TODO: Should reference values be configured more fully to take to account all fields that are fetched from the reference end?",
+			"key": "study_references",
+			"translateable": false,
+			"type": "REFERENCE",
+			"section": "basic_information"
+		},
+		"binder_references": {
+			"_comment": "TODO: Should reference values be configured more fully to take to account all fields that are fetched from the reference end?",
+			"key": "binder_references",
+			"translateable": false,
+			"type": "REFERENCE",
+			"section": "basic_information"
+		},
 		"deposit_agreement"
-		käyttöoikeus
-		käyttöehdon_muutos_pvm
-		käyttöehto_muutospvm_jälkeen
-		arkistointisopimuksen_pvm
-		luovuttajan_tyyppi
-		arkistointisopimuksen_tapa
-		jos_heräte_ilmoitus_pvm
-		herätteen_saaja
-		herätteen_selite
+		"usability_permission": {
+			"key": "usability_permission",
+			"translateable": false,
+			"maxValues": 1,
+			"type": "CHOISE",
+			"choiselist": "usability_permission_list",
+			"section": "deposit_agreement"
+		},
+		"usability_permission_change_date": {
+			"key": "usability_permission_change_date",
+			"translateable": false,
+			"maxValues": 1,
+			"type": "DATE",
+			"section": "deposit_agreement"
+		},
+		"usability_permission_after_change": {
+			"key": "usability_permission_after_change",
+			"translateable": false,
+			"maxValues": 1,
+			"type": "CHOISE",
+			"choiselist": "usability_permission_list",
+			"section": "deposit_agreement"
+		},
+		"deposit_agreement_date": {
+			"key": "deposit_agreement_date",
+			"translateable": false,
+			"maxValues": 1,
+			"type": "DATE",
+			"section": "deposit_agreement"
+		},
+		"contributor_type": {
+			"key": "contributor_type",
+			"translateable": false,
+			"maxValues": 1,
+			"type": "CHOISE",
+			"choiselist": "contributor_type_list",
+			"section": "deposit_agreement"
+		},
+		"deposit_agreement_type": {
+			"key": "deposit_agreement_type",
+			"translateable": false,
+			"maxValues": 1,
+			"type": "CHOISE",
+			"choiselist": "deposit_agreement_type_list",
+			"section": "deposit_agreement"
+		},
+		"trigger_date": {
+			"_comment": "TODO: better translation for term 'heräte'",
+			"key": "trigger_date",
+			"translateable": false,
+			"maxValues": 1,
+			"type": "DATE",
+			"section": "deposit_agreement"
+		},
+		"trigger_receiver": {
+			"key": "trigger_receiver",
+			"translateable": false,
+			"maxValues": 1,
+			"type": "STRING",
+			"section": "deposit_agreement"
+		},
+		"trigger_subject": {
+			"key": "trigger_subject",
+			"translateable": false,
+			"maxValues": 1,
+			"type": "STRING",
+			"section": "deposit_agreement"
+		},
 		arkistointisopimustiedosto
 		lisätiedot_koskien_arkistointisopimusta
 		menettely_jos_luvanantajaa_ei_tavoiteta

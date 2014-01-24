@@ -1,4 +1,4 @@
-package fi.uta.fsd.metka.mvc.domain.simple;
+package fi.uta.fsd.metka.mvc.domain.simple.series;
 
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchSO;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSingleSO;

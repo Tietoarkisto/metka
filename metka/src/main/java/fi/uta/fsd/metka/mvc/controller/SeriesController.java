@@ -3,7 +3,7 @@ package fi.uta.fsd.metka.mvc.controller;
 import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.mvc.domain.ConfigurationService;
 import fi.uta.fsd.metka.mvc.domain.SeriesService;
-import fi.uta.fsd.metka.mvc.domain.simple.SeriesInfo;
+import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesInfo;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchSO;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSingleSO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.io.OutputStream;
 import java.util.List;
 
 /**
@@ -46,7 +45,7 @@ public class SeriesController {
     */
     @RequestMapping(value = "view/{id}", method = RequestMethod.GET)
     public String view(Model model, @ModelAttribute("info")SeriesInfo info, @PathVariable Integer id) {
-        model.addAttribute("page", "series");
+        model.asMap().put("page", "series");
 
         SeriesSingleSO single = seriesService.findSingleSeries(id);
 

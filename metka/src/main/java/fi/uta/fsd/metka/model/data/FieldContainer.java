@@ -2,6 +2,7 @@ package fi.uta.fsd.metka.model.data;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.joda.time.DateTime;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -19,6 +20,8 @@ import java.util.ArrayList;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FieldContainer {
     @XmlElement(name="key") @JsonProperty("key") private final String fieldKey;
+    @XmlElement private DateTime savedAt;
+    @XmlElement private String savedBy;
     @XmlElement private List<Value> values = new ArrayList<Value>();
 
     @JsonCreator
@@ -28,6 +31,22 @@ public class FieldContainer {
 
     public String getFieldKey() {
         return fieldKey;
+    }
+
+    public DateTime getSavedAt() {
+        return savedAt;
+    }
+
+    public void setSavedAt(DateTime savedAt) {
+        this.savedAt = savedAt;
+    }
+
+    public String getSavedBy() {
+        return savedBy;
+    }
+
+    public void setSavedBy(String savedBy) {
+        this.savedBy = savedBy;
     }
 
     public List<Value> getValues() {

@@ -14,6 +14,7 @@ import fi.uta.fsd.metka.model.data.FieldContainer;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.factories.SeriesFactory;
 import fi.uta.fsd.metka.mvc.MetkaObjectMapper;
+import fi.uta.fsd.metka.mvc.domain.simple.SimpleObject;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSingleSO;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -115,12 +116,16 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         DateTime time = new DateTime();
 
         FieldContainer field;
+        FieldContainer newField = null;
         Integer intValue;
         String stringValue;
-        
+        Change change;
+        String key;
+
         // Check ID
-        field = getContainerFromRevisionData(data, "id");
-        intValue = extractIntegerValue(field);
+        key = "id";
+        field = getContainerFromRevisionData(data, key);
+        intValue = extractIntegerSimpleValue(field);
         if(!so.getId().equals(intValue)) {
             // TODO: data is out of sync or someone tried to change the id, log error
             // Return false since save can not continue.
@@ -128,8 +133,9 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         }
         
         // Check abbreviation.
-        field = getContainerFromRevisionData(data, "abbreviation"); // Since we are in a DRAFT this returns a field only if one exists in changes
-        stringValue = extractStringValue(field);
+        key = "abbreviation";
+        field = getContainerFromRevisionData(data, key); // Since we are in a DRAFT this returns a field only if one exists in changes
+        stringValue = extractStringSimpleValue(field);
         if(!StringUtils.isEmpty(stringValue) && !so.getAbbreviation().equals(stringValue)) {
             // TODO: data is out of sync or someone tried to change the abbreviation, log error
             return false;
@@ -137,33 +143,50 @@ public class SeriesRepositoryImpl implements SeriesRepository {
 
         if(!StringUtils.isEmpty(so.getAbbreviation()) && StringUtils.isEmpty(stringValue)) {
             changes = true;
-            Change change = updateValue(data, time, "abbreviation", so.getAbbreviation());
+
+            newField = factory.createFieldContainer(key, time);
+            factory.setSimpleValue(newField, so.getByKey(key).toString());
+
+            change = updateValue(data, key, newField);
             data.getChanges().put(change.getKey(), change);
         }
-        
+
+        // TODO: these following two can be generalised and used by the other type of objects too.
         // Check name
-        field = getContainerFromRevisionData(data, "name");
-        stringValue = extractStringValue(field);
+        key = "name";
+        field = getContainerFromRevisionData(data, key);
+        stringValue = extractStringSimpleValue(field);
         String name = so.getName();
         if((StringUtils.isEmpty(stringValue) && !StringUtils.isEmpty(name))     // New value
             || (!StringUtils.isEmpty(stringValue) && StringUtils.isEmpty(name)) // Value removed
             || (!StringUtils.isEmpty(stringValue) && !StringUtils.isEmpty(name) && !name.equals(stringValue))) { // Existing value changed
             changes = true;
 
-            Change change = updateValue(data, time, "name", name);
+            newField = factory.createFieldContainer(key, time);
+            if(!(!StringUtils.isEmpty(stringValue) && StringUtils.isEmpty(name))) {
+                factory.setSimpleValue(newField, so.getByKey(key).toString());
+            }
+
+            change = updateValue(data, key, newField);
             data.getChanges().put(change.getKey(), change);
         }
         
         // Check description
-        field = getContainerFromRevisionData(data, "description");
-        stringValue = extractStringValue(field);
+        key = "description";
+        field = getContainerFromRevisionData(data, key);
+        stringValue = extractStringSimpleValue(field);
         String description = so.getDescription();
         if((StringUtils.isEmpty(stringValue) && !StringUtils.isEmpty(description))     // New value
                 || (!StringUtils.isEmpty(stringValue) && StringUtils.isEmpty(description)) // Value removed
                 || (!StringUtils.isEmpty(stringValue) && !StringUtils.isEmpty(description) && !description.equals(stringValue))) { // Existing value changed
             changes = true;
 
-            Change change = updateValue(data, time, "description", description);
+            newField = factory.createFieldContainer(key, time);
+            if(!(!StringUtils.isEmpty(stringValue) && StringUtils.isEmpty(description))) {
+                factory.setSimpleValue(newField, description);
+            }
+
+            change = updateValue(data, key, newField);
             data.getChanges().put(change.getKey(), change);
         }
 
@@ -279,6 +302,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         // Entities should still be managed so no merge necessary.
         data.setState(RevisionState.APPROVED);
         data.setApprovalDate(new LocalDate());
+        // TODO: set approver for the data to the user who requested the data approval
         entity.setData(metkaObjectMapper.writeValueAsString(data));
         entity.setState(RevisionState.APPROVED);
         series.setCurApprovedNo(series.getLatestRevisionNo());
@@ -335,7 +359,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         RevisionData newData = factory.createRevisionData(newRevision, oldData.getConfiguration());
         DateTime time = new DateTime();
         for(Map.Entry<String, FieldContainer> field : oldData.getFields().entrySet()) {
-            Change change = factory.createNewRevisionChange(field.getKey(), time, field.getValue());
+            Change change = factory.createNewRevisionChange(field.getKey(), field.getValue());
             newData.getChanges().put(change.getKey(), change);
         }
 
@@ -352,24 +376,17 @@ public class SeriesRepositoryImpl implements SeriesRepository {
     }
 
     // Helper functions
-    private Change updateValue(RevisionData data, DateTime time, String key, String newValue) {
+    private Change updateValue(RevisionData data, String key, FieldContainer newValue) {
         Change change = data.getChanges().get(key);
         if(change == null) {
-            change = factory.createSimpleChange(key, time);
-        } else {
-            change.setChangeTime(time);
+            change = new Change(key);
         }
-        if(StringUtils.isEmpty(newValue)) {
+        if(newValue.getValues().size() == 0) {
             change.setOperation(ChangeOperation.REMOVED);
-            change.setNewField(null);
         } else {
-            FieldContainer field = new FieldContainer(change.getKey());
-            factory.setSimpleValue(field, newValue);
-
             change.setOperation(ChangeOperation.MODIFIED);
-            change.setNewField(field);
         }
-        // TODO: set user reference for who made the change
+        change.setNewField(newValue);
         return change;
     }
 }

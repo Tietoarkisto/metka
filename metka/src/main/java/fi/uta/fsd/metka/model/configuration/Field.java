@@ -28,6 +28,8 @@ public class Field {
     @XmlElement private String section;
     @XmlElement private FieldType type;
     @XmlElement private String subfieldTo;
+    @XmlElement private Boolean unique = false;
+    @XmlElement private Boolean required = false;
 
     @JsonCreator
     public Field(@JsonProperty("key")String key) {
@@ -100,6 +102,22 @@ public class Field {
 
     public void setSubfieldTo(String subfieldTo) {
         this.subfieldTo = subfieldTo;
+    }
+
+    public Boolean getUnique() {
+        return unique;
+    }
+
+    public void setUnique(Boolean unique) {
+        this.unique = unique;
+    }
+
+    public Boolean getRequired() {
+        return required;
+    }
+
+    public void setRequired(Boolean required) {
+        this.required = required;
     }
 
     @Override

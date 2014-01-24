@@ -54,7 +54,7 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
 
             RevisionData revData = metkaObjectMapper.readValue(data, RevisionData.class);
             FieldContainer field = getContainerFromRevisionData(revData, "abbreviation");
-            String value = extractStringValue(field);
+            String value = extractStringSimpleValue(field);
             if(!StringUtils.isEmpty(value)) list.add(value);
         }
         Collections.sort(list);
@@ -105,14 +105,14 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
             if(data != null) {
                 if(!StringUtils.isEmpty(query.getAbbreviation())) {
                     FieldContainer field = getContainerFromRevisionData(data, "abbreviation");
-                    String value = extractStringValue(field);
+                    String value = extractStringSimpleValue(field);
                     if(StringUtils.isEmpty(value) || !value.equals(query.getAbbreviation())) {
                         continue;
                     }
                 }
                 if(!StringUtils.isEmpty(query.getName())) {
                     FieldContainer field = getContainerFromRevisionData(data, "name");
-                    String value = extractStringValue(field);
+                    String value = extractStringSimpleValue(field);
                     if(StringUtils.isEmpty(value) || !value.contains(query.getName())) {
                         continue;
                     }

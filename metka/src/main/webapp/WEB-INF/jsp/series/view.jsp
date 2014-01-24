@@ -33,7 +33,10 @@
             <div class="content">
            	<h1 class="pageTitle"><spring:message code="SERIES"/> ${info.single.id} - <spring:message code="general.revision"/> ${info.single.revision}</h1>
 				<div class="upperContainer">
-					<div class="prevNextContainer"><h1 class="prev">&lt;</h1><h1 class="next">&gt;</h1></div>		
+					<jsp:include page="../../inc/prevNext.jsp">
+                        <jsp:param name="prevLink" value="${contextPath}/prev/series/${info.single.id}" />
+                        <jsp:param name="nextLink" value="${contextPath}/next/series/${info.single.id}" />
+					</jsp:include>
 					<div class="rowContainer containsTranslations">
 						<div class="seriesDataSetContainer">
                             <label><spring:message code="SERIES.field.id"/></label>

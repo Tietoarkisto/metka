@@ -62,22 +62,11 @@ public class SeriesFactory {
         FieldContainer field;
         SimpleValue sv;
 
-        change = createSimpleChange("id", time);
-        field = new FieldContainer(change.getKey());
+        change = new Change("id");
+        field = createFieldContainer(change.getKey(), time);
+        // TODO: set savedBy using the user id who requested a new series
         setSimpleValue(field, entity.getKey().getRevisionableId()+"");
         change.setOriginalField(field);
-        change.setOperation(ChangeOperation.UNCHANGED);
-        data.getChanges().put(change.getKey(), change);
-
-        change = createSimpleChange("abbreviation", time);
-        change.setOperation(ChangeOperation.UNCHANGED);
-        data.getChanges().put(change.getKey(), change);
-
-        change = createSimpleChange("name", time);
-        change.setOperation(ChangeOperation.UNCHANGED);
-        data.getChanges().put(change.getKey(), change);
-
-        change = createSimpleChange("description", time);
         change.setOperation(ChangeOperation.UNCHANGED);
         data.getChanges().put(change.getKey(), change);
 
@@ -95,16 +84,23 @@ public class SeriesFactory {
         return data;
     }
 
-    public Change createSimpleChange(String key, DateTime time) {
-        Change change = new Change(key);
-        change.setChangeTime(time);
+    public FieldContainer createFieldContainer(String key, DateTime time) {
+        FieldContainer field = new FieldContainer(key);
+        field.setSavedAt(time);
+        // TODO: set current user that requests this new field container
 
-        return change;
+        return field;
     }
 
-    public Change createNewRevisionChange(String key, DateTime time, FieldContainer field) {
+    /**
+     * When you create a new revision you need to copy old field values as changes to the new DRAFT.
+     * This method does the initialisation of the Change object for you.
+     * @param key
+     * @param field
+     * @return
+     */
+    public Change createNewRevisionChange(String key, FieldContainer field) {
         Change change = new Change(key);
-        change.setChangeTime(time);
         change.setOperation(ChangeOperation.UNCHANGED);
         change.setOriginalField(field);
 

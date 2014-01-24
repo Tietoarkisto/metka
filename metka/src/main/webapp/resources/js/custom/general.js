@@ -99,6 +99,7 @@ $(document).ready(function(){
     });
 
     // Clean code here
+
     $(".pointerClass").hover(
         function() {
             $(this).css('cursor', 'pointer');
@@ -107,4 +108,17 @@ $(document).ready(function(){
             $(this).css('cursor', 'auto');
         }
     );
+
+    /**
+     * Display controller provided errors.
+     */
+    if(errorMsg != null && errorMsg != "") {
+        var str = errors[errorMsg];
+        if(errorData != null && errorData.length > 0) {
+            for(var i = 0; i < errorData.length; i++) {
+                str = str.replace("{"+i+"}", errors[errorData[i]]);
+            }
+        }
+        alert(str, errorTitle);
+    }
 });

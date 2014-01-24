@@ -56,6 +56,12 @@ public class HistoryService {
         return revisions;
     }
 
+    /**
+     * Compares revision between two revision numbers (inclusive) and collects all changes that have happened after
+     * the selected begin revision.
+     * @param request User selected values for revision comparison.
+     * @return
+     */
     public ChangeCompareSO compareRevisions(ChangeCompareRequest request) {
         ChangeCompareSO response = new ChangeCompareSO();
         response.setId(request.getId());
@@ -109,6 +115,7 @@ public class HistoryService {
                         so.setMaxValues(cfgField.getMaxValues());
                         changesSO.put(cfgField.getKey(), so);
                     }
+                    so.getNewValue().clear();
                     if(change.getValue().getOperation() != ChangeOperation.REMOVED) {
                         ChangeSO.ValueStringBuilder.buildValueString(
                                 so.getType(), change.getValue().getNewField(), so.getNewValue());

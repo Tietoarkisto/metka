@@ -35,7 +35,7 @@ public class ModelAccessUtil {
         return container;
     }
 
-    public static Integer extractIntegerValue(FieldContainer field) {
+    public static Integer extractIntegerSimpleValue(FieldContainer field) {
         Integer integer = null;
         if(field != null && field.getValues().size() > 0) {
             String value = ((SimpleValue) field.getValues().get(0)).getValue();
@@ -45,7 +45,7 @@ public class ModelAccessUtil {
         return integer;
     }
 
-    public static String extractStringValue(FieldContainer field) {
+    public static String extractStringSimpleValue(FieldContainer field) {
         String string = null;
         if(field != null && field.getValues().size() > 0) {
             string = ((SimpleValue) field.getValues().get(0)).getValue();

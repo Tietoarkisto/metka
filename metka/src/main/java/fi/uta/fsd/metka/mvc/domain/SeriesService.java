@@ -158,11 +158,11 @@ public class SeriesService {
 
         SeriesSingleSO so = new SeriesSingleSO();
         // TODO: this should be automated as much as possible using configuration in the future.
-        so.setId(extractIntegerValue(getContainerFromRevisionData(data, "id")));
+        so.setId(extractIntegerSimpleValue(getContainerFromRevisionData(data, "id")));
         so.setRevision(data.getKey().getRevision());
-        so.setAbbreviation(extractStringValue(getContainerFromRevisionData(data, "abbreviation")));
-        so.setName(extractStringValue(getContainerFromRevisionData(data, "name")));
-        so.setDescription(extractStringValue(getContainerFromRevisionData(data, "description")));
+        so.setAbbreviation(extractStringSimpleValue(getContainerFromRevisionData(data, "abbreviation")));
+        so.setName(extractStringSimpleValue(getContainerFromRevisionData(data, "name")));
+        so.setDescription(extractStringSimpleValue(getContainerFromRevisionData(data, "description")));
         so.setState(data.getState());
         return so;
     }
@@ -175,9 +175,9 @@ public class SeriesService {
 
         SeriesSearchSO so = new SeriesSearchSO();
         // TODO: this should be automated as much as possible using configuration in the future.
-        so.setId(extractIntegerValue(getContainerFromRevisionData(data, "id")));
-        so.setAbbreviation(extractStringValue(getContainerFromRevisionData(data, "abbreviation")));
-        so.setName(extractStringValue(getContainerFromRevisionData(data, "name")));
+        so.setId(extractIntegerSimpleValue(getContainerFromRevisionData(data, "id")));
+        so.setAbbreviation(extractStringSimpleValue(getContainerFromRevisionData(data, "abbreviation")));
+        so.setName(extractStringSimpleValue(getContainerFromRevisionData(data, "name")));
 
         return so;
     }

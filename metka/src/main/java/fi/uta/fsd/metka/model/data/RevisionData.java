@@ -29,6 +29,7 @@ public class RevisionData implements Comparable<RevisionData> {
     @XmlElement private Map<String, FieldContainer> fields = new HashMap<String, FieldContainer>();
     @XmlElement private RevisionState state;
     @XmlElement private LocalDate approvalDate;
+    @XmlElement private String approver;
 
     @JsonCreator
     public RevisionData(@JsonProperty("key")RevisionKey key, @JsonProperty("configuration")ConfigurationKey configuration) {
@@ -66,6 +67,14 @@ public class RevisionData implements Comparable<RevisionData> {
 
     public void setApprovalDate(LocalDate approvalDate) {
         this.approvalDate = approvalDate;
+    }
+
+    public String getApprover() {
+        return approver;
+    }
+
+    public void setApprover(String approver) {
+        this.approver = approver;
     }
 
     @Override
