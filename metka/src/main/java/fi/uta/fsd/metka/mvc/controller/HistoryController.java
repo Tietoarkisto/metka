@@ -26,27 +26,27 @@ public class HistoryController {
     @Autowired
     private HistoryService service;
 
-    // Handle requests for revision history
+    /**
+     * Get list of revisions for revisionable object.
+     * @param id - Id of revisionable object for which revisions are requested
+     * @return List of RevisionSO objects containing all existing revisions for given revisionable
+     */
     @RequestMapping(value = "revisions/{id}", method = {RequestMethod.GET},
         produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<RevisionSO> getRevisions(@PathVariable Integer id) {
         return service.getRevisionHistory(id);
     }
 
-    // Handle requests for revision changes
+    /**
+     * Get comparison of an inclusive revision range given in the request.
+     * Only latest changes to each field are included.
+     * @param request - Request object containing revision range and other needed information.
+     * @return ChangeComparison object containing all relevant data for the revision range comparison
+     */
     @RequestMapping(value = "revisions/compare", method = {RequestMethod.GET, RequestMethod.POST},
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody ChangeCompareSO getChanges(@RequestBody ChangeCompareRequest request) {
         ChangeCompareSO c = service.compareRevisions(request);
         return c;
     }
-
-    // Show revision history for revisionable
-
-    // Find changes comparing two revisions
-    // 1. Get oldRevision+1
-    // 2. Get changes
-    // 3. Repeat combining changes always leaving the latest change for every field until at current revision
-    // 4. Make a history object suitable for showing on page.
-
 }

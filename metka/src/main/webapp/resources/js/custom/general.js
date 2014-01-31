@@ -112,13 +112,17 @@ $(document).ready(function(){
     /**
      * Display controller provided errors.
      */
+    checkForErrors();
+});
+
+function checkForErrors() {
     if(errorMsg != null && errorMsg != "") {
-        var str = errors[errorMsg];
+        var str = strings[errorMsg];
         if(errorData != null && errorData.length > 0) {
             for(var i = 0; i < errorData.length; i++) {
-                str = str.replace("{"+i+"}", errors[errorData[i]]);
+                str = str.replace("{"+i+"}", strings[errorData[i]]);
             }
         }
         alert(str, errorTitle);
     }
-});
+}

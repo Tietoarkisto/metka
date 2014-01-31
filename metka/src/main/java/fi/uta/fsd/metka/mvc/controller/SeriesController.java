@@ -3,7 +3,9 @@ package fi.uta.fsd.metka.mvc.controller;
 import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.mvc.domain.ConfigurationService;
 import fi.uta.fsd.metka.mvc.domain.SeriesService;
+import fi.uta.fsd.metka.mvc.domain.simple.ErrorMessage;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesInfo;
+import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchResultSO;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchSO;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSingleSO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -70,14 +73,23 @@ public class SeriesController {
         model.addAttribute("page", "series");
 
         info.setAbbreviations(seriesService.findAbbreviations());
-        List<SeriesSearchSO> results = seriesService.searchForSeries(info.getQuery());
-        if(results.size() == 1) {
-            return "redirect:/series/view/"+results.get(0).getId();
+        if(info.getQuery() != null) {
+            List<SeriesSearchResultSO> results = seriesService.searchForSeries(info.getQuery());
+            if(results.size() == 1) {
+                return "redirect:/series/view/"+results.get(0).getId();
+            }
+            info.setResults(results);
+            info.setQuery(info.getQuery());
         }
-        info.setResults(results);
-        info.setQuery(info.getQuery());
 
         model.addAttribute("info", info);
+
+        if(info.getQuery() != null && info.getResults().size() == 0) {
+            ErrorMessage error = new ErrorMessage();
+            error.setMsg("general.errors.search.noResult");
+            error.getData().add("general.errors.search.noResult.series");
+            model.asMap().put("errorContainer", error);
+        }
 
         return SEARCH;
     }
@@ -99,7 +111,6 @@ public class SeriesController {
         }
         info.setSingle(single);
 
-
         return MODIFY;
     }
 
@@ -114,7 +125,13 @@ public class SeriesController {
         model.addAttribute("page", "series");
 
         boolean success = seriesService.saveSeries(info.getSingle());
-        model.addAttribute("saveFail", !success);
+        //model.addAttribute("saveFail", !success);
+
+        if(success) {
+            ErrorMessage error = new ErrorMessage();
+            error.setMsg("general.errors.save.success");
+            model.asMap().put("errorContainer", error);
+        }
 
         return MODIFY;
     }
@@ -127,22 +144,26 @@ public class SeriesController {
     * later in the approval process.
     */
     @RequestMapping(value="approve", method = {RequestMethod.POST})
-    public String approve(Model model, @ModelAttribute("info")SeriesInfo info, BindingResult result) {
+    public String approve(Model model, @ModelAttribute("info")SeriesInfo info, BindingResult result, RedirectAttributes redirectAttributes) {
         model.addAttribute("page", "series");
 
         boolean success = seriesService.saveSeries(info.getSingle());
 
         if(!success) {
-            model.addAttribute("saveFail", !success);
+            // TODO: add error message for save failure during approval
             return MODIFY;
         }
 
         success = seriesService.approveSeries(info.getSingle().getId());
 
         if(!success) {
-            model.addAttribute("approveFail", !success);
+            // TODO: add error message for approval failure
             return MODIFY;
         }
+
+        ErrorMessage error = new ErrorMessage();
+        error.setMsg("general.errors.approve.success");
+        redirectAttributes.addFlashAttribute("errorContainer", error);
 
         return "redirect:/series/view/"+info.getSingle().getId();
     }

@@ -156,11 +156,3 @@ function checkRadioGroups() {
         $("#compareRevisions").attr("disabled", false);
     }
 }
-
-/*
-<div class="versionHistoryDialogRow">
-    <div class="versionName">${version.versionNumber}</div>
-    <div class="versionPublishedDate">${version.publishDate}</div>
-    <div class="versionCompare"><input type="checkbox" name="version"/></div>
-    <div class="versionReplace"><input type="button" class="searchFormInput" value="<spring:message code='general.versions.replace'/>" /></div>
-</div>*/

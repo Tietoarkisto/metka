@@ -1,5 +1,6 @@
 package fi.uta.fsd.metka.mvc.domain;
 
+import fi.uta.fsd.metka.data.enums.repositoryResponses.RemoveResponse;
 import fi.uta.fsd.metka.data.repository.GeneralRepository;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +26,35 @@ public class GeneralService {
      * @param currentId Id of the revisionable the user is looking at at the moment
      * @param type What type of revisionable is required (series, publication etc.)
      * @param forward do we want next or previous revisionable
-     * @return
+     * @return Id of the adjanced revisionable object. If not found then error is thrown instead.
      */
     public Integer getAdjancedRevisionableId(Integer currentId, String type, boolean forward) throws NotFoundException {
         return repository.getAdjancedRevisionableId(currentId, type, forward);
+    }
+
+    /**
+     * Removes the draft revision from given revisionable object. There has to be a draft, otherwise error should be returned.
+     * To remove a draft the user requesting the removal has to be the same as the handler of that draft.
+     * Notice that revision number is not required since all revisionable objects can have at most one draft open at a time.
+     *
+     * @param type - Type of the revisionable object.
+     * @param id - Id of the revisionable object.
+     * @return RemoveResponse enum returned by repository. Success or failure of the operation can be determined from this.
+     */
+    public RemoveResponse removeDraft(String type, Integer id) {
+        return repository.removeDraft(type, id);
+    }
+
+    /**
+     * Performs a logical remove on revisionable entity with given type and id.
+     * To logically remove a revisionable entity it has to have at least one approved revision and can not have open drafts,
+     * If successful then the revisionable has a value 'true' in its 'removed' column in database.
+     *
+     * @param type - Type of the revisionable object.
+     * @param id - Id of the revisionable object.
+     * @return RemoveResponse enum returned by repository. Success or failure of the operation can be determined from this.
+     */
+    public RemoveResponse removeLogical(String type, Integer id) {
+        return repository.removeLogical(type, id);
     }
 }

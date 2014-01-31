@@ -14,12 +14,32 @@ $(document).ready(function(){
     $("#alertCloseBtn").click(function() {
         $("#alertDialog").dialog("close");
     });
+    $("#confirmationNoBtn").click(function() {
+        $("#confirmationDialog").dialog("close");
+    });
+
     window.alert = function(message, title){
-        title = title || "general.errors.title.notice";
+        if(!title) {
+            title = "general.errors.title.notice";
+        }
         var alertDlg = $("#alertDialog");
-        alertDlg.dialog("option", "title", errors[title]);
-        alertDlg.find("#content").empty();
-        alertDlg.find("#content").text(message);
+        alertDlg.dialog("option", "title", strings[title]);
+        alertDlg.find("#alertContent").empty();
+        alertDlg.find("#alertContent").text(message);
         alertDlg.dialog("open");
     };
 });
+
+function confirmation(message, title, execute){
+    if(!title) {
+        title = strings["general.confirmation.title.confirm"];
+    }
+    var confirm = $("#confirmationDialog");
+    confirm.dialog("option", "title", title);
+    confirm.find("#confirmationContent").empty();
+    confirm.find("#confirmationContent").text(message);
+
+    confirm.find("#confirmationYesBtn").click(execute);
+
+    confirm.dialog("open");
+}

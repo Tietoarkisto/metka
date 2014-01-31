@@ -5,17 +5,15 @@ import fi.uta.fsd.metka.mvc.domain.simple.SimpleSearchObject;
 /**
  * Created with IntelliJ IDEA.
  * User: lasseku
- * Date: 12/23/13
- * Time: 3:35 PM
+ * Date: 1/30/14
+ * Time: 4:25 PM
  * To change this template use File | Settings | File Templates.
  */
-public class SeriesSearchSO extends SimpleSearchObject {
+public class SeriesSearchResultSO extends SimpleSearchObject {
     private Integer id;
     private String name;
     private String abbreviation;
-    private boolean searchApproved;
-    private boolean searchDraft;
-    private boolean searchRemoved;
+    private String state;
 
     public Integer getId() {
         return id;
@@ -41,28 +39,12 @@ public class SeriesSearchSO extends SimpleSearchObject {
         this.abbreviation = abbreviation;
     }
 
-    public boolean isSearchApproved() {
-        return searchApproved;
+    public String getState() {
+        return state;
     }
 
-    public void setSearchApproved(boolean searchApproved) {
-        this.searchApproved = searchApproved;
-    }
-
-    public boolean isSearchDraft() {
-        return searchDraft;
-    }
-
-    public void setSearchDraft(boolean searchDraft) {
-        this.searchDraft = searchDraft;
-    }
-
-    public boolean isSearchRemoved() {
-        return searchRemoved;
-    }
-
-    public void setSearchRemoved(boolean searchRemoved) {
-        this.searchRemoved = searchRemoved;
+    public void setState(String state) {
+        this.state = state;
     }
 
     @Override
@@ -89,12 +71,14 @@ public class SeriesSearchSO extends SimpleSearchObject {
                 return abbreviation;
             case NAME:
                 return name;
+            case STATE:
+                return state;
         }
         return null;
     }
 
     private static enum VALUE {
-        ID("id"), ABBREVIATION("abbreviation"), NAME("name");
+        ID("id"), ABBREVIATION("abbreviation"), NAME("name"), STATE("state");
         private String key;
 
         private VALUE(String key) {

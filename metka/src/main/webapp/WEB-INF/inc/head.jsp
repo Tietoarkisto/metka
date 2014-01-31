@@ -6,27 +6,12 @@
 <link rel="stylesheet" type="text/css" href="${contextPath}/css/jquery-ui.css">
 <link rel="stylesheet" type="text/css" href="${contextPath}/css/styles.css">
 <script>
+    // Set global variable for contextPath to be used in javascript.
     var contextPath = "${pageContext.request.contextPath}";
-    var errorTitle = "";
-    <c:if test="${not empty errorContainer}">errorTitle = "${errorContainer.title}";</c:if>
-    var errorMsg = "";
-    <c:if test="${not empty errorContainer}">errorMsg = "${errorContainer.msg}";</c:if>
-    var errorData = new Array();
-    <c:if test="${not empty errorContainer}">
-        <c:forEach items="${errorContainer.data}" var="dataStr" varStatus="errorDataStatus">
-            errorData[${errorDataStatus.index}] = "${dataStr}";
-        </c:forEach>
-    </c:if>
-    var errors = new Array();
-    errors["general.errors.title.notice"] = "<spring:message code='general.errors.title.notice'/>";
-    errors["general.errors.title.error"] = "<spring:message code='general.errors.title.error'/>";
-    errors["general.errors.move.previous"] = "<spring:message code='general.errors.move.previous'/>";
-    errors["general.errors.move.next"] = "<spring:message code='general.errors.move.next'/>";
-    errors["general.errors.move.series"] = "<spring:message code='general.errors.move.series'/>";
-    errors["general.errors.move.study"] = "<spring:message code='general.errors.move.study'/>";
-    errors["general.errors.move.publication"] = "<spring:message code='general.errors.move.publication'/>";
-
+    // Initialise the global translation strings array for javascript. When translations are needed they should be found from here.
+    var strings = new Array();
 </script>
+<%@include file="errorInit.jsp"%>
 <script src="${contextPath}/js/jquery/jquery-1.10.2.js"></script>
 <script src="${contextPath}/js/jquery/jquery-ui.js"></script>
 <script src="${contextPath}/js/jquery/jquery.tablesorter.min.js"></script>

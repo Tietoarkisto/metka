@@ -9,7 +9,6 @@ package fi.uta.fsd.metka.data.enums;
  */
 public enum RevisionState {
     DRAFT,
-    APPROVED,
-    REMOVED
+    APPROVED
     // Add more as needed
 }

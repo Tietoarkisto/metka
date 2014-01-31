@@ -29,7 +29,10 @@ public abstract class RevisionableEntity {
     @Column(name = "LATEST_REVISION_NO")
     private Integer latestRevisionNo;
 
-    @OneToOne
+    @Column(name = "REMOVED")
+    private Boolean removed = false;
+
+    /*@OneToOne
     @JoinColumns({
             @JoinColumn(name = "REVISIONABLE_ID", referencedColumnName = "REVISIONABLE_ID", insertable = false, updatable = false),
             @JoinColumn(name = "CUR_APPROVED_NO", referencedColumnName = "REVISION_NO", insertable = false, updatable = false)
@@ -41,7 +44,7 @@ public abstract class RevisionableEntity {
             @JoinColumn(name = "REVISIONABLE_ID", referencedColumnName = "REVISIONABLE_ID", insertable = false, updatable = false),
             @JoinColumn(name = "LATEST_REVISION_NO", referencedColumnName = "REVISION_NO", insertable = false, updatable = false)
     })
-    private RevisionEntity latestRevision;
+    private RevisionEntity latestRevision;*/
 
     public Integer getId() {
         return id;
@@ -75,12 +78,20 @@ public abstract class RevisionableEntity {
         this.latestRevisionNo = latestRevisionNo;
     }
 
-    public RevisionEntity getCurApprovedRev() {
+    /*public RevisionEntity getCurApprovedRev() {
         return curApprovedRev;
     }
 
     public RevisionEntity getLatestRevision() {
         return latestRevision;
+    }*/
+
+    public Boolean getRemoved() {
+        return (removed == null) ? false : removed;
+    }
+
+    public void setRemoved(Boolean removed) {
+        this.removed = (removed == null) ? false : removed;
     }
 
     @Override

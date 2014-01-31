@@ -63,9 +63,6 @@ abbr[title], dfn[title] {
   border-bottom: 1px dotted;
   cursor: help; }
 
-table {
-  border-collapse: collapse;
-  border-spacing: 0; }
 
 /* change border colour to suit your needs */
 hr {
@@ -136,18 +133,6 @@ footer {
   background-color: white;
   display: block;
   box-shadow: 10px 10px 5px #888; }
-
-.pageTitle {
-  font-size: 17px;
-  color: white;
-  border-bottom: solid 1px;
-  padding: 10px 20px 10px 20px;
-  background-color: #009ee0;
-  height: 20px; }
-  .pageTitle .floatLeft {
-    float: left; }
-  .pageTitle .floatRight {
-    float: right; }
 
 .required:after {
   content: " *"; }
@@ -256,63 +241,6 @@ footer {
 .ui-state-disabled {
   color: #ccc !important;
   opacity: 1 !important; }
-
-/*TABLE CSS*/
-table.metkaTable, #materialStudyLevel #studyLevelData .metkaTable {
-  border-bottom: solid 1px #009ee0;
-  border-left: solid 1px #009ee0;
-  border-right: solid 1px #009ee0;
-  margin: 0px 10px 0px 10px;
-  font-size: 8pt;
-  width: 1004px;
-  text-align: left; }
-  table.metkaTable a, #materialStudyLevel #studyLevelData .metkaTable a {
-    text-decoration: none;
-    color: #000; }
-  table.metkaTable thead tr th, #materialStudyLevel #studyLevelData .metkaTable thead tr th, table.metkaTable thead tfoot tr th, #materialStudyLevel #studyLevelData .metkaTable thead tfoot tr th {
-    background-color: #009ee0;
-    font-size: 15px;
-    padding: 4px;
-    color: white; }
-  table.metkaTable thead tr .header, #materialStudyLevel #studyLevelData .metkaTable thead tr .header {
-    background-image: url(../images/bg.gif);
-    background-repeat: no-repeat;
-    background-position: center right;
-    cursor: pointer; }
-  table.metkaTable thead tr .headerSortUp, #materialStudyLevel #studyLevelData .metkaTable thead tr .headerSortUp {
-    background-color: #8dbdd8;
-    background-image: url(../images/asc.gif); }
-  table.metkaTable thead tr .headerSortDown, #materialStudyLevel #studyLevelData .metkaTable thead tr .headerSortDown {
-    background-color: #8dbdd8;
-    background-image: url(../images/desc.gif); }
-  table.metkaTable tbody tr:hover, #materialStudyLevel #studyLevelData .metkaTable tbody tr:hover {
-    background-color: #eaeaea; }
-  table.metkaTable tbody td, #materialStudyLevel #studyLevelData .metkaTable tbody td {
-    padding: 4px;
-    vertical-align: top; }
-  table.metkaTable tbody tr.odd td, #materialStudyLevel #studyLevelData .metkaTable tbody tr.odd td {
-    background-color: #EAEAEA; }
-
-.searchFormInput, .button {
-  padding: 5px;
-  outline: none;
-  transition: all 0.25s ease-in-out;
-  -webkit-transition: all 0.25s ease-in-out;
-  -moz-transition: all 0.25s ease-in-out;
-  background-color: #009ee0;
-  color: white;
-  border: 1px solid #009ee0;
-  cursor: pointer;
-  text-decoration: none;
-  font-size: 15px;
-  margin-left: 20px; }
-  .searchFormInput :focus, .button :focus {
-    box-shadow: 0 0 8px #005993;
-    -webkit-box-shadow: 0 0 8px #005993;
-    -moz-box-shadow: 0 0 8px #005993; }
-  .searchFormInput:disabled, .button:disabled {
-      background-color: #c8c8c8;
-  }
 
 nav {
   display: inline-block; }
@@ -747,10 +675,7 @@ nav {
   height: 200px;
   width: 440px; }
 
-.searchResult {
-  margin-top: 20px;
-  display: block;
-}
+
 
 .searchTableActionLinkHolder {
   clear: left;
@@ -773,10 +698,6 @@ nav {
 
 .materialContent .addRow, .materialContent .removeRow, .materialContent .editButton, .materialContent .reservedButton, .publicationContent .addRow, .publicationContent .removeRow, .publicationContent .editButton, .publicationContent .reservedButton, .seriesContent .addRow, .seriesContent .removeRow, .seriesContent .editButton, .seriesContent .reservedButton {
   display: none; }
-
-.upperContainer {
-  margin: 10px;
-  font-size: 12px; }
 
 .rowContainer {
   clear: both;
@@ -924,25 +845,25 @@ nav {
     width: 150px; }
   .seriesDataSetContainer input {
     font-size: 15px;
-    width: 450px;
+    /*width: 450px;*/
     margin-right: 10px; }
   .seriesDataSetContainer select {
     font-size: 15px;
-    width: 450px;
+    /*width: 450px;*/
     margin-right: 10px; }
   .seriesDataSetContainer textarea {
     font-size: 15px;
-    width: 460px;
+    /*width: 460px;*/
     height: 100px; }
   .seriesDataSetContainer .plainTextInput {
     float: left;
     font-size: 15px;
-    width: 450px;
+    /*width: 450px;*/
     margin-right: 10px; }
   .seriesDataSetContainer .plainTextTextarea {
     float: left;
     font-size: 15px;
-    width: 460px; }
+    /*width: 460px;*/ }
   .seriesDataSetContainer label {
     margin-bottom: 20px; }
   .seriesDataSetContainer input {
@@ -990,29 +911,7 @@ nav {
   #materialStudyLevel #studyLevelData .studyLevelDataSetTextareaContainer textarea {
     width: 400px; }
 
-.prevNextContainer {
-  display: inline-block;
-  float: right;
-  margin-bottom: 10px;
-  margin-right: 10px;
-  width: 984px; }
-  .prevNextContainer h1.prev {
-    font-size: 15px;
-    float: left;
-    background: #009ee0;
-    color: white;
-    padding: 5px;
-    cursor: pointer; }
-  .prevNextContainer h1.next {
-    font-size: 15px;
-    float: right;
-    background: #009ee0;
-    color: white;
-    padding: 5px;
-    margin-left: 10px;
-    cursor: pointer; }
-
-#variablesPrevNextContainer {
+/*#variablesPrevNextContainer {
   display: inline;
   float: top;
   margin-bottom: 0px;
@@ -1032,7 +931,7 @@ nav {
     color: white;
     padding: 5px;
     margin-left: 10px;
-    cursor: pointer; }
+    cursor: pointer; }*/
 
 /* RENAME */
 .materialPrevNextContainer {
@@ -1042,15 +941,6 @@ nav {
   margin-right: 20px;
   width: 984px;
   width: 979px; }
-
-.viewFormButtonsHolder {
-  clear: left;
-  display: inline-block;
-  margin-top: 20px;
-  text-align: right;
-  width: 1014px; }
-  .viewFormButtonsHolder input {
-    margin-left: 20px; }
 
 .materialTableActionLinkHolder, .publicationTableActionLinkHolder {
   clear: left;
@@ -1180,16 +1070,171 @@ nav {
 #packagingHistoryContainer {
   padding: 10px; }
 
-/* Clean css */
-.revisionTableColumn {
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*************
+ * Clean css *
+ *************/
+.upperContainer {
+    margin: 10px;
+}
+
+.pageTitle {
+    font-size: 17px;
+    color: white;
+    padding: 10px 20px 10px 20px;
+    background-color: #009ee0;
+    height: 20px; }
+.pageTitle .floatLeft {
+    float: left;
+}
+.pageTitle .floatRight {
+    float: right;
+}
+
+.searchResult {
+    margin: 10px;
+    display: block;
+}
+
+.viewFormButtonsHolder {
+    margin: 0px 10px;
+    display: block;
+    position: relative;
+}
+.buttonsGroup {
+    display: inline;
+    float: right;
+}
+
+.spaceClear {
+    clear: both;
+}
+
+.buttonsGroup input {
+    margin-left: 20px;
+}
+
+.prevNextContainer {
+    margin: 5px 10px;
+}
+.prevNextContainer > input:last-of-type {
+    float:right;
+}
+
+.button {
     padding: 5px;
-    min-width: 120px;
-    max-width: 300px;
+    outline: none;
+    background-color: #009ee0;
+    color: white;
+    border: 1px solid #009ee0;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 15px;
+
+    transition: all 0.25s ease-in-out;
+    -webkit-transition: all 0.25s ease-in-out;
+    -moz-transition: all 0.25s ease-in-out;
+}
+.button :focus {
+    box-shadow: 0 0 8px #005993;
+    -webkit-box-shadow: 0 0 8px #005993;
+    -moz-box-shadow: 0 0 8px #005993; }
+.button:disabled {
+    background-color: #c8c8c8;
+}
+
+/* form table */
+table.formTable {
     text-align: left;
+    width: 100%;
+}
+table.formTable * {
+    font-size: 15px;
+}
+table.formTable td {
+    vertical-align: top;
+}
+table.formTable input {
+    padding: 5px 0px;
+    width: 100%;
+}
+table.formTable select {
+    padding: 5px 0px;
+    width: 100%;
+}
+table.formTable textarea {
+    padding: 5px 0px;
+    width: 100%;
+    min-height: 10em;
+}
+table.formTable .labelColumn {
+    width: 200px;
+}
+
+/* data table */
+table.dataTable {
+    border-bottom: solid 1px #009ee0;
+    border-left: solid 1px #009ee0;
+    border-right: solid 1px #009ee0;
+    margin: 0px;
+    font-size: 8pt;
+    width: 100%;
+    text-align: left;
+    border-collapse: collapse;
+}
+table.dataTable a {
+    text-decoration: none;
+    color: black;
+}
+table.dataTable thead tr th {
+    background-color: #009ee0;
+    font-size: 15px;
+    padding: 4px;
+    color: white;
+}
+table.dataTable thead.sortable tr th {
+    background-image: url(images/bg.gif);
+    background-repeat: no-repeat;
+    background-position: center right;
+    cursor: pointer; }
+table.dataTable thead tr .sortableSortedAsc {
+    background-color: #8dbdd8;
+    background-image: url(images/asc.gif);
+}
+table.dataTable thead tr .sortableSortedDesc {
+    background-color: #8dbdd8;
+    background-image: url(images/desc.gif);
+}
+table.dataTable tbody tr:hover {
+    background-color: #eaeaea;
+}
+table.dataTable tbody td {
+    padding: 4px;
+    vertical-align: top;
+}
+table.dataTable tbody tr td {
+    border-bottom: 1px solid black;
+}
+table.dataTable tbody tr:last-of-type td {
+    border-bottom: none;
+}
+
+.revisionTableColumn {
+    max-width: 300px;
 }
 .changeTableColumn {
-    padding: 5px;
     min-width: 300px;
     max-width: 500px;
-    text-align: left;
 }

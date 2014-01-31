@@ -1,4 +1,6 @@
 <div class="prevNextContainer">
-    <h1 class="prev" onclick="location.href='${param.prevLink}'">&lt;</h1>
-    <h1 class="next" onclick="location.href='${param.nextLink}'">&gt;</h1>
+    <input type="button" class="button" value="&lt;"
+           onclick="location.href='${pageContext.request.contextPath}/prev/${page}/${param.id}'" />
+    <input type="button" class="button" value="&gt;"
+           onclick="location.href='${pageContext.request.contextPath}/next/${page}/${param.id}'" />
 </div>

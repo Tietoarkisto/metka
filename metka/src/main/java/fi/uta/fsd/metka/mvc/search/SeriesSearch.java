@@ -19,6 +19,13 @@ import java.util.List;
 @Transactional(readOnly = true)
 public interface SeriesSearch {
     public List<String> findAbbreviations() throws IOException;
-    public List<RevisionData> findSeries(SeriesSearchSO query) throws IOException;
+
+    /**
+     * Return all series matching the given search terms.
+     * @param query User defined search terms for finding series
+     * @return List of Object[2]. First column contains the RevisionData object second column contains the removed value of the series.
+     * @throws IOException
+     */
+    public List findSeries(SeriesSearchSO query) throws IOException;
     public RevisionData findSingleSeries(Integer id) throws IOException;
 }

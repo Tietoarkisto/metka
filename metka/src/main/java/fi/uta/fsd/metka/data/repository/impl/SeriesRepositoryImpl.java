@@ -94,7 +94,8 @@ public class SeriesRepositoryImpl implements SeriesRepository {
             return false;
         }
 
-        RevisionEntity revEntity = series.getLatestRevision();
+        //RevisionEntity revEntity = series.getLatestRevision();
+        RevisionEntity revEntity = em.find(RevisionEntity.class, new RevisionKey(series.getId(), series.getLatestRevisionNo()));
         if(revEntity.getState() != RevisionState.DRAFT || StringUtils.isEmpty(revEntity.getData())) {
             // Only drafts can be saved and there has to be existing revision data
             // TODO: if we get here an error has to be logged since data is out of sync
@@ -225,25 +226,26 @@ public class SeriesRepositoryImpl implements SeriesRepository {
             return false;
         }
 
-        if(series.getCurApprovedRev() == null && series.getLatestRevision() == null) {
+        if(series.getCurApprovedNo() == null && series.getLatestRevisionNo() == null) {
             // TODO: log suitable error
             System.err.println("No revision found when approving series "+id);
             return false;
         }
 
-        if(series.getCurApprovedRev() != null && series.getCurApprovedNo().equals(series.getLatestRevisionNo())) {
+        if(series.getCurApprovedNo() != null && series.getCurApprovedNo().equals(series.getLatestRevisionNo())) {
             // Assume no DRAFT exists in this case. Add confirmation if necessary but it will still be an exception and
             // approval will not be done anyway.
             return true;
         }
 
-        if(series.getCurApprovedRev() != null && series.getCurApprovedNo().compareTo(series.getLatestRevisionNo()) > 0) {
+        if(series.getCurApprovedNo() != null && series.getCurApprovedNo().compareTo(series.getLatestRevisionNo()) > 0) {
             // TODO: log exception since data is out of sync
             System.err.println("Current approved is larger than latest revision on series "+id+". This should not happen.");
             return false;
         }
 
-        RevisionEntity entity = series.getLatestRevision();
+        //RevisionEntity entity = series.getLatestRevision();
+        RevisionEntity entity = em.find(RevisionEntity.class, new RevisionKey(series.getId(), series.getLatestRevisionNo()));
         if(entity.getState() != RevisionState.DRAFT) {
             // TODO: log exception since data is out of sync
             System.err.println("Latest revision should be DRAFT but is not on series "+id);
@@ -323,15 +325,16 @@ public class SeriesRepositoryImpl implements SeriesRepository {
             // TODO: log suitable error
             return null;
         }
-        if(series.getCurApprovedRev() == null && series.getLatestRevision() == null) {
+        if(series.getCurApprovedNo() == null && series.getLatestRevisionNo() == null) {
             // TODO: log suitable error
             System.err.println("No revision found when trying to edit series "+id);
             return null;
         }
 
-        RevisionEntity latestRevision = series.getLatestRevision();
+        //RevisionEntity latestRevision = series.getLatestRevision();
+        RevisionEntity latestRevision = em.find(RevisionEntity.class, new RevisionKey(series.getId(), series.getLatestRevisionNo()));
         RevisionData oldData = metkaObjectMapper.readValue(latestRevision.getData(), RevisionData.class);
-        if(series.getCurApprovedRev() == null || series.getCurApprovedNo().compareTo(series.getLatestRevisionNo()) < 0) {
+        if(series.getCurApprovedNo() == null || series.getCurApprovedNo().compareTo(series.getLatestRevisionNo()) < 0) {
             if(latestRevision.getState() != RevisionState.DRAFT) {
                 // TODO: log exception since data is out of sync
                 System.err.println("Latest revision should be DRAFT but is not on series "+id);

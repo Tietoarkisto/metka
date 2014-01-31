@@ -1,21 +1,15 @@
 package fi.uta.fsd.metka.mvc.controller;
 
+import fi.uta.fsd.metka.data.enums.repositoryResponses.RemoveResponse;
 import fi.uta.fsd.metka.mvc.domain.GeneralService;
 import fi.uta.fsd.metka.mvc.domain.simple.ErrorMessage;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
 
 /**
  * Created with IntelliJ IDEA.
@@ -43,7 +37,7 @@ public class GeneralController {
             ErrorMessage error = new ErrorMessage();
             error.setTitle("general.errors.title.notice");
             error.setMsg("general.errors.move.previous");
-            error.getData().add("general.errors.move."+type);
+            error.getData().add("general.errors.move." + type);
 
             redirectAttributes.addFlashAttribute("errorContainer", error);
         }
@@ -64,5 +58,108 @@ public class GeneralController {
             redirectAttributes.addFlashAttribute("errorContainer", error);
         }
         return "redirect:/"+type+"/view/"+id;
+    }
+
+    /**
+     * Remove draft from revisionable. This is an actual removal and after the operation the data can not be found
+     * from database anymore.
+     * @param id - Id of the revisionable entity from where the draft is to be removed
+     * @param type - Type of the removed object (used to return the user to correct page).
+     * @return View name. If removal fails then the user is returned to the edit page (where the button is)
+     *          otherwise they are returned to view the revisionable object
+     */
+    @RequestMapping(value="/remove/{type}/draft/{id}", method = RequestMethod.GET)
+    public String removeDraft(@PathVariable String type, @PathVariable Integer id, RedirectAttributes redirectAttributes) {
+        ErrorMessage error = new ErrorMessage();
+        RemoveResponse response = service.removeDraft(type, id);
+        switch (response) {
+            case SUCCESS:
+                error = new ErrorMessage();
+                error.setMsg("general.errors.remove.draft.complete");
+                error.getData().add("general.errors.remove.draft.complete."+type);
+                error.getData().add(id+"");
+
+                redirectAttributes.addFlashAttribute("errorContainer", error);
+                return "redirect:/"+type+"/view/"+id;
+            case NO_DRAFT:
+                error = new ErrorMessage();
+                error.setTitle("general.errors.title.error");
+                error.setMsg("general.errors.remove.draft.noDraft");
+                error.getData().add("general.errors.remove.draft.noDraft."+type);
+                error.getData().add(id+"");
+
+                redirectAttributes.addFlashAttribute("errorContainer", error);
+                return "redirect:/"+type+"/search";
+            case NO_REVISIONABLE:
+                error = new ErrorMessage();
+                error.setTitle("general.errors.title.error");
+                error.setMsg("general.errors.remove.draft.noObject");
+                error.getData().add("general.errors.remove.draft.noObject."+type);
+                error.getData().add(id+"");
+
+                redirectAttributes.addFlashAttribute("errorContainer", error);
+                return "redirect:/"+type+"/search";
+            case FINAL_REVISION:
+                error = new ErrorMessage();
+                error.setMsg("general.errors.remove.draft.final");
+                error.getData().add("general.errors.remove.draft.final."+type);
+                error.getData().add(id+"");
+
+                redirectAttributes.addFlashAttribute("errorContainer", error);
+                return "redirect:/"+type+"/search";
+        }
+        return "redirect:/"+type+"/search";
+    }
+
+    /**
+     * Remove draft from revisionable. This is an actual removal and after the operation the data can not be found
+     * from database anymore.
+     * @param id - Id of the revisionable entity from where the draft is to be removed
+     * @param type - Type of the removed object (used to return the user to correct page).
+     * @return View name. If removal fails then the user is returned to the edit page (where the button is)
+     *          otherwise they are returned to view the revisionable object
+     */
+    @RequestMapping(value="/remove/{type}/logical/{id}", method = RequestMethod.GET)
+    public String removeLogical(@PathVariable String type, @PathVariable Integer id, RedirectAttributes redirectAttributes) {
+        ErrorMessage error = new ErrorMessage();
+        RemoveResponse response = service.removeLogical(type, id);
+        switch (response) {
+            case SUCCESS:
+                error = new ErrorMessage();
+                error.setMsg("general.errors.remove.logical.complete");
+                error.getData().add("general.errors.remove.logical.complete."+type);
+                error.getData().add(id+"");
+
+                redirectAttributes.addFlashAttribute("errorContainer", error);
+                return "redirect:/"+type+"/search";
+            case OPEN_DRAFT:
+                error = new ErrorMessage();
+                error.setTitle("general.errors.title.error");
+                error.setMsg("general.errors.remove.logical.draft");
+                error.getData().add("general.errors.remove.logical.draft."+type);
+                error.getData().add(id+"");
+
+                redirectAttributes.addFlashAttribute("errorContainer", error);
+                return "redirect:/"+type+"/view/"+id;
+            case NO_REVISIONABLE:
+                error = new ErrorMessage();
+                error.setTitle("general.errors.title.error");
+                error.setMsg("general.errors.remove.logical.noObject");
+                error.getData().add("general.errors.remove.logical.noObject."+type);
+                error.getData().add(id+"");
+
+                redirectAttributes.addFlashAttribute("errorContainer", error);
+                return "redirect:/"+type+"/search";
+            case NO_APPROVED:
+                error = new ErrorMessage();
+                error.setTitle("general.errors.title.notice");
+                error.setMsg("general.errors.remove.logical.noApproved");
+                error.getData().add("general.errors.remove.logical.noApprived."+type);
+                error.getData().add(id+"");
+
+                redirectAttributes.addFlashAttribute("errorContainer", error);
+                return "redirect:/"+type+"/view/"+id;
+        }
+        return "redirect:/"+type+"/search";
     }
 }

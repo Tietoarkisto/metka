@@ -16,7 +16,7 @@ public class SeriesInfo {
 
     private List<String> abbreviations;
     private SeriesSearchSO query;
-    private List<SeriesSearchSO> results;
+    private List<SeriesSearchResultSO> results;
     private SeriesSingleSO single;
 
     public List<String> getAbbreviations() {
@@ -35,11 +35,11 @@ public class SeriesInfo {
         this.query = query;
     }
 
-    public List<SeriesSearchSO> getResults() {
+    public List<SeriesSearchResultSO> getResults() {
         return results;
     }
 
-    public void setResults(List<SeriesSearchSO> results) {
+    public void setResults(List<SeriesSearchResultSO> results) {
         this.results = results;
     }
 

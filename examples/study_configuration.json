@@ -271,7 +271,6 @@
 			"type": "REFERENCE",
 			"section": "basic_information"
 		},
-		"deposit_agreement"
 		"usability_permission": {
 			"key": "usability_permission",
 			"translateable": false,

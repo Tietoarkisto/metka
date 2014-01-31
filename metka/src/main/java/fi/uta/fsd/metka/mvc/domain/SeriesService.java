@@ -5,6 +5,7 @@ import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.data.repository.SeriesRepository;
 import fi.uta.fsd.metka.model.configuration.ConfigurationKey;
 import fi.uta.fsd.metka.model.data.*;
+import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchResultSO;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchSO;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSingleSO;
 import fi.uta.fsd.metka.mvc.search.SeriesSearch;
@@ -47,9 +48,9 @@ public class SeriesService {
         return list;
     }
 
-    public List<SeriesSearchSO> searchForSeries(SeriesSearchSO query) {
-        List<SeriesSearchSO> seriesList = new ArrayList<SeriesSearchSO>();
-        List<RevisionData> datas = null;
+    public List<SeriesSearchResultSO> searchForSeries(SeriesSearchSO query) {
+        List<SeriesSearchResultSO> seriesList = new ArrayList<>();
+        List<Object[]> datas = null;
         try {
             datas = search.findSeries(query);
         } catch(Exception ex) {
@@ -58,9 +59,12 @@ public class SeriesService {
             return seriesList;
         }
 
-        for(RevisionData data : datas) {
-            SeriesSearchSO series = searchSOFromRevisionData(data);
+        for(Object[] data : datas) {
+            SeriesSearchResultSO series = resultSOFromRevisionData((RevisionData)data[0]);
             if(series != null) {
+                if((boolean)data[1]) {
+                    series.setState("removed");
+                }
                 seriesList.add(series);
             }
         }
@@ -167,17 +171,25 @@ public class SeriesService {
         return so;
     }
 
-    private SeriesSearchSO searchSOFromRevisionData(RevisionData data) {
+    private SeriesSearchResultSO resultSOFromRevisionData(RevisionData data) {
         // check if data is for series
         if(data == null || data.getConfiguration().getType() != ConfigurationType.SERIES) {
             return null;
         }
 
-        SeriesSearchSO so = new SeriesSearchSO();
+        SeriesSearchResultSO so = new SeriesSearchResultSO();
         // TODO: this should be automated as much as possible using configuration in the future.
         so.setId(extractIntegerSimpleValue(getContainerFromRevisionData(data, "id")));
         so.setAbbreviation(extractStringSimpleValue(getContainerFromRevisionData(data, "abbreviation")));
         so.setName(extractStringSimpleValue(getContainerFromRevisionData(data, "name")));
+        switch(data.getState()) {
+            case DRAFT:
+                so.setState("draft");
+                break;
+            case APPROVED:
+                so.setState("approved");
+                break;
+        }
 
         return so;
     }
