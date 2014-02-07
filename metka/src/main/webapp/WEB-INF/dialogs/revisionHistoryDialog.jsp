@@ -2,7 +2,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 
 <div class="popupContainer" id="revisionHistoryDialog" title="<spring:message code="general.revision.revisions"/>">
-    <table id="revisionTable">
+    <table id="revisionTable" class="revisionTable">
         <thead>
             <tr class="revisionHistoryDialogRow">
                 <th class="revisionTableColumn"><spring:message code="general.revision"/></th>
@@ -15,8 +15,7 @@
             </tr>
         </thead>
     </table>
-	
-	<br/>
+
 	<div class="popupButtonsHolder">
 		<input id="revisionsCloseBtn" type="button" class="button" value="<spring:message code='general.buttons.close'/>" />
 		<input type="button" id="compareRevisions" class="button" value="<spring:message code="general.revision.compare"/>"/>
@@ -24,7 +23,7 @@
 </div>
 
 <div class="popupContainer" id="revisionCompareDialog">
-    <table id="revisionChangesTable">
+    <table id="revisionChangesTable" class="revisionTable">
         <thead>
             <tr class="revisionHistoryCompareRow">
                 <th class="changeTableColumn"><spring:message code="general.revision.compare.property"/></th>

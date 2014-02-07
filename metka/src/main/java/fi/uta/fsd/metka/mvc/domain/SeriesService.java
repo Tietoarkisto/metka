@@ -71,10 +71,15 @@ public class SeriesService {
         return seriesList;
     }
 
-    public SeriesSingleSO findSingleSeries(Integer id) {
+    public Integer findSingleSeriesRevisionNo(Integer id) {
+        Integer revision = search.findSingleSeriesRevisionNo(id);
+        return revision;
+    }
+
+    public SeriesSingleSO findSingleRevision(Integer id, Integer revision) {
         RevisionData data = null;
         try {
-            data = search.findSingleSeries(id);
+            data = search.findSingleRevision(id, revision);
         } catch(IOException ex) {
             // TODO: better exception handling with messages to the user
             ex.printStackTrace();
@@ -88,10 +93,6 @@ public class SeriesService {
         SeriesSingleSO series = singleSOFromRevisionData(data);
 
         return series;
-    }
-
-    public SeriesSingleSO findDraftRevision(SeriesSearchSO query) {
-        return null;  //To change body of created methods use File | Settings | File Templates.
     }
 
     public SeriesSingleSO newSeries() {
@@ -119,9 +120,9 @@ public class SeriesService {
         }
     }
 
-    public boolean approveSeries(Integer id) {
+    public boolean approveSeries(SeriesSingleSO so) {
         try {
-            return repository.approveSeries(id);
+            return repository.approveSeries(so.getId());
         } catch(Exception ex) {
             // TODO: better exception handling with messages to the user
             ex.printStackTrace();
@@ -180,6 +181,7 @@ public class SeriesService {
         SeriesSearchResultSO so = new SeriesSearchResultSO();
         // TODO: this should be automated as much as possible using configuration in the future.
         so.setId(extractIntegerSimpleValue(getContainerFromRevisionData(data, "id")));
+        so.setRevision(data.getKey().getRevision());
         so.setAbbreviation(extractStringSimpleValue(getContainerFromRevisionData(data, "abbreviation")));
         so.setName(extractStringSimpleValue(getContainerFromRevisionData(data, "name")));
         switch(data.getState()) {

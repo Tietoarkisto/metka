@@ -1,12 +1,10 @@
 package fi.uta.fsd.metka.mvc.controller;
 
 import fi.uta.fsd.metka.data.enums.RevisionState;
-import fi.uta.fsd.metka.mvc.domain.ConfigurationService;
 import fi.uta.fsd.metka.mvc.domain.SeriesService;
 import fi.uta.fsd.metka.mvc.domain.simple.ErrorMessage;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesInfo;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchResultSO;
-import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchSO;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSingleSO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,39 +19,58 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: MetkaDev1
- * Date: 11/19/13
- * Time: 1:51 PM
+ * Handles all requests for series operations such as view and save.
+ * All requests contain base address /series
  */
-@Controller("seriesController")
+@Controller
 @RequestMapping("/series")
 public class SeriesController {
 
+    private static final String REDIRECT_SEARCH = "redirect:/series/search";
+    private static final String REDIRECT_VIEW = "redirect:/series/view/";
     private static final String VIEW = "series/view";
     private static final String SEARCH = "series/search";
     private static final String MODIFY = "series/modify";
 
     @Autowired
     private SeriesService seriesService;
-    @Autowired
-    private ConfigurationService configurationService;
 
     /*
     * View single series
-    * Use search functions to find the requested series.
-    * Service will form a viewable object that can be added to the model.
-    * If the returned single object is in DRAFT state then show modify page,
-    * otherwise show view page.
+    * Use search functions to find relevant revision for the requested series. Then redirect to viewing that specific revision.
+    * If no revision is found then return to search page with an error message.
     */
     @RequestMapping(value = "view/{id}", method = RequestMethod.GET)
-    public String view(Model model, @ModelAttribute("info")SeriesInfo info, @PathVariable Integer id) {
-        model.asMap().put("page", "series");
+    public String view(@ModelAttribute("info")SeriesInfo info, @PathVariable Integer id, RedirectAttributes redirectAttributes) {
+        Integer revision = seriesService.findSingleSeriesRevisionNo(id);
+        if(revision != null) {
+            return REDIRECT_VIEW+id+"/"+revision;
+        } else {
+            redirectAttributes.addFlashAttribute("errorContainer", ErrorMessage.noViewableRevision("series", id));
+            return REDIRECT_SEARCH;
+        }
+    }
 
-        SeriesSingleSO single = seriesService.findSingleSeries(id);
+    /*
+    * View single series revision
+    * Use search functions to find the requested series revision.
+    * Service will form a viewable object that can be added to the model.
+    * If the returned single object is in DRAFT state and the current user is the handler
+    * then show modify page, otherwise show view page.
+    */
+    @RequestMapping(value = "view/{id}/{revision}", method = RequestMethod.GET)
+    public String viewRevision(Model model, @ModelAttribute("info")SeriesInfo info,
+                               @PathVariable Integer id, @PathVariable Integer revision,
+                               RedirectAttributes redirectAttributes) {
+        SeriesSingleSO single = seriesService.findSingleRevision(id, revision);
 
+        if(single == null) {
+            redirectAttributes.addFlashAttribute("errorContainer", ErrorMessage.noSuchRevision("series", id, revision));
+            return REDIRECT_SEARCH;
+        }
         info.setSingle(single);
-        model.addAttribute("info", info);
+        model.asMap().put("info", info);
+        model.asMap().put("page", "series");
         if(single.getState() == RevisionState.DRAFT) {
             // TODO: this should check if the user is the handler for this revision.
             return MODIFY;
@@ -69,28 +86,25 @@ public class SeriesController {
     * Otherwise show search page with the result in the model.
     */
     @RequestMapping(value="search", method = {RequestMethod.GET, RequestMethod.POST})
-    public String search(Model model, @ModelAttribute("info")SeriesInfo info, BindingResult result) {
-        model.addAttribute("page", "series");
+    public String search(Model model, @ModelAttribute("info")SeriesInfo info) {
 
-        info.setAbbreviations(seriesService.findAbbreviations());
         if(info.getQuery() != null) {
             List<SeriesSearchResultSO> results = seriesService.searchForSeries(info.getQuery());
             if(results.size() == 1) {
-                return "redirect:/series/view/"+results.get(0).getId();
+                return REDIRECT_VIEW+results.get(0).getId()+"/"+results.get(0).getRevision();
             }
             info.setResults(results);
             info.setQuery(info.getQuery());
         }
 
-        model.addAttribute("info", info);
+        info.setAbbreviations(seriesService.findAbbreviations());
+        model.asMap().put("info", info);
 
         if(info.getQuery() != null && info.getResults().size() == 0) {
-            ErrorMessage error = new ErrorMessage();
-            error.setMsg("general.errors.search.noResult");
-            error.getData().add("general.errors.search.noResult.series");
-            model.asMap().put("errorContainer", error);
+            model.asMap().put("errorContainer", ErrorMessage.noResults("series"));
         }
 
+        model.asMap().put("page", "series");
         return SEARCH;
     }
 
@@ -101,17 +115,14 @@ public class SeriesController {
     * so you can always modify by using only the id for the series.
     */
     @RequestMapping(value="add", method = {RequestMethod.GET})
-    public String add(Model model, @ModelAttribute("info")SeriesInfo info, BindingResult result) {
-        model.addAttribute("page", "series");
-
+    public String add(@ModelAttribute("info")SeriesInfo info, RedirectAttributes redirectAttributes) {
         SeriesSingleSO single = seriesService.newSeries();
-        // TODO: Show error if no new series could be created
         if(single == null) {
-            return SEARCH;
+            // TODO: Show error if no new series could be created
+            return REDIRECT_SEARCH;
+        } else {
+            return REDIRECT_VIEW+single.getId()+"/"+single.getRevision();
         }
-        info.setSingle(single);
-
-        return MODIFY;
     }
 
     /*
@@ -121,19 +132,16 @@ public class SeriesController {
     * Return to the modify page after including the success status of the operation.
     */
     @RequestMapping(value="save", method = {RequestMethod.POST})
-    public String save(Model model, @ModelAttribute("info")SeriesInfo info, BindingResult result) {
-        model.addAttribute("page", "series");
-
+    public String save(Model model, @ModelAttribute("info")SeriesInfo info, RedirectAttributes redirectAttributes) {
         boolean success = seriesService.saveSeries(info.getSingle());
-        //model.addAttribute("saveFail", !success);
 
         if(success) {
-            ErrorMessage error = new ErrorMessage();
-            error.setMsg("general.errors.save.success");
-            model.asMap().put("errorContainer", error);
+            redirectAttributes.addFlashAttribute("errorContainer", ErrorMessage.saveSuccess());
+        } else {
+            redirectAttributes.addFlashAttribute("errorContainer", ErrorMessage.saveFail());
         }
 
-        return MODIFY;
+        return REDIRECT_VIEW+info.getSingle().getId()+"/"+info.getSingle().getRevision();
     }
 
     /*
@@ -144,28 +152,22 @@ public class SeriesController {
     * later in the approval process.
     */
     @RequestMapping(value="approve", method = {RequestMethod.POST})
-    public String approve(Model model, @ModelAttribute("info")SeriesInfo info, BindingResult result, RedirectAttributes redirectAttributes) {
-        model.addAttribute("page", "series");
-
+    public String approve(Model model, @ModelAttribute("info")SeriesInfo info, RedirectAttributes redirectAttributes) {
         boolean success = seriesService.saveSeries(info.getSingle());
 
         if(!success) {
-            // TODO: add error message for save failure during approval
-            return MODIFY;
+            redirectAttributes.addFlashAttribute("errorContainer", ErrorMessage.approveFailSave());
+        } else {
+            success = seriesService.approveSeries(info.getSingle());
+
+            if(!success) {
+                redirectAttributes.addFlashAttribute("errorContainer", ErrorMessage.approveFailValidate());
+            } else {
+                redirectAttributes.addFlashAttribute("errorContainer", ErrorMessage.approveSuccess());
+            }
         }
 
-        success = seriesService.approveSeries(info.getSingle().getId());
-
-        if(!success) {
-            // TODO: add error message for approval failure
-            return MODIFY;
-        }
-
-        ErrorMessage error = new ErrorMessage();
-        error.setMsg("general.errors.approve.success");
-        redirectAttributes.addFlashAttribute("errorContainer", error);
-
-        return "redirect:/series/view/"+info.getSingle().getId();
+        return REDIRECT_VIEW+info.getSingle().getId()+"/"+info.getSingle().getRevision();
     }
 
     /*
@@ -175,16 +177,13 @@ public class SeriesController {
     * actually required or is there already an open DRAFT revision).
     */
     @RequestMapping(value = "edit/{id}", method = {RequestMethod.GET})
-    public String edit(Model model, @ModelAttribute("info")SeriesInfo info, @PathVariable Integer id) {
-        model.addAttribute("page", "series");
-
+    public String edit(Model model, @PathVariable Integer id, RedirectAttributes redirectAttributes) {
         SeriesSingleSO single = seriesService.editSeries(id);
         if(single != null) {
-            info.setSingle(single);
-            return MODIFY;
+            return REDIRECT_VIEW+single.getId()+"/"+single.getRevision();
         } else {
-            // TODO: Notify user that no editable revision could be found
-            return "redirect:/series/view/"+id;
+            // TODO: Notify user that no editable revision could be found or created
+            return REDIRECT_VIEW+id;
         }
     }
 }

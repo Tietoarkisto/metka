@@ -32,6 +32,7 @@ public class GeneralRepositoryImpl implements GeneralRepository {
         List<RevisionableEntity> list = em.createQuery("SELECT r FROM RevisionableEntity r " +
                     "WHERE r.id "+(forward?">":"<")+" :id AND r.type = :type " +
                     "AND r.removed = false " +
+                    "AND r.curApprovedNo IS NOT NULL " +
                     "ORDER BY r.id "+(forward?"ASC":"DESC"))
                 .setParameter("id", currentId)
                 .setParameter("type", type.toUpperCase())

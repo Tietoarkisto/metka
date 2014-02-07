@@ -2,7 +2,7 @@ package fi.uta.fsd.metka.model.configuration;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import fi.uta.fsd.metka.data.enums.ChoiselistType;
+import fi.uta.fsd.metka.data.enums.ChoicelistType;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -18,15 +18,15 @@ import java.util.Set;
  * To change this template use File | Settings | File Templates.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Choiselist {
+public class Choicelist {
     @XmlElement private final String key;
     @XmlElement(name = "default") @JsonProperty("default") private Integer def = 0;
     @XmlElement private Set<Option> options = new LinkedHashSet<Option>();
-    @XmlElement private ChoiselistType type = ChoiselistType.LIST;
+    @XmlElement private ChoicelistType type = ChoicelistType.VALUE;
     @XmlElement private Reference reference;
 
     @JsonCreator
-    public Choiselist(@JsonProperty("key")String key) {
+    public Choicelist(@JsonProperty("key") String key) {
         this.key = key;
     }
 
@@ -50,11 +50,11 @@ public class Choiselist {
         this.options = options;
     }
 
-    public ChoiselistType getType() {
+    public ChoicelistType getType() {
         return type;
     }
 
-    public void setType(ChoiselistType type) {
+    public void setType(ChoicelistType type) {
         this.type = type;
     }
 
@@ -71,7 +71,7 @@ public class Choiselist {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Choiselist that = (Choiselist) o;
+        Choicelist that = (Choicelist) o;
 
         if (!key.equals(that.key)) return false;
 

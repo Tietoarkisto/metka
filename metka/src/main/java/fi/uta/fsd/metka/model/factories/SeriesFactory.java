@@ -36,7 +36,7 @@ public class SeriesFactory {
      * Constructs a new dataset for a Revision entity.
      * Entity should have no previous data and its state should be DRAFT.
      * All field values will be added as UNMODIFIED changes with original value being either
-     * empty or a field container containing some default value like revisionable id or choiselist
+     * empty or a field container containing some default value like revisionable id or choicelist
      * default selection.
      *
      * As a result the supplied RevisionEntity will have a complete initial data set in its data field.

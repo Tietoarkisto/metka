@@ -27,5 +27,24 @@ public interface SeriesSearch {
      * @throws IOException
      */
     public List findSeries(SeriesSearchSO query) throws IOException;
-    public RevisionData findSingleSeries(Integer id) throws IOException;
+
+    /**
+     * Return relevant revision number for requested series.
+     * If the found series has an approved revision then the latest approved revision number is returned, otherwise return
+     * the draft revision number (if there is no approved or draft revision then something is horribly wrong in the database).
+     *
+     * @param id Id of the requested series.
+     * @return Revision number of either a draft or the latest approved revision.
+     * @throws IOException
+     */
+    public Integer findSingleSeriesRevisionNo(Integer id);
+
+    /**
+     * Return a specific revision of requested series.
+     * @param id Id of the requested series
+     * @param revision Revision number of requested revision.
+     * @return RevisionData of the requested series revision and null if revision was not found.
+     * @throws IOException
+     */
+    public RevisionData findSingleRevision(Integer id, Integer revision) throws IOException;
 }

@@ -11,6 +11,7 @@ import fi.uta.fsd.metka.mvc.domain.simple.SimpleSearchObject;
  */
 public class SeriesSearchResultSO extends SimpleSearchObject {
     private Integer id;
+    private Integer revision;
     private String name;
     private String abbreviation;
     private String state;
@@ -21,6 +22,14 @@ public class SeriesSearchResultSO extends SimpleSearchObject {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getRevision() {
+        return revision;
+    }
+
+    public void setRevision(Integer revision) {
+        this.revision = revision;
     }
 
     public String getName() {
@@ -49,7 +58,7 @@ public class SeriesSearchResultSO extends SimpleSearchObject {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("Series search object: [");
+        StringBuilder sb = new StringBuilder("Series search result object: [");
         for(int i = 0; i < VALUE.values().length; i++) {
             VALUE v = VALUE.values()[i];
             sb.append(v.getKey()+": ");

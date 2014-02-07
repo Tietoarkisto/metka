@@ -1,6 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ page session="false" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE HTML>
@@ -59,19 +60,19 @@
                 <div class="spaceClear"></div>
                 <c:if test="${not empty info.results}">
                     <div class="searchResult">
-                        <h1 class="pageTitle"><spring:message code="general.searchResult"/></h1>
+                        <h1 class="pageTitle"><spring:message code="general.searchResult"/><span class="floatRight normalText"><spring:message code="general.searchResult.amount"/> ${fn:length(info.results)}</span> </h1>
                         <table class="dataTable">
                             <thead>
                                 <tr>
                                     <th><spring:message code="SERIES.field.id"/></th>
                                     <th><spring:message code="SERIES.field.abbreviation"/></th>
                                     <th><spring:message code="SERIES.field.name"/></th>
-                                    <th><spring:message code="SERIES.field.state"/></th>
+                                    <th><spring:message code="general.search.result.state"/></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <c:forEach var="r" items="${info.results}">
-                                    <tr class="pointerClass" onclick="location.href='${contextPath}/series/view/${r.id}'">
+                                    <tr class="pointerClass" onclick="location.href='${contextPath}/series/view/${r.id}/${r.revision}'">
                                         <td>${r.id}</td>
                                         <td>${r.abbreviation}</td>
                                         <td>${r.name}</td>

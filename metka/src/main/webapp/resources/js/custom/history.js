@@ -18,7 +18,7 @@ $(document).ready(function(){
         request.id = revisionableId;
         request.begin = parseInt(beginVal);
         request.end = parseInt(endVal);
-        request.type = type;
+        request.type = type.toUpperCase();
         $.ajax({
             type: "POST",
             headers: {
@@ -42,20 +42,20 @@ $(document).ready(function(){
                     var row = $("<tr>", {class: "revisionHistoryDialogRow"});
                     var prop = "";
                     if(rowData["section"] != null) {
-                        prop += strings[type+".section."+rowData["section"]];
+                        prop += strings[type.toUpperCase()+".section."+rowData["section"]];
                         prop += ": ";
                     }
-                    prop += strings[type+".field."+rowData["property"]];
-                    row.append($("<td>", {cass: "revisionTableColumn", text: prop}));
+                    prop += strings[type.toUpperCase()+".field."+rowData["property"]];
+                    row.append($("<td>", {class: "revisionTableColumn", text: prop}));
 
                     if(rowData.maxValues != 1) {
                         // TODO: handle display of multiline values
                     } else {
                         if(rowData["oldValue"].length > 0) {
-                            row.append($("<td>", {cass: "revisionTableColumn", text: rowData["oldValue"][0]}));
+                            row.append($("<td>", {class: "revisionTableColumn", text: rowData["oldValue"][0]}));
                         }
                         if(rowData["newValue"].length > 0) {
-                            row.append($("<td>", {cass: "revisionTableColumn", text: rowData["newValue"][0]}));
+                            row.append($("<td>", {class: "revisionTableColumn", text: rowData["newValue"][0]}));
                         }
                     }
 
@@ -94,25 +94,27 @@ $(document).ready(function(){
                 for(var i = 0; i < response.length; i++) {
                     var rowData = response[i];
                     var row = $("<tr>", {class: "revisionHistoryDialogRow"});
-                    row.append($("<td>", {cass: "revisionTableColumn", text: rowData["revision"]}));
+                    var td = $("<td>", {class: "revisionTableColumn"});
+                    td.append($("<a>", {href: contextPath+"/"+type+"/view"+"/"+revisionableId+"/"+rowData["revision"], text: rowData["revision"]}));
+                    row.append(td);
                     if(rowData["state"]=="DRAFT") {
-                        row.append($("<td>", {cass: "revisionTableColumn", text: rowData["state"]}));
+                        row.append($("<td>", {class: "revisionTableColumn", text: rowData["state"]}));
                     } else {
-                        row.append($("<td>", {cass: "revisionTableColumn", text: rowData["approvalDate"]}));
+                        row.append($("<td>", {class: "revisionTableColumn", text: rowData["approvalDate"]}));
                     }
-                    var radioColumn = $("<td>", {cass: "revisionTableColumn"});
+                    var radioColumn = $("<td>", {class: "revisionTableColumn"});
                     var input = $("<input>", {type: "radio", name: "beginGrp", value: rowData["revision"]});
                     input.change(checkRadioGroups);
                     radioColumn.append(input);
                     row.append(radioColumn);
-                    radioColumn = $("<td>", {cass: "revisionTableColumn"});
+                    radioColumn = $("<td>", {class: "revisionTableColumn"});
                     input = $("<input>", {type: "radio", name: "endGrp", value: rowData["revision"]});
                     input.change(checkRadioGroups);
                     radioColumn.append(input);
                     row.append(radioColumn);
                     if(isDraft) {
-                        var replaceColumn = $("<td>", {cass: "revisionTableColumn"});
-                        replaceColumn.append($("<input>", {type: "button", class: "searchFormInput", value: strings["general.revision.replace"]}));
+                        var replaceColumn = $("<td>", {class: "revisionTableColumn"});
+                        replaceColumn.append($("<input>", {type: "button", class: "button", value: strings["general.revision.replace"]}));
                         row.append(replaceColumn);
                     }
                     tbody.append(row);

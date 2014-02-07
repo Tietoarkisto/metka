@@ -8,6 +8,8 @@ import fi.uta.fsd.metka.data.enums.FieldType;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -20,16 +22,17 @@ import javax.xml.bind.annotation.XmlElement;
 @JsonIgnoreProperties("_comment")
 public class Field {
     @XmlElement private final String key;
-    @XmlElement private Boolean translateable = true;
+    @XmlElement private Boolean translatable = true;
     @XmlElement private Boolean immutable = false;
     @XmlElement private Boolean display = true;
     @XmlElement private Integer maxValues;
-    @XmlElement private String choiselist;
+    @XmlElement private String choicelist;
     @XmlElement private String section;
     @XmlElement private FieldType type;
     @XmlElement private String subfieldTo;
     @XmlElement private Boolean unique = false;
     @XmlElement private Boolean required = false;
+    @XmlElement private List<String> concatenate = new ArrayList<>();
 
     @JsonCreator
     public Field(@JsonProperty("key")String key) {
@@ -40,12 +43,12 @@ public class Field {
         return key;
     }
 
-    public Boolean getTranslateable() {
-        return translateable;
+    public Boolean getTranslatable() {
+        return translatable;
     }
 
-    public void setTranslateable(Boolean translateable) {
-        this.translateable = translateable;
+    public void setTranslatable(Boolean translatable) {
+        this.translatable = translatable;
     }
 
     public Boolean getImmutable() {
@@ -72,12 +75,12 @@ public class Field {
         this.maxValues = maxValues;
     }
 
-    public String getChoiselist() {
-        return choiselist;
+    public String getChoicelist() {
+        return choicelist;
     }
 
-    public void setChoiselist(String choiselist) {
-        this.choiselist = choiselist;
+    public void setChoicelist(String choicelist) {
+        this.choicelist = choicelist;
     }
 
     public String getSection() {
@@ -118,6 +121,10 @@ public class Field {
 
     public void setRequired(Boolean required) {
         this.required = required;
+    }
+
+    public List<String> getConcatenate() {
+        return concatenate;
     }
 
     @Override

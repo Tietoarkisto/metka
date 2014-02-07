@@ -3,7 +3,7 @@
 		"version": 1,
 		"type": "PUBLICATION"
 	},
-    "choiselists": {
+    "choicelists": {
 		"yes_no": {
 			"key": "yes_no",
 			"options": [
@@ -38,7 +38,7 @@
 	"fields": {
 		"id": {
 			"key": "id",
-			"translateable": false,
+			"translatable": false,
 			"immutable": true,
 			"unique": true,
 			"required": true,
@@ -47,30 +47,30 @@
 		},
 		"publication_year": {
 			"key": "publication_year",
-			"translateable": false,
+			"translatable": false,
 			"maxValues": 1,
 			"type": "INTEGER"
 		},
 		"can_publish": {
 			"key": "can_publish",
-			"translateable": false,
-			"type": "CHOISE",
+			"translatable": false,
+			"type": "CHOICE",
 			"maxValues": 1,
-			"choiselist": "yes_no"
+			"choicelist": "yes_no"
 		},
 		"publication_lang": {
 			"key": "publication_lang",
-			"translateable": false,
-			"type": "CHOISE",
+			"translatable": false,
+			"type": "CHOICE",
 			"maxValues": 1,
-			"choiselist": "langs"
+			"choicelist": "langs"
 		},
 		"notification_way": {
 			"key": "notification_way",
-			"translateable": false,
-			"type": "CHOISE",
+			"translatable": false,
+			"type": "CHOICE",
 			"maxValues": 1,
-			"choiselist": "notification_way"
+			"choicelist": "notification_way"
 		},
 		"publication_title": {
 			"key": "publication_title",

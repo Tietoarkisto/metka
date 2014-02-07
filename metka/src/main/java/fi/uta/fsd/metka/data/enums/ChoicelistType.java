@@ -7,6 +7,6 @@ package fi.uta.fsd.metka.data.enums;
  * Time: 10:16 AM
  * To change this template use File | Settings | File Templates.
  */
-public enum ChoiselistType {
-    LIST, REFERENCE
+public enum ChoicelistType {
+    VALUE, REFERENCE, LITERAL
 }

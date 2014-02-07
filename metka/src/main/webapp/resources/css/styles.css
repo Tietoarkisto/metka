@@ -127,6 +127,7 @@ footer {
 .content {
   margin: 0 auto;
   padding: 0;
+  padding-bottom: 10px;
   width: 1024px;
   height: 100%;
   min-height: 600px;
@@ -1102,6 +1103,10 @@ nav {
 .pageTitle .floatRight {
     float: right;
 }
+.pageTitle .normalText {
+    font-size: 15px;
+    font-weight: normal;
+}
 
 .searchResult {
     margin: 10px;
@@ -1231,10 +1236,37 @@ table.dataTable tbody tr:last-of-type td {
     border-bottom: none;
 }
 
-.revisionTableColumn {
+/* revision table */
+table.revisionTable {
+    text-align: left;
+    width: 100%;
+    margin: 10px;
+}
+table.revisionTable * {
+    font-size: 15px;
+}
+table.revisionTable thead tr th {
+    vertical-align: middle;
+    margin-right: 5px;
+}
+table.revisionTable thead tr th:last-of-type {
+    margin-right: 0px;
+}
+table.revisionTable tbody tr td {
+    vertical-align: middle;
+}
+
+table.revisionTable tr .revisionTableColumn {
+    min-width: 120px;
     max-width: 300px;
 }
-.changeTableColumn {
+table.revisionTable tr .revisionTableColumn:last-of-type {
+    min-width: 0px;
+}
+table.revisionTable tr  .changeTableColumn {
     min-width: 300px;
     max-width: 500px;
+}
+table.revisionTable tr  .changeTableColumn:last-of-type {
+    min-width: 0px;
 }

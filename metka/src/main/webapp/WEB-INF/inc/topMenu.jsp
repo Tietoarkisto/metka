@@ -5,14 +5,14 @@
     <div class="headerContainer">
         <nav>
             <ul class="mainNavUl">
-                <li><a href="/desktop" ${page == "desktop" ? 'class="selected"': ''}>Työpöytä</a></li>
-                <li><a href="/expertSearch" ${page == "expertSearch" ? 'class="selected"': ''}>Eksperttihaku</a></li>
-                <li><a href="/study/search" ${page == "study" ? 'class="selected"': ''}>Aineistot</a></li>
-                <li><a href="/publication/search" ${page == "publication" ? 'class="selected"': ''}>Julkaisut</a></li>
+                <li><a href="${contextPath}/desktop" ${page == "desktop" ? 'class="selected"': ''}>Työpöytä</a></li>
+                <li><a href="${contextPath}/expertSearch" ${page == "expertSearch" ? 'class="selected"': ''}>Eksperttihaku</a></li>
+                <li><a href="${contextPath}/study/search" ${page == "study" ? 'class="selected"': ''}>Aineistot</a></li>
+                <li><a href="${contextPath}/publication/search" ${page == "publication" ? 'class="selected"': ''}>Julkaisut</a></li>
                 <li><a href="${contextPath}/series/search" ${page == "series" ? 'class="selected"': ''}>Sarjat</a></li>
-                <li><a href="/binder/all" ${page == "binder" ? 'class="selected"': ''}>Mapit</a></li>
-                <li><a href="/report/all" ${page == "report" ? 'class="selected"': ''}>Raportit</a></li>
-                <li><a href="/settings" ${page == "settings" ? 'class="selected"': ''}>Asetukset</a></li>
+                <li><a href="${contextPath}/binder/all" ${page == "binder" ? 'class="selected"': ''}>Mapit</a></li>
+                <li><a href="${contextPath}/report/all" ${page == "report" ? 'class="selected"': ''}>Raportit</a></li>
+                <li><a href="${contextPath}/settings" ${page == "settings" ? 'class="selected"': ''}>Asetukset</a></li>
             </ul>
 
             <div style="clear:both;"></div>
@@ -25,10 +25,10 @@
             </form>
         </div>
 
-        <div class="languageSelect">
+        <%--<div class="languageSelect">
             <input type="radio" name="language" value="fi"/>fi
             <input type="radio" name="language" value="en"/>en
             <input type="radio" name="language" value="sv"/>sv
-        </div>
+        </div>--%>
     </div>
 </header>

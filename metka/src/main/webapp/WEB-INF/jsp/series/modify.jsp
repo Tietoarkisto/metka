@@ -17,6 +17,7 @@
 				<div class="upperContainer">
                     <form:form id="modifyForm" method="post" action="/series/save" modelAttribute="info.single">
                         <table class="formTable">
+                            <form:hidden path="revision" />
                             <tr>
                                 <td class="labelColumn"><form:label path="id"><spring:message code="SERIES.field.id"/></form:label></td>
                                 <td><form:input path="id" readonly="true"/></td>
@@ -58,7 +59,6 @@
                         <jsp:include page="../../inc/revHistory.jsp">
                             <jsp:param name="id" value="${info.single.id}"></jsp:param>
                             <jsp:param name="isDraft" value="true"></jsp:param>
-                            <jsp:param name="type" value="series"></jsp:param>
                         </jsp:include>
                         <jsp:include page="../../inc/removeButton.jsp">
                             <jsp:param name="id" value="${info.single.id}" />

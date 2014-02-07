@@ -18,7 +18,7 @@
       <data key="d4"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="158.99999999999997" width="202.25" x="1048.5" y="545.4208333333333"/>
+          <y:Geometry height="171.99999999999997" width="202.25" x="1048.5" y="545.4208333333333"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="39.9150390625" x="81.16748046875" y="3.0">Field<y:LabelModel>
@@ -30,14 +30,15 @@
           </y:NodeLabel>
           <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="" use3DEffect="true">
             <y:AttributeLabel>+key : String {id}
-+translateable : Boolean = true
++translatable : Boolean = true
 +immutable : Boolean = false
 +display : Boolean = true
 +unique : Boolean = false
 +required : Boolean = false
 +maxValues : Integer [0..1]
-+choiselist : String [0..1]
-+section : String [0..1]</y:AttributeLabel>
++choicelist : String [0..1]
++section : String [0..1]
++concatenate : String [0..*]</y:AttributeLabel>
             <y:MethodLabel/>
           </y:UML>
         </y:UMLClassNode>
@@ -47,7 +48,7 @@
       <data key="d4"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="204.57916666666662" width="162.0" x="705.2249999999999" y="618.4208333333333"/>
+          <y:Geometry height="219.57916666666662" width="162.0" x="705.2249999999999" y="618.4208333333333"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="34.265625" modelName="custom" textColor="#000000" visible="true" width="141.2998046875" x="10.35009765625" y="3.0">&lt;&lt;enumeration&gt;&gt;
@@ -65,7 +66,8 @@ REAL
 REFERENCE
 DERIVED
 CONTAINER
-CHOISE
+CHOICE
+CONCAT
 DATE
 DATETIME
 TIME
@@ -92,14 +94,14 @@ in json clobs.</y:NodeLabel>
       <data key="d4"/>
       <data key="d6">
         <y:UMLNoteNode>
-          <y:Geometry height="652.3999999999999" width="389.60000000000014" x="897.225" y="744.4208333333335"/>
+          <y:Geometry height="793.3999999999999" width="389.60000000000014" x="897.225" y="785.4208333333335"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="646.5625" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="376.046875" x="4.0" y="4.0">key: identifies the field inside this configuration.
+          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="772.28125" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="376.046875" x="4.0" y="4.000000000000114">key: identifies the field inside this configuration.
     all versionable objects use only one configuration
     so there should be no clashes.
  
-translateable: denotes if this field can be translated.
+translatable: denotes if this field can be translated.
     Default = true.
  
 immutable: If true then value can not change once given.
@@ -123,7 +125,10 @@ type: what kind of field is this field.
     REFERENCE: contains a link to a versionable object.
     DERIVED: value is derived from given parameters.
     CONTAINER: value contains multiple fields.
-    CHOISE: Value is chosen from given options.
+    CHOICE: Value is chosen from given options.
+    CONCAT: Value is calculated automatically by combining
+                  multible fields. Field keys and their order are
+                  found from concatenate attribute.
     DATE: Calendar date using ISO_8601.
     DATETIME: Calendar date + time using ISO_8601.
     TIME: ISO_8601 time in extended format.
@@ -133,25 +138,52 @@ subfieldTo: subfields define parts of multifield values.
     CONTAINER fields also and all CONTAINER fields
     have to have at least two subfields.
 
-choiselist: Key of the choiselist used to select values for
-    this field.
+choicelist: Key of the list used to select values for this field.
 
 section: Key of the section this field is part of. All field
     keys within a configuration should be unique no matter
     their section (or lack thereof). Section is only displayed
     in certain parts of the application such as version
-    difference dialog.</y:NodeLabel>
+    difference dialog.
+
+concatenate: List of keys that are used if the type of this field
+    is concatenate. Values of those fields are concatenated
+    in the order given in the list.
+
+reference: If this field has type REFERENCE then there should
+    be a reference object describing the reference.</y:NodeLabel>
         </y:UMLNoteNode>
+      </data>
+    </node>
+    <node id="n4">
+      <data key="d4"/>
+      <data key="d6">
+        <y:UMLClassNode>
+          <y:Geometry height="28.0" width="100.0" x="1305.0" y="545.4208333333333"/>
+          <y:Fill color="#FFCC00" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="78.3056640625" x="10.84716796875" y="3.0">Reference<y:LabelModel>
+              <y:SmartNodeLabelModel distance="4.0"/>
+            </y:LabelModel>
+            <y:ModelParameter>
+              <y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="-0.03703090122767855" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/>
+            </y:ModelParameter>
+          </y:NodeLabel>
+          <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="" use3DEffect="true">
+            <y:AttributeLabel/>
+            <y:MethodLabel/>
+          </y:UML>
+        </y:UMLClassNode>
       </data>
     </node>
     <edge id="e0" source="n0" target="n1">
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="-10.070312499999773" sy="21.57916666666665" tx="6.775000000000091" ty="-74.21041666666667"/>
+          <y:Path sx="14.808593749999545" sy="17.137966234885994" tx="6.775000000000091" ty="-79.65161709844737"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="none"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="31.9375" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="74.04296875" x="-171.1241210937501" y="2.0">+type
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="31.9375" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="74.04296875" x="-171.1465820312501" y="2.0000227127505923">+type
 {readOnly}<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
           </y:EdgeLabel>
           <y:BendStyle smoothed="false"/>
@@ -162,7 +194,7 @@ section: Key of the section this field is part of. All field
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="25.929687500000227" sy="-52.0" tx="0.0" ty="0.0"/>
+          <y:Path sx="25.929687500000227" sy="-56.25157232704402" tx="0.0" ty="0.0"/>
           <y:LineStyle color="#000000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="none"/>
           <y:BendStyle smoothed="false"/>
@@ -174,16 +206,16 @@ section: Key of the section this field is part of. All field
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
-            <y:Point x="1153.0" y="734.6208333333334"/>
+            <y:Point x="1153.0" y="757.6208333333334"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="31.9375" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="102.806640625" x="99.37675563660241" y="2.788014637737092">+subfieldTo 0..1
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="31.9375" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="102.806640625" x="122.11476992507733" y="2.3787443209215553">+subfieldTo 0..1
 {readOnly}<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
             </y:LabelModel>
             <y:ModelParameter>
-              <y:SmartEdgeLabelModelParameter angle="6.283185307179586" distance="100.41685675613681" distanceToCenter="true" position="left" ratio="0.4459699290763228" segment="0"/>
+              <y:SmartEdgeLabelModelParameter angle="6.283185307179586" distance="113.62608008487426" distanceToCenter="true" position="left" ratio="0.06552871006053432" segment="0"/>
             </y:ModelParameter>
             <y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
           </y:EdgeLabel>
@@ -195,9 +227,24 @@ section: Key of the section this field is part of. All field
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="-84.47031249999964" sy="-60.55268964694587" tx="-26.870312499999727" ty="-236.78932291666604"/>
+          <y:Path sx="-84.47031249999964" sy="-65.50353848600435" tx="-26.870312499999727" ty="-287.96543347958743"/>
           <y:LineStyle color="#000000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="none"/>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e4" source="n0" target="n4">
+      <data key="d8"/>
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
+            <y:Point x="1355.0" y="624.9208333333333"/>
+          </y:Path>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="none"/>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="98.59375" x="106.2669677734375" y="-44.67499186197915">+reference 0..1<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
+          </y:EdgeLabel>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
       </data>

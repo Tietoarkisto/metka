@@ -1,16 +1,5 @@
 // TODO: clean this script to include only needed functionality
 $(document).ready(function(){
-    $(".tabNavi ul li a").click(function(){
-        if(!$(this).hasClass("selected")){
-            $(".tabNavi ul li a.selected").attr("id");
-            $(".tabNavi ul li a").removeClass("selected");
-            $(this).addClass("selected");
-            var selectedId = $(this).attr("id");
-            $(".tabs").hide();
-            $("." + selectedId).show();
-        }
-    });
-
     $(".sortableTable").tablesorter();
 
     $( ".datepicker" ).datepicker();
@@ -99,6 +88,17 @@ $(document).ready(function(){
     });
 
     // Clean code here
+
+    $(".tabNavi ul li a").click(function(){
+        if(!$(this).hasClass("selected")){
+            $(".tabNavi ul li a.selected").attr("id");
+            $(".tabNavi ul li a").removeClass("selected");
+            $(this).addClass("selected");
+            var selectedId = $(this).attr("id");
+            $(".tabs").hide();
+            $(".tab_" + selectedId).show();
+        }
+    });
 
     $(".pointerClass").hover(
         function() {

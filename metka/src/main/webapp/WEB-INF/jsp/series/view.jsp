@@ -74,10 +74,9 @@
                         <jsp:include page="../../inc/revHistory.jsp">
                             <jsp:param name="id" value="${info.single.id}"></jsp:param>
                             <jsp:param name="isDraft" value="false"></jsp:param>
-                            <jsp:param name="type" value="series"></jsp:param>
                         </jsp:include>
 
-                        <input type="button" class="previewButton button"
+                        <input type="button" class="button"
                                value="<spring:message code='general.buttons.edit'/>"
                                onclick="location.href='${contextPath}/series/edit/${info.single.id}'"/>
 

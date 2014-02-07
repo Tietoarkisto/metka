@@ -6,7 +6,7 @@
 	"fields": {
 		"id": {
 			"key": "id",
-			"translateable": false,
+			"translatable": false,
 			"immutable": true,
 			"unique": true,
 			"required": true,
@@ -19,7 +19,7 @@
 			"immutable": true,
 			"unique": true,
 			"required": true,
-			"translateable": false,
+			"translatable": false,
 			"type": "STRING"
 		},
 		"name": {

@@ -7,6 +7,7 @@ import fi.uta.fsd.metka.data.entity.RevisionEntity;
 import fi.uta.fsd.metka.data.entity.RevisionableEntity;
 import fi.uta.fsd.metka.data.entity.impl.SeriesEntity;
 import fi.uta.fsd.metka.data.entity.key.RevisionKey;
+import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.model.data.FieldContainer;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchSO;
@@ -120,7 +121,7 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
                 qry += "r.id = :id";
             }
             if(query.getId() != null && !query.isSearchRemoved()) {
-                qry += " ";
+                qry += " AND ";
             }
             if(!query.isSearchRemoved()) {
                 qry += "r.removed = false";
@@ -140,14 +141,14 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
         if(!StringUtils.isEmpty(query.getAbbreviation())) {
             FieldContainer field = getContainerFromRevisionData(data, "abbreviation");
             String value = extractStringSimpleValue(field);
-            if(StringUtils.isEmpty(value) || !value.equals(query.getAbbreviation())) {
+            if(StringUtils.isEmpty(value) || !value.toUpperCase().equals(query.getAbbreviation().toUpperCase())) {
                 return null;
             }
         }
         if(!StringUtils.isEmpty(query.getName())) {
             FieldContainer field = getContainerFromRevisionData(data, "name");
             String value = extractStringSimpleValue(field);
-            if(StringUtils.isEmpty(value) || !value.contains(query.getName())) {
+            if(StringUtils.isEmpty(value) || !value.toUpperCase().contains(query.getName().toUpperCase())) {
                 return null;
             }
         }
@@ -158,7 +159,7 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
     * Return revision data for the latest
     */
     @Override
-    public RevisionData findSingleSeries(Integer id) throws IOException {
+    public Integer findSingleSeriesRevisionNo(Integer id) {
         SeriesEntity entity = em.find(SeriesEntity.class, id);
         if(entity == null || (entity.getLatestRevisionNo() == null && entity.getCurApprovedNo() == null)) {
             // TODO: log error
@@ -167,16 +168,26 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
 
         /*RevisionEntity revEntity = (entity.getCurApprovedNo() == null)
                 ? entity.getLatestRevision() : entity.getCurApprovedRev();*/
-        RevisionEntity revEntity = (entity.getCurApprovedNo() == null)
-                ? em.find(RevisionEntity.class, new RevisionKey(entity.getId(), entity.getLatestRevisionNo()))
-                : em.find(RevisionEntity.class, new RevisionKey(entity.getId(), entity.getCurApprovedNo()));
+        Integer revision = (entity.getCurApprovedNo() == null)?entity.getLatestRevisionNo():entity.getCurApprovedNo();
+        return revision;
+    }
 
-        if(StringUtils.isEmpty(revEntity.getData())) {
+    @Override
+    public RevisionData findSingleRevision(Integer id, Integer revision) throws IOException {
+        RevisionEntity entity = em.find(RevisionEntity.class, new RevisionKey(id, revision));
+        if(entity == null) {
+            return null;
+        }
+
+        if(StringUtils.isEmpty(entity.getData())) {
             // TODO: log error
             return null;
         }
 
-        RevisionData data = metkaObjectMapper.readValue(revEntity.getData(), RevisionData.class);
+        RevisionData data = metkaObjectMapper.readValue(entity.getData(), RevisionData.class);
+        if(data.getConfiguration().getType() != ConfigurationType.SERIES) {
+            return null;
+        }
 
         return data;
     }

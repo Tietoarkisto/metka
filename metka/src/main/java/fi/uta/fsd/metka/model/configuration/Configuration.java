@@ -22,8 +22,8 @@ import java.util.*;
 public class Configuration {
     @XmlElement private ConfigurationKey key;
     @XmlElement private Set<Section> sections = new HashSet<Section>();
-    @XmlElement private Map<String, Choiselist> choiselists = new HashMap<String, Choiselist>();
-    @XmlElement private Map<String, Field> fields = new HashMap<String, Field>();
+    @XmlElement private Map<String, Choicelist> choicelists = new HashMap<>();
+    @XmlElement private Map<String, Field> fields = new HashMap<>();
     @XmlElement private String hash; // no functionality for hash is implemented at this time.
 
     public Configuration() {
@@ -45,8 +45,8 @@ public class Configuration {
         return sections;
     }
 
-    public Map<String, Choiselist> getChoiselists() {
-        return choiselists;
+    public Map<String, Choicelist> getChoicelists() {
+        return choicelists;
     }
 
     public Map<String, Field> getFields() {

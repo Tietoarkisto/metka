@@ -12,12 +12,10 @@ functionality is required including a component with id: showRevisions. -->
     var revisionableId = ${param.id};
     var isDraft = ${param.isDraft};
     var contextPath = "${pageContext.request.contextPath}";
-    var type = "${param.type}".toUpperCase();
+    var type = "${page}";
 </script>
-<c:set var="type" value="${fn:toUpperCase(param.type)}" />
 <!--    historyJSInit.jsp contains javascript initialisation actions such as initialising strings array for localization
-pertaining to revision history components.
-JSP variable type has to be set before including this file. -->
+pertaining to revision history components. -->
 <%@include file="historyJSInit.jsp"%>
 <script src="${pageContext.request.contextPath}/js/custom/history.js"></script>
 <!--    End of revision history component requirements. -->

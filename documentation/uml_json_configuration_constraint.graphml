@@ -18,30 +18,35 @@
       <data key="d4"/>
       <data key="d6">
         <y:UMLNoteNode>
-          <y:Geometry height="304.0" width="500.99999999999994" x="911.4987614678898" y="545.4208333333333"/>
+          <y:Geometry height="372.0" width="500.99999999999994" x="911.4987614678898" y="545.4208333333333"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="297.34375" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="479.447265625" x="4.0" y="4.0">{context Configuration
-let container:Set(Field) = fields-&gt;select(f | f.type = FieldType::CONTAINER)
+          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="367.1875" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="479.447265625" x="4.0" y="4.0">{let container:Set(Field) = fields-&gt;select(f | f.type = FieldType::CONTAINER)
 inv:
   container-&gt;forAll(subfieldTo-&gt;isEmpty())
 and
   container-&gt;forAll(c | fields-&gt;select(f | f.subfieldTo-&gt;includes(c))-&gt;size() &gt; 1)}
  
-{context Configuration
-let choise:Set(Field) = fields-&gt;select(f | f.type = FieldType::CHOISE)
-let others:Set(Field) = fields-&gt;exclude(f | f.type = FieldType::CHOISE)
+{let choice:Set(Field) = fields-&gt;select(f | f.type = FieldType::CHOICE)
+let others:Set(Field) = fields-&gt;exclude(f | f.type = FieldType::CHOICE)
 inv:
-  choise-&gt;forAll(choiselist-&gt;size() = 1)
+  choice-&gt;forAll(choicelist-&gt;size() = 1)
 and
-  choise-&gt;forAll(c | choiselists-&gt;select(key = c.choiselist)-&gt;size() = 1)
+  choice-&gt;forAll(c | choicelists-&gt;select(key = c.choicelist)-&gt;size() = 1)
 and
-  others-&gt;forAll(choiselist-&gt;isEmpty())}
+  others-&gt;forAll(choicelist-&gt;isEmpty())}
  
-{context Configuration
-let hasSection:Set(Field) = fields-&gt;select(section-&gt;size() = 1)
+{let hasSection:Set(Field) = fields-&gt;select(section-&gt;size() = 1)
 inv:
-  hasSection-&gt;forAll(s | sections-&gt;select(key = s.section)-&gt;size() = 1)}</y:NodeLabel>
+  hasSection-&gt;forAll(s | sections-&gt;select(key = s.section)-&gt;size() = 1)}
+
+{let ref:Set(Field) = fields-&gt;select(f | f.type = FieldType::REFERENCE)
+inv:
+  ref-&gt;forAll(r | r-&gt;reference-&gt;size = 1)}
+
+{let concat:Set(Field) = fields-&gt;select(f | f.type = FieldType::CONCAT)
+inv:
+  ref-&gt;forAll(r | r-&gt;concatenate-&gt;size &gt; 1)}</y:NodeLabel>
         </y:UMLNoteNode>
       </data>
     </node>
@@ -84,7 +89,7 @@ the validity of configuration</y:NodeLabel>
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="24.886915452564608" sy="-0.2038394415357061" tx="-0.2249999999999091" ty="-127.20383944153569"/>
+          <y:Path sx="24.886915452564608" sy="-0.2038394415357061" tx="7.001238532110165" ty="-161.2038394415357"/>
           <y:LineStyle color="#000000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="none"/>
           <y:BendStyle smoothed="false"/>
