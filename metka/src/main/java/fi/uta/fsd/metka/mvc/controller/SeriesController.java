@@ -41,8 +41,11 @@ public class SeriesController {
     * If no revision is found then return to search page with an error message.
     */
     @RequestMapping(value = "view/{id}", method = RequestMethod.GET)
-    public String view(@ModelAttribute("info")SeriesInfo info, @PathVariable Integer id, RedirectAttributes redirectAttributes) {
+    public String view(Model model, @ModelAttribute("info")SeriesInfo info, @PathVariable Integer id, RedirectAttributes redirectAttributes) {
         Integer revision = seriesService.findSingleSeriesRevisionNo(id);
+        if(model.asMap().containsKey("errorContainer")) {
+            redirectAttributes.addFlashAttribute("errorContainer", model.asMap().get("errorContainer"));
+        }
         if(revision != null) {
             return REDIRECT_VIEW+id+"/"+revision;
         } else {
@@ -132,7 +135,7 @@ public class SeriesController {
     * Return to the modify page after including the success status of the operation.
     */
     @RequestMapping(value="save", method = {RequestMethod.POST})
-    public String save(Model model, @ModelAttribute("info")SeriesInfo info, RedirectAttributes redirectAttributes) {
+    public String save(@ModelAttribute("info")SeriesInfo info, RedirectAttributes redirectAttributes) {
         boolean success = seriesService.saveSeries(info.getSingle());
 
         if(success) {
@@ -152,7 +155,7 @@ public class SeriesController {
     * later in the approval process.
     */
     @RequestMapping(value="approve", method = {RequestMethod.POST})
-    public String approve(Model model, @ModelAttribute("info")SeriesInfo info, RedirectAttributes redirectAttributes) {
+    public String approve(@ModelAttribute("info")SeriesInfo info, RedirectAttributes redirectAttributes) {
         boolean success = seriesService.saveSeries(info.getSingle());
 
         if(!success) {
@@ -177,7 +180,7 @@ public class SeriesController {
     * actually required or is there already an open DRAFT revision).
     */
     @RequestMapping(value = "edit/{id}", method = {RequestMethod.GET})
-    public String edit(Model model, @PathVariable Integer id, RedirectAttributes redirectAttributes) {
+    public String edit(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
         SeriesSingleSO single = seriesService.editSeries(id);
         if(single != null) {
             return REDIRECT_VIEW+single.getId()+"/"+single.getRevision();
