@@ -8,11 +8,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
 /**
- * Created with IntelliJ IDEA.
- * User: lasseku
- * Date: 12/18/13
- * Time: 1:53 PM
- * To change this template use File | Settings | File Templates.
+ * Identifies a single Revision from a combination of id (id of the revisionable object) and revision (ordering
+ * number for revisions within revisionable).
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RevisionKey implements Comparable<RevisionKey> {

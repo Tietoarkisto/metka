@@ -8,8 +8,9 @@ import fi.uta.fsd.metka.data.entity.RevisionableEntity;
 import fi.uta.fsd.metka.data.entity.impl.SeriesEntity;
 import fi.uta.fsd.metka.data.entity.key.RevisionKey;
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
-import fi.uta.fsd.metka.model.data.FieldContainer;
+import fi.uta.fsd.metka.model.data.container.FieldContainer;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.data.container.ValueFieldContainer;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchSO;
 import fi.uta.fsd.metka.mvc.search.SeriesSearch;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +60,7 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
             }
 
             RevisionData revData = metkaObjectMapper.readValue(data, RevisionData.class);
-            FieldContainer field = getContainerFromRevisionData(revData, "abbreviation");
+            ValueFieldContainer field = getValueFieldContainerFromRevisionData(revData, "abbreviation");
             String value = extractStringSimpleValue(field);
             if(!StringUtils.isEmpty(value)) list.add(value);
         }
@@ -139,14 +140,14 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
 
         RevisionData data = metkaObjectMapper.readValue(revision.getData(), RevisionData.class);
         if(!StringUtils.isEmpty(query.getAbbreviation())) {
-            FieldContainer field = getContainerFromRevisionData(data, "abbreviation");
+            ValueFieldContainer field = getValueFieldContainerFromRevisionData(data, "abbreviation");
             String value = extractStringSimpleValue(field);
             if(StringUtils.isEmpty(value) || !value.toUpperCase().equals(query.getAbbreviation().toUpperCase())) {
                 return null;
             }
         }
         if(!StringUtils.isEmpty(query.getName())) {
-            FieldContainer field = getContainerFromRevisionData(data, "name");
+            ValueFieldContainer field = getValueFieldContainerFromRevisionData(data, "name");
             String value = extractStringSimpleValue(field);
             if(StringUtils.isEmpty(value) || !value.toUpperCase().contains(query.getName().toUpperCase())) {
                 return null;

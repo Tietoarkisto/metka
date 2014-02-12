@@ -11,6 +11,10 @@ import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.ConfigurationKey;
 import fi.uta.fsd.metka.model.data.*;
+import fi.uta.fsd.metka.model.data.change.ValueFieldChange;
+import fi.uta.fsd.metka.model.data.container.FieldContainer;
+import fi.uta.fsd.metka.model.data.container.ValueFieldContainer;
+import fi.uta.fsd.metka.model.data.value.SimpleValue;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,12 +62,12 @@ public class SeriesFactory {
 
         RevisionData data = createRevisionData(entity, conf.getKey());
 
-        Change change;
-        FieldContainer field;
+        ValueFieldChange change;
+        ValueFieldContainer field;
         SimpleValue sv;
 
-        change = new Change("id");
-        field = createFieldContainer(change.getKey(), time);
+        change = new ValueFieldChange("id");
+        field = createValueFieldContainer(change.getKey(), time);
         // TODO: set savedBy using the user id who requested a new series
         setSimpleValue(field, entity.getKey().getRevisionableId()+"");
         change.setOriginalField(field);
@@ -84,8 +88,8 @@ public class SeriesFactory {
         return data;
     }
 
-    public FieldContainer createFieldContainer(String key, DateTime time) {
-        FieldContainer field = new FieldContainer(key);
+    public ValueFieldContainer createValueFieldContainer(String key, DateTime time) {
+        ValueFieldContainer field = new ValueFieldContainer(key);
         field.setSavedAt(time);
         // TODO: set current user that requests this new field container
 
@@ -99,8 +103,8 @@ public class SeriesFactory {
      * @param field
      * @return
      */
-    public Change createNewRevisionChange(String key, FieldContainer field) {
-        Change change = new Change(key);
+    public ValueFieldChange createNewRevisionValueFieldChange(String key, ValueFieldContainer field) {
+        ValueFieldChange change = new ValueFieldChange(key);
         change.setOperation(ChangeOperation.UNCHANGED);
         change.setOriginalField(field);
 
@@ -113,7 +117,7 @@ public class SeriesFactory {
     * WARNING: This does not in any way check what type of value this field is supposed to have
      *         so you can easily insert illegal values with this.
      */
-    public void setSimpleValue(FieldContainer field, String value) {
+    public void setSimpleValue(ValueFieldContainer field, String value) {
         field.getValues().clear();
         field.getValues().add(new SimpleValue(value));
     }

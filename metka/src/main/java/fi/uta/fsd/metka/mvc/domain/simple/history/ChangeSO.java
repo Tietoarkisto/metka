@@ -2,18 +2,15 @@ package fi.uta.fsd.metka.mvc.domain.simple.history;
 
 import fi.uta.fsd.metka.data.enums.ChangeOperation;
 import fi.uta.fsd.metka.data.enums.FieldType;
-import fi.uta.fsd.metka.model.data.FieldContainer;
-import fi.uta.fsd.metka.model.data.Value;
+import fi.uta.fsd.metka.model.data.container.FieldContainer;
+import fi.uta.fsd.metka.model.data.container.ValueFieldContainer;
+import fi.uta.fsd.metka.model.data.value.Value;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: lasseku
- * Date: 1/17/14
- * Time: 11:08 AM
- * To change this template use File | Settings | File Templates.
+ * Simple representation of a field change.
  */
 public class ChangeSO {
     private String property;
@@ -98,7 +95,7 @@ public class ChangeSO {
                 case DATE:
                 case DATETIME:
                 case TIME:
-                    buildSimpleValue(field, list);
+                    buildSimpleValue((ValueFieldContainer)field, list);
                     break;
                 default:
                     break;
@@ -106,7 +103,7 @@ public class ChangeSO {
         }
     }
 
-    private static void buildSimpleValue(FieldContainer field, List<String> list) {
+    private static void buildSimpleValue(ValueFieldContainer field, List<String> list) {
         for(Value value : field.getValues()) {
             list.add(value.toString());
         }

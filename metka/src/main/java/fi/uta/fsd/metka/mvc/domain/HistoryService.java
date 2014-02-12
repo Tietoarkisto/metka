@@ -2,11 +2,11 @@ package fi.uta.fsd.metka.mvc.domain;
 
 import fi.uta.fsd.metka.data.enums.ChangeOperation;
 import fi.uta.fsd.metka.data.repository.HistoryRepository;
-import fi.uta.fsd.metka.data.util.ModelAccessUtil;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
-import fi.uta.fsd.metka.model.data.Change;
-import fi.uta.fsd.metka.model.data.FieldContainer;
+import fi.uta.fsd.metka.model.data.change.FieldChange;
+import fi.uta.fsd.metka.model.data.change.ValueFieldChange;
+import fi.uta.fsd.metka.model.data.container.FieldContainer;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.mvc.domain.requests.ChangeCompareRequest;
 import fi.uta.fsd.metka.mvc.domain.simple.history.ChangeCompareSO;
@@ -95,10 +95,12 @@ public class HistoryService {
         }
         Configuration config = configurationService.findLatestByType(request.getType());
 
-        Map<String, Change> changes = new HashMap<String, Change>();
+        // TODO: Improve to take into account container fields and row containers. For now handles only ValueFields
+        Map<String, FieldChange> changes = new HashMap<String, FieldChange>();
         for(RevisionData data : comparedRevisions) {
-            for(Map.Entry<String, Change> change : data.getChanges().entrySet()) {
-                if(change.getValue().getOperation() != ChangeOperation.UNCHANGED) {
+            for(Map.Entry<String, FieldChange> change : data.getChanges().entrySet()) {
+                ValueFieldChange valueChange = (ValueFieldChange) change.getValue();
+                if(valueChange.getOperation() != ChangeOperation.UNCHANGED) {
                     ChangeSO so = changesSO.get(change.getKey());
                     FieldContainer field;
                     if(so == null) {
@@ -116,11 +118,11 @@ public class HistoryService {
                         changesSO.put(cfgField.getKey(), so);
                     }
                     so.getNewValue().clear();
-                    if(change.getValue().getOperation() != ChangeOperation.REMOVED) {
+                    if(valueChange.getOperation() != ChangeOperation.REMOVED) {
                         ChangeSO.ValueStringBuilder.buildValueString(
-                                so.getType(), change.getValue().getNewField(), so.getNewValue());
+                                so.getType(), valueChange.getNewField(), so.getNewValue());
                     }
-                    so.setOperation(change.getValue().getOperation());
+                    so.setOperation(valueChange.getOperation());
                 }
             }
         }

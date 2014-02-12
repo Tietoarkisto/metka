@@ -1,5 +1,6 @@
-package fi.uta.fsd.metka.model.data;
+package fi.uta.fsd.metka.model.data.value;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -17,6 +18,7 @@ import javax.xml.bind.annotation.XmlElement;
 public class DerivedValue extends SimpleValue {
     @XmlElement private String result;
 
+    @JsonCreator
     public DerivedValue(@JsonProperty("value") String value) {
         super(value);
     }

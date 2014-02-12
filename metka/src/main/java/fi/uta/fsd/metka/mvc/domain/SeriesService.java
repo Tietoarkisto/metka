@@ -163,11 +163,12 @@ public class SeriesService {
 
         SeriesSingleSO so = new SeriesSingleSO();
         // TODO: this should be automated as much as possible using configuration in the future.
-        so.setId(extractIntegerSimpleValue(getContainerFromRevisionData(data, "id")));
+        // TODO: For now assumes that all fields are ValueFields
+        so.setId(extractIntegerSimpleValue(getValueFieldContainerFromRevisionData(data, "id")));
         so.setRevision(data.getKey().getRevision());
-        so.setAbbreviation(extractStringSimpleValue(getContainerFromRevisionData(data, "abbreviation")));
-        so.setName(extractStringSimpleValue(getContainerFromRevisionData(data, "name")));
-        so.setDescription(extractStringSimpleValue(getContainerFromRevisionData(data, "description")));
+        so.setAbbreviation(extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "abbreviation")));
+        so.setName(extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "name")));
+        so.setDescription(extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "description")));
         so.setState(data.getState());
         return so;
     }
@@ -180,10 +181,10 @@ public class SeriesService {
 
         SeriesSearchResultSO so = new SeriesSearchResultSO();
         // TODO: this should be automated as much as possible using configuration in the future.
-        so.setId(extractIntegerSimpleValue(getContainerFromRevisionData(data, "id")));
+        so.setId(extractIntegerSimpleValue(getValueFieldContainerFromRevisionData(data, "id")));
         so.setRevision(data.getKey().getRevision());
-        so.setAbbreviation(extractStringSimpleValue(getContainerFromRevisionData(data, "abbreviation")));
-        so.setName(extractStringSimpleValue(getContainerFromRevisionData(data, "name")));
+        so.setAbbreviation(extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "abbreviation")));
+        so.setName(extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "name")));
         switch(data.getState()) {
             case DRAFT:
                 so.setState("draft");

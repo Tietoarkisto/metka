@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.model.configuration.ConfigurationKey;
+import fi.uta.fsd.metka.model.data.change.FieldChange;
+import fi.uta.fsd.metka.model.data.container.FieldContainer;
 import org.joda.time.LocalDate;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -25,10 +27,11 @@ import java.util.Map;
 public class RevisionData implements Comparable<RevisionData> {
     @XmlElement private final RevisionKey key;
     @XmlElement private final ConfigurationKey configuration;
-    @XmlElement private Map<String, Change> changes = new HashMap<String, Change>();
-    @XmlElement private Map<String, FieldContainer> fields = new HashMap<String, FieldContainer>();
+    @XmlElement private final Map<String, FieldChange> changes = new HashMap<>();
+    @XmlElement private final Map<String, FieldContainer> fields = new HashMap<>();
     @XmlElement private RevisionState state;
     @XmlElement private LocalDate approvalDate;
+    @XmlElement private LocalDate lastSave;
     @XmlElement private String approver;
 
     @JsonCreator
@@ -45,7 +48,7 @@ public class RevisionData implements Comparable<RevisionData> {
         return configuration;
     }
 
-    public Map<String, Change> getChanges() {
+    public Map<String, FieldChange> getChanges() {
         return changes;
     }
 
@@ -67,6 +70,14 @@ public class RevisionData implements Comparable<RevisionData> {
 
     public void setApprovalDate(LocalDate approvalDate) {
         this.approvalDate = approvalDate;
+    }
+
+    public LocalDate getLastSave() {
+        return lastSave;
+    }
+
+    public void setLastSave(LocalDate lastSave) {
+        this.lastSave = lastSave;
     }
 
     public String getApprover() {

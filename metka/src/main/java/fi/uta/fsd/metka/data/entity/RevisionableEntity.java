@@ -1,5 +1,8 @@
 package fi.uta.fsd.metka.data.entity;
 
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDate;
+
 import javax.persistence.*;
 
 /**
@@ -32,19 +35,9 @@ public abstract class RevisionableEntity {
     @Column(name = "REMOVED")
     private Boolean removed = false;
 
-    /*@OneToOne
-    @JoinColumns({
-            @JoinColumn(name = "REVISIONABLE_ID", referencedColumnName = "REVISIONABLE_ID", insertable = false, updatable = false),
-            @JoinColumn(name = "CUR_APPROVED_NO", referencedColumnName = "REVISION_NO", insertable = false, updatable = false)
-    })
-    private RevisionEntity curApprovedRev;
-
-    @OneToOne
-    @JoinColumns({
-            @JoinColumn(name = "REVISIONABLE_ID", referencedColumnName = "REVISIONABLE_ID", insertable = false, updatable = false),
-            @JoinColumn(name = "LATEST_REVISION_NO", referencedColumnName = "REVISION_NO", insertable = false, updatable = false)
-    })
-    private RevisionEntity latestRevision;*/
+    @Column(name = "REMOVAL_DATE")
+    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate removalDate;
 
     public Integer getId() {
         return id;
@@ -78,20 +71,20 @@ public abstract class RevisionableEntity {
         this.latestRevisionNo = latestRevisionNo;
     }
 
-    /*public RevisionEntity getCurApprovedRev() {
-        return curApprovedRev;
-    }
-
-    public RevisionEntity getLatestRevision() {
-        return latestRevision;
-    }*/
-
     public Boolean getRemoved() {
         return (removed == null) ? false : removed;
     }
 
     public void setRemoved(Boolean removed) {
         this.removed = (removed == null) ? false : removed;
+    }
+
+    public LocalDate getRemovalDate() {
+        return removalDate;
+    }
+
+    public void setRemovalDate(LocalDate removalDate) {
+        this.removalDate = removalDate;
     }
 
     @Override

@@ -9,12 +9,12 @@ import fi.uta.fsd.metka.data.entity.key.RevisionKey;
 import fi.uta.fsd.metka.data.enums.ChangeOperation;
 import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.data.repository.SeriesRepository;
-import fi.uta.fsd.metka.model.data.Change;
-import fi.uta.fsd.metka.model.data.FieldContainer;
+import fi.uta.fsd.metka.model.data.change.FieldChange;
+import fi.uta.fsd.metka.model.data.change.ValueFieldChange;
+import fi.uta.fsd.metka.model.data.container.FieldContainer;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.data.container.ValueFieldContainer;
 import fi.uta.fsd.metka.model.factories.SeriesFactory;
-import fi.uta.fsd.metka.mvc.MetkaObjectMapper;
-import fi.uta.fsd.metka.mvc.domain.simple.SimpleObject;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSingleSO;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -25,20 +25,12 @@ import org.springframework.util.StringUtils;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
 
-/**
- * Created with IntelliJ IDEA.
- * User: lasseku
- * Date: 1/3/14
- * Time: 3:32 PM
- * To change this template use File | Settings | File Templates.
- */
 @Repository
 public class SeriesRepositoryImpl implements SeriesRepository {
     @PersistenceContext(name = "entityManager")
@@ -116,16 +108,16 @@ public class SeriesRepositoryImpl implements SeriesRepository {
 
         DateTime time = new DateTime();
 
-        FieldContainer field;
-        FieldContainer newField = null;
+        ValueFieldContainer field;
+        ValueFieldContainer newField = null;
         Integer intValue;
         String stringValue;
-        Change change;
+        ValueFieldChange change;
         String key;
 
         // Check ID
         key = "id";
-        field = getContainerFromRevisionData(data, key);
+        field = getValueFieldContainerFromRevisionData(data, key);
         intValue = extractIntegerSimpleValue(field);
         if(!so.getId().equals(intValue)) {
             // TODO: data is out of sync or someone tried to change the id, log error
@@ -135,7 +127,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         
         // Check abbreviation.
         key = "abbreviation";
-        field = getContainerFromRevisionData(data, key); // Since we are in a DRAFT this returns a field only if one exists in changes
+        field = getValueFieldContainerFromRevisionData(data, key); // Since we are in a DRAFT this returns a field only if one exists in changes
         stringValue = extractStringSimpleValue(field);
         if(!StringUtils.isEmpty(stringValue) && !so.getAbbreviation().equals(stringValue)) {
             // TODO: data is out of sync or someone tried to change the abbreviation, log error
@@ -145,17 +137,17 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         if(!StringUtils.isEmpty(so.getAbbreviation()) && StringUtils.isEmpty(stringValue)) {
             changes = true;
 
-            newField = factory.createFieldContainer(key, time);
+            newField = factory.createValueFieldContainer(key, time);
             factory.setSimpleValue(newField, so.getByKey(key).toString());
 
-            change = updateValue(data, key, newField);
+            change = updateValueField(data, key, newField);
             data.getChanges().put(change.getKey(), change);
         }
 
         // TODO: these following two can be generalised and used by the other type of objects too.
         // Check name
         key = "name";
-        field = getContainerFromRevisionData(data, key);
+        field = getValueFieldContainerFromRevisionData(data, key);
         stringValue = extractStringSimpleValue(field);
         String name = so.getName();
         if((StringUtils.isEmpty(stringValue) && !StringUtils.isEmpty(name))     // New value
@@ -163,18 +155,18 @@ public class SeriesRepositoryImpl implements SeriesRepository {
             || (!StringUtils.isEmpty(stringValue) && !StringUtils.isEmpty(name) && !name.equals(stringValue))) { // Existing value changed
             changes = true;
 
-            newField = factory.createFieldContainer(key, time);
+            newField = factory.createValueFieldContainer(key, time);
             if(!(!StringUtils.isEmpty(stringValue) && StringUtils.isEmpty(name))) {
                 factory.setSimpleValue(newField, so.getByKey(key).toString());
             }
 
-            change = updateValue(data, key, newField);
+            change = updateValueField(data, key, newField);
             data.getChanges().put(change.getKey(), change);
         }
         
         // Check description
         key = "description";
-        field = getContainerFromRevisionData(data, key);
+        field = getValueFieldContainerFromRevisionData(data, key);
         stringValue = extractStringSimpleValue(field);
         String description = so.getDescription();
         if((StringUtils.isEmpty(stringValue) && !StringUtils.isEmpty(description))     // New value
@@ -182,12 +174,12 @@ public class SeriesRepositoryImpl implements SeriesRepository {
                 || (!StringUtils.isEmpty(stringValue) && !StringUtils.isEmpty(description) && !description.equals(stringValue))) { // Existing value changed
             changes = true;
 
-            newField = factory.createFieldContainer(key, time);
+            newField = factory.createValueFieldContainer(key, time);
             if(!(!StringUtils.isEmpty(stringValue) && StringUtils.isEmpty(description))) {
                 factory.setSimpleValue(newField, description);
             }
 
-            change = updateValue(data, key, newField);
+            change = updateValueField(data, key, newField);
             data.getChanges().put(change.getKey(), change);
         }
 
@@ -197,6 +189,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         // Entity should still be managed at this point so
 
         if(changes) {
+            data.setLastSave(new LocalDate());
             revEntity.setData(metkaObjectMapper.writeValueAsString(data));
         }
 
@@ -280,8 +273,9 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         }
 
         List<String> unchangedKeys = new ArrayList<String>();
+        // TODO: Field type confirmation from configuration. For now assume accurate use
         for(String key : data.getChanges().keySet()) {
-            Change change = data.getChanges().get(key);
+            ValueFieldChange change = (ValueFieldChange)data.getChanges().get(key);
             FieldContainer field = null;
             if(change.getOperation() == ChangeOperation.UNCHANGED) {
                 unchangedKeys.add(key);
@@ -290,7 +284,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
                 field = change.getNewField();
             }
             if(field != null) {
-                data.getFields().put(field.getFieldKey(), field);
+                data.getFields().put(field.getKey(), field);
             }
         }
         for(String key : unchangedKeys) {
@@ -361,8 +355,9 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         newRevision.setState(RevisionState.DRAFT);
         RevisionData newData = factory.createRevisionData(newRevision, oldData.getConfiguration());
         DateTime time = new DateTime();
+        // TODO: Field type checking from configuration. For now treate everything as ValueField
         for(Map.Entry<String, FieldContainer> field : oldData.getFields().entrySet()) {
-            Change change = factory.createNewRevisionChange(field.getKey(), field.getValue());
+            ValueFieldChange change = factory.createNewRevisionValueFieldChange(field.getKey(), (ValueFieldContainer)field.getValue());
             newData.getChanges().put(change.getKey(), change);
         }
 
@@ -379,10 +374,11 @@ public class SeriesRepositoryImpl implements SeriesRepository {
     }
 
     // Helper functions
-    private Change updateValue(RevisionData data, String key, FieldContainer newValue) {
-        Change change = data.getChanges().get(key);
+    // TODO: Configuration checking that the field is a valid target, for now assume accurate use
+    private ValueFieldChange updateValueField(RevisionData data, String key, ValueFieldContainer newValue) {
+        ValueFieldChange change = (ValueFieldChange)data.getChanges().get(key);
         if(change == null) {
-            change = new Change(key);
+            change = new ValueFieldChange(key);
         }
         if(newValue.getValues().size() == 0) {
             change.setOperation(ChangeOperation.REMOVED);

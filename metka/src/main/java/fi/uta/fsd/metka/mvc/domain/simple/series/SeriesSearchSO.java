@@ -13,8 +13,8 @@ public class SeriesSearchSO extends SimpleSearchObject {
     private Integer id;
     private String name;
     private String abbreviation;
-    private boolean searchApproved;
-    private boolean searchDraft;
+    private boolean searchApproved = true;
+    private boolean searchDraft = true;
     private boolean searchRemoved;
 
     public Integer getId() {

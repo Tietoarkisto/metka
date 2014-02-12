@@ -7,6 +7,7 @@ import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.data.enums.repositoryResponses.RemoveResponse;
 import fi.uta.fsd.metka.data.repository.GeneralRepository;
 import javassist.NotFoundException;
+import org.joda.time.LocalDate;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -97,6 +98,7 @@ public class GeneralRepositoryImpl implements GeneralRepository {
         }
 
         entity.setRemoved(true);
+        entity.setRemovalDate(new LocalDate());
         return RemoveResponse.SUCCESS;
     }
 }
