@@ -10,9 +10,9 @@ public class StudySearchSO extends SimpleObject {
     private boolean searchDraft;
     private boolean searchRemoved;
 
-    private String study_number;
-    private String study_name;
-    private Integer series_reference;
+    private String id;
+    private String title;
+    private Integer seriesid;
 
     public boolean isSearchApproved() {
         return searchApproved;
@@ -38,38 +38,38 @@ public class StudySearchSO extends SimpleObject {
         this.searchRemoved = searchRemoved;
     }
 
-    public String getStudy_number() {
-        return study_number;
+    public String getId() {
+        return id;
     }
 
-    public void setStudy_number(String study_number) {
-        this.study_number = study_number;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String getStudy_name() {
-        return study_name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setStudy_name(String study_name) {
-        this.study_name = study_name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public Integer getSeries_reference() {
-        return series_reference;
+    public Integer getSeriesid() {
+        return seriesid;
     }
 
-    public void setSeries_reference(Integer series_reference) {
-        this.series_reference = series_reference;
+    public void setSeriesid(Integer seriesid) {
+        this.seriesid = seriesid;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("Study search object: [");
-        for(int i = 0; i < VALUE.values().length; i++) {
-            VALUE v = VALUE.values()[i];
+        for(int i = 0; i < StudyValues.values().length; i++) {
+            StudyValues v = StudyValues.values()[i];
             sb.append(v.getKey()+": ");
             sb.append(getByKey(v.getKey()));
-            if(i < VALUE.values().length-1) {
+            if(i < StudyValues.values().length-1) {
                 sb.append(", ");
             }
         }
@@ -79,40 +79,15 @@ public class StudySearchSO extends SimpleObject {
 
     @Override
     public Object getByKey(String key) throws IllegalArgumentException {
-        switch(VALUE.fromString(key)) {
+        switch(StudyValues.fromString(key)) {
             // TODO: Add search attributes
-            case STUDY_NAME:
-                return study_name;
-            case STUDY_NUMBER:
-                return study_number;
-            case SERIES_REFERENCE:
-                return series_reference;
+            case TITLE:
+                return title;
+            case ID:
+                return id;
+            case SERIESID:
+                return seriesid;
         }
         return null;
-    }
-
-    private static enum VALUE {
-        // TODO: add search attribtes
-        STUDY_NUMBER("study_number"), STUDY_NAME("study_name"), SERIES_REFERENCE("series_reference");
-        private String key;
-
-        private VALUE(String key) {
-            this.key = key;
-        }
-
-        private String getKey() {
-            return this.key;
-        }
-
-        private static VALUE fromString(String key) {
-            if(key != null) {
-                for(VALUE v : VALUE.values()) {
-                    if(key.equals(v.key)) {
-                        return v;
-                    }
-                }
-            }
-            throw new IllegalArgumentException("No value for ["+key+"] found.");
-        }
     }
 }

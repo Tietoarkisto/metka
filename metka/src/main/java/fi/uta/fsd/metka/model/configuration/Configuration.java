@@ -21,9 +21,10 @@ import java.util.*;
 @JsonIgnoreProperties("_comment")
 public class Configuration {
     @XmlElement private ConfigurationKey key;
-    @XmlElement private Set<Section> sections = new HashSet<Section>();
-    @XmlElement private Map<String, Choicelist> choicelists = new HashMap<>();
-    @XmlElement private Map<String, Field> fields = new HashMap<>();
+    @XmlElement private final Map<String, Section> sections = new HashMap<>();
+    @XmlElement private final Map<String, Reference> references = new HashMap<>();
+    @XmlElement private final Map<String, Choicelist> choicelists = new HashMap<>();
+    @XmlElement private final Map<String, Field> fields = new HashMap<>();
     @XmlElement private String hash; // no functionality for hash is implemented at this time.
 
     public Configuration() {
@@ -41,8 +42,12 @@ public class Configuration {
         this.key = key;
     }
 
-    public Set<Section> getSections() {
+    public Map<String, Section> getSections() {
         return sections;
+    }
+
+    public Map<String, Reference> getReferences() {
+        return references;
     }
 
     public Map<String, Choicelist> getChoicelists() {
@@ -51,6 +56,11 @@ public class Configuration {
 
     public Map<String, Field> getFields() {
         return fields;
+    }
+
+    // Helper functions
+    public Field getField(String key) {
+        return fields.get(key);
     }
 
     @Override

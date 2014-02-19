@@ -33,22 +33,24 @@
                                     <form:checkbox path="searchRemoved" />
                                 </td>
                             </tr>
-                            <tr>
-                                <td class="labelColumn"><form:label path="id"><spring:message code="SERIES.field.id"/></form:label></td>
-                                <td colspan="3"><form:input path="id" /></td>
+                            <jsp:include page="../../inc/fullRowFormText.jsp">
+                                <jsp:param name="field" value="seriesno" />
+                                <jsp:param name="type" value="input" />
+                                <jsp:param name="colspan" value="3" />
+                            </jsp:include>
+                            <tr><c:set var="field" value="seriesabb" />
+                                <td class="labelColumn"><form:label path="seriesabb"><spring:message code="SERIES.field.${field}"/></form:label></td>
+                                <td colspan="3"><form:select path="${field}" items="${info.abbreviations}" /></td>
                             </tr>
-                            <tr>
-                                <td class="labelColumn"><form:label path="abbreviation"><spring:message code="SERIES.field.abbreviation"/></form:label></td>
-                                <td colspan="3"><form:select path="abbreviation" items="${info.abbreviations}" /></td>
-                            </tr>
-                            <tr>
-                                <td class="labelColumn"><form:label path="name"><spring:message code="SERIES.field.name"/></form:label></td>
-                                <td colspan="3"><form:input path="name" /></td>
-                            </tr>
+                            <jsp:include page="../../inc/fullRowFormText.jsp">
+                                <jsp:param name="field" value="seriesname" />
+                                <jsp:param name="type" value="input" />
+                                <jsp:param name="colspan" value="3" />
+                            </jsp:include>
                         </table>
                     </form:form>
                 </div>
-                <div class="viewFormButtonsHolder">
+                <div class="buttonsHolder">
                     <div class="buttonsGroup">
                         <!-- TODO: Fix this reset button
                         <input type="reset" class="button" value="Tyhjennä">-->
@@ -64,18 +66,18 @@
                         <table class="dataTable">
                             <thead>
                                 <tr>
-                                    <th><spring:message code="SERIES.field.id"/></th>
-                                    <th><spring:message code="SERIES.field.abbreviation"/></th>
-                                    <th><spring:message code="SERIES.field.name"/></th>
+                                    <th><spring:message code="SERIES.field.seriesno"/></th>
+                                    <th><spring:message code="SERIES.field.seriesabb"/></th>
+                                    <th><spring:message code="SERIES.field.seriesname"/></th>
                                     <th><spring:message code="general.search.result.state"/></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <c:forEach var="r" items="${info.results}">
-                                    <tr class="pointerClass" onclick="location.href='${contextPath}/series/view/${r.id}/${r.revision}'">
-                                        <td>${r.id}</td>
-                                        <td>${r.abbreviation}</td>
-                                        <td>${r.name}</td>
+                                    <tr class="pointerClass" onclick="location.href='${contextPath}/series/view/${r.seriesno}/${r.revision}'">
+                                        <td>${r.seriesno}</td>
+                                        <td>${r.seriesabb}</td>
+                                        <td>${r.seriesname}</td>
                                         <td><spring:message code="general.search.result.state.${r.state}"/></td>
                                     </tr>
                                 </c:forEach>

@@ -8,6 +8,8 @@ import fi.uta.fsd.metka.model.data.*;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchResultSO;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchSO;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSingleSO;
+import fi.uta.fsd.metka.mvc.search.GeneralSearch;
+import fi.uta.fsd.metka.mvc.search.RevisionDataRemovedContainer;
 import fi.uta.fsd.metka.mvc.search.SeriesSearch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,8 @@ public class SeriesService {
 
     @Autowired
     private SeriesSearch search;
+    @Autowired
+    private GeneralSearch generalSearch;
 
     @Autowired
     private SeriesRepository repository;
@@ -50,7 +54,7 @@ public class SeriesService {
 
     public List<SeriesSearchResultSO> searchForSeries(SeriesSearchSO query) {
         List<SeriesSearchResultSO> seriesList = new ArrayList<>();
-        List<Object[]> datas = null;
+        List<RevisionDataRemovedContainer> datas = null;
         try {
             datas = search.findSeries(query);
         } catch(Exception ex) {
@@ -59,10 +63,10 @@ public class SeriesService {
             return seriesList;
         }
 
-        for(Object[] data : datas) {
-            SeriesSearchResultSO series = resultSOFromRevisionData((RevisionData)data[0]);
+        for(RevisionDataRemovedContainer container : datas) {
+            SeriesSearchResultSO series = resultSOFromRevisionData(container.getData());
             if(series != null) {
-                if((boolean)data[1]) {
+                if(container.isRemoved()) {
                     series.setState("removed");
                 }
                 seriesList.add(series);
@@ -71,15 +75,26 @@ public class SeriesService {
         return seriesList;
     }
 
-    public Integer findSingleSeriesRevisionNo(Integer id) {
-        Integer revision = search.findSingleSeriesRevisionNo(id);
+    /**
+     * Return a default revision number for requested revisionable
+     * @param id Revisionable id
+     * @return
+     */
+    public Integer findSingleRevisionNo(Integer id) {
+        Integer revision = generalSearch.findSingleRevisionNo(id);
         return revision;
     }
 
+    /**
+     * Find requested revision data and convert it to SeriesSingle simple object
+     * @param id Revisionable id
+     * @param revision Revision number
+     * @return Revision data converted to SeriesSingleSO
+     */
     public SeriesSingleSO findSingleRevision(Integer id, Integer revision) {
         RevisionData data = null;
         try {
-            data = search.findSingleRevision(id, revision);
+            data = generalSearch.findSingleRevision(id, revision, ConfigurationType.SERIES);
         } catch(IOException ex) {
             // TODO: better exception handling with messages to the user
             ex.printStackTrace();
@@ -122,7 +137,7 @@ public class SeriesService {
 
     public boolean approveSeries(SeriesSingleSO so) {
         try {
-            return repository.approveSeries(so.getId());
+            return repository.approveSeries(so.getByKey("seriesno"));
         } catch(Exception ex) {
             // TODO: better exception handling with messages to the user
             ex.printStackTrace();
@@ -130,9 +145,9 @@ public class SeriesService {
         }
     }
 
-    public SeriesSingleSO editSeries(Integer id) {
+    public SeriesSingleSO editSeries(Integer seriesno) {
         try {
-            RevisionData data = repository.editSeries(id);
+            RevisionData data = repository.editSeries(seriesno);
             return singleSOFromRevisionData(data);
         } catch(Exception ex) {
             // TODO: better exception handling with messages to the user
@@ -164,12 +179,13 @@ public class SeriesService {
         SeriesSingleSO so = new SeriesSingleSO();
         // TODO: this should be automated as much as possible using configuration in the future.
         // TODO: For now assumes that all fields are ValueFields
-        so.setId(extractIntegerSimpleValue(getValueFieldContainerFromRevisionData(data, "id")));
         so.setRevision(data.getKey().getRevision());
-        so.setAbbreviation(extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "abbreviation")));
-        so.setName(extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "name")));
-        so.setDescription(extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "description")));
         so.setState(data.getState());
+        so.setSeriesno(extractIntegerSimpleValue(getValueFieldContainerFromRevisionData(data, "seriesno")));
+        so.setSeriesabb(extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "seriesabb")));
+        so.setSeriesname(extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "seriesname")));
+        so.setSeriesdesc(extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "seriesdesc")));
+        so.setSeriesnotes(extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "seriesnotes")));
         return so;
     }
 
@@ -181,10 +197,10 @@ public class SeriesService {
 
         SeriesSearchResultSO so = new SeriesSearchResultSO();
         // TODO: this should be automated as much as possible using configuration in the future.
-        so.setId(extractIntegerSimpleValue(getValueFieldContainerFromRevisionData(data, "id")));
         so.setRevision(data.getKey().getRevision());
-        so.setAbbreviation(extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "abbreviation")));
-        so.setName(extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "name")));
+        so.setSeriesno(extractIntegerSimpleValue(getValueFieldContainerFromRevisionData(data, "seriesno")));
+        so.setSeriesabb(extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "seriesabb")));
+        so.setSeriesname(extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "seriesname")));
         switch(data.getState()) {
             case DRAFT:
                 so.setState("draft");

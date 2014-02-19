@@ -109,10 +109,10 @@ public class HistoryService {
                         Field cfgField = config.getFields().get(change.getKey());
                         so.setSection(cfgField.getSection());
                         so.setType(cfgField.getType());
-                        field = original.getFields().get(cfgField.getKey());
+                        field = original.getField(cfgField);
                         if(field != null) {
                             ChangeSO.ValueStringBuilder.buildValueString(
-                                    cfgField.getType(), original.getFields().get(cfgField.getKey()), so.getOldValue());
+                                    cfgField.getType(), original.getField(cfgField), so.getOldValue());
                         }
                         so.setMaxValues(cfgField.getMaxValues());
                         changesSO.put(cfgField.getKey(), so);

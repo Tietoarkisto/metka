@@ -932,14 +932,14 @@ h1.next{
 	margin-left: 10px;
 }
 
-.viewFormButtonsHolder{
+.buttonsHolder {
     clear: left;
     display: inline-block;
     margin-top: 20px;
     text-align: right;
     width: 950px;
 }
-.viewFormButtonsHolder input{
+.buttonsHolder input{
 	margin-left: 20px;
 }
 

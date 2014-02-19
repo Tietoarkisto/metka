@@ -16,7 +16,7 @@
 					<div class="prevNextContainer"><h1 class="prev">&lt;</h1><h1 class="next">&gt;</h1></div>
 					<div class="rowContainer">
 						<div class="publicationDataSetContainer"><label><spring:message code="publication.view.publicationYear"/></label><input type="text" name="publicationYear" value="" /></div>
-						<div class="publicationDataSetContainer"><label><spring:message code="publication.view.publishable"/></label><select name="publishable"><option>Kyllä</option></select></div>
+						<div class="publicationDataSetContainer"><label><spring:message code="publication.view.publishable"/></label><select name="publishable"><option>Kyllï¿½</option></select></div>
 						<div class="publicationDataSetContainer"><label><spring:message code="publication.view.id"/></label><input type="text" class="unModifiable" readonly="readonly" name="publicationId" value="" /></div>
 					</div>
 					<div class="rowContainer">
@@ -112,7 +112,7 @@
 					<div class="publicationTableActionLinkHolder"><a href="dialogs/attachSeriesDialog.html" class="addRow fancyboxpopup fancybox.ajax"><spring:message code='general.buttons.add'/></a></div>						
 				</div>
 				
-				<div class="viewFormButtonsHolder" style="margin-bottom:20px;">
+				<div class="buttonsHolder" style="margin-bottom:20px;">
 					<input type="button" class="editButton searchFormInput" value="<spring:message code='general.buttons.remove'/>" />
 					<a href="dialogs/versionHistoryDialog.html" class="versionHistoryButton fancyboxpopup fancybox.ajax button"><spring:message code="general.buttons.versionHistory"/></a>
 					<input type="button" id="approvePublcationButton" class="editButton searchFormInput" value="<spring:message code='general.buttons.approve'/>" />

@@ -1,4 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
 <header>
     <jsp:include page="../dialogs/alertDialog.jsp" />
@@ -17,10 +19,11 @@
 
             <div style="clear:both;"></div>
         </nav>
-        <div class="searchContainer">
+        <div class="quickSearchContainer">
             <a class="logoutLink" href="#">Kirjaudu ulos</a>
-            <form action="material.html" class="quickSearchForm">
-                <input type="text" autocomplete="off" dir="ltr" class="searchInput" placeholder="Aineiston id-nro" />
+            <form action="material.html">
+                <spring:message code="STUDY.field.study_number" var="searchPlaceholder" />
+                <input type="text" autocomplete="off" dir="ltr" class="searchInput" placeholder="${searchPlaceholder}" />
                 <input type="submit" value="Hae" class="searchButton"/>
             </form>
         </div>

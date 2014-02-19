@@ -25,14 +25,15 @@ public class Field {
     @XmlElement private Boolean translatable = true;
     @XmlElement private Boolean immutable = false;
     @XmlElement private Boolean display = true;
-    @XmlElement private Integer maxValues;
-    @XmlElement private String choicelist;
-    @XmlElement private String section;
+    @XmlElement private Integer maxValues = null;
+    @XmlElement private String choicelist = null;
+    @XmlElement private String section = null;
     @XmlElement private FieldType type;
-    @XmlElement private String subfieldTo;
+    @XmlElement private String subfieldTo = null;
     @XmlElement private Boolean unique = false;
     @XmlElement private Boolean required = false;
-    @XmlElement private List<String> concatenate = new ArrayList<>();
+    @XmlElement private final List<String> concatenate = new ArrayList<>();
+    @XmlElement private String reference = null;
 
     @JsonCreator
     public Field(@JsonProperty("key")String key) {
@@ -125,6 +126,14 @@ public class Field {
 
     public List<String> getConcatenate() {
         return concatenate;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
     }
 
     @Override

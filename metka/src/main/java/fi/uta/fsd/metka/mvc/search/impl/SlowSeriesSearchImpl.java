@@ -12,6 +12,7 @@ import fi.uta.fsd.metka.model.data.container.FieldContainer;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.ValueFieldContainer;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchSO;
+import fi.uta.fsd.metka.mvc.search.RevisionDataRemovedContainer;
 import fi.uta.fsd.metka.mvc.search.SeriesSearch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -27,13 +28,6 @@ import java.util.List;
 
 import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
 
-/**
- * Created with IntelliJ IDEA.
- * User: lasseku
- * Date: 1/2/14
- * Time: 4:06 PM
- * To change this template use File | Settings | File Templates.
- */
 @Repository("seriesSearch")
 public class SlowSeriesSearchImpl implements SeriesSearch {
 
@@ -60,7 +54,7 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
             }
 
             RevisionData revData = metkaObjectMapper.readValue(data, RevisionData.class);
-            ValueFieldContainer field = getValueFieldContainerFromRevisionData(revData, "abbreviation");
+            ValueFieldContainer field = getValueFieldContainerFromRevisionData(revData, "seriesabb");
             String value = extractStringSimpleValue(field);
             if(!StringUtils.isEmpty(value)) list.add(value);
         }
@@ -69,10 +63,10 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
     }
 
     @Override
-    public List findSeries(SeriesSearchSO query) throws IOException {
-        List result = new ArrayList();
+    public List<RevisionDataRemovedContainer> findSeries(SeriesSearchSO query) throws IOException {
+        List<RevisionDataRemovedContainer> result = new ArrayList<>();
         List<RevisionableEntity> entities = formFindQuery(query).getResultList();
-
+        RevisionDataRemovedContainer container;
         for(RevisionableEntity entity : entities) {
             if(!entity.getRemoved()) {
                 if(query.isSearchApproved() && entity.getCurApprovedNo() != null) {
@@ -80,10 +74,8 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
                     RevisionData data = checkSearch(rev, query);
 
                     if(data != null) {
-                        Object[] revision = new Object[2];
-                        revision[0] = data;
-                        revision[1] = false;
-                        result.add(revision);
+                        container = new RevisionDataRemovedContainer(data, false);
+                        result.add(container);
                     }
                 }
                 if(query.isSearchDraft() && !entity.getLatestRevisionNo().equals(entity.getCurApprovedNo())) {
@@ -91,10 +83,8 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
                     RevisionData data = checkSearch(rev, query);
 
                     if(data != null) {
-                        Object[] revision = new Object[2];
-                        revision[0] = data;
-                        revision[1] = false;
-                        result.add(revision);
+                        container = new RevisionDataRemovedContainer(data, false);
+                        result.add(container);
                     }
                 }
             } else {
@@ -103,10 +93,8 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
                     RevisionData data = checkSearch(rev, query);
 
                     if(data != null) {
-                        Object[] revision = new Object[2];
-                        revision[0] = data;
-                        revision[1] = true;
-                        result.add(revision);
+                        container = new RevisionDataRemovedContainer(data, true);
+                        result.add(container);
                     }
                 }
             }
@@ -116,12 +104,12 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
 
     private TypedQuery<RevisionableEntity> formFindQuery(SeriesSearchSO query) {
         String qry = "SELECT r FROM RevisionableEntity r";
-        if(query != null && (query.getId() != null || !query.isSearchRemoved())) {
+        if(query != null && (query.getSeriesno() != null || !query.isSearchRemoved())) {
             qry += " WHERE ";
-            if(query.getId() != null) {
+            if(query.getSeriesno() != null) {
                 qry += "r.id = :id";
             }
-            if(query.getId() != null && !query.isSearchRemoved()) {
+            if(query.getSeriesno() != null && !query.isSearchRemoved()) {
                 qry += " AND ";
             }
             if(!query.isSearchRemoved()) {
@@ -130,8 +118,8 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
         }
         qry += " ORDER BY r.id ASC";
         TypedQuery<RevisionableEntity> typedQuery = em.createQuery(qry, RevisionableEntity.class);
-        if(query != null && query.getId() != null) {
-            typedQuery.setParameter("id", query.getId());
+        if(query != null && query.getSeriesno() != null) {
+            typedQuery.setParameter("id", query.getSeriesno());
         }
         return typedQuery;
     }
@@ -139,66 +127,25 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
     private RevisionData checkSearch(RevisionEntity revision, SeriesSearchSO query) throws IOException {
 
         RevisionData data = metkaObjectMapper.readValue(revision.getData(), RevisionData.class);
-        if(!StringUtils.isEmpty(query.getAbbreviation())) {
-            ValueFieldContainer field = getValueFieldContainerFromRevisionData(data, "abbreviation");
+        if(!StringUtils.isEmpty(query.getSeriesabb())) {
+            ValueFieldContainer field = getValueFieldContainerFromRevisionData(data, "seriesabb");
             String value = extractStringSimpleValue(field);
-            if(StringUtils.isEmpty(value) || !value.toUpperCase().equals(query.getAbbreviation().toUpperCase())) {
+            if(StringUtils.isEmpty(value) || !value.toUpperCase().equals(query.getSeriesabb().toUpperCase())) {
                 return null;
             }
         }
-        if(!StringUtils.isEmpty(query.getName())) {
-            ValueFieldContainer field = getValueFieldContainerFromRevisionData(data, "name");
+        if(!StringUtils.isEmpty(query.getSeriesname())) {
+            ValueFieldContainer field = getValueFieldContainerFromRevisionData(data, "seriesname");
             String value = extractStringSimpleValue(field);
-            if(StringUtils.isEmpty(value) || !value.toUpperCase().contains(query.getName().toUpperCase())) {
+            if(StringUtils.isEmpty(value) || !value.toUpperCase().contains(query.getSeriesname().toUpperCase())) {
                 return null;
             }
         }
-        return data;
-    }
-
-    /*
-    * Return revision data for the latest
-    */
-    @Override
-    public Integer findSingleSeriesRevisionNo(Integer id) {
-        SeriesEntity entity = em.find(SeriesEntity.class, id);
-        if(entity == null || (entity.getLatestRevisionNo() == null && entity.getCurApprovedNo() == null)) {
-            // TODO: log error
-            return null;
-        }
-
-        /*RevisionEntity revEntity = (entity.getCurApprovedNo() == null)
-                ? entity.getLatestRevision() : entity.getCurApprovedRev();*/
-        Integer revision = (entity.getCurApprovedNo() == null)?entity.getLatestRevisionNo():entity.getCurApprovedNo();
-        return revision;
-    }
-
-    @Override
-    public RevisionData findSingleRevision(Integer id, Integer revision) throws IOException {
-        RevisionEntity entity = em.find(RevisionEntity.class, new RevisionKey(id, revision));
-        if(entity == null) {
-            return null;
-        }
-
-        if(StringUtils.isEmpty(entity.getData())) {
-            // TODO: log error
-            return null;
-        }
-
-        RevisionData data = metkaObjectMapper.readValue(entity.getData(), RevisionData.class);
-        if(data.getConfiguration().getType() != ConfigurationType.SERIES) {
-            return null;
-        }
-
         return data;
     }
 
     private RevisionData getRevisionData(SeriesEntity entity) throws IOException {
         if(entity != null && (entity.getCurApprovedNo() != null || entity.getLatestRevisionNo() != null)) {
-            /*RevisionEntity revEntity =
-                    (entity.getCurApprovedRev() != null)
-                            ? entity.getCurApprovedRev()
-                            : entity.getLatestRevision();*/
             RevisionEntity revEntity = (entity.getCurApprovedNo() == null)
                     ? em.find(RevisionEntity.class, new RevisionKey(entity.getId(), entity.getLatestRevisionNo()))
                     : em.find(RevisionEntity.class, new RevisionKey(entity.getId(), entity.getCurApprovedNo()));

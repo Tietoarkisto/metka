@@ -13,6 +13,8 @@ public enum ConfigurationType {
     SERIES,
     DICTIONARY,
     STANDARD_TEXT,
-    BINDER
+    BINDER,
+    FILE,
+    CODEBOOK
     // Add more as needed
 }

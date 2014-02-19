@@ -2,8 +2,10 @@ package fi.uta.fsd.metka.model.data;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import fi.uta.fsd.metka.data.entity.RevisionEntity;
 import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.model.configuration.ConfigurationKey;
+import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.change.FieldChange;
 import fi.uta.fsd.metka.model.data.container.FieldContainer;
 import org.joda.time.LocalDate;
@@ -25,6 +27,18 @@ import java.util.Map;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "revisionData")
 public class RevisionData implements Comparable<RevisionData> {
+    // Factories
+
+    public static RevisionData createRevisionData(RevisionEntity entity, ConfigurationKey configuration) {
+        RevisionData data = new RevisionData(
+                new RevisionKey(entity.getKey().getRevisionableId(), entity.getKey().getRevisionNo()),
+                configuration
+        );
+        data.setState(entity.getState());
+        return data;
+    }
+
+    // Class
     @XmlElement private final RevisionKey key;
     @XmlElement private final ConfigurationKey configuration;
     @XmlElement private final Map<String, FieldChange> changes = new HashMap<>();
@@ -86,6 +100,26 @@ public class RevisionData implements Comparable<RevisionData> {
 
     public void setApprover(String approver) {
         this.approver = approver;
+    }
+
+    // Helper methods
+    public FieldChange getChange(String key) {
+        return changes.get(key);
+    }
+    public FieldChange getChange(Field field) {
+        return getChange(field.getKey());
+    }
+    public void putChange(FieldChange change) {
+        changes.put(change.getKey(), change);
+    }
+    public FieldContainer getField(String key) {
+        return fields.get(key);
+    }
+    public FieldContainer getField(Field field) {
+        return getField(field.getKey());
+    }
+    public void putField(FieldContainer field) {
+        fields.put(field.getKey(), field);
     }
 
     @Override

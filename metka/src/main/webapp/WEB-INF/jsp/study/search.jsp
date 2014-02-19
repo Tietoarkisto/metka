@@ -14,14 +14,10 @@
 <div class="wrapper">
     <div class="content">
         <h1 class="pageTitle"><spring:message code="STUDY.search.title"/></h1>
-
         <div class="tabNavi">
-            <ul>
-                <li><a id="search" class="selected" href="#"><spring:message code="STUDY.search.title"/></a></li>
-                <li><a id="erroneous" href="#"><spring:message code="STUDY.erroneous.title"/></a></li>
-            </ul>
+            <a id="search" class="selected" href="#"><spring:message code="STUDY.search.title"/></a>
+            <a id="erroneous" href="#"><spring:message code="STUDY.erroneous.title"/></a>
         </div>
-
         <div class="tabs tab_search">
             <div class="upperContainer">
                 <%--<form action="#">
@@ -59,51 +55,26 @@
                                 <form:checkbox path="searchRemoved" />
                             </td>
                         </tr>
-                        <tr>
-                            <td class="labelColumn"><form:label path="study_number"><spring:message code="STUDY.field.study_number"/></form:label></td>
-                            <td colspan="3"><form:input path="study_number" /></td>
-                        </tr>
-                        <tr>
-                            <td class="labelColumn"><form:label path="study_name"><spring:message code="STUDY.field.study_name"/></form:label></td>
-                            <td colspan="3"><form:input path="study_name" /></td>
-                        </tr>
-                        <%-- TODO: Luovuttaja?
-                        <tr>
-                            <td class="labelColumn"><form:label path="name"><spring:message code="SERIES.field.name"/></form:label></td>
-                            <td><form:input path="name" /></td>
-                            <td class="labelColumn"><form:label path="name"><spring:message code="SERIES.field.name"/></form:label></td>
-                            <td><form:input path="name" /></td>
-                        </tr>
+                        <jsp:include page="../../inc/fullRowFormText.jsp">
+                            <jsp:param name="field" value="id" />
+                            <jsp:param name="type" value="input" />
+                            <jsp:param name="colspan" value="3" />
+                        </jsp:include>
+                        <jsp:include page="../../inc/fullRowFormText.jsp">
+                            <jsp:param name="field" value="title" />
+                            <jsp:param name="type" value="input" />
+                            <jsp:param name="colspan" value="3" />
+                        </jsp:include>
                         <tr>
                             <td class="labelColumn">
-                                <form:label path="publication_references"><spring:message code="STUDY.field.publication_references"/></form:label>
+                                <form:label path="seriesid"><spring:message code="STUDY.field.seriesid"/></form:label>
                             </td>
-                            <td colspan="3"><form:select path="publication_references" items="${info.publications}" /></td>
-                        </tr>
-                        <tr>
-                            <td class="labelColumn"><form:label path="name"><spring:message code="SERIES.field.name"/></form:label></td>
-                            <td colspan="3"><form:input path="name" /></td>
-                        </tr>
-                        --%>
-
-
-                        <%-- TODO: Tuottaja?
-                        <tr>
-                            <td class="labelColumn"><form:label path="name"><spring:message code="SERIES.field.name"/></form:label></td>
-                            <td><form:input path="name" /></td>
-                            <td class="labelColumn"><form:label path="name"><spring:message code="SERIES.field.name"/></form:label></td>
-                            <td><form:input path="name" /></td>
-                        </tr>--%>
-                        <tr>
-                            <td class="labelColumn">
-                                <form:label path="series_reference"><spring:message code="STUDY.field.series_reference"/></form:label>
-                            </td>
-                            <td colspan="3"><form:select path="series_reference" items="${info.series}" itemLabel="name" itemValue="id" /></td>
+                            <td colspan="3"><form:select path="seriesid" items="${info.series}" itemLabel="name" itemValue="id" /></td>
                         </tr>
                     </table>
                 </form:form>
             </div>
-            <div class="viewFormButtonsHolder">
+            <div class="buttonsHolder">
                 <div class="buttonsGroup">
                     <!-- TODO: Fix this reset button
                     <input type="reset" class="button" value="Tyhjennä">-->

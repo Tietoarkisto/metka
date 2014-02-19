@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <title><spring:message code="page.title"/></title>
 <link rel="stylesheet" type="text/css" href="${contextPath}/css/jquery-ui.css">
+<link rel="stylesheet" type="text/css" href="${contextPath}/css/form.css">
+<link rel="stylesheet" type="text/css" href="${contextPath}/css/table.css">
 <link rel="stylesheet" type="text/css" href="${contextPath}/css/styles.css">
 <script>
     // Set global variable for contextPath to be used in javascript.

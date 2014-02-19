@@ -33,8 +33,8 @@
 		}
 	},
 	"choicelists": {
-		"study_type_list": {
-			"key": "study_type_list",
+		"datakind_list": {
+			"key": "datakind_list",
 			"default": "1",
 			"options": [
 				{
@@ -53,6 +53,20 @@
 		},
 		"anonymity_list": {
 			"key": "anonymity_list",
+			"options": [
+				{
+					"value": "1"
+				},
+				{
+					"value": "2"
+				},
+				{
+					"value": "3"
+				}
+			]
+		},
+		"ispublic_list": {
+			"key": "public_list",
 			"options": [
 				{
 					"value": "1"
@@ -135,10 +149,9 @@
 			"valueField": "id"
 		},
 		"study_ref": {
-			"_comment": "TODO: ID should be combined from two values, how is this done?",
 			"key": "study_ref",
 			"targetType": "STUDY",
-			"valueField": "id"
+			"valueField": "study_number"
 		},
 		"binder_ref": {
 			"_comment": "TODO: This is an inverse reference. No data is saved on study, only fetched from binder! How to configure or is configuration even needed",
@@ -163,7 +176,7 @@
 			
 		},
 		"study_id": {
-			"_comment": "This contains only the number part (revisionable id). Letter part comes from study_id_prefix.",
+			"_comment": "This contains only the number part (revisionable id).",
 			"key": "study_id",
 			"translatable": false,
 			"immutable": true,
@@ -174,9 +187,9 @@
 			"type": "INTEGER",
 			"section": "basic_information"
 		},
-		"study_number": {
-			"_comment": "This contains the automatically generated study_id_prefix+study_id combination. Figure some way to describe the automation.",
-			"key": "study_number",
+		"id": {
+			"_comment": "This contains the automatically generated study_id_prefix+study_id combination.",
+			"key": "id",
 			"translatable": false,
 			"immutable": true,
 			"unique": true,
@@ -189,14 +202,14 @@
 			],
 			"section": "basic_information"
 		},
-		"study_name": {
-			"key": "study_name",
+		"title": {
+			"key": "title",
 			"maxValues": 1,
 			"type": "STRING",
 			"section": "basic_information"
 		},
-		"acquisition_number": {
-			"key": "acquisition_number",
+		"submissionid": {
+			"key": "submissionid",
 			"translatable": false,
 			"immutable": true,
 			"unique": true,
@@ -214,8 +227,8 @@
 			"type": "DATE",
 			"section": "basic_information"
 		},
-		"study_type": {
-			"key": "study_type",
+		"datakind": {
+			"key": "datakind",
 			"translatable": false,
 			"maxValues": 1,
 			"type": "CHOICE",
@@ -238,13 +251,12 @@
 			"choicelist": "yes_no_na",
 			"section": "basic_information"
 		},
-		"approved": {
-			"_comment": "Approval for study is done through this choice. Can this be avoided?",
-			"key": "approved",
+		"ispublic": {
+			"key": "ispublic",
 			"translatable": false,
 			"maxValues": 1,
 			"type": "CHOICE",
-			"choicelist": "yes_no_na",
+			"choicelist": "ispublic_list",
 			"section": "basic_information"
 		},
 		"description_approved": {
@@ -265,8 +277,8 @@
 			"choicelist": "yes_no_na",
 			"section": "basic_information"
 		},
-		"series_reference": {
-			"key": "series_reference",
+		"seriesid": {
+			"key": "seriesid",
 			"translatable": false,
 			"maxValues": 1,
 			"type": "CHOICE",
@@ -303,7 +315,7 @@
 			"key": "data_versions_version",
 			"translatable": false,
 			"required": true,
-			"type": "NUMBER",
+			"type": "REAL",
 			"section": "basic_information",
 			"subfieldTo": "data_versions"
 		},
@@ -321,7 +333,6 @@
 			"section": "basic_information",
 			"subfieldTo": "data_versions"
 		},
-		datan_versiot::lyhyt_selite "TODO: why is this a choicelist?"
 		"data_versions_public_description": {
 			"key": "data_versions_public_description",
 			"translatable": false,
@@ -346,7 +357,7 @@
 			"key": "data_versions_version",
 			"translatable": false,
 			"required": true,
-			"type": "NUMBER",
+			"type": "REAL",
 			"section": "basic_information",
 			"subfieldTo": "data_versions"
 		},
@@ -364,7 +375,6 @@
 			"section": "basic_information",
 			"subfieldTo": "data_versions"
 		},
-		kuvailun_Versiot::lyhyt_selite "TODO: why is this a choicelist?"
 		"description_versions_public_description": {
 			"key": "data_versions_public_description",
 			"translatable": false,
@@ -450,7 +460,7 @@
 			"section": "deposit_agreement"
 		},
 		"trigger_date": {
-			"_comment": "TODO: better translation for term 'her‰te'",
+			"_comment": "TODO: better translation for term 'her√§te'",
 			"key": "trigger_date",
 			"translatable": false,
 			"maxValues": 1,
@@ -471,118 +481,6 @@
 			"type": "STRING",
 			"section": "deposit_agreement"
 		},
-		arkistointisopimustiedosto
-		lis‰tiedot_koskien_arkistointisopimusta
-		menettely_jos_luvanantajaa_ei_tavoiteta
-		erityisehdot
-		muuta_kommentoitavaa
-		"study_description"
-		rinnakkainen_nimi
-		muunkieliset_nimet
-		muunkieliset_nimet::nimi
-		muunkieliset_nimet::kieli
-		tekij‰t (organisaatioihmeellisyyksi‰, vaatii tarkennusta)
-		tekij‰t::tekij‰-etunimi
-		tekij‰t::tekij‰-sukunimi
-		tekij‰t::tunniste
-		tekij‰t::tyyppi
-		tekij‰t::taustaorg
-		tekij‰t::taustaorg_tunniste
-		tekij‰t::taustaorg_tunnistetyyppi
-		muut_tekij‰t (organisaatioihmeellisyyksi‰, vaatii tarkennusta)
-		muut_tekij‰t::tekij‰-etunimi
-		muut_tekij‰t::tekij‰-sukunimi
-		muut_tekij‰t::tunniste
-		muut_tekij‰t::tyyppi
-		muut_tekij‰t::taustaorg
-		muut_tekij‰t::taustaorg_tunniste
-		muut_tekij‰t::taustaorg_tunnistetyyppi
-		tuottajat (organisaatioihmeellisyyksi‰, vaatii tarkennusta)
-		tuottajat::tuottaja
-		tuottajat::tunniste
-		tuottajat::tunnistetyyppi
-		tuottajat::rooli
-		tuottajat::projektinumero
-		tuottajat::lyhenne
-		asiasanat
-		asiasanat::sanasto
-		asiasanat::asiasana
-		asiasanat::uri
-		asiasanat::tunniste/osoite
-		tieteenala
-		tieteenala::sanasto
-		tieteenala::tieteenala
-		tieteenala::uri
-		tieteenala::tunniste/osoite
-		tiivistelm‰
-		viittaustiedot
-		ajalliset_kattavuudet
-		ajalliset_kattavuudet::pvm
-		ajalliset_kattavuudet::lis‰ys_dialogin_toinen_kentt‰
-		ajalliset_kattavuudet::tapahtuma
-		maat
-		maat::maa
-		maat::lyhenne
-		perusjoukot
-		perusjoukot::perusjoukko
-		perusjoukot::rajaus
-		kohdealueet
-		keruutapahtumat
-		keruutapahtumat::ajankohta
-		keruutapahtumat::lis‰ys_dialogin_toinen_kentt‰
-		keruutapahtumat::tapahtuma
-		ker‰‰j‰t (organisaatioihmeellisyyksi‰, vaatii tarkennusta)
-		ker‰‰j‰t::ker‰‰j‰
-		ker‰‰j‰t::tunniste
-		ker‰‰j‰t::tunnistetyyppi
-		ker‰‰j‰t::taustaorg
-		ker‰‰j‰t::taustaorg_tunniste
-		ker‰‰j‰t::taustaorg_tunnistetyyppi
-		havaintoyksikˆt
-		aikaulottuvuudet
-		keruumenetelm‰t
-		keruuv‰lineet
-		otantamenetelm‰t
-		otantamenetelm‰t::otantamenetelm‰
-		otantamenetelm‰t::kuvaus
-		vastausprosentti
-		l‰hdeaineisto
-		painokertoimet
-		painokertoimet::ei_painokertoimia
-		painokertoimet::painokertoimet
-		sis‰llˆllinen_muokkaus
-		tiedostot
-		t‰ydellisyys
-		lis‰varauma
-		huomioitavaa
-		arviointia
-		oheismateriaali
-		muut_materiaalit
-		muut_materiaalit::uri
-		muut_materiaalit::lyhyt_kuvaus
-		muut_materiaalit::tarkka_kuvaus
-		julkaisuihin_liittyv‰t_huomiot
-		"variables"
-		muuttujat
-		muuttujat::nimi
-		muuttujat::selite
-		muuttujat::kysymysteksti
-		muuttujat::esiteksti
-		muuttujat::j‰lkiteksti
-		muuttujat::haastattelijan_ohje
-		muuttujat::huomiot
-		muuttujat::lis‰tiedot
-		muuttujat::tietosuoja-asiat
-		muuttujat::arvojen_selitteet (vaatii s‰‰tˆ‰)
-		muuttujat::lukum‰‰r‰
-		muuttujat::minimi
-		muuttujat::maksimi
-		muuttujat::keskiarvo
-		muuttujat::keskihajonta
-		muuttujat::muuttujaryhm‰_id
-		muuttujaryhm‰t
-		muuttujaryhm‰t::id
-		muuttujaryhm‰t::nimi
 		"files": {
 			"key": "files",
 			"translatable": false,
@@ -596,13 +494,6 @@
 			"type": "REFERENCE",
 			"reference": "codebook_ref",
 			"section": "codebook"
-		},
-		"identifiers"
-		"TODO: Clarification for this is needed so that it is done correctly from start!"
-		tunnisteet
-		tunnisteet::output
-		tunnisteet::versio
-		tunnisteet::p‰iv‰m‰‰r‰
-		tunnisteet::urn
+		}
 	}
 }

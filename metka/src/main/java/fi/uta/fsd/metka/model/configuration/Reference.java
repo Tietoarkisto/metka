@@ -1,5 +1,7 @@
 package fi.uta.fsd.metka.model.configuration;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
 
@@ -7,22 +9,23 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
-/**
- * Created with IntelliJ IDEA.
- * User: lasseku
- * Date: 1/23/14
- * Time: 10:21 AM
- * To change this template use File | Settings | File Templates.
- */
 @XmlAccessorType(XmlAccessType.FIELD)
+@JsonIgnoreProperties("_comment")
 public class Reference {
+    @XmlElement private final String key;
     @XmlElement private final ConfigurationType targetType;
     @XmlElement private final String valueField;
     @XmlElement private String titleField;
 
-    public Reference(@JsonProperty("targetType")ConfigurationType targetType, @JsonProperty("valueField")String valueField) {
+    @JsonCreator
+    public Reference(@JsonProperty("key")String key, @JsonProperty("targetType")ConfigurationType targetType, @JsonProperty("valueField")String valueField) {
+        this.key = key;
         this.targetType = targetType;
         this.valueField = valueField;
+    }
+
+    public String getKey() {
+        return key;
     }
 
     public ConfigurationType getTargetType() {

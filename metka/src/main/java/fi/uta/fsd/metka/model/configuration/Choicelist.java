@@ -7,23 +7,18 @@ import fi.uta.fsd.metka.data.enums.ChoicelistType;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
-/**
- * Created with IntelliJ IDEA.
- * User: lasseku
- * Date: 12/18/13
- * Time: 10:12 AM
- * To change this template use File | Settings | File Templates.
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Choicelist {
     @XmlElement private final String key;
-    @XmlElement(name = "default") @JsonProperty("default") private Integer def = 0;
-    @XmlElement private Set<Option> options = new LinkedHashSet<Option>();
+    @XmlElement(name = "default") @JsonProperty("default") private String def = "0";
+    @XmlElement private List<Option> options = new ArrayList<>();
     @XmlElement private ChoicelistType type = ChoicelistType.VALUE;
-    @XmlElement private Reference reference;
+    @XmlElement private String reference;
 
     @JsonCreator
     public Choicelist(@JsonProperty("key") String key) {
@@ -34,19 +29,19 @@ public class Choicelist {
         return key;
     }
 
-    public Integer getDef() {
+    public String getDef() {
         return def;
     }
 
-    public void setDef(Integer def) {
+    public void setDef(String def) {
         this.def = def;
     }
 
-    public Set<Option> getOptions() {
+    public List<Option> getOptions() {
         return options;
     }
 
-    public void setOptions(Set<Option> options) {
+    public void setOptions(List<Option> options) {
         this.options = options;
     }
 
@@ -58,11 +53,11 @@ public class Choicelist {
         this.type = type;
     }
 
-    public Reference getReference() {
+    public String getReference() {
         return reference;
     }
 
-    public void setReference(Reference reference) {
+    public void setReference(String reference) {
         this.reference = reference;
     }
 
@@ -81,5 +76,16 @@ public class Choicelist {
     @Override
     public int hashCode() {
         return key.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        String out = "Choicelist["+key+"], options[";
+        for(Option option : options) {
+            out += option;
+            out += ", ";
+        }
+        out += "]";
+        return out;
     }
 }

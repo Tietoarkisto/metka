@@ -1,8 +1,10 @@
 package fi.uta.fsd.metka.mvc.domain.simple.study;
 
+import fi.uta.fsd.metka.model.configuration.Choicelist;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,7 +17,6 @@ public class StudyInfo {
     private StudySearchSO query;
     private StudySingleSO single;
     private List<StudySearchResultSO> results;
-    private Configuration configuration;
     private List<SeriesReference> series;
     private List<ErroneousStudy> erroneous;
 
@@ -41,14 +42,6 @@ public class StudyInfo {
 
     public void setResults(List<StudySearchResultSO> results) {
         this.results = results;
-    }
-
-    public Configuration getConfiguration() {
-        return configuration;
-    }
-
-    public void setConfiguration(Configuration configuration) {
-        this.configuration = configuration;
     }
 
     public List<SeriesReference> getSeries() {

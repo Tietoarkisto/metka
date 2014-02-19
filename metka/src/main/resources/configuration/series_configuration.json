@@ -4,8 +4,8 @@
 		"type": "SERIES"
 	},
 	"fields": {
-		"id": {
-			"key": "id",
+		"seriesno": {
+			"key": "seriesno",
 			"translatable": false,
 			"immutable": true,
 			"unique": true,
@@ -13,8 +13,8 @@
 			"maxValues": 1,
 			"type": "INTEGER"
 		},
-		"abbreviation": {
-			"key": "abbreviation",
+		"seriesabb": {
+			"key": "seriesabb",
 			"maxValues": 1,
 			"immutable": true,
 			"unique": true,
@@ -22,13 +22,18 @@
 			"translatable": false,
 			"type": "STRING"
 		},
-		"name": {
-			"key": "name",
+		"seriesname": {
+			"key": "seriesname",
 			"maxValues": 1,
 			"type": "STRING"
 		},
-		"description": {
-			"key": "description",
+		"seriesdesc": {
+			"key": "seriesdesc",
+			"maxValues": 1,
+			"type": "STRING"
+		},
+		"seriesnotes": {
+			"key": "seriesnotes",
 			"maxValues": 1,
 			"type": "STRING"
 		}

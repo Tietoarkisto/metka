@@ -10,37 +10,14 @@ import fi.uta.fsd.metka.mvc.domain.simple.SimpleSearchObject;
  * To change this template use File | Settings | File Templates.
  */
 public class SeriesSearchSO extends SimpleSearchObject {
-    private Integer id;
-    private String name;
-    private String abbreviation;
+    private Integer seriesno;
+    private String seriesname;
+    private String seriesabb;
     private boolean searchApproved = true;
     private boolean searchDraft = true;
     private boolean searchRemoved;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getAbbreviation() {
-        return abbreviation;
-    }
-
-    public void setAbbreviation(String abbreviation) {
-        this.abbreviation = abbreviation;
-    }
-
+   // External values
     public boolean isSearchApproved() {
         return searchApproved;
     }
@@ -65,14 +42,41 @@ public class SeriesSearchSO extends SimpleSearchObject {
         this.searchRemoved = searchRemoved;
     }
 
+    // Field values
+
+
+    public Integer getSeriesno() {
+        return seriesno;
+    }
+
+    public void setSeriesno(Integer seriesno) {
+        this.seriesno = seriesno;
+    }
+
+    public String getSeriesname() {
+        return seriesname;
+    }
+
+    public void setSeriesname(String seriesname) {
+        this.seriesname = seriesname;
+    }
+
+    public String getSeriesabb() {
+        return seriesabb;
+    }
+
+    public void setSeriesabb(String seriesabb) {
+        this.seriesabb = seriesabb;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("Series search object: [");
-        for(int i = 0; i < VALUE.values().length; i++) {
-            VALUE v = VALUE.values()[i];
+        for(int i = 0; i < SeriesValues.values().length; i++) {
+            SeriesValues v = SeriesValues.values()[i];
             sb.append(v.getKey()+": ");
             sb.append(getByKey(v.getKey()));
-            if(i < VALUE.values().length-1) {
+            if(i < SeriesValues.values().length-1) {
                 sb.append(", ");
             }
         }
@@ -82,38 +86,14 @@ public class SeriesSearchSO extends SimpleSearchObject {
 
     @Override
     public Object getByKey(String key) throws IllegalArgumentException {
-        switch(VALUE.fromString(key)) {
-            case ID:
-                return id;
-            case ABBREVIATION:
-                return abbreviation;
-            case NAME:
-                return name;
+        switch(SeriesValues.fromString(key)) {
+            case SERIESNO:
+                return seriesno;
+            case SERIESABB:
+                return seriesabb;
+            case SERIESNAME:
+                return seriesname;
         }
         return null;
-    }
-
-    private static enum VALUE {
-        ID("id"), ABBREVIATION("abbreviation"), NAME("name");
-        private String key;
-
-        private VALUE(String key) {
-            this.key = key;
-        }
-
-        private String getKey() {
-            return this.key;
-        }
-
-        private static VALUE fromString(String key) {
-            if(key != null) {
-                for(VALUE v : VALUE.values()) {
-                    if(key.equals(v.key)) {
-                        return v;
-                    }
-                }
-            }
-            throw new IllegalArgumentException("No value for ["+key+"] found.");
-        }
     }
 }

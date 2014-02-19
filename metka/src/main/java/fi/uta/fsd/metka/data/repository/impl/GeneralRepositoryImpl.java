@@ -34,7 +34,7 @@ public class GeneralRepositoryImpl implements GeneralRepository {
                     "WHERE r.id "+(forward?">":"<")+" :id AND r.type = :type " +
                     "AND r.removed = false " +
                     "AND r.curApprovedNo IS NOT NULL " +
-                    "ORDER BY r.id "+(forward?"ASC":"DESC"))
+                    "ORDER BY r.id "+(forward?"ASC":"DESC"), RevisionableEntity.class)
                 .setParameter("id", currentId)
                 .setParameter("type", type.toUpperCase())
                 .setMaxResults(1)
@@ -49,7 +49,7 @@ public class GeneralRepositoryImpl implements GeneralRepository {
     @Override
     public RemoveResponse removeDraft(String type, Integer id) {
         List<RevisionableEntity> list = em.createQuery("SELECT r FROM RevisionableEntity r " +
-                "WHERE r.id = :id AND r.type = :type")
+                "WHERE r.id = :id AND r.type = :type", RevisionableEntity.class)
                 .setParameter("id", id)
                 .setParameter("type", type.toUpperCase())
                 .getResultList();
@@ -82,7 +82,7 @@ public class GeneralRepositoryImpl implements GeneralRepository {
     @Override
     public RemoveResponse removeLogical(String type, Integer id) {
         List<RevisionableEntity> list = em.createQuery("SELECT r FROM RevisionableEntity r " +
-                "WHERE r.id = :id AND r.type = :type")
+                "WHERE r.id = :id AND r.type = :type", RevisionableEntity.class)
                 .setParameter("id", id)
                 .setParameter("type", type.toUpperCase())
                 .getResultList();

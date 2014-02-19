@@ -35,7 +35,7 @@ public class HistoryRepositoryImpl implements HistoryRepository {
         List<RevisionData> revisions = new ArrayList<RevisionData>();
         List<RevisionEntity> entities =
                 em.createQuery("SELECT r FROM RevisionEntity r " +
-                        "WHERE r.key.revisionableId=:id ORDER BY r.key.revisionNo ASC")
+                        "WHERE r.key.revisionableId=:id ORDER BY r.key.revisionNo ASC", RevisionEntity.class)
                     .setParameter("id", id)
                     .getResultList();
 

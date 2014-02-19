@@ -43,7 +43,7 @@ public class StudyController {
     */
     @RequestMapping(value = "view/{id}", method = RequestMethod.GET)
     public String view(@ModelAttribute("info")StudyInfo info, @PathVariable Integer id, RedirectAttributes redirectAttributes) {
-        Integer revision = studyService.findSingleStudyRevisionNo(id);
+        Integer revision = studyService.findSingleRevisionNo(id);
         if(revision != null) {
             return REDIRECT_VIEW+id+"/"+revision;
         } else {
@@ -72,7 +72,7 @@ public class StudyController {
         info.setSingle(single);
 
         Configuration config = configService.findByTypeAndVersion(single.getConfiguration());
-        info.setConfiguration(config);
+        model.asMap().put("configuration", config);
 
         model.asMap().put("info", info);
         model.asMap().put("page", "study");
@@ -117,14 +117,14 @@ public class StudyController {
     * Only a DRAFT revision can be edited and only the newest revision can be a draft revision
     * so you can always modify by using only the id for the series.
     */
-    @RequestMapping(value="add", method = {RequestMethod.GET})
-    public String add(@ModelAttribute("info")StudyInfo info, RedirectAttributes redirectAttributes) {
-        StudySingleSO single = studyService.newSeries();
+    @RequestMapping(value="add/{acquisition_number}", method = {RequestMethod.GET})
+    public String add(@ModelAttribute("info")StudyInfo info, @PathVariable Integer acquisition_number, RedirectAttributes redirectAttributes) {
+        StudySingleSO single = studyService.newSeries(acquisition_number);
         if(single == null) {
             // TODO: Show error if no new series could be created
             return REDIRECT_SEARCH;
         } else {
-            return REDIRECT_VIEW+single.getId()+"/"+single.getRevision();
+            return REDIRECT_VIEW+single.getStudy_id()+"/"+single.getRevision();
         }
     }
 
@@ -144,7 +144,7 @@ public class StudyController {
             redirectAttributes.addFlashAttribute("errorContainer", ErrorMessage.saveFail());
         }
 
-        return REDIRECT_VIEW+info.getSingle().getId()+"/"+info.getSingle().getRevision();
+        return REDIRECT_VIEW+info.getSingle().getStudy_id()+"/"+info.getSingle().getRevision();
     }
 
     /*
@@ -170,7 +170,7 @@ public class StudyController {
             }
         }
 
-        return REDIRECT_VIEW+info.getSingle().getId()+"/"+info.getSingle().getRevision();
+        return REDIRECT_VIEW+info.getSingle().getStudy_id()+"/"+info.getSingle().getRevision();
     }
 
     /*
@@ -183,7 +183,7 @@ public class StudyController {
     public String edit(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
         StudySingleSO single = studyService.editStudy(id);
         if(single != null) {
-            return REDIRECT_VIEW+single.getId()+"/"+single.getRevision();
+            return REDIRECT_VIEW+single.getStudy_id()+"/"+single.getRevision();
         } else {
             // TODO: Notify user that no editable revision could be found or created
             return REDIRECT_VIEW+id;

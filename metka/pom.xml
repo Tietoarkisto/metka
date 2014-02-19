@@ -17,6 +17,8 @@
         <joda-time-version>2.3</joda-time-version>
         <rabbit-version>3.2.2</rabbit-version>
         <env>demo</env>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 
     <dependencies>

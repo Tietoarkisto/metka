@@ -2,6 +2,7 @@ package fi.uta.fsd.metka.mvc.domain;
 
 import fi.uta.fsd.metka.data.enums.repositoryResponses.RemoveResponse;
 import fi.uta.fsd.metka.data.repository.GeneralRepository;
+import fi.uta.fsd.metka.mvc.search.GeneralSearch;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ public class GeneralService {
 
     @Autowired
     private GeneralRepository repository;
+
 
     /**
      * Return the id of next or previous revisionable of the same type as the current revisionable the user is looking at.

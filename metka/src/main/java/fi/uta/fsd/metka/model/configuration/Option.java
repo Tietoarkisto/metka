@@ -17,6 +17,7 @@ import javax.xml.bind.annotation.XmlElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Option {
     @XmlElement private final String value;
+    @XmlElement private String title = null;
     @XmlElement private Boolean deprecated = false;
 
     @JsonCreator
@@ -26,6 +27,14 @@ public class Option {
 
     public String getValue() {
         return value;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public Boolean getDeprecated() {
@@ -51,5 +60,10 @@ public class Option {
     @Override
     public int hashCode() {
         return value.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return value;
     }
 }

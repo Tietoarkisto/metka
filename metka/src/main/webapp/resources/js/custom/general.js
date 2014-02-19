@@ -89,10 +89,10 @@ $(document).ready(function(){
 
     // Clean code here
 
-    $(".tabNavi ul li a").click(function(){
+    $(".tabNavi a").click(function(){
         if(!$(this).hasClass("selected")){
-            $(".tabNavi ul li a.selected").attr("id");
-            $(".tabNavi ul li a").removeClass("selected");
+            $(".tabNavi a.selected").attr("id");
+            $(".tabNavi a").removeClass("selected");
             $(this).addClass("selected");
             var selectedId = $(this).attr("id");
             $(".tabs").hide();

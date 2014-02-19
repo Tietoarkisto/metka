@@ -1,8 +1,8 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 
 <div id="importExport" class="tabs2 importExport">
-	<div class="viewFormButtonsHolder" style="margin-bottom:20px;">
-		<%-- Import study ei kuulu tänne, uusi välilehti "Aineistot"-välilehdelle? --%>
+	<div class="buttonsHolder" style="margin-bottom:20px;">
+		<%-- Import study ei kuulu tï¿½nne, uusi vï¿½lilehti "Aineistot"-vï¿½lilehdelle? --%>
 		<input type="button" class="searchFormInput import" value="<spring:message code='study.view.importExport.importStudy'/>" />
 		<input type="button" class="searchFormInput export" value="<spring:message code='study.view.importExport.exportAll'/>" />
 		<input type="button" class="searchFormInput ddi2ExportButton" value="<spring:message code='study.view.importExport.ddi2Export'/>" />

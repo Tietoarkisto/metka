@@ -13,75 +13,56 @@
         <jsp:include page="../../inc/topMenu.jsp" />
         <div class="wrapper">
             <div class="content">
-           	<h1 class="pageTitle"><spring:message code="SERIES"/> ${info.single.id} - <spring:message code="general.revision"/> ${info.single.revision}</h1>
+           	<h1 class="pageTitle"><spring:message code="SERIES"/> ${info.single.seriesno} - <spring:message code="general.revision"/> ${info.single.revision}</h1>
                 <jsp:include page="../../inc/prevNext.jsp">
-                    <jsp:param name="id" value="${info.single.id}" />
+                    <jsp:param name="id" value="${info.single.seriesno}" />
                 </jsp:include>
                 <div class="upperContainer">
-                    <table class="formTable">
-                        <tr>
-                            <td class="labelColumn"><label><spring:message code="SERIES.field.id"/></label></td>
-                            <td><input type="text" value="${info.single.id}" name="seriesId" readonly="readonly" /></td>
-                        </tr>
-                        <tr>
-                            <td class="labelColumn"><label><spring:message code="SERIES.field.abbreviation"/></label></td>
-                            <td><input type="text" value="${info.single.abbreviation}" name="seriesAbbr" readonly="readonly" /></td>
-                        </tr>
-                        <tr>
-                            <td class="labelColumn"><label><spring:message code="SERIES.field.name"/></label></td>
-                            <td><input type="text" name="seriesNameFi" value="${info.single.name}" readonly="readonly" /></td>
-                            <%-- TODO: Implement translatiopn functionality
-                            <div class="seriesDataSetContainer translationSv"><label><spring:message code="series.view.name"/></label><input type="text" name="seriesNameSv" /></div>
-                            <div class="seriesDataSetContainer translationEn"><label><spring:message code="series.view.name"/></label><input type="text" name="seriesNameEn" /></div>--%>
-                        </tr>
-                        <tr>
-                            <td class="labelColumn"><label><spring:message code="SERIES.field.description"/></label></td>
-                            <td><textarea id="seriesDescriptionFi" name="seriesDescrFi" readonly="readonly" >${info.single.description}</textarea></td>
-                            <%-- TODO: Implement translation functionality
-                            <div class="seriesDataSetContainer translationSv"><label><spring:message code="series.view.description"/></label><textarea name="seriesDescrSv"></textarea></div>
-                            <div class="seriesDataSetContainer translationEn"><label><spring:message code="series.view.description"/></label><textarea name="seriesDescrEn"></textarea></div>--%>
-                        </tr>
-                        <%--<div class="rowContainer containsTranslations">
-                            <div class="seriesDataSetContainer">
-
-                            </div>
-                        </div>
-                        <div class="rowContainer containsTranslations">
-                            <div class="seriesDataSetContainer">
-
-
-                            </div>
-                        </div>
-                        <div class="rowContainer containsTranslations">
-                            <div class="seriesDataSetContainer translated translationFi">
-
-
-                            </div>
-
-                        </div>
-                        <div class="rowContainer containsTranslations">
-                            <div class="seriesDataSetContainer translated translationFi">
-
-
-                            </div>
-
-                        </div>--%>
-                    </table>
+                    <form:form modelAttribute="info.single">
+                        <table class="formTable">
+                            <form:hidden path="revision" />
+                            <jsp:include page="../../inc/fullRowFormText.jsp">
+                                <jsp:param name="field" value="seriesno" />
+                                <jsp:param name="type" value="input" />
+                                <jsp:param name="readOnly" value="true" />
+                            </jsp:include>
+                            <jsp:include page="../../inc/fullRowFormText.jsp">
+                                <jsp:param name="field" value="seriesabb" />
+                                <jsp:param name="type" value="input" />
+                                <jsp:param name="readOnly" value="true" />
+                            </jsp:include>
+                            <jsp:include page="../../inc/fullRowFormText.jsp">
+                                <jsp:param name="field" value="seriesname" />
+                                <jsp:param name="type" value="input" />
+                                <jsp:param name="readOnly" value="true" />
+                            </jsp:include>
+                            <jsp:include page="../../inc/fullRowFormText.jsp">
+                                <jsp:param name="field" value="seriesdesc" />
+                                <jsp:param name="type" value="area" />
+                                <jsp:param name="readOnly" value="true" />
+                            </jsp:include>
+                            <jsp:include page="../../inc/fullRowFormText.jsp">
+                                <jsp:param name="field" value="seriesnotes" />
+                                <jsp:param name="type" value="area" />
+                                <jsp:param name="readOnly" value="true" />
+                            </jsp:include>
+                        </table>
+                    </form:form>
                 </div>
 
-				<div class="viewFormButtonsHolder">
+				<div class="buttonsHolder">
                     <div class="buttonsGroup">
                         <jsp:include page="../../inc/revHistory.jsp">
-                            <jsp:param name="id" value="${info.single.id}"></jsp:param>
+                            <jsp:param name="id" value="${info.single.seriesno}"></jsp:param>
                             <jsp:param name="isDraft" value="false"></jsp:param>
                         </jsp:include>
 
                         <input type="button" class="button"
                                value="<spring:message code='general.buttons.edit'/>"
-                               onclick="location.href='${contextPath}/series/edit/${info.single.id}'"/>
+                               onclick="location.href='${contextPath}/series/edit/${info.single.seriesno}'"/>
 
                         <jsp:include page="../../inc/removeButton.jsp">
-                            <jsp:param name="id" value="${info.single.id}" />
+                            <jsp:param name="id" value="${info.single.seriesno}" />
                             <jsp:param name="isDraft" value="false" />
                         </jsp:include>
                     </div>

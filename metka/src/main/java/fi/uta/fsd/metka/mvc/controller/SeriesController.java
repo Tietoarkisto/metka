@@ -42,7 +42,7 @@ public class SeriesController {
     */
     @RequestMapping(value = "view/{id}", method = RequestMethod.GET)
     public String view(Model model, @ModelAttribute("info")SeriesInfo info, @PathVariable Integer id, RedirectAttributes redirectAttributes) {
-        Integer revision = seriesService.findSingleSeriesRevisionNo(id);
+        Integer revision = seriesService.findSingleRevisionNo(id);
         if(model.asMap().containsKey("errorContainer")) {
             redirectAttributes.addFlashAttribute("errorContainer", model.asMap().get("errorContainer"));
         }
@@ -94,7 +94,7 @@ public class SeriesController {
         if(info.getQuery() != null) {
             List<SeriesSearchResultSO> results = seriesService.searchForSeries(info.getQuery());
             if(results.size() == 1) {
-                return REDIRECT_VIEW+results.get(0).getId()+"/"+results.get(0).getRevision();
+                return REDIRECT_VIEW+results.get(0).getSeriesno()+"/"+results.get(0).getRevision();
             }
             info.setResults(results);
             info.setQuery(info.getQuery());
@@ -124,7 +124,7 @@ public class SeriesController {
             // TODO: Show error if no new series could be created
             return REDIRECT_SEARCH;
         } else {
-            return REDIRECT_VIEW+single.getId()+"/"+single.getRevision();
+            return REDIRECT_VIEW+single.getSeriesno()+"/"+single.getRevision();
         }
     }
 
@@ -144,7 +144,7 @@ public class SeriesController {
             redirectAttributes.addFlashAttribute("errorContainer", ErrorMessage.saveFail());
         }
 
-        return REDIRECT_VIEW+info.getSingle().getId()+"/"+info.getSingle().getRevision();
+        return REDIRECT_VIEW+info.getSingle().getSeriesno()+"/"+info.getSingle().getRevision();
     }
 
     /*
@@ -170,7 +170,7 @@ public class SeriesController {
             }
         }
 
-        return REDIRECT_VIEW+info.getSingle().getId()+"/"+info.getSingle().getRevision();
+        return REDIRECT_VIEW+info.getSingle().getSeriesno()+"/"+info.getSingle().getRevision();
     }
 
     /*
@@ -179,14 +179,14 @@ public class SeriesController {
     * revision for the user is done further down the line (e.g. checking if new revision is
     * actually required or is there already an open DRAFT revision).
     */
-    @RequestMapping(value = "edit/{id}", method = {RequestMethod.GET})
-    public String edit(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
-        SeriesSingleSO single = seriesService.editSeries(id);
+    @RequestMapping(value = "edit/{seriesno}", method = {RequestMethod.GET})
+    public String edit(@PathVariable Integer seriesno, RedirectAttributes redirectAttributes) {
+        SeriesSingleSO single = seriesService.editSeries(seriesno);
         if(single != null) {
-            return REDIRECT_VIEW+single.getId()+"/"+single.getRevision();
+            return REDIRECT_VIEW+single.getSeriesno()+"/"+single.getRevision();
         } else {
             // TODO: Notify user that no editable revision could be found or created
-            return REDIRECT_VIEW+id;
+            return REDIRECT_VIEW+seriesno;
         }
     }
 }

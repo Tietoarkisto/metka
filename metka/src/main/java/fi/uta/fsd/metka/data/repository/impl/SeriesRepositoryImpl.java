@@ -8,7 +8,9 @@ import fi.uta.fsd.metka.data.entity.impl.SeriesEntity;
 import fi.uta.fsd.metka.data.entity.key.RevisionKey;
 import fi.uta.fsd.metka.data.enums.ChangeOperation;
 import fi.uta.fsd.metka.data.enums.RevisionState;
+import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.data.repository.SeriesRepository;
+import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.change.FieldChange;
 import fi.uta.fsd.metka.model.data.change.ValueFieldChange;
 import fi.uta.fsd.metka.model.data.container.FieldContainer;
@@ -42,9 +44,11 @@ public class SeriesRepositoryImpl implements SeriesRepository {
     @Autowired
     private ObjectMapper metkaObjectMapper;
 
+    @Autowired
+    private ConfigurationRepository configRepo;
+
     @Override
-    public RevisionData getNew()
-            throws JsonProcessingException, JsonMappingException, IOException {
+    public RevisionData getNew() throws IOException {
         SeriesEntity entity = new SeriesEntity();
         em.persist(entity);
 
@@ -74,7 +78,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         // Check state
         // Deserialize revision data and check that data agrees with entity.
 
-        SeriesEntity series = em.find(SeriesEntity.class, so.getId());
+        SeriesEntity series = em.find(SeriesEntity.class, so.getSeriesno());
         if(series == null) {
             // There has to be a series so you can save
             return false;
@@ -95,6 +99,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         }
 
         RevisionData data = metkaObjectMapper.readValue(revEntity.getData(), RevisionData.class);
+        Configuration config = configRepo.findConfiguration(data.getConfiguration());
 
         // Validate SeriesSingleSO against revision data:
         // Id should match id in revision data and key.
@@ -116,72 +121,44 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         String key;
 
         // Check ID
-        key = "id";
+        key = "seriesno";
         field = getValueFieldContainerFromRevisionData(data, key);
         intValue = extractIntegerSimpleValue(field);
-        if(!so.getId().equals(intValue)) {
+        if(!so.getSeriesno().equals(intValue)) {
             // TODO: data is out of sync or someone tried to change the id, log error
             // Return false since save can not continue.
             return false;
         }
         
         // Check abbreviation.
-        key = "abbreviation";
+        // TODO: handle immutable values (values that can be inserted but once inserted can not be changed).
+        key = "seriesabb";
         field = getValueFieldContainerFromRevisionData(data, key); // Since we are in a DRAFT this returns a field only if one exists in changes
         stringValue = extractStringSimpleValue(field);
-        if(!StringUtils.isEmpty(stringValue) && !so.getAbbreviation().equals(stringValue)) {
+        if(!StringUtils.isEmpty(stringValue) && !so.getSeriesabb().equals(stringValue)) {
             // TODO: data is out of sync or someone tried to change the abbreviation, log error
             return false;
         }
 
-        if(!StringUtils.isEmpty(so.getAbbreviation()) && StringUtils.isEmpty(stringValue)) {
+        if(!StringUtils.isEmpty(so.getSeriesabb()) && StringUtils.isEmpty(stringValue)) {
             changes = true;
 
-            newField = factory.createValueFieldContainer(key, time);
-            factory.setSimpleValue(newField, so.getByKey(key).toString());
+            newField = createValueFieldContainer(key, time);
+            setSimpleValue(newField, so.getByKey(key).toString());
 
             change = updateValueField(data, key, newField);
-            data.getChanges().put(change.getKey(), change);
+            data.putChange(change);
         }
 
         // TODO: these following two can be generalised and used by the other type of objects too.
         // Check name
-        key = "name";
-        field = getValueFieldContainerFromRevisionData(data, key);
-        stringValue = extractStringSimpleValue(field);
-        String name = so.getName();
-        if((StringUtils.isEmpty(stringValue) && !StringUtils.isEmpty(name))     // New value
-            || (!StringUtils.isEmpty(stringValue) && StringUtils.isEmpty(name)) // Value removed
-            || (!StringUtils.isEmpty(stringValue) && !StringUtils.isEmpty(name) && !name.equals(stringValue))) { // Existing value changed
-            changes = true;
-
-            newField = factory.createValueFieldContainer(key, time);
-            if(!(!StringUtils.isEmpty(stringValue) && StringUtils.isEmpty(name))) {
-                factory.setSimpleValue(newField, so.getByKey(key).toString());
-            }
-
-            change = updateValueField(data, key, newField);
-            data.getChanges().put(change.getKey(), change);
-        }
+        doSingleValueChanges("seriesname", so, time, data, config);
         
         // Check description
-        key = "description";
-        field = getValueFieldContainerFromRevisionData(data, key);
-        stringValue = extractStringSimpleValue(field);
-        String description = so.getDescription();
-        if((StringUtils.isEmpty(stringValue) && !StringUtils.isEmpty(description))     // New value
-                || (!StringUtils.isEmpty(stringValue) && StringUtils.isEmpty(description)) // Value removed
-                || (!StringUtils.isEmpty(stringValue) && !StringUtils.isEmpty(description) && !description.equals(stringValue))) { // Existing value changed
-            changes = true;
+        doSingleValueChanges("seriesdesc", so, time, data, config);
 
-            newField = factory.createValueFieldContainer(key, time);
-            if(!(!StringUtils.isEmpty(stringValue) && StringUtils.isEmpty(description))) {
-                factory.setSimpleValue(newField, description);
-            }
-
-            change = updateValueField(data, key, newField);
-            data.getChanges().put(change.getKey(), change);
-        }
+        // check series notes
+        doSingleValueChanges("seriesnotes", so, time, data, config);
 
         // If there were changes:
         // Serialize RevisionData.
@@ -205,14 +182,14 @@ public class SeriesRepositoryImpl implements SeriesRepository {
     *       or removed.
     */
     @Override
-    public boolean approveSeries(Integer id) throws IOException {
+    public boolean approveSeries(Object seriesno) throws IOException {
         // Get series entity
         // Compare current approved and latest revision no, if they are the same there is nothing to approve.
         // If latest revision is larger than current approved then get the revision.
         // If latest revision is not in DRAFT state log exception and return false.
         // Deserialize revision data.
 
-        SeriesEntity series = em.find(SeriesEntity.class, id);
+        SeriesEntity series = em.find(SeriesEntity.class, seriesno);
 
         if(series == null) {
             // TODO: log suitable error
@@ -221,7 +198,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
 
         if(series.getCurApprovedNo() == null && series.getLatestRevisionNo() == null) {
             // TODO: log suitable error
-            System.err.println("No revision found when approving series "+id);
+            System.err.println("No revision found when approving series "+seriesno);
             return false;
         }
 
@@ -233,7 +210,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
 
         if(series.getCurApprovedNo() != null && series.getCurApprovedNo().compareTo(series.getLatestRevisionNo()) > 0) {
             // TODO: log exception since data is out of sync
-            System.err.println("Current approved is larger than latest revision on series "+id+". This should not happen.");
+            System.err.println("Current approved is larger than latest revision on series "+seriesno+". This should not happen.");
             return false;
         }
 
@@ -241,7 +218,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         RevisionEntity entity = em.find(RevisionEntity.class, new RevisionKey(series.getId(), series.getLatestRevisionNo()));
         if(entity.getState() != RevisionState.DRAFT) {
             // TODO: log exception since data is out of sync
-            System.err.println("Latest revision should be DRAFT but is not on series "+id);
+            System.err.println("Latest revision should be DRAFT but is not on series "+seriesno);
             return false;
         }
 
@@ -258,7 +235,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
 
         if(data.getState() != RevisionState.DRAFT) {
             // TODO: log exception since data is out of sync
-            System.err.println("Revision data on series "+id+" was not in DRAFT state even though should have been.");
+            System.err.println("Revision data on series "+seriesno+" was not in DRAFT state even though should have been.");
             return false;
         }
 
@@ -275,7 +252,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         List<String> unchangedKeys = new ArrayList<String>();
         // TODO: Field type confirmation from configuration. For now assume accurate use
         for(String key : data.getChanges().keySet()) {
-            ValueFieldChange change = (ValueFieldChange)data.getChanges().get(key);
+            ValueFieldChange change = (ValueFieldChange)data.getChange(key);
             FieldContainer field = null;
             if(change.getOperation() == ChangeOperation.UNCHANGED) {
                 unchangedKeys.add(key);
@@ -284,7 +261,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
                 field = change.getNewField();
             }
             if(field != null) {
-                data.getFields().put(field.getKey(), field);
+                data.putField(field);
             }
         }
         for(String key : unchangedKeys) {
@@ -307,13 +284,13 @@ public class SeriesRepositoryImpl implements SeriesRepository {
     }
 
     @Override
-    public RevisionData editSeries(Integer id) throws IOException {
+    public RevisionData editSeries(Object seriesno) throws IOException {
         // Get series entity
         // Do the usual checking
         // If latest revision differs from current approved get that
         // Do the usual checking
         // Return deserialized revision data from the already existing DRAFT
-        SeriesEntity series = em.find(SeriesEntity.class, id);
+        SeriesEntity series = em.find(SeriesEntity.class, seriesno);
 
         if(series == null) {
             // TODO: log suitable error
@@ -321,7 +298,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         }
         if(series.getCurApprovedNo() == null && series.getLatestRevisionNo() == null) {
             // TODO: log suitable error
-            System.err.println("No revision found when trying to edit series "+id);
+            System.err.println("No revision found when trying to edit series "+seriesno);
             return null;
         }
 
@@ -331,12 +308,12 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         if(series.getCurApprovedNo() == null || series.getCurApprovedNo().compareTo(series.getLatestRevisionNo()) < 0) {
             if(latestRevision.getState() != RevisionState.DRAFT) {
                 // TODO: log exception since data is out of sync
-                System.err.println("Latest revision should be DRAFT but is not on series "+id);
+                System.err.println("Latest revision should be DRAFT but is not on series "+seriesno);
                 return null;
             }
             if(oldData.getState() != RevisionState.DRAFT) {
                 // TODO: log exception since data is out of sync
-                System.err.println("Revision data on series "+id+" was not in DRAFT state even though should have been.");
+                System.err.println("Revision data on series "+seriesno+" was not in DRAFT state even though should have been.");
                 return null;
             }
             return oldData;
@@ -353,12 +330,12 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         RevisionEntity newRevision = new RevisionEntity(new RevisionKey(latestRevision.getKey().getRevisionableId(),
                 latestRevision.getKey().getRevisionNo()+1));
         newRevision.setState(RevisionState.DRAFT);
-        RevisionData newData = factory.createRevisionData(newRevision, oldData.getConfiguration());
+        RevisionData newData = RevisionData.createRevisionData(newRevision, oldData.getConfiguration());
         DateTime time = new DateTime();
         // TODO: Field type checking from configuration. For now treate everything as ValueField
         for(Map.Entry<String, FieldContainer> field : oldData.getFields().entrySet()) {
-            ValueFieldChange change = factory.createNewRevisionValueFieldChange(field.getKey(), (ValueFieldContainer)field.getValue());
-            newData.getChanges().put(change.getKey(), change);
+            ValueFieldChange change = createNewRevisionValueFieldChange((ValueFieldContainer)field.getValue());
+            newData.putChange(change);
         }
 
         // Serialize new dataset to the new revision entity
@@ -371,21 +348,5 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         // Return new revision data
         series.setLatestRevisionNo(newRevision.getKey().getRevisionNo());
         return newData;
-    }
-
-    // Helper functions
-    // TODO: Configuration checking that the field is a valid target, for now assume accurate use
-    private ValueFieldChange updateValueField(RevisionData data, String key, ValueFieldContainer newValue) {
-        ValueFieldChange change = (ValueFieldChange)data.getChanges().get(key);
-        if(change == null) {
-            change = new ValueFieldChange(key);
-        }
-        if(newValue.getValues().size() == 0) {
-            change.setOperation(ChangeOperation.REMOVED);
-        } else {
-            change.setOperation(ChangeOperation.MODIFIED);
-        }
-        change.setNewField(newValue);
-        return change;
     }
 }
