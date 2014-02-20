@@ -1,4 +1,4 @@
-package fi.uta.fsd.metka.messaging;
+package fi.uta.fsd.metkaAmqp;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;

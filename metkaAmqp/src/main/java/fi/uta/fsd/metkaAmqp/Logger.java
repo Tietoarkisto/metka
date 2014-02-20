@@ -1,4 +1,4 @@
-package fi.uta.fsd.metka.messaging;
+package fi.uta.fsd.metkaAmqp;
 
 
 import com.rabbitmq.client.Channel;
@@ -20,7 +20,7 @@ import java.util.TimerTask;
 public class Logger {
 
     // Logging method
-    public enum LoggingMethod {
+    public static enum LoggingMethod {
         AMQP,
         AMQP_FAILOVER,
         SYSLOG
