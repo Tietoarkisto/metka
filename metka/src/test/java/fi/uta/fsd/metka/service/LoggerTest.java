@@ -17,6 +17,29 @@ import static org.junit.Assert.assertTrue;
  */
 public class LoggerTest {
 
+    @Test
+    public void TestLogSuccess() {
+        OutputTestStream stream = new OutputTestStream();
+
+        Logger logger = Logger.getInstance();
+        logger.info(this,"Logger test.",stream);
+        assertFalse(stream.toString().contains("Logger test."));
+    }
+
+    @Test
+    public void TestLogFail() {
+        String rabbitIP = AmqpConnector.getAmqpHost();
+        AmqpConnector.setAmqpHost("127.0.0.0");
+
+        OutputTestStream stream = new OutputTestStream();
+        Logger logger = Logger.getInstance();
+        logger.info(this,"Logger test.",stream);
+
+        AmqpConnector.setAmqpHost(rabbitIP);
+
+        assertTrue(stream.toString().contains("Logger test."));
+    }
+
     private class OutputTestStream extends OutputStream {
         protected StringBuffer buf = new StringBuffer();
 
@@ -39,28 +62,5 @@ public class LoggerTest {
         public String toString() {
             return buf.toString();
         }
-    }
-
-    @Test
-    public void TestLogSuccess() {
-        OutputTestStream stream = new OutputTestStream();
-
-        Logger logger = Logger.getInstance();
-        logger.info(this,"Logger test.",stream);
-        assertFalse(stream.toString().contains("Logger test."));
-    }
-
-    @Test
-    public void TestLogFail() {
-        String rabbitIP = AmqpConnector.getAmqpHost();
-        AmqpConnector.setAmqpHost("127.0.0.0");
-
-        OutputTestStream stream = new OutputTestStream();
-        Logger logger = Logger.getInstance();
-        logger.info(this,"Logger test.",stream);
-
-        AmqpConnector.setAmqpHost(rabbitIP);
-
-        assertTrue(stream.toString().contains("Logger test."));
     }
 }
