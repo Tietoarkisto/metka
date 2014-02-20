@@ -1,0 +1,99 @@
+nav {
+  display: inline-block;
+}
+nav .mainNavUl li {
+  float: left;
+}
+nav .mainNavUl li a {
+  padding: 60px 10px 20px 10px;
+  display: block;
+  background-color: white;
+  text-decoration: none;
+  color: #005993;
+}
+nav .mainNavUl li a.selected {
+  background-color: #009ee0;
+  color: white;
+}
+nav .mainNavUl li a:hover {
+  text-decoration: underline;
+  transition: all 0.25s ease-in-out;
+  -webkit-transition: all 0.25s ease-in-out;
+  -moz-transition: all 0.25s ease-in-out;
+}
+
+.logoutLink {
+  text-decoration: none;
+  color: #000;
+  margin-bottom: 10px !important;
+  display: inline-block;
+  text-align: right;
+  width: 160px;
+}
+
+.tabs {
+  position: relative;
+  display: block;
+  clear: both;
+  min-height: 275px;
+}
+
+.tabs2 {
+  display: block;
+  clear: both;
+  min-height: 275px;
+}
+
+.tab2, .tab3, .tab4, .tab5, .tab6, .tab7, .tab8 {
+  display: none;
+}
+
+.tabNavi ul {
+  display: inline-block;
+  list-style: none outside none;
+  margin-bottom: 20px;
+  margin-top: -10px;
+  margin-left: 10px;
+  float: left;
+}
+.tabNavi ul li {
+  float: left;
+}
+.tabNavi ul li a {
+  background-color: white;
+  color: #005993;
+  display: block;
+  padding: 10px;
+  text-decoration: none;
+  cursor: pointer;
+}
+.tabNavi ul li a.selected {
+  background-color: #009ee0;
+  color: white;
+  cursor: default;
+}
+
+.materialTabNavi ul {
+  display: inline-block;
+  list-style: none outside none;
+  margin-bottom: 20px;
+  margin-top: 10px;
+  margin-left: -20px;
+  float: left;
+}
+.materialTabNavi ul li {
+  float: left;
+}
+.materialTabNavi ul li a {
+  background-color: white;
+  color: #005993;
+  display: block;
+  padding: 10px;
+  text-decoration: none;
+  cursor: pointer;
+}
+.materialTabNavi ul li a.selected {
+  background-color: #009ee0;
+  color: white;
+  cursor: default;
+}

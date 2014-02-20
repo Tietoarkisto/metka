@@ -1,0 +1,104 @@
+table input, table textarea, table select {
+    width: 100%;
+}
+
+/* form table */
+table.formTable {
+    text-align: left;
+    width: 100%;
+}
+table.formTable td {
+    vertical-align: top;
+}
+table.formTable .labelColumn {
+    width: 120px;
+    vertical-align: middle;
+}
+table.formTable .textAreaLabel {
+    width: 120px;
+    padding-top: 5px;
+    vertical-align: top;
+}
+
+/* data table */
+table.dataTable {
+    border-bottom: solid 1px #009ee0;
+    border-left: solid 1px #009ee0;
+    border-right: solid 1px #009ee0;
+    margin: 0px;
+    font-size: 12px;
+    width: 100%;
+    text-align: left;
+    border-collapse: collapse;
+}
+table.dataTable a {
+    text-decoration: none;
+    color: black;
+}
+table.dataTable thead tr th {
+    background-color: #009ee0;
+    font-size: 15px;
+    padding: 4px;
+    color: white;
+}
+table.dataTable thead.sortable tr th {
+    background-image: url(images/bg.gif);
+    background-repeat: no-repeat;
+    background-position: center right;
+    cursor: pointer; }
+table.dataTable thead tr .sortableSortedAsc {
+    background-color: #8dbdd8;
+    background-image: url(images/asc.gif);
+}
+table.dataTable thead tr .sortableSortedDesc {
+    background-color: #8dbdd8;
+    background-image: url(images/desc.gif);
+}
+table.dataTable tbody tr:hover {
+    background-color: #eaeaea;
+}
+table.dataTable tbody td {
+    padding: 4px;
+    vertical-align: top;
+}
+table.dataTable tbody tr td {
+    border-bottom: 1px solid black;
+}
+table.dataTable tbody tr:last-of-type td {
+    border-bottom: none;
+}
+
+/* revision table */
+table.revisionTable {
+    text-align: left;
+    width: 100%;
+    margin: 10px;
+}
+table.revisionTable * {
+    font-size: 15px;
+}
+table.revisionTable thead tr th {
+    vertical-align: middle;
+    margin-right: 5px;
+}
+table.revisionTable thead tr th:last-of-type {
+    margin-right: 0px;
+}
+table.revisionTable tbody tr td {
+    vertical-align: middle;
+}
+
+table.revisionTable tr .revisionTableColumn {
+    min-width: 120px;
+    max-width: 300px;
+}
+table.revisionTable tr .revisionTableColumn:last-of-type {
+    min-width: 0px;
+}
+table.revisionTable tr  .changeTableColumn {
+    min-width: 300px;
+    max-width: 500px;
+}
+table.revisionTable tr  .changeTableColumn:last-of-type {
+    min-width: 0px;
+}

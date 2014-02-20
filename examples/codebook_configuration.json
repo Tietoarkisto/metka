@@ -1,0 +1,37 @@
+{
+	"key": {
+		"version": 1,
+		"type": "CODEBOOK"
+	},
+	"fields": {
+		"id": {
+			"key": "id",
+			"translateable": false,
+			"immutable": true,
+			"unique": true,
+			"required": true,
+			"maxValues": 1,
+			"type": "INTEGER"
+		},
+		"location": {
+			"key": "location",
+			"translateable": false,
+			"immutable": true,
+			"required": true,
+			"maxValues": 1,
+			"type": "STRING"
+		},
+		"subject": {
+			"key": "subject",
+			"translateable": false,
+			"maxValues": 1,
+			"type": "STRING"
+		},
+		"description": {
+			"key": "description",
+			"translateable": false,
+			"maxValues": 1,
+			"type": "STRING"
+		}
+	}
+}

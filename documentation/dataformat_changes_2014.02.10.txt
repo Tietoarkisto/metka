@@ -1,0 +1,44 @@
+FieldContainer:
+	Superclass that can be used to group different types of fields into a single map on RevisionData (fields).
+	Has an unique identity in the map (field key) and there is only one for each field (subfields will not be part of this map).
+Classes extending FieldContainer:
+- ValueFieldContainer
+	Top level (not a subfield to anything) field that is not a CONTAINER type field will get its value saved as this.
+	This can go both to fields map on RevisionData as well as to value fields on ValueFieldChange object.
+	This records the time when a change was made last as well as who made it.
+- ContainerFieldContainer
+	Collects a group of RowContainers (keeps a record of all rows as well as their ordering.
+	It might possibly be beneficial to change all multivalue fields to this and use internal field for storing the value.
+	This can go to fields map on RevisionData. There is a corresponding ContainerFieldChange object but it groups row changes.
+	ContainerFieldChange and ContainerFieldContainer keep track of the highest granted row identity within them.
+	This does not keep track of change time or user.
+- SubfieldContainer
+	Similar to ValueFieldContainer but only for fields that are marked as subfields to something else.
+	Goes only to a map in RowContainer and through that to change objects, does not have a change object of its own.
+	Still tracks the time when a change is made and the user who made it.
+
+RowContainer:
+	Meant to exist only within ContainerFieldContainer and does not extend FieldContainer.
+	Collects a group of SubfieldContainer objects together. Has an unique identity within ContainerFieldContainer.
+	This goes to a list in ContainerFieldContainer as well as a new or original value to RowChange object.
+	This records the time when a change was last made to this row (either removing or adding the row entirely or changing one of its subfields) as well as who made it.
+
+
+FieldChange:
+	Superclass that can be used to group different types of field related changes into a single map on RevisionData (changes).
+	Has an unique identity in the map (field key) and there is only one for each field (subfields will not be part of this map).
+Classes extending FieldChange:
+- ValueFieldChange
+	Records the operation that is done to a field as well as the original value and new value for that field.
+	New value and original value can only be ValueFieldContainer objects.
+- ContainerFieldChange
+	Groups multiple RowChange objects together into a map and using the row identity of those changes.
+	Does not record operations.
+	In comparisons with more than two revisions (e.g. 2,3,4) one master ContainerFieldChange must be collected and displayed.
+
+RowChange:
+	Uses the same row identity as RowContainer.
+	Meant to exist only within ContainerFieldChange and does not extend FieldChange.
+	Records the operation done to a single row in ContainerFieldContainer and keeps the original row and new row objects.
+	This is what is displayed to user when ContainerField changes are shown in revision comparison
+There is no subclass for SubfieldContainer. Subfields are never saved to changes as their own entities (even though they track changes made to them), but instead only as part of RowContainer that is in RowChange objects new or original value field.

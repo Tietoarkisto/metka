@@ -1,0 +1,12 @@
+liitetyt_tiedostot::tiedoston_polku
+		liitetyt_tiedostot::virallinen_selite
+		liitetyt_tiedostot::epävirallinen_selite
+		liitetyt_tiedostot::kommentti
+		liitetyt_tiedostot::tyyppi
+		liitetyt_tiedostot::pas
+		liitetyt_tiedostot::kieli
+		liitetyt_tiedostot::alkuperäinen_kieli
+		liitetyt_tiedostot::www
+		liitetyt_tiedostot::ulosluovutus
+		liitetyt_tiedostot::muutokset_selite
+		liitetyt_tiedostot::poistettu

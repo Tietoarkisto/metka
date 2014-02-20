@@ -1,0 +1,46 @@
+textarea {
+    padding: 5px 2px;
+    min-height: 10em;
+    font-family: "PT Sans Regular","Trebuchet MS",Helvetica,"Helvetica Neue",sans-serif;
+    border: 1px solid #b7b7b7;
+    resize: none;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+}
+textarea[readonly="readonly"] {
+    background-color: #dedede;
+}
+
+input {
+    padding: 5px 2px;
+    font-family: "PT Sans Regular","Trebuchet MS",Helvetica,"Helvetica Neue",sans-serif;
+    border: 1px solid #b7b7b7;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+}
+input[readonly="readonly"] {
+    background-color: #dedede;
+}
+
+select {
+    padding: 5px 2px;
+    border: 1px solid #b7b7b7;
+    background-color: white;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+}
+select[readonly="readonly"] {
+    background-color: #dedede;
+}
