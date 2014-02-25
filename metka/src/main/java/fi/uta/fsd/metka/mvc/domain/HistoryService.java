@@ -96,7 +96,6 @@ public class HistoryService {
         Configuration config = configurationService.findLatestByType(request.getType());
 
         // TODO: Improve to take into account container fields and row containers. For now handles only ValueFields
-        Map<String, FieldChange> changes = new HashMap<String, FieldChange>();
         for(RevisionData data : comparedRevisions) {
             for(Map.Entry<String, FieldChange> change : data.getChanges().entrySet()) {
                 ValueFieldChange valueChange = (ValueFieldChange) change.getValue();

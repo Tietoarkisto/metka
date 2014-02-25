@@ -14,7 +14,7 @@
         <jsp:include page="../../inc/topMenu.jsp" />
         <div class="wrapper">
             <div class="content study">
-                <h1 class="pageTitle"><spring:message code="STUDY"/> ${info.single.id} - <spring:message code="general.revision"/> ${info.single.revision} - <spring:message code="general.title.draft"/></h1>
+                <h1 class="pageTitle"><spring:message code="STUDY"/> ${single.values['id']} - <spring:message code="general.revision"/> ${single.revision} - <spring:message code="general.title.draft"/></h1>
                 <div class="tabNavi">
                     <a id="basic_information" class="selected" href="#basic_information"><spring:message code="STUDY.section.basic_information"/></a>
                     <a id="deposit_agreement" href="#deposit_agreement"><spring:message code="STUDY.section.deposit_agreement"/></a>
@@ -27,9 +27,10 @@
                     <a id="import_export" href="#import_export"><spring:message code="STUDY.section.import_export"/></a>
                 </div>
 				<div class="upperContainer">
-                    <form:form id="modifyForm" method="post" action="/study/save" modelAttribute="info.single">
+                    <form:form id="modifyForm" method="post" action="/study/save" modelAttribute="single">
+                        <form:hidden path="id" />
                         <form:hidden path="revision" />
-                        <form:hidden path="study_id" />
+                        <form:hidden path="values['${configuration.idField}']" />
                         <jsp:include page="sub/basic_information.jsp"/>
                     </form:form>
                     <%--<h1 class="pageTitle">
@@ -61,22 +62,19 @@
                     <jsp:include page="identifiers.jsp"/>--%>
                 </div>
                 <div class="buttonsHolder">
-                    <div class="buttonsGroup" >
-                        <input type="button" id="studySave" class="button" value="<spring:message code="general.buttons.save" />">
-                        <input type="button" id="studyApprove" class="button" value="<spring:message code='general.buttons.approve'/>" />
-                        <jsp:include page="../../inc/revHistory.jsp">
-                            <jsp:param name="id" value="${info.single.study_id}"></jsp:param>
-                            <jsp:param name="isDraft" value="true"></jsp:param>
-                        </jsp:include>
-                        <jsp:include page="../../inc/removeButton.jsp">
-                            <jsp:param name="id" value="${info.single.study_id}" />
-                            <jsp:param name="isDraft" value="true" />
-                        </jsp:include>
-                        <!-- TODO: Fix this reset button
-                        <input type="reset" class="button" value="Tyhjennä">-->
-                    </div>
+                    <input type="button" id="studySave" class="button" value="<spring:message code="general.buttons.save" />">
+                    <input type="button" id="studyApprove" class="button" value="<spring:message code='general.buttons.approve'/>" />
+                    <jsp:include page="../../inc/revHistory.jsp">
+                        <jsp:param name="id" value="${single.id}"></jsp:param>
+                        <jsp:param name="isDraft" value="true"></jsp:param>
+                    </jsp:include>
+                    <jsp:include page="../../inc/removeButton.jsp">
+                        <jsp:param name="id" value="${single.id}" />
+                        <jsp:param name="isDraft" value="true" />
+                    </jsp:include>
+                    <!-- TODO: Fix this reset button
+                    <input type="reset" class="button" value="Tyhjennä">-->
                 </div>
-                <div class="spaceClear"></div>
             </div>
         </div>
     </body>

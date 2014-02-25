@@ -1,19 +1,18 @@
 package fi.uta.fsd.metka.mvc.domain;
 
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
-import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.data.repository.SeriesRepository;
-import fi.uta.fsd.metka.model.configuration.ConfigurationKey;
-import fi.uta.fsd.metka.model.data.*;
+import fi.uta.fsd.metka.model.configuration.Configuration;
+import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.mvc.domain.simple.RevisionViewDataContainer;
+import fi.uta.fsd.metka.mvc.domain.simple.TransferObject;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchResultSO;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchSO;
-import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSingleSO;
 import fi.uta.fsd.metka.mvc.search.GeneralSearch;
 import fi.uta.fsd.metka.mvc.search.RevisionDataRemovedContainer;
 import fi.uta.fsd.metka.mvc.search.SeriesSearch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.NumberUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,13 +20,6 @@ import java.util.List;
 
 import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
 
-/**
- * Created with IntelliJ IDEA.
- * User: lasseku
- * Date: 1/3/14
- * Time: 10:09 AM
- * To change this template use File | Settings | File Templates.
- */
 @Service
 public class SeriesService {
 
@@ -38,6 +30,8 @@ public class SeriesService {
 
     @Autowired
     private SeriesRepository repository;
+    @Autowired
+    private ConfigurationService configService;
 
     public List<String> findAbbreviations() {
         List<String> list = null;
@@ -86,12 +80,12 @@ public class SeriesService {
     }
 
     /**
-     * Find requested revision data and convert it to SeriesSingle simple object
-     * @param id Revisionable id
-     * @param revision Revision number
-     * @return Revision data converted to SeriesSingleSO
+     * Find requested revision data and its related configuration.
+     * @param id RevisionableId of the requested revision.
+     * @param revision Revision number of the requested revision.
+     * @return RevisionViewDataContainer containing requested revision data and its configuration
      */
-    public SeriesSingleSO findSingleRevision(Integer id, Integer revision) {
+    public RevisionViewDataContainer findSingleRevision(Integer id, Integer revision) {
         RevisionData data = null;
         try {
             data = generalSearch.findSingleRevision(id, revision, ConfigurationType.SERIES);
@@ -104,13 +98,13 @@ public class SeriesService {
         if(data == null) {
             return null;
         }
+        Configuration config = configService.findByTypeAndVersion(data.getConfiguration());
+        TransferObject single = TransferObject.buildTransferObjectFromRevisionData(data, config);
 
-        SeriesSingleSO series = singleSOFromRevisionData(data);
-
-        return series;
+        return new RevisionViewDataContainer(single, config);
     }
 
-    public SeriesSingleSO newSeries() {
+    public RevisionViewDataContainer newSeries() {
         RevisionData revision = null;
         try {
             revision = repository.getNew();
@@ -119,40 +113,42 @@ public class SeriesService {
             ex.printStackTrace();
             return null;
         }
+        Configuration config = configService.findByTypeAndVersion(revision.getConfiguration());
+        TransferObject single = TransferObject.buildTransferObjectFromRevisionData(revision, config);
 
-        SeriesSingleSO single = singleSOFromRevisionData(revision);
-
-        return single;
+        return new RevisionViewDataContainer(single, config);
     }
 
-    public boolean saveSeries(SeriesSingleSO so) {
-        try {
-            return repository.saveSeries(so);
-        } catch(Exception ex) {
-            // TODO: better exception handling with messages to the user
-            ex.printStackTrace();
-            return false;
-        }
-    }
-
-    public boolean approveSeries(SeriesSingleSO so) {
-        try {
-            return repository.approveSeries(so.getByKey("seriesno"));
-        } catch(Exception ex) {
-            // TODO: better exception handling with messages to the user
-            ex.printStackTrace();
-            return false;
-        }
-    }
-
-    public SeriesSingleSO editSeries(Integer seriesno) {
+    public RevisionViewDataContainer editSeries(Integer seriesno) {
         try {
             RevisionData data = repository.editSeries(seriesno);
-            return singleSOFromRevisionData(data);
+            Configuration config = configService.findByTypeAndVersion(data.getConfiguration());
+            TransferObject single = TransferObject.buildTransferObjectFromRevisionData(data, config);
+            return new RevisionViewDataContainer(single, config);
         } catch(Exception ex) {
             // TODO: better exception handling with messages to the user
             ex.printStackTrace();
             return null;
+        }
+    }
+
+    public boolean saveSeries(TransferObject to) {
+        try {
+            return repository.saveSeries(to);
+        } catch(Exception ex) {
+            // TODO: better exception handling with messages to the user
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean approveSeries(TransferObject to) {
+        try {
+            return repository.approveSeries(to.getId());
+        } catch(Exception ex) {
+            // TODO: better exception handling with messages to the user
+            ex.printStackTrace();
+            return false;
         }
     }
 
@@ -170,24 +166,27 @@ public class SeriesService {
 
     // Helper functions
 
-    private SeriesSingleSO singleSOFromRevisionData(RevisionData data) {
+    /*private TransferObject transferObjectFromRevisionData(RevisionData data) {
         // check if data is for series
         if(data == null || data.getConfiguration().getType() != ConfigurationType.SERIES) {
             return null;
         }
 
-        SeriesSingleSO so = new SeriesSingleSO();
+        TransferObject to = new TransferObject();
         // TODO: this should be automated as much as possible using configuration in the future.
         // TODO: For now assumes that all fields are ValueFields
-        so.setRevision(data.getKey().getRevision());
-        so.setState(data.getState());
-        so.setSeriesno(extractIntegerSimpleValue(getValueFieldContainerFromRevisionData(data, "seriesno")));
-        so.setSeriesabb(extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "seriesabb")));
-        so.setSeriesname(extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "seriesname")));
-        so.setSeriesdesc(extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "seriesdesc")));
-        so.setSeriesnotes(extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "seriesnotes")));
-        return so;
-    }
+        to.setId(data.getKey().getId());
+        to.setRevision(data.getKey().getRevision());
+        to.setState(data.getState());
+        to.setConfiguration(data.getConfiguration());
+        to.setByKey("seriesno", extractIntegerSimpleValue(getValueFieldContainerFromRevisionData(data, "seriesno")));
+        to.setByKey("seriesabb", extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "seriesabb")));
+        to.setByKey("seriesname", extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "seriesname")));
+        to.setByKey("seriesdesc", extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "seriesdesc")));
+        to.setByKey("seriesnotes", extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "seriesnotes")));
+
+        return to;
+    }*/
 
     private SeriesSearchResultSO resultSOFromRevisionData(RevisionData data) {
         // check if data is for series

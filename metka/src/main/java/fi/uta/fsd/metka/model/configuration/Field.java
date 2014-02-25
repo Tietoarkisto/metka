@@ -29,11 +29,13 @@ public class Field {
     @XmlElement private String choicelist = null;
     @XmlElement private String section = null;
     @XmlElement private FieldType type;
-    @XmlElement private String subfieldTo = null;
+    @XmlElement private Boolean subfield = false;
+    @XmlElement private final List<String> subfields = new ArrayList<>();
     @XmlElement private Boolean unique = false;
     @XmlElement private Boolean required = false;
     @XmlElement private final List<String> concatenate = new ArrayList<>();
     @XmlElement private String reference = null;
+    @XmlElement private Boolean multiline = false;
 
     @JsonCreator
     public Field(@JsonProperty("key")String key) {
@@ -100,12 +102,16 @@ public class Field {
         this.type = type;
     }
 
-    public String getSubfieldTo() {
-        return subfieldTo;
+    public Boolean getSubfield() {
+        return (subfield == null) ? false : subfield;
     }
 
-    public void setSubfieldTo(String subfieldTo) {
-        this.subfieldTo = subfieldTo;
+    public void setSubfield(Boolean subfield) {
+        this.subfield = (subfield == null) ? false : subfield;
+    }
+
+    public List<String> getSubfields() {
+        return subfields;
     }
 
     public Boolean getUnique() {
@@ -134,6 +140,14 @@ public class Field {
 
     public void setReference(String reference) {
         this.reference = reference;
+    }
+
+    public Boolean getMultiline() {
+        return (multiline == null) ? false :multiline;
+    }
+
+    public void setMultiline(Boolean multiline) {
+        this.multiline = (multiline == null) ? false : multiline;
     }
 
     @Override

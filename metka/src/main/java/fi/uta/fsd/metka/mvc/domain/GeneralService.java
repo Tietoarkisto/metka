@@ -2,10 +2,22 @@ package fi.uta.fsd.metka.mvc.domain;
 
 import fi.uta.fsd.metka.data.enums.repositoryResponses.RemoveResponse;
 import fi.uta.fsd.metka.data.repository.GeneralRepository;
-import fi.uta.fsd.metka.mvc.search.GeneralSearch;
+import fi.uta.fsd.metka.model.configuration.Choicelist;
+import fi.uta.fsd.metka.model.configuration.Option;
+import fi.uta.fsd.metka.model.configuration.Reference;
+import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.data.container.ValueFieldContainer;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -58,5 +70,23 @@ public class GeneralService {
      */
     public RemoveResponse removeLogical(String type, Integer id) {
         return repository.removeLogical(type, id);
+    }
+
+    public void fillOptions(Choicelist list, Reference ref) throws IOException {
+        List<RevisionData> datas = repository.getLatestRevisionsForType(ref.getTargetType(), ref.getApprovedOnly());
+        for(RevisionData data : datas) {
+            Option option = new Option(extractStringSimpleValue((ValueFieldContainer)data.getField(ref.getValueField())));
+            if(StringUtils.isEmpty(ref.getTitleField())) {
+                option.setTitle(option.getValue());
+            } else {
+                option.setTitle(extractStringSimpleValue((ValueFieldContainer)data.getField(ref.getTitleField())));
+            }
+            list.getOptions().add(option);
+        }
+        Collections.sort(list.getOptions(), new Comparator<Option>() {
+            public int compare(Option o1, Option o2) {
+                return o1.getTitle().compareTo(o2.getTitle());
+            }
+        });
     }
 }

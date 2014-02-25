@@ -29,7 +29,7 @@
             </y:ModelParameter>
           </y:NodeLabel>
           <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="" use3DEffect="true">
-            <y:AttributeLabel/>
+            <y:AttributeLabel>+idField : Field</y:AttributeLabel>
             <y:MethodLabel/>
           </y:UML>
         </y:UMLClassNode>
@@ -152,17 +152,25 @@ ConfigurationKey<y:LabelModel>
       <data key="d4"/>
       <data key="d6">
         <y:UMLNoteNode>
-          <y:Geometry height="121.0" width="447.0" x="11.974999999999966" y="187.1964806718274"/>
+          <y:Geometry height="220.0" width="447.0" x="11.974999999999966" y="187.19648067182743"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="115.75" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="438.953125" x="4.0" y="4.000000000000028">+key : Unique string key for this reference object that is used to link
-           to it from other objects.
+          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="227.5" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="438.953125" x="4.0" y="4.0">+key : Unique string key for this reference object that is used to link
+    to it from other objects.
+
 +targetType : Type of the object that this choicelist is referencing to.
+
 +valueField : Key of the field from where the value that will be saved
-                     when option is selected is found.
+    when option is selected is found.
+
 +titleField : Key of the field from where the text that is shown for option
-                   is found. If this is left empty then result from +valueField
-                   is used instead.</y:NodeLabel>
+    is found. If this is left empty then +valueField is used instead.
+
++approvedOnly: Referenced values should be found from approved
+    revisions only. For choicelists this means that values are collected 
+    from approved revisions and for REFERENCE fields the displayed
+    values are from approved revisions only.
+	</y:NodeLabel>
         </y:UMLNoteNode>
       </data>
     </node>
@@ -170,7 +178,7 @@ ConfigurationKey<y:LabelModel>
       <data key="d4"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="87.0" width="209.25" x="249.72499999999997" y="35.355530150994326"/>
+          <y:Geometry height="104.0" width="209.25" x="249.72499999999997" y="35.355530150994326"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="78.3056640625" x="65.47216796875" y="3.0">Reference<y:LabelModel>
@@ -184,10 +192,45 @@ ConfigurationKey<y:LabelModel>
             <y:AttributeLabel>+key : String {id}
 +targetType : ConfigurationType
 +valueField : String
-+titleField : String</y:AttributeLabel>
++titleField : String
++approvedOnly : Boolean = true</y:AttributeLabel>
             <y:MethodLabel/>
           </y:UML>
         </y:UMLClassNode>
+      </data>
+    </node>
+    <node id="n8">
+      <data key="d4"/>
+      <data key="d6">
+        <y:UMLNoteNode>
+          <y:Geometry height="142.0" width="392.0" x="486.5" y="-299.68190104166615"/>
+          <y:Fill color="#FFCC00" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1.0"/>
+          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="129.71875" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="384.51953125" x="4.0" y="4.0">Choicelist members don't need to be unique. Choicelists is
+(like most collections in this model) a map with string keys and
+choicelist values. In this instance the choicelist map key and
+the actual choicelist key don't need to be equivalent. Instead
+the key is used to denote a choicelists map key from where
+the options are collected. So for a value of N there has to be
+a choicelist with key N and map key N but all the other
+instances of key N can be used to give different default values
+for options.</y:NodeLabel>
+        </y:UMLNoteNode>
+      </data>
+    </node>
+    <node id="n9">
+      <data key="d4"/>
+      <data key="d5"/>
+      <data key="d6">
+        <y:UMLNoteNode>
+          <y:Geometry height="67.0" width="506.0" x="-197.27500000000003" y="-431.5"/>
+          <y:Fill color="#FFCC00" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1.0"/>
+          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="59.875" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="488.91015625" x="4.0" y="4.0">+idField: Field key of the field that contains revisionableId for this configuration.
+    Even though the id can be found from key there is need to save it as a field
+    also since it can be used as a choicelist reference field. This information helps
+    automating some checks and UI functionality.</y:NodeLabel>
+        </y:UMLNoteNode>
       </data>
     </node>
     <edge id="e0" source="n2" target="n1">
@@ -259,7 +302,7 @@ ConfigurationKey<y:LabelModel>
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="118.875" ty="1.3152173913043481"/>
+          <y:Path sx="0.0" sy="0.0" tx="118.875" ty="2.391304347826087"/>
           <y:LineStyle color="#000000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="none"/>
           <y:BendStyle smoothed="false"/>
@@ -268,14 +311,36 @@ ConfigurationKey<y:LabelModel>
     </edge>
     <edge id="e6" source="n0" target="n7">
       <data key="d8"/>
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:Path sx="-9.224999999999966" sy="167.51871559633022" tx="12.650000000000034" ty="-8.5"/>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="diamond" target="none"/>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="103.2109375" x="171.67955932617184" y="2.0000003658380763">+references 0..*<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
+          </y:EdgeLabel>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e7" source="n4" target="n8">
+      <data key="d8"/>
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:Path sx="0.0" sy="0.0" tx="4.271186440677968" ty="40.0"/>
+          <y:LineStyle color="#000000" type="dashed" width="1.0"/>
+          <y:Arrows source="none" target="none"/>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e8" source="n0" target="n9">
+      <data key="d8"/>
       <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="-9.224999999999966" sy="167.51871559633022" tx="0.0" ty="0.0"/>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
-          <y:Arrows source="diamond" target="none"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="103.2109375" x="171.653596496582" y="2.0000003658380763">+references 0..*<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
-          </y:EdgeLabel>
+          <y:Path sx="0.0" sy="0.0" tx="-172.0" ty="0.5"/>
+          <y:LineStyle color="#000000" type="dashed" width="1.0"/>
+          <y:Arrows source="none" target="none"/>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
       </data>

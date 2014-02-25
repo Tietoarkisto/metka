@@ -2,19 +2,15 @@ package fi.uta.fsd.metka.model.factories;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.uta.fsd.metka.data.entity.RevisionEntity;
-import fi.uta.fsd.metka.data.enums.ChangeOperation;
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
+import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.configuration.ConfigurationKey;
-import fi.uta.fsd.metka.model.data.*;
+import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.change.ValueFieldChange;
-import fi.uta.fsd.metka.model.data.container.FieldContainer;
 import fi.uta.fsd.metka.model.data.container.ValueFieldContainer;
-import fi.uta.fsd.metka.model.data.value.SimpleValue;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,7 +27,7 @@ public class SeriesFactory {
     @Autowired
     private ConfigurationRepository configurationRepository;
     @Autowired
-    private ObjectMapper metkaObjectMapper;
+    private JSONUtil json;
 
     /**
      * Constructs a new dataset for a Revision entity.
@@ -55,20 +51,24 @@ public class SeriesFactory {
         Configuration conf = null;
         conf = configurationRepository.findLatestConfiguration(ConfigurationType.SERIES);
 
+        if(conf == null) {
+            // TODO: Log error that no configuration found for study
+            return null;
+        }
+
         DateTime time = new DateTime();
 
         RevisionData data = RevisionData.createRevisionData(entity, conf.getKey());
 
         ValueFieldChange change;
         ValueFieldContainer field;
-        SimpleValue sv;
 
-        field = createValueFieldContainer("seriesno", time);
+        field = createValueFieldContainer(conf.getIdField(), time);
         setSimpleValue(field, entity.getKey().getRevisionableId()+"");
         change = createNewRevisionValueFieldChange(field);
         data.putChange(change);
 
-        entity.setData(metkaObjectMapper.writeValueAsString(data));
+        entity.setData(json.serialize(data));
 
         return data;
     }

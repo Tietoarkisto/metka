@@ -8,9 +8,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Choicelist {
@@ -19,6 +17,7 @@ public class Choicelist {
     @XmlElement private List<Option> options = new ArrayList<>();
     @XmlElement private ChoicelistType type = ChoicelistType.VALUE;
     @XmlElement private String reference;
+    @XmlElement private Boolean includeEmpty = false;
 
     @JsonCreator
     public Choicelist(@JsonProperty("key") String key) {
@@ -59,6 +58,14 @@ public class Choicelist {
 
     public void setReference(String reference) {
         this.reference = reference;
+    }
+
+    public Boolean getIncludeEmpty() {
+        return (includeEmpty == null) ? false : includeEmpty;
+    }
+
+    public void setIncludeEmpty(Boolean includeEmpty) {
+        this.includeEmpty = (includeEmpty == null) ? false : includeEmpty;
     }
 
     @Override

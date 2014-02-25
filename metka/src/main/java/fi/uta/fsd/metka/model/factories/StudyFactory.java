@@ -1,17 +1,16 @@
 package fi.uta.fsd.metka.model.factories;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.uta.fsd.metka.data.entity.RevisionEntity;
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
+import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.model.configuration.Choicelist;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.change.ValueFieldChange;
 import fi.uta.fsd.metka.model.data.container.ValueFieldContainer;
-import fi.uta.fsd.metka.model.data.value.SimpleValue;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,7 +28,7 @@ public class StudyFactory {
     @Autowired
     private ConfigurationRepository configurationRepository;
     @Autowired
-    private ObjectMapper metkaObjectMapper;
+    private JSONUtil json;
 
     /**
      * Constructs a new dataset for a Revision entity.
@@ -64,12 +63,14 @@ public class StudyFactory {
 
         ValueFieldChange change;
         ValueFieldContainer field;
-        SimpleValue sv;
         Choicelist list;
         Field confField;
 
+        // TODO: define autofill fields in the configuration.
+        // These can be basically idField, CONCAT fields and CHOICE fields (insert choicelist default value if any) as well as values that are expected to be delivered to Factory.
+
         // Study_id, this is revisionable id
-        field = createValueFieldContainer("study_id", time);
+        field = createValueFieldContainer(conf.getIdField(), time);
         setSimpleValue(field, entity.getKey().getRevisionableId()+"");
         change = createNewRevisionValueFieldChange(field);
         data.putChange(change);
@@ -87,7 +88,6 @@ public class StudyFactory {
         change = createNewRevisionValueFieldChange(field);
         data.putChange(change);
 
-        // TODO: automate all concat fields
         // create Study_number field, which concatenates study_id_prefix and study_id. This is the basis of study searches.
         field = createValueFieldContainer("id", time);
         confField = conf.getField(field.getKey());
@@ -101,7 +101,7 @@ public class StudyFactory {
         change = createNewRevisionValueFieldChange(field);
         data.putChange(change);
 
-        entity.setData(metkaObjectMapper.writeValueAsString(data));
+        entity.setData(json.serialize(data));
 
         return data;
     }

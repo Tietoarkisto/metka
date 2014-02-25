@@ -4,7 +4,6 @@ import fi.uta.fsd.metka.data.enums.ChangeOperation;
 import fi.uta.fsd.metka.data.enums.FieldType;
 import fi.uta.fsd.metka.model.data.container.FieldContainer;
 import fi.uta.fsd.metka.model.data.container.ValueFieldContainer;
-import fi.uta.fsd.metka.model.data.value.Value;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,8 +103,6 @@ public class ChangeSO {
     }
 
     private static void buildSimpleValue(ValueFieldContainer field, List<String> list) {
-        for(Value value : field.getValues()) {
-            list.add(value.toString());
-        }
+        list.add(field.getValue().toString());
     }
 }

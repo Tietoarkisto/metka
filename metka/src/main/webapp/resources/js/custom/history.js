@@ -48,7 +48,7 @@ $(document).ready(function(){
                     prop += strings[type.toUpperCase()+".field."+rowData["property"]];
                     row.append($("<td>", {class: "revisionTableColumn", text: prop}));
 
-                    if(rowData.maxValues != 1) {
+                    if(rowData.type == "CONTAINER") {
                         // TODO: handle display of multiline values
                     } else {
                         if(rowData["oldValue"].length > 0) {

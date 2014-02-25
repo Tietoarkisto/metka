@@ -2,12 +2,8 @@
     strings["general.revision.replace"] = "<spring:message code='general.revision.replace'/>";
     strings["general.revision.compare.title"] = "<spring:message code='general.revision.compare.title'/>";
     // Init type specific translations
-    <c:if test="${page == 'series'}">
-        strings["SERIES"] = "<spring:message code='SERIES'/>";
-        strings["SERIES.field.id"] = "<spring:message code='SERIES.field.id'/>";
-        strings["SERIES.field.abbreviation"] = "<spring:message code='SERIES.field.abbreviation'/>";
-        strings["SERIES.field.name"] = "<spring:message code='SERIES.field.name'/>";
-        strings["SERIES.field.description"] = "<spring:message code='SERIES.field.description'/>";
-    </c:if>
-    // Add more as needed
+    strings["${fn:toUpperCase(page)}"] = "<spring:message code='${fn:toUpperCase(page)}'/>";
+    <c:forEach var="field" items="${configuration.fields}">
+        strings["${fn:toUpperCase(page)}.field.${field.key}"] = "<spring:message code='${fn:toUpperCase(page)}.field.${field.key}'/>"
+    </c:forEach>
 </script>

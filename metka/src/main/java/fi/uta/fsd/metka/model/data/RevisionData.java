@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.data.entity.RevisionEntity;
 import fi.uta.fsd.metka.data.enums.RevisionState;
+import fi.uta.fsd.metka.model.ModelBase;
 import fi.uta.fsd.metka.model.configuration.ConfigurationKey;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.change.FieldChange;
@@ -26,7 +27,7 @@ import java.util.Map;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "revisionData")
-public class RevisionData implements Comparable<RevisionData> {
+public class RevisionData implements Comparable<RevisionData>, ModelBase {
     // Factories
 
     public static RevisionData createRevisionData(RevisionEntity entity, ConfigurationKey configuration) {

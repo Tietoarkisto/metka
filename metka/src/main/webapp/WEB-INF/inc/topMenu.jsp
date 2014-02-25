@@ -22,7 +22,7 @@
         <div class="quickSearchContainer">
             <a class="logoutLink" href="#">Kirjaudu ulos</a>
             <form action="material.html">
-                <spring:message code="STUDY.field.study_number" var="searchPlaceholder" />
+                <spring:message code="STUDY.field.id" var="searchPlaceholder" />
                 <input type="text" autocomplete="off" dir="ltr" class="searchInput" placeholder="${searchPlaceholder}" />
                 <input type="submit" value="Hae" class="searchButton"/>
             </form>

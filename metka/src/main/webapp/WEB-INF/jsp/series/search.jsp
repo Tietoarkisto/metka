@@ -16,53 +16,45 @@
                 <h1 class="pageTitle"><spring:message code="SERIES.search.title"/></h1>
 
                 <div class="upperContainer">
-                    <form:form id="seriesSearchForm" method="post" action="/series/search" modelAttribute="info.query">
+                    <form:form id="seriesSearchForm" method="post" action="/series/search" modelAttribute="searchData.query">
                         <table class="formTable">
                             <tr>
                                 <td class="labelColumn"><spring:message code="general.search.state"/></td>
-                                <td>
-                                    <form:label path="searchApproved"><spring:message code="general.search.state.approved"/></form:label>
-                                    <form:checkbox path="searchApproved" />
-                                </td>
-                                <td>
-                                    <form:label path="searchDraft"><spring:message code="general.search.state.draft"/></form:label>
-                                    <form:checkbox path="searchDraft" />
-                                </td>
-                                <td>
-                                    <form:label path="searchRemoved"><spring:message code="general.search.state.removed"/></form:label>
-                                    <form:checkbox path="searchRemoved" />
-                                </td>
+
+                                <td class="rightAlignCell"><form:label path="searchApproved"><spring:message code="general.search.state.approved"/></form:label></td>
+                                <td><form:checkbox path="searchApproved" /></td>
+
+                                <td class="rightAlignCell"><form:label path="searchDraft"><spring:message code="general.search.state.draft"/></form:label></td>
+                                <td><form:checkbox path="searchDraft" /></td>
+
+                                <td class="rightAlignCell"><form:label path="searchRemoved"><spring:message code="general.search.state.removed"/></form:label></td>
+                                <td><form:checkbox path="searchRemoved" /></td>
                             </tr>
+                        </table>
+                        <table class="formTable">
                             <jsp:include page="../../inc/fullRowFormText.jsp">
                                 <jsp:param name="field" value="seriesno" />
-                                <jsp:param name="type" value="input" />
-                                <jsp:param name="colspan" value="3" />
                             </jsp:include>
                             <tr><c:set var="field" value="seriesabb" />
-                                <td class="labelColumn"><form:label path="seriesabb"><spring:message code="SERIES.field.${field}"/></form:label></td>
-                                <td colspan="3"><form:select path="${field}" items="${info.abbreviations}" /></td>
+                                <td class="labelColumn"><form:label path="values['${field}']"><spring:message code="SERIES.field.${field}"/></form:label></td>
+                                <td><form:select path="values['${field}']" items="${searchData.abbreviations}" /></td>
                             </tr>
                             <jsp:include page="../../inc/fullRowFormText.jsp">
                                 <jsp:param name="field" value="seriesname" />
-                                <jsp:param name="type" value="input" />
-                                <jsp:param name="colspan" value="3" />
                             </jsp:include>
                         </table>
                     </form:form>
                 </div>
                 <div class="buttonsHolder">
-                    <div class="buttonsGroup">
-                        <!-- TODO: Fix this reset button
-                        <input type="reset" class="button" value="Tyhjennä">-->
-                        <input type="button" id="addNewSeriesBtn" class="button" value="<spring:message code='general.buttons.addSeries'/>"
-                               onclick="location.href='${contextPath}/series/add'"/>
-                        <input id="seriesSearchSubmit" type="submit" class="button" value="<spring:message code='general.buttons.search'/>">
-                    </div>
+                    <!-- TODO: Fix this reset button
+                    <input type="reset" class="button" value="Tyhjennä">-->
+                    <input type="button" id="addNewSeriesBtn" class="button" value="<spring:message code='general.buttons.addSeries'/>"
+                           onclick="location.href='${contextPath}/series/add'"/>
+                    <input id="seriesSearchSubmit" type="submit" class="button" value="<spring:message code='general.buttons.search'/>">
                 </div>
-                <div class="spaceClear"></div>
-                <c:if test="${not empty info.results}">
+                <c:if test="${not empty searchData.results}">
                     <div class="searchResult">
-                        <h1 class="pageTitle"><spring:message code="general.searchResult"/><span class="floatRight normalText"><spring:message code="general.searchResult.amount"/> ${fn:length(info.results)}</span> </h1>
+                        <h1 class="pageTitle"><spring:message code="general.searchResult"/><span class="floatRight normalText"><spring:message code="general.searchResult.amount"/> ${fn:length(searchData.results)}</span> </h1>
                         <table class="dataTable">
                             <thead>
                                 <tr>
@@ -73,7 +65,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <c:forEach var="r" items="${info.results}">
+                                <c:forEach var="r" items="${searchData.results}">
                                     <tr class="pointerClass" onclick="location.href='${contextPath}/series/view/${r.seriesno}/${r.revision}'">
                                         <td>${r.seriesno}</td>
                                         <td>${r.seriesabb}</td>

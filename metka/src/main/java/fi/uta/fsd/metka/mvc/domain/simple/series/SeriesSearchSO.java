@@ -2,6 +2,9 @@ package fi.uta.fsd.metka.mvc.domain.simple.series;
 
 import fi.uta.fsd.metka.mvc.domain.simple.SimpleSearchObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created with IntelliJ IDEA.
  * User: lasseku
@@ -10,12 +13,11 @@ import fi.uta.fsd.metka.mvc.domain.simple.SimpleSearchObject;
  * To change this template use File | Settings | File Templates.
  */
 public class SeriesSearchSO extends SimpleSearchObject {
-    private Integer seriesno;
-    private String seriesname;
-    private String seriesabb;
     private boolean searchApproved = true;
     private boolean searchDraft = true;
     private boolean searchRemoved;
+
+    private final Map<String, Object> values = new HashMap<>();
 
    // External values
     public boolean isSearchApproved() {
@@ -45,28 +47,8 @@ public class SeriesSearchSO extends SimpleSearchObject {
     // Field values
 
 
-    public Integer getSeriesno() {
-        return seriesno;
-    }
-
-    public void setSeriesno(Integer seriesno) {
-        this.seriesno = seriesno;
-    }
-
-    public String getSeriesname() {
-        return seriesname;
-    }
-
-    public void setSeriesname(String seriesname) {
-        this.seriesname = seriesname;
-    }
-
-    public String getSeriesabb() {
-        return seriesabb;
-    }
-
-    public void setSeriesabb(String seriesabb) {
-        this.seriesabb = seriesabb;
+    public Map<String, Object> getValues() {
+        return values;
     }
 
     @Override
@@ -86,7 +68,8 @@ public class SeriesSearchSO extends SimpleSearchObject {
 
     @Override
     public Object getByKey(String key) throws IllegalArgumentException {
-        switch(SeriesValues.fromString(key)) {
+        return values.get(key);
+        /*switch(SeriesValues.fromString(key)) {
             case SERIESNO:
                 return seriesno;
             case SERIESABB:
@@ -94,6 +77,6 @@ public class SeriesSearchSO extends SimpleSearchObject {
             case SERIESNAME:
                 return seriesname;
         }
-        return null;
+        return null;*/
     }
 }

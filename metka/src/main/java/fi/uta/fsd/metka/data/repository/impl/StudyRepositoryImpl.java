@@ -1,21 +1,17 @@
 package fi.uta.fsd.metka.data.repository.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.uta.fsd.metka.data.entity.RevisionEntity;
 import fi.uta.fsd.metka.data.entity.impl.StudyEntity;
 import fi.uta.fsd.metka.data.entity.key.RevisionKey;
-import fi.uta.fsd.metka.data.enums.FieldType;
 import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.data.repository.StudyRepository;
+import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.change.ValueFieldChange;
-import fi.uta.fsd.metka.model.data.container.ValueFieldContainer;
 import fi.uta.fsd.metka.model.factories.StudyFactory;
-import fi.uta.fsd.metka.mvc.domain.simple.SimpleObject;
-import fi.uta.fsd.metka.mvc.domain.simple.study.StudySingleSO;
+import fi.uta.fsd.metka.mvc.domain.simple.TransferObject;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +33,7 @@ public class StudyRepositoryImpl implements StudyRepository {
     private StudyFactory factory;
 
     @Autowired
-    private ObjectMapper metkaObjectMapper;
+    private JSONUtil json;
 
     @Autowired
     private ConfigurationRepository configRepo;
@@ -65,7 +61,7 @@ public class StudyRepositoryImpl implements StudyRepository {
 
     @Override
     // TODO: needs better reporting to user about what went wrong
-    public boolean saveStudy(StudySingleSO so) throws IOException {
+    public boolean saveStudy(TransferObject to) throws IOException {
         // Get StudyEntity
         // Check if latest revision is different from latest approved (the first requirement since only drafts
         // can be saved and these should always be different if Revisionable has an active draft).
@@ -73,7 +69,7 @@ public class StudyRepositoryImpl implements StudyRepository {
         // Check state
         // Deserialize revision data and check that data agrees with entity.
 
-        StudyEntity study = em.find(StudyEntity.class, so.getStudy_id());
+        StudyEntity study = em.find(StudyEntity.class, to.getId());
         if(study == null) {
             // There has to be a series so you can save
             return false;
@@ -93,7 +89,7 @@ public class StudyRepositoryImpl implements StudyRepository {
         }
 
         // Get old revision data and its configuration.
-        RevisionData data = metkaObjectMapper.readValue(revEntity.getData(), RevisionData.class);
+        RevisionData data = json.readRevisionDataFromString(revEntity.getData());
         Configuration config = configRepo.findConfiguration(data.getConfiguration());
 
         // Validate StudySingleSO against revision data:
@@ -101,62 +97,29 @@ public class StudyRepositoryImpl implements StudyRepository {
         // Revision should match revision in key
         // Study_number should match that of existing revision since it's set at first creation.
 
-        boolean changes = false;
-
-        DateTime time = new DateTime();
-
-        ValueFieldContainer field;
-        ValueFieldContainer newField = null;
-        Integer intValue;
-        String stringValue;
-        ValueFieldChange change;
-        String key;
+        // Check ID integrity
+        if (idIntegrityCheck(to, data, config)) {
+            return false;
+        }
 
         // check revision
-        if(!so.getRevision().equals(data.getKey().getRevision())) {
+        if(!to.getRevision().equals(data.getKey().getRevision())) {
             // TODO: data is out of sync or someone tried to change the revision, log error
             // Return false since save can not continue.
             return false;
         }
 
-        // Check ID
-        key = "study_id";
-        field = getValueFieldContainerFromRevisionData(data, key);
-        intValue = extractIntegerSimpleValue(field);
-        if(!so.getStudy_id().equals(intValue)) {
-            // TODO: data is out of sync or someone tried to change the study_id, log error
-            // Return false since save can not continue.
-            return false;
+        // Check values
+
+        boolean changes = false;
+
+        DateTime time = new DateTime();
+
+        for(Field field : config.getFields().values()) {
+            changes = doFieldChanges(field.getKey(), to, time, data, config) | changes;
         }
 
-        // Check ID
-        // TODO: add change checking for cases that should always be present and should not change.
-        key = "id";
-        field = getValueFieldContainerFromRevisionData(data, key);
-        stringValue = extractStringSimpleValue(field);
-        if(!so.getStudy_id().equals(intValue)) {
-            // TODO: data is out of sync or someone tried to change the study_number, log error
-            // Return false since save can not continue.
-            return false;
-        }
-
-         // TODO: these following fields can be generalised and used by the other type of objects too.
-        // Check study_name
-        if(doSingleValueChanges("title", so, time, data, config)) {
-            changes = true;
-        }
-
-        // TODO: Choicelist values should really check if the selected value is an existing value, approval should also check that the value is not depricated
-        // TODO: For now types are assumed and hard coded so you can easily insert wrong values
-        // Check study_type
-        if(doSingleValueChanges("datakind", so, time, data, config)) {
-            changes = true;
-        }
-
-        // Check approved
-        if(doSingleValueChanges("ispublic", so, time, data, config)) {
-            changes = true;
-        }
+        // TODO: Do CONCAT checking
 
         // If there were changes:
         // Serialize RevisionData.
@@ -165,9 +128,88 @@ public class StudyRepositoryImpl implements StudyRepository {
 
         if(changes) {
             data.setLastSave(new LocalDate());
-            revEntity.setData(metkaObjectMapper.writeValueAsString(data));
+            revEntity.setData(json.serialize(data));
         }
 
         return true;
+
+        // Check ID
+        // TODO: Choicelist values should really check if the selected value is an existing value, approval should also check that the value is not depricated
+        // TODO: add change checking for cases that should always be present and should not change.
+        /* Example where error is needed
+        key = "id";
+        field = getValueFieldContainerFromRevisionData(data, key);
+        stringValue = extractStringSimpleValue(field);
+        if(!to.getByKey(key).equals(stringValue)) {
+            // TODO: data is out of sync or someone tried to change the study_number, log error
+            // Return false since save can not continue.
+            return false;
+        }*/
+
+
+        /*ValueFieldContainer field;
+        Integer intValue;
+        String stringValue;
+        String key;
+        key = "id";
+        field = getValueFieldContainerFromRevisionData(data, key);
+        stringValue = extractStringSimpleValue(field);
+        if(!to.getByKey(key).equals(stringValue)) {
+            // TODO: data is out of sync or someone tried to change the study_number, log error
+            // Return false since save can not continue.
+            return false;
+        }
+
+        // Check Submission id
+        // TODO: add change checking for cases that should always be present and should not change.
+        {
+        key = "submissionid";
+        field = getValueFieldContainerFromRevisionData(data, key);
+        intValue = extractIntegerSimpleValue(field);
+        Integer submissionid = stringToInteger(to.getByKey(key));
+        if(submissionid == null || !submissionid.equals(intValue)) {
+            // TODO: data is out of sync or someone tried to change the study_id, log error
+            // Return false since save can not continue.
+            return false;
+        }
+        }
+
+         // TODO: these following fields can be generalised and used by the other type of objects too.
+        // Check study_name
+        if(doSingleValueChanges("title", to, time, data, config)) {
+            changes = true;
+        }
+
+
+        // TODO: For now types are assumed and hard coded so you can easily insert wrong values
+        // Check study_type
+        changes = doSingleValueChanges("datakind", to, time, data, config) | changes;
+
+        // Check approved
+        changes = doSingleValueChanges("ispublic", to, time, data, config) | changes;
+
+        // Check anonymization
+        changes = doSingleValueChanges("anonymization", to, time, data, config) | changes;
+
+        // Check aipcomplete
+        changes = doSingleValueChanges("aipcomplete", to, time, data, config) | changes; // TODO: DATE checks
+
+        // Check securityissues
+        changes = doSingleValueChanges("securityissues", to, time, data, config) | changes;
+
+        // Check descpublic
+        changes = doSingleValueChanges("descpublic", to, time, data, config) | changes;
+
+        // Check varpublic
+        changes = doSingleValueChanges("varpublic", to, time, data, config) | changes;
+
+        // Check seriesid
+        changes = doSingleValueChanges("seriesid", to, time, data, config) | changes;
+
+        // Check originallocation
+        changes = doSingleValueChanges("originallocation", to, time, data, config) | changes;
+
+        // Check processingnotes
+        changes = doSingleValueChanges("processingnotes", to, time, data, config) | changes;*/
     }
 }

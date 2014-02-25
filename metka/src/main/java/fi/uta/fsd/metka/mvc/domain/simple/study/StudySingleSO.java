@@ -24,6 +24,14 @@ public class StudySingleSO extends SimpleObject {
     private String title;
     private String datakind;
     private String ispublic;
+    private String anonymization;
+    private String descpublic;
+    private String aipcomplete; // TODO: this should be DATE
+    private String securityissues;
+    private String varpublic;
+    private String originallocation;
+    private String processingnotes;
+    private String seriesid;
 
     // External values
     public Integer getRevision() {
@@ -99,6 +107,70 @@ public class StudySingleSO extends SimpleObject {
         this.ispublic = ispublic;
     }
 
+    public String getAnonymization() {
+        return anonymization;
+    }
+
+    public void setAnonymization(String anonymization) {
+        this.anonymization = anonymization;
+    }
+
+    public String getDescpublic() {
+        return descpublic;
+    }
+
+    public void setDescpublic(String descpublic) {
+        this.descpublic = descpublic;
+    }
+
+    public String getAipcomplete() {
+        return aipcomplete;
+    }
+
+    public void setAipcomplete(String aipcomplete) {
+        this.aipcomplete = aipcomplete;
+    }
+
+    public String getSecurityissues() {
+        return securityissues;
+    }
+
+    public void setSecurityissues(String securityissues) {
+        this.securityissues = securityissues;
+    }
+
+    public String getVarpublic() {
+        return varpublic;
+    }
+
+    public void setVarpublic(String varpublic) {
+        this.varpublic = varpublic;
+    }
+
+    public String getOriginallocation() {
+        return originallocation;
+    }
+
+    public void setOriginallocation(String originallocation) {
+        this.originallocation = originallocation;
+    }
+
+    public String getProcessingnotes() {
+        return processingnotes;
+    }
+
+    public void setProcessingnotes(String processingnotes) {
+        this.processingnotes = processingnotes;
+    }
+
+    public String getSeriesid() {
+        return seriesid;
+    }
+
+    public void setSeriesid(String seriesid) {
+        this.seriesid = seriesid;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -149,6 +221,8 @@ public class StudySingleSO extends SimpleObject {
                 return datakind;
             case ISPUBLIC:
                 return ispublic;
+            case SERIESID:
+                return seriesid;
         }
         return null;
     }

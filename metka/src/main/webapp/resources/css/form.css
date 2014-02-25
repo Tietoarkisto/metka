@@ -1,7 +1,17 @@
+label {
+    padding: 5px 0px;
+    font-family: "PT Sans Regular","Trebuchet MS",Helvetica,"Helvetica Neue",sans-serif;
+    font-size: 12px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
 textarea {
     padding: 5px 2px;
     min-height: 10em;
     font-family: "PT Sans Regular","Trebuchet MS",Helvetica,"Helvetica Neue",sans-serif;
+    font-size: 12px;
     border: 1px solid #b7b7b7;
     resize: none;
     box-sizing: border-box;
@@ -18,6 +28,7 @@ textarea[readonly="readonly"] {
 input {
     padding: 5px 2px;
     font-family: "PT Sans Regular","Trebuchet MS",Helvetica,"Helvetica Neue",sans-serif;
+    font-size: 12px;
     border: 1px solid #b7b7b7;
     box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -30,10 +41,17 @@ input[readonly="readonly"] {
     background-color: #dedede;
 }
 
+input[type="checkbox"] {
+    border: 0px;
+    display: inline;
+}
+
 select {
     padding: 5px 2px;
     border: 1px solid #b7b7b7;
     background-color: white;
+    font-family: "PT Sans Regular","Trebuchet MS",Helvetica,"Helvetica Neue",sans-serif;
+    font-size: 12px;
     box-sizing: border-box;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;

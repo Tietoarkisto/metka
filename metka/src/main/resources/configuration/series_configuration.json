@@ -3,6 +3,7 @@
 		"version": 1,
 		"type": "SERIES"
 	},
+	"idField": "seriesno",
 	"fields": {
 		"seriesno": {
 			"key": "seriesno",
@@ -10,12 +11,10 @@
 			"immutable": true,
 			"unique": true,
 			"required": true,
-			"maxValues": 1,
 			"type": "INTEGER"
 		},
 		"seriesabb": {
 			"key": "seriesabb",
-			"maxValues": 1,
 			"immutable": true,
 			"unique": true,
 			"required": true,
@@ -24,18 +23,17 @@
 		},
 		"seriesname": {
 			"key": "seriesname",
-			"maxValues": 1,
 			"type": "STRING"
 		},
 		"seriesdesc": {
 			"key": "seriesdesc",
-			"maxValues": 1,
-			"type": "STRING"
+			"type": "STRING",
+			"multiline": true
 		},
 		"seriesnotes": {
 			"key": "seriesnotes",
-			"maxValues": 1,
-			"type": "STRING"
+			"type": "STRING",
+			"multiline": true
 		}
 	}
 }

@@ -16,7 +16,7 @@ public class RowContainer {
     @XmlElement private final RowIdentity key;
     @XmlElement private DateTime savedAt;
     @XmlElement private String savedBy;
-    @XmlElement private final Map<String, SubfieldContainer> fields = new HashMap<>();
+    @XmlElement private final Map<String, FieldContainer> fields = new HashMap<>();
 
     @JsonCreator
     public RowContainer(@JsonProperty("key")RowIdentity key) {
@@ -43,7 +43,7 @@ public class RowContainer {
         this.savedBy = savedBy;
     }
 
-    public Map<String, SubfieldContainer> getFields() {
+    public Map<String, FieldContainer> getFields() {
         return fields;
     }
 

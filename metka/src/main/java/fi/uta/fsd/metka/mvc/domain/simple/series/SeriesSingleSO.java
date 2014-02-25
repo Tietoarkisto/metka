@@ -1,7 +1,11 @@
 package fi.uta.fsd.metka.mvc.domain.simple.series;
 
 import fi.uta.fsd.metka.data.enums.RevisionState;
+import fi.uta.fsd.metka.model.configuration.ConfigurationKey;
 import fi.uta.fsd.metka.mvc.domain.simple.SimpleObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -11,13 +15,17 @@ import fi.uta.fsd.metka.mvc.domain.simple.SimpleObject;
  * To change this template use File | Settings | File Templates.
  */
 public class SeriesSingleSO extends SimpleObject {
-    private Integer seriesno;
     private Integer revision;
+    private ConfigurationKey configuration;
+    private RevisionState state;
+
+    /*private Integer seriesno;
     private String seriesabb;
     private String seriesname;
     private String seriesdesc;
-    private String seriesnotes;
-    private RevisionState state;
+    private String seriesnotes;*/
+
+    private final Map<String, Object> values = new HashMap<>();
 
     // External values
     public Integer getRevision() {
@@ -36,47 +44,16 @@ public class SeriesSingleSO extends SimpleObject {
         this.state = state;
     }
 
-    // Field values
-
-
-    public Integer getSeriesno() {
-        return seriesno;
+    public ConfigurationKey getConfiguration() {
+        return configuration;
     }
 
-    public void setSeriesno(Integer seriesno) {
-        this.seriesno = seriesno;
+    public void setConfiguration(ConfigurationKey configuration) {
+        this.configuration = configuration;
     }
 
-    public String getSeriesabb() {
-        return seriesabb;
-    }
-
-    public void setSeriesabb(String seriesabb) {
-        this.seriesabb = seriesabb;
-    }
-
-    public String getSeriesname() {
-        return seriesname;
-    }
-
-    public void setSeriesname(String seriesname) {
-        this.seriesname = seriesname;
-    }
-
-    public String getSeriesdesc() {
-        return seriesdesc;
-    }
-
-    public void setSeriesdesc(String seriesdesc) {
-        this.seriesdesc = seriesdesc;
-    }
-
-    public String getSeriesnotes() {
-        return seriesnotes;
-    }
-
-    public void setSeriesnotes(String seriesnotes) {
-        this.seriesnotes = seriesnotes;
+    public Map<String, Object> getValues() {
+        return values;
     }
 
     @Override
@@ -96,7 +73,8 @@ public class SeriesSingleSO extends SimpleObject {
 
     @Override
     public Object getByKey(String key) throws IllegalArgumentException {
-        switch(SeriesValues.fromString(key)) {
+        return values.get(key);
+        /*switch(SeriesValues.fromString(key)) {
             case SERIESNO:
                 return seriesno;
             case SERIESABB:
@@ -108,6 +86,10 @@ public class SeriesSingleSO extends SimpleObject {
             case SERIESNOTES:
                 return seriesnotes;
         }
-        return null;
+        return null;*/
+    }
+
+    public void setByKey(String key, Object value) {
+        values.put(key, value);
     }
 }

@@ -1,14 +1,10 @@
 package fi.uta.fsd.metka.mvc.search.impl;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.uta.fsd.metka.data.entity.RevisionEntity;
 import fi.uta.fsd.metka.data.entity.RevisionableEntity;
 import fi.uta.fsd.metka.data.entity.impl.SeriesEntity;
 import fi.uta.fsd.metka.data.entity.key.RevisionKey;
-import fi.uta.fsd.metka.data.enums.ConfigurationType;
-import fi.uta.fsd.metka.model.data.container.FieldContainer;
+import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.ValueFieldContainer;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchSO;
@@ -27,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
+import static fi.uta.fsd.metka.data.util.ConversionUtil.*;
 
 @Repository("seriesSearch")
 public class SlowSeriesSearchImpl implements SeriesSearch {
@@ -35,10 +32,10 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
     private EntityManager em;
 
     @Autowired
-    private ObjectMapper metkaObjectMapper;
+    private JSONUtil json;
 
     @Override
-    public List<String> findAbbreviations() throws JsonParseException, JsonMappingException, IOException {
+    public List<String> findAbbreviations() throws IOException {
         List<String> list = new ArrayList<String>();
         list.add("");
 
@@ -53,7 +50,7 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
                 data = em.find(RevisionEntity.class, new RevisionKey(entity.getId(), entity.getLatestRevisionNo())).getData();
             }
 
-            RevisionData revData = metkaObjectMapper.readValue(data, RevisionData.class);
+            RevisionData revData = json.readRevisionDataFromString(data);
             ValueFieldContainer field = getValueFieldContainerFromRevisionData(revData, "seriesabb");
             String value = extractStringSimpleValue(field);
             if(!StringUtils.isEmpty(value)) list.add(value);
@@ -104,12 +101,13 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
 
     private TypedQuery<RevisionableEntity> formFindQuery(SeriesSearchSO query) {
         String qry = "SELECT r FROM RevisionableEntity r";
-        if(query != null && (query.getSeriesno() != null || !query.isSearchRemoved())) {
+        Integer seriesno = stringToInteger(query.getByKey("seriesno"));
+        if(query != null && (seriesno != null || !query.isSearchRemoved())) {
             qry += " WHERE ";
-            if(query.getSeriesno() != null) {
+            if(seriesno != null) {
                 qry += "r.id = :id";
             }
-            if(query.getSeriesno() != null && !query.isSearchRemoved()) {
+            if(seriesno != null && !query.isSearchRemoved()) {
                 qry += " AND ";
             }
             if(!query.isSearchRemoved()) {
@@ -118,40 +116,29 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
         }
         qry += " ORDER BY r.id ASC";
         TypedQuery<RevisionableEntity> typedQuery = em.createQuery(qry, RevisionableEntity.class);
-        if(query != null && query.getSeriesno() != null) {
-            typedQuery.setParameter("id", query.getSeriesno());
+        if(query != null && seriesno != null) {
+            typedQuery.setParameter("id", seriesno);
         }
         return typedQuery;
     }
 
     private RevisionData checkSearch(RevisionEntity revision, SeriesSearchSO query) throws IOException {
 
-        RevisionData data = metkaObjectMapper.readValue(revision.getData(), RevisionData.class);
-        if(!StringUtils.isEmpty(query.getSeriesabb())) {
+        RevisionData data = json.readRevisionDataFromString(revision.getData());
+        if(!StringUtils.isEmpty(query.getByKey("seriesabb"))) {
             ValueFieldContainer field = getValueFieldContainerFromRevisionData(data, "seriesabb");
             String value = extractStringSimpleValue(field);
-            if(StringUtils.isEmpty(value) || !value.toUpperCase().equals(query.getSeriesabb().toUpperCase())) {
+            if(StringUtils.isEmpty(value) || !value.toUpperCase().equals(((String)query.getByKey("seriesabb")).toUpperCase())) {
                 return null;
             }
         }
-        if(!StringUtils.isEmpty(query.getSeriesname())) {
+        if(!StringUtils.isEmpty(query.getByKey("seriesname"))) {
             ValueFieldContainer field = getValueFieldContainerFromRevisionData(data, "seriesname");
             String value = extractStringSimpleValue(field);
-            if(StringUtils.isEmpty(value) || !value.toUpperCase().contains(query.getSeriesname().toUpperCase())) {
+            if(StringUtils.isEmpty(value) || !value.toUpperCase().contains(((String)query.getByKey("seriesname")).toUpperCase())) {
                 return null;
             }
         }
         return data;
-    }
-
-    private RevisionData getRevisionData(SeriesEntity entity) throws IOException {
-        if(entity != null && (entity.getCurApprovedNo() != null || entity.getLatestRevisionNo() != null)) {
-            RevisionEntity revEntity = (entity.getCurApprovedNo() == null)
-                    ? em.find(RevisionEntity.class, new RevisionKey(entity.getId(), entity.getLatestRevisionNo()))
-                    : em.find(RevisionEntity.class, new RevisionKey(entity.getId(), entity.getCurApprovedNo()));
-
-            RevisionData data = metkaObjectMapper.readValue(revEntity.getData(), RevisionData.class);
-            return data;
-        } else return null;
     }
 }

@@ -1,8 +1,5 @@
 package fi.uta.fsd.metka.data.repository.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.uta.fsd.metka.data.entity.RevisionEntity;
 import fi.uta.fsd.metka.data.entity.impl.SeriesEntity;
 import fi.uta.fsd.metka.data.entity.key.RevisionKey;
@@ -10,14 +7,15 @@ import fi.uta.fsd.metka.data.enums.ChangeOperation;
 import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.data.repository.SeriesRepository;
+import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.data.change.FieldChange;
+import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.change.ValueFieldChange;
 import fi.uta.fsd.metka.model.data.container.FieldContainer;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.ValueFieldContainer;
 import fi.uta.fsd.metka.model.factories.SeriesFactory;
-import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSingleSO;
+import fi.uta.fsd.metka.mvc.domain.simple.TransferObject;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +40,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
     private SeriesFactory factory;
 
     @Autowired
-    private ObjectMapper metkaObjectMapper;
+    private JSONUtil json;
 
     @Autowired
     private ConfigurationRepository configRepo;
@@ -70,7 +68,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
 
     @Override
     // TODO: needs better reporting to user about what went wrong
-    public boolean saveSeries(SeriesSingleSO so) throws IOException {
+    public boolean saveSeries(TransferObject to) throws IOException {
         // Get SeriesEntity
         // Check if latest revision is different from latest approved (the first requirement since only drafts
         // can be saved and these should always be different if Revisionable has an active draft).
@@ -78,7 +76,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         // Check state
         // Deserialize revision data and check that data agrees with entity.
 
-        SeriesEntity series = em.find(SeriesEntity.class, so.getSeriesno());
+        SeriesEntity series = em.find(SeriesEntity.class, to.getId());
         if(series == null) {
             // There has to be a series so you can save
             return false;
@@ -98,10 +96,10 @@ public class SeriesRepositoryImpl implements SeriesRepository {
             return false;
         }
 
-        RevisionData data = metkaObjectMapper.readValue(revEntity.getData(), RevisionData.class);
+        RevisionData data = json.readRevisionDataFromString(revEntity.getData());
         Configuration config = configRepo.findConfiguration(data.getConfiguration());
 
-        // Validate SeriesSingleSO against revision data:
+        // Validate TransferObject against revision data:
         // Id should match id in revision data and key.
         // Revision should match revision in key
         // If previous abbreviation exists then so should match that, otherwise abort.
@@ -109,56 +107,27 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         // Id description field has changed record the change otherwise do no change to description field.
         // TODO: automate validation using configuration, since all needed information is there.
         
+        // Check ID integrity
+        if (idIntegrityCheck(to, data, config)) {
+            return false;
+        }
+
+        // check revision
+        if(!to.getRevision().equals(data.getKey().getRevision())) {
+            // TODO: data is out of sync or someone tried to change the revision, log error
+            // Return false since save can not continue.
+            return false;
+        }
+
         boolean changes = false;
 
         DateTime time = new DateTime();
 
-        ValueFieldContainer field;
-        ValueFieldContainer newField = null;
-        Integer intValue;
-        String stringValue;
-        ValueFieldChange change;
-        String key;
-
-        // Check ID
-        key = "seriesno";
-        field = getValueFieldContainerFromRevisionData(data, key);
-        intValue = extractIntegerSimpleValue(field);
-        if(!so.getSeriesno().equals(intValue)) {
-            // TODO: data is out of sync or someone tried to change the id, log error
-            // Return false since save can not continue.
-            return false;
-        }
-        
-        // Check abbreviation.
-        // TODO: handle immutable values (values that can be inserted but once inserted can not be changed).
-        key = "seriesabb";
-        field = getValueFieldContainerFromRevisionData(data, key); // Since we are in a DRAFT this returns a field only if one exists in changes
-        stringValue = extractStringSimpleValue(field);
-        if(!StringUtils.isEmpty(stringValue) && !so.getSeriesabb().equals(stringValue)) {
-            // TODO: data is out of sync or someone tried to change the abbreviation, log error
-            return false;
+        for(Field field : config.getFields().values()) {
+            changes = doFieldChanges(field.getKey(), to, time, data, config) | changes;
         }
 
-        if(!StringUtils.isEmpty(so.getSeriesabb()) && StringUtils.isEmpty(stringValue)) {
-            changes = true;
-
-            newField = createValueFieldContainer(key, time);
-            setSimpleValue(newField, so.getByKey(key).toString());
-
-            change = updateValueField(data, key, newField);
-            data.putChange(change);
-        }
-
-        // TODO: these following two can be generalised and used by the other type of objects too.
-        // Check name
-        doSingleValueChanges("seriesname", so, time, data, config);
-        
-        // Check description
-        doSingleValueChanges("seriesdesc", so, time, data, config);
-
-        // check series notes
-        doSingleValueChanges("seriesnotes", so, time, data, config);
+        // TODO: Do CONCAT checking
 
         // If there were changes:
         // Serialize RevisionData.
@@ -167,10 +136,46 @@ public class SeriesRepositoryImpl implements SeriesRepository {
 
         if(changes) {
             data.setLastSave(new LocalDate());
-            revEntity.setData(metkaObjectMapper.writeValueAsString(data));
+            revEntity.setData(json.serialize(data));
         }
 
         return true;
+
+        /*
+        ValueFieldContainer newField = null;
+        Integer intValue;
+        String stringValue;
+        ValueFieldChange change;
+        String key;
+        // Check abbreviation.
+        // TODO: handle immutable values (values that can be inserted but once inserted can not be changed).
+        key = "seriesabb";
+        field = getValueFieldContainerFromRevisionData(data, key); // Since we are in a DRAFT this returns a field only if one exists in changes
+        stringValue = extractStringSimpleValue(field);
+        if(!StringUtils.isEmpty(stringValue) && !to.getByKey("seriesabb").equals(stringValue)) {
+            // TODO: data is out of sync or someone tried to change the abbreviation, log error
+            return false;
+        }
+
+        if(!StringUtils.isEmpty(to.getByKey("seriesabb")) && StringUtils.isEmpty(stringValue)) {
+            changes = true;
+
+            newField = createValueFieldContainer(key, time);
+            setSimpleValue(newField, to.getByKey(key).toString());
+
+            change = updateValueField(data, key, newField);
+            data.putChange(change);
+        }
+
+        // TODO: these following two can be generalised and used by the other type of objects too.
+        // Check name
+        changes = doSingleValueChanges("seriesname", to, time, data, config) | changes;
+        
+        // Check description
+        changes = doSingleValueChanges("seriesdesc", to, time, data, config) | changes;
+
+        // check series notes
+        changes = doSingleValueChanges("seriesnotes", to, time, data, config) | changes;*/
     }
 
     /*
@@ -214,7 +219,6 @@ public class SeriesRepositoryImpl implements SeriesRepository {
             return false;
         }
 
-        //RevisionEntity entity = series.getLatestRevision();
         RevisionEntity entity = em.find(RevisionEntity.class, new RevisionKey(series.getId(), series.getLatestRevisionNo()));
         if(entity.getState() != RevisionState.DRAFT) {
             // TODO: log exception since data is out of sync
@@ -222,7 +226,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
             return false;
         }
 
-        RevisionData data = metkaObjectMapper.readValue(entity.getData(), RevisionData.class);
+        RevisionData data = json.readRevisionDataFromString(entity.getData());
 
         // Check that data is also in DRAFT state and that id and revision match.
         // For each change:
@@ -276,7 +280,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         data.setState(RevisionState.APPROVED);
         data.setApprovalDate(new LocalDate());
         // TODO: set approver for the data to the user who requested the data approval
-        entity.setData(metkaObjectMapper.writeValueAsString(data));
+        entity.setData(json.serialize(data));
         entity.setState(RevisionState.APPROVED);
         series.setCurApprovedNo(series.getLatestRevisionNo());
 
@@ -304,7 +308,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
 
         //RevisionEntity latestRevision = series.getLatestRevision();
         RevisionEntity latestRevision = em.find(RevisionEntity.class, new RevisionKey(series.getId(), series.getLatestRevisionNo()));
-        RevisionData oldData = metkaObjectMapper.readValue(latestRevision.getData(), RevisionData.class);
+        RevisionData oldData = json.readRevisionDataFromString(latestRevision.getData());
         if(series.getCurApprovedNo() == null || series.getCurApprovedNo().compareTo(series.getLatestRevisionNo()) < 0) {
             if(latestRevision.getState() != RevisionState.DRAFT) {
                 // TODO: log exception since data is out of sync
@@ -331,7 +335,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
                 latestRevision.getKey().getRevisionNo()+1));
         newRevision.setState(RevisionState.DRAFT);
         RevisionData newData = RevisionData.createRevisionData(newRevision, oldData.getConfiguration());
-        DateTime time = new DateTime();
+
         // TODO: Field type checking from configuration. For now treate everything as ValueField
         for(Map.Entry<String, FieldContainer> field : oldData.getFields().entrySet()) {
             ValueFieldChange change = createNewRevisionValueFieldChange((ValueFieldContainer)field.getValue());
@@ -340,7 +344,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
 
         // Serialize new dataset to the new revision entity
         // Persist new entity
-        newRevision.setData(metkaObjectMapper.writeValueAsString(newData));
+        newRevision.setData(json.serialize(newData));
         em.persist(newRevision);
 
         // Set latest revision number to new revisions revision number

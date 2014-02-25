@@ -10,13 +10,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.*;
-/**
- * Created with IntelliJ IDEA.
- * User: lasseku
- * Date: 1/3/14
- * Time: 10:57 AM
- * To change this template use File | Settings | File Templates.
- */
+
 public class ConfigurationTests extends MetkaTestModel {
     @Autowired
     private ConfigurationRepository repo;

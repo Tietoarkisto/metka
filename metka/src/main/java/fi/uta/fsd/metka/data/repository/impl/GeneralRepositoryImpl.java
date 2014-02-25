@@ -3,29 +3,30 @@ package fi.uta.fsd.metka.data.repository.impl;
 import fi.uta.fsd.metka.data.entity.RevisionEntity;
 import fi.uta.fsd.metka.data.entity.RevisionableEntity;
 import fi.uta.fsd.metka.data.entity.key.RevisionKey;
+import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.data.enums.repositoryResponses.RemoveResponse;
 import fi.uta.fsd.metka.data.repository.GeneralRepository;
+import fi.uta.fsd.metka.data.util.JSONUtil;
+import fi.uta.fsd.metka.model.data.RevisionData;
 import javassist.NotFoundException;
 import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.MissingResourceException;
 
-/**
- * Created with IntelliJ IDEA.
- * User: lasseku
- * Date: 1/24/14
- * Time: 10:57 AM
- * To change this template use File | Settings | File Templates.
- */
 @Repository
 public class GeneralRepositoryImpl implements GeneralRepository {
     @PersistenceContext(name = "entityManager")
     private EntityManager em;
+    @Autowired
+    private JSONUtil json;
 
     @Override
     public Integer getAdjancedRevisionableId(Integer currentId, String type, boolean forward)
@@ -100,5 +101,29 @@ public class GeneralRepositoryImpl implements GeneralRepository {
         entity.setRemoved(true);
         entity.setRemovalDate(new LocalDate());
         return RemoveResponse.SUCCESS;
+    }
+
+    @Override
+    public List<RevisionData> getLatestRevisionsForType(ConfigurationType type, Boolean approvedOnly) throws IOException {
+        List<RevisionData> dataList = new ArrayList<>();
+        List<RevisionableEntity> revisionables = em.createQuery("SELECT r FROM RevisionableEntity r", RevisionableEntity.class).getResultList();
+
+        RevisionEntity revision;
+        for(RevisionableEntity entity : revisionables) {
+            revision = null;
+            if(approvedOnly) {
+                if(entity.getCurApprovedNo() == null) {
+                    continue;
+                }
+                revision = em.find(RevisionEntity.class, new RevisionKey(entity.getId(), entity.getCurApprovedNo()));
+            } else {
+                revision = em.find(RevisionEntity.class, new RevisionKey(entity.getId(), entity.getLatestRevisionNo()));
+            }
+            if(revision != null) {
+                dataList.add(json.readRevisionDataFromString(revision.getData()));
+            }
+        }
+
+        return dataList;
     }
 }

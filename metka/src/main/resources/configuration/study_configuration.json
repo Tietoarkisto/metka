@@ -51,8 +51,9 @@
 				}
 			]
 		},
-		"anonymity_list": {
-			"key": "anonymity_list",
+		"anonymization_list": {
+			"key": "anonymization_list",
+			"type": "VALUE",
 			"options": [
 				{
 					"value": "1"
@@ -62,25 +63,30 @@
 				},
 				{
 					"value": "3"
+				},
+				{
+					"value": "4"
+				},
+				{
+					"value": "5"
 				}
 			]
 		},
 		"ispublic_list": {
-			"key": "public_list",
-			"options": [
-				{
-					"value": "1"
-				},
-				{
-					"value": "2"
-				},
-				{
-					"value": "3"
-				}
-			]
+			"key": "yes_no_na"
+		},
+		"descpublic_list": {
+			"key": "yes_no_na"
+		},
+		"securityissues_list": {
+			"key": "yes_no_na"
+		},
+		"varpublic_list": {
+			"key": "yes_no_na"
 		},
 		"yes_no_na": {
 			"key": "yes_no_na",
+			"type": "VALUE",
 			"options": [
 				{
 					"value": "1"
@@ -117,7 +123,8 @@
 			"key": "series_list",
 			"type": "REFERENCE",
 			"options": [],
-			"reference": "series_select_ref"
+			"reference": "series_select_ref",
+			"includeEmpty": true
 		},
 		"id_prefix_list": {
 			"key": "id_prefix_list",
@@ -134,8 +141,8 @@
 		"series_select_ref": {
 			"key": "series_select_ref",
 			"targetType": "SERIES",
-			"valueField": "id",
-			"titleField": "name"
+			"valueField": "seriesid",
+			"titleField": "seriesname"
 		},
 		"codebook_ref": {
 			"key": "codebook_ref",
@@ -151,7 +158,7 @@
 		"study_ref": {
 			"key": "study_ref",
 			"targetType": "STUDY",
-			"valueField": "study_number"
+			"valueField": "id"
 		},
 		"binder_ref": {
 			"_comment": "TODO: This is an inverse reference. No data is saved on study, only fetched from binder! How to configure or is configuration even needed",
@@ -161,6 +168,7 @@
 			"titleField": "location"
 		}
 	},
+	"idField": "study_id",
 	"fields": {
 		"study_id_prefix": {
 			"_comment": "Contains the letter part of study id. This comes automatically from the default value of the choicelist.",
@@ -169,7 +177,6 @@
 			"immutable": true,
 			"required": true,
 			"display": false,
-			"maxValues": 1,
 			"type": "CHOICE",
 			"choicelist": "id_prefix_list",
 			"section": "basic_information"
@@ -183,7 +190,6 @@
 			"unique": true,
 			"required": true,
 			"display": false,
-			"maxValues": 1,
 			"type": "INTEGER",
 			"section": "basic_information"
 		},
@@ -194,7 +200,6 @@
 			"immutable": true,
 			"unique": true,
 			"required": true,
-			"maxValues": 1,
 			"type": "CONCAT",
 			"concatenate": [
 				"study_id_prefix",
@@ -204,7 +209,6 @@
 		},
 		"title": {
 			"key": "title",
-			"maxValues": 1,
 			"type": "STRING",
 			"section": "basic_information"
 		},
@@ -214,90 +218,78 @@
 			"immutable": true,
 			"unique": true,
 			"required": true,
-			"maxValues": 1,
 			"type": "INTEGER",
 			"section": "basic_information"
 		},
-		"ready_date": {
-			"_comment": "This can be gained straight from ApprovalDate and doesn't need a field",
-			"key": "ready_date",
+		"aipcomplete": {
+			"key": "aipcomplete",
 			"translatable": false,
 			"immutable": true,
-			"maxValues": 1,
 			"type": "DATE",
 			"section": "basic_information"
 		},
 		"datakind": {
 			"key": "datakind",
 			"translatable": false,
-			"maxValues": 1,
 			"type": "CHOICE",
-			"choicelist": "study_type_list",
+			"choicelist": "datakind_list",
 			"section": "basic_information"
 		},
-		"anonymity": {
-			"key": "anonymity",
+		"anonymization": {
+			"key": "anonymization",
 			"translatable": false,
-			"maxValues": 1,
 			"type": "CHOICE",
-			"choicelist": "anonymity_list",
+			"choicelist": "anonymization_list",
 			"section": "basic_information"
 		},
-		"confidentiality": {
-			"key": "confidentiality",
+		"securityissues": {
+			"key": "securityissues",
 			"translatable": false,
-			"maxValues": 1,
 			"type": "CHOICE",
-			"choicelist": "yes_no_na",
+			"choicelist": "securityissues_list",
 			"section": "basic_information"
 		},
 		"ispublic": {
 			"key": "ispublic",
 			"translatable": false,
-			"maxValues": 1,
 			"type": "CHOICE",
 			"choicelist": "ispublic_list",
 			"section": "basic_information"
 		},
-		"description_approved": {
-			"_comment": "What does this do?",
-			"key": "description_approved",
+		"descpublic": {
+			"key": "descpublic",
 			"translatable": false,
-			"maxValues": 1,
 			"type": "CHOICE",
-			"choicelist": "yes_no_na",
+			"choicelist": "descpublic_list",
 			"section": "basic_information"
 		},
-		"variables_approved": {
-			"_comment": "What does this do?",
-			"key": "variables_approved",
+		"varpublic": {
+			"key": "varpublic",
 			"translatable": false,
-			"maxValues": 1,
 			"type": "CHOICE",
-			"choicelist": "yes_no_na",
+			"choicelist": "varpublic_list",
 			"section": "basic_information"
 		},
 		"seriesid": {
 			"key": "seriesid",
 			"translatable": false,
-			"maxValues": 1,
 			"type": "CHOICE",
 			"choicelist": "series_list",
 			"section": "basic_information"
 		},
-		"original_location": {
-			"key": "original_location",
+		"originallocation": {
+			"key": "originallocation",
 			"translatable": false,
-			"maxValues": 1,
 			"type": "STRING",
-			"section": "basic_information"
+			"section": "basic_information",
+			"multiline": true
 		},
-		"process_notes": {
-			"key": "process_notes",
+		"processingnotes": {
+			"key": "processingnotes",
 			"translatable": false,
-			"maxValues": 1,
 			"type": "STRING",
-			"section": "basic_information"
+			"section": "basic_information",
+			"multiline": true
 		},
 		"notes": {
 			"key": "notes",
@@ -309,85 +301,73 @@
 			"key": "data_versions",
 			"translatable": false,
 			"type": "CONTAINER",
-			"section": "basic_information"
+			"section": "basic_information",
+			"subfields": [
+				"subfield_versions_version",
+				"subfield_versions_date",
+				"subfield_versions_handler",
+				"subfield_versions_short_description",
+				"subfield_versions_public_description",
+				"subfield_versions_private_description"
+			]
 		},
-		"data_versions_version": {
+		"subfield_versions_version": {
 			"key": "data_versions_version",
 			"translatable": false,
 			"required": true,
 			"type": "REAL",
 			"section": "basic_information",
-			"subfieldTo": "data_versions"
+			"subfield": true
 		},
-		"data_versions_date": {
+		"subfield_versions_date": {
 			"key": "data_versions_date",
 			"translatable": false,
 			"type": "DATE",
 			"section": "basic_information",
-			"subfieldTo": "data_versions"
+			"subfield": true
 		},
-		"data_versions_handler": {
+		"subfield_versions_handler": {
 			"key": "data_versions_handler",
 			"translatable": false,
 			"type": "STRING",
 			"section": "basic_information",
-			"subfieldTo": "data_versions"
+			"subfield": true
 		},
-		"data_versions_public_description": {
+		"subfield_versions_short_description": {
+			"key": "data_versions_short_description",
+			"translatable": false,
+			"type": "CHOICE",
+			"section": "basic_information",
+			"choicelist": "shortdescription_list",
+			"subfield": true
+		},
+		"subfield_versions_public_description": {
 			"key": "data_versions_public_description",
 			"translatable": false,
 			"type": "STRING",
 			"section": "basic_information",
-			"subfieldTo": "data_versions"
+			"subfield": true
 		},
-		"data_versions_private_description": {
+		"subfield_versions_private_description": {
 			"key": "data_versions_private_description",
 			"translatable": false,
 			"type": "STRING",
 			"section": "basic_information",
-			"subfieldTo": "data_versions"
+			"subfield": true
 		},
 		"description_versions": {
 			"key": "description_versions",
 			"translatable": false,
 			"type": "CONTAINER",
-			"section": "basic_information"
-		},
-		"description_versions_version": {
-			"key": "data_versions_version",
-			"translatable": false,
-			"required": true,
-			"type": "REAL",
 			"section": "basic_information",
-			"subfieldTo": "data_versions"
-		},
-		"description_versions_date": {
-			"key": "data_versions_date",
-			"translatable": false,
-			"type": "DATE",
-			"section": "basic_information",
-			"subfieldTo": "data_versions"
-		},
-		"description_versions_handler": {
-			"key": "data_versions_handler",
-			"translatable": false,
-			"type": "STRING",
-			"section": "basic_information",
-			"subfieldTo": "data_versions"
-		},
-		"description_versions_public_description": {
-			"key": "data_versions_public_description",
-			"translatable": false,
-			"type": "STRING",
-			"section": "basic_information",
-			"subfieldTo": "data_versions"
-		},
-		"description_versions_private_description": {
-			"key": "data_versions_private_description",
-			"translatable": false,
-			"type": "STRING",
-			"section": "basic_information",
-			"subfieldTo": "data_versions"
+			"subfields": [
+				"subfield_versions_version",
+				"subfield_versions_date",
+				"subfield_versions_handler",
+				"subfield_versions_short_description",
+				"subfield_versions_public_description",
+				"subfield_versions_private_description"
+			]
 		},
 		"publication_references": {
 			"_comment": "TODO: Should all needed fields be mentioned in configuration or is that something that is just done while collecting data for UI?",
@@ -405,18 +385,9 @@
 			"reference": "study_ref",
 			"section": "basic_information"
 		},
-		"binder_references": {
-			"_comment": "TODO: This is an inverse reference where data is only fetched to be shown and not saved on study. Should this be in the configuration at all?",
-			"key": "binder_references",
-			"translatable": false,
-			"type": "REFERENCE",
-			"reference": "binder_ref",
-			"section": "basic_information"
-		},
 		"usability_permission": {
 			"key": "usability_permission",
 			"translatable": false,
-			"maxValues": 1,
 			"type": "CHOICE",
 			"choicelist": "usability_permission_list",
 			"section": "deposit_agreement"
@@ -424,14 +395,12 @@
 		"usability_permission_change_date": {
 			"key": "usability_permission_change_date",
 			"translatable": false,
-			"maxValues": 1,
 			"type": "DATE",
 			"section": "deposit_agreement"
 		},
 		"usability_permission_after_change": {
 			"key": "usability_permission_after_change",
 			"translatable": false,
-			"maxValues": 1,
 			"type": "CHOICE",
 			"choicelist": "usability_permission_list",
 			"section": "deposit_agreement"
@@ -439,14 +408,12 @@
 		"deposit_agreement_date": {
 			"key": "deposit_agreement_date",
 			"translatable": false,
-			"maxValues": 1,
 			"type": "DATE",
 			"section": "deposit_agreement"
 		},
 		"contributor_type": {
 			"key": "contributor_type",
 			"translatable": false,
-			"maxValues": 1,
 			"type": "CHOICE",
 			"choicelist": "contributor_type_list",
 			"section": "deposit_agreement"
@@ -454,7 +421,6 @@
 		"deposit_agreement_type": {
 			"key": "deposit_agreement_type",
 			"translatable": false,
-			"maxValues": 1,
 			"type": "CHOICE",
 			"choicelist": "deposit_agreement_type_list",
 			"section": "deposit_agreement"
@@ -463,21 +429,18 @@
 			"_comment": "TODO: better translation for term 'heräte'",
 			"key": "trigger_date",
 			"translatable": false,
-			"maxValues": 1,
 			"type": "DATE",
 			"section": "deposit_agreement"
 		},
 		"trigger_receiver": {
 			"key": "trigger_receiver",
 			"translatable": false,
-			"maxValues": 1,
 			"type": "STRING",
 			"section": "deposit_agreement"
 		},
 		"trigger_subject": {
 			"key": "trigger_subject",
 			"translatable": false,
-			"maxValues": 1,
 			"type": "STRING",
 			"section": "deposit_agreement"
 		},

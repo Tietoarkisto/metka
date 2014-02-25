@@ -1,0 +1,34 @@
+Choicelist:
+Configuration->choicelists map keys don't need to match choicelist keys. If the keys do not match then the choicelist doesn't need to have any options or references. Options are fetched from the choicelists map value using the key in choicelist key field. This allows for defining different default values for different compoboxes while still using the same values without need to duplicate the whole definition or all of the translations.
+
+Field:
+SubfieldTo - isSubfield
+Fields that are marked as subfields to some other field will now be marked as only subfields.
+subfields[]
+CONTAINER fields will now have a list of subfield keys giving the order of the fields used and what fields are used.
+These two changes make it possible to use the same field definition in two different CONTAINERs (now possible because of the previous format changes). These also help automating CONTAINER field display and handling.
+
+multiline
+Adding information of should the field be shown as text area or text input saves time designing the UI since this can be automated.
+
+-- 21.02.2014 additions --
+Reference:
+approvedOnly
+Tells the system that references have to be collected from approved revisions only and any draft revisions should be ignored when displaying values on the UI. Defaults to true since that seems to be the usual case.
+
+-- 24.02.2014 additions --
+RowContainer:
+fields list comprises of FieldContainer instances. This means that constructs n-deep are possible but using this makes managing fields with maxValues > 1 easier. We can basically stop using maxValues completely and instead make all fields containing multiple values into CONTAINER fields with one subfield. This way all fields that contain actual values reduce to ValueFieldContainer and are contained either at the top level or inside a RowContainer. No need for two different multivalue implementations. Additionally this should make searching more accurate since all multi row answers can give their accurate id. Additionally it makes the VARIABLES page of STUDY easier to handle. Changes should always be handled in a similar manner so that even a changed row that contains a container only contains those rows in that container that have changed. So a ContainerChange can contain a row change where the only change is that a row within a container has changed. Displaying revision changes when multivalue multifield containers are concerned is still a headache but at least we can make one consistent implementation and use it for everything.
+
+RowChange:
+Doesn't contain origValue or newValue anymore, instead contains a list of FieldChange objects listing all the changed fields within the row (or in the case of a DRAFT all the fields inside the row). This makes it possible for a row to contain only changed fields in a case where one of the subfields is a CONTAINER in itself. This makes the dataformat somewhat more hard to manage but it makes it easier to handle multivalues by treating them basically as a CONTAINER with one subfield. After this change there is no direct Change object for RowContainer just as there is no direct change object for ChangeContainer (there is never a place where ChangeContainer or RowContainer can be found from changed but instead those have to be formed on the fly when approving a revision). In case where a complete row is removed then a recursive modification needs to be made to that row marking every field removed. No matter how table changes are handled there is just going to be problems with showing the changes in comparison especially with multi level tables such as study variables.
+
+Field:
+maxValues information is used only to tell how many rows a CONTAINER can have. Fields either contain one inserted value or are CONTAINER fields. This way we have completely unique key (albeit it can consist of multiple levels of Container and Row hierarchy) to every inserted value, where value is always the only value of a field that in itself is either a top level field (found in fields array) or a subfield to some CONTAINER (which is found at the bottom of a hierarchy of CONTAINERs). Since fields are either single values or CONTAINERs there is no possibility of a field that is not a CONTAINER to contain multiple values and due to that there is no possibility that a field that is a CONTAINER contains anything else than RowContainer objects containing more CONTAINERs or ValueFieldContainers.
+
+ValueFieldContainer:
+no multiple values are saved to a single ValueFieldContainer and as such the values list can be changed to a single Value reference.
+
+-- 25.02.2014 additions --
+Configuration:
+added idField which should contain the field key of the field containing revisionable id for the revision data. This lets us automate some checks and UI necessities.

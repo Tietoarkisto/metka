@@ -1,9 +1,9 @@
 package fi.uta.fsd.metka.data.repository.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.uta.fsd.metka.data.entity.RevisionEntity;
 import fi.uta.fsd.metka.data.entity.key.RevisionKey;
 import fi.uta.fsd.metka.data.repository.HistoryRepository;
+import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.mvc.domain.requests.ChangeCompareRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,20 +15,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created with IntelliJ IDEA.
- * User: lasseku
- * Date: 1/14/14
- * Time: 10:18 AM
- * To change this template use File | Settings | File Templates.
- */
 @Repository
 public class HistoryRepositoryImpl implements HistoryRepository {
     @PersistenceContext(name = "entityManager")
     private EntityManager em;
 
     @Autowired
-    private ObjectMapper metkaObjectMapper;
+    private JSONUtil json;
 
     @Override
     public List<RevisionData> getRevisionHistory(Integer id) throws IOException {
@@ -40,7 +33,7 @@ public class HistoryRepositoryImpl implements HistoryRepository {
                     .getResultList();
 
         for(RevisionEntity entity : entities) {
-            RevisionData data = metkaObjectMapper.readValue(entity.getData(), RevisionData.class);
+            RevisionData data = json.readRevisionDataFromString(entity.getData());
             revisions.add(data);
         }
         return revisions;
@@ -57,7 +50,7 @@ public class HistoryRepositoryImpl implements HistoryRepository {
                 .getResultList();
         List<RevisionData> datas = new ArrayList<RevisionData>();
         for(RevisionEntity entity : entities) {
-            datas.add(metkaObjectMapper.readValue(entity.getData(), RevisionData.class));
+            datas.add(json.readRevisionDataFromString(entity.getData()));
         }
         return datas;
     }
@@ -68,7 +61,7 @@ public class HistoryRepositoryImpl implements HistoryRepository {
         if(entity == null) {
             return null;
         }
-        RevisionData data = metkaObjectMapper.readValue(entity.getData(), RevisionData.class);
+        RevisionData data = json.readRevisionDataFromString(entity.getData());
         return data;
     }
 }

@@ -16,6 +16,7 @@ public class Reference {
     @XmlElement private final ConfigurationType targetType;
     @XmlElement private final String valueField;
     @XmlElement private String titleField;
+    @XmlElement private Boolean approvedOnly = true;
 
     @JsonCreator
     public Reference(@JsonProperty("key")String key, @JsonProperty("targetType")ConfigurationType targetType, @JsonProperty("valueField")String valueField) {
@@ -42,6 +43,14 @@ public class Reference {
 
     public void setTitleField(String titleField) {
         this.titleField = titleField;
+    }
+
+    public Boolean getApprovedOnly() {
+        return (approvedOnly == null) ? true : approvedOnly;
+    }
+
+    public void setApprovedOnly(Boolean approvedOnly) {
+        this.approvedOnly = (approvedOnly == null) ? true : approvedOnly;
     }
 
     @Override

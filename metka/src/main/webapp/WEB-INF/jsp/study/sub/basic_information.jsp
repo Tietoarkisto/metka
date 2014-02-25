@@ -6,31 +6,61 @@
     <table class="formTable">
         <jsp:include page="../../../inc/fullRowFormText.jsp">
             <jsp:param name="field" value="title" />
-            <jsp:param name="type" value="input" />
         </jsp:include>
     </table>
     <table class="formTable">
         <tr><c:set var="field" value="id" />
-            <td class="labelColumn"><form:label path="${field}"><spring:message code="STUDY.field.${field}"/></form:label></td>
-            <td><form:input path="${field}" readonly="true"/></td>
-            <c:set var="field" value="datakind" />
-            <td class="labelColumn"><form:label path="${field}"><spring:message code="STUDY.field.${field}"/></form:label></td>
-            <td>
-                <jsp:include page="../../../inc/l18nSelect.jsp">
-                    <jsp:param name="selectPath" value="${field}" />
-                    <jsp:param name="list" value="datakind_list" />
-                </jsp:include>
-            </td>
-            <c:set var="field" value="ispublic" />
-            <td class="labelColumn"><form:label path="${field}"><spring:message code="STUDY.field.${field}"/></form:label></td>
-            <td>
-                <jsp:include page="../../../inc/l18nSelect.jsp">
-                    <jsp:param name="selectPath" value="${field}" />
-                    <jsp:param name="list" value="ispublic_list" />
-                </jsp:include>
-            </td>
-            <%-- Not done yet from here on --%>
+            <td class="labelColumn"><form:label path="values['${field}']"><spring:message code="STUDY.field.${field}"/></form:label></td>
+            <td><form:input path="values['${field}']" readonly="true"/></td>
+
+            <jsp:include page="../../../inc/l18nSelect.jsp">
+                <jsp:param name="field" value="datakind" />
+            </jsp:include>
+
+            <jsp:include page="../../../inc/l18nSelect.jsp">
+                <jsp:param name="field" value="ispublic" />
+            </jsp:include>
         </tr>
+        <tr><c:set var="field" value="submissionid" />
+            <td class="labelColumn"><form:label path="values['${field}']"><spring:message code="STUDY.field.${field}"/></form:label></td>
+            <td><form:input path="values['${field}']" readonly="true"/></td>
+
+            <jsp:include page="../../../inc/l18nSelect.jsp">
+                <jsp:param name="field" value="anonymization" />
+            </jsp:include>
+
+            <jsp:include page="../../../inc/l18nSelect.jsp">
+                <jsp:param name="field" value="descpublic" />
+            </jsp:include>
+        </tr>
+        <tr><c:set var="field" value="aipcomplete" />
+            <td class="labelColumn"><form:label path="values['${field}']"><spring:message code="STUDY.field.${field}"/></form:label></td>
+            <td><form:input path="values['${field}']" /></td>
+
+            <jsp:include page="../../../inc/l18nSelect.jsp">
+                <jsp:param name="field" value="securityissues" />
+            </jsp:include>
+
+            <jsp:include page="../../../inc/l18nSelect.jsp">
+                <jsp:param name="field" value="varpublic" />
+            </jsp:include>
+        </tr>
+        <tr>
+            <jsp:include page="../../../inc/l18nSelect.jsp">
+                <jsp:param name="field" value="seriesid" />
+            </jsp:include>
+        </tr>
+        <tr>
+            <jsp:include page="../../../inc/singleCellFormText.jsp">
+                <jsp:param name="field" value="originallocation" />
+                <jsp:param name="colspan" value="3" />
+            </jsp:include>
+            <jsp:include page="../../../inc/singleCellFormText.jsp">
+                <jsp:param name="field" value="processingnotes" />
+                <jsp:param name="colspan" value="3" />
+            </jsp:include>
+        </tr>
+        <%-- Not done yet from here on --%>
     </table>
 	<%--<div class="upperContainer">
 		<div class="rowContainer containsTranslations">

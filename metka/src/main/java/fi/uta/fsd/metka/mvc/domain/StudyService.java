@@ -2,20 +2,19 @@ package fi.uta.fsd.metka.mvc.domain;
 
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.repository.StudyRepository;
+import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.mvc.domain.simple.RevisionViewDataContainer;
+import fi.uta.fsd.metka.mvc.domain.simple.TransferObject;
 import fi.uta.fsd.metka.mvc.domain.simple.study.StudySearchResultSO;
 import fi.uta.fsd.metka.mvc.domain.simple.study.StudySearchSO;
-import fi.uta.fsd.metka.mvc.domain.simple.study.StudySingleSO;
 import fi.uta.fsd.metka.mvc.search.GeneralSearch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-
-import static fi.uta.fsd.metka.data.util.ModelAccessUtil.extractIntegerSimpleValue;
-import static fi.uta.fsd.metka.data.util.ModelAccessUtil.extractStringSimpleValue;
-import static fi.uta.fsd.metka.data.util.ModelAccessUtil.getValueFieldContainerFromRevisionData;
 
 @Service
 public class StudyService {
@@ -24,22 +23,13 @@ public class StudyService {
     @Autowired
     private GeneralSearch generalSearch;
 
-    public List<StudySearchResultSO> searchForStudies(StudySearchSO query) {
-        // TODO: Find searched studies and create search result objects for them.
-        return null;
-    }
+    @Autowired
+    private ConfigurationService configService;
 
-    public StudySingleSO newSeries(Integer acquisition_number) {
-        RevisionData data = null;
-        try {
-            data = repository.getNew(acquisition_number);
-        } catch(IOException ex) {
-            // TODO: better exception handling with messages to the user
-            ex.printStackTrace();
-            return null;
-        }
-        StudySingleSO single = singleSOFromRevisionData(data);
-        return single;
+    public List<StudySearchResultSO> searchForStudies(StudySearchSO query) {
+        List<StudySearchResultSO> resultList = new ArrayList<>();
+        // TODO: Find searched studies and create search result objects for them.
+        return resultList;
     }
 
     /**
@@ -56,9 +46,9 @@ public class StudyService {
      * Find requested revision data and convert it to SeriesSingle simple object
      * @param id Revisionable id
      * @param revision Revision number
-     * @return Revision data converted to SeriesSingleSO
+     * @return Revision data converted to TransferObject
      */
-    public StudySingleSO findSingleRevision(Integer id, Integer revision) {
+    public RevisionViewDataContainer findSingleRevision(Integer id, Integer revision) {
         RevisionData data = null;
         try {
             data = generalSearch.findSingleRevision(id, revision, ConfigurationType.STUDY);
@@ -72,14 +62,35 @@ public class StudyService {
             return null;
         }
 
-        StudySingleSO series = singleSOFromRevisionData(data);
+        Configuration config = configService.findByTypeAndVersion(data.getConfiguration());
+        TransferObject single = TransferObject.buildTransferObjectFromRevisionData(data, config);
 
-        return series;
+        return new RevisionViewDataContainer(single, config);
     }
 
-    public boolean saveStudy(StudySingleSO so) {
+    public RevisionViewDataContainer newStudy(Integer acquisition_number) {
+        RevisionData data = null;
         try {
-            return repository.saveStudy(so);
+            data = repository.getNew(acquisition_number);
+        } catch(IOException ex) {
+            // TODO: better exception handling with messages to the user
+            ex.printStackTrace();
+            return null;
+        }
+        Configuration config = configService.findByTypeAndVersion(data.getConfiguration());
+        TransferObject single = TransferObject.buildTransferObjectFromRevisionData(data, config);
+
+        return new RevisionViewDataContainer(single, config);
+    }
+
+    public RevisionViewDataContainer editStudy(Integer id) {
+        // TODO: Request an editable draft for given study, convert and return StudySingleSO object.
+        return null;
+    }
+
+    public boolean saveStudy(TransferObject to) {
+        try {
+            return repository.saveStudy(to);
         } catch(Exception ex) {
             // TODO: better exception handling with messages to the user
             ex.printStackTrace();
@@ -87,34 +98,31 @@ public class StudyService {
         }
     }
 
-    public boolean approveStudy(StudySingleSO single) {
+    public boolean approveStudy(TransferObject single) {
         // TODO: Request validation and approval of the given study.
         return false;
     }
 
-    public StudySingleSO editStudy(Integer id) {
-        // TODO: Request an editable draft for given study, convert and return StudySingleSO object.
-        return null;
-    }
-
-    private StudySingleSO singleSOFromRevisionData(RevisionData data) {
+    /*private TransferObject transferObjectFromRevisionData(RevisionData data) {
         // check if data is for study
         if(data == null || data.getConfiguration().getType() != ConfigurationType.STUDY) {
             return null;
         }
-        StudySingleSO so = new StudySingleSO();
+        TransferObject to = new TransferObject();
         // Set additional information
-        so.setState(data.getState());
-        so.setRevision(data.getKey().getRevision());
-        so.setConfiguration(data.getConfiguration());
+        to.setId(data.getKey().getId());
+        to.setRevision(data.getKey().getRevision());
+        to.setState(data.getState());
+        to.setConfiguration(data.getConfiguration());
 
         // Set field values
-        so.setStudy_id(extractIntegerSimpleValue(getValueFieldContainerFromRevisionData(data, "study_id")));
-        so.setId(extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "id")));
-        so.setSubmissionid(extractIntegerSimpleValue(getValueFieldContainerFromRevisionData(data, "submissionid")));
-        so.setDatakind(extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "datakind")));
-        so.setIspublic(extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "ispublic")));
-        so.setTitle(extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "title")));
-        return so;
-    }
+        // TODO: Automate value setting using configuration
+        to.setByKey("study_id", extractIntegerSimpleValue(getValueFieldContainerFromRevisionData(data, "study_id")));
+        to.setByKey("id", extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "id")));
+        to.setByKey("submissionid", extractIntegerSimpleValue(getValueFieldContainerFromRevisionData(data, "submissionid")));
+        to.setByKey("datakind", extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "datakind")));
+        to.setByKey("ispublic", extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "ispublic")));
+        to.setByKey("title", extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "title")));
+        return to;
+    }*/
 }

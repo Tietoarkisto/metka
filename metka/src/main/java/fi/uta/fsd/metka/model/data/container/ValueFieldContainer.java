@@ -8,14 +8,12 @@ import org.joda.time.DateTime;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import java.util.ArrayList;
-import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ValueFieldContainer extends FieldContainer {
     @XmlElement private DateTime savedAt;
     @XmlElement private String savedBy;
-    @XmlElement private final List<Value> values = new ArrayList<>();
+    @XmlElement private Value value;
 
     @JsonCreator
     public ValueFieldContainer(@JsonProperty("key") String key) {
@@ -38,7 +36,11 @@ public class ValueFieldContainer extends FieldContainer {
         this.savedBy = savedBy;
     }
 
-    public List<Value> getValues() {
-        return values;
+    public Value getValue() {
+        return value;
+    }
+
+    public void setValue(Value value) {
+        this.value = value;
     }
 }

@@ -3,11 +3,19 @@ package fi.uta.fsd.metka.mvc.domain.simple.study;
 enum StudyValues {
     STUDY_ID("study_id"),
     ID("id"),
-    SUBMISSIONID("submissionid"),
     TITLE("title"),
+    SUBMISSIONID("submissionid"),
+    AIPCOMPLETE("aipcomplete"),
     DATAKIND("datakind"),
+    ANONYMIZATION("anonymization"),
+    SECURITYISSUES("securityissues"),
     ISPUBLIC("ispublic"),
-    SERIESID("seriesid");
+    DESCPUBLIC("descpublic"),
+    VARPUBLIC("varpublic"),
+    SERIESID("seriesid"),
+    ORIGINALLOCATION("originallocation"),
+    PROCESSINGNOTES("processingnotes")
+    ;
     private String key;
 
     StudyValues(String key) {

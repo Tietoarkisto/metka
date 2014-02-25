@@ -42,11 +42,11 @@ public class StudySearchResultSO extends SimpleSearchObject {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("Study search result object: [");
-        for(int i = 0; i < VALUE.values().length; i++) {
-            VALUE v = VALUE.values()[i];
+        for(int i = 0; i < StudyValues.values().length; i++) {
+            StudyValues v = StudyValues.values()[i];
             sb.append(v.getKey()+": ");
             sb.append(getByKey(v.getKey()));
-            if(i < VALUE.values().length-1) {
+            if(i < StudyValues.values().length-1) {
                 sb.append(", ");
             }
         }
@@ -56,34 +56,9 @@ public class StudySearchResultSO extends SimpleSearchObject {
 
     @Override
     public Object getByKey(String key) throws IllegalArgumentException {
-        switch(VALUE.fromString(key)) {
+        switch(StudyValues.fromString(key)) {
             // TODO: Add search result attributes
         }
         return null;
-    }
-
-    private static enum VALUE {
-        // TODO: add search result attribtes
-        ID("id");
-        private String key;
-
-        private VALUE(String key) {
-            this.key = key;
-        }
-
-        private String getKey() {
-            return this.key;
-        }
-
-        private static VALUE fromString(String key) {
-            if(key != null) {
-                for(VALUE v : VALUE.values()) {
-                    if(key.equals(v.key)) {
-                        return v;
-                    }
-                }
-            }
-            throw new IllegalArgumentException("No value for ["+key+"] found.");
-        }
     }
 }

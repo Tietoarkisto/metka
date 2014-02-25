@@ -38,7 +38,7 @@
                         <input class="searchFormInput" type="reset" value="<spring:message code='general.buttons.clear'/>" />
                     </div>
                 </form>--%>
-                <form:form id="studySearchForm" method="post" action="/study/search" modelAttribute="info.query">
+                <form:form id="studySearchForm" method="post" action="/study/search" modelAttribute="searchData.query">
                     <table class="formTable">
                         <tr>
                             <td class="labelColumn"><spring:message code="general.search.state"/></td>
@@ -57,34 +57,29 @@
                         </tr>
                         <jsp:include page="../../inc/fullRowFormText.jsp">
                             <jsp:param name="field" value="id" />
-                            <jsp:param name="type" value="input" />
                             <jsp:param name="colspan" value="3" />
                         </jsp:include>
                         <jsp:include page="../../inc/fullRowFormText.jsp">
                             <jsp:param name="field" value="title" />
-                            <jsp:param name="type" value="input" />
                             <jsp:param name="colspan" value="3" />
                         </jsp:include>
-                        <tr>
+                        <tr><c:set var="field" value="seriesid" />
                             <td class="labelColumn">
-                                <form:label path="seriesid"><spring:message code="STUDY.field.seriesid"/></form:label>
+                                <form:label path="values['${field}']"><spring:message code="STUDY.field.${field}"/></form:label>
                             </td>
-                            <td colspan="3"><form:select path="seriesid" items="${info.series}" itemLabel="name" itemValue="id" /></td>
+                            <td colspan="3"><form:select path="values['${field}']" items="${searchData.series}" itemLabel="name" itemValue="id" /></td>
                         </tr>
                     </table>
                 </form:form>
             </div>
             <div class="buttonsHolder">
-                <div class="buttonsGroup">
-                    <!-- TODO: Fix this reset button
-                    <input type="reset" class="button" value="Tyhjennä">-->
-                    <input id="studySearchSubmit" type="submit" class="button" value="<spring:message code='general.buttons.search'/>">
-                </div>
+                <!-- TODO: Fix this reset button
+                <input type="reset" class="button" value="Tyhjennä">-->
+                <input id="studySearchSubmit" type="submit" class="button" value="<spring:message code='general.buttons.search'/>">
             </div>
-            <div class="spaceClear"></div>
-            <c:if test="${not empty info.results}">
+            <c:if test="${not empty searchData.results}">
                 <div class="searchResult">
-                    <h1 class="pageTitle"><spring:message code="general.searchResult"/><span class="floatRight normalText"><spring:message code="general.searchResult.amount"/> ${fn:length(info.results)}</span> </h1>
+                    <h1 class="pageTitle"><spring:message code="general.searchResult"/><span class="floatRight normalText"><spring:message code="general.searchResult.amount"/> ${fn:length(searchData.results)}</span> </h1>
                     <table class="dataTable">
                         <thead>
                         <tr>
@@ -98,7 +93,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <c:forEach var="r" items="${info.results}">
+                        <c:forEach var="r" items="${searchData.results}">
                             <tr class="pointerClass" onclick="location.href='${contextPath}/series/view/${r.id}/${r.revision}'">
                                 <td>${r.study_number}</td>
                                 <td>${r.study_name}</td>
@@ -127,7 +122,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                    <c:forEach items="${info.erroneous}" var="study">
+                    <c:forEach items="${searchData.erroneous}" var="study">
                         <tr>
                             <td>${study.study_number}</td>
                             <td>${study.study_name}</td>

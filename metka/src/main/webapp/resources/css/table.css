@@ -1,3 +1,7 @@
+.rightAlignCell {
+    text-align: right;
+}
+
 table input, table textarea, table select {
     width: 100%;
 }

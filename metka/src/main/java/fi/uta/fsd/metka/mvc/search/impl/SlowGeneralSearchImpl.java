@@ -6,6 +6,7 @@ import fi.uta.fsd.metka.data.entity.RevisionableEntity;
 import fi.uta.fsd.metka.data.entity.impl.SeriesEntity;
 import fi.uta.fsd.metka.data.entity.key.RevisionKey;
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
+import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.mvc.search.GeneralSearch;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class SlowGeneralSearchImpl implements GeneralSearch {
     private EntityManager em;
 
     @Autowired
-    private ObjectMapper metkaObjectMapper;
+    private JSONUtil json;
 
     @Override
     public Integer findSingleRevisionNo(Integer id) {
@@ -49,7 +50,7 @@ public class SlowGeneralSearchImpl implements GeneralSearch {
             return null;
         }
 
-        RevisionData data = metkaObjectMapper.readValue(entity.getData(), RevisionData.class);
+        RevisionData data = json.readRevisionDataFromString(entity.getData());
         if(data.getConfiguration().getType() != type) {
             return null;
         }
