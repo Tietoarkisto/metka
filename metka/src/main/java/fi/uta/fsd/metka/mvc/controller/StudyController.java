@@ -9,7 +9,7 @@ import fi.uta.fsd.metka.mvc.domain.GeneralService;
 import fi.uta.fsd.metka.mvc.domain.StudyService;
 import fi.uta.fsd.metka.mvc.domain.simple.ErrorMessage;
 import fi.uta.fsd.metka.mvc.domain.simple.RevisionViewDataContainer;
-import fi.uta.fsd.metka.mvc.domain.simple.TransferObject;
+import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
 import fi.uta.fsd.metka.mvc.domain.simple.study.StudySearchData;
 import fi.uta.fsd.metka.mvc.domain.simple.study.StudySearchResultSO;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -11,7 +11,7 @@ import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.factories.StudyFactory;
-import fi.uta.fsd.metka.mvc.domain.simple.TransferObject;
+import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;

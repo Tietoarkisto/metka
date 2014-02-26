@@ -7,7 +7,7 @@ import fi.uta.fsd.metka.mvc.domain.ConfigurationService;
 import fi.uta.fsd.metka.mvc.domain.SeriesService;
 import fi.uta.fsd.metka.mvc.domain.simple.ErrorMessage;
 import fi.uta.fsd.metka.mvc.domain.simple.RevisionViewDataContainer;
-import fi.uta.fsd.metka.mvc.domain.simple.TransferObject;
+import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchData;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchResultSO;
 import org.springframework.beans.factory.annotation.Autowired;

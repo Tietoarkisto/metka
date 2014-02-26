@@ -3,6 +3,7 @@ package fi.uta.fsd.metka.model.data.change;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.model.data.RowIdentity;
+import org.joda.time.DateTime;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -14,6 +15,8 @@ import java.util.Map;
 public class RowChange {
     @XmlElement private final RowIdentity key;
     @XmlElement private final Map<String, FieldChange> changes = new HashMap<>();
+    @XmlElement private DateTime savedAt;
+    @XmlElement private String savedBy;
 
     @JsonCreator
     public RowChange(@JsonProperty("key")RowIdentity key) {
@@ -26,6 +29,22 @@ public class RowChange {
 
     public Map<String, FieldChange> getChanges() {
         return changes;
+    }
+
+    public DateTime getSavedAt() {
+        return savedAt;
+    }
+
+    public void setSavedAt(DateTime savedAt) {
+        this.savedAt = savedAt;
+    }
+
+    public String getSavedBy() {
+        return savedBy;
+    }
+
+    public void setSavedBy(String savedBy) {
+        this.savedBy = savedBy;
     }
 
     @Override

@@ -26,4 +26,8 @@ public class ContainerFieldChange  extends FieldChange {
     public void setNextRowId(Integer nextRowId) {
         this.nextRowId = nextRowId;
     }
+
+    public List<RowChange> getRows() {
+        return rows;
+    }
 }

@@ -5,7 +5,7 @@ import fi.uta.fsd.metka.data.repository.SeriesRepository;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.mvc.domain.simple.RevisionViewDataContainer;
-import fi.uta.fsd.metka.mvc.domain.simple.TransferObject;
+import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchResultSO;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchSO;
 import fi.uta.fsd.metka.mvc.search.GeneralSearch;

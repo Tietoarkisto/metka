@@ -36,6 +36,7 @@ public class Field {
     @XmlElement private final List<String> concatenate = new ArrayList<>();
     @XmlElement private String reference = null;
     @XmlElement private Boolean multiline = false;
+    @XmlElement private Boolean showSaveInfo = false;
 
     @JsonCreator
     public Field(@JsonProperty("key")String key) {
@@ -148,6 +149,14 @@ public class Field {
 
     public void setMultiline(Boolean multiline) {
         this.multiline = (multiline == null) ? false : multiline;
+    }
+
+    public Boolean getShowSaveInfo() {
+        return showSaveInfo;
+    }
+
+    public void setShowSaveInfo(Boolean showSaveInfo) {
+        this.showSaveInfo = showSaveInfo;
     }
 
     @Override

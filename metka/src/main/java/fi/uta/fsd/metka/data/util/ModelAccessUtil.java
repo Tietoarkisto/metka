@@ -6,11 +6,13 @@ import fi.uta.fsd.metka.data.enums.FieldType;
 import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
+import fi.uta.fsd.metka.model.data.change.ContainerFieldChange;
 import fi.uta.fsd.metka.model.data.change.ValueFieldChange;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.data.container.ContainerFieldContainer;
 import fi.uta.fsd.metka.model.data.container.ValueFieldContainer;
 import fi.uta.fsd.metka.model.data.value.SimpleValue;
-import fi.uta.fsd.metka.mvc.domain.simple.TransferObject;
+import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -24,7 +26,12 @@ public class ModelAccessUtil {
 
     public static boolean idIntegrityCheck(TransferObject to, RevisionData data, Configuration config) {
         String key = config.getIdField();
-        ValueFieldContainer field = getValueFieldContainerFromRevisionData(data, key);
+        ValueFieldContainer field = getValueFieldContainerFromRevisionData(data, key, config);
+        if(field == null) {
+            // TODO: tried to check id integrity with Container field. Container field should never be id field. Log error
+            // Tried to check integrity with wrong field, integrity can not be checked.
+            return false;
+        }
         Integer dataIdField = extractIntegerSimpleValue(field);
         Integer toIdField = stringToInteger(to.getByKey(key));
         if(dataIdField == null) {
@@ -58,13 +65,41 @@ public class ModelAccessUtil {
         return false;
     }
 
-    // TODO: Configuration checking that the field is a valid target, for now assume accurate use
-    public static ValueFieldContainer getValueFieldContainerFromRevisionData(RevisionData data, String key) {
+    /**
+     * Return newest possible top level ValueFieldContainer for given field key.
+     * If field does not exist in configuration returns null
+     * If field is a CONTAINER field return null.
+     * If field key is valid and data is in a DRAFT state get newField from change object.
+     * If newField is null then originalField is returned instead. If no change exists then returns null.
+     * If we're not in a DRAFT then ValueFieldContainer is returned from fields map instead.
+     * @param data RevisionData of the revision being manipulated.
+     * @param key Field key of the requested field.
+     * @param config Configuration of the provided RevisionData
+     * @return Newest possible top level ValueFieldContainer of the requested key if one exists.
+     */
+    public static ValueFieldContainer getValueFieldContainerFromRevisionData(RevisionData data, String key, Configuration config) {
+        if(config.getField(key) == null) {
+            // TODO: no such field in configuration, log error.
+            // Field does not exist. return null
+            return null;
+        }
+        if(config.getField(key).getSubfield()) {
+            // TODO: Tried to request a CONTAINER that is a subfield, log error.
+            // TODO: Should return an error message or some sort of result object to inform that illegal operation has happened
+            return null;
+        }
+        if(config.getField(key).getType() == FieldType.CONTAINER) {
+            // TODO: Tried to get ContainerFieldContainer instead of ValueFieldContainer, log error
+            // TODO: Should return an error message or some sort of result object to inform that illegal operation has happened
+            return null;
+        }
         ValueFieldContainer container = null;
         if(data.getState() == RevisionState.DRAFT) {
             ValueFieldChange change = (ValueFieldChange)data.getChange(key);
             if(change == null) {
-                container = (ValueFieldContainer)data.getField(key);
+                // No change exists for this field, value has never been inserted. Since this is a DRAFT that means that
+                // fields map is empty and we can return null.
+                return null;
             } else if(change.getNewField() != null) {
                 container = change.getNewField();
             } else {
@@ -75,6 +110,84 @@ public class ModelAccessUtil {
         }
 
         return container;
+    }
+
+    /**
+     * Return top level ContainerFieldContainer for given field key.
+     * If field does not exist in configuration returns null.
+     * If field is a subfield return null, this should only be used for top level (non subfield) containers.
+     * If field is not a CONTAINER field return null.
+     * If the data is in a DRAFT state return null (does not contain ContainerFieldContainer objects)
+     * Otherwise returns field from data typed as ContainerFieldContainer (assumes data is correct).
+     * @param data RevisionData of the revision being manipulated.
+     * @param key Field key of the requested field.
+     * @param config Configuration of the provided RevisionData
+     * @return ContainerFieldContainer of the requested key if one exists.
+     */
+    public static ContainerFieldContainer getContainerFieldContainerFromRevisionData(RevisionData data, String key, Configuration config) {
+        if(config.getField(key) == null) {
+            // TODO: no such field in configuration, log error.
+            // Field does not exist. return null
+            // TODO: Should return an error message or some sort of result object to inform that illegal operation has happened
+            return null;
+        }
+        if(config.getField(key).getSubfield()) {
+            // TODO: Tried to request a CONTAINER that is a subfield, log error.
+            // TODO: Should return an error message or some sort of result object to inform that illegal operation has happened
+            return null;
+        }
+        if(config.getField(key).getType() != FieldType.CONTAINER) {
+            // TODO: Tried to get ValueFieldContainer instead of ContainerFieldContainer, log error
+            // TODO: Should return an error message or some sort of result object to inform that illegal operation has happened
+            return null;
+        }
+        if(data.getState() == RevisionState.DRAFT) {
+            // TODO: log error that wrong method is being used. You can not return ContainerFieldContainer objects from DRAFT.
+            // TODO: Should return an error message or some sort of result object to inform that illegal operation has happened
+            return null;
+        }
+
+
+        return (ContainerFieldContainer)data.getField(key);
+    }
+
+    /**
+     * Return top level ContainerFieldChange for given field key.
+     * If field does not exist in configuration returns null.
+     * If field is a subfield return null, this should only be used for top level (non subfield) containers.
+     * If field is not a CONTAINER field return null.
+     * If the data is not in a DRAFT state return null (ContainerFieldChange does not contain all data)
+     * Otherwise returns change from data typed as ContainerFieldChange (assumes data is correct).
+     * @param data RevisionData of the revision being manipulated.
+     * @param key Field key of the requested field.
+     * @param config Configuration of the provided RevisionData
+     * @return ContainerFieldChange of the requested key if one exists. Null otherwise (or if field is CONTAINER).
+     */
+    public static ContainerFieldChange getContainerFieldChangeFromRevisionData(RevisionData data, String key, Configuration config) {
+        if(config.getField(key) == null) {
+            // TODO: no such field in configuration, log error.
+            // Field does not exist. return null
+            // TODO: Should return an error message or some sort of result object to inform that illegal operation has happened
+            return null;
+        }
+        if(config.getField(key).getSubfield()) {
+            // TODO: Tried to request a CONTAINER that is a subfield, log error.
+            // TODO: Should return an error message or some sort of result object to inform that illegal operation has happened
+            return null;
+        }
+        if(config.getField(key).getType() != FieldType.CONTAINER) {
+            // TODO: Tried to get ValueFieldContainer instead of ContainerFieldContainer, log error
+            // TODO: Should return an error message or some sort of result object to inform that illegal operation has happened
+            return null;
+        }
+        if(data.getState() != RevisionState.DRAFT) {
+            // TODO: log error that wrong method is being used. ContainerFieldChange in non DRAFT revisions doesn't contain all information.
+            // TODO: Should return an error message or some sort of result object to inform that illegal operation has happened
+            return null;
+        }
+
+
+        return (ContainerFieldChange)data.getChange(key);
     }
 
     /**
@@ -242,7 +355,7 @@ public class ModelAccessUtil {
             return false;
         }
         Object value = to.getByKey(key);
-        ValueFieldContainer container = getValueFieldContainerFromRevisionData(data, key);
+        ValueFieldContainer container = getValueFieldContainerFromRevisionData(data, key, config);
 
         boolean change = false;
         switch(field.getType()) {

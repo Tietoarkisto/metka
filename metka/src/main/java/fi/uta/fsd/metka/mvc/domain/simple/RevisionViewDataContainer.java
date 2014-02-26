@@ -1,6 +1,7 @@
 package fi.uta.fsd.metka.mvc.domain.simple;
 
 import fi.uta.fsd.metka.model.configuration.Configuration;
+import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
 
 /**
  * Return TransferObject and its related Configuration.

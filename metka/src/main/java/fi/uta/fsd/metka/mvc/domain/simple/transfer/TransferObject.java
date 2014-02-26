@@ -1,4 +1,4 @@
-package fi.uta.fsd.metka.mvc.domain.simple;
+package fi.uta.fsd.metka.mvc.domain.simple.transfer;
 
 import fi.uta.fsd.metka.data.enums.FieldType;
 import fi.uta.fsd.metka.data.enums.RevisionState;
@@ -6,6 +6,7 @@ import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.ConfigurationKey;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.data.container.ContainerFieldContainer;
 import fi.uta.fsd.metka.model.data.container.ValueFieldContainer;
 import fi.uta.fsd.metka.model.data.value.SimpleValue;
 
@@ -97,17 +98,15 @@ public class TransferObject {
         to.setState(data.getState());
         to.setConfiguration(data.getConfiguration());
 
-        // TODO: this should be automated as much as possible using configuration in the future.
-        // TODO: For now assumes that all fields are ValueFields
         for(Field field : config.getFields().values()) {
             if(field.getType() != FieldType.CONTAINER) {
                 // Since we don't care about types at the UI that much we can push all values to the map as Strings
-                ValueFieldContainer container = getValueFieldContainerFromRevisionData(data, field.getKey());
+                ValueFieldContainer container = getValueFieldContainerFromRevisionData(data, field.getKey(), config);
                 if(container != null) {
                     to.setByKey(field.getKey(), ((SimpleValue)container.getValue()).getValue());
                 }
             } else {
-                // TODO: Handle containers. This needs a recursion since subfields can now be containers.
+                ContainerTransfer ct = ContainerTransfer.buildContainerTransferFromFieldContainer(data, field.getKey(), config)
             }
         }
 
