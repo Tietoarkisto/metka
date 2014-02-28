@@ -33,10 +33,6 @@ public class LuceneAPI {
     // Initialize logger.
     private static final Logger log = Logger.getInstance();
 
-    //Read properties file
-    Properties prop = new Properties();
-    InputStream input = null;
-
     // TODO Read from properties
     private static String indexBaseDirectory = "/tmp/index/";
     private String indexDirectory;
@@ -63,6 +59,8 @@ public class LuceneAPI {
     public LuceneAPI(IndexType type, String indexDirectory) throws Exception {
 
         // Read properties from file.
+        Properties prop = new Properties();
+        InputStream input = null;
         try {
             // Name of the properties file
             String filename = "lucene_config.properties";

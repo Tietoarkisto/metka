@@ -4,22 +4,22 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.io.JsonStringEncoder;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.QueueingConsumer;
-import com.rabbitmq.client.AMQP.*;
-
 import fi.uta.fsd.metkaAmqp.AmqpConnector;
 import fi.uta.fsd.metkaAmqp.Logger;
 import org.apache.commons.daemon.Daemon;
 import org.apache.commons.daemon.DaemonContext;
-import org.apache.commons.daemon.DaemonInitException;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopScoreDocCollector;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 /**
  * Company: Proactum Oy
@@ -44,10 +44,44 @@ public class MetkaSearchServer implements Daemon {
 
     // Daemon controll functions
     @Override
-    public void init(DaemonContext daemonContext) throws DaemonInitException, Exception {
+    public void init(DaemonContext daemonContext) throws Exception {
         log.debug(this, "MetkaSearchServer initializing..");
+
+        // Read properties from file.
+        Properties prop = new Properties();
+        InputStream input = null;
+        try {
+            // Name of the properties file
+            String filename = "search_config.properties";
+            input = LuceneAPI.class.getClassLoader().getResourceAsStream(filename);
+            if(input==null){
+                System.out.println("Sorry, unable to find " + filename);
+                throw new IOException("Sorry, unable to find \"" + filename +"\"");
+            }
+
+            // load a properties file
+            prop.load(input);
+
+            indexBaseDirectory = prop.getProperty("indexBaseDirectory", indexBaseDirectory);
+
+        } catch (IOException ex) {
+            log.error(this, "" + ex.getMessage());
+        } finally {
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (IOException e) {
+                    log.error(this, e.getMessage());
+                }
+            }
+        }
+
+
         amqpChannel = AmqpConnector.getChannel();
         luceneSearchThread = new SearchThread();
+
+
+
     }
 
     @Override
@@ -140,7 +174,9 @@ public class MetkaSearchServer implements Daemon {
         private TopScoreDocCollector collector = null;
         private String searchQuery = "";
         private Channel channel = null;
+
         // Hide basic constructor..
+        @SuppressWarnings("UnusedDeclaration")
         private SearchActionRunnable(){}
 
         // Constructor takes in communication channel and delivered message.
@@ -152,7 +188,7 @@ public class MetkaSearchServer implements Daemon {
         // And run() actually do all the search work.
         public void run() {
             // Parse incoming message.
-            JsonNode message = null;
+            JsonNode message;
             ObjectMapper mapper = new ObjectMapper();
 
             BasicProperties props = delivery.getProperties();
@@ -165,8 +201,8 @@ public class MetkaSearchServer implements Daemon {
                 message = mapper.readTree(delivery.getBody());
                 searchQuery = message.get("searchQuery").asText();
             } catch (IOException e) {
-                // Parse failed
-                log.error(this, "Error parsing search message.\nMessage body: " + delivery.getBody() + "\n" + e.getMessage());
+                /* Parse failed */
+                log.error(this, "Error parsing search message.\nMessage body: " + delivery.getBody()[0] + "\n" + e.getMessage());
                 try {
                     // Try to send error thu Rabbit..
                     channel.basicPublish("", props.getReplyTo(), replyProps, generateErrorJson("Failed to parse message!").getBytes());
@@ -181,8 +217,7 @@ public class MetkaSearchServer implements Daemon {
             try {
                 // Do the search from Lucene
                 api = new LuceneAPI(LuceneAPI.IndexType.FILESYSTEM_READONLY,"tietoarkisto");
-                //TODO "body" is for testing purposes only! Need to be adjusted when
-                //document format is ready.
+                //TODO "body" is for testing purposes only! Need to be adjusted when document format is ready.
                 collector =  api.findDocuments("body", searchQuery);
             } catch (IOException e) {
                 log.error(this, "Can't access to lucene!\n" + e.getMessage());
