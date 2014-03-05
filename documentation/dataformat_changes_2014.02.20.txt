@@ -33,9 +33,14 @@ no multiple values are saved to a single ValueFieldContainer and as such the val
 Configuration:
 added idField which should contain the field key of the field containing revisionable id for the revision data. This lets us automate some checks and UI necessities.
 
--- 26.02.2014 additions --
-RowChange:
-added SavedAt and SavedBy information to RowChange. These should be updated every time a new change is set inside that row (might cause some trouble with recursive CONTAINERS) and then these can be copied directly to RowContainer when approving revision.
+Field:
+added showSaveInfo to field. This is used on CONTAINER fields to inform UI that it should show savedAt and savedBy information for each row. This info is always available to the UI (the transfer object doesn't careabout field configuration, it includes all possible information at this point) but it's only shown if defined in Field configuration.
 
+-- 26.02.2014 additions --
 Field+Change
 Changes and Fields are unified into one Fields map where each field value has both old value and new value. Changes map will only contain field keys so that changes can be tracked but they are never really used to fetch data (except for displaying changes). This will make data handling much easier removing the need to fetch data from two different hierarchies as well as making indexing easier by allowing to handle both approved and draft data in a similar way. When new revision is made the whole field structure is copied as a base, then every field that has a newValue has its oldValue set to that value and newValue field set to null. Fields that don't exist at all have never been set, fields that exist but have null for their value are fields that have been set but have been removed.
+Check uml_json_data_changes.graphml and uml_json_data_field.graphml for the new format. These changes override some of the changes mentioned earlier in this document.
+
+-- 04.03.2014 additions --
+Field:
+summaryField added to control wether fields are show in the datatables collecting CONTAINER information. There are certain fields with larger texts that are not suitable for table format and so are only shown in the edit/add dialog.

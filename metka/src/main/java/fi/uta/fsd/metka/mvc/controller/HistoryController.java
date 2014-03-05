@@ -11,13 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * Created with IntelliJ IDEA.
- * User: lasseku
- * Date: 1/14/14
- * Time: 8:55 AM
- * To change this template use File | Settings | File Templates.
- */
 @Controller
 @RequestMapping("/history")
 public class HistoryController {
@@ -43,8 +36,9 @@ public class HistoryController {
      */
     @RequestMapping(value = "revisions/compare", method = {RequestMethod.GET, RequestMethod.POST},
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody ChangeCompareSO getChanges(@RequestBody ChangeCompareRequest request) {
-        ChangeCompareSO c = service.compareRevisions(request);
-        return c;
+    public @ResponseBody ChangeCompareSO getChanges(@RequestBody ChangeCompareRequest request) throws Exception {
+        //ChangeCompareSO c = service.compareRevisions(request);
+        throw new Exception("Comparison not implemented yet!");
+        //return c;
     }
 }

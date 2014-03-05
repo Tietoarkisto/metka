@@ -1,7 +1,8 @@
 package fi.uta.fsd.metka.data.repository;
 
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
-import fi.uta.fsd.metka.data.enums.repositoryResponses.RemoveResponse;
+import fi.uta.fsd.metka.data.enums.repositoryResponses.DraftRemoveResponse;
+import fi.uta.fsd.metka.data.enums.repositoryResponses.LogicalRemoveResponse;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import javassist.NotFoundException;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,8 +18,8 @@ import java.util.MissingResourceException;
 public interface GeneralRepository {
 
     public Integer getAdjancedRevisionableId(Integer currentId, String type, boolean forward) throws NotFoundException;
-    @Transactional(readOnly = false) public RemoveResponse removeDraft(String type, Integer id);
-    @Transactional(readOnly = false) public RemoveResponse removeLogical(String type, Integer id);
+    @Transactional(readOnly = false) public DraftRemoveResponse removeDraft(String type, Integer id);
+    @Transactional(readOnly = false) public LogicalRemoveResponse removeLogical(String type, Integer id);
 
     /**
      * Returns a list of revision data objects consisting of the latest revision of each revisionable of given type.

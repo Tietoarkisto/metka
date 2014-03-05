@@ -1,16 +1,9 @@
 package fi.uta.fsd.metka.mvc.domain;
 
-import fi.uta.fsd.metka.data.enums.ChangeOperation;
 import fi.uta.fsd.metka.data.repository.HistoryRepository;
-import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.configuration.Field;
-import fi.uta.fsd.metka.model.data.change.FieldChange;
-import fi.uta.fsd.metka.model.data.change.ValueFieldChange;
-import fi.uta.fsd.metka.model.data.container.FieldContainer;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.mvc.domain.requests.ChangeCompareRequest;
 import fi.uta.fsd.metka.mvc.domain.simple.history.ChangeCompareSO;
-import fi.uta.fsd.metka.mvc.domain.simple.history.ChangeSO;
 import fi.uta.fsd.metka.mvc.domain.simple.history.RevisionSO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,13 +11,6 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.*;
 
-/**
- * Created with IntelliJ IDEA.
- * User: lasseku
- * Date: 1/14/14
- * Time: 9:53 AM
- * To change this template use File | Settings | File Templates.
- */
 @Service
 public class HistoryService {
 
@@ -63,7 +49,7 @@ public class HistoryService {
      * @return
      */
     public ChangeCompareSO compareRevisions(ChangeCompareRequest request) {
-        ChangeCompareSO response = new ChangeCompareSO();
+        /*ChangeCompareSO response = new ChangeCompareSO();
         response.setId(request.getId());
         response.setBegin(request.getBegin());
         response.setEnd(request.getEnd());
@@ -96,8 +82,10 @@ public class HistoryService {
         Configuration config = configurationService.findLatestByType(request.getType());
 
         // TODO: Improve to take into account container fields and row containers. For now handles only ValueFields
+
+        // TODO: Values should be found using the keys in Changes hierarchy
         for(RevisionData data : comparedRevisions) {
-            for(Map.Entry<String, FieldChange> change : data.getChanges().entrySet()) {
+            for(Map.Entry<String, Change> change : data.getChanges().entrySet()) {
                 ValueFieldChange valueChange = (ValueFieldChange) change.getValue();
                 if(valueChange.getOperation() != ChangeOperation.UNCHANGED) {
                     ChangeSO so = changesSO.get(change.getKey());
@@ -128,6 +116,7 @@ public class HistoryService {
 
         response.setChanges(changesSO.values());
 
-        return response;
+        return response;*/
+        return null;
     }
 }

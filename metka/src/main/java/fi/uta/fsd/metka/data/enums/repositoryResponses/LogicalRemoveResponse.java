@@ -7,6 +7,6 @@ package fi.uta.fsd.metka.data.enums.repositoryResponses;
  * Time: 1:09 PM
  * To change this template use File | Settings | File Templates.
  */
-public enum RemoveResponse {
-    SUCCESS, NO_REVISIONABLE, NO_DRAFT, FINAL_REVISION, OPEN_DRAFT, NO_APPROVED
+public enum LogicalRemoveResponse {
+    SUCCESS, NO_REVISIONABLE, OPEN_DRAFT, NO_APPROVED
 }

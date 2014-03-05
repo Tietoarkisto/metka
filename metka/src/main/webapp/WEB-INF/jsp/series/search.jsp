@@ -21,13 +21,13 @@
                             <tr>
                                 <td class="labelColumn"><spring:message code="general.search.state"/></td>
 
-                                <td class="rightAlignCell"><form:label path="searchApproved"><spring:message code="general.search.state.approved"/></form:label></td>
+                                <td class="rightAlignCell"><form:label path="searchApproved"><spring:message code="general.search.state.APPROVED"/></form:label></td>
                                 <td><form:checkbox path="searchApproved" /></td>
 
-                                <td class="rightAlignCell"><form:label path="searchDraft"><spring:message code="general.search.state.draft"/></form:label></td>
+                                <td class="rightAlignCell"><form:label path="searchDraft"><spring:message code="general.search.state.DRAFT"/></form:label></td>
                                 <td><form:checkbox path="searchDraft" /></td>
 
-                                <td class="rightAlignCell"><form:label path="searchRemoved"><spring:message code="general.search.state.removed"/></form:label></td>
+                                <td class="rightAlignCell"><form:label path="searchRemoved"><spring:message code="general.search.state.REMOVED"/></form:label></td>
                                 <td><form:checkbox path="searchRemoved" /></td>
                             </tr>
                         </table>
@@ -66,10 +66,10 @@
                             </thead>
                             <tbody>
                                 <c:forEach var="r" items="${searchData.results}">
-                                    <tr class="pointerClass" onclick="location.href='${contextPath}/series/view/${r.seriesno}/${r.revision}'">
-                                        <td>${r.seriesno}</td>
-                                        <td>${r.seriesabb}</td>
-                                        <td>${r.seriesname}</td>
+                                    <tr class="pointerClass" onclick="location.href='${contextPath}/series/view/${r.id}/${r.revision}'">
+                                        <td>${r.values['seriesno']}</td>
+                                        <td>${r.values['seriesabb']}</td>
+                                        <td>${r.values['seriesname']}</td>
                                         <td><spring:message code="general.search.result.state.${r.state}"/></td>
                                     </tr>
                                 </c:forEach>

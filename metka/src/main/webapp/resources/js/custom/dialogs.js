@@ -43,3 +43,7 @@ function confirmation(message, title, execute){
 
     confirm.dialog("open");
 }
+
+function dialogClose(id) {
+    $("#"+id).dialog("close");
+}

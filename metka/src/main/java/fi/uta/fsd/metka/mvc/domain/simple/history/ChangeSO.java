@@ -3,7 +3,7 @@ package fi.uta.fsd.metka.mvc.domain.simple.history;
 import fi.uta.fsd.metka.data.enums.ChangeOperation;
 import fi.uta.fsd.metka.data.enums.FieldType;
 import fi.uta.fsd.metka.model.data.container.FieldContainer;
-import fi.uta.fsd.metka.model.data.container.ValueFieldContainer;
+import fi.uta.fsd.metka.model.data.container.SavedFieldContainer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,7 +94,7 @@ public class ChangeSO {
                 case DATE:
                 case DATETIME:
                 case TIME:
-                    buildSimpleValue((ValueFieldContainer)field, list);
+                    buildSimpleValue((SavedFieldContainer)field, list);
                     break;
                 default:
                     break;
@@ -102,7 +102,7 @@ public class ChangeSO {
         }
     }
 
-    private static void buildSimpleValue(ValueFieldContainer field, List<String> list) {
+    private static void buildSimpleValue(SavedFieldContainer field, List<String> list) {
         list.add(field.getValue().toString());
     }
 }

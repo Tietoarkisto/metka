@@ -5,7 +5,8 @@ import fi.uta.fsd.metka.data.entity.RevisionableEntity;
 import fi.uta.fsd.metka.data.entity.key.RevisionKey;
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.enums.RevisionState;
-import fi.uta.fsd.metka.data.enums.repositoryResponses.RemoveResponse;
+import fi.uta.fsd.metka.data.enums.repositoryResponses.DraftRemoveResponse;
+import fi.uta.fsd.metka.data.enums.repositoryResponses.LogicalRemoveResponse;
 import fi.uta.fsd.metka.data.repository.GeneralRepository;
 import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.model.data.RevisionData;
@@ -48,24 +49,24 @@ public class GeneralRepositoryImpl implements GeneralRepository {
     }
 
     @Override
-    public RemoveResponse removeDraft(String type, Integer id) {
+    public DraftRemoveResponse removeDraft(String type, Integer id) {
         List<RevisionableEntity> list = em.createQuery("SELECT r FROM RevisionableEntity r " +
                 "WHERE r.id = :id AND r.type = :type", RevisionableEntity.class)
                 .setParameter("id", id)
                 .setParameter("type", type.toUpperCase())
                 .getResultList();
         if(list.size() == 0) {
-            return RemoveResponse.NO_REVISIONABLE;
+            return DraftRemoveResponse.NO_REVISIONABLE;
         }
         RevisionableEntity entity = list.get(0);
         if(entity.getCurApprovedNo() != null && entity.getCurApprovedNo().equals(entity.getLatestRevisionNo())) {
-            return RemoveResponse.NO_DRAFT;
+            return DraftRemoveResponse.NO_DRAFT;
         }
         RevisionEntity rev = em.find(RevisionEntity.class, new RevisionKey(entity.getId(), entity.getLatestRevisionNo()));
 
         if(!rev.getState().equals(RevisionState.DRAFT)) {
             // TODO: Log error since there is data discrepancy
-            return RemoveResponse.NO_DRAFT;
+            return DraftRemoveResponse.NO_DRAFT;
         }
 
         em.remove(rev);
@@ -73,34 +74,34 @@ public class GeneralRepositoryImpl implements GeneralRepository {
         if(entity.getCurApprovedNo() == null) {
             // No revisions remaining, remove the whole revisionable entity.
             em.remove(entity);
-            return RemoveResponse.FINAL_REVISION;
+            return DraftRemoveResponse.FINAL_REVISION;
         } else {
             entity.setLatestRevisionNo(entity.getCurApprovedNo());
-            return RemoveResponse.SUCCESS;
+            return DraftRemoveResponse.SUCCESS;
         }
     }
 
     @Override
-    public RemoveResponse removeLogical(String type, Integer id) {
+    public LogicalRemoveResponse removeLogical(String type, Integer id) {
         List<RevisionableEntity> list = em.createQuery("SELECT r FROM RevisionableEntity r " +
                 "WHERE r.id = :id AND r.type = :type", RevisionableEntity.class)
                 .setParameter("id", id)
                 .setParameter("type", type.toUpperCase())
                 .getResultList();
         if(list.size() == 0) {
-            return RemoveResponse.NO_REVISIONABLE;
+            return LogicalRemoveResponse.NO_REVISIONABLE;
         }
         RevisionableEntity entity = list.get(0);
         if(entity.getCurApprovedNo() == null) {
-            return RemoveResponse.NO_APPROVED;
+            return LogicalRemoveResponse.NO_APPROVED;
         }
         if(entity.getCurApprovedNo() != null && !entity.getCurApprovedNo().equals(entity.getLatestRevisionNo())) {
-            return RemoveResponse.OPEN_DRAFT;
+            return LogicalRemoveResponse.OPEN_DRAFT;
         }
 
         entity.setRemoved(true);
         entity.setRemovalDate(new LocalDate());
-        return RemoveResponse.SUCCESS;
+        return LogicalRemoveResponse.SUCCESS;
     }
 
     @Override

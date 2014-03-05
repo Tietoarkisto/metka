@@ -1,17 +1,20 @@
 package fi.uta.fsd.metka.mvc.controller;
 
 import fi.uta.fsd.metka.data.enums.ChoicelistType;
-import fi.uta.fsd.metka.data.enums.RevisionState;
+import fi.uta.fsd.metka.data.enums.FieldType;
+import fi.uta.fsd.metka.data.enums.UIRevisionState;
 import fi.uta.fsd.metka.model.configuration.Choicelist;
 import fi.uta.fsd.metka.model.configuration.Configuration;
+import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.mvc.domain.ConfigurationService;
 import fi.uta.fsd.metka.mvc.domain.GeneralService;
 import fi.uta.fsd.metka.mvc.domain.StudyService;
 import fi.uta.fsd.metka.mvc.domain.simple.ErrorMessage;
 import fi.uta.fsd.metka.mvc.domain.simple.RevisionViewDataContainer;
+import fi.uta.fsd.metka.mvc.domain.simple.transfer.SearchResult;
 import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
 import fi.uta.fsd.metka.mvc.domain.simple.study.StudySearchData;
-import fi.uta.fsd.metka.mvc.domain.simple.study.StudySearchResultSO;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -88,6 +91,7 @@ public class StudyController {
             return REDIRECT_SEARCH;
         }
 
+        // Fill choicelist reference options
         try {
             for(Choicelist list : config.getChoicelists().values()) {
                 if(list.getType().equals(ChoicelistType.REFERENCE)) {
@@ -99,8 +103,38 @@ public class StudyController {
             ex.printStackTrace();
         }
 
+        // Form CONTAINER config json
+        JSONObject containerConfig = null;
+        for(Field field : config.getFields().values()) {
+            if(field.getType() != FieldType.CONTAINER) { // Handle only CONTAINERs
+                continue;
+            }
+
+            if(containerConfig == null) {
+                containerConfig = new JSONObject();
+            }
+            JSONObject container = new JSONObject();
+            container.put("key", field.getKey());
+            container.put("type", field.getType());
+            for(String subkey : field.getSubfields()) {
+                Field subConf = config.getField(subkey);
+                JSONObject subfield = new JSONObject();
+                subfield.put("key", subConf.getKey());
+                subfield.put("type", subConf.getType());
+                subfield.put("immutable", subConf.getImmutable());
+                subfield.put("multiline", subConf.getMultiline());
+                subfield.put("required", subConf.getRequired());
+                subfield.put("summaryField", subConf.getSummaryField());
+                container.append("subfields", subfield);
+            }
+            //container.put("subfields", field.getSubfields());
+            container.put("showSaveInfo", field.getShowSaveInfo());
+            containerConfig.put(field.getKey(), container);
+        }
+        model.asMap().put("containerConfig", containerConfig.toString());
+
         model.asMap().put("page", "study");
-        if(single.getState() == RevisionState.DRAFT) {
+        if(single.getState() == UIRevisionState.DRAFT) {
             // TODO: this should check if the user is the handler for this revision.
             return MODIFY;
         } else {
@@ -117,7 +151,7 @@ public class StudyController {
     @RequestMapping(value="search", method = {RequestMethod.GET, RequestMethod.POST})
     public String search(Model model, @ModelAttribute("searchData")StudySearchData searchData) {
         if(searchData.getQuery() != null) {
-            List<StudySearchResultSO> results = studyService.searchForStudies(searchData.getQuery());
+            List<SearchResult> results = studyService.searchForStudies(searchData.getQuery());
             if(results.size() == 1) {
                 return REDIRECT_VIEW+results.get(0).getId()+"/"+results.get(0).getRevision();
             }

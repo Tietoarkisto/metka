@@ -1,15 +1,8 @@
 package fi.uta.fsd.metka.service;
 
 import fi.uta.fsd.metka.MetkaTestModel;
-import fi.uta.fsd.metka.data.entity.RevisionEntity;
-import fi.uta.fsd.metka.data.entity.impl.StudyEntity;
-import fi.uta.fsd.metka.data.enums.RevisionState;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import java.util.List;
-
-import static org.junit.Assert.*;
 
 public class StudyServiceTest extends MetkaTestModel {
 

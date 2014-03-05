@@ -1,34 +1,6 @@
-package fi.uta.fsd.metka.mvc.domain.simple;
+package fi.uta.fsd.metka.mvc.domain.simple.transfer;
 
-public abstract class SimpleSearchObject extends SimpleObject {
-
-    private Integer id;
-    private Integer revision;
-    private String state;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getRevision() {
-        return revision;
-    }
-
-    public void setRevision(Integer revision) {
-        this.revision = revision;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
+public class SearchResult extends TransferObject {
 
     /**
      * Used to export search results as csv-files.
@@ -37,6 +9,7 @@ public abstract class SimpleSearchObject extends SimpleObject {
      * @return
      * @throws IllegalArgumentException - If keys contains a key not found in this object
      */
+    // TODO: Remake using current model
     public String toCSVRow(String[] keys) throws IllegalArgumentException {
         StringBuilder csvBuilder = new StringBuilder();
         boolean first = true;
@@ -50,4 +23,6 @@ public abstract class SimpleSearchObject extends SimpleObject {
         }
         return csvBuilder.toString();
     }
+
+    // TODO: Make enum containing only valid fields for each type of search result and override setByKey and getByKey to check that given value is in that enum
 }

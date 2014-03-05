@@ -9,8 +9,8 @@ import fi.uta.fsd.metka.model.configuration.Choicelist;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.change.ValueFieldChange;
-import fi.uta.fsd.metka.model.data.container.ValueFieldContainer;
+import fi.uta.fsd.metka.model.data.change.Change;
+import fi.uta.fsd.metka.model.data.container.SavedFieldContainer;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -61,8 +61,7 @@ public class StudyFactory {
 
         RevisionData data = RevisionData.createRevisionData(entity, conf.getKey());
 
-        ValueFieldChange change;
-        ValueFieldContainer field;
+        SavedFieldContainer field;
         Choicelist list;
         Field confField;
 
@@ -70,36 +69,32 @@ public class StudyFactory {
         // These can be basically idField, CONCAT fields and CHOICE fields (insert choicelist default value if any) as well as values that are expected to be delivered to Factory.
 
         // Study_id, this is revisionable id
-        field = createValueFieldContainer(conf.getIdField(), time);
-        setSimpleValue(field, entity.getKey().getRevisionableId()+"");
-        change = createNewRevisionValueFieldChange(field);
-        data.putChange(change);
+        field = new SavedFieldContainer(conf.getIdField());
+        field.setModifiedValue(setSimpleValue(createSavedValue(time), entity.getKey().getRevisionableId() + ""));
+        data.putField(field).putChange(new Change(field.getKey()));
 
         // Study_id_prefix, this is a string that is added to the front of study_id
         list = conf.getChoicelists().get("id_prefix_list");
-        field = createValueFieldContainer("study_id_prefix", time);
-        setSimpleValue(field, list.getDef());
-        change = createNewRevisionValueFieldChange(field);
-        data.putChange(change);
+        field = new SavedFieldContainer("study_id_prefix");
+        field.setModifiedValue(setSimpleValue(createSavedValue(time), list.getDef()));
+        data.putField(field).putChange(new Change(field.getKey()));
 
         // Acquisition_number, this is required information for creating a new study
-        field = createValueFieldContainer("submissionid", time);
-        setSimpleValue(field, acquisition_number+"");
-        change = createNewRevisionValueFieldChange(field);
-        data.putChange(change);
+        field = new SavedFieldContainer("submissionid");
+        field.setModifiedValue(setSimpleValue(createSavedValue(time), acquisition_number+""));
+        data.putField(field).putChange(new Change(field.getKey()));
 
         // create Study_number field, which concatenates study_id_prefix and study_id. This is the basis of study searches.
-        field = createValueFieldContainer("id", time);
+        // This is more of a proof of concept for concatenate fields than anything.
+        field = new SavedFieldContainer("id");
         confField = conf.getField(field.getKey());
         String concat = "";
         for(String fieldKey : confField.getConcatenate()) {
-            /*ValueFieldContainer tempField = (ValueFieldContainer)data.getField(fieldKey);*/
-            ValueFieldContainer tempField = getValueFieldContainerFromRevisionData(data, fieldKey);
+            SavedFieldContainer tempField = getSavedFieldContainerFromRevisionData(data, fieldKey);
             concat += extractStringSimpleValue(tempField);
         }
-        setSimpleValue(field, concat);
-        change = createNewRevisionValueFieldChange(field);
-        data.putChange(change);
+        field.setModifiedValue(setSimpleValue(createSavedValue(time), concat));
+        data.putField(field).putChange(new Change(field.getKey()));
 
         entity.setData(json.serialize(data));
 

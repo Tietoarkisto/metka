@@ -1,6 +1,7 @@
 package fi.uta.fsd.metka.model.data.container;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -29,5 +30,30 @@ public class ContainerFieldContainer extends FieldContainer {
 
     public List<RowContainer> getRows() {
         return rows;
+    }
+
+    @JsonIgnore public RowContainer getRow(Integer rowId) {
+
+        if(rowId == null || rowId >= nextRowId) {
+            // Row can not exist since no rowId given or row with given id has not been created for this container yet.
+            return null;
+        }
+        for(RowContainer row : rows) {
+            if(row.getRowId().equals(rowId)) {
+                return row;
+            }
+        }
+        // Given rowId was not found from this container
+        return null;
+    }
+
+    @Override
+    public FieldContainer copy() {
+        ContainerFieldContainer container = new ContainerFieldContainer(getKey());
+        container.setNextRowId(nextRowId);
+        for(RowContainer row : rows) {
+            container.getRows().add((RowContainer)row.copy());
+        }
+        return container;
     }
 }

@@ -12,7 +12,7 @@
         <jsp:include page="../../inc/topMenu.jsp" />
         <div class="wrapper">
             <div class="content">
-                <h1 class="pageTitle"><spring:message code="SERIES"/> ${single.values['seriesno']} - <spring:message code="general.revision"/> ${single.revision} - <spring:message code="general.title.draft"/></h1>
+                <h1 class="pageTitle"><spring:message code="SERIES"/> ${single.values['seriesno']} - <spring:message code="general.revision"/> ${single.revision} - <spring:message code="general.title.DRAFT"/></h1>
 				<div class="upperContainer">
                     <form:form id="modifyForm" method="post" modelAttribute="single">
                         <table class="formTable">

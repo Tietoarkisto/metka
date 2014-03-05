@@ -7,7 +7,7 @@ import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.model.ModelBase;
 import fi.uta.fsd.metka.model.configuration.ConfigurationKey;
 import fi.uta.fsd.metka.model.configuration.Field;
-import fi.uta.fsd.metka.model.data.change.FieldChange;
+import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.container.FieldContainer;
 import org.joda.time.LocalDate;
 
@@ -42,7 +42,7 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase {
     // Class
     @XmlElement private final RevisionKey key;
     @XmlElement private final ConfigurationKey configuration;
-    @XmlElement private final Map<String, FieldChange> changes = new HashMap<>();
+    @XmlElement private final Map<String, Change> changes = new HashMap<>();
     @XmlElement private final Map<String, FieldContainer> fields = new HashMap<>();
     @XmlElement private RevisionState state;
     @XmlElement private LocalDate approvalDate;
@@ -63,7 +63,7 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase {
         return configuration;
     }
 
-    public Map<String, FieldChange> getChanges() {
+    public Map<String, Change> getChanges() {
         return changes;
     }
 
@@ -104,14 +104,15 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase {
     }
 
     // Helper methods
-    public FieldChange getChange(String key) {
+    public Change getChange(String key) {
         return changes.get(key);
     }
-    public FieldChange getChange(Field field) {
+    public Change getChange(Field field) {
         return getChange(field.getKey());
     }
-    public void putChange(FieldChange change) {
+    public RevisionData putChange(Change change) {
         changes.put(change.getKey(), change);
+        return this;
     }
     public FieldContainer getField(String key) {
         return fields.get(key);
@@ -119,8 +120,9 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase {
     public FieldContainer getField(Field field) {
         return getField(field.getKey());
     }
-    public void putField(FieldContainer field) {
+    public RevisionData putField(FieldContainer field) {
         fields.put(field.getKey(), field);
+        return this;
     }
 
     @Override

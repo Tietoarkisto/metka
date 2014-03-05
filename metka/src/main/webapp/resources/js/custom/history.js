@@ -48,8 +48,9 @@ $(document).ready(function(){
                     prop += strings[type.toUpperCase()+".field."+rowData["property"]];
                     row.append($("<td>", {class: "revisionTableColumn", text: prop}));
 
+                    // TODO: server should only send strings suitable for display and nothing more.
                     if(rowData.type == "CONTAINER") {
-                        // TODO: handle display of multiline values
+
                     } else {
                         if(rowData["oldValue"].length > 0) {
                             row.append($("<td>", {class: "revisionTableColumn", text: rowData["oldValue"][0]}));

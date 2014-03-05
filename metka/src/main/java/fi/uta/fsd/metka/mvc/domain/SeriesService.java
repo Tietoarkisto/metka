@@ -1,12 +1,13 @@
 package fi.uta.fsd.metka.mvc.domain;
 
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
+import fi.uta.fsd.metka.data.enums.UIRevisionState;
 import fi.uta.fsd.metka.data.repository.SeriesRepository;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.mvc.domain.simple.RevisionViewDataContainer;
+import fi.uta.fsd.metka.mvc.domain.simple.transfer.SearchResult;
 import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
-import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchResultSO;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchSO;
 import fi.uta.fsd.metka.mvc.search.GeneralSearch;
 import fi.uta.fsd.metka.mvc.search.RevisionDataRemovedContainer;
@@ -46,8 +47,8 @@ public class SeriesService {
         return list;
     }
 
-    public List<SeriesSearchResultSO> searchForSeries(SeriesSearchSO query) {
-        List<SeriesSearchResultSO> seriesList = new ArrayList<>();
+    public List<SearchResult> searchForSeries(SeriesSearchSO query) {
+        List<SearchResult> seriesList = new ArrayList<>();
         List<RevisionDataRemovedContainer> datas = null;
         try {
             datas = search.findSeries(query);
@@ -58,10 +59,10 @@ public class SeriesService {
         }
 
         for(RevisionDataRemovedContainer container : datas) {
-            SeriesSearchResultSO series = resultSOFromRevisionData(container.getData());
+            SearchResult series = resultSOFromRevisionData(container.getData());
             if(series != null) {
                 if(container.isRemoved()) {
-                    series.setState("removed");
+                    series.setState(UIRevisionState.REMOVED);
                 }
                 seriesList.add(series);
             }
@@ -99,7 +100,7 @@ public class SeriesService {
             return null;
         }
         Configuration config = configService.findByTypeAndVersion(data.getConfiguration());
-        TransferObject single = TransferObject.buildTransferObjectFromRevisionData(data, config);
+        TransferObject single = TransferObject.buildTransferObjectFromRevisionData(data);
 
         return new RevisionViewDataContainer(single, config);
     }
@@ -114,7 +115,7 @@ public class SeriesService {
             return null;
         }
         Configuration config = configService.findByTypeAndVersion(revision.getConfiguration());
-        TransferObject single = TransferObject.buildTransferObjectFromRevisionData(revision, config);
+        TransferObject single = TransferObject.buildTransferObjectFromRevisionData(revision);
 
         return new RevisionViewDataContainer(single, config);
     }
@@ -123,7 +124,7 @@ public class SeriesService {
         try {
             RevisionData data = repository.editSeries(seriesno);
             Configuration config = configService.findByTypeAndVersion(data.getConfiguration());
-            TransferObject single = TransferObject.buildTransferObjectFromRevisionData(data, config);
+            TransferObject single = TransferObject.buildTransferObjectFromRevisionData(data);
             return new RevisionViewDataContainer(single, config);
         } catch(Exception ex) {
             // TODO: better exception handling with messages to the user
@@ -152,62 +153,20 @@ public class SeriesService {
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
     // Helper functions
-
-    /*private TransferObject transferObjectFromRevisionData(RevisionData data) {
+    private SearchResult resultSOFromRevisionData(RevisionData data) {
         // check if data is for series
         if(data == null || data.getConfiguration().getType() != ConfigurationType.SERIES) {
             return null;
         }
 
-        TransferObject to = new TransferObject();
-        // TODO: this should be automated as much as possible using configuration in the future.
-        // TODO: For now assumes that all fields are ValueFields
-        to.setId(data.getKey().getId());
-        to.setRevision(data.getKey().getRevision());
-        to.setState(data.getState());
-        to.setConfiguration(data.getConfiguration());
-        to.setByKey("seriesno", extractIntegerSimpleValue(getValueFieldContainerFromRevisionData(data, "seriesno")));
-        to.setByKey("seriesabb", extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "seriesabb")));
-        to.setByKey("seriesname", extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "seriesname")));
-        to.setByKey("seriesdesc", extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "seriesdesc")));
-        to.setByKey("seriesnotes", extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "seriesnotes")));
-
-        return to;
-    }*/
-
-    private SeriesSearchResultSO resultSOFromRevisionData(RevisionData data) {
-        // check if data is for series
-        if(data == null || data.getConfiguration().getType() != ConfigurationType.SERIES) {
-            return null;
-        }
-
-        SeriesSearchResultSO so = new SeriesSearchResultSO();
-        // TODO: this should be automated as much as possible using configuration in the future.
+        SearchResult so = new SearchResult();
+        so.setId(data.getKey().getId());
         so.setRevision(data.getKey().getRevision());
-        so.setSeriesno(extractIntegerSimpleValue(getValueFieldContainerFromRevisionData(data, "seriesno")));
-        so.setSeriesabb(extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "seriesabb")));
-        so.setSeriesname(extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "seriesname")));
-        switch(data.getState()) {
-            case DRAFT:
-                so.setState("draft");
-                break;
-            case APPROVED:
-                so.setState("approved");
-                break;
-        }
+        so.setState(UIRevisionState.fromRevisionState(data.getState()));
+        so.setByKey("seriesno", extractIntegerSimpleValue(getSavedFieldContainerFromRevisionData(data, "seriesno")));
+        so.setByKey("seriesabb", extractStringSimpleValue(getSavedFieldContainerFromRevisionData(data, "seriesabb")));
+        so.setByKey("seriesname", extractStringSimpleValue(getSavedFieldContainerFromRevisionData(data, "seriesname")));
 
         return so;
     }

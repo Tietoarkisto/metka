@@ -141,7 +141,7 @@
 		"series_select_ref": {
 			"key": "series_select_ref",
 			"targetType": "SERIES",
-			"valueField": "seriesid",
+			"valueField": "seriesno",
 			"titleField": "seriesname"
 		},
 		"codebook_ref": {
@@ -294,8 +294,21 @@
 		"notes": {
 			"key": "notes",
 			"translatable": false,
+			"type": "CONTAINER",
+			"section": "basic_information",
+			"subfields": [
+				"note"
+			],
+			"showSaveInfo": true
+		},
+		"note": {
+			"key": "note",
+			"translatable": false,
+			"required": true,
 			"type": "STRING",
-			"section": "basic_information"
+			"multiline": true,
+			"section": "basic_information",
+			"subfield": true
 		},
 		"data_versions": {
 			"key": "data_versions",
@@ -312,7 +325,7 @@
 			]
 		},
 		"subfield_versions_version": {
-			"key": "data_versions_version",
+			"key": "subfield_versions_version",
 			"translatable": false,
 			"required": true,
 			"type": "REAL",
@@ -320,21 +333,21 @@
 			"subfield": true
 		},
 		"subfield_versions_date": {
-			"key": "data_versions_date",
+			"key": "subfield_versions_date",
 			"translatable": false,
 			"type": "DATE",
 			"section": "basic_information",
 			"subfield": true
 		},
 		"subfield_versions_handler": {
-			"key": "data_versions_handler",
+			"key": "subfield_versions_handler",
 			"translatable": false,
 			"type": "STRING",
 			"section": "basic_information",
 			"subfield": true
 		},
 		"subfield_versions_short_description": {
-			"key": "data_versions_short_description",
+			"key": "subfield_versions_short_description",
 			"translatable": false,
 			"type": "CHOICE",
 			"section": "basic_information",
@@ -342,14 +355,14 @@
 			"subfield": true
 		},
 		"subfield_versions_public_description": {
-			"key": "data_versions_public_description",
+			"key": "subfield_versions_public_description",
 			"translatable": false,
 			"type": "STRING",
 			"section": "basic_information",
 			"subfield": true
 		},
 		"subfield_versions_private_description": {
-			"key": "data_versions_private_description",
+			"key": "subfield_versions_private_description",
 			"translatable": false,
 			"type": "STRING",
 			"section": "basic_information",

@@ -1,6 +1,7 @@
 package fi.uta.fsd.metka.mvc.controller;
 
-import fi.uta.fsd.metka.data.enums.repositoryResponses.RemoveResponse;
+import fi.uta.fsd.metka.data.enums.repositoryResponses.DraftRemoveResponse;
+import fi.uta.fsd.metka.data.enums.repositoryResponses.LogicalRemoveResponse;
 import fi.uta.fsd.metka.mvc.domain.GeneralService;
 import fi.uta.fsd.metka.mvc.domain.simple.ErrorMessage;
 import javassist.NotFoundException;
@@ -71,7 +72,7 @@ public class GeneralController {
     @RequestMapping(value="/remove/{type}/draft/{id}", method = RequestMethod.GET)
     public String removeDraft(@PathVariable String type, @PathVariable Integer id, RedirectAttributes redirectAttributes) {
         ErrorMessage error = new ErrorMessage();
-        RemoveResponse response = service.removeDraft(type, id);
+        DraftRemoveResponse response = service.removeDraft(type, id);
         switch (response) {
             case SUCCESS:
                 error = new ErrorMessage();
@@ -122,7 +123,7 @@ public class GeneralController {
     @RequestMapping(value="/remove/{type}/logical/{id}", method = RequestMethod.GET)
     public String removeLogical(@PathVariable String type, @PathVariable Integer id, RedirectAttributes redirectAttributes) {
         ErrorMessage error = new ErrorMessage();
-        RemoveResponse response = service.removeLogical(type, id);
+        LogicalRemoveResponse response = service.removeLogical(type, id);
         switch (response) {
             case SUCCESS:
                 error = new ErrorMessage();

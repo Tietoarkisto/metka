@@ -14,6 +14,8 @@
     var contextPath = "${pageContext.request.contextPath}";
     // Initialise the global translation strings array for javascript. When translations are needed they should be found from here.
     var strings = new Array();
+
+    var containerConfig = JSON.parse('${containerConfig}');
 </script>
 <%@include file="errorInit.jsp"%>
 <script src="${contextPath}/js/jquery/jquery-1.10.2.js"></script>
@@ -29,6 +31,7 @@
 <script src="${contextPath}/js/custom/dialogs.js"></script>
 <script src="${contextPath}/js/custom/general.js"></script>
 <script src="${contextPath}/js/custom/${page}.js"></script>
+<script src="${contextPath}/js/custom/table.js"></script>
 <script src="${contextPath}/js/studies.js"></script>
 <script src="${contextPath}/js/publications.js"></script>
 <script src="${contextPath}/js/binders.js"></script>

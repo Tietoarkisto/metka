@@ -37,6 +37,7 @@ public class Field {
     @XmlElement private String reference = null;
     @XmlElement private Boolean multiline = false;
     @XmlElement private Boolean showSaveInfo = false;
+    @XmlElement private Boolean summaryField = true;
 
     @JsonCreator
     public Field(@JsonProperty("key")String key) {
@@ -109,6 +110,14 @@ public class Field {
 
     public void setSubfield(Boolean subfield) {
         this.subfield = (subfield == null) ? false : subfield;
+    }
+
+    public Boolean getSummaryField() {
+        return (summaryField == null) ? true : summaryField;
+    }
+
+    public void setSummaryField(Boolean summaryField) {
+        this.summaryField = (summaryField == null) ? true : summaryField;
     }
 
     public List<String> getSubfields() {

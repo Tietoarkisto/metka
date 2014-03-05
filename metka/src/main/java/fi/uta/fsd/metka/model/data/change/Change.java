@@ -10,11 +10,11 @@ import javax.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
-public class FieldChange {
+public class Change {
     @XmlElement private final String key;
 
     @JsonCreator
-    public FieldChange(@JsonProperty("key")String key) {
+    public Change(@JsonProperty("key") String key) {
         this.key = key;
     }
 

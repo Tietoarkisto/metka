@@ -242,6 +242,7 @@ nav .mainNavUl li a:hover {
 }
 
 .button {
+    display: inline;
     padding: 5px;
     outline: none;
     background-color: #009ee0;

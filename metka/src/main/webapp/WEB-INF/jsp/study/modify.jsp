@@ -14,7 +14,7 @@
         <jsp:include page="../../inc/topMenu.jsp" />
         <div class="wrapper">
             <div class="content study">
-                <h1 class="pageTitle"><spring:message code="STUDY"/> ${single.values['id']} - <spring:message code="general.revision"/> ${single.revision} - <spring:message code="general.title.draft"/></h1>
+                <h1 class="pageTitle"><spring:message code="STUDY"/> ${single.values['id']} - <spring:message code="general.revision"/> ${single.revision} - <spring:message code="general.title.DRAFT"/></h1>
                 <div class="tabNavi">
                     <a id="basic_information" class="selected" href="#basic_information"><spring:message code="STUDY.section.basic_information"/></a>
                     <a id="deposit_agreement" href="#deposit_agreement"><spring:message code="STUDY.section.deposit_agreement"/></a>

@@ -1,12 +1,13 @@
 package fi.uta.fsd.metka.mvc.domain;
 
-import fi.uta.fsd.metka.data.enums.repositoryResponses.RemoveResponse;
+import fi.uta.fsd.metka.data.enums.repositoryResponses.DraftRemoveResponse;
+import fi.uta.fsd.metka.data.enums.repositoryResponses.LogicalRemoveResponse;
 import fi.uta.fsd.metka.data.repository.GeneralRepository;
 import fi.uta.fsd.metka.model.configuration.Choicelist;
 import fi.uta.fsd.metka.model.configuration.Option;
 import fi.uta.fsd.metka.model.configuration.Reference;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.ValueFieldContainer;
+import fi.uta.fsd.metka.model.data.container.SavedFieldContainer;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,19 +20,11 @@ import java.util.List;
 
 import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
 
-/**
- * Created with IntelliJ IDEA.
- * User: lasseku
- * Date: 1/24/14
- * Time: 10:34 AM
- * To change this template use File | Settings | File Templates.
- */
 @Service
 public class GeneralService {
 
     @Autowired
     private GeneralRepository repository;
-
 
     /**
      * Return the id of next or previous revisionable of the same type as the current revisionable the user is looking at.
@@ -53,9 +46,9 @@ public class GeneralService {
      *
      * @param type - Type of the revisionable object.
      * @param id - Id of the revisionable object.
-     * @return RemoveResponse enum returned by repository. Success or failure of the operation can be determined from this.
+     * @return DraftRemoveResponse enum returned by repository. Success or failure of the operation can be determined from this.
      */
-    public RemoveResponse removeDraft(String type, Integer id) {
+    public DraftRemoveResponse removeDraft(String type, Integer id) {
         return repository.removeDraft(type, id);
     }
 
@@ -66,20 +59,30 @@ public class GeneralService {
      *
      * @param type - Type of the revisionable object.
      * @param id - Id of the revisionable object.
-     * @return RemoveResponse enum returned by repository. Success or failure of the operation can be determined from this.
+     * @return LogicalRemoveResponse enum returned by repository. Success or failure of the operation can be determined from this.
      */
-    public RemoveResponse removeLogical(String type, Integer id) {
+    public LogicalRemoveResponse removeLogical(String type, Integer id) {
         return repository.removeLogical(type, id);
     }
 
     public void fillOptions(Choicelist list, Reference ref) throws IOException {
         List<RevisionData> datas = repository.getLatestRevisionsForType(ref.getTargetType(), ref.getApprovedOnly());
         for(RevisionData data : datas) {
-            Option option = new Option(extractStringSimpleValue((ValueFieldContainer)data.getField(ref.getValueField())));
+            SavedFieldContainer field = getSavedFieldContainerFromRevisionData(data, ref.getValueField());
+            if(field == null) {
+                // No value field found. Option can not be completed
+                continue;
+            }
+            Option option = new Option(extractStringSimpleValue(field));
+            if(StringUtils.isEmpty(option.getValue())) {
+                // Value is empty, option is not usable. Continue
+                continue;
+            }
             if(StringUtils.isEmpty(ref.getTitleField())) {
                 option.setTitle(option.getValue());
             } else {
-                option.setTitle(extractStringSimpleValue((ValueFieldContainer)data.getField(ref.getTitleField())));
+                field = getSavedFieldContainerFromRevisionData(data, ref.getTitleField());
+                option.setTitle(extractStringSimpleValue(field));
             }
             list.getOptions().add(option);
         }

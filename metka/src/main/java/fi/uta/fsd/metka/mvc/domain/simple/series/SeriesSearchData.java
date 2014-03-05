@@ -1,12 +1,14 @@
 package fi.uta.fsd.metka.mvc.domain.simple.series;
 
+import fi.uta.fsd.metka.mvc.domain.simple.transfer.SearchResult;
+
 import java.util.List;
 
 public class SeriesSearchData {
 
     private SeriesSearchSO query;
     private List<String> abbreviations;
-    private List<SeriesSearchResultSO> results;
+    private List<SearchResult> results;
 
     public List<String> getAbbreviations() {
         return abbreviations;
@@ -24,11 +26,11 @@ public class SeriesSearchData {
         this.query = query;
     }
 
-    public List<SeriesSearchResultSO> getResults() {
+    public List<SearchResult> getResults() {
         return results;
     }
 
-    public void setResults(List<SeriesSearchResultSO> results) {
+    public void setResults(List<SearchResult> results) {
         this.results = results;
     }
 }

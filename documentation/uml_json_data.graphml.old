@@ -108,11 +108,17 @@
           <y:Geometry height="162.0" width="589.0" x="432.0" y="564.2143416171709"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="73.84375" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="565.404296875" x="4.0" y="4.0">state: When draft is marked as approved all computed fields have their values inserted
+          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="157.65625" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="565.404296875" x="4.0" y="4.0">state: When draft is marked as approved all computed fields have their values inserted
     into the data to finalize the dataset. In a complete data there is no need for any outside
     dataset save for the configuration to be able to understand the meaning of every field and
     have all the values present. For all intents and purposes a data marked isComplete should
-    be considered read only save anything done because of batch processing.</y:NodeLabel>
+    be considered read only save anything done because of batch processing.
+ 
+{context RevisionData inv:
+  state = RevisionState::DRAFT implies fields-&gt;size() = 0
+and
+  state &lt;&gt; RevisionState::DRAFT implies
+  not fields-&gt;exists(changeOperation = ChangeOperation::ORIGINAL}</y:NodeLabel>
         </y:UMLNoteNode>
       </data>
     </node>

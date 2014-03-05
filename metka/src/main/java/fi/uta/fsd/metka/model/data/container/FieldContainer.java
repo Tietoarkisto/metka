@@ -8,13 +8,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
-/**
- * Created with IntelliJ IDEA.
- * User: lasseku
- * Date: 12/18/13
- * Time: 2:16 PM
- * To change this template use File | Settings | File Templates.
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 public class FieldContainer {
@@ -50,4 +43,6 @@ public class FieldContainer {
     public String toString() {
         return "Json[name="+this.getClass().getSimpleName()+", key="+key+"]";
     }
+
+    public FieldContainer copy() {throw new UnsupportedOperationException();}
 }

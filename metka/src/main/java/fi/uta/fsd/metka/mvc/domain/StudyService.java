@@ -5,8 +5,8 @@ import fi.uta.fsd.metka.data.repository.StudyRepository;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.mvc.domain.simple.RevisionViewDataContainer;
+import fi.uta.fsd.metka.mvc.domain.simple.transfer.SearchResult;
 import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
-import fi.uta.fsd.metka.mvc.domain.simple.study.StudySearchResultSO;
 import fi.uta.fsd.metka.mvc.domain.simple.study.StudySearchSO;
 import fi.uta.fsd.metka.mvc.search.GeneralSearch;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +26,8 @@ public class StudyService {
     @Autowired
     private ConfigurationService configService;
 
-    public List<StudySearchResultSO> searchForStudies(StudySearchSO query) {
-        List<StudySearchResultSO> resultList = new ArrayList<>();
+    public List<SearchResult> searchForStudies(StudySearchSO query) {
+        List<SearchResult> resultList = new ArrayList<>();
         // TODO: Find searched studies and create search result objects for them.
         return resultList;
     }
@@ -63,7 +63,7 @@ public class StudyService {
         }
 
         Configuration config = configService.findByTypeAndVersion(data.getConfiguration());
-        TransferObject single = TransferObject.buildTransferObjectFromRevisionData(data, config);
+        TransferObject single = TransferObject.buildTransferObjectFromRevisionData(data);
 
         return new RevisionViewDataContainer(single, config);
     }
@@ -78,7 +78,7 @@ public class StudyService {
             return null;
         }
         Configuration config = configService.findByTypeAndVersion(data.getConfiguration());
-        TransferObject single = TransferObject.buildTransferObjectFromRevisionData(data, config);
+        TransferObject single = TransferObject.buildTransferObjectFromRevisionData(data);
 
         return new RevisionViewDataContainer(single, config);
     }
@@ -102,27 +102,4 @@ public class StudyService {
         // TODO: Request validation and approval of the given study.
         return false;
     }
-
-    /*private TransferObject transferObjectFromRevisionData(RevisionData data) {
-        // check if data is for study
-        if(data == null || data.getConfiguration().getType() != ConfigurationType.STUDY) {
-            return null;
-        }
-        TransferObject to = new TransferObject();
-        // Set additional information
-        to.setId(data.getKey().getId());
-        to.setRevision(data.getKey().getRevision());
-        to.setState(data.getState());
-        to.setConfiguration(data.getConfiguration());
-
-        // Set field values
-        // TODO: Automate value setting using configuration
-        to.setByKey("study_id", extractIntegerSimpleValue(getValueFieldContainerFromRevisionData(data, "study_id")));
-        to.setByKey("id", extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "id")));
-        to.setByKey("submissionid", extractIntegerSimpleValue(getValueFieldContainerFromRevisionData(data, "submissionid")));
-        to.setByKey("datakind", extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "datakind")));
-        to.setByKey("ispublic", extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "ispublic")));
-        to.setByKey("title", extractStringSimpleValue(getValueFieldContainerFromRevisionData(data, "title")));
-        return to;
-    }*/
 }

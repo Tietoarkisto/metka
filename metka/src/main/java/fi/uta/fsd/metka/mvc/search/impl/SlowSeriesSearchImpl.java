@@ -6,7 +6,7 @@ import fi.uta.fsd.metka.data.entity.impl.SeriesEntity;
 import fi.uta.fsd.metka.data.entity.key.RevisionKey;
 import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.ValueFieldContainer;
+import fi.uta.fsd.metka.model.data.container.SavedFieldContainer;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchSO;
 import fi.uta.fsd.metka.mvc.search.RevisionDataRemovedContainer;
 import fi.uta.fsd.metka.mvc.search.SeriesSearch;
@@ -51,7 +51,8 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
             }
 
             RevisionData revData = json.readRevisionDataFromString(data);
-            ValueFieldContainer field = getValueFieldContainerFromRevisionData(revData, "seriesabb");
+            // Use the method with less sanity checks since there's no point in getting configuration here.
+            SavedFieldContainer field = getSavedFieldContainerFromRevisionData(revData, "seriesabb");
             String value = extractStringSimpleValue(field);
             if(!StringUtils.isEmpty(value)) list.add(value);
         }
@@ -126,14 +127,14 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
 
         RevisionData data = json.readRevisionDataFromString(revision.getData());
         if(!StringUtils.isEmpty(query.getByKey("seriesabb"))) {
-            ValueFieldContainer field = getValueFieldContainerFromRevisionData(data, "seriesabb");
+            SavedFieldContainer field = getSavedFieldContainerFromRevisionData(data, "seriesabb");
             String value = extractStringSimpleValue(field);
             if(StringUtils.isEmpty(value) || !value.toUpperCase().equals(((String)query.getByKey("seriesabb")).toUpperCase())) {
                 return null;
             }
         }
         if(!StringUtils.isEmpty(query.getByKey("seriesname"))) {
-            ValueFieldContainer field = getValueFieldContainerFromRevisionData(data, "seriesname");
+            SavedFieldContainer field = getSavedFieldContainerFromRevisionData(data, "seriesname");
             String value = extractStringSimpleValue(field);
             if(StringUtils.isEmpty(value) || !value.toUpperCase().contains(((String)query.getByKey("seriesname")).toUpperCase())) {
                 return null;

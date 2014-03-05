@@ -1,10 +1,12 @@
 package fi.uta.fsd.metka.mvc.domain.simple.study;
 
+import fi.uta.fsd.metka.mvc.domain.simple.transfer.SearchResult;
+
 import java.util.List;
 
 public class StudySearchData {
     private StudySearchSO query;
-    private List<StudySearchResultSO> results;
+    private List<SearchResult> results;
     private List<SeriesReference> series;
     private List<ErroneousStudy> erroneous;
 
@@ -16,11 +18,11 @@ public class StudySearchData {
         this.query = query;
     }
 
-    public List<StudySearchResultSO> getResults() {
+    public List<SearchResult> getResults() {
         return results;
     }
 
-    public void setResults(List<StudySearchResultSO> results) {
+    public void setResults(List<SearchResult> results) {
         this.results = results;
     }
 

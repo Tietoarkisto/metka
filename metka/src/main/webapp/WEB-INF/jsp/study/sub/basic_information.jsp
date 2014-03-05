@@ -60,9 +60,12 @@
                 <jsp:param name="colspan" value="3" />
             </jsp:include>
         </tr>
-        <%-- Not done yet from here on --%>
     </table>
-	<%--<div class="upperContainer">
+    <jsp:include page="../../../inc/datatableContainer.jsp">
+        <jsp:param name="field" value="notes" />
+    </jsp:include>
+    <%-- Not done yet from here on --%>
+    <%--<div class="upperContainer">
 		<div class="rowContainer containsTranslations">
 			<div class="materialDataSetContainerTopRow translated translationFi">
 				<label id="materialName" class="required leftSide"><spring:message code="study.view.basic.name"/></label>

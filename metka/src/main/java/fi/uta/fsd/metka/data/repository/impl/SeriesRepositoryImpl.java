@@ -3,17 +3,20 @@ package fi.uta.fsd.metka.data.repository.impl;
 import fi.uta.fsd.metka.data.entity.RevisionEntity;
 import fi.uta.fsd.metka.data.entity.impl.SeriesEntity;
 import fi.uta.fsd.metka.data.entity.key.RevisionKey;
-import fi.uta.fsd.metka.data.enums.ChangeOperation;
 import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.data.repository.SeriesRepository;
 import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
-import fi.uta.fsd.metka.model.data.change.ValueFieldChange;
+import fi.uta.fsd.metka.model.data.change.Change;
+import fi.uta.fsd.metka.model.data.change.ContainerChange;
+import fi.uta.fsd.metka.model.data.change.RowChange;
+import fi.uta.fsd.metka.model.data.container.ContainerFieldContainer;
 import fi.uta.fsd.metka.model.data.container.FieldContainer;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.ValueFieldContainer;
+import fi.uta.fsd.metka.model.data.container.RowContainer;
+import fi.uta.fsd.metka.model.data.container.SavedFieldContainer;
 import fi.uta.fsd.metka.model.factories.SeriesFactory;
 import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
 import org.joda.time.DateTime;
@@ -25,8 +28,6 @@ import org.springframework.util.StringUtils;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
@@ -140,42 +141,6 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         }
 
         return true;
-
-        /*
-        ValueFieldContainer newField = null;
-        Integer intValue;
-        String stringValue;
-        ValueFieldChange change;
-        String key;
-        // Check abbreviation.
-        // TODO: handle immutable values (values that can be inserted but once inserted can not be changed).
-        key = "seriesabb";
-        field = getValueFieldContainerFromRevisionData(data, key); // Since we are in a DRAFT this returns a field only if one exists in changes
-        stringValue = extractStringSimpleValue(field);
-        if(!StringUtils.isEmpty(stringValue) && !to.getByKey("seriesabb").equals(stringValue)) {
-            // TODO: data is out of sync or someone tried to change the abbreviation, log error
-            return false;
-        }
-
-        if(!StringUtils.isEmpty(to.getByKey("seriesabb")) && StringUtils.isEmpty(stringValue)) {
-            changes = true;
-
-            newField = createValueFieldContainer(key, time);
-            setSimpleValue(newField, to.getByKey(key).toString());
-
-            change = updateValueField(data, key, newField);
-            data.putChange(change);
-        }
-
-        // TODO: these following two can be generalised and used by the other type of objects too.
-        // Check name
-        changes = doSingleValueChanges("seriesname", to, time, data, config) | changes;
-        
-        // Check description
-        changes = doSingleValueChanges("seriesdesc", to, time, data, config) | changes;
-
-        // check series notes
-        changes = doSingleValueChanges("seriesnotes", to, time, data, config) | changes;*/
     }
 
     /*
@@ -234,8 +199,6 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         //          If the operation is removed then take no value.
         //          If the operation is modified take the new value.
         // TODO: Validate changed value where necessary
-        //      Put the result into fields map.
-        //      If the operation is unchanged then remove the change object from the changes map.
 
         if(data.getState() != RevisionState.DRAFT) {
             // TODO: log exception since data is out of sync
@@ -251,25 +214,6 @@ public class SeriesRepositoryImpl implements SeriesRepository {
             System.err.println(entity.getKey());
 
             return false;
-        }
-
-        List<String> unchangedKeys = new ArrayList<String>();
-        // TODO: Field type confirmation from configuration. For now assume accurate use
-        for(String key : data.getChanges().keySet()) {
-            ValueFieldChange change = (ValueFieldChange)data.getChange(key);
-            FieldContainer field = null;
-            if(change.getOperation() == ChangeOperation.UNCHANGED) {
-                unchangedKeys.add(key);
-                field = change.getOriginalField();
-            } else if(change.getOperation() == ChangeOperation.MODIFIED) {
-                field = change.getNewField();
-            }
-            if(field != null) {
-                data.putField(field);
-            }
-        }
-        for(String key : unchangedKeys) {
-            data.getChanges().remove(key);
         }
 
         // Change state in revision data to approved.
@@ -336,11 +280,15 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         newRevision.setState(RevisionState.DRAFT);
         RevisionData newData = RevisionData.createRevisionData(newRevision, oldData.getConfiguration());
 
-        // TODO: Field type checking from configuration. For now treate everything as ValueField
-        for(Map.Entry<String, FieldContainer> field : oldData.getFields().entrySet()) {
-            ValueFieldChange change = createNewRevisionValueFieldChange((ValueFieldContainer)field.getValue());
-            newData.putChange(change);
+        // Copy old fields to new revision data
+        for(FieldContainer field : oldData.getFields().values()) {
+            newData.putField(field.copy());
         }
+        // Changes are not copied but instead changes in oldData are used to normalize changes in fields copied to
+        // newData since changes in previous revision are original values in new revision.
+
+        // Go through changes and move modified value to original value for every change.
+        changesToOriginals(oldData.getChanges(), newData.getFields());
 
         // Serialize new dataset to the new revision entity
         // Persist new entity
@@ -352,5 +300,46 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         // Return new revision data
         series.setLatestRevisionNo(newRevision.getKey().getRevisionNo());
         return newData;
+    }
+
+    /**
+     * Moves modified values to original values for all changed fields.
+     * Goes through given changes map and for each change if it is not a ContainerFieldContainer assumes it's
+     * a SavedFieldContainer and sets its originalValue to newest value, then sets its modified value to null.
+     * For containers it call helper method to go through the rows.
+     * NOTICE: This method assumes data accuracy. If things are broken here then there's deeper problems.
+     * @param changes Map of Changes pointing to given fields in fields map.
+     * @param fields Map of FieldContainers where changes are to be set to original values.
+     */
+    private void changesToOriginals(Map<String, Change> changes, Map<String, FieldContainer> fields) {
+        for(Change change : changes.values()) {
+            if(change instanceof ContainerChange) {
+                ContainerFieldContainer field = (ContainerFieldContainer)fields.get(change.getKey());
+                handleRowChanges((ContainerChange)change, field);
+            } else {
+                SavedFieldContainer field = (SavedFieldContainer)fields.get(change.getKey());
+                // Once field has been set it should not be set back to null for any reason during new revision creation.
+                // Revision save should handle cases where there is no original value and modified value is removed.
+                // Here we can use the convinience method of getValue() since it doesn't return modified value if it is null.
+                field.setOriginalValue(field.getValue());
+                field.setModifiedValue(null);
+            }
+        }
+    }
+
+    /**
+     * Helper method for changesToOriginals().
+     * Goes through all rows in given ContainerChange and calls changesToOriginals
+     * using Changes in RowChange and fields in RowContainer
+     * @param change ContainerChange to be handled
+     * @param field ContainerFieldContainer to be modified
+     */
+    private void handleRowChanges(ContainerChange change, ContainerFieldContainer field) {
+        for(RowChange c : change.getRows().values()) {
+            RowContainer row = field.getRow(c.getRowId());
+            if(row != null) {
+                changesToOriginals(c.getChanges(), row.getFields());
+            }
+        }
     }
 }

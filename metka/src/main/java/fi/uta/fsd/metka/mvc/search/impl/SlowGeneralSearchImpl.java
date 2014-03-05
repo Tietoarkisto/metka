@@ -1,9 +1,7 @@
 package fi.uta.fsd.metka.mvc.search.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.uta.fsd.metka.data.entity.RevisionEntity;
 import fi.uta.fsd.metka.data.entity.RevisionableEntity;
-import fi.uta.fsd.metka.data.entity.impl.SeriesEntity;
 import fi.uta.fsd.metka.data.entity.key.RevisionKey;
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.util.JSONUtil;

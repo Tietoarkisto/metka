@@ -27,4 +27,9 @@ public class SimpleValue extends Value {
     public String toString() {
         return value;
     }
+
+    @Override
+    public Value copy() {
+        return new SimpleValue(value);
+    }
 }

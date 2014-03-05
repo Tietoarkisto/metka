@@ -1,5 +1,8 @@
 package fi.uta.fsd.metka.mvc.domain.simple;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created with IntelliJ IDEA.
  * User: lasseku
@@ -9,11 +12,18 @@ package fi.uta.fsd.metka.mvc.domain.simple;
  */
 public abstract class SimpleObject {
 
-    /**
-     * Used for automated validation and generally by getting a value by using a configuration key.
-     * @param key - Configuration key of the given value
-     * @return
-     * @throws IllegalArgumentException - If the given key does not exist within this SimpleObject
-     */
-    public abstract Object getByKey(String key) throws IllegalArgumentException;
+    private final Map<String, Object> values = new HashMap<>();
+
+    public Map<String, Object> getValues() {
+        return values;
+    }
+
+    public Object getByKey(String key) {
+        return values.get(key);
+    }
+    public void setByKey(String key, Object value) {
+        values.put(key, value);
+    }
+
+
 }

@@ -1,15 +1,15 @@
 package fi.uta.fsd.metka.mvc.controller;
 
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
-import fi.uta.fsd.metka.data.enums.RevisionState;
+import fi.uta.fsd.metka.data.enums.UIRevisionState;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.mvc.domain.ConfigurationService;
 import fi.uta.fsd.metka.mvc.domain.SeriesService;
 import fi.uta.fsd.metka.mvc.domain.simple.ErrorMessage;
 import fi.uta.fsd.metka.mvc.domain.simple.RevisionViewDataContainer;
+import fi.uta.fsd.metka.mvc.domain.simple.transfer.SearchResult;
 import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchData;
-import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchResultSO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -87,7 +87,7 @@ public class SeriesController {
         }
 
         model.asMap().put("page", "series");
-        if(single.getState() == RevisionState.DRAFT) {
+        if(single.getState() == UIRevisionState.DRAFT) {
             // TODO: this should check if the user is the handler for this revision.
             return MODIFY;
         } else {
@@ -105,9 +105,9 @@ public class SeriesController {
     public String search(Model model, @ModelAttribute("searchData")SeriesSearchData searchData) {
 
         if(searchData.getQuery() != null) {
-            List<SeriesSearchResultSO> results = seriesService.searchForSeries(searchData.getQuery());
+            List<SearchResult> results = seriesService.searchForSeries(searchData.getQuery());
             if(results.size() == 1) {
-                return REDIRECT_VIEW+results.get(0).getSeriesno()+"/"+results.get(0).getRevision();
+                return REDIRECT_VIEW+results.get(0).getId()+"/"+results.get(0).getRevision();
             }
             searchData.setResults(results);
             searchData.setQuery(searchData.getQuery());

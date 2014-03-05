@@ -1,14 +1,13 @@
 package fi.uta.fsd.metka.mvc.domain.simple.transfer;
 
-import fi.uta.fsd.metka.data.enums.FieldType;
-import fi.uta.fsd.metka.data.enums.RevisionState;
-import fi.uta.fsd.metka.model.configuration.Configuration;
+import fi.uta.fsd.metka.data.enums.UIRevisionState;
 import fi.uta.fsd.metka.model.configuration.ConfigurationKey;
-import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.ContainerFieldContainer;
-import fi.uta.fsd.metka.model.data.container.ValueFieldContainer;
+import fi.uta.fsd.metka.model.data.container.FieldContainer;
+import fi.uta.fsd.metka.model.data.container.SavedFieldContainer;
 import fi.uta.fsd.metka.model.data.value.SimpleValue;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +20,7 @@ import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
 public class TransferObject {
     private Integer id;
     private Integer revision;
-    private RevisionState state;
+    private UIRevisionState state;
     private ConfigurationKey configuration;
 
     private final Map<String, Object> values = new HashMap<>();
@@ -42,11 +41,11 @@ public class TransferObject {
         this.revision = revision;
     }
 
-    public RevisionState getState() {
+    public UIRevisionState getState() {
         return state;
     }
 
-    public void setState(RevisionState state) {
+    public void setState(UIRevisionState state) {
         this.state = state;
     }
 
@@ -82,11 +81,10 @@ public class TransferObject {
 
     /**
      * Collect all available data from RevisionData object to be ready to display on UI.
-     * @param data - Revision from which data is needed.
-     * @param config - Configuration of given revision (assumes correct configuration).
+     * @param data - Revision from which data is needed..
      * @return TransferObject containing all relevant data ready for UI
      */
-    public static TransferObject buildTransferObjectFromRevisionData(RevisionData data, Configuration config) {
+    public static TransferObject buildTransferObjectFromRevisionData(RevisionData data) {
         // check if data is for series
         if(data == null) {
             return null;
@@ -95,18 +93,22 @@ public class TransferObject {
         TransferObject to = new TransferObject();
         to.setId(data.getKey().getId());
         to.setRevision(data.getKey().getRevision());
-        to.setState(data.getState());
+        to.setState(UIRevisionState.fromRevisionState(data.getState()));
         to.setConfiguration(data.getConfiguration());
 
-        for(Field field : config.getFields().values()) {
-            if(field.getType() != FieldType.CONTAINER) {
-                // Since we don't care about types at the UI that much we can push all values to the map as Strings
-                ValueFieldContainer container = getValueFieldContainerFromRevisionData(data, field.getKey(), config);
-                if(container != null) {
-                    to.setByKey(field.getKey(), ((SimpleValue)container.getValue()).getValue());
+        for(FieldContainer field : data.getFields().values()) {
+            if(field instanceof ContainerFieldContainer) {
+                // TODO: Containers
+                JSONObject ct = ContainerTransfer.buildJSONObject((ContainerFieldContainer)field);
+                if(ct != null) {
+                    to.setByKey(field.getKey(), ct.toString());
                 }
             } else {
-                ContainerTransfer ct = ContainerTransfer.buildContainerTransferFromFieldContainer(data, field.getKey(), config)
+                // Since we don't care about types at the UI that much we can push all values to the map as Strings
+                SavedFieldContainer container = getSavedFieldContainerFromRevisionData(data, field.getKey());
+                if(container != null && container.getValue() != null && container.getValue().getValue() != null) {
+                    to.setByKey(field.getKey(), ((SimpleValue)container.getValue().getValue()).getValue());
+                }
             }
         }
 
