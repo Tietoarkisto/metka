@@ -98,7 +98,7 @@ function handleGeneralContainerDialog(key) {
     var body = $("#"+key+"ContainerDialogTable tbody");
     var row = new Object();
     row.type = "row";
-    row.rowId = $("#"+key+"ContainerDialogRowId").val()
+    row.rowId = $("#"+key+"ContainerDialogRowId").val();
     row.key = key;
     row.fields = new Object();
     // RowId is set when row is added to container
@@ -129,9 +129,8 @@ function handleGeneralContainerDialog(key) {
  * Save a given CONTAINER row to right hidden input.
  * Makes needed changes to JSON and sets it to input.
  * If given row's rowId is null or undefined assumes new row, otherwise updates old row.
- * In case of new row rowId is assigned and incremented and row is pushed to array.
  * In case of modified row the row in original content is overwritten.
- * If original row is not found then row is assumed to be new, rowId is overwritten with new rowId
+ * If original row is not found then row is assumed to be new, rowId is overwritten to null
  * and row is pushed to content.
  *
  * After modifications are done datatable is rebuilt.
@@ -140,7 +139,15 @@ function handleGeneralContainerDialog(key) {
 function saveDatatableRow(row) {
     if(row.type != "row") return;
     // Fetch previous data from hidden field
-    var content = JSON.parse($("#values\\'"+row.key+"\\'").val());
+    var contentStr = $("#values\\'"+row.key+"\\'").val();
+    var content = null;
+    if(contentStr == undefined || contentStr == "") {
+        content = new Object();
+        content.type = "container";
+        content.key = row.key;
+    } else {
+        content = JSON.parse(contentStr);
+    }
 
     if(content.key != row.key) { // Sanity check that row is being saved to correct container
         return;
@@ -148,6 +155,9 @@ function saveDatatableRow(row) {
     row.change = true; // Set row to changed so it's easy to find while saving user input on server
     // Make modification
     var found = false;
+    if(content.rows == undefined) {
+        content.rows = new Array();
+    }
     if(row.rowId != null && row.rowId != undefined) { // Check for old row
         for(var i = 0; i < content.rows.length; i++) {
             if(content.rows[i].rowId == row.rowId) {
@@ -158,11 +168,7 @@ function saveDatatableRow(row) {
         }
     }
     if(found == false) { // Either a new row or old row was not found.
-        row.rowId = content.nextRowId;
-        content.nextRowId += 1;
-        if(content.rows == undefined) {
-            content.rows = new Array();
-        }
+        row.rowId = null; // Make sure that rowId is null when adding a new row.
         content.rows.push(row);
     }
 

@@ -351,11 +351,16 @@ public class ModelAccessUtil {
             if(row.optBoolean("change", false) == false) {
                 continue; // Row has not been opened on UI, no need to process.
             }
-            RowContainer rowContainer = container.getRow((Integer)row.get("rowId"));
+            if(row.opt("rowId") == null || row.opt("rowId") == JSONObject.NULL) { // If no rowId was set this is a new row. Initialise rowId for future use. This should automatically set rowId to correct value for new rows
+                row.put("rowId", container.getNextRowId());
+                container.setNextRowId(container.getNextRowId()+1);
+            }
+            RowContainer rowContainer = container.getRow(stringToInteger(row.get("rowId")));
             boolean rowChanges = false;
             boolean newRow = false; // Flag for inserting the row at the end of this iteration if changes are present.
+
             if(rowContainer == null) {
-                rowContainer = new RowContainer(container.getKey(), (Integer)row.get("rowId"));
+                rowContainer = new RowContainer(container.getKey(), stringToInteger(row.get("rowId")));
                 newRow = true;
                 // This should automatically lead to there being a change in one of the fields so we don't have to set
                 // rowChanges to true. If for some strange reason no changes are detected then a new empty row is not
@@ -388,7 +393,7 @@ public class ModelAccessUtil {
                         savedField = new SavedFieldContainer(subfield.getKey());
                         rowContainer.putField(savedField);
                     }
-                    updateFieldValue(savedField, field, fieldValue.get("value"), time);
+                    updateFieldValue(savedField, subfield, fieldValue.get("value"), time);
                     rowChangeContainer.putChange(new Change(field.getKey()));
                 }
                 // If this field changed or if row was changed previously then row has changed.
@@ -405,10 +410,6 @@ public class ModelAccessUtil {
             // If this row has changed or a row has changed previously, then this container has changed.
             changes = rowChanges | changes;
         } // End of row handling
-
-        if(container.getNextRowId() < (Integer)jsonContainer.get("nextRowId")) {
-            container.setNextRowId((Integer)jsonContainer.get("nextRowId"));
-        }
 
         if(changes) {
             data.putField(container);

@@ -51,7 +51,6 @@ public class ContainerTransfer {
         JSONObject json = new JSONObject();
         json.put("type", "container");
         json.put("key", field.getKey());
-        json.put("nextRowId", field.getNextRowId());
 
         for(RowContainer row : field.getRows()) {
             JSONObject rt = RowTransfer.buildJSONObject(row);
