@@ -23,16 +23,19 @@
 		},
 		"seriesname": {
 			"key": "seriesname",
+			"required": true,
 			"type": "STRING"
 		},
 		"seriesdesc": {
 			"key": "seriesdesc",
 			"type": "STRING",
+			"required": true,
 			"multiline": true
 		},
 		"seriesnotes": {
 			"key": "seriesnotes",
 			"type": "STRING",
+			"translatable": false,
 			"multiline": true
 		}
 	}

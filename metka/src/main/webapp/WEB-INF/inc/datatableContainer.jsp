@@ -18,7 +18,6 @@
     </thead>
     <tbody />
 </table>
-<%-- TODO: add some generic way to add rows --%>
 <c:if test="${empty param.generalHandler or param.generalHandler == true}">
     <div class="rightAlignCell"><input type="button" class="button" value="<spring:message code="general.table.add"/>"
             onclick="showGeneralDialog('${param.field}', true)"/></div>

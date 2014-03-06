@@ -21,7 +21,7 @@ function buildDatatable(content) {
         }
     }
     for(var row = 0; row < content.rows.length; row++) {
-        var tr = $("<tr>");
+        var tr = $("<tr>", {class: "pointerClass"});
         var rowContent = content.rows[row];
         var opener = new DialogOpener(key, false, rowContent.rowId);
         tr.click(opener);
@@ -32,6 +32,12 @@ function buildDatatable(content) {
             }
             var subkey = subfield.key;
             var value = rowContent.fields[subkey];
+            if(value == undefined || value == null) {
+                // TODO: value is missing for some reason, make placeholder value so columns are not missing
+                value = new Object();
+                value.type = "value";
+                value.value = "";
+            }
             if((containerConfig[subkey] != undefined && containerConfig[subkey].type == "CONTAINER") || value.type != "value") {
                 // TODO: Handle recursive containers somehow. Mostly datatable should not contain recursive containers
                 return;
@@ -83,6 +89,12 @@ function showGeneralDialog(key, isNew, rowId) {
                 }
                 var input = $("#"+key+"Field"+subfield.key);
                 // TODO: For now assumes input into val(), add exceptions as needed
+                if(row.fields[subfield.key] == undefined || row.fields[subfield.key] == null) {
+                    // TODO: value is missing for some reason, make placeholder value so columns are not missing
+                    row.fields[subfield.key] = new Object();
+                    row.fields[subfield.key].type = "value";
+                    row.fields[subfield.key].value = "";
+                }
                 input.val(row.fields[subfield.key].value);
             }
         } else {

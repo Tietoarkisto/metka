@@ -44,3 +44,7 @@ Check uml_json_data_changes.graphml and uml_json_data_field.graphml for the new 
 -- 04.03.2014 additions --
 Field:
 summaryField added to control wether fields are show in the datatables collecting CONTAINER information. There are certain fields with larger texts that are not suitable for table format and so are only shown in the edit/add dialog.
+
+-- 06.03.2014 additions --
+Field:
+notToLang is a list of language codes to which the field should not be translated. What is done with these fields on those languages is still open to be defined. Main use is with study where you need to have a separate english title field in the base RevisionData and thus translating the actual title field to english is redundant.

@@ -9,7 +9,7 @@ enum StudyValues {
     DATAKIND("datakind"),
     ANONYMIZATION("anonymization"),
     SECURITYISSUES("securityissues"),
-    ISPUBLIC("ispublic"),
+    PUBLIC("public"),
     DESCPUBLIC("descpublic"),
     VARPUBLIC("varpublic"),
     SERIESID("seriesid"),

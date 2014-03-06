@@ -72,7 +72,7 @@
 				}
 			]
 		},
-		"ispublic_list": {
+		"public_list": {
 			"key": "yes_no_na"
 		},
 		"descpublic_list": {
@@ -170,6 +170,114 @@
 	},
 	"idField": "study_id",
 	"fields": {
+		"aipcomplete": {
+			"key": "aipcomplete",
+			"translatable": false,
+			"immutable": true,
+			"type": "DATE",
+			"section": "basic_information"
+		},
+		"anonymization": {
+			"key": "anonymization",
+			"translatable": false,
+			"type": "CHOICE",
+			"choicelist": "anonymization_list",
+			"section": "basic_information"
+		},
+		"datakind": {
+			"key": "datakind",
+			"translatable": false,
+			"type": "CHOICE",
+			"choicelist": "datakind_list",
+			"section": "basic_information"
+		},
+		"dataversions": {
+			"key": "dataversions",
+			"translatable": false,
+			"type": "CONTAINER",
+			"section": "basic_information",
+			"subfields": [
+				"dataversion",
+				"dataversiondate",
+				"dataversionpro",
+				"dataversionlabel",
+				"dataversiontext",
+				"dataversionnotes"
+			]
+		},
+		"dataversion": {
+			"key": "dataversion",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"_comment": "Toistaiseksi STRING kunnes reaalilukujen käsittely tehty.",
+			"section": "basic_information",
+			"subfield": true
+		},
+		"dataversiondate": {
+			"key": "dataversiondate",
+			"translatable": false,
+			"required": true,
+			"type": "DATE",
+			"section": "basic_information",
+			"subfield": true
+		},
+		"dataversionlabel": {
+			"key": "dataversionlabel",
+			"translatable": false,
+			"required": true,
+			"type": "CHOICE",
+			"section": "basic_information",
+			"choicelist": "dataversionlabel_list",
+			"subfield": true
+		},
+		"dataversionnotes": {
+			"key": "dataversionnotes",
+			"translatable": false,
+			"type": "STRING",
+			"section": "basic_information",
+			"summaryField": false,
+			"multiline": true,
+			"subfield": true
+		},
+		"dataversionpro": {
+			"key": "dataversionpro",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"section": "basic_information",
+			"subfield": true
+		},
+		"dataversiontext": {
+			"key": "dataversiontext",
+			"required": true,
+			"type": "STRING",
+			"section": "basic_information",
+			"summaryField": false,
+			"multiline": true,
+			"subfield": true
+		},
+		"descpublic": {
+			"key": "descpublic",
+			"translatable": false,
+			"type": "CHOICE",
+			"choicelist": "descpublic_list",
+			"section": "basic_information"
+		},
+		"id": {
+			"_comment": "This contains the automatically generated study_id_prefix+study_id combination.",
+			"key": "id",
+			"translatable": false,
+			"immutable": true,
+			"unique": true,
+			"required": true,
+			"type": "CONCAT",
+			"concatenate": [
+				"study_id_prefix",
+				"study_id"
+			],
+			"section": "basic_information"
+		},
 		"study_id_prefix": {
 			"_comment": "Contains the letter part of study id. This comes automatically from the default value of the choicelist.",
 			"key": "study_id_prefix",
@@ -193,104 +301,6 @@
 			"type": "INTEGER",
 			"section": "basic_information"
 		},
-		"id": {
-			"_comment": "This contains the automatically generated study_id_prefix+study_id combination.",
-			"key": "id",
-			"translatable": false,
-			"immutable": true,
-			"unique": true,
-			"required": true,
-			"type": "CONCAT",
-			"concatenate": [
-				"study_id_prefix",
-				"study_id"
-			],
-			"section": "basic_information"
-		},
-		"title": {
-			"key": "title",
-			"type": "STRING",
-			"section": "basic_information"
-		},
-		"submissionid": {
-			"key": "submissionid",
-			"translatable": false,
-			"immutable": true,
-			"unique": true,
-			"required": true,
-			"type": "INTEGER",
-			"section": "basic_information"
-		},
-		"aipcomplete": {
-			"key": "aipcomplete",
-			"translatable": false,
-			"immutable": true,
-			"type": "DATE",
-			"section": "basic_information"
-		},
-		"datakind": {
-			"key": "datakind",
-			"translatable": false,
-			"type": "CHOICE",
-			"choicelist": "datakind_list",
-			"section": "basic_information"
-		},
-		"anonymization": {
-			"key": "anonymization",
-			"translatable": false,
-			"type": "CHOICE",
-			"choicelist": "anonymization_list",
-			"section": "basic_information"
-		},
-		"securityissues": {
-			"key": "securityissues",
-			"translatable": false,
-			"type": "CHOICE",
-			"choicelist": "securityissues_list",
-			"section": "basic_information"
-		},
-		"ispublic": {
-			"key": "ispublic",
-			"translatable": false,
-			"type": "CHOICE",
-			"choicelist": "ispublic_list",
-			"section": "basic_information"
-		},
-		"descpublic": {
-			"key": "descpublic",
-			"translatable": false,
-			"type": "CHOICE",
-			"choicelist": "descpublic_list",
-			"section": "basic_information"
-		},
-		"varpublic": {
-			"key": "varpublic",
-			"translatable": false,
-			"type": "CHOICE",
-			"choicelist": "varpublic_list",
-			"section": "basic_information"
-		},
-		"seriesid": {
-			"key": "seriesid",
-			"translatable": false,
-			"type": "CHOICE",
-			"choicelist": "series_list",
-			"section": "basic_information"
-		},
-		"originallocation": {
-			"key": "originallocation",
-			"translatable": false,
-			"type": "STRING",
-			"section": "basic_information",
-			"multiline": true
-		},
-		"processingnotes": {
-			"key": "processingnotes",
-			"translatable": false,
-			"type": "STRING",
-			"section": "basic_information",
-			"multiline": true
-		},
 		"notes": {
 			"key": "notes",
 			"translatable": false,
@@ -310,77 +320,26 @@
 			"section": "basic_information",
 			"subfield": true
 		},
-		"data_versions": {
-			"key": "data_versions",
-			"translatable": false,
-			"type": "CONTAINER",
-			"section": "basic_information",
-			"subfields": [
-				"subfield_versions_version",
-				"subfield_versions_date",
-				"subfield_versions_handler",
-				"subfield_versions_short_description",
-				"subfield_versions_public_description",
-				"subfield_versions_private_description"
-			]
-		},
-		"subfield_versions_version": {
-			"key": "subfield_versions_version",
-			"translatable": false,
-			"required": true,
-			"type": "REAL",
-			"section": "basic_information",
-			"subfield": true
-		},
-		"subfield_versions_date": {
-			"key": "subfield_versions_date",
-			"translatable": false,
-			"type": "DATE",
-			"section": "basic_information",
-			"subfield": true
-		},
-		"subfield_versions_handler": {
-			"key": "subfield_versions_handler",
+		"originallocation": {
+			"key": "originallocation",
 			"translatable": false,
 			"type": "STRING",
 			"section": "basic_information",
-			"subfield": true
+			"multiline": true
 		},
-		"subfield_versions_short_description": {
-			"key": "subfield_versions_short_description",
+		"processingnotes": {
+			"key": "processingnotes",
+			"translatable": false,
+			"type": "STRING",
+			"section": "basic_information",
+			"multiline": true
+		},
+		"public": {
+			"key": "public",
 			"translatable": false,
 			"type": "CHOICE",
-			"section": "basic_information",
-			"choicelist": "shortdescription_list",
-			"subfield": true
-		},
-		"subfield_versions_public_description": {
-			"key": "subfield_versions_public_description",
-			"translatable": false,
-			"type": "STRING",
-			"section": "basic_information",
-			"subfield": true
-		},
-		"subfield_versions_private_description": {
-			"key": "subfield_versions_private_description",
-			"translatable": false,
-			"type": "STRING",
-			"section": "basic_information",
-			"subfield": true
-		},
-		"description_versions": {
-			"key": "description_versions",
-			"translatable": false,
-			"type": "CONTAINER",
-			"section": "basic_information",
-			"subfields": [
-				"subfield_versions_version",
-				"subfield_versions_date",
-				"subfield_versions_handler",
-				"subfield_versions_short_description",
-				"subfield_versions_public_description",
-				"subfield_versions_private_description"
-			]
+			"choicelist": "public_list",
+			"section": "basic_information"
 		},
 		"publication_references": {
 			"_comment": "TODO: Should all needed fields be mentioned in configuration or is that something that is just done while collecting data for UI?",
@@ -396,6 +355,42 @@
 			"translatable": false,
 			"type": "REFERENCE",
 			"reference": "study_ref",
+			"section": "basic_information"
+		},
+		"securityissues": {
+			"key": "securityissues",
+			"translatable": false,
+			"type": "CHOICE",
+			"choicelist": "securityissues_list",
+			"section": "basic_information"
+		},
+		"seriesid": {
+			"key": "seriesid",
+			"translatable": false,
+			"type": "CHOICE",
+			"choicelist": "series_list",
+			"section": "basic_information"
+		},
+		"submissionid": {
+			"key": "submissionid",
+			"translatable": false,
+			"immutable": true,
+			"unique": true,
+			"required": true,
+			"type": "INTEGER",
+			"section": "basic_information"
+		},
+		"title": {
+			"key": "title",
+			"type": "STRING",
+			"notToLang": ["en_US"],
+			"section": "basic_information"
+		},
+		"varpublic": {
+			"key": "varpublic",
+			"translatable": false,
+			"type": "CHOICE",
+			"choicelist": "varpublic_list",
 			"section": "basic_information"
 		},
 		"usability_permission": {

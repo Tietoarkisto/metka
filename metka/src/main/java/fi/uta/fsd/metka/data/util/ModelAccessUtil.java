@@ -381,19 +381,30 @@ public class ModelAccessUtil {
                     // TODO: Handle recursive containers
                     continue;
                 }
-                // Field is a single value field.
-                JSONObject fieldValue = row.getJSONObject("fields").getJSONObject(subfield.getKey());
+                if(row.opt("fields") == null || row.opt("field") == JSONObject.NULL) {
+                    // TODO: if row is missing fields object it might mean row is deleted, for now continue
+                    continue;
+                }
+                // Field is a single value field and fields exists
+                JSONObject fieldValue = row.optJSONObject("fields").optJSONObject(subfield.getKey());
                 SavedFieldContainer savedField = (SavedFieldContainer)rowContainer.getField(subfield.getKey());
-
+                Object newValue = null;
+                if(fieldValue != null || fieldValue != JSONObject.NULL) {
+                    if(!fieldValue.get("type").equals("value")) {
+                        // TODO: For some reason value field with wrong time is present, log error.
+                        continue;
+                    }
+                    newValue = fieldValue.opt("value");
+                }
                 // Check if there has been a change in field value
-                fieldChange = doValueComparison(savedField, subfield, fieldValue.get("value"));
+                fieldChange = doValueComparison(savedField, subfield, newValue);
 
                 if(fieldChange) {
                     if(savedField == null) {
                         savedField = new SavedFieldContainer(subfield.getKey());
                         rowContainer.putField(savedField);
                     }
-                    updateFieldValue(savedField, subfield, fieldValue.get("value"), time);
+                    updateFieldValue(savedField, subfield, newValue, time);
                     rowChangeContainer.putChange(new Change(field.getKey()));
                 }
                 // If this field changed or if row was changed previously then row has changed.

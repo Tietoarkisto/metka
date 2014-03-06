@@ -18,7 +18,7 @@
             </jsp:include>
 
             <jsp:include page="../../../inc/l18nSelect.jsp">
-                <jsp:param name="field" value="ispublic" />
+                <jsp:param name="field" value="public" />
             </jsp:include>
         </tr>
         <tr><c:set var="field" value="submissionid" />
@@ -35,7 +35,7 @@
         </tr>
         <tr><c:set var="field" value="aipcomplete" />
             <td class="labelColumn"><form:label path="values['${field}']"><spring:message code="STUDY.field.${field}"/></form:label></td>
-            <td><form:input path="values['${field}']" /></td>
+            <td><form:input class="datepicker" path="values['${field}']" /></td>
 
             <jsp:include page="../../../inc/l18nSelect.jsp">
                 <jsp:param name="field" value="securityissues" />
@@ -63,6 +63,9 @@
     </table>
     <jsp:include page="../../../inc/datatableContainer.jsp">
         <jsp:param name="field" value="notes" />
+    </jsp:include>
+    <jsp:include page="../../../inc/datatableContainer.jsp">
+        <jsp:param name="field" value="dataversions" />
     </jsp:include>
     <%-- Not done yet from here on --%>
     <%--<div class="upperContainer">

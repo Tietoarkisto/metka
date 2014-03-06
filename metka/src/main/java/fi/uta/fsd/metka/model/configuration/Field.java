@@ -23,6 +23,7 @@ import java.util.List;
 public class Field {
     @XmlElement private final String key;
     @XmlElement private Boolean translatable = true;
+    @XmlElement private final List<String> notToLang = new ArrayList<>();
     @XmlElement private Boolean immutable = false;
     @XmlElement private Boolean display = true;
     @XmlElement private Integer maxValues = null;
@@ -54,6 +55,10 @@ public class Field {
 
     public void setTranslatable(Boolean translatable) {
         this.translatable = translatable;
+    }
+
+    public List<String> getNotToLang() {
+        return notToLang;
     }
 
     public Boolean getImmutable() {

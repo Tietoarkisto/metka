@@ -31,6 +31,7 @@
           <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="" use3DEffect="true">
             <y:AttributeLabel>+key : String {id}
 +translatable : Boolean = true
++notToLang : String [0..*]
 +immutable : Boolean = false
 +display : Boolean = true
 +unique : Boolean = false
@@ -99,15 +100,18 @@ in json clobs.</y:NodeLabel>
       <data key="d4"/>
       <data key="d6">
         <y:UMLNoteNode>
-          <y:Geometry height="738.3284403669718" width="389.60000000000014" x="1048.5" y="858.2189984709482"/>
+          <y:Geometry height="819.3284403669718" width="409.60000000000014" x="1048.5" y="858.2189984709482"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="772.28125" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="406.38671875" x="4.0" y="4.0">key: identifies the field inside this configuration.
+          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="814.1875" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="406.38671875" x="4.0" y="4.0">key: identifies the field inside this configuration.
     all versionable objects use only one configuration
     so there should be no clashes.
  
 translatable: denotes if this field can be translated.
     Default = true.
+
+notToLang: List of language codes to which the field should
+    not be translated.
  
 immutable: If true then value can not change once given.
     practically means that all attempts to modify a
@@ -235,7 +239,7 @@ summaryField: Controls wether this field will appear in dataTables.
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="-88.43609984364511" sy="-92.19035776431781" tx="-177.36339342162682" ty="-265.96592604607577"/>
+          <y:Path sx="-88.43609984364511" sy="-92.19035776431781" tx="-186.46829041452347" ty="-295.1443225860009"/>
           <y:LineStyle color="#000000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="none"/>
           <y:BendStyle smoothed="false"/>

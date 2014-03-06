@@ -17,27 +17,13 @@ $(document).ready(function(){
             dayNames: ['Sunnuntai','Maanantai','Tiistai','Keskiviikko','Torstai','Perjantai','Lauantai'],
             dayNamesMin: ['Su','Ma','Ti','Ke','To','Pe','La'],
             weekHeader: 'Vk',
-            dateFormat: 'dd.mm.yy',
+            dateFormat: 'yy-mm-dd',
             firstDay: 1,
             isRTL: false,
             showMonthAfterYear: false,
             yearSuffix: ''};
         $.datepicker.setDefaults($.datepicker.regional['fi']);
     });
-
-    // TODO: add pointerClass class to all relevant dom-objects in JSP-instead of listing them all here
-    /*$(".materialFileRow, .materialCodebookFileRow, .materialErrorRow, .desktopWidgetDataRow, " +
-        ".errorneousMaterialRow, .materialSearchResultRow, .publicationSearchResultRow, " +
-        ".materialSeriesRow, .materialPublicationRow, .materialMaterialRow, #variablesListBasic li, " +
-        ".publicationSeriesRow, .publicationMaterialRow, .link, #removeAdditionalFilingContractFile, " +
-        ".studyLevelIdRow, .parTitleRow, .otherMaterialRow, .relatedMaterialRow, #addAltTitle, #removeAltTitle, " +
-        ".removeAddedElement, .versionRow, .materialNotificationRow, .helpImage, .binderNumber, .packagingRow").hover(function() {
-            $(this).css('cursor', 'pointer');
-        }, function() {
-            $(this).css('cursor', 'auto');
-        });*/
-
-
 
     $("input[type=radio][name=language]").on("click", function() {
         var language = $(this).val();
