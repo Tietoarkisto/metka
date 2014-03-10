@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,9 +32,9 @@ public class SeriesController {
 
     private static final String REDIRECT_SEARCH = "redirect:/series/search";
     private static final String REDIRECT_VIEW = "redirect:/series/view/";
-    private static final String VIEW = "series/view";
-    private static final String SEARCH = "series/search";
-    private static final String MODIFY = "series/modify";
+    private static final String VIEW = "view";
+    private static final String SEARCH = "search";
+    private static final String MODIFY = "modify";
 
     @Autowired
     private SeriesService seriesService;
@@ -48,13 +49,15 @@ public class SeriesController {
     @RequestMapping(value = "view/{id}", method = RequestMethod.GET)
     public String view(Model model, @PathVariable Integer id, RedirectAttributes redirectAttributes) {
         Integer revision = seriesService.findSingleRevisionNo(id);
-        if(model.asMap().containsKey("errorContainer")) {
-            redirectAttributes.addFlashAttribute("errorContainer", model.asMap().get("errorContainer"));
+        if(model.asMap().containsKey("displayableErrors")) {
+            redirectAttributes.addFlashAttribute("displayableErrors", model.asMap().get("displayableErrors"));
         }
         if(revision != null) {
             return REDIRECT_VIEW+id+"/"+revision;
         } else {
-            redirectAttributes.addFlashAttribute("errorContainer", ErrorMessage.noViewableRevision("series", id));
+            List<ErrorMessage> errors = new ArrayList<>();
+            errors.add(ErrorMessage.noViewableRevision("series", id));
+            redirectAttributes.addFlashAttribute("displayableErrors", errors);
             return REDIRECT_SEARCH;
         }
     }
@@ -74,15 +77,20 @@ public class SeriesController {
 
         if(model.asMap().get("single") == null || model.asMap().get("configuration") == null) {
             RevisionViewDataContainer revData = seriesService.findSingleRevision(id, revision);
-            model.asMap().put("single", revData.getTransferObject());
-            model.asMap().put("configuration", revData.getConfiguration());
-            single = revData.getTransferObject();
+            if(revData != null) {
+                model.asMap().put("single", revData.getTransferObject());
+                model.asMap().put("configuration", revData.getConfiguration());
+                single = revData.getTransferObject();
+            }
         } else {
             single = (TransferObject)model.asMap().get("single");
         }
 
         if(single == null) {
-            redirectAttributes.addFlashAttribute("errorContainer", ErrorMessage.noSuchRevision("series", id, revision));
+            List<ErrorMessage> errors = new ArrayList<>();
+            errors.add(ErrorMessage.noSuchRevision("series", id, revision));
+            errors.add(ErrorMessage.noSuchRevision("study", id, revision));
+            redirectAttributes.addFlashAttribute("displayableErrors", errors);
             return REDIRECT_SEARCH;
         }
 
@@ -117,7 +125,9 @@ public class SeriesController {
         model.asMap().put("searchData", searchData);
 
         if(searchData.getQuery() != null && searchData.getResults().size() == 0) {
-            model.asMap().put("errorContainer", ErrorMessage.noResults("series"));
+            List<ErrorMessage> errors = new ArrayList<>();
+            errors.add(ErrorMessage.noResults("series"));
+            model.asMap().put("displayableErrors", errors);
         }
 
         Configuration config = configService.findLatestByType(ConfigurationType.SERIES);
@@ -174,13 +184,14 @@ public class SeriesController {
     @RequestMapping(value="save", method = {RequestMethod.POST})
     public String save(@ModelAttribute("single")TransferObject single, RedirectAttributes redirectAttributes) {
         boolean success = seriesService.saveSeries(single);
-
+        List<ErrorMessage> errors = new ArrayList<>();
         if(success) {
-            redirectAttributes.addFlashAttribute("errorContainer", ErrorMessage.saveSuccess());
+            errors.add(ErrorMessage.saveSuccess());
         } else {
-            redirectAttributes.addFlashAttribute("errorContainer", ErrorMessage.saveFail());
+            errors.add(ErrorMessage.saveFail());
         }
 
+        if(errors.size() > 0) redirectAttributes.addFlashAttribute("displayableErrors", errors);
         return REDIRECT_VIEW+single.getId()+"/"+single.getRevision();
     }
 
@@ -194,19 +205,20 @@ public class SeriesController {
     @RequestMapping(value="approve", method = {RequestMethod.POST})
     public String approve(@ModelAttribute("single")TransferObject single, RedirectAttributes redirectAttributes) {
         boolean success = seriesService.saveSeries(single);
-
+        List<ErrorMessage> errors = new ArrayList<>();
         if(!success) {
-            redirectAttributes.addFlashAttribute("errorContainer", ErrorMessage.approveFailSave());
+            errors.add(ErrorMessage.approveFailSave());
         } else {
             success = seriesService.approveSeries(single);
 
             if(!success) {
-                redirectAttributes.addFlashAttribute("errorContainer", ErrorMessage.approveFailValidate());
+                errors.add(ErrorMessage.approveFailValidate());
             } else {
-                redirectAttributes.addFlashAttribute("errorContainer", ErrorMessage.approveSuccess());
+                errors.add(ErrorMessage.approveSuccess());
             }
         }
 
+        if(errors.size() > 0) redirectAttributes.addFlashAttribute("displayableErrors", errors);
         return REDIRECT_VIEW+single.getId()+"/"+single.getRevision();
     }
 }

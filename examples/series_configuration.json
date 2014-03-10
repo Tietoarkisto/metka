@@ -3,34 +3,40 @@
 		"version": 1,
 		"type": "SERIES"
 	},
+	"idField": "seriesno",
 	"fields": {
-		"id": {
-			"key": "id",
-			"translateable": false,
+		"seriesno": {
+			"key": "seriesno",
+			"translatable": false,
 			"immutable": true,
 			"unique": true,
 			"required": true,
-			"maxValues": 1,
 			"type": "INTEGER"
 		},
-		"abbreviation": {
-			"key": "abbreviation",
-			"maxValues": 1,
+		"seriesabb": {
+			"key": "seriesabb",
 			"immutable": true,
 			"unique": true,
 			"required": true,
-			"translateable": false,
+			"translatable": false,
 			"type": "STRING"
 		},
-		"name": {
-			"key": "name",
-			"maxValues": 1,
+		"seriesname": {
+			"key": "seriesname",
+			"required": true,
 			"type": "STRING"
 		},
-		"description": {
-			"key": "description",
-			"maxValues": 1,
-			"type": "STRING"
+		"seriesdesc": {
+			"key": "seriesdesc",
+			"type": "STRING",
+			"required": true,
+			"multiline": true
+		},
+		"seriesnotes": {
+			"key": "seriesnotes",
+			"type": "STRING",
+			"translatable": false,
+			"multiline": true
 		}
 	}
 }

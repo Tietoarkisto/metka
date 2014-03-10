@@ -135,17 +135,6 @@
 					"value": "FSD"
 				}
 			]
-		},
-		"dataversionlabel_list": {
-			"key": "dataversionlabel_list",
-			"options": [
-				{
-					"value": "1"
-				},
-				{
-					"value": "2"
-				}
-			]
 		}
 	},
 	"references": {
@@ -195,6 +184,9 @@
 			"choicelist": "anonymization_list",
 			"section": "basic_information"
 		},
+		
+		// DATAARRIVALDATE
+		
 		"datakind": {
 			"key": "datakind",
 			"translatable": false,
@@ -202,72 +194,84 @@
 			"choicelist": "datakind_list",
 			"section": "basic_information"
 		},
-		"dataversions": {
-			"key": "dataversions",
+		
+		// Versiotaulut
+		
+		"data_versions": {
+			"key": "data_versions",
 			"translatable": false,
 			"type": "CONTAINER",
 			"section": "basic_information",
 			"subfields": [
-				"dataversion",
-				"dataversiondate",
-				"dataversionpro",
-				"dataversionlabel",
-				"dataversiontext",
-				"dataversionnotes"
+				"subfield_versions_version",
+				"subfield_versions_date",
+				"subfield_versions_handler",
+				"subfield_versions_short_description",
+				"subfield_versions_public_description",
+				"subfield_versions_private_description"
 			]
 		},
-		"dataversion": {
-			"key": "dataversion",
+		"subfield_versions_version": {
+			"key": "subfield_versions_version",
 			"translatable": false,
 			"required": true,
-			"type": "STRING",
-			"_comment": "Toistaiseksi STRING kunnes reaalilukujen käsittely tehty.",
+			"type": "REAL",
 			"section": "basic_information",
 			"subfield": true
 		},
-		"dataversiondate": {
-			"key": "dataversiondate",
+		"subfield_versions_date": {
+			"key": "subfield_versions_date",
 			"translatable": false,
-			"required": true,
 			"type": "DATE",
 			"section": "basic_information",
 			"subfield": true
 		},
-		"dataversionlabel": {
-			"key": "dataversionlabel",
+		"subfield_versions_handler": {
+			"key": "subfield_versions_handler",
 			"translatable": false,
-			"required": true,
+			"type": "STRING",
+			"section": "basic_information",
+			"subfield": true
+		},
+		"subfield_versions_short_description": {
+			"key": "subfield_versions_short_description",
+			"translatable": false,
 			"type": "CHOICE",
 			"section": "basic_information",
-			"choicelist": "dataversionlabel_list",
+			"choicelist": "shortdescription_list",
 			"subfield": true
 		},
-		"dataversionnotes": {
-			"key": "dataversionnotes",
+		"subfield_versions_public_description": {
+			"key": "subfield_versions_public_description",
 			"translatable": false,
 			"type": "STRING",
 			"section": "basic_information",
-			"summaryField": false,
-			"multiline": true,
 			"subfield": true
 		},
-		"dataversionpro": {
-			"key": "dataversionpro",
+		"subfield_versions_private_description": {
+			"key": "subfield_versions_private_description",
 			"translatable": false,
-			"required": true,
 			"type": "STRING",
 			"section": "basic_information",
 			"subfield": true
 		},
-		"dataversiontext": {
-			"key": "dataversiontext",
-			"required": true,
-			"type": "STRING",
+		"description_versions": {
+			"key": "description_versions",
+			"translatable": false,
+			"type": "CONTAINER",
 			"section": "basic_information",
-			"summaryField": false,
-			"multiline": true,
-			"subfield": true
+			"subfields": [
+				"subfield_versions_version",
+				"subfield_versions_date",
+				"subfield_versions_handler",
+				"subfield_versions_short_description",
+				"subfield_versions_public_description",
+				"subfield_versions_private_description"
+			]
 		},
+		
+		// Versiotaulut
+		
 		"descpublic": {
 			"key": "descpublic",
 			"translatable": false,
@@ -331,6 +335,9 @@
 			"section": "basic_information",
 			"subfield": true
 		},
+		
+		// Onko huomion muokkauspäivämäärä ja muokkaaja haettavaa tietoa?
+		
 		"originallocation": {
 			"key": "originallocation",
 			"translatable": false,
@@ -338,6 +345,9 @@
 			"section": "basic_information",
 			"multiline": true
 		},
+		
+		// Englanninkielinen title
+		
 		"processingnotes": {
 			"key": "processingnotes",
 			"translatable": false,
@@ -346,13 +356,13 @@
 			"multiline": true
 		},
 		"public": {
-			"key": "public",
+			"key": "ispublic",
 			"translatable": false,
 			"type": "CHOICE",
 			"choicelist": "public_list",
 			"section": "basic_information"
 		},
-		"publication_references": {
+		"publication_references": { // Puutuu kuvailusta
 			"_comment": "TODO: Should all needed fields be mentioned in configuration or is that something that is just done while collecting data for UI?",
 			"key": "publication_references",
 			"translatable": false,
@@ -360,7 +370,7 @@
 			"reference": "publication_ref",
 			"section": "basic_information"
 		},
-		"study_references": {
+		"study_references": { // Tee CONTAINER jossa relatedstudyno ja relatedstudytitle on jotenkin järkevästi
 			"_comment": "TODO: See publication_reference!",
 			"key": "study_references",
 			"translatable": false,
@@ -375,13 +385,16 @@
 			"choicelist": "securityissues_list",
 			"section": "basic_information"
 		},
-		"seriesid": {
+		"seriesid": { // Sarjasta tallennetaan id, haun pitäisi varmaankin olla mahdollinen myös nimellä
 			"key": "seriesid",
 			"translatable": false,
 			"type": "CHOICE",
 			"choicelist": "series_list",
 			"section": "basic_information"
 		},
+		
+		// Lisää STATUS?
+		
 		"submissionid": {
 			"key": "submissionid",
 			"translatable": false,
@@ -394,7 +407,6 @@
 		"title": {
 			"key": "title",
 			"type": "STRING",
-			"notToLang": ["en_US"],
 			"section": "basic_information"
 		},
 		"varpublic": {

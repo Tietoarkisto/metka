@@ -10,7 +10,7 @@ $(document).ready(function() {
 function buildDatatable(content) {
     // Handle only containers
     var key = content.key;
-    var field = containerConfig[key];
+    var field = MetkaGlobals.containerConfig[key];
     if(content.type != "container" || field.type != "CONTAINER") return;
 
     var body = $("#"+key+" tbody");
@@ -25,7 +25,7 @@ function buildDatatable(content) {
         var rowContent = content.rows[row];
         var opener = new DialogOpener(key, false, rowContent.rowId);
         tr.click(opener);
-        for(i = 0; i < containerConfig[key].subfields.length; i++) {
+        for(i = 0; i < field.subfields.length; i++) {
             var subfield = field.subfields[i];
             if(subfield.summaryField == false) {
                 continue;
@@ -38,12 +38,20 @@ function buildDatatable(content) {
                 value.type = "value";
                 value.value = "";
             }
-            if((containerConfig[subkey] != undefined && containerConfig[subkey].type == "CONTAINER") || value.type != "value") {
+            if((MetkaGlobals.containerConfig[subkey] != undefined && MetkaGlobals.containerConfig[subkey].type == "CONTAINER") || value.type != "value") {
                 // TODO: Handle recursive containers somehow. Mostly datatable should not contain recursive containers
                 return;
             }
+
             var td = $("<td>");
-            td.text(value.value);
+            switch(subfield.type) {
+                case "CHOICE":
+                    td.text(MetkaGlobals.strings[MetkaGlobals.page.toUpperCase()+"."+subfield.choicelist+".choices."+value.value]);
+                    break;
+                default:
+                    td.text(value.value);
+                    break;
+            }
             tr.append(td);
         }
         if(field.showSaveInfo == true) {
@@ -78,8 +86,8 @@ function showGeneralDialog(key, isNew, rowId) {
         }
         if(row != null) { // If row was found then use it, otherwise clear dialog and change to adding new row
             $("#"+key+"ContainerDialogRowId").val(row.rowId);
-            for(var i = 0; i < containerConfig[key].subfields.length; i++) {
-                var subfield = containerConfig[key].subfields[i];
+            for(var i = 0; i < MetkaGlobals.containerConfig[key].subfields.length; i++) {
+                var subfield = MetkaGlobals.containerConfig[key].subfields[i];
                 if(subfield == undefined) {
                     // Sanity check, although this means that something is very wrong
                     continue;
@@ -114,8 +122,8 @@ function handleGeneralContainerDialog(key) {
     row.key = key;
     row.fields = new Object();
     // RowId is set when row is added to container
-    for(var i = 0; i < containerConfig[key].subfields.length; i++) {
-        var subfield = containerConfig[key].subfields[i];
+    for(var i = 0; i < MetkaGlobals.containerConfig[key].subfields.length; i++) {
+        var subfield = MetkaGlobals.containerConfig[key].subfields[i];
         if(subfield == undefined) {
             // Sanity check, although this means that something is very wrong
             continue;

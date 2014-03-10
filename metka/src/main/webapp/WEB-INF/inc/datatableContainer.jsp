@@ -25,13 +25,3 @@
         <jsp:param name="field" value="${param.field}" />
     </jsp:include>
 </c:if>
-
-<%--
-<td colspan="${colspan}">
-
-    <c:choose><c:when test="${multiline == false}">
-        <form:input path="values['${param.field}']" readonly="${param.readOnly}"/> &lt;%&ndash; TODO: Implement translations &ndash;%&gt;
-    </c:when><c:when test="${multiline == true}">
-        <form:textarea path="values['${param.field}']" readonly="${param.readOnly}"/> &lt;%&ndash; TODO: Implement translations &ndash;%&gt;
-    </c:when></c:choose>
-</td>--%>

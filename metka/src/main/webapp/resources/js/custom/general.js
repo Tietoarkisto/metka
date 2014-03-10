@@ -99,16 +99,29 @@ $(document).ready(function(){
      * Display controller provided errors.
      */
     checkForErrors();
+
+    $( "#revisionSearchFormSearch" ).click(function() {
+        $( "#revisionSearchForm" ).submit();
+    });
+
+    $( "#revisionModifyFormSave" ).click(function() {
+        $( "#revisionModifyForm" ).attr("action", MetkaGlobals.contextPath+"/"+MetkaGlobals.page+"/save");
+        $( "#revisionModifyForm" ).submit();
+    });
+
+    $( "#revisionModifyFormApprove" ).click(function() {
+        $("#revisionModifyForm").attr("action", MetkaGlobals.contextPath+"/"+MetkaGlobals.page+"/approve");
+        $("#revisionModifyForm").submit();
+    });
 });
 
 function checkForErrors() {
-    if(errorMsg != null && errorMsg != "") {
-        var str = strings[errorMsg];
-        if(errorData != null && errorData.length > 0) {
-            for(var i = 0; i < errorData.length; i++) {
-                str = str.replace("{"+i+"}", strings[errorData[i]]);
-            }
+    for(var index = 0; index < MetkaGlobals.errorArray.length; index++) {
+        var errorObject = MetkaGlobals.errorArray[index];
+        var str = MetkaGlobals.strings[errorObject.message];
+        for(var i = 0; i < errorObject.data.length; i++) {
+            str = str.replace("{"+i+"}", errorObject.data[i]);
         }
-        alert(str, errorTitle);
+        alert(str, errorObject.title);
     }
 }

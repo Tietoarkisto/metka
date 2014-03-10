@@ -135,6 +135,17 @@
 					"value": "FSD"
 				}
 			]
+		},
+		"dataversionlabel_list": {
+			"key": "dataversionlabel_list",
+			"options": [
+				{
+					"value": "1"
+				},
+				{
+					"value": "2"
+				}
+			]
 		}
 	},
 	"references": {

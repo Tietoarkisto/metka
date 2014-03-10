@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -36,9 +37,9 @@ import java.util.List;
 public class StudyController {
     private static final String REDIRECT_SEARCH = "redirect:/study/search";
     private static final String REDIRECT_VIEW = "redirect:/study/view/";
-    private static final String VIEW = "study/view";
-    private static final String SEARCH = "study/search";
-    private static final String MODIFY = "study/modify";
+    private static final String VIEW = "view";
+    private static final String SEARCH = "search";
+    private static final String MODIFY = "modify";
 
     @Autowired
     private StudyService studyService;
@@ -57,7 +58,9 @@ public class StudyController {
         if(revision != null) {
             return REDIRECT_VIEW+id+"/"+revision;
         } else {
-            redirectAttributes.addFlashAttribute("errorContainer", ErrorMessage.noViewableRevision("study", id));
+            List<ErrorMessage> errors = new ArrayList<>();
+            errors.add(ErrorMessage.noViewableRevision("study", id));
+            redirectAttributes.addFlashAttribute("displayableErrors", errors);
             return REDIRECT_SEARCH;
         }
     }
@@ -77,17 +80,27 @@ public class StudyController {
         Configuration config = null;
         if(model.asMap().get("single") == null || model.asMap().get("configuration") == null) {
             RevisionViewDataContainer revData = studyService.findSingleRevision(id, revision);
-            model.asMap().put("single", revData.getTransferObject());
-            model.asMap().put("configuration", revData.getConfiguration());
-            single = revData.getTransferObject();
-            config = revData.getConfiguration();
+            if(revData != null) {
+                model.asMap().put("single", revData.getTransferObject());
+                model.asMap().put("configuration", revData.getConfiguration());
+                single = revData.getTransferObject();
+                config = revData.getConfiguration();
+            }
         } else {
             single = (TransferObject)model.asMap().get("single");
             config = (Configuration)model.asMap().get("configuration");
         }
 
         if(single == null) {
-            redirectAttributes.addFlashAttribute("errorContainer", ErrorMessage.noSuchRevision("study", id, revision));
+            List<ErrorMessage> errors = new ArrayList<>();
+            errors.add(ErrorMessage.noSuchRevision("study", id, revision));
+            redirectAttributes.addFlashAttribute("displayableErrors", errors);
+            return REDIRECT_SEARCH;
+        }
+        if(config == null) {
+            List<ErrorMessage> errors = new ArrayList<>();
+            errors.add(ErrorMessage.noSuchRevision("study", id, revision));
+            redirectAttributes.addFlashAttribute("displayableErrors", errors);
             return REDIRECT_SEARCH;
         }
 
@@ -125,6 +138,9 @@ public class StudyController {
                 subfield.put("multiline", subConf.getMultiline());
                 subfield.put("required", subConf.getRequired());
                 subfield.put("summaryField", subConf.getSummaryField());
+                if(subConf.getType() == FieldType.CHOICE) {
+                    subfield.put("choicelist", config.getChoicelists().get(subConf.getChoicelist()).getKey());
+                }
                 container.append("subfields", subfield);
             }
             //container.put("subfields", field.getSubfields());
@@ -162,7 +178,9 @@ public class StudyController {
         model.asMap().put("searchData", searchData);
 
         if(searchData.getQuery() != null && searchData.getResults().size() == 0) {
-            model.asMap().put("errorContainer", ErrorMessage.noResults("series"));
+            List<ErrorMessage> errors = new ArrayList<>();
+            errors.add(ErrorMessage.noResults("series"));
+            model.asMap().put("displayableErrors", errors);
         }
 
         model.asMap().put("page", "study");
@@ -216,13 +234,13 @@ public class StudyController {
     @RequestMapping(value="save", method = {RequestMethod.POST})
     public String save(@ModelAttribute("single")TransferObject single, RedirectAttributes redirectAttributes) {
         boolean success = studyService.saveStudy(single);
-
+        List<ErrorMessage> errors = new ArrayList<>();
         if(success) {
-            redirectAttributes.addFlashAttribute("errorContainer", ErrorMessage.saveSuccess());
+            errors.add(ErrorMessage.saveSuccess());
         } else {
-            redirectAttributes.addFlashAttribute("errorContainer", ErrorMessage.saveFail());
+            errors.add(ErrorMessage.saveFail());
         }
-
+        if(errors.size() > 0) redirectAttributes.addFlashAttribute("displayableErrors", errors);
         return REDIRECT_VIEW+single.getId()+"/"+single.getRevision();
     }
 
@@ -236,18 +254,19 @@ public class StudyController {
     @RequestMapping(value="approve", method = {RequestMethod.POST})
     public String approve(@ModelAttribute("single")TransferObject single, RedirectAttributes redirectAttributes) {
         boolean success = studyService.saveStudy(single);
-
+        List<ErrorMessage> errors = new ArrayList<>();
         if(!success) {
-            redirectAttributes.addFlashAttribute("errorContainer", ErrorMessage.approveFailSave());
+            errors.add(ErrorMessage.approveFailSave());
         } else {
             success = studyService.approveStudy(single);
 
             if(!success) {
-                redirectAttributes.addFlashAttribute("errorContainer", ErrorMessage.approveFailValidate());
+                errors.add(ErrorMessage.approveFailValidate());
             } else {
-                redirectAttributes.addFlashAttribute("errorContainer", ErrorMessage.approveSuccess());
+                errors.add(ErrorMessage.approveSuccess());
             }
         }
+        if(errors.size() > 0) redirectAttributes.addFlashAttribute("displayableErrors", errors);
 
         return REDIRECT_VIEW+single.getId()+"/"+single.getRevision();
     }

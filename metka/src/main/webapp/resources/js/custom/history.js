@@ -15,10 +15,10 @@ $(document).ready(function(){
             return;
         }
         var request = new Object();
-        request.id = revisionableId;
+        request.id = SingleObject.id;
         request.begin = parseInt(beginVal);
         request.end = parseInt(endVal);
-        request.type = type.toUpperCase();
+        request.type = MetkaGlobals.page.toUpperCase();
         $.ajax({
             type: "POST",
             headers: {
@@ -26,7 +26,7 @@ $(document).ready(function(){
                 'Content-Type': 'application/json'
             },
             dataType: "json",
-            url: contextPath+"/history/revisions/compare",
+            url: MetkaGlobals.contextPath+"/history/revisions/compare",
             data: JSON.stringify(request),
             success: function(response) {
                 // Fill compare dialog
@@ -42,10 +42,10 @@ $(document).ready(function(){
                     var row = $("<tr>", {class: "revisionHistoryDialogRow"});
                     var prop = "";
                     if(rowData["section"] != null) {
-                        prop += strings[type.toUpperCase()+".section."+rowData["section"]];
+                        prop += MetkaGlobals.strings[MetkaGlobals.page.toUpperCase()+".section."+rowData["section"]];
                         prop += ": ";
                     }
-                    prop += strings[type.toUpperCase()+".field."+rowData["property"]];
+                    prop += MetkaGlobals.strings[MetkaGlobals.page.toUpperCase()+".field."+rowData["property"]];
                     row.append($("<td>", {class: "revisionTableColumn", text: prop}));
 
                     // TODO: server should only send strings suitable for display and nothing more.
@@ -69,7 +69,7 @@ $(document).ready(function(){
                 $("#revisionHistoryDialog").dialog("close");
 
                 // show compare dialog
-                var str = strings["general.revision.compare.title"];
+                var str = MetkaGlobals.strings["general.revision.compare.title"];
                 str = str.replace("{0}", response["begin"]);
                 str = str.replace("{1}", response["end"]);
 
@@ -85,7 +85,7 @@ $(document).ready(function(){
     $("#showRevisions").click(function() {
         $.ajax({
             type: "GET",
-            url: contextPath+"/history/revisions/"+revisionableId,
+            url: MetkaGlobals.contextPath+"/history/revisions/"+SingleObject.id,
             success: function(response) {
                 var revisionTable = $("#revisionTable");
                 var titleRow = revisionTable.children().first();
@@ -96,7 +96,7 @@ $(document).ready(function(){
                     var rowData = response[i];
                     var row = $("<tr>", {class: "revisionHistoryDialogRow"});
                     var td = $("<td>", {class: "revisionTableColumn"});
-                    td.append($("<a>", {href: contextPath+"/"+type+"/view"+"/"+revisionableId+"/"+rowData["revision"], text: rowData["revision"]}));
+                    td.append($("<a>", {href: MetkaGlobals.contextPath+"/"+MetkaGlobals.page+"/view"+"/"+SingleObject.id+"/"+rowData["revision"], text: rowData["revision"]}));
                     row.append(td);
                     if(rowData["state"]=="DRAFT") {
                         row.append($("<td>", {class: "revisionTableColumn", text: rowData["state"]}));
@@ -113,9 +113,9 @@ $(document).ready(function(){
                     input.change(checkRadioGroups);
                     radioColumn.append(input);
                     row.append(radioColumn);
-                    if(isDraft) {
+                    if(SingleObject.draft) {
                         var replaceColumn = $("<td>", {class: "revisionTableColumn"});
-                        replaceColumn.append($("<input>", {type: "button", class: "button", value: strings["general.revision.replace"]}));
+                        replaceColumn.append($("<input>", {type: "button", class: "button", value: MetkaGlobals.strings["general.revision.replace"]}));
                         row.append(replaceColumn);
                     }
                     tbody.append(row);

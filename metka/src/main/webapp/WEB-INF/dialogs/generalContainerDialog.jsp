@@ -13,14 +13,17 @@
                         <jsp:param name="field" value="${subkey}" />
                     </jsp:include>
                 </c:if>
-                <c:if test="${configuration.fields[subkey].type == 'DATE'}"> <%-- TODO: Actual date field, for now use string--%>
+                <c:if test="${configuration.fields[subkey].type == 'DATE'}">
                     <jsp:include page="inc/dialogDateRow.jsp">
                         <jsp:param name="container" value="${param.field}" />
                         <jsp:param name="field" value="${subkey}" />
                     </jsp:include>
                 </c:if>
-                <c:if test="${configuration.fields[subkey].type == 'CHOICE'}"> <%-- TODO: General dialog choice --%>
-
+                <c:if test="${configuration.fields[subkey].type == 'CHOICE'}">
+                    <jsp:include page="inc/dialogChoiceRow.jsp">
+                        <jsp:param name="container" value="${param.field}" />
+                        <jsp:param name="field" value="${subkey}" />
+                    </jsp:include>
                 </c:if>
             </c:forEach>
         </tbody>

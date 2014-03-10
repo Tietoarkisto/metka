@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  * User: lasseku
@@ -35,12 +38,14 @@ public class GeneralController {
         try {
             id = service.getAdjancedRevisionableId(id, type, false);
         } catch(NotFoundException e) {
+            List<ErrorMessage> errors = new ArrayList<>();
             ErrorMessage error = new ErrorMessage();
             error.setTitle("general.errors.title.notice");
             error.setMsg("general.errors.move.previous");
             error.getData().add("general.errors.move." + type);
+            errors.add(error);
 
-            redirectAttributes.addFlashAttribute("errorContainer", error);
+            redirectAttributes.addFlashAttribute("displayableErrors", error);
         }
         return "redirect:/"+type+"/view/"+id;
 
@@ -51,12 +56,14 @@ public class GeneralController {
         try {
             id = service.getAdjancedRevisionableId(id, type, true);
         } catch(NotFoundException e) {
+            List<ErrorMessage> errors = new ArrayList<>();
             ErrorMessage error = new ErrorMessage();
             error.setTitle("general.errors.title.notice");
             error.setMsg("general.errors.move.next");
             error.getData().add("general.errors.move."+type);
+            errors.add(error);
 
-            redirectAttributes.addFlashAttribute("errorContainer", error);
+            redirectAttributes.addFlashAttribute("displayableErrors", errors);
         }
         return "redirect:/"+type+"/view/"+id;
     }
@@ -73,14 +80,16 @@ public class GeneralController {
     public String removeDraft(@PathVariable String type, @PathVariable Integer id, RedirectAttributes redirectAttributes) {
         ErrorMessage error = new ErrorMessage();
         DraftRemoveResponse response = service.removeDraft(type, id);
+        List<ErrorMessage> errors = new ArrayList<>();
+        redirectAttributes.addFlashAttribute("displayableErrors", errors);
         switch (response) {
             case SUCCESS:
                 error = new ErrorMessage();
                 error.setMsg("general.errors.remove.draft.complete");
                 error.getData().add("general.errors.remove.draft.complete."+type);
                 error.getData().add(id+"");
+                errors.add(error);
 
-                redirectAttributes.addFlashAttribute("errorContainer", error);
                 return "redirect:/"+type+"/view/"+id;
             case NO_DRAFT:
                 error = new ErrorMessage();
@@ -88,8 +97,8 @@ public class GeneralController {
                 error.setMsg("general.errors.remove.draft.noDraft");
                 error.getData().add("general.errors.remove.draft.noDraft."+type);
                 error.getData().add(id+"");
+                errors.add(error);
 
-                redirectAttributes.addFlashAttribute("errorContainer", error);
                 return "redirect:/"+type+"/search";
             case NO_REVISIONABLE:
                 error = new ErrorMessage();
@@ -97,16 +106,16 @@ public class GeneralController {
                 error.setMsg("general.errors.remove.draft.noObject");
                 error.getData().add("general.errors.remove.draft.noObject."+type);
                 error.getData().add(id+"");
+                errors.add(error);
 
-                redirectAttributes.addFlashAttribute("errorContainer", error);
                 return "redirect:/"+type+"/search";
             case FINAL_REVISION:
                 error = new ErrorMessage();
                 error.setMsg("general.errors.remove.draft.final");
                 error.getData().add("general.errors.remove.draft.final."+type);
                 error.getData().add(id+"");
+                errors.add(error);
 
-                redirectAttributes.addFlashAttribute("errorContainer", error);
                 return "redirect:/"+type+"/search";
         }
         return "redirect:/"+type+"/search";
@@ -124,14 +133,16 @@ public class GeneralController {
     public String removeLogical(@PathVariable String type, @PathVariable Integer id, RedirectAttributes redirectAttributes) {
         ErrorMessage error = new ErrorMessage();
         LogicalRemoveResponse response = service.removeLogical(type, id);
+        List<ErrorMessage> errors = new ArrayList<>();
+        redirectAttributes.addFlashAttribute("displayableErrors", errors);
         switch (response) {
             case SUCCESS:
                 error = new ErrorMessage();
                 error.setMsg("general.errors.remove.logical.complete");
                 error.getData().add("general.errors.remove.logical.complete."+type);
                 error.getData().add(id+"");
+                errors.add(error);
 
-                redirectAttributes.addFlashAttribute("errorContainer", error);
                 return "redirect:/"+type+"/search";
             case OPEN_DRAFT:
                 error = new ErrorMessage();
@@ -139,8 +150,8 @@ public class GeneralController {
                 error.setMsg("general.errors.remove.logical.draft");
                 error.getData().add("general.errors.remove.logical.draft."+type);
                 error.getData().add(id+"");
+                errors.add(error);
 
-                redirectAttributes.addFlashAttribute("errorContainer", error);
                 return "redirect:/"+type+"/view/"+id;
             case NO_REVISIONABLE:
                 error = new ErrorMessage();
@@ -148,8 +159,8 @@ public class GeneralController {
                 error.setMsg("general.errors.remove.logical.noObject");
                 error.getData().add("general.errors.remove.logical.noObject."+type);
                 error.getData().add(id+"");
+                errors.add(error);
 
-                redirectAttributes.addFlashAttribute("errorContainer", error);
                 return "redirect:/"+type+"/search";
             case NO_APPROVED:
                 error = new ErrorMessage();
@@ -157,8 +168,8 @@ public class GeneralController {
                 error.setMsg("general.errors.remove.logical.noApproved");
                 error.getData().add("general.errors.remove.logical.noApprived."+type);
                 error.getData().add(id+"");
+                errors.add(error);
 
-                redirectAttributes.addFlashAttribute("errorContainer", error);
                 return "redirect:/"+type+"/view/"+id;
         }
         return "redirect:/"+type+"/search";

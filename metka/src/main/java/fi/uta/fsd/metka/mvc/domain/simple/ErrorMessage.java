@@ -3,19 +3,12 @@ package fi.uta.fsd.metka.mvc.domain.simple;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created with IntelliJ IDEA.
- * User: lasseku
- * Date: 1/24/14
- * Time: 3:22 PM
- * To change this template use File | Settings | File Templates.
- */
 public class ErrorMessage {
 
 
-    private String title;
+    private String title = "";
     private String msg;
-    private List<String> data = new ArrayList<String>();
+    private final List<String> data = new ArrayList<String>();
 
     public String getTitle() {
         return title;
@@ -81,7 +74,7 @@ public class ErrorMessage {
         return error;
     }
 
-    public static Object noSuchRevision(String type, Integer id, Integer revision) {
+    public static ErrorMessage noSuchRevision(String type, Integer id, Integer revision) {
         ErrorMessage error = new ErrorMessage();
         error.setMsg("general.errors.revision.noRevision");
         error.getData().add("general.errors.revision.noRevision."+type);
@@ -91,7 +84,17 @@ public class ErrorMessage {
         return error;
     }
 
-    public static Object noViewableRevision(String type, Integer id) {
+    public static ErrorMessage noConfigurationForRevision(String type, Integer id, Integer revision) {
+        ErrorMessage error = new ErrorMessage();
+        error.setMsg("general.errors.revision.noConfigurationForRevision");
+        error.getData().add("general.errors.revision.noConfigurationForRevision."+type);
+        error.getData().add(id+"");
+        error.getData().add(revision+"");
+
+        return error;
+    }
+
+    public static ErrorMessage noViewableRevision(String type, Integer id) {
         ErrorMessage error = new ErrorMessage();
         error.setMsg("general.errors.revision.noViewableRevision");
         error.getData().add("general.errors.revision.noViewableRevision."+type);

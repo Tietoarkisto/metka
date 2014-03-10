@@ -4,29 +4,20 @@
     Removes a draft revision completely or whole revisionable logically depending on where the button was pressed.
     If trying to remove draft revision then the user has to be the handler of that draft, otherwise error is returned.
     If trying to remove whole revisionable but there is an open draft the removal fails.
-    Required params:
-        removeDraft - Tells if the user is viewing a draft or not (if the user is on edit page). Drafts are removed actually, not just logically
-        id - removeId of the object being removed. If removeDraft is true then it is assumed the user was viewing the draft page when pressing remove. --%>
+--%>
 <script>
-    var removeDraft = ${param.isDraft};
+    MetkaGlobals.strings["general.confirmation.remove.draft"] = "<spring:message code='general.confirmation.remove.draft' />";
+    MetkaGlobals.strings["general.confirmation.remove.logical"] = "<spring:message code='general.confirmation.remove.logical' />";
 
-    <c:choose>
-        <c:when test="${param.isDraft}">
-            <c:set var="removeConfirmBase" value="general.confirmation.remove.draft" />
-        </c:when>
-        <c:otherwise>
-            <c:set var="removeConfirmBase" value="general.confirmation.remove.logical" />
-        </c:otherwise>
-    </c:choose>
-    var removeMsg = "<spring:message code='${removeConfirmBase}' />";
+    var removeMsg = MetkaGlobals.strings["general.confirmation.remove."+(SingleObject.draft?"draft":"logical")];
     removeMsg = removeMsg.replace("{0}", "<spring:message code='${removeConfirmBase}.${page}' />");
-    removeMsg = removeMsg.replace("{1}", ${param.id});
+    removeMsg = removeMsg.replace("{1}", SingleObject.id);
 
     function confirmRemove() {
-        confirmation(removeMsg,
+        confirm(removeMsg,
                 "<spring:message code='general.confirmation.title.remove' />",
                 function() {
-                    location.href = contextPath+"/remove/${page}/"+(removeDraft?"draft":"logical")+"/${param.id}";
+                    location.href = contextPath+"/remove/"+MetkaGlobals.page+"/"+(SingleObject.draft?"draft":"logical")+"/"+SingleObject.id;
                 });
     }
 
