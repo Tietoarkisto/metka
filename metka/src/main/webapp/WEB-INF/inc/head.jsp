@@ -51,6 +51,7 @@
 <script src="${contextPath}/js/jquery/jquery.fancytree.js"></script>
 <script src="${contextPath}/js/jquery/jquery.fancytree.filter.js"></script>
 <script src="${contextPath}/js/jquery/jquery.fastLiveFilter.js"></script>
+<script src="${contextPath}/js/jquery/jquery.fileupload.js"></script>
 <script src="${contextPath}/js/custom/dialogs.js"></script>
 <script src="${contextPath}/js/custom/general.js"></script>
 <script src="${contextPath}/js/custom/${page}.js"></script>

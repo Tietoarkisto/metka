@@ -20,7 +20,6 @@ import fi.uta.fsd.metka.model.data.container.SavedFieldContainer;
 import fi.uta.fsd.metka.model.factories.SeriesFactory;
 import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -136,7 +135,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         // Entity should still be managed at this point so
 
         if(changes) {
-            data.setLastSave(new LocalDate());
+            data.setLastSave(new DateTime());
             revEntity.setData(json.serialize(data));
         }
 
@@ -222,7 +221,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         // Update current approved revision number on series entity
         // Entities should still be managed so no merge necessary.
         data.setState(RevisionState.APPROVED);
-        data.setApprovalDate(new LocalDate());
+        data.setApprovalDate(new DateTime());
         // TODO: set approver for the data to the user who requested the data approval
         entity.setData(json.serialize(data));
         entity.setState(RevisionState.APPROVED);

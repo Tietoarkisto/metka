@@ -5,11 +5,7 @@ import fi.uta.fsd.metka.model.data.container.FieldContainer;
 import fi.uta.fsd.metka.model.data.container.RowContainer;
 import fi.uta.fsd.metka.model.data.container.SavedFieldContainer;
 import fi.uta.fsd.metka.model.data.value.SimpleValue;
-import org.joda.time.DateTime;
 import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Used to move single RowContainer from JSON to UI and back.
@@ -17,7 +13,7 @@ import java.util.Map;
  * objects when recursive containers are used (e.g. Study Variables).
  */
 public class RowTransfer {
-    private String key;
+    /*private String key;
     private Integer rowId;
     private DateTime savedAt;
     private String savedBy;
@@ -79,7 +75,7 @@ public class RowTransfer {
             }
         }
         return row;
-    }
+    }*/
 
     public static JSONObject buildJSONObject(RowContainer container) {
         JSONObject json = new JSONObject();

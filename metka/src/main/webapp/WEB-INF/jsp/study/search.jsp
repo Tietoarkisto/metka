@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <div class="tabNavi">
-    <a id="search" class="selected" href="#"><spring:message code="STUDY.search.title"/></a>
+    <a id="search" href="#"><spring:message code="STUDY.search.title"/></a>
     <a id="erroneous" href="#"><spring:message code="STUDY.erroneous.title"/></a>
 </div>
 <div class="tabs tab_search">

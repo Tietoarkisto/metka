@@ -46,6 +46,12 @@ input[type="checkbox"] {
     display: inline;
 }
 
+input[type="file"] {
+    opacity: 0;
+    position: absolute;
+    top: -9001px;
+}
+
 select {
     padding: 5px 2px;
     border: 1px solid #b7b7b7;
@@ -61,4 +67,17 @@ select {
 }
 select[readonly="readonly"] {
     background-color: #dedede;
+}
+
+/* File upload form */
+.fileUploadForm .fileSelector {
+
+}
+.fileUploadForm .fileSelector .inputSpan {
+    display: inline-block;
+    width: 50%;
+}
+
+.fileUploadForm .fileSelector .inputSpan input[type="text"] {
+    width: 100%;
 }

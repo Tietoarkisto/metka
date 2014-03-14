@@ -7,13 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * Created with IntelliJ IDEA.
- * User: lasseku
- * Date: 1/14/14
- * Time: 9:54 AM
- * To change this template use File | Settings | File Templates.
- */
 @Transactional(readOnly = true)
 public interface HistoryRepository {
     public List<RevisionData> getRevisionHistory(Integer id) throws IOException;

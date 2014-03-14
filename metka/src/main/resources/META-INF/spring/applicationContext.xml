@@ -26,4 +26,8 @@
     <bean id="startupScanner" class="fi.uta.fsd.metka.data.automation.StartupScanner" />
 
     <bean id="metkaObjectMapper" class="fi.uta.fsd.metka.mvc.MetkaObjectMapper" />
+
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="100000000000" />
+    </bean>
 </beans>

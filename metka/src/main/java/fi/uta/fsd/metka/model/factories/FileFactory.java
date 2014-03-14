@@ -15,13 +15,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
+
 import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
 
 /**
- * Contains functionality related to RevisionData model and specifically to revision data related to Series.
+ * Contains functionality related to File-revisions
  */
 @Service
-public class SeriesFactory {
+public class FileFactory {
     @Autowired
     private ConfigurationRepository configurationRepository;
     @Autowired
@@ -41,12 +42,12 @@ public class SeriesFactory {
      *
      * @param entity RevisionEntity for which this revision data is created.
      */
-    public RevisionData newData(RevisionEntity entity) throws IOException {
+    public RevisionData newData(RevisionEntity entity, String path) throws IOException {
         if(StringUtils.isEmpty(entity.getData()) && entity.getState() != RevisionState.DRAFT)
             return null;
 
         Configuration conf = null;
-        conf = configurationRepository.findLatestConfiguration(ConfigurationType.SERIES);
+        conf = configurationRepository.findLatestConfiguration(ConfigurationType.FILE);
 
         if(conf == null) {
             // TODO: Log error that no configuration found for study
@@ -59,6 +60,10 @@ public class SeriesFactory {
 
         SavedFieldContainer field = new SavedFieldContainer(conf.getIdField());
         field.setModifiedValue(setSimpleValue(createSavedValue(time), entity.getKey().getRevisionableId() + ""));
+        data.putField(field).putChange(new Change(field.getKey()));
+
+        field = new SavedFieldContainer("file");
+        field.setModifiedValue(setSimpleValue(createSavedValue(time), path));
         data.putField(field).putChange(new Change(field.getKey()));
 
         entity.setData(json.serialize(data));

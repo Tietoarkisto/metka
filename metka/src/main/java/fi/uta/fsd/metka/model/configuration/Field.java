@@ -39,6 +39,7 @@ public class Field {
     @XmlElement private Boolean multiline = false;
     @XmlElement private Boolean showSaveInfo = false;
     @XmlElement private Boolean summaryField = true;
+    @XmlElement private Boolean editable = true;
 
     @JsonCreator
     public Field(@JsonProperty("key")String key) {
@@ -171,6 +172,14 @@ public class Field {
 
     public void setShowSaveInfo(Boolean showSaveInfo) {
         this.showSaveInfo = showSaveInfo;
+    }
+
+    public Boolean getEditable() {
+        return editable;
+    }
+
+    public void setEditable(Boolean editable) {
+        this.editable = editable;
     }
 
     @Override

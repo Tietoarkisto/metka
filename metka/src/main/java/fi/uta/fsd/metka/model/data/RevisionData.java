@@ -1,6 +1,7 @@
 package fi.uta.fsd.metka.model.data;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.data.entity.RevisionEntity;
 import fi.uta.fsd.metka.data.enums.RevisionState;
@@ -9,7 +10,7 @@ import fi.uta.fsd.metka.model.configuration.ConfigurationKey;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.container.FieldContainer;
-import org.joda.time.LocalDate;
+import org.joda.time.DateTime;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -45,14 +46,20 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase {
     @XmlElement private final Map<String, Change> changes = new HashMap<>();
     @XmlElement private final Map<String, FieldContainer> fields = new HashMap<>();
     @XmlElement private RevisionState state;
-    @XmlElement private LocalDate approvalDate;
-    @XmlElement private LocalDate lastSave;
+    @XmlElement private Integer rowIdSeq;
+    @XmlElement private DateTime approvalDate;
+    @XmlElement private DateTime lastSave;
     @XmlElement private String approver;
 
+    public RevisionData(RevisionKey key, ConfigurationKey configuration) {
+        this(key, configuration, 1);
+    }
+
     @JsonCreator
-    public RevisionData(@JsonProperty("key")RevisionKey key, @JsonProperty("configuration")ConfigurationKey configuration) {
+    public RevisionData(@JsonProperty("key")RevisionKey key, @JsonProperty("configuration")ConfigurationKey configuration, @JsonProperty("rowIdSeq") Integer rowIdSeq) {
         this.key = key;
         this.configuration = configuration;
+        this.rowIdSeq = rowIdSeq;
     }
 
     public RevisionKey getKey() {
@@ -79,19 +86,19 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase {
         this.state = state;
     }
 
-    public LocalDate getApprovalDate() {
+    public DateTime getApprovalDate() {
         return approvalDate;
     }
 
-    public void setApprovalDate(LocalDate approvalDate) {
+    public void setApprovalDate(DateTime approvalDate) {
         this.approvalDate = approvalDate;
     }
 
-    public LocalDate getLastSave() {
+    public DateTime getLastSave() {
         return lastSave;
     }
 
-    public void setLastSave(LocalDate lastSave) {
+    public void setLastSave(DateTime lastSave) {
         this.lastSave = lastSave;
     }
 
@@ -101,6 +108,10 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase {
 
     public void setApprover(String approver) {
         this.approver = approver;
+    }
+
+    public Integer getRowIdSeq() {
+        return rowIdSeq;
     }
 
     // Helper methods
@@ -124,6 +135,11 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase {
         fields.put(field.getKey(), field);
         return this;
     }
+    @JsonIgnore public Integer getNewRowId() {
+        rowIdSeq++;
+        return rowIdSeq;
+    }
+
 
     @Override
     public boolean equals(Object o) {

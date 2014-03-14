@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <div class="tabNavi">
-    <a id="basic_information" class="selected" href="#basic_information"><spring:message code="STUDY.section.basic_information"/></a>
+    <a id="basic_information" href="#basic_information"><spring:message code="STUDY.section.basic_information"/></a>
     <a id="deposit_agreement" href="#deposit_agreement"><spring:message code="STUDY.section.deposit_agreement"/></a>
     <a id="study_description" href="#study_description"><spring:message code="STUDY.section.study_description"/></a>
     <a id="variables" href="#variables"><spring:message code="STUDY.section.variables"/></a>
@@ -15,11 +15,13 @@
     <a id="import_export" href="#import_export"><spring:message code="STUDY.section.import_export"/></a>
 </div>
 <div class="upperContainer">
+    <jsp:include page="sub/file_upload.jsp"/>
     <form:form id="revisionModifyForm" method="post" action="/study/save" modelAttribute="single">
         <form:hidden path="id" />
         <form:hidden path="revision" />
         <form:hidden path="values['${configuration.idField}']" />
         <jsp:include page="sub/basic_information.jsp"/>
+        <jsp:include page="sub/file_management.jsp"/>
     </form:form>
     <%--<h1 class="pageTitle">
         <div class="floatLeft">${study.id}&nbsp;-&nbps;${study.data.name}&nbsp;-&nbsp;</div>

@@ -12,6 +12,7 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.container.SavedFieldContainer;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -33,8 +34,8 @@ public class StudyFactory {
     /**
      * Constructs a new dataset for a Revision entity.
      * Entity should have no previous data and its state should be DRAFT.
-     * All required field values that can be inserted automatically will be added as UNMODIFIED changes with
-     * original value containing some default value like revisionable id or choicelist default selection.
+     * All required field values that can be inserted automatically will be added as
+     * modified values containing some default value like revisionable id or choicelist default selection.
      *
      * As a result the supplied RevisionEntity will have a every required field that can be automatically set
      * initialised to its default value.
@@ -44,8 +45,7 @@ public class StudyFactory {
      *
      * @param entity RevisionEntity for which this revision data is created.
      */
-    public RevisionData newData(RevisionEntity entity, Integer acquisition_number)
-            throws IOException {
+    public RevisionData newData(RevisionEntity entity, Integer acquisition_number) throws IOException {
         if(StringUtils.isEmpty(entity.getData()) && entity.getState() != RevisionState.DRAFT)
             return null;
 
@@ -95,6 +95,11 @@ public class StudyFactory {
         }
         field.setModifiedValue(setSimpleValue(createSavedValue(time), concat));
         data.putField(field).putChange(new Change(field.getKey()));
+
+        // TODO: Tieto tulee tiipiistä, toistaiseksi käytetään kuluvaa päivää
+        field = new SavedFieldContainer("dataarrivaldate");
+        field.setModifiedValue(setSimpleValue(createSavedValue(time), new LocalDate().toString()));
+        data.putField(field);
 
         entity.setData(json.serialize(data));
 

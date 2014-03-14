@@ -1,0 +1,213 @@
+{
+	"key": {
+		"version": 1,
+		"type": "FILE"
+	},
+	"sections": {
+	},
+	"choicelists": {
+		"fileaip_list": {
+			"key": "fileaip_list",
+			"options": [
+				{
+					"value": "1"
+				},
+				{
+					"value": "2"
+				},
+				{
+					"value": "3"
+				},
+				{
+					"value": "4"
+				}
+			]
+		},
+		"filecategory_list": {
+			"key": "filecategory_list",
+			"options": [
+				{
+					"value": "1"
+				},
+				{
+					"value": "2"
+				}
+			]
+		},
+		"filedip_list": {
+			"key": "yes_no_na"
+		},
+		"filelanguage_list": {
+			"key": "filelanguage_list",
+			"options": [
+				{
+					"value": "de"
+				},
+				{
+					"value": "en"
+				},
+				{
+					"value": "es"
+				},
+				{
+					"value": "st"
+				},
+				{
+					"value": "fi"
+				},
+				{
+					"value": "fr"
+				},
+				{
+					"value": "it"
+				},
+				{
+					"value": "lit"
+				},
+				{
+					"value": "ru"
+				},
+				{
+					"value": "sv"
+				},
+				{
+					"value": "xx"
+				}
+			]
+		},
+		"fileoriginal_list": {
+			"key": "yes_no_na"
+		},
+		"filelanguage_list": {
+			"key": "filelanguage_list",
+			"options": [
+				{
+					"value": "de"
+				},
+				{
+					"value": "en"
+				},
+				{
+					"value": "es"
+				},
+				{
+					"value": "st"
+				},
+				{
+					"value": "fi"
+				},
+				{
+					"value": "fr"
+				},
+				{
+					"value": "it"
+				}
+			]
+		},
+		"yes_no_na": {
+			"key": "yes_no_na",
+			"options": [
+				{
+					"value": "1"
+				},
+				{
+					"value": "2"
+				},
+				{
+					"value": "3"
+				}
+			]
+		}
+	},
+	"references": {
+	},
+	"idField": "fileno",
+	"fields": {
+		"fileno": {
+			"key": "fileno",
+			"translatable": false,
+			"immutable": true,
+			"unique": true,
+			"required": true,
+			"display": true,
+			"type": "INTEGER"
+		},
+		"file": {
+			"key": "file",
+			"immutable": true,
+			"translatable": false,
+			"required": true,
+			"type": "STRING"
+		},
+		"fileaip": {
+			"key": "fileaip",
+			"translatable": false,
+			"required": true,
+			"type": "CHOICE",
+			"choicelist": "fileaip_list"
+		},
+		"filecategory": {
+			"key": "filecategory",
+			"translatable": false,
+			"required": true,
+			"type": "CHOICE",
+			"choicelist": "filecategory_list"
+		},
+		"filecomment": {
+			"key": "filecomment",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"multiline": true
+		},
+		"filedescription": {
+			"key": "filedescription",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"multiline": true
+		},
+		"filedip": {
+			"key": "filedip",
+			"translatable": false,
+			"required": true,
+			"type": "CHOICE",
+			"choicelist": "filedip_list"
+		},
+		"filelabel": {
+			"key": "filelabel",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"multiline": true
+		},
+		"filelanguage": {
+			"key": "filelanguage",
+			"translatable": false,
+			"required": true,
+			"type": "CHOICE",
+			"choicelist": "filelanguage_list"
+		},
+		"filenotes": {
+			"key": "filenotes",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"multiline": true
+		},
+		"fileoriginal": {
+			"key": "fileoriginal",
+			"translatable": false,
+			"required": true,
+			"type": "CHOICE",
+			"choicelist": "fileoriginal_list"
+		},
+		"filepublication": {
+			"key": "filepublication",
+			"translatable": false,
+			"required": true,
+			"type": "CHOICE",
+			"choicelist": "filepublication_list"
+		}
+	}
+}

@@ -1,19 +1,12 @@
 package fi.uta.fsd.metka.mvc.domain.simple.history;
 
 import fi.uta.fsd.metka.data.enums.RevisionState;
-import org.joda.time.LocalDate;
+import org.joda.time.DateTime;
 
-/**
- * Created with IntelliJ IDEA.
- * User: lasseku
- * Date: 1/14/14
- * Time: 9:11 AM
- * To change this template use File | Settings | File Templates.
- */
 public class RevisionSO {
     private Integer id;
     private Integer revision;
-    private LocalDate approvalDate;
+    private DateTime approvalDate;
     private RevisionState state;
 
     public Integer getId() {
@@ -32,11 +25,11 @@ public class RevisionSO {
         this.revision = revision;
     }
 
-    public LocalDate getApprovalDate() {
+    public DateTime getApprovalDate() {
         return approvalDate;
     }
 
-    public void setApprovalDate(LocalDate approvalDate) {
+    public void setApprovalDate(DateTime approvalDate) {
         this.approvalDate = approvalDate;
     }
 

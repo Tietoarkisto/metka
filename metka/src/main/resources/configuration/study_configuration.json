@@ -155,12 +155,6 @@
 			"valueField": "seriesno",
 			"titleField": "seriesname"
 		},
-		"codebook_ref": {
-			"key": "codebook_ref",
-			"targetType": "CODEBOOK",
-			"valueField": "id",
-			"titleField": "location"
-		},
 		"publication_ref": {
 			"key": "publication_ref",
 			"targetType": "PUBLICATION",
@@ -171,12 +165,11 @@
 			"targetType": "STUDY",
 			"valueField": "id"
 		},
-		"binder_ref": {
-			"_comment": "TODO: This is an inverse reference. No data is saved on study, only fetched from binder! How to configure or is configuration even needed",
-			"key": "binder_ref",
-			"targetType": "BINDER",
-			"valueField": "id",
-			"titleField": "location"
+		"file_ref": {
+			"key": "file_ref",
+			"targetType": "FILE",
+			"valueField": "fileno",
+			"titleField": "file"
 		}
 	},
 	"idField": "study_id",
@@ -186,6 +179,7 @@
 			"translatable": false,
 			"immutable": true,
 			"type": "DATE",
+			"editable": false,
 			"section": "basic_information"
 		},
 		"anonymization": {
@@ -193,6 +187,14 @@
 			"translatable": false,
 			"type": "CHOICE",
 			"choicelist": "anonymization_list",
+			"section": "basic_information"
+		},
+		"dataarrivaldate": {
+			"key": "dataarrivaldate",
+			"translatable": false,
+			"immutable": true,
+			"type": "DATE",
+			"editable": false,
 			"section": "basic_information"
 		},
 		"datakind": {
@@ -208,16 +210,16 @@
 			"type": "CONTAINER",
 			"section": "basic_information",
 			"subfields": [
-				"dataversion",
-				"dataversiondate",
-				"dataversionpro",
-				"dataversionlabel",
-				"dataversiontext",
-				"dataversionnotes"
+				"version",
+				"versiondate",
+				"versionpro",
+				"versionlabel",
+				"versiontext",
+				"versionnotes"
 			]
 		},
-		"dataversion": {
-			"key": "dataversion",
+		"version": {
+			"key": "version",
 			"translatable": false,
 			"required": true,
 			"type": "STRING",
@@ -225,16 +227,16 @@
 			"section": "basic_information",
 			"subfield": true
 		},
-		"dataversiondate": {
-			"key": "dataversiondate",
+		"versiondate": {
+			"key": "versiondate",
 			"translatable": false,
 			"required": true,
 			"type": "DATE",
 			"section": "basic_information",
 			"subfield": true
 		},
-		"dataversionlabel": {
-			"key": "dataversionlabel",
+		"versionlabel": {
+			"key": "versionlabel",
 			"translatable": false,
 			"required": true,
 			"type": "CHOICE",
@@ -242,8 +244,8 @@
 			"choicelist": "dataversionlabel_list",
 			"subfield": true
 		},
-		"dataversionnotes": {
-			"key": "dataversionnotes",
+		"versionnotes": {
+			"key": "versionnotes",
 			"translatable": false,
 			"type": "STRING",
 			"section": "basic_information",
@@ -251,16 +253,16 @@
 			"multiline": true,
 			"subfield": true
 		},
-		"dataversionpro": {
-			"key": "dataversionpro",
+		"versionpro": {
+			"key": "versionpro",
 			"translatable": false,
 			"required": true,
 			"type": "STRING",
 			"section": "basic_information",
 			"subfield": true
 		},
-		"dataversiontext": {
-			"key": "dataversiontext",
+		"versiontext": {
+			"key": "versiontext",
 			"required": true,
 			"type": "STRING",
 			"section": "basic_information",
@@ -274,6 +276,20 @@
 			"type": "CHOICE",
 			"choicelist": "descpublic_list",
 			"section": "basic_information"
+		},
+		"descversions": {
+			"key": "descversions",
+			"translatable": false,
+			"type": "CONTAINER",
+			"section": "basic_information",
+			"subfields": [
+				"version",
+				"versiondate",
+				"versionpro",
+				"versionlabel",
+				"versiontext",
+				"versionnotes"
+			]
 		},
 		"id": {
 			"_comment": "This contains the automatically generated study_id_prefix+study_id combination.",
@@ -466,16 +482,21 @@
 		"files": {
 			"key": "files",
 			"translatable": false,
-			"type": "REFERENCE",
+			"type": "CONTAINER",
 			"reference": "file_ref",
-			"section": "file_management"
+			"section": "file_management",
+			"subfields": [
+				"file"
+			],
+			"showSaveInfo": true
 		},
-		"codebooks": {
-			"key": "codebooks",
+		"file": {
+			"key": "file",
 			"translatable": false,
 			"type": "REFERENCE",
-			"reference": "codebook_ref",
-			"section": "codebook"
+			"reference": "file_ref",
+			"section": "file_management",
+			"subfield": true
 		}
 	}
 }

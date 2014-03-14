@@ -22,5 +22,4 @@
     }
 
 </script>
-<script src="${pageContext.request.contextPath}/js/custom/remove.js"></script>
 <input type="button" id="removeBtn" class="button" value="<spring:message code='general.buttons.remove'/>" onclick="confirmRemove()"/>

@@ -33,9 +33,9 @@
                 <jsp:param name="field" value="descpublic" />
             </jsp:include>
         </tr>
-        <tr><c:set var="field" value="aipcomplete" />
+        <tr><c:set var="field" value="dataarrivaldate" />
             <td class="labelColumn"><form:label path="values['${field}']"><spring:message code="STUDY.field.${field}"/></form:label></td>
-            <td><form:input class="datepicker" path="values['${field}']" /></td>
+            <td><form:input class="datepicker" path="values['${field}']" readonly="${configuration.fields[field].editable == false}" /></td>
 
             <jsp:include page="../../../inc/l18nSelect.jsp">
                 <jsp:param name="field" value="securityissues" />
@@ -48,7 +48,11 @@
         <tr>
             <jsp:include page="../../../inc/l18nSelect.jsp">
                 <jsp:param name="field" value="seriesid" />
+                <jsp:param name="colspan" value="3" />
             </jsp:include>
+            <c:set var="field" value="aipcomplete" />
+            <td class="labelColumn"><form:label path="values['${field}']"><spring:message code="STUDY.field.${field}"/></form:label></td>
+            <td><form:input class="datepicker" path="values['${field}']" readonly="${configuration.fields[field].editable == false}" /></td>
         </tr>
         <tr>
             <jsp:include page="../../../inc/singleCellFormText.jsp">
@@ -66,6 +70,9 @@
     </jsp:include>
     <jsp:include page="../../../inc/datatableContainer.jsp">
         <jsp:param name="field" value="dataversions" />
+    </jsp:include>
+    <jsp:include page="../../../inc/datatableContainer.jsp">
+        <jsp:param name="field" value="descversions" />
     </jsp:include>
     <%-- Not done yet from here on --%>
     <%--<div class="upperContainer">

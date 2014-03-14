@@ -4,11 +4,8 @@ import fi.uta.fsd.metka.model.data.container.ContainerFieldContainer;
 import fi.uta.fsd.metka.model.data.container.RowContainer;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ContainerTransfer {
-    private String key;
+    /*private String key;
     private Integer nextRowId;
     private final List<RowTransfer> rows = new ArrayList<>();
 
@@ -37,7 +34,6 @@ public class ContainerTransfer {
     public static ContainerTransfer buildContainerTransfer(ContainerFieldContainer field) {
         ContainerTransfer ct = new ContainerTransfer();
         ct.setKey(field.getKey());
-        ct.setNextRowId(field.getNextRowId());
         for(RowContainer row : field.getRows()) {
             RowTransfer rt = RowTransfer.buildRowTransferFromRowContaienr(row);
             if(rt != null) {
@@ -45,7 +41,7 @@ public class ContainerTransfer {
             }
         }
         return ct;
-    }
+    }*/
 
     public static JSONObject buildJSONObject(ContainerFieldContainer field) {
         JSONObject json = new JSONObject();

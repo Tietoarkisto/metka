@@ -352,8 +352,7 @@ public class ModelAccessUtil {
                 continue; // Row has not been opened on UI, no need to process.
             }
             if(row.opt("rowId") == null || row.opt("rowId") == JSONObject.NULL) { // If no rowId was set this is a new row. Initialise rowId for future use. This should automatically set rowId to correct value for new rows
-                row.put("rowId", container.getNextRowId());
-                container.setNextRowId(container.getNextRowId()+1);
+                row.put("rowId", data.getNewRowId());
             }
             RowContainer rowContainer = container.getRow(stringToInteger(row.get("rowId")));
             boolean rowChanges = false;

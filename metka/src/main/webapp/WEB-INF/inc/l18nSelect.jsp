@@ -2,10 +2,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<c:set var="colspan" value="${empty param.colspan ? 1 : param.colspan}" />
 <td class="labelColumn">
     <form:label path="values['${param.field}']"><spring:message code="${fn:toUpperCase(page)}.field.${param.field}"/></form:label>
 </td>
-<td>
+<td colspan="${colspan}">
     <form:select path="values['${param.field}']" autocomplete="off">
         <c:set var="choicelist" value="${configuration.fields[param.field].choicelist}" />
         <c:set var="optionslist" value="${configuration.choicelists[choicelist].key}" />

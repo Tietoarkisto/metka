@@ -2,8 +2,6 @@
 $(document).ready(function(){
     $(".sortableTable").tablesorter();
 
-    $( ".datepicker" ).datepicker();
-
     // TODO: localize calendar texts
     jQuery(function($){
         $.datepicker.regional['fi'] = {
@@ -22,7 +20,9 @@ $(document).ready(function(){
             isRTL: false,
             showMonthAfterYear: false,
             yearSuffix: ''};
-        $.datepicker.setDefaults($.datepicker.regional['fi']);
+        $.datepicker.setDefaults($.datepicker.regional['fi']).setDefaults({beforeShow: function(i) {
+            if($(i).attr('readonly')) return false;
+        }});
     });
 
     $("input[type=radio][name=language]").on("click", function() {
@@ -73,18 +73,29 @@ $(document).ready(function(){
         window.open("help.html");
     });
 
-    // Clean code here
+    /**************
+     * Clean code *
+     **************/
+    $( ".datepicker" ).datepicker();
+
+    // Init tab navigation
+    //changeToTab($(".tabnavi a").first());
 
     $(".tabNavi a").click(function(){
-        if(!$(this).hasClass("selected")){
-            $(".tabNavi a.selected").attr("id");
+        changeToTab($(this));
+    });
+
+    $(".tabNavi a").first().click();
+
+    function changeToTab(tab){
+        if(!tab.hasClass("selected")){
             $(".tabNavi a").removeClass("selected");
-            $(this).addClass("selected");
-            var selectedId = $(this).attr("id");
+            tab.addClass("selected");
+            var selectedId = tab.attr("id");
             $(".tabs").hide();
             $(".tab_" + selectedId).show();
         }
-    });
+    }
 
     $(".pointerClass").hover(
         function() {

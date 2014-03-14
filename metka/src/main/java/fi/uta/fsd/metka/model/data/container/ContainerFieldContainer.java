@@ -12,20 +12,11 @@ import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ContainerFieldContainer extends FieldContainer {
-    @XmlElement private Integer nextRowId = 1;
     @XmlElement private final List<RowContainer> rows = new ArrayList<>();
 
     @JsonCreator
     public ContainerFieldContainer(@JsonProperty("key") String key) {
         super(key);
-    }
-
-    public Integer getNextRowId() {
-        return nextRowId;
-    }
-
-    public void setNextRowId(Integer nextRowId) {
-        this.nextRowId = nextRowId;
     }
 
     public List<RowContainer> getRows() {
@@ -34,8 +25,8 @@ public class ContainerFieldContainer extends FieldContainer {
 
     @JsonIgnore public RowContainer getRow(Integer rowId) {
 
-        if(rowId == null || rowId >= nextRowId) {
-            // Row can not exist since no rowId given or row with given id has not been created for this container yet.
+        if(rowId == null || rowId < 1) {
+            // Row can not be found since no rowId given.
             return null;
         }
         for(RowContainer row : rows) {
@@ -50,7 +41,6 @@ public class ContainerFieldContainer extends FieldContainer {
     @Override
     public FieldContainer copy() {
         ContainerFieldContainer container = new ContainerFieldContainer(getKey());
-        container.setNextRowId(nextRowId);
         for(RowContainer row : rows) {
             container.getRows().add((RowContainer)row.copy());
         }

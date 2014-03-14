@@ -183,7 +183,7 @@ nav .mainNavUl li a:hover {
     position: relative;
     display: block;
     clear: both;
-    min-height: 275px;
+    min-height: 30px;
 }
 
 .popupContainer .popupButtonsHolder {
@@ -196,6 +196,18 @@ nav .mainNavUl li a:hover {
 .upperContainer {
     margin: 10px;
     font-size: 12px;
+}
+
+.contentBox {
+    background-color: #eaeaea;
+    border: 1px solid #dbdbdb;
+    padding: 5px;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
 }
 
 .pageTitle {

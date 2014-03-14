@@ -2,8 +2,12 @@ $(document).ready(function() {
     // Init autobuild tables
     $(".autobuild").each(function(index) {
         var id = $(this).attr("id");
-        var content = JSON.parse($("#values\\'"+id+"\\'").val());
-        buildDatatable(content);
+        if($("#values\\'"+id+"\\'").val() != undefined
+                && $("#values\\'"+id+"\\'").val() != null
+                && $("#values\\'"+id+"\\'").val() != "") {
+            var content = JSON.parse($("#values\\'"+id+"\\'").val());
+            buildDatatable(content);
+        }
     });
 });
 

@@ -13,7 +13,6 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.factories.StudyFactory;
 import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -127,10 +126,12 @@ public class StudyRepositoryImpl implements StudyRepository {
         // Entity should still be managed at this point so
 
         if(changes) {
-            data.setLastSave(new LocalDate());
+            data.setLastSave(new DateTime());
             revEntity.setData(json.serialize(data));
         }
 
         return true;
     }
+
+    // TODO: During approval set aipcomplete if it's not set already. This is a value that should be set during first approval and not before.
 }
