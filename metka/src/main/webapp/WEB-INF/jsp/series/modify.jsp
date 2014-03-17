@@ -25,11 +25,3 @@
         </table>
     </form:form>
 </div>
-<div class="buttonsHolder">
-    <input type="button" id="revisionModifyFormSave" class="button" value="<spring:message code="general.buttons.save" />">
-    <input type="button" id="revisionModifyFormApprove" class="button" value="<spring:message code='general.buttons.approve'/>" />
-    <jsp:include page="../../inc/revHistory.jsp"/>
-    <jsp:include page="../../inc/removeButton.jsp" />
-    <!-- TODO: Fix this reset button
-    <input type="reset" class="button" value="Tyhjennä">-->
-</div>

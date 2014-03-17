@@ -122,6 +122,7 @@
 	"references": {
 	},
 	"idField": "fileno",
+	"displayId": "fileno",
 	"fields": {
 		"fileno": {
 			"key": "fileno",

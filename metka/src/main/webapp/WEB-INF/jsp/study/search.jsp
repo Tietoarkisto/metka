@@ -32,15 +32,15 @@
                 <tr>
                     <td class="labelColumn"><spring:message code="general.search.state"/></td>
                     <td>
-                        <form:label path="searchApproved"><spring:message code="general.search.state.approved"/></form:label>
+                        <form:label path="searchApproved"><spring:message code="general.search.state.APPROVED"/></form:label>
                         <form:checkbox path="searchApproved" />
                     </td>
                     <td>
-                        <form:label path="searchDraft"><spring:message code="general.search.state.draft"/></form:label>
+                        <form:label path="searchDraft"><spring:message code="general.search.state.DRAFT"/></form:label>
                         <form:checkbox path="searchDraft" />
                     </td>
                     <td>
-                        <form:label path="searchRemoved"><spring:message code="general.search.state.removed"/></form:label>
+                        <form:label path="searchRemoved"><spring:message code="general.search.state.REMOVED"/></form:label>
                         <form:checkbox path="searchRemoved" />
                     </td>
                 </tr>
@@ -83,7 +83,7 @@
                 </thead>
                 <tbody>
                 <c:forEach var="r" items="${searchData.results}">
-                    <tr class="pointerClass" onclick="location.href='${pageContext.request.contextPath}/series/view/${r.id}/${r.revision}'">
+                    <tr class="pointerClass" onclick="MetkaJS.view(${r.id},${r.revision})">
                         <td>${r.study_number}</td>
                         <td>${r.study_name}</td>
                             <%--<td>${r.publication_references}</td>--%><%-- TODO: See above--%>

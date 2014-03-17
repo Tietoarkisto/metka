@@ -58,18 +58,14 @@ public class FileController {
      * @throws Exception
      */
     @RequestMapping(value = "upload", method = {RequestMethod.POST}, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String upload(@RequestParam("file") MultipartFile file, @RequestParam("id") Integer id) throws Exception {
+    public @ResponseBody String upload(@RequestParam("file") MultipartFile file, @RequestParam("id") Integer id, @RequestParam("targetField") String key) throws Exception {
         /*Iterator<String> itr = request.getFileNames();
         MultipartFile file = request.getFile(itr.next());*/
         try {
             String fileName = new File(file.getOriginalFilename()).getName();
             String path = fileService.saveFile(file, fileName, id);
-            fileService.initNewFile(path, id);
-            JSONObject json = new JSONObject();
-            json.put("name", fileName);
-            json.put("id", id);
-
-            return json.toString();
+            String fileRow = fileService.initNewFile(path, id, key);
+            return fileRow;
         } catch(IOException ex) {
             // TODO: Return error
             ex.printStackTrace();

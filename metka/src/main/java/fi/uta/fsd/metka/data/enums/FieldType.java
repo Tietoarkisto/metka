@@ -14,6 +14,7 @@ public enum FieldType {
     REFERENCE,
     DERIVED,
     CONTAINER,
+    REFERENCECONTAINER,
     CHOICE,
     CONCAT,
     DATE,

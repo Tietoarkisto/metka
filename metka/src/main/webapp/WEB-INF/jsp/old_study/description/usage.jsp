@@ -3,7 +3,7 @@
 
 <label class="studyLevelTitle"><spring:message code="study.view.description.usage"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></label>
 <div class="accordionContent">
-	<div class="rowContainer containsTranslations">
+	<div class="dataRow containsTranslations">
 		<div class="studyLevelDataSetTextareaContainer translated translationFi">
 			<label><spring:message code="study.view.description.usage.weightFactors"/>&nbsp;&nbsp;(<input id="weightCoefficientToggle" type="checkbox" checked="checked"/><spring:message code="study.view.description.usage.noWeightFactors"/>)</label>
 			<textarea class="weightCoefficient"></textarea>
@@ -29,7 +29,7 @@
 			<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 		</div>
 	</div>
-	<div class="rowContainer containsTranslations">
+	<div class="dataRow containsTranslations">
 		<div class="studyLevelDataSetTextareaContainer translated translationFi">
 			<label><spring:message code="study.view.description.usage.files"/></label>
 			<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
@@ -55,7 +55,7 @@
 			<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 		</div>
 	</div>
-	<div class="rowContainer containsTranslations">
+	<div class="dataRow containsTranslations">
 		<div class="studyLevelDataSetTextareaContainer translated translationFi">
 			<label><spring:message code="study.view.description.usage.additionalReservation"/></label>
 			<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
@@ -81,7 +81,7 @@
 			<textarea>Foo bar lorem ipsum dolor sit amet</textarea>
 		</div>
 	</div>
-	<div class="rowContainer containsTranslations">
+	<div class="dataRow containsTranslations">
 		<div class="studyLevelDataSetTextareaContainer translated translationFi">
 			<c:forEach items="${study.data.description.appraisals}" var="appraisal" varStatus="i">
 				<c:choose>

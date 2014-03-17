@@ -14,4 +14,5 @@ public interface ConfigurationRepository {
     @Transactional(readOnly = false) public void insert(Configuration configuration) throws IOException;
     public Configuration findConfiguration(ConfigurationKey key) throws IncorrectResultSizeDataAccessException, IOException;
     public Configuration findLatestConfiguration(ConfigurationType type) throws IncorrectResultSizeDataAccessException, IOException;
+    public Configuration findLatestByRevisionableId(Integer id) throws IncorrectResultSizeDataAccessException, IOException;
 }

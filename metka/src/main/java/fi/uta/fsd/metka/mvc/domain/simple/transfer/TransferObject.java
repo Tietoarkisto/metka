@@ -3,9 +3,9 @@ package fi.uta.fsd.metka.mvc.domain.simple.transfer;
 import fi.uta.fsd.metka.data.enums.UIRevisionState;
 import fi.uta.fsd.metka.model.configuration.ConfigurationKey;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.ContainerFieldContainer;
-import fi.uta.fsd.metka.model.data.container.FieldContainer;
-import fi.uta.fsd.metka.model.data.container.SavedFieldContainer;
+import fi.uta.fsd.metka.model.data.container.ContainerDataField;
+import fi.uta.fsd.metka.model.data.container.DataField;
+import fi.uta.fsd.metka.model.data.container.SavedDataField;
 import fi.uta.fsd.metka.model.data.value.SimpleValue;
 import org.json.JSONObject;
 
@@ -96,16 +96,16 @@ public class TransferObject {
         to.setState(UIRevisionState.fromRevisionState(data.getState()));
         to.setConfiguration(data.getConfiguration());
 
-        for(FieldContainer field : data.getFields().values()) {
-            if(field instanceof ContainerFieldContainer) {
+        for(DataField field : data.getFields().values()) {
+            if(field instanceof ContainerDataField) {
                 // TODO: Containers
-                JSONObject ct = ContainerTransfer.buildJSONObject((ContainerFieldContainer)field);
+                JSONObject ct = ContainerTransfer.buildJSONObject((ContainerDataField)field);
                 if(ct != null) {
                     to.setByKey(field.getKey(), ct.toString());
                 }
             } else {
                 // Since we don't care about types at the UI that much we can push all values to the map as Strings
-                SavedFieldContainer container = getSavedFieldContainerFromRevisionData(data, field.getKey());
+                SavedDataField container = getSavedDataFieldFromRevisionData(data, field.getKey());
                 if(container != null && container.getValue() != null && container.getValue().getValue() != null) {
                     to.setByKey(field.getKey(), ((SimpleValue)container.getValue().getValue()).getValue());
                 }

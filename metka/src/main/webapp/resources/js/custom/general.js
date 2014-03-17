@@ -106,33 +106,22 @@ $(document).ready(function(){
         }
     );
 
-    /**
-     * Display controller provided errors.
-     */
-    checkForErrors();
-
     $( "#revisionSearchFormSearch" ).click(function() {
         $( "#revisionSearchForm" ).submit();
     });
 
     $( "#revisionModifyFormSave" ).click(function() {
-        $( "#revisionModifyForm" ).attr("action", MetkaGlobals.contextPath+"/"+MetkaGlobals.page+"/save");
+        $( "#revisionModifyForm" ).attr("action", MetkaJS.PathBuilder().add(MetkaJS.Globals.page).add("save").build());
         $( "#revisionModifyForm" ).submit();
     });
 
     $( "#revisionModifyFormApprove" ).click(function() {
-        $("#revisionModifyForm").attr("action", MetkaGlobals.contextPath+"/"+MetkaGlobals.page+"/approve");
+        $("#revisionModifyForm").attr("action", MetkaJS.PathBuilder().add(MetkaJS.Globals.page).add("approve").build());
         $("#revisionModifyForm").submit();
     });
-});
 
-function checkForErrors() {
-    for(var index = 0; index < MetkaGlobals.errorArray.length; index++) {
-        var errorObject = MetkaGlobals.errorArray[index];
-        var str = MetkaGlobals.strings[errorObject.message];
-        for(var i = 0; i < errorObject.data.length; i++) {
-            str = str.replace("{"+i+"}", errorObject.data[i]);
-        }
-        alert(str, errorObject.title);
-    }
-}
+    /**
+     * Display controller provided errors.
+     */
+    if(MetkaJS.ErrorManager != null) MetkaJS.ErrorManager.showAll();
+});

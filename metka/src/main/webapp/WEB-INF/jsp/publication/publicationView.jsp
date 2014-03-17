@@ -14,31 +14,31 @@
             	<h1 class="pageTitle"><spring:message code="publication.view.title"/></h1>
 				<div class="upperContainer">
 					<div class="prevNextContainer"><h1 class="prev">&lt;</h1><h1 class="next">&gt;</h1></div>
-					<div class="rowContainer">
+					<div class="dataRow">
 						<div class="publicationDataSetContainer"><label><spring:message code="publication.view.publicationYear"/></label><input type="text" name="publicationYear" value="" /></div>
 						<div class="publicationDataSetContainer"><label><spring:message code="publication.view.publishable"/></label><select name="publishable"><option>Kyll�</option></select></div>
 						<div class="publicationDataSetContainer"><label><spring:message code="publication.view.id"/></label><input type="text" class="unModifiable" readonly="readonly" name="publicationId" value="" /></div>
 					</div>
-					<div class="rowContainer">
+					<div class="dataRow">
 						<div class="publicationDataSetContainer"><label><spring:message code="publication.view.firstSaveDay"/></label><input type="text" class="unModifiable" readonly="readonly" name="firstSaveDay" value="" /></div>
 						<div class="publicationDataSetContainer"><label><spring:message code="publication.view.noticeType"/></label><select name="noticeType"><option>Ei tietoa</option></select></div>
 						<div class="publicationDataSetContainer"><label><spring:message code="publication.view.publicationLanguage"/></label><select name="language"><option>Suomi</option></select></div>
 					</div>
-					<div class="rowContainer">
+					<div class="dataRow">
 						<div class="publicationDataSetContainer"><label><spring:message code="publication.view.latestModificationDay"/></label><input type="text" name="latestChangeDay" value="" /></div>
 						<div class="publicationDataSetContainer"><label><spring:message code="general.handler"/></label><input type="text" name="handler" value="" /></div>
 					</div>
-					<div class="rowContainer">
+					<div class="dataRow">
 						<div class="publicationDataSetContainer"><label><spring:message code="publication.view.publicationTitle"/></label><textarea name="title"></textarea></div>
 					</div>
-					<div class="rowContainer">
+					<div class="dataRow">
 						<div class="publicationDataSetContainer"><label><spring:message code="publication.view.relPubl"/></label><textarea name="relPubl"></textarea></div>
 					</div>
-					<div class="rowContainer">
+					<div class="dataRow">
 						<div class="publicationDataSetContainer"><label><spring:message code="publication.view.publicationNotifications"/></label><textarea name="notifications"></textarea></div>
 					</div>
 				</div>
-				<div class="rowContainer" style="display: inline-block; margin-top: 10px;">
+				<div class="dataRow" style="display: inline-block; margin-top: 10px;">
 					<div class="publicationRowTitle"><spring:message code="publication.view.relatedPeople"/>t&nbsp;<img src="../images/info-sign.png" class="helpImage"/></div>
 					<table id="publicationPersonTable" class="metkaTable sortableTable">
 						<thead>
@@ -56,7 +56,7 @@
 					</table>	
 					<div class="publicationTableActionLinkHolder"><a href="dialogs/attachPersonPublicationDialog.html" class="addRow fancyboxpopup fancybox.ajax"><spring:message code='general.buttons.add'/></a></div>						
 				</div>
-				<div class="rowContainer">
+				<div class="dataRow">
 					<div class="publicationRowTitle"><spring:message code="publication.view.pids"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></div>
 					<table id="publicationIdentificationTable" class="metkaTable sortableTable">
 						<thead>
@@ -74,7 +74,7 @@
 					</table>	
 					<div class="publicationTableActionLinkHolder"><a href="dialogs/attachIndentificationDialog.html" class="addRow fancyboxpopup fancybox.ajax"><spring:message code='general.buttons.add'/></a></div>						
 				</div>		
-				<div class="rowContainer">
+				<div class="dataRow">
 					<div class="publicationRowTitle"><spring:message code="publication.view.relatedStudies"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></div>
 					<table id="publicationMaterialTable" class="metkaTable sortableTable">
 						<thead>
@@ -92,7 +92,7 @@
 					</table>	
 					<div class="publicationTableActionLinkHolder"><a href="dialogs/attachMaterialDialog.html" class="addRow fancyboxpopup fancybox.ajax"><spring:message code='general.buttons.add'/></a></div>						
 				</div>					
-				<div class="rowContainer">
+				<div class="dataRow">
 					<div class="publicationRowTitle"><spring:message code="publication.view.relatedSeries"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></div>
 					<table id="publicationSeriesTable" class="metkaTable sortableTable">
 						<thead>

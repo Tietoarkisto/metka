@@ -1,7 +1,7 @@
 package fi.uta.fsd.metka.mvc.domain.simple.transfer;
 
-import fi.uta.fsd.metka.model.data.container.ContainerFieldContainer;
-import fi.uta.fsd.metka.model.data.container.RowContainer;
+import fi.uta.fsd.metka.model.data.container.ContainerDataField;
+import fi.uta.fsd.metka.model.data.container.DataRow;
 import org.json.JSONObject;
 
 public class ContainerTransfer {
@@ -31,10 +31,10 @@ public class ContainerTransfer {
     }
 
 
-    public static ContainerTransfer buildContainerTransfer(ContainerFieldContainer field) {
+    public static ContainerTransfer buildContainerTransfer(ContainerDataField field) {
         ContainerTransfer ct = new ContainerTransfer();
         ct.setKey(field.getKey());
-        for(RowContainer row : field.getRows()) {
+        for(DataRow row : field.getRows()) {
             RowTransfer rt = RowTransfer.buildRowTransferFromRowContaienr(row);
             if(rt != null) {
                 ct.getRows().add(rt);
@@ -43,12 +43,12 @@ public class ContainerTransfer {
         return ct;
     }*/
 
-    public static JSONObject buildJSONObject(ContainerFieldContainer field) {
+    public static JSONObject buildJSONObject(ContainerDataField field) {
         JSONObject json = new JSONObject();
         json.put("type", "container");
         json.put("key", field.getKey());
 
-        for(RowContainer row : field.getRows()) {
+        for(DataRow row : field.getRows()) {
             JSONObject rt = RowTransfer.buildJSONObject(row);
             if(rt != null) {
                 json.append("rows", rt);

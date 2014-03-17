@@ -89,7 +89,7 @@ public class HistoryService {
                 ValueFieldChange valueChange = (ValueFieldChange) change.getValue();
                 if(valueChange.getOperation() != ChangeOperation.UNCHANGED) {
                     ChangeSO so = changesSO.get(change.getKey());
-                    FieldContainer field;
+                    DataField field;
                     if(so == null) {
                         so = new ChangeSO();
                         so.setProperty(change.getKey());

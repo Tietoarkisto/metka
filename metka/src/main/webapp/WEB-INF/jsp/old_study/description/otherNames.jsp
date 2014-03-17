@@ -3,7 +3,7 @@
 
 <label class="studyLevelTitle"><spring:message code="study.view.description.otherNames"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></label>
 <div class="accordionContent">
-	<div class="rowContainer containsTranslations">
+	<div class="dataRow containsTranslations">
 		<c:forEach items="${study.data.description.altTitles}" var="altTitle" varStatus="i">
 			<div class="studyLevelDataSetContainer translated translationFi">
 				<label id="studyLevelAltTitle"><spring:message code="study.view.description.concurrentName"/>
@@ -26,7 +26,7 @@
 			</div>
 		</c:forEach>
 	</div>
-	<div class="rowContainer containsTranslations">
+	<div class="dataRow containsTranslations">
 		<%-- parTitleDialog --%>
 		<div class="studyLevelDataSetContainer translated translationFi">
 			<div class="studyLevelTableTitle"><spring:message code="study.view.description.parTitles"/></div>

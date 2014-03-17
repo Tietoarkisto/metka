@@ -9,12 +9,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SavedFieldContainer extends FieldContainer {
+public class SavedDataField extends DataField {
     @XmlElement private SavedValue originalValue;
     @XmlElement private SavedValue modifiedValue;
 
     @JsonCreator
-    public SavedFieldContainer(@JsonProperty("key") String key) {
+    public SavedDataField(@JsonProperty("key") String key) {
         super(key);
     }
 
@@ -45,8 +45,8 @@ public class SavedFieldContainer extends FieldContainer {
     }
 
     @Override
-    public FieldContainer copy() {
-        SavedFieldContainer field = new SavedFieldContainer(getKey());
+    public DataField copy() {
+        SavedDataField field = new SavedDataField(getKey());
         field.setModifiedValue((modifiedValue != null) ? modifiedValue.copy() : null);
         field.setOriginalValue((originalValue != null) ? originalValue.copy() : null);
         return field;

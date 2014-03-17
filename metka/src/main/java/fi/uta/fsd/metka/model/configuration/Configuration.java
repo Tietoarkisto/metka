@@ -27,6 +27,7 @@ public class Configuration implements ModelBase {
     @XmlElement private final Map<String, Choicelist> choicelists = new HashMap<>();
     @XmlElement private final Map<String, Field> fields = new HashMap<>();
     @XmlElement private String idField;
+    @XmlElement private String displayId;
     @XmlElement private String hash; // no functionality for hash is implemented at this time.
 
     public Configuration() {
@@ -66,6 +67,14 @@ public class Configuration implements ModelBase {
 
     public void setIdField(String idField) {
         this.idField = idField;
+    }
+
+    public String getDisplayId() {
+        return displayId;
+    }
+
+    public void setDisplayId(String displayId) {
+        this.displayId = displayId;
     }
 
     // Helper functions

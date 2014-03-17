@@ -21,22 +21,24 @@ import java.util.List;
 import static fi.uta.fsd.metka.data.util.ConversionUtil.*;
 
 public class ModelAccessUtil {
+    public static interface PathNavigable {
 
+    }
     /**
-     * Returns a FieldContainer using field path navigation.
-     * If supplied path doesn't lead to a legal FieldContainer then null is returned.
-     * Since both Containers and Rows are also FieldContainers both can be returned with this method.
+     * Returns a DataField using field path navigation.
+     * If supplied path doesn't lead to a legal DataField then null is returned.
+     * Since both Containers and Rows are also DataFields both can be returned with this method.
      *
      * Field path consist of one or more steps separated by period.
      * Each step is either a field key that should be found from given position or an integer denoting a rowId for
      * specific row.
-     * @param path Path to requested FieldContainer
-     * @param data RevisionData from which the FieldContainer should be returned.
-     * @return FieldContainer found from the specific path.
+     * @param path Path to requested DataField
+     * @param data RevisionData from which the DataField should be returned.
+     * @return DataField found from the specific path.
      */
-    public static FieldContainer getFieldDotFormat(String path, RevisionData data) {
+    public static PathNavigable getFieldDotFormat(String path, RevisionData data) {
         List<String> steps = Arrays.asList(path.split("."));
-        FieldContainer field = null;
+        PathNavigable field = null;
         for(String step : steps) {
             if(field == null) {
                 field = data.getField(step);
@@ -45,12 +47,12 @@ public class ModelAccessUtil {
                     return null;
                 }
             } else {
-                if(field instanceof ContainerFieldContainer) {
-                    ContainerFieldContainer container = (ContainerFieldContainer)field;
+                if(field instanceof ContainerDataField) {
+                    ContainerDataField container = (ContainerDataField)field;
                     Integer rowId = stringToInteger(step);
                     if(rowId != null) {
                         field = null;
-                        for(RowContainer row : container.getRows()) {
+                        for(DataRow row : container.getRows()) {
                             if(row.getRowId().equals(rowId)) {
                                 // Found correct row, break.
                                 field = row;
@@ -65,8 +67,8 @@ public class ModelAccessUtil {
                         // Path is invalid, we should find a row but step is not an integer.
                         return null;
                     }
-                } else if(field instanceof RowContainer) {
-                    RowContainer row = (RowContainer)field;
+                } else if(field instanceof DataRow) {
+                    DataRow row = (DataRow)field;
                     field = row.getField(step);
                     if(field == null) {
                         // Path terminates here, no matter if there are more steps. Return null.
@@ -80,7 +82,7 @@ public class ModelAccessUtil {
 
     public static boolean idIntegrityCheck(TransferObject to, RevisionData data, Configuration config) {
         String key = config.getIdField();
-        SavedFieldContainer field = getSavedFieldContainerFromRevisionData(data, key, config);
+        SavedDataField field = getSavedDataFieldFromRevisionData(data, key, config);
         if(field == null) {
             // TODO: tried to check id integrity with Container field. Container field should never be id field. Log error
             // Tried to check integrity with wrong field, integrity can not be checked.
@@ -120,18 +122,18 @@ public class ModelAccessUtil {
     }
 
     /**
-     * Return top level SavedFieldContainer for given field key.
+     * Return top level SavedDataField for given field key.
      * If field does not exist in configuration returns null
      * If field is a subfield return null, this should only be used for top level (non subfield) containers.
      * If field is a CONTAINER field return null.
      *
-     * Otherwise returns field from data typed as SavedFieldContainer (assumes data is correct)
+     * Otherwise returns field from data typed as SavedDataField (assumes data is correct)
      * @param data RevisionData of the revision being manipulated.
      * @param key Field key of the requested field.
      * @param config Configuration of the provided RevisionData
-     * @return SavedFieldContainer of the requested key if one exists.
+     * @return SavedDataField of the requested key if one exists.
      */
-    public static SavedFieldContainer getSavedFieldContainerFromRevisionData(RevisionData data, String key, Configuration config) {
+    public static SavedDataField getSavedDataFieldFromRevisionData(RevisionData data, String key, Configuration config) {
         if(config.getField(key) == null) {
             // TODO: no such field in configuration, log error.
             // Field does not exist. return null
@@ -143,26 +145,31 @@ public class ModelAccessUtil {
             return null;
         }
         if(config.getField(key).getType() == FieldType.CONTAINER) {
-            // TODO: Tried to get ContainerFieldContainer instead of ValueFieldContainer, log error
+            // TODO: Tried to get ContainerDataField instead of SavedDataField, log error
+            // TODO: Should return an error message or some sort of result object to inform that illegal operation has happened
+            return null;
+        }
+        if(config.getField(key).getType() == FieldType.REFERENCECONTAINER) {
+            // TODO: Tried to get ReferenceContainerDataField instead of SavedDataField, log error
             // TODO: Should return an error message or some sort of result object to inform that illegal operation has happened
             return null;
         }
 
-        return (SavedFieldContainer)data.getField(key);
+        return (SavedDataField)data.getField(key);
     }
 
     /**
-     * Return top level SavedFieldContainer for given field key.
+     * Return top level SavedDataField for given field key.
      * Contains less sanity checks since no configuration is provided.
      *
      * @param data RevisionData of the revision being manipulated.
      * @param key Field key of the requested field.
-     * @return SavedFieldContainer of the requested key if one exists.
+     * @return SavedDataField of the requested key if one exists.
      */
-    public static SavedFieldContainer getSavedFieldContainerFromRevisionData(RevisionData data, String key) {
-        FieldContainer field = data.getField(key);
-        if(field instanceof SavedFieldContainer) {
-            return (SavedFieldContainer)field;
+    public static SavedDataField getSavedDataFieldFromRevisionData(RevisionData data, String key) {
+        DataField field = data.getField(key);
+        if(field instanceof SavedDataField) {
+            return (SavedDataField)field;
         } else {
             // Field isn't a requested type of field, return null
             return null;
@@ -170,18 +177,18 @@ public class ModelAccessUtil {
     }
 
     /**
-     * Return top level ContainerFieldContainer for given field key.
+     * Return top level ContainerDataField for given field key.
      * If field does not exist in configuration returns null.
      * If field is a subfield return null, this should only be used for top level (non subfield) containers.
      * If field is not a CONTAINER field return null.
      *
-     * Otherwise returns field from data typed as ContainerFieldContainer (assumes data is correct).
+     * Otherwise returns field from data typed as ContainerDataField (assumes data is correct).
      * @param data RevisionData of the revision being manipulated.
      * @param key Field key of the requested field.
      * @param config Configuration of the provided RevisionData
-     * @return ContainerFieldContainer of the requested key if one exists.
+     * @return ContainerDataField of the requested key if one exists.
      */
-    public static ContainerFieldContainer getContainerFieldContainerFromRevisionData(RevisionData data, String key, Configuration config) {
+    public static ContainerDataField getContainerDataFieldFromRevisionData(RevisionData data, String key, Configuration config) {
         if(config.getField(key) == null) {
             // TODO: no such field in configuration, log error.
             // Field does not exist. return null
@@ -194,59 +201,29 @@ public class ModelAccessUtil {
             return null;
         }
         if(config.getField(key).getType() != FieldType.CONTAINER) {
-            // TODO: Tried to get ValueFieldContainer instead of ContainerFieldContainer, log error
+            // TODO: Tried to get field that is not a Container, log error
             // TODO: Should return an error message or some sort of result object to inform that illegal operation has happened
             return null;
         }
 
-        return (ContainerFieldContainer)data.getField(key);
+        return (ContainerDataField)data.getField(key);
     }
 
     /**
-     * Initialises and returns a SavedFieldContainer that is usable in a new revision.
+     * Initialises and returns a SavedDataField that is usable in a new revision.
      * Performs a sanity check to see if given field should be initialised for new revision at all.
      * Returns null if given field should not be inserted into new revision.
-     * @param field Old SavedFieldContainer that is transformed to new revision
-     * @return SavedFieldContainer that can be inserted into a new revision or null.
+     * @param field Old SavedDataField that is transformed to new revision
+     * @return SavedDataField that can be inserted into a new revision or null.
      */
-    public static SavedFieldContainer createNewRevisionSavedFieldContainer(SavedFieldContainer field) {
-        SavedFieldContainer newField = null;
+    public static SavedDataField createNewRevisionSavedDataField(SavedDataField field) {
+        SavedDataField newField = null;
         if(field != null && field.getValue() != null) { // sanity check
-            newField = new SavedFieldContainer(field.getKey());
+            newField = new SavedDataField(field.getKey());
             newField.setOriginalValue(field.getValue());
         }
         return newField;
     }
-
-
-    /*
-     * When you create a new revision you need to copy old field values as changes to the new DRAFT.
-     * This method does the initialisation of the Change object for you.
-     * This method is only for ValueFieldChanges, ContainerFieldChanges need their own.
-     * @param field the actual value container for the field.
-     * @return
-
-    public static ValueFieldChange createNewRevisionValueFieldChange(ValueFieldContainer field) {
-        ValueFieldChange change = new ValueFieldChange(field.getKey());
-        change.setOperation(ChangeOperation.UNCHANGED);
-        change.setOriginalField(field);
-
-        return change;
-    }*/
-
-    /*
-     * Creates and initialises a new ValueFieldContainer from given parameters.
-     * @param key Field key of the needed container
-     * @param time Time when this container was requested.
-     * @return Initialised ValueFieldContainer ready for use
-
-    public static ValueFieldContainer createValueFieldContainer(String key, DateTime time) {
-        ValueFieldContainer field = new ValueFieldContainer(key);
-        field.setSavedAt(time);
-        // TODO: set current user that requests this new field container
-
-        return field;
-    }*/
 
     /**
      * Used for field value checks and changes automation during TransferObject saves.
@@ -276,6 +253,9 @@ public class ModelAccessUtil {
             return false;
         } else if(field.getType() == FieldType.CONTAINER) {
             return doContainerChanges(key, to.getByKey(field.getKey()), time, data, config);
+        } else if(field.getType() == FieldType.REFERENCECONTAINER) {
+            // TODO: handle referencecontainer
+            return false;
         } else {
             return doSingleValueChanges(key, to.getByKey(key), time, data, config);
         }
@@ -337,9 +317,9 @@ public class ModelAccessUtil {
             return false;
         }
         boolean changes = false;
-        ContainerFieldContainer container = (ContainerFieldContainer)data.getField(field.getKey());
+        ContainerDataField container = (ContainerDataField)data.getField(field.getKey());
         if(container == null) {
-            container = new ContainerFieldContainer(field.getKey());
+            container = new ContainerDataField(field.getKey());
         }
         JSONArray rows = jsonContainer.getJSONArray("rows");
         ContainerChange changeContainer = (ContainerChange)data.getChange(field.getKey());
@@ -354,20 +334,20 @@ public class ModelAccessUtil {
             if(row.opt("rowId") == null || row.opt("rowId") == JSONObject.NULL) { // If no rowId was set this is a new row. Initialise rowId for future use. This should automatically set rowId to correct value for new rows
                 row.put("rowId", data.getNewRowId());
             }
-            RowContainer rowContainer = container.getRow(stringToInteger(row.get("rowId")));
+            DataRow dataRow = container.getRow(stringToInteger(row.get("rowId")));
             boolean rowChanges = false;
             boolean newRow = false; // Flag for inserting the row at the end of this iteration if changes are present.
 
-            if(rowContainer == null) {
-                rowContainer = new RowContainer(container.getKey(), stringToInteger(row.get("rowId")));
+            if(dataRow == null) {
+                dataRow = new DataRow(container.getKey(), stringToInteger(row.get("rowId")));
                 newRow = true;
                 // This should automatically lead to there being a change in one of the fields so we don't have to set
                 // rowChanges to true. If for some strange reason no changes are detected then a new empty row is not
                 // added to the container, which is desirable.
             }
-            RowChange rowChangeContainer = changeContainer.getRows().get(rowContainer.getRowId());
+            RowChange rowChangeContainer = changeContainer.getRows().get(dataRow.getRowId());
             if(rowChangeContainer == null) {
-                rowChangeContainer = new RowChange(rowContainer.getKey(), rowContainer.getRowId());
+                rowChangeContainer = new RowChange(dataRow.getRowId());
             }
             for(String subkey : field.getSubfields()) {
                 Field subfield = config.getField(subkey);
@@ -379,6 +359,9 @@ public class ModelAccessUtil {
                 } else if(subfield.getType() == FieldType.CONTAINER) {
                     // TODO: Handle recursive containers
                     continue;
+                } else if(subfield.getType() == FieldType.REFERENCECONTAINER) {
+                    // TODO: Handle recursive referencecontainer
+                    continue;
                 }
                 if(row.opt("fields") == null || row.opt("field") == JSONObject.NULL) {
                     // TODO: if row is missing fields object it might mean row is deleted, for now continue
@@ -386,7 +369,7 @@ public class ModelAccessUtil {
                 }
                 // Field is a single value field and fields exists
                 JSONObject fieldValue = row.optJSONObject("fields").optJSONObject(subfield.getKey());
-                SavedFieldContainer savedField = (SavedFieldContainer)rowContainer.getField(subfield.getKey());
+                SavedDataField savedField = (SavedDataField) dataRow.getField(subfield.getKey());
                 Object newValue = null;
                 if(fieldValue != null || fieldValue != JSONObject.NULL) {
                     if(!fieldValue.get("type").equals("value")) {
@@ -400,8 +383,8 @@ public class ModelAccessUtil {
 
                 if(fieldChange) {
                     if(savedField == null) {
-                        savedField = new SavedFieldContainer(subfield.getKey());
-                        rowContainer.putField(savedField);
+                        savedField = new SavedDataField(subfield.getKey());
+                        dataRow.putField(savedField);
                     }
                     updateFieldValue(savedField, subfield, newValue, time);
                     rowChangeContainer.putChange(new Change(field.getKey()));
@@ -410,10 +393,10 @@ public class ModelAccessUtil {
                 rowChanges = fieldChange | rowChanges;
             } // End of field handling
             if(rowChanges) {
-                rowContainer.setSavedAt(time);
+                dataRow.setSavedAt(time);
                 //TODO: Set savedBy when information is available
                 if(newRow) { // Row was created at the beginning of this iteration, add it to rows list.
-                    container.getRows().add(rowContainer);
+                    container.getRows().add(dataRow);
                 }
                 changeContainer.getRows().put(rowChangeContainer.getRowId(), rowChangeContainer);
             }
@@ -442,7 +425,7 @@ public class ModelAccessUtil {
      */
     private static boolean doSingleValueChanges(String key, Object value, DateTime time, RevisionData data, Configuration config) {
         Field field = config.getField(key);
-        if(field.getType() == FieldType.CONCAT || field.getType() == FieldType.CONTAINER || field.getSubfield()) {
+        if(field.getType() == FieldType.CONCAT || field.getType() == FieldType.CONTAINER || field.getType() == FieldType.REFERENCECONTAINER || field.getSubfield()) {
             // If this field is of type CONCAT or CONTAINER or a subfield to something then changes can't be handled here.
             // Container fields are handled separately and have a whole process for each row and subfield.
             // Concat values should be checked at the end just by concatenating the values again and seeing if it's a new value.
@@ -450,7 +433,7 @@ public class ModelAccessUtil {
             return false;
         }
 
-        SavedFieldContainer container = getSavedFieldContainerFromRevisionData(data, key, config);
+        SavedDataField container = getSavedDataFieldFromRevisionData(data, key, config);
 
         // Do checking for change
         boolean change = doValueComparison(container, field, value);
@@ -459,7 +442,7 @@ public class ModelAccessUtil {
         // This method handles only top level fields so change can be inserted directly to data.
         if(change) {
             if(container == null) {
-                container = new SavedFieldContainer(field.getKey());
+                container = new SavedDataField(field.getKey());
                 data.putField(container);
             }
             updateFieldValue(container, field, value, time);
@@ -469,14 +452,14 @@ public class ModelAccessUtil {
     }
 
     /**
-     * Checks given SavedFieldContainer against given value using given Field configuration.
+     * Checks given SavedDataField against given value using given Field configuration.
      *
      * @param container Current value to be compared to
      * @param field Configuration for current value
      * @param value New value to be compared
      * @return True if change is detected, false otherwise
      */
-    private static boolean doValueComparison(SavedFieldContainer container, Field field, Object value) {
+    private static boolean doValueComparison(SavedDataField container, Field field, Object value) {
         // Sanity check, if configuration is for wrong container then don't compare
         if(container != null && !container.getKey().equals(field.getKey())) {
             return false; // Tried to compare field with wrong configuration.
@@ -531,12 +514,12 @@ public class ModelAccessUtil {
 
     /**
      * Updates the value in given Container using typed procedures
-     * @param container SavedFieldContainer to be modified
+     * @param container SavedDataField to be modified
      * @param field Configuration for given container
      * @param value New value to be inserted
      * @param time Requested time for modification. If not present then current time is used
      */
-    private static void updateFieldValue(SavedFieldContainer container, Field field, Object value, DateTime time) {
+    private static void updateFieldValue(SavedDataField container, Field field, Object value, DateTime time) {
         // Sanity check to see that container exists and configuration is for right container
         if(container == null || !container.getKey().equals(field.getKey())) {
             return;
@@ -556,18 +539,18 @@ public class ModelAccessUtil {
     }
 
     /**
-     * Default insertion method for modifying SavedFieldContainer.
+     * Default insertion method for modifying SavedDataField.
      * In theory can be used for everything but some types might need more sophisticated methods or conversions.
      * @param time Requested time for the change
      * @param value New value to be inserted
-     * @param container SavedFieldContainer to be modified.
+     * @param container SavedDataField to be modified.
      */
-    private static void insertStringValueChange(DateTime time, String value, SavedFieldContainer container) {
+    private static void insertStringValueChange(DateTime time, String value, SavedDataField container) {
         SavedValue saved = createSavedValue(time);
         if(!StringUtils.isEmpty(value)) {
             setSimpleValue(saved, value);
         }
-        updateSavedFieldContainer(container, saved);
+        updateSavedDataField(container, saved);
     }
 
     /**
@@ -578,21 +561,21 @@ public class ModelAccessUtil {
      * @param value New value
      * @param container SavedField where the new value is to be inserted
      */
-    private static void insertIntegerValueChange(DateTime time, Integer value, SavedFieldContainer container) {
+    private static void insertIntegerValueChange(DateTime time, Integer value, SavedDataField container) {
         SavedValue saved = createSavedValue(time);
         if(value != null) {
             setSimpleValue(saved, value.toString());
         }
-        updateSavedFieldContainer(container, saved);
+        updateSavedDataField(container, saved);
     }
 
     /**
-     * Actually inserts the given SavedValue into a SavedFieldContainer.
+     * Actually inserts the given SavedValue into a SavedDataField.
      * Performs a sanity check to see that null values are not inserted.
      * @param container
      * @param saved
      */
-    private static void updateSavedFieldContainer(SavedFieldContainer container, SavedValue saved) {
+    private static void updateSavedDataField(SavedDataField container, SavedValue saved) {
         // TODO: Improve by taking out unnecessary cases such as no original value and new SavedValue has no value.
 
         if(saved != null) {
@@ -603,15 +586,15 @@ public class ModelAccessUtil {
     /**
      * If there is a value then assume SimpleValue and return it as an Integer.
      * This is a convenience method and so it assumes you want the most recent value and so it uses
-     * getValue() method on SavedFieldContainer to get value.
+     * getValue() method on SavedDataField to get value.
      * NOTICE:  This does not check the configuration so if the value is DERIVED then only the reference part
      *          of that value gets returned through ConversionUtil.stringToInteger conversion.
      * NOTICE:  No matter what the configuration for the field says this method returns ConversionUtil parsed integer.
      *          This can return null.
-     * @param field SavedFieldContainer from where the value is extracted from.
+     * @param field SavedDataField from where the value is extracted from.
      * @return Integer gained by using ConversionUtil.stringToInteger on the simple value representation if value is found.
      */
-    public static Integer extractIntegerSimpleValue(SavedFieldContainer field) {
+    public static Integer extractIntegerSimpleValue(SavedDataField field) {
         Integer integer = null;
         if(field != null && field.getValue() != null && field.getValue().getValue() != null) {
             String value = ((SimpleValue)(field.getValue().getValue())).getValue();
@@ -624,14 +607,14 @@ public class ModelAccessUtil {
     /**
      * If there is a value then assume SimpleValue and return it as a String.
      * This is a convenience method and so it assumes you want the most recent value and so it uses
-     * getValue() method on SavedFieldContainer to get SavedValue.
+     * getValue() method on SavedDataField to get SavedValue.
      * NOTICE:  This does not check the configuration so if the value is DERIVED then only the reference part
      *          of that value gets returned.
      * NOTICE:  No matter what the configuration for the field says this method returns Strings.
      * @param field Container from where the value is extracted from.
      * @return String containing the simple value representation if value is found.
      */
-    public static String extractStringSimpleValue(SavedFieldContainer field) {
+    public static String extractStringSimpleValue(SavedDataField field) {
         String string = null;
         if(field != null && field.getValue() != null && field.getValue().getValue() != null) {
             string = ((SimpleValue)(field.getValue().getValue())).getValue();
@@ -641,10 +624,9 @@ public class ModelAccessUtil {
     }
 
     /*
-    * This clears existing values from given fields and inserts a new SimpleValue with the given
+    * This clears existing values from given SavedValue and inserts a new SimpleValue with the given
     * value.
-    * This is only for ValueFieldContainers, ContainerFieldContainers as well as RowContainers work
-    * on different basis altogether.
+    *
     * WARNING: This does not in any way check what type of value this field is supposed to have
      *         so you can easily insert illegal values with this.
      */
@@ -656,7 +638,7 @@ public class ModelAccessUtil {
     /**
      * Creates and initialises a new SavedValue from given parameters.
      * @param time Time when this container was requested.
-     * @return Initialised ValueFieldContainer ready for use
+     * @return Initialised SavedValue ready for use
      */
     public static SavedValue createSavedValue(DateTime time) {
         SavedValue value = new SavedValue();

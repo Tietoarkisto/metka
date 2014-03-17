@@ -3,7 +3,7 @@
 
 <label class="studyLevelTitle"><spring:message code="study.view.description.otherStudies"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></label>
 <div class="accordionContent">
-	<div class="rowContainer containsTranslations">
+	<div class="dataRow containsTranslations">
 		<%-- relatedStudyDialog --%>
 		<div class="studyLevelDataSetContainer translated translationFi">
 			<div class="studyLevelTableTitle"><spring:message code="study.view.description.otherStudies.relatedStudy"/></div>
@@ -54,7 +54,7 @@
 			<div class="accordionTableActionLinkHolder"><spring:message code='general.buttons.add'/></div>
 		</div>
 	</div>
-	<div class="rowContainer containsTranslations">
+	<div class="dataRow containsTranslations">
 		<%-- otherStudyDialog --%>
 		<div class="studyLevelDataSetContainer translated translationFi">
 			<div class="studyLevelTableTitle"><spring:message code="study.view.description.otherStudies.otherStudies"/></div>
@@ -117,7 +117,7 @@
 			<div class="accordionTableActionLinkHolder"><spring:message code='general.buttons.add'/></div>
 		</div>
 	</div>
-	<div class="rowContainer containsTranslations">
+	<div class="dataRow containsTranslations">
 		<%-- remarksDialog (not done) --%>
 		<div class="studyLevelDataSetContainer translated translationFi">
 			<div class="studyLevelTableTitle"><spring:message code="study.view.description.otherStudies.remarksOnPublishing"/></div>

@@ -14,11 +14,11 @@
                 <option value="${option.value}">
                     <c:choose>
                         <c:when test="${configuration.choicelists[optionslist].type == 'VALUE'}">
-                            <script>MetkaGlobals.strings["${fn:toUpperCase(page)}.${optionslist}.choices.${option.value}"] = "<spring:message code="${fn:toUpperCase(page)}.${optionslist}.choices.${option.value}"/>"</script>
+                            <script>MetkaJS.L18N.put("${fn:toUpperCase(page)}.${optionslist}.choices.${option.value}", "<spring:message code="${fn:toUpperCase(page)}.${optionslist}.choices.${option.value}"/>")</script>
                             <spring:message code="${fn:toUpperCase(page)}.${optionslist}.choices.${option.value}"/>
                         </c:when>
                         <c:otherwise>
-                            <script>MetkaGlobals.strings["${fn:toUpperCase(page)}.${optionslist}.choices.${option.value}"] = "${option.title}"</script>
+                            <script>MetkaJS.L18N.put("${fn:toUpperCase(page)}.${optionslist}.choices.${option.value}", "${option.title}")</script>
                             ${option.title}
                         </c:otherwise>
                     </c:choose>

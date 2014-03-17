@@ -12,11 +12,8 @@ import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.change.ContainerChange;
 import fi.uta.fsd.metka.model.data.change.RowChange;
-import fi.uta.fsd.metka.model.data.container.ContainerFieldContainer;
-import fi.uta.fsd.metka.model.data.container.FieldContainer;
+import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.RowContainer;
-import fi.uta.fsd.metka.model.data.container.SavedFieldContainer;
 import fi.uta.fsd.metka.model.factories.SeriesFactory;
 import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
 import org.joda.time.DateTime;
@@ -280,7 +277,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         RevisionData newData = RevisionData.createRevisionData(newRevision, oldData.getConfiguration());
 
         // Copy old fields to new revision data
-        for(FieldContainer field : oldData.getFields().values()) {
+        for(DataField field : oldData.getFields().values()) {
             newData.putField(field.copy());
         }
         // Changes are not copied but instead changes in oldData are used to normalize changes in fields copied to
@@ -303,20 +300,24 @@ public class SeriesRepositoryImpl implements SeriesRepository {
 
     /**
      * Moves modified values to original values for all changed fields.
-     * Goes through given changes map and for each change if it is not a ContainerFieldContainer assumes it's
-     * a SavedFieldContainer and sets its originalValue to newest value, then sets its modified value to null.
+     * Goes through given changes map and for each change if it is not a ContainerDataField assumes it's
+     * a SavedDataField and sets its originalValue to newest value, then sets its modified value to null.
      * For containers it call helper method to go through the rows.
      * NOTICE: This method assumes data accuracy. If things are broken here then there's deeper problems.
      * @param changes Map of Changes pointing to given fields in fields map.
-     * @param fields Map of FieldContainers where changes are to be set to original values.
+     * @param fields Map of DataFields where changes are to be set to original values.
      */
-    private void changesToOriginals(Map<String, Change> changes, Map<String, FieldContainer> fields) {
+    private void changesToOriginals(Map<String, Change> changes, Map<String, DataField> fields) {
         for(Change change : changes.values()) {
             if(change instanceof ContainerChange) {
-                ContainerFieldContainer field = (ContainerFieldContainer)fields.get(change.getKey());
-                handleRowChanges((ContainerChange)change, field);
+                DataField field = fields.get(change.getKey());
+                if(field instanceof ContainerDataField) {
+                    handleRowChanges((ContainerChange)change, (ContainerDataField)field);
+                } else if(field instanceof ReferenceContainerDataField) {
+                    handleReferenceChanges((ContainerChange), (ReferenceContainerDataField)field):
+                }
             } else {
-                SavedFieldContainer field = (SavedFieldContainer)fields.get(change.getKey());
+                SavedDataField field = (SavedDataField)fields.get(change.getKey());
                 // Once field has been set it should not be set back to null for any reason during new revision creation.
                 // Revision save should handle cases where there is no original value and modified value is removed.
                 // Here we can use the convinience method of getValue() since it doesn't return modified value if it is null.
@@ -329,15 +330,32 @@ public class SeriesRepositoryImpl implements SeriesRepository {
     /**
      * Helper method for changesToOriginals().
      * Goes through all rows in given ContainerChange and calls changesToOriginals
-     * using Changes in RowChange and fields in RowContainer
+     * using Changes in RowChange and fields in DataRow
      * @param change ContainerChange to be handled
-     * @param field ContainerFieldContainer to be modified
+     * @param field ContainerDataField to be modified
      */
-    private void handleRowChanges(ContainerChange change, ContainerFieldContainer field) {
+    private void handleRowChanges(ContainerChange change, ContainerDataField field) {
         for(RowChange c : change.getRows().values()) {
-            RowContainer row = field.getRow(c.getRowId());
+            DataRow row = field.getRow(c.getRowId());
             if(row != null) {
                 changesToOriginals(c.getChanges(), row.getFields());
+            }
+        }
+    }
+
+    /**
+     * Helper method for changesToOriginals().
+     * Goes through all rows in given ContainerChange and handles all found rows
+     * as SavedReference from given ReferenceContainerDataField
+     * @param change ContainerChange to be handled
+     * @param field ContainerDataField to be modified
+     */
+    private void handleReferenceChanges(ContainerChange change, ReferenceContainerDataField field) {
+        for(RowChange c : change.getRows().values()) {
+            SavedReference row = field.getReference(c.getRowId());
+            if(row != null) {
+                row.setOriginalValue(row.getValue());
+                row.setModifiedValue(null);
             }
         }
     }

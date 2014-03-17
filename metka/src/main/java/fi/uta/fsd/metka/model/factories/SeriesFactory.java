@@ -8,7 +8,7 @@ import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.change.Change;
-import fi.uta.fsd.metka.model.data.container.SavedFieldContainer;
+import fi.uta.fsd.metka.model.data.container.SavedDataField;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,7 +57,7 @@ public class SeriesFactory {
 
         RevisionData data = RevisionData.createRevisionData(entity, conf.getKey());
 
-        SavedFieldContainer field = new SavedFieldContainer(conf.getIdField());
+        SavedDataField field = new SavedDataField(conf.getIdField());
         field.setModifiedValue(setSimpleValue(createSavedValue(time), entity.getKey().getRevisionableId() + ""));
         data.putField(field).putChange(new Change(field.getKey()));
 

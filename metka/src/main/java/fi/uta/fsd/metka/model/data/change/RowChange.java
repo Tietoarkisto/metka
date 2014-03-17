@@ -10,13 +10,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RowChange extends Change {
+public class RowChange {
     @XmlElement private final Integer rowId;
     @XmlElement private final Map<String, Change> changes = new HashMap<>();
 
     @JsonCreator
-    public RowChange(@JsonProperty("key") String key, @JsonProperty("rowId") Integer rowId) {
-        super(key);
+    public RowChange(@JsonProperty("rowId") Integer rowId) {
         this.rowId = rowId;
     }
 
@@ -39,7 +38,6 @@ public class RowChange extends Change {
 
         RowChange rowChange = (RowChange) o;
 
-        if (!getKey().equals(rowChange.getKey())) return false;
         if (!rowId.equals(rowChange.rowId)) return false;
 
         return true;
@@ -47,8 +45,6 @@ public class RowChange extends Change {
 
     @Override
     public int hashCode() {
-        int result = getKey().hashCode();
-        result = 31 * result + rowId.hashCode();
-        return result;
+        return rowId.hashCode();
     }
 }

@@ -1,9 +1,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <div id="materialCodebook" class="tabs2 codebook">
-	<div class="rowContainer containsTranslations">
+	<div class="dataRow containsTranslations">
 	</div>
-	<div class="rowContainer containsTranslations">
+	<div class="dataRow containsTranslations">
 		<%-- codeBookFileDialog --%>
 		<div class="materialRowTitle"><spring:message code="study.view.codebook.tableTitle"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></div>
 		<table class="metkaTable" id="materialCodebookFileTable">

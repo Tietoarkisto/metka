@@ -7,7 +7,7 @@ import fi.uta.fsd.metka.model.configuration.Choicelist;
 import fi.uta.fsd.metka.model.configuration.Option;
 import fi.uta.fsd.metka.model.configuration.Reference;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.SavedFieldContainer;
+import fi.uta.fsd.metka.model.data.container.SavedDataField;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -68,7 +68,7 @@ public class GeneralService {
     public void fillOptions(Choicelist list, Reference ref) throws IOException {
         List<RevisionData> datas = repository.getLatestRevisionsForType(ref.getTargetType(), ref.getApprovedOnly());
         for(RevisionData data : datas) {
-            SavedFieldContainer field = getSavedFieldContainerFromRevisionData(data, ref.getValueField());
+            SavedDataField field = getSavedDataFieldFromRevisionData(data, ref.getValueField());
             if(field == null) {
                 // No value field found. Option can not be completed
                 continue;
@@ -81,7 +81,7 @@ public class GeneralService {
             if(StringUtils.isEmpty(ref.getTitleField())) {
                 option.setTitle(option.getValue());
             } else {
-                field = getSavedFieldContainerFromRevisionData(data, ref.getTitleField());
+                field = getSavedDataFieldFromRevisionData(data, ref.getTitleField());
                 option.setTitle(extractStringSimpleValue(field));
             }
             list.getOptions().add(option);

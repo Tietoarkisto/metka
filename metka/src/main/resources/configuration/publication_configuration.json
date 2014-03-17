@@ -39,6 +39,7 @@
 		}
 	},
 	"idField": "id",
+	"displayId": "id",
 	"fields": {
 		"id": {
 			"key": "id",

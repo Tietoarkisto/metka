@@ -15,10 +15,10 @@ $(document).ready(function(){
             return;
         }
         var request = new Object();
-        request.id = SingleObject.id;
+        request.id = MetkaJS.SingleObject.id;
         request.begin = parseInt(beginVal);
         request.end = parseInt(endVal);
-        request.type = MetkaGlobals.page.toUpperCase();
+        request.type = MetkaJS.Globals.page.toUpperCase();
         $.ajax({
             type: "POST",
             headers: {
@@ -26,7 +26,7 @@ $(document).ready(function(){
                 'Content-Type': 'application/json'
             },
             dataType: "json",
-            url: MetkaGlobals.contextPath+"/history/revisions/compare",
+            url: MetkaJS.PathBuilder().add("history").add("revisions").add("compare").build(),
             data: JSON.stringify(request),
             success: function(response) {
                 // Fill compare dialog
@@ -42,10 +42,10 @@ $(document).ready(function(){
                     var row = $("<tr>", {class: "revisionHistoryDialogRow"});
                     var prop = "";
                     if(rowData["section"] != null) {
-                        prop += MetkaGlobals.strings[MetkaGlobals.page.toUpperCase()+".section."+rowData["section"]];
+                        prop += MetkaJS.L18N.get(MetkaJS.Globals.page.toUpperCase()+".section."+rowData["section"]);
                         prop += ": ";
                     }
-                    prop += MetkaGlobals.strings[MetkaGlobals.page.toUpperCase()+".field."+rowData["property"]];
+                    prop += MetkaJS.L18N.get(MetkaJS.Globals.page.toUpperCase()+".field."+rowData["property"]);
                     row.append($("<td>", {class: "revisionTableColumn", text: prop}));
 
                     // TODO: server should only send strings suitable for display and nothing more.
@@ -69,7 +69,7 @@ $(document).ready(function(){
                 $("#revisionHistoryDialog").dialog("close");
 
                 // show compare dialog
-                var str = MetkaGlobals.strings["general.revision.compare.title"];
+                var str = MetkaJS.L18N.get("general.revision.compare.title");
                 str = str.replace("{0}", response["begin"]);
                 str = str.replace("{1}", response["end"]);
 
@@ -85,7 +85,7 @@ $(document).ready(function(){
     $("#showRevisions").click(function() {
         $.ajax({
             type: "GET",
-            url: MetkaGlobals.contextPath+"/history/revisions/"+SingleObject.id,
+            url: MetkaJS.PathBuilder().add("history").add("revisions").add(MetkaJS.SingleObject.id).build(),
             success: function(response) {
                 var revisionTable = $("#revisionTable");
                 var titleRow = revisionTable.children().first();
@@ -96,10 +96,13 @@ $(document).ready(function(){
                     var rowData = response[i];
                     var row = $("<tr>", {class: "revisionHistoryDialogRow"});
                     var td = $("<td>", {class: "revisionTableColumn"});
-                    td.append($("<a>", {href: MetkaGlobals.contextPath+"/"+MetkaGlobals.page+"/view"+"/"+SingleObject.id+"/"+rowData["revision"], text: rowData["revision"]}));
+                    td.append($("<a>", {
+                        href: MetkaJS.PathBuilder().add(MetkaJS.Globals.page).add("view").add(MetkaJS.SingleObject.id).add(rowData["revision"]).build(),
+                        text: rowData["revision"]
+                    }));
                     row.append(td);
                     if(rowData["state"]=="DRAFT") {
-                        row.append($("<td>", {class: "revisionTableColumn", text: rowData["state"]}));
+                        row.append($("<td>", {class: "revisionTableColumn", text: MetkaJS.L18N.get("general.title.DRAFT")}));
                     } else {
                         row.append($("<td>", {class: "revisionTableColumn", text: rowData["approvalDate"]}));
                     }
@@ -113,9 +116,9 @@ $(document).ready(function(){
                     input.change(checkRadioGroups);
                     radioColumn.append(input);
                     row.append(radioColumn);
-                    if(SingleObject.draft) {
+                    if(MetkaJS.SingleObject.draft) {
                         var replaceColumn = $("<td>", {class: "revisionTableColumn"});
-                        replaceColumn.append($("<input>", {type: "button", class: "button", value: MetkaGlobals.strings["general.revision.replace"]}));
+                        replaceColumn.append($("<input>", {type: "button", class: "button", value: MetkaJS.L18N.get("general.revision.replace")}));
                         row.append(replaceColumn);
                     }
                     tbody.append(row);
@@ -123,6 +126,11 @@ $(document).ready(function(){
 
                 revisionTable.append(tbody);
                 checkRadioGroups();
+                if(MetkaJS.SingleObject.draft) {
+                    $("#revisionHistoryDialog #replaceColumn").show();
+                } else {
+                    $("#revisionHistoryDialog #replaceColumn").hide();
+                }
                 $("#revisionHistoryDialog").dialog("open");
             },
             error: function(e) {

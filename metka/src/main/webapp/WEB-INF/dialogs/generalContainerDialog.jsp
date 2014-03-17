@@ -30,7 +30,7 @@
     </table>
 
     <div class="popupButtonsHolder">
-        <input type="button" class="button" onclick="dialogClose('${param.field}ContainerDialog')" value="<spring:message code='general.buttons.close'/>" />
-        <input type="button" class="button generalDialogAdd" onclick="handleGeneralContainerDialog('${param.field}')" value="<spring:message code="general.buttons.ok"/>"/>
+        <input type="button" class="button" onclick="MetkaJS.dialogClose('${param.field}ContainerDialog')" value="<spring:message code='general.buttons.close'/>" />
+        <input type="button" class="button generalDialogAdd" onclick="MetkaJS.DatatableHandler.process('${param.field}')" value="<spring:message code="general.buttons.ok"/>"/>
     </div>
 </div>

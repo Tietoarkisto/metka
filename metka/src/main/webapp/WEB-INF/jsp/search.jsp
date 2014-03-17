@@ -3,7 +3,6 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ page session="false" %>
-<c:set var="contextPath" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE HTML>
 <html lang="fi">
 <head>

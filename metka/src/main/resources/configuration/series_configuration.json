@@ -4,6 +4,7 @@
 		"type": "SERIES"
 	},
 	"idField": "seriesno",
+	"displayId": "seriesno",
 	"fields": {
 		"seriesno": {
 			"key": "seriesno",

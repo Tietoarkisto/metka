@@ -89,7 +89,7 @@ $(document).ready(function(){
 		$(".translationFi").find("textarea").attr("disabled", hide);
 		$(".translationFi").find("select").attr("disabled", hide);
 		if ( hide ) {
-			$(".rowContainer:not(.containsTranslations)").hide();
+			$(".dataRow:not(.containsTranslations)").hide();
 			$(".materialDataSetContainer:not(.translated), .materialDataSetTextareaContainer:not(.translated)").hide();
 			$(".studyLevelDataSetContainer:not(.translated), .studyLevelDataSetContainer:not(.translated)").hide();
 			$("#normalDesktop").hide();
@@ -98,7 +98,7 @@ $(document).ready(function(){
 			$(".translationBorder").removeClass("translationSvBorder");
 			$("#studyLevelData").find(".translationFi").find("a").hide();
 		} else {
-			$(".rowContainer:not(.containsTranslations)").show();
+			$(".dataRow:not(.containsTranslations)").show();
 			$(".materialDataSetContainer:not(.translated), .materialDataSetTextareaContainer:not(.translated)").show();
 			$(".studyLevelDataSetContainer:not(.translated), .studyLevelDataSetTextareaContainer:not(.translated)").show();
 			$("#normalDesktop").show();

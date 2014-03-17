@@ -45,7 +45,7 @@ public class GeneralController {
             error.getData().add("general.errors.move." + type);
             errors.add(error);
 
-            redirectAttributes.addFlashAttribute("displayableErrors", error);
+            redirectAttributes.addFlashAttribute("displayableErrors", errors);
         }
         return "redirect:/"+type+"/view/"+id;
 

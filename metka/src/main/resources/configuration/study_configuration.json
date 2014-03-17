@@ -173,6 +173,7 @@
 		}
 	},
 	"idField": "study_id",
+	"displayId": "id",
 	"fields": {
 		"aipcomplete": {
 			"key": "aipcomplete",
@@ -354,6 +355,12 @@
 			"section": "basic_information",
 			"multiline": true
 		},
+		"partitle": {
+			"key": "title",
+			"type": "STRING",
+			"translatable": false,
+			"section": "basic_information"
+		},
 		"processingnotes": {
 			"key": "processingnotes",
 			"translatable": false,
@@ -486,12 +493,12 @@
 			"reference": "file_ref",
 			"section": "file_management",
 			"subfields": [
-				"file"
+				"fileno"
 			],
 			"showSaveInfo": true
 		},
-		"file": {
-			"key": "file",
+		"fileno": {
+			"key": "fileno",
 			"translatable": false,
 			"type": "REFERENCE",
 			"reference": "file_ref",

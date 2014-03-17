@@ -2,6 +2,7 @@ package fi.uta.fsd.metka.model.data.container;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import fi.uta.fsd.metka.data.util.ModelAccessUtil;
 import org.joda.time.DateTime;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -10,17 +11,25 @@ import javax.xml.bind.annotation.XmlElement;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Single row of fields in a container is saved through this
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RowContainer extends FieldContainer {
+public class DataRow implements ModelAccessUtil.PathNavigable {
+    @XmlElement private final String key;
     @XmlElement private final Integer rowId;
-    @XmlElement private final Map<String, FieldContainer> fields = new HashMap<>();
+    @XmlElement private final Map<String, DataField> fields = new HashMap<>();
     @XmlElement private DateTime savedAt;
     @XmlElement private String savedBy;
 
     @JsonCreator
-    public RowContainer(@JsonProperty("key")String key, @JsonProperty("rowId")Integer rowId) {
-        super(key);
+    public DataRow(@JsonProperty("key") String key, @JsonProperty("rowId") Integer rowId) {
+        this.key = key;
         this.rowId = rowId;
+    }
+
+    public String getKey() {
+        return key;
     }
 
     public Integer getRowId() {
@@ -43,15 +52,15 @@ public class RowContainer extends FieldContainer {
         this.savedBy = savedBy;
     }
 
-    public Map<String, FieldContainer> getFields() {
+    public Map<String, DataField> getFields() {
         return fields;
     }
 
-    public FieldContainer getField(String key) {
+    public DataField getField(String key) {
         return fields.get(key);
     }
 
-    public void putField(FieldContainer field) {
+    public void putField(DataField field) {
         fields.put(field.getKey(), field);
     }
 
@@ -61,7 +70,7 @@ public class RowContainer extends FieldContainer {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
 
-        RowContainer that = (RowContainer) o;
+        DataRow that = (DataRow) o;
 
         if (!getKey().equals(that.getKey())) return false;
         if (!rowId.equals(that.rowId)) return false;
@@ -82,12 +91,11 @@ public class RowContainer extends FieldContainer {
         return "Json[name="+this.getClass().getSimpleName()+", key="+getKey()+", rowId="+rowId+"]";
     }
 
-    @Override
-    public FieldContainer copy() {
-        RowContainer row = new RowContainer(getKey(), rowId);
+    public DataRow copy() {
+        DataRow row = new DataRow(getKey(), rowId);
         row.setSavedAt(new DateTime(savedAt));
         row.setSavedBy(savedBy);
-        for(FieldContainer field : fields.values()) {
+        for(DataField field : fields.values()) {
             row.putField(field.copy());
         }
         return row;

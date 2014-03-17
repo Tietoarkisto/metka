@@ -36,7 +36,7 @@
     <!-- TODO: Fix this reset button
     <input type="reset" class="button" value="Tyhjennä">-->
     <input type="button" id="addNewSeriesBtn" class="button" value="<spring:message code='general.buttons.addSeries'/>"
-           onclick="location.href='${pageContext.request.contextPath}/series/add'"/>
+           onclick="MetkaJS.PathBuilder().add('series').add('add').navigate()"/>
     <input id="revisionSearchFormSearch" type="submit" class="button" value="<spring:message code='general.buttons.search'/>">
 </div>
 <c:if test="${not empty searchData.results}">
@@ -53,7 +53,7 @@
             </thead>
             <tbody>
                 <c:forEach var="r" items="${searchData.results}">
-                    <tr class="pointerClass" onclick="location.href='${pageContext.request.contextPath}/series/view/${r.id}/${r.revision}'">
+                    <tr class="pointerClass" onclick="MetkaJS.view(${r.id},${r.revision})">
                         <td>${r.values['seriesno']}</td>
                         <td>${r.values['seriesabb']}</td>
                         <td>${r.values['seriesname']}</td>

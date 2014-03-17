@@ -3,7 +3,7 @@
 
 <label class="studyLevelTitle"><spring:message code="study.view.description.authorsAndProducers"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></label>
 <div class="accordionContent">
-	<div class="rowContainer">
+	<div class="dataRow">
 	<%-- authorDialog --%>
 		<table class="metkaTable studyLevelOrderedTable" id="studyLevelAuthors">
 			<thead>
@@ -45,7 +45,7 @@
 		</table>
 		<div class="accordionTableActionLinkHolder"><spring:message code='general.buttons.add'/></div>
 	</div>
-	<div class="rowContainer">
+	<div class="dataRow">
 		<%-- authorDialog --%>
 		<table class="metkaTable studyLevelOrderedTable" id="studyLevelOtherAuthors">
 			<thead>
@@ -88,7 +88,7 @@
 		<div class="accordionTableActionLinkHolder"><spring:message code='general.buttons.add'/></div>
 	</div>
 
-	<div class="rowContainer">
+	<div class="dataRow">
 		<%-- producerDialog --%>
 		<table class="metkaTable studyLevelOrderedTable" id="studyLevelProducers">
 			<thead>

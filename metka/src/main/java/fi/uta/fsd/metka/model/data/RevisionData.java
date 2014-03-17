@@ -9,7 +9,7 @@ import fi.uta.fsd.metka.model.ModelBase;
 import fi.uta.fsd.metka.model.configuration.ConfigurationKey;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.change.Change;
-import fi.uta.fsd.metka.model.data.container.FieldContainer;
+import fi.uta.fsd.metka.model.data.container.DataField;
 import org.joda.time.DateTime;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -44,7 +44,7 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase {
     @XmlElement private final RevisionKey key;
     @XmlElement private final ConfigurationKey configuration;
     @XmlElement private final Map<String, Change> changes = new HashMap<>();
-    @XmlElement private final Map<String, FieldContainer> fields = new HashMap<>();
+    @XmlElement private final Map<String, DataField> fields = new HashMap<>();
     @XmlElement private RevisionState state;
     @XmlElement private Integer rowIdSeq;
     @XmlElement private DateTime approvalDate;
@@ -74,7 +74,7 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase {
         return changes;
     }
 
-    public Map<String, FieldContainer> getFields() {
+    public Map<String, DataField> getFields() {
         return fields;
     }
 
@@ -125,13 +125,13 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase {
         changes.put(change.getKey(), change);
         return this;
     }
-    public FieldContainer getField(String key) {
+    public DataField getField(String key) {
         return fields.get(key);
     }
-    public FieldContainer getField(Field field) {
+    public DataField getField(Field field) {
         return getField(field.getKey());
     }
-    public RevisionData putField(FieldContainer field) {
+    public RevisionData putField(DataField field) {
         fields.put(field.getKey(), field);
         return this;
     }

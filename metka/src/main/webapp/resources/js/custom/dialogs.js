@@ -10,8 +10,10 @@ $(document).ready(function(){
     /**
      * Replace native alert with jQuery dialog.
      * This provides non blocking alert dialog that can be styled.
+     *
+     * @param message - Message to be shown to user
+     * @param title - Title for this alert
      */
-
     window.alert = function(message, title){
         if(title == undefined || title == null || title == "") {
             title = "general.errors.title.notice";
@@ -24,7 +26,7 @@ $(document).ready(function(){
             width: 'auto',
             height: 'auto'
         });
-        alertDlg.dialog("option", "title", MetkaGlobals.strings[title]);
+        alertDlg.dialog("option", "title", MetkaJS.L18N.get(title));
         alertDlg.find("#alertContent").empty();
         alertDlg.find("#alertContent").text(message);
         alertDlg.find("#alertCloseBtn").click(function(alertDlg) {
@@ -35,9 +37,16 @@ $(document).ready(function(){
         alertDlg.dialog("open");
     };
 
+    /**
+     * Replace native confirm with jQuery dialog.
+     * This gives better styling options as well as better control.
+     * @param message - Message to be shown to user
+     * @param title - Title for this dialog
+     * @param execute - Callback to be executed if user confirms action
+     */
     window.confirm = function confirmation(message, title, execute) {
         if(title == undefined || title == null || title == "") {
-            title = MetkaGlobals.strings["general.confirmation.title.confirm"];
+            title = "general.confirmation.title.confirm";
         }
         var confirm = $("#confirmationDialog").clone();
         confirm.dialog({
@@ -47,7 +56,7 @@ $(document).ready(function(){
             width: 'auto',
             height: 'auto'
         });
-        confirm.dialog("option", "title", title);
+        confirm.dialog("option", "title", MetkaJS.L18N.get(title));
         confirm.find("#confirmationContent").empty();
         confirm.find("#confirmationContent").text(message);
         if(execute==undefined || execute==null) {
@@ -67,8 +76,13 @@ $(document).ready(function(){
 
         confirm.dialog("open");
     }
-});
 
-function dialogClose(id) {
-    $("#"+id).dialog("close");
-}
+    /**
+     * General close function for dialogs.
+     * Closes the dialog with provided id.
+     * @param id - Id of the dialog
+     */
+    MetkaJS.dialogClose = function(id) {
+        $("#"+id).dialog("close");
+    }
+});

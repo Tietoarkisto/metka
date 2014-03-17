@@ -20,7 +20,7 @@
 </table>
 <c:if test="${empty param.generalHandler or param.generalHandler == true}">
     <div class="rightAlignCell"><input type="button" class="button" value="<spring:message code="general.table.add"/>"
-            onclick="showGeneralDialog('${param.field}', true)"/></div>
+            onclick="MetkaJS.DatatableHandler.showDialog('${param.field}', true)"/></div>
     <jsp:include page="../dialogs/generalContainerDialog.jsp">
         <jsp:param name="field" value="${param.field}" />
     </jsp:include>

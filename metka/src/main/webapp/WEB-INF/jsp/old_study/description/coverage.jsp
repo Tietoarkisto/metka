@@ -3,7 +3,7 @@
 
 <label class="studyLevelTitle"><spring:message code="study.view.description.coverage"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></label>
 <div class="accordionContent">
-	<div class="rowContainer">
+	<div class="dataRow">
 		<%-- timePeriodDialog --%>
 		<div class="studyLevelTableTitle"><spring:message code="study.view.description.coverage.timePeriods"/></div>
 		<table class="metkaTable studyLevelTwoHeadersTable">
@@ -22,7 +22,7 @@
 		</table>
 		<div class="accordionTableActionLinkHolder"><spring:message code='general.buttons.add'/></div>
 	</div>
-	<div class="rowContainer">
+	<div class="dataRow">
 		<%-- countryDialog --%>
 		<table class="metkaTable studyLevelTwoHeadersTable">
 			<thead>
@@ -40,7 +40,7 @@
 		</table>
 		<div class="accordionTableActionLinkHolder"><spring:message code='general.buttons.add'/></div>
 	</div>
-	<div class="rowContainer">
+	<div class="dataRow">
 		<%-- universeDialog --%>
 		<table class="metkaTable studyLevelTwoHeadersTable">
 			<thead>
@@ -59,7 +59,7 @@
 		<div class="accordionTableActionLinkHolder"><spring:message code='general.buttons.add'/></div>
 	</div>
 
-	<div class="rowContainer">
+	<div class="dataRow">
 		<%-- geoCoverDialog --%>
 		<table class="metkaTable">
 			<thead>

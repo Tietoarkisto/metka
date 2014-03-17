@@ -3,7 +3,7 @@
 
 <label class="studyLevelTitle"><spring:message code="study.view.description.collecting"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></label>
 <div class="accordionContent">
-	<div class="rowContainer">
+	<div class="dataRow">
 		<%-- collectingDateDialog --%>
 		<table class="metkaTable studyLevelTwoHeadersTable">
 			<thead>
@@ -26,7 +26,7 @@
 		<div class="accordionTableActionLinkHolder"><spring:message code='general.buttons.add'/></div>
 	</div>
 
-	<div class="rowContainer">
+	<div class="dataRow">
 		<%-- collectorDialog --%>
 		<table class="metkaTable studyLevelOrderedTable">
 			<thead>
@@ -73,7 +73,7 @@
 		<div class="accordionTableActionLinkHolder"><spring:message code='general.buttons.add'/></div>
 	</div>
 
-	<div class="rowContainer">
+	<div class="dataRow">
 		<%-- collectingDataDialog --%>
 		<table class="metkaTable studyLevelCollectingTable">
 			<thead>
@@ -98,7 +98,7 @@
 		<div class="accordionTableActionLinkHolder"><spring:message code='general.buttons.add'/></div>
 	</div>
 
-	<div class="rowContainer">
+	<div class="dataRow">
 		<%-- collectingDataDialog --%>
 		<table class="metkaTable studyLevelCollectingTable">
 			<thead>
@@ -123,7 +123,7 @@
 		<div class="accordionTableActionLinkHolder"><spring:message code='general.buttons.add'/></div>
 	</div>
 
-	<div class="rowContainer">
+	<div class="dataRow">
 		<%-- collectingDataDialog --%>
 		<table class="metkaTable studyLevelCollectingTable">
 			<thead>
@@ -148,7 +148,7 @@
 		<div class="accordionTableActionLinkHolder"><spring:message code='general.buttons.add'/></div>
 	</div>
 
-	<div class="rowContainer">
+	<div class="dataRow">
 		<%-- collectingDataDialog --%>
 		<table class="metkaTable studyLevelCollectingTable">
 			<thead>
@@ -173,7 +173,7 @@
 		<div class="accordionTableActionLinkHolder"><spring:message code='general.buttons.add'/></div>
 	</div>
 
-	<div class="rowContainer">
+	<div class="dataRow">
 		<%-- collectingDataDialog --%>
 		<table class="metkaTable">
 			<thead>
@@ -200,13 +200,13 @@
 		<div class="accordionTableActionLinkHolder"><spring:message code='general.buttons.add'/></div>
 	</div>
 
-	<div class="rowContainer">
+	<div class="dataRow">
 		<div class="studyLevelDataSetContainer">
 			<label><spring:message code="study.view.description.collecting.responseRate"/></label>
 			<input type="text" name="" value="67%"/>
 		</div>
 	</div>
-	<div class="rowContainer">
+	<div class="dataRow">
 		<div class="studyLevelDataSetTextareaContainer">
 			<c:forEach items="${study.data.description.sourceBooks}" var="sourceBook" varStatus="i">
 				<c:choose>

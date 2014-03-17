@@ -1,2 +1,6 @@
 Choicelist:
 There's a boolean on choicelist configuration named includeEmpty. If this is set to true then the GUI automatically adds one empty option with default title to the choicelist letting the user clear the selection. If no default value has been set for the choicelist then the empty option is selected as default.
+
+-- 15.03.2014 additions --
+Configuration:
+displayId tells which field should be used when displaying object id to user. Can be the same than idField but not necessarily.

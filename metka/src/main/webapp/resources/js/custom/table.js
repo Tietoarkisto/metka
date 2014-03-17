@@ -6,80 +6,90 @@ $(document).ready(function() {
                 && $("#values\\'"+id+"\\'").val() != null
                 && $("#values\\'"+id+"\\'").val() != "") {
             var content = JSON.parse($("#values\\'"+id+"\\'").val());
-            buildDatatable(content);
+            MetkaJS.DatatableHandler.build(content);
         }
     });
 });
 
-function buildDatatable(content) {
-    // Handle only containers
-    var key = content.key;
-    var field = MetkaGlobals.containerConfig[key];
-    if(content.type != "container" || field.type != "CONTAINER") return;
+MetkaJS.DatatableHandler = function() {
+    function buildDatatable(content) {
+        // Handle only containers
+        var key = content.key;
+        var field = MetkaJS.containerConfig[key];
+        if(content.type != "container" || field.type != "CONTAINER") return;
 
-    var body = $("#"+key+" tbody");
-    body.empty();
-    DialogOpener = function(containerKey, isNew, rowId) {
-        return function() {
-            showGeneralDialog(containerKey, isNew, rowId);
+        var body = $("#"+key+" tbody");
+        body.empty();
+        DialogOpener = function(containerKey, isNew, rowId) {
+            return function() {
+                showGeneralDialog(containerKey, isNew, rowId);
+            }
+        }
+        for(var row = 0; row < content.rows.length; row++) {
+            var tr = $("<tr>", {class: "pointerClass"});
+            var rowContent = content.rows[row];
+            var opener = new DialogOpener(key, false, rowContent.rowId);
+            tr.click(opener);
+            for(i = 0; i < field.subfields.length; i++) {
+                var subfield = field.subfields[i];
+                if(subfield.summaryField == false) {
+                    continue;
+                }
+                var subkey = subfield.key;
+                var value = rowContent.fields[subkey];
+                if(value == undefined || value == null) {
+                    // TODO: value is missing for some reason, make placeholder value so columns are not missing
+                    value = new Object();
+                    value.type = "value";
+                    value.value = "";
+                }
+                if((MetkaJS.containerConfig[subkey] != undefined && MetkaJS.containerConfig[subkey].type == "CONTAINER") || value.type != "value") {
+                    // TODO: Handle recursive containers somehow. Mostly datatable should not contain recursive containers
+                    return;
+                }
+
+                var td = $("<td>");
+                switch(subfield.type) {
+                    case "CHOICE":
+                        td.text(MetkaJS.L18N.get(MetkaJS.Globals.page.toUpperCase()+"."+subfield.choicelist+".choices."+value.value));
+                        break;
+                    default:
+                        td.text(value.value);
+                        break;
+                }
+                tr.append(td);
+            }
+            if(field.showSaveInfo == true) {
+                var value = rowContent.savedAt;
+                var td = $("<td>");
+                if(value != undefined) td.text(value);
+                tr.append(td);
+
+                value = rowContent.savedBy;
+                td = $("<td>");
+                if(value != undefined) td.text(value);
+                tr.append(td);
+            }
+            body.append(tr);
         }
     }
-    for(var row = 0; row < content.rows.length; row++) {
-        var tr = $("<tr>", {class: "pointerClass"});
-        var rowContent = content.rows[row];
-        var opener = new DialogOpener(key, false, rowContent.rowId);
-        tr.click(opener);
-        for(i = 0; i < field.subfields.length; i++) {
-            var subfield = field.subfields[i];
-            if(subfield.summaryField == false) {
-                continue;
-            }
-            var subkey = subfield.key;
-            var value = rowContent.fields[subkey];
-            if(value == undefined || value == null) {
-                // TODO: value is missing for some reason, make placeholder value so columns are not missing
-                value = new Object();
-                value.type = "value";
-                value.value = "";
-            }
-            if((MetkaGlobals.containerConfig[subkey] != undefined && MetkaGlobals.containerConfig[subkey].type == "CONTAINER") || value.type != "value") {
-                // TODO: Handle recursive containers somehow. Mostly datatable should not contain recursive containers
-                return;
-            }
 
-            var td = $("<td>");
-            switch(subfield.type) {
-                case "CHOICE":
-                    td.text(MetkaGlobals.strings[MetkaGlobals.page.toUpperCase()+"."+subfield.choicelist+".choices."+value.value]);
-                    break;
-                default:
-                    td.text(value.value);
-                    break;
-            }
-            tr.append(td);
+    function showGeneralDialog(key, isNew, rowId) {
+        $("#"+key+"ContainerDialog").dialog("open");
+        // TODO: if isNew is true, clear all values or texts from the dialog that might be there
+        if(isNew) {
+            initAddDialog(key);
+        } else {
+            initModifyDialog(key, rowId);
         }
-        if(field.showSaveInfo == true) {
-            var value = rowContent.savedAt;
-            var td = $("<td>");
-            if(value != undefined) td.text(value);
-            tr.append(td);
-
-            value = rowContent.savedBy;
-            td = $("<td>");
-            if(value != undefined) td.text(value);
-            tr.append(td);
-        }
-        body.append(tr);
     }
-}
 
-function showGeneralDialog(key, isNew, rowId) {
-    $("#"+key+"ContainerDialog").dialog("open");
-    // TODO: if isNew is true, clear all values or texts from the dialog that might be there
-    if(isNew) {
+    function initAddDialog(key) {
         $("#"+key+"ContainerDialogRowId").val(null);
         $("#"+key+"ContainerDialogTable .dialogValue").val(null);
-    } else {
+    }
+
+    function initModifyDialog(key, rowId) {
         var content = JSON.parse($("#values\\'"+key+"\\'").val());
         var row = null;
         for(var i = 0; i < content.rows.length; i++) {
@@ -90,8 +100,8 @@ function showGeneralDialog(key, isNew, rowId) {
         }
         if(row != null) { // If row was found then use it, otherwise clear dialog and change to adding new row
             $("#"+key+"ContainerDialogRowId").val(row.rowId);
-            for(var i = 0; i < MetkaGlobals.containerConfig[key].subfields.length; i++) {
-                var subfield = MetkaGlobals.containerConfig[key].subfields[i];
+            for(var i = 0; i < MetkaJS.containerConfig[key].subfields.length; i++) {
+                var subfield = MetkaJS.containerConfig[key].subfields[i];
                 if(subfield == undefined) {
                     // Sanity check, although this means that something is very wrong
                     continue;
@@ -115,89 +125,94 @@ function showGeneralDialog(key, isNew, rowId) {
         }
     }
 
-    // TODO: if isNew is false then initialise inputs with values from container
-}
+    function handleGeneralContainerDialog(key) {
+        var body = $("#"+key+"ContainerDialogTable tbody");
+        var row = new Object();
+        row.type = "row";
+        row.rowId = $("#"+key+"ContainerDialogRowId").val();
+        row.key = key;
+        row.fields = new Object();
+        // RowId is set when row is added to container
+        for(var i = 0; i < MetkaJS.containerConfig[key].subfields.length; i++) {
+            var subfield = MetkaJS.containerConfig[key].subfields[i];
+            if(subfield == undefined) {
+                // Sanity check, although this means that something is very wrong
+                continue;
+            } else if(subfield.type == "CONTAINER") {
+                // TODO: Handle recursive CONTAINERS
+                continue;
+            }
+            var input = $("#"+key+"Field"+subfield.key);
+            var value = new Object;
+            value.type = "value";
+            // TODO: Handle possible value extraction exception
+            value.value = input.val();
 
-function handleGeneralContainerDialog(key) {
-    var body = $("#"+key+"ContainerDialogTable tbody");
-    var row = new Object();
-    row.type = "row";
-    row.rowId = $("#"+key+"ContainerDialogRowId").val();
-    row.key = key;
-    row.fields = new Object();
-    // RowId is set when row is added to container
-    for(var i = 0; i < MetkaGlobals.containerConfig[key].subfields.length; i++) {
-        var subfield = MetkaGlobals.containerConfig[key].subfields[i];
-        if(subfield == undefined) {
-            // Sanity check, although this means that something is very wrong
-            continue;
-        } else if(subfield.type == "CONTAINER") {
-            // TODO: Handle recursive CONTAINERS
-            continue;
+            row.fields[subfield.key] = value;
         }
-        var input = $("#"+key+"Field"+subfield.key);
-        var value = new Object;
-        value.type = "value";
-        // TODO: Handle possible value extraction exception
-        value.value = input.val();
 
-        row.fields[subfield.key] = value;
+        saveDatatableRow(row);
+        // TODO: check for missing required information
+        $("#"+key+"ContainerDialog").dialog("close");
     }
 
-    saveDatatableRow(row);
-    // TODO: check for missing required information
-    $("#"+key+"ContainerDialog").dialog("close");
-}
+    /**
+     * Save a given CONTAINER row to right hidden input.
+     * Makes needed changes to JSON and sets it to input.
+     * If given row's rowId is null or undefined assumes new row, otherwise updates old row.
+     * In case of modified row the row in original content is overwritten.
+     * If original row is not found then row is assumed to be new, rowId is overwritten to null
+     * and row is pushed to content.
+     *
+     * After modifications are done datatable is rebuilt.
+     * @param row Row being saved to JSON hidden field
+     */
+    function saveDatatableRow(row) {
+        if(row.type != "row") return;
+        // Fetch previous data from hidden field
+        var contentStr = $("#values\\'"+row.key+"\\'").val();
+        var content = null;
+        if(contentStr == undefined || contentStr == "") {
+            content = new Object();
+            content.type = "container";
+            content.key = row.key;
+        } else {
+            content = JSON.parse(contentStr);
+        }
 
-/**
- * Save a given CONTAINER row to right hidden input.
- * Makes needed changes to JSON and sets it to input.
- * If given row's rowId is null or undefined assumes new row, otherwise updates old row.
- * In case of modified row the row in original content is overwritten.
- * If original row is not found then row is assumed to be new, rowId is overwritten to null
- * and row is pushed to content.
- *
- * After modifications are done datatable is rebuilt.
- * @param row Row being saved to JSON hidden field
- */
-function saveDatatableRow(row) {
-    if(row.type != "row") return;
-    // Fetch previous data from hidden field
-    var contentStr = $("#values\\'"+row.key+"\\'").val();
-    var content = null;
-    if(contentStr == undefined || contentStr == "") {
-        content = new Object();
-        content.type = "container";
-        content.key = row.key;
-    } else {
-        content = JSON.parse(contentStr);
-    }
-
-    if(content.key != row.key) { // Sanity check that row is being saved to correct container
-        return;
-    }
-    row.change = true; // Set row to changed so it's easy to find while saving user input on server
-    // Make modification
-    var found = false;
-    if(content.rows == undefined) {
-        content.rows = new Array();
-    }
-    if(row.rowId != null && row.rowId != undefined) { // Check for old row
-        for(var i = 0; i < content.rows.length; i++) {
-            if(content.rows[i].rowId == row.rowId) {
-                found = true;
-                content.rows[i] = row; // Just replace old row with new row. All info should be there already
-                break;
+        if(content.key != row.key) { // Sanity check that row is being saved to correct container
+            return;
+        }
+        row.change = true; // Set row to changed so it's easy to find while saving user input on server
+        // Make modification
+        var found = false;
+        if(content.rows == undefined) {
+            content.rows = new Array();
+        }
+        if(row.rowId != null && row.rowId != undefined) { // Check for old row
+            for(var i = 0; i < content.rows.length; i++) {
+                if(content.rows[i].rowId == row.rowId) {
+                    found = true;
+                    content.rows[i] = row; // Just replace old row with new row. All info should be there already
+                    break;
+                }
             }
         }
-    }
-    if(found == false) { // Either a new row or old row was not found.
-        row.rowId = null; // Make sure that rowId is null when adding a new row.
-        content.rows.push(row);
+        if(found == false) { // Either a new row or old row was not found.
+            row.rowId = null; // Make sure that rowId is null when adding a new row.
+            content.rows.push(row);
+        }
+
+        // Put modified data back to hidden field
+        $("#values\\'"+row.key+"\\'").val(JSON.stringify(content));
+        // Rebuild table
+        buildDatatable(content);
     }
 
-    // Put modified data back to hidden field
-    $("#values\\'"+row.key+"\\'").val(JSON.stringify(content));
-    // Rebuild table
-    buildDatatable(content);
-}
+    return {
+        build: buildDatatable,
+        showDialog: showGeneralDialog,
+        process: handleGeneralContainerDialog,
+        saveRow: saveDatatableRow
+    }
+}();

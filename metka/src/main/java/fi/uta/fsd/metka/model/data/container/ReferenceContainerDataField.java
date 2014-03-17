@@ -10,40 +10,35 @@ import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * List of references are saved through this
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ContainerFieldContainer extends FieldContainer {
-    @XmlElement private final List<RowContainer> rows = new ArrayList<>();
+public class ReferenceContainerDataField extends DataField {
+    @XmlElement private final List<SavedReference> references = new ArrayList<>();
 
     @JsonCreator
-    public ContainerFieldContainer(@JsonProperty("key") String key) {
+    public ReferenceContainerDataField(@JsonProperty("key") String key) {
         super(key);
     }
 
-    public List<RowContainer> getRows() {
-        return rows;
+    public List<SavedReference> getReferences() {
+        return references;
     }
 
-    @JsonIgnore public RowContainer getRow(Integer rowId) {
+    @JsonIgnore public SavedReference getReference(Integer rowId) {
 
         if(rowId == null || rowId < 1) {
             // Row can not be found since no rowId given.
             return null;
         }
-        for(RowContainer row : rows) {
-            if(row.getRowId().equals(rowId)) {
-                return row;
+        for(SavedReference reference : references) {
+            if(reference.getRowId().equals(rowId)) {
+                return reference;
             }
         }
         // Given rowId was not found from this container
         return null;
     }
 
-    @Override
-    public FieldContainer copy() {
-        ContainerFieldContainer container = new ContainerFieldContainer(getKey());
-        for(RowContainer row : rows) {
-            container.getRows().add((RowContainer)row.copy());
-        }
-        return container;
-    }
 }

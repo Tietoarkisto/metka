@@ -15,7 +15,9 @@
     <a id="import_export" href="#import_export"><spring:message code="STUDY.section.import_export"/></a>
 </div>
 <div class="upperContainer">
-    <jsp:include page="sub/file_upload.jsp"/>
+    <jsp:include page="sub/file_upload.jsp">
+        <jsp:param name="targetField" value="files" />
+    </jsp:include>
     <form:form id="revisionModifyForm" method="post" action="/study/save" modelAttribute="single">
         <form:hidden path="id" />
         <form:hidden path="revision" />
@@ -50,14 +52,4 @@
     <jsp:include page="errors.jsp"/>
 
     <jsp:include page="identifiers.jsp"/>--%>
-</div>
-<div class="buttonsHolder">
-    <input type="button" id="revisionModifyFormSave" class="button" value="<spring:message code="general.buttons.save" />">
-    <input type="button" id="revisionModifyFormApprove" class="button" value="<spring:message code='general.buttons.approve'/>" />
-    <jsp:include page="../../inc/revHistory.jsp">
-        <jsp:param name="isDraft" value="true"></jsp:param>
-    </jsp:include>
-    <jsp:include page="../../inc/removeButton.jsp" />
-    <!-- TODO: Fix this reset button
-    <input type="reset" class="button" value="Tyhjennä">-->
 </div>

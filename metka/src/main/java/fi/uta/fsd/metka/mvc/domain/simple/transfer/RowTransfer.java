@@ -1,14 +1,14 @@
 package fi.uta.fsd.metka.mvc.domain.simple.transfer;
 
-import fi.uta.fsd.metka.model.data.container.ContainerFieldContainer;
-import fi.uta.fsd.metka.model.data.container.FieldContainer;
-import fi.uta.fsd.metka.model.data.container.RowContainer;
-import fi.uta.fsd.metka.model.data.container.SavedFieldContainer;
+import fi.uta.fsd.metka.model.data.container.ContainerDataField;
+import fi.uta.fsd.metka.model.data.container.DataField;
+import fi.uta.fsd.metka.model.data.container.DataRow;
+import fi.uta.fsd.metka.model.data.container.SavedDataField;
 import fi.uta.fsd.metka.model.data.value.SimpleValue;
 import org.json.JSONObject;
 
 /**
- * Used to move single RowContainer from JSON to UI and back.
+ * Used to move single DataRow from JSON to UI and back.
  * Values contains either Strings (or whatever is needed to handle non CONTAINER fields) or ContainerTransfer
  * objects when recursive containers are used (e.g. Study Variables).
  */
@@ -56,20 +56,20 @@ public class RowTransfer {
         this.savedBy = savedBy;
     }
 
-    public static RowTransfer buildRowTransferFromRowContaienr(RowContainer container) {
+    public static RowTransfer buildRowTransferFromRowContaienr(DataRow container) {
         RowTransfer row = new RowTransfer();
         row.setKey(container.getKey());
         row.setRowId(container.getRowId());
         row.setSavedAt(container.getSavedAt());
         row.setSavedBy(container.getSavedBy());
-        for(FieldContainer field : container.getFields().values()) {
-            if(field instanceof ContainerFieldContainer) {
-                ContainerTransfer ct = ContainerTransfer.buildContainerTransfer((ContainerFieldContainer)field);
+        for(DataField field : container.getFields().values()) {
+            if(field instanceof ContainerDataField) {
+                ContainerTransfer ct = ContainerTransfer.buildContainerTransfer((ContainerDataField)field);
                 if(ct != null) {
                     row.values.put(ct.getKey(), ct);
                 }
             } else {
-                SavedFieldContainer saved = (SavedFieldContainer)field;
+                SavedDataField saved = (SavedDataField)field;
                 // TODO: Handle derived values
                 row.values.put(saved.getKey(),((SimpleValue)saved.getValue().getValue()).getValue());
             }
@@ -77,7 +77,7 @@ public class RowTransfer {
         return row;
     }*/
 
-    public static JSONObject buildJSONObject(RowContainer container) {
+    public static JSONObject buildJSONObject(DataRow container) {
         JSONObject json = new JSONObject();
         json.put("type", "row");
         json.put("key", container.getKey());
@@ -86,14 +86,14 @@ public class RowTransfer {
         json.put("savedBy", container.getSavedBy());
 
         JSONObject values = new JSONObject();
-        for(FieldContainer field : container.getFields().values()) {
-            if(field instanceof ContainerFieldContainer) {
-                JSONObject ct = ContainerTransfer.buildJSONObject((ContainerFieldContainer) field);
+        for(DataField field : container.getFields().values()) {
+            if(field instanceof ContainerDataField) {
+                JSONObject ct = ContainerTransfer.buildJSONObject((ContainerDataField) field);
                 if(ct != null) {
                     values.put(field.getKey(), ct);
                 }
             } else {
-                SavedFieldContainer saved = (SavedFieldContainer)field;
+                SavedDataField saved = (SavedDataField)field;
                 JSONObject value = new JSONObject();
                 value.put("type", "value");
                 value.put("value", ((SimpleValue)saved.getValue().getValue()).getValue());

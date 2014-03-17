@@ -3,6 +3,7 @@ package fi.uta.fsd.metka.model.data.container;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import fi.uta.fsd.metka.data.util.ModelAccessUtil;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -10,11 +11,11 @@ import javax.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
-public class FieldContainer {
+public class DataField implements ModelAccessUtil.PathNavigable {
     @XmlElement private final String key;
 
     @JsonCreator
-    public FieldContainer(@JsonProperty("key")String key) {
+    public DataField(@JsonProperty("key") String key) {
         this.key = key;
     }
 
@@ -27,7 +28,7 @@ public class FieldContainer {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        FieldContainer that = (FieldContainer) o;
+        DataField that = (DataField) o;
 
         if (!key.equals(that.key)) return false;
 
@@ -44,5 +45,5 @@ public class FieldContainer {
         return "Json[name="+this.getClass().getSimpleName()+", key="+key+"]";
     }
 
-    public FieldContainer copy() {throw new UnsupportedOperationException();}
+    public DataField copy() {throw new UnsupportedOperationException();}
 }

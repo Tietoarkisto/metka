@@ -3,7 +3,7 @@
 
 <label class="studyLevelTitle"><spring:message code="study.view.description.keywords"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></label>
 <div class="accordionContent">
-	<div class="rowContainer">
+	<div class="dataRow">
 		<%-- keywordDialog --%>
 		<div class="studyLevelTableTitle"><spring:message code="study.view.description.keywords.keywords"/></div>
 		<table class="metkaTable studyLevelVocabularyTable">
@@ -27,7 +27,7 @@
 		</table>
 		<div class="accordionTableActionLinkHolder"><spring:message code='general.buttons.add'/></div>
 	</div>
-	<div class="rowContainer">
+	<div class="dataRow">
 		<%-- topicDialog --%>
 		<div class="studyLevelTableTitle"><spring:message code="study.view.description.keywords.topics"/></div>
 		<table class="metkaTable studyLevelVocabularyTable">

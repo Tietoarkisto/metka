@@ -44,4 +44,15 @@ public class ConfigurationService {
 
         return conf;
     }
+
+    public Configuration findLatestByRevisionableId(Integer id) {
+        Configuration conf = null;
+        try {
+            conf = repository.findLatestByRevisionableId(id);
+        } catch(Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return conf;
+    }
 }

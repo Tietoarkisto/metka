@@ -1,6 +1,7 @@
 package fi.uta.fsd.metka.data.repository.impl;
 
 import fi.uta.fsd.metka.data.entity.ConfigurationEntity;
+import fi.uta.fsd.metka.data.entity.RevisionableEntity;
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.data.util.JSONUtil;
@@ -76,6 +77,40 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
                 .setParameter("type", type)
                 .setMaxResults(1)
                 .getResultList();
+        ConfigurationEntity entity = null;
+        try {
+            entity = DataAccessUtils.requiredSingleResult(list);
+        } catch(EmptyResultDataAccessException ex) {
+            return null;
+        }
+
+        Configuration configuration = json.readConfigurationFromString(entity.getData());
+        return configuration;
+    }
+
+    public Configuration findLatestByRevisionableId(Integer id)
+            throws IncorrectResultSizeDataAccessException, IOException {
+        List<RevisionableEntity> revs =
+                em.createQuery("SELECT r FROM RevisionableEntity r WHERE r.id=:id", RevisionableEntity.class)
+                .setParameter("id", id)
+                .getResultList();
+        RevisionableEntity rev = null;
+        try {
+            rev = DataAccessUtils.requiredSingleResult(revs);
+        } catch(EmptyResultDataAccessException ex) {
+            // No revisionable
+            return null;
+        }
+        if(rev == null) {
+            // no revisionable
+            return null;
+        }
+        List<ConfigurationEntity> list =
+                em.createQuery("SELECT c FROM ConfigurationEntity c WHERE c.type =:type ORDER BY c.version DESC", ConfigurationEntity.class)
+                .setParameter("type", rev.getType())
+                .setMaxResults(1)
+                .getResultList();
+
         ConfigurationEntity entity = null;
         try {
             entity = DataAccessUtils.requiredSingleResult(list);

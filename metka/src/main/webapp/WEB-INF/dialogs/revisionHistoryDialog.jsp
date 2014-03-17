@@ -9,9 +9,7 @@
                 <th class="revisionTableColumn"><spring:message code="general.revision.publishDate"/></th>
                 <th class="revisionTableColumn"><spring:message code="general.revision.compare.begin"/></th>
                 <th class="revisionTableColumn"><spring:message code="general.revision.compare.end"/></th>
-                <c:if test="${param.isDraft}">
-                    <th class="revisionTableColumn"><spring:message code="general.revision.replace"/></th>
-                </c:if>
+                <th id="replaceColumn" class="revisionTableColumn"><spring:message code="general.revision.replace"/></th>
             </tr>
         </thead>
     </table>

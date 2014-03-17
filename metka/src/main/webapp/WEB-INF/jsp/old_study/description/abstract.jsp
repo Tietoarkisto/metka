@@ -3,7 +3,7 @@
 
 <label class="studyLevelTitle"><spring:message code="study.view.description.abstract"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></label>						
 <div class="accordionContent">
-	<div class="rowContainer">
+	<div class="dataRow">
 		<div class="studyLevelDataSetTextareaContainer">
 			<label><spring:message code="study.view.description.abstract.summary"/></label>
 			<textarea></textarea>

@@ -7,6 +7,9 @@
         <jsp:include page="../../../inc/fullRowFormText.jsp">
             <jsp:param name="field" value="title" />
         </jsp:include>
+        <jsp:include page="../../../inc/fullRowFormText.jsp">
+            <jsp:param name="field" value="partitle" />
+        </jsp:include>
     </table>
     <table class="formTable">
         <tr><c:set var="field" value="id" />
@@ -76,7 +79,7 @@
     </jsp:include>
     <%-- Not done yet from here on --%>
     <%--<div class="upperContainer">
-		<div class="rowContainer containsTranslations">
+		<div class="dataRow containsTranslations">
 			<div class="materialDataSetContainerTopRow translated translationFi">
 				<label id="materialName" class="required leftSide"><spring:message code="study.view.basic.name"/></label>
 				<input tabIndex="1" type="text" value="Eduskuntavaalitutkimukset 2003-2011: yhdistetty aineisto." name="nameFi" />
@@ -91,7 +94,7 @@
 				<input tabIndex="2" type="text" name="nameSv" />
 			</div>
 		</div>
-		<div class="rowContainer">
+		<div class="dataRow">
 			<div class="materialDataSetContainer">
 				<label id="materialNumber" class="required"><spring:message code="study.view.basic.number"/></label>
 				<input readonly="readonly" class="unModifiable" type="text" name="number" value="FSD2556" />
@@ -113,7 +116,7 @@
 				<select><option>Kyll�</option><option>Ei</option><option>Ei tietoa</option></select>
 			</div>
 		</div>
-		<div class="rowContainer">
+		<div class="dataRow">
 
 			<div class="materialDataSetContainer">
 				<label id="acquisitiedMaterialNumber" class="required"><spring:message code="study.view.basic.acquisitionStudyNumber"/></label>
@@ -128,7 +131,7 @@
 				<select><option>Kyll�</option><option>Ei</option><option>Ei tietoa</option></select>
 			</div>
 		</div>
-		<div class="rowContainer containsTranslations">
+		<div class="dataRow containsTranslations">
 
 			<div class="materialDataSetContainer">
 				<label id="materialReadyDate"><spring:message code="study.view.basic.readyDate"/></label>
@@ -143,13 +146,13 @@
 				<select><option>Kyll�</option><option>Ei</option><option>Ei tietoa</option></select>
 			</div>
 		</div>
-		<div class="rowContainer">
+		<div class="dataRow">
 			<div class="materialDataSetContainer">
 				<label id="materialSeries"><spring:message code="study.view.basic.series"/></label>
 				<select id="materialSeriesSelect"><option>Valitse...</option><option>Yksitt�iset aineistot</option><option>Sosiaalibarometrit</option><option>Evan kansalliset asennetutkimukset foo bar lorem</option></select>
 			</div>
 		</div>
-		<div class="rowContainer">
+		<div class="dataRow">
 			<div class="materialDataSetTextareaContainer">
                  <label><spring:message code="study.view.basic.originalLocation"/></label>
                  <textarea></textarea>
@@ -161,7 +164,7 @@
 		</div>
 	</div>
 	<br/>
-	<div class="rowContainer">
+	<div class="dataRow">
 		&lt;%&ndash; notificationDialog &ndash;%&gt;
 		<div class="materialRowTitle"><spring:message code="study.view.basic.notifications"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></div>
 		<table class="metkaTable" id="materialNotificationTable">
@@ -182,7 +185,7 @@
 		</table>		
 		<div class="materialTableActionLinkHolder"><spring:message code="general.buttons.add"/></div>		
 	</div>
-	<div class="rowContainer containsTranslations">
+	<div class="dataRow containsTranslations">
 		<div class="materialRowTitle"><spring:message code="study.view.basic.dataVersions"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></div>
 		<table class="metkaTable materialVersionTable">
 			<thead>
@@ -201,7 +204,7 @@
 			</tbody>
 		</table>			
 	</div>
-	<div class="rowContainer containsTranslations">
+	<div class="dataRow containsTranslations">
 		<div class="materialRowTitle"><spring:message code="study.view.basic.descriptionVersions"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></div>
 		<table class="metkaTable materialVersionTable">
 			<thead>
@@ -221,7 +224,7 @@
 		</table>			
 	</div>
 	
-	<div class="rowContainer">
+	<div class="dataRow">
 		<div class="materialRowTitle"><spring:message code="study.view.basic.relatedPublications"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></div>
 		<table class="metkaTable sortableTable" id="materialPublicationTable">
 			<thead>
@@ -239,7 +242,7 @@
 		</table>
 		<div class="materialTableActionLinkHolder"><spring:message code="general.buttons.add"/></div>					
 	</div>
-	<div class="rowContainer">
+	<div class="dataRow">
 		<div class="materialRowTitle"><spring:message code="study.view.basic.relatedStudies"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></div>
 		<table class="metkaTable sortableTable" id="materialMaterialTable">
 			<thead>
@@ -257,7 +260,7 @@
 		</table>
 		<div class="materialTableActionLinkHolder"><spring:message code="general.buttons.add"/></div>					
 	</div>
-	<div class="rowContainer">
+	<div class="dataRow">
 		<div class="materialRowTitle"><spring:message code="study.view.basic.relatedBinders"/>&nbsp;<img src="../images/info-sign.png" class="helpImage"/></div>
 		<table class="metkaTable sortableTable" id="materialBinderTable">
 			<thead>
