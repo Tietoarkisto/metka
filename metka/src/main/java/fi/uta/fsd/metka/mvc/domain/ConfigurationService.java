@@ -55,4 +55,15 @@ public class ConfigurationService {
         }
         return conf;
     }
+
+    public Configuration findConfigurationForRevision(Integer id, Integer revision) {
+        Configuration conf = null;
+        try {
+            conf = repository.findConfigurationForRevision(id, revision);
+        } catch(Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return conf;
+    }
 }

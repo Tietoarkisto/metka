@@ -36,8 +36,10 @@ public class Field {
     @XmlElement private Boolean required = false;
     @XmlElement private final List<String> concatenate = new ArrayList<>();
     @XmlElement private String reference = null;
-    @XmlElement private Boolean multiline = false;
+    @XmlElement private String referenceKey = null;
+    @XmlElement private Boolean showReferenceKey = false;
     @XmlElement private Boolean showSaveInfo = false;
+    @XmlElement private Boolean multiline = false;
     @XmlElement private Boolean summaryField = true;
     @XmlElement private Boolean editable = true;
 
@@ -158,12 +160,20 @@ public class Field {
         this.reference = reference;
     }
 
-    public Boolean getMultiline() {
-        return (multiline == null) ? false :multiline;
+    public String getReferenceKey() {
+        return referenceKey;
     }
 
-    public void setMultiline(Boolean multiline) {
-        this.multiline = (multiline == null) ? false : multiline;
+    public void setReferenceKey(String referenceKey) {
+        this.referenceKey = referenceKey;
+    }
+
+    public Boolean getShowReferenceKey() {
+        return showReferenceKey;
+    }
+
+    public void setShowReferenceKey(Boolean showReferenceKey) {
+        this.showReferenceKey = showReferenceKey;
     }
 
     public Boolean getShowSaveInfo() {
@@ -172,6 +182,14 @@ public class Field {
 
     public void setShowSaveInfo(Boolean showSaveInfo) {
         this.showSaveInfo = showSaveInfo;
+    }
+
+    public Boolean getMultiline() {
+        return (multiline == null) ? false :multiline;
+    }
+
+    public void setMultiline(Boolean multiline) {
+        this.multiline = (multiline == null) ? false : multiline;
     }
 
     public Boolean getEditable() {

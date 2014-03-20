@@ -190,6 +190,10 @@ nav .mainNavUl li a:hover {
     margin-top: 20px;
     text-align: right; }
 
+.largePopupContainer .popupButtonsHolder {
+    margin-top: 20px;
+    text-align: right; }
+
 /*************
  * Clean css *
  *************/

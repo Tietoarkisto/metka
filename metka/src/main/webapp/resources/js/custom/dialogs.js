@@ -7,6 +7,14 @@ $(document).ready(function(){
         height: 'auto'
     });
 
+    $(".largePopupContainer").dialog({
+        autoOpen: false,
+        resizable: false,
+        modal: true,
+        width: '60%',
+        height: 'auto'
+    });
+
     /**
      * Replace native alert with jQuery dialog.
      * This provides non blocking alert dialog that can be styled.

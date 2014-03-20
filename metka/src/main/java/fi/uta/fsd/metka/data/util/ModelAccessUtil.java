@@ -17,6 +17,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static fi.uta.fsd.metka.data.util.ConversionUtil.*;
 
@@ -75,6 +76,7 @@ public class ModelAccessUtil {
                         return null;
                     }
                 }
+                // TODO: ReferenceContainerDataField
             }
         }
         return field;
@@ -210,6 +212,39 @@ public class ModelAccessUtil {
     }
 
     /**
+     * Return top level ReferenceContainerDataField for given field key.
+     * If field does not exist in configuration returns null.
+     * If field is a subfield return null, this should only be used for top level (non subfield) containers.
+     * If field is not a REFERENCECONTAINER field return null.
+     *
+     * Otherwise returns field from data typed as ContainerDataField (assumes data is correct).
+     * @param data RevisionData of the revision being manipulated.
+     * @param key Field key of the requested field.
+     * @param config Configuration of the provided RevisionData
+     * @return ReferenceContainerDataField of the requested key if one exists.
+     */
+    public static ReferenceContainerDataField getReferenceContainerDataFieldFromRevisionData(RevisionData data, String key, Configuration config) {
+        if(config.getField(key) == null) {
+            // TODO: no such field in configuration, log error.
+            // Field does not exist. return null
+            // TODO: Should return an error message or some sort of result object to inform that illegal operation has happened
+            return null;
+        }
+        if(config.getField(key).getSubfield()) {
+            // TODO: Tried to request a CONTAINER that is a subfield, log error.
+            // TODO: Should return an error message or some sort of result object to inform that illegal operation has happened
+            return null;
+        }
+        if(config.getField(key).getType() != FieldType.REFERENCECONTAINER) {
+            // TODO: Tried to get field that is not a ReferenceContainer, log error
+            // TODO: Should return an error message or some sort of result object to inform that illegal operation has happened
+            return null;
+        }
+
+        return (ReferenceContainerDataField)data.getField(key);
+    }
+
+    /**
      * Initialises and returns a SavedDataField that is usable in a new revision.
      * Performs a sanity check to see if given field should be initialised for new revision at all.
      * Returns null if given field should not be inserted into new revision.
@@ -254,8 +289,7 @@ public class ModelAccessUtil {
         } else if(field.getType() == FieldType.CONTAINER) {
             return doContainerChanges(key, to.getByKey(field.getKey()), time, data, config);
         } else if(field.getType() == FieldType.REFERENCECONTAINER) {
-            // TODO: handle referencecontainer
-            return false;
+            return doReferenceContainerChanges(key, to.getByKey(field.getKey()), time, data, config);
         } else {
             return doSingleValueChanges(key, to.getByKey(key), time, data, config);
         }
@@ -406,6 +440,105 @@ public class ModelAccessUtil {
 
         if(changes) {
             data.putField(container);
+            data.putChange(changeContainer);
+        }
+
+        return changes;
+    }
+
+    /**
+     * Handle saving of reference container objects.
+     * Assumes that it's used on a top level field and the provided value is the JSON send by UI.
+     * Only information saved is the actual reference. Everything else is of no interest for this purpose.
+     * Uses the changed-extrafield from GUI to detect fields that need to be handled but only actually
+     * saves fields that are truly changed.
+     *
+     * @param key Key of the top level field for this reference container
+     * @param value Contents of the field in transfer object
+     * @param time Time set to all new values
+     * @param data Current revision data, changes are made to this if changes are present.
+     * @param config Assumed to be the configuration for the given Revision Data.
+     * @return True if there has been changes in this container, false otherwise.
+     */
+    private static boolean doReferenceContainerChanges(String key, Object value, DateTime time, RevisionData data, Configuration config) {
+        Field field = config.getField(key);
+        if(field.getType() != FieldType.REFERENCECONTAINER) {
+            // If this field's type is something other than REFERENCECONTAINER return false.
+            // This method is meant exclusively for handling reference containers and nothing else.
+            return false;
+        }
+        // Non empty, non null String is expected, if not then can't continue
+        if(!(value instanceof String) || StringUtils.isEmpty((String)value)) {
+            // TODO: Possibly something wrong, log warning
+            return false;
+        }
+        JSONObject json = new JSONObject((String)value);
+
+        // More sanity checks
+        if(!json.get("type").equals("referencecontainer")) {
+            // TODO: Wrong data, log warning
+            return false;
+        }
+        boolean changes = false;
+        ReferenceContainerDataField referenceContainer = (ReferenceContainerDataField)data.getField(field.getKey());
+        if(referenceContainer == null) {
+            referenceContainer = new ReferenceContainerDataField(field.getKey());
+        }
+        JSONArray references = json.getJSONArray("references");
+        ContainerChange changeContainer = (ContainerChange)data.getChange(field.getKey());
+        if(changeContainer == null) {
+            changeContainer = new ContainerChange(field.getKey());
+        }
+        for(int i = 0; i < references.length(); i++) {
+            JSONObject reference = references.getJSONObject(i);
+            if(reference.optBoolean("change", false) == false) {
+                continue; // Row has not been edited on UI, no need to process.
+            }
+            if(reference.opt("rowId") == null || reference.opt("rowId") == JSONObject.NULL) { // If no rowId was set this is a new reference. Initialise rowId for future use. This should automatically set rowId to correct value for new references
+                reference.put("rowId", data.getNewRowId());
+            }
+            SavedReference savedReference = referenceContainer.getReference(stringToInteger(reference.get("rowId")));
+            boolean referenceChanges = false;
+            boolean newReference = false; // Flag for inserting the reference at the end of this iteration if changes are present.
+
+            if(savedReference == null) {
+                savedReference = new SavedReference(referenceContainer.getKey(), stringToInteger(reference.get("rowId")));
+                newReference = true;
+                // This should automatically lead to there being a change in one of the fields so we don't have to set
+                // referenceChanges to true. If for some strange reason no changes are detected then a new empty row is not
+                // added to the container, which is desirable.
+            }
+            if(reference.optString("value", null) == null && savedReference.getValue() == null) {
+                // Both new value and old value are empty, no need for changes.
+                continue;
+            } else if(reference.optString("value", null) != null) {
+                // There is a value, check to see if it's the same as old value
+                if(savedReference.getValue() != null && savedReference.getValue().getValue() != null && savedReference.getValue().getValue().equals(reference.getString("value"))) {
+                    // Old value and new value are same, no changes
+                    continue;
+                } else {
+                    // Some kind of change, stick new value as modified value to saved reference
+                    SavedValue savedValue = new SavedValue();
+                    savedValue.setSavedAt(time);
+                    //TODO: Set savedBy when information is available
+                    setSimpleValue(savedValue, reference.getString("value"));
+                    savedReference.setModifiedValue(savedValue);
+                    referenceChanges = true;
+                }
+            }
+
+            if(referenceChanges) {
+                if(newReference) { // Row was created at the beginning of this iteration, add it to rows list.
+                    referenceContainer.getReferences().add(savedReference);
+                }
+                changeContainer.getRows().put(savedReference.getRowId(), new RowChange(savedReference.getRowId()));
+            }
+            // If this reference has changed or a reference has changed previously, then this container has changed.
+            changes = referenceChanges | changes;
+        } // End of row handling
+
+        if(changes) {
+            data.putField(referenceContainer);
             data.putChange(changeContainer);
         }
 
@@ -646,5 +779,67 @@ public class ModelAccessUtil {
         // TODO: set current user that requests this new field container
 
         return value;
+    }
+
+    /**
+     * Moves modified values to original values for all changed fields.
+     * Goes through given changes map and for each change if it is not a ContainerDataField assumes it's
+     * a SavedDataField and sets its originalValue to newest value, then sets its modified value to null.
+     * For containers it call helper method to go through the rows.
+     * NOTICE: This method assumes data accuracy. If things are broken here then there's deeper problems.
+     * @param changes Map of Changes pointing to given fields in fields map.
+     * @param fields Map of DataFields where changes are to be set to original values.
+     */
+    public static void changesToOriginals(Map<String, Change> changes, Map<String, DataField> fields) {
+        for(Change change : changes.values()) {
+            if(change instanceof ContainerChange) {
+                DataField field = fields.get(change.getKey());
+                if(field instanceof ContainerDataField) {
+                    handleRowChanges((ContainerChange)change, (ContainerDataField)field);
+                } else if(field instanceof ReferenceContainerDataField) {
+                    handleReferenceChanges((ContainerChange)change, (ReferenceContainerDataField)field);
+                }
+            } else {
+                SavedDataField field = (SavedDataField)fields.get(change.getKey());
+                // Once field has been set it should not be set back to null for any reason during new revision creation.
+                // Revision save should handle cases where there is no original value and modified value is removed.
+                // Here we can use the convinience method of getValue() since it doesn't return modified value if it is null.
+                field.setOriginalValue(field.getValue());
+                field.setModifiedValue(null);
+            }
+        }
+    }
+
+    /**
+     * Helper method for changesToOriginals().
+     * Goes through all rows in given ContainerChange and calls changesToOriginals
+     * using Changes in RowChange and fields in DataRow
+     * @param change ContainerChange to be handled
+     * @param field ContainerDataField to be modified
+     */
+    private static void handleRowChanges(ContainerChange change, ContainerDataField field) {
+        for(RowChange c : change.getRows().values()) {
+            DataRow row = field.getRow(c.getRowId());
+            if(row != null) {
+                changesToOriginals(c.getChanges(), row.getFields());
+            }
+        }
+    }
+
+    /**
+     * Helper method for changesToOriginals().
+     * Goes through all rows in given ContainerChange and handles all found rows
+     * as SavedReference from given ReferenceContainerDataField
+     * @param change ContainerChange to be handled
+     * @param field ContainerDataField to be modified
+     */
+    private static void handleReferenceChanges(ContainerChange change, ReferenceContainerDataField field) {
+        for(RowChange c : change.getRows().values()) {
+            SavedReference row = field.getReference(c.getRowId());
+            if(row != null) {
+                row.setOriginalValue(row.getValue());
+                row.setModifiedValue(null);
+            }
+        }
     }
 }

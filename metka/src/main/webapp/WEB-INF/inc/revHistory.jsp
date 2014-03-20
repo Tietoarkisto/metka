@@ -4,16 +4,16 @@
 <%-- Includes everything needed to implement revision history viewing and comparison --%>
 <%--    Initialization for revision history viewing and comparison. All of these things have to be included when this
 functionality is required including a component with id: showRevisions. --%>
+<c:set var="context" value="${empty param.context ? fn:toUpperCase(page) : fn:toUpperCase(param.context)}" />
 <script>
     MetkaJS.L18N.put("general.revision.replace", "<spring:message code='general.revision.replace'/>");
     MetkaJS.L18N.put("general.revision.compare.title", "<spring:message code='general.revision.compare.title'/>");
     // Init page specific translations
-    MetkaJS.L18N.put("${fn:toUpperCase(page)}", "<spring:message code='${fn:toUpperCase(page)}'/>");
-    <c:forEach var="field" items="${configuration.fields}">MetkaJS.L18N.put("${fn:toUpperCase(page)}.field.${field.key}", "<spring:message code='${fn:toUpperCase(page)}.field.${field.key}'/>");
+    MetkaJS.L18N.put("${context}", "<spring:message code='${context}'/>");
+    <c:forEach var="field" items="${configuration[context].fields}">MetkaJS.L18N.put("${context}.field.${field.key}", "<spring:message code='${context}.field.${field.key}'/>");
     </c:forEach>
 </script>
-<%--    historyJSInit.jsp contains javascript initialisation actions such as initialising strings array for localization
-pertaining to revision history components. --%>
+
 <script src="${pageContext.request.contextPath}/js/custom/history.js"></script>
 <%--    End of revision history component requirements. --%>
 <jsp:include page="../dialogs/revisionHistoryDialog.jsp" />

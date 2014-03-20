@@ -1,10 +1,12 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<c:set var="context" value="${empty param.context ? fn:toUpperCase(page) : fn:toUpperCase(param.context)}" />
 <div class="tabs tab_file_management contentBox">
     <script>
         $(document).ready(function() {
-            var targetField = ${param.targetField};
+            var targetField = "${param.targetField}";
             var visCheck = function() {
                 var name = $("#studyFileName").val();
                 if(name != undefined && name != null && name != "") {
@@ -50,9 +52,7 @@
             function fileUploadSuccess(response) {
                 if(response !== 'undefined' && response != null && response != "") {
                     response = JSON.parse(response);
-                    if(response.type == "row") {
-                        MetkaJS.DatatableHandler.saveRow(response);
-                    }
+                    MetkaJS.TableHandler.saveRow(response, "${context}");
                 } else {
                     $("#studyFileUploadProgress").text("couldn't save: "+response);
                 }

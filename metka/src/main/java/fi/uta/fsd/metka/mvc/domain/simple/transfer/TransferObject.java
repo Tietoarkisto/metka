@@ -5,6 +5,7 @@ import fi.uta.fsd.metka.model.configuration.ConfigurationKey;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.ContainerDataField;
 import fi.uta.fsd.metka.model.data.container.DataField;
+import fi.uta.fsd.metka.model.data.container.ReferenceContainerDataField;
 import fi.uta.fsd.metka.model.data.container.SavedDataField;
 import fi.uta.fsd.metka.model.data.value.SimpleValue;
 import org.json.JSONObject;
@@ -98,10 +99,14 @@ public class TransferObject {
 
         for(DataField field : data.getFields().values()) {
             if(field instanceof ContainerDataField) {
-                // TODO: Containers
                 JSONObject ct = ContainerTransfer.buildJSONObject((ContainerDataField)field);
                 if(ct != null) {
                     to.setByKey(field.getKey(), ct.toString());
+                }
+            } else if(field instanceof ReferenceContainerDataField) {
+                JSONObject rct = ContainerTransfer.buildJSONObject((ReferenceContainerDataField)field);
+                if(rct != null) {
+                    to.setByKey(field.getKey(), rct.toString());
                 }
             } else {
                 // Since we don't care about types at the UI that much we can push all values to the map as Strings

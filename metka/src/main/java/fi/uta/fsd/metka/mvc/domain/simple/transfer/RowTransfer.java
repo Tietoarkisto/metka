@@ -1,9 +1,6 @@
 package fi.uta.fsd.metka.mvc.domain.simple.transfer;
 
-import fi.uta.fsd.metka.model.data.container.ContainerDataField;
-import fi.uta.fsd.metka.model.data.container.DataField;
-import fi.uta.fsd.metka.model.data.container.DataRow;
-import fi.uta.fsd.metka.model.data.container.SavedDataField;
+import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.data.value.SimpleValue;
 import org.json.JSONObject;
 
@@ -92,6 +89,11 @@ public class RowTransfer {
                 if(ct != null) {
                     values.put(field.getKey(), ct);
                 }
+            } else if(field instanceof ReferenceContainerDataField) {
+                JSONObject rct = ContainerTransfer.buildJSONObject((ReferenceContainerDataField)field);
+                if(rct != null) {
+                    values.put(field.getKey(), rct);
+                }
             } else {
                 SavedDataField saved = (SavedDataField)field;
                 JSONObject value = new JSONObject();
@@ -102,6 +104,24 @@ public class RowTransfer {
             }
         }
         json.put("fields", values);
+        return json;
+    }
+
+    public static JSONObject buildJSONObject(SavedReference reference) {
+        JSONObject json = new JSONObject();
+        json.put("type", "reference");
+        json.put("key", reference.getKey());
+        json.put("rowId", reference.getRowId());
+        if(reference.getValue() != null) {
+            json.put("value", (SimpleValue)reference.getValue().getValue());
+            json.put("savedAt", reference.getValue().getSavedAt());
+            json.put("savedBy", reference.getValue().getSavedBy());
+        } else {
+            json.put("value", (Object)null);
+            json.put("savedAt", (Object)null);
+            json.put("savedBy", (Object)null);
+        }
+        // TODO: Collect all needed reference information based on subfields
         return json;
     }
 }

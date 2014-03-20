@@ -1,10 +1,14 @@
 package fi.uta.fsd.metka.mvc.domain;
 
+import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.enums.FieldType;
 import fi.uta.fsd.metka.data.repository.FileRepository;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.data.container.SavedReference;
+import fi.uta.fsd.metka.mvc.domain.simple.RevisionViewDataContainer;
+import fi.uta.fsd.metka.mvc.domain.simple.transfer.RowTransfer;
 import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,16 +18,14 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 
+import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
+
 @Service
 public class FileService {
     @Autowired
     private FileRepository repository;
     @Autowired
     private ConfigurationService configService;
-
-    public Integer addFile(TransferObject to) {
-        return null;  //To change body of created methods use File | Settings | File Templates.
-    }
 
     public String saveFile(MultipartFile file, String fileName, Integer id) throws IOException {
         File dir = new File("/usr/share/metka/files/study/"+id);
@@ -45,21 +47,22 @@ public class FileService {
      * @return
      */
     public String initNewFile(String path, Integer targetId, String key) throws IOException {
-        RevisionData revision = repository.newFileRevisionable(path);
-
         // TODO: Form file row
         Configuration config = configService.findLatestByRevisionableId(targetId);
 
         Field field = config.getField(key);
-        if(field == null || field.getType() != FieldType.CONTAINER) {
+        if(field == null || field.getType() != FieldType.REFERENCECONTAINER) {
             // No target field found or target not container
             return null;
         }
-        JSONObject json = new JSONObject();
-        json.put("type", "row");
-        json.put("key", key);
 
-        JSONObject values = new JSONObject();
+        RevisionData revision = repository.newFileRevisionable(path);
+
+        JSONObject json = new JSONObject();
+        json.put("type", "reference");
+        json.put("key", key);
+        json.put("value", getSavedDataFieldFromRevisionData(revision, "fileno").getValue().getValue());
+
         /*for(DataField field : container.getFields().values()) {
             if(field instanceof ContainerDataField) {
                 JSONObject ct = ContainerTransfer.buildJSONObject((ContainerDataField) field);
@@ -75,8 +78,44 @@ public class FileService {
                 values.put(saved.getKey(), value);
             }
         }*/
-        json.put("fields", values);
 
         return json.toString();
+    }
+
+    public RevisionViewDataContainer findLatestRevisionForEdit(Integer id) {
+        RevisionData revision = null;
+        try {
+            revision = repository.findLatestRevision(id);
+        } catch(IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        if(revision == null) {
+            return null;
+        }
+        TransferObject to = TransferObject.buildTransferObjectFromRevisionData(revision);
+        Configuration config = configService.findLatestByType(ConfigurationType.FILE);
+        if(to != null && config != null) {
+            RevisionViewDataContainer container = new RevisionViewDataContainer(to, config);
+            return container;
+        } else {
+            return null;
+        }
+    }
+
+    public String saveAndApprove(TransferObject to) {
+        SavedReference reference = null;
+        try {
+            reference = repository.saveAndApprove(to);
+        } catch(Exception ex) {
+            // TODO: Log error and notify user that there was a problem with saving file
+            return null;
+        }
+        if(reference != null) {
+            JSONObject json = RowTransfer.buildJSONObject(reference);
+            return json.toString();
+        } else {
+            return null;
+        }
     }
 }

@@ -427,83 +427,24 @@
 			"choicelist": "varpublic_list",
 			"section": "basic_information"
 		},
-		"usability_permission": {
-			"key": "usability_permission",
-			"translatable": false,
-			"type": "CHOICE",
-			"choicelist": "usability_permission_list",
-			"section": "deposit_agreement"
-		},
-		"usability_permission_change_date": {
-			"key": "usability_permission_change_date",
-			"translatable": false,
-			"type": "DATE",
-			"section": "deposit_agreement"
-		},
-		"usability_permission_after_change": {
-			"key": "usability_permission_after_change",
-			"translatable": false,
-			"type": "CHOICE",
-			"choicelist": "usability_permission_list",
-			"section": "deposit_agreement"
-		},
-		"deposit_agreement_date": {
-			"key": "deposit_agreement_date",
-			"translatable": false,
-			"type": "DATE",
-			"section": "deposit_agreement"
-		},
-		"contributor_type": {
-			"key": "contributor_type",
-			"translatable": false,
-			"type": "CHOICE",
-			"choicelist": "contributor_type_list",
-			"section": "deposit_agreement"
-		},
-		"deposit_agreement_type": {
-			"key": "deposit_agreement_type",
-			"translatable": false,
-			"type": "CHOICE",
-			"choicelist": "deposit_agreement_type_list",
-			"section": "deposit_agreement"
-		},
-		"trigger_date": {
-			"_comment": "TODO: better translation for term 'heräte'",
-			"key": "trigger_date",
-			"translatable": false,
-			"type": "DATE",
-			"section": "deposit_agreement"
-		},
-		"trigger_receiver": {
-			"key": "trigger_receiver",
-			"translatable": false,
-			"type": "STRING",
-			"section": "deposit_agreement"
-		},
-		"trigger_subject": {
-			"key": "trigger_subject",
-			"translatable": false,
-			"type": "STRING",
-			"section": "deposit_agreement"
-		},
 		"files": {
 			"key": "files",
 			"translatable": false,
-			"type": "CONTAINER",
+			"type": "REFERENCECONTAINER",
 			"reference": "file_ref",
 			"section": "file_management",
 			"subfields": [
-				"fileno"
 			],
+			"showReferenceKey": true,
 			"showSaveInfo": true
 		},
-		"fileno": {
-			"key": "fileno",
+		"filenotes": {
+			"key": "filenotes",
 			"translatable": false,
-			"type": "REFERENCE",
-			"reference": "file_ref",
+			"required": true,
 			"section": "file_management",
-			"subfield": true
+			"type": "STRING",
+			"multiline": true
 		}
 	}
 }

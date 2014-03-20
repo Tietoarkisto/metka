@@ -21,7 +21,7 @@ textarea {
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
 }
-textarea[readonly="readonly"] {
+textarea[readonly] {
     background-color: #dedede;
 }
 
@@ -37,7 +37,7 @@ input {
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
 }
-input[readonly="readonly"] {
+input[readonly] {
     background-color: #dedede;
 }
 
@@ -65,7 +65,7 @@ select {
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
 }
-select[readonly="readonly"] {
+select[readonly] {
     background-color: #dedede;
 }
 

@@ -41,4 +41,12 @@ public class ReferenceContainerDataField extends DataField {
         return null;
     }
 
+    @Override
+    public DataField copy() {
+        ReferenceContainerDataField container = new ReferenceContainerDataField(getKey());
+        for(SavedReference reference : references) {
+            container.getReferences().add(reference.copy());
+        }
+        return container;
+    }
 }

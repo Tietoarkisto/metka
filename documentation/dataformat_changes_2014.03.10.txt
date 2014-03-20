@@ -4,3 +4,11 @@ There's a boolean on choicelist configuration named includeEmpty. If this is set
 -- 15.03.2014 additions --
 Configuration:
 displayId tells which field should be used when displaying object id to user. Can be the same than idField but not necessarily.
+
+-- 17.03.2014 additions --
+Field:
+added new type called REFERENCECONTAINER. Meant to exclusively handle references to revisionable objects it should have a defined reference object telling what to reference and how. Reference field can still have subfields, but these are used to define information that is fetched from the referenced object for display to user. They will form the column information on a REFERENCECONTAINER table. These fields need to have unique id within their configuration and need to have referenceKey value set (this will telle the name of the field in referenced object value of which is to be fetched.
+
+referenceKey is used to tell what value to get from a referenced object while displaying this field in a table. For now these references should be contained to top level value fields (meaning no containers and no values from within containers) although this can be changed in the future quite easily. Non of fields using referenceKey should have summaryfield set to false (although it's not checked during display so it doesn't really matter). Since this is not real data related to currently displayed object there's no point in including fields that are not displayed to the user.
+
+showReferenceKey is an option on REFERENCECONTAINER. If this value is set to true then each row will display as its first column the reference id for that row.

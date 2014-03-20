@@ -13,6 +13,7 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import javassist.NotFoundException;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -126,5 +127,23 @@ public class GeneralRepositoryImpl implements GeneralRepository {
         }
 
         return dataList;
+    }
+
+    @Override
+    public RevisionData getRevision(Integer id, Integer revision) throws IOException {
+        List<RevisionEntity> revisions =
+                em.createQuery(
+                    "SELECT r FROM RevisionEntity r " +
+                    "WHERE r.key.revisionableId = :id AND r.key.revisionNo = :revision",
+                    RevisionEntity.class)
+                .setParameter("id", id)
+                .setParameter("revision", revision)
+                .getResultList();
+
+        RevisionEntity ent = DataAccessUtils.requiredSingleResult(revisions);
+
+        RevisionData data = json.readRevisionDataFromString(ent.getData());
+
+        return data;
     }
 }

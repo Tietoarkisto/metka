@@ -31,4 +31,6 @@ public interface GeneralRepository {
      * @throws IOException If Jackson deserialization fails for some reason at any point.
      */
     public List<RevisionData> getLatestRevisionsForType(ConfigurationType type, Boolean approvedOnly) throws IOException;
+
+    public RevisionData getRevision(Integer id, Integer revision) throws IOException;
 }

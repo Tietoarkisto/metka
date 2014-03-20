@@ -1,9 +1,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-<c:set var="multiline" value="${empty configuration.fields[param.field].multiline ? false : configuration.fields[param.field].multiline}" />
+<c:set var="context" value="${empty param.context ? fn:toUpperCase(page) : fn:toUpperCase(param.context)}" />
+<c:set var="multiline" value="${empty configuration[context].fields[param.field].multiline ? false : configuration[context].fields[param.field].multiline}" />
 <tr>
-    <td class="${multiline == true ? 'textAreaLabel' : 'labelColumn'}"><label for="dialogField_${param.field}"><spring:message code="${fn:toUpperCase(page)}.field.${param.field}"/></label></td>
+    <td class="${multiline == true ? 'textAreaLabel' : 'labelColumn'}"><label for="dialogField_${param.field}"><spring:message code="${context}.field.${param.field}"/></label></td>
 <c:choose>
     <c:when test="${multiline == false}">
     <td><input type="text" id="${param.container}Field${param.field}" class="dialogValue"/></td> <%-- TODO: implement readOnly --%>

@@ -1,6 +1,7 @@
 package fi.uta.fsd.metka.mvc.controller;
 
 import fi.uta.fsd.metka.data.enums.ChoicelistType;
+import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.enums.FieldType;
 import fi.uta.fsd.metka.data.enums.UIRevisionState;
 import fi.uta.fsd.metka.model.configuration.Choicelist;
@@ -14,6 +15,7 @@ import fi.uta.fsd.metka.mvc.domain.simple.RevisionViewDataContainer;
 import fi.uta.fsd.metka.mvc.domain.simple.transfer.SearchResult;
 import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
 import fi.uta.fsd.metka.mvc.domain.simple.study.StudySearchData;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,7 +28,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Handles all requests for study operations such as view and save.
@@ -78,17 +82,17 @@ public class StudyController {
                                RedirectAttributes redirectAttributes) {
         TransferObject single = null;
         Configuration config = null;
-        if(model.asMap().get("single") == null || model.asMap().get("configuration") == null) {
+        if(model.asMap().get("single") == null || model.asMap().get("studyconfiguration") == null) {
             RevisionViewDataContainer revData = studyService.findSingleRevision(id, revision);
             if(revData != null) {
                 model.asMap().put("single", revData.getTransferObject());
-                model.asMap().put("configuration", revData.getConfiguration());
+                //model.asMap().put("configuration", revData.getConfiguration());
                 single = revData.getTransferObject();
                 config = revData.getConfiguration();
             }
         } else {
             single = (TransferObject)model.asMap().get("single");
-            config = (Configuration)model.asMap().get("configuration");
+            config = (Configuration)model.asMap().get("studyconfiguration");
         }
 
         if(single == null) {
@@ -99,10 +103,22 @@ public class StudyController {
         }
         if(config == null) {
             List<ErrorMessage> errors = new ArrayList<>();
-            errors.add(ErrorMessage.noSuchRevision("study", id, revision));
+            errors.add(ErrorMessage.noConfigurationForRevision("study", id, revision));
             redirectAttributes.addFlashAttribute("displayableErrors", errors);
             return REDIRECT_SEARCH;
         }
+
+        Configuration fileConfig = configService.findLatestByType(ConfigurationType.FILE);
+        if(fileConfig == null) {
+            List<ErrorMessage> errors = new ArrayList<>();
+            errors.add(ErrorMessage.noConfigurationForRevision("study", id, revision));
+            redirectAttributes.addFlashAttribute("displayableErrors", errors);
+            return REDIRECT_SEARCH;
+        }
+        Map<String, Configuration> configurations = new HashMap<>();
+        configurations.put("FILE", fileConfig);
+        configurations.put("STUDY", config);
+        model.asMap().put("configuration", configurations);
 
         // Fill choicelist reference options
         try {
@@ -116,38 +132,11 @@ public class StudyController {
             ex.printStackTrace();
         }
 
-        // Form CONTAINER config json
-        JSONObject containerConfig = null;
-        for(Field field : config.getFields().values()) {
-            if(field.getType() != FieldType.CONTAINER) { // Handle only CONTAINERs
-                continue;
-            }
-
-            if(containerConfig == null) {
-                containerConfig = new JSONObject();
-            }
-            JSONObject container = new JSONObject();
-            container.put("key", field.getKey());
-            container.put("type", field.getType());
-            for(String subkey : field.getSubfields()) {
-                Field subConf = config.getField(subkey);
-                JSONObject subfield = new JSONObject();
-                subfield.put("key", subConf.getKey());
-                subfield.put("type", subConf.getType());
-                subfield.put("immutable", subConf.getImmutable());
-                subfield.put("multiline", subConf.getMultiline());
-                subfield.put("required", subConf.getRequired());
-                subfield.put("summaryField", subConf.getSummaryField());
-                if(subConf.getType() == FieldType.CHOICE) {
-                    subfield.put("choicelist", config.getChoicelists().get(subConf.getChoicelist()).getKey());
-                }
-                container.append("subfields", subfield);
-            }
-            //container.put("subfields", field.getSubfields());
-            container.put("showSaveInfo", field.getShowSaveInfo());
-            containerConfig.put(field.getKey(), container);
-        }
-        model.asMap().put("containerConfig", containerConfig.toString());
+        // Form JSConfig
+        JSONObject jsConfig = new JSONObject();
+        jsConfig.put(config.getKey().getType().toValue(), makeJSConfig(config));
+        jsConfig.put(fileConfig.getKey().getType().toValue(), makeJSConfig(fileConfig));
+        model.asMap().put("jsConfig", jsConfig.toString());
 
         model.asMap().put("page", "study");
         if(single.getState() == UIRevisionState.DRAFT) {
@@ -200,8 +189,9 @@ public class StudyController {
             // TODO: Show error if no new series could be created
             return REDIRECT_SEARCH;
         } else {
+
             redirectAttributes.addFlashAttribute("single", revData.getTransferObject());
-            redirectAttributes.addFlashAttribute("configuration", revData.getConfiguration());
+            redirectAttributes.addFlashAttribute("studyconfiguration", revData.getConfiguration());
             return REDIRECT_VIEW+revData.getTransferObject().getId()+"/"+revData.getTransferObject().getRevision();
         }
     }
@@ -220,7 +210,7 @@ public class StudyController {
             return REDIRECT_VIEW+id;
         } else {
             redirectAttributes.addFlashAttribute("single", revData.getTransferObject());
-            redirectAttributes.addFlashAttribute("configuration", revData.getConfiguration());
+            redirectAttributes.addFlashAttribute("studyconfiguration", revData.getConfiguration());
             return REDIRECT_VIEW+revData.getTransferObject().getId()+"/"+revData.getTransferObject().getRevision();
         }
     }
@@ -269,5 +259,43 @@ public class StudyController {
         if(errors.size() > 0) redirectAttributes.addFlashAttribute("displayableErrors", errors);
 
         return REDIRECT_VIEW+single.getId()+"/"+single.getRevision();
+    }
+
+    private JSONObject makeJSConfig(Configuration config) {
+        // Form CONTAINER config json
+        JSONObject jsConfig = new JSONObject();
+        for(Field field : config.getFields().values()) {
+            JSONObject jsField = new JSONObject();
+            jsConfig.put(field.getKey(), jsField);
+
+            jsField.put("key", field.getKey());
+            jsField.put("type", field.getType());
+            switch(field.getType()) {
+                case REFERENCECONTAINER:
+                    jsField.put("showReferenceKey", field.getShowReferenceKey());
+                case CONTAINER:
+                    jsField.put("showSaveInfo", field.getShowSaveInfo());
+                    JSONArray subfields = new JSONArray();
+                    for(String subfield : field.getSubfields()) {
+                        subfields.put(subfield);
+                    }
+                    jsField.put("subfields", subfields);
+                    break;
+                default:
+                    jsField.put("immutable", field.getImmutable());
+                    jsField.put("multiline", field.getMultiline());
+                    jsField.put("required", field.getRequired());
+                    jsField.put("subfield", field.getSubfield());
+                    if(field.getSubfield()) {
+                        jsField.put("summaryField", field.getSummaryField());
+                        jsField.put("referenceKey", (Object)field.getReferenceKey());
+                    }
+                    if(field.getType() == FieldType.CHOICE) {
+                        jsField.put("choicelist", config.getChoicelists().get(field.getChoicelist()).getKey());
+                    }
+                    break;
+            }
+        }
+        return jsConfig;
     }
 }

@@ -4,8 +4,8 @@ import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.mvc.domain.ConfigurationService;
 import fi.uta.fsd.metka.mvc.domain.FileService;
+import fi.uta.fsd.metka.mvc.domain.simple.RevisionViewDataContainer;
 import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -33,22 +33,27 @@ public class FileController {
      * @throws Exception
      */
     @RequestMapping(value = "currentConfiguration", method = {RequestMethod.POST},
-            produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Configuration getCurrentFileConfiguration() throws Exception {
         Configuration config = configService.findLatestByType(ConfigurationType.FILE);
         return config;
     }
 
-    /**
-     * Returns current File-configuration as a JSON-construct.
-     * @return Configuration
-     * @throws Exception
-     */
+
     @RequestMapping(value = "save", method = {RequestMethod.POST},
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody Integer save(@RequestBody TransferObject to) throws Exception {
-        Integer revisionableId = fileService.addFile(to);
-        return revisionableId;
+    public @ResponseBody String saveAndApprove(@RequestBody TransferObject to) throws Exception {
+        // TODO: Implement saving and approving a File-object
+        String  reference = fileService.saveAndApprove(to);
+        return reference;
+    }
+
+    @RequestMapping(value = "edit/{id}", method = {RequestMethod.POST},
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody
+    RevisionViewDataContainer edit(@PathVariable Integer id) {
+        RevisionViewDataContainer container = fileService.findLatestRevisionForEdit(id);
+        return container;
     }
 
     /**

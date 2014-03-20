@@ -5,12 +5,20 @@
        should be accessible from anywhere */
     MetkaJS = function() {
         return {
-            Globals: {
-                page: "${page}",
-                contextPath: "${pageContext.request.contextPath}",
-                strings: new Array()
-            },
-            containerConfig: null,
+            DialogHandlers: {}, // This is used to collect and reference custom dialog handlers used throughout the application
+            Globals: function() {
+                var globalId = 0;
+                return {
+                    page: "${page}",
+                    contextPath: "${pageContext.request.contextPath}",
+                    strings: new Array(),
+                    globalId: function() {
+                        globalId++
+                        return globalId;
+                    }
+                }
+            }(),
+            JSConfig: null,
             SingleObject: null,
             view: function(id, revision) {
                 MetkaJS.PathBuilder()
@@ -61,6 +69,10 @@
     MetkaJS.L18N.put("general.errors.title.notice", "<spring:message code='general.errors.title.notice' />");
     // Insert localisation for text DRAFT
     MetkaJS.L18N.put("general.title.DRAFT", "<spring:message code="general.title.DRAFT"/>");
+
+    // Insert missing implementation notifications
+    MetkaJS.L18N.put("general.errors.title.noImplementation", "<spring:message code='general.errors.title.noImplementation' />");
+    MetkaJS.L18N.put("general.errors.container.dialog.noImplementation", "<spring:message code='general.errors.container.dialog.noImplementation' />");
 
     <%-- Initialise single object if applicable --%>
 <c:if test="${not empty single}">
@@ -141,6 +153,6 @@
 </c:forEach>
 </c:if>
 
-    <%-- If containerConfig JSON is provided insert it to globals. Otherwise MetkaJS.containerConfig will remain null --%>
-    <c:if test="${not empty containerConfig}">MetkaJS.containerConfig = JSON.parse('${containerConfig}');</c:if>
+    <%-- If JSConfig JSON is provided insert it to globals. Otherwise MetkaJS.JSConfig will remain null --%>
+    <c:if test="${not empty jsConfig}">MetkaJS.JSConfig = JSON.parse('${jsConfig}');</c:if>
 </script>

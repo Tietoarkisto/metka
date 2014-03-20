@@ -2,7 +2,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-
+<c:set var="context" value="${fn:toUpperCase(page)}" />
 <div class="tabNavi">
     <a id="basic_information" href="#basic_information"><spring:message code="STUDY.section.basic_information"/></a>
     <a id="deposit_agreement" href="#deposit_agreement"><spring:message code="STUDY.section.deposit_agreement"/></a>
@@ -21,7 +21,7 @@
     <form:form id="revisionModifyForm" method="post" action="/study/save" modelAttribute="single">
         <form:hidden path="id" />
         <form:hidden path="revision" />
-        <form:hidden path="values['${configuration.idField}']" />
+        <form:hidden path="values['${configuration[context].idField}']" />
         <jsp:include page="sub/basic_information.jsp"/>
         <jsp:include page="sub/file_management.jsp"/>
     </form:form>

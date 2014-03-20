@@ -57,4 +57,11 @@ public class SavedReference {
     public SavedValue getValue() {
         return (modifiedValue != null) ? modifiedValue : originalValue;
     }
+
+    public SavedReference copy() {
+        SavedReference reference = new SavedReference(getKey(), getRowId());
+        reference.setModifiedValue((modifiedValue != null) ? modifiedValue.copy() : null);
+        reference.setOriginalValue((originalValue != null) ? originalValue.copy() : null);
+        return reference;
+    }
 }

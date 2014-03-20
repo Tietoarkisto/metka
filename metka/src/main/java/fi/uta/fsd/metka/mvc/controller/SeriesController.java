@@ -20,7 +20,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Handles all requests for series operations such as view and save.
@@ -75,11 +77,13 @@ public class SeriesController {
                                RedirectAttributes redirectAttributes) {
         TransferObject single = null;
 
-        if(model.asMap().get("single") == null || model.asMap().get("configuration") == null) {
+        if(model.asMap().get("single") == null || model.asMap().get("seriesconfiguration") == null) {
             RevisionViewDataContainer revData = seriesService.findSingleRevision(id, revision);
             if(revData != null) {
                 model.asMap().put("single", revData.getTransferObject());
-                model.asMap().put("configuration", revData.getConfiguration());
+                Map<String, Configuration> configuration = new HashMap<>();
+                configuration.put("SERIES", revData.getConfiguration());
+                model.asMap().put("configuration", configuration);
                 single = revData.getTransferObject();
             }
         } else {
@@ -131,7 +135,9 @@ public class SeriesController {
         }
 
         Configuration config = configService.findLatestByType(ConfigurationType.SERIES);
-        model.asMap().put("configuration", config);
+        Map<String, Configuration> configuration = new HashMap<>();
+        configuration.put("SERIES", config);
+        model.asMap().put("configuration", configuration);
 
         model.asMap().put("page", "series");
         return SEARCH;
@@ -151,7 +157,7 @@ public class SeriesController {
             return REDIRECT_SEARCH;
         } else {
             redirectAttributes.addFlashAttribute("single", revData.getTransferObject());
-            redirectAttributes.addFlashAttribute("configuration", revData.getConfiguration());
+            redirectAttributes.addFlashAttribute("seriesconfiguration", revData.getConfiguration());
             return REDIRECT_VIEW+revData.getTransferObject().getId()+"/"+revData.getTransferObject().getRevision();
         }
     }
@@ -170,7 +176,7 @@ public class SeriesController {
             return REDIRECT_VIEW+seriesno;
         } else {
             redirectAttributes.addFlashAttribute("single", revData.getTransferObject());
-            redirectAttributes.addFlashAttribute("configuration", revData.getConfiguration());
+            redirectAttributes.addFlashAttribute("seriesconfiguration", revData.getConfiguration());
             return REDIRECT_VIEW+revData.getTransferObject().getId()+"/"+revData.getTransferObject().getRevision();
         }
     }

@@ -42,7 +42,7 @@ public class ContainerDataField extends DataField {
     public DataField copy() {
         ContainerDataField container = new ContainerDataField(getKey());
         for(DataRow row : rows) {
-            container.getRows().add((DataRow)row.copy());
+            container.getRows().add(row.copy());
         }
         return container;
     }

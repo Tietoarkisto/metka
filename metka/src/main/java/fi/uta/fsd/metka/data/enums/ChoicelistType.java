@@ -8,5 +8,5 @@ package fi.uta.fsd.metka.data.enums;
  * To change this template use File | Settings | File Templates.
  */
 public enum ChoicelistType {
-    VALUE, REFERENCE, LITERAL
+    VALUE, REFERENCE, LITERAL, SUBLIST
 }

@@ -35,7 +35,8 @@
 			]
 		},
 		"filedip_list": {
-			"key": "yes_no_na"
+			"key": "yes_no_na",
+			"type": "SUBLIST"
 		},
 		"filelanguage_list": {
 			"key": "filelanguage_list",
@@ -76,31 +77,32 @@
 			]
 		},
 		"fileoriginal_list": {
-			"key": "yes_no_na"
+			"key": "yes_no_na",
+			"type": "SUBLIST"
 		},
-		"filelanguage_list": {
-			"key": "filelanguage_list",
+		"filepublication_list": {
+			"key": "filepublication_list",
 			"options": [
 				{
-					"value": "de"
+					"value": "1"
 				},
 				{
-					"value": "en"
+					"value": "2"
 				},
 				{
-					"value": "es"
+					"value": "3"
 				},
 				{
-					"value": "st"
+					"value": "4"
 				},
 				{
-					"value": "fi"
+					"value": "5"
 				},
 				{
-					"value": "fr"
+					"value": "6"
 				},
 				{
-					"value": "it"
+					"value": "7"
 				}
 			]
 		},
@@ -140,22 +142,8 @@
 			"required": true,
 			"type": "STRING"
 		},
-		"fileaip": {
-			"key": "fileaip",
-			"translatable": false,
-			"required": true,
-			"type": "CHOICE",
-			"choicelist": "fileaip_list"
-		},
-		"filecategory": {
-			"key": "filecategory",
-			"translatable": false,
-			"required": true,
-			"type": "CHOICE",
-			"choicelist": "filecategory_list"
-		},
-		"filecomment": {
-			"key": "filecomment",
+		"filelabel": {
+			"key": "filelabel",
 			"translatable": false,
 			"required": true,
 			"type": "STRING",
@@ -168,19 +156,26 @@
 			"type": "STRING",
 			"multiline": true
 		},
-		"filedip": {
-			"key": "filedip",
-			"translatable": false,
-			"required": true,
-			"type": "CHOICE",
-			"choicelist": "filedip_list"
-		},
-		"filelabel": {
-			"key": "filelabel",
+		"filecomment": {
+			"key": "filecomment",
 			"translatable": false,
 			"required": true,
 			"type": "STRING",
 			"multiline": true
+		},
+		"filecategory": {
+			"key": "filecategory",
+			"translatable": false,
+			"required": true,
+			"type": "CHOICE",
+			"choicelist": "filecategory_list"
+		},
+		"fileaip": {
+			"key": "fileaip",
+			"translatable": false,
+			"required": true,
+			"type": "CHOICE",
+			"choicelist": "fileaip_list"
 		},
 		"filelanguage": {
 			"key": "filelanguage",
@@ -188,13 +183,6 @@
 			"required": true,
 			"type": "CHOICE",
 			"choicelist": "filelanguage_list"
-		},
-		"filenotes": {
-			"key": "filenotes",
-			"translatable": false,
-			"required": true,
-			"type": "STRING",
-			"multiline": true
 		},
 		"fileoriginal": {
 			"key": "fileoriginal",
@@ -209,6 +197,13 @@
 			"required": true,
 			"type": "CHOICE",
 			"choicelist": "filepublication_list"
+		},
+		"filedip": {
+			"key": "filedip",
+			"translatable": false,
+			"required": true,
+			"type": "CHOICE",
+			"choicelist": "filedip_list"
 		}
 	}
 }
