@@ -197,6 +197,9 @@ nav .mainNavUl li a:hover {
 /*************
  * Clean css *
  *************/
+.temporary {
+    color: red;
+}
 .upperContainer {
     margin: 10px;
     font-size: 12px;
@@ -215,15 +218,20 @@ nav .mainNavUl li a:hover {
 }
 
 .pageTitle {
-    font-size: 17px;
+    display: block;
+    font-size: 20px;
     color: white;
     padding: 10px 20px 10px 20px;
     background-color: #009ee0;
-    height: 20px; }
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
 .pageTitle .floatLeft {
     float: left;
 }
 .pageTitle .floatRight {
+    display: inline-block;
     float: right;
 }
 .pageTitle .normalText {
@@ -279,3 +287,6 @@ nav .mainNavUl li a:hover {
     background-color: #c8c8c8;
 }
 
+.borderbutton {
+    border: 1px solid white;
+}

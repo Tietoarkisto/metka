@@ -58,6 +58,8 @@ public class FileService {
 
         RevisionData revision = repository.newFileRevisionable(path);
 
+        repository.addFileLinkEvent(targetId, revision.getKey().getId(), key, path);
+
         JSONObject json = new JSONObject();
         json.put("type", "reference");
         json.put("key", key);
@@ -85,7 +87,7 @@ public class FileService {
     public RevisionViewDataContainer findLatestRevisionForEdit(Integer id) {
         RevisionData revision = null;
         try {
-            revision = repository.findLatestRevision(id);
+            revision = repository.getEditableRevision(id);
         } catch(IOException ex) {
             ex.printStackTrace();
             return null;
@@ -104,18 +106,12 @@ public class FileService {
     }
 
     public String saveAndApprove(TransferObject to) {
-        SavedReference reference = null;
         try {
-            reference = repository.saveAndApprove(to);
+            repository.saveAndApprove(to);
+            return "{\"result\": \"Onnistui\"}";
         } catch(Exception ex) {
             // TODO: Log error and notify user that there was a problem with saving file
-            return null;
-        }
-        if(reference != null) {
-            JSONObject json = RowTransfer.buildJSONObject(reference);
-            return json.toString();
-        } else {
-            return null;
+            return "{\"result\": \"Virhe: "+ex.getMessage()+"\"}";
         }
     }
 }

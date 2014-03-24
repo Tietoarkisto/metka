@@ -50,6 +50,18 @@ public class StudyService {
      */
     public RevisionViewDataContainer findSingleRevision(Integer id, Integer revision) {
         RevisionData data = null;
+
+        // Check for FileLinkQueue events.
+        // If given id/revision belongs to a draft revision then process possible FileLinkQueue events.
+        // This makes sure that any recently added file references are found from their respective REFERENCECONTAINERs.
+        // Also if there is a new POR file present then that is parsed and the data is added
+        try {
+            repository.checkFileLinkQueue(id, revision);
+        } catch(IOException ex) {
+            // TODO: better exception handling with messages to the user
+            ex.printStackTrace();
+        }
+
         try {
             data = generalSearch.findSingleRevision(id, revision, ConfigurationType.STUDY);
         } catch(IOException ex) {

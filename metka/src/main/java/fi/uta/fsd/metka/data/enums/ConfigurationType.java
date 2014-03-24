@@ -4,18 +4,14 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * Created with IntelliJ IDEA.
- * User: lasseku
- * Date: 1/3/14
- * Time: 12:58 PM
- * To change this template use File | Settings | File Templates.
+ * Configuration types enumerator.
+ * Discriminator value uses the Values constants.
  */
 public enum ConfigurationType {
     STUDY(Values.STUDY),
     SERIES(Values.SERIES),
     FILE(Values.FILE),
-    PUBLICATION(Values.PUBLICATION),
-    CODEBOOK(Values.CODEBOOK);
+    PUBLICATION(Values.PUBLICATION);
     // Add more as needed
 
     private final String value;
@@ -48,6 +44,5 @@ public enum ConfigurationType {
         public static final String SERIES = "SERIES";
         public static final String FILE = "FILE";
         public static final String PUBLICATION = "PUBLICATION";
-        public static final String CODEBOOK = "CODEBOOK";
     }
 }

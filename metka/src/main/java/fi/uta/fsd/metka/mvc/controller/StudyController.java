@@ -231,6 +231,8 @@ public class StudyController {
             errors.add(ErrorMessage.saveFail());
         }
         if(errors.size() > 0) redirectAttributes.addFlashAttribute("displayableErrors", errors);
+        // TODO: IMPORTANT: If save failed user should not be redirected or the data should at least be the same they sent to server, otherwise users changes are lost.
+
         return REDIRECT_VIEW+single.getId()+"/"+single.getRevision();
     }
 

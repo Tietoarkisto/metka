@@ -44,14 +44,13 @@ public class FileController {
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String saveAndApprove(@RequestBody TransferObject to) throws Exception {
         // TODO: Implement saving and approving a File-object
-        String  reference = fileService.saveAndApprove(to);
-        return reference;
+        String result = fileService.saveAndApprove(to);
+        return result;
     }
 
     @RequestMapping(value = "edit/{id}", method = {RequestMethod.POST},
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody
-    RevisionViewDataContainer edit(@PathVariable Integer id) {
+    public @ResponseBody RevisionViewDataContainer edit(@PathVariable Integer id) {
         RevisionViewDataContainer container = fileService.findLatestRevisionForEdit(id);
         return container;
     }
@@ -64,8 +63,6 @@ public class FileController {
      */
     @RequestMapping(value = "upload", method = {RequestMethod.POST}, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String upload(@RequestParam("file") MultipartFile file, @RequestParam("id") Integer id, @RequestParam("targetField") String key) throws Exception {
-        /*Iterator<String> itr = request.getFileNames();
-        MultipartFile file = request.getFile(itr.next());*/
         try {
             String fileName = new File(file.getOriginalFilename()).getName();
             String path = fileService.saveFile(file, fileName, id);

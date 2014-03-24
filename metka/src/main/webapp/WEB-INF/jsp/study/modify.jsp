@@ -24,6 +24,7 @@
         <form:hidden path="values['${configuration[context].idField}']" />
         <jsp:include page="sub/basic_information.jsp"/>
         <jsp:include page="sub/file_management.jsp"/>
+        <jsp:include page="sub/codebook.jsp"/>
     </form:form>
     <%--<h1 class="pageTitle">
         <div class="floatLeft">${study.id}&nbsp;-&nbps;${study.data.name}&nbsp;-&nbsp;</div>

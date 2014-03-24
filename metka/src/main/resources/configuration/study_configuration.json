@@ -445,6 +445,35 @@
 			"section": "file_management",
 			"type": "STRING",
 			"multiline": true
+		},
+		"cbattachments": {
+			"key": "cbattachments",
+			"translatable": false,
+			"type": "CONTAINER",
+			"section": "basic_information",
+			"showSaveInfo": true,
+			"subfields": [
+				"cbattachmentlocation",
+				"cbattachmenttitle"
+			]
+		},
+		"cbattachmentlocation": {
+			"key": "cbattachmentlocation",
+			"translatable": false,
+			"required": true,
+			"immutable": true,
+			"type": "STRING",
+			"section": "codebook",
+			"subfield": true
+		},
+		"cbattachmenttitle": {
+			"key": "cbattachmenttitle",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"multiline": true,
+			"section": "codebook",
+			"subfield": true
 		}
 	}
 }

@@ -2,31 +2,37 @@ package fi.uta.fsd.metka.mvc.controller;
 
 import fi.uta.fsd.metka.data.enums.repositoryResponses.DraftRemoveResponse;
 import fi.uta.fsd.metka.data.enums.repositoryResponses.LogicalRemoveResponse;
+import fi.uta.fsd.metka.data.util.JSONUtil;
+import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.mvc.domain.GeneralService;
 import fi.uta.fsd.metka.mvc.domain.simple.ErrorMessage;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: lasseku
- * Date: 1/10/14
- * Time: 10:04 AM
- * To change this template use File | Settings | File Templates.
+ * Includes controllers for general functionality that doesn't warrant its own controller or doesn't fit anywhere else
  */
 @Controller
 public class GeneralController {
 
     @Autowired
     private GeneralService service;
+
+    @Autowired
+    private JSONUtil json;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String catchAll() {
@@ -173,5 +179,24 @@ public class GeneralController {
                 return "redirect:/"+type+"/view/"+id;
         }
         return "redirect:/"+type+"/search";
+    }
+
+    @RequestMapping(value="/download/{id}/{revision}", method = RequestMethod.GET)
+    public HttpEntity<byte[]> downloadRevision(@PathVariable Integer id, @PathVariable Integer revision)
+            throws IOException {
+        String data = service.getRevisionData(id, revision);
+        if(StringUtils.isEmpty(data)) {
+            return null;
+        }
+        RevisionData revData = json.readRevisionDataFromString(data);
+        byte[] dataBytes = data.getBytes();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Content-Disposition",
+                "attachment; filename=" + revData.getConfiguration().getType()
+                        + "_id_" + revData.getKey().getId() + "_revision_" + revData.getKey().getRevision() + ".json");
+        headers.setContentLength(dataBytes.length);
+
+        return new HttpEntity<byte[]>(dataBytes, headers);
     }
 }

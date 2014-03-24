@@ -52,6 +52,7 @@
             function fileUploadSuccess(response) {
                 if(response !== 'undefined' && response != null && response != "") {
                     response = JSON.parse(response);
+                    response.temporary = true;
                     MetkaJS.TableHandler.saveRow(response, "${context}");
                 } else {
                     $("#studyFileUploadProgress").text("couldn't save: "+response);

@@ -1,8 +1,11 @@
 package fi.uta.fsd.metka.data.repository.impl;
 
+import fi.uta.fsd.metka.data.entity.FileLinkQueueEntity;
 import fi.uta.fsd.metka.data.entity.RevisionEntity;
+import fi.uta.fsd.metka.data.entity.RevisionableEntity;
 import fi.uta.fsd.metka.data.entity.impl.StudyEntity;
 import fi.uta.fsd.metka.data.entity.key.RevisionKey;
+import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.data.repository.StudyRepository;
@@ -20,6 +23,7 @@ import org.springframework.util.StringUtils;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.IOException;
+import java.util.List;
 
 import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
 
@@ -42,7 +46,7 @@ public class StudyRepositoryImpl implements StudyRepository {
         StudyEntity entity = new StudyEntity();
         em.persist(entity);
 
-        RevisionEntity revision = new RevisionEntity(new RevisionKey(entity.getId(), 1));
+        RevisionEntity revision = entity.createNextRevision();
         revision.setState(RevisionState.DRAFT);
 
         /*
@@ -134,4 +138,33 @@ public class StudyRepositoryImpl implements StudyRepository {
     }
 
     // TODO: During approval set aipcomplete if it's not set already. This is a value that should be set during first approval and not before.
+
+    @Override
+    public void checkFileLinkQueue(Integer id, Integer revision) throws IOException {
+        RevisionableEntity revisionable = em.find(RevisionableEntity.class, id);
+        RevisionEntity entity = em.find(RevisionEntity.class, new RevisionKey(id, revision));
+        if(ConfigurationType.fromValue(revisionable.getType()) != ConfigurationType.STUDY || entity.getState() != RevisionState.DRAFT) {
+            // id/revision doesn't match STUDY DRAFT revision, don't do checks
+            return;
+        }
+
+        RevisionData data = json.readRevisionDataFromString(entity.getData());
+        boolean changes = false;
+
+        // Check for existing FileLinkQueue events
+        List<FileLinkQueueEntity> events = em
+                .createQuery("SELECT e FROM FileLinkQueueEntity e WHERE e.targetId=:id", FileLinkQueueEntity.class)
+                .setParameter("id", id)
+                .getResultList();
+
+        // Check that references are found from data
+        // Add missing references
+
+        // Check for POR-files
+        // Parse POR-files
+        // Merge POR-data to RevisionData
+
+        // Save RevisionData back to DB
+        // Remove FileLinkQueue events
+    }
 }

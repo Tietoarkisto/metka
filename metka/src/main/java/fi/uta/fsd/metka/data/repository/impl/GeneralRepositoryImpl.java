@@ -146,4 +146,20 @@ public class GeneralRepositoryImpl implements GeneralRepository {
 
         return data;
     }
+
+    @Override
+    public String getRevisionData(Integer id, Integer revision) {
+        List<RevisionEntity> revisions =
+                em.createQuery(
+                        "SELECT r FROM RevisionEntity r " +
+                                "WHERE r.key.revisionableId = :id AND r.key.revisionNo = :revision",
+                        RevisionEntity.class)
+                        .setParameter("id", id)
+                        .setParameter("revision", revision)
+                        .getResultList();
+
+        RevisionEntity ent = DataAccessUtils.requiredSingleResult(revisions);
+
+        return (ent != null) ? ent.getData() : null;
+    }
 }

@@ -9,9 +9,6 @@ import fi.uta.fsd.metka.data.repository.SeriesRepository;
 import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
-import fi.uta.fsd.metka.model.data.change.Change;
-import fi.uta.fsd.metka.model.data.change.ContainerChange;
-import fi.uta.fsd.metka.model.data.change.RowChange;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.factories.SeriesFactory;
@@ -24,7 +21,6 @@ import org.springframework.util.StringUtils;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.IOException;
-import java.util.Map;
 
 import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
 
@@ -47,7 +43,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         SeriesEntity entity = new SeriesEntity();
         em.persist(entity);
 
-        RevisionEntity revision = new RevisionEntity(new RevisionKey(entity.getId(), 1));
+        RevisionEntity revision = entity.createNextRevision();
         revision.setState(RevisionState.DRAFT);
 
         /*
@@ -271,8 +267,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         // Go through fields map
         // For each field generate change with operation UNCHANGED and put the field to original value
         // Add changes to new dataset
-        RevisionEntity newRevision = new RevisionEntity(new RevisionKey(latestRevision.getKey().getRevisionableId(),
-                latestRevision.getKey().getRevisionNo()+1));
+        RevisionEntity newRevision = series.createNextRevision();
         newRevision.setState(RevisionState.DRAFT);
         RevisionData newData = RevisionData.createRevisionData(newRevision, oldData.getConfiguration());
 

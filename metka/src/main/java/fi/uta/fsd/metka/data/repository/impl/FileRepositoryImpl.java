@@ -1,5 +1,6 @@
 package fi.uta.fsd.metka.data.repository.impl;
 
+import fi.uta.fsd.metka.data.entity.FileLinkQueueEntity;
 import fi.uta.fsd.metka.data.entity.RevisionEntity;
 import fi.uta.fsd.metka.data.entity.RevisionableEntity;
 import fi.uta.fsd.metka.data.entity.impl.FileEntity;
@@ -10,21 +11,20 @@ import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.data.repository.FileRepository;
 import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.model.configuration.Configuration;
+import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.DataField;
-import fi.uta.fsd.metka.model.data.container.SavedReference;
 import fi.uta.fsd.metka.model.factories.FileFactory;
 import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
+import org.apache.commons.io.FilenameUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
 
@@ -47,7 +47,7 @@ public class FileRepositoryImpl implements FileRepository {
         FileEntity entity = new FileEntity();
         em.persist(entity);
 
-        RevisionEntity revision = new RevisionEntity(new RevisionKey(entity.getId(), 1));
+        RevisionEntity revision = entity.createNextRevision();
         revision.setState(RevisionState.DRAFT);
 
         /*
@@ -63,14 +63,9 @@ public class FileRepositoryImpl implements FileRepository {
         return data;
     }
 
-    /**
-     * Return latest revision data for a FILE with given revisionable id.
-     * @param id Revisionable id
-     * @return Latest RevisionableData for given id, this should always exist assuming that given id is for a FILE
-     * @throws IOException
-     */
+
     @Override
-    public RevisionData findLatestRevision(Integer id) throws IOException {
+    public RevisionData getEditableRevision(Integer id) throws IOException {
         RevisionableEntity file = em.find(RevisionableEntity.class, id);
 
         // Sanity check
@@ -80,55 +75,41 @@ public class FileRepositoryImpl implements FileRepository {
         }
 
         RevisionEntity revision = em.find(RevisionEntity.class, new RevisionKey(file.getId(), file.getLatestRevisionNo()));
-        // another sanity check
-        if(revision == null || StringUtils.isEmpty(revision.getData())) {
-            // TODO: Log error since something is seriously wrong.
+        if(revision == null) {
+            // TODO: Missing revision, log error
             return null;
         }
-
         RevisionData data = json.readRevisionDataFromString(revision.getData());
-        return data;
-    }
-
-    @Override
-    public SavedReference saveAndApprove(TransferObject to) throws Exception {
-        FileEntity file = em.find(FileEntity.class, to.getId());
-        if(file == null) {
-            // There has to be a file so you can save
+        if(data == null) {
+            // TODO: Log error, missing data
             return null;
         }
+        // If DRAFT exists, return it
+        if(file.getCurApprovedNo() == null || !file.getCurApprovedNo().equals(file.getLatestRevisionNo())) {
+            // Sanity check that latest revision is indeed a DRAFT
+            if(revision.getState() != RevisionState.DRAFT || data.getState() != RevisionState.DRAFT) {
+                // TODO: Log error, there is a data discrepancy
+                return null;
+            }
 
-        // Sanity check
-        if(file.getLatestRevisionNo() == null) {
-            // TODO: There's no latest revision, something is really wrong, log error.
-            return null;
-        }
+            return data;
+        } else {
+            // Latest revision should be APPROVED, make sanity check and if passed create a new DRAFT
+            if(revision.getState() != RevisionState.APPROVED || data.getState() != RevisionState.APPROVED) {
+                // TODO: Log error, there is a data discrepancy
+                return null;
+            }
 
-        RevisionEntity revEntity = em.find(RevisionEntity.class, new RevisionKey(file.getId(), file.getLatestRevisionNo()));
-        if(revEntity == null) {
-            // TODO: Log error, revision should excist
-            return null;
-        }
+            RevisionEntity newRevision = file.createNextRevision();
+            newRevision.setState(RevisionState.DRAFT);
+            em.persist(newRevision);
+            file.setLatestRevisionNo(newRevision.getKey().getRevisionNo());
 
-        RevisionData data = json.readRevisionDataFromString(revEntity.getData());
-        Configuration config = configRepo.findLatestConfiguration(ConfigurationType.FILE);
-
-
-        if (idIntegrityCheck(to, data, config)) {
-            throw new Exception("Id integrity was not maintained");
-        }
-
-        if(data.getState() != RevisionState.DRAFT) {
-            // This is not the first time this file is saved, make a new revision and make data for it.
-            revEntity = new RevisionEntity(new RevisionKey(file.getId(), file.getLatestRevisionNo()+1));
-            revEntity.setState(RevisionState.DRAFT);
-
-            em.persist(revEntity);
-
-            file.setLatestRevisionNo(revEntity.getKey().getRevisionNo());
+            // Get latest configuration for configuration key for new data
+            Configuration config = configRepo.findLatestConfiguration(ConfigurationType.FILE);
 
             // Create new RevisionData object using the current revEntity (either new or old, doesn't matter)
-            RevisionData newData = RevisionData.createRevisionData(revEntity, config.getKey());
+            RevisionData newData = RevisionData.createRevisionData(newRevision, config.getKey());
             // Copy old fields to new revision data
             for(DataField field : data.getFields().values()) {
                 newData.putField(field.copy());
@@ -137,21 +118,84 @@ public class FileRepositoryImpl implements FileRepository {
             // newData since changes in previous revision are original values in new revision.
             // Go through changes and move modified value to original value for every change.
             changesToOriginals(data.getChanges(), newData.getFields());
-            newData.setState(RevisionState.APPROVED);
-            newData.setApprovalDate(new DateTime());
-            newData.setLastSave(new DateTime());
+            newRevision.setData(json.serialize(newData));
 
-            revEntity.setData(json.serialize(newData));
-        } else {
-            // This was the first time the user has manually saved this file. We can use the current revision and data, just approve it
+            return newData;
+        }
+    }
+
+    @Override
+    public void saveAndApprove(TransferObject to) throws Exception {
+        FileEntity file = em.find(FileEntity.class, to.getId());
+        if(file == null) {
+            // There has to be a file so you can save
+            throw new Exception("No file found for id "+to.getId());
+        }
+
+        // Sanity check
+        if(file.getLatestRevisionNo() == null) {
+            // TODO: There's no latest revision, something is really wrong, log error.
+            throw new Exception("No revision found for id "+to.getId());
+        }
+
+        RevisionEntity revEntity = em.find(RevisionEntity.class, new RevisionKey(file.getId(), file.getLatestRevisionNo()));
+        if(revEntity == null) {
+            // TODO: Log error, revision should excist
+            throw new Exception("No revision found for id "+to.getId() + " and revision "+file.getLatestRevisionNo());
+        }
+        if(revEntity.getState() != RevisionState.DRAFT) {
+            // TODO: Log error, revision should be a draft
+            throw new Exception("Revision is not a DRAFT");
+        }
+
+        RevisionData data = json.readRevisionDataFromString(revEntity.getData());
+        Configuration config = configRepo.findLatestConfiguration(ConfigurationType.FILE);
+
+        // Latest data is not a DRAFT
+        if(data.getState() != RevisionState.DRAFT) {
+            // TODO: Log error, data discrepancy
+            throw new Exception("Data is not a DRAFT");
+        }
+
+        if (idIntegrityCheck(to, data, config)) {
+            throw new Exception("Id integrity was not maintained");
+        }
+
+        // Check values
+
+        boolean changes = false;
+
+        DateTime time = new DateTime();
+
+        for(Field field : config.getFields().values()) {
+            changes = doFieldChanges(field.getKey(), to, time, data, config) | changes;
+        }
+
+        // TODO: Do CONCAT checking
+
+        if(changes) {
+            // If there were changes save and approve current revision.
             data.setState(RevisionState.APPROVED);
             data.setApprovalDate(new DateTime());
             data.setLastSave(new DateTime());
 
             revEntity.setData(json.serialize(data));
+            revEntity.setState(RevisionState.APPROVED);
+            file.setCurApprovedNo(revEntity.getKey().getRevisionNo());
         }
+    }
 
-        revEntity.setState(RevisionState.APPROVED);
-        return null;
+    @Override
+    public void addFileLinkEvent(Integer targetId, Integer fileId, String key, String path) {
+        FileLinkQueueEntity fileLink = new FileLinkQueueEntity();
+        fileLink.setTargetId(targetId);
+        fileLink.setTargetField(key);
+        fileLink.setFileId(fileId);
+        if(FilenameUtils.getExtension(path).toUpperCase().equals("POR")) {
+            fileLink.setPorFile(true);
+        } else {
+            fileLink.setPorFile(false);
+        }
+        em.persist(fileLink);
     }
 }

@@ -19,7 +19,10 @@ MetkaJS.DialogHandlers.studyFilesHandler = function() {
         context = "FILE";
 
         // Clear values from dialog.
+        $("#fileManagementRowId").val(null);
+        $("#fileManagementRowId").data("handlerId", null);
         $("#"+dialogId+" .dialogValue").val(null);
+        $("#"+dialogId+" .dialogValue").prop("readonly", false);
 
         // Get table content
         var content = MetkaJS.TableHandler.readContent(key);
@@ -72,8 +75,6 @@ MetkaJS.DialogHandlers.studyFilesHandler = function() {
                                 || (config.fields[key].immutable == true
                                     && (to.values[key] !== 'undefined' && to.values[key] != null))) {
                             $("#fileManagementField"+key).prop("readonly", true);
-                        } else {
-                            $("#fileManagementField"+key).prop("readonly", false)
                         }
                     }
 
@@ -87,9 +88,7 @@ MetkaJS.DialogHandlers.studyFilesHandler = function() {
     /**
      * Process file properties dialog with id "fileManagementDialog".
      * Collects all value and sends them to server, then if save is successful closes the dialog.
-     * Server may send back a reference object, if it does then save that row using MetkaJS.TableHandler.saveRow.
-     * Key and context parameters are ignored. Configuration should be found straight from dialog and when row is
-     * saved the row should contain the key anyway.
+     * Server should send back a result object, display result in alert message.
      * @param key Ignored
      * @param context Ignored
      */
@@ -115,73 +114,21 @@ MetkaJS.DialogHandlers.studyFilesHandler = function() {
             data: JSON.stringify(to),
             url: MetkaJS.PathBuilder().add("file").add("save").build()
         }).done(function(data) {
-                if(data != null && data !== 'undefined') {
-                    MetkaJS.TableHandler.saveRow(data);
-                }
+            data = JSON.parse(data);
+            if(data != null && data !== 'undefined') {
+                // TODO: actual error message
+                alert(data.result, "Tallentaminen");
+            }
+        }).fail(function() {
+                // TODO: actual error message
+                alert("Virhe tiedoston tallennuksessa", "Virhe");
         });
 
-        // TODO: Close dialog
-        // TODO: set revision and config data-attributes to null, there's no need to keep that information.
+        $("#"+dialogId).dialog("close");
+        $("#"+dialogId).data("revision", null);
+        $("#"+dialogId).data("config", null);
         return true;
     }
-
-
-
-
-
-
-
-
-
-
-    /**
-     * Forms a row from general dialog and saves it to content using MetkaJS.TableHandler.saveRow function
-     * @param key Key of target CONTAINER field
-     * @param context Configuration context
-     */
-    function processGeneralContainerDialog(key, context) {
-        var body = $("#"+key+"ContainerDialogTable tbody");
-        var row = new Object();
-        row.type = "row";
-        row.rowId = $("#"+key+"ContainerDialogRowId").val();
-        // Handler id is important since it tells if this row was existing or not.
-        row.handlerId = $("#"+key+"ContainerDialogRowId").data("handlerId");
-        row.key = key;
-        row.fields = new Object();
-        // RowId is set when row is added to container
-        for(var i = 0; i < MetkaJS.JSConfig[context][key].subfields.length; i++) {
-            var subfield = MetkaJS.JSConfig[context][key].subfields[i];
-            if(subfield === 'undefined' || subfield == null || subfield == "") {
-                // Sanity check, although this means that something is very wrong
-                continue;
-            } else if(MetkaJS.JSConfig[context][subfield].type == "CONTAINER") {
-                // TODO: Handle recursive CONTAINERS
-                continue;
-            }
-            var input = $("#"+key+"Field"+subfield);
-            var value = new Object;
-            value.type = "value";
-            // TODO: Handle possible value extraction exception
-            value.value = input.val();
-
-            row.fields[subfield] = value;
-        }
-
-        MetkaJS.TableHandler.saveRow(row, context);
-        // TODO: check for missing required information
-        $("#"+key+"ContainerDialog").dialog("close");
-    }
-
-
-
-
-
-
-
-
-
-
-
 
     return {
         show: showFileDialog,

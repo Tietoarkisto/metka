@@ -92,4 +92,8 @@ public class GeneralService {
             }
         });
     }
+
+    public String getRevisionData(Integer id, Integer revision) {
+        return repository.getRevisionData(id, revision);
+    }
 }

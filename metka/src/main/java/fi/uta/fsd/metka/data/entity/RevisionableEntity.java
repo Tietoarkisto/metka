@@ -1,17 +1,11 @@
 package fi.uta.fsd.metka.data.entity;
 
+import fi.uta.fsd.metka.data.entity.key.RevisionKey;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
 import javax.persistence.*;
 
-/**
- * Created with IntelliJ IDEA.
- * User: lasseku
- * Date: 12/10/13
- * Time: 4:11 PM
- * To change this template use File | Settings | File Templates.
- */
 @Entity
 @Table(name = "REVISIONABLE")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -85,6 +79,15 @@ public abstract class RevisionableEntity {
 
     public void setRemovalDate(LocalDate removalDate) {
         this.removalDate = removalDate;
+    }
+
+    // Helper for creating new revisions
+    public RevisionEntity createNextRevision() {
+        if(latestRevisionNo == null) {
+            return new RevisionEntity(new RevisionKey(id, 1));
+        } else {
+            return new RevisionEntity(new RevisionKey(id, latestRevisionNo+1));
+        }
     }
 
     @Override

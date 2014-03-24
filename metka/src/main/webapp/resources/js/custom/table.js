@@ -28,8 +28,12 @@ MetkaJS.DialogHandlers.generalContainerHandler = function() {
      * @param row Existing row for which data should be shown in the dialog.
      */
     function showGeneralContainerDialog(key, handlerId, context) {
-        // Clear all value fields from the dialog. This needs to be done no matter if it's an old row or a new row.
+        // Reset dialog, these are only changed if a row was found so until then we can assume new row.
+        $("#"+key+"ContainerDialogRowId").val(null);
+        $("#"+key+"ContainerDialogRowId").data("handlerId", null);
+
         $("#"+key+"ContainerDialogTable .dialogValue").val(null);
+        $("#"+key+"ContainerDialogTable .dialogValue").prop("readonly", false);
 
         // Get content so we can find the actual data.
         var content = MetkaJS.TableHandler.readContent(key);
@@ -70,15 +74,17 @@ MetkaJS.DialogHandlers.generalContainerHandler = function() {
                     row.fields[subfield].type = "value";
                     row.fields[subfield].value = "";
                 }
+
                 input.val(row.fields[subfield].value);
+
+                if(MetkaJS.JSConfig[context][subfield].editable == false
+                    || (MetkaJS.JSConfig[context][subfield].immutable == true
+                    && (input.val() !== 'undefined' && input.val() != null && input.val() != ""))) {
+                    input.prop("readonly", true);
+                }
             }
         }
-        // No row found or given, assume new row.
-        if(!found) {
-            $("#"+key+"ContainerDialogRowId").val(null);
-            $("#"+key+"ContainerDialogRowId").data("handlerId", null);
-            $("#"+key+"ContainerDialogTable .dialogValue").val(null);
-        }
+
         // Open dialog
         $("#"+key+"ContainerDialog").dialog("open");
     }
@@ -236,6 +242,11 @@ MetkaJS.TableHandler = function() {
             }
             var opener = new DialogOpener(handler, key, rowContent.handlerId, context);
             tr.click(opener);
+            if(rowContent.temporary) {
+                tr.addClass("temporary");
+            } else {
+                tr.removeClass("temporary");
+            }
             for(i = 0; i < field.subfields.length; i++) {
                 var subfield = field.subfields[i];
                 if(MetkaJS.JSConfig[context][subfield].summaryField == false) {
@@ -302,6 +313,11 @@ MetkaJS.TableHandler = function() {
         for(var row = 0; row < content.references.length; row++) {
             var tr = $("<tr>", {class: "pointerClass"});
             var reference = content.references[row];
+            if(reference.temporary) {
+                tr.addClass("temporary");
+            } else {
+                tr.removeClass("temporary");
+            }
             if(reference.handlerId ==='undefined' || reference.handlerId == null) {
                 // Add handler id so reference can be found after editing, these do not affect actual data on serverside in any way
                 reference.handlerId = MetkaJS.Globals.globalId();
