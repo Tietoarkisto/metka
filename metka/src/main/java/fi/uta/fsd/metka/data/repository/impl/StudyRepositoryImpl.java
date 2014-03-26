@@ -6,19 +6,27 @@ import fi.uta.fsd.metka.data.entity.RevisionableEntity;
 import fi.uta.fsd.metka.data.entity.impl.StudyEntity;
 import fi.uta.fsd.metka.data.entity.key.RevisionKey;
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
+import fi.uta.fsd.metka.data.enums.FieldType;
 import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.data.repository.StudyRepository;
 import fi.uta.fsd.metka.data.util.JSONUtil;
+import fi.uta.fsd.metka.data.util.StudyVariablesParser;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.data.container.DataField;
+import fi.uta.fsd.metka.model.data.container.ReferenceContainerDataField;
+import fi.uta.fsd.metka.model.data.container.SavedReference;
+import fi.uta.fsd.metka.model.data.value.SimpleValue;
 import fi.uta.fsd.metka.model.factories.StudyFactory;
 import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
+import spssio.por.PORFile;
+import spssio.por.input.PORReader;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -149,6 +157,8 @@ public class StudyRepositoryImpl implements StudyRepository {
         }
 
         RevisionData data = json.readRevisionDataFromString(entity.getData());
+        Configuration config = configRepo.findConfiguration(data.getConfiguration());
+        DateTime time = new DateTime();
         boolean changes = false;
 
         // Check for existing FileLinkQueue events
@@ -157,14 +167,53 @@ public class StudyRepositoryImpl implements StudyRepository {
                 .setParameter("id", id)
                 .getResultList();
 
-        // Check that references are found from data
-        // Add missing references
+        // For each FileLinkQueueEntity
+        PORReader porReader = new PORReader();
+        for(FileLinkQueueEntity event : events) {
+            Field field = config.getField(event.getTargetField());
+            // Sanity check, should field actually exist in this data, is it not a REFERENCECONTAINER or is it a subfield (handle those somewhere else
+            if(field == null || field.getType() != FieldType.REFERENCECONTAINER || field.getSubfield()) {
+                // Field should not exist, is not a REFERENCECONTAINER or is a subfield, can't add reference.
+                continue;
+            }
 
-        // Check for POR-files
-        // Parse POR-files
-        // Merge POR-data to RevisionData
+            // Check that references are found from data
+            ReferenceContainerDataField references = getReferenceContainerDataFieldFromRevisionData(data, event.getTargetField(), config);
+            if(references == null) { // Missing REFERENCECONTAINER, add container
+                references = new ReferenceContainerDataField(event.getTargetField());
+            }
+            boolean found = false;
+            for(SavedReference reference : references.getReferences()) {
+                if(!reference.hasValue()) {
+                    continue;
+                }
+                if(reference.valueEquals(event.getFileId().toString())) {
+                    found = true;
+                    break;
+                }
+            }
+            // Reference was not found
+            if(!found) {
+                // Add missing reference
+                SavedReference reference = new SavedReference(event.getTargetField(), data.getNewRowId());
+                reference.setModifiedValue(setSimpleValue(createSavedValue(time), event.getFileId().toString()));
+                references.getReferences().add(reference);
+                changes = true;
+                // Put references to data just in case it was not already there.
+                data.putField(references);
+            }
+            // Check for POR-files
+            changes = StudyVariablesParser.merge(data, event.getType(), event.getPath(), config) | changes;
+        }
 
         // Save RevisionData back to DB
+        if(changes) {
+            entity.setData(json.serialize(data));
+        }
+
         // Remove FileLinkQueue events
+        em.createQuery("DELETE FROM FileLinkQueueEntity e WHERE e.targetId=:id")
+                .setParameter("id", id)
+                .executeUpdate();
     }
 }

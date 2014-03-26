@@ -263,6 +263,7 @@ public class StudyController {
         return REDIRECT_VIEW+single.getId()+"/"+single.getRevision();
     }
 
+    @SuppressWarnings("fallthrough")
     private JSONObject makeJSConfig(Configuration config) {
         // Form CONTAINER config json
         JSONObject jsConfig = new JSONObject();

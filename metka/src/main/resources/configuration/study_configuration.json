@@ -146,6 +146,174 @@
 					"value": "2"
 				}
 			]
+		},
+		"termsofuse_list": {
+			"key": "termsofuse_list",
+			"includeEmpty": true,
+			"type": "VALUE",
+			"options": [
+				{
+					"value": "1"
+				},
+				{
+					"value": "2"
+				},
+				{
+					"value": "3"
+				},
+				{
+					"value": "4"
+				},
+				{
+					"value": "5"
+				}
+			]
+		},
+		"depositortype_list": {
+			"key": "depositortype_list",
+			"includeEmpty": true,
+			"type": "VALUE",
+			"options": [
+				{
+					"value": "1"
+				},
+				{
+					"value": "2"
+				},
+				{
+					"value": "3"
+				}
+			]
+		},
+		"newtermsofuse_list": {
+			"key": "newtermsofuse_list",
+			"includeEmpty": true,
+			"type": "VALUE",
+			"options": [
+				{
+					"value": "1"
+				},
+				{
+					"value": "2"
+				},
+				{
+					"value": "3"
+				},
+				{
+					"value": "4"
+				}
+			]
+		},
+		"agreementtype_list": {
+			"key": "agreementtype_list",
+			"includeEmpty": true,
+			"type": "VALUE",
+			"options": [
+				{
+					"value": "1"
+				},
+				{
+					"value": "2"
+				},
+				{
+					"value": "3"
+				},
+				{
+					"value": "4"
+				},
+				{
+					"value": "5"
+				}
+			]
+		},
+		"topicvocab_list": {
+			"key": "topicvocab_list",
+			"type": "REFERENCE",
+			"options": [],
+			"reference": ""
+		},
+		"topic_list": {
+			"key": "topic_list",
+			"type": "REFERENCE",
+			"options": [],
+			"reference": ""
+		},
+		"timeperiodevent_list": {
+			"key": "start_end_single"
+		},
+		"start_end_single": {
+			"key": "start_end_single",
+			"type": "VALUE",
+			"options": [
+				{
+					"value": "1"
+				},
+				{
+					"value": "2"
+				},
+				{
+					"value": "3"
+				}
+			]
+		},
+		"universeclusion_list": {
+			"key": "universeclusion_list",
+			"type": "VALUE",
+			"options": [
+				{
+					"value": "1"
+				},
+				{
+					"value": "2"
+				}
+			]
+		},
+		"colldateevent_list": {
+			"key": "start_end_single"
+		},
+		"analysisunitvocab_list": {
+			"key": "analysisunitvocab_list",
+			"type": "LITERAL",
+			"default": "DDI CV",
+			"options": [
+				{
+					"value": "DDI CV"
+				}
+			]
+		},
+		"analysisunit_list": {
+			"key": "analysisunit_list",
+			"type": "REFERENCE",
+			"options": [],
+			"reference": "",
+			"includeEmpty": true
+		},
+		"authortype_list": {
+			"key": "analysisunit_list",
+			"type": "REFERENCE",
+			"options": [],
+			"reference": ""
+		},
+		"statisticstype_list": {
+			"key": "statisticstype_list",
+			"type": "VALUE",
+			"options": [
+				{
+					"value": "vald"
+				},
+				{
+					"value": "min"
+				},
+				{
+					"value": "max"
+				},
+				{
+					"value": "mean"
+				},
+				{
+					"value": "stdev"
+				}
+			]
 		}
 	},
 	"references": {
@@ -427,6 +595,687 @@
 			"choicelist": "varpublic_list",
 			"section": "basic_information"
 		},
+		"termsofuse": {
+			"key": "termsofuse",
+			"translatable": false,
+			"required": true,
+			"type": "CHOICE",
+			"choicelist": "termsofuse_list",
+			"section": "deposit_agreement"
+		},
+		"agreementdate": {
+			"key": "agreementdate",
+			"translatable": false,
+			"type": "DATE",
+			"section": "deposit_agreement"
+		},
+		"triggerdate": {
+			"key": "triggerdate",
+			"translatable": false,
+			"type": "DATE",
+			"section": "deposit_agreement"
+		},
+		"termsofusechangedate": {
+			"key": "termsofusechangedate",
+			"translatable": false,
+			"type": "DATE",
+			"section": "deposit_agreement"
+		},
+		"depositortype": {
+			"key": "depositortype",
+			"translatable": false,
+			"required": true,
+			"type": "CHOICE",
+			"choicelist": "depositortype_list",
+			"section": "deposit_agreement"
+		},
+		"triggerpro": {
+			"key": "triggerpro",
+			"translatable": false,
+			"type": "STRING",
+			"section": "deposit_agreement"
+		},
+		"newtermsofuse": {
+			"key": "newtermsofuse",
+			"translatable": false,
+			"type": "CHOICE",
+			"choicelist": "newtermsofuse_list",
+			"section": "deposit_agreement"
+		},
+		"agreementtype": {
+			"key": "agreementtype",
+			"translatable": false,
+			"required": true,
+			"type": "CHOICE",
+			"choicelist": "agreementtype_list",
+			"section": "deposit_agreement"
+		},
+		"triggerlabel": {
+			"key": "triggerlabel",
+			"translatable": false,
+			"type": "STRING",
+			"section": "deposit_agreement",
+			"multiline": false
+		},
+		"agreement": {
+			"key": "agreement",
+			"_comment": "TODO: Tässä pitäisi olla linkki sopimukseen.",
+			"translatable": false,
+			"type": "STRING",
+			"section": "deposit_agreement",
+			"multiline": false
+		},
+		"agreementnotes": {
+			"key": "agreementnotes",
+			"translatable": false,
+			"type": "STRING",
+			"section": "deposit_agreement",
+			"multiline": true
+		},
+		"permission": {
+			"key": "permission",
+			"translatable": false,
+			"type": "STRING",
+			"section": "deposit_agreement",
+			"multiline": true
+		},
+		"specialtermsofuse": {
+			"key": "specialtermsofuse",
+			"translatable": false,
+			"type": "STRING",
+			"section": "deposit_agreement",
+			"multiline": true
+		},
+		"agreementfsdnotes": {
+			"key": "agreementfsdnotes",
+			"translatable": false,
+			"type": "STRING",
+			"section": "deposit_agreement",
+			"multiline": true
+		},
+		"alttitle": {
+			"key": "alttitle",
+			"translatable": false,
+			"type": "STRING",
+			"section": "study_description",
+			"multiline": false
+		},
+		"partitles": {
+			"key": "partitles",
+			"translatable": false,
+			"type": "CONTAINER",
+			"section": "study_description",
+			"subfields": [
+				"partitle",
+				"partitlelang"
+			]
+		},
+		"partitle": {
+			"key": "partitle",
+			"translatable": false,
+			"type": "STRING",
+			"section": "study_description",
+			"subfield": true
+		},
+		"partitlelang": {
+			"key": "partitlelang",
+			"translatable": false,
+			"type": "STRING",
+			"section": "study_description",
+			"subfield": true
+		},
+		"authors": {
+			"key": "authors",
+			"translatable": false,
+			"type": "CONTAINER",
+			"section": "study_description",
+			"subfields": [
+				"authortype",
+				"author",
+				"affiliation"
+			]
+		},
+		"authortype": {
+			"key": "authortype",
+			"translatable": false,
+			"required": true,
+			"type": "CHOICE",
+			"choicelist": "authortype_list",
+			"section": "deposit_agreement",
+			"subfield": true,
+			"summaryField": false
+		},
+		"author": {
+			"key": "author",
+			"translatable": false,
+			"type": "STRING",
+			"section": "study_description",
+			"subfield": true
+		},
+		"affiliation": {
+			"key": "affiliation",
+			"translatable": false,
+			"type": "STRING",
+			"section": "study_description",
+			"subfield": true
+		},
+		"otherauthors": {
+			"key": "otherauthors",
+			"translatable": false,
+			"type": "CONTAINER",
+			"section": "study_description",
+			"subfields": [
+				"authortype",
+				"otherauthor",
+				"otherauthoraffiliation"
+			]
+		},
+		"otherauthor": {
+			"key": "otherauthor",
+			"translatable": false,
+			"type": "STRING",
+			"section": "study_description",
+			"subfield": true
+		},
+		"otherauthoraffiliation": {
+			"key": "otherauthoraffiliation",
+			"translatable": false,
+			"type": "STRING",
+			"section": "study_description",
+			"subfield": true
+		},
+		"producers": {
+			"key": "producers",
+			"translatable": false,
+			"type": "CONTAINER",
+			"section": "study_description",                                   
+			"subfields": [
+				"producer",
+				"producerid",
+				"produceridtype",
+				"producerrole",
+				"projectnr",
+				"producerabbr"
+			]
+		},
+		"producer": {
+			"key": "producer",
+			"translatable": false,
+			"type": "STRING",
+			"section": "study_description",
+			"subfield": true
+		},
+		"producerid": {
+			"key": "producerid",
+			"translatable": false,
+			"type": "STRING",
+			"section": "study_description",
+			"subfield": true
+		},
+		"produceridtype": {
+			"key": "produceridtype",
+			"translatable": false,
+			"type": "STRING",
+			"section": "study_description",
+			"subfield": true
+		},
+		"producerrole": {
+			"key": "producerrole",
+			"translatable": false,
+			"type": "STRING",
+			"section": "study_description",
+			"subfield": true
+		},
+		"projectnr": {
+			"key": "projectnr",
+			"translatable": false,
+			"type": "STRING",
+			"section": "study_description",
+			"subfield": true
+		},
+		"producerabbr": {
+			"key": "producerabbr",
+			"translatable": false,
+			"type": "STRING",
+			"section": "study_description",
+			"subfield": true
+		},
+		"biblcit": {
+			"key": "biblcit",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"section": "study_description",
+			"multiline": true
+		},
+		"keywords": {
+			"key": "keywords",
+			"translatable": false,
+			"type": "CONTAINER",
+			"section": "study_description",
+			"subfields": [
+				"keywordvocab",
+				"keyword",
+				"keywordnovocab",
+				"keywordvocaburi",
+				"keyworduri"
+			]
+		},
+		"keywordvocab": {
+			"key": "keywordvocab",
+			"translatable": false,
+			"type": "STRING",
+			"section": "study_description",
+			"subfield": true
+		},
+		"keyword": {
+			"key": "keyword",
+			"_comment": "TODO: Edit box added instead of drop down list, will be read to drop down list from vocabulary later?",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"section": "study_description",
+			"subfield": true
+		},
+		"keywordnovocab": {
+			"key": "keywordnovocab",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"section": "study_description",
+			"subfield": true
+		},
+		"keywordvocaburi": {
+			"key": "keywordvocaburi",
+			"translatable": false,
+			"type": "STRING",
+			"section": "study_description",
+			"subfield": true
+		},
+		"keyworduri": {
+			"key": "keyworduri",
+			"translatable": false,
+			"type": "STRING",
+			"section": "study_description",
+			"subfield": true
+		},
+		"topics": {
+			"key": "topics",
+			"translatable": false,
+			"type": "CONTAINER",
+			"section": "study_description",
+			"subfields": [
+				"topicvocab",
+				"topic"
+			]
+		},
+		"topicvocab": {
+			"key": "topicvocab",
+			"translatable": false,
+			"required": true,
+			"type": "CHOICE",
+			"choicelist": "topicvocab_list",
+			"section": "study_description",
+			"subfield": true
+		},
+		"topic": {
+			"key": "topic",
+			"translatable": false,
+			"required": true,
+			"type": "CHOICE",
+			"choicelist": "topic_list",
+			"section": "study_description",
+			"subfield": true
+		},
+		"timeperiods": {
+			"key": "timeperiods",
+			"translatable": false,
+			"type": "CONTAINER",
+			"section": "study_description",
+			"subfields": [
+				"timeperiod",
+				"timeperiodtext",
+				"timeperiodevent"
+			]
+		},
+		"timeperiod": {
+			"key": "timeperiod",
+			"translatable": false,
+			"type": "DATE",
+			"section": "study_description",
+			"subfield": true
+		},
+		"timeperiodtext": {
+			"key": "timeperiodtext",
+			"translatable": false,
+			"type": "STRING",
+			"section": "study_description",
+			"subfield": true
+		},
+		"timeperiodevent": {
+			"key": "timeperiodevent",
+			"translatable": false,
+			"type": "CHOICE",
+			"choicelist": "timeperiodevent_list",
+			"section": "study_description",
+			"subfield": true
+		},
+		"countries": {
+			"key": "countries",
+			"_comment": "TODO: Checkbox to define if country is Finland is missing?",
+			"translatable": false,
+			"type": "CONTAINER",
+			"section": "study_description",
+			"subfields": [
+				"country",
+				"countryabbr"
+			]
+		},
+		"country": {
+			"key": "country",
+			"_comment": "TODO: link to reference missing?",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"section": "study_description",
+			"subfield": true
+		},
+		"countryabbr": {
+			"key": "countryabbr",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"section": "study_description",
+			"subfield": true
+		},
+		"universes": {
+			"key": "universes",
+			"translatable": false,
+			"type": "CONTAINER",
+			"section": "study_description",
+			"subfields": [
+				"universe",
+				"universeclusion"
+			]
+		},
+		"universe": {
+			"key": "universe",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"section": "study_description",
+			"subfield": true
+		},
+		"universeclusion": {
+			"key": "universeclusion",
+			"translatable": false,
+			"type": "CHOICE",
+			"choicelist": "universeclusion_list",
+			"section": "study_description",
+			"subfield": true
+		},
+		"geogcovers": {
+			"key": "geogcovers",
+			"translatable": false,
+			"type": "CONTAINER",
+			"section": "study_description",
+			"subfields": [
+				"geogcover"
+			]
+		},
+		"geogcover": {
+			"key": "geogcover",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"section": "study_description",
+			"subfield": true
+		},
+		"colltime": {
+			"key": "colltime",
+			"translatable": false,
+			"type": "CONTAINER",
+			"section": "study_description",
+			"subfields": [
+				"colldate",
+				"colldatetext",
+				"colldateevent"
+			]
+		},
+		"colldate": {
+			"key": "colldate",
+			"_comment": "TODO: conditionally required.",
+			"translatable": false,
+			"type": "DATE",
+			"section": "study_description",
+			"subfield": true
+		},
+		"colldatetext": {
+			"key": "colldatetext",
+			"_comment": "TODO: conditionally required.",
+			"translatable": false,
+			"type": "STRING",
+			"section": "study_description",
+			"subfield": true
+		},
+		"colldateevent": {
+			"key": "colldateevent",
+			"translatable": false,
+			"type": "CHOICE",
+			"choicelist": "colldateevent_list",
+			"section": "study_description",
+			"subfield": true
+		},
+		"collectors": {
+			"key": "collectors",
+			"translatable": false,
+			"type": "CONTAINER",
+			"section": "study_description",
+			"subfields": [
+				"authortype",
+				"collector",
+				"collectoraffiliation"
+			]
+		},
+		"collector": {
+			"key": "collector",
+			"translatable": false,
+			"type": "STRING",
+			"section": "study_description",
+			"subfield": true
+		},
+		"collectoraffiliation": {
+			"key": "collectoraffiliation",
+			"translatable": false,
+			"type": "STRING",
+			"section": "study_description",
+			"subfield": true
+		},
+		"analysis": {
+			"key": "analysis",
+			"translatable": false,
+			"type": "CONTAINER",
+			"section": "study_description",
+			"subfields": [
+				"topicvocab",
+				"topic"
+			]
+		},
+		"timemethods": {
+			"key": "timemethods",
+			"translatable": false,
+			"type": "CONTAINER",
+			"section": "study_description",
+			"subfields": [
+				"topicvocab",
+				"topic"
+			]
+		},
+		"collmodes": {
+			"key": "collmodes",
+			"translatable": false,
+			"type": "CONTAINER",
+			"section": "study_description",
+			"subfields": [
+				"topicvocab",
+				"topic"
+			]
+		},
+		"instruments": {
+			"key": "instruments",
+			"translatable": false,
+			"type": "CONTAINER",
+			"section": "study_description",
+			"subfields": [
+				"topicvocab",
+				"topic"
+			]
+		},
+		"sampprocs": {
+			"key": "sampprocs",
+			"translatable": false,
+			"type": "CONTAINER",
+			"section": "study_description",
+			"subfields": [
+				"topicvocab",
+				"topic"
+			]
+		},
+		"resprate": {
+			"key": "resprate",
+			"translatable": false,
+			"type": "STRING",
+			"section": "study_description"
+		},
+		"datasource": {
+			"key": "datasource",
+			"translatable": false,
+			"type": "STRING",
+			"multiline": true,
+			"section": "study_description"
+		},
+		"weight": {
+			"key": "weight",
+			"translatable": false,
+			"type": "STRING",
+			"section": "study_description"
+		},
+		"weightyesno": {
+			"key": "weightyesno",
+			"translatable": false,
+			"type": "BOOLEAN",
+			"section": "study_description"
+		},
+		"dataprosessing": {
+			"key": "dataprosessing",
+			"translatable": false,
+			"type": "STRING",
+			"multiline": true,
+			"section": "study_description"
+		},
+		"collsize": {
+			"key": "collsize",
+			"translatable": false,
+			"type": "STRING",
+			"multiline": true,
+			"section": "study_description"
+		},
+		"complete": {
+			"key": "complete",
+			"translatable": false,
+			"type": "STRING",
+			"multiline": true,
+			"section": "study_description"
+		},
+		"disclaimer": {
+			"key": "disclaimer",
+			"translatable": false,
+			"type": "STRING",
+			"multiline": true,
+			"section": "study_description"
+		},
+		"datasetnotes": {
+			"key": "datasetnotes",
+			"translatable": false,
+			"type": "STRING",
+			"multiline": true,
+			"section": "study_description"
+		},
+		"appraisal": {
+			"key": "appraisal",
+			"translatable": false,
+			"type": "STRING",
+			"multiline": true,
+			"section": "study_description"
+		},
+		"relatedmaterials": {
+			"key": "relatedmaterials",
+			"translatable": false,
+			"type": "CONTAINER",
+			"section": "study_description",
+			"subfields": [
+				"relatedmaterial"
+			]
+		},
+		"relatedmaterial": {
+			"key": "relatedmaterial",
+			"translatable": false,
+			"type": "STRING",
+			"multiline": true,
+			"section": "study_description",
+			"subfield": true
+		},
+		"othermaterials": {
+			"key": "othermaterials",
+			"translatable": false,
+			"type": "CONTAINER",
+			"section": "study_description",
+			"subfields": [
+				"othermaterialuri",
+				"othermateriallabel",
+				"othermaterialtext"
+			]
+		},
+		"othermaterialuri": {
+			"key": "othermaterialuri",
+			"translatable": false,
+			"type": "STRING",
+			"section": "study_description",
+			"subfield": true
+		},
+		"othermateriallabel": {
+			"key": "othermateriallabel",
+			"translatable": false,
+			"type": "STRING",
+			"multiline": true,
+			"section": "study_description",
+			"subfield": true
+		},
+		"othermaterialtext": {
+			"key": "othermaterialtext",
+			"translatable": false,
+			"type": "STRING",
+			"multiline": true,
+			"section": "study_description",
+			"subfield": true
+		},
+		"publicationcomments": {
+			"key": "publicationcomments",
+			"translatable": false,
+			"type": "CONTAINER",
+			"section": "study_description",
+			"subfields": [
+				"publicationcomment"
+			]
+		},
+		"publicationcomment": {
+			"key": "publicationcomment",
+			"translatable": false,
+			"type": "STRING",
+			"multiline": true,
+			"section": "study_description",
+			"subfield": true
+		},
 		"files": {
 			"key": "files",
 			"translatable": false,
@@ -450,7 +1299,7 @@
 			"key": "cbattachments",
 			"translatable": false,
 			"type": "CONTAINER",
-			"section": "basic_information",
+			"section": "codebook",
 			"showSaveInfo": true,
 			"subfields": [
 				"cbattachmentlocation",
@@ -473,6 +1322,206 @@
 			"type": "STRING",
 			"multiline": true,
 			"section": "codebook",
+			"subfield": true
+		},
+		"variables": {
+			"key": "variables",
+			"translatable": false,
+			"type": "CONTAINER",
+			"section": "variables",
+			"showSaveInfo": true,
+			"subfields": [
+				"varname",
+				"varid",
+				"varlabel",
+				"qstnlit",
+				"preqtxt",
+				"postqtxt",
+				"ivuinstr",
+				"varnotes",
+				"vartext",
+				"varsecurity",
+				"categories",
+				"statistics"
+			]
+		},
+		"varname": {
+			"key": "varname",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"editable": false,
+			"immutable": true,
+			"section": "variables",
+			"subfield": true
+		},
+		"varid": {
+			"key": "varid",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"editable": false,
+			"immutable": true,
+			"section": "variables",
+			"subfield": true
+		},
+		"varlabel": {
+			"key": "varlabel",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"editable": false,
+			"immutable": true,
+			"section": "variables",
+			"subfield": true
+		},
+		"qstnlit": {
+			"_comment": "TODO: Should be a container.",
+			"key": "qstnlit",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"multiline": true,
+			"section": "variables",
+			"subfield": true
+		},
+		"preqtxt": {
+			"_comment": "TODO: Should be a container.",
+			"key": "preqtxt",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"multiline": true,
+			"section": "variables",
+			"subfield": true
+		},
+		"postqtxt": {
+			"_comment": "TODO: Should be a container.",
+			"key": "postqtxt",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"multiline": true,
+			"section": "variables",
+			"subfield": true
+		},
+		"ivuinstr": {
+			"_comment": "TODO: Should be a container.",
+			"key": "ivuinstr",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"multiline": true,
+			"section": "variables",
+			"subfield": true
+		},
+		"varnotes": {
+			"_comment": "TODO: Should be a container.",
+			"key": "varnotes",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"multiline": true,
+			"section": "variables",
+			"subfield": true
+		},
+		"vartext": {
+			"_comment": "TODO: Should be a container.",
+			"key": "vartext",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"multiline": true,
+			"section": "variables",
+			"subfield": true
+		},
+		"varsecurity": {
+			"_comment": "Should this be a CHOICE instead?",
+			"key": "varsecurity",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"multiline": true,
+			"section": "variables",
+			"subfield": true
+		},
+		"categories": {
+			"key": "categories",
+			"translatable": false,
+			"type": "CONTAINER",
+			"section": "variables",
+			"showSaveInfo": true,
+			"subfields": [
+				"categoryvalue",
+				"categorylabel",
+				"categorystat"
+			],
+			"subfield": true
+		},
+		"categoryvalue": {
+			"_comment": "Should be a REAL instead",
+			"key": "categoryvalue",
+			"translatable": false,
+			"required": true,
+			"editable": false,
+			"immutable": true,
+			"type": "STRING",
+			"section": "variables",
+			"subfield": true
+		},
+		"categorylabel": {
+			"key": "categorylabel",
+			"translatable": false,
+			"required": true,
+			"editable": false,
+			"immutable": true,
+			"type": "STRING",
+			"section": "variables",
+			"subfield": true
+		},
+		"categorystat": {
+			"_comment": "Should be an INTEGER instead",
+			"key": "categorystat",
+			"translatable": false,
+			"required": true,
+			"editable": false,
+			"immutable": true,
+			"type": "STRING",
+			"section": "variables",
+			"subfield": true
+		},
+		"statistics": {
+			"key": "statistics",
+			"translatable": false,
+			"type": "CONTAINER",
+			"section": "variables",
+			"showSaveInfo": true,
+			"subfields": [
+				"statisticstype",
+				"statisticsvalue"
+			],
+			"subfield": true
+		},
+		"statisticstype": {
+			"key": "statisticstype",
+			"translatable": false,
+			"required": true,
+			"editable": false,
+			"immutable": true,
+			"type": "CHOICE",
+			"choicelist": "statisticstype_list",
+			"section": "variables",
+			"subfield": true
+		},
+		"statisticsvalue": {
+			"_comment": "Should be a REAL instead",
+			"key": "statisticsvalue",
+			"translatable": false,
+			"required": true,
+			"editable": false,
+			"immutable": true,
+			"type": "STRING",
+			"section": "variables",
 			"subfield": true
 		}
 	}

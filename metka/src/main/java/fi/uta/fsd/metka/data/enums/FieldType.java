@@ -11,6 +11,7 @@ public enum FieldType {
     STRING,
     INTEGER,
     REAL,
+    BOOLEAN,
     REFERENCE,
     DERIVED,
     CONTAINER,

@@ -513,7 +513,7 @@ public class ModelAccessUtil {
                 continue;
             } else if(reference.optString("value", null) != null) {
                 // There is a value, check to see if it's the same as old value
-                if(savedReference.getValue() != null && savedReference.getValue().getValue() != null && savedReference.getValue().getValue().equals(reference.getString("value"))) {
+                if(savedReference.hasValue() && savedReference.valueEquals(reference.getString("value"))) {
                     // Old value and new value are same, no changes
                     continue;
                 } else {
@@ -729,9 +729,8 @@ public class ModelAccessUtil {
      */
     public static Integer extractIntegerSimpleValue(SavedDataField field) {
         Integer integer = null;
-        if(field != null && field.getValue() != null && field.getValue().getValue() != null) {
-            String value = ((SimpleValue)(field.getValue().getValue())).getValue();
-            integer = stringToInteger(value);
+        if(field != null && field.hasValue()) {
+            integer = stringToInteger(field.getActualValue());
         }
 
         return integer;
@@ -749,15 +748,15 @@ public class ModelAccessUtil {
      */
     public static String extractStringSimpleValue(SavedDataField field) {
         String string = null;
-        if(field != null && field.getValue() != null && field.getValue().getValue() != null) {
-            string = ((SimpleValue)(field.getValue().getValue())).getValue();
+        if(field != null && field.hasValue()) {
+            string = field.getActualValue();
         }
 
         return string;
     }
 
     /*
-    * This clears existing values from given SavedValue and inserts a new SimpleValue with the given
+    * This clears existing value from given SavedValue and inserts a new SimpleValue with the given
     * value.
     *
     * WARNING: This does not in any way check what type of value this field is supposed to have

@@ -7,6 +7,7 @@ import fi.uta.fsd.metka.data.entity.impl.FileEntity;
 import fi.uta.fsd.metka.data.entity.key.RevisionKey;
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.enums.RevisionState;
+import fi.uta.fsd.metka.data.enums.VariableDataType;
 import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.data.repository.FileRepository;
 import fi.uta.fsd.metka.data.util.JSONUtil;
@@ -191,10 +192,11 @@ public class FileRepositoryImpl implements FileRepository {
         fileLink.setTargetId(targetId);
         fileLink.setTargetField(key);
         fileLink.setFileId(fileId);
+        fileLink.setPath(path);
         if(FilenameUtils.getExtension(path).toUpperCase().equals("POR")) {
-            fileLink.setPorFile(true);
+            fileLink.setType(VariableDataType.POR);
         } else {
-            fileLink.setPorFile(false);
+            fileLink.setType(null);
         }
         em.persist(fileLink);
     }

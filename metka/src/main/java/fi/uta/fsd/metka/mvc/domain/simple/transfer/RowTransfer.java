@@ -68,7 +68,7 @@ public class RowTransfer {
             } else {
                 SavedDataField saved = (SavedDataField)field;
                 // TODO: Handle derived values
-                row.values.put(saved.getKey(),((SimpleValue)saved.getValue().getValue()).getValue());
+                row.values.put(saved.getKey(),saved.getActualValue());
             }
         }
         return row;
@@ -98,7 +98,7 @@ public class RowTransfer {
                 SavedDataField saved = (SavedDataField)field;
                 JSONObject value = new JSONObject();
                 value.put("type", "value");
-                value.put("value", ((SimpleValue)saved.getValue().getValue()).getValue());
+                value.put("value", saved.getActualValue());
                 // TODO: Handle derived values
                 values.put(saved.getKey(), value);
             }
@@ -113,7 +113,7 @@ public class RowTransfer {
         json.put("key", reference.getKey());
         json.put("rowId", reference.getRowId());
         if(reference.getValue() != null) {
-            json.put("value", (SimpleValue)reference.getValue().getValue());
+            json.put("value", reference.getActualValue());
             json.put("savedAt", reference.getValue().getSavedAt());
             json.put("savedBy", reference.getValue().getSavedBy());
         } else {

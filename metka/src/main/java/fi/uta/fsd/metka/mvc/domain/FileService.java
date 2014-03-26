@@ -63,7 +63,7 @@ public class FileService {
         JSONObject json = new JSONObject();
         json.put("type", "reference");
         json.put("key", key);
-        json.put("value", getSavedDataFieldFromRevisionData(revision, "fileno").getValue().getValue());
+        json.put("value", getSavedDataFieldFromRevisionData(revision, "fileno").getActualValue());
 
         /*for(DataField field : container.getFields().values()) {
             if(field instanceof ContainerDataField) {
@@ -75,7 +75,7 @@ public class FileService {
                 SavedDataField saved = (SavedDataField)field;
                 JSONObject value = new JSONObject();
                 value.put("type", "value");
-                value.put("value", ((SimpleValue)saved.getValue().getValue()).getValue());
+                value.put("value", ((SimpleValue)saved.getActualValue());
                 // TODO: Handle derived values
                 values.put(saved.getKey(), value);
             }

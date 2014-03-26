@@ -1,3 +1,10 @@
+.pointerClass {
+    cursor: auto;
+}
+.pointerClass:hover {
+    cursor: pointer;
+}
+
 .rightAlignCell {
     text-align: right;
 }
@@ -105,4 +112,51 @@ table.revisionTable tr  .changeTableColumn {
 }
 table.revisionTable tr  .changeTableColumn:last-of-type {
     min-width: 0px;
+}
+
+/* Variables */
+#variablesList {
+    display: inline-block;
+    width: 49%;
+}
+#variableView {
+    display: inline-block;
+    float:right;
+    width: 49%;
+}
+
+#variablesList>div {
+    border-bottom: 1px solid #eaeaea;
+}
+#variablesList>div:last-of-type {
+    border-bottom: none;
+}
+#variablesList>div:hover {
+    background-color: #eaeaea;
+}
+#variablesList .studyVariableAlternate {
+    background-color: #f8f8f8;
+}
+
+#variableView table {
+    width: 100%;
+}
+#variableView table .labelColumn {
+    width: 110px;
+    vertical-align: middle;
+    border-right: 1px solid #eaeaea;
+}
+#variableView table .textAreaLabel {
+    width: 110px;
+    padding-top: 5px;
+    vertical-align: top;
+}
+
+#variableView table textarea {
+    width: 100%;
+    min-height: 3em;
+}
+
+#variableView table tr td:last-of-type {
+    padding-left: 3px;
 }

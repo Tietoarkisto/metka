@@ -1,5 +1,7 @@
 package fi.uta.fsd.metka.data.entity;
 
+import fi.uta.fsd.metka.data.enums.VariableDataType;
+
 import javax.persistence.*;
 
 @Entity
@@ -21,8 +23,12 @@ public class FileLinkQueueEntity {
     @Column(name = "FILE_ID")
     private Integer fileId;
 
-    @Column(name = "POR_FILE")
-    private Boolean porFile;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "VARIABLE_TYPE")
+    private VariableDataType type;
+
+    @Column(name = "PATH")
+    private String path;
 
     public Integer getId() {
         return id;
@@ -56,11 +62,19 @@ public class FileLinkQueueEntity {
         this.fileId = fileId;
     }
 
-    public Boolean getPorFile() {
-        return (porFile == null) ? false : porFile;
+    public VariableDataType getType() {
+        return type;
     }
 
-    public void setPorFile(Boolean porFile) {
-        this.porFile = (porFile == null) ? false : porFile;
+    public void setType(VariableDataType type) {
+        this.type = type;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }

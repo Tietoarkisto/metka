@@ -1,6 +1,7 @@
 package fi.uta.fsd.metka.model.data.container;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.data.util.ModelAccessUtil;
 import org.joda.time.DateTime;
@@ -56,10 +57,13 @@ public class DataRow implements ModelAccessUtil.PathNavigable {
         return fields;
     }
 
+    // Helper methods
+    @JsonIgnore
     public DataField getField(String key) {
         return fields.get(key);
     }
 
+    @JsonIgnore
     public void putField(DataField field) {
         fields.put(field.getKey(), field);
     }

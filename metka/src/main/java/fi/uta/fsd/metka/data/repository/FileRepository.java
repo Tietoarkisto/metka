@@ -7,9 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 
-@Transactional(readOnly = true)
+@Transactional
 public interface FileRepository {
-    @Transactional(readOnly = false) public RevisionData newFileRevisionable(String path) throws IOException;
+    public RevisionData newFileRevisionable(String path) throws IOException;
 
     /**
      * Return a DRAFT revision for given FILE.
@@ -18,7 +18,7 @@ public interface FileRepository {
      * @return RevisionData for DRAFT revision for given file, if none exists one is created.
      * @throws IOException
      */
-    @Transactional(readOnly = false) public RevisionData getEditableRevision(Integer id) throws IOException;
+    public RevisionData getEditableRevision(Integer id) throws IOException;
 
     /**
      * Takes given TransferObject and saves possible changes to FILE-object.
@@ -28,7 +28,7 @@ public interface FileRepository {
      * @return
      * @throws Exception
      */
-    @Transactional(readOnly = false) public void saveAndApprove(TransferObject to) throws Exception;
+    public void saveAndApprove(TransferObject to) throws Exception;
 
     /**
      * Adds a row to FILE_LINK_QUEUE for future checking that a reference actually exists in target revisionable.

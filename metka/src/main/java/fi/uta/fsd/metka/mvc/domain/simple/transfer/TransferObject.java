@@ -110,9 +110,9 @@ public class TransferObject {
                 }
             } else {
                 // Since we don't care about types at the UI that much we can push all values to the map as Strings
-                SavedDataField container = getSavedDataFieldFromRevisionData(data, field.getKey());
-                if(container != null && container.getValue() != null && container.getValue().getValue() != null) {
-                    to.setByKey(field.getKey(), ((SimpleValue)container.getValue().getValue()).getValue());
+                SavedDataField saved = (SavedDataField)field;
+                if(saved != null && saved.hasValue()) {
+                    to.setByKey(saved.getKey(), saved.getActualValue());
                 }
             }
         }
