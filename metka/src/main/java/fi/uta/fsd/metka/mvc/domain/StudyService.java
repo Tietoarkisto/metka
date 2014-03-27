@@ -111,7 +111,12 @@ public class StudyService {
     }
 
     public boolean approveStudy(TransferObject single) {
-        // TODO: Request validation and approval of the given study.
-        return false;
+        try {
+            return repository.approveStudy(single.getId());
+        } catch(Exception ex) {
+            // TODO: better exception handling with messages to the user
+            ex.printStackTrace();
+            return false;
+        }
     }
 }

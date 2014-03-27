@@ -10,7 +10,7 @@
             <jsp:param name="field" value="title" />
         </jsp:include>
         <jsp:include page="../../../inc/fullRowFormText.jsp">
-            <jsp:param name="field" value="partitle" />
+            <jsp:param name="field" value="entitle" />
         </jsp:include>
     </table>
     <table class="formTable">

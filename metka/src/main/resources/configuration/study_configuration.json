@@ -1165,6 +1165,7 @@
 		"weight": {
 			"key": "weight",
 			"translatable": false,
+			"multiline": true,
 			"type": "STRING",
 			"section": "study_description"
 		},

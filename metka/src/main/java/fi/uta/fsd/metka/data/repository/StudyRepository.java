@@ -22,4 +22,7 @@ public interface StudyRepository {
      * @param revision RevisionNo
      */
     public void checkFileLinkQueue(Integer id, Integer revision) throws IOException;
+
+    public boolean approveStudy(Object id) throws IOException;
+    public RevisionData editStudy(Object studyno) throws IOException;
 }

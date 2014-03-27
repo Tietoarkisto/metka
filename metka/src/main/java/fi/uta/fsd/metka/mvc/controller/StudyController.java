@@ -276,6 +276,7 @@ public class StudyController {
             switch(field.getType()) {
                 case REFERENCECONTAINER:
                     jsField.put("showReferenceKey", field.getShowReferenceKey());
+                    /* FALLTHROUGH */
                 case CONTAINER:
                     jsField.put("showSaveInfo", field.getShowSaveInfo());
                     JSONArray subfields = new JSONArray();

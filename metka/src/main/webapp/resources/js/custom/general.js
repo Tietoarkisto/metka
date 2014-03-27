@@ -111,8 +111,8 @@ $(document).ready(function(){
     });
 
     $( "#revisionModifyFormSave" ).click(function() {
-        $( "#revisionModifyForm" ).attr("action", MetkaJS.PathBuilder().add(MetkaJS.Globals.page).add("save").build());
-        $( "#revisionModifyForm" ).submit();
+        $("#revisionModifyForm").attr("action", MetkaJS.PathBuilder().add(MetkaJS.Globals.page).add("save").build());
+        $("#revisionModifyForm").submit();
     });
 
     $( "#revisionModifyFormApprove" ).click(function() {

@@ -4,71 +4,160 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <c:set var="context" value="${fn:toUpperCase(page)}" />
 <div class="tabs tab_study_description">
+    <table class="formTable">
+        <tbody>
+            <jsp:include page="../../../inc/fullRowFormText.jsp">
+                <jsp:param name="field" value="alttitle" />
+            </jsp:include>
+        </tbody>
+    </table>
+
+    <jsp:include page="../../../inc/datatableContainer.jsp">
+        <jsp:param name="field" value="partitles" />
+    </jsp:include>
+
+    <jsp:include page="../../../inc/datatableContainer.jsp">
+        <jsp:param name="field" value="authors" />
+    </jsp:include>
+
+    <jsp:include page="../../../inc/datatableContainer.jsp">
+        <jsp:param name="field" value="otherauthors" />
+    </jsp:include>
+
+    <jsp:include page="../../../inc/datatableContainer.jsp">
+        <jsp:param name="field" value="producers" />
+    </jsp:include>
+
+    <jsp:include page="../../../inc/datatableContainer.jsp">
+        <jsp:param name="field" value="keywords" />
+    </jsp:include>
+
+    <jsp:include page="../../../inc/datatableContainer.jsp">
+        <jsp:param name="field" value="topics" />
+    </jsp:include>
 
     <table class="formTable">
-        <tr><c:set var="field" value="id" />
-            <td class="labelColumn"><form:label path="values['${field}']"><spring:message code="STUDY.field.${field}"/></form:label></td>
-            <td><form:input path="values['${field}']" readonly="true"/></td>
+        <tbody>
+            <tr>
+                <jsp:include page="../../../inc/singleCellFormText.jsp">
+                    <jsp:param name="field" value="biblcit" />
+                </jsp:include>
+                <jsp:include page="../../../inc/singleCellFormText.jsp">
+                    <jsp:param name="field" value="abstract" />
+                </jsp:include>
+            </tr>
+        </tbody>
+    </table>
 
-            <jsp:include page="../../../inc/l18nSelect.jsp">
-                <jsp:param name="field" value="datakind" />
-            </jsp:include>
+    <jsp:include page="../../../inc/datatableContainer.jsp">
+        <jsp:param name="field" value="timeperiods" />
+    </jsp:include>
 
-            <jsp:include page="../../../inc/l18nSelect.jsp">
-                <jsp:param name="field" value="public" />
-            </jsp:include>
-        </tr>
-        <tr><c:set var="field" value="submissionid" />
-            <td class="labelColumn"><form:label path="values['${field}']"><spring:message code="STUDY.field.${field}"/></form:label></td>
-            <td><form:input path="values['${field}']" readonly="true"/></td>
+    <jsp:include page="../../../inc/datatableContainer.jsp">
+        <jsp:param name="field" value="countries" />
+    </jsp:include>
 
-            <jsp:include page="../../../inc/l18nSelect.jsp">
-                <jsp:param name="field" value="anonymization" />
-            </jsp:include>
+    <jsp:include page="../../../inc/datatableContainer.jsp">
+        <jsp:param name="field" value="universes" />
+    </jsp:include>
 
-            <jsp:include page="../../../inc/l18nSelect.jsp">
-                <jsp:param name="field" value="descpublic" />
-            </jsp:include>
-        </tr>
-        <tr><c:set var="field" value="dataarrivaldate" />
-            <td class="labelColumn"><form:label path="values['${field}']"><spring:message code="STUDY.field.${field}"/></form:label></td>
-            <td><form:input class="datepicker" path="values['${field}']" readonly="${configuration[context].fields[field].editable == false}" /></td>
+    <jsp:include page="../../../inc/datatableContainer.jsp">
+        <jsp:param name="field" value="geogcovers" />
+    </jsp:include>
 
-            <jsp:include page="../../../inc/l18nSelect.jsp">
-                <jsp:param name="field" value="securityissues" />
-            </jsp:include>
+    <jsp:include page="../../../inc/datatableContainer.jsp">
+        <jsp:param name="field" value="colltime" />
+    </jsp:include>
 
-            <jsp:include page="../../../inc/l18nSelect.jsp">
-                <jsp:param name="field" value="varpublic" />
-            </jsp:include>
-        </tr>
-        <tr>
-            <jsp:include page="../../../inc/l18nSelect.jsp">
-                <jsp:param name="field" value="seriesid" />
-                <jsp:param name="colspan" value="3" />
-            </jsp:include>
-            <c:set var="field" value="aipcomplete" />
-            <td class="labelColumn"><form:label path="values['${field}']"><spring:message code="STUDY.field.${field}"/></form:label></td>
-            <td><form:input class="datepicker" path="values['${field}']" readonly="${configuration[context].fields[field].editable == false}" /></td>
-        </tr>
-        <tr>
+    <jsp:include page="../../../inc/datatableContainer.jsp">
+        <jsp:param name="field" value="collectors" />
+    </jsp:include>
+
+    <jsp:include page="../../../inc/datatableContainer.jsp">
+        <jsp:param name="field" value="analysis" />
+    </jsp:include>
+
+    <jsp:include page="../../../inc/datatableContainer.jsp">
+        <jsp:param name="field" value="timemethods" />
+    </jsp:include>
+
+    <jsp:include page="../../../inc/datatableContainer.jsp">
+        <jsp:param name="field" value="collmodes" />
+    </jsp:include>
+
+    <jsp:include page="../../../inc/datatableContainer.jsp">
+        <jsp:param name="field" value="instruments" />
+    </jsp:include>
+
+    <jsp:include page="../../../inc/datatableContainer.jsp">
+        <jsp:param name="field" value="sampprocs" />
+    </jsp:include>
+
+    <table class="formTable">
+        <tbody>
             <jsp:include page="../../../inc/singleCellFormText.jsp">
-                <jsp:param name="field" value="originallocation" />
-                <jsp:param name="colspan" value="3" />
+                <jsp:param name="field" value="resprate" />
             </jsp:include>
-            <jsp:include page="../../../inc/singleCellFormText.jsp">
-                <jsp:param name="field" value="processingnotes" />
-                <jsp:param name="colspan" value="3" />
-            </jsp:include>
+        </tbody>
+    </table>
+    <table class="formTable">
+        <tr>
+            <td>
+                <jsp:include page="../../../inc/singleCellFormText.jsp">
+                    <jsp:param name="field" value="datasource" />
+                </jsp:include>
+            </td>
         </tr>
     </table>
+
+    <table class="formTable">
+        <tr>TÄSTÄ PUUTTUU weightyesno check box</tr>
+        <tr>
+            <jsp:include page="../../../inc/singleCellFormText.jsp">
+                <jsp:param name="field" value="weight" />
+            </jsp:include>
+
+            <jsp:include page="../../../inc/singleCellFormText.jsp">
+                <jsp:param name="field" value="dataprosessing" />
+            </jsp:include>
+        </tr>
+        <tr>
+            <jsp:include page="../../../inc/singleCellFormText.jsp">
+                <jsp:param name="field" value="collsize" />
+            </jsp:include>
+
+            <jsp:include page="../../../inc/singleCellFormText.jsp">
+                <jsp:param name="field" value="complete" />
+            </jsp:include>
+        </tr>
+        <tr>
+            <jsp:include page="../../../inc/singleCellFormText.jsp">
+                <jsp:param name="field" value="disclaimer" />
+            </jsp:include>
+
+            <jsp:include page="../../../inc/singleCellFormText.jsp">
+                <jsp:param name="field" value="datasetnotes" />
+            </jsp:include>
+        </tr>
+        <tr>
+            <jsp:include page="../../../inc/singleCellFormText.jsp">
+                <jsp:param name="field" value="appraisal" />
+            </jsp:include>
+
+            <td></td>
+        </tr>
+    </table>
+
     <jsp:include page="../../../inc/datatableContainer.jsp">
-        <jsp:param name="field" value="notes" />
+        <jsp:param name="field" value="relatedmaterials" />
     </jsp:include>
+
     <jsp:include page="../../../inc/datatableContainer.jsp">
-        <jsp:param name="field" value="dataversions" />
+        <jsp:param name="field" value="othermaterials" />
     </jsp:include>
+
     <jsp:include page="../../../inc/datatableContainer.jsp">
-        <jsp:param name="field" value="descversions" />
+        <jsp:param name="field" value="publicationcomments" />
     </jsp:include>
+
 </div>

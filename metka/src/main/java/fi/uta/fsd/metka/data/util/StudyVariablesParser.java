@@ -162,10 +162,54 @@ public class StudyVariablesParser {
         }
 
         private void setStatistics(PORUtil.PORVariableHolder variable) {
+            // Get statistics container
+            ContainerDataField statistics = (ContainerDataField)currentRow.getField("statistics");
+            if(statistics == null) {
+                statistics = new ContainerDataField("statistics");
+                currentRow.putField(statistics);
+            }
+
             List<PORUtil.PORVariableData> variableData = variable.getNumericalDataWithoutMissing();
+            DataRow row;
+            String type;
+            // Set vald
             Integer variables = variableData.size();
-            String min = Collections.min(variableData, new PORUtil.PORVariableDataComparator()).toString();
-            String max = Collections.max(variableData, new PORUtil.PORVariableDataComparator()).toString();
+            type = "vald";
+            row = findRowWithFieldValue(statistics.getRows(), "statisticstype", type);
+            if(row == null) {
+                row = new DataRow(statistics.getKey(), data.getNewRowId());
+                statistics.getRows().add(row);
+                setRowField(row, "statisticstype", type);
+            }
+            setRowField(row, "statisticsvalue", variables.toString());
+
+            // Set min
+            if(variables != null && variables > 0) {
+                String min = Collections.min(variableData, new PORUtil.PORVariableDataComparator()).toString();
+                type = "min";
+                row = findRowWithFieldValue(statistics.getRows(), "statisticstype", type);
+                if(row == null) {
+                    row = new DataRow(statistics.getKey(), data.getNewRowId());
+                    statistics.getRows().add(row);
+                    setRowField(row, "statisticstype", type);
+                }
+                setRowField(row, "statisticsvalue", min);
+            }
+
+            // Set max
+            if(variables != null && variables > 0) {
+                String max = Collections.max(variableData, new PORUtil.PORVariableDataComparator()).toString();
+                type = "max";
+                row = findRowWithFieldValue(statistics.getRows(), "statisticstype", type);
+                if(row == null) {
+                    row = new DataRow(statistics.getKey(), data.getNewRowId());
+                    statistics.getRows().add(row);
+                    setRowField(row, "statisticstype", type);
+                }
+                setRowField(row, "statisticsvalue", max);
+            }
+
+            // Set mean
             Double mean = 0D;
             Integer meanDenom = 0;
             for(PORUtil.PORVariableData varD : variableData) {
@@ -181,6 +225,16 @@ public class StudyVariablesParser {
                 }
             }
             mean = mean / meanDenom;
+            type = "mean";
+            row = findRowWithFieldValue(statistics.getRows(), "statisticstype", type);
+            if(row == null) {
+                row = new DataRow(statistics.getKey(), data.getNewRowId());
+                statistics.getRows().add(row);
+                setRowField(row, "statisticstype", type);
+            }
+            setRowField(row, "statisticsvalue", mean.toString());
+
+            // Set stdev
             Double deviation = 0D;
             for(PORUtil.PORVariableData varD : variableData) {
                 Double value = null;
@@ -199,57 +253,6 @@ public class StudyVariablesParser {
             }
             deviation = Math.sqrt(deviation/meanDenom);
 
-            // Get statistics container
-            ContainerDataField statistics = (ContainerDataField)currentRow.getField("statistics");
-            if(statistics == null) {
-                statistics = new ContainerDataField("statistics");
-                currentRow.putField(statistics);
-            }
-
-            DataRow row;
-            String type;
-
-            // Set vald
-            type = "vald";
-            row = findRowWithFieldValue(statistics.getRows(), "statisticstype", type);
-            if(row == null) {
-                row = new DataRow(statistics.getKey(), data.getNewRowId());
-                statistics.getRows().add(row);
-                setRowField(row, "statisticstype", type);
-            }
-            setRowField(row, "statisticsvalue", variables.toString());
-
-            // Set min
-            type = "min";
-            row = findRowWithFieldValue(statistics.getRows(), "statisticstype", type);
-            if(row == null) {
-                row = new DataRow(statistics.getKey(), data.getNewRowId());
-                statistics.getRows().add(row);
-                setRowField(row, "statisticstype", type);
-            }
-            setRowField(row, "statisticsvalue", min);
-
-            // Set max
-            type = "max";
-            row = findRowWithFieldValue(statistics.getRows(), "statisticstype", type);
-            if(row == null) {
-                row = new DataRow(statistics.getKey(), data.getNewRowId());
-                statistics.getRows().add(row);
-                setRowField(row, "statisticstype", type);
-            }
-            setRowField(row, "statisticsvalue", max);
-
-            // Set mean
-            type = "mean";
-            row = findRowWithFieldValue(statistics.getRows(), "statisticstype", type);
-            if(row == null) {
-                row = new DataRow(statistics.getKey(), data.getNewRowId());
-                statistics.getRows().add(row);
-                setRowField(row, "statisticstype", type);
-            }
-            setRowField(row, "statisticsvalue", mean.toString());
-
-            // Set stdev
             type = "stdev";
             row = findRowWithFieldValue(statistics.getRows(), "statisticstype", type);
             if(row == null) {

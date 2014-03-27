@@ -405,7 +405,7 @@ public class ModelAccessUtil {
                 JSONObject fieldValue = row.optJSONObject("fields").optJSONObject(subfield.getKey());
                 SavedDataField savedField = (SavedDataField) dataRow.getField(subfield.getKey());
                 Object newValue = null;
-                if(fieldValue != null || fieldValue != JSONObject.NULL) {
+                if(fieldValue != null && fieldValue != JSONObject.NULL) {
                     if(!fieldValue.get("type").equals("value")) {
                         // TODO: For some reason value field with wrong time is present, log error.
                         continue;
@@ -607,6 +607,13 @@ public class ModelAccessUtil {
             case DERIVED: // We are only interested in the key part of the derived value. Actual derived text is added during approval.
             case CHOICE: // Choice can be treated as a string since only choice value is saved and it is saved as a string.
             case STRING: { // Assume correctness and treat values as string.
+
+                /*String strValue = "";
+                try{
+                strValue = (String)value;
+                }catch(ClassCastException ex) {
+                    int temp = 0;
+                }*/
                 String strValue = (String)value;
                 strValue = (StringUtils.isEmpty(strValue)) ? null : strValue;
 

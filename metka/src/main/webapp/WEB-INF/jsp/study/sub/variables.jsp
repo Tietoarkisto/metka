@@ -14,7 +14,7 @@
                  * Writes variables data back to hidden field.
                  * Variables is such an complex construct that it doesn't make sense to continually
                  * read and parse it and then save it back. Saving variable data should be made only when absolutely
-                 * necessary and hopefully
+                 * necessary.
                  */
                 function saveVariables() {
                     MetkaJS.TableHandler.saveContent(content);
@@ -31,7 +31,7 @@
 
                     // Get "variables" CONTAINER content
                     content = MetkaJS.TableHandler.readContent("variables");
-                    var alternate = false
+                    var alternate = false;
                     // If we have content then
                     if(content != null) {
                         for(var i=0; i<content.rows.length; i++) {
@@ -116,26 +116,26 @@
                 // TODO: Make container based thing for multiple value rows
                 function addTextAreaRow(row, key, view) {
                     var tr, td;
-                    tr = $("<tr>");
 
                     // Add label
                     td = $("<td>", {class: "labelColumn"});
                     td.append(MetkaJS.L18N.get(MetkaJS.Globals.page.toUpperCase()+".field."+key));
-                    tr.append(td);
+                    tr =  $("<tr>").append(td);
 
                     // Add data
                     td = $("<td>");
                     var input = $("<textarea>");
                     input.data("key", key);
+                    input.data("rowId", row.rowId);
                     // TODO: Add change detector
-                    td.append(input);
+                    input.on("change", saveTextAreaChange);
 
                     var data = (row.fields[key] !== 'undefined' && row.fields[key] != null) ? row.fields[key].value : null;
                     if(data !== 'undefined' && data != null) {
-                        input.text(data);
+                        input.append(data);
                     }
-                    tr.append(td);
-                    view.append(tr);
+
+                    view.append(tr.append(td.append(input)));
                 }
 
                 function addCategories(row, view) {
@@ -226,8 +226,35 @@
                     view.append(tr);
                 }
 
+                function saveTextAreaChange() {
+                    var input = $(this);
+                    var rowId = input.data("rowId");
+                    var key = input.data("key");
+
+                    var row = null;
+                    for(var i=0; i<content.rows.length; i++) {
+                        if(content.rows[i].rowId == rowId) {
+                            row = content.rows[i];
+                            break;
+                        }
+                    }
+                    if(row == null) {
+                        return;
+                    }
+                    var field = row.fields[key];
+                    if(field === 'undefined' || field == null) {
+                        field = new Object();
+                        field.type = "value";
+                        row.fields[key] = field;
+                    }
+                    field.value = input.val();
+                    row.change = true;
+                    saveVariables();
+                }
+
                 return {
-                    build: buildVariables
+                    build: buildVariables,
+                    save: saveVariables
                 }
             }();
 

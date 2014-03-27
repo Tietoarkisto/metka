@@ -21,7 +21,7 @@
         </tr>
         <tr><c:set var="field" value="termsofusechangedate" />
             <td class="labelColumn"><form:label path="values['${field}']"><spring:message code="STUDY.field.${field}"/></form:label></td>
-            <td><form:input path="values['${field}']"/></td>
+            <td><form:input class="datepicker" path="values['${field}']" readonly="${configuration[context].fields[field].editable == false}" /></td>
 
             <jsp:include page="../../../inc/l18nSelect.jsp">
                 <jsp:param name="field" value="depositortype" />
@@ -43,6 +43,12 @@
             <c:set var="field" value="triggerlabel" />
             <td class="labelColumn"><form:label path="values['${field}']"><spring:message code="STUDY.field.${field}"/></form:label></td>
             <td><form:input path="values['${field}']"/></td>
+        </tr>
+        <tr>
+            <c:set var="field" value="agreement" />
+            <td class="labelColumn"><form:label path="values['${field}']"><spring:message code="STUDY.field.${field}"/></form:label></td>
+            <td><form:input path="values['${field}']"/></td>
+            <td colspan="4"></td>
         </tr>
         <tr>
             <jsp:include page="../../../inc/singleCellFormText.jsp">
