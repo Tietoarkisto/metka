@@ -155,8 +155,8 @@
 
 <%-- If page is study then add some variable statistics localisations --%>
 <c:if test="${page == 'study'}">
-    <c:set var="choicelist" value="${configuration.fields['statisticstype'].choicelist}" />
-    <c:forEach items="${configuration.choicelists[choicelist].options}" var="option">
+    <c:set var="choicelist" value="${configuration['STUDY'].fields['statisticstype'].choicelist}" />
+    <c:forEach items="${configuration['STUDY'].choicelists[choicelist].options}" var="option">
     MetkaJS.L18N.put("STUDY.${choicelist}.choices.${option.value}", "<spring:message code='STUDY.${choicelist}.choices.${option.value}' />");
     </c:forEach>
 </c:if>

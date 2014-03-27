@@ -523,7 +523,8 @@
 			"section": "basic_information",
 			"multiline": true
 		},
-		"partitle": {
+		"entitle": {
+			"_comment": "Partitle is a column in 'Muunkieliset nimet' table",
 			"key": "title",
 			"type": "STRING",
 			"translatable": false,
@@ -926,6 +927,13 @@
 			"choicelist": "topic_list",
 			"section": "study_description",
 			"subfield": true
+		},
+		"abstract": {
+            "key": "abstract",
+            "translatable": false,
+            "type": "STRING",
+            "section": "study_description",
+            "multiline": true
 		},
 		"timeperiods": {
 			"key": "timeperiods",

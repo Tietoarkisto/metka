@@ -6,6 +6,7 @@ import spssio.por.PORValueLabels;
 import spssio.por.PORVariable;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Vector;
 
@@ -30,8 +31,8 @@ class PORUtil {
 
         public PORVariableHolder(PORVariable var) {
             this.var = var;
-            labels = new ArrayList<PORValueLabels>();
-            data = new ArrayList<PORVariableData>();
+            labels = new ArrayList<>();
+            data = new ArrayList<>();
             missing = 0;
         }
 
@@ -40,17 +41,17 @@ class PORUtil {
         }
 
         public List<PORValueLabels> getLabels() {
-            List<PORValueLabels> copy = new ArrayList<PORValueLabels>(labels);
+            List<PORValueLabels> copy = new ArrayList<>(labels);
             return copy;
         }
 
         public List<PORVariableData> getData() {
-            List<PORVariableData> copy = new ArrayList<PORVariableData>(data);
+            List<PORVariableData> copy = new ArrayList<>(data);
             return copy;
         }
 
         public List<PORVariableData> getNumericalDataWithoutMissing() {
-            List<PORVariableData> copy = new ArrayList<PORVariableData>();
+            List<PORVariableData> copy = new ArrayList<>();
             for(PORVariableData d : data) {
                 if(!d.missing && !(d instanceof PORVariableDataString)) {
                     copy.add(d);
@@ -241,5 +242,57 @@ class PORUtil {
             holders.get(x).addString(valstr);
         }
 
+    }
+
+    static class PORVariableDataComparator implements Comparator<PORVariableData> {
+        /**
+         * Compares two PORVariableData objects through numerical comparison.
+         * Missing values and non numerical String values are always smaller than numerical values.
+         *
+         * @param o1
+         * @param o2
+         * @return -1 if o1 is smaller than o2, 0 if equal, 1 if o1 is larger than o2
+         */
+        @Override
+        public int compare(PORVariableData o1, PORVariableData o2) {
+            if(o1.isMissing() && o2.isMissing())
+                return 0;
+            if(o1.isMissing())
+                return -1;
+            if(o2.isMissing())
+                return 1;
+            if(o1 instanceof PORVariableDataString && !NumberUtils.isNumber(((PORVariableDataString) o1).getValue())
+                    && o2 instanceof PORVariableDataString && !NumberUtils.isNumber(((PORVariableDataString) o2).getValue()))
+                return 0;
+            if(o1 instanceof PORVariableDataString && !NumberUtils.isNumber(((PORVariableDataString) o1).getValue()))
+                return -1;
+            if(o2 instanceof PORVariableDataString && !NumberUtils.isNumber(((PORVariableDataString) o2).getValue()))
+                return 1;
+
+            Double d1 = null;
+            Double d2 = null;
+            if(o1 instanceof PORVariableDataString)
+                d1 = NumberUtils.toDouble(((PORVariableDataString) o1).getValue());
+            else if(o1 instanceof PORVariableDataInt)
+                d1 = new Double(((PORVariableDataInt) o1).getValue());
+            else if(o1 instanceof PORVariableDataDouble)
+                d1 = ((PORVariableDataDouble) o1).getValue();
+
+            if(o2 instanceof PORVariableDataString)
+                d2 = NumberUtils.toDouble(((PORVariableDataString) o2).getValue());
+            else if(o1 instanceof PORVariableDataInt)
+                d2 = new Double(((PORVariableDataInt) o2).getValue());
+            else if(o1 instanceof PORVariableDataDouble)
+                d2 = ((PORVariableDataDouble) o2).getValue();
+
+            if(d1 == null && d2 == null)
+                return 0;
+            if(d1 == null)
+                return -1;
+            if(d2 == null)
+                return 1;
+
+            return d1.compareTo(d2);
+        }
     }
 }

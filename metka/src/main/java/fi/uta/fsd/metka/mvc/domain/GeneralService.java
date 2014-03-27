@@ -66,6 +66,11 @@ public class GeneralService {
     }
 
     public void fillOptions(Choicelist list, Reference ref) throws IOException {
+        // Sanity check, usually means that configuration is missing information so might be a good idea to log
+        if(ref == null) {
+            // TODO: Possibly log something
+            return;
+        }
         List<RevisionData> datas = repository.getLatestRevisionsForType(ref.getTargetType(), ref.getApprovedOnly());
         for(RevisionData data : datas) {
             SavedDataField field = getSavedDataFieldFromRevisionData(data, ref.getValueField());

@@ -8,6 +8,17 @@
     <script>
         $(document).ready(function() {
             MetkaJS.StudyVariablesHandler = function() {
+                var content = null;
+
+                /**
+                 * Writes variables data back to hidden field.
+                 * Variables is such an complex construct that it doesn't make sense to continually
+                 * read and parse it and then save it back. Saving variable data should be made only when absolutely
+                 * necessary and hopefully
+                 */
+                function saveVariables() {
+                    MetkaJS.TableHandler.saveContent(content);
+                }
 
                 /**
                  * Builds variables list using JSON in hidden CONTAINER element like data tables.
@@ -19,7 +30,7 @@
                     $("#variableView table tbody").empty();
 
                     // Get "variables" CONTAINER content
-                    var content = MetkaJS.TableHandler.readContent("variables");
+                    content = MetkaJS.TableHandler.readContent("variables");
                     var alternate = false
                     // If we have content then
                     if(content != null) {
@@ -40,7 +51,6 @@
                 function showVariableRequest() {
                     var div = $(this);
                     var rowId = div.attr("id");
-                    var content = MetkaJS.TableHandler.readContent("variables");
                     var row = null;
                     for(var i=0; i<content.rows.length; i++) {
                         if(content.rows[i].rowId == rowId) {
@@ -193,23 +203,25 @@
                     }
                 }
 
-                function addStatisticsRow(row, view, choicelist) {
+                function addStatisticsRow(row, view) {
                     var tr, td, data;
                     tr = $("<tr>");
+
+                    var choicelist = MetkaJS.JSConfig["STUDY"]["statisticstype"].choicelist;
 
                     td = $("<td>", {class: "labelColumn"});
                     data = row.fields["statisticstype"];
                     if(data !== 'undefined' && data != null) {
                         td.append(MetkaJS.L18N.get("STUDY."+choicelist+".choices."+data.value));
                     }
-                    tr.addend(td);
+                    tr.append(td);
 
                     td = $("<td>");
                     data = row.fields["statisticsvalue"];
                     if(data !== 'undefined' && data != null) {
                         td.append(data.value);
                     }
-                    tr.addend(td);
+                    tr.append(td);
 
                     view.append(tr);
                 }
