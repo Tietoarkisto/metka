@@ -24,6 +24,7 @@
         <form:hidden path="values['${configuration[context].idField}']" />
         <jsp:include page="sub/basic_information.jsp"/>
         <jsp:include page="sub/deposit_agreement.jsp"/>
+        <jsp:include page="sub/study_description.jsp"/>
         <jsp:include page="sub/variables.jsp"/>
         <jsp:include page="sub/file_management.jsp"/>
         <jsp:include page="sub/codebook.jsp"/>
