@@ -76,7 +76,7 @@ public class SeriesController {
                                @PathVariable Integer id, @PathVariable Integer revision,
                                RedirectAttributes redirectAttributes) {
         TransferObject single = null;
-
+        Configuration config = null;
         if(model.asMap().get("single") == null || model.asMap().get("seriesconfiguration") == null) {
             RevisionViewDataContainer revData = seriesService.findSingleRevision(id, revision);
             if(revData != null) {
@@ -85,12 +85,14 @@ public class SeriesController {
                 configuration.put("SERIES", revData.getConfiguration());
                 model.asMap().put("configuration", configuration);
                 single = revData.getTransferObject();
+                config = revData.getConfiguration();
             }
         } else {
             single = (TransferObject)model.asMap().get("single");
+            config = (Configuration)model.asMap().get("seriesconfiguration");
         }
 
-        if(single == null) {
+        if(single == null || config == null) {
             List<ErrorMessage> errors = new ArrayList<>();
             errors.add(ErrorMessage.noSuchRevision("series", id, revision));
             errors.add(ErrorMessage.noSuchRevision("study", id, revision));
@@ -99,6 +101,9 @@ public class SeriesController {
         }
 
         model.asMap().put("page", "series");
+        Map<String, Configuration> configs = new HashMap<>();
+        configs.put("SERIES", config);
+        model.asMap().put("configuration", configs);
         if(single.getState() == UIRevisionState.DRAFT) {
             // TODO: this should check if the user is the handler for this revision.
             return MODIFY;

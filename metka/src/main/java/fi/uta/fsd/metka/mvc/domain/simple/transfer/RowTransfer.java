@@ -1,7 +1,6 @@
 package fi.uta.fsd.metka.mvc.domain.simple.transfer;
 
 import fi.uta.fsd.metka.model.data.container.*;
-import fi.uta.fsd.metka.model.data.value.SimpleValue;
 import org.json.JSONObject;
 
 /**

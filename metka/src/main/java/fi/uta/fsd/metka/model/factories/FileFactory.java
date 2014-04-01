@@ -9,7 +9,7 @@ import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.container.SavedDataField;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -22,7 +22,7 @@ import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
  * Contains functionality related to File-revisions
  */
 @Service
-public class FileFactory {
+public class FileFactory extends DataFactory {
     @Autowired
     private ConfigurationRepository configurationRepository;
     @Autowired
@@ -54,9 +54,9 @@ public class FileFactory {
             return null;
         }
 
-        DateTime time = new DateTime();
+        LocalDateTime time = new LocalDateTime();
 
-        RevisionData data = RevisionData.createRevisionData(entity, conf.getKey());
+        RevisionData data = createInitialRevision(entity, conf.getKey());
 
         SavedDataField field = new SavedDataField(conf.getIdField());
         field.setModifiedValue(setSimpleValue(createSavedValue(time), entity.getKey().getRevisionableId() + ""));

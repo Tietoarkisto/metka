@@ -1,14 +1,17 @@
 @XmlJavaTypeAdapters({
         @XmlJavaTypeAdapter(type = DateTime.class, value = DateTimeAdapter.class),
+        @XmlJavaTypeAdapter(type = LocalDateTime.class, value = LocalDateTimeAdapter.class),
         @XmlJavaTypeAdapter(type = LocalDate.class, value = LocalDateAdapter.class),
         @XmlJavaTypeAdapter(type = LocalTime.class, value = LocalTimeAdapter.class)
 })
 package fi.uta.fsd.metka.model.data;
 
 import fi.uta.fsd.metka.mvc.adapters.DateTimeAdapter;
+import fi.uta.fsd.metka.mvc.adapters.LocalDateTimeAdapter;
 import fi.uta.fsd.metka.mvc.adapters.LocalDateAdapter;
 import fi.uta.fsd.metka.mvc.adapters.LocalTimeAdapter;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 

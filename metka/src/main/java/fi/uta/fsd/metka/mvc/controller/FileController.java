@@ -4,6 +4,7 @@ import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.mvc.domain.ConfigurationService;
 import fi.uta.fsd.metka.mvc.domain.FileService;
+import fi.uta.fsd.metka.mvc.domain.simple.ErrorMessage;
 import fi.uta.fsd.metka.mvc.domain.simple.RevisionViewDataContainer;
 import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,9 +43,9 @@ public class FileController {
 
     @RequestMapping(value = "save", method = {RequestMethod.POST},
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String saveAndApprove(@RequestBody TransferObject to) throws Exception {
+    public @ResponseBody ErrorMessage saveAndApprove(@RequestBody TransferObject to) throws Exception {
         // TODO: Implement saving and approving a File-object
-        String result = fileService.saveAndApprove(to);
+        ErrorMessage result = fileService.saveAndApprove(to);
         return result;
     }
 

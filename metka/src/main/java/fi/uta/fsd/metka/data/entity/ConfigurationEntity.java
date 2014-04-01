@@ -5,13 +5,6 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 
-/**
- * Created with IntelliJ IDEA.
- * User: lasseku
- * Date: 1/2/14
- * Time: 10:01 AM
- * To change this template use File | Settings | File Templates.
- */
 @Entity
 @Table(name = "CONFIGURATION", uniqueConstraints = @UniqueConstraint(columnNames = {"TYPE", "VERSION"}))
 public class ConfigurationEntity {
@@ -29,9 +22,8 @@ public class ConfigurationEntity {
     private Integer version;
 
     @Lob
-    @Column(name = "DATA", length = 10000)
+    @Column(name = "DATA")
     @Type(type="org.hibernate.type.StringClobType")
-    // Length defined because HSQL has problems for some reason, should be removed.
     private String data;
 
     public Integer getId() {

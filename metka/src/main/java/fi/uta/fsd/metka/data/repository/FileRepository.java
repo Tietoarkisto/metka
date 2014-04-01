@@ -1,7 +1,6 @@
 package fi.uta.fsd.metka.data.repository;
 
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.SavedReference;
 import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
 import org.springframework.transaction.annotation.Transactional;
 

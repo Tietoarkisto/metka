@@ -10,14 +10,13 @@ import fi.uta.fsd.metka.model.data.change.RowChange;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.data.value.SimpleValue;
 import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import static fi.uta.fsd.metka.data.util.ConversionUtil.*;
 
@@ -263,7 +262,7 @@ public class ModelAccessUtil {
     /**
      * Used for field value checks and changes automation during TransferObject saves.
      * Skips over configured idField as well as concatenate fields since both are checked separately by different
-     * methods.
+     * methods. Also skips over subfields since they are handled in their containers.
      *
      * @param key Field key of the field being checked
      * @param to TransferObject containing values from UI
@@ -272,7 +271,7 @@ public class ModelAccessUtil {
      * @param config Configuration mathinc the configuration key in data
      * @return True if field has changed, false if not. TODO: Return better information for error message purposes and to stop save process if there is some data tampering.
      */
-    public static boolean doFieldChanges(String key, TransferObject to, DateTime time, RevisionData data, Configuration config) {
+    public static boolean doFieldChanges(String key, TransferObject to, LocalDateTime time, RevisionData data, Configuration config) {
         if(key.equals(config.getIdField())) {
             // Id field should have been checked separately and there should never be changes to it.
             // Skip id field.
@@ -282,6 +281,9 @@ public class ModelAccessUtil {
         Field field = config.getField(key);
         if(field == null) {
             // TODO: No such field in configuration. Log error
+            return false;
+        } else if(field.getSubfield()) {
+            // No need to process further, subfields are handled when their containers are processed
             return false;
         } else if(field.getType() == FieldType.CONCAT) {
             // Concat fields are handled after everything else is done since they require information from other fields.
@@ -305,7 +307,7 @@ public class ModelAccessUtil {
      * @param config Configuration mathinc the configuration key in data
      * @return True if field has changed, false if not. TODO: Return better information for error message purposes and to stop save process if there is some data tampering.
      */
-    public static boolean doConcatChanges(String key, TransferObject to, DateTime time, RevisionData data, Configuration config) {
+    public static boolean doConcatChanges(String key, TransferObject to, LocalDateTime time, RevisionData data, Configuration config) {
         Field field = config.getField(key);
         if(field.getType() != FieldType.CONCAT) {
             // This method handles only CONCAT fields. Return without changes.
@@ -331,7 +333,7 @@ public class ModelAccessUtil {
      * @param config Assumed to be the configuration for the given Revision Data.
      * @return True if there has been changes in this container, false otherwise.
      */
-    private static boolean doContainerChanges(String key, Object value, DateTime time, RevisionData data, Configuration config) {
+    private static boolean doContainerChanges(String key, Object value, LocalDateTime time, RevisionData data, Configuration config) {
         Field field = config.getField(key);
         if(field.getType() != FieldType.CONTAINER) {
             // If this field's type is something other than CONTAINER return false.
@@ -421,7 +423,7 @@ public class ModelAccessUtil {
                         dataRow.putField(savedField);
                     }
                     updateFieldValue(savedField, subfield, newValue, time);
-                    rowChangeContainer.putChange(new Change(field.getKey()));
+                    rowChangeContainer.putChange(new Change(subkey));
                 }
                 // If this field changed or if row was changed previously then row has changed.
                 rowChanges = fieldChange | rowChanges;
@@ -460,7 +462,7 @@ public class ModelAccessUtil {
      * @param config Assumed to be the configuration for the given Revision Data.
      * @return True if there has been changes in this container, false otherwise.
      */
-    private static boolean doReferenceContainerChanges(String key, Object value, DateTime time, RevisionData data, Configuration config) {
+    private static boolean doReferenceContainerChanges(String key, Object value, LocalDateTime time, RevisionData data, Configuration config) {
         Field field = config.getField(key);
         if(field.getType() != FieldType.REFERENCECONTAINER) {
             // If this field's type is something other than REFERENCECONTAINER return false.
@@ -556,7 +558,7 @@ public class ModelAccessUtil {
      * @param config configuration of the data being validated
      * @return Boolean telling has there been a change in the given value or no
      */
-    private static boolean doSingleValueChanges(String key, Object value, DateTime time, RevisionData data, Configuration config) {
+    private static boolean doSingleValueChanges(String key, Object value, LocalDateTime time, RevisionData data, Configuration config) {
         Field field = config.getField(key);
         if(field.getType() == FieldType.CONCAT || field.getType() == FieldType.CONTAINER || field.getType() == FieldType.REFERENCECONTAINER || field.getSubfield()) {
             // If this field is of type CONCAT or CONTAINER or a subfield to something then changes can't be handled here.
@@ -659,13 +661,13 @@ public class ModelAccessUtil {
      * @param value New value to be inserted
      * @param time Requested time for modification. If not present then current time is used
      */
-    private static void updateFieldValue(SavedDataField container, Field field, Object value, DateTime time) {
+    private static void updateFieldValue(SavedDataField container, Field field, Object value, LocalDateTime time) {
         // Sanity check to see that container exists and configuration is for right container
         if(container == null || !container.getKey().equals(field.getKey())) {
             return;
         }
         if(time == null) {
-            time = new DateTime();
+            time = new LocalDateTime();
         }
         switch (field.getType()) {
             case INTEGER:
@@ -685,7 +687,7 @@ public class ModelAccessUtil {
      * @param value New value to be inserted
      * @param container SavedDataField to be modified.
      */
-    private static void insertStringValueChange(DateTime time, String value, SavedDataField container) {
+    private static void insertStringValueChange(LocalDateTime time, String value, SavedDataField container) {
         SavedValue saved = createSavedValue(time);
         if(!StringUtils.isEmpty(value)) {
             setSimpleValue(saved, value);
@@ -701,7 +703,7 @@ public class ModelAccessUtil {
      * @param value New value
      * @param container SavedField where the new value is to be inserted
      */
-    private static void insertIntegerValueChange(DateTime time, Integer value, SavedDataField container) {
+    private static void insertIntegerValueChange(LocalDateTime time, Integer value, SavedDataField container) {
         SavedValue saved = createSavedValue(time);
         if(value != null) {
             setSimpleValue(saved, value.toString());
@@ -779,7 +781,7 @@ public class ModelAccessUtil {
      * @param time Time when this container was requested.
      * @return Initialised SavedValue ready for use
      */
-    public static SavedValue createSavedValue(DateTime time) {
+    public static SavedValue createSavedValue(LocalDateTime time) {
         SavedValue value = new SavedValue();
         value.setSavedAt(time);
         // TODO: set current user that requests this new field container
@@ -788,64 +790,16 @@ public class ModelAccessUtil {
     }
 
     /**
-     * Moves modified values to original values for all changed fields.
-     * Goes through given changes map and for each change if it is not a ContainerDataField assumes it's
-     * a SavedDataField and sets its originalValue to newest value, then sets its modified value to null.
-     * For containers it call helper method to go through the rows.
-     * NOTICE: This method assumes data accuracy. If things are broken here then there's deeper problems.
-     * @param changes Map of Changes pointing to given fields in fields map.
-     * @param fields Map of DataFields where changes are to be set to original values.
+     * Initialises new revision from old revision data
+     * @param oldData Source revision
+     * @param newData Target revision
      */
-    public static void changesToOriginals(Map<String, Change> changes, Map<String, DataField> fields) {
-        for(Change change : changes.values()) {
-            if(change instanceof ContainerChange) {
-                DataField field = fields.get(change.getKey());
-                if(field instanceof ContainerDataField) {
-                    handleRowChanges((ContainerChange)change, (ContainerDataField)field);
-                } else if(field instanceof ReferenceContainerDataField) {
-                    handleReferenceChanges((ContainerChange)change, (ReferenceContainerDataField)field);
-                }
-            } else {
-                SavedDataField field = (SavedDataField)fields.get(change.getKey());
-                // Once field has been set it should not be set back to null for any reason during new revision creation.
-                // Revision save should handle cases where there is no original value and modified value is removed.
-                // Here we can use the convinience method of getValue() since it doesn't return modified value if it is null.
-                field.setOriginalValue(field.getValue());
-                field.setModifiedValue(null);
-            }
+    public static void copyFieldsToNewRevision(RevisionData oldData, RevisionData newData) {
+        for(DataField field : oldData.getFields().values()) {
+            newData.putField(field.copy());
         }
-    }
-
-    /**
-     * Helper method for changesToOriginals().
-     * Goes through all rows in given ContainerChange and calls changesToOriginals
-     * using Changes in RowChange and fields in DataRow
-     * @param change ContainerChange to be handled
-     * @param field ContainerDataField to be modified
-     */
-    private static void handleRowChanges(ContainerChange change, ContainerDataField field) {
-        for(RowChange c : change.getRows().values()) {
-            DataRow row = field.getRow(c.getRowId());
-            if(row != null) {
-                changesToOriginals(c.getChanges(), row.getFields());
-            }
-        }
-    }
-
-    /**
-     * Helper method for changesToOriginals().
-     * Goes through all rows in given ContainerChange and handles all found rows
-     * as SavedReference from given ReferenceContainerDataField
-     * @param change ContainerChange to be handled
-     * @param field ContainerDataField to be modified
-     */
-    private static void handleReferenceChanges(ContainerChange change, ReferenceContainerDataField field) {
-        for(RowChange c : change.getRows().values()) {
-            SavedReference row = field.getReference(c.getRowId());
-            if(row != null) {
-                row.setOriginalValue(row.getValue());
-                row.setModifiedValue(null);
-            }
+        for(DataField field : newData.getFields().values()) {
+            field.normalize();
         }
     }
 }

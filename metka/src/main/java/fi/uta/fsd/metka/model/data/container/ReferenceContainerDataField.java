@@ -49,4 +49,11 @@ public class ReferenceContainerDataField extends DataField {
         }
         return container;
     }
+
+    @Override
+    public void normalize() {
+        for(SavedReference reference : references) {
+            reference.normalize();
+        }
+    }
 }

@@ -1,21 +1,27 @@
 package fi.uta.fsd.metka.mvc.domain.simple.study;
 
-import fi.uta.fsd.metka.mvc.domain.simple.SimpleObject;
+import fi.uta.fsd.metka.mvc.domain.simple.SimpleSearchObject;
 
-import java.util.HashMap;
-import java.util.Map;
-
-
-public class StudySearchSO extends SimpleObject {
+public class StudySearchSO extends SimpleSearchObject {
     // TODO: Add study search attributes
 
-    private boolean searchApproved;
+    private boolean all;
+
+    public boolean isAll() {
+        return all;
+    }
+
+    public void setAll(boolean all) {
+        this.all = all;
+    }
+
+    /*private boolean searchApproved;
     private boolean searchDraft;
-    private boolean searchRemoved;
+    private boolean searchRemoved;*/
 
-    private final Map<String, Object> values = new HashMap<>();
+    /*private final Map<String, Object> values = new HashMap<>();*/
 
-    public boolean isSearchApproved() {
+    /*public boolean isSearchApproved() {
         return searchApproved;
     }
 
@@ -41,9 +47,9 @@ public class StudySearchSO extends SimpleObject {
 
     public Map<String, Object> getValues() {
         return values;
-    }
+    }*/
 
-    @Override
+    /*@Override
     public String toString() {
         StringBuilder sb = new StringBuilder("Study search object: [");
         for(int i = 0; i < StudyValues.values().length; i++) {
@@ -61,7 +67,7 @@ public class StudySearchSO extends SimpleObject {
     @Override
     public Object getByKey(String key) throws IllegalArgumentException {
         return values.get(key);
-        /*switch(StudyValues.fromString(key)) {
+        *//*switch(StudyValues.fromString(key)) {
             // TODO: Add search attributes
             case TITLE:
                 return title;
@@ -70,6 +76,6 @@ public class StudySearchSO extends SimpleObject {
             case SERIESID:
                 return seriesid;
         }
-        return null;*/
-    }
+        return null;*//*
+    }*/
 }

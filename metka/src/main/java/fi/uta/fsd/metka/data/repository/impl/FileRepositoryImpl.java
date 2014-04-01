@@ -14,17 +14,16 @@ import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.DataField;
+import fi.uta.fsd.metka.model.factories.DataFactory;
 import fi.uta.fsd.metka.model.factories.FileFactory;
 import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
 import org.apache.commons.io.FilenameUtils;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.io.File;
 import java.io.IOException;
 
 import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
@@ -110,15 +109,8 @@ public class FileRepositoryImpl implements FileRepository {
             Configuration config = configRepo.findLatestConfiguration(ConfigurationType.FILE);
 
             // Create new RevisionData object using the current revEntity (either new or old, doesn't matter)
-            RevisionData newData = RevisionData.createRevisionData(newRevision, config.getKey());
-            // Copy old fields to new revision data
-            for(DataField field : data.getFields().values()) {
-                newData.putField(field.copy());
-            }
-            // Changes are not copied but instead changes in oldData are used to normalize changes in fields copied to
-            // newData since changes in previous revision are original values in new revision.
-            // Go through changes and move modified value to original value for every change.
-            changesToOriginals(data.getChanges(), newData.getFields());
+            RevisionData newData = DataFactory.createNewRevisionData(newRevision, data, config.getKey());
+
             newRevision.setData(json.serialize(newData));
 
             return newData;
@@ -166,7 +158,7 @@ public class FileRepositoryImpl implements FileRepository {
 
         boolean changes = false;
 
-        DateTime time = new DateTime();
+        LocalDateTime time = new LocalDateTime();
 
         for(Field field : config.getFields().values()) {
             changes = doFieldChanges(field.getKey(), to, time, data, config) | changes;
@@ -177,8 +169,8 @@ public class FileRepositoryImpl implements FileRepository {
         if(changes) {
             // If there were changes save and approve current revision.
             data.setState(RevisionState.APPROVED);
-            data.setApprovalDate(new DateTime());
-            data.setLastSave(new DateTime());
+            data.setApprovalDate(new LocalDateTime());
+            data.setLastSave(new LocalDateTime());
 
             revEntity.setData(json.serialize(data));
             revEntity.setState(RevisionState.APPROVED);

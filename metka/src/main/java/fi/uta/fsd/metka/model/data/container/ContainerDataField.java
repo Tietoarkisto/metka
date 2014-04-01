@@ -46,4 +46,11 @@ public class ContainerDataField extends DataField {
         }
         return container;
     }
+
+    @Override
+    public void normalize() {
+        for(DataRow row : rows) {
+            row.normalize();
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package fi.uta.fsd.metka.model.data.container;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import fi.uta.fsd.metka.data.util.ModelAccessUtil;
@@ -45,5 +46,8 @@ public class DataField implements ModelAccessUtil.PathNavigable {
         return "Json[name="+this.getClass().getSimpleName()+", key="+key+"]";
     }
 
+    @JsonIgnore
     public DataField copy() {throw new UnsupportedOperationException();}
+    @JsonIgnore
+    public void normalize() {throw new UnsupportedOperationException();}
 }

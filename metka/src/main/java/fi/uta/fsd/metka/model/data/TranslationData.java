@@ -24,7 +24,7 @@ public class TranslationData extends RevisionData {
     public TranslationData(@JsonProperty("key") RevisionKey key,
                            @JsonProperty("configuration") ConfigurationKey configuration,
                            @JsonProperty("validFromRevision")Integer validFromRevision) {
-        super(key, configuration);
+        super(key, configuration, 1);
         this.validFromRevision = validFromRevision;
     }
 

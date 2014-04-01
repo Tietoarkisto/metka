@@ -4,7 +4,7 @@ import fi.uta.fsd.metka.data.enums.VariableDataType;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.*;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 import spssio.por.PORFile;
 import spssio.por.PORValue;
 import spssio.por.PORValueLabels;
@@ -54,18 +54,18 @@ public class StudyVariablesParser {
         private RevisionData data;
         private Configuration config;
 
-        private DateTime time;
+        private LocalDateTime time;
         private DataRow currentRow = null;
 
         VariablesHandler(RevisionData data, Configuration config) {
 
             this.data = data;
             this.config = config;
-            this.time = new DateTime();
+            this.time = new LocalDateTime();
 
             // Get variables container
             // TODO: Either this has to be known and hardcoded or else we need some kind of standard mapping for where these values are found on a STUDY
-            container = getContainerDataFieldFromRevisionData(data, "variables", config);
+            container = getContainerDataFieldFromRevisionData(data, "variables", this.config);
             // If container wasn't already present make it now, since we are parsing a por-file we can assume that there will be content
             // Since we are returning true from merge-method the new container will get saved to database
             if(container == null) {

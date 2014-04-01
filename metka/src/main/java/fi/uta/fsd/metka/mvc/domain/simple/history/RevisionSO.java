@@ -1,12 +1,12 @@
 package fi.uta.fsd.metka.mvc.domain.simple.history;
 
 import fi.uta.fsd.metka.data.enums.RevisionState;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 
 public class RevisionSO {
     private Integer id;
     private Integer revision;
-    private DateTime approvalDate;
+    private LocalDateTime approvalDate;
     private RevisionState state;
 
     public Integer getId() {
@@ -25,11 +25,11 @@ public class RevisionSO {
         this.revision = revision;
     }
 
-    public DateTime getApprovalDate() {
+    public LocalDateTime getApprovalDate() {
         return approvalDate;
     }
 
-    public void setApprovalDate(DateTime approvalDate) {
+    public void setApprovalDate(LocalDateTime approvalDate) {
         this.approvalDate = approvalDate;
     }
 

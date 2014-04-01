@@ -3,6 +3,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <c:set var="context" value="${empty param.context ? fn:toUpperCase(page) : fn:toUpperCase(param.context)}" />
+<c:set var="readonly" value="${empty param.readonly ? false : param.readonly}" />
 <div class="popupContainer" id="${param.field}ContainerDialog" title="<spring:message code="${context}.dialog.${param.field}" />">
     <input type="hidden" id="${param.field}ContainerDialogRowId" />
     <table id="${param.field}ContainerDialogTable" class="formTable">
@@ -32,6 +33,8 @@
 
     <div class="popupButtonsHolder">
         <input type="button" class="button" onclick="MetkaJS.dialogClose('${param.field}ContainerDialog')" value="<spring:message code='general.buttons.close'/>" />
+        <c:if test="${readonly == false}">
         <input type="button" class="button generalDialogAdd" onclick="MetkaJS.DialogHandlers.generalContainerHandler.process('${param.field}', '${context}')" value="<spring:message code="general.buttons.ok"/>"/>
+        </c:if>
     </div>
 </div>

@@ -15,18 +15,18 @@ import fi.uta.fsd.metka.data.util.StudyVariablesParser;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.DataField;
+import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.container.ReferenceContainerDataField;
+import fi.uta.fsd.metka.model.data.container.SavedDataField;
 import fi.uta.fsd.metka.model.data.container.SavedReference;
-import fi.uta.fsd.metka.model.data.value.SimpleValue;
+import fi.uta.fsd.metka.model.factories.DataFactory;
 import fi.uta.fsd.metka.model.factories.StudyFactory;
 import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
-import spssio.por.PORFile;
-import spssio.por.input.PORReader;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -124,7 +124,7 @@ public class StudyRepositoryImpl implements StudyRepository {
 
         boolean changes = false;
 
-        DateTime time = new DateTime();
+        LocalDateTime time = new LocalDateTime();
 
         for(Field field : config.getFields().values()) {
             changes = doFieldChanges(field.getKey(), to, time, data, config) | changes;
@@ -138,7 +138,7 @@ public class StudyRepositoryImpl implements StudyRepository {
         // Entity should still be managed at this point so
 
         if(changes) {
-            data.setLastSave(new DateTime());
+            data.setLastSave(new LocalDateTime());
             revEntity.setData(json.serialize(data));
         }
 
@@ -150,7 +150,6 @@ public class StudyRepositoryImpl implements StudyRepository {
     * Modifies the revision data so that it is a correct approved data set, changes state to APPROVED
     * and then saves it back to database.
     *
-    * TODO: During approval set aipcomplete if it's not set already. This is a value that should be set during first approval and not before.
     */
     @Override
     public boolean approveStudy(Object studyno) throws IOException {
@@ -211,13 +210,21 @@ public class StudyRepositoryImpl implements StudyRepository {
             return false;
         }
 
+        // TODO: Make setting aipcomplete better
+        if(data.getField("aipcomplete") == null) {
+            SavedDataField aip = new SavedDataField("aipcomplete");
+            aip.setModifiedValue(setSimpleValue(createSavedValue(new LocalDateTime()), new LocalDate().toString()));
+            data.putField(aip);
+            data.putChange(new Change("aipcomplete"));
+        }
+
         // Change state in revision data to approved.
         // Serialize data back to revision entity.
         // Change state of entity to approved.
         // Update current approved revision number on series entity
         // Entities should still be managed so no merge necessary.
         data.setState(RevisionState.APPROVED);
-        data.setApprovalDate(new DateTime());
+        data.setApprovalDate(new LocalDateTime());
         // TODO: set approver for the data to the user who requested the data approval
         entity.setData(json.serialize(data));
         entity.setState(RevisionState.APPROVED);
@@ -267,17 +274,7 @@ public class StudyRepositoryImpl implements StudyRepository {
         // Add changes to new dataset
         RevisionEntity newRevision = series.createNextRevision();
         newRevision.setState(RevisionState.DRAFT);
-        RevisionData newData = RevisionData.createRevisionData(newRevision, oldData.getConfiguration());
-
-        // Copy old fields to new revision data
-        for(DataField field : oldData.getFields().values()) {
-            newData.putField(field.copy());
-        }
-        // Changes are not copied but instead changes in oldData are used to normalize changes in fields copied to
-        // newData since changes in previous revision are original values in new revision.
-
-        // Go through changes and move modified value to original value for every change.
-        changesToOriginals(oldData.getChanges(), newData.getFields());
+        RevisionData newData = DataFactory.createNewRevisionData(newRevision, oldData);
 
         // Serialize new dataset to the new revision entity
         // Persist new entity
@@ -303,7 +300,7 @@ public class StudyRepositoryImpl implements StudyRepository {
 
         RevisionData data = json.readRevisionDataFromString(entity.getData());
         Configuration config = configRepo.findConfiguration(data.getConfiguration());
-        DateTime time = new DateTime();
+        LocalDateTime time = new LocalDateTime();
         boolean changes = false;
 
         // Check for existing FileLinkQueue events
@@ -313,7 +310,6 @@ public class StudyRepositoryImpl implements StudyRepository {
                 .getResultList();
 
         // For each FileLinkQueueEntity
-        PORReader porReader = new PORReader();
         for(FileLinkQueueEntity event : events) {
             Field field = config.getField(event.getTargetField());
             // Sanity check, should field actually exist in this data, is it not a REFERENCECONTAINER or is it a subfield (handle those somewhere else
@@ -347,7 +343,7 @@ public class StudyRepositoryImpl implements StudyRepository {
                 // Put references to data just in case it was not already there.
                 data.putField(references);
             }
-            // Check for POR-files
+            // Check for mergeable files
             changes = StudyVariablesParser.merge(data, event.getType(), event.getPath(), config) | changes;
         }
 

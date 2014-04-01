@@ -26,7 +26,6 @@ public class RevisionEntity {
     @Lob
     @Column(name = "DATA")
     @Type(type="org.hibernate.type.StringClobType")
-    // Length defined because HSQL has problems for some reason, should be removed.
     private String data;
 
     public RevisionEntity() {

@@ -5,6 +5,7 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.List;
 
 @Transactional(readOnly = true)
 public interface GeneralSearch {
@@ -27,4 +28,7 @@ public interface GeneralSearch {
      * @throws java.io.IOException
      */
     public RevisionData findSingleRevision(Integer id, Integer revision, ConfigurationType type) throws IOException;
+
+    // TODO: Remove this
+    public List<RevisionDataRemovedContainer> tempFindAllStudies() throws IOException;
 }

@@ -1,7 +1,7 @@
 package fi.uta.fsd.metka.model.data.container;
 
 import fi.uta.fsd.metka.model.data.value.Value;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -9,15 +9,15 @@ import javax.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SavedValue {
-    @XmlElement private DateTime savedAt;
+    @XmlElement private LocalDateTime savedAt;
     @XmlElement private String savedBy;
     @XmlElement private Value value;
 
-    public DateTime getSavedAt() {
+    public LocalDateTime getSavedAt() {
         return savedAt;
     }
 
-    public void setSavedAt(DateTime savedAt) {
+    public void setSavedAt(LocalDateTime savedAt) {
         this.savedAt = savedAt;
     }
 
@@ -44,7 +44,7 @@ public class SavedValue {
 
     public SavedValue copy() {
         SavedValue saved = new SavedValue();
-        saved.setSavedAt(new DateTime(savedAt));
+        saved.setSavedAt(new LocalDateTime(savedAt));
         saved.setSavedBy(savedBy);
         saved.value = value.copy();
         return saved;

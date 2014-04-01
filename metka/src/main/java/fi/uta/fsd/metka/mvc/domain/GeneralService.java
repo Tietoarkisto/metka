@@ -89,6 +89,9 @@ public class GeneralService {
                 field = getSavedDataFieldFromRevisionData(data, ref.getTitleField());
                 option.setTitle(extractStringSimpleValue(field));
             }
+            if(option.getTitle() == null) {
+                option.setTitle(option.getValue());
+            }
             list.getOptions().add(option);
         }
         Collections.sort(list.getOptions(), new Comparator<Option>() {

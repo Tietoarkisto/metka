@@ -4,12 +4,6 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
 
-/**
- * Created with IntelliJ IDEA.
- * User: MetkaDev1
- * Date: 11/22/13
- * Time: 8:46 AM
- */
 @Embeddable
 public class RevisionKey implements Serializable {
     public static final long serialVersionUID = 1L;

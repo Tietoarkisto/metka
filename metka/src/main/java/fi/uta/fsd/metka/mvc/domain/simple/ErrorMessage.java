@@ -102,4 +102,19 @@ public class ErrorMessage {
 
         return error;
     }
+
+    public static ErrorMessage fileSaveAndApproveSuccesss() {
+        ErrorMessage error = new ErrorMessage();
+        error.setMsg("general.errors.file.saveSuccess");
+
+        return error;
+    }
+
+    public static ErrorMessage fileSaveAndApproveFail(Exception ex) {
+        ErrorMessage error = new ErrorMessage();
+        error.setMsg("general.errors.file.saveFail");
+        error.getData().add(ex.toString());
+
+        return error;
+    }
 }

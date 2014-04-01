@@ -1,0 +1,45 @@
+{
+	"key": "VOCABULARIES",
+	"data": [
+		{
+	        "codeListID": "AnalysisUnit",
+	        "codeListName": "Analysis Unit",
+	        "codeListAgencyName": "DDI Alliance",
+	        "codeListVersionID": "1.0.0",
+	        "codeListURN": "urn:ddi-cv:AnalysisUnit:1.0.0",
+	        "codeListSchemeURN": "urn:ddi-cv:AnalysisUnit",
+	        "selector": "/codeBook/stdyDscr/stdyInfo/sumDscr/anlyUnit",
+	        "codeListURI": "www.uri.fi",
+	        "terms": {
+	            "Individual": {
+	                "key": "Individual",
+	                "fi": "Henkilö",
+	                "en": "Individual",
+	                "sv": "Individ"
+	                
+	            },
+	            "Organization": {
+	                "key": "Organization",
+	                "fi": "Organisaatio",
+	                "en": "Organization",
+	                "sv": "Organisation"
+	                
+	            },
+	            "Family": {
+	                "key": "Family",
+	                "fi": "Perhe",
+	                "en": "Family",
+	                "sv": "Familj"
+	                
+	            },
+	            "Household": {
+	                "key": "Household",
+	                "fi": "Kotitalous",
+	                "en": "Household",
+	                "sv": "Hushåll"
+	            }
+	        
+	        }
+	    }
+	]
+}

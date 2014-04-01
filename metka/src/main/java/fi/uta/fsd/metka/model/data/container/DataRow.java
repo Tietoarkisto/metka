@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.data.util.ModelAccessUtil;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -20,7 +20,7 @@ public class DataRow implements ModelAccessUtil.PathNavigable {
     @XmlElement private final String key;
     @XmlElement private final Integer rowId;
     @XmlElement private final Map<String, DataField> fields = new HashMap<>();
-    @XmlElement private DateTime savedAt;
+    @XmlElement private LocalDateTime savedAt;
     @XmlElement private String savedBy;
 
     @JsonCreator
@@ -37,11 +37,11 @@ public class DataRow implements ModelAccessUtil.PathNavigable {
         return rowId;
     }
 
-    public DateTime getSavedAt() {
+    public LocalDateTime getSavedAt() {
         return savedAt;
     }
 
-    public void setSavedAt(DateTime savedAt) {
+    public void setSavedAt(LocalDateTime savedAt) {
         this.savedAt = savedAt;
     }
 
@@ -97,11 +97,17 @@ public class DataRow implements ModelAccessUtil.PathNavigable {
 
     public DataRow copy() {
         DataRow row = new DataRow(getKey(), rowId);
-        row.setSavedAt(new DateTime(savedAt));
+        row.setSavedAt(new LocalDateTime(savedAt));
         row.setSavedBy(savedBy);
         for(DataField field : fields.values()) {
             row.putField(field.copy());
         }
         return row;
+    }
+
+    public void normalize() {
+        for(DataField field : fields.values()) {
+            field.normalize();
+        }
     }
 }

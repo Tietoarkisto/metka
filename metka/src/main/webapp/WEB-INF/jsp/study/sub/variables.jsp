@@ -3,6 +3,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <c:set var="context" value="${fn:toUpperCase(page)}" />
+<c:set var="readonly" value="${empty param.readonly ? false : param.readonly}" />
 <div class="tabs tab_variables">
     <%-- Move to separate js-file if this gets too long --%>
     <script>
@@ -129,6 +130,7 @@
                     input.data("rowId", row.rowId);
                     // TODO: Add change detector
                     input.on("change", saveTextAreaChange);
+                    input.prop("readonly", !MetkaJS.SingleObject.draft);
 
                     var data = (row.fields[key] !== 'undefined' && row.fields[key] != null) ? row.fields[key].value : null;
                     if(data !== 'undefined' && data != null) {

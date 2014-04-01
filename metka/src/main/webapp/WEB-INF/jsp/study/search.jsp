@@ -9,26 +9,9 @@
 </div>
 <div class="tabs tab_search">
     <div class="upperContainer">
-        <%--<form action="#">
-            <div class="searchFormRowHolder"><label><spring:message code="study.search.form.studyNumber"/></label><input type="text" class="searchInput" name="studyNumber" /></div>
-            <div class="searchFormRowHolder"><label><spring:message code="study.search.form.studyName"/></label><input type="text" class="searchInput" name="studyName" /></div>
-            <div class="searchFormRowHolder">
-                <label><spring:message code="study.search.form.contributor.lastName"/></label><input type="text" class="shortSearchInput" name="contributorLastName" />
-                <label class="shortLabel"><spring:message code="study.search.form.contributor.firstName"/></label><input type="text" class="shortSearchInput" name="contributorFirstName" /><div style="clear:both;"></div></div>
-            <div class="searchFormRowHolder"><label><spring:message code="study.search.form.contributor.organization"/></label><select class="formSelect" name="contributorOrganization"><option></option></select></div>
-            <div class="searchFormRowHolder"><label><spring:message code="study.search.form.contributor.institution"/></label><input type="text" class="searchInput" name="contributorInstitution" /></div>
-            <div class="searchFormRowHolder">
-                <label><spring:message code="study.search.form.producer.lastName"/></label><input type="text" class="shortSearchInput" name="producerLastName" />
-                <label class="shortLabel"><spring:message code="study.search.form.producer.firstName"/></label><input type="text" class="shortSearchInput" name="producerFirstName" /><div style="clear:both;"></div></div>
-            <div class="searchFormRowHolder"><label><spring:message code="study.search.form.seriesName"/></label><select class="formSelect" name="seriesName"><option></option></select></div>
-
-            <div class="searchFormButtonsHolder">
-                <input type="button" class="searchFormInput doSearch" value="<spring:message code='general.buttons.search'/>" />
-                <input class="searchFormInput" type="reset" value="<spring:message code='general.buttons.clear'/>" />
-            </div>
-        </form>--%>
         <form:form id="revisionSearchForm" method="post" action="/study/search" modelAttribute="searchData.query">
-            <table class="formTable">
+            <form:hidden path="all" />
+            <%--<table class="formTable">
                 <tr>
                     <td class="labelColumn"><spring:message code="general.search.state"/></td>
                     <td>
@@ -58,7 +41,7 @@
                     </td>
                     <td colspan="3"><form:select path="values['${field}']" items="${searchData.series}" itemLabel="name" itemValue="id" /></td>
                 </tr>
-            </table>
+            </table>--%>
         </form:form>
     </div>
     <div class="buttonsHolder">
@@ -72,24 +55,16 @@
             <table class="dataTable">
                 <thead>
                 <tr>
-                    <th><spring:message code="STUDY.field.study_number"/></th>
-                    <th><spring:message code="STUDY.field.study_name"/></th>
-                        <%--<th><spring:message code="STUDY.field.publication_references"/></th>--%><%--TODO: Julkaisuja voi olla monta, näytetäänkö tätä.--%>
-                    <th><spring:message code="STUDY.field.series_reference"/></th>
-                    <th><spring:message code="STUDY.field.acquisition_number"/></th>
-                    <%--<th><spring:message code="STUDY.field.fsd_contributes"/></th>--%><%-- TODO: What is this --%>
+                    <th><spring:message code="STUDY.field.id"/></th>
+                    <th><spring:message code="STUDY.field.title"/></th>
                     <th><spring:message code="general.search.result.state"/></th>
                 </tr>
                 </thead>
                 <tbody>
                 <c:forEach var="r" items="${searchData.results}">
                     <tr class="pointerClass" onclick="MetkaJS.view(${r.id},${r.revision})">
-                        <td>${r.study_number}</td>
-                        <td>${r.study_name}</td>
-                            <%--<td>${r.publication_references}</td>--%><%-- TODO: See above--%>
-                        <td>${r.series_reference}</td>
-                        <td>${r.acquisition_number}</td>
-                        <td>${r.fsd_contributes}</td>
+                        <td>${r.values["id"]}</td>
+                        <td>${r.values["title"]}</td>
                         <td><spring:message code="general.search.result.state.${r.state}"/></td>
                     </tr>
                 </c:forEach>

@@ -479,6 +479,7 @@
 			"key": "study_id_prefix",
 			"translatable": false,
 			"immutable": true,
+			"editable": false,
 			"required": true,
 			"display": false,
 			"type": "CHOICE",
@@ -525,7 +526,7 @@
 		},
 		"entitle": {
 			"_comment": "Partitle is a column in 'Muunkieliset nimet' table",
-			"key": "title",
+			"key": "entitle",
 			"type": "STRING",
 			"translatable": false,
 			"section": "basic_information"

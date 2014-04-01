@@ -6,9 +6,8 @@ import fi.uta.fsd.metka.data.repository.FileRepository;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.SavedReference;
+import fi.uta.fsd.metka.mvc.domain.simple.ErrorMessage;
 import fi.uta.fsd.metka.mvc.domain.simple.RevisionViewDataContainer;
-import fi.uta.fsd.metka.mvc.domain.simple.transfer.RowTransfer;
 import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,13 +104,14 @@ public class FileService {
         }
     }
 
-    public String saveAndApprove(TransferObject to) {
+    public ErrorMessage saveAndApprove(TransferObject to) {
+        ErrorMessage msg = new ErrorMessage();
         try {
             repository.saveAndApprove(to);
-            return "{\"result\": \"Onnistui\"}";
+            return ErrorMessage.fileSaveAndApproveSuccesss();
         } catch(Exception ex) {
             // TODO: Log error and notify user that there was a problem with saving file
-            return "{\"result\": \"Virhe: "+ex.getMessage()+"\"}";
+            return ErrorMessage.fileSaveAndApproveFail(ex);
         }
     }
 }

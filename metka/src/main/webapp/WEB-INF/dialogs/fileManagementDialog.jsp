@@ -5,6 +5,7 @@
 <c:set var="handler" value="${empty param.handler ? 'generalReferenceHandler' : param.handler}" />
 <c:set var="container" value="fileManagement" />
 <c:set var="context" value="FILE" />
+<c:set var="readonly" value="${empty param.readonly ? false : param.readonly}" />
 <script src="${pageContext.request.contextPath}/js/handlers/studyFilesHandler.js"></script>
 <div class="largePopupContainer" id="fileManagementDialog" title="<spring:message code="${context}.dialog.fileManagement"/>" >
     <input type="hidden" id="fileManagementRowId" />
@@ -70,6 +71,8 @@
 
     <div class="popupButtonsHolder">
         <input type="button" class="button" onclick="MetkaJS.dialogClose('fileManagementDialog')" value="<spring:message code='general.buttons.close'/>" />
+        <c:if test="${readonly == false}">
         <input type="button" class="button generalDialogAdd" onclick="MetkaJS.DialogHandlers['${handler}'].process()" value="<spring:message code="general.buttons.ok"/>"/>
+        </c:if>
     </div>
 </div>

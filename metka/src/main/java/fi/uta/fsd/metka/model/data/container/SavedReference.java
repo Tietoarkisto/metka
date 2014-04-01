@@ -99,10 +99,22 @@ public class SavedReference {
         } else return null;
     }
 
+    @JsonIgnore
     public SavedReference copy() {
         SavedReference reference = new SavedReference(getKey(), getRowId());
         reference.setModifiedValue((modifiedValue != null) ? modifiedValue.copy() : null);
         reference.setOriginalValue((originalValue != null) ? originalValue.copy() : null);
         return reference;
+    }
+
+    public void normalize() {
+        // If there's no modifiedValue then don't do anything
+        if(modifiedValue != null) {
+            // Set original value to current value.
+            // If modified value has something other than null then it is a valid changed value.
+            originalValue = modifiedValue;
+            // Set modified value to null
+            modifiedValue = null;
+        }
     }
 }

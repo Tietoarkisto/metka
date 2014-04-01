@@ -5,7 +5,7 @@
 <tr>
     <td class="labelColumn"><label for="dialogField_${param.field}"><spring:message code="${context}.field.${param.field}"/></label></td>
     <td>
-        <select id="${param.container}Field${param.field}" class="dialogValue" autocomplete="off"> <%-- TODO: implement readOnly --%>
+        <select id="${param.container}Field${param.field}" class="dialogValue" autocomplete="off">
             <c:set var="choicelist" value="${configuration[context].fields[param.field].choicelist}" />
             <c:set var="optionslist" value="${configuration[context].choicelists[choicelist].key}" />
             <c:if test="${configuration[context].choicelists[choicelist].includeEmpty == true or configuration[context].choicelists[optionslist].includeEmpty == true}">

@@ -92,4 +92,16 @@ public class SavedDataField extends DataField {
         field.setOriginalValue((originalValue != null) ? originalValue.copy() : null);
         return field;
     }
+
+    @Override
+    public void normalize() {
+        // If there's no modified value then don't do anything
+        if(modifiedValue != null) {
+            // Set original value to current value.
+            // If modified value has something other than null then it is a valid changed value.
+            // Otherwise we're just setting original value to itself, which doesn't really concern us that much.
+            originalValue = modifiedValue;
+            modifiedValue = null;
+        }
+    }
 }

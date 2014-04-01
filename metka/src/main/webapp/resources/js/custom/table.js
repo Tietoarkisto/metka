@@ -77,9 +77,12 @@ MetkaJS.DialogHandlers.generalContainerHandler = function() {
 
                 input.val(row.fields[subfield].value);
 
-                if(MetkaJS.JSConfig[context][subfield].editable == false
-                    || (MetkaJS.JSConfig[context][subfield].immutable == true
-                    && (input.val() !== 'undefined' && input.val() != null && input.val() != ""))) {
+                if(MetkaJS.SingleObject.draft == false
+                        || MetkaJS.JSConfig[context][subfield].editable == false
+                        || (
+                            MetkaJS.JSConfig[context][subfield].immutable == true
+                            && (input.val() !== 'undefined' && input.val() != null && input.val() != ""))
+                        ) {
                     input.prop("readonly", true);
                 }
             }

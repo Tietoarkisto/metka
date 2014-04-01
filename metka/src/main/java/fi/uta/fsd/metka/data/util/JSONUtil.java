@@ -4,11 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.uta.fsd.metka.model.ModelBase;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 /**
  * Handles general JSON deserialization and serialization operations.
@@ -31,5 +33,9 @@ public class JSONUtil {
 
     public String serialize(ModelBase data) throws IOException {
         return metkaObjectMapper.writeValueAsString(data);
+    }
+
+    public JSONObject readSimpleJSON(String data) {
+        return new JSONObject(data);
     }
 }

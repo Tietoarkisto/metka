@@ -6,23 +6,23 @@
             <form:hidden path="revision" />
             <jsp:include page="../../inc/fullRowFormText.jsp">
                 <jsp:param name="field" value="seriesno" />
-                <jsp:param name="readOnly" value="true" />
+                <jsp:param name="readonly" value="true" />
             </jsp:include>
             <jsp:include page="../../inc/fullRowFormText.jsp">
                 <jsp:param name="field" value="seriesabb" />
-                <jsp:param name="readOnly" value="true" />
+                <jsp:param name="readonly" value="true" />
             </jsp:include>
             <jsp:include page="../../inc/fullRowFormText.jsp">
                 <jsp:param name="field" value="seriesname" />
-                <jsp:param name="readOnly" value="true" />
+                <jsp:param name="readonly" value="true" />
             </jsp:include>
             <jsp:include page="../../inc/fullRowFormText.jsp">
                 <jsp:param name="field" value="seriesdesc" />
-                <jsp:param name="readOnly" value="true" />
+                <jsp:param name="readonly" value="true" />
             </jsp:include>
             <jsp:include page="../../inc/fullRowFormText.jsp">
                 <jsp:param name="field" value="seriesnotes" />
-                <jsp:param name="readOnly" value="true" />
+                <jsp:param name="readonly" value="true" />
             </jsp:include>
         </table>
     </form:form>

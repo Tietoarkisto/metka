@@ -71,9 +71,12 @@ MetkaJS.DialogHandlers.studyFilesHandler = function() {
 
                     for(var key in config.fields) {
                         $("#fileManagementField"+key).val(to.values[key]);
-                        if(config.fields[key].editable == false
-                                || (config.fields[key].immutable == true
-                                    && (to.values[key] !== 'undefined' && to.values[key] != null))) {
+                        if(MetkaJS.SingleObject.draft == false
+                                || config.fields[key].editable == false
+                                || (
+                                    config.fields[key].immutable == true
+                                    && (to.values[key] !== 'undefined' && to.values[key] != null))
+                                ) {
                             $("#fileManagementField"+key).prop("readonly", true);
                         }
                     }

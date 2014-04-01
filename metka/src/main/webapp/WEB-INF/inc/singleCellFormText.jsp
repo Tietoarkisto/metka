@@ -5,11 +5,12 @@
 <c:set var="context" value="${empty param.context ? fn:toUpperCase(page) : fn:toUpperCase(param.context)}" />
 <c:set var="colspan" value="${empty param.colspan ? 1 : param.colspan}" />
 <c:set var="multiline" value="${empty configuration[context].fields[param.field].multiline ? false : configuration[context].fields[param.field].multiline}" />
+<c:set var="readonly" value="${empty param.readonly ? false : param.readonly}" />
 <td colspan="${colspan}">
     <div class="singleCellTitle"><spring:message code="${context}.field.${param.field}"/></div>
 <c:choose><c:when test="${multiline == false}">
-    <form:input path="values['${param.field}']" readonly="${param.readOnly}"/> <%-- TODO: Implement translations --%>
+    <form:input path="values['${param.field}']" readonly="${readonly}"/> <%-- TODO: Implement translations --%>
 </c:when><c:when test="${multiline == true}">
-    <form:textarea path="values['${param.field}']" readonly="${param.readOnly}"/> <%-- TODO: Implement translations --%>
+    <form:textarea path="values['${param.field}']" readonly="${readonly}"/> <%-- TODO: Implement translations --%>
 </c:when></c:choose>
 </td>

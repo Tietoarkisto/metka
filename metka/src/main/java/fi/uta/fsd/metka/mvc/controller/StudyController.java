@@ -172,6 +172,11 @@ public class StudyController {
             model.asMap().put("displayableErrors", errors);
         }
 
+        Configuration config = configService.findLatestByType(ConfigurationType.STUDY);
+        Map<String, Configuration> configuration = new HashMap<>();
+        configuration.put("STUDY", config);
+        model.asMap().put("configuration", configuration);
+
         model.asMap().put("page", "study");
         return SEARCH;
     }

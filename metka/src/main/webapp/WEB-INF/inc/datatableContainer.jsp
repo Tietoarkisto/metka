@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <c:set var="context" value="${empty param.context ? fn:toUpperCase(page) : fn:toUpperCase(param.context)}" />
 <c:set var="handler" value="${empty param.handler ? 'generalContainerHandler' : param.handler}" />
+<c:set var="readonly" value="${empty param.readonly ? false : param.readonly}" />
 <div class="singleCellTitle"><spring:message code="${context}.field.${param.field}"/></div>
 
 <form:hidden path="values['${param.field}']" />
@@ -21,12 +22,13 @@
     </thead>
     <tbody />
 </table>
-<c:if test="${empty param.addButton or param.addButton == true}">
+<c:if test="${(empty param.addButton or param.addButton == true) and not readonly}">
     <div class="rightAlignCell"><input type="button" class="button" value="<spring:message code="general.table.add"/>"
             onclick="MetkaJS.DialogHandlers['${handler}'].show('${param.field}')"/></div>
 </c:if>
 <c:if test="${empty param.handler or param.handler == 'generalContainerHandler'}">
     <jsp:include page="../dialogs/generalContainerDialog.jsp">
         <jsp:param name="field" value="${param.field}" />
+        <jsp:param name="readonly" value="${readonly}" />
     </jsp:include>
 </c:if>

@@ -3,14 +3,13 @@ package fi.uta.fsd.metka.model.data;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import fi.uta.fsd.metka.data.entity.RevisionEntity;
 import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.model.ModelBase;
 import fi.uta.fsd.metka.model.configuration.ConfigurationKey;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.container.DataField;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -19,27 +18,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created with IntelliJ IDEA.
- * User: lasseku
- * Date: 12/18/13
- * Time: 10:07 AM
- * To change this template use File | Settings | File Templates.
- */
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "revisionData")
 public class RevisionData implements Comparable<RevisionData>, ModelBase {
-    // Factories
-
-    public static RevisionData createRevisionData(RevisionEntity entity, ConfigurationKey configuration) {
-        RevisionData data = new RevisionData(
-                new RevisionKey(entity.getKey().getRevisionableId(), entity.getKey().getRevisionNo()),
-                configuration
-        );
-        data.setState(entity.getState());
-        return data;
-    }
-
     // Class
     @XmlElement private final RevisionKey key;
     @XmlElement private final ConfigurationKey configuration;
@@ -47,13 +29,9 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase {
     @XmlElement private final Map<String, DataField> fields = new HashMap<>();
     @XmlElement private RevisionState state;
     @XmlElement private Integer rowIdSeq;
-    @XmlElement private DateTime approvalDate;
-    @XmlElement private DateTime lastSave;
+    @XmlElement private LocalDateTime approvalDate;
+    @XmlElement private LocalDateTime lastSave;
     @XmlElement private String approver;
-
-    public RevisionData(RevisionKey key, ConfigurationKey configuration) {
-        this(key, configuration, 1);
-    }
 
     @JsonCreator
     public RevisionData(@JsonProperty("key")RevisionKey key, @JsonProperty("configuration")ConfigurationKey configuration, @JsonProperty("rowIdSeq") Integer rowIdSeq) {
@@ -86,19 +64,19 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase {
         this.state = state;
     }
 
-    public DateTime getApprovalDate() {
+    public LocalDateTime getApprovalDate() {
         return approvalDate;
     }
 
-    public void setApprovalDate(DateTime approvalDate) {
+    public void setApprovalDate(LocalDateTime approvalDate) {
         this.approvalDate = approvalDate;
     }
 
-    public DateTime getLastSave() {
+    public LocalDateTime getLastSave() {
         return lastSave;
     }
 
-    public void setLastSave(DateTime lastSave) {
+    public void setLastSave(LocalDateTime lastSave) {
         this.lastSave = lastSave;
     }
 

@@ -7,13 +7,10 @@ import fi.uta.fsd.metka.model.data.container.ContainerDataField;
 import fi.uta.fsd.metka.model.data.container.DataField;
 import fi.uta.fsd.metka.model.data.container.ReferenceContainerDataField;
 import fi.uta.fsd.metka.model.data.container.SavedDataField;
-import fi.uta.fsd.metka.model.data.value.SimpleValue;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
 
 /**
  * Move revision data between service and jsp layers

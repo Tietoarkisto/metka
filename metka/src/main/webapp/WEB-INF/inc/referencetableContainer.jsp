@@ -29,11 +29,3 @@
     <div class="rightAlignCell"><input type="button" class="button" value="<spring:message code="general.table.add"/>"
                                        onclick="MetkaJS.DialogHandlers['${handler}'].show('${param.field}')"/></div>
 </c:if>
-<%--
-<c:if test="${empty param.generalHandler or param.generalHandler == true}">
-    <div class="rightAlignCell"><input type="button" class="button" value="<spring:message code="general.table.add"/>"
-                                       onclick="MetkaJS.TableHandler.showDialog('${param.field}', true)"/></div>
-    <jsp:include page="../dialogs/generalContainerDialog.jsp">
-        <jsp:param name="field" value="${param.field}" />
-    </jsp:include>
-</c:if>--%>

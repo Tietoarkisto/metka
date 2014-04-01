@@ -9,11 +9,11 @@ import fi.uta.fsd.metka.data.repository.SeriesRepository;
 import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
-import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.factories.DataFactory;
 import fi.uta.fsd.metka.model.factories.SeriesFactory;
 import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -114,7 +114,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
 
         boolean changes = false;
 
-        DateTime time = new DateTime();
+        LocalDateTime time = new LocalDateTime();
 
         for(Field field : config.getFields().values()) {
             changes = doFieldChanges(field.getKey(), to, time, data, config) | changes;
@@ -128,7 +128,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         // Entity should still be managed at this point so
 
         if(changes) {
-            data.setLastSave(new DateTime());
+            data.setLastSave(new LocalDateTime());
             revEntity.setData(json.serialize(data));
         }
 
@@ -214,7 +214,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         // Update current approved revision number on series entity
         // Entities should still be managed so no merge necessary.
         data.setState(RevisionState.APPROVED);
-        data.setApprovalDate(new DateTime());
+        data.setApprovalDate(new LocalDateTime());
         // TODO: set approver for the data to the user who requested the data approval
         entity.setData(json.serialize(data));
         entity.setState(RevisionState.APPROVED);
@@ -269,17 +269,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         // Add changes to new dataset
         RevisionEntity newRevision = series.createNextRevision();
         newRevision.setState(RevisionState.DRAFT);
-        RevisionData newData = RevisionData.createRevisionData(newRevision, oldData.getConfiguration());
-
-        // Copy old fields to new revision data
-        for(DataField field : oldData.getFields().values()) {
-            newData.putField(field.copy());
-        }
-        // Changes are not copied but instead changes in oldData are used to normalize changes in fields copied to
-        // newData since changes in previous revision are original values in new revision.
-
-        // Go through changes and move modified value to original value for every change.
-        changesToOriginals(oldData.getChanges(), newData.getFields());
+        RevisionData newData = DataFactory.createNewRevisionData(newRevision, oldData);
 
         // Serialize new dataset to the new revision entity
         // Persist new entity
