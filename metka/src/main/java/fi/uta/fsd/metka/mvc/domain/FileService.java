@@ -95,7 +95,7 @@ public class FileService {
             return null;
         }
         TransferObject to = TransferObject.buildTransferObjectFromRevisionData(revision);
-        Configuration config = configService.findLatestByType(ConfigurationType.FILE);
+        Configuration config = configService.findLatestByType(ConfigurationType.STUDY_ATTACHMENT);
         if(to != null && config != null) {
             RevisionViewDataContainer container = new RevisionViewDataContainer(to, config);
             return container;
@@ -105,7 +105,6 @@ public class FileService {
     }
 
     public ErrorMessage saveAndApprove(TransferObject to) {
-        ErrorMessage msg = new ErrorMessage();
         try {
             repository.saveAndApprove(to);
             return ErrorMessage.fileSaveAndApproveSuccesss();

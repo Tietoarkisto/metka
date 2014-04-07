@@ -30,10 +30,10 @@ public class SeriesRepositoryImpl implements SeriesRepository {
     private EntityManager em;
 
     @Autowired
-    private SeriesFactory factory;
+    private JSONUtil json;
 
     @Autowired
-    private JSONUtil json;
+    private SeriesFactory factory;
 
     @Autowired
     private ConfigurationRepository configRepo;

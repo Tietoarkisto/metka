@@ -606,7 +606,7 @@ public class ModelAccessUtil {
             case DATE: // TODO: Actual DATE, DATETIME and TIME handling. For now treat as string
             case DATETIME:
             case TIME:
-            case DERIVED: // We are only interested in the key part of the derived value. Actual derived text is added during approval.
+            case REFERENCE: // For now treat as a simple value and assume that the value comes from a valid source.
             case CHOICE: // Choice can be treated as a string since only choice value is saved and it is saved as a string.
             case STRING: { // Assume correctness and treat values as string.
 

@@ -116,8 +116,9 @@
 			"subfield": true
 		},
 		"subfield_pid_type": {
+			"_comment": "Derived is an old type and not supported, changing to STRING for the moment.",
 			"key": "pid_type",
-			"type": "DERIVED",
+			"type": "STRING",
 			"subfield": true
 		},
 		"studies": {

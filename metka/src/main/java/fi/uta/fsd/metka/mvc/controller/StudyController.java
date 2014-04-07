@@ -1,10 +1,8 @@
 package fi.uta.fsd.metka.mvc.controller;
 
-import fi.uta.fsd.metka.data.enums.ChoicelistType;
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.enums.FieldType;
 import fi.uta.fsd.metka.data.enums.UIRevisionState;
-import fi.uta.fsd.metka.model.configuration.Choicelist;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.mvc.domain.ConfigurationService;
@@ -26,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,8 +54,11 @@ public class StudyController {
     * If no revision is found then return to search page with an error message.
     */
     @RequestMapping(value = "view/{id}", method = RequestMethod.GET)
-    public String view(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+    public String view(Model model, @PathVariable Integer id, RedirectAttributes redirectAttributes) {
         Integer revision = studyService.findSingleRevisionNo(id);
+        if(model.asMap().containsKey("displayableErrors")) {
+            redirectAttributes.addFlashAttribute("displayableErrors", model.asMap().get("displayableErrors"));
+        }
         if(revision != null) {
             return REDIRECT_VIEW+id+"/"+revision;
         } else {
@@ -108,7 +108,7 @@ public class StudyController {
             return REDIRECT_SEARCH;
         }
 
-        Configuration fileConfig = configService.findLatestByType(ConfigurationType.FILE);
+        Configuration fileConfig = configService.findLatestByType(ConfigurationType.STUDY_ATTACHMENT);
         if(fileConfig == null) {
             List<ErrorMessage> errors = new ArrayList<>();
             errors.add(ErrorMessage.noConfigurationForRevision("study", id, revision));
@@ -119,18 +119,6 @@ public class StudyController {
         configurations.put("FILE", fileConfig);
         configurations.put("STUDY", config);
         model.asMap().put("configuration", configurations);
-
-        // Fill choicelist reference options
-        try {
-            for(Choicelist list : config.getChoicelists().values()) {
-                if(list.getType().equals(ChoicelistType.REFERENCE)) {
-                    generalService.fillOptions(list, config.getReferences().get(list.getReference()));
-                }
-            }
-        } catch(IOException ex) {
-            // TODO: Notify user that some choicelist could not be filled
-            ex.printStackTrace();
-        }
 
         // Form JSConfig
         JSONObject jsConfig = new JSONObject();

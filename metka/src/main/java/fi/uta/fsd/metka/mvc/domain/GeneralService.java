@@ -3,22 +3,12 @@ package fi.uta.fsd.metka.mvc.domain;
 import fi.uta.fsd.metka.data.enums.repositoryResponses.DraftRemoveResponse;
 import fi.uta.fsd.metka.data.enums.repositoryResponses.LogicalRemoveResponse;
 import fi.uta.fsd.metka.data.repository.GeneralRepository;
-import fi.uta.fsd.metka.model.configuration.Choicelist;
-import fi.uta.fsd.metka.model.configuration.Option;
-import fi.uta.fsd.metka.model.configuration.Reference;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.SavedDataField;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
-import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
 
 @Service
 public class GeneralService {
@@ -65,40 +55,8 @@ public class GeneralService {
         return repository.removeLogical(type, id);
     }
 
-    public void fillOptions(Choicelist list, Reference ref) throws IOException {
-        // Sanity check, usually means that configuration is missing information so might be a good idea to log
-        if(ref == null) {
-            // TODO: Possibly log something
-            return;
-        }
-        List<RevisionData> datas = repository.getLatestRevisionsForType(ref.getTargetType(), ref.getApprovedOnly());
-        for(RevisionData data : datas) {
-            SavedDataField field = getSavedDataFieldFromRevisionData(data, ref.getValueField());
-            if(field == null) {
-                // No value field found. Option can not be completed
-                continue;
-            }
-            Option option = new Option(extractStringSimpleValue(field));
-            if(StringUtils.isEmpty(option.getValue())) {
-                // Value is empty, option is not usable. Continue
-                continue;
-            }
-            if(StringUtils.isEmpty(ref.getTitleField())) {
-                option.setTitle(option.getValue());
-            } else {
-                field = getSavedDataFieldFromRevisionData(data, ref.getTitleField());
-                option.setTitle(extractStringSimpleValue(field));
-            }
-            if(option.getTitle() == null) {
-                option.setTitle(option.getValue());
-            }
-            list.getOptions().add(option);
-        }
-        Collections.sort(list.getOptions(), new Comparator<Option>() {
-            public int compare(Option o1, Option o2) {
-                return o1.getTitle().compareTo(o2.getTitle());
-            }
-        });
+    public RevisionData getRevision(Integer id, Integer revision) throws IOException {
+        return repository.getRevision(id, revision);
     }
 
     public String getRevisionData(Integer id, Integer revision) {

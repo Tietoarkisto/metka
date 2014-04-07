@@ -47,7 +47,7 @@ public class FileFactory extends DataFactory {
             return null;
 
         Configuration conf = null;
-        conf = configurationRepository.findLatestConfiguration(ConfigurationType.FILE);
+        conf = configurationRepository.findLatestConfiguration(ConfigurationType.STUDY_ATTACHMENT);
 
         if(conf == null) {
             // TODO: Log error that no configuration found for study

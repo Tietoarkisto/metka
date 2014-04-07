@@ -169,13 +169,9 @@ MetkaJS.TableHandler = function() {
      * @returns Javascript object representing the JSON string in a field, null if no data found
      */
     function readContent(key) {
-        if(key === 'undefined' || key == null || key == "") {
-            return null;
-        }
-        if($("#values\\'"+key+"\\'").val() != undefined
-                && $("#values\\'"+key+"\\'").val() != null
-                && $("#values\\'"+key+"\\'").val() != "") {
-            var content = JSON.parse($("#values\\'"+key+"\\'").val());
+        var field = MetkaJS.getModelInput(key);
+        if(field != null && field.val() !== 'undefined' && field.val() != null && field.val() != "") {
+            var content = JSON.parse(field.val());
             return content;
         }
         return null;
@@ -187,15 +183,8 @@ MetkaJS.TableHandler = function() {
      * @param content Content to be saved, must not be null or doesn't do anything at all.
      */
     function saveContent(content) {
-        if(content === 'undefined'
-                || content == null
-                || content.key === 'undefined'
-                || content.key == null
-                || content.key == "") {
-            return;
-        }
-        var input = $("#values\\'"+content.key+"\\'");
-        if(input === 'undefined' || input == null) {
+        var input = MetkaJS.getModelInput(content.key);
+        if(input == null) {
             return;
         }
         input.val(JSON.stringify(content));

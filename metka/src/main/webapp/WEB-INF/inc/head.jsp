@@ -13,20 +13,17 @@
 
 <script src="${contextPath}/js/jquery/jquery-1.10.2.js"></script>
 <script src="${contextPath}/js/jquery/jquery-ui.js"></script>
-<script src="${contextPath}/js/jquery/jquery.tablesorter.min.js"></script>
+<%--<script src="${contextPath}/js/jquery/jquery.tablesorter.min.js"></script>
 <script src="${contextPath}/js/jquery/jquery.dataTables.min.js"></script>
 <script src="${contextPath}/js/jquery/jquery.tablesorter.pager.js"></script>
 <script src="${contextPath}/js/jquery/jquery.dataTables.rowReordering.js"></script>
 <script src="${contextPath}/js/jquery/jquery.fastLiveFilter.js"></script>
 <script src="${contextPath}/js/jquery/jquery.fancytree.js"></script>
 <script src="${contextPath}/js/jquery/jquery.fancytree.filter.js"></script>
-<script src="${contextPath}/js/jquery/jquery.fastLiveFilter.js"></script>
+<script src="${contextPath}/js/jquery/jquery.fastLiveFilter.js"></script>--%>
 <script src="${contextPath}/js/jquery/jquery.fileupload.js"></script>
 <script src="${contextPath}/js/custom/dialogs.js"></script>
 <script src="${contextPath}/js/custom/general.js"></script>
 <script src="${contextPath}/js/custom/${page}.js"></script>
 <script src="${contextPath}/js/custom/table.js"></script>
-<script src="${contextPath}/js/studies.js"></script>
-<script src="${contextPath}/js/publications.js"></script>
-<script src="${contextPath}/js/binders.js"></script>
-<script src="${contextPath}/js/tables.js"></script>
+<script src="${contextPath}/js/custom/reference.js"></script>

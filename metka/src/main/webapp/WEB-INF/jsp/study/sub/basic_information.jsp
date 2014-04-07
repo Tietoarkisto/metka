@@ -60,7 +60,7 @@
             </jsp:include>
         </tr>
         <tr>
-            <jsp:include page="../../../inc/l18nSelect.jsp">
+            <jsp:include page="../../../inc/referenceSelect.jsp">
                 <jsp:param name="field" value="seriesid" />
                 <jsp:param name="colspan" value="3" />
                 <jsp:param name="readonly" value="${readonly}" />

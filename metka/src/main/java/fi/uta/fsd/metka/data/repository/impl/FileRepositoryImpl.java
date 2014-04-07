@@ -3,7 +3,7 @@ package fi.uta.fsd.metka.data.repository.impl;
 import fi.uta.fsd.metka.data.entity.FileLinkQueueEntity;
 import fi.uta.fsd.metka.data.entity.RevisionEntity;
 import fi.uta.fsd.metka.data.entity.RevisionableEntity;
-import fi.uta.fsd.metka.data.entity.impl.FileEntity;
+import fi.uta.fsd.metka.data.entity.impl.StudyAttachmentEntity;
 import fi.uta.fsd.metka.data.entity.key.RevisionKey;
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.enums.RevisionState;
@@ -44,7 +44,7 @@ public class FileRepositoryImpl implements FileRepository {
 
     @Override
     public RevisionData newFileRevisionable(String path) throws IOException {
-        FileEntity entity = new FileEntity();
+        StudyAttachmentEntity entity = new StudyAttachmentEntity();
         em.persist(entity);
 
         RevisionEntity revision = entity.createNextRevision();
@@ -69,7 +69,7 @@ public class FileRepositoryImpl implements FileRepository {
         RevisionableEntity file = em.find(RevisionableEntity.class, id);
 
         // Sanity check
-        if(file == null || ConfigurationType.fromValue(file.getType()) != ConfigurationType.FILE || file.getLatestRevisionNo() == null) {
+        if(file == null || ConfigurationType.fromValue(file.getType()) != ConfigurationType.STUDY_ATTACHMENT || file.getLatestRevisionNo() == null) {
             // TODO: Log error, this should never happen.
             return null;
         }
@@ -106,7 +106,7 @@ public class FileRepositoryImpl implements FileRepository {
             file.setLatestRevisionNo(newRevision.getKey().getRevisionNo());
 
             // Get latest configuration for configuration key for new data
-            Configuration config = configRepo.findLatestConfiguration(ConfigurationType.FILE);
+            Configuration config = configRepo.findLatestConfiguration(ConfigurationType.STUDY_ATTACHMENT);
 
             // Create new RevisionData object using the current revEntity (either new or old, doesn't matter)
             RevisionData newData = DataFactory.createNewRevisionData(newRevision, data, config.getKey());
@@ -119,7 +119,7 @@ public class FileRepositoryImpl implements FileRepository {
 
     @Override
     public void saveAndApprove(TransferObject to) throws Exception {
-        FileEntity file = em.find(FileEntity.class, to.getId());
+        StudyAttachmentEntity file = em.find(StudyAttachmentEntity.class, to.getId());
         if(file == null) {
             // There has to be a file so you can save
             throw new Exception("No file found for id "+to.getId());
@@ -142,7 +142,7 @@ public class FileRepositoryImpl implements FileRepository {
         }
 
         RevisionData data = json.readRevisionDataFromString(revEntity.getData());
-        Configuration config = configRepo.findLatestConfiguration(ConfigurationType.FILE);
+        Configuration config = configRepo.findLatestConfiguration(ConfigurationType.STUDY_ATTACHMENT);
 
         // Latest data is not a DRAFT
         if(data.getState() != RevisionState.DRAFT) {

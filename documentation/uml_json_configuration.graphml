@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:y="http://www.yworks.com/xml/graphml" xmlns:yed="http://www.yworks.com/xml/yed/3" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml/1.1/ygraphml.xsd">
-  <!--Created by yFiles for Java 2.11-->
+  <!--Created by yEd 3.12.2-->
   <key for="graphml" id="d0" yfiles.type="resources"/>
   <key for="port" id="d1" yfiles.type="portgraphics"/>
   <key for="port" id="d2" yfiles.type="portgeometry"/>
@@ -156,7 +156,7 @@ ConfigurationKey<y:LabelModel>
           <y:Geometry height="220.0" width="447.0" x="11.974999999999966" y="187.19648067182743"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="227.5" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="438.953125" x="4.0" y="4.0">+key : Unique string key for this reference object that is used to link
+          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="171.625" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="438.953125" x="4.0" y="4.0">+key : Unique string key for this reference object that is used to link
     to it from other objects.
 
 +targetType : Type of the object that this choicelist is referencing to.
@@ -165,13 +165,9 @@ ConfigurationKey<y:LabelModel>
     when option is selected is found.
 
 +titleField : Key of the field from where the text that is shown for option
-    is found. If this is left empty then +valueField is used instead.
+    is found. If this is left empty then +valueField is used instead.	
 
-+approvedOnly: Referenced values should be found from approved
-    revisions only. For choicelists this means that values are collected 
-    from approved revisions and for REFERENCE fields the displayed
-    values are from approved revisions only.
-	</y:NodeLabel>
+see reference specification document.</y:NodeLabel>
         </y:UMLNoteNode>
       </data>
     </node>
@@ -191,10 +187,10 @@ ConfigurationKey<y:LabelModel>
           </y:NodeLabel>
           <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="" use3DEffect="true">
             <y:AttributeLabel>+key : String {id}
-+targetType : ConfigurationType
-+valueField : String
-+titleField : String
-+approvedOnly : Boolean = true</y:AttributeLabel>
++type : ReferenceType
++target : String
++valuePath : Path
++titlePath : Path</y:AttributeLabel>
             <y:MethodLabel/>
           </y:UML>
         </y:UMLClassNode>
@@ -231,6 +227,30 @@ for options.</y:NodeLabel>
     also since it can be used as a choicelist reference field. This information helps
     automating some checks and UI functionality.</y:NodeLabel>
         </y:UMLNoteNode>
+      </data>
+    </node>
+    <node id="n10">
+      <data key="d4"/>
+      <data key="d6">
+        <y:UMLClassNode>
+          <y:Geometry height="87.00000000000003" width="162.0" x="556.3737614678898" y="35.355530150994326"/>
+          <y:Fill color="#FFCC00" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="34.265625" modelName="custom" textColor="#000000" visible="true" width="141.2998046875" x="10.35009765625" y="3.0">&lt;&lt;enumeration&gt;&gt;
+ReferenceType<y:LabelModel>
+              <y:SmartNodeLabelModel distance="4.0"/>
+            </y:LabelModel>
+            <y:ModelParameter>
+              <y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="-0.03703090122767855" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/>
+            </y:ModelParameter>
+          </y:NodeLabel>
+          <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="" use3DEffect="true">
+            <y:AttributeLabel>REVISIONABLE
+JSON
+DEPENDENCY</y:AttributeLabel>
+            <y:MethodLabel/>
+          </y:UML>
+        </y:UMLClassNode>
       </data>
     </node>
     <edge id="e0" source="n2" target="n1">

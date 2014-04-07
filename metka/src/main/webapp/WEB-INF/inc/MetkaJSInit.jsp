@@ -43,7 +43,13 @@
                 this.navigate = function() {
                     location.href = this.path;
                 }
-            }}
+            }},
+            getModelInput: function(key) {
+                if(key != null) {
+                    return $("#values\\'"+key+"\\'");
+                }
+                return null;
+            }
         };
     }();
 
@@ -69,6 +75,9 @@
     MetkaJS.L18N.put("general.errors.title.notice", "<spring:message code='general.errors.title.notice' />");
     // Insert localisation for text DRAFT
     MetkaJS.L18N.put("general.title.DRAFT", "<spring:message code="general.title.DRAFT"/>");
+
+    // Insert empty selection row
+    MetkaJS.L18N.put("general.list.empty", "<spring:message code="general.list.empty"/>");
 
     // Insert missing implementation notifications
     MetkaJS.L18N.put("general.errors.title.noImplementation", "<spring:message code='general.errors.title.noImplementation' />");

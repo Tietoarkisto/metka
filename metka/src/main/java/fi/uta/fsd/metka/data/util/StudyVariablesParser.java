@@ -22,6 +22,9 @@ import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
  */
 public class StudyVariablesParser {
     public static boolean merge(RevisionData data, VariableDataType type, String path, Configuration config) throws IOException {
+        if(type == null) {
+            return false;
+        }
         switch(type) {
             case POR:
                 // Read POR file

@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum ConfigurationType {
     STUDY(Values.STUDY),
     SERIES(Values.SERIES),
-    FILE(Values.FILE),
+    STUDY_ATTACHMENT(Values.STUDY_ATTACHMENT),
     PUBLICATION(Values.PUBLICATION);
     // Add more as needed
 
@@ -29,6 +29,16 @@ public enum ConfigurationType {
         }
         throw new IllegalArgumentException(value);
     }
+
+    public static boolean isValue(String value) {
+        for(ConfigurationType type : values()) {
+            if(type.value.equals(value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @JsonValue
     public String toValue() {
         return value;
@@ -42,7 +52,7 @@ public enum ConfigurationType {
     public static class Values {
         public static final String STUDY = "STUDY";
         public static final String SERIES = "SERIES";
-        public static final String FILE = "FILE";
+        public static final String STUDY_ATTACHMENT = "STUDY_ATTACHMENT";
         public static final String PUBLICATION = "PUBLICATION";
     }
 }

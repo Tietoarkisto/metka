@@ -12,7 +12,7 @@
     <tr>
         <c:if test="${configuration[context].fields[param.field].showReferenceKey == true}">
             <c:set var="reference" value="${configuration[context].fields[param.field].reference}" />
-            <th><spring:message code="${configuration[context].references[reference].targetType}.field.${configuration[context].references[reference].valueField}"/></th>
+            <th><spring:message code="${configuration[context].references[reference].target}.field.${configuration[context].references[reference].valuePath}"/></th>
         </c:if>
         <%--<c:forEach var="subfield" items="${configuration[context].fields[param.field].subfields}">
             <c:if test="${configuration[context].fields[subfield].summaryField == true}"><th><spring:message code="${context}.field.${subfield}"/></th></c:if>

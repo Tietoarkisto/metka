@@ -1,6 +1,6 @@
 // TODO: clean this script to include only needed functionality
 $(document).ready(function(){
-    $(".sortableTable").tablesorter();
+    /*$(".sortableTable").tablesorter();*/
 
     // TODO: localize calendar texts
     jQuery(function($){
@@ -44,7 +44,7 @@ $(document).ready(function(){
         }
     });
 
-    function toggleFinnishTranslations(hide) {
+    /*function toggleFinnishTranslations(hide) {
         $(".translationFi").find("input").attr("disabled", hide);
         $(".translationFi").find("textarea").attr("disabled", hide);
         $(".translationFi").find("select").attr("disabled", hide);
@@ -67,11 +67,11 @@ $(document).ready(function(){
             $(".translationBorder").removeClass("translationEnBorder");
             $("#studyLevelData").find(".translationFi").find("a").show();
         }
-    }
+    }*/
 
-    $(".helpImage").on("click", function() {
+    /*$(".helpImage").on("click", function() {
         window.open("help.html");
-    });
+    });*/
 
     /**************
      * Clean code *

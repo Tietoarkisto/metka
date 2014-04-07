@@ -3,11 +3,7 @@ package fi.uta.fsd.metka.mvc.domain.requests;
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
 
 /**
- * Created with IntelliJ IDEA.
- * User: lasseku
- * Date: 1/17/14
- * Time: 11:04 AM
- * To change this template use File | Settings | File Templates.
+ * Request object for comparing two revisions of a revisionable object
  */
 public class ChangeCompareRequest {
     private Integer id;

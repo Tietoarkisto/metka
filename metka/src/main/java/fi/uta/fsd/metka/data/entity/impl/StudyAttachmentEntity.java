@@ -7,6 +7,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 @Entity
-@DiscriminatorValue(ConfigurationType.Values.FILE)
-public class FileEntity extends RevisionableEntity{
+@DiscriminatorValue(ConfigurationType.Values.STUDY_ATTACHMENT)
+public class StudyAttachmentEntity extends RevisionableEntity{
 }

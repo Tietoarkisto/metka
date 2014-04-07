@@ -319,25 +319,25 @@
 	"references": {
 		"series_select_ref": {
 			"key": "series_select_ref",
-			"targetType": "SERIES",
-			"valueField": "seriesno",
-			"titleField": "seriesname"
+			"type": "REVISIONABLE",
+			"target": "SERIES",
+			"titlePath": "seriesname"
 		},
 		"publication_ref": {
 			"key": "publication_ref",
-			"targetType": "PUBLICATION",
-			"valueField": "id"
+			"type": "REVISIONABLE",
+			"target": "PUBLICATION"
 		},
 		"study_ref": {
 			"key": "study_ref",
-			"targetType": "STUDY",
-			"valueField": "id"
+			"type": "REVISIONABLE",
+			"target": "STUDY"
 		},
-		"file_ref": {
-			"key": "file_ref",
-			"targetType": "FILE",
-			"valueField": "fileno",
-			"titleField": "file"
+		"attachment_ref": {
+			"key": "attachment_ref",
+			"type": "REVISIONABLE",
+			"target": "STUDY_ATTACHMENT",
+			"titlePath": "file"
 		}
 	},
 	"idField": "study_id",
@@ -543,22 +543,6 @@
 			"translatable": false,
 			"type": "CHOICE",
 			"choicelist": "public_list",
-			"section": "basic_information"
-		},
-		"publication_references": {
-			"_comment": "TODO: Should all needed fields be mentioned in configuration or is that something that is just done while collecting data for UI?",
-			"key": "publication_references",
-			"translatable": false,
-			"type": "REFERENCE",
-			"reference": "publication_ref",
-			"section": "basic_information"
-		},
-		"study_references": {
-			"_comment": "TODO: See publication_reference!",
-			"key": "study_references",
-			"translatable": false,
-			"type": "REFERENCE",
-			"reference": "study_ref",
 			"section": "basic_information"
 		},
 		"securityissues": {
@@ -1290,7 +1274,7 @@
 			"key": "files",
 			"translatable": false,
 			"type": "REFERENCECONTAINER",
-			"reference": "file_ref",
+			"reference": "attachment_ref",
 			"section": "file_management",
 			"subfields": [
 			],

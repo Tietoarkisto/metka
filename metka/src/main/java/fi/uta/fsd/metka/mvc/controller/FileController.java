@@ -36,7 +36,7 @@ public class FileController {
     @RequestMapping(value = "currentConfiguration", method = {RequestMethod.POST},
             produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody Configuration getCurrentFileConfiguration() throws Exception {
-        Configuration config = configService.findLatestByType(ConfigurationType.FILE);
+        Configuration config = configService.findLatestByType(ConfigurationType.STUDY_ATTACHMENT);
         return config;
     }
 

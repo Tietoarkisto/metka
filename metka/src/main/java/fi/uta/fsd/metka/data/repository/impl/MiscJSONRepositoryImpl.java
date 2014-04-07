@@ -1,7 +1,6 @@
 package fi.uta.fsd.metka.data.repository.impl;
 
 import fi.uta.fsd.metka.data.entity.MiscJSONEntity;
-import fi.uta.fsd.metka.data.enums.MiscJSONType;
 import fi.uta.fsd.metka.data.repository.MiscJSONRepository;
 import fi.uta.fsd.metka.data.util.JSONUtil;
 import org.json.JSONObject;
@@ -42,8 +41,8 @@ public class MiscJSONRepositoryImpl implements MiscJSONRepository {
     }
 
     @Override
-    public JSONObject findByType(MiscJSONType type) {
-        MiscJSONEntity entity = em.find(MiscJSONEntity.class, type);
+    public JSONObject findByKey(String key) {
+        MiscJSONEntity entity = em.find(MiscJSONEntity.class, key);
         if(entity == null || StringUtils.isEmpty(entity.getData())) {
             return null;
         }

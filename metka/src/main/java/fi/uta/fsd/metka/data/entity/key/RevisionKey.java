@@ -17,8 +17,8 @@ public class RevisionKey implements Serializable {
     public RevisionKey() {
     }
 
-    public RevisionKey(Integer versionableId, Integer revisionNo) {
-        this.revisionableId = versionableId;
+    public RevisionKey(Integer revisionableId, Integer revisionNo) {
+        this.revisionableId = revisionableId;
         this.revisionNo = revisionNo;
     }
 

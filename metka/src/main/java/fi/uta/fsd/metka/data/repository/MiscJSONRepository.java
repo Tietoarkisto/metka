@@ -1,6 +1,5 @@
 package fi.uta.fsd.metka.data.repository;
 
-import fi.uta.fsd.metka.data.enums.MiscJSONType;
 import org.json.JSONObject;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,9 +21,9 @@ public interface MiscJSONRepository {
     @Transactional(readOnly = false) public void merge(JSONObject misc);
 
     /**
-     * Find MiscJSON data with given type.
-     * @param type Requested Misc JSON type
+     * Find MiscJSON data with given key.
+     * @param key Requested Misc JSON key
      * @return
      */
-    public JSONObject findByType(MiscJSONType type);
+    public JSONObject findByKey(String key);
 }

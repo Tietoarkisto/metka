@@ -1,7 +1,5 @@
 package fi.uta.fsd.metka.data.entity;
 
-
-import fi.uta.fsd.metka.data.enums.MiscJSONType;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
