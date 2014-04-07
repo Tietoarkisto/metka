@@ -21,12 +21,12 @@
             <td class="labelColumn"><form:label path="values['${field}']"><spring:message code="STUDY.field.${field}"/></form:label></td>
             <td><form:input path="values['${field}']" readonly="true"/></td>
 
-            <jsp:include page="../../../inc/l18nSelect.jsp">
+            <jsp:include page="../../../inc/l10nSelect.jsp">
                 <jsp:param name="field" value="datakind" />
                 <jsp:param name="readonly" value="${readonly}" />
             </jsp:include>
 
-            <jsp:include page="../../../inc/l18nSelect.jsp">
+            <jsp:include page="../../../inc/l10nSelect.jsp">
                 <jsp:param name="field" value="public" />
                 <jsp:param name="readonly" value="${readonly}" />
             </jsp:include>
@@ -35,12 +35,12 @@
             <td class="labelColumn"><form:label path="values['${field}']"><spring:message code="STUDY.field.${field}"/></form:label></td>
             <td><form:input path="values['${field}']" readonly="true"/></td>
 
-            <jsp:include page="../../../inc/l18nSelect.jsp">
+            <jsp:include page="../../../inc/l10nSelect.jsp">
                 <jsp:param name="field" value="anonymization" />
                 <jsp:param name="readonly" value="${readonly}" />
             </jsp:include>
 
-            <jsp:include page="../../../inc/l18nSelect.jsp">
+            <jsp:include page="../../../inc/l10nSelect.jsp">
                 <jsp:param name="field" value="descpublic" />
                 <jsp:param name="readonly" value="${readonly}" />
             </jsp:include>
@@ -49,12 +49,12 @@
             <td class="labelColumn"><form:label path="values['${field}']"><spring:message code="STUDY.field.${field}"/></form:label></td>
             <td><form:input class="datepicker" path="values['${field}']" readonly="${readonly or configuration[context].fields[field].editable == false}" /></td>
 
-            <jsp:include page="../../../inc/l18nSelect.jsp">
+            <jsp:include page="../../../inc/l10nSelect.jsp">
                 <jsp:param name="field" value="securityissues" />
                 <jsp:param name="readonly" value="${readonly}" />
             </jsp:include>
 
-            <jsp:include page="../../../inc/l18nSelect.jsp">
+            <jsp:include page="../../../inc/l10nSelect.jsp">
                 <jsp:param name="field" value="varpublic" />
                 <jsp:param name="readonly" value="${readonly}" />
             </jsp:include>

@@ -1,10 +1,9 @@
 package fi.uta.fsd.metka.mvc.controller;
 
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
-import fi.uta.fsd.metka.data.enums.FieldType;
 import fi.uta.fsd.metka.data.enums.UIRevisionState;
+import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.mvc.domain.ConfigurationService;
 import fi.uta.fsd.metka.mvc.domain.GeneralService;
 import fi.uta.fsd.metka.mvc.domain.StudyService;
@@ -13,8 +12,7 @@ import fi.uta.fsd.metka.mvc.domain.simple.RevisionViewDataContainer;
 import fi.uta.fsd.metka.mvc.domain.simple.transfer.SearchResult;
 import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
 import fi.uta.fsd.metka.mvc.domain.simple.study.StudySearchData;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import fi.uta.fsd.metka.transfer.configuration.ConfigurationMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,6 +47,9 @@ public class StudyController {
     private GeneralService generalService;
     @Autowired
     private ConfigurationService configService;
+    @Autowired
+    private JSONUtil json;
+
     /*
     * View single study
     * Use search functions to find relevant revision for the requested study. Then redirect to viewing that specific revision.
@@ -116,15 +118,23 @@ public class StudyController {
             return REDIRECT_SEARCH;
         }
         Map<String, Configuration> configurations = new HashMap<>();
-        configurations.put("FILE", fileConfig);
-        configurations.put("STUDY", config);
+        configurations.put(fileConfig.getKey().getType().toValue(), fileConfig);
+        configurations.put(config.getKey().getType().toValue(), config);
         model.asMap().put("configuration", configurations);
 
         // Form JSConfig
-        JSONObject jsConfig = new JSONObject();
-        jsConfig.put(config.getKey().getType().toValue(), makeJSConfig(config));
-        jsConfig.put(fileConfig.getKey().getType().toValue(), makeJSConfig(fileConfig));
-        model.asMap().put("jsConfig", jsConfig.toString());
+        ConfigurationMap configs = new ConfigurationMap();
+        configs.setConfiguration(config);
+        configs.setConfiguration(fileConfig);
+        try {
+            model.asMap().put("jsConfig", json.serialize(configs));
+        } catch(IOException ex) {
+            ex.printStackTrace();
+            List<ErrorMessage> errors = new ArrayList<>();
+            errors.add(ErrorMessage.configurationSerializationError("study", id, revision));
+            redirectAttributes.addFlashAttribute("displayableErrors", errors);
+            return REDIRECT_SEARCH;
+        }
 
         model.asMap().put("page", "study");
         if(single.getState() == UIRevisionState.DRAFT) {
@@ -254,45 +264,5 @@ public class StudyController {
         if(errors.size() > 0) redirectAttributes.addFlashAttribute("displayableErrors", errors);
 
         return REDIRECT_VIEW+single.getId()+"/"+single.getRevision();
-    }
-
-    @SuppressWarnings("fallthrough")
-    private JSONObject makeJSConfig(Configuration config) {
-        // Form CONTAINER config json
-        JSONObject jsConfig = new JSONObject();
-        for(Field field : config.getFields().values()) {
-            JSONObject jsField = new JSONObject();
-            jsConfig.put(field.getKey(), jsField);
-
-            jsField.put("key", field.getKey());
-            jsField.put("type", field.getType());
-            switch(field.getType()) {
-                case REFERENCECONTAINER:
-                    jsField.put("showReferenceKey", field.getShowReferenceKey());
-                    /* FALLTHROUGH */
-                case CONTAINER:
-                    jsField.put("showSaveInfo", field.getShowSaveInfo());
-                    JSONArray subfields = new JSONArray();
-                    for(String subfield : field.getSubfields()) {
-                        subfields.put(subfield);
-                    }
-                    jsField.put("subfields", subfields);
-                    break;
-                default:
-                    jsField.put("immutable", field.getImmutable());
-                    jsField.put("multiline", field.getMultiline());
-                    jsField.put("required", field.getRequired());
-                    jsField.put("subfield", field.getSubfield());
-                    if(field.getSubfield()) {
-                        jsField.put("summaryField", field.getSummaryField());
-                        jsField.put("referenceKey", (Object)field.getReferenceKey());
-                    }
-                    if(field.getType() == FieldType.CHOICE) {
-                        jsField.put("choicelist", config.getChoicelists().get(field.getChoicelist()).getKey());
-                    }
-                    break;
-            }
-        }
-        return jsConfig;
     }
 }

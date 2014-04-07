@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <c:set var="handler" value="${empty param.handler ? 'generalReferenceHandler' : param.handler}" />
 <c:set var="container" value="fileManagement" />
-<c:set var="context" value="FILE" />
+<c:set var="context" value="STUDY_ATTACHMENT" />
 <c:set var="readonly" value="${empty param.readonly ? false : param.readonly}" />
 <script src="${pageContext.request.contextPath}/js/handlers/studyFilesHandler.js"></script>
 <div class="largePopupContainer" id="fileManagementDialog" title="<spring:message code="${context}.dialog.fileManagement"/>" >

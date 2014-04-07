@@ -19,6 +19,7 @@
                 }
             }(),
             JSConfig: null,
+            JSConfigUtil: null,
             SingleObject: null,
             view: function(id, revision) {
                 MetkaJS.PathBuilder()
@@ -29,7 +30,7 @@
                         .navigate();
             },
             ErrorManager: null,
-            L18N: null,
+            L10N: null,
             PathBuilder: function() {return new function() {
                 this.path = MetkaJS.Globals.contextPath;
                 this.add = function(part) {
@@ -49,11 +50,23 @@
                     return $("#values\\'"+key+"\\'");
                 }
                 return null;
+            },
+            getModelInputId: function(key) {
+                if(key != null) {
+                    return "values\\'"+key+"\\'";
+                }
+                return null;
+            },
+            getModelInputName: function(key) {
+                if(key != null) {
+                    return "values[\\'"+key+"\\']";
+                }
+                return null;
             }
         };
     }();
 
-    MetkaJS.L18N = function() {
+    MetkaJS.L10N = function() {
         var strings = new Array();
         return {
             put: function(key, value) {
@@ -70,18 +83,18 @@
     }();
 
     // Insert default confirmation dialog title
-    MetkaJS.L18N.put("general.confirmation.title.confirm", "<spring:message code='general.confirmation.title.confirm' />");
+    MetkaJS.L10N.put("general.confirmation.title.confirm", "<spring:message code='general.confirmation.title.confirm' />");
     // Insert default error title
-    MetkaJS.L18N.put("general.errors.title.notice", "<spring:message code='general.errors.title.notice' />");
+    MetkaJS.L10N.put("general.errors.title.notice", "<spring:message code='general.errors.title.notice' />");
     // Insert localisation for text DRAFT
-    MetkaJS.L18N.put("general.title.DRAFT", "<spring:message code="general.title.DRAFT"/>");
+    MetkaJS.L10N.put("general.title.DRAFT", "<spring:message code="general.title.DRAFT"/>");
 
     // Insert empty selection row
-    MetkaJS.L18N.put("general.list.empty", "<spring:message code="general.list.empty"/>");
+    MetkaJS.L10N.put("general.list.empty", "<spring:message code="general.list.empty"/>");
 
     // Insert missing implementation notifications
-    MetkaJS.L18N.put("general.errors.title.noImplementation", "<spring:message code='general.errors.title.noImplementation' />");
-    MetkaJS.L18N.put("general.errors.container.dialog.noImplementation", "<spring:message code='general.errors.container.dialog.noImplementation' />");
+    MetkaJS.L10N.put("general.errors.title.noImplementation", "<spring:message code='general.errors.title.noImplementation' />");
+    MetkaJS.L10N.put("general.errors.container.dialog.noImplementation", "<spring:message code='general.errors.container.dialog.noImplementation' />");
 
     <%-- Initialise single object if applicable --%>
 <c:if test="${not empty single}">
@@ -107,13 +120,12 @@
         };
     }();
 </c:if>
-<%-- There are displayable errors, make error handler --%>
-<c:if test="${not empty displayableErrors}">
+<%-- Make error handler --%>
     MetkaJS.ErrorManager = function() {
         var errors = new Array();
 
         function showError(error) {
-            var str = MetkaJS.L18N.get(error.message);
+            var str = MetkaJS.L10N.get(error.message);
             for(var i = 0; i < error.data.length; i++) {
                 str = str.replace("{"+i+"}", error.data[i]);
             }
@@ -142,8 +154,8 @@
                     showError(errors.pop());
                 }
             },
-            show: function() {
-
+            show: function(error) {
+                showError(error);
             },
             topError: function() {
                 return errors[errors.length - 1];
@@ -152,9 +164,10 @@
     }();
 
     <%-- List displayable errors --%>
+<c:if test="${not empty displayableErrors}">
 <c:forEach items="${displayableErrors}" var="errorObject">
-    <c:if test="${not empty errorObject.title}">MetkaJS.L18N.put("${errorObject.title}", "<spring:message code='${errorObject.title}' />");</c:if>
-    MetkaJS.L18N.put("${errorObject.msg}", "<spring:message code='${errorObject.msg}' />");
+    <c:if test="${not empty errorObject.title}">MetkaJS.L10N.put("${errorObject.title}", "<spring:message code='${errorObject.title}' />");</c:if>
+    MetkaJS.L10N.put("${errorObject.msg}", "<spring:message code='${errorObject.msg}' />");
     MetkaJS.ErrorManager.push(MetkaJS.ErrorManager.ErrorObject("${errorObject.title}", "${errorObject.msg}"));
     <c:forEach items="${errorObject.data}" var="dataStr">
     MetkaJS.ErrorManager.topError().pushData("<spring:message code='${dataStr}' />");
@@ -166,9 +179,37 @@
 <c:if test="${page == 'study'}">
     <c:set var="choicelist" value="${configuration['STUDY'].fields['statisticstype'].choicelist}" />
     <c:forEach items="${configuration['STUDY'].choicelists[choicelist].options}" var="option">
-    MetkaJS.L18N.put("STUDY.${choicelist}.choices.${option.value}", "<spring:message code='STUDY.${choicelist}.choices.${option.value}' />");
+    MetkaJS.L10N.put("STUDY.${choicelist}.choices.${option.value}", "<spring:message code='STUDY.${choicelist}.choices.${option.value}' />");
     </c:forEach>
 </c:if>
     <%-- If JSConfig JSON is provided insert it to globals. Otherwise MetkaJS.JSConfig will remain null --%>
     <c:if test="${not empty jsConfig}">MetkaJS.JSConfig = JSON.parse('${jsConfig}');</c:if>
+    MetkaJS.JSConfigUtil = function() {
+        return {
+            getField: function(key, context) {
+                if(context == null) {
+                    context = MetkaJS.Globals.page.toUpperCase();
+                }
+                if(key != null && context != null && MetkaJS.JSConfig[context] != null) {
+                    return MetkaJS.JSConfig[context].fields[key];
+                }
+                return null;
+            },
+            getRootChoicelist: function(key, context) {
+                if(context == null) {
+                    context = MetkaJS.Globals.page.toUpperCase();
+                }
+                if(key != null && context != null && MetkaJS.JSConfig[context] != null) {
+                    // TODO: Implement loop protection
+                    var choicelist = MetkaJS.JSConfig[context].choicelists[key];
+                    while(choicelist.key != key) {
+                        key = choicelist.key;
+                        choicelist = MetkaJS.JSConfig[context].choicelists[key];
+                    }
+                    return choicelist;
+                }
+                return null;
+            }
+        }
+    }();
 </script>

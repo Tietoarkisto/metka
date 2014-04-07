@@ -35,6 +35,7 @@
 	"choicelists": {
 		"datakind_list": {
 			"key": "datakind_list",
+			"type": "VALUE",
 			"default": "1",
 			"options": [
 				{
@@ -73,16 +74,20 @@
 			]
 		},
 		"public_list": {
-			"key": "yes_no_na"
+			"key": "yes_no_na",
+			"type": "SUBLIST"
 		},
 		"descpublic_list": {
-			"key": "yes_no_na"
+			"key": "yes_no_na",
+			"type": "SUBLIST"
 		},
 		"securityissues_list": {
-			"key": "yes_no_na"
+			"key": "yes_no_na",
+			"type": "SUBLIST"
 		},
 		"varpublic_list": {
-			"key": "yes_no_na"
+			"key": "yes_no_na",
+			"type": "SUBLIST"
 		},
 		"yes_no_na": {
 			"key": "yes_no_na",
@@ -101,6 +106,7 @@
 		},
 		"usability_permission_list": {
 			"key": "usability_permission_list",
+			"type": "VALUE",
 			"options": [
 				{
 					"value": "1"
@@ -122,7 +128,6 @@
 		"series_list": {
 			"key": "series_list",
 			"type": "REFERENCE",
-			"options": [],
 			"reference": "series_select_ref",
 			"includeEmpty": true
 		},
@@ -138,6 +143,7 @@
 		},
 		"dataversionlabel_list": {
 			"key": "dataversionlabel_list",
+			"type": "VALUE",
 			"options": [
 				{
 					"value": "1"
@@ -229,17 +235,16 @@
 		"topicvocab_list": {
 			"key": "topicvocab_list",
 			"type": "REFERENCE",
-			"options": [],
 			"reference": ""
 		},
 		"topic_list": {
 			"key": "topic_list",
 			"type": "REFERENCE",
-			"options": [],
 			"reference": ""
 		},
 		"timeperiodevent_list": {
-			"key": "start_end_single"
+			"key": "start_end_single",
+			"type": "SUBLIST"
 		},
 		"start_end_single": {
 			"key": "start_end_single",
@@ -269,7 +274,8 @@
 			]
 		},
 		"colldateevent_list": {
-			"key": "start_end_single"
+			"key": "start_end_single",
+			"type": "SUBLIST"
 		},
 		"analysisunitvocab_list": {
 			"key": "analysisunitvocab_list",
@@ -284,14 +290,12 @@
 		"analysisunit_list": {
 			"key": "analysisunit_list",
 			"type": "REFERENCE",
-			"options": [],
 			"reference": "",
 			"includeEmpty": true
 		},
 		"authortype_list": {
 			"key": "analysisunit_list",
 			"type": "REFERENCE",
-			"options": [],
 			"reference": ""
 		},
 		"statisticstype_list": {

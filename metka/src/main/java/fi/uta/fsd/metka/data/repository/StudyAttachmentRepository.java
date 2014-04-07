@@ -7,27 +7,27 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 
 @Transactional
-public interface FileRepository {
+public interface StudyAttachmentRepository {
     public RevisionData newFileRevisionable(String path) throws IOException;
 
     /**
-     * Return a DRAFT revision for given FILE.
+     * Return a DRAFT revision for given STUDY_ATTACHMENT.
      * If there's no existing DRAFT then one is created, otherwise returns an existing draft
      * @param id Revisionable id
      * @return RevisionData for DRAFT revision for given file, if none exists one is created.
      * @throws IOException
      */
-    public RevisionData getEditableRevision(Integer id) throws IOException;
+    public RevisionData getEditableStudyAttachmentRevision(Integer id) throws IOException;
 
     /**
-     * Takes given TransferObject and saves possible changes to FILE-object.
-     * If no changes were found does nothing, but if there were changes saves the data and approves the FILE-object.
+     * Takes given TransferObject and saves possible changes to STUDY_ATTACHMENT-object.
+     * If no changes were found does nothing, but if there were changes saves the data and approves the STUDY_ATTACHMENT-object.
      * This will lead to new revision being created next time the file is opened.
      * @param to
      * @return
      * @throws Exception
      */
-    public void saveAndApprove(TransferObject to) throws Exception;
+    public void studyAttachmentSaveAndApprove(TransferObject to) throws Exception;
 
     /**
      * Adds a row to FILE_LINK_QUEUE for future checking that a reference actually exists in target revisionable.

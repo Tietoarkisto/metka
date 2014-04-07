@@ -17,12 +17,10 @@
             <%-- TODO: get reference title value with ajax--%>
         </c:when>
         <c:otherwise>
-            <form:select path="values['${param.field}']" autocomplete="off" >
-
-            </form:select>
+            <form:input path="values['${param.field}']" autocomplete="off"  />
             <script>
                 $(document).ready(function() {
-                    MetkaJS.ReferenceHandler.handleRevisionableReferenceModelInput("${param.field}");
+                    MetkaJS.ReferenceHandler.handleRevisionableReferenceModelInput("${param.field}", "${context}");
                 })
             </script>
         </c:otherwise>

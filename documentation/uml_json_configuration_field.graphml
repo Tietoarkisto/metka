@@ -18,7 +18,7 @@
       <data key="d4"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="312.70577217125344" width="241.227981651376" x="1048.5" y="545.4208333333333"/>
+          <y:Geometry height="299.3303593272168" width="241.227981651376" x="1048.5" y="545.4208333333333"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="39.9150390625" x="100.656471294438" y="3.0">Field<y:LabelModel>
@@ -47,8 +47,7 @@
 +showReferenceKey : Boolean = false
 +showSaveInfo : Boolean = false
 +summaryField : Boolean = true
-+editable : Boolean = true
-+approvedOnly : Boolean = true</y:AttributeLabel>
++editable : Boolean = true</y:AttributeLabel>
             <y:MethodLabel/>
           </y:UML>
         </y:UMLClassNode>
@@ -91,10 +90,10 @@ TIME
       <data key="d4"/>
       <data key="d6">
         <y:UMLNoteNode>
-          <y:Geometry height="1067.8623853211002" width="409.60000000000014" x="1427.149770642202" y="545.4208333333333"/>
+          <y:Geometry height="998.4774311926599" width="409.60000000000014" x="1427.149770642202" y="545.4208333333333"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="1065.625" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="406.38671875" x="4.0" y="4.0">key: identifies the field inside this configuration.
+          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="995.78125" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="406.38671875" x="4.0" y="4.0">key: identifies the field inside this configuration.
     all versionable objects use only one configuration
     so there should be no clashes.
  
@@ -117,8 +116,8 @@ required: does this field need to be filled during approval
 
 maxValues: how many values can this field contain.
     If maxValues is not present then it's unbounded.
-    Only relevant on CONTAINER where it tells the max number
-    of rows.
+    Only relevant on CONTAINER and REFERENCECONTAINER
+    where it tells the max number of rows.
  
 subfield: Set to true if this field is going to be used as a
     subfield. Default false. Subfields should not be used outside
@@ -164,12 +163,7 @@ summaryField: Controls wether this field will appear in dataTables.
     Only applicaple to subfields.
 
 editable: Is this field editable by user. If false it usually means
-    that value is inserted automatically at some point.
-
-approvedOnly: Referenced values should be found from approved
-    revisions only. For CHOICE this means that values are collected 
-    from approved revisions and for REFERENCE the displayed
-    values are from approved revisions only.</y:NodeLabel>
+    that value is inserted automatically at some point.</y:NodeLabel>
         </y:UMLNoteNode>
       </data>
     </node>
@@ -231,13 +225,13 @@ approvedOnly: Referenced values should be found from approved
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="2.448394495412458" sy="-97.0251076775638" tx="6.775000000000091" ty="-84.41990577040781">
+          <y:Path sx="2.448394495412458" sy="-92.87503758959046" tx="6.775000000000091" ty="-84.41990577040781">
             <y:Point x="1171.5623853211005" y="497.5798165137612"/>
             <y:Point x="751.8532110091743" y="497.5798165137612"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="none"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="31.9375" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="74.04296875" x="-417.7091669205132" y="-42.0759318033854">+type
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="31.9375" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="74.04296875" x="-417.7091669205132" y="-42.06671549479165">+type
 {readOnly}<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
           </y:EdgeLabel>
           <y:BendStyle smoothed="false"/>
@@ -253,7 +247,7 @@ approvedOnly: Referenced values should be found from approved
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="standard" target="none"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="94.357421875" x="18.203104857517246" y="-13.508796273722282">+subfields 0..n<y:LabelModel>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="94.357421875" x="14.202210866669247" y="-8.117073660257574">+subfields 0..n<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -280,7 +274,7 @@ approvedOnly: Referenced values should be found from approved
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="38.73463302752248" sy="-130.37532335205435" tx="-26.086467889909045" ty="-507.5704903163258"/>
+          <y:Path sx="38.73463302752248" sy="-124.79875927905894" tx="-26.086467889909045" ty="-474.5908145906391"/>
           <y:LineStyle color="#000000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="none"/>
           <y:BendStyle smoothed="false"/>

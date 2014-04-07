@@ -16,7 +16,8 @@ public class Reference {
     @XmlElement private final ReferenceType type;
     @XmlElement private final String target;
     @XmlElement private final String valuePath;
-    @XmlElement private String titlePath;
+    @XmlElement private String titlePath = null;
+    @XmlElement private Boolean approvedOnly = true;
 
     @JsonCreator
     public Reference(@JsonProperty("key")String key, @JsonProperty("type")ReferenceType type, @JsonProperty("target")String target, @JsonProperty("valuePath")String valuePath) {
@@ -48,6 +49,14 @@ public class Reference {
 
     public void setTitlePath(String titlePath) {
         this.titlePath = titlePath;
+    }
+
+    public Boolean getApprovedOnly() {
+        return approvedOnly;
+    }
+
+    public void setApprovedOnly(Boolean approvedOnly) {
+        this.approvedOnly = approvedOnly;
     }
 
     @Override

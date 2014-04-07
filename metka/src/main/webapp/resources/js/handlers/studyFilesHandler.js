@@ -6,7 +6,7 @@ MetkaJS.DialogHandlers.studyFilesHandler = function() {
      * can be moved to a data attribute on the table.
      * @param key This should be 'files' but it's just assumed that the table contains file references
      * @param handlerId This should always be provided (this function doesn't support adding through dialog for now)
-     * @param context Configuration context, ignored since this function should only work with FILE dialogs.
+     * @param context Configuration context, ignored since this function should only work with STUDY_ATTACHMENT dialogs.
      */
     function showFileDialog(key, handlerId, context) {
         // If adding files through dialog comes possible then remove this check, for now make sure there is a handlerId
@@ -15,8 +15,8 @@ MetkaJS.DialogHandlers.studyFilesHandler = function() {
         }
         // This function is for handling "fileManagementDialog". This information can be moved to a data-attribute at a later time
         var dialogId = "fileManagementDialog";
-        // This function is designed to always work with "FILE" context.
-        context = "FILE";
+        // This function is designed to always work with "STUDY_ATTACHMENT" context.
+        context = "STUDY_ATTACHMENT";
 
         // Clear values from dialog.
         $("#fileManagementRowId").val(null);

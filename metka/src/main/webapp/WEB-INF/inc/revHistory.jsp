@@ -6,11 +6,11 @@
 functionality is required including a component with id: showRevisions. --%>
 <c:set var="context" value="${empty param.context ? fn:toUpperCase(page) : fn:toUpperCase(param.context)}" />
 <script>
-    MetkaJS.L18N.put("general.revision.replace", "<spring:message code='general.revision.replace'/>");
-    MetkaJS.L18N.put("general.revision.compare.title", "<spring:message code='general.revision.compare.title'/>");
+    MetkaJS.L10N.put("general.revision.replace", "<spring:message code='general.revision.replace'/>");
+    MetkaJS.L10N.put("general.revision.compare.title", "<spring:message code='general.revision.compare.title'/>");
     // Init page specific translations
-    MetkaJS.L18N.put("${context}", "<spring:message code='${context}'/>");
-    <c:forEach var="field" items="${configuration[context].fields}">MetkaJS.L18N.put("${context}.field.${field.key}", "<spring:message code='${context}.field.${field.key}'/>");
+    MetkaJS.L10N.put("${context}", "<spring:message code='${context}'/>");
+    <c:forEach var="field" items="${configuration[context].fields}">MetkaJS.L10N.put("${context}.field.${field.key}", "<spring:message code='${context}.field.${field.key}'/>");
     </c:forEach>
 </script>
 

@@ -8,6 +8,7 @@
 	"choicelists": {
 		"fileaip_list": {
 			"key": "fileaip_list",
+			"type": "VALUE",
 			"options": [
 				{
 					"value": "1"
@@ -25,6 +26,7 @@
 		},
 		"filecategory_list": {
 			"key": "filecategory_list",
+			"type": "VALUE",
 			"options": [
 				{
 					"value": "1"
@@ -40,39 +42,40 @@
 		},
 		"filelanguage_list": {
 			"key": "filelanguage_list",
+			"type": "VALUE",
 			"options": [
 				{
-					"value": "de"
+					"value": "1"
 				},
 				{
-					"value": "en"
+					"value": "2"
 				},
 				{
-					"value": "es"
+					"value": "3"
 				},
 				{
-					"value": "st"
+					"value": "4"
 				},
 				{
-					"value": "fi"
+					"value": "5"
 				},
 				{
-					"value": "fr"
+					"value": "6"
 				},
 				{
-					"value": "it"
+					"value": "7"
 				},
 				{
-					"value": "lit"
+					"value": "8"
 				},
 				{
-					"value": "ru"
+					"value": "9"
 				},
 				{
-					"value": "sv"
+					"value": "10"
 				},
 				{
-					"value": "xx"
+					"value": "11"
 				}
 			]
 		},
@@ -82,6 +85,7 @@
 		},
 		"filepublication_list": {
 			"key": "filepublication_list",
+			"type": "VALUE",
 			"options": [
 				{
 					"value": "1"
@@ -108,6 +112,7 @@
 		},
 		"yes_no_na": {
 			"key": "yes_no_na",
+			"type": "VALUE",
 			"options": [
 				{
 					"value": "1"

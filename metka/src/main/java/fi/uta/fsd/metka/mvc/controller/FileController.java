@@ -45,14 +45,14 @@ public class FileController {
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody ErrorMessage saveAndApprove(@RequestBody TransferObject to) throws Exception {
         // TODO: Implement saving and approving a File-object
-        ErrorMessage result = fileService.saveAndApprove(to);
+        ErrorMessage result = fileService.studyAttachmentSaveAndApprove(to);
         return result;
     }
 
     @RequestMapping(value = "edit/{id}", method = {RequestMethod.POST},
             produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody RevisionViewDataContainer edit(@PathVariable Integer id) {
-        RevisionViewDataContainer container = fileService.findLatestRevisionForEdit(id);
+        RevisionViewDataContainer container = fileService.findLatestStudyAttachmentRevisionForEdit(id);
         return container;
     }
 

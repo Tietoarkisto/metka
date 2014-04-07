@@ -58,12 +58,12 @@ MetkaJS.DialogHandlers.generalContainerHandler = function() {
             $("#"+key+"ContainerDialogRowId").val(row.rowId);
             // rowId field can double as handler id data storage since this field is always present and doesn't relate to actual data
             $("#"+key+"ContainerDialogRowId").data("handlerId", row.handlerId);
-            for(var i = 0; i < MetkaJS.JSConfig[context][key].subfields.length; i++) {
-                var subfield = MetkaJS.JSConfig[context][key].subfields[i];
-                if(subfield === 'undefined' || subfield == null || subfield == "") {
+            for(var i = 0; i < MetkaJS.JSConfig[context].fields[key].subfields.length; i++) {
+                var subfield = MetkaJS.JSConfig[context].fields[key].subfields[i];
+                if(subfield == null || subfield == "") {
                     // Sanity check, although this means that something is very wrong
                     continue;
-                } else if(MetkaJS.JSConfig[context][subfield].type == "CONTAINER") {
+                } else if(MetkaJS.JSConfig[context].fields[subfield].type == "CONTAINER") {
                     // TODO: Handle recursive CONTAINERS
                     continue;
                 }
@@ -78,9 +78,9 @@ MetkaJS.DialogHandlers.generalContainerHandler = function() {
                 input.val(row.fields[subfield].value);
 
                 if(MetkaJS.SingleObject.draft == false
-                        || MetkaJS.JSConfig[context][subfield].editable == false
+                        || MetkaJS.JSConfig[context].fields[subfield].editable == false
                         || (
-                            MetkaJS.JSConfig[context][subfield].immutable == true
+                            MetkaJS.JSConfig[context].fields[subfield].immutable == true
                             && (input.val() !== 'undefined' && input.val() != null && input.val() != ""))
                         ) {
                     input.prop("readonly", true);
@@ -107,12 +107,12 @@ MetkaJS.DialogHandlers.generalContainerHandler = function() {
         row.key = key;
         row.fields = new Object();
         // RowId is set when row is added to container
-        for(var i = 0; i < MetkaJS.JSConfig[context][key].subfields.length; i++) {
-            var subfield = MetkaJS.JSConfig[context][key].subfields[i];
+        for(var i = 0; i < MetkaJS.JSConfig[context].fields[key].subfields.length; i++) {
+            var subfield = MetkaJS.JSConfig[context].fields[key].subfields[i];
             if(subfield === 'undefined' || subfield == null || subfield == "") {
                 // Sanity check, although this means that something is very wrong
                 continue;
-            } else if(MetkaJS.JSConfig[context][subfield].type == "CONTAINER") {
+            } else if(MetkaJS.JSConfig[context].fields[subfield].type == "CONTAINER") {
                 // TODO: Handle recursive CONTAINERS
                 continue;
             }
@@ -143,16 +143,16 @@ MetkaJS.DialogHandlers.generalContainerHandler = function() {
  */
 MetkaJS.DialogHandlers.generalReferenceHandler = function() {
     function fallbackShow(key, handlerId, context) {
-        var message = MetkaJS.L18N.get("general.errors.container.dialog.noImplementation");
+        var message = MetkaJS.L10N.get("general.errors.container.dialog.noImplementation");
         message = message.replace("{0}", key);
-        message = message.replace("{1}", MetkaJS.L18N.get(MetkaJS.Globals.page.toUpperCase()+".field."+key));
+        message = message.replace("{1}", MetkaJS.L10N.get(MetkaJS.Globals.page.toUpperCase()+".field."+key));
         alert(message, "general.errors.title.noImplementation");
     }
 
     function fallbackProcess(key, context) {
-        var message = MetkaJS.L18N.get("general.errors.container.dialog.noImplementation");
+        var message = MetkaJS.L10N.get("general.errors.container.dialog.noImplementation");
         message = message.replace("{0}", key);
-        message = message.replace("{1}", MetkaJS.L18N.get(MetkaJS.Globals.page.toUpperCase()+".field."+key));
+        message = message.replace("{1}", MetkaJS.L10N.get(MetkaJS.Globals.page.toUpperCase()+".field."+key));
         alert(message, "general.errors.title.noImplementation");
     }
 
@@ -217,7 +217,7 @@ MetkaJS.TableHandler = function() {
     function buildContainertable(content, context) {
         // Handle only containers
         var key = content.key;
-        var field = MetkaJS.JSConfig[context][key];
+        var field = MetkaJS.JSConfig[context].fields[key];
         var changes = false;
         if(content.type != "container" || field.type != "CONTAINER") return;
 
@@ -241,7 +241,7 @@ MetkaJS.TableHandler = function() {
             }
             for(i = 0; i < field.subfields.length; i++) {
                 var subfield = field.subfields[i];
-                if(MetkaJS.JSConfig[context][subfield].summaryField == false) {
+                if(MetkaJS.JSConfig[context].fields[subfield].summaryField == false) {
                     continue;
                 }
                 var value = rowContent.fields[subfield];
@@ -251,15 +251,15 @@ MetkaJS.TableHandler = function() {
                     value.type = "value";
                     value.value = "";
                 }
-                if(value.type != "value" || MetkaJS.JSConfig[context][subfield].type == "CONTAINER" || MetkaJS.JSConfig[context][subfield].type == "REFERENCECONTAINER") {
+                if(value.type != "value" || MetkaJS.JSConfig[context].fields[subfield].type == "CONTAINER" || MetkaJS.JSConfig[context].fields[subfield].type == "REFERENCECONTAINER") {
                     // TODO: Handle recursive containers somehow. Mostly table should not contain recursive containers
                     return;
                 }
 
                 var td = $("<td>");
-                switch(MetkaJS.JSConfig[context][subfield].type) {
+                switch(MetkaJS.JSConfig[context].fields[subfield].type) {
                     case "CHOICE":
-                        td.text(MetkaJS.L18N.get(MetkaJS.Globals.page.toUpperCase()+"."+MetkaJS.JSConfig[context][subfield].choicelist+".choices."+value.value));
+                        td.text(MetkaJS.L10N.get(MetkaJS.Globals.page.toUpperCase()+"."+MetkaJS.JSConfig[context].fields[subfield].choicelist+".choices."+value.value));
                         break;
                     default:
                         td.text(value.value);
@@ -295,7 +295,7 @@ MetkaJS.TableHandler = function() {
     function buildReferencetable(content, context) {
         // Handle only containers
         var key = content.key;
-        var field = MetkaJS.JSConfig[context][key];
+        var field = MetkaJS.JSConfig[context].fields[key];
         var changes = false;
         if(content.type != "referencecontainer" || field.type != "REFERENCECONTAINER") return;
 

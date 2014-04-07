@@ -94,6 +94,16 @@ public class ErrorMessage {
         return error;
     }
 
+    public static ErrorMessage configurationSerializationError(String type, Integer id, Integer revision) {
+        ErrorMessage error = new ErrorMessage();
+        error.setMsg("general.errors.revision.configurationSerializationError");
+        error.getData().add("general.errors.revision.configurationSerializationError."+type);
+        error.getData().add(id+"");
+        error.getData().add(revision+"");
+
+        return error;
+    }
+
     public static ErrorMessage noViewableRevision(String type, Integer id) {
         ErrorMessage error = new ErrorMessage();
         error.setMsg("general.errors.revision.noViewableRevision");
@@ -103,16 +113,16 @@ public class ErrorMessage {
         return error;
     }
 
-    public static ErrorMessage fileSaveAndApproveSuccesss() {
+    public static ErrorMessage studyAttachmentSaveAndApproveSuccesss() {
         ErrorMessage error = new ErrorMessage();
-        error.setMsg("general.errors.file.saveSuccess");
+        error.setMsg("general.errors.studyAttachment.saveSuccess");
 
         return error;
     }
 
-    public static ErrorMessage fileSaveAndApproveFail(Exception ex) {
+    public static ErrorMessage studyAttachmentSaveAndApproveFail(Exception ex) {
         ErrorMessage error = new ErrorMessage();
-        error.setMsg("general.errors.file.saveFail");
+        error.setMsg("general.errors.studyAttachment.saveFail");
         error.getData().add(ex.toString());
 
         return error;

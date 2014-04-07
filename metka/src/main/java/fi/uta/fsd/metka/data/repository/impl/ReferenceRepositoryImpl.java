@@ -77,7 +77,7 @@ public class ReferenceRepositoryImpl implements ReferenceRepository {
                 .getResultList();
 
         for(RevisionableEntity entity : entities) {
-            if(field.getApprovedOnly() && entity.getCurApprovedNo() == null) {
+            if(reference.getApprovedOnly() && entity.getCurApprovedNo() == null) {
                 // No approved revision, not applicable.
                 continue;
             }
@@ -88,7 +88,7 @@ public class ReferenceRepositoryImpl implements ReferenceRepository {
                         RevisionEntity.class,
                         new RevisionKey(
                                 entity.getId(),
-                                (field.getApprovedOnly()) ? entity.getCurApprovedNo() : entity.getLatestRevisionNo()));
+                                (reference.getApprovedOnly()) ? entity.getCurApprovedNo() : entity.getLatestRevisionNo()));
                 if(revision == null || StringUtils.isEmpty(revision.getData())) {
                     // TODO: There's a data problem, log event
                     continue;

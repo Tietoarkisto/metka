@@ -42,10 +42,10 @@ $(document).ready(function(){
                     var row = $("<tr>", {class: "revisionHistoryDialogRow"});
                     var prop = "";
                     if(rowData["section"] != null) {
-                        prop += MetkaJS.L18N.get(MetkaJS.Globals.page.toUpperCase()+".section."+rowData["section"]);
+                        prop += MetkaJS.L10N.get(MetkaJS.Globals.page.toUpperCase()+".section."+rowData["section"]);
                         prop += ": ";
                     }
-                    prop += MetkaJS.L18N.get(MetkaJS.Globals.page.toUpperCase()+".field."+rowData["property"]);
+                    prop += MetkaJS.L10N.get(MetkaJS.Globals.page.toUpperCase()+".field."+rowData["property"]);
                     row.append($("<td>", {class: "revisionTableColumn", text: prop}));
 
                     // TODO: server should only send strings suitable for display and nothing more.
@@ -69,7 +69,7 @@ $(document).ready(function(){
                 $("#revisionHistoryDialog").dialog("close");
 
                 // show compare dialog
-                var str = MetkaJS.L18N.get("general.revision.compare.title");
+                var str = MetkaJS.L10N.get("general.revision.compare.title");
                 str = str.replace("{0}", response["begin"]);
                 str = str.replace("{1}", response["end"]);
 
@@ -102,7 +102,7 @@ $(document).ready(function(){
                     }));
                     row.append(td);
                     if(rowData["state"]=="DRAFT") {
-                        row.append($("<td>", {class: "revisionTableColumn", text: MetkaJS.L18N.get("general.title.DRAFT")}));
+                        row.append($("<td>", {class: "revisionTableColumn", text: MetkaJS.L10N.get("general.title.DRAFT")}));
                     } else {
                         row.append($("<td>", {class: "revisionTableColumn", text: rowData["approvalDate"]}));
                     }
@@ -118,7 +118,7 @@ $(document).ready(function(){
                     row.append(radioColumn);
                     if(MetkaJS.SingleObject.draft) {
                         var replaceColumn = $("<td>", {class: "revisionTableColumn"});
-                        replaceColumn.append($("<input>", {type: "button", class: "button", value: MetkaJS.L18N.get("general.revision.replace")}));
+                        replaceColumn.append($("<input>", {type: "button", class: "button", value: MetkaJS.L10N.get("general.revision.replace")}));
                         row.append(replaceColumn);
                     }
                     tbody.append(row);

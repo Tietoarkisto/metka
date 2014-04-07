@@ -2,7 +2,7 @@ package fi.uta.fsd.metka.mvc.domain;
 
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.enums.FieldType;
-import fi.uta.fsd.metka.data.repository.FileRepository;
+import fi.uta.fsd.metka.data.repository.StudyAttachmentRepository;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.RevisionData;
@@ -22,7 +22,7 @@ import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
 @Service
 public class FileService {
     @Autowired
-    private FileRepository repository;
+    private StudyAttachmentRepository repository;
     @Autowired
     private ConfigurationService configService;
 
@@ -83,10 +83,10 @@ public class FileService {
         return json.toString();
     }
 
-    public RevisionViewDataContainer findLatestRevisionForEdit(Integer id) {
+    public RevisionViewDataContainer findLatestStudyAttachmentRevisionForEdit(Integer id) {
         RevisionData revision = null;
         try {
-            revision = repository.getEditableRevision(id);
+            revision = repository.getEditableStudyAttachmentRevision(id);
         } catch(IOException ex) {
             ex.printStackTrace();
             return null;
@@ -104,13 +104,13 @@ public class FileService {
         }
     }
 
-    public ErrorMessage saveAndApprove(TransferObject to) {
+    public ErrorMessage studyAttachmentSaveAndApprove(TransferObject to) {
         try {
-            repository.saveAndApprove(to);
-            return ErrorMessage.fileSaveAndApproveSuccesss();
+            repository.studyAttachmentSaveAndApprove(to);
+            return ErrorMessage.studyAttachmentSaveAndApproveSuccesss();
         } catch(Exception ex) {
             // TODO: Log error and notify user that there was a problem with saving file
-            return ErrorMessage.fileSaveAndApproveFail(ex);
+            return ErrorMessage.studyAttachmentSaveAndApproveFail(ex);
         }
     }
 }

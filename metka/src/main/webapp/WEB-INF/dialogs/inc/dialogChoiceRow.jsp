@@ -15,11 +15,11 @@
                 <option value="${option.value}">
                     <c:choose>
                         <c:when test="${configuration[context].choicelists[optionslist].type == 'VALUE'}">
-                            <script>MetkaJS.L18N.put("${context}.${optionslist}.choices.${option.value}", "<spring:message code="${context}.${optionslist}.choices.${option.value}"/>")</script>
+                            <script>MetkaJS.L10N.put("${context}.${optionslist}.choices.${option.value}", "<spring:message code="${context}.${optionslist}.choices.${option.value}"/>")</script>
                             <spring:message code="${context}.${optionslist}.choices.${option.value}"/>
                         </c:when>
                         <c:otherwise>
-                            <script>MetkaJS.L18N.put("${context}.${optionslist}.choices.${option.value}", "${option.title}")</script>
+                            <script>MetkaJS.L10N.put("${context}.${optionslist}.choices.${option.value}", "${option.title}")</script>
                             ${option.title}
                         </c:otherwise>
                     </c:choose>

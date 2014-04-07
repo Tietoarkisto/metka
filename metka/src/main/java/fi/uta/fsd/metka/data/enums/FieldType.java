@@ -1,11 +1,8 @@
 package fi.uta.fsd.metka.data.enums;
 
 /**
- * Created with IntelliJ IDEA.
- * User: lasseku
- * Date: 1/3/14
- * Time: 12:58 PM
- * To change this template use File | Settings | File Templates.
+ * Enumerator for Configuration Field types.
+ * Used to validate that type given in configuration file is a valid type.
  */
 public enum FieldType {
     STRING,

@@ -8,7 +8,7 @@
 
     <table class="formTable">
         <tr>
-            <jsp:include page="../../../inc/l18nSelect.jsp">
+            <jsp:include page="../../../inc/l10nSelect.jsp">
                 <jsp:param name="field" value="termsofuse" />
                 <jsp:param name="readonly" value="${readonly}" />
             </jsp:include>
@@ -25,7 +25,7 @@
             <td class="labelColumn"><form:label path="values['${field}']"><spring:message code="STUDY.field.${field}"/></form:label></td>
             <td><form:input class="datepicker" path="values['${field}']" readonly="${readonly or configuration[context].fields[field].editable == false}" /></td>
 
-            <jsp:include page="../../../inc/l18nSelect.jsp">
+            <jsp:include page="../../../inc/l10nSelect.jsp">
                 <jsp:param name="field" value="depositortype" />
                 <jsp:param name="readonly" value="${readonly}" />
             </jsp:include>
@@ -35,12 +35,12 @@
             <td><form:input path="values['${field}']" readonly="${readonly}"/></td>
         </tr>
         <tr>
-            <jsp:include page="../../../inc/l18nSelect.jsp">
+            <jsp:include page="../../../inc/l10nSelect.jsp">
                 <jsp:param name="field" value="newtermsofuse" />
                 <jsp:param name="readonly" value="${readonly}" />
             </jsp:include>
 
-            <jsp:include page="../../../inc/l18nSelect.jsp">
+            <jsp:include page="../../../inc/l10nSelect.jsp">
                 <jsp:param name="field" value="agreementtype" />
                 <jsp:param name="readonly" value="${readonly}" />
             </jsp:include>

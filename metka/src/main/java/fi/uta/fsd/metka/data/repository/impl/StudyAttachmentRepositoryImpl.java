@@ -9,7 +9,7 @@ import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.data.enums.VariableDataType;
 import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.data.repository.FileRepository;
+import fi.uta.fsd.metka.data.repository.StudyAttachmentRepository;
 import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
@@ -29,7 +29,7 @@ import java.io.IOException;
 import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
 
 @Repository
-public class FileRepositoryImpl implements FileRepository {
+public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository {
     @PersistenceContext(name = "entityManager")
     private EntityManager em;
 
@@ -65,7 +65,7 @@ public class FileRepositoryImpl implements FileRepository {
 
 
     @Override
-    public RevisionData getEditableRevision(Integer id) throws IOException {
+    public RevisionData getEditableStudyAttachmentRevision(Integer id) throws IOException {
         RevisionableEntity file = em.find(RevisionableEntity.class, id);
 
         // Sanity check
@@ -118,7 +118,7 @@ public class FileRepositoryImpl implements FileRepository {
     }
 
     @Override
-    public void saveAndApprove(TransferObject to) throws Exception {
+    public void studyAttachmentSaveAndApprove(TransferObject to) throws Exception {
         StudyAttachmentEntity file = em.find(StudyAttachmentEntity.class, to.getId());
         if(file == null) {
             // There has to be a file so you can save

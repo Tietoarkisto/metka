@@ -15,7 +15,7 @@ public class Choicelist {
     @XmlElement private final String key;
     @XmlElement(name = "default") @JsonProperty("default") private String def = "0";
     @XmlElement private List<Option> options = new ArrayList<>();
-    @XmlElement private ChoicelistType type = ChoicelistType.VALUE;
+    @XmlElement private ChoicelistType type;
     @XmlElement private String reference;
     @XmlElement private Boolean includeEmpty = false;
 

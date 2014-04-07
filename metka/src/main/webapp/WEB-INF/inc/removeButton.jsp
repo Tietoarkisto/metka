@@ -6,15 +6,15 @@
     If trying to remove whole revisionable but there is an open draft the removal fails.
 --%>
 <script>
-    MetkaJS.L18N.put("general.confirmation.remove.draft", "<spring:message code='general.confirmation.remove.draft' />");
-    MetkaJS.L18N.put("general.confirmation.remove.logical", "<spring:message code='general.confirmation.remove.logical' />");
-    MetkaJS.L18N.put("general.confirmation.remove.draft."+MetkaJS.Globals.page, "<spring:message code='general.confirmation.remove.draft.${page}' />");
-    MetkaJS.L18N.put("general.confirmation.remove.logical."+MetkaJS.Globals.page, "<spring:message code='general.confirmation.remove.logical.${page}' />");
-    MetkaJS.L18N.put("general.confirmation.title.remove", "<spring:message code='general.confirmation.title.remove' />");
+    MetkaJS.L10N.put("general.confirmation.remove.draft", "<spring:message code='general.confirmation.remove.draft' />");
+    MetkaJS.L10N.put("general.confirmation.remove.logical", "<spring:message code='general.confirmation.remove.logical' />");
+    MetkaJS.L10N.put("general.confirmation.remove.draft."+MetkaJS.Globals.page, "<spring:message code='general.confirmation.remove.draft.${page}' />");
+    MetkaJS.L10N.put("general.confirmation.remove.logical."+MetkaJS.Globals.page, "<spring:message code='general.confirmation.remove.logical.${page}' />");
+    MetkaJS.L10N.put("general.confirmation.title.remove", "<spring:message code='general.confirmation.title.remove' />");
 
 
-    var removeMsg = MetkaJS.L18N.get("general.confirmation.remove."+(MetkaJS.SingleObject.draft?"draft":"logical"));
-    removeMsg = removeMsg.replace("{0}", MetkaJS.L18N.get("general.confirmation.remove."+(MetkaJS.SingleObject.draft?"draft":"logical")+"."+MetkaJS.Globals.page));
+    var removeMsg = MetkaJS.L10N.get("general.confirmation.remove."+(MetkaJS.SingleObject.draft?"draft":"logical"));
+    removeMsg = removeMsg.replace("{0}", MetkaJS.L10N.get("general.confirmation.remove."+(MetkaJS.SingleObject.draft?"draft":"logical")+"."+MetkaJS.Globals.page));
     removeMsg = removeMsg.replace("{1}", MetkaJS.SingleObject.id);
 
     function confirmRemove() {

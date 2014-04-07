@@ -101,7 +101,7 @@
 
                     // Add label
                     td = $("<td>", {class: "labelColumn"});
-                    td.append(MetkaJS.L18N.get(MetkaJS.Globals.page.toUpperCase()+".field."+key));
+                    td.append(MetkaJS.L10N.get(MetkaJS.Globals.page.toUpperCase()+".field."+key));
                     tr.append(td);
 
                     // Add data
@@ -120,7 +120,7 @@
 
                     // Add label
                     td = $("<td>", {class: "labelColumn"});
-                    td.append(MetkaJS.L18N.get(MetkaJS.Globals.page.toUpperCase()+".field."+key));
+                    td.append(MetkaJS.L10N.get(MetkaJS.Globals.page.toUpperCase()+".field."+key));
                     tr =  $("<tr>").append(td);
 
                     // Add data
@@ -146,7 +146,7 @@
 
                     // Add label
                     td = $("<td>", {class: "labelColumn"});
-                    td.append(MetkaJS.L18N.get(MetkaJS.Globals.page.toUpperCase()+".field.categories"));
+                    td.append(MetkaJS.L10N.get(MetkaJS.Globals.page.toUpperCase()+".field.categories"));
                     tr.append(td);
 
                     // Add data
@@ -209,12 +209,12 @@
                     var tr, td, data;
                     tr = $("<tr>");
 
-                    var choicelist = MetkaJS.JSConfig["STUDY"]["statisticstype"].choicelist;
+                    var choicelist = MetkaJS.JSConfig["STUDY"].fields["statisticstype"].choicelist;
 
                     td = $("<td>", {class: "labelColumn"});
                     data = row.fields["statisticstype"];
                     if(data !== 'undefined' && data != null) {
-                        td.append(MetkaJS.L18N.get("STUDY."+choicelist+".choices."+data.value));
+                        td.append(MetkaJS.L10N.get("STUDY."+choicelist+".choices."+data.value));
                     }
                     tr.append(td);
 

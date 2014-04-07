@@ -34,7 +34,7 @@ $(document).ready(function(){
             width: 'auto',
             height: 'auto'
         });
-        alertDlg.dialog("option", "title", MetkaJS.L18N.get(title));
+        alertDlg.dialog("option", "title", MetkaJS.L10N.get(title));
         alertDlg.find("#alertContent").empty();
         alertDlg.find("#alertContent").text(message);
         alertDlg.find("#alertCloseBtn").click(function(alertDlg) {
@@ -64,7 +64,7 @@ $(document).ready(function(){
             width: 'auto',
             height: 'auto'
         });
-        confirm.dialog("option", "title", MetkaJS.L18N.get(title));
+        confirm.dialog("option", "title", MetkaJS.L10N.get(title));
         confirm.find("#confirmationContent").empty();
         confirm.find("#confirmationContent").text(message);
         if(execute==undefined || execute==null) {
