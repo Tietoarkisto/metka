@@ -28,7 +28,7 @@ public class ReferenceController {
     @RequestMapping(value = "collectOptions", method = {RequestMethod.POST},
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody ReferenceOptionsResponse collectReferenceOptions(@RequestBody ReferenceOptionsRequest request) {
-        ReferenceOptionsResponse response = new ReferenceOptionsResponse(request.getKey(), request.getId(), request.getRevision());
+        ReferenceOptionsResponse response = new ReferenceOptionsResponse(request.getKey());
 
         List<ReferenceOption> options = null;
         try {

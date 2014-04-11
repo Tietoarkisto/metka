@@ -1,10 +1,10 @@
 package fi.uta.fsd.metka.data.util;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.uta.fsd.metka.model.ModelBase;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +34,15 @@ public class JSONUtil {
         return metkaObjectMapper.writeValueAsString(data);
     }
 
-    public JSONObject readSimpleJSON(String data) {
-        return new JSONObject(data);
+    public String serialize(JsonNode data) throws IOException {
+        return metkaObjectMapper.writeValueAsString(data);
+    }
+
+    public JsonNode readJsonTree(File file) throws IOException {
+        return metkaObjectMapper.readTree(file);
+    }
+
+    public JsonNode readJsonTree(String data) throws IOException {
+        return metkaObjectMapper.readTree(data);
     }
 }

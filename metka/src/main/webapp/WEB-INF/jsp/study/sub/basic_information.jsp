@@ -69,6 +69,62 @@
             <td class="labelColumn"><form:label path="values['${field}']"><spring:message code="STUDY.field.${field}"/></form:label></td>
             <td><form:input class="datepicker" path="values['${field}']" readonly="${readonly or configuration[context].fields[field].editable == false}" /></td>
         </tr>
+        <%-- TEMPORARY TEST FIELD START --%>
+        <c:set var="field" value="seriesiddep1" />
+        <c:if test="${configuration[context].fields[field].display == true}">
+        <c:choose>
+            <c:when test="${configuration[context].fields[field].type == 'CHOICE'}">
+                <tr>
+                    <jsp:include page="../../../inc/referenceSelect.jsp">
+                        <jsp:param name="field" value="${field}" />
+                        <jsp:param name="colspan" value="3" />
+                        <jsp:param name="readonly" value="${readonly}" />
+                    </jsp:include>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </c:when>
+            <c:otherwise>
+                <tr>
+                    <jsp:include page="../../../inc/referenceText.jsp">
+                        <jsp:param name="field" value="${field}" />
+                        <jsp:param name="colspan" value="4" />
+                        <jsp:param name="readonly" value="${readonly}" />
+                    </jsp:include>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </c:otherwise>
+        </c:choose>
+        </c:if>
+        <c:set var="field" value="seriesiddep2" />
+        <c:if test="${configuration[context].fields[field].display == true}">
+        <c:choose>
+            <c:when test="${configuration[context].fields[field].type == 'CHOICE'}">
+                <tr>
+                    <jsp:include page="../../../inc/referenceSelect.jsp">
+                        <jsp:param name="field" value="${field}" />
+                        <jsp:param name="colspan" value="3" />
+                        <jsp:param name="readonly" value="${readonly}" />
+                    </jsp:include>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </c:when>
+            <c:otherwise>
+                <tr>
+                    <jsp:include page="../../../inc/referenceText.jsp">
+                        <jsp:param name="field" value="${field}" />
+                        <jsp:param name="colspan" value="4" />
+                        <jsp:param name="readonly" value="${readonly}" />
+                    </jsp:include>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </c:otherwise>
+        </c:choose>
+        </c:if>
+        <%-- TEMPORARY TEST FIELD END --%>
         <tr>
             <jsp:include page="../../../inc/singleCellFormText.jsp">
                 <jsp:param name="field" value="originallocation" />

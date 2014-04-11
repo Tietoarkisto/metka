@@ -74,7 +74,7 @@ public class StudyFactory extends DataFactory {
         data.putField(field).putChange(new Change(field.getKey()));
 
         // Study_id_prefix, this is a string that is added to the front of study_id
-        list = conf.getChoicelists().get("id_prefix_list");
+        list = conf.getChoicelist("id_prefix_list");
         field = new SavedDataField("study_id_prefix");
         field.setModifiedValue(setSimpleValue(createSavedValue(time), list.getDef()));
         data.putField(field).putChange(new Change(field.getKey()));

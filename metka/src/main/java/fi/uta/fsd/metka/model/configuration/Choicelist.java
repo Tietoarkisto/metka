@@ -1,6 +1,7 @@
 package fi.uta.fsd.metka.model.configuration;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.data.enums.ChoicelistType;
 
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
+@JsonIgnoreProperties("_comment")
 public class Choicelist {
     @XmlElement private final String key;
     @XmlElement(name = "default") @JsonProperty("default") private String def = "0";

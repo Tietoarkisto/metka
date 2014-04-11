@@ -1,0 +1,3 @@
+-- 2014.04.11 additions --
+Field:
+Added writable property to field. This property defaults to true. Fields marked with writable false are not saved to RevisionData in database. These values are usually reference values that are read each time they have to be displayed.

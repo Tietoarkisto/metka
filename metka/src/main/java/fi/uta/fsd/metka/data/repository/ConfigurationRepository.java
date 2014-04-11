@@ -12,6 +12,9 @@ import java.io.IOException;
 @Transactional(readOnly = true)
 public interface ConfigurationRepository {
     @Transactional(readOnly = false) public void insert(Configuration configuration) throws IOException;
+    @Transactional(readOnly = false) public void insert(String text) throws IOException;
+    public Configuration findConfiguration(String type, Integer version) throws IncorrectResultSizeDataAccessException, IOException;
+    public Configuration findConfiguration(ConfigurationType type, Integer version) throws IncorrectResultSizeDataAccessException, IOException;
     public Configuration findConfiguration(ConfigurationKey key) throws IncorrectResultSizeDataAccessException, IOException;
     public Configuration findLatestConfiguration(ConfigurationType type) throws IncorrectResultSizeDataAccessException, IOException;
     public Configuration findLatestByRevisionableId(Integer id) throws IncorrectResultSizeDataAccessException, IOException;

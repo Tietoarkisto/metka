@@ -131,6 +131,13 @@
 			"reference": "series_select_ref",
 			"includeEmpty": true
 		},
+		"dependency_test_list": {
+			"_comment": "This is strictly a test case, should be removed",
+			"key": "dependency_test_list",
+			"type": "REFERENCE",
+			"reference": "dependency_test_ref2",
+			"includeEmpty": true
+		},
 		"id_prefix_list": {
 			"key": "id_prefix_list",
 			"type": "LITERAL",
@@ -325,7 +332,24 @@
 			"key": "series_select_ref",
 			"type": "REVISIONABLE",
 			"target": "SERIES",
+			"valuePath": "key",
 			"titlePath": "seriesname"
+		},
+		"dependency_test_ref1": {
+			"_comment": "This is strictly a test case, should be removed",
+			"key": "dependency_test_ref1",
+			"type": "DEPENDENCY",
+			"target": "seriesid",
+			"valuePath": "key",
+			"titlePath": "description"
+		},
+		"dependency_test_ref2": {
+			"_comment": "This is strictly a test case, should be removed",
+			"key": "dependency_test_ref2",
+			"type": "DEPENDENCY",
+			"target": "seriesid",
+			"valuePath": "values.key",
+			"titlePath": "data"
 		},
 		"publication_ref": {
 			"key": "publication_ref",
@@ -562,6 +586,29 @@
 			"type": "CHOICE",
 			"choicelist": "series_list",
 			"section": "basic_information"
+		},
+		"seriesiddep1": {
+			"_comment": "This is strictly a test case, should be removed",
+			"key": "seriesiddep1",
+			"translatable": false,
+			"type": "REFERENCE",
+			"multiline": false,
+			"reference": "dependency_test_ref1",
+			"section": "basic_information",
+			"writable": false,
+			"display": false
+		},
+		"seriesiddep2": {
+			"_comment": "This is strictly a test case, should be removed",
+			"key": "seriesiddep2",
+			"translatable": false,
+			"type": "CHOICE",
+			"multiline": true,
+			"choicelist": "dependency_test_list",
+			"reference": "dependency_test_ref2",
+			"section": "basic_information",
+			"writable": false,
+			"display": false
 		},
 		"submissionid": {
 			"key": "submissionid",

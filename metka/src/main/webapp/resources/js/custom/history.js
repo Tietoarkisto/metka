@@ -102,7 +102,7 @@ $(document).ready(function(){
                     }));
                     row.append(td);
                     if(rowData["state"]=="DRAFT") {
-                        row.append($("<td>", {class: "revisionTableColumn", text: MetkaJS.L10N.get("general.title.DRAFT")}));
+                        row.append($("<td>", {class: "revisionTableColumn", text: MetkaJS.L10N.get("general.DRAFT")}));
                     } else {
                         row.append($("<td>", {class: "revisionTableColumn", text: rowData["approvalDate"]}));
                     }
@@ -138,32 +138,32 @@ $(document).ready(function(){
             }
         });
     });
-});
 
-function checkRadioGroups() {
-    var beginVal = $("input[name='beginGrp']:checked").val();
-    var endVal = $("input[name='endGrp']:checked").val();
-    if(beginVal != undefined) {
-        $("input[name='endGrp']").each(function(){
-            if($(this).val() <= beginVal) {
-                $(this).attr("disabled", true);
-            } else {
-                $(this).attr("disabled", false);
-            }
-        });
+    function checkRadioGroups() {
+        var beginVal = $("input[name='beginGrp']:checked").val();
+        var endVal = $("input[name='endGrp']:checked").val();
+        if(beginVal != undefined) {
+            $("input[name='endGrp']").each(function(){
+                if($(this).val() <= beginVal) {
+                    $(this).attr("disabled", true);
+                } else {
+                    $(this).attr("disabled", false);
+                }
+            });
+        }
+        if(endVal != undefined) {
+            $("input[name='beginGrp']").each(function(){
+                if($(this).val() >= endVal) {
+                    $(this).attr("disabled", true);
+                } else {
+                    $(this).attr("disabled", false);
+                }
+            });
+        }
+        if(beginVal == undefined || endVal == undefined) {
+            $("#compareRevisions").attr("disabled", true);
+        } else {
+            $("#compareRevisions").attr("disabled", false);
+        }
     }
-    if(endVal != undefined) {
-        $("input[name='beginGrp']").each(function(){
-            if($(this).val() >= endVal) {
-                $(this).attr("disabled", true);
-            } else {
-                $(this).attr("disabled", false);
-            }
-        });
-    }
-    if(beginVal == undefined || endVal == undefined) {
-        $("#compareRevisions").attr("disabled", true);
-    } else {
-        $("#compareRevisions").attr("disabled", false);
-    }
-}
+});

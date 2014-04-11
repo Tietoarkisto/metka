@@ -7,6 +7,8 @@ import fi.uta.fsd.metka.model.configuration.ConfigurationKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+
 /**
  * Created with IntelliJ IDEA.
  * User: lasseku
@@ -18,6 +20,14 @@ import org.springframework.stereotype.Service;
 public class ConfigurationService {
     @Autowired
     private ConfigurationRepository repository;
+
+    public void insert(String text) {
+        try {
+            repository.insert(text);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
 
     public Configuration findLatestByType(ConfigurationType type) {
         Configuration conf = null;

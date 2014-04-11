@@ -10,27 +10,16 @@ import java.util.List;
  */
 public class ReferenceOptionsResponse {
     private final String key;
-    private final Integer id;
-    private final Integer revision;
+
     private List<ReferenceOption> options;
     private final List<ErrorMessage> messages = new ArrayList<>();
 
-    public ReferenceOptionsResponse(String key, Integer id, Integer revision) {
+    public ReferenceOptionsResponse(String key) {
         this.key = key;
-        this.id = id;
-        this.revision = revision;
     }
 
     public String getKey() {
         return key;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public Integer getRevision() {
-        return revision;
     }
 
     public List<ReferenceOption> getOptions() {
@@ -52,9 +41,7 @@ public class ReferenceOptionsResponse {
 
         ReferenceOptionsResponse that = (ReferenceOptionsResponse) o;
 
-        if (!id.equals(that.id)) return false;
         if (!key.equals(that.key)) return false;
-        if (!revision.equals(that.revision)) return false;
 
         return true;
     }
@@ -62,8 +49,6 @@ public class ReferenceOptionsResponse {
     @Override
     public int hashCode() {
         int result = key.hashCode();
-        result = 31 * result + id.hashCode();
-        result = 31 * result + revision.hashCode();
         return result;
     }
 }

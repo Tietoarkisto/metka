@@ -63,7 +63,7 @@
     <div id="tempContent"></div>
     <form class="fileUploadForm" method="POST" enctype="multipart/form-data">
         <div class="fileSelector">
-            <input id="studyFileInput" type="file" name="files[]" />
+            <input id="studyFileInput" class="hiddenFile" type="file" name="files[]" />
             <label for="studyFileName">Tiedosto</label>
             <span class="inputSpan"><input type="text" id="studyFileName" readonly="readonly"/></span>
             <input type="button" class="button" id="studyFileUpload" value="Lataa" />

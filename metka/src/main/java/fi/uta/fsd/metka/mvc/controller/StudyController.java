@@ -172,7 +172,7 @@ public class StudyController {
 
         Configuration config = configService.findLatestByType(ConfigurationType.STUDY);
         Map<String, Configuration> configuration = new HashMap<>();
-        configuration.put("STUDY", config);
+        configuration.put(config.getKey().getType().toValue(), config);
         model.asMap().put("configuration", configuration);
 
         model.asMap().put("page", "study");

@@ -53,6 +53,23 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
         em.merge(entity);
     }
 
+    @Override
+    public void insert(String text) throws IOException {
+        Configuration config = json.readConfigurationFromString(text);
+        insert(config);
+    }
+
+    @Override
+    public Configuration findConfiguration(String type, Integer version) throws IncorrectResultSizeDataAccessException, IOException {
+        return findConfiguration(ConfigurationType.fromValue(type), version);
+    }
+
+    @Override
+    public Configuration findConfiguration(ConfigurationType type, Integer version) throws IncorrectResultSizeDataAccessException, IOException {
+        return findConfiguration(new ConfigurationKey(type, version));
+    }
+
+    @Override
     public Configuration findConfiguration(ConfigurationKey key)
             throws IncorrectResultSizeDataAccessException, IOException {
         List<ConfigurationEntity> list =
@@ -73,6 +90,7 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
         return configuration;
     }
 
+    @Override
     public Configuration findLatestConfiguration(ConfigurationType type)
             throws IncorrectResultSizeDataAccessException, IOException {
         List<ConfigurationEntity> list =
@@ -93,6 +111,7 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
         return configuration;
     }
 
+    @Override
     public Configuration findLatestByRevisionableId(Integer id)
             throws IncorrectResultSizeDataAccessException, IOException {
         List<RevisionableEntity> revs =

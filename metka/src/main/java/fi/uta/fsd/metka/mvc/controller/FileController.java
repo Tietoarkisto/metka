@@ -57,7 +57,7 @@ public class FileController {
     }
 
     /**
-     * Handles file upload from ajax call.
+     * Handles study attachment upload from ajax call.
      * Returns header information for the file in a append ready row json.
      * @return JSONObject containing append ready row in JSON format
      * @throws Exception

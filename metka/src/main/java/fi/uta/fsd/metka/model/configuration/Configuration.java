@@ -1,5 +1,6 @@
 package fi.uta.fsd.metka.model.configuration;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import fi.uta.fsd.metka.model.ModelBase;
 
@@ -78,8 +79,29 @@ public class Configuration implements ModelBase {
     }
 
     // Helper functions
+    @JsonIgnore
     public Field getField(String key) {
         return fields.get(key);
+    }
+
+    @JsonIgnore
+    public Choicelist getChoicelist(String key) {
+        return choicelists.get(key);
+    }
+
+    @JsonIgnore
+    public Choicelist getRootChoicelist(String key) {
+        Choicelist list = getChoicelist(key);
+        while(list != null && !list.getKey().equals(key)) {
+            key = list.getKey();
+            list = getChoicelist(key);
+        }
+        return list;
+    }
+
+    @JsonIgnore
+    public Reference getReference(String key) {
+        return references.get(key);
     }
 
     @Override

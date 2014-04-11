@@ -41,6 +41,7 @@ public class FieldSerializer extends JsonSerializer<Field> {
             // TODO: Handle field referenceKey
         }
         jgen.writeBooleanField("editable", value.getEditable());
+        jgen.writeBooleanField("writable", value.getWritable());
 
         switch(value.getType()) {
             case REFERENCECONTAINER:
@@ -65,7 +66,7 @@ public class FieldSerializer extends JsonSerializer<Field> {
                 break;
             case REFERENCE:
                 jgen.writeStringField("reference", value.getReference());
-                break;
+                /* FALLTHROUGH */
             case STRING:
                 jgen.writeBooleanField("multiline", value.getMultiline());
                 break;

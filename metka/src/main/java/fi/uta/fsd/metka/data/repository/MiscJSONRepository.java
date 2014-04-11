@@ -1,7 +1,9 @@
 package fi.uta.fsd.metka.data.repository;
 
-import org.json.JSONObject;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.IOException;
 
 @Transactional(readOnly = true)
 public interface MiscJSONRepository {
@@ -10,7 +12,9 @@ public interface MiscJSONRepository {
      *
      * @param misc Misc JSON data to be inserted.
      */
-    @Transactional(readOnly = false) public void insert(JSONObject misc);
+    @Transactional(readOnly = false) public void insert(JsonNode misc);
+
+    @Transactional(readOnly = false) public void insert(String text) throws IOException;
 
     /**
      * If previous data exists for given Misc JSON tree the new content is merged to the old content
@@ -18,12 +22,12 @@ public interface MiscJSONRepository {
      * NOTICE: TODO:
      * @param misc Misc JSON data to be merged
      */
-    @Transactional(readOnly = false) public void merge(JSONObject misc);
+    @Transactional(readOnly = false) public void merge(JsonNode misc);
 
     /**
      * Find MiscJSON data with given key.
      * @param key Requested Misc JSON key
      * @return
      */
-    public JSONObject findByKey(String key);
+    public JsonNode findByKey(String key) throws IOException;
 }

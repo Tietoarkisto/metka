@@ -1,15 +1,18 @@
 package fi.uta.fsd.metka.data.repository.impl;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
 import fi.uta.fsd.metka.data.entity.MiscJSONEntity;
 import fi.uta.fsd.metka.data.repository.MiscJSONRepository;
 import fi.uta.fsd.metka.data.util.JSONUtil;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.io.IOException;
 
 @Repository("miscJSONRepository")
 public class MiscJSONRepositoryImpl implements MiscJSONRepository {
@@ -19,33 +22,49 @@ public class MiscJSONRepositoryImpl implements MiscJSONRepository {
     private JSONUtil json;
 
     @Override
-    public void insert(JSONObject misc) {
-        if(misc.opt("key") == null || misc.opt("data") == null || misc.getJSONArray("data").length() == 0) {
-            // Not key and no data, ignore
+    public void insert(JsonNode misc) {
+        JsonNode key = misc.get("key");
+        if(key == null || key.getNodeType() != JsonNodeType.STRING) {
+            // Not key or key is not text, ignore
+            return;
+        }
+        if(misc.get("data") == null || misc.get("data").getNodeType() != JsonNodeType.ARRAY) {
+            // No data or data not an array, ignore
+            return;
+        }
+        ArrayNode data = (ArrayNode)misc.get("data");
+        if(data.size() <= 0) {
+            // No actual data, ignore.
             return;
         }
 
-        MiscJSONEntity entity = em.find(MiscJSONEntity.class, misc.getString("key"));
+        MiscJSONEntity entity = em.find(MiscJSONEntity.class, key.asText());
         if(entity == null) {
             entity = new MiscJSONEntity();
-            entity.setKey(misc.getString("key"));
+            entity.setKey(misc.get("key").asText());
             em.persist(entity);
         }
         entity.setData(misc.toString());
     }
 
     @Override
-    public void merge(JSONObject misc) {
+    public void insert(String text) throws IOException {
+        JsonNode node = json.readJsonTree(text);
+        insert(node);
+    }
+
+    @Override
+    public void merge(JsonNode misc) {
         // TODO: actual merge
         insert(misc);
     }
 
     @Override
-    public JSONObject findByKey(String key) {
+    public JsonNode findByKey(String key) throws IOException {
         MiscJSONEntity entity = em.find(MiscJSONEntity.class, key);
         if(entity == null || StringUtils.isEmpty(entity.getData())) {
             return null;
         }
-        return new JSONObject(entity.getData());
+        return json.readJsonTree(entity.getData());
     }
 }

@@ -7,16 +7,15 @@
     <div class="headerContainer">
         <nav>
             <ul class="mainNavUl">
-                <li><a href="${contextPath}/desktop" ${page == "desktop" ? 'class="selected"': ''}>Työpöytä</a></li>
-                <li><a href="${contextPath}/expertSearch" ${page == "expertSearch" ? 'class="selected"': ''}>Eksperttihaku</a></li>
-                <li><a href="${contextPath}/study/search" ${page == "study" ? 'class="selected"': ''}>Aineistot</a></li>
-                <li><a href="${contextPath}/publication/search" ${page == "publication" ? 'class="selected"': ''}>Julkaisut</a></li>
-                <li><a href="${contextPath}/series/search" ${page == "series" ? 'class="selected"': ''}>Sarjat</a></li>
-                <li><a href="${contextPath}/binder/all" ${page == "binder" ? 'class="selected"': ''}>Mapit</a></li>
-                <li><a href="${contextPath}/report/all" ${page == "report" ? 'class="selected"': ''}>Raportit</a></li>
-                <li><a href="${contextPath}/settings" ${page == "settings" ? 'class="selected"': ''}>Asetukset</a></li>
+                <li><a href="${contextPath}/desktop" ${page == "desktop" ? 'class="selected"': ''}><spring:message code="topmenu.desktop"/></a></li>
+                <li><a href="${contextPath}/expertSearch" ${page == "expertSearch" ? 'class="selected"': ''}><spring:message code="topmenu.expert"/></a></li>
+                <li><a href="${contextPath}/study/search" ${page == "study" ? 'class="selected"': ''}><spring:message code="topmenu.study"/></a></li>
+                <li><a href="${contextPath}/publication/search" ${page == "publication" ? 'class="selected"': ''}><spring:message code="topmenu.publication"/></a></li>
+                <li><a href="${contextPath}/series/search" ${page == "series" ? 'class="selected"': ''}><spring:message code="topmenu.series"/></a></li>
+                <li><a href="${contextPath}/binder/all" ${page == "binder" ? 'class="selected"': ''}><spring:message code="topmenu.binder"/></a></li>
+                <li><a href="${contextPath}/report/all" ${page == "report" ? 'class="selected"': ''}><spring:message code="topmenu.report"/></a></li>
+                <li><a href="${contextPath}/settings" ${page == "settings" ? 'class="selected"': ''}><spring:message code="topmenu.settings"/></a></li>
             </ul>
-
             <div style="clear:both;"></div>
         </nav>
         <div class="quickSearchContainer">

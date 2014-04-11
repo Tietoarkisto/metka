@@ -121,7 +121,7 @@ $(document).ready(function(){
     });
 
     /**
-     * Display controller provided errors.
+     * Display controller provided errors that are present at page load time.
      */
     if(MetkaJS.ErrorManager != null) MetkaJS.ErrorManager.showAll();
 });

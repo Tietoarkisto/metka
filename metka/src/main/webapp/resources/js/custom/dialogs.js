@@ -84,13 +84,4 @@ $(document).ready(function(){
 
         confirm.dialog("open");
     }
-
-    /**
-     * General close function for dialogs.
-     * Closes the dialog with provided id.
-     * @param id - Id of the dialog
-     */
-    MetkaJS.dialogClose = function(id) {
-        $("#"+id).dialog("close");
-    }
 });

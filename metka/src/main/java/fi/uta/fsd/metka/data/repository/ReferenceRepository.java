@@ -1,7 +1,11 @@
 package fi.uta.fsd.metka.data.repository;
 
-import fi.uta.fsd.metka.model.configuration.Field;
+import fi.uta.fsd.metka.data.entity.MiscJSONEntity;
+import fi.uta.fsd.metka.data.entity.RevisionEntity;
+import fi.uta.fsd.metka.data.entity.RevisionableEntity;
 import fi.uta.fsd.metka.model.configuration.Reference;
+import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.mvc.domain.requests.ReferenceOptionsRequest;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,13 +30,8 @@ import java.util.List;
  */
 @Transactional(readOnly = true)
 public interface ReferenceRepository {
-    /**
-     * This analysis a given reference and collects all values matching that reference.
-     *
-     * TODO: This contains a huge deal of functionality that will be implemented as it is needed and so the method signature will change over time.
-     * @param field Field configuration for which the values are to be collected
-     * @param reference Reference defining what values should be collected
-     * @return List of ReferenceOption objects (size >= 0) defining values and titles (if reference doesn't define a title then value is copied to title).
-     */
-    public List<ReferenceOption> collectReferenceOptions(Field field, Reference reference) throws IOException;
+    public List<RevisionableEntity> getRevisionablesForReference(Reference reference);
+    public RevisionEntity getRevisionForReference(RevisionableEntity revisionable, Reference reference);
+    public MiscJSONEntity getMiscJsonForReference(Reference reference);
+    public RevisionEntity getRevisionForReferencedRevisionable(Reference reference, String value);
 }
