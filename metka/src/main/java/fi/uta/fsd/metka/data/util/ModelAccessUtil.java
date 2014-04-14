@@ -279,13 +279,12 @@ public class ModelAccessUtil {
         }
 
         Field field = config.getField(key);
-        if(field.getWritable() == false) {
-            // Field is not writable, don't check for changes and don't add to RevisionData
-            return false;
-        }
 
         if(field == null) {
             // TODO: No such field in configuration. Log error
+            return false;
+        } else if(field.getWritable() == false) {
+            // Field is not writable, don't check for changes and don't add to RevisionData
             return false;
         } else if(field.getSubfield()) {
             // No need to process further, subfields are handled when their containers are processed

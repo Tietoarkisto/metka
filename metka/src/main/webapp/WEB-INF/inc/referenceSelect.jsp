@@ -20,7 +20,7 @@
             <form:input path="values['${param.field}']" autocomplete="off"  />
             <script>
                 $(document).ready(function() {
-                    MetkaJS.ReferenceHandler.handleRevisionableReferenceModelInput("${param.field}", "${context}");
+                    MetkaJS.ReferenceHandler.handleReference("${param.field}", "${context}");
                 })
             </script>
         </c:otherwise>

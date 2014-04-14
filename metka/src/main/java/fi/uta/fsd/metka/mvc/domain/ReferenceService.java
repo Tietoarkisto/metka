@@ -3,18 +3,16 @@ package fi.uta.fsd.metka.mvc.domain;
 import fi.uta.fsd.metka.data.collecting.ReferenceCollecting;
 import fi.uta.fsd.metka.data.enums.ChoicelistType;
 import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.data.repository.ReferenceRepository;
 import fi.uta.fsd.metka.model.configuration.Choicelist;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.configuration.Reference;
-import fi.uta.fsd.metka.mvc.domain.requests.ReferenceOptionsRequest;
+import fi.uta.fsd.metka.transfer.reference.ReferenceOptionsRequest;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**

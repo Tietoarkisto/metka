@@ -1,4 +1,4 @@
-package fi.uta.fsd.metka.mvc.domain.requests;
+package fi.uta.fsd.metka.transfer.reference;
 
 /**
  * Request object for collecting reference options for certain field

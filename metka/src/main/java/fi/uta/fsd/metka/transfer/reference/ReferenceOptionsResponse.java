@@ -10,6 +10,7 @@ import java.util.List;
  */
 public class ReferenceOptionsResponse {
     private final String key;
+    private String dependencyValue;
 
     private List<ReferenceOption> options;
     private final List<ErrorMessage> messages = new ArrayList<>();
@@ -20,6 +21,14 @@ public class ReferenceOptionsResponse {
 
     public String getKey() {
         return key;
+    }
+
+    public String getDependencyValue() {
+        return dependencyValue;
+    }
+
+    public void setDependencyValue(String dependencyValue) {
+        this.dependencyValue = dependencyValue;
     }
 
     public List<ReferenceOption> getOptions() {

@@ -366,6 +366,20 @@
 			"type": "REVISIONABLE",
 			"target": "STUDY_ATTACHMENT",
 			"titlePath": "file"
+		},
+		"files_path_ref": {
+			"key": "files_path_ref",
+			"type": "DEPENDENCY",
+			"target": "files",
+			"valuePath": "fileno",
+			"titlePath": "file"
+		},
+		"files_lang_ref": {
+			"key": "files_lang_ref",
+			"type": "DEPENDENCY",
+			"target": "files",
+			"valuePath": "fileno",
+			"titlePath": "filelanguage"
 		}
 	},
 	"idField": "study_id",
@@ -1328,9 +1342,29 @@
 			"reference": "attachment_ref",
 			"section": "file_management",
 			"subfields": [
+				"filespath",
+				"fileslang"
 			],
 			"showReferenceKey": true,
 			"showSaveInfo": true
+		},
+		"filespath": {
+			"key": "filespath",
+			"translatable": false,
+			"section": "file_management",
+			"type": "REFERENCE",
+			"reference": "files_path_ref",
+			"subfield": true,
+			"writable": false
+		},
+		"fileslang": {
+			"key": "fileslang",
+			"translatable": false,
+			"section": "file_management",
+			"type": "REFERENCE",
+			"reference": "files_lang_ref",
+			"subfield": true,
+			"writable": false
 		},
 		"filenotes": {
 			"key": "filenotes",

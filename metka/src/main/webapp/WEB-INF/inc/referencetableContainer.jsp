@@ -15,9 +15,9 @@
             <c:set var="target" value="${configuration[context].references[reference].target}" />
             <th><spring:message code="${target}.field.${configuration[target].idField}"/></th>
         </c:if>
-        <%--<c:forEach var="subfield" items="${configuration[context].fields[param.field].subfields}">
+        <c:forEach var="subfield" items="${configuration[context].fields[param.field].subfields}">
             <c:if test="${configuration[context].fields[subfield].summaryField == true}"><th><spring:message code="${context}.field.${subfield}"/></th></c:if>
-        </c:forEach> TODO: Subfields for REFERENCECONTAINER--%>
+        </c:forEach>
         <c:if test="${configuration[context].fields[param.field].showSaveInfo == true}">
             <th><spring:message code="general.saveInfo.savedAt"/></th>
             <th><spring:message code="general.saveInfo.savedBy"/></th>

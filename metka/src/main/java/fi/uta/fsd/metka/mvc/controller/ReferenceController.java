@@ -1,10 +1,8 @@
 package fi.uta.fsd.metka.mvc.controller;
 
 import fi.uta.fsd.metka.mvc.domain.ReferenceService;
-import fi.uta.fsd.metka.mvc.domain.requests.ReferenceOptionsRequest;
+import fi.uta.fsd.metka.transfer.reference.*;
 import fi.uta.fsd.metka.mvc.domain.simple.ErrorMessage;
-import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
-import fi.uta.fsd.metka.transfer.reference.ReferenceOptionsResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -48,5 +46,33 @@ public class ReferenceController {
         }
 
         return response;
+    }
+
+    @RequestMapping(value = "collectOptionsGroup", method = {RequestMethod.POST},
+            produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody ReferenceOptionsGroupResponse collectReferenceOptionsGroup(@RequestBody ReferenceOptionsGroupRequest requests) {
+        ReferenceOptionsGroupResponse responses = new ReferenceOptionsGroupResponse();
+        for(ReferenceOptionsRequest request : requests.getRequests()) {
+            ReferenceOptionsResponse response = new ReferenceOptionsResponse(request.getKey());
+
+            List<ReferenceOption> options = null;
+            try {
+                options = service.collectReferenceOptions(request);
+            } catch(IOException ex) {
+                ex.printStackTrace();
+                ErrorMessage message = new ErrorMessage();
+                message.setMsg("general.errors.reference.exceptionWhileCollecting");
+                response.getMessages().add(message);
+            }
+            if(options == null) {
+                ErrorMessage message = new ErrorMessage();
+                message.setMsg("general.errors.reference.exceptionBeforeCollecting");
+                response.getMessages().add(message);
+            } else {
+                response.setOptions(options);
+            }
+        }
+
+        return responses;
     }
 }

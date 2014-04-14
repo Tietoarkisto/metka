@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import fi.uta.fsd.metka.data.entity.MiscJSONEntity;
 import fi.uta.fsd.metka.data.entity.RevisionEntity;
 import fi.uta.fsd.metka.data.enums.ChoicelistType;
+import fi.uta.fsd.metka.data.enums.FieldType;
+import fi.uta.fsd.metka.data.enums.ReferenceTitleType;
 import fi.uta.fsd.metka.model.configuration.Choicelist;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
@@ -12,6 +14,7 @@ import fi.uta.fsd.metka.model.configuration.Reference;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.SavedDataField;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
+import fi.uta.fsd.metka.transfer.reference.ReferenceOptionTitle;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -61,6 +64,14 @@ class DependencyReferenceHandler extends ReferenceHandler {
                 } else {
                     // TODO: Handle non reference list dependency
                 }
+                break;
+            case REFERENCECONTAINER:
+                Reference dependencyReference = config.getReference(field.getReference());
+                if(dependencyReference == null) {
+                    // We can't do anything, dependency reference is missing from configuration.
+                    return;
+                }
+                handleReferenceDependency(field, reference, config, dependencyValue, dependencyReference, options);
                 break;
             default:
                 // Functionality has not been implemented yet for the given case.
@@ -121,7 +132,7 @@ class DependencyReferenceHandler extends ReferenceHandler {
         // TODO: If field type is CHOICE or some other type that requires multiple options and valuePath points to something that allows multiple options then add all of them.
 
         String value;
-        String title = null;
+        ReferenceOptionTitle title = null;
         SavedDataField sf = getSavedDataFieldFromRevisionData(data, reference.getValuePath());
         if(sf == null || !sf.hasValue()) {
             // No value to save
@@ -131,13 +142,18 @@ class DependencyReferenceHandler extends ReferenceHandler {
         value = sf.getActualValue();
         if(!StringUtils.isEmpty(reference.getTitlePath())) {
             sf = getSavedDataFieldFromRevisionData(data, reference.getTitlePath());
+            Configuration config = configurations.findConfiguration(data.getConfiguration());
             if(sf != null && sf.hasValue()) {
-                title = sf.getActualValue();
+                if(config.getField(reference.getTitlePath()).getType() == FieldType.CHOICE) {
+                    title = new ReferenceOptionTitle(ReferenceTitleType.VALUE, sf.getActualValue());
+                } else {
+                    title = new ReferenceOptionTitle(ReferenceTitleType.LITERAL, sf.getActualValue());
+                }
             }
         }
 
         if(title == null) {
-            title = value;
+            title = new ReferenceOptionTitle(ReferenceTitleType.LITERAL, value);
         }
 
         // Add option to options list.

@@ -129,7 +129,7 @@ MetkaJS.TableHandler = function() {
      * @param content JSON object, usually from hidden field. Must match type container.
      */
     function buildReferencetable(content, context) {
-        // Handle only containers
+        // Handle only reference containers
         var key = content.key;
         var field = MetkaJS.JSConfig[context].fields[key];
         var changes = false;
@@ -173,6 +173,10 @@ MetkaJS.TableHandler = function() {
                 if(value !== 'undefined') td.text(value);
                 tr.append(td);
             }
+            // Add reference change listener for current row
+            MetkaJS.EventManager.listen(MetkaJS.E.Event.REFERENCE_CONTAINER_CHANGE,
+                reference.value, key,
+                new MetkaJS.ReferenceHandler.ModelInputCallback(key, context, reference.value));
             body.append(tr);
         }
         if(changes) {
@@ -181,8 +185,6 @@ MetkaJS.TableHandler = function() {
             saveContent(content);
         }
     }
-
-
 
     function saveRow(row, context) {
         if(row.type=="row") {
@@ -296,10 +298,13 @@ MetkaJS.TableHandler = function() {
         }
     }
 
+
+
     return {
         readContent: readContent,
         saveContent: saveContent,
         build: buildTable,
-        saveRow: saveRow
+        saveRow: saveRow,
+        handleReferenceOptions: handleReferenceOptions
     }
 }();

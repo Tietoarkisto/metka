@@ -33,12 +33,15 @@ MetkaJS.EventManager = (function() {
     }
 
     function notifyListeners(type, notifier) {
-        var listeners = eventListeners[type][notifier];
+        var listeners = eventListeners[type][notifier.key];
         if(listeners == null) {
             return;
         }
         for(var i = 0, length = listeners.length; i<length; i++) {
             var listener = listeners[i];
+            if(type == MetkaJS.E.Event.REFERENCE_CONTAINER_CHANGE && listener.listener != notifier.id) {
+                continue;
+            }
             listener.callback();
         }
     }

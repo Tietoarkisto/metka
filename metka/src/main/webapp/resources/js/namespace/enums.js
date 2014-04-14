@@ -6,7 +6,8 @@ MetkaJS.E = {
      * Event enum values
      */
     Event: {
-        FIELD_CHANGE: "FIELD_CHANGE"
+        FIELD_CHANGE: "FIELD_CHANGE",
+        REFERENCE_CONTAINER_CHANGE: "REFERENCE_CONTAINER_CHANGE"
     },
     /**
      * Reference enum values.
@@ -15,6 +16,13 @@ MetkaJS.E = {
         REVISIONABLE: "REVISIONABLE",
         JSON: "JSON",
         DEPENDENCY: "DEPENDENCY"
+    },
+    /**
+     * Reference title enum values
+     */
+    RefTitle: {
+        VALUE: "VALUE",
+        LITERAL: "LITERAL"
     },
     /**
      * Field types

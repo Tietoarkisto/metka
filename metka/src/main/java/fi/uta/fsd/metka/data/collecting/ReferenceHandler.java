@@ -2,16 +2,22 @@ package fi.uta.fsd.metka.data.collecting;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
+import fi.uta.fsd.metka.data.enums.ReferenceTitleType;
+import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.data.repository.ReferenceRepository;
 import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.model.configuration.Reference;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
+import fi.uta.fsd.metka.transfer.reference.ReferenceOptionTitle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
 public abstract class ReferenceHandler {
     @Autowired
     protected ReferenceRepository repository;
+
+    @Autowired
+    protected ConfigurationRepository configurations;
 
     @Autowired
     protected JSONUtil json;
@@ -53,7 +59,7 @@ public abstract class ReferenceHandler {
             // Don't return option since we don't have a value
             return null;
         }
-        ReferenceOption option = new ReferenceOption(valueStr, titleStr);
+        ReferenceOption option = new ReferenceOption(valueStr, new ReferenceOptionTitle(ReferenceTitleType.LITERAL, titleStr));
         return option;
     }
 }

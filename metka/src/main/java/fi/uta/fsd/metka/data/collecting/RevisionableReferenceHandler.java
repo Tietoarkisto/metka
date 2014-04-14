@@ -2,11 +2,14 @@ package fi.uta.fsd.metka.data.collecting;
 
 import fi.uta.fsd.metka.data.entity.RevisionEntity;
 import fi.uta.fsd.metka.data.entity.RevisionableEntity;
-import fi.uta.fsd.metka.data.enums.ConfigurationType;
+import fi.uta.fsd.metka.data.enums.FieldType;
+import fi.uta.fsd.metka.data.enums.ReferenceTitleType;
+import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Reference;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.SavedDataField;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
+import fi.uta.fsd.metka.transfer.reference.ReferenceOptionTitle;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -38,7 +41,8 @@ class RevisionableReferenceHandler extends ReferenceHandler {
                 // No approved revision, not applicable.
                 continue;
             }
-            String title = null;
+
+            ReferenceOptionTitle title = null;
             if(!StringUtils.isEmpty(reference.getTitlePath())) {
                 // Title is requested
                 RevisionEntity revision = repository.getRevisionForReference(entity, reference);
@@ -48,13 +52,19 @@ class RevisionableReferenceHandler extends ReferenceHandler {
                 }
 
                 RevisionData data = json.readRevisionDataFromString(revision.getData());
+                Configuration config = configurations.findConfiguration(data.getConfiguration());
+                // TODO: Fetch value based on path, not just assumption that it's a top level field
                 SavedDataField saved = getSavedDataFieldFromRevisionData(data, reference.getTitlePath());
                 if(saved != null) {
-                    title = saved.getActualValue();
+                    if(config.getField(reference.getTitlePath()).getType() == FieldType.CHOICE) {
+                        title = new ReferenceOptionTitle(ReferenceTitleType.VALUE, saved.getActualValue());
+                    } else {
+                        title = new ReferenceOptionTitle(ReferenceTitleType.LITERAL,saved.getActualValue());
+                    }
                 }
             }
             if(title == null) {
-                title = entity.getId().toString();
+                title = new ReferenceOptionTitle(ReferenceTitleType.LITERAL, entity.getId().toString());
             }
             options.add(new ReferenceOption(entity.getId().toString(), title));
         }

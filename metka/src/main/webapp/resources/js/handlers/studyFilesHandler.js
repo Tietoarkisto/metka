@@ -119,12 +119,15 @@ MetkaJS.DialogHandlers.studyFilesHandler = function() {
         }).done(function(data) {
             data = JSON.parse(data);
             if(data != null && data !== 'undefined') {
-                // TODO: actual error message
-                alert(data.result, "Tallentaminen");
+                var message = MetkaJS.ErrorManager.ErrorMessage(data.title, data.msg);
+
+                MetkaJS.ErrorManager.show(message);
+
+                MetkaJS.EventManager.notify(MetkaJS.E.Event.REFERENCE_CONTAINER_CHANGE, {key: key, id: to.id});
             }
         }).fail(function() {
-                // TODO: actual error message
-                alert("Virhe tiedoston tallennuksessa", "Virhe");
+            // TODO: actual error message
+            alert("Virhe tiedoston tallennuksessa", "Virhe");
         });
 
         $("#"+dialogId).dialog("close");

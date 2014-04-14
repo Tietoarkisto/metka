@@ -7,9 +7,9 @@ package fi.uta.fsd.metka.transfer.reference;
  */
 public class ReferenceOption {
     private final String value;
-    private final String title;
+    private final ReferenceOptionTitle title;
 
-    public ReferenceOption(String value, String title) {
+    public ReferenceOption(String value, ReferenceOptionTitle title) {
         this.value = value;
         this.title = title;
     }
@@ -18,7 +18,7 @@ public class ReferenceOption {
         return value;
     }
 
-    public String getTitle() {
+    public ReferenceOptionTitle getTitle() {
         return title;
     }
 

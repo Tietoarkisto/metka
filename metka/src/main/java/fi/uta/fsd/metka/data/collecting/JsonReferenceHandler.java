@@ -2,7 +2,6 @@ package fi.uta.fsd.metka.data.collecting;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ValueNode;
 import fi.uta.fsd.metka.data.entity.MiscJSONEntity;
 import fi.uta.fsd.metka.model.configuration.Reference;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;

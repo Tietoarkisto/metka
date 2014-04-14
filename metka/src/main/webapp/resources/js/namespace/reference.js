@@ -1,15 +1,59 @@
 MetkaJS.ReferenceHandler = (function() {
-    CallbackCaller = function(key, context) {
+    ModelInputCallback = function(key, context, dependencyValue) {
         return function() {
-            MetkaJS.ReferenceHandler.handleRevisionableReferenceModelInput(key, context);
+            MetkaJS.ReferenceHandler.handleReference(key, context, dependencyValue);
         }
     }
-    function revisionableReferenceModelInput(key, context) {
+
+    function referenceHandlerChooser(key, context, dependencyValue) {
         var field = MetkaJS.JSConfigUtil.getField(key);
         if(field == null) {
             // Sanity check, field has to exist for this to make sense.
             return;
         }
+
+        switch(field.type) {
+            case MetkaJS.E.Field.REFERENCECONTAINER:
+                // Collects
+                referenceContainer(field, context, dependencyValue);
+                break;
+            case MetkaJS.E.Field.CONTAINER:
+                // For now, do nothing
+                break;
+            default:
+                // Make single request with parameters related to given field
+                modelInputReference(field, context, dependencyValue);
+                break;
+        }
+    }
+
+    function referenceContainer(field, context, dependencyValue) {
+        if(field.subfield == true) {
+            // Let's not handle recursive referencecontainers just yet.
+            return;
+        } else if(field.type != MetkaJS.E.Field.REFERENCECONTAINER) {
+            // Sanity check. This function is meant only for referencecontainers
+            return;
+        } else if(dependencyValue == null) {
+            // Sanity check, this function is meant to handle one specific row at a time.
+            // It no dependencyValue is provided then we can not make the request.
+            return;
+        }
+
+        var requests = new Array();
+        for(var i= 0, length=field.subfields.length; i<length; i++) {
+            var request = new Object();
+            request.key = field.subfields[i];
+            request.confType = MetkaJS.JSConfigUtil.getConfigurationKey().type;
+            request.confVersion = MetkaJS.JSConfigUtil.getConfigurationKey().version;
+            request.dependencyValue = dependencyValue;
+            requests.push(request);
+        }
+
+        makeReferenceGroupRequest(requests, context, MetkaJS.TableHandler.handleReferenceOptions);
+    }
+
+    function modelInputReference(field, context, dependencyValue) {
         if(field.subfield == true) {
             // Sanity check, this function is meant for top level fields
             // TODO: Generalise to any field
@@ -25,41 +69,40 @@ MetkaJS.ReferenceHandler = (function() {
                 break;
             case MetkaJS.E.Field.REFERENCE:
                 reference = MetkaJS.JSConfigUtil.getReference(field.reference);
+                break;
         }
         if(reference == null) {
             // Sanity check, field has to have a reference for this function to make sense
             return;
         }
-        var dependencyValue = null;
+        if(dependencyValue == null) {
+            if(reference.type == MetkaJS.E.Ref.DEPENDENCY) {
+                var depField = MetkaJS.JSConfigUtil.getField(reference.target);
+                MetkaJS.EventManager.listen(MetkaJS.E.Event.FIELD_CHANGE, field.key, {key: depField.key}, new ModelInputCallback(field.key, context, null));
+                var input = null;
+                switch(depField.type) {
+                    case MetkaJS.E.Field.REFERENCE:
+                    case MetkaJS.E.Field.STRING:
+                    case MetkaJS.E.Field.CHOICE:
+                        // TODO: We are assuming here that current field and dependency field are both top level fields. This should get generalises at some point.
 
-        if(reference.type == MetkaJS.E.Ref.DEPENDENCY) {
-            var depField = MetkaJS.JSConfigUtil.getField(reference.target);
-            MetkaJS.EventManager.listen(MetkaJS.E.Event.FIELD_CHANGE, key, depField.key, new CallbackCaller(key, context));
-            var input = null;
-            switch(depField.type) {
-                case MetkaJS.E.Field.REFERENCE:
-                case MetkaJS.E.Field.STRING:
-                case MetkaJS.E.Field.CHOICE:
-                    // TODO: We are assuming here that current field and dependency field are both top level fields. This should get generalises at some point.
-
-                    // With choice we don't really care about if the choice is REFERENCE etc. since we only want the current value.
-                    // Server can make better judgements on how to use that value.
-                    input = MetkaJS.getModelInput(depField.key);
-                    break;
-            }
-            if(input != null) {
-                dependencyValue = input.val();
+                        // With choice we don't really care about if the choice is REFERENCE etc. since we only want the current value.
+                        // Server can make better judgements on how to use that value.
+                        input = MetkaJS.getModelInput(depField.key);
+                        break;
+                }
+                if(input != null) {
+                    dependencyValue = input.val();
+                }
             }
         }
 
-        /**
-         * At present there should be no need to make separate type of requests for different field types
-         */
-        makeReferenceRequest(key, dependencyValue, context);
+        // Make single request
+        makeReferenceRequest(field.key, dependencyValue, context);
     }
 
     /**
-     * Handles operations related to choice type references.
+     * Sends a single ReferenceOption request to server.
      * Requests a list of options from server and displays them in a select component with previous selection selected
      * as default.
      * @param key Field key
@@ -83,7 +126,32 @@ MetkaJS.ReferenceHandler = (function() {
             url: MetkaJS.PathBuilder().add("references").add("collectOptions").build(),
             data: JSON.stringify(request)
         }).done(function(data) {
-            handleReferenceInput(key, data, context);
+            handleReferenceInput(data, context);
+        });
+    }
+
+    /**
+     * Sends a group of reference option requests to server.
+     * Requests a list of options from server and displays them in a select component with previous selection selected
+     * as default.
+     * @param key Field key
+     * @param context Configuration context
+     */
+    function makeReferenceGroupRequest(requests, context, handler) {
+        var request = new Object();
+        request.requests = requests;
+
+        $.ajax({
+            type: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            dataType: "json",
+            url: MetkaJS.PathBuilder().add("references").add("collectOptionsGroup").build(),
+            data: JSON.stringify(request)
+        }).done(function(data) {
+            handler(data, context);
         });
     }
 
@@ -95,7 +163,7 @@ MetkaJS.ReferenceHandler = (function() {
      * @param data Request response
      * @param context Context where the data is expected
      */
-    function handleReferenceInput(key, data, context) {
+    function handleReferenceInput(data, context) {
         if(data.messages !== 'undefined' && data.messages != null && data.messages.length > 0) {
             for(var i= 0, iLength = data.messages.length; i<iLength; i++) {
                 var message = data.messages[i];
@@ -112,6 +180,7 @@ MetkaJS.ReferenceHandler = (function() {
             // No options
             return;
         }
+        var key = data.key;
 
         var field = MetkaJS.JSConfigUtil.getField(key);
         switch(field.type) {
@@ -127,7 +196,10 @@ MetkaJS.ReferenceHandler = (function() {
                 if(data.options.length <= 0) {
                     data.options[0] = {
                         value: "",
-                        title: ""
+                        title: {
+                            type: MetkaJS.E.RefTitle.LITERAL,
+                            value: ""
+                        }
                     }
                 }
                 if(field.subfield == true) {
@@ -153,7 +225,7 @@ MetkaJS.ReferenceHandler = (function() {
         select.data("key", key);
         select.change(function() {
             var $this = $(this);
-            MetkaJS.EventManager.notify(MetkaJS.E.Event.FIELD_CHANGE, $this.data("key"));
+            MetkaJS.EventManager.notify(MetkaJS.E.Event.FIELD_CHANGE, {key: $this.data("key")});
         });
         if(includeEmpty == true) {
             var option = $("<option>", {value: null});
@@ -162,7 +234,7 @@ MetkaJS.ReferenceHandler = (function() {
         }
         for(var i= 0, length = options.length; i<length; i++) {
             var option = $("<option>", {value: options[i].value});
-            option.append(options[i].title);
+            option.append(options[i].title.value);
             select.append(option);
         }
         select.val(curVal);
@@ -180,10 +252,12 @@ MetkaJS.ReferenceHandler = (function() {
         var text = $("#"+key+"_text");
 
         hidden.val(option.value);
-        text.val(option.title);
+        // TODO: Handle VALUE type titles by selecting correct choice translation
+        text.val(option.title.value);
     }
 
     return {
-        handleRevisionableReferenceModelInput: revisionableReferenceModelInput
+        ModelInputCallback: ModelInputCallback,
+        handleReference: referenceHandlerChooser
     }
 })();

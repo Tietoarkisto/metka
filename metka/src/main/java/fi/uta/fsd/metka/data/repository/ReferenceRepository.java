@@ -4,12 +4,8 @@ import fi.uta.fsd.metka.data.entity.MiscJSONEntity;
 import fi.uta.fsd.metka.data.entity.RevisionEntity;
 import fi.uta.fsd.metka.data.entity.RevisionableEntity;
 import fi.uta.fsd.metka.model.configuration.Reference;
-import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.mvc.domain.requests.ReferenceOptionsRequest;
-import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.util.List;
 
 /**

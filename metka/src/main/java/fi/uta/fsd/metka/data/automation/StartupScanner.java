@@ -26,8 +26,8 @@ public class StartupScanner {
 
     @PostConstruct
     public void scanForConfigurations() throws IOException {
-        //File confDir = new File("src/main/resources/configuration"); // Development
-        File confDir = new File("/usr/share/metka/config"); // QA-server
+        File confDir = new File("src/main/resources/configuration"); // Development
+        //File confDir = new File("/usr/share/metka/config"); // QA-server
 
         Collection<File> files = FileUtils.listFiles(confDir, FileFilterUtils.suffixFileFilter(".json"), TrueFileFilter.TRUE);
 
@@ -47,8 +47,8 @@ public class StartupScanner {
 
     @PostConstruct
     public void scanForMiscJSON() throws IOException {
-        //File miscDir = new File("src/main/resources/misc"); // Development
-        File miscDir = new File("/usr/share/metka/misc"); // QA-server
+        File miscDir = new File("src/main/resources/misc"); // Development
+        //File miscDir = new File("/usr/share/metka/misc"); // QA-server
 
         Collection<File> files = FileUtils.listFiles(miscDir, FileFilterUtils.suffixFileFilter(".json"), TrueFileFilter.TRUE);
 
