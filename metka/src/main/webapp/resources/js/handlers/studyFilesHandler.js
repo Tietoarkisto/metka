@@ -92,7 +92,9 @@ MetkaJS.DialogHandlers.studyFilesHandler = function() {
      * Process file properties dialog with id "fileManagementDialog".
      * Collects all value and sends them to server, then if save is successful closes the dialog.
      * Server should send back a result object, display result in alert message.
-     * @param key Ignored
+     * After server returns notifies all listeners of change in given field
+     *
+     * @param key
      * @param context Ignored
      */
     function processFileDialog(key, context) {
@@ -103,8 +105,8 @@ MetkaJS.DialogHandlers.studyFilesHandler = function() {
             // Can't continue if save object or config are missing, these are minimum requirements for processing a file and should be set while opening the dialog.
             return false;
         }
-        for(var key in config.fields) {
-            to.values[key] = $("#fileManagementField"+key).val();
+        for(var fieldKey in config.fields) {
+            to.values[fieldKey] = $("#fileManagementField"+fieldKey).val();
         }
 
         $.ajax({
@@ -117,14 +119,13 @@ MetkaJS.DialogHandlers.studyFilesHandler = function() {
             data: JSON.stringify(to),
             url: MetkaJS.PathBuilder().add("file").add("save").build()
         }).done(function(data) {
-            data = JSON.parse(data);
             if(data != null && data !== 'undefined') {
                 var message = MetkaJS.ErrorManager.ErrorMessage(data.title, data.msg);
 
                 MetkaJS.ErrorManager.show(message);
 
-                MetkaJS.EventManager.notify(MetkaJS.E.Event.REFERENCE_CONTAINER_CHANGE, {key: key, id: to.id});
             }
+            MetkaJS.EventManager.notify(MetkaJS.E.Event.DIALOG_EVENT, {target: dialogId, id: to.id});
         }).fail(function() {
             // TODO: actual error message
             alert("Virhe tiedoston tallennuksessa", "Virhe");

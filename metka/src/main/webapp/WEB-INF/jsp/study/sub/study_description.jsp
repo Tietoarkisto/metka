@@ -159,22 +159,14 @@
         </tr>
         <tr>
             <jsp:include page="../../../inc/singleCellFormText.jsp">
-                <jsp:param name="field" value="disclaimer" />
-                <jsp:param name="readonly" value="${readonly}" />
-            </jsp:include>
-
-            <jsp:include page="../../../inc/singleCellFormText.jsp">
                 <jsp:param name="field" value="datasetnotes" />
                 <jsp:param name="readonly" value="${readonly}" />
             </jsp:include>
-        </tr>
-        <tr>
+
             <jsp:include page="../../../inc/singleCellFormText.jsp">
                 <jsp:param name="field" value="appraisal" />
                 <jsp:param name="readonly" value="${readonly}" />
             </jsp:include>
-
-            <td></td>
         </tr>
     </table>
 

@@ -66,7 +66,7 @@ class DependencyReferenceHandler extends ReferenceHandler {
                 }
                 break;
             case REFERENCECONTAINER:
-                Reference dependencyReference = config.getReference(field.getReference());
+                Reference dependencyReference = config.getReference(dependencyField.getReference());
                 if(dependencyReference == null) {
                     // We can't do anything, dependency reference is missing from configuration.
                     return;

@@ -84,8 +84,11 @@ $(document).ready(function(){
     $(".tabNavi a").click(function(){
         changeToTab($(this));
     });
-
-    $(".tabNavi a").first().click();
+    if(window.location.hash != null && window.location.hash.length > 0) {
+        changeToTab($(".tabNavi "+window.location.hash));
+    } else {
+        $(".tabNavi a").first().click();
+    }
 
     function changeToTab(tab){
         if(!tab.hasClass("selected")){

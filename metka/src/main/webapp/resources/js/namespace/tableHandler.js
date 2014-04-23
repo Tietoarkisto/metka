@@ -131,7 +131,7 @@ MetkaJS.TableHandler = function() {
     function buildReferencetable(content, context) {
         // Handle only reference containers
         var key = content.key;
-        var field = MetkaJS.JSConfig[context].fields[key];
+        var field = MetkaJS.JSConfigUtil.getField(key, context);
         var changes = false;
         if(content.type != "referencecontainer" || field.type != MetkaJS.E.Field.REFERENCECONTAINER) return;
 
@@ -141,6 +141,7 @@ MetkaJS.TableHandler = function() {
         for(var row = 0; row < content.references.length; row++) {
             var tr = $("<tr>", {class: "pointerClass"});
             var reference = content.references[row];
+            tr.data("reference", reference.value);
             if(reference.temporary) {
                 tr.addClass("temporary");
             } else {
@@ -161,6 +162,15 @@ MetkaJS.TableHandler = function() {
                 tr.append(td);
             }
             // TODO: display extra fields for referenced information
+            for(var i = 0, length = field.subfields.length; i < length; i++) {
+                var subkey = field.subfields[i];
+                var subfield = MetkaJS.JSConfigUtil.getField(subkey, context);
+                if(subfield.summaryField == true) {
+                    td = $("<td>");
+                    td.data("key", subkey);
+                    tr.append(td);
+                }
+            }
 
             if(field.showSaveInfo == true) {
                 var value = reference.savedAt;
@@ -175,9 +185,11 @@ MetkaJS.TableHandler = function() {
             }
             // Add reference change listener for current row
             MetkaJS.EventManager.listen(MetkaJS.E.Event.REFERENCE_CONTAINER_CHANGE,
-                reference.value, key,
-                new MetkaJS.ReferenceHandler.ModelInputCallback(key, context, reference.value));
+                reference.value,
+                key,
+                new MetkaJS.ReferenceHandler.ReferenceContainerCallback(key, context, reference.value));
             body.append(tr);
+            MetkaJS.ReferenceHandler.handleReference(key, context, reference.value);
         }
         if(changes) {
             // Save content back to field since there has been new handlerId:s inserted
@@ -298,7 +310,53 @@ MetkaJS.TableHandler = function() {
         }
     }
 
+    function handleReferenceOptions(data, context) {
+        var tbody = $("#"+data.key+" tbody");
+        var currentDependencyValue = null;
+        var currentRow = null;
 
+        var field = MetkaJS.JSConfigUtil.getField(data.key);
+        var reference = MetkaJS.JSConfigUtil.getReference(field.reference);
+        var target = reference.target;
+
+        field = null;
+        reference = null;
+
+        for(var i= 0, length=data.responses.length; i<length; i++) {
+            var response = data.responses[i];
+            if(response.options == null || response.options.length == 0) {
+                // No text to insert
+                continue;
+            }
+            if(currentRow == null || currentDependencyValue != response.dependencyValue) {
+                currentRow = MetkaJS.getElementWithDataValue(tbody, "tr", "reference", response.dependencyValue);
+            }
+            if(currentRow == null) {
+                // No row, continue.
+                continue;
+            }
+
+            field = MetkaJS.JSConfigUtil.getField(response.key);
+            reference = MetkaJS.JSConfigUtil.getReference(field.reference);
+
+            var td = MetkaJS.getElementWithDataValue(currentRow, "td", "key", response.key);
+            if(td != null) {
+                td.empty();
+                var option = response.options[0];
+                if(option.title.type == MetkaJS.E.RefTitle.LITERAL) {
+                    td.append(option.title.value);
+                } else if(option.title.type == MetkaJS.E.RefTitle.VALUE) {
+                    var targetField = MetkaJS.JSConfigUtil.getField(reference.titlePath, target);
+                    if(targetField == null || targetField.type != MetkaJS.E.Field.CHOICE) {
+                        td.append(option.title.value);
+                    } else {
+                        td.append(MetkaJS.L10N.get(target+"."+targetField.choicelist+".choices."+option.title.value));
+                    }
+                }
+
+            }
+        }
+    }
 
     return {
         readContent: readContent,

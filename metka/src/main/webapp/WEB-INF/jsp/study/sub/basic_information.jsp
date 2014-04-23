@@ -60,10 +60,9 @@
             </jsp:include>
         </tr>
         <tr>
-            <jsp:include page="../../../inc/referenceSelect.jsp">
+            <jsp:include page="../../../inc/referenceWithLabel.jsp">
                 <jsp:param name="field" value="seriesid" />
                 <jsp:param name="colspan" value="3" />
-                <jsp:param name="readonly" value="${readonly}" />
             </jsp:include>
             <c:set var="field" value="aipcomplete" />
             <td class="labelColumn"><form:label path="values['${field}']"><spring:message code="STUDY.field.${field}"/></form:label></td>
@@ -72,57 +71,25 @@
         <%-- TEMPORARY TEST FIELD START --%>
         <c:set var="field" value="seriesiddep1" />
         <c:if test="${configuration[context].fields[field].display == true}">
-        <c:choose>
-            <c:when test="${configuration[context].fields[field].type == 'CHOICE'}">
-                <tr>
-                    <jsp:include page="../../../inc/referenceSelect.jsp">
-                        <jsp:param name="field" value="${field}" />
-                        <jsp:param name="colspan" value="3" />
-                        <jsp:param name="readonly" value="${readonly}" />
-                    </jsp:include>
-                    <td></td>
-                    <td></td>
-                </tr>
-            </c:when>
-            <c:otherwise>
-                <tr>
-                    <jsp:include page="../../../inc/referenceText.jsp">
-                        <jsp:param name="field" value="${field}" />
-                        <jsp:param name="colspan" value="4" />
-                        <jsp:param name="readonly" value="${readonly}" />
-                    </jsp:include>
-                    <td></td>
-                    <td></td>
-                </tr>
-            </c:otherwise>
-        </c:choose>
+        <tr>
+            <jsp:include page="../../../inc/referenceWithLabel.jsp">
+                <jsp:param name="field" value="${field}" />
+                <jsp:param name="colspan" value="4" />
+            </jsp:include>
+            <td></td>
+            <td></td>
+        </tr>
         </c:if>
         <c:set var="field" value="seriesiddep2" />
         <c:if test="${configuration[context].fields[field].display == true}">
-        <c:choose>
-            <c:when test="${configuration[context].fields[field].type == 'CHOICE'}">
-                <tr>
-                    <jsp:include page="../../../inc/referenceSelect.jsp">
-                        <jsp:param name="field" value="${field}" />
-                        <jsp:param name="colspan" value="3" />
-                        <jsp:param name="readonly" value="${readonly}" />
-                    </jsp:include>
-                    <td></td>
-                    <td></td>
-                </tr>
-            </c:when>
-            <c:otherwise>
-                <tr>
-                    <jsp:include page="../../../inc/referenceText.jsp">
-                        <jsp:param name="field" value="${field}" />
-                        <jsp:param name="colspan" value="4" />
-                        <jsp:param name="readonly" value="${readonly}" />
-                    </jsp:include>
-                    <td></td>
-                    <td></td>
-                </tr>
-            </c:otherwise>
-        </c:choose>
+            <tr>
+                <jsp:include page="../../../inc/referenceWithLabel.jsp">
+                    <jsp:param name="field" value="${field}" />
+                    <jsp:param name="colspan" value="4" />
+                </jsp:include>
+                <td></td>
+                <td></td>
+            </tr>
         </c:if>
         <%-- TEMPORARY TEST FIELD END --%>
         <tr>

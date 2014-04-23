@@ -7,7 +7,8 @@ MetkaJS.E = {
      */
     Event: {
         FIELD_CHANGE: "FIELD_CHANGE",
-        REFERENCE_CONTAINER_CHANGE: "REFERENCE_CONTAINER_CHANGE"
+        REFERENCE_CONTAINER_CHANGE: "REFERENCE_CONTAINER_CHANGE",
+        DIALOG_EVENT: "DIALOG_EVENT"
     },
     /**
      * Reference enum values.

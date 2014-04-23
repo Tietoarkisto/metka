@@ -2,6 +2,7 @@
 should be accessible from anywhere */
 MetkaJS = {
     DialogHandlers: {}, // This is used to collect and reference custom dialog handlers used throughout the application
+    TableBuilders: {}, // This is used to collect and reference custom table builders used throughout the application
     // Placeholders for functionality added in other files
     E: null,
     JSConfig: null,
@@ -115,5 +116,55 @@ MetkaJS = {
             return "values['"+key+"']";
         }
         return null;
+    },
+
+    /**
+     * Returns jQuery element with given value in given key found from given root element with provided selector.
+     * Returns first element with given value so it multiple values match returns only one.
+     *
+     * @param root Element used for root in search
+     * @param selector Selector string for descendant elements
+     * @param key Data value key
+     * @param value Value that should be matched.
+     * @returns {null}
+     */
+    getElementWithDataValue: function(root, selector, key, value) {
+        var elem = null;
+        $(root).find(selector).each(function() {
+            if($(this).data(key) == value) {
+                elem = $(this);
+            }
+            return !(elem != null);
+        });
+        return elem;
+    },
+
+    /**
+     * Checks whether given field should be rendered as a read only field.
+     * There are multiple things that have to be considered for this but restrictions are implemented as needed.
+     * TODO: Immutability causes problems since we have to have the original value from revision to determine that.
+     * TODO: All in all immutability is handled wrong currently since it should depend on original value, not current value.
+     *
+     * @param field Field configuration used to check if read only is needed
+     */
+    isReadOnly: function(field) {
+        // We are not viewing a revision, never use read only
+        if(MetkaJS.SingleObject == null) {
+            return false;
+        }
+
+        // We are in an approved revision, always use readonly
+        if(MetkaJS.SingleObject.draft == false) {
+            return true;
+        }
+
+        // Field should not be editable by user
+        if(field.editable == false) {
+            return true;
+        }
+
+        if(field.immutable == true && currentValue != null) {
+            return
+        }
     }
 };

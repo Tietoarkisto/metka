@@ -11,7 +11,9 @@ public enum ConfigurationType {
     STUDY(Values.STUDY),
     SERIES(Values.SERIES),
     STUDY_ATTACHMENT(Values.STUDY_ATTACHMENT),
-    PUBLICATION(Values.PUBLICATION);
+    PUBLICATION(Values.PUBLICATION),
+    STUDY_VARIABLES(Values.STUDY_VARIABLES),
+    STUDY_VARIABLE(Values.STUDY_VARIABLE);
     // Add more as needed
 
     private final String value;
@@ -54,5 +56,7 @@ public enum ConfigurationType {
         public static final String SERIES = "SERIES";
         public static final String STUDY_ATTACHMENT = "STUDY_ATTACHMENT";
         public static final String PUBLICATION = "PUBLICATION";
+        public static final String STUDY_VARIABLES = "STUDY_VARIABLES";
+        public static final String STUDY_VARIABLE = "STUDY_VARIABLE";
     }
 }

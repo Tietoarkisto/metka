@@ -1,8 +1,28 @@
 MetkaJS.ReferenceHandler = (function() {
     ModelInputCallback = function(key, context, dependencyValue) {
-        return function() {
+        return function(notifier) {
             MetkaJS.ReferenceHandler.handleReference(key, context, dependencyValue);
         }
+    }
+
+    ReferenceContainerCallback = function(key, context, dependencyValue) {
+        return function(notifier) {
+            if(notifier.id == dependencyValue) {
+                MetkaJS.ReferenceHandler.handleReference(key, context, dependencyValue);
+            }
+        }
+    }
+
+    ReferenceOptionsGroupRequest = function(key) {
+        this.key = key;
+        this.requests = new Array();
+    }
+
+    ReferenceOptionsRequest = function(key, confType, confVersion, dependencyValue) {
+        this.key = key;
+        this.confType = confType;
+        this.confVersion = confVersion;
+        this.dependencyValue = dependencyValue;
     }
 
     function referenceHandlerChooser(key, context, dependencyValue) {
@@ -40,17 +60,18 @@ MetkaJS.ReferenceHandler = (function() {
             return;
         }
 
-        var requests = new Array();
+        var group = new ReferenceOptionsGroupRequest(field.key);
         for(var i= 0, length=field.subfields.length; i<length; i++) {
-            var request = new Object();
-            request.key = field.subfields[i];
-            request.confType = MetkaJS.JSConfigUtil.getConfigurationKey().type;
-            request.confVersion = MetkaJS.JSConfigUtil.getConfigurationKey().version;
-            request.dependencyValue = dependencyValue;
-            requests.push(request);
+            var request = new ReferenceOptionsRequest(
+                field.subfields[i],
+                MetkaJS.JSConfigUtil.getConfigurationKey().type,
+                MetkaJS.JSConfigUtil.getConfigurationKey().version,
+                dependencyValue);
+
+            group.requests.push(request);
         }
 
-        makeReferenceGroupRequest(requests, context, MetkaJS.TableHandler.handleReferenceOptions);
+        makeReferenceGroupRequest(group, context, MetkaJS.TableHandler.handleReferenceOptions);
     }
 
     function modelInputReference(field, context, dependencyValue) {
@@ -78,7 +99,7 @@ MetkaJS.ReferenceHandler = (function() {
         if(dependencyValue == null) {
             if(reference.type == MetkaJS.E.Ref.DEPENDENCY) {
                 var depField = MetkaJS.JSConfigUtil.getField(reference.target);
-                MetkaJS.EventManager.listen(MetkaJS.E.Event.FIELD_CHANGE, field.key, {key: depField.key}, new ModelInputCallback(field.key, context, null));
+                MetkaJS.EventManager.listen(MetkaJS.E.Event.FIELD_CHANGE, field.key, depField.key, new ModelInputCallback(field.key, context, null));
                 var input = null;
                 switch(depField.type) {
                     case MetkaJS.E.Field.REFERENCE:
@@ -110,24 +131,15 @@ MetkaJS.ReferenceHandler = (function() {
      * @param context Configuration context
      */
     function makeReferenceRequest(key, dependencyValue, context) {
-        var request = new Object();
-        request.key = key;
-        request.confType = MetkaJS.JSConfigUtil.getConfigurationKey().type;
-        request.confVersion = MetkaJS.JSConfigUtil.getConfigurationKey().version;
-        request.dependencyValue = dependencyValue;
+        var request = new ReferenceOptionsRequest(
+            key,
+            MetkaJS.JSConfigUtil.getConfigurationKey().type,
+            MetkaJS.JSConfigUtil.getConfigurationKey().version,
+            dependencyValue);
 
-        $.ajax({
-            type: "POST",
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            dataType: "json",
-            url: MetkaJS.PathBuilder().add("references").add("collectOptions").build(),
-            data: JSON.stringify(request)
-        }).done(function(data) {
-            handleReferenceInput(data, context);
-        });
+        var group = new ReferenceOptionsGroupRequest();
+        group.requests.push(request);
+        makeReferenceGroupRequest(group, context, handleReferenceInput);
     }
 
     /**
@@ -137,10 +149,7 @@ MetkaJS.ReferenceHandler = (function() {
      * @param key Field key
      * @param context Configuration context
      */
-    function makeReferenceGroupRequest(requests, context, handler) {
-        var request = new Object();
-        request.requests = requests;
-
+    function makeReferenceGroupRequest(request, context, handler) {
         $.ajax({
             type: "POST",
             headers: {
@@ -151,7 +160,10 @@ MetkaJS.ReferenceHandler = (function() {
             url: MetkaJS.PathBuilder().add("references").add("collectOptionsGroup").build(),
             data: JSON.stringify(request)
         }).done(function(data) {
-            handler(data, context);
+            if(data != null && data.responses != null && data.responses.length > 0) {
+                // Handle responses
+                handler(data, context);
+            }
         });
     }
 
@@ -164,6 +176,7 @@ MetkaJS.ReferenceHandler = (function() {
      * @param context Context where the data is expected
      */
     function handleReferenceInput(data, context) {
+        var data = data.responses[0];
         if(data.messages !== 'undefined' && data.messages != null && data.messages.length > 0) {
             for(var i= 0, iLength = data.messages.length; i<iLength; i++) {
                 var message = data.messages[i];
@@ -183,31 +196,26 @@ MetkaJS.ReferenceHandler = (function() {
         var key = data.key;
 
         var field = MetkaJS.JSConfigUtil.getField(key);
-        switch(field.type) {
-            case MetkaJS.E.Field.CHOICE:
-                var choicelist = MetkaJS.JSConfigUtil.getRootChoicelist(field.choicelist);
-                if(field.subfield == true) {
-
-                } else {
+        // Only handle non subfields
+        if(field.subfield == false) {
+            switch(field.type) {
+                case MetkaJS.E.Field.CHOICE:
+                    var choicelist = MetkaJS.JSConfigUtil.getRootChoicelist(field.choicelist);
                     createModelReferenceSelection(key, data.options, choicelist.includeEmpty);
-                }
-                break;
-            case MetkaJS.E.Field.REFERENCE:
-                if(data.options.length <= 0) {
-                    data.options[0] = {
-                        value: "",
-                        title: {
-                            type: MetkaJS.E.RefTitle.LITERAL,
-                            value: ""
+                    break;
+                case MetkaJS.E.Field.REFERENCE:
+                    if(data.options.length <= 0) {
+                        data.options[0] = {
+                            value: "",
+                            title: {
+                                type: MetkaJS.E.RefTitle.LITERAL,
+                                value: ""
+                            }
                         }
                     }
-                }
-                if(field.subfield == true) {
-
-                } else {
-                    insertModelReferenceText(key, data.options[0]);
-                }
-                break;
+                    createModelReferenceText(key, data.options[0]);
+                    break;
+            }
         }
     }
 
@@ -219,26 +227,54 @@ MetkaJS.ReferenceHandler = (function() {
      */
     function createModelReferenceSelection(key, options, includeEmpty) {
         includeEmpty = (includeEmpty == null) ? true : includeEmpty;
+        if($("#"+key+"_text").length !== 0) {
+            $("#"+key+"_text").remove();
+        }
+        var field = MetkaJS.JSConfigUtil.getField(key);
+        var readonly = MetkaJS.isReadOnly(field);
         var input = MetkaJS.getModelInput(key);
         var curVal = input.val();
-        var select = $("<select>", {id: MetkaJS.getModelInputId(key), name: MetkaJS.getModelInputName(key)});
-        select.data("key", key);
-        select.change(function() {
-            var $this = $(this);
-            MetkaJS.EventManager.notify(MetkaJS.E.Event.FIELD_CHANGE, {key: $this.data("key")});
-        });
-        if(includeEmpty == true) {
-            var option = $("<option>", {value: null});
-            option.append(MetkaJS.L10N.get("general.list.empty"));
-            select.append(option);
+
+        if(readonly == true) {
+            // Make text input instead of select
+            var option = null;
+            for(var i = 0, length = options.length; i<length; i++) {
+                if(options[i].value == curVal) {
+                    option = options[i];
+                    break;
+                }
+            }
+            if(option == null) {
+                option = {
+                    value: "",
+                    title: {
+                        type: MetkaJS.E.RefTitle.LITERAL,
+                        value: ""
+                    }
+                }
+            }
+            createModelReferenceText(key, option);
+        } else {
+            // Make select
+            var select = $("<select>", {id: MetkaJS.getModelInputId(key), name: MetkaJS.getModelInputName(key)});
+            select.data("key", key);
+            select.change(function() {
+                var $this = $(this);
+                MetkaJS.EventManager.notify(MetkaJS.E.Event.FIELD_CHANGE, {target: $this.data("key")});
+            });
+            if(includeEmpty == true) {
+                var option = $("<option>", {value: null});
+                option.append(MetkaJS.L10N.get("general.list.empty"));
+                select.append(option);
+            }
+            for(var i= 0, length = options.length; i<length; i++) {
+                var option = $("<option>", {value: options[i].value});
+                option.append(options[i].title.value);
+                select.append(option);
+            }
+            select.val(curVal);
+            input.replaceWith(select);
         }
-        for(var i= 0, length = options.length; i<length; i++) {
-            var option = $("<option>", {value: options[i].value});
-            option.append(options[i].title.value);
-            select.append(option);
-        }
-        select.val(curVal);
-        input.replaceWith(select);
     }
 
     /**
@@ -247,17 +283,46 @@ MetkaJS.ReferenceHandler = (function() {
      * @param key Field key where the data is meant to be inserted
      * @param option Option containing value and title
      */
-    function insertModelReferenceText(key, option) {
-        var hidden = MetkaJS.getModelInput(key);
-        var text = $("#"+key+"_text");
+    function createModelReferenceText(key, option) {
+        var input = MetkaJS.getModelInput(key);
+        var inputText = $("#"+key+"_text");
+        var hidden = $("<input>", {type: "hidden", id: MetkaJS.getModelInputId(key), name: MetkaJS.getModelInputName(key)});
+
+
+        var field = MetkaJS.JSConfigUtil.getField(key);
+        var readonly = MetkaJS.isReadOnly(field);
+
+        //var text = $("#"+key+"_text");
+        var text;
+        if(field.multiline == true) {
+            text = $("<textarea>", {id: key+"_text"});
+        } else {
+            text = $("<input>", {type: "text", id: key+"_text"});
+        }
+
+        if(readonly == true) {
+            hidden.prop("readonly", true);
+            text.prop("readonly", true);
+        } else {
+            hidden.prop("readonly", false);
+            text.prop("readonly", false);
+        }
 
         hidden.val(option.value);
         // TODO: Handle VALUE type titles by selecting correct choice translation
         text.val(option.title.value);
+
+        input.replaceWith(hidden);
+        if(inputText.length !== 0) {
+            inputText.replaceWith(text);
+        } else {
+            text.insertAfter(hidden);
+        }
     }
 
     return {
         ModelInputCallback: ModelInputCallback,
+        ReferenceContainerCallback: ReferenceContainerCallback,
         handleReference: referenceHandlerChooser
     }
 })();

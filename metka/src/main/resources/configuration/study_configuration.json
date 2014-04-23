@@ -330,10 +330,10 @@
 	"references": {
 		"series_select_ref": {
 			"key": "series_select_ref",
-			"type": "REVISIONABLE",
-			"target": "SERIES",
+			"type": "JSON",
+			"target": "jsonReferenceTest",
 			"valuePath": "key",
-			"titlePath": "seriesname"
+			"titlePath": "name"
 		},
 		"dependency_test_ref1": {
 			"_comment": "This is strictly a test case, should be removed",
@@ -605,12 +605,13 @@
 			"_comment": "This is strictly a test case, should be removed",
 			"key": "seriesiddep1",
 			"translatable": false,
+			"editable": false,
 			"type": "REFERENCE",
 			"multiline": false,
 			"reference": "dependency_test_ref1",
 			"section": "basic_information",
 			"writable": false,
-			"display": false
+			"display": true
 		},
 		"seriesiddep2": {
 			"_comment": "This is strictly a test case, should be removed",
@@ -621,8 +622,8 @@
 			"choicelist": "dependency_test_list",
 			"reference": "dependency_test_ref2",
 			"section": "basic_information",
-			"writable": false,
-			"display": false
+			"writable": true,
+			"display": true
 		},
 		"submissionid": {
 			"key": "submissionid",
@@ -1246,13 +1247,6 @@
 			"multiline": true,
 			"section": "study_description"
 		},
-		"disclaimer": {
-			"key": "disclaimer",
-			"translatable": false,
-			"type": "STRING",
-			"multiline": true,
-			"section": "study_description"
-		},
 		"datasetnotes": {
 			"key": "datasetnotes",
 			"translatable": false,
@@ -1369,7 +1363,7 @@
 		"filenotes": {
 			"key": "filenotes",
 			"translatable": false,
-			"required": true,
+			"required": false,
 			"section": "file_management",
 			"type": "STRING",
 			"multiline": true
