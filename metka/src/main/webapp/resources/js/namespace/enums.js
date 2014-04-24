@@ -1,5 +1,7 @@
 /**
  * Defines enum values used by Metka for different data types.
+ * These can include parts of REST-call addresses so that the address can be changed easily since the javascript
+ * should adapt just by changing this enumeration value.
  */
 MetkaJS.E = {
     /**
@@ -51,5 +53,12 @@ MetkaJS.E = {
         SUBLIST: "SUBLIST",
         LITERAL: "LITERAL",
         REFERENCE: "REFERENCE"
+    },
+    /**
+     * Form actions
+     */
+    Form: {
+        SAVE: "save",
+        APPROVE: "approve"
     }
 };

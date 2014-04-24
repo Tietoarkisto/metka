@@ -330,10 +330,9 @@
 	"references": {
 		"series_select_ref": {
 			"key": "series_select_ref",
-			"type": "JSON",
-			"target": "jsonReferenceTest",
-			"valuePath": "key",
-			"titlePath": "name"
+			"type": "REVISIONABLE",
+			"target": "SERIES",
+			"titlePath": "seriesname"
 		},
 		"dependency_test_ref1": {
 			"_comment": "This is strictly a test case, should be removed",
@@ -611,7 +610,7 @@
 			"reference": "dependency_test_ref1",
 			"section": "basic_information",
 			"writable": false,
-			"display": true
+			"display": false
 		},
 		"seriesiddep2": {
 			"_comment": "This is strictly a test case, should be removed",
@@ -622,8 +621,8 @@
 			"choicelist": "dependency_test_list",
 			"reference": "dependency_test_ref2",
 			"section": "basic_information",
-			"writable": true,
-			"display": true
+			"writable": false,
+			"display": false
 		},
 		"submissionid": {
 			"key": "submissionid",
@@ -745,10 +744,21 @@
 			"section": "deposit_agreement",
 			"multiline": true
 		},
+		"alttitles": {
+			"key": "alttitles",
+			"translatable": false,
+			"type": "CONTAINER",
+			"showSaveInfo": true,
+			"section": "study_description",
+			"subfields": [
+				"alttitle"
+			]
+		},
 		"alttitle": {
 			"key": "alttitle",
 			"translatable": false,
 			"type": "STRING",
+			"subfield": true,
 			"section": "study_description",
 			"multiline": false
 		},
@@ -1206,11 +1216,22 @@
 			"type": "STRING",
 			"section": "study_description"
 		},
+		"datasources": {
+			"key": "datasources",
+			"translatable": false,
+			"type": "CONTAINER",
+			"showSaveInfo": true,
+			"section": "study_description",
+			"subfields": [
+				"datasource"
+			]
+		},
 		"datasource": {
 			"key": "datasource",
 			"translatable": false,
 			"type": "STRING",
 			"multiline": true,
+			"subfield": true,
 			"section": "study_description"
 		},
 		"weight": {
@@ -1254,11 +1275,22 @@
 			"multiline": true,
 			"section": "study_description"
 		},
+		"appraisals": {
+			"key": "appraisals",
+			"translatable": false,
+			"showSaveInfo": true,
+			"type": "CONTAINER",
+			"section": "study_description",
+			"subfields": [
+				"appraisal"
+			]
+		},
 		"appraisal": {
 			"key": "appraisal",
 			"translatable": false,
 			"type": "STRING",
 			"multiline": true,
+			"subfield": true,
 			"section": "study_description"
 		},
 		"relatedmaterials": {

@@ -5,7 +5,7 @@ MetkaJS.TableHandler = function() {
      * @returns Javascript object representing the JSON string in a field, null if no data found
      */
     function readContent(key) {
-        var field = MetkaJS.getModelInput(key);
+        var field = MetkaJS.getValuesInput(key);
         if(field != null && field.val() !== 'undefined' && field.val() != null && field.val() != "") {
             var content = JSON.parse(field.val());
             return content;
@@ -19,7 +19,7 @@ MetkaJS.TableHandler = function() {
      * @param content Content to be saved, must not be null or doesn't do anything at all.
      */
     function saveContent(content) {
-        var input = MetkaJS.getModelInput(content.key);
+        var input = MetkaJS.getValuesInput(content.key);
         if(input == null) {
             return;
         }

@@ -21,6 +21,7 @@
     <form:form id="revisionModifyForm" method="post" action="/study/save" modelAttribute="single">
         <form:hidden path="id" />
         <form:hidden path="revision" />
+        <form:hidden path="urlHash" />
         <form:hidden path="values['${configuration[context].idField}']" />
         <jsp:include page="sub/basic_information.jsp"/>
         <jsp:include page="sub/deposit_agreement.jsp"/>
@@ -29,31 +30,4 @@
         <jsp:include page="sub/file_management.jsp"/>
         <jsp:include page="sub/codebook.jsp"/>
     </form:form>
-    <%--<h1 class="pageTitle">
-        <div class="floatLeft">${study.id}&nbsp;-&nbps;${study.data.name}&nbsp;-&nbsp;</div>
-        <div class="floatLeft draftInfo">${study.data.state}</div>
-        <div class="floatLeft publishedInfo"><spring:message code="general.version"/>&nbsp;${study.data.version}</div>
-        <!--<div class="floatLeft publishedInfo smallFont">&nbsp;(julkaistu 12.3.2013)</div>-->
-        <div class="floatRight handlerInfo">${study.data.handler}</div>
-        <div class="floatRight handlerInfo"><spring:message code="general.handler"/>&nbsp;</div>
-    </h1>
-    <div class="materialPrevNextContainer">
-        <div class="prevNextContainer"><h1 class="prev">&lt;</h1><h1 class="next">&gt;</h1></div>
-    </div>
-
-    <jsp:include page="basicInformation.jsp"/>
-
-    <jsp:include page="depositAgreement.jsp"/>
-
-    <jsp:include page="description/description.jsp"/>
-
-    <jsp:include page="variables/variables.jsp"/>
-
-    <jsp:include page="fileManagement.jsp"/>
-
-    <jsp:include page="codebook.jsp"/>
-
-    <jsp:include page="errors.jsp"/>
-
-    <jsp:include page="identifiers.jsp"/>--%>
 </div>

@@ -290,3 +290,43 @@ nav .mainNavUl li a:hover {
 .borderbutton {
     border: 1px solid white;
 }
+
+.accordionNavi .accordionTitle:not(:first-of-type) {
+    margin-top: 5px;
+}
+
+.accordionTitle {
+    border: 1px solid #aaaaaa;
+    display: block;
+    font-size: 20px;
+    color: #3383bb;
+    padding: 10px 20px 10px 20px;
+    background-color: #f2f2f2;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.accordionTitle:hover {
+    color: white;
+    background-color: #009ee0;
+}
+
+.accordionTitle.selected {
+    color: white;
+    background-color: #009ee0;
+
+    -webkit-border-radius: 5px 5px 0px 0px;
+    -moz-border-radius: 5px 5px 0px 0px;
+    border-radius: 5px 5px 0px 0px;
+}
+
+.accordionContent {
+    border: 1px solid #aaaaaa;
+    border-top: none;
+    padding: 5px;
+}

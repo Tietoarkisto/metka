@@ -56,6 +56,19 @@ MetkaJS = {
                 .add(MetkaJS.Globals.page)
                 .add(MetkaJS.SingleObject.id)
                 .navigate();
+        },
+        /**
+         * Submits revision modification form to given action
+         * @param action MetkaJS.E.Form enumeration value
+         */
+        formAction: function(action) {
+            var hash = window.location.hash;
+            var hashField = $("#urlHash");
+            if(hash != null && hashField != null && hashField.length > 0) {
+                hashField.val(hash);
+            }
+            $("#revisionModifyForm").attr("action", MetkaJS.PathBuilder().add(MetkaJS.Globals.page).add(action).build());
+            $("#revisionModifyForm").submit();
         }
     },
 
@@ -96,22 +109,22 @@ MetkaJS = {
             location.href = this.path;
         }
     }},
-    // Returns an jQuery wrapped page element for a given field key. Key is assumed to be for a top level input build by JSP and SpingForms but this is not checked.
-    getModelInput: function(key) {
+    // Returns a jQuery wrapped page element for a given field key. Key is assumed to be for a top level input build by JSP and SpingForms but this is not checked.
+    getValuesInput: function(key) {
         if(key != null) {
             return $("#values\\'"+key+"\\'");
         }
         return null;
     },
     // Returns an id for top level field input build by JSP and SpringForms
-    getModelInputId: function(key) {
+    getValuesInputId: function(key) {
         if(key != null) {
             return "values'"+key+"'";
         }
         return null;
     },
     // Returns a name for top level field input build by JSP and SpringForms
-    getModelInputName: function(key) {
+    getValuesInputName: function(key) {
         if(key != null) {
             return "values['"+key+"']";
         }

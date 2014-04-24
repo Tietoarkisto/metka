@@ -135,7 +135,7 @@ public class StudyController {
             redirectAttributes.addFlashAttribute("displayableErrors", errors);
             return REDIRECT_SEARCH;
         }
-
+        single.setUrlHash((String)model.asMap().get("urlHash"));
         model.asMap().put("page", "study");
         if(single.getState() == UIRevisionState.DRAFT) {
             // TODO: this should check if the user is the handler for this revision.
@@ -236,7 +236,7 @@ public class StudyController {
         if(errors.size() > 0) redirectAttributes.addFlashAttribute("displayableErrors", errors);
         // TODO: IMPORTANT: If save failed user should not be redirected or the data should at least be the same they sent to server, otherwise users changes are lost.
 
-        return REDIRECT_VIEW+single.getId()+"/"+single.getRevision();
+        return REDIRECT_VIEW+single.getId()+"/"+single.getRevision()+(single.getUrlHash() != null ? single.getUrlHash() : "");
     }
 
     /*
@@ -262,7 +262,10 @@ public class StudyController {
             }
         }
         if(errors.size() > 0) redirectAttributes.addFlashAttribute("displayableErrors", errors);
-
-        return REDIRECT_VIEW+single.getId()+"/"+single.getRevision();
+        // Set urlHash so the user can be directed back to the tab they were on.
+        if(single.getUrlHash() != null) {
+            redirectAttributes.addFlashAttribute("urlHash", single.getUrlHash());
+        }
+        return REDIRECT_VIEW+single.getId()+"/"+single.getRevision()+(single.getUrlHash() != null ? single.getUrlHash() : "");
     }
 }

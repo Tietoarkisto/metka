@@ -20,6 +20,7 @@ public class TransferObject {
     private Integer revision;
     private UIRevisionState state;
     private ConfigurationKey configuration;
+    private String urlHash;
 
     private final Map<String, Object> values = new HashMap<>();
 
@@ -57,6 +58,14 @@ public class TransferObject {
 
     public Map<String, Object> getValues() {
         return values;
+    }
+
+    public String getUrlHash() {
+        return urlHash;
+    }
+
+    public void setUrlHash(String urlHash) {
+        this.urlHash = urlHash;
     }
 
     public Object getByKey(String key) {

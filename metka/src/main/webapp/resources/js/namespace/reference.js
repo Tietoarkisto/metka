@@ -109,7 +109,7 @@ MetkaJS.ReferenceHandler = (function() {
 
                         // With choice we don't really care about if the choice is REFERENCE etc. since we only want the current value.
                         // Server can make better judgements on how to use that value.
-                        input = MetkaJS.getModelInput(depField.key);
+                        input = MetkaJS.getValuesInput(depField.key);
                         break;
                 }
                 if(input != null) {
@@ -232,7 +232,7 @@ MetkaJS.ReferenceHandler = (function() {
         }
         var field = MetkaJS.JSConfigUtil.getField(key);
         var readonly = MetkaJS.isReadOnly(field);
-        var input = MetkaJS.getModelInput(key);
+        var input = MetkaJS.getValuesInput(key);
         var curVal = input.val();
 
         if(readonly == true) {
@@ -256,7 +256,7 @@ MetkaJS.ReferenceHandler = (function() {
             createModelReferenceText(key, option);
         } else {
             // Make select
-            var select = $("<select>", {id: MetkaJS.getModelInputId(key), name: MetkaJS.getModelInputName(key)});
+            var select = $("<select>", {id: MetkaJS.getValuesInputId(key), name: MetkaJS.getValuesInputName(key)});
             select.data("key", key);
             select.change(function() {
                 var $this = $(this);
@@ -284,9 +284,9 @@ MetkaJS.ReferenceHandler = (function() {
      * @param option Option containing value and title
      */
     function createModelReferenceText(key, option) {
-        var input = MetkaJS.getModelInput(key);
+        var input = MetkaJS.getValuesInput(key);
         var inputText = $("#"+key+"_text");
-        var hidden = $("<input>", {type: "hidden", id: MetkaJS.getModelInputId(key), name: MetkaJS.getModelInputName(key)});
+        var hidden = $("<input>", {type: "hidden", id: MetkaJS.getValuesInputId(key), name: MetkaJS.getValuesInputName(key)});
 
 
         var field = MetkaJS.JSConfigUtil.getField(key);

@@ -100,6 +100,15 @@ $(document).ready(function(){
         }
     }
 
+    $(".accordionContent").hide();
+    $(".accordionTitle").click(function() {
+        toggleAccordion($(this));
+    })
+    function toggleAccordion(accordionTitle) {
+        accordionTitle.next().toggle();
+        accordionTitle.toggleClass("selected");
+    }
+
     $(".pointerClass").hover(
         function() {
             $(this).css('cursor', 'pointer');
@@ -114,13 +123,11 @@ $(document).ready(function(){
     });
 
     $( "#revisionModifyFormSave" ).click(function() {
-        $("#revisionModifyForm").attr("action", MetkaJS.PathBuilder().add(MetkaJS.Globals.page).add("save").build());
-        $("#revisionModifyForm").submit();
+        MetkaJS.SingleObject.formAction(MetkaJS.E.Form.SAVE);
     });
 
     $( "#revisionModifyFormApprove" ).click(function() {
-        $("#revisionModifyForm").attr("action", MetkaJS.PathBuilder().add(MetkaJS.Globals.page).add("approve").build());
-        $("#revisionModifyForm").submit();
+        MetkaJS.SingleObject.formAction(MetkaJS.E.Form.APPROVE);
     });
 
     /**
