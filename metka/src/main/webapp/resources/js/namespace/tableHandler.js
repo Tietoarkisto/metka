@@ -53,7 +53,7 @@ MetkaJS.TableHandler = function() {
     function buildContainertable(content, context) {
         // Handle only containers
         var key = content.key;
-        var field = MetkaJS.JSConfig[context].fields[key];
+        var field = MektaJS.JSConfigUtil.getField(key, context);
         var changes = false;
         if(content.type != "container" || field.type != MetkaJS.E.Field.CONTAINER) return;
 
@@ -76,26 +76,26 @@ MetkaJS.TableHandler = function() {
                 tr.removeClass("temporary");
             }
             for(i = 0; i < field.subfields.length; i++) {
-                var subfield = field.subfields[i];
-                if(MetkaJS.JSConfig[context].fields[subfield].summaryField == false) {
+                var subfield = MetkaJS.JSConfigUtil.getField(field.subfields[i], context);
+                if(subfield.summaryField == false) {
                     continue;
                 }
-                var value = rowContent.fields[subfield];
+                var value = rowContent.fields[subfield.key];
                 if(value == undefined || value == null) {
                     // TODO: value is missing for some reason, make placeholder value so columns are not missing
                     value = new Object();
                     value.type = "value";
                     value.value = "";
                 }
-                if(value.type != "value" || MetkaJS.JSConfig[context].fields[subfield].type == MetkaJS.E.Field.CONTAINER || MetkaJS.JSConfig[context].fields[subfield].type == MetkaJS.E.Field.REFERENCECONTAINER) {
+                if(value.type != "value" || subfield.type == MetkaJS.E.Field.CONTAINER || subfield.type == MetkaJS.E.Field.REFERENCECONTAINER) {
                     // TODO: Handle recursive containers somehow. Mostly table should not contain recursive containers
                     return;
                 }
 
                 var td = $("<td>");
-                switch(MetkaJS.JSConfig[context].fields[subfield].type) {
+                switch(subfield.type) {
                     case MetkaJS.E.Field.CHOICE:
-                        td.text(MetkaJS.L10N.get(MetkaJS.Globals.page.toUpperCase()+"."+MetkaJS.JSConfig[context].fields[subfield].choicelist+".choices."+value.value));
+                        td.text(MetkaJS.L10N.get(MetkaJS.Globals.page.toUpperCase()+"."+subfield.choicelist+".choices."+value.value));
                         break;
                     default:
                         td.text(value.value);

@@ -176,8 +176,15 @@ MetkaJS = {
             return true;
         }
 
-        if(field.immutable == true && currentValue != null) {
-            return
+        // Field is a REFERENCE text field, should not be editable since value comes from reference.
+        if(field.type == MetkaJS.E.Field.REFERENCE) {
+            return true;
         }
+
+        /*if(field.immutable == true && currentValue != null) {
+            return
+        }*/
+        // By default fields are not read only
+        return false;
     }
 };

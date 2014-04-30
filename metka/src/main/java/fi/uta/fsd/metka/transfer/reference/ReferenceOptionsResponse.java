@@ -10,17 +10,23 @@ import java.util.List;
  */
 public class ReferenceOptionsResponse {
     private final String key;
+    private final String container;
     private String dependencyValue;
 
     private List<ReferenceOption> options;
     private final List<ErrorMessage> messages = new ArrayList<>();
 
-    public ReferenceOptionsResponse(String key) {
+    public ReferenceOptionsResponse(String key, String container) {
         this.key = key;
+        this.container = container;
     }
 
     public String getKey() {
         return key;
+    }
+
+    public String getContainer() {
+        return container;
     }
 
     public String getDependencyValue() {

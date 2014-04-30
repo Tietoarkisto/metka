@@ -209,7 +209,7 @@
                     var tr, td, data;
                     tr = $("<tr>");
 
-                    var choicelist = MetkaJS.JSConfig[MetkaJS.E.Conf.STUDY].fields["statisticstype"].choicelist;
+                    var choicelist = MetkaJS.JSConfigUtil.getField("statisticstype", MetkaJS.E.Conf.STUDY).choicelist;
 
                     td = $("<td>", {class: "labelColumn"});
                     data = row.fields["statisticstype"];

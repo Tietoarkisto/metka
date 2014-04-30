@@ -54,7 +54,7 @@ public class ReferenceController {
     public @ResponseBody ReferenceOptionsGroupResponse collectReferenceOptionsGroup(@RequestBody ReferenceOptionsGroupRequest requests) {
         ReferenceOptionsGroupResponse responses = new ReferenceOptionsGroupResponse(requests.getKey());
         for(ReferenceOptionsRequest request : requests.getRequests()) {
-            ReferenceOptionsResponse response = new ReferenceOptionsResponse(request.getKey());
+            ReferenceOptionsResponse response = new ReferenceOptionsResponse(request.getKey(), request.getContainer());
             response.setDependencyValue(request.getDependencyValue());
 
             List<ReferenceOption> options = null;

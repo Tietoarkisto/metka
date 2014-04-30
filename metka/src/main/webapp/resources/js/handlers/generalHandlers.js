@@ -20,6 +20,11 @@ MetkaJS.DialogHandlers.generalContainerHandler = function() {
      * @param row Existing row for which data should be shown in the dialog.
      */
     function showGeneralContainerDialog(key, handlerId, context) {
+        var field = MetkaJS.JSConfigUtil.getField(key, context);
+        if(field.type != MetkaJS.E.Field.CONTAINER) {
+            // Sanity check, this function is meant only for CONTAINERS
+            return;
+        }
         // Reset dialog, these are only changed if a row was found so until then we can assume new row.
         $("#"+key+"ContainerDialogRowId").val(null);
         $("#"+key+"ContainerDialogRowId").data("handlerId", null);
@@ -44,40 +49,48 @@ MetkaJS.DialogHandlers.generalContainerHandler = function() {
             }
         }
 
+        var newRow = (row == null || row.handlerId == null);
+
         // If row was given then use it, otherwise clear dialog and change to adding new row
-        if(row != null && row.handlerId !== 'undefined' && row.handlerId != null) {
-            found = true;
+        if(!newRow) {
             $("#"+key+"ContainerDialogRowId").val(row.rowId);
             // rowId field can double as handler id data storage since this field is always present and doesn't relate to actual data
             $("#"+key+"ContainerDialogRowId").data("handlerId", row.handlerId);
-            for(var i = 0; i < MetkaJS.JSConfig[context].fields[key].subfields.length; i++) {
-                var subfield = MetkaJS.JSConfig[context].fields[key].subfields[i];
-                if(subfield == null || subfield == "") {
-                    // Sanity check, although this means that something is very wrong
-                    continue;
-                } else if(MetkaJS.JSConfig[context].fields[subfield].type == MetkaJS.E.Field.CONTAINER) {
-                    // TODO: Handle recursive CONTAINERS
-                    continue;
-                }
-                var input = $("#"+key+"Field"+subfield);
-                // TODO: For now assumes input into val(), add exceptions as needed
-                if(row.fields[subfield] == undefined || row.fields[subfield] == null) {
-                    row.fields[subfield] = new Object();
-                    row.fields[subfield].type = "value";
-                    row.fields[subfield].value = "";
-                }
+        }
 
-                input.val(row.fields[subfield].value);
-
-                if(MetkaJS.SingleObject.draft == false
-                    || MetkaJS.JSConfig[context].fields[subfield].editable == false
-                    || (
-                    MetkaJS.JSConfig[context].fields[subfield].immutable == true
-                        && (input.val() !== 'undefined' && input.val() != null && input.val() != ""))
-                    ) {
-                    input.prop("readonly", true);
-                }
+        for(var i = 0, length = field.subfields.length; i < length; i++) {
+            var subfield = MetkaJS.JSConfigUtil.getField(field.subfields[i]);
+            if(subfield == null) {
+                // Sanity check, although this means that something is very wrong
+                continue;
+            } else if(subfield.type == MetkaJS.E.Field.CONTAINER) {
+                // TODO: Handle recursive CONTAINERS
+                continue;
+            } else if(subfield.type == MetkaJS.E.Field.REFERENCECONTAINER) {
+                // TODO: Handle recursive REFERENCECONTAINERS
+                continue;
             }
+
+            // Get input for handling
+            var input = $("#"+key+"Field"+subfield.key);
+
+            if(!newRow) {
+                if(row.fields[subfield.key] == undefined || row.fields[subfield.key] == null) {
+                    row.fields[subfield.key] = new Object();
+                    row.fields[subfield.key].type = "value";
+                    row.fields[subfield.key].value = "";
+                }
+                // For now assumes input into val(), add exceptions if needed
+                input.val(row.fields[subfield.key].value);
+            }
+
+            if(MetkaJS.isReadOnly(subfield)) {
+                input.prop("readonly", true);
+            } else {
+                input.prop("readonly", false);
+            }
+
+            MetkaJS.ReferenceHandler.handleReference(subfield.key, context, null, key);
         }
 
         // Open dialog
@@ -98,23 +111,24 @@ MetkaJS.DialogHandlers.generalContainerHandler = function() {
         row.handlerId = $("#"+key+"ContainerDialogRowId").data("handlerId");
         row.key = key;
         row.fields = new Object();
+        var field = MetkaJS.JSConfigUtil.getField(key, context);
         // RowId is set when row is added to container
-        for(var i = 0; i < MetkaJS.JSConfig[context].fields[key].subfields.length; i++) {
-            var subfield = MetkaJS.JSConfig[context].fields[key].subfields[i];
-            if(subfield === 'undefined' || subfield == null || subfield == "") {
+        for(var i = 0, length = field.subfields.length; i < length; i++) {
+            var subfield = MetkaJS.JSConfigUtil.getField(field.subfields[i], context);
+            if(subfield == null) {
                 // Sanity check, although this means that something is very wrong
                 continue;
-            } else if(MetkaJS.JSConfig[context].fields[subfield].type == MetkaJS.E.Field.CONTAINER) {
+            } else if(subfield.type == MetkaJS.E.Field.CONTAINER) {
                 // TODO: Handle recursive CONTAINERS
                 continue;
             }
-            var input = $("#"+key+"Field"+subfield);
+            var input = $("#"+key+"Field"+subfield.key);
             var value = new Object;
             value.type = "value";
             // TODO: Handle possible value extraction exception
             value.value = input.val();
 
-            row.fields[subfield] = value;
+            row.fields[subfield.key] = value;
         }
 
         MetkaJS.TableHandler.saveRow(row, context);

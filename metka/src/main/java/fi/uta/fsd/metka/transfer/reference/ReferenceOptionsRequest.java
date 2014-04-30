@@ -8,6 +8,7 @@ public class ReferenceOptionsRequest {
     private String confType;
     private Integer confVersion;
     private String dependencyValue;
+    private String container;
 
     public String getKey() {
         return key;
@@ -41,6 +42,14 @@ public class ReferenceOptionsRequest {
         this.dependencyValue = dependencyValue;
     }
 
+    public String getContainer() {
+        return container;
+    }
+
+    public void setContainer(String container) {
+        this.container = container;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -50,6 +59,7 @@ public class ReferenceOptionsRequest {
 
         if (!confType.equals(that.confType)) return false;
         if (!confVersion.equals(that.confVersion)) return false;
+        if (container != null ? !container.equals(that.container) : that.container != null) return false;
         if (!key.equals(that.key)) return false;
 
         return true;
@@ -60,6 +70,7 @@ public class ReferenceOptionsRequest {
         int result = key.hashCode();
         result = 31 * result + confType.hashCode();
         result = 31 * result + confVersion.hashCode();
+        result = 31 * result + (container != null ? container.hashCode() : 0);
         return result;
     }
 }

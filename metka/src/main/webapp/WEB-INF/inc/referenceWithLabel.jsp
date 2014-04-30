@@ -8,7 +8,7 @@
     <form:label path="values['${param.field}']"><spring:message code="${context}.field.${param.field}"/></form:label>
 </td>
 <td colspan="${colspan}">
-    <form:input path="values['${param.field}']" autocomplete="off"  />
+    <form:input path="values['${param.field}']" />
     <script>
         $(document).ready(function() {
             MetkaJS.ReferenceHandler.handleReference("${param.field}", "${context}");

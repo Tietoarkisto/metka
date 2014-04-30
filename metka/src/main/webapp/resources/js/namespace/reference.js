@@ -1,14 +1,14 @@
 MetkaJS.ReferenceHandler = (function() {
-    ModelInputCallback = function(key, context, dependencyValue) {
+    ReferenceInputCallback = function(key, context, dependencyValue) {
         return function(notifier) {
-            MetkaJS.ReferenceHandler.handleReference(key, context, dependencyValue);
+            MetkaJS.ReferenceHandler.handleReference(key, context, dependencyValue, notifier.container);
         }
     }
 
     ReferenceContainerCallback = function(key, context, dependencyValue) {
         return function(notifier) {
             if(notifier.id == dependencyValue) {
-                MetkaJS.ReferenceHandler.handleReference(key, context, dependencyValue);
+                MetkaJS.ReferenceHandler.handleReference(key, context, dependencyValue, notifier.container);
             }
         }
     }
@@ -18,14 +18,27 @@ MetkaJS.ReferenceHandler = (function() {
         this.requests = new Array();
     }
 
-    ReferenceOptionsRequest = function(key, confType, confVersion, dependencyValue) {
+    ReferenceOptionsRequest = function(key, confType, confVersion, dependencyValue, container) {
         this.key = key;
+        this.container = container
         this.confType = confType;
         this.confVersion = confVersion;
         this.dependencyValue = dependencyValue;
     }
 
-    function referenceHandlerChooser(key, context, dependencyValue) {
+    /**
+     * Decides what reference handler to use for given field key.
+     * Doesn't make deep analysis of if the field has to be handled at all,
+     * just passes it along to the most likely handler which will then make a better decision.
+     * Can be used as a general catch all where field keys are just fed to the function and
+     * something happens if they are applicable.
+     *
+     * @param key Field key of the field to be handled
+     * @param context Configuration context of the field
+     * @param dependencyValue Possible dependency value for the field
+     * @param container Field key of the possible container of the field
+     */
+    function referenceHandlerChooser(key, context, dependencyValue, container) {
         var field = MetkaJS.JSConfigUtil.getField(key);
         if(field == null) {
             // Sanity check, field has to exist for this to make sense.
@@ -35,14 +48,18 @@ MetkaJS.ReferenceHandler = (function() {
         switch(field.type) {
             case MetkaJS.E.Field.REFERENCECONTAINER:
                 // Collects
-                referenceContainer(field, context, dependencyValue);
+                if(container == null) {
+                    referenceContainer(field, context, dependencyValue);
+                } else {
+                    // TODO: Handle reference container within a container
+                }
                 break;
             case MetkaJS.E.Field.CONTAINER:
                 // For now, do nothing
                 break;
             default:
                 // Make single request with parameters related to given field
-                modelInputReference(field, context, dependencyValue);
+                referenceInput(field, context, dependencyValue, container);
                 break;
         }
     }
@@ -74,12 +91,17 @@ MetkaJS.ReferenceHandler = (function() {
         makeReferenceGroupRequest(group, context, MetkaJS.TableHandler.handleReferenceOptions);
     }
 
-    function modelInputReference(field, context, dependencyValue) {
-        if(field.subfield == true) {
-            // Sanity check, this function is meant for top level fields
-            // TODO: Generalise to any field
-            return;
-        }
+    /**
+     * Handles reference inputs where the field is not a container.
+     * Can be fed any field key and if the field is applicable will handle given field as needed.
+     * If no reference is found on the field then nothing is done leaving the field
+     * as it is at the moment in the UI.
+     * @param field Field key of the field to be analysed
+     * @param context Configuration context of the field
+     * @param dependencyValue Possible dependency value for value queries
+     * @param container Field key of the possible container where this field is located
+     */
+    function referenceInput(field, context, dependencyValue, container) {
         var reference = null;
         switch(field.type) {
             case MetkaJS.E.Field.CHOICE:
@@ -99,7 +121,8 @@ MetkaJS.ReferenceHandler = (function() {
         if(dependencyValue == null) {
             if(reference.type == MetkaJS.E.Ref.DEPENDENCY) {
                 var depField = MetkaJS.JSConfigUtil.getField(reference.target);
-                MetkaJS.EventManager.listen(MetkaJS.E.Event.FIELD_CHANGE, field.key, depField.key, new ModelInputCallback(field.key, context, null));
+                // TODO: Container fields pose a problem since we can have multiple dependency fields with the same key, albeit a different id, at the same time. Maybe we should listen to input id of the notifier also.
+                MetkaJS.EventManager.listen(MetkaJS.E.Event.FIELD_CHANGE, field.key, depField.key, new ReferenceInputCallback(field.key, context, null));
                 var input = null;
                 switch(depField.type) {
                     case MetkaJS.E.Field.REFERENCE:
@@ -109,17 +132,24 @@ MetkaJS.ReferenceHandler = (function() {
 
                         // With choice we don't really care about if the choice is REFERENCE etc. since we only want the current value.
                         // Server can make better judgements on how to use that value.
-                        input = MetkaJS.getValuesInput(depField.key);
+                        if(depField.subfield == false) {
+                            // If dependency field is not a subfield then try to get a top level field
+                            input = MetkaJS.getValuesInput(depField.key);
+                        } else if(depField.subfield == true && container != null) {
+                            // If dependency field is a subfield and there is a container then try to get a field within that container
+                            // There should be only one instance of given field at any moment and it should be from the row that is currently open.
+                            input = $("#"+container+"Field"+depField.key);
+                        }
                         break;
                 }
-                if(input != null) {
+                if(input.length !== 0) {
                     dependencyValue = input.val();
                 }
             }
         }
 
         // Make single request
-        makeReferenceRequest(field.key, dependencyValue, context);
+        makeReferenceRequest(field.key, dependencyValue, context, container);
     }
 
     /**
@@ -129,13 +159,15 @@ MetkaJS.ReferenceHandler = (function() {
      * @param key Field key
      * @param dependencyValue Value of dependency field
      * @param context Configuration context
+     * @param container Possible key for a container in which this field is located, can be undefined or null
      */
-    function makeReferenceRequest(key, dependencyValue, context) {
+    function makeReferenceRequest(key, dependencyValue, context, container) {
         var request = new ReferenceOptionsRequest(
             key,
             MetkaJS.JSConfigUtil.getConfigurationKey().type,
             MetkaJS.JSConfigUtil.getConfigurationKey().version,
-            dependencyValue);
+            dependencyValue,
+            container);
 
         var group = new ReferenceOptionsGroupRequest();
         group.requests.push(request);
@@ -171,7 +203,6 @@ MetkaJS.ReferenceHandler = (function() {
      * Checks how to handle a certain reference request data.
      *
      * TODO: Missing handlers
-     * @param key Field key where the data is meant to be inserted
      * @param data Request response
      * @param context Context where the data is expected
      */
@@ -196,44 +227,48 @@ MetkaJS.ReferenceHandler = (function() {
         var key = data.key;
 
         var field = MetkaJS.JSConfigUtil.getField(key);
-        // Only handle non subfields
-        if(field.subfield == false) {
-            switch(field.type) {
-                case MetkaJS.E.Field.CHOICE:
-                    var choicelist = MetkaJS.JSConfigUtil.getRootChoicelist(field.choicelist);
-                    createModelReferenceSelection(key, data.options, choicelist.includeEmpty);
-                    break;
-                case MetkaJS.E.Field.REFERENCE:
-                    if(data.options.length <= 0) {
-                        data.options[0] = {
-                            value: "",
-                            title: {
-                                type: MetkaJS.E.RefTitle.LITERAL,
-                                value: ""
-                            }
+
+        switch(field.type) {
+            case MetkaJS.E.Field.CHOICE:
+                var choicelist = MetkaJS.JSConfigUtil.getRootChoicelist(field.choicelist);
+                createReferenceSelection(field, data.options, choicelist.includeEmpty, data.container);
+                break;
+            case MetkaJS.E.Field.REFERENCE:
+                if(data.options.length <= 0) {
+                    data.options[0] = {
+                        value: "",
+                        title: {
+                            type: MetkaJS.E.RefTitle.LITERAL,
+                            value: ""
                         }
                     }
-                    createModelReferenceText(key, data.options[0]);
-                    break;
-            }
+                }
+                createReferenceText(field, data.options[0], data.container);
+                break;
         }
     }
 
     /**
-     * Fills selection input with options from the provided options array
-     * @param key Field key where the data is meant to be inserted
+     * Fills selection input with options from the provided options array.
+     * @param field Field where the data is meant to be inserted
      * @param options Options array containing values and titles
      * @param includeEmpty Should empty option be included.
+     * @param container Possible container field key, should only be present on subfields.
      */
-    function createModelReferenceSelection(key, options, includeEmpty) {
+    function createReferenceSelection(field, options, includeEmpty, container) {
+        // Sanity check, if field is subfield but there is no container then nothing can be done.
+        if(field.subfield == true && (container == null || container == "")) return;
+
+        // Check if empty value is needed as part of the selection
         includeEmpty = (includeEmpty == null) ? true : includeEmpty;
-        if($("#"+key+"_text").length !== 0) {
-            $("#"+key+"_text").remove();
+
+        // Remove possible text fields added by reference handling
+        $("#"+field.key+"_reftext").remove();
+        if(container != null) {
+            $("#"+container+"Field"+field.key+"_reftext").remove();
         }
-        var field = MetkaJS.JSConfigUtil.getField(key);
+
         var readonly = MetkaJS.isReadOnly(field);
-        var input = MetkaJS.getValuesInput(key);
-        var curVal = input.val();
 
         if(readonly == true) {
             // Make text input instead of select
@@ -253,15 +288,29 @@ MetkaJS.ReferenceHandler = (function() {
                     }
                 }
             }
-            createModelReferenceText(key, option);
+            createReferenceText(field, option);
         } else {
+            // Get correct input and its value
+            var input = (field.subfield == true) ? $("#"+container+"Field"+field.key) : MetkaJS.getValuesInput(field.key);
+            var curVal = input.val();
+
             // Make select
-            var select = $("<select>", {id: MetkaJS.getValuesInputId(key), name: MetkaJS.getValuesInputName(key)});
-            select.data("key", key);
-            select.change(function() {
-                var $this = $(this);
-                MetkaJS.EventManager.notify(MetkaJS.E.Event.FIELD_CHANGE, {target: $this.data("key")});
-            });
+            var select;
+            if(field.subfield == true) {
+                select = $("<select>", {id: container+"Field"+field.key, class: "dialogValue"});
+                select.change(function() {
+                    var $this = $(this);
+                    MetkaJS.EventManager.notify(MetkaJS.E.Event.FIELD_CHANGE, {target: $this.data("key"), container: container});
+                });
+            } else {
+                select = $("<select>", {id: MetkaJS.getValuesInputId(field.key), name: MetkaJS.getValuesInputName(field.key)});
+                select.change(function() {
+                    var $this = $(this);
+                    MetkaJS.EventManager.notify(MetkaJS.E.Event.FIELD_CHANGE, {target: $this.data("key")});
+                });
+            }
+            select.data("key", field.key);
+
             if(includeEmpty == true) {
                 var option = $("<option>", {value: null});
                 option.append(MetkaJS.L10N.get("general.list.empty"));
@@ -280,25 +329,44 @@ MetkaJS.ReferenceHandler = (function() {
     /**
      * Inserts given option to top level field.
      * Option value goes to hidden field and option text goes to text field / text area.
-     * @param key Field key where the data is meant to be inserted
+     *
+     * @param field Field where the data is meant to be inserted
      * @param option Option containing value and title
+     * @param container Possible container field key, should only be present on subfields.
      */
-    function createModelReferenceText(key, option) {
-        var input = MetkaJS.getValuesInput(key);
-        var inputText = $("#"+key+"_text");
-        var hidden = $("<input>", {type: "hidden", id: MetkaJS.getValuesInputId(key), name: MetkaJS.getValuesInputName(key)});
+    function createReferenceText(field, option, container) {
+        // Sanity check, if field is subfield but there is no container then nothing can be done.
+        if(field.subfield == true && (container == null || container == "")) return;
 
-
-        var field = MetkaJS.JSConfigUtil.getField(key);
-        var readonly = MetkaJS.isReadOnly(field);
-
-        //var text = $("#"+key+"_text");
+        var input;
+        var inputText
+        var hidden;
         var text;
-        if(field.multiline == true) {
-            text = $("<textarea>", {id: key+"_text"});
+        if(field.subfield == true) {
+            input = $("#"+container+"Field"+field.key);
+            inputText = $("#"+container+"Field"+field.key+"_reftext");
+            hidden = $("<input>", {type: "hidden", id: container+"Field"+field.key, class: "dialogValue"});
+
+            if(field.multiline == true) {
+                text = $("<textarea>", {id: container+"Field"+field.key+"_reftext"});
+            } else {
+                text = $("<input>", {type: "text", id: container+"Field"+field.key+"_reftext"});
+            }
+
         } else {
-            text = $("<input>", {type: "text", id: key+"_text"});
+            input = MetkaJS.getValuesInput(field.key);
+            inputText = $("#"+field.key+"_reftext");
+            hidden = $("<input>", {type: "hidden", id: MetkaJS.getValuesInputId(field.key), name: MetkaJS.getValuesInputName(field.key)});
+
+            if(field.multiline == true) {
+                text = $("<textarea>", {id: field.key+"_reftext"});
+            } else {
+                text = $("<input>", {type: "text", id: field.key+"_reftext"});
+            }
+
         }
+
+        var readonly = MetkaJS.isReadOnly(field);
 
         if(readonly == true) {
             hidden.prop("readonly", true);
@@ -321,7 +389,7 @@ MetkaJS.ReferenceHandler = (function() {
     }
 
     return {
-        ModelInputCallback: ModelInputCallback,
+        ReferenceInputCallback: ReferenceInputCallback,
         ReferenceContainerCallback: ReferenceContainerCallback,
         handleReference: referenceHandlerChooser
     }

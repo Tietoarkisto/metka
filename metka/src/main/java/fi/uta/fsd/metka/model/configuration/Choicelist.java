@@ -16,10 +16,12 @@ import java.util.List;
 public class Choicelist {
     @XmlElement private final String key;
     @XmlElement(name = "default") @JsonProperty("default") private String def = "0";
-    @XmlElement private List<Option> options = new ArrayList<>();
+    @XmlElement private final List<Option> options = new ArrayList<>();
     @XmlElement private ChoicelistType type;
     @XmlElement private String reference;
-    @XmlElement private Boolean includeEmpty = false;
+    @XmlElement private Boolean includeEmpty = true;
+    @XmlElement private final List<String> freeText = new ArrayList<>();
+    @XmlElement private String freeTextKey;
 
     @JsonCreator
     public Choicelist(@JsonProperty("key") String key) {
@@ -40,10 +42,6 @@ public class Choicelist {
 
     public List<Option> getOptions() {
         return options;
-    }
-
-    public void setOptions(List<Option> options) {
-        this.options = options;
     }
 
     public ChoicelistType getType() {
@@ -68,6 +66,18 @@ public class Choicelist {
 
     public void setIncludeEmpty(Boolean includeEmpty) {
         this.includeEmpty = (includeEmpty == null) ? false : includeEmpty;
+    }
+
+    public List<String> getFreeText() {
+        return freeText;
+    }
+
+    public String getFreeTextKey() {
+        return freeTextKey;
+    }
+
+    public void setFreeTextKey(String freeTextKey) {
+        this.freeTextKey = freeTextKey;
     }
 
     @Override

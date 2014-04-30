@@ -20,7 +20,7 @@
         </c:if>
         </tr>
     </thead>
-    <tbody />
+    <tbody></tbody>
 </table>
 <c:if test="${(empty param.addButton or param.addButton == true) and not readonly}">
     <div class="rightAlignCell"><input type="button" class="button" value="<spring:message code="general.table.add"/>"

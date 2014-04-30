@@ -94,13 +94,37 @@
 			"type": "VALUE",
 			"options": [
 				{
-					"value": "1"
+					"value": "1",
+					"&title": {
+						"key": "yes",
+						"values": {
+							"default": "Kyllä",
+							"fi": "Kyllä",
+							"en": "Yes"
+						}
+					}
 				},
 				{
-					"value": "2"
+					"value": "2",
+					"&title": {
+						"key": "no",
+						"values": {
+							"default": "Ei",
+							"fi": "Ei",
+							"en": "No"
+						}
+					}
 				},
 				{
-					"value": "3"
+					"value": "3",
+					"&title": {
+						"key": "na",
+						"values": {
+							"default": "Ei koske",
+							"fi": "Ei koske",
+							"en": "Not applicable"
+						}
+					}
 				}
 			]
 		},
@@ -253,6 +277,17 @@
 			"key": "start_end_single",
 			"type": "SUBLIST"
 		},
+		"sampproc_list": {
+			"key": "sampproc_list",
+			"type": "REFERENCE",
+			"reference": "sampproc_ref",
+			"freeText": [
+				"value4",
+				"value8"
+			],
+			"freeTextKey": "sampprocother",
+			"includeEmpty": true
+		},
 		"start_end_single": {
 			"key": "start_end_single",
 			"type": "VALUE",
@@ -379,6 +414,21 @@
 			"target": "files",
 			"valuePath": "fileno",
 			"titlePath": "filelanguage"
+		},
+		"sampproc_ref": {
+			"key": "sampproc_ref",
+			"type": "JSON",
+			"target": "jsonReferenceTest",
+			"valuePath": "values.key",
+			"titlePath": "name"
+		},
+		"sampprocdesc_ref": {
+			"_comment": "Temporary placeholder for vocaburl reference",
+			"key": "sampprocdesc_ref",
+			"type": "DEPENDENCY",
+			"target": "sampproc",
+			"valuePath": "key",
+			"titlePath": "description"
 		}
 	},
 	"idField": "study_id",
@@ -1206,9 +1256,39 @@
 			"type": "CONTAINER",
 			"section": "study_description",
 			"subfields": [
-				"topicvocab",
-				"topic"
+				"sampproc",
+				"sampprocdesc"
 			]
+		},
+		"sampproc": {
+			"key": "sampproc",
+			"translatable": false,
+			"required": false,
+			"type": "CHOICE",
+			"choicelist": "sampproc_list",
+			"section": "study_description",
+			"subfield": true
+		},
+		"sampprocdesc": {
+			"_comment": "Temporary placeholder for vocaburl while working things out",
+			"key": "sampprocdesc",
+			"translatable": false,
+			"required": false,
+			"type": "REFERENCE",
+			"reference": "sampprocdesc_ref",
+			"section": "study_description",
+			"writable": false,
+			"subfield": true
+		},
+		"sampprocother": {
+			"key": "sampprocother",
+			"translatable": false,
+			"required": false,
+			"type": "STRING",
+			"writable": false,
+			"section": "study_description",
+			"subfield": true,
+			"summaryField": true
 		},
 		"resprate": {
 			"key": "resprate",

@@ -1,0 +1,11 @@
+Mietittävää GUI-konfiguraatiosta
+--------------------------------
+Mitä kaikkia osioita käyttöliittymästä (esim. alasivujen määrä ja nimet, välilehtien määrä ja nimet, dialogien sisältö...) halutaan konfiguroida.
+
+Kuinka tarkasti konfigurointi halutaan tehdä, sisältääkö konfiguraatio esimerkiksi tyylitietoa?
+
+Kuinka vapaa halutaan olla sommittelun suhteen, pitääkö mihin tahansa pystyä määrittämään taulukko (esimerkiksi dialogiin tai toisen taulukon sisälle)?
+
+Kuinka automaattinen konfiguraatiosta halutaan, kerrotaanko konfiguraatiossa esimerkiksi elementtien koot vai pitäisikö koko tulla automaattisesti käyttöliittymää piirrettäessä. Kerrotaanko gui-konfiguraatiossa mitä komponenttia halutaan käyttää vai pitäisikö tämän tiedon tulla automaattisesti kenttä-konfiguraatiosta ja guille vaan kerrotaan missä kohtaa kenttä sijaitsee?
+
+Pitäisikö aineiston kuvailun väliotsikoidenkin olla osa gui-konfiguraatiota. Jos ei niin miten tämä halutaan toteuttaa (esimerkiksi väliotsikot on kovakoodattu ja niiden tunnisteet tiedetään etukäteen jolloin jokaiselle komponentille voidaan kertoa minkä väliotsikon sisään ne pitää laittaa. Jos väliotsikot tulevat konfiguraatiosta niin halutaanko niitä käyttää esim. dialogien sisällä?
