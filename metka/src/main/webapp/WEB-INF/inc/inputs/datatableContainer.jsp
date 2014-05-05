@@ -27,7 +27,7 @@
             onclick="MetkaJS.DialogHandlers['${handler}'].show('${param.field}')"/></div>
 </c:if>
 <c:if test="${empty param.handler or param.handler == 'generalContainerHandler'}">
-    <jsp:include page="../dialogs/generalContainerDialog.jsp">
+    <jsp:include page="../../dialogs/generalContainerDialog.jsp">
         <jsp:param name="field" value="${param.field}" />
         <jsp:param name="readonly" value="${readonly}" />
     </jsp:include>

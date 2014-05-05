@@ -3,7 +3,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <c:set var="readonly" value="${empty param.readonly ? false : param.readonly}" />
 <div class="tabs tab_file_management">
-    <jsp:include page="../../../inc/referencetableContainer.jsp">
+    <jsp:include page="../../../inc/inputs/referencetableContainer.jsp">
         <jsp:param name="field" value="files" />
         <jsp:param name="addButton" value="false" />
         <jsp:param name="dialogId" value="fileManagementDialog" />
@@ -15,7 +15,7 @@
     </jsp:include>
     <table class="formTable">
         <tr>
-            <jsp:include page="../../../inc/singleCellFormText.jsp">
+            <jsp:include page="../../../inc/inputs/formText.jsp">
                 <jsp:param name="field" value="filenotes" />
                 <jsp:param name="readonly" value="${readonly}" />
             </jsp:include>

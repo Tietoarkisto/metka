@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:y="http://www.yworks.com/xml/graphml" xmlns:yed="http://www.yworks.com/xml/yed/3" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml/1.1/ygraphml.xsd">
-  <!--Created by yFiles for Java 2.11-->
+  <!--Created by yEd 3.12.2-->
   <key for="graphml" id="d0" yfiles.type="resources"/>
   <key for="port" id="d1" yfiles.type="portgraphics"/>
   <key for="port" id="d2" yfiles.type="portgeometry"/>
@@ -147,18 +147,21 @@ This element is ignored during processing.</y:NodeLabel>
       <data key="d4"/>
       <data key="d6">
         <y:UMLNoteNode>
-          <y:Geometry height="135.0" width="308.9999999999999" x="4.000000000000114" y="1003.0"/>
+          <y:Geometry height="174.0" width="308.9999999999999" x="4.000000000000114" y="1003.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="129.71875" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="292.052734375" x="4.0" y="4.0">TranslationData is a special case of
+          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="171.625" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="286.94921875" x="4.0" y="4.0">TranslationData is a special case of
 RevisionData containing additional information
 and a subset of the fields contained in data.
-Approved translation data is a self-complete
-dataset containing all calculated fields with
-values from correct locales where available and
-all fields missing a translation or are not
-translateable copied over from the revision
-being translated.</y:NodeLabel>
+It is still open if TranslationData will be a self-
+contained dataset or will it only contain all of
+the fields marked translatable. This will mostly
+depend on how to mark a revision as not
+applicaple for certain translations. Basically if
+it is possible to tell that from certain revision
+onwards a new translation is required then
+it is possible to contain only translatable data
+in TranslationData.</y:NodeLabel>
         </y:UMLNoteNode>
       </data>
     </node>
@@ -233,7 +236,7 @@ is not used as part of the authentication.</y:NodeLabel>
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="0.5082236842105261" ty="-53.11475409836066"/>
+          <y:Path sx="0.0" sy="0.0" tx="23.999999999999943" ty="-74.0"/>
           <y:LineStyle color="#000000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="none"/>
           <y:BendStyle smoothed="false"/>

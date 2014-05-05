@@ -67,7 +67,7 @@ $(document).ready(function(){
         confirm.dialog("option", "title", MetkaJS.L10N.get(title));
         confirm.find("#confirmationContent").empty();
         confirm.find("#confirmationContent").text(message);
-        if(execute==undefined || execute==null) {
+        if(execute==null) {
             confirm.find("#confirmationYesBtn").click(function(confirm) {
                 return function() {
                     confirm.dialog("close");

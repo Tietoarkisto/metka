@@ -53,7 +53,7 @@ MetkaJS.TableHandler = function() {
     function buildContainertable(content, context) {
         // Handle only containers
         var key = content.key;
-        var field = MektaJS.JSConfigUtil.getField(key, context);
+        var field = MetkaJS.JSConfigUtil.getField(key, context);
         var changes = false;
         if(content.type != "container" || field.type != MetkaJS.E.Field.CONTAINER) return;
 

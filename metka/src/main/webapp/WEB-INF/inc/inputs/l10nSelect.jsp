@@ -5,10 +5,14 @@
 <c:set var="context" value="${empty param.context ? fn:toUpperCase(page) : fn:toUpperCase(param.context)}" />
 <c:set var="colspan" value="${empty param.colspan ? 1 : param.colspan}" />
 <c:set var="readonly" value="${empty param.readonly ? false : param.readonly}" />
-<td class="labelColumn">
-    <form:label path="values['${param.field}']"><spring:message code="${context}.field.${param.field}"/></form:label>
-</td>
-<td colspan="${colspan}">
+<c:set var="singlecolumn" value="${empty param.singlecolumn ? true : param.singlecolumn}" />
+<c:if test="${singlecolumn == false}">
+    <td class="labelColumn"><form:label path="values['${param.field}']"><spring:message code="${context}.field.${param.field}"/></form:label></td>
+</c:if>
+<td colspan="${colspan}" >
+    <c:if test="${singlecolumn == true}">
+        <div class="singleCellTitle"><form:label path="values['${param.field}']"><spring:message code="${context}.field.${param.field}"/></form:label></div>
+    </c:if>
     <c:choose>
         <c:when test="${readonly}">
             <c:set var="choicelist" value="${configuration[context].fields[param.field].choicelist}" />

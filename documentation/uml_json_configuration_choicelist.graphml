@@ -43,7 +43,7 @@
       <data key="d4"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="76.0" width="209.25" x="749.2487614678898" y="365.31809895833385"/>
+          <y:Geometry height="76.0" width="209.25" x="770.7070948012233" y="365.31809895833385"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="53.21337890625" x="78.018310546875" y="3.0">Option<y:LabelModel>
@@ -91,7 +91,7 @@ SUBLIST</y:AttributeLabel>
       <data key="d4"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="50.0" width="209.25" x="749.2487614678898" y="493.21953125000107"/>
+          <y:Geometry height="50.0" width="209.25" x="770.7070948012233" y="496.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="78.3056640625" x="65.47216796875" y="3.0">Reference<y:LabelModel>
@@ -112,7 +112,7 @@ SUBLIST</y:AttributeLabel>
       <data key="d4"/>
       <data key="d6">
         <y:UMLNoteNode>
-          <y:Geometry height="316.31809895833385" width="526.1070948012233" x="443.84999999999997" y="22.31809895833385"/>
+          <y:Geometry height="316.31809895833385" width="536.1070948012233" x="443.84999999999997" y="22.31809895833385"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="311.3125" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="529.28125" x="4.0" y="4.0">The way choicelist object is used is that many objects can have the same key
@@ -144,10 +144,12 @@ choicelists in order to have different default values assigned to different keys
       <data key="d4"/>
       <data key="d6">
         <y:UMLNoteNode>
-          <y:Geometry height="110.0" width="514.6487614678899" x="443.8499999999999" y="613.0"/>
+          <y:Geometry height="136.0" width="536.1070948012234" x="443.8499999999999" y="613.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="101.78125" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="489.666015625" x="4.0" y="4.0">VALUE: Numerical value for the choice. It will be translated via localization file.
+          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="129.71875" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="492.794921875" x="4.0" y="4.0">VALUE: Numerical value for the choice. It will be translated via localization file.
+    Translations of VALUE type choicelist options will be moved to configuration at
+    some point.
 REFERENCE: List of values for this choicelist are fetched using given Reference
     configuration. Shown text can be either the fetched value itself or a separate
     field from the referenced object.
@@ -164,7 +166,7 @@ SUBLIST: This choicelist is referencing some other list for values and is here o
           <y:Path sx="-11.474999999999909" sy="-27.0" tx="19.126238532110165" ty="-13.0"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="diamond" target="none"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="31.9375" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="83.330078125" x="6.394107296444872" y="2.0000142415369737">+options 0..*
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="31.9375" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="83.330078125" x="24.13916267231707" y="2.0000142415369737">+options 0..*
 {ordered}<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
           </y:EdgeLabel>
           <y:BendStyle smoothed="false"/>
@@ -178,7 +180,13 @@ SUBLIST: This choicelist is referencing some other list for values and is here o
           <y:Path sx="-23.625" sy="3.6699698464905244" tx="0.0" ty="0.0"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="none"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="40.861328125" x="2.000024414062409" y="4.343924967448174">+type<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="40.861328125" x="2.000024414062409" y="5.343924967448174">+type<y:LabelModel>
+              <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
+            </y:LabelModel>
+            <y:ModelParameter>
+              <y:SmartEdgeLabelModelParameter angle="6.283185307179586" distance="2.0" distanceToCenter="false" position="left" ratio="1.0" segment="-1"/>
+            </y:ModelParameter>
+            <y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
           </y:EdgeLabel>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
@@ -188,10 +196,10 @@ SUBLIST: This choicelist is referencing some other list for values and is here o
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="-45.47499999999991" sy="14.681901041666151" tx="0.0" ty="0.0"/>
+          <y:Path sx="-31.47499999999991" sy="8.181901041666151" tx="-8.33209480122332" ty="7.5"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="diamond" target="none"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="98.59375" x="90.98650397003814" y="1.2441345409549172">+reference 0..1<y:LabelModel>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="98.59375" x="110.19968456309743" y="13.412218060349971">+reference 0..1<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -207,7 +215,7 @@ SUBLIST: This choicelist is referencing some other list for values and is here o
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="-182.0535474006117" sy="-23.310481770834286" tx="-23.625" ty="0.9331277412273654"/>
+          <y:Path sx="-185.51393691445003" sy="-23.310481770834286" tx="-23.625" ty="0.9331277412273654"/>
           <y:LineStyle color="#000000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="none"/>
           <y:BendStyle smoothed="false"/>
@@ -218,7 +226,7 @@ SUBLIST: This choicelist is referencing some other list for values and is here o
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="-176.32438073394496" ty="12.708333333333371"/>
+          <y:Path sx="0.0" sy="0.0" tx="-183.6762440237562" ty="15.712121212121247"/>
           <y:LineStyle color="#000000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="none"/>
           <y:BendStyle smoothed="false"/>

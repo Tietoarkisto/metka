@@ -5,23 +5,33 @@
         <table class="formTable">
             <form:hidden path="id" />
             <form:hidden path="revision" />
-            <jsp:include page="../../inc/fullRowFormText.jsp">
-                <jsp:param name="field" value="seriesno" />
-                <jsp:param name="readonly" value="true" />
-            </jsp:include>
-            <jsp:include page="../../inc/fullRowFormText.jsp">
-                <jsp:param name="field" value="seriesabb" />
-                <jsp:param name="readonly" value="${not empty single.values['seriesabb']}" />
-            </jsp:include>
-            <jsp:include page="../../inc/fullRowFormText.jsp">
-                <jsp:param name="field" value="seriesname" />
-            </jsp:include>
-            <jsp:include page="../../inc/fullRowFormText.jsp">
-                <jsp:param name="field" value="seriesdesc" />
-            </jsp:include>
-            <jsp:include page="../../inc/fullRowFormText.jsp">
-                <jsp:param name="field" value="seriesnotes" />
-            </jsp:include>
+            <tr>
+                <jsp:include page="../../inc/inputs/formText.jsp">
+                    <jsp:param name="field" value="seriesno" />
+                    <jsp:param name="readonly" value="true" />
+                </jsp:include>
+            </tr>
+            <tr>
+                <jsp:include page="../../inc/inputs/formText.jsp">
+                    <jsp:param name="field" value="seriesabb" />
+                    <jsp:param name="readonly" value="${not empty single.values['seriesabb']}" />
+                </jsp:include>
+            </tr>
+            <tr>
+                <jsp:include page="../../inc/inputs/formText.jsp">
+                    <jsp:param name="field" value="seriesname" />
+                </jsp:include>
+            </tr>
+            <tr>
+                <jsp:include page="../../inc/inputs/formText.jsp">
+                    <jsp:param name="field" value="seriesdesc" />
+                </jsp:include>
+            </tr>
+            <tr>
+                <jsp:include page="../../inc/inputs/formText.jsp">
+                    <jsp:param name="field" value="seriesnotes" />
+                </jsp:include>
+            </tr>
         </table>
     </form:form>
 </div>

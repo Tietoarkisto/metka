@@ -27,14 +27,18 @@
                         <form:checkbox path="searchRemoved" />
                     </td>
                 </tr>
-                <jsp:include page="../../inc/fullRowFormText.jsp">
-                    <jsp:param name="field" value="id" />
-                    <jsp:param name="colspan" value="3" />
-                </jsp:include>
-                <jsp:include page="../../inc/fullRowFormText.jsp">
-                    <jsp:param name="field" value="title" />
-                    <jsp:param name="colspan" value="3" />
-                </jsp:include>
+                <tr>
+                    <jsp:include page="../../inc/inputs/formText.jsp">
+                        <jsp:param name="field" value="id" />
+                        <jsp:param name="colspan" value="3" />
+                    </jsp:include>
+                </tr>
+                <tr>
+                    <jsp:include page="../../inc/inputs/formText.jsp">
+                        <jsp:param name="field" value="title" />
+                        <jsp:param name="colspan" value="3" />
+                    </jsp:include>
+                </tr>
                 <tr><c:set var="field" value="seriesid" />
                     <td class="labelColumn">
                         <form:label path="values['${field}']"><spring:message code="STUDY.field.${field}"/></form:label>

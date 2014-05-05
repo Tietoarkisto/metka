@@ -19,16 +19,20 @@
             </tr>
         </table>
         <table class="formTable">
-            <jsp:include page="../../inc/fullRowFormText.jsp">
-                <jsp:param name="field" value="seriesno" />
-            </jsp:include>
+            <tr>
+                <jsp:include page="../../inc/inputs/formText.jsp">
+                    <jsp:param name="field" value="seriesno" />
+                </jsp:include>
+            </tr>
             <tr><c:set var="field" value="seriesabb" />
                 <td class="labelColumn"><form:label path="values['${field}']"><spring:message code="SERIES.field.${field}"/></form:label></td>
                 <td><form:select path="values['${field}']" items="${searchData.abbreviations}" /></td>
             </tr>
-            <jsp:include page="../../inc/fullRowFormText.jsp">
-                <jsp:param name="field" value="seriesname" />
-            </jsp:include>
+            <tr>
+                <jsp:include page="../../inc/inputs/formText.jsp">
+                    <jsp:param name="field" value="seriesname" />
+                </jsp:include>
+            </tr>
         </table>
     </form:form>
 </div>
