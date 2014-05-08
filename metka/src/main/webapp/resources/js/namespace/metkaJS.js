@@ -62,11 +62,6 @@ MetkaJS = {
          * @param action MetkaJS.E.Form enumeration value
          */
         formAction: function(action) {
-            var hash = window.location.hash;
-            var hashField = $("#urlHash");
-            if(hash != null && hashField != null && hashField.length > 0) {
-                hashField.val(hash);
-            }
             $("#revisionModifyForm").attr("action", MetkaJS.PathBuilder().add(MetkaJS.Globals.page).add(action).build());
             $("#revisionModifyForm").submit();
         }

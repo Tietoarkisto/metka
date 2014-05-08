@@ -22,6 +22,7 @@
             <tr>
                 <jsp:include page="../../inc/inputs/formText.jsp">
                     <jsp:param name="field" value="seriesno" />
+                    <jsp:param name="singlecolumn" value="false" />
                 </jsp:include>
             </tr>
             <tr><c:set var="field" value="seriesabb" />
@@ -31,6 +32,7 @@
             <tr>
                 <jsp:include page="../../inc/inputs/formText.jsp">
                     <jsp:param name="field" value="seriesname" />
+                    <jsp:param name="singlecolumn" value="false" />
                 </jsp:include>
             </tr>
         </table>
