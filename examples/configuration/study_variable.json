@@ -1,0 +1,279 @@
+{
+	"key": {
+		"version": 1,
+		"type": "STUDY_VARIABLE"
+	},
+	"sections": {
+		
+	},
+	"choicelists": {
+		
+	},
+	"references": {
+		"file_ref": {
+			"key": "file_ref",
+			"type": "REVISIONABLE",
+			"target": "STUDY_ATTACHMENT",
+			"titlePath": "file"
+		},
+		"variables_ref": {
+			"key": "variables_ref",
+			"type": "REVISIONABLE",
+			"target": "STUDY_VARIABLES",
+			"titlePath": "id"
+		}
+	},
+	"idField": "id",
+	"displayId": "id",
+	"fields": {
+		"id": {
+			"key": "id",
+			"translatable": false,
+			"immutable": true,
+			"unique": true,
+			"required": true,
+			"display": false,
+			"type": "INTEGER",
+			"section": "basic_information"
+		},
+		"variables": {
+			"key": "variables",
+			"translatable": false,
+			"immutable": true,
+			"editable": false,
+			"type": "REFERENCE",
+			"reference": "variables_ref"
+		},
+		"file": {
+			"key": "file",
+			"translatable": false,
+			"immutable": true,
+			"editable": false,
+			"type": "REFERENCE",
+			"reference": "file_ref"
+		},
+		"varname": {
+			"key": "varname",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"editable": false,
+			"immutable": true,
+			"section": "variables"
+		},
+		"varid": {
+			"key": "varid",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"editable": false,
+			"immutable": true,
+			"section": "variables"
+		},
+		"varlabel": {
+			"key": "varlabel",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"editable": false,
+			"immutable": true,
+			"section": "variables"
+		},
+		"qstnlits": {
+			"key": "qstnlits",
+			"translatable": false,
+			"required": true,
+			"type": "CONTAINER",
+			"subfields": [
+				"qstnlit"
+			]
+		},
+		"qstnlit": {
+			"key": "qstnlit",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"multiline": true,
+			"subfield": true
+		},
+		"preqtxts": {
+			"key": "preqtxts",
+			"translatable": false,
+			"required": true,
+			"type": "CONTAINER",
+			"subfields": [
+				"preqtxt"
+			]
+		},
+		"preqtxt": {
+			"key": "preqtxt",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"multiline": true,
+			"subfield": true
+		},
+		"postqtxts": {
+			"key": "postqtxts",
+			"translatable": false,
+			"required": true,
+			"type": "CONTAINER",
+			"subfields": [
+				"postqtxt"
+			]
+		},
+		"postqtxt": {
+			"key": "postqtxt",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"multiline": true,
+			"subfield": true
+		},
+		"ivuinstrs": {
+			"key": "ivuinstrs",
+			"translatable": false,
+			"required": true,
+			"type": "CONTAINER",
+			"subfields": [
+				"ivuinstr"
+			]
+		},
+		"ivuinstr": {
+			"key": "ivuinstr",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"multiline": true,
+			"subfield": true
+		},
+		"varnotes": {
+			"key": "varnotes",
+			"translatable": false,
+			"required": true,
+			"type": "CONTAINER",
+			"subfields": [
+				"varnote"
+			]
+		},
+		"varnote": {
+			"key": "varnote",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"multiline": true,
+			"subfield": true
+		},
+		"vartexts": {
+			"key": "vartexts",
+			"translatable": false,
+			"required": true,
+			"type": "CONTAINER",
+			"subfields": [
+				"vartext"
+			]
+		},
+		"vartext": {
+			"key": "vartext",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"multiline": true,
+			"subfield": true
+		},
+		"varsecuritys": {
+			"key": "varsecuritys",
+			"translatable": false,
+			"required": true,
+			"type": "CONTAINER",
+			"subfields": [
+				"varsecurity"
+			]
+		},
+		"varsecurity": {
+			"key": "varsecurity",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"multiline": true,
+			"subfield": true
+		},
+		"categories": {
+			"key": "categories",
+			"translatable": false,
+			"type": "CONTAINER",
+			"section": "variables",
+			"showSaveInfo": true,
+			"subfields": [
+				"categoryvalue",
+				"categorylabel",
+				"categorystat"
+			]
+		},
+		"categoryvalue": {
+			"_comment": "Should be a REAL instead",
+			"key": "categoryvalue",
+			"translatable": false,
+			"required": true,
+			"editable": false,
+			"immutable": true,
+			"type": "STRING",
+			"section": "variables",
+			"subfield": true
+		},
+		"categorylabel": {
+			"key": "categorylabel",
+			"translatable": false,
+			"required": true,
+			"editable": false,
+			"immutable": true,
+			"type": "STRING",
+			"section": "variables",
+			"subfield": true
+		},
+		"categorystat": {
+			"_comment": "Should be an INTEGER instead",
+			"key": "categorystat",
+			"translatable": false,
+			"required": true,
+			"editable": false,
+			"immutable": true,
+			"type": "STRING",
+			"section": "variables",
+			"subfield": true
+		},
+		"statistics": {
+			"key": "statistics",
+			"translatable": false,
+			"type": "CONTAINER",
+			"section": "variables",
+			"showSaveInfo": true,
+			"subfields": [
+				"statisticstype",
+				"statisticsvalue"
+			]
+		},
+		"statisticstype": {
+			"key": "statisticstype",
+			"translatable": false,
+			"required": true,
+			"editable": false,
+			"immutable": true,
+			"type": "CHOICE",
+			"choicelist": "statisticstype_list",
+			"section": "variables",
+			"subfield": true
+		},
+		"statisticsvalue": {
+			"_comment": "Should be a REAL instead",
+			"key": "statisticsvalue",
+			"translatable": false,
+			"required": true,
+			"editable": false,
+			"immutable": true,
+			"type": "STRING",
+			"section": "variables",
+			"subfield": true
+		}
+	}
+}

@@ -1,0 +1,73 @@
+{
+	"key": {
+		"version": 1,
+		"type": "STUDY_VARIABLES"
+	},
+	"sections": {
+		
+	},
+	"choicelists": {
+		
+	},
+	"references": {
+		"study_ref": {
+			"key": "study_ref",
+			"type": "REVISIONABLE",
+			"target": "STUDY",
+			"titlePath": "title"
+		},
+		"file_ref": {
+			"key": "file_ref",
+			"type": "REVISIONABLE",
+			"target": "STUDY_ATTACHMENT",
+			"titlePath": "file"
+		},
+		"variable_ref": {
+			"key": "variable_ref",
+			"type": "REVISIONABLE",
+			"target": "STUDY_VARIABLE",
+			"titlePath": "varlabel"
+		}
+	},
+	"idField": "id",
+	"displayId": "id",
+	"fields": {
+		"id": {
+			"key": "id",
+			"translatable": false,
+			"immutable": true,
+			"unique": true,
+			"required": true,
+			"display": false,
+			"type": "INTEGER",
+			"section": "basic_information"
+		},
+		"study": {
+			"key": "study",
+			"translatable": false,
+			"immutable": true,
+			"editable": false,
+			"type": "REFERENCE",
+			"reference": "study_ref"
+		},
+		"file": {
+			"key": "file",
+			"translatable": false,
+			"immutable": true,
+			"editable": false,
+			"type": "REFERENCE",
+			"reference": "file_ref"
+		},
+		"variables": {
+			"key": "variables",
+			"translatable": false,
+			"type": "REFERENCECONTAINER",
+			"showSaveInfo": true,
+			"reference": "variable_ref",
+			"subfields": [
+				"varlabel",
+				
+			]
+		}
+	}
+}

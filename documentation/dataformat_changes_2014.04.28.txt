@@ -2,3 +2,6 @@
 Choicelist:
 Added freeText and freeTextKey attributes to choicelist. freeText is an array of string values denoting values that should provide user with and input for a custom entry on a choicelist.
 Changed the default of includeEmpty to true, most choicelists should have an empty option and so this is a more useful default.
+-- 2014.05.08 additions --
+Choicelist:
+Changed field type CHOICE to type SELECTION, changed Choicelist to SelectionList and changed all occurances of words referencing CHOICE type or Choicelist to variants of 'selection' that make sense in the context.

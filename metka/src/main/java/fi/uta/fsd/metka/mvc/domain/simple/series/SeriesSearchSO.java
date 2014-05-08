@@ -5,13 +5,6 @@ import fi.uta.fsd.metka.mvc.domain.simple.SimpleSearchObject;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created with IntelliJ IDEA.
- * User: lasseku
- * Date: 12/23/13
- * Time: 3:35 PM
- * To change this template use File | Settings | File Templates.
- */
 public class SeriesSearchSO extends SimpleSearchObject {
     private boolean searchApproved = true;
     private boolean searchDraft = true;

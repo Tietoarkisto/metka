@@ -2,6 +2,7 @@ package fi.uta.fsd.metka.mvc.controller;
 
 import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.mvc.domain.ConfigurationService;
+import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,11 +19,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/variables")
 public class VariablesController {
-    private static final String REDIRECT_SEARCH = "redirect:/study/search";
+    /*private static final String REDIRECT_SEARCH = "redirect:/study/search";
     private static final String REDIRECT_VIEW = "redirect:/study/view/";
     private static final String VIEW = "view";
     private static final String SEARCH = "search";
-    private static final String MODIFY = "modify";
+    private static final String MODIFY = "modify";*/
 
     @Autowired
     private ConfigurationService configService;
@@ -48,6 +49,7 @@ public class VariablesController {
             redirectAttributes.addFlashAttribute("displayableErrors", errors);
             return REDIRECT_SEARCH;
         }*/
+        return null;
     }
 
     /*
@@ -122,6 +124,7 @@ public class VariablesController {
         } else {
             return VIEW;
         }*/
+        return null;
     }
 
     /*
@@ -131,7 +134,8 @@ public class VariablesController {
     * from that study and return it.
     */
     @RequestMapping(value="search", method = {RequestMethod.GET, RequestMethod.POST})
-    public String search(Model model, @ModelAttribute("searchData")StudySearchData searchData) {
+    //public String search(Model model, @ModelAttribute("searchData")StudySearchData searchData) {
+    public String search(Model model) {
         /*if(searchData.getQuery() != null) {
             List<SearchResult> results = studyService.searchForStudies(searchData.getQuery());
             if(results.size() == 1) {
@@ -156,6 +160,7 @@ public class VariablesController {
 
         model.asMap().put("page", "study");
         return SEARCH;*/
+        return null;
     }
 
     /*
@@ -184,6 +189,7 @@ public class VariablesController {
             redirectAttributes.addFlashAttribute("studyconfiguration", revData.getConfiguration());
             return REDIRECT_VIEW+revData.getTransferObject().getId()+"/"+revData.getTransferObject().getRevision();
         }*/
+        return null;
     }
 
     /*
@@ -193,7 +199,8 @@ public class VariablesController {
     * Return to the modify page after including the success status of the operation.
     */
     @RequestMapping(value="save", method = {RequestMethod.POST})
-    public String save(@ModelAttribute("single")TransferObject single, RedirectAttributes redirectAttributes) {
+    //public String save(@ModelAttribute("single")TransferObject single, RedirectAttributes redirectAttributes) {
+    public String save() {
         /*boolean success = studyService.saveStudy(single);
         List<ErrorMessage> errors = new ArrayList<>();
         if(success) {
@@ -205,6 +212,7 @@ public class VariablesController {
         // TODO: IMPORTANT: If save failed user should not be redirected or the data should at least be the same they sent to server, otherwise users changes are lost.
 
         return REDIRECT_VIEW+single.getId()+"/"+single.getRevision()+(single.getUrlHash() != null ? single.getUrlHash() : "");*/
+        return null;
     }
 
     /*

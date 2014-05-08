@@ -37,7 +37,7 @@
 +unique : Boolean = false
 +required : Boolean = false
 +maxValues : Integer [0..1]
-+choicelist : String [0..1]
++selectionList : String [0..1]
 +section : String [0..1]
 +concatenate : String [0..*]
 +subfield : Boolean = false
@@ -76,7 +76,7 @@ REAL
 REFERENCE
 CONTAINER
 REFERENCECONTAINER
-CHOICE
+SELECTION
 CONCAT
 DATE
 DATETIME
@@ -127,7 +127,7 @@ subfield: Set to true if this field is going to be used as a
 subfields: lists all subfields this CONTAINER has.
     Only CONTAINER type field can have subfields.
 
-choicelist: Key of the list used to select values for this field.
+selectionList: Key of the list used to display options for this field.
 
 section: Key of the section this field is part of. All field
     keys within a configuration should be unique no matter
@@ -178,7 +178,7 @@ writable: Is this value supposed to be written in RevisionData.
           <y:Geometry height="341.493845565749" width="375.25963302752325" x="749.0782110091741" y="929.4327599388381"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="339.25" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="372.8125" x="4.0" y="4.000000000000114">type: what kind of field is this field.
+          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="339.25" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="372.8125" x="4.0" y="3.9999999999998863">type: what kind of field is this field.
     STRING: contains text values.
     INTEGER: contains whole number values.
     REAL: contains real number values.
@@ -194,7 +194,7 @@ writable: Is this value supposed to be written in RevisionData.
         pointer to another revisionable object (not to revision)
         and there can be additional configuration where some
         the data in that object is shown on the GUI.
-    CHOICE: Value is chosen from given options.
+    SELECTION: Value is chosen from a group of options.
     CONCAT: Value is calculated automatically by combining
         multible fields. Field keys and their order are
         found from concatenate attribute.
