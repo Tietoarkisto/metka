@@ -1,5 +1,5 @@
 .sass-cache
-metka/target/**/*
+metka/target/*
 metka_search/target/**/*
 .classpath
 .project

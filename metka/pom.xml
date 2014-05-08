@@ -16,7 +16,7 @@
         <jackson.version>2.2.3</jackson.version>
         <joda-time-version>2.3</joda-time-version>
         <rabbit-version>3.2.2</rabbit-version>
-        <jslint4java.version>2.0.0</jslint4java.version>
+        <jslint4java.version>2.0.5</jslint4java.version>
         <env>demo</env>
 	</properties>
 
@@ -323,13 +323,18 @@
                             <goal>lint</goal>
                         </goals>
                         <configuration>
+                            <outputFolder>${project.build.directory}/jslint/</outputFolder>
                             <failOnError>false</failOnError>
                             <options>
+                                <confusion>true</confusion>
                                 <passfail>true</passfail>
                                 <plusplus>true</plusplus>
-                                <predef>$, document, location, MetkaJS, sessionStorage, window</predef>
+                                <predef>$, alert, document, location, MetkaJS, sessionStorage, window</predef>
                                 <vars>true</vars>
                             </options>
+                            <excludes>
+                                <exclude>**/jquery/*</exclude>
+                            </excludes>
                         </configuration>
                     </execution>
                 </executions>
