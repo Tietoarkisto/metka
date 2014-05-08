@@ -32,21 +32,21 @@
             {
               "type" : "column", # CONST, always "column"
               "&title" : TRANSLATION-OBJECT,
-              "display" : "show"|"hide",
+              "hidden" : "true"|"false",
               "read-only" : "true"|NULL,
               "columns" : 1, # INT, one of 1, 2, 3 (and maybe 4)
               "rows" : [
                 {
                   "type" : "row",  # CONST, always "row"
                   "&title": TRANSLATION-OBJECT
-                  "display" : "show"|"hide",
+                  "hidden" : "true"|"false",
                   "read-only" : "true"|NULL,
                   "cells" : [ # or "content"
 
                     {
                       "type" : "cell",  # ENUM, one of "cell" or "empty-cell"
                       "&title": TRANSLATION-OBJECT
-                      "display" : "show"|"hide",
+                      "hidden" : "true"|"false",
                       "read-only" : "true"|NULL,
                       "field": FIELD-INPUT-OBJECT, # Containing reference to field key
                       "important" : "true"|NULL, # Emphasize the importance of this field
@@ -89,7 +89,7 @@ How to handle constants in GUI, like "lis‰‰" in Add-button?
 
 {
   "key" : REF,          # References (external) FIELD-CONFIGURATION-OBJECT 
-  "display-type": REF,  # Overrides presentation derived from FIELD-CONFIGURATION-OBJECT, references DISPLAY-TYPE-OBJECT
+  "hidden-type": REF,  # Overrides presentation derived from FIELD-CONFIGURATION-OBJECT, references hidden-TYPE-OBJECT
   "multiline" : "true"|"false", # One or multiple lines if dealing with text input
   "multichoice" : "true"|"false", # One or multiple choices if dealing with select component
                                  # NB. multichoice may not be desirable at all and in any case it is 

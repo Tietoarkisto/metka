@@ -26,5 +26,5 @@
     <bean id="startupScanner" class="fi.uta.fsd.metka.data.automation.StartupScanner" />
 
     <!-- For testing only -->
-    <bean id="metkaObjectMapper" class="fi.uta.fsd.metka.mvc.MetkaObjectMapper" />
+    <!--<bean id="metkaObjectMapper" class="fi.uta.fsd.metka.mvc.MetkaObjectMapper" />-->
 </beans>

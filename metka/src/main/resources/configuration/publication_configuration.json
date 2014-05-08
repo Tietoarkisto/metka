@@ -3,7 +3,7 @@
 		"version": 1,
 		"type": "PUBLICATION"
 	},
-    "choiselists": {
+    "choicelists": {
 		"yes_no": {
 			"key": "yes_no",
 			"type": "VALUE",
@@ -43,7 +43,7 @@
 	"fields": {
 		"id": {
 			"key": "id",
-			"translateable": false,
+			"translatable": false,
 			"immutable": true,
 			"unique": true,
 			"required": true,
