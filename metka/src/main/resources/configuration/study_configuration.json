@@ -55,6 +55,10 @@
 		"anonymization_list": {
 			"key": "anonymization_list",
 			"type": "VALUE",
+			"freeText": [
+				"5"
+			],
+			"freeTextKey": "anonymizationother",
 			"options": [
 				{
 					"value": "1"
@@ -423,6 +427,13 @@
 			"translatable": false,
 			"type": "CHOICE",
 			"choicelist": "anonymization_list",
+			"section": "basic_information"
+		},
+		"anonymizationother": {
+			"_comment": "This is a pure test field",
+			"key": "anonymizationother",
+			"translatable": false,
+			"type": "STRING",
 			"section": "basic_information"
 		},
 		"dataarrivaldate": {

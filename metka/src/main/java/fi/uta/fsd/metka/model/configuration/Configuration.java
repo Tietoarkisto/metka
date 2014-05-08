@@ -11,13 +11,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import java.util.*;
 
-/**
- * Created with IntelliJ IDEA.
- * User: lasseku
- * Date: 12/18/13
- * Time: 10:06 AM
- * To change this template use File | Settings | File Templates.
- */
 @XmlRootElement(name = "configuration")
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonIgnoreProperties("_comment")

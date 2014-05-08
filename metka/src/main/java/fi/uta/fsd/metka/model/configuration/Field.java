@@ -11,13 +11,6 @@ import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created with IntelliJ IDEA.
- * User: lasseku
- * Date: 12/18/13
- * Time: 10:14 AM
- * To change this template use File | Settings | File Templates.
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonIgnoreProperties("_comment")
 public class Field {

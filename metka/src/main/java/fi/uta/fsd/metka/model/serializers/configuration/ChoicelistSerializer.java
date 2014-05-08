@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import fi.uta.fsd.metka.model.configuration.Choicelist;
 import fi.uta.fsd.metka.model.configuration.Option;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 
@@ -23,6 +24,14 @@ public class ChoicelistSerializer extends JsonSerializer<Choicelist> {
         jgen.writeStringField("default", value.getDef());
         jgen.writeStringField("type", value.getType().toString());
         jgen.writeBooleanField("includeEmpty", value.getIncludeEmpty());
+        jgen.writeArrayFieldStart("freeText");
+        for(String free : value.getFreeText()) {
+            jgen.writeString(free);
+        }
+        jgen.writeEndArray();
+        if(!StringUtils.isEmpty(value.getFreeTextKey())) {
+            jgen.writeStringField("freeTextKey", value.getFreeTextKey());
+        }
         switch(value.getType()) {
             case VALUE:
             case LITERAL:

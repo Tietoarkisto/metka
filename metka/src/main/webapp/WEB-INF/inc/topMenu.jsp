@@ -10,6 +10,7 @@
                 <li><a href="${contextPath}/desktop" ${page == "desktop" ? 'class="selected"': ''}><spring:message code="topmenu.desktop"/></a></li>
                 <li><a href="${contextPath}/expertSearch" ${page == "expertSearch" ? 'class="selected"': ''}><spring:message code="topmenu.expert"/></a></li>
                 <li><a href="${contextPath}/study/search" ${page == "study" ? 'class="selected"': ''}><spring:message code="topmenu.study"/></a></li>
+                <li><a href="${contextPath}/variables/search" ${page == "variables" ? 'class="selected"': ''}><spring:message code="topmenu.variables"/></a></li>
                 <li><a href="${contextPath}/publication/search" ${page == "publication" ? 'class="selected"': ''}><spring:message code="topmenu.publication"/></a></li>
                 <li><a href="${contextPath}/series/search" ${page == "series" ? 'class="selected"': ''}><spring:message code="topmenu.series"/></a></li>
                 <li><a href="${contextPath}/binder/all" ${page == "binder" ? 'class="selected"': ''}><spring:message code="topmenu.binder"/></a></li>

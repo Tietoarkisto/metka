@@ -1,0 +1,16 @@
+Muistio GUI-Konfiguraatio
+-------------------------
+* Alasivuja ei tarvitse määritellä konfiguraatiossa
+* Toistaiseksi dialogien konfiguroinnille ei näytä olevan tarvetta
+* Taulukon käsittelijä määritellään gui-konfissa, konfiguraation kirjoittajan pitää tietää nämä. Tämä voidaan myöhemmin erottaa GUI-konfista.
+* Määritellään kenttien järjestys ja kentän ulkonäköön liittyvät asiat
+* Gui-konfiguraatio ylikirjoittaa kenttäkonfiguraation määrittelemän kenttätyypin (esim. CHOICE voidaan esittää tekstikenttänä)
+* Gui-konfiguraatio ylikirjoittaa kentän readonly tilan (voidaan pakottaa joko aina kirjoitustilaan tai vain luku tilaan)
+* Gui-konfiguraatiossa voidaan asettaa kenttiä palstoihin. Palstojen määrä rajataan joko kolmeen tai neljään.
+* Jos palstan rivillä on tyhjä solu, pitää tyhjän solun löytyä myös konfiguraatiosta.
+* Konfi on puurakenne jossa yleisemmän tason containerit sisältävät tarkemman tason containereita ja lopulta varsinaiset tekstikentät.
+* Konfin sisältöä ei tarvitse redusoida kirjoittamisen helpottamiseksi, eli esim. ykissäiset tekstikentät pistetään oman palstoittajan sisään.
+* Jotkin arvot, kuten readonly, peritään ylemmältä tasolta alemmalle tasolle
+* GUI:n lokalisointiin riittää että javascriptissä on jokin yleinen tieto mihin kielikoodi on tallennettu ja tätä tietoa käytetään aina käännöstekstien hakemiseen.
+  Tieto asetetaan arvoon "default" ja jos joku haluaa tehdä myöhemmin GUI:n kielen vaihtamisen niin se on mahdollista toteuttaa.
+* Samalla hierarkiatasolla voi olla vain samoja komponentteja tai alemman tason komponentteja. Jos samalla hierarkiatasolla on useamman tason komponentteja niin kaikki alemman tason komponentit näytetään GUI:lla ylemmän tason komponenttien jälkeen.

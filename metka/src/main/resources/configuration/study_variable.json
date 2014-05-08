@@ -1,7 +1,7 @@
 {
 	"key": {
 		"version": 1,
-		"type": "STUDY_VARIABLES"
+		"type": "STUDY_VARIABLE"
 	},
 	"sections": {
 		
@@ -10,17 +10,17 @@
 		
 	},
 	"references": {
-		"study_ref": {
-			"key": "study_ref",
-			"type": "REVISIONABLE",
-			"target": "STUDY",
-			"titlePath": "title"
-		},
 		"file_ref": {
 			"key": "file_ref",
 			"type": "REVISIONABLE",
 			"target": "STUDY_ATTACHMENT",
 			"titlePath": "file"
+		},
+		"variables_ref": {
+			"key": "variables_ref",
+			"type": "REVISIONABLE",
+			"target": "STUDY_VARIABLES",
+			"titlePath": "id"
 		}
 	},
 	"idField": "id",
@@ -36,13 +36,13 @@
 			"type": "INTEGER",
 			"section": "basic_information"
 		},
-		"study": {
-			"key": "study",
+		"variables": {
+			"key": "variables",
 			"translatable": false,
 			"immutable": true,
 			"editable": false,
 			"type": "REFERENCE",
-			"reference": "study_ref"
+			"reference": "variables_ref"
 		},
 		"file": {
 			"key": "file",
@@ -52,27 +52,6 @@
 			"type": "REFERENCE",
 			"reference": "file_ref"
 		},
-		"variables": {
-			"key": "variables",
-			"translatable": false,
-			"type": "CONTAINER",
-			"section": "variables",
-			"showSaveInfo": true,
-			"subfields": [
-				"varname",
-				"varid",
-				"varlabel",
-				"qstnlit",
-				"preqtxt",
-				"postqtxt",
-				"ivuinstr",
-				"varnotes",
-				"vartext",
-				"varsecurity",
-				"categories",
-				"statistics"
-			]
-		},
 		"varname": {
 			"key": "varname",
 			"translatable": false,
@@ -80,8 +59,7 @@
 			"type": "STRING",
 			"editable": false,
 			"immutable": true,
-			"section": "variables",
-			"subfield": true
+			"section": "variables"
 		},
 		"varid": {
 			"key": "varid",
@@ -90,8 +68,7 @@
 			"type": "STRING",
 			"editable": false,
 			"immutable": true,
-			"section": "variables",
-			"subfield": true
+			"section": "variables"
 		},
 		"varlabel": {
 			"key": "varlabel",
@@ -100,77 +77,125 @@
 			"type": "STRING",
 			"editable": false,
 			"immutable": true,
-			"section": "variables",
-			"subfield": true
+			"section": "variables"
+		},
+		"qstnlits": {
+			"key": "qstnlits",
+			"translatable": false,
+			"required": true,
+			"type": "CONTAINER",
+			"subfields": [
+				"qstnlit"
+			]
 		},
 		"qstnlit": {
-			"_comment": "TODO: Should be a container.",
 			"key": "qstnlit",
 			"translatable": false,
 			"required": true,
 			"type": "STRING",
 			"multiline": true,
-			"section": "variables",
 			"subfield": true
 		},
+		"preqtxts": {
+			"key": "preqtxts",
+			"translatable": false,
+			"required": true,
+			"type": "CONTAINER",
+			"subfields": [
+				"preqtxt"
+			]
+		},
 		"preqtxt": {
-			"_comment": "TODO: Should be a container.",
 			"key": "preqtxt",
 			"translatable": false,
 			"required": true,
 			"type": "STRING",
 			"multiline": true,
-			"section": "variables",
 			"subfield": true
 		},
+		"postqtxts": {
+			"key": "postqtxts",
+			"translatable": false,
+			"required": true,
+			"type": "CONTAINER",
+			"subfields": [
+				"postqtxt"
+			]
+		},
 		"postqtxt": {
-			"_comment": "TODO: Should be a container.",
 			"key": "postqtxt",
 			"translatable": false,
 			"required": true,
 			"type": "STRING",
 			"multiline": true,
-			"section": "variables",
 			"subfield": true
 		},
+		"ivuinstrs": {
+			"key": "ivuinstrs",
+			"translatable": false,
+			"required": true,
+			"type": "CONTAINER",
+			"subfields": [
+				"ivuinstr"
+			]
+		},
 		"ivuinstr": {
-			"_comment": "TODO: Should be a container.",
 			"key": "ivuinstr",
 			"translatable": false,
 			"required": true,
 			"type": "STRING",
 			"multiline": true,
-			"section": "variables",
 			"subfield": true
 		},
 		"varnotes": {
-			"_comment": "TODO: Should be a container.",
 			"key": "varnotes",
+			"translatable": false,
+			"required": true,
+			"type": "CONTAINER",
+			"subfields": [
+				"varnote"
+			]
+		},
+		"varnote": {
+			"key": "varnote",
 			"translatable": false,
 			"required": true,
 			"type": "STRING",
 			"multiline": true,
-			"section": "variables",
 			"subfield": true
 		},
+		"vartexts": {
+			"key": "vartexts",
+			"translatable": false,
+			"required": true,
+			"type": "CONTAINER",
+			"subfields": [
+				"vartext"
+			]
+		},
 		"vartext": {
-			"_comment": "TODO: Should be a container.",
 			"key": "vartext",
 			"translatable": false,
 			"required": true,
 			"type": "STRING",
 			"multiline": true,
-			"section": "variables",
 			"subfield": true
 		},
+		"varsecuritys": {
+			"key": "varsecuritys",
+			"translatable": false,
+			"required": true,
+			"type": "CONTAINER",
+			"subfields": [
+				"varsecurity"
+			]
+		},
 		"varsecurity": {
-			"_comment": "Should this be a CHOICE instead?",
 			"key": "varsecurity",
 			"translatable": false,
 			"required": true,
 			"type": "STRING",
 			"multiline": true,
-			"section": "variables",
 			"subfield": true
 		},
 		"categories": {
@@ -183,8 +208,7 @@
 				"categoryvalue",
 				"categorylabel",
 				"categorystat"
-			],
-			"subfield": true
+			]
 		},
 		"categoryvalue": {
 			"_comment": "Should be a REAL instead",
@@ -227,8 +251,7 @@
 			"subfields": [
 				"statisticstype",
 				"statisticsvalue"
-			],
-			"subfield": true
+			]
 		},
 		"statisticstype": {
 			"key": "statisticstype",
