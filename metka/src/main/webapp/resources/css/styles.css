@@ -101,12 +101,20 @@ nav .mainNavUl li a:hover {
     -moz-transition: all 0.25s ease-in-out;
 }
 
+.pointerClass:hover {
+    cursor: pointer;
+}
+
 .quickSearchContainer {
     float: right;
     margin-top: 20px;
 }
 .quickSearchContainer .searchInput {
     width: 150px;
+    border-right: 0px;
+    margin-right: 0px;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
 }
 
 .quickSearchContainer .searchButton {
@@ -115,8 +123,7 @@ nav .mainNavUl li a:hover {
     border-radius: 0 7px 7px 0;
     color: white;
     height: 29px;
-    position: absolute;
-    right: -3px;
+    margin-left: 0px;
 }
 
 .quickSearchContainer form {
