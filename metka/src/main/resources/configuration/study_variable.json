@@ -6,7 +6,7 @@
 	"sections": {
 		
 	},
-	"choicelists": {
+	"selectionLists": {
 		
 	},
 	"references": {
@@ -259,8 +259,8 @@
 			"required": true,
 			"editable": false,
 			"immutable": true,
-			"type": "CHOICE",
-			"choicelist": "statisticstype_list",
+			"type": "SELECTION",
+			"selectionList": "statisticstype_list",
 			"section": "variables",
 			"subfield": true
 		},

@@ -36,32 +36,32 @@
                 <jsp:param name="context" value="${context}" />
                 <jsp:param name="field" value="filecomment" />
             </jsp:include>
-            <jsp:include page="inc/dialogChoiceRow.jsp">
+            <jsp:include page="inc/dialogSelectionRow.jsp">
                 <jsp:param name="container" value="${container}" />
                 <jsp:param name="context" value="${context}" />
                 <jsp:param name="field" value="filecategory" />
             </jsp:include>
-            <jsp:include page="inc/dialogChoiceRow.jsp">
+            <jsp:include page="inc/dialogSelectionRow.jsp">
                 <jsp:param name="container" value="${container}" />
                 <jsp:param name="context" value="${context}" />
                 <jsp:param name="field" value="fileaip" />
             </jsp:include>
-            <jsp:include page="inc/dialogChoiceRow.jsp">
+            <jsp:include page="inc/dialogSelectionRow.jsp">
                 <jsp:param name="container" value="${container}" />
                 <jsp:param name="context" value="${context}" />
                 <jsp:param name="field" value="filelanguage" />
             </jsp:include>
-            <jsp:include page="inc/dialogChoiceRow.jsp">
+            <jsp:include page="inc/dialogSelectionRow.jsp">
                 <jsp:param name="container" value="${container}" />
                 <jsp:param name="context" value="${context}" />
                 <jsp:param name="field" value="fileoriginal" />
             </jsp:include>
-            <jsp:include page="inc/dialogChoiceRow.jsp">
+            <jsp:include page="inc/dialogSelectionRow.jsp">
                 <jsp:param name="container" value="${container}" />
                 <jsp:param name="context" value="${context}" />
                 <jsp:param name="field" value="filepublication" />
             </jsp:include>
-            <jsp:include page="inc/dialogChoiceRow.jsp">
+            <jsp:include page="inc/dialogSelectionRow.jsp">
                 <jsp:param name="container" value="${container}" />
                 <jsp:param name="context" value="${context}" />
                 <jsp:param name="field" value="filedip" />

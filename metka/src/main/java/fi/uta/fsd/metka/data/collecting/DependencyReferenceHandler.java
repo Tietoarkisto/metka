@@ -4,13 +4,13 @@ package fi.uta.fsd.metka.data.collecting;
 import com.fasterxml.jackson.databind.JsonNode;
 import fi.uta.fsd.metka.data.entity.MiscJSONEntity;
 import fi.uta.fsd.metka.data.entity.RevisionEntity;
-import fi.uta.fsd.metka.data.enums.ChoicelistType;
 import fi.uta.fsd.metka.data.enums.FieldType;
 import fi.uta.fsd.metka.data.enums.ReferenceTitleType;
-import fi.uta.fsd.metka.model.configuration.Choicelist;
+import fi.uta.fsd.metka.data.enums.SelectionListType;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.configuration.Reference;
+import fi.uta.fsd.metka.model.configuration.SelectionList;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.SavedDataField;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
@@ -48,13 +48,13 @@ class DependencyReferenceHandler extends ReferenceHandler {
         Field dependencyField = config.getField(reference.getTarget());
         // TODO: All possible permutations as per specification. Implement in priority order. When more permutations start to be added then reorganize for clarity.
         switch(dependencyField.getType()) {
-            case CHOICE:
-                Choicelist dependencyList = config.getRootChoicelist(dependencyField.getChoicelist());
+            case SELECTION:
+                SelectionList dependencyList = config.getRootSelectionList(dependencyField.getSelectionList());
                 if(dependencyList == null) {
                     // We can't do anything, dependency list is missing from configuration.
                     return;
                 }
-                if(dependencyList.getType() == ChoicelistType.REFERENCE) {
+                if(dependencyList.getType() == SelectionListType.REFERENCE) {
                     Reference dependencyReference = config.getReference(dependencyList.getReference());
                     if(dependencyReference == null) {
                         // We can't do anything, dependency reference is missing from configuration.
@@ -129,7 +129,7 @@ class DependencyReferenceHandler extends ReferenceHandler {
 
         // TODO: fields that are not top level value fields, for now assume this is the case.
 
-        // TODO: If field type is CHOICE or some other type that requires multiple options and valuePath points to something that allows multiple options then add all of them.
+        // TODO: If field type is SELECTION or some other type that requires multiple options and valuePath points to something that allows multiple options then add all of them.
 
         String value;
         ReferenceOptionTitle title = null;
@@ -144,7 +144,7 @@ class DependencyReferenceHandler extends ReferenceHandler {
             sf = getSavedDataFieldFromRevisionData(data, reference.getTitlePath());
             Configuration config = configurations.findConfiguration(data.getConfiguration());
             if(sf != null && sf.hasValue()) {
-                if(config.getField(reference.getTitlePath()).getType() == FieldType.CHOICE) {
+                if(config.getField(reference.getTitlePath()).getType() == FieldType.SELECTION) {
                     title = new ReferenceOptionTitle(ReferenceTitleType.VALUE, sf.getActualValue());
                 } else {
                     title = new ReferenceOptionTitle(ReferenceTitleType.LITERAL, sf.getActualValue());
@@ -183,7 +183,7 @@ class DependencyReferenceHandler extends ReferenceHandler {
 
         // If field requires only a single answer then return only first option, otherwise return all
         switch(field.getType()) {
-            case CHOICE:
+            case SELECTION:
                 List<JsonNode> termini = parser.findTermini();
                 for(JsonNode node : termini) {
                     // Get node containing value, Has to be ValueNode due to JsonParser only returning objects containing terminating value node.

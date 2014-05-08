@@ -20,7 +20,7 @@ public class Field {
     @XmlElement private Boolean immutable = false;
     @XmlElement private Boolean display = true;
     @XmlElement private Integer maxValues = null;
-    @XmlElement private String choicelist = null;
+    @XmlElement private String selectionList = null;
     @XmlElement private String section = null;
     @XmlElement private FieldType type;
     @XmlElement private Boolean subfield = false;
@@ -82,12 +82,12 @@ public class Field {
         this.maxValues = maxValues;
     }
 
-    public String getChoicelist() {
-        return choicelist;
+    public String getSelectionList() {
+        return selectionList;
     }
 
-    public void setChoicelist(String choicelist) {
-        this.choicelist = choicelist;
+    public void setSelectionList(String selectionList) {
+        this.selectionList = selectionList;
     }
 
     public String getSection() {

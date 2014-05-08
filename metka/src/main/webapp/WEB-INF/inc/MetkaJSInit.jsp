@@ -43,9 +43,9 @@
 
 <%-- If page is study then add some variable statistics localisations --%>
 <c:if test="${page == 'study'}">
-    <c:set var="choicelist" value="${configuration['STUDY'].fields['statisticstype'].choicelist}" />
-    <c:forEach items="${configuration['STUDY'].choicelists[choicelist].options}" var="option">
-    MetkaJS.L10N.put("STUDY.${choicelist}.choices.${option.value}", "<spring:message code='STUDY.${choicelist}.choices.${option.value}' />");
+    <c:set var="selectionList" value="${configuration['STUDY'].fields['statisticstype'].selectionList}" />
+    <c:forEach items="${configuration['STUDY'].selectionLists[selectionList].options}" var="option">
+    MetkaJS.L10N.put("STUDY.${selectionList}.option.${option.value}", "<spring:message code='STUDY.${selectionList}.option.${option.value}' />");
     </c:forEach>
 </c:if>
     <%-- If JSConfig JSON is provided insert it to globals. Otherwise MetkaJS.JSConfig will remain null --%>

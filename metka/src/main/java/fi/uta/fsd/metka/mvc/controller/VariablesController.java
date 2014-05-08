@@ -2,7 +2,6 @@ package fi.uta.fsd.metka.mvc.controller;
 
 import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.mvc.domain.ConfigurationService;
-import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

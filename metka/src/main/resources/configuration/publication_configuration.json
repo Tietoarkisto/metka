@@ -3,7 +3,7 @@
 		"version": 1,
 		"type": "PUBLICATION"
 	},
-    "choicelists": {
+    "selectionLists": {
 		"yes_no": {
 			"key": "yes_no",
 			"type": "VALUE",
@@ -57,20 +57,20 @@
 		"can_publish": {
 			"key": "can_publish",
 			"translatable": false,
-			"type": "CHOICE",
-			"choicelist": "yes_no"
+			"type": "SELECTION",
+			"selectionList": "yes_no"
 		},
 		"publication_lang": {
 			"key": "publication_lang",
 			"translatable": false,
-			"type": "CHOICE",
-			"choicelist": "langs"
+			"type": "SELECTION",
+			"selectionList": "langs"
 		},
 		"notification_way": {
 			"key": "notification_way",
 			"translatable": false,
-			"type": "CHOICE",
-			"choicelist": "notification_way"
+			"type": "SELECTION",
+			"selectionList": "notification_way"
 		},
 		"publication_title": {
 			"key": "publication_title",

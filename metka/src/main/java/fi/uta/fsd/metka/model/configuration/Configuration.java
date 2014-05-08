@@ -18,7 +18,7 @@ public class Configuration implements ModelBase {
     @XmlElement private ConfigurationKey key;
     @XmlElement private final Map<String, Section> sections = new HashMap<>();
     @XmlElement private final Map<String, Reference> references = new HashMap<>();
-    @XmlElement private final Map<String, Choicelist> choicelists = new HashMap<>();
+    @XmlElement private final Map<String, SelectionList> selectionLists = new HashMap<>();
     @XmlElement private final Map<String, Field> fields = new HashMap<>();
     @XmlElement private String idField;
     @XmlElement private String displayId;
@@ -47,8 +47,8 @@ public class Configuration implements ModelBase {
         return references;
     }
 
-    public Map<String, Choicelist> getChoicelists() {
-        return choicelists;
+    public Map<String, SelectionList> getSelectionLists() {
+        return selectionLists;
     }
 
     public Map<String, Field> getFields() {
@@ -78,16 +78,16 @@ public class Configuration implements ModelBase {
     }
 
     @JsonIgnore
-    public Choicelist getChoicelist(String key) {
-        return choicelists.get(key);
+    public SelectionList getSelectionList(String key) {
+        return selectionLists.get(key);
     }
 
     @JsonIgnore
-    public Choicelist getRootChoicelist(String key) {
-        Choicelist list = getChoicelist(key);
+    public SelectionList getRootSelectionList(String key) {
+        SelectionList list = getSelectionList(key);
         while(list != null && !list.getKey().equals(key)) {
             key = list.getKey();
-            list = getChoicelist(key);
+            list = getSelectionList(key);
         }
         return list;
     }

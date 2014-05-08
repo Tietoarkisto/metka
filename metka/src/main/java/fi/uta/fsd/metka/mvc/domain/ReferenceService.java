@@ -1,12 +1,12 @@
 package fi.uta.fsd.metka.mvc.domain;
 
 import fi.uta.fsd.metka.data.collecting.ReferenceCollecting;
-import fi.uta.fsd.metka.data.enums.ChoicelistType;
+import fi.uta.fsd.metka.data.enums.SelectionListType;
 import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.model.configuration.Choicelist;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.configuration.Reference;
+import fi.uta.fsd.metka.model.configuration.SelectionList;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOptionsRequest;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +41,9 @@ public class ReferenceService {
             case REFERENCECONTAINER:
                 reference = config.getReference(field.getReference());
                 break;
-            case CHOICE:
-                Choicelist list = config.getRootChoicelist(field.getChoicelist());
-                if(list == null || list.getType() != ChoicelistType.REFERENCE) {
+            case SELECTION:
+                SelectionList list = config.getRootSelectionList(field.getSelectionList());
+                if(list == null || list.getType() != SelectionListType.REFERENCE) {
                     return null;
                 }
                 reference = config.getReference(list.getReference());

@@ -3,7 +3,7 @@ package fi.uta.fsd.metka.model.configuration;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import fi.uta.fsd.metka.data.enums.ChoicelistType;
+import fi.uta.fsd.metka.data.enums.SelectionListType;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -13,18 +13,18 @@ import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonIgnoreProperties("_comment")
-public class Choicelist {
+public class SelectionList {
     @XmlElement private final String key;
     @XmlElement(name = "default") @JsonProperty("default") private String def = "0";
     @XmlElement private final List<Option> options = new ArrayList<>();
-    @XmlElement private ChoicelistType type;
+    @XmlElement private SelectionListType type;
     @XmlElement private String reference;
     @XmlElement private Boolean includeEmpty = true;
     @XmlElement private final List<String> freeText = new ArrayList<>();
     @XmlElement private String freeTextKey;
 
     @JsonCreator
-    public Choicelist(@JsonProperty("key") String key) {
+    public SelectionList(@JsonProperty("key") String key) {
         this.key = key;
     }
 
@@ -44,11 +44,11 @@ public class Choicelist {
         return options;
     }
 
-    public ChoicelistType getType() {
+    public SelectionListType getType() {
         return type;
     }
 
-    public void setType(ChoicelistType type) {
+    public void setType(SelectionListType type) {
         this.type = type;
     }
 
@@ -85,7 +85,7 @@ public class Choicelist {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Choicelist that = (Choicelist) o;
+        SelectionList that = (SelectionList) o;
 
         if (!key.equals(that.key)) return false;
 
@@ -99,7 +99,7 @@ public class Choicelist {
 
     @Override
     public String toString() {
-        String out = "Choicelist["+key+"], options[";
+        String out = "selectionList["+key+"], options[";
         for(Option option : options) {
             out += option;
             out += ", ";

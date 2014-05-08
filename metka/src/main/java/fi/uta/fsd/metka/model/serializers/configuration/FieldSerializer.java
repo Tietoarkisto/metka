@@ -61,8 +61,8 @@ public class FieldSerializer extends JsonSerializer<Field> {
                 }
                 jgen.writeEndArray();
                 break;
-            case CHOICE:
-                jgen.writeStringField("choicelist", value.getChoicelist());
+            case SELECTION:
+                jgen.writeStringField("selectionList", value.getSelectionList());
                 break;
             case REFERENCE:
                 jgen.writeStringField("reference", value.getReference());

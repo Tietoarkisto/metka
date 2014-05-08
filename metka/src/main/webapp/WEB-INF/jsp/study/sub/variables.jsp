@@ -209,12 +209,12 @@
                     var tr, td, data;
                     tr = $("<tr>");
 
-                    var choicelist = MetkaJS.JSConfigUtil.getField("statisticstype", MetkaJS.E.Conf.STUDY).choicelist;
+                    var selectionList = MetkaJS.JSConfigUtil.getField("statisticstype", MetkaJS.E.Conf.STUDY).selectionList;
 
                     td = $("<td>", {class: "labelColumn"});
                     data = row.fields["statisticstype"];
                     if(data !== 'undefined' && data != null) {
-                        td.append(MetkaJS.L10N.get("STUDY."+choicelist+".choices."+data.value));
+                        td.append(MetkaJS.L10N.get("STUDY."+selectionList+".option."+data.value));
                     }
                     tr.append(td);
 

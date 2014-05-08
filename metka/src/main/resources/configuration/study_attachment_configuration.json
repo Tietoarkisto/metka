@@ -5,7 +5,7 @@
 	},
 	"sections": {
 	},
-	"choicelists": {
+	"selectionLists": {
 		"fileaip_list": {
 			"key": "fileaip_list",
 			"type": "VALUE",
@@ -183,43 +183,43 @@
 			"key": "filecategory",
 			"translatable": false,
 			"required": true,
-			"type": "CHOICE",
-			"choicelist": "filecategory_list"
+			"type": "SELECTION",
+			"selectionList": "filecategory_list"
 		},
 		"fileaip": {
 			"key": "fileaip",
 			"translatable": false,
 			"required": true,
-			"type": "CHOICE",
-			"choicelist": "fileaip_list"
+			"type": "SELECTION",
+			"selectionList": "fileaip_list"
 		},
 		"filelanguage": {
 			"key": "filelanguage",
 			"translatable": false,
 			"required": true,
-			"type": "CHOICE",
-			"choicelist": "filelanguage_list"
+			"type": "SELECTION",
+			"selectionList": "filelanguage_list"
 		},
 		"fileoriginal": {
 			"key": "fileoriginal",
 			"translatable": false,
 			"required": true,
-			"type": "CHOICE",
-			"choicelist": "fileoriginal_list"
+			"type": "SELECTION",
+			"selectionList": "fileoriginal_list"
 		},
 		"filepublication": {
 			"key": "filepublication",
 			"translatable": false,
 			"required": true,
-			"type": "CHOICE",
-			"choicelist": "filepublication_list"
+			"type": "SELECTION",
+			"selectionList": "filepublication_list"
 		},
 		"filedip": {
 			"key": "filedip",
 			"translatable": false,
 			"required": true,
-			"type": "CHOICE",
-			"choicelist": "filedip_list"
+			"type": "SELECTION",
+			"selectionList": "filedip_list"
 		}
 	}
 }

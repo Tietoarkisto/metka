@@ -7,8 +7,8 @@
 <c:set var="readonly" value="${empty param.readonly ? false : param.readonly}" />
 <c:set var="singlecolumn" value="${empty param.singlecolumn ? true : param.singlecolumn}" />
 
-<c:set var="choicelist" value="${configuration[context].fields[param.field].choicelist}" />
-<c:set var="optionslist" value="${configuration[context].choicelists[choicelist].key}" />
+<c:set var="selectionList" value="${configuration[context].fields[param.field].selectionList}" />
+<c:set var="optionsList" value="${configuration[context].selectionLists[selectionList].key}" />
 
 <c:if test="${singlecolumn == false}">
     <td class="labelColumn"><form:label path="values['${param.field}']"><spring:message code="${context}.field.${param.field}"/></form:label></td>
@@ -23,9 +23,9 @@
                 <c:when test="${single.values[param.field] == null or single.values[param.field] == ''}">
                     <input type="text" readonly="${readonly}" value="" />
                 </c:when>
-                <c:when test="${configuration[context].choicelists[optionslist].type == 'VALUE'}"><input type="text" readonly="${readonly}" value="<spring:message code="${context}.${optionslist}.choices.${single.values[param.field]}"/>" /></c:when>
+                <c:when test="${configuration[context].selectionLists[optionsList].type == 'VALUE'}"><input type="text" readonly="${readonly}" value="<spring:message code="${context}.${optionsList}.option.${single.values[param.field]}"/>" /></c:when>
                 <c:otherwise>
-                    <c:forEach var="option" items="${configuration[context].choicelists[optionslist].options}">
+                    <c:forEach var="option" items="${configuration[context].selectionLists[optionsList].options}">
                         <c:if test="${option.value == single.values[param.field]}">
                             <input type="text" readonly="${readonly}" value="${option.title}" />
                         </c:if>
@@ -36,13 +36,13 @@
         </c:when>
         <c:otherwise>
             <form:select path="values['${param.field}']" autocomplete="off" >
-                <c:if test="${configuration[context].choicelists[choicelist].includeEmpty == true or configuration[context].choicelists[optionslist].includeEmpty == true}">
+                <c:if test="${configuration[context].selectionLists[selectionList].includeEmpty == true or configuration[context].selectionLists[optionsList].includeEmpty == true}">
                     <form:option value="${null}"><spring:message code="general.list.empty"/></form:option>
                 </c:if>
-                <c:forEach var="option" items="${configuration[context].choicelists[optionslist].options}">
+                <c:forEach var="option" items="${configuration[context].selectionLists[optionsList].options}">
                     <form:option value="${option.value}">
                         <c:choose>
-                            <c:when test="${configuration[context].choicelists[optionslist].type == 'VALUE'}"><spring:message code="${context}.${optionslist}.choices.${option.value}"/></c:when>
+                            <c:when test="${configuration[context].selectionLists[optionsList].type == 'VALUE'}"><spring:message code="${context}.${optionsList}.option.${option.value}"/></c:when>
                             <c:otherwise>${option.title}</c:otherwise>
                         </c:choose>
                     </form:option>
@@ -52,10 +52,10 @@
     </c:choose>
 
     <%--Doesn't work like this, need to create field without table cell--%>
-    <%--<c:if test="${not empty configuration[context].choicelists[choicelist].freeTextKey}">
+    <%--<c:if test="${not empty configuration[context].selectionLists[selectionList].freeTextKey}">
         <div class="${param.field}_freeText">
             <jsp:include page="formText.jsp">
-                <jsp:param name="field" value="${configuration[context].choicelists[choicelist].freeTextKey}" />
+                <jsp:param name="field" value="${configuration[context].selectionLists[selectionList].freeTextKey}" />
                 <jsp:param name="readonly" value="${readonly}" />
             </jsp:include>
             &lt;%&ndash; TODO: Add select component change listener with free text resolver &ndash;%&gt;

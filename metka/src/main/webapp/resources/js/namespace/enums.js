@@ -32,7 +32,7 @@ MetkaJS.E = {
      */
     Field: {
         STRING: "STRING",
-        CHOICE: "CHOICE",
+        SELECTION: "SELECTION",
         CONTAINER: "CONTAINER",
         REFERENCE: "REFERENCE",
         REFERENCECONTAINER: "REFERENCECONTAINER"
@@ -46,9 +46,9 @@ MetkaJS.E = {
         SERIES: "SERIES"
     },
     /**
-     * Choicelist types
+     * SelectionList types
      */
-    Choice: {
+    Selection: {
         VALUE: "VALUE",
         SUBLIST: "SUBLIST",
         LITERAL: "LITERAL",

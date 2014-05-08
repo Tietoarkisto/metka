@@ -56,7 +56,7 @@ class RevisionableReferenceHandler extends ReferenceHandler {
                 // TODO: Fetch value based on path, not just assumption that it's a top level field
                 SavedDataField saved = getSavedDataFieldFromRevisionData(data, reference.getTitlePath());
                 if(saved != null) {
-                    if(config.getField(reference.getTitlePath()).getType() == FieldType.CHOICE) {
+                    if(config.getField(reference.getTitlePath()).getType() == FieldType.SELECTION) {
                         title = new ReferenceOptionTitle(ReferenceTitleType.VALUE, saved.getActualValue());
                     } else {
                         title = new ReferenceOptionTitle(ReferenceTitleType.LITERAL,saved.getActualValue());

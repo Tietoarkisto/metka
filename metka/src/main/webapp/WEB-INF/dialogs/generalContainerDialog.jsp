@@ -21,13 +21,13 @@
                         <jsp:param name="field" value="${subkey}" />
                     </jsp:include>
                 </c:if>
-                <c:if test="${configuration[context].fields[subkey].type == 'CHOICE' and configuration[context].choicelists[configuration[context].fields[subkey].choicelist].type != 'REFERENCE'}">
-                    <jsp:include page="inc/dialogChoiceRow.jsp">
+                <c:if test="${configuration[context].fields[subkey].type == 'SELECTION' and configuration[context].selectionLists[configuration[context].fields[subkey].selectionList].type != 'REFERENCE'}">
+                    <jsp:include page="inc/dialogSelectionRow.jsp">
                         <jsp:param name="container" value="${param.field}" />
                         <jsp:param name="field" value="${subkey}" />
                     </jsp:include>
                 </c:if>
-                <c:if test="${configuration[context].fields[subkey].type == 'CHOICE' and configuration[context].choicelists[configuration[context].fields[subkey].choicelist].type == 'REFERENCE'}">
+                <c:if test="${configuration[context].fields[subkey].type == 'SELECTION' and configuration[context].selectionLists[configuration[context].fields[subkey].selectionList].type == 'REFERENCE'}">
                     <jsp:include page="inc/dialogReferenceRow.jsp">
                         <jsp:param name="container" value="${param.field}" />
                         <jsp:param name="field" value="${subkey}" />

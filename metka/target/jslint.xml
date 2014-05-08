@@ -1,0 +1,84 @@
+<jslint><file name='/home/lasseku/repo/metka/metka/src/main/webapp/resources/js/namespace/errorManager.js'>
+<issue line='7' char='33' reason='Expected exactly one space between &apos;function&apos; and &apos;(&apos;.' evidence='MetkaJS.ErrorManager = (function() {'/>
+<issue line='7' char='33' reason='Stopping.  (9% scanned).' evidence=''/>
+</file><file name='/home/lasseku/repo/metka/metka/src/main/webapp/resources/js/namespace/jsConfigUtil.js'>
+<issue line='10' char='5' reason='Expected &apos;getField&apos; at column 1, not column 5.' evidence='    getField: function(key, context) {'/>
+<issue line='10' char='5' reason='Stopping.  (12% scanned).' evidence=''/>
+</file><file name='/home/lasseku/repo/metka/metka/src/main/webapp/resources/js/namespace/metkaJS.js'>
+<issue line='4' char='5' reason='Expected &apos;DialogHandlers&apos; at column 1, not column 5.' evidence='    DialogHandlers: {}, // This is used to collect and reference custom dialog handlers used throughout the application'/>
+<issue line='4' char='5' reason='Stopping.  (2% scanned).' evidence=''/>
+</file><file name='/home/lasseku/repo/metka/metka/src/main/webapp/resources/js/namespace/tableHandler.js'>
+<issue line='1' char='32' reason='Expected exactly one space between &apos;function&apos; and &apos;(&apos;.' evidence='MetkaJS.TableHandler = function() {'/>
+<issue line='1' char='32' reason='Stopping.  (0% scanned).' evidence=''/>
+</file><file name='/home/lasseku/repo/metka/metka/src/main/webapp/resources/js/namespace/eventManager.js'>
+<issue line='1' char='33' reason='Expected exactly one space between &apos;function&apos; and &apos;(&apos;.' evidence='MetkaJS.EventManager = (function() {'/>
+<issue line='1' char='33' reason='Stopping.  (1% scanned).' evidence=''/>
+</file><file name='/home/lasseku/repo/metka/metka/src/main/webapp/resources/js/namespace/enums.js'>
+<issue line='10' char='5' reason='Expected &apos;Event&apos; at column 1, not column 5.' evidence='    Event: {'/>
+<issue line='10' char='5' reason='Stopping.  (15% scanned).' evidence=''/>
+</file><file name='/home/lasseku/repo/metka/metka/src/main/webapp/resources/js/namespace/reference.js'>
+<issue line='1' char='37' reason='Expected exactly one space between &apos;function&apos; and &apos;(&apos;.' evidence='MetkaJS.ReferenceHandler = (function() {'/>
+<issue line='1' char='37' reason='Stopping.  (0% scanned).' evidence=''/>
+</file><file name='/home/lasseku/repo/metka/metka/src/main/webapp/resources/js/namespace/l10n.js'>
+<issue line='4' char='25' reason='Expected exactly one space between &apos;function&apos; and &apos;(&apos;.' evidence='MetkaJS.L10N = (function() {'/>
+<issue line='4' char='25' reason='Stopping.  (13% scanned).' evidence=''/>
+</file><file name='/home/lasseku/repo/metka/metka/src/main/webapp/resources/js/jquery/jquery.fancytree.dnd.js'>
+<issue line='16' char='1' reason='Unexpected space between &apos;(begin)&apos; and &apos;;&apos;.' evidence=';(function($, window, document, undefined) {'/>
+<issue line='16' char='1' reason='Stopping.  (2% scanned).' evidence=''/>
+</file><file name='/home/lasseku/repo/metka/metka/src/main/webapp/resources/js/jquery/jquery.fancybox.pack.js'>
+<issue line='2' char='10' reason='Expected exactly one space between &apos;function&apos; and &apos;(&apos;.' evidence='(function(r,G,f,v){var J=f(&quot;html&quot;),n=f(r),p=f(G),b=f.fancybox=function(){b.open.apply(this,arguments)},I=navigator.userAgent.match(/msie/i),B=null,s=G.createTouch!==v,t=function(a){return a&amp;&amp;a.hasOwnProperty&amp;&amp;a instanceof f},q=function(a){return a&amp;&amp;&quot;string&quot;===f.type(a)},E=function(a){return q(a)&amp;&amp;0&lt;a.indexOf(&quot;%&quot;)},l=function(a,d){var e=parseInt(a,10)||0;d&amp;&amp;E(a)&amp;&amp;(e*=b.getViewport()[d]/100);return Math.ceil(e)},w=function(a,b){return l(a,b)+&quot;px&quot;};f.extend(b,{version:&quot;2.1.5&quot;,defaults:{padding:15,margin:20,'/>
+<issue line='2' char='10' reason='Stopping.  (4% scanned).' evidence=''/>
+</file><file name='/home/lasseku/repo/metka/metka/src/main/webapp/resources/js/jquery/jquery.dataTables.rowReordering.js'>
+<issue line='23' char='5' reason='Expected &apos;$&apos; at column 1, not column 5.' evidence='    $.fn.rowReordering = function (options) {'/>
+<issue line='23' char='5' reason='Stopping.  (8% scanned).' evidence=''/>
+</file><file name='/home/lasseku/repo/metka/metka/src/main/webapp/resources/js/jquery/jquery.tablesorter.pager.js'>
+<issue line='1' char='10' reason='Expected exactly one space between &apos;function&apos; and &apos;(&apos;.' evidence='(function($) {'/>
+<issue line='1' char='10' reason='Stopping.  (0% scanned).' evidence=''/>
+</file><file name='/home/lasseku/repo/metka/metka/src/main/webapp/resources/js/jquery/jquery-ui.js'>
+<issue line='5' char='10' reason='Expected exactly one space between &apos;function&apos; and &apos;(&apos;.' evidence='(function( $, undefined ) {'/>
+<issue line='5' char='10' reason='Stopping.  (0% scanned).' evidence=''/>
+</file><file name='/home/lasseku/repo/metka/metka/src/main/webapp/resources/js/jquery/jquery.fancytree.js'>
+<issue line='15' char='1' reason='Unexpected space between &apos;(begin)&apos; and &apos;;&apos;.' evidence=';(function($, window, document, undefined) {'/>
+<issue line='15' char='1' reason='Stopping.  (0% scanned).' evidence=''/>
+</file><file name='/home/lasseku/repo/metka/metka/src/main/webapp/resources/js/jquery/jquery.dataTables.min.js'>
+<issue line='18' char='10' reason='Expected exactly one space between &apos;function&apos; and &apos;(&apos;.' evidence='(function(X,l,n){var L=function(h){var j=function(e){function o(a,b){var c=j.defaults.columns,d=a.aoColumns.length,c=h.extend({},j.models.oColumn,c,{sSortingClass:a.oClasses.sSortable,sSortingClassJUI:a.oClasses.sSortJUI,nTh:b?b:l.createElement(&quot;th&quot;),sTitle:c.sTitle?c.sTitle:b?b.innerHTML:&quot;&quot;,aDataSort:c.aDataSort?c.aDataSort:[d],mData:c.mData?c.oDefaults:d});a.aoColumns.push(c);if(a.aoPreSearchCols[d]===n||null===a.aoPreSearchCols[d])a.aoPreSearchCols[d]=h.extend({},j.models.oSearch);else if(c=a.aoPreSearchCols[d],'/>
+<issue line='18' char='10' reason='Stopping.  (11% scanned).' evidence=''/>
+</file><file name='/home/lasseku/repo/metka/metka/src/main/webapp/resources/js/jquery/jquery.fastLiveFilter.js'>
+<issue line='9' char='1' reason='&apos;jQuery&apos; was used before it was defined.' evidence='jQuery.fn.fastLiveFilter = function(list, options) {'/>
+<issue line='9' char='1' reason='Stopping.  (15% scanned).' evidence=''/>
+</file><file name='/home/lasseku/repo/metka/metka/src/main/webapp/resources/js/jquery/jquery.tablesorter.min.js'>
+<issue line='2' char='10' reason='Expected exactly one space between &apos;function&apos; and &apos;(&apos;.' evidence='(function($){$.extend({tablesorter:new'/>
+<issue line='2' char='10' reason='Stopping.  (50% scanned).' evidence=''/>
+</file><file name='/home/lasseku/repo/metka/metka/src/main/webapp/resources/js/jquery/jquery.fileupload.js'>
+<issue line='16' char='5' reason='Expected &apos;use strict&apos; at column 1, not column 5.' evidence='    &apos;use strict&apos;;'/>
+<issue line='16' char='5' reason='Stopping.  (1% scanned).' evidence=''/>
+</file><file name='/home/lasseku/repo/metka/metka/src/main/webapp/resources/js/jquery/jquery.jstree.js'>
+<issue line='18' char='1' reason='Use the function form of &apos;use strict&apos;.' evidence='&quot;use strict&quot;;'/>
+<issue line='18' char='1' reason='Stopping.  (0% scanned).' evidence=''/>
+</file><file name='/home/lasseku/repo/metka/metka/src/main/webapp/resources/js/jquery/jquery.fancytree.filter.js'>
+<issue line='16' char='1' reason='Unexpected space between &apos;(begin)&apos; and &apos;;&apos;.' evidence=';(function($, window, document, undefined) {'/>
+<issue line='16' char='1' reason='Stopping.  (11% scanned).' evidence=''/>
+</file><file name='/home/lasseku/repo/metka/metka/src/main/webapp/resources/js/jquery/jquery-1.10.2.js'>
+<issue line='14' char='10' reason='Expected exactly one space between &apos;function&apos; and &apos;(&apos;.' evidence='(function( window, undefined ) {'/>
+<issue line='14' char='10' reason='Stopping.  (0% scanned).' evidence=''/>
+</file><file name='/home/lasseku/repo/metka/metka/src/main/webapp/resources/js/handlers/studyFilesHandler.js'>
+<issue line='1' char='52' reason='Expected exactly one space between &apos;function&apos; and &apos;(&apos;.' evidence='MetkaJS.DialogHandlers.studyFilesHandler = function() {'/>
+<issue line='1' char='52' reason='Stopping.  (0% scanned).' evidence=''/>
+</file><file name='/home/lasseku/repo/metka/metka/src/main/webapp/resources/js/handlers/generalHandlers.js'>
+<issue line='15' char='58' reason='Expected exactly one space between &apos;function&apos; and &apos;(&apos;.' evidence='MetkaJS.DialogHandlers.generalContainerHandler = function() {'/>
+<issue line='15' char='58' reason='Stopping.  (8% scanned).' evidence=''/>
+</file><file name='/home/lasseku/repo/metka/metka/src/main/webapp/resources/js/custom/general.js'>
+</file><file name='/home/lasseku/repo/metka/metka/src/main/webapp/resources/js/custom/series.js'>
+<issue line='1' char='27' reason='Expected exactly one space between &apos;function&apos; and &apos;(&apos;.' evidence='$(document).ready(function(){'/>
+<issue line='1' char='27' reason='Stopping.  (25% scanned).' evidence=''/>
+</file><file name='/home/lasseku/repo/metka/metka/src/main/webapp/resources/js/custom/table.js'>
+<issue line='1' char='27' reason='Expected exactly one space between &apos;function&apos; and &apos;(&apos;.' evidence='$(document).ready(function() {'/>
+<issue line='1' char='27' reason='Stopping.  (14% scanned).' evidence=''/>
+</file><file name='/home/lasseku/repo/metka/metka/src/main/webapp/resources/js/custom/history.js'>
+<issue line='54' char='18' reason='Expected &apos;===&apos; and instead saw &apos;==&apos;.' evidence='					if (rowData.type == &apos;CONTAINER&apos;) {'/>
+<issue line='54' char='18' reason='Stopping.  (31% scanned).' evidence=''/>
+</file><file name='/home/lasseku/repo/metka/metka/src/main/webapp/resources/js/custom/study.js'>
+<issue line='1' char='27' reason='Expected exactly one space between &apos;function&apos; and &apos;(&apos;.' evidence='$(document).ready(function(){'/>
+<issue line='1' char='27' reason='Stopping.  (33% scanned).' evidence=''/>
+</file><file name='/home/lasseku/repo/metka/metka/src/main/webapp/resources/js/custom/dialogs.js'>
+</file></jslint>

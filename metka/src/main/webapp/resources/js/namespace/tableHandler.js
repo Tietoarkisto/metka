@@ -94,8 +94,8 @@ MetkaJS.TableHandler = function() {
 
                 var td = $("<td>");
                 switch(subfield.type) {
-                    case MetkaJS.E.Field.CHOICE:
-                        td.text(MetkaJS.L10N.get(MetkaJS.Globals.page.toUpperCase()+"."+subfield.choicelist+".choices."+value.value));
+                    case MetkaJS.E.Field.SELECTION:
+                        td.text(MetkaJS.L10N.get(MetkaJS.Globals.page.toUpperCase()+"."+subfield.selectionList+".option."+value.value));
                         break;
                     default:
                         td.text(value.value);
@@ -347,10 +347,10 @@ MetkaJS.TableHandler = function() {
                     td.append(option.title.value);
                 } else if(option.title.type == MetkaJS.E.RefTitle.VALUE) {
                     var targetField = MetkaJS.JSConfigUtil.getField(reference.titlePath, target);
-                    if(targetField == null || targetField.type != MetkaJS.E.Field.CHOICE) {
+                    if(targetField == null || targetField.type != MetkaJS.E.Field.SELECTION) {
                         td.append(option.title.value);
                     } else {
-                        td.append(MetkaJS.L10N.get(target+"."+targetField.choicelist+".choices."+option.title.value));
+                        td.append(MetkaJS.L10N.get(target+"."+targetField.selectionList+".option."+option.title.value));
                     }
                 }
 

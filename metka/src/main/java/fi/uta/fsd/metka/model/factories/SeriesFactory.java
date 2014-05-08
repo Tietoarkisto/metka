@@ -31,7 +31,7 @@ public class SeriesFactory extends DataFactory {
      * Constructs a new dataset for a Revision entity.
      * Entity should have no previous data and its state should be DRAFT.
      * All required field values that can be inserted automatically will be added as
-     * modified values containing some default value like revisionable id or choicelist default selection.
+     * modified values containing some default value like revisionable id or selectionList default selection.
      *
      * As a result the supplied RevisionEntity will have a every required field that can be automatically set
      * initialised to its default value.

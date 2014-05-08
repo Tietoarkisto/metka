@@ -32,7 +32,7 @@
 			"key": "import_export"
 		}
 	},
-	"choicelists": {
+	"selectionLists": {
 		"datakind_list": {
 			"key": "datakind_list",
 			"type": "VALUE",
@@ -425,8 +425,8 @@
 		"anonymization": {
 			"key": "anonymization",
 			"translatable": false,
-			"type": "CHOICE",
-			"choicelist": "anonymization_list",
+			"type": "SELECTION",
+			"selectionList": "anonymization_list",
 			"section": "basic_information"
 		},
 		"anonymizationother": {
@@ -447,8 +447,8 @@
 		"datakind": {
 			"key": "datakind",
 			"translatable": false,
-			"type": "CHOICE",
-			"choicelist": "datakind_list",
+			"type": "SELECTION",
+			"selectionList": "datakind_list",
 			"section": "basic_information"
 		},
 		"dataversions": {
@@ -486,9 +486,9 @@
 			"key": "versionlabel",
 			"translatable": false,
 			"required": true,
-			"type": "CHOICE",
+			"type": "SELECTION",
 			"section": "basic_information",
-			"choicelist": "dataversionlabel_list",
+			"selectionList": "dataversionlabel_list",
 			"subfield": true
 		},
 		"versionnotes": {
@@ -520,8 +520,8 @@
 		"descpublic": {
 			"key": "descpublic",
 			"translatable": false,
-			"type": "CHOICE",
-			"choicelist": "descpublic_list",
+			"type": "SELECTION",
+			"selectionList": "descpublic_list",
 			"section": "basic_information"
 		},
 		"descversions": {
@@ -553,15 +553,15 @@
 			"section": "basic_information"
 		},
 		"study_id_prefix": {
-			"_comment": "Contains the letter part of study id. This comes automatically from the default value of the choicelist.",
+			"_comment": "Contains the letter part of study id. This comes automatically from the default value of the selectionList.",
 			"key": "study_id_prefix",
 			"translatable": false,
 			"immutable": true,
 			"editable": false,
 			"required": true,
 			"display": false,
-			"type": "CHOICE",
-			"choicelist": "id_prefix_list",
+			"type": "SELECTION",
+			"selectionList": "id_prefix_list",
 			"section": "basic_information"
 			
 		},
@@ -619,22 +619,22 @@
 		"public": {
 			"key": "public",
 			"translatable": false,
-			"type": "CHOICE",
-			"choicelist": "public_list",
+			"type": "SELECTION",
+			"selectionList": "public_list",
 			"section": "basic_information"
 		},
 		"securityissues": {
 			"key": "securityissues",
 			"translatable": false,
-			"type": "CHOICE",
-			"choicelist": "securityissues_list",
+			"type": "SELECTION",
+			"selectionList": "securityissues_list",
 			"section": "basic_information"
 		},
 		"seriesid": {
 			"key": "seriesid",
 			"translatable": false,
-			"type": "CHOICE",
-			"choicelist": "series_list",
+			"type": "SELECTION",
+			"selectionList": "series_list",
 			"section": "basic_information"
 		},
 		"seriesiddep1": {
@@ -653,9 +653,9 @@
 			"_comment": "This is strictly a test case, should be removed",
 			"key": "seriesiddep2",
 			"translatable": false,
-			"type": "CHOICE",
+			"type": "SELECTION",
 			"multiline": true,
-			"choicelist": "dependency_test_list",
+			"selectionList": "dependency_test_list",
 			"reference": "dependency_test_ref2",
 			"section": "basic_information",
 			"writable": false,
@@ -679,16 +679,16 @@
 		"varpublic": {
 			"key": "varpublic",
 			"translatable": false,
-			"type": "CHOICE",
-			"choicelist": "varpublic_list",
+			"type": "SELECTION",
+			"selectionList": "varpublic_list",
 			"section": "basic_information"
 		},
 		"termsofuse": {
 			"key": "termsofuse",
 			"translatable": false,
 			"required": true,
-			"type": "CHOICE",
-			"choicelist": "termsofuse_list",
+			"type": "SELECTION",
+			"selectionList": "termsofuse_list",
 			"section": "deposit_agreement"
 		},
 		"agreementdate": {
@@ -713,8 +713,8 @@
 			"key": "depositortype",
 			"translatable": false,
 			"required": true,
-			"type": "CHOICE",
-			"choicelist": "depositortype_list",
+			"type": "SELECTION",
+			"selectionList": "depositortype_list",
 			"section": "deposit_agreement"
 		},
 		"triggerpro": {
@@ -726,16 +726,16 @@
 		"newtermsofuse": {
 			"key": "newtermsofuse",
 			"translatable": false,
-			"type": "CHOICE",
-			"choicelist": "newtermsofuse_list",
+			"type": "SELECTION",
+			"selectionList": "newtermsofuse_list",
 			"section": "deposit_agreement"
 		},
 		"agreementtype": {
 			"key": "agreementtype",
 			"translatable": false,
 			"required": true,
-			"type": "CHOICE",
-			"choicelist": "agreementtype_list",
+			"type": "SELECTION",
+			"selectionList": "agreementtype_list",
 			"section": "deposit_agreement"
 		},
 		"triggerlabel": {
@@ -838,8 +838,8 @@
 			"key": "authortype",
 			"translatable": false,
 			"required": true,
-			"type": "CHOICE",
-			"choicelist": "authortype_list",
+			"type": "SELECTION",
+			"selectionList": "authortype_list",
 			"section": "deposit_agreement",
 			"subfield": true,
 			"summaryField": false
@@ -1012,8 +1012,8 @@
 			"key": "topicvocab",
 			"translatable": false,
 			"required": true,
-			"type": "CHOICE",
-			"choicelist": "topicvocab_list",
+			"type": "SELECTION",
+			"selectionList": "topicvocab_list",
 			"section": "study_description",
 			"subfield": true
 		},
@@ -1021,8 +1021,8 @@
 			"key": "topic",
 			"translatable": false,
 			"required": true,
-			"type": "CHOICE",
-			"choicelist": "topic_list",
+			"type": "SELECTION",
+			"selectionList": "topic_list",
 			"section": "study_description",
 			"subfield": true
 		},
@@ -1061,8 +1061,8 @@
 		"timeperiodevent": {
 			"key": "timeperiodevent",
 			"translatable": false,
-			"type": "CHOICE",
-			"choicelist": "timeperiodevent_list",
+			"type": "SELECTION",
+			"selectionList": "timeperiodevent_list",
 			"section": "study_description",
 			"subfield": true
 		},
@@ -1115,8 +1115,8 @@
 		"universeclusion": {
 			"key": "universeclusion",
 			"translatable": false,
-			"type": "CHOICE",
-			"choicelist": "universeclusion_list",
+			"type": "SELECTION",
+			"selectionList": "universeclusion_list",
 			"section": "study_description",
 			"subfield": true
 		},
@@ -1167,8 +1167,8 @@
 		"colldateevent": {
 			"key": "colldateevent",
 			"translatable": false,
-			"type": "CHOICE",
-			"choicelist": "colldateevent_list",
+			"type": "SELECTION",
+			"selectionList": "colldateevent_list",
 			"section": "study_description",
 			"subfield": true
 		},
@@ -1251,8 +1251,8 @@
 			"key": "sampproc",
 			"translatable": false,
 			"required": false,
-			"type": "CHOICE",
-			"choicelist": "sampproc_list",
+			"type": "SELECTION",
+			"selectionList": "sampproc_list",
 			"section": "study_description",
 			"subfield": true
 		},
@@ -1608,7 +1608,7 @@
 			"subfield": true
 		},
 		"varsecurity": {
-			"_comment": "Should this be a CHOICE instead?",
+			"_comment": "Should this be a SELECTION instead?",
 			"key": "varsecurity",
 			"translatable": false,
 			"required": true,
@@ -1680,8 +1680,8 @@
 			"required": true,
 			"editable": false,
 			"immutable": true,
-			"type": "CHOICE",
-			"choicelist": "statisticstype_list",
+			"type": "SELECTION",
+			"selectionList": "statisticstype_list",
 			"section": "variables",
 			"subfield": true
 		},

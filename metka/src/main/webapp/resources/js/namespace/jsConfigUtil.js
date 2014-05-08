@@ -17,28 +17,28 @@ MetkaJS.JSConfigUtil = {
         return null;
     },
     /**
-     * Returns a choicelist configuration for the given key and context.
+     * Returns a selectionList configuration for the given key and context.
      * If no context is given uses current page (from Globals).
-     * Returns null if no choicelist can be found with given parameters.
-     * Returns the root configuration for choicelist, meaning the actual
+     * Returns null if no selection list can be found with given parameters.
+     * Returns the root configuration for selection list, meaning the actual
      * configuration containing type, options etc. not the configuration
      * given in field configuration necessarily.
-     * @param key Choicelist key used as a starting point for search.
+     * @param key SelectionList key used as a starting point for search.
      * @param context Desired configuration context, can be omitted
-     * @returns Choicelist configuration
+     * @returns SelectionList configuration
      */
-    getRootChoicelist: function(key, context) {
+    getRootSelectionList: function(key, context) {
         if(context == null) {
             context = MetkaJS.Globals.page.toUpperCase();
         }
         if(key != null && context != null && MetkaJS.JSConfig[context] != null) {
             // TODO: Implement loop protection
-            var choicelist = MetkaJS.JSConfig[context].choicelists[key];
-            while(choicelist.key != key) {
-                key = choicelist.key;
-                choicelist = MetkaJS.JSConfig[context].choicelists[key];
+            var selectionList = MetkaJS.JSConfig[context].selectionLists[key];
+            while(selectionList.key != key) {
+                key = selectionList.key;
+                selectionList = MetkaJS.JSConfig[context].selectionLists[key];
             }
-            return choicelist;
+            return selectionList;
         }
         return null;
     },

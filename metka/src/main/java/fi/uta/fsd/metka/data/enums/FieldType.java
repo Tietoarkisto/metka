@@ -12,7 +12,7 @@ public enum FieldType {
     REFERENCE,
     CONTAINER,
     REFERENCECONTAINER,
-    CHOICE,
+    SELECTION,
     CONCAT,
     DATE,
     DATETIME,

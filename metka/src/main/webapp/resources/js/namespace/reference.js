@@ -104,10 +104,10 @@ MetkaJS.ReferenceHandler = (function() {
     function referenceInput(field, context, dependencyValue, container) {
         var reference = null;
         switch(field.type) {
-            case MetkaJS.E.Field.CHOICE:
-                var choicelist = MetkaJS.JSConfigUtil.getRootChoicelist(field.choicelist);
-                if(choicelist != null && choicelist.type == MetkaJS.E.Choice.REFERENCE) {
-                    reference = MetkaJS.JSConfigUtil.getReference(choicelist.reference);
+            case MetkaJS.E.Field.SELECTION:
+                var selectionList = MetkaJS.JSConfigUtil.getRootSelectionList(field.selectionList);
+                if(selectionList != null && selectionList.type == MetkaJS.E.Selection.REFERENCE) {
+                    reference = MetkaJS.JSConfigUtil.getReference(selectionList.reference);
                 }
                 break;
             case MetkaJS.E.Field.REFERENCE:
@@ -127,10 +127,10 @@ MetkaJS.ReferenceHandler = (function() {
                 switch(depField.type) {
                     case MetkaJS.E.Field.REFERENCE:
                     case MetkaJS.E.Field.STRING:
-                    case MetkaJS.E.Field.CHOICE:
+                    case MetkaJS.E.Field.SELECTION:
                         // TODO: We are assuming here that current field and dependency field are both top level fields. This should get generalises at some point.
 
-                        // With choice we don't really care about if the choice is REFERENCE etc. since we only want the current value.
+                        // With selection we don't really care about if the selection is REFERENCE etc. since we only want the current value.
                         // Server can make better judgements on how to use that value.
                         if(depField.subfield == false) {
                             // If dependency field is not a subfield then try to get a top level field
@@ -229,9 +229,9 @@ MetkaJS.ReferenceHandler = (function() {
         var field = MetkaJS.JSConfigUtil.getField(key);
 
         switch(field.type) {
-            case MetkaJS.E.Field.CHOICE:
-                var choicelist = MetkaJS.JSConfigUtil.getRootChoicelist(field.choicelist);
-                createReferenceSelection(field, data.options, choicelist.includeEmpty, data.container);
+            case MetkaJS.E.Field.SELECTION:
+                var selectionList = MetkaJS.JSConfigUtil.getRootSelectionList(field.selectionList);
+                createReferenceSelection(field, data.options, selectionList.includeEmpty, data.container);
                 break;
             case MetkaJS.E.Field.REFERENCE:
                 if(data.options.length <= 0) {
@@ -377,7 +377,7 @@ MetkaJS.ReferenceHandler = (function() {
         }
 
         hidden.val(option.value);
-        // TODO: Handle VALUE type titles by selecting correct choice translation
+        // TODO: Handle VALUE type titles by selecting correct selection translation
         text.val(option.title.value);
 
         input.replaceWith(hidden);

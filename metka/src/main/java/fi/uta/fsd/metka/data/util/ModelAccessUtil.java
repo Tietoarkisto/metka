@@ -611,7 +611,8 @@ public class ModelAccessUtil {
             case DATETIME:
             case TIME:
             case REFERENCE: // For now treat as a simple value and assume that the value comes from a valid source.
-            case CHOICE: // Choice can be treated as a string since only choice value is saved and it is saved as a string.
+            case SELECTION: // Selection can be treated as a string since only selected value is saved and it is saved as a string.
+                // TODO: Separate saving of SELECTION to enable saving freeText value
             case STRING: { // Assume correctness and treat values as string.
 
                 /*String strValue = "";

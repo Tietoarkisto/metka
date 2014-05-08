@@ -1,23 +1,22 @@
 package fi.uta.fsd.metka.model.serializers.configuration;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import fi.uta.fsd.metka.model.configuration.Choicelist;
 import fi.uta.fsd.metka.model.configuration.Option;
+import fi.uta.fsd.metka.model.configuration.SelectionList;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 
 /**
- * Serializer for Configuration Choicelist pertaining information only to choicelist type
+ * Serializer for Configuration SelectionList pertaining information only to selection list type
  */
-public class ChoicelistSerializer extends JsonSerializer<Choicelist> {
+public class SelectionListSerializer extends JsonSerializer<SelectionList> {
 
     @Override
-    public void serialize(Choicelist value, JsonGenerator jgen, SerializerProvider provider)
-            throws IOException, JsonProcessingException {
+    public void serialize(SelectionList value, JsonGenerator jgen, SerializerProvider provider)
+            throws IOException {
         jgen.writeStartObject();
 
         jgen.writeStringField("key", value.getKey());
