@@ -42,7 +42,6 @@
 +concatenate : String [0..*]
 +subfield : Boolean = false
 +reference : Reference [0..1]
-+referenceKey : String [0..1]
 +multiline : Boolean = false
 +showReferenceKey : Boolean = false
 +showSaveInfo : Boolean = false
@@ -94,7 +93,7 @@ TIME
           <y:Geometry height="1042.4774311926599" width="409.60000000000014" x="1427.149770642202" y="545.4208333333333"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="1037.6875" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="406.38671875" x="4.0" y="4.0">key: identifies the field inside this configuration.
+          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="967.84375" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="406.38671875" x="4.0" y="4.0">key: identifies the field inside this configuration.
     all versionable objects use only one configuration
     so there should be no clashes.
  
@@ -142,11 +141,6 @@ concatenate: List of keys that are used if the type of this field
 reference: If this field is REFERENCE or REFERENCECONTAINER
     then there should be a reference object describing the
     reference.
-
-referenceKey: Used for REFERENCECONTAINER subfields to tell
-    what value they should display from referenced object.
-    Value is visual only and these fields are never saved on the
-    object being viewed.
 
 multiline: Is the value shown on the UI using a textarea or
     singleline text input. Default false.
