@@ -34,7 +34,7 @@
 			$('#' + key + 'ContainerDialogTable .dialogValue').prop('readonly', false);
 			// Get content so we can find the actual data.
 			var content = MetkaJS.TableHandler.readContent(key);
-			if ((content === 'undefined' || content === null) && (handlerId !== 'undefined' && handlerId !== null)) {
+			if ((typeof content === 'undefined' || content === null) && (typeof handlerId !== 'undefined' && handlerId !== null)) {
 				// No content was found but this is supposed to be an existing row. Return false since we can't be sure about anything at this point.
 				return false;
 			}

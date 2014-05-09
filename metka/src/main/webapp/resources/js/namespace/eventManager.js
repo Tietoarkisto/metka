@@ -1,7 +1,7 @@
 (function () {
 	'use strict';
 
-	var eventListeners = [];
+	var eventListeners = {};
 
 	MetkaJS.EventManager = {
 		/**
@@ -14,12 +14,12 @@
 		 */
 		listen: function (type, listener, target, callback) {
 			var typed = eventListeners[type];
-			if (typed === null) {
+			if (!typed) {
 				typed = [];
 				eventListeners[type] = typed;
 			}
 			var targeted = typed[target];
-			if (targeted === null) {
+			if (!targeted) {
 				targeted = [];
 				typed[target] = targeted;
 			}
@@ -55,12 +55,12 @@
 		 * @param notifier Information of the event thrower. Must contain at least target-attribute since this is used to find listeners.
 		 */
 		notify: function (type, notifier) {
-			if (eventListeners[type] === null || notifier.target === null || eventListeners[type][notifier.target] === null) {
+			if (!eventListeners[type] || !notifier.target || !eventListeners[type][notifier.target]) {
 				// no listeners or notifier didn't give target
 				return;
 			}
 			var listeners = eventListeners[type][notifier.target];
-			if (listeners === null) {
+			if (!listeners) {
 				return;
 			}
 			var i, length;

@@ -327,7 +327,7 @@
                             <failOnError>false</failOnError>
                             <options>
                                 <confusion>true</confusion>
-                                <passfail>true</passfail>
+                                <passfail>false</passfail>
                                 <plusplus>true</plusplus>
                                 <predef>$, alert, document, location, MetkaJS, sessionStorage, window</predef>
                                 <vars>true</vars>
