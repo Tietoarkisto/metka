@@ -1,0 +1,76 @@
+{
+	"key": {
+		"type": "STUDY",
+		"version": 1
+	},
+	"contents": [
+		{
+			"type": "TAB",
+			"title": "Perustiedot",
+			"content": [
+				{
+					"type": "COLUMN",
+					"columns": 1,
+					"rows": [
+						{
+							"type": "ROW",
+							"cells": [
+								{
+									"type": "CELL",
+									"title": "Aineiston nimi",
+									"field": {
+										"key": "title"
+									}
+								}
+							]
+						},
+						{
+							"type": "ROW",
+							"cells": [
+								{
+									"type": "CELL",
+									"title": "Aineiston nimi (en)",
+									"field": {
+										"key": "entitle"
+									}
+								}
+							]
+						}
+					]
+				},
+				{
+					"type": "COLUMN",
+					"columns": 3,
+					"rows": [
+						{
+							"type": "ROW",
+							"cells": [
+								{
+									"type": "CELL",
+									"title": "Aineistonumero",
+									"field": {
+										"key": "id"
+									}
+								},
+								{
+									"type": "CELL",
+									"title": "Aineiston laatu",
+									"field": {
+										"key": "datakind"
+									}
+								},
+								{
+									"type": "CELL",
+									"title": "Julkaisu",
+									"field": {
+										"key": "public"
+									}
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	]
+}

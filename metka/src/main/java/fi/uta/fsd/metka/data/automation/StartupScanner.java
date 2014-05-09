@@ -5,6 +5,7 @@ import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.data.repository.MiscJSONRepository;
 import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.model.configuration.Configuration;
+import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
@@ -24,6 +25,10 @@ public class StartupScanner {
     @Autowired
     private JSONUtil json;
 
+    /**
+     * Gathers data configurations from file and saves them to database
+     * @throws IOException
+     */
     @PostConstruct
     public void scanForConfigurations() throws IOException {
         File confDir = new File("src/main/resources/configuration"); // Development
@@ -34,7 +39,7 @@ public class StartupScanner {
         for (File file : files) {
             Configuration conf = null;
             try {
-                conf = json.readConfigurationFromFile(file);
+                conf = json.readDataConfigurationFromFile(file);
             } catch(IOException ex) {
                 ex.printStackTrace();
                 continue;
@@ -45,6 +50,10 @@ public class StartupScanner {
         }
     }
 
+    /**
+     * Gathers miscellaneous JSON-files from file and saves them to database
+     * @throws IOException
+     */
     @PostConstruct
     public void scanForMiscJSON() throws IOException {
         File miscDir = new File("src/main/resources/misc"); // Development
@@ -63,6 +72,31 @@ public class StartupScanner {
 
             if(misc != null){
                 miscJsonRepo.insert(misc);
+            }
+        }
+    }
+
+    /**
+     * Gathers gui-configuration from file and saves them to database
+     * @throws IOException
+     */
+    @PostConstruct
+    public void scanForGUIConfigurations() throws IOException {
+        File guiDir = new File("src/main/resources/gui"); // Development
+        //File guiDir = new File("/usr/share/metka/gui"); // QA-server
+
+        Collection<File> files = FileUtils.listFiles(guiDir, FileFilterUtils.suffixFileFilter(".json"), TrueFileFilter.TRUE);
+
+        for (File file : files) {
+            GUIConfiguration gui = null;
+            try {
+                gui = json.readGUIConfigurationFromFile(file);
+            } catch(IOException ex) {
+                ex.printStackTrace();
+                continue;
+            }
+            if(gui != null) {
+                configRepo.insert(gui);
             }
         }
     }

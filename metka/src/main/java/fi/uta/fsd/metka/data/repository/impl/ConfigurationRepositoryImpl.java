@@ -1,6 +1,7 @@
 package fi.uta.fsd.metka.data.repository.impl;
 
 import fi.uta.fsd.metka.data.entity.ConfigurationEntity;
+import fi.uta.fsd.metka.data.entity.GUIConfigurationEntity;
 import fi.uta.fsd.metka.data.entity.RevisionableEntity;
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
@@ -9,6 +10,7 @@ import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.ConfigurationKey;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
@@ -54,8 +56,37 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
     }
 
     @Override
-    public void insert(String text) throws IOException {
-        Configuration config = json.readConfigurationFromString(text);
+    public void insert(GUIConfiguration configuration) throws IOException {
+        List<GUIConfigurationEntity> list =
+                em.createQuery(
+                        "SELECT c FROM GUIConfigurationEntity c WHERE c.type = :type AND c.version = :version",
+                        GUIConfigurationEntity.class)
+                        .setParameter("type", configuration.getKey().getType())
+                        .setParameter("version", configuration.getKey().getVersion())
+                        .getResultList();
+
+        GUIConfigurationEntity entity = null;
+
+        if(list.size() == 0) {
+            entity = new GUIConfigurationEntity();
+            entity.setVersion(configuration.getKey().getVersion());
+            entity.setType(configuration.getKey().getType());
+        } else {
+            entity = list.get(0);
+        }
+        entity.setData(json.serialize(configuration));
+        em.merge(entity);
+    }
+
+    @Override
+    public void insertDataConfig(String text) throws IOException {
+        Configuration config = json.readDataConfigurationFromString(text);
+        insert(config);
+    }
+
+    @Override
+    public void insertGUIConfig(String text) throws IOException {
+        GUIConfiguration config = json.readGUIConfigurationFromString(text);
         insert(config);
     }
 
@@ -86,7 +117,7 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
             return null;
         }
 
-        Configuration configuration = json.readConfigurationFromString(entity.getData());
+        Configuration configuration = json.readDataConfigurationFromString(entity.getData());
         return configuration;
     }
 
@@ -107,7 +138,7 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
             return null;
         }
 
-        Configuration configuration = json.readConfigurationFromString(entity.getData());
+        Configuration configuration = json.readDataConfigurationFromString(entity.getData());
         return configuration;
     }
 
@@ -142,7 +173,7 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
             return null;
         }
 
-        Configuration configuration = json.readConfigurationFromString(entity.getData());
+        Configuration configuration = json.readDataConfigurationFromString(entity.getData());
         return configuration;
     }
 
@@ -165,7 +196,7 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
             } catch(EmptyResultDataAccessException ex) {
                 return null;
             }
-            config = json.readConfigurationFromString(entity.getData());
+            config = json.readDataConfigurationFromString(entity.getData());
         }
         return config;
     }

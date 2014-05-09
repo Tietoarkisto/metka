@@ -27,11 +27,11 @@ public class SettingsController {
     }
 
     /**
-     * Handles configuration upload from the settings page.
+     * Handles data configuration upload from the settings page.
      * @throws Exception
      */
-    @RequestMapping(value = "uploadConfiguration", method = {RequestMethod.POST})
-    public String uploadConfiguration(@ModelAttribute("uploadConfig")UploadRequest uploadConfig, BindingResult result)
+    @RequestMapping(value = "uploadDataConfiguration", method = {RequestMethod.POST})
+    public String uploadDataConfiguration(@ModelAttribute("uploadConfig")UploadRequest uploadConfig, BindingResult result)
             throws Exception {
 
         uploadValidator.validate(uploadConfig, result);
@@ -40,7 +40,25 @@ public class SettingsController {
         }
 
         String text = new String(uploadConfig.getFile().getBytes());
-        service.insertConfig(text);
+        service.insertDataConfig(text);
+        return "settings";
+    }
+
+    /**
+     * Handles gui configuration upload from the settings page.
+     * @throws Exception
+     */
+    @RequestMapping(value = "uploadGUIConfiguration", method = {RequestMethod.POST})
+    public String uploadGUIConfiguration(@ModelAttribute("uploadConfig")UploadRequest uploadConfig, BindingResult result)
+            throws Exception {
+
+        uploadValidator.validate(uploadConfig, result);
+        if(result.hasErrors()) {
+            return "settings";
+        }
+
+        String text = new String(uploadConfig.getFile().getBytes());
+        service.insertGUIConfig(text);
         return "settings";
     }
 

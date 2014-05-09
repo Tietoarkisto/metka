@@ -9,21 +9,22 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
-/**
- * Created with IntelliJ IDEA.
- * User: lasseku
- * Date: 1/4/14
- * Time: 12:09 PM
- * To change this template use File | Settings | File Templates.
- */
 @Service
 public class ConfigurationService {
     @Autowired
     private ConfigurationRepository repository;
 
-    public void insert(String text) {
+    public void insertDataConfig(String text) {
         try {
-            repository.insert(text);
+            repository.insertDataConfig(text);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void insertGUIConfig(String text) {
+        try {
+            repository.insertGUIConfig(text);
         } catch (IOException ex) {
             ex.printStackTrace();
         }

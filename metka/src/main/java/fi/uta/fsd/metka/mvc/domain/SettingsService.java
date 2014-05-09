@@ -15,8 +15,12 @@ public class SettingsService {
     @Autowired
     private MiscJSONRepository miscJSONRepository;
 
-    public void insertConfig(String text) {
-        configurationService.insert(text);
+    public void insertDataConfig(String text) {
+        configurationService.insertDataConfig(text);
+    }
+
+    public void insertGUIConfig(String text) {
+        configurationService.insertGUIConfig(text);
     }
 
     public void insertMisc(String text) {

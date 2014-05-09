@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.uta.fsd.metka.model.ModelBase;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,11 +20,18 @@ public class JSONUtil {
     @Autowired
     private ObjectMapper metkaObjectMapper;
 
-    public Configuration readConfigurationFromFile(File file) throws IOException {
+    public Configuration readDataConfigurationFromFile(File file) throws IOException {
         return metkaObjectMapper.readValue(file, Configuration.class);
     }
-    public Configuration readConfigurationFromString(String data) throws IOException {
+    public Configuration readDataConfigurationFromString(String data) throws IOException {
         return metkaObjectMapper.readValue(data, Configuration.class);
+    }
+
+    public GUIConfiguration readGUIConfigurationFromFile(File file) throws IOException {
+        return metkaObjectMapper.readValue(file, GUIConfiguration.class);
+    }
+    public GUIConfiguration readGUIConfigurationFromString(String data) throws IOException {
+        return metkaObjectMapper.readValue(data, GUIConfiguration.class);
     }
 
     public RevisionData readRevisionDataFromString(String data) throws IOException {
