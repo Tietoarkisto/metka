@@ -8,13 +8,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
-/**
- * Created with IntelliJ IDEA.
- * User: lasseku
- * Date: 12/18/13
- * Time: 10:13 AM
- * To change this template use File | Settings | File Templates.
- */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ConfigurationKey {
 

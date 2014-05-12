@@ -104,6 +104,16 @@ public class ErrorMessage {
         return error;
     }
 
+    public static ErrorMessage guiConfigurationSerializationError(String type, Integer id, Integer revision) {
+        ErrorMessage error = new ErrorMessage();
+        error.setMsg("general.errors.revision.guiConfigurationSerializationError");
+        error.getData().add("general.errors.revision.guiConfigurationSerializationError."+type);
+        error.getData().add(id+"");
+        error.getData().add(revision+"");
+
+        return error;
+    }
+
     public static ErrorMessage noViewableRevision(String type, Integer id) {
         ErrorMessage error = new ErrorMessage();
         error.setMsg("general.errors.revision.noViewableRevision");

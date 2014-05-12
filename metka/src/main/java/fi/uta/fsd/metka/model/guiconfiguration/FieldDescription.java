@@ -40,19 +40,19 @@ public class FieldDescription {
     }
 
     public Boolean getMultiline() {
-        return multiline;
+        return (multiline == null) ? false : multiline;
     }
 
     public void setMultiline(Boolean multiline) {
-        this.multiline = multiline;
+        this.multiline = (multiline == null) ? false : multiline;
     }
 
     public Boolean getMultichoice() {
-        return multichoice;
+        return (multichoice == null) ? false : multichoice;
     }
 
     public void setMultichoice(Boolean multichoice) {
-        this.multichoice = multichoice;
+        this.multichoice = (multichoice == null) ? false : multichoice;
     }
 
     public List<String> getColumnFields() {
@@ -60,19 +60,19 @@ public class FieldDescription {
     }
 
     public Boolean getShowSaveInfo() {
-        return showSaveInfo;
+        return (showSaveInfo == null) ? false : showSaveInfo;
     }
 
     public void setShowSaveInfo(Boolean showSaveInfo) {
-        this.showSaveInfo = showSaveInfo;
+        this.showSaveInfo = (showSaveInfo == null) ? false : showSaveInfo;
     }
 
     public Boolean getShowReferenceValue() {
-        return showReferenceValue;
+        return (showReferenceValue == null) ? false : showReferenceValue;
     }
 
     public void setShowReferenceValue(Boolean showReferenceValue) {
-        this.showReferenceValue = showReferenceValue;
+        this.showReferenceValue = (showReferenceValue == null) ? false : showReferenceValue;
     }
 
     @Override

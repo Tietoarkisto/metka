@@ -4,6 +4,7 @@ import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.enums.UIRevisionState;
 import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.model.configuration.Configuration;
+import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import fi.uta.fsd.metka.mvc.domain.ConfigurationService;
 import fi.uta.fsd.metka.mvc.domain.StudyService;
 import fi.uta.fsd.metka.mvc.domain.simple.ErrorMessage;
@@ -12,6 +13,7 @@ import fi.uta.fsd.metka.mvc.domain.simple.transfer.SearchResult;
 import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
 import fi.uta.fsd.metka.mvc.domain.simple.study.StudySearchData;
 import fi.uta.fsd.metka.transfer.configuration.ConfigurationMap;
+import fi.uta.fsd.metka.transfer.configuration.GUIConfigurationMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -132,6 +134,22 @@ public class StudyController {
             redirectAttributes.addFlashAttribute("displayableErrors", errors);
             return REDIRECT_SEARCH;
         }
+
+        // Form JSGUIConfig
+        GUIConfigurationMap guiConfigs = new GUIConfigurationMap();
+        GUIConfiguration guiConfig = configService.findLatestGUIByType(ConfigurationType.STUDY);
+        guiConfigs.setConfiguration(guiConfig);
+
+        try {
+            model.asMap().put("jsGUIConfig", json.serialize(guiConfigs));
+        } catch(IOException ex) {
+            ex.printStackTrace();
+            List<ErrorMessage> errors = new ArrayList<>();
+            errors.add(ErrorMessage.guiConfigurationSerializationError("study", id, revision));
+            redirectAttributes.addFlashAttribute("displayableErrors", errors);
+            return REDIRECT_SEARCH;
+        }
+
         single.setUrlHash((String)model.asMap().get("urlHash"));
         model.asMap().put("page", "study");
         if(single.getState() == UIRevisionState.DRAFT) {

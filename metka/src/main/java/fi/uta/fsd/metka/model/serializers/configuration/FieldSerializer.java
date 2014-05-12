@@ -14,8 +14,7 @@ import java.io.IOException;
 public class FieldSerializer extends JsonSerializer<Field> {
     @Override
     @SuppressWarnings("fallthrough")
-    public void serialize(Field value, JsonGenerator jgen, SerializerProvider provider)
-            throws IOException, JsonProcessingException {
+    public void serialize(Field value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
 
         jgen.writeStartObject();
         jgen.writeStringField("key", value.getKey());

@@ -143,6 +143,27 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
     }
 
     @Override
+    public GUIConfiguration findLatestGUIConfiguration(ConfigurationType type)
+            throws IncorrectResultSizeDataAccessException, IOException {
+        List<GUIConfigurationEntity> list =
+                em.createQuery(
+                        "SELECT c FROM GUIConfigurationEntity c WHERE c.type = :type ORDER BY c.version DESC",
+                        GUIConfigurationEntity.class)
+                        .setParameter("type", type)
+                        .setMaxResults(1)
+                        .getResultList();
+        GUIConfigurationEntity entity = null;
+        try {
+            entity = DataAccessUtils.requiredSingleResult(list);
+        } catch(EmptyResultDataAccessException ex) {
+            return null;
+        }
+
+        GUIConfiguration configuration = json.readGUIConfigurationFromString(entity.getData());
+        return configuration;
+    }
+
+    @Override
     public Configuration findLatestByRevisionableId(Integer id)
             throws IncorrectResultSizeDataAccessException, IOException {
         List<RevisionableEntity> revs =

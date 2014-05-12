@@ -9,6 +9,7 @@
 		// Placeholders for functionality added in other files
 		E: null,
 		JSConfig: null,
+        JSGUIConfig: null,
 		JSConfigUtil: null,
 		ErrorManager: null,
 		EventManager: null,

@@ -1,0 +1,147 @@
+{   
+
+    "_comment": "tästä alkavat organisaatiot, joilla mahdolliset tiedot ovat: pääorganisaation sisäinen id, pääorganisaation nimi (3 kielellä), pääorganisaation lyhenne, pääorganisaation pid, pääorganisaation pid:n myöntäjä,
+                        yksikön/aliorganisaation sisäinen id (agencies-rakenteessa), yksikön /aliorganisaation nimi 3 kielellä , yksikön lyhenne, yksikön pid, yksinkön pid:n myöntäjä, laitoksen/tutkimuskeskuksen/alialiorganisaation sisäinen id, 
+                        laitoksen nimi 3 kielellä, laitoksen nimen lyhenne, laitokset pid, laitoksen pid:n myöntäjä
+    "key" : "Organizations",
+    "organizations":
+        [
+            "&organization" :
+            {
+                "id" : "",
+                "default" : "Testi-yliopisto",
+                "en" : "Test University",
+                "sv" : "Test Universitet",
+                "abbr" : "TU",
+                "pids": [
+                    {
+                    "pid" : "123446",
+                    "pidagency" : "agency 1"
+                    },
+                    {   
+                    "pid" : "7895-1-4-5",
+                    "pidagency" : "agency 2"
+                    }
+                ],
+                "agencies":
+                [
+                    {
+                        "&agency" : {
+                            "id": "",
+                            "default": "Kauppakorkeakoulu",
+                            "en": "School of Economics",
+                            "sv": "Handelshögskola",
+                            "abbr" : "SEC",
+                            "pids" : [
+                                {
+                                    "pid" : "456-87:4518_[232]",
+                                    "pidagency" : "agency 5"
+                                },
+                                {   
+                                    "pid" : "&ku231-231",
+                                    "pidagency" : "agency 6"
+                                }
+                            ],
+                            "sections" : [
+                                "&section" : {
+                                    "id": "",
+                                    "default" : "Johtamisen laitos",
+                                    "en" : "Department of Management",
+                                    "sv" : "Institutionen för ledarskap",
+                                    "abbr" : "DoM",
+                                    "pids" : [
+                                        {
+                                            "pid" : "&ku123-123",
+                                            "pidagency" : "agency 6"
+                                        },
+                                        {
+                                            "pid" : "4561-2-5-9",
+                                            "pidagency" : "agency 2"
+                                        }
+                                    ]
+                                },
+                                "&section" : {
+                                    "id": "",
+                                    "default" : "Kansantaloustieteen laitos",
+                                    "en" : "Department of Economics",
+                                    "sv" : "Institutionen för ekonomi",
+                                    "abbr" : "DoE",
+                                    "pids" : [
+                                        {
+                                            "pid" : "5421%-789@",
+                                            "pidagency" : "agency 8"
+                                        }
+                                    ]
+                                }
+                            ]
+                                                                    
+                        },
+                        "&agency" : {
+                            "id" : "",
+                            "default" : "Taidekorkeakoulu"
+                            "en" : "School of Arts",
+                            "sv" : "Kunsthögskola",
+                            "abbr" : "SoA",
+                            "pids" : [ JOS PIDIÄ EI OLE NIIN POISTETAANKO TÄMÄ RAKENNE KOKONAAN VAI ONKO SE TYHJÄ??
+                            ],
+                            "sections": [
+                                "&section" : {
+                                    "id": ,
+                                    "fi": "Näyttelijäntyön laitos",
+                                    "en": "Department of acting",
+                                    "sv": "Institution för spel",
+                                    "pids" : [ JOS PIDIÄ EI OLE NIIN POISTETAANKO TÄMÄ RAKENNE KOKONAAN VAI ONKO SE TYHJÄ??
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+                                
+            },
+            
+            "&organization" : {   
+                "id": "",
+                "default": "Testaus organisaatio",
+                "en": "Organisation for testing purposes",
+                "sv": "Organisation för testning",
+                "abbr" : "Otp"
+                "pids": [
+                    {
+                        "pid" : "123-45-78:456-78",
+                        "pidagency" : "agency 13"
+                    }
+                ],
+                "agencies" : [
+                    "&agency" : {
+                        "id" : "",
+                        "default" : "Lettutieteiden yksikkö"
+                        "en" : "School of pancake sciences",
+                        "sv" : "Enhet för plätt vetenskap",
+                        "abbr" : "SPS",
+                        "pids" : [
+                            JOS PIDIÄ EI OLE NIIN POISTETAANKO TÄMÄ RAKENNE KOKONAAN VAI ONKO SE TYHJÄ??
+                        ],
+                        "sections": [
+                            "&section" : {
+                            "id": "",
+                            "default": "Makusiirappien tutkimusyksikkö",
+                            "en": "Centrum for research of flavoured syrups",
+                            "sv": "Centret för undersökning av sirup",
+                            "pids" : [
+                                {
+                                    "pid" : "pid_081:8371-52",
+                                    "pidagency" : "agency 2"
+                                }
+                            ]
+                            }
+                        ]
+    
+                    }
+                ]
+                    
+            }
+        ]
+}
+
+                

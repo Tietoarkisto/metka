@@ -20,7 +20,7 @@ public class Container {
     @XmlElement private Boolean important = false;
     @XmlElement private SectionState defaultState = SectionState.CLOSE;
     @XmlElement private Integer columns = 1;
-    @XmlElement private Boolean required = null;
+    @XmlElement private Boolean required = false;
     @XmlElement private Integer colspan = 1;
 
     @XmlElement private FieldDescription field = null;
@@ -46,35 +46,35 @@ public class Container {
     }
 
     public Boolean getHidden() {
-        return hidden;
+        return (hidden == null) ? false : hidden;
     }
 
     public void setHidden(Boolean hidden) {
-        this.hidden = hidden;
+        this.hidden = (hidden == null) ? false : hidden;
     }
 
     public Boolean getReadOnly() {
-        return readOnly;
+        return (readOnly != null && readOnly == false) ? null : readOnly;
     }
 
     public void setReadOnly(Boolean readOnly) {
-        this.readOnly = readOnly;
+        this.readOnly = (readOnly != null && readOnly == false) ? null : readOnly;
     }
 
     public Boolean getImportant() {
-        return important;
+        return (important == null) ? false : important;
     }
 
     public void setImportant(Boolean important) {
-        this.important = important;
+        this.important = (important == null) ? false : important;
     }
 
     public SectionState getDefaultState() {
-        return defaultState;
+        return (defaultState == null) ? SectionState.CLOSE : defaultState;
     }
 
     public void setDefaultState(SectionState defaultState) {
-        this.defaultState = defaultState;
+        this.defaultState = (defaultState == null) ? SectionState.CLOSE : defaultState;
     }
 
     public Integer getColumns() {
@@ -86,11 +86,11 @@ public class Container {
     }
 
     public Boolean getRequired() {
-        return required;
+        return (required == null) ? false : required;
     }
 
     public void setRequired(Boolean required) {
-        this.required = required;
+        this.required = (required == null) ? false : required;
     }
 
     public Integer getColspan() {

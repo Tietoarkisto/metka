@@ -4,6 +4,7 @@ import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.ConfigurationKey;
+import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +35,19 @@ public class ConfigurationService {
         Configuration conf = null;
         try {
             conf = repository.findLatestConfiguration(type);
+        } catch(Exception ex) {
+            // TODO: better exception handling with messages to the user
+            ex.printStackTrace();
+            return null;
+        }
+
+        return conf;
+    }
+
+    public GUIConfiguration findLatestGUIByType(ConfigurationType type) {
+        GUIConfiguration conf = null;
+        try {
+            conf = repository.findLatestGUIConfiguration(type);
         } catch(Exception ex) {
             // TODO: better exception handling with messages to the user
             ex.printStackTrace();

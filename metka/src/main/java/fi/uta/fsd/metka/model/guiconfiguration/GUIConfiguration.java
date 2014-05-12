@@ -16,7 +16,7 @@ import java.util.List;
 @JsonIgnoreProperties("_comment")
 public class GUIConfiguration implements ModelBase {
     @XmlElement private ConfigurationKey key;
-    @XmlElement private final List<Container> contents = new ArrayList<>();
+    @XmlElement private final List<Container> content = new ArrayList<>();
 
     public ConfigurationKey getKey() {
         return key;
@@ -26,8 +26,8 @@ public class GUIConfiguration implements ModelBase {
         this.key = key;
     }
 
-    public List<Container> getContents() {
-        return contents;
+    public List<Container> getContent() {
+        return content;
     }
 
     @Override

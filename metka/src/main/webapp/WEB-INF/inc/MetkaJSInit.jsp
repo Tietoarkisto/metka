@@ -50,4 +50,5 @@
 </c:if>
     <%-- If JSConfig JSON is provided insert it to globals. Otherwise MetkaJS.JSConfig will remain null --%>
     <c:if test="${not empty jsConfig}">MetkaJS.JSConfig = JSON.parse('${jsConfig}');</c:if>
+    <c:if test="${not empty jsGUIConfig}">MetkaJS.JSGUIConfig = JSON.parse('${jsGUIConfig}');</c:if>
 </script>
