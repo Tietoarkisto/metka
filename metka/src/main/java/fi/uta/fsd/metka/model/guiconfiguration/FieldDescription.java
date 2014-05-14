@@ -21,6 +21,7 @@ public class FieldDescription {
     @XmlElement private final List<String> columnFields = new ArrayList<>();
     @XmlElement private Boolean showSaveInfo;
     @XmlElement private Boolean showReferenceValue;
+    @XmlElement private String handlerName;
 
     @JsonCreator
     public FieldDescription(@JsonProperty("key")String key) {
@@ -73,6 +74,14 @@ public class FieldDescription {
 
     public void setShowReferenceValue(Boolean showReferenceValue) {
         this.showReferenceValue = (showReferenceValue == null) ? false : showReferenceValue;
+    }
+
+    public String getHandlerName() {
+        return handlerName;
+    }
+
+    public void setHandlerName(String handlerName) {
+        this.handlerName = handlerName;
     }
 
     @Override

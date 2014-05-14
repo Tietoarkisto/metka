@@ -45,6 +45,7 @@
     run automated commands after document has loaded.
     Generally everything inside these scripts should be inside
     $(document).ready() function. --%>
+<script src="${contextPath}/js/custom/uiLocalization.js"></script>
 <script src="${contextPath}/js/custom/dialogs.js"></script>
 <script src="${contextPath}/js/custom/general.js"></script>
 <script src="${contextPath}/js/custom/${page}.js"></script>

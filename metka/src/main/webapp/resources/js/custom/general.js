@@ -97,6 +97,9 @@ $(document).ready(function () {
 	/**************
 	 * Clean code *
 	 **************/
+
+    document.title = MetkaJS.L10N.get("page.title");
+
 	$('.datepicker').datepicker();
 
 	// Init tab navigation

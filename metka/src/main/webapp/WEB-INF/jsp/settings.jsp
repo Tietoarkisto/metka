@@ -18,14 +18,14 @@
         <form:form method="post" action="/settings/uploadDataConfiguration" enctype="multipart/form-data" modelAttribute="uploadConfig">
             Data konfiguraatio
             <input type="file" name="file" />
-            <input type="submit" value="<spring:message code="general.buttons.upload.configuration" />"/>
+            <input type="submit" value="<spring:message code="general.buttons.upload.dataConfiguration" />"/>
         </form:form>
         <br />
         <%-- GUI configuration import --%>
         <form:form method="post" action="/settings/uploadGUIConfiguration" enctype="multipart/form-data" modelAttribute="uploadConfig">
             GUI konfiguraatio
             <input type="file" name="file" />
-            <input type="submit" value="<spring:message code="general.buttons.upload.configuration" />"/>
+            <input type="submit" value="<spring:message code="general.buttons.upload.guiConfiguration" />"/>
         </form:form>
         <br />
         <%-- Misc Json import --%>
