@@ -39,10 +39,10 @@
       <data key="d4"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="186.0" width="237.91319444444457" x="609.6388888888889" y="317.0"/>
+          <y:Geometry height="186.0" width="188.0" x="445.62420998980633" y="317.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="75.65234375" x="81.13042534722229" y="3.0">Container<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="75.65234375" x="56.173828125" y="3.0">Container<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -50,17 +50,7 @@
             </y:ModelParameter>
           </y:NodeLabel>
           <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="" use3DEffect="true">
-            <y:AttributeLabel>+title : TranslationText
-+hidden : Boolean
-+content : Container [0..*] {ordered}
-+readOnly : TRUE|NULL
-+important : Boolean
-+defaultState : OPEN|CLOSE
-+columns : Integer
-+rows : Container [0..*] {ordered}
-+cells : Container [0..*] {ordered}
-+required : Boolean
-+colspan : Integer</y:AttributeLabel>
+            <y:AttributeLabel/>
             <y:MethodLabel/>
           </y:UML>
         </y:UMLClassNode>
@@ -70,11 +60,10 @@
       <data key="d4"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="119.0" width="152.0" x="411.13541666666697" y="560.875"/>
+          <y:Geometry height="88.29357798165154" width="188.0" x="94.16666666666714" y="669.1667431192659"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="34.265625" modelName="custom" textColor="#000000" visible="true" width="141.2998046875" x="5.35009765625" y="3.0">&lt;&lt;enumeration&gt;&gt;
-ContainerType<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="53.7783203125" x="67.11083984375" y="3.0">Button<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -82,291 +71,36 @@ ContainerType<y:LabelModel>
             </y:ModelParameter>
           </y:NodeLabel>
           <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="" use3DEffect="true">
-            <y:AttributeLabel>TAB
-SECTION
-COLUMN
-ROW
-CELL</y:AttributeLabel>
+            <y:AttributeLabel/>
             <y:MethodLabel/>
           </y:UML>
         </y:UMLClassNode>
-      </data>
-    </node>
-    <node id="n3">
-      <data key="d4"/>
-      <data key="d6">
-        <y:UMLClassNode>
-          <y:Geometry height="146.66788990825683" width="237.91319444444457" x="609.6388888888889" y="560.875"/>
-          <y:Fill color="#FFCC00" transparent="false"/>
-          <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="123.99609375" x="56.958550347222285" y="3.0">FieldDescription<y:LabelModel>
-              <y:SmartNodeLabelModel distance="4.0"/>
-            </y:LabelModel>
-            <y:ModelParameter>
-              <y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="-0.03703090122767855" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/>
-            </y:ModelParameter>
-          </y:NodeLabel>
-          <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="" use3DEffect="true">
-            <y:AttributeLabel>+key : Field
-+displayType : DisplayType
-+multiline : Boolean
-+multichoice : Boolean
-+columnFields : Field [0..*] {ordered}
-+showSaveInfo : Boolean
-+showReferenceValue : Boolean
-+handlerName : String</y:AttributeLabel>
-            <y:MethodLabel/>
-          </y:UML>
-        </y:UMLClassNode>
-      </data>
-    </node>
-    <node id="n4">
-      <data key="d4"/>
-      <data key="d6">
-        <y:UMLNoteNode>
-          <y:Geometry height="651.3889016309886" width="436.4166666666665" x="411.13541666666697" y="751.75"/>
-          <y:Fill color="#FFCC00" transparent="false"/>
-          <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="646.5625" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="432.671875" x="4.0" y="4.0">key : Field key of the field being inserted into a cell.
-
-displayType : Override for the rendering of this field. Can display
-    for example a textfield instead of a dropdown selection.
-    Implementation of this is not a priority. Can be null.
-
-multiline : Changes the rendering of input to a textarea in cases
-    where this makes sense (like STRING). Exact circumstances
-    are yet to be determined (for example does this effect INTEGER).
-    Default is false.
-
-multichoice : Should allow the user to select multiple values from
-    a dropdown menu or a selection list. Due to the way these need
-    to be handled in the code the implementation of this is not of a
-    high priority.
-    Default is false.
-
-columnFields : Applicaple only to fields that display a table structure
-    when they are rendered. This is an array of field keys that defines
-    which fields should be used as columns for the table. Order of the
-    keys in the array is the order in which the columns appear in the
-    table. Should be empty if not needed.
-
-showSaveInfo : At present applies only to components that are
-    rendered as a table but it is possible to make implementations
-    to all other components as well (although the implementation is
-    not of a high priority). Displays savedAt and savedBy information
-    that is most reasonable for the situtaion (for table rows this is
-    the information of the most recent change within that row).
-    Default is false.
-
-showReferenceKey : At present applies only to REFERENCECONTAINER
-    but could in theory be implemented for reference fields and select
-    fields that use a reference as well (although again implementation
-    is of no high priority). Displays the valuePath (or implied value in
-    case of REVISIONABLE references) of the reference saved in given
-    field.
-    Default is false.
-
-handlerName : Specifies a special handler for fields that are rendered
-    as a table. This information is needed when the table is rendered
-    to allow for correct handling for example when the user clicks a
-    row on the table. Values for this attribute are just something the
-    user that writes the configuration must know. If ever a GUI is written
-    to generate these configurations then it's relatively easy to provide
-    the user with a list of selections for different handlers.</y:NodeLabel>
-        </y:UMLNoteNode>
-      </data>
-    </node>
-    <node id="n5">
-      <data key="d4"/>
-      <data key="d6">
-        <y:UMLNoteNode>
-          <y:Geometry height="1124.8628472222222" width="436.4166666666665" x="852.3125" y="317.0"/>
-          <y:Fill color="#FFCC00" transparent="false"/>
-          <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="1121.5" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="433.298828125" x="4.0" y="4.0">type : One of enum values in ContainerType enumerator. Defines
-    the type of this container and how it is handled. Type is a hierarchic
-    definition where type of a certain level can not contain containers
-    that have the type of the same level or a higher level (for example
-    a SECTION container can not contain containers of type SECTION or
-    TAB). Types are in order from highest to lowest level
-    TAB
-    SECTION
-    COLUMN
-    ROW
-    CELL
-
-title : Text displayed on the GUI where this Container is located.
-    In addition to the obvious TAB, SECTION and CELL titles that will
-    be implemented both COLUMN and ROW can be made to have
-    a title as well. This is not however of a hight priority.
-
-hidden : This container and all of the content within this container
-    are hidden from display. They are still rendered to DOM but
-    they are not show without some action from some other part
-    of the GUI. These can be for example fields that are shown only
-    after certain selection from the user or fields that are still under
-    development but need to be brought to production for for example
-    data integrity reasons.
-    Default is false.
-
-readOnly : Marks all fields within this container branch as read only
-    fields regardless of their other configurations. This overrides all
-    other instructions to editability the field might have.
-    This attribute is of type TRUE|NULL meaning that there is no
-    difference between NULL and FALSE values and they are considered
-    equal. In cases where value is NULL it is ignored completely, you
-    can not force fields to be writable with this configuration.
-    This value is inherited in the sense that since it only really affects
-    fields it needs to be passed down the container hierarchy until field
-    rendering is happening.
-    Default is null.
-
-important : Applicaple only to CELL and SECTION containers. Marks
-    contents as important so that users attention can be drawn to them.
-    Display depends on the type of container.
-    Default is false.
-
-defaultState : Applicaple only on SECTION containers. Determines
-    whether the sections start in opened or closed state when the page
-    is rendered.
-    Default is CLOSED.
-
-columns : Applicaple only to COLUMN container. Tells how many
-    columns should be in the ROWs within this container. Depending on
-    how it looks when used this has a maximum value of 3 or 4.
-    Default is 1.
-
-required : Affects only the visual representation of the field. If field is
-    marked required then some indicator is drawn besides the cell title.
-    This is usable only on CELL containers since required status is
-    checked on field by field basis.
-    Default is false.
-
-colspan : Applicaple only to CELL containers. Tells how many columns
-    the cell should span when drawn on GUI. Maximum value depends
-    on the maximum value of columns possible.
-    Default is 1.
-
-field : Applicaple only to CELL container. Defines the displayed field
-    within the current cell. There is only one field per cell (although this
-    field can be a CONTAINER-field. Should always be present with
-    CELL container, otherwise can be missing.
-
-content : Array of containers within this container. Since TAB is the
-    highest possible level of container it can never show up within this
-    array and since ROW and CELL containers have their own arrays this
-    array can ever only contain SECTION and COLUMN containers. Only
-    appears on TAB and SECTION containers.
-
-rows : Is present only on COLUMN container. Contains all rows within
-    given COLUMN container, never contains anything else than ROWs.
-
-cells : Is present only on ROW container. Contains all cells within given
-    ROW container, never contains anything else than CELL containers.</y:NodeLabel>
-        </y:UMLNoteNode>
-      </data>
-    </node>
-    <node id="n6">
-      <data key="d4"/>
-      <data key="d6">
-        <y:UMLNoteNode>
-          <y:Geometry height="303.3833970438325" width="436.4166666666665" x="-30.04166666666609" y="751.75"/>
-          <y:Fill color="#FFCC00" transparent="false"/>
-          <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="297.34375" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="433.41015625" x="4.0" y="4.0">    Example of displayType and multichoice:
-These two attributes will most likely not be implemented during this
-project. However they have one clear use case that is interesting when
-used together. If we have a CONTAINER-field with one subfield of type
-SELECTION then it is trivial to see how that CONTAINER could be
-shown as displayType SELECTION with multichoice=true instead. This
-would change the gui-representation of the field from table to a
-dropdown or selection list instead and allow the user to select each
-value only once.
-This is maybe the most obvious use case for these two attributes
-although there are others, like changing a selection from a dropdown
-menu to a radiobutton group or changing the CONTAINER with select
-field into a checkbox selection instead with radiobutton plus
-multichoice.
-The important thing to note is that displayType values don't have to be
-one to one the same as field type values since there are different
-ways of displaying the same type of data to the user but the actual
-data definition doesn't need to know about these. For example it might
-be smart to implement a new field type MULTISELECT to define those
-containers that can only have one subfield that is of type SELECT
-but this in itself doesn't yet tell how the data is displayed to the user.</y:NodeLabel>
-        </y:UMLNoteNode>
       </data>
     </node>
     <edge id="e0" source="n0" target="n1">
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="-22.507812500000455" sy="-68.86111111111109" tx="61.80716225353757" ty="-68.86111111111109"/>
+          <y:Path sx="-22.507812500000455" sy="-68.86111111111109" tx="48.84027777777757" ty="-68.86111111111109"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="diamond" target="none"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="31.9375" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="94.439453125" x="222.92435031467016" y="2.000003390842039">+content [1..*]
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="31.9375" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="94.439453125" x="58.88678323199383" y="2.000003390842039">+content [1..*]
 {ordered}<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
           </y:EdgeLabel>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e1" source="n1" target="n2">
-      <data key="d8"/>
-      <data key="d10">
-        <y:PolyLineEdge>
-          <y:Path sx="-68.6009906982672" sy="43.141284403669715" tx="51.03038194444383" ty="-43.27430555555566"/>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
-          <y:Arrows source="diamond" target="none"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="40.861328125" x="-27.283757063634766" y="29.795928955078125">+type<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
-          </y:EdgeLabel>
-          <y:BendStyle smoothed="false"/>
-        </y:PolyLineEdge>
-      </data>
-    </edge>
-    <edge id="e2" source="n1" target="n3">
+    <edge id="e1" source="n0" target="n2">
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="diamond" target="none"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="39.947265625" x="2.0000271267361995" y="29.807891845703125">+field<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="31.9375" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="94.328125" x="1.9999949137374529" y="124.13302119543778">+buttons [0..*]
+{ordered}<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
           </y:EdgeLabel>
-          <y:BendStyle smoothed="false"/>
-        </y:PolyLineEdge>
-      </data>
-    </edge>
-    <edge id="e3" source="n3" target="n4">
-      <data key="d8"/>
-      <data key="d10">
-        <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="99.25173611111097" ty="-58.31424356763262"/>
-          <y:LineStyle color="#000000" type="dashed" width="1.0"/>
-          <y:Arrows source="none" target="none"/>
-          <y:BendStyle smoothed="false"/>
-        </y:PolyLineEdge>
-      </data>
-    </edge>
-    <edge id="e4" source="n1" target="n5">
-      <data key="d8"/>
-      <data key="d10">
-        <y:PolyLineEdge>
-          <y:Path sx="-34.42324108447495" sy="-67.81944444444434" tx="20.51996527777783" ty="-534.0474217459079"/>
-          <y:LineStyle color="#000000" type="dashed" width="1.0"/>
-          <y:Arrows source="none" target="none"/>
-          <y:BendStyle smoothed="false"/>
-        </y:PolyLineEdge>
-      </data>
-    </edge>
-    <edge id="e5" source="n6" target="n4">
-      <data key="d8"/>
-      <data key="d9"/>
-      <data key="d10">
-        <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="11.725974770641983" ty="-174.00275229357806"/>
-          <y:LineStyle color="#000000" type="dashed" width="1.0"/>
-          <y:Arrows source="none" target="none"/>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
       </data>

@@ -327,7 +327,12 @@
                             <failOnError>false</failOnError>
                             <options>
                                 <confusion>true</confusion>
+                                <browser>true</browser>
+                                <continue>true</continue>
                                 <passfail>false</passfail>
+                                <es5>true</es5>
+                                <indent>4</indent>
+                                <nomen>true</nomen>
                                 <plusplus>true</plusplus>
                                 <predef>$, alert, document, location, MetkaJS, sessionStorage, window</predef>
                                 <vars>true</vars>

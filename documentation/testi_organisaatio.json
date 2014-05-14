@@ -4,15 +4,20 @@
                         yksikön/aliorganisaation sisäinen id (agencies-rakenteessa), yksikön /aliorganisaation nimi 3 kielellä , yksikön lyhenne, yksikön pid, yksinkön pid:n myöntäjä, laitoksen/tutkimuskeskuksen/alialiorganisaation sisäinen id, 
                         laitoksen nimi 3 kielellä, laitoksen nimen lyhenne, laitokset pid, laitoksen pid:n myöntäjä
     "key" : "Organizations",
-    "organizations":
+    "data":
         [
-            "&organization" :
             {
-                "id" : "",
-                "default" : "Testi-yliopisto",
-                "en" : "Test University",
-                "sv" : "Test Universitet",
-                "abbr" : "TU",
+                "id" : "1",
+                "&organizationname" : {
+                    "default" : "Testi-yliopisto",
+                    "en" : "Test University",
+                    "sv" : "Test Universitet"
+                },
+                "&organizationabbr" : {
+                    "default" : "TY",
+                    "en" : "TU",
+                    "sv" : "TU"
+                },
                 "pids": [
                     {
                     "pid" : "123446",
@@ -26,86 +31,112 @@
                 "agencies":
                 [
                     {
-                        "&agency" : {
-                            "id": "",
+                        "id": "1.1",
+                        "&agencyname" : {
                             "default": "Kauppakorkeakoulu",
                             "en": "School of Economics",
-                            "sv": "Handelshögskola",
-                            "abbr" : "SEC",
-                            "pids" : [
-                                {
-                                    "pid" : "456-87:4518_[232]",
-                                    "pidagency" : "agency 5"
-                                },
-                                {   
-                                    "pid" : "&ku231-231",
-                                    "pidagency" : "agency 6"
-                                }
-                            ],
-                            "sections" : [
-                                "&section" : {
-                                    "id": "",
+                            "sv": "Handelshögskola"
+                        },
+                        "&agencyabbr" : {
+                            "default" : "KKK"
+                            "en" : "SEC",
+                            "sv" :"HHS"
+                        },
+                        "pids" : [
+                            {
+                                "pid" : "456-87:4518_[232]",
+                                "pidagency" : "agency 5"
+                            },
+                            {   
+                                "pid" : "&ku231-231",
+                                "pidagency" : "agency 6"
+                            }
+                        ],
+                        "sections" : [
+                            {
+                                "id": "1.1.1",
+                                "&sectionname" : {
                                     "default" : "Johtamisen laitos",
                                     "en" : "Department of Management",
-                                    "sv" : "Institutionen för ledarskap",
-                                    "abbr" : "DoM",
-                                    "pids" : [
-                                        {
-                                            "pid" : "&ku123-123",
-                                            "pidagency" : "agency 6"
-                                        },
-                                        {
-                                            "pid" : "4561-2-5-9",
-                                            "pidagency" : "agency 2"
-                                        }
-                                    ]
+                                    "sv" : "Institutionen för ledarskap"
                                 },
-                                "&section" : {
-                                    "id": "",
+                                "&sectionabbr" :
+                                {
+                                    
+                                },
+                                "pids" : [
+                                    {
+                                        "pid" : "&ku123-123",
+                                        "pidagency" : "agency 6"
+                                    },
+                                    {
+                                        "pid" : "4561-2-5-9",
+                                        "pidagency" : "agency 2"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "1.1.2",
+                                "&sectionname" : {
                                     "default" : "Kansantaloustieteen laitos",
                                     "en" : "Department of Economics",
-                                    "sv" : "Institutionen för ekonomi",
-                                    "abbr" : "DoE",
-                                    "pids" : [
-                                        {
-                                            "pid" : "5421%-789@",
-                                            "pidagency" : "agency 8"
-                                        }
-                                    ]
-                                }
-                            ]
+                                    "sv" : "Institutionen för ekonomi"
+                                },
+                                "&sectionabbr" : {
+                                    "default" : "DoE",
+                                },
+                                "pids" : [
+                                    {
+                                        "pid" : "5421%-789@",
+                                        "pidagency" : "agency 8"
+                                    }
+                                ]
+                            }
+                        ]
                                                                     
-                        },
-                        "&agency" : {
-                            "id" : "",
+                    },
+                    {
+                        "id" : "1.2",
+                        "&agencyname" : {
                             "default" : "Taidekorkeakoulu"
                             "en" : "School of Arts",
-                            "sv" : "Kunsthögskola",
-                            "abbr" : "SoA",
-                            "pids" : [ JOS PIDIÄ EI OLE NIIN POISTETAANKO TÄMÄ RAKENNE KOKONAAN VAI ONKO SE TYHJÄ??
-                            ],
-                            "sections": [
-                                "&section" : {
-                                    "id": ,
-                                    "fi": "Näyttelijäntyön laitos",
+                            "sv" : "Kunsthögskola"
+                        },
+                        "&agencyabbr" :
+                        {
+                            "default" : "SoA"
+                        },
+                        "pids" : [
+                        ],
+                        "sections": [
+                            {
+                                "id": "1.2.1",
+                                &section" : {
+                                    "default": "Näyttelijäntyön laitos",
                                     "en": "Department of acting",
-                                    "sv": "Institution för spel",
-                                    "pids" : [ JOS PIDIÄ EI OLE NIIN POISTETAANKO TÄMÄ RAKENNE KOKONAAN VAI ONKO SE TYHJÄ??
-                                    ]
-                                }
-                            ]
-                        }
+                                    "sv": "Institution för spel"
+                                },
+                                "&sectionabbr" : {
+                                },
+                                "pids" : [
+                                ]
+                            }
+                        ]
                     }
                 ]
-                                
             },
-            
-            "&organization" : {   
-                "id": "",
-                "default": "Testaus organisaatio",
-                "en": "Organisation for testing purposes",
-                "sv": "Organisation för testning",
-                "abbr" : "Otp"
+            {   
+                "id": "2",
+                "&organizationname" : {
+                    "default": "Testaus organisaatio",
+                    "en": "Organisation for testing purposes",
+                    "sv": "Organisation för testning"
+                },
+                "&organizationabbr" : {
+                    "default" : "To",
+                    "en" : "Otp",
+                    "sv" : "Ot"
+                },
                 "pids": [
                     {
                         "pid" : "123-45-78:456-78",
@@ -113,33 +144,39 @@
                     }
                 ],
                 "agencies" : [
-                    "&agency" : {
-                        "id" : "",
-                        "default" : "Lettutieteiden yksikkö"
-                        "en" : "School of pancake sciences",
-                        "sv" : "Enhet för plätt vetenskap",
-                        "abbr" : "SPS",
+                    {
+                        "id" : "2.1",
+                        &agencyname" : {
+                            "default" : "Lettutieteiden yksikkö"
+                            "en" : "School of pancake sciences",
+                            "sv" : "Enhet för plätt vetenskap"
+                        },
+                        "&agencyabbr" : {
+                            "default" : "Letty"
+                            "en" : "SPS"
+                        },
                         "pids" : [
-                            JOS PIDIÄ EI OLE NIIN POISTETAANKO TÄMÄ RAKENNE KOKONAAN VAI ONKO SE TYHJÄ??
                         ],
                         "sections": [
-                            "&section" : {
-                            "id": "",
-                            "default": "Makusiirappien tutkimusyksikkö",
-                            "en": "Centrum for research of flavoured syrups",
-                            "sv": "Centret för undersökning av sirup",
-                            "pids" : [
-                                {
-                                    "pid" : "pid_081:8371-52",
-                                    "pidagency" : "agency 2"
-                                }
-                            ]
+                            {
+                                "id": "2.1.1",
+                                "&sectionname" : {
+                                    "default": "Makusiirappien tutkimusyksikkö",
+                                    "en": "Centrum for research of flavoured syrups",
+                                    "sv": "Centret för undersökning av sirup"
+                                },
+                                "&sectionabbr" : {
+                                },
+                                "pids" : [
+                                    {
+                                        "pid" : "pid_081:8371-52",
+                                        "pidagency" : "agency 2"
+                                    }
+                                ]
                             }
                         ]
-    
                     }
                 ]
-                    
             }
         ]
 }
