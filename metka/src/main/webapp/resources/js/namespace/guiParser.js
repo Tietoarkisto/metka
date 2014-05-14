@@ -10,8 +10,127 @@
      * @type {{}}
      */
     MetkaJS.GUI = (function() {
-        function buildGui(root) {
+        /**
+         * Compares two container types and returns integer telling if a is of higher or lower priority than b.
+         * Assumes priorities are strings equal to MetkaJS.E.Container enum values.
+         *
+         * @param a MetkaJS.E.Container enum value
+         * @param b MetkaJS.E.Container enum value
+         * @returns {number} Negative number if a is of higher priority than b, positive if reverse and zero if they have the same priority.
+         */
+        function containerPriorityComparator(a, b) {
+            if(a === b) {
+                return 0;
+            }
 
+            if((a === MetkaJS.E.Container.CELL && b === MetkaJS.E.Container.EMPTYCELL)
+                    || (a === MetkaJS.E.Container.EMPTYCELL && b === MetkaJS.E.Container.CELL)) {
+                return 0;
+            }
+
+            if(a === MetkaJS.E.Container.CELL || a === MetkaJS.E.Container.EMPTYCELL) {
+                return -1;
+            }
+
+            if(b === MetkaJS.E.Container.CELL || b === MetkaJS.E.Container.EMPTYCELL) {
+                return 1;
+            }
+
+            if(a === MetkaJS.E.Container.TAB) {
+                return -1;
+            }
+
+            if(b === MetkaJS.E.Container.TAB) {
+                return 1;
+            }
+
+            if(a === MetkaJS.E.Container.SECTION) {
+                return -1;
+            }
+
+            if(b === MetkaJS.E.Container.SECTION) {
+                return 1;
+            }
+
+            if(a === MetkaJS.E.Container.COLUMN) {
+                return -1;
+            }
+
+            if(b === MetkaJS.E.Container.COLUMN) {
+                return 1;
+            }
+
+            // Failsafe, this should never be reached but we can't really do much about it.
+            return 0;
+        }
+
+        /**
+         * Takes a gui configuration with given context and builds a gui based on it.
+         * The gui is added as a child to given root element.
+         *
+         * @param root Where gui is build
+         * @param context Configuration context for gui
+         */
+        function buildGui(root, context) {
+            if(!MetkaJS.exists(context)) {
+                context = MetkaJS.Globals.page.toUpperCase();
+            }
+            var config = MetkaJS.JSGUIConfig[context];
+
+            // Sanity check to see that the configuration actually exists
+            if(!MetkaJS.exists(config)) {
+                return;
+            }
+
+            var i, length, currentContainer;
+            // Get the highest priority type in content so that containers can be processed in right order
+            var highestType = null;
+            for(i = 0, length = config.content.length; i < length; i++) {
+                currentContainer = config.content[i];
+                if(highestType === null) {
+                    highestType = currentContainer.type;
+                    continue;
+                }
+
+                if(containerPriorityComparator(currentContainer.type, highestType) < 0) {
+                    highestType = currentContainer.type;
+                }
+
+                // Break the loop since highest type can not grow.
+                if(highestType === MetkaJS.E.Container.TAB) {
+                    break;
+                }
+            }
+
+            // Sanity check, we can't really do anything at this point.
+            if(highestType === null) {
+                return;
+            }
+
+            // We have highest type in content, lets collect all container of the highest type and let everything else wait
+            var highest = new Array(); // Contains indexes for the highest type
+            var rest = new Array(); // Contains indexes for the rest
+
+            for(i = 0; i < length; i++) {
+                // If current container is of highest type push current index to highest-array, otherwise push index to rest-array.
+                if(config.content[i].type === highestType) {
+                    highest.push(i);
+                } else {
+                    rest.push(i);
+                }
+            }
+
+            // Handle all containers of the highest type
+            for(i = 0, length = highest.length; i < length; i++) {
+
+            }
+
+            // Handle rest of the containers
+            for(i = 0, length = rest.length; i < length; i++) {
+
+            }
+
+            // Render buttons to button area
         }
 
         return {

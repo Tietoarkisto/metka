@@ -69,6 +69,18 @@
         Form: {
             SAVE: 'save',
             APPROVE: 'approve'
+        },
+
+        /**
+         * GUI-configuration container types
+         */
+        Container: {
+            TAB: "TAB",
+            SECTION: "SECTION",
+            COLUMN: "COLUMN",
+            ROW: "ROW",
+            CELL: "CELL",
+            EMPTYCELL: "EMPTYCELL"
         }
     };
 }());

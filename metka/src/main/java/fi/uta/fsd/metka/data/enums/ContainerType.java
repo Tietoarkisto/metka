@@ -5,5 +5,6 @@ public enum ContainerType {
     SECTION,
     COLUMN,
     ROW,
-    CELL
+    CELL,
+    EMPTYCELL
 }

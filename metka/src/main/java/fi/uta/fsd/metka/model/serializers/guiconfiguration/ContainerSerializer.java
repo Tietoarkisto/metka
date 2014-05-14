@@ -14,69 +14,75 @@ public class ContainerSerializer extends JsonSerializer<Container> {
         jgen.writeStartObject();
 
         jgen.writeStringField("type", value.getType().name());
-        jgen.writeStringField("title", value.getTitle()); // TODO: Change to translation text instead
-        jgen.writeBooleanField("hidden", value.getHidden());
-        if(value.getReadOnly() == null) {
-            jgen.writeNullField("readOnly");
-        } else {
-            jgen.writeBooleanField("readOnly", value.getReadOnly());
+
+        if(value.getType() != ContainerType.EMPTYCELL) {
+            jgen.writeStringField("title", value.getTitle()); // TODO: Change to translation text instead
+            jgen.writeBooleanField("hidden", value.getHidden());
+            if(value.getReadOnly() == null) {
+                jgen.writeNullField("readOnly");
+            } else {
+                jgen.writeBooleanField("readOnly", value.getReadOnly());
+            }
+
+            if(value.getType() == ContainerType.CELL) {
+                jgen.writeBooleanField("required", value.getRequired());
+            }
+
+            if(value.getType() == ContainerType.CELL || value.getType() == ContainerType.SECTION) {
+                jgen.writeBooleanField("important", value.getImportant());
+            }
+
+            if(value.getType() == ContainerType.SECTION) {
+                jgen.writeStringField("defaultState", value.getDefaultState().name());
+            }
+
+            if(value.getType() == ContainerType.COLUMN) {
+                jgen.writeNumberField("columns", value.getColumns());
+            }
+
+            if(value.getType() == ContainerType.TAB || value.getType() == ContainerType.SECTION) {
+                jgen.writeArrayFieldStart("content");
+
+                for(Container child : value.getContent()) {
+                    if(checkValidContainer(value.getType(), child.getType())) {
+                        jgen.writeObject(child);
+                    }
+                }
+
+                jgen.writeEndArray();
+            }
+
+            if(value.getType() == ContainerType.COLUMN) {
+                jgen.writeArrayFieldStart("rows");
+
+                for(Container child : value.getRows()) {
+                    if(checkValidContainer(value.getType(), child.getType())) {
+                        jgen.writeObject(child);
+                    }
+                }
+
+                jgen.writeEndArray();
+            }
+
+            if(value.getType() == ContainerType.ROW) {
+                jgen.writeArrayFieldStart("cells");
+
+                for(Container child : value.getCells()) {
+                    if(checkValidContainer(value.getType(), child.getType())) {
+                        jgen.writeObject(child);
+                    }
+                }
+
+                jgen.writeEndArray();
+            }
+
+            if(value.getType() == ContainerType.CELL) {
+                jgen.writeObjectField("field", value.getField());
+            }
         }
 
-        if(value.getType() == ContainerType.CELL || value.getType() == ContainerType.SECTION) {
-            jgen.writeBooleanField("important", value.getImportant());
-        }
-
-        if(value.getType() == ContainerType.SECTION) {
-            jgen.writeStringField("defaultState", value.getDefaultState().name());
-        }
-
-        if(value.getType() == ContainerType.COLUMN) {
-            jgen.writeNumberField("columns", value.getColumns());
-        }
-
-        if(value.getType() == ContainerType.CELL) {
-            jgen.writeBooleanField("required", value.getRequired());
+        if(value.getType() == ContainerType.CELL || value.getType() == ContainerType.EMPTYCELL) {
             jgen.writeNumberField("colspan", value.getColspan());
-        }
-
-        if(value.getType() == ContainerType.TAB || value.getType() == ContainerType.SECTION) {
-            jgen.writeArrayFieldStart("content");
-
-            for(Container child : value.getContent()) {
-                if(checkValidContainer(value.getType(), child.getType())) {
-                    jgen.writeObject(child);
-                }
-            }
-
-            jgen.writeEndArray();
-        }
-
-        if(value.getType() == ContainerType.COLUMN) {
-            jgen.writeArrayFieldStart("rows");
-
-            for(Container child : value.getRows()) {
-                if(checkValidContainer(value.getType(), child.getType())) {
-                    jgen.writeObject(child);
-                }
-            }
-
-            jgen.writeEndArray();
-        }
-
-        if(value.getType() == ContainerType.ROW) {
-            jgen.writeArrayFieldStart("cells");
-
-            for(Container child : value.getCells()) {
-                if(checkValidContainer(value.getType(), child.getType())) {
-                    jgen.writeObject(child);
-                }
-            }
-
-            jgen.writeEndArray();
-        }
-
-        if(value.getType() == ContainerType.CELL) {
-            jgen.writeObjectField("field", value.getField());
         }
 
         jgen.writeEndObject();
@@ -87,12 +93,12 @@ public class ContainerSerializer extends JsonSerializer<Container> {
         if(parent == child) {
             return false;
         }
-        // Cell can never contain anything
-        if(parent == ContainerType.CELL) {
+        // Cell or empty cell can never contain anything
+        if(parent == ContainerType.CELL || parent == ContainerType.EMPTYCELL) {
             return false;
         }
-        // Cells must always be within a row
-        if(child == ContainerType.CELL && parent != ContainerType.ROW) {
+        // Cells and empty cells must always be within a row
+        if((child == ContainerType.CELL || child == ContainerType.EMPTYCELL) && parent != ContainerType.ROW) {
             return false;
         }
         // Rows must always be within a column container
