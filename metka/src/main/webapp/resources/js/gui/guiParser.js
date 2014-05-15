@@ -130,11 +130,87 @@
 
             }
 
+            var holder = null;
+            if(config.buttons.length > 0) {
+                holder = $("<div>", {class: "buttonsHolder"});
+            }
             // Render buttons to button area
+            for(i = 0, length = config.buttons.length; i < length; i++) {
+                handleButton(holder, config.buttons[i]);
+            }
+
+            // Add all top containers in order to root
+            // Add highest containers
+            // Add rest containers
+            // Add buttons
+            if(MetkaJS.exists(holder)) {
+                root.append(holder);
+            }
+        }
+
+        function handleButton(root, button) {
+            // Check if button should be displayed
+            var display = true;
+            // Check group
+            display = checkButtonGroupRestriction(button);
+            if(display === true) {
+                display = checkButtonHandlerRestriction(button);
+            }
+            if(display === true) {
+                display = checkButtonStateRestriction(button);
+            }
+
+            if(display === false) {
+                // At least one of the restrictions was not fulfilled, return without displaying the button
+                return;
+            }
+
+            // Send button to renderer
+            if(MetkaJS.exists(MetkaJS.GUI.buttonHandlers[button.type])) {
+                MetkaJS.GUI.buttonHandlers[button.type].render(root, button);
+            } else {
+                MetkaJS.GUI.buttonHandlers['_GENERAL'].render(root, button);
+            }
+        }
+
+        /**
+         * Checks to see if user fulfills buttons userGroups restriction
+         * @param button Button configuration
+         * @returns {boolean} Is user groups restriction filled
+         */
+        function checkButtonGroupRestriction(button) {
+            if(MetkaJS.hasContent(button.userGroups)) {
+                // TODO: Check users groups against this and return false if user doesn't fulfill the restriction
+            }
+
+            return true;
+        }
+
+        /**
+         * Checks to see if user fulfills buttons isHandler restriction
+         * @param button Button configuration
+         * @returns {boolean} Is is handler restriction filled
+         */
+        function checkButtonHandlerRestriction(button) {
+            if(MetkaJS.exists(button.isHandler)) {
+                // TODO: Check if user fulfills buttons isHandler restriction
+            }
+
+            return true;
+        }
+
+        function checkButtonStateRestriction(button) {
+            if(MetkaJS.hasContent(button.states)) {
+                // TODO: Check current revision state and return false if button is not supposed to be shown
+            }
+
+            return true;
         }
 
         return {
-            build: buildGui
+            build: buildGui,
+            buttonHandlers: {},
+            containerHandlers: {}
         };
     }());
 }());

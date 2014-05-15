@@ -12,7 +12,8 @@
 
         function showError(error) {
             var str = MetkaJS.L10N.get(error.message);
-            for(var i = 0; i < error.data.length; i++) {
+            var i;
+            for(i = 0; i < error.data.length; i++) {
                 str = str.replace('{' + i + '}', error.data[i]);
             }
             alert(str, error.title);

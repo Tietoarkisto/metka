@@ -92,19 +92,19 @@
 
         // Provides a new PathBuilder instance every time this is called. PathBuilder takes care of certain repeating elements in service URLs and can navigate straight to the built URL.
         PathBuilder: function () {
+            var path = MetkaJS.Globals.contextPath;
             return {
-                path: MetkaJS.Globals.contextPath,
                 add: function (part) {
-                    if (typeof part !== 'undefined' && part !== null) {
-                        this.path += '/' + part;
+                    if (MetkaJS.isString(part)) {
+                        path += '/' + part;
                     }
                     return this;
                 },
                 build: function () {
-                    return this.path;
+                    return path;
                 },
                 navigate: function () {
-                    location.href = this.path;
+                    location.href = path;
                 }
             };
         },
@@ -219,6 +219,19 @@
             }
 
             if(typeof variable !== 'string') {
+                return false;
+            }
+
+            if(variable.length <= 0) {
+                return false;
+            }
+
+            return true;
+        },
+
+        // Checks to see if given variable is an array and has any content
+        hasContent: function(variable) {
+            if(!$.isArray(variable)) {
                 return false;
             }
 
