@@ -1,4 +1,7 @@
 package fi.uta.fsd.metka.data.enums;
 
-public class VisibilityState {
+public enum VisibilityState {
+    DRAFT,
+    APPROVED,
+    REMOVED
 }

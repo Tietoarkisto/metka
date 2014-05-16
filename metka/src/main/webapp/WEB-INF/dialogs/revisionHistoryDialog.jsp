@@ -16,7 +16,7 @@
 
 	<div class="popupButtonsHolder">
 		<input id="revisionsCloseBtn" type="button" class="button" value="<spring:message code='general.buttons.close'/>" />
-		<input type="button" id="compareRevisions" class="button" value="<spring:message code="general.revision.compare"/>"/>
+		<input type="button" id="compareRevisions" class="button" onclick="MetkaJS.RevisionHistory.compare()" value="<spring:message code="general.revision.compare"/>"/>
 	</div>
 </div>
 

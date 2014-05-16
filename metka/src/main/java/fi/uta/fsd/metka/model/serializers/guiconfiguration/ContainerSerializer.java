@@ -17,6 +17,7 @@ public class ContainerSerializer extends JsonSerializer<Container> {
 
         if(value.getType() != ContainerType.EMPTYCELL) {
             jgen.writeStringField("title", value.getTitle()); // TODO: Change to translation text instead
+            //jgen.writeObjectField("&title", value.getTitle()); // TODO: Change to translation text instead
             jgen.writeBooleanField("hidden", value.getHidden());
             if(value.getReadOnly() == null) {
                 jgen.writeNullField("readOnly");

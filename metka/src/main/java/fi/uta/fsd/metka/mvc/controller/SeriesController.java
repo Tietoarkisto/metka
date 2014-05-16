@@ -2,7 +2,9 @@ package fi.uta.fsd.metka.mvc.controller;
 
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.enums.UIRevisionState;
+import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.model.configuration.Configuration;
+import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import fi.uta.fsd.metka.mvc.domain.ConfigurationService;
 import fi.uta.fsd.metka.mvc.domain.SeriesService;
 import fi.uta.fsd.metka.mvc.domain.simple.ErrorMessage;
@@ -10,6 +12,7 @@ import fi.uta.fsd.metka.mvc.domain.simple.RevisionViewDataContainer;
 import fi.uta.fsd.metka.mvc.domain.simple.transfer.SearchResult;
 import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchData;
+import fi.uta.fsd.metka.transfer.configuration.GUIConfigurationMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +46,8 @@ public class SeriesController {
     private SeriesService seriesService;
     @Autowired
     private ConfigurationService configService;
+    @Autowired
+    private JSONUtil json;
 
     /*
     * View single series
@@ -96,6 +102,21 @@ public class SeriesController {
             List<ErrorMessage> errors = new ArrayList<>();
             errors.add(ErrorMessage.noSuchRevision("series", id, revision));
             errors.add(ErrorMessage.noSuchRevision("study", id, revision));
+            redirectAttributes.addFlashAttribute("displayableErrors", errors);
+            return REDIRECT_SEARCH;
+        }
+
+        // Form JSGUIConfig
+        GUIConfigurationMap guiConfigs = new GUIConfigurationMap();
+        GUIConfiguration guiConfig = configService.findLatestGUIByType(ConfigurationType.SERIES);
+        guiConfigs.setConfiguration(guiConfig);
+
+        try {
+            model.asMap().put("jsGUIConfig", json.serialize(guiConfigs));
+        } catch(IOException ex) {
+            ex.printStackTrace();
+            List<ErrorMessage> errors = new ArrayList<>();
+            errors.add(ErrorMessage.guiConfigurationSerializationError("study", id, revision));
             redirectAttributes.addFlashAttribute("displayableErrors", errors);
             return REDIRECT_SEARCH;
         }

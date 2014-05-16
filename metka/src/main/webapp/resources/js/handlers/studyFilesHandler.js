@@ -116,8 +116,8 @@
 				url: MetkaJS.PathBuilder().add('file').add('save').build()
 			}).done(function (data) {
 				if (data !== null && data !== 'undefined') {
-					var message = MetkaJS.ErrorManager.ErrorMessage(data.title, data.msg);
-					MetkaJS.ErrorManager.show(message);
+					var message = MetkaJS.MessageManager.Message(data.title, data.msg);
+					MetkaJS.MessageManager.show(message);
 				}
 				MetkaJS.EventManager.notify(MetkaJS.E.Event.DIALOG_EVENT, {
 					target: dialogId,

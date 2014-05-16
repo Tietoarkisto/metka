@@ -6,7 +6,7 @@ import java.util.List;
 public class ErrorMessage {
 
 
-    private String title = "";
+    private String title = null;
     private String msg;
     private final List<String> data = new ArrayList<String>();
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import fi.uta.fsd.metka.data.enums.ContainerType;
+import fi.uta.fsd.metka.model.guiconfiguration.Button;
 import fi.uta.fsd.metka.model.guiconfiguration.Container;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 
@@ -21,6 +22,12 @@ public class GUIConfigurationSerializer extends JsonSerializer<GUIConfiguration>
             if(checkValidContainer(container.getType())) {
                 jgen.writeObject(container);
             }
+        }
+        jgen.writeEndArray();
+
+        jgen.writeArrayFieldStart("buttons");
+        for(Button button : value.getButtons()) {
+            jgen.writeObject(button);
         }
         jgen.writeEndArray();
 

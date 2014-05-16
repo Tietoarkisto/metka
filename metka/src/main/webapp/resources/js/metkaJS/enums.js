@@ -81,6 +81,15 @@
             ROW: "ROW",
             CELL: "CELL",
             EMPTYCELL: "EMPTYCELL"
+        },
+
+        /**
+         * Visibility state enum
+         */
+        VisibilityState: {
+            DRAFT: "DRAFT",
+            APPROVED: "APPROVED",
+            REMOVED: "REMOVED"
         }
     };
 }());

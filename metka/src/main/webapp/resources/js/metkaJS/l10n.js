@@ -58,7 +58,7 @@
 
             localize: function(obj, name) {
                 //Sanity checks
-                if(!MetkaJS.exists(obj) || !MetkaJS.isString(name) || !MetkaJS.exists(obj[name])) {
+                if(!MetkaJS.exists(obj) || !MetkaJS.isString(name)) {
                     return '['+name+']';
                 }
 
@@ -87,7 +87,7 @@
              * @returns {boolean} True if there is a translation version of given property
              */
             hasTranslation: function(obj, name) {
-                if(MetkaJS.isTranslation(obj['&'+name])) {
+                if(MetkaJS.L10N.isTranslation(obj['&'+name])) {
                     return true;
                 } else {
                     return false;

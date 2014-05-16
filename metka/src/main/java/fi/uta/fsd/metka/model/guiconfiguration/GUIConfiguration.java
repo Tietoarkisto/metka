@@ -17,6 +17,7 @@ import java.util.List;
 public class GUIConfiguration implements ModelBase {
     @XmlElement private ConfigurationKey key;
     @XmlElement private final List<Container> content = new ArrayList<>();
+    @XmlElement private final List<Button> buttons = new ArrayList<>();
 
     public ConfigurationKey getKey() {
         return key;
@@ -28,6 +29,10 @@ public class GUIConfiguration implements ModelBase {
 
     public List<Container> getContent() {
         return content;
+    }
+
+    public List<Button> getButtons() {
+        return buttons;
     }
 
     @Override

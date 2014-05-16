@@ -17,4 +17,5 @@ functionality is required including a component with id: showRevisions. --%>
 <script src="${pageContext.request.contextPath}/js/custom/history.js"></script>
 <%--    End of revision history component requirements. --%>
 <jsp:include page="../dialogs/revisionHistoryDialog.jsp" />
-<input type="button" id="showRevisions" class="button" value="<spring:message code='general.buttons.revisionHistory'/>" />
+<%--
+<input type="button" id="showRevisions" class="button" value="<spring:message code='general.buttons.revisionHistory'/>" />--%>

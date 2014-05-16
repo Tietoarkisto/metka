@@ -1,16 +1,16 @@
 (function() {
     'use strict';
-    GUI.buttonHandlers['SAVE'] = (function() {
-        function renderSaveButton(root, button) {
+    GUI.buttonHandlers['APPROVE'] = (function() {
+        function renderApproveButton(root, button) {
             var input = GUI.Components.viewButton(button);
             input.click(function () {
-                MetkaJS.SingleObject.formAction(MetkaJS.E.Form.SAVE);
+                MetkaJS.SingleObject.formAction(MetkaJS.E.Form.APPROVE);
             });
             root.append(input);
         }
 
         return {
-            render: renderSaveButton
+            render: renderApproveButton
         }
     }());
 }());

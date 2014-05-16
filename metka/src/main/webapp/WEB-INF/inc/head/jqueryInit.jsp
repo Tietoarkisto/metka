@@ -1,16 +1,17 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: lasseku
-  Date: 5/15/14
-  Time: 12:33 PM
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
-<head>
-    <title></title>
-</head>
-<body>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<c:set var="contextPath" value="${pageContext.request.contextPath}"/>
 
-</body>
-</html>
+<%-- Include jQuery and plugins --%>
+<script src="${contextPath}/js/jquery/jquery-1.10.2.js"></script>
+<script src="${contextPath}/js/jquery/jquery-ui.js"></script>
+<script src="${contextPath}/js/jquery/jquery.fileupload.js"></script>
+
+<%--
+<script src="${contextPath}/js/jquery/jquery.tablesorter.min.js"></script>
+<script src="${contextPath}/js/jquery/jquery.dataTables.min.js"></script>
+<script src="${contextPath}/js/jquery/jquery.tablesorter.pager.js"></script>
+<script src="${contextPath}/js/jquery/jquery.dataTables.rowReordering.js"></script>
+<script src="${contextPath}/js/jquery/jquery.fastLiveFilter.js"></script>
+<script src="${contextPath}/js/jquery/jquery.fancytree.js"></script>
+<script src="${contextPath}/js/jquery/jquery.fancytree.filter.js"></script>
+<script src="${contextPath}/js/jquery/jquery.fastLiveFilter.js"></script>--%>

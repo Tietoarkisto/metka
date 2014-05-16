@@ -25,14 +25,16 @@ public class StartupScanner {
     @Autowired
     private JSONUtil json;
 
+    //private String rootFolder = "src/main/resources/"; // Development
+    private String rootFolder = "/usr/share/metka/"; // QA-server
+
     /**
      * Gathers data configurations from file and saves them to database
      * @throws IOException
      */
     @PostConstruct
     public void scanForConfigurations() throws IOException {
-        File confDir = new File("src/main/resources/configuration"); // Development
-        //File confDir = new File("/usr/share/metka/config"); // QA-server
+        File confDir = new File(rootFolder+"configuration");
 
         Collection<File> files = FileUtils.listFiles(confDir, FileFilterUtils.suffixFileFilter(".json"), TrueFileFilter.TRUE);
 
@@ -56,8 +58,7 @@ public class StartupScanner {
      */
     @PostConstruct
     public void scanForMiscJSON() throws IOException {
-        File miscDir = new File("src/main/resources/misc"); // Development
-        //File miscDir = new File("/usr/share/metka/misc"); // QA-server
+        File miscDir = new File(rootFolder+"misc");
 
         Collection<File> files = FileUtils.listFiles(miscDir, FileFilterUtils.suffixFileFilter(".json"), TrueFileFilter.TRUE);
 
@@ -82,8 +83,7 @@ public class StartupScanner {
      */
     @PostConstruct
     public void scanForGUIConfigurations() throws IOException {
-        File guiDir = new File("src/main/resources/gui"); // Development
-        //File guiDir = new File("/usr/share/metka/gui"); // QA-server
+        File guiDir = new File(rootFolder+"gui");
 
         Collection<File> files = FileUtils.listFiles(guiDir, FileFilterUtils.suffixFileFilter(".json"), TrueFileFilter.TRUE);
 

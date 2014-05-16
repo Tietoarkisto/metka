@@ -1,13 +1,23 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<c:set var="contextPath" value="${pageContext.request.contextPath}"/>
+
+<%-- Include MetkaJS namespace javascript. --%>
+<script src="${contextPath}/js/metkaJS/metkaJS.js"></script>
+<script src="${contextPath}/js/metkaJS/enums.js"></script>
+<script src="${contextPath}/js/metkaJS/l10n.js"></script>
+<script src="${contextPath}/js/metkaJS/messageManager.js"></script>
+<script src="${contextPath}/js/metkaJS/reference.js"></script>
+<script src="${contextPath}/js/metkaJS/tableHandler.js"></script>
+<script src="${contextPath}/js/metkaJS/jsConfigUtil.js"></script>
+<script src="${contextPath}/js/metkaJS/eventManager.js"></script>
+<script src="${contextPath}/js/metkaJS/revisionHistory.js"></script>
+
+
 <script>
     MetkaJS.Globals.page = "${page}";
-    MetkaJS.Globals.contextPath = "${pageContext.request.contextPath}";
+    MetkaJS.Globals.contextPath = "${contextPath}";
 
-    // Insert default confirmation dialog title
-    MetkaJS.L10N.put("general.confirmation.title.confirm", "<spring:message code='general.confirmation.title.confirm' />");
-    // Insert default error title
-    MetkaJS.L10N.put("general.errors.title.notice", "<spring:message code='general.errors.title.notice' />");
     // Insert localisation for text DRAFT
     MetkaJS.L10N.put("general.DRAFT", "<spring:message code="general.DRAFT"/>");
 
@@ -34,9 +44,9 @@
 <c:forEach items="${displayableErrors}" var="errorObject">
     <c:if test="${not empty errorObject.title}">MetkaJS.L10N.put("${errorObject.title}", "<spring:message code='${errorObject.title}' />");</c:if>
     MetkaJS.L10N.put("${errorObject.msg}", "<spring:message code='${errorObject.msg}' />");
-    MetkaJS.ErrorManager.push(MetkaJS.ErrorManager.ErrorMessage("${errorObject.title}", "${errorObject.msg}"));
+    MetkaJS.MessageManager.push(MetkaJS.MessageManager.Message("${errorObject.title}", "${errorObject.msg}"));
     <c:forEach items="${errorObject.data}" var="dataStr">
-    MetkaJS.ErrorManager.topError().pushData("<spring:message code='${dataStr}' />");
+    MetkaJS.MessageManager.topMessage().pushData("<spring:message code='${dataStr}' />");
     </c:forEach>
 </c:forEach>
 </c:if>

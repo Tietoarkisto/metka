@@ -51,7 +51,7 @@
          * @param dependencyValue
          * @constructor
          */
-        function ReferencyOptionsRequest(key, container, confType, confVersion, dependencyValue) {
+        function ReferenceOptionsRequest(key, container, confType, confVersion, dependencyValue) {
             this.key = key;
             this.container = container;
             this.confType = confType;
@@ -247,12 +247,12 @@
             if (typeof data.messages !== 'undefined' && data.messages !== null && data.messages.length > 0) {
                 for (i = 0, iLength = data.messages.length; i < iLength; i++) {
                     var message = data.messages[i];
-                    MetkaJS.ErrorManager.push(MetkaJS.ErrorManager.ErrorMessage(message.title, message.message));
+                    MetkaJS.MessageManager.push(MetkaJS.MessageManager.Message(message.title, message.message));
                     for (j = 0, jLength = message.data.length; j < jLength; j++) {
-                        MetkaJS.ErrorManager.topError().pushData(message.data[j]);
+                        MetkaJS.MessageManager.topMessage().pushData(message.data[j]);
                     }
                 }
-                MetkaJS.ErrorManager.showAll();
+                MetkaJS.MessageManager.showAll();
                 return;
             }
 

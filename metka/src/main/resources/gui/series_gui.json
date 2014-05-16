@@ -1,0 +1,44 @@
+{
+	"key": {
+		"type": "SERIES",
+		"version": 1
+	},
+	"content": [
+		
+	],
+	"buttons": [
+		{
+			"title": "Tallenna",
+			"type": "SAVE",
+			"states": [
+				"DRAFT"
+			]
+		},
+		{
+			"title": "Hyväksy",
+			"type": "APPROVE",
+			"states": [
+				"DRAFT"
+			]
+		},
+		{
+			"title": "Muokkaa",
+			"type": "EDIT",
+			"states": [
+				"APPROVED"
+			]
+		},
+		{
+			"title": "Poista",
+			"type": "REMOVE",
+			"states": [
+				"DRAFT",
+				"APPROVED"
+			]
+		},
+		{
+			"title": "Revisiohistoria",
+			"type": "HISTORY"
+		}
+	]
+}

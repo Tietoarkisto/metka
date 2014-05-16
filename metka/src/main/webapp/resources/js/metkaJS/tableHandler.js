@@ -209,7 +209,7 @@
                     tr.append(td);
                 }
                 // Add reference change listener for current row
-                MetkaJS.EventManager.listen(MetkaJS.E.Event.REFERENCE_CONTAINER_CHANGE, reference.value, key, new MetkaJS.ReferenceHandler.ReferenceContainerCallback(key, context, reference.value));
+                MetkaJS.EventManager.listen(MetkaJS.E.Event.REFERENCE_CONTAINER_CHANGE, reference.value, key, MetkaJS.ReferenceHandler.referenceContainerCallback(key, context, reference.value));
                 body.append(tr);
                 MetkaJS.ReferenceHandler.handleReference(key, context, reference.value);
             });

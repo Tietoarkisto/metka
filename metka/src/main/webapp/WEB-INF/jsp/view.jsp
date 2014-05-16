@@ -19,12 +19,14 @@
         <jsp:include page="${page}/view.jsp" />
         <div class="buttonsHolder">
             <jsp:include page="../inc/revHistory.jsp" />
-            <input type="button" class="button"
-                   value="<spring:message code='general.buttons.edit'/>"
-                   onclick="MetkaJS.SingleObject.edit()"/>
-            <jsp:include page="../inc/removeButton.jsp" />
         </div>
     </div>
+    <div class="dynamicContent"></div>
 </div>
 </body>
+<script>
+    $(document).ready(function() {
+        GUI.build($(".dynamicContent"), "${context}");
+    });
+</script>
 </html>

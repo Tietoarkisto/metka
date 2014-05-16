@@ -1,8 +1,8 @@
 (function () {
 	'use strict';
 
-    /* Define MetkaJS namespace. Should include all global variables as well as all functions and other objects that
-     should be accessible from anywhere */
+    /* Define MetkaJS namespace. Includes general global variables, objects, handlers and functions related to Metka-client.
+     */
     window.MetkaJS = {
         DialogHandlers: {}, // This is used to collect and reference custom dialog handlers used throughout the application
         TableBuilders: {}, // This is used to collect and reference custom table builders used throughout the application
@@ -11,10 +11,10 @@
         JSConfig: null,
         JSGUIConfig: null,
         JSConfigUtil: null,
-        ErrorManager: null,
+        MessageManager: null,
         EventManager: null,
         L10N: null,
-        GUI: null,
+        RevisionHistory: null,
         // Globals-object contains global variables and sequences
         Globals: {
             page: '',
@@ -95,7 +95,7 @@
             var path = MetkaJS.Globals.contextPath;
             return {
                 add: function (part) {
-                    if (MetkaJS.isString(part)) {
+                    if (MetkaJS.isString(part) || MetkaJS.isNumber(part)) {
                         path += '/' + part;
                     }
                     return this;
@@ -223,6 +223,23 @@
             }
 
             if(variable.length <= 0) {
+                return false;
+            }
+
+            return true;
+        },
+
+        /**
+         * Checks if given variable exists and is a number
+         * @param variable Variable to be checked
+         * @returns {boolean} True if given variable exists and is a number, false otherwise
+         */
+        isNumber: function(variable) {
+            if(!MetkaJS.exists(variable)) {
+                return false;
+            }
+
+            if(typeof variable !== 'number') {
                 return false;
             }
 

@@ -91,9 +91,6 @@ $(document).ready(function() {
 
         "general": {
             "buttons": {
-                "&save": {
-                    "default": "Tallenna"
-                },
                 "&close": {
                     "default": "Sulje"
                 },
@@ -109,23 +106,11 @@ $(document).ready(function() {
                 "&search": {
                     "default": "Hae"
                 },
-                "&revisionHistory": {
-                    "default": "Revisiohistoria"
-                },
-                "&remove": {
-                    "default": "Poista"
-                },
                 "&addSeries": {
                     "default": "Lisää sarja"
                 },
                 "&download": {
                     "default": "Lataa"
-                },
-                "&approve": {
-                    "default": "Hyväksy"
-                },
-                "&edit": {
-                    "default": "Muokkaa"
                 },
                 "&add": {
                     "default": "Lisää"
@@ -442,6 +427,67 @@ $(document).ready(function() {
                     }
                 }
             }
+        },
+
+        "alert": {
+            "notice": {
+                "&title": {
+                    "default": "Huomio"
+                }
+            },
+
+            "error": {
+                "&title": {
+                    "default": "Virhe"
+                }
+            },
+
+            "gui": {
+                "missingButtonHandler": {
+                    "&text": {
+                        "default": 'Ei käsittelijää painikkeelle [{0}] otsikolla "{1}"'
+                    }
+                }
+            }
+        },
+
+        "confirmation": {
+            "&title": {
+                "default": "Varmistus"
+            },
+            "remove": {
+                "revision": {
+                    "&title": {
+                        "default": "Revision poiston varmistus"
+                    },
+                    "draft": {
+                        "&text": {
+                            "default": "Haluatko varmasti poistaa luonnoksen {0} id:llä {1}"
+                        },
+                        "data": {
+                            "&series": {
+                                "default": "sarjalta"
+                            },
+                            "&study": {
+                                "default": "aineistolta"
+                            }
+                        }
+                    },
+                    "logical": {
+                        "&text": {
+                            "default": "Haluatko varmasti poistaa {0} id:llä {1}"
+                        },
+                        "data": {
+                            "&series": {
+                                "default": "sarjan"
+                            },
+                            "&study": {
+                                "default": "aineiston"
+                            }
+                        }
+                    }
+                }
+            }
         }
     };
 
@@ -469,8 +515,6 @@ $(document).ready(function() {
     addTranslation("", uiTranslations);
 
     /*# Virheviestejä, kannattaa keksiä parempia jossain välissä
-    general.errors.title.notice = Huomio
-    general.errors.title.error = Virhe
     general.errors.title.noImplementation = Ei käsittelijää
 
     general.errors.search.noResult = Ei hakua vastaavia {0}.
@@ -507,13 +551,13 @@ $(document).ready(function() {
     #...
 
     general.errors.remove.draft.noDraft = {0} ei löytynyt poistettavaa luonnosta.
-        general.errors.remove.draft.noDraft.series = Sarjalle
+    general.errors.remove.draft.noDraft.series = Sarjalle
     general.errors.remove.draft.noDraft.study = Aineistolle
     general.errors.remove.draft.noDraft.publication = Julkaisulle
     #...
 
     general.errors.remove.draft.final = Luonnos poistettu onnistuneesti. Hyväksyttyjä revisioita ei löytynyt. {0} id:llä {1} poistettu.
-        general.errors.remove.draft.final.series = Sarja
+    general.errors.remove.draft.final.series = Sarja
     general.errors.remove.draft.final.study = Aineisto
     general.errors.remove.draft.final.publication = Julkaisu
     #...
@@ -532,44 +576,31 @@ $(document).ready(function() {
     #...
 
     general.errors.remove.logical.draft = {0} id:llä {1} sisältää avoimen luonnoksen.
-        general.errors.remove.logical.draft.series = Sarja
+    general.errors.remove.logical.draft.series = Sarja
     general.errors.remove.logical.draft.study = Aineisto
     general.errors.remove.logical.draft.publication = Julkaisu
     #...
 
     general.errors.remove.logical.noApproved = {0} id:llä {1} ei sisällä hyväksyttyjä revisioita.
-        general.errors.remove.logical.noApproved.series = Sarja
+    general.errors.remove.logical.noApproved.series = Sarja
     general.errors.remove.logical.noApproved.study = Aineisto
     general.errors.remove.logical.noApproved.publication = Julkaisu
     #...
 
     general.errors.remove.logical.complete = {0} id:llä {1} poistettu onnistuneesti.
-        general.errors.remove.logical.complete.series = Sarja
+    general.errors.remove.logical.complete.series = Sarja
     general.errors.remove.logical.complete.study = Aineisto
     general.errors.remove.logical.complete.publication = Julkaisu
     #...
 
     general.errors.container.dialog.noImplementation = Taululle [{0}: {1}] ei ole toteutettu käsittelijää.
 
-        general.errors.studyAttachment.saveSuccess = Tiedoston tiedot tallennettu onnistuneesti.
-        general.errors.studyAttachment.saveFail = Tiedoston tietojen tallennuksessa tapahtui virhe: {0}
+    general.errors.studyAttachment.saveSuccess = Tiedoston tiedot tallennettu onnistuneesti.
+    general.errors.studyAttachment.saveFail = Tiedoston tietojen tallennuksessa tapahtui virhe: {0}
     general.errors.studyAttachment.saveFailAjax = Tiedoston tietojen tallennuspyynnössä tapahtui virhe
+    */
 
-    # Varmistusviestit
-    general.confirmation.title.confirm = Varmistus
-    general.confirmation.title.remove = Poiston varmistus
 
-    general.confirmation.remove.draft = Haluatko varmasti poistaa luonnoksen {0} id:llä {1}
-    general.confirmation.remove.draft.series = sarjalta
-    general.confirmation.remove.draft.study = aineistolta
-    general.confirmation.remove.draft.pubication = julkaisulta
-    #...
-
-    general.confirmation.remove.logical = Haluatko varmasti poistaa {0} id:llä {1}
-    general.confirmation.remove.logical.series = sarjan
-    general.confirmation.remove.logical.study = aineiston
-    general.confirmation.remove.logical.pubication = julkaisun
-    #...*/
 
 
     /*general.revision=Revisio

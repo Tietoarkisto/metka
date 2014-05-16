@@ -9,7 +9,7 @@
      *
      * @type {{}}
      */
-    MetkaJS.GUI = (function() {
+    window.GUI = (function() {
         /**
          * Compares two container types and returns integer telling if a is of higher or lower priority than b.
          * Assumes priorities are strings equal to MetkaJS.E.Container enum values.
@@ -82,6 +82,13 @@
                 return;
             }
 
+            buildContainers(root, config);
+
+            buildButtons(root, config);
+
+        }
+
+        function buildContainers(root, config) {
             var i, length, currentContainer;
             // Get the highest priority type in content so that containers can be processed in right order
             var highestType = null;
@@ -130,19 +137,23 @@
 
             }
 
+            // Add all top containers in order to root
+            // Add highest containers
+            // Add rest containers
+        }
+
+        function buildButtons(root, config) {
             var holder = null;
             if(config.buttons.length > 0) {
                 holder = $("<div>", {class: "buttonsHolder"});
             }
             // Render buttons to button area
+            var i, length;
             for(i = 0, length = config.buttons.length; i < length; i++) {
                 handleButton(holder, config.buttons[i]);
             }
 
-            // Add all top containers in order to root
-            // Add highest containers
-            // Add rest containers
-            // Add buttons
+            // Add buttons to root
             if(MetkaJS.exists(holder)) {
                 root.append(holder);
             }
@@ -166,10 +177,10 @@
             }
 
             // Send button to renderer
-            if(MetkaJS.exists(MetkaJS.GUI.buttonHandlers[button.type])) {
-                MetkaJS.GUI.buttonHandlers[button.type].render(root, button);
+            if(MetkaJS.exists(GUI.buttonHandlers[button.type])) {
+                GUI.buttonHandlers[button.type].render(root, button);
             } else {
-                MetkaJS.GUI.buttonHandlers['_GENERAL'].render(root, button);
+                GUI.buttonHandlers['_GENERAL'].render(root, button);
             }
         }
 
@@ -200,17 +211,42 @@
         }
 
         function checkButtonStateRestriction(button) {
+            var show = false;
             if(MetkaJS.hasContent(button.states)) {
-                // TODO: Check current revision state and return false if button is not supposed to be shown
+                var i, length;
+                for(i = 0, length = button.states.length; i < length; i++) {
+                    var state = button.states[i];
+                    switch(state) {
+                        case MetkaJS.E.VisibilityState.DRAFT:
+                            if(MetkaJS.SingleObject.draft) {
+                                show = true;
+                            }
+                            break;
+                        case MetkaJS.E.VisibilityState.APPROVED:
+                            if(!MetkaJS.SingleObject.draft) {
+                                show = true;
+                            }
+                            break;
+                        case MetkaJS.E.VisibilityState.REMOVED:
+                            // TODO: Check for displaying removed revisionable
+                            break;
+                    }
+                    if(show) {
+                        break;
+                    }
+                }
+            } else {
+                show = true;
             }
 
-            return true;
+            return show;
         }
 
         return {
             build: buildGui,
             buttonHandlers: {},
-            containerHandlers: {}
+            containerHandlers: {},
+            Components: {}
         };
     }());
 }());

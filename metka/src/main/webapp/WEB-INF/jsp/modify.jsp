@@ -20,14 +20,17 @@
             <div class="floatRight normalText"><input type="button" onclick="MetkaJS.PathBuilder().add('download').add(MetkaJS.SingleObject.id).add(MetkaJS.SingleObject.revision).navigate()" value="<spring:message code='general.buttons.download' />"/></div></h1>
         <jsp:include page="${page}/modify.jsp" />
         <div class="buttonsHolder">
-            <input type="button" id="revisionModifyFormSave" class="button" value="<spring:message code="general.buttons.save" />">
-            <input type="button" id="revisionModifyFormApprove" class="button" value="<spring:message code='general.buttons.approve'/>" />
             <jsp:include page="../inc/revHistory.jsp"/>
-            <jsp:include page="../inc/removeButton.jsp" />
             <!-- TODO: Fix this reset button
             <input type="reset" class="button" value="Tyhjennä">-->
         </div>
     </div>
+    <div class="dynamicContent"></div>
 </div>
 </body>
+<script>
+    $(document).ready(function() {
+        GUI.build($(".dynamicContent"), "${context}");
+    });
+</script>
 </html>

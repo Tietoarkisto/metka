@@ -46,7 +46,6 @@ public class GeneralController {
         } catch(NotFoundException e) {
             List<ErrorMessage> errors = new ArrayList<>();
             ErrorMessage error = new ErrorMessage();
-            error.setTitle("general.errors.title.notice");
             error.setMsg("general.errors.move.previous");
             error.getData().add("general.errors.move." + type);
             errors.add(error);
@@ -64,7 +63,6 @@ public class GeneralController {
         } catch(NotFoundException e) {
             List<ErrorMessage> errors = new ArrayList<>();
             ErrorMessage error = new ErrorMessage();
-            error.setTitle("general.errors.title.notice");
             error.setMsg("general.errors.move.next");
             error.getData().add("general.errors.move."+type);
             errors.add(error);
@@ -99,7 +97,7 @@ public class GeneralController {
                 return "redirect:/"+type+"/view/"+id;
             case NO_DRAFT:
                 error = new ErrorMessage();
-                error.setTitle("general.errors.title.error");
+                error.setTitle("alert.error.title");
                 error.setMsg("general.errors.remove.draft.noDraft");
                 error.getData().add("general.errors.remove.draft.noDraft."+type);
                 error.getData().add(id+"");
@@ -108,7 +106,7 @@ public class GeneralController {
                 return "redirect:/"+type+"/search";
             case NO_REVISIONABLE:
                 error = new ErrorMessage();
-                error.setTitle("general.errors.title.error");
+                error.setTitle("alert.error.title");
                 error.setMsg("general.errors.remove.draft.noObject");
                 error.getData().add("general.errors.remove.draft.noObject."+type);
                 error.getData().add(id+"");
@@ -152,7 +150,7 @@ public class GeneralController {
                 return "redirect:/"+type+"/search";
             case OPEN_DRAFT:
                 error = new ErrorMessage();
-                error.setTitle("general.errors.title.error");
+                error.setTitle("alert.error.title");
                 error.setMsg("general.errors.remove.logical.draft");
                 error.getData().add("general.errors.remove.logical.draft."+type);
                 error.getData().add(id+"");
@@ -161,7 +159,7 @@ public class GeneralController {
                 return "redirect:/"+type+"/view/"+id;
             case NO_REVISIONABLE:
                 error = new ErrorMessage();
-                error.setTitle("general.errors.title.error");
+                error.setTitle("alert.error.title");
                 error.setMsg("general.errors.remove.logical.noObject");
                 error.getData().add("general.errors.remove.logical.noObject."+type);
                 error.getData().add(id+"");
@@ -170,7 +168,6 @@ public class GeneralController {
                 return "redirect:/"+type+"/search";
             case NO_APPROVED:
                 error = new ErrorMessage();
-                error.setTitle("general.errors.title.notice");
                 error.setMsg("general.errors.remove.logical.noApproved");
                 error.getData().add("general.errors.remove.logical.noApprived."+type);
                 error.getData().add(id+"");

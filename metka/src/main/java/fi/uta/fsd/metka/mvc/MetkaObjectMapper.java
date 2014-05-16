@@ -7,12 +7,18 @@ import com.fasterxml.jackson.datatype.joda.JodaModule;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.configuration.Reference;
 import fi.uta.fsd.metka.model.configuration.SelectionList;
+import fi.uta.fsd.metka.model.deserializers.general.TranslationObjectDeserializer;
+import fi.uta.fsd.metka.model.deserializers.guiconfiguration.ButtonDeserializer;
+import fi.uta.fsd.metka.model.general.TranslationObject;
+import fi.uta.fsd.metka.model.guiconfiguration.Button;
 import fi.uta.fsd.metka.model.guiconfiguration.Container;
 import fi.uta.fsd.metka.model.guiconfiguration.FieldDescription;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import fi.uta.fsd.metka.model.serializers.configuration.FieldSerializer;
 import fi.uta.fsd.metka.model.serializers.configuration.ReferenceSerializer;
 import fi.uta.fsd.metka.model.serializers.configuration.SelectionListSerializer;
+import fi.uta.fsd.metka.model.serializers.general.TranslationObjectSerializer;
+import fi.uta.fsd.metka.model.serializers.guiconfiguration.ButtonSerializer;
 import fi.uta.fsd.metka.model.serializers.guiconfiguration.ContainerSerializer;
 import fi.uta.fsd.metka.model.serializers.guiconfiguration.FieldDescriptionSerializer;
 import fi.uta.fsd.metka.model.serializers.guiconfiguration.GUIConfigurationSerializer;
@@ -29,13 +35,23 @@ public class MetkaObjectMapper extends ObjectMapper {
         configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 
         // Add serializers
-        SimpleModule serializers = new SimpleModule();
-        serializers.addSerializer(Field.class, new FieldSerializer());
-        serializers.addSerializer(SelectionList.class, new SelectionListSerializer());
-        serializers.addSerializer(Reference.class, new ReferenceSerializer());
-        serializers.addSerializer(GUIConfiguration.class, new GUIConfigurationSerializer());
-        serializers.addSerializer(Container.class, new ContainerSerializer());
-        serializers.addSerializer(FieldDescription.class, new FieldDescriptionSerializer());
-        this.registerModule(serializers);
+        SimpleModule parsers = new SimpleModule();
+        // Add general
+        parsers.addDeserializer(TranslationObject.class, new TranslationObjectDeserializer());
+        parsers.addSerializer(TranslationObject.class, new TranslationObjectSerializer());
+
+        // Gui config
+        parsers.addSerializer(GUIConfiguration.class, new GUIConfigurationSerializer());
+        parsers.addSerializer(Container.class, new ContainerSerializer());
+        parsers.addSerializer(FieldDescription.class, new FieldDescriptionSerializer());
+
+        parsers.addDeserializer(Button.class, new ButtonDeserializer());
+        parsers.addSerializer(Button.class, new ButtonSerializer());
+
+        // Data config
+        parsers.addSerializer(Field.class, new FieldSerializer());
+        parsers.addSerializer(SelectionList.class, new SelectionListSerializer());
+        parsers.addSerializer(Reference.class, new ReferenceSerializer());
+        this.registerModule(parsers);
     }
 }

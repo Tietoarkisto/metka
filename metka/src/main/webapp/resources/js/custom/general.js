@@ -131,18 +131,16 @@ $(document).ready(function () {
 		$('#revisionSearchForm').submit();
 	});
 
-	$('#revisionModifyFormSave').click(function () {
+	/*$('#revisionModifyFormSave').click(function () {
 		MetkaJS.SingleObject.formAction(MetkaJS.E.Form.SAVE);
 	});
 
 	$('#revisionModifyFormApprove').click(function () {
 		MetkaJS.SingleObject.formAction(MetkaJS.E.Form.APPROVE);
-	});
+	});*/
 
 	/**
 	 * Display controller provided errors that are present at page load time.
 	 */
-	if (MetkaJS.ErrorManager) {
-		MetkaJS.ErrorManager.showAll();
-	}
+	MetkaJS.MessageManager.showAll();
 });

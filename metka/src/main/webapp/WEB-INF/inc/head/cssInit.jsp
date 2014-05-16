@@ -1,16 +1,7 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: lasseku
-  Date: 5/15/14
-  Time: 12:32 PM
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
-<head>
-    <title></title>
-</head>
-<body>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<c:set var="contextPath" value="${pageContext.request.contextPath}"/>
 
-</body>
-</html>
+<link rel="stylesheet" type="text/css" href="${contextPath}/css/jquery-ui.css">
+<link rel="stylesheet" type="text/css" href="${contextPath}/css/styles.css">
+<link rel="stylesheet" type="text/css" href="${contextPath}/css/form.css">
+<link rel="stylesheet" type="text/css" href="${contextPath}/css/table.css">
