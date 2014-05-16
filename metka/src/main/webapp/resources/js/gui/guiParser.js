@@ -246,7 +246,8 @@
             build: buildGui,
             buttonHandlers: {},
             containerHandlers: {},
-            Components: {}
+            Components: {},
+            Grid: null
         };
     }());
 }());
