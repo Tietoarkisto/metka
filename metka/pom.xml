@@ -258,6 +258,7 @@
             <version>3.1</version>
         </dependency>
 
+        <!-- JSLint -->
         <dependency>
             <groupId>com.googlecode.jslint4java</groupId>
             <artifactId>jslint4java-maven-plugin</artifactId>
@@ -336,9 +337,11 @@
                                 <plusplus>true</plusplus>
                                 <predef>$, alert, document, location, MetkaJS, sessionStorage, window</predef>
                                 <vars>true</vars>
+                                <white>true</white>
                             </options>
                             <excludes>
-                                <exclude>**/jquery/*</exclude>
+                                <exclude>**/bootstrap/**</exclude>
+                                <exclude>**/jquery/**</exclude>
                             </excludes>
                         </configuration>
                     </execution>
