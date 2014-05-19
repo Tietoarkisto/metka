@@ -12,7 +12,7 @@
      *                This is used to display the actual button. Restrictions for display should have been sorted out
      *                earlier and handlers should only be called if the button is actually to be shown
      */
-    GUI.buttonHandlers['_GENERAL'] = (function() {
+    GUI.ButtonParser.buttonHandlers['_GENERAL'] = (function() {
         function generalButtonRenderer(root, button) {
             var message = MetkaJS.MessageManager.Message(null, "alert.gui.missingButtonHandler.text");
             message.data.push(button.type);

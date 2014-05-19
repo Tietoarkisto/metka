@@ -25,8 +25,8 @@ public class StartupScanner {
     @Autowired
     private JSONUtil json;
 
-    //private String rootFolder = "src/main/resources/"; // Development
-    private String rootFolder = "/usr/share/metka/"; // QA-server
+    private String rootFolder = "src/main/resources/"; // Development
+    //private String rootFolder = "/usr/share/metka/"; // QA-server
 
     /**
      * Gathers data configurations from file and saves them to database

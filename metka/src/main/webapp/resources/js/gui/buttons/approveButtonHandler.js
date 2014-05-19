@@ -1,6 +1,6 @@
 (function() {
     'use strict';
-    GUI.buttonHandlers['APPROVE'] = (function() {
+    GUI.ButtonParser.buttonHandlers['APPROVE'] = (function() {
         function renderApproveButton(root, button) {
             var input = GUI.Components.viewButton(button);
             input.click(function () {

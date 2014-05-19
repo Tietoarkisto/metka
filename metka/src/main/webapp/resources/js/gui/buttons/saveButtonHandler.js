@@ -1,6 +1,6 @@
 (function() {
     'use strict';
-    GUI.buttonHandlers['SAVE'] = (function() {
+    GUI.ButtonParser.buttonHandlers['SAVE'] = (function() {
         function renderSaveButton(root, button) {
             var input = GUI.Components.viewButton(button);
             input.click(function () {

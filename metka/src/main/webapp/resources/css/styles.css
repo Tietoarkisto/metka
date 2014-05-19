@@ -216,6 +216,14 @@ nav .mainNavUl li a:hover {
 /*************
  * Clean css *
  *************/
+
+/* Bootstrap init */
+.container {
+    width: 1000px !important;
+}
+
+/* Metka CSS */
+
 .temporary {
     color: red;
 }

@@ -4,6 +4,7 @@
 <%-- Include GUI parser namespace and all sub components --%>
 <script src="${contextPath}/js/gui/guiParser.js"></script>
 <script src="${contextPath}/js/gui/gridInterpreter.js"></script>
+<script src="${contextPath}/js/gui/buttonParser.js"></script>
 
 <%-- Button handlers--%>
 <script src="${contextPath}/js/gui/buttons/generalButtonHandler.js"></script>

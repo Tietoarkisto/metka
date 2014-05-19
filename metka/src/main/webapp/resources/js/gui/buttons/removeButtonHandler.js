@@ -1,6 +1,6 @@
 (function() {
     'use strict';
-    GUI.buttonHandlers['REMOVE'] = (function() {
+    GUI.ButtonParser.buttonHandlers['REMOVE'] = (function() {
 
         function renderRemoveButton(root, button) {
             var input = GUI.Components.viewButton(button);

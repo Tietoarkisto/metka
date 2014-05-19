@@ -82,10 +82,32 @@
                 return;
             }
 
+            // NOTICE: bootstrap test, remove
+            testBootstrap(root);
+
             buildContainers(root, config);
 
             buildButtons(root, config);
 
+        }
+
+        function testBootstrap(root) {
+            var testCon = $("<div>", {class: "container"});
+
+            var row = $("<div>", {class: "row"});
+            var col1 = $("<div>", {class: GUI.Grid.getColumnClass(3, 2)});
+            col1.append("Sarake 1");
+            row.append(col1);
+            /*var col2 = $("<div>", {class: GUI.Grid.getColumnClass(3, 1)});
+            col2.append("Sarake 2");
+            row.append(col2);*/
+            var col3 = $("<div>", {class: GUI.Grid.getColumnClass(3, 1)});
+            col3.append("Sarake 3");
+            row.append(col3);
+
+            testCon.append(row);
+
+            root.append(testCon);
         }
 
         function buildContainers(root, config) {
@@ -150,7 +172,7 @@
             // Render buttons to button area
             var i, length;
             for(i = 0, length = config.buttons.length; i < length; i++) {
-                handleButton(holder, config.buttons[i]);
+                GUI.ButtonParser.parse(holder, config.buttons[i]);
             }
 
             // Add buttons to root
@@ -159,95 +181,12 @@
             }
         }
 
-        function handleButton(root, button) {
-            // Check if button should be displayed
-            var display = true;
-            // Check group
-            display = checkButtonGroupRestriction(button);
-            if(display === true) {
-                display = checkButtonHandlerRestriction(button);
-            }
-            if(display === true) {
-                display = checkButtonStateRestriction(button);
-            }
-
-            if(display === false) {
-                // At least one of the restrictions was not fulfilled, return without displaying the button
-                return;
-            }
-
-            // Send button to renderer
-            if(MetkaJS.exists(GUI.buttonHandlers[button.type])) {
-                GUI.buttonHandlers[button.type].render(root, button);
-            } else {
-                GUI.buttonHandlers['_GENERAL'].render(root, button);
-            }
-        }
-
-        /**
-         * Checks to see if user fulfills buttons userGroups restriction
-         * @param button Button configuration
-         * @returns {boolean} Is user groups restriction filled
-         */
-        function checkButtonGroupRestriction(button) {
-            if(MetkaJS.hasContent(button.userGroups)) {
-                // TODO: Check users groups against this and return false if user doesn't fulfill the restriction
-            }
-
-            return true;
-        }
-
-        /**
-         * Checks to see if user fulfills buttons isHandler restriction
-         * @param button Button configuration
-         * @returns {boolean} Is is handler restriction filled
-         */
-        function checkButtonHandlerRestriction(button) {
-            if(MetkaJS.exists(button.isHandler)) {
-                // TODO: Check if user fulfills buttons isHandler restriction
-            }
-
-            return true;
-        }
-
-        function checkButtonStateRestriction(button) {
-            var show = false;
-            if(MetkaJS.hasContent(button.states)) {
-                var i, length;
-                for(i = 0, length = button.states.length; i < length; i++) {
-                    var state = button.states[i];
-                    switch(state) {
-                        case MetkaJS.E.VisibilityState.DRAFT:
-                            if(MetkaJS.SingleObject.draft) {
-                                show = true;
-                            }
-                            break;
-                        case MetkaJS.E.VisibilityState.APPROVED:
-                            if(!MetkaJS.SingleObject.draft) {
-                                show = true;
-                            }
-                            break;
-                        case MetkaJS.E.VisibilityState.REMOVED:
-                            // TODO: Check for displaying removed revisionable
-                            break;
-                    }
-                    if(show) {
-                        break;
-                    }
-                }
-            } else {
-                show = true;
-            }
-
-            return show;
-        }
-
         return {
             build: buildGui,
-            buttonHandlers: {},
             containerHandlers: {},
             Components: {},
-            Grid: null
+            Grid: null,
+            ButtonParser: null
         };
     }());
 }());

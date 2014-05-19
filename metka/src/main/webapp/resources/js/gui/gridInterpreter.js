@@ -5,15 +5,15 @@
      */
     GUI.Grid = (function() {
         var sizes = {
-            large: ".col-lg-",
-            medium: ".col-md-",
-            small: ".col-sm-",
-            xs: ".col-xs-"
+            large: "col-lg-",
+            medium: "col-md-",
+            small: "col-sm-",
+            xs: "col-xs-"
         };
 
         // Set currently used prefix, this can be changed for compile time to match presets or it can
         // be changed at run-time if ever needed and if some functionality for changing it is provided.
-        var prefix = sizes.medium;
+        var prefix = sizes.xs;
 
         // Maximum number of columns povided by grid
         var COL_MAX = 12;

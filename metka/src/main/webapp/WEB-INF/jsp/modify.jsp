@@ -27,10 +27,10 @@
     </div>
     <div class="dynamicContent"></div>
 </div>
-</body>
 <script>
     $(document).ready(function() {
         GUI.build($(".dynamicContent"), "${context}");
     });
 </script>
+</body>
 </html>
