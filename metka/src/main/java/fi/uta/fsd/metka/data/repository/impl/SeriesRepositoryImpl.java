@@ -44,7 +44,6 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         em.persist(entity);
 
         RevisionEntity revision = entity.createNextRevision();
-        revision.setState(RevisionState.DRAFT);
 
         /*
          * creates initial dataset for the first draft any exceptions thrown should force rollback
@@ -268,7 +267,6 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         // For each field generate change with operation UNCHANGED and put the field to original value
         // Add changes to new dataset
         RevisionEntity newRevision = series.createNextRevision();
-        newRevision.setState(RevisionState.DRAFT);
         RevisionData newData = DataFactory.createNewRevisionData(newRevision, oldData);
 
         // Serialize new dataset to the new revision entity

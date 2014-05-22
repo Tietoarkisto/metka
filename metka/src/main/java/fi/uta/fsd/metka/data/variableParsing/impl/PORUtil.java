@@ -1,4 +1,4 @@
-package fi.uta.fsd.metka.data.util;
+package fi.uta.fsd.metka.data.variableParsing.impl;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import spssio.por.PORMatrixVisitor;

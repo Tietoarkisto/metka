@@ -17,8 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 
-import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
-
 @Service
 public class FileService {
     @Autowired
@@ -38,16 +36,18 @@ public class FileService {
 
     /**
      * Request adding a file with given path to database.
-     * Calls for adding a new file to database which will create a new Revisionable entry and a revision for that entry.
+     * Calls for adding a file to database which will either create a new Revisionable entry and a revision for that entry
+     * or use an existing entry if one with the same path exists.
      * After this method returns there should be a new File-revisionable with a revision pointing to given path with state DRAFT.
      * Returns a representation of a row ready to be inserted into a CONTAINER json on client.
      * @param path Path to a newly added file
-     * @param targetId Id of the revisionable that should refer this file.
+     * @param studyId Id of the study that should refer this file.
+     * @param key Field key of the field that will contain a reference to this file
      * @return
      */
-    public String initNewFile(String path, Integer targetId, String key) throws IOException {
+    public String initNewStudyAttachment(String path, Integer studyId, String key) throws IOException {
         // TODO: Form file row
-        Configuration config = configService.findLatestByRevisionableId(targetId);
+        Configuration config = configService.findLatestByRevisionableId(studyId);
 
         Field field = config.getField(key);
         if(field == null || field.getType() != FieldType.REFERENCECONTAINER) {
@@ -55,30 +55,28 @@ public class FileService {
             return null;
         }
 
-        RevisionData revision = repository.newFileRevisionable(path);
+        /*
+         * Find a RevisionData matching given study or create a new one if none present
+         */
+        RevisionData revision = repository.studyAttachmentForPath(path, studyId);
+        if(revision == null) {
+            // TODO: There's a problem, notify user
+            return null;
+        }
 
-        repository.addFileLinkEvent(targetId, revision.getKey().getId(), key, path);
+        /*
+         * Add event to file link queue for making sure that the reference exists and if this is a variable file to parse
+         * and merge it to study
+         */
+        repository.addFileLinkEvent(studyId, revision.getKey().getId(), key, path);
 
+        /*
+         * Create
+         */
         JSONObject json = new JSONObject();
         json.put("type", "reference");
         json.put("key", key);
-        json.put("value", getSavedDataFieldFromRevisionData(revision, "fileno").getActualValue());
-
-        /*for(DataField field : container.getFields().values()) {
-            if(field instanceof ContainerDataField) {
-                JSONObject ct = ContainerTransfer.buildJSONObject((ContainerDataField) field);
-                if(ct != null) {
-                    values.put(field.getKey(), ct);
-                }
-            } else {
-                SavedDataField saved = (SavedDataField)field;
-                JSONObject value = new JSONObject();
-                value.put("type", "value");
-                value.put("value", ((SimpleValue)saved.getActualValue());
-                // TODO: Handle derived values
-                values.put(saved.getKey(), value);
-            }
-        }*/
+        json.put("value", revision.getKey().getId());
 
         return json.toString();
     }

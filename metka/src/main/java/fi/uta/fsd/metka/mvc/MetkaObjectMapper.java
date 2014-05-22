@@ -9,19 +9,16 @@ import fi.uta.fsd.metka.model.configuration.Reference;
 import fi.uta.fsd.metka.model.configuration.SelectionList;
 import fi.uta.fsd.metka.model.deserializers.general.TranslationObjectDeserializer;
 import fi.uta.fsd.metka.model.deserializers.guiconfiguration.ButtonDeserializer;
+import fi.uta.fsd.metka.model.deserializers.guiconfiguration.ContainerDeserializer;
+import fi.uta.fsd.metka.model.deserializers.guiconfiguration.FieldDescriptionDeserializer;
+import fi.uta.fsd.metka.model.deserializers.guiconfiguration.FieldTitleDeserializer;
 import fi.uta.fsd.metka.model.general.TranslationObject;
-import fi.uta.fsd.metka.model.guiconfiguration.Button;
-import fi.uta.fsd.metka.model.guiconfiguration.Container;
-import fi.uta.fsd.metka.model.guiconfiguration.FieldDescription;
-import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
+import fi.uta.fsd.metka.model.guiconfiguration.*;
 import fi.uta.fsd.metka.model.serializers.configuration.FieldSerializer;
 import fi.uta.fsd.metka.model.serializers.configuration.ReferenceSerializer;
 import fi.uta.fsd.metka.model.serializers.configuration.SelectionListSerializer;
 import fi.uta.fsd.metka.model.serializers.general.TranslationObjectSerializer;
-import fi.uta.fsd.metka.model.serializers.guiconfiguration.ButtonSerializer;
-import fi.uta.fsd.metka.model.serializers.guiconfiguration.ContainerSerializer;
-import fi.uta.fsd.metka.model.serializers.guiconfiguration.FieldDescriptionSerializer;
-import fi.uta.fsd.metka.model.serializers.guiconfiguration.GUIConfigurationSerializer;
+import fi.uta.fsd.metka.model.serializers.guiconfiguration.*;
 
 /**
  * Custom Jackson ObjectMapper to be used by METKA.
@@ -34,7 +31,7 @@ public class MetkaObjectMapper extends ObjectMapper {
         this.registerModule(new JodaModule());
         configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 
-        // Add serializers
+        // Add serializers and deserializers
         SimpleModule parsers = new SimpleModule();
         // Add general
         parsers.addDeserializer(TranslationObject.class, new TranslationObjectDeserializer());
@@ -42,8 +39,15 @@ public class MetkaObjectMapper extends ObjectMapper {
 
         // Gui config
         parsers.addSerializer(GUIConfiguration.class, new GUIConfigurationSerializer());
+
+        parsers.addDeserializer(Container.class, new ContainerDeserializer());
         parsers.addSerializer(Container.class, new ContainerSerializer());
+
+        parsers.addDeserializer(FieldDescription.class, new FieldDescriptionDeserializer());
         parsers.addSerializer(FieldDescription.class, new FieldDescriptionSerializer());
+
+        parsers.addDeserializer(FieldTitle.class, new FieldTitleDeserializer());
+        parsers.addSerializer(FieldTitle.class, new FieldTitleSerializer());
 
         parsers.addDeserializer(Button.class, new ButtonDeserializer());
         parsers.addSerializer(Button.class, new ButtonSerializer());

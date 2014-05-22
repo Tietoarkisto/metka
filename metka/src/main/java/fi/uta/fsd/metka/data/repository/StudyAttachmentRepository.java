@@ -8,7 +8,7 @@ import java.io.IOException;
 
 @Transactional
 public interface StudyAttachmentRepository {
-    public RevisionData newFileRevisionable(String path) throws IOException;
+    public RevisionData studyAttachmentForPath(String path, Integer studyId) throws IOException;
 
     /**
      * Return a DRAFT revision for given STUDY_ATTACHMENT.
@@ -39,5 +39,5 @@ public interface StudyAttachmentRepository {
      * @param key Field key of the REFERENCECONTAINER where the reference should be found
      * @param path File path, used to detect a por file
      */
-    public void addFileLinkEvent(Integer targetId, Integer fileId, String key, String path);
+    public void addFileLinkEvent(Integer targetId, Integer fileId, String key, String path) throws IOException;
 }

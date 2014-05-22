@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.data.enums.FieldType;
+import fi.uta.fsd.metka.model.general.TranslationObject;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -22,6 +23,7 @@ public class FieldDescription {
     @XmlElement private Boolean showSaveInfo;
     @XmlElement private Boolean showReferenceValue;
     @XmlElement private String handlerName;
+    @XmlElement private TranslationObject dialogTitle; // TODO: This should be translation object
 
     @JsonCreator
     public FieldDescription(@JsonProperty("key")String key) {
@@ -82,6 +84,14 @@ public class FieldDescription {
 
     public void setHandlerName(String handlerName) {
         this.handlerName = handlerName;
+    }
+
+    public TranslationObject getDialogTitle() {
+        return dialogTitle;
+    }
+
+    public void setDialogTitle(TranslationObject dialogTitle) {
+        this.dialogTitle = dialogTitle;
     }
 
     @Override

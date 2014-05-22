@@ -20,22 +20,21 @@ public class ReferenceSerializer extends JsonSerializer<Reference> {
 
         jgen.writeStringField("key", value.getKey());
         jgen.writeStringField("type", value.getType().toString());
+        if(value.getTitlePath() == null) {
+            jgen.writeNullField("titlePath");
+        } else {
+            jgen.writeStringField("titlePath", value.getTitlePath());
+        }
         switch(value.getType()) {
             case REVISIONABLE:
                 ConfigurationType confType = ConfigurationType.fromValue(value.getTarget());
                 jgen.writeStringField("target", confType.toValue());
-                jgen.writeStringField("titlePath", value.getTitlePath());
                 jgen.writeBooleanField("approvedOnly", value.getApprovedOnly());
                 break;
             case JSON:
             case DEPENDENCY:
                 jgen.writeStringField("target", value.getTarget());
                 jgen.writeStringField("valuePath", value.getValuePath());
-                if(value.getTitlePath() == null) {
-                    jgen.writeNullField("titlePath");
-                } else {
-                    jgen.writeStringField("titlePath", value.getTitlePath());
-                }
                 break;
         }
 
