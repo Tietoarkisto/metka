@@ -2,7 +2,6 @@
     'use strict';
     GUI.Components.cells = function ($container, content, readOnly, container, context, buildContainers) {
         $container.eachTo(content, function (i, cell) {
-            console.log(GUI.Grid.getColumnClass(container.columns, cell.colspan), container.columns, cell.colspan)
             this
                 .append($('<div>', {
                     'class': GUI.Grid.getColumnClass(container.columns, cell.colspan)
