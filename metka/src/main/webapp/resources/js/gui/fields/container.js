@@ -5,7 +5,7 @@
         $elem.append($('<div class="form-group">')
             .append($('<div class="panel panel-primary">')
                 .append($('<div class="panel-heading">')
-                    .text(cell.title))
+                    .text(MetkaJS.L10N.localize(cell, 'title')))
                 .append($('<table class="table">')
                     .append($('<thead>')
                         .append($('<tr>')

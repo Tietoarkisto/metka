@@ -11,7 +11,7 @@
                         .toggleClass('collapsed', container.defaultState !== 'OPEN')
                         .append($('<h4 class="panel-title">')
                             .append($('<a href="javascript:void 0;">')
-                                .text(container.title))))
+                                .text(MetkaJS.L10N.localize(container, 'title')))))
                     .append($('<div id="' + id + '" class="panel-collapse collapse">')
                         .toggleClass('in', container.defaultState === 'OPEN')
                         .append(buildContainers(

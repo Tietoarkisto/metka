@@ -7,7 +7,7 @@
             var id = GUI.id();
             $navTabs.append($('<li>')
                 .append($('<a data-target="#' + id + '" href="javascript:void 0;" data-toggle="tab">')
-                    .text(container.title))
+                    .text(MetkaJS.L10N.localize(container, 'title')))
                 .toggleClass('containerHidden', container.hidden));
             $tabContent.append(buildContainers(
                 $('<div class="tab-pane" id="' + id + '">')

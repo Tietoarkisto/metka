@@ -5,7 +5,7 @@
         $elem.append($('<label>', {
             'for': id
         })
-            .text(cell.title)
+            .text(MetkaJS.L10N.localize(cell, 'title'))
             .toggleClass('containerHidden', cell.hidden)
             .if(cell.required, function () {
                 this.append('<span class="glyphicon glyphicon-asterisk"></span>');
