@@ -16,3 +16,13 @@
 
 <%-- UI Components --%>
 <script src="${contextPath}/js/gui/components/viewButton.js"></script>
+<script src="${contextPath}/js/gui/components/tabs.js"></script>
+<script src="${contextPath}/js/gui/components/sections.js"></script>
+<script src="${contextPath}/js/gui/components/columns.js"></script>
+<script src="${contextPath}/js/gui/components/rows.js"></script>
+<script src="${contextPath}/js/gui/components/cells.js"></script>
+
+<%-- UI Fields --%>
+<script src="${contextPath}/js/gui/fields/container.js"></script>
+<script src="${contextPath}/js/gui/fields/input.js"></script>
+<script src="${contextPath}/js/gui/fields/input/datetime.js"></script>

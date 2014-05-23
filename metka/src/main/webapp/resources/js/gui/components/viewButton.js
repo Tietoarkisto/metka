@@ -8,8 +8,10 @@
      * @param button Button configuration
      * @returns {*|jQuery|HTMLElement} Input of type button and with title provided by the given configuration.
      */
-    GUI.Components.viewButton = function(button) {
-        var input = $("<input>", {type: "button", class: "button", value: MetkaJS.L10N.localize(button, "title")});
-        return input;
+    GUI.Components.viewButton = function (button) {
+        return $('<button>', {
+            type: 'button',
+            'class': 'btn btn-primary'
+        }).text(MetkaJS.L10N.localize(button, 'title'));
     }
 }());

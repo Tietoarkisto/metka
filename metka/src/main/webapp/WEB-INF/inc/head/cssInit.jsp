@@ -5,7 +5,8 @@
 <link rel="stylesheet" type="text/css" href="${contextPath}/css/jquery-ui.css">
 
 <%-- Bootstrap --%>
-<link rel="stylesheet" type="text/css" href="${contextPath}/bootstrap/3.1.1/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="${contextPath}/lib/bootstrap/3.1.1/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="${contextPath}/lib/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css">
 
 <%-- Metka --%>
 <link rel="stylesheet" type="text/css" href="${contextPath}/css/styles.css">

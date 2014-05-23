@@ -38,40 +38,440 @@
 						}
 					]
 				},
-				{
-					"type": "COLUMN",
-					"columns": 3,
-					"rows": [
-						{
-							"type": "ROW",
-							"cells": [
-								{
-									"type": "CELL",
-									"title": "Aineistonumero",
-									"field": {
-										"key": "id"
-									}
-								},
-								{
-									"type": "CELL",
-									"title": "Aineiston laatu",
-									"field": {
-										"key": "datakind"
-									}
-								},
-								{
-									"type": "CELL",
-									"title": "Julkaisu",
-									"field": {
-										"key": "public"
-									}
-								}
-							]
-						}
-					]
-				}
+                {
+                    "type": "COLUMN",
+                    "columns": 3,
+                    "rows": [
+                        {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Aineistonumero",
+                                    "readOnly": true,
+                                    "field": {
+                                        "key": "id"
+                                    }
+                                },
+                                {
+                                    "type": "CELL",
+                                    "title": "Aineiston laatu",
+                                    "field": {
+                                        "key": "datakind"
+                                    }
+                                },
+                                {
+                                    "type": "CELL",
+                                    "title": "Julkaisu",
+                                    "field": {
+                                        "key": "public"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Hankinta-aineistonumero",
+                                    "readOnly": true,
+                                    "field": {
+                                        "key": "submissionid"
+                                    }
+                                },
+                                {
+                                    "type": "CELL",
+                                    "title": "Anonymisointi",
+                                    "field": {
+                                        "key": "anonymization"
+                                    }
+                                },
+                                {
+                                    "type": "CELL",
+                                    "title": "Aineiston kuvailun julkaisu",
+                                    "field": {
+                                        "key": "descpublic"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Datan saantipvm",
+                                    "field": {
+                                        "key": "dataarrivaldate"
+                                    }
+                                },
+                                {
+                                    "type": "CELL",
+                                    "title": "Tietosuoja",
+                                    "field": {
+                                        "key": "securityissues"
+                                    }
+                                },
+                                {
+                                    "type": "CELL",
+                                    "title": "Muuttujakuvailun julkaisu",
+                                    "field": {
+                                        "key": "varpublic"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "COLUMN",
+                    "columns": 2,
+                    "rows": [
+                        {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Sarja",
+                                    "field": {
+                                        "key": "seriesid"
+                                    }
+                                },
+                                {
+                                    "type": "CELL",
+                                    "title": "Valmis pvm",
+                                    "field": {
+                                        "key": "aipcomplete"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Alkuperäinen sijainti",
+                                    "field": {
+                                        "key": "originallocation",
+                                        "multiline": true
+                                    }
+                                },
+                                {
+                                    "type": "CELL",
+                                    "title": "Huomautuksia prosessiin",
+                                    "field": {
+                                        "key": "processingnotes",
+                                        "multiline": true
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "COLUMN",
+                    "columns": 1,
+                    "rows": [
+                        {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Huomautukset",
+                                    "field": {
+                                        "key": "notes",
+                                        "showSaveInfo": true
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Datan versiot",
+                                    "field": {
+                                        "key": "dataversions"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Kuvailun versiot",
+                                    "field": {
+                                        "key": "descversions"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
 			]
-		}
+		},
+        {
+            "type": "TAB",
+            "title": "Arkistointisopimus",
+            "content": [
+                {
+                    "type": "COLUMN",
+                    "columns": 3,
+                    "rows": [
+                        {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Ehto 1: käyttöoikeus",
+                                    "field": {
+                                        "key": "termsofuse"
+                                    }
+                                },
+                                {
+                                    "type": "CELL",
+                                    "title": "Arkistointisopimuksen pvm",
+                                    "field": {
+                                        "key": "agreementdate"
+                                    }
+                                },
+                                {
+                                    "type": "CELL",
+                                    "title": "Jos heräte, ilmoituspvm",
+                                    "field": {
+                                        "key": "triggerdate"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Käyttöehdon muutospvm",
+                                    "field": {
+                                        "key": "termsofusechangedate"
+                                    }
+                                },
+                                {
+                                    "type": "CELL",
+                                    "title": "Luovuttajan tyyppi",
+                                    "field": {
+                                        "key": "depositortype"
+                                    }
+                                },
+                                {
+                                    "type": "CELL",
+                                    "title": "Herätteen saaja",
+                                    "field": {
+                                        "key": "triggerpro"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Käyttöehto muutospvm jälkeen",
+                                    "field": {
+                                        "key": "newtermsofuse"
+                                    }
+                                },
+                                {
+                                    "type": "CELL",
+                                    "title": "Käyttöehto muutospvm jälkeen",
+                                    "field": {
+                                        "key": "agreementtype"
+                                    }
+                                },
+                                {
+                                    "type": "CELL",
+                                    "title": "Herätteen selite",
+                                    "field": {
+                                        "key": "triggerlabel"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "COLUMN",
+                    "columns": 1,
+                    "rows": [
+                        {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Arkistointisopimustiedosto",
+                                    "field": {
+                                        "key": "agreement"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "COLUMN",
+                    "columns": 2,
+                    "rows": [
+                        {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Lisätiedot koskien arkistointisopimusta",
+                                    "field": {
+                                        "key": "agreementnotes",
+                                        "multiline": true
+                                    }
+                                },
+                                {
+                                    "type": "CELL",
+                                    "title": "Menettely, jos luvanantajaa ei tavoiteta tai hän ei itse voi antaa lupaa",
+                                    "field": {
+                                        "key": "permission",
+                                        "multiline": true
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Erityisehdot",
+                                    "field": {
+                                        "key": "specialtermsofuse",
+                                        "multiline": true
+                                    }
+                                },
+                                {
+                                    "type": "CELL",
+                                    "title": "Muuta kommentoitavaa",
+                                    "field": {
+                                        "key": "agreementfsdnotes",
+                                        "multiline": true
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "TAB",
+            "title": "Kuvailu",
+            "content": [
+                {
+                    "type": "SECTION",
+                    "title": "Muut nimet",
+                    "content": [{
+                        "type": "COLUMN",
+                        "columns": 1,
+                        "rows": [
+                            {
+                                "type": "ROW",
+                                "cells": [
+                                    {
+                                        "type": "CELL",
+                                        "title": "Rinnakkaiset nimet",
+                                        "field": {
+                                            "key": "alttitles",
+                                            "showSaveInfo": true
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "ROW",
+                                "cells": [
+                                    {
+                                        "type": "CELL",
+                                        "title": "Aineiston muunkieliset nimet",
+                                        "field": {
+                                            "key": "partitles"
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }]
+                },
+                {
+                    "type": "SECTION",
+                    "title": "Tekijät ja tuottajat",
+                    "content": []
+                },
+                {
+                    "type": "SECTION",
+                    "title": "Viittaustiedot",
+                    "content": [
+                        {
+                            "type": "COLUMN",
+                            "columns": 1,
+                            "rows": [
+                                {
+                                    "type": "ROW",
+                                    "cells": [
+                                        {
+                                            "type": "CELL",
+                                            "title": "Viittaustiedot",
+                                            "field": {
+                                                "key": "biblcit",
+                                                "multiline": true
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "SECTION",
+                    "title": "Asiasanat ja tieteenalat",
+                    "content": []
+                },
+                {
+                    "type": "SECTION",
+                    "title": "Abstrakti",
+                    "content": []
+                },
+                {
+                    "type": "SECTION",
+                    "title": "Kattavuus",
+                    "content": []
+                },
+                {
+                    "type": "SECTION",
+                    "title": "Aineistonkeruu",
+                    "content": []
+                },
+                {
+                    "type": "SECTION",
+                    "title": "Aineiston käyttö",
+                    "content": []
+                },
+                {
+                    "type": "SECTION",
+                    "title": "Muut materiaalit",
+                    "content": []
+                }
+            ]
+        }
 	],
 	"buttons": [
 		{

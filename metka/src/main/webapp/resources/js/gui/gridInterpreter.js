@@ -15,7 +15,7 @@
         // be changed at run-time if ever needed and if some functionality for changing it is provided.
         var prefix = sizes.xs;
 
-        // Maximum number of columns povided by grid
+        // Maximum number of columns provided by grid
         var COL_MAX = 12;
 
         /**

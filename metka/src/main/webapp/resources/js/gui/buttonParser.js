@@ -1,31 +1,6 @@
 (function() {
     'use strict';
     GUI.ButtonParser = (function() {
-        function parseButton(root, button) {
-            // Check if button should be displayed
-            var display = true;
-            // Check group
-            display = checkButtonGroupRestriction(button);
-            if(display === true) {
-                display = checkButtonHandlerRestriction(button);
-            }
-            if(display === true) {
-                display = checkButtonStateRestriction(button);
-            }
-
-            if(display === false) {
-                // At least one of the restrictions was not fulfilled, return without displaying the button
-                return;
-            }
-
-            // Send button to renderer
-            if(MetkaJS.exists(GUI.ButtonParser.buttonHandlers[button.type])) {
-                GUI.ButtonParser.buttonHandlers[button.type].render(root, button);
-            } else {
-                GUI.ButtonParser.buttonHandlers['_GENERAL'].render(root, button);
-            }
-        }
-
         /**
          * Checks to see if user fulfills buttons userGroups restriction
          * @param button Button configuration
@@ -85,7 +60,33 @@
         }
 
         return {
-            parse: parseButton,
+            parse: function ($container, button) {
+                // Check if button should be displayed
+                var display = true;
+                // Check group
+                display = checkButtonGroupRestriction(button);
+                if(display === true) {
+                    display = checkButtonHandlerRestriction(button);
+                }
+                if(display === true) {
+                    display = checkButtonStateRestriction(button);
+                }
+
+                if(display === false) {
+                    // At least one of the restrictions was not fulfilled, return without displaying the button
+                    return;
+                }
+
+                if (!MetkaJS.exists(GUI.ButtonParser.buttonHandlers[button.type])) {
+                    var message = MetkaJS.MessageManager.Message(null, 'alert.gui.missingButtonHandler.text');
+                    message.data.push(button.type);
+                    message.data.push(MetkaJS.L10N.localize(button, 'title'));
+                    MetkaJS.MessageManager.show(message);
+                    return;
+                }
+
+                $container.append(GUI.ButtonParser.buttonHandlers[button.type].call(GUI.Components.viewButton(button)));
+            },
             buttonHandlers: {}
         }
     }());
