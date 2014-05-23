@@ -375,6 +375,17 @@
 			"type": "REVISIONABLE",
 			"target": "STUDY"
 		},
+		"variables_ref": {
+			"key": "variables_ref",
+			"type": "REVISIONABLE",
+			"target": "STUDY_VARIABLES"
+		},
+		"variable_file_ref": {
+			"key": "variable_file_ref",
+			"type": "REVISIONABLE",
+			"target": "STUDY_ATTACHMENT",
+			"titlePath": "file"
+		},
 		"attachment_ref": {
 			"key": "attachment_ref",
 			"type": "REVISIONABLE",
@@ -1427,6 +1438,18 @@
 			"multiline": true,
 			"section": "study_description",
 			"subfield": true
+		},
+		"variables": {
+			"key": "variables",
+			"type": "REFERENCE",
+			"translatable": false,
+			"reference": "variables_ref"
+		},
+		"variablefile": {
+			"key": "variablefile",
+			"type": "REFERENCE",
+			"translatable": false,
+			"reference": "variable_file_ref"
 		},
 		"files": {
 			"key": "files",

@@ -10,12 +10,6 @@
 		
 	},
 	"references": {
-		"file_ref": {
-			"key": "file_ref",
-			"type": "REVISIONABLE",
-			"target": "STUDY_ATTACHMENT",
-			"titlePath": "file"
-		},
 		"variables_ref": {
 			"key": "variables_ref",
 			"type": "REVISIONABLE",
@@ -43,14 +37,6 @@
 			"editable": false,
 			"type": "REFERENCE",
 			"reference": "variables_ref"
-		},
-		"file": {
-			"key": "file",
-			"translatable": false,
-			"immutable": true,
-			"editable": false,
-			"type": "REFERENCE",
-			"reference": "file_ref"
 		},
 		"varname": {
 			"key": "varname",

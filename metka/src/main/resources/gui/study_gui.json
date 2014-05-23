@@ -3,6 +3,22 @@
 		"type": "STUDY",
 		"version": 1
 	},
+	"fieldTitles": {
+		"some" : {
+			"key" : "some",
+			"title" : "jotain tekstiä"
+		},
+		"other" : {
+			"key" : "other",
+			"&title" : "jotain muuta tekstiä"
+		},
+		"thing" : {
+			"key" : "thing",
+			"&title" : {
+				"default": "vielä tekstiä"
+			}
+		}
+	},
 	"content": [
 		{
 			"type": "TAB",

@@ -19,35 +19,22 @@ import java.io.IOException;
 import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
 
 /**
- * Contains functionality related to File-revisions
+ * Factory related to study variables.
+ * Provides initial data methods for study variables and a study variable
  */
 @Service
-public class FileFactory extends DataFactory {
+public class VariablesFactory extends DataFactory {
     @Autowired
     private ConfigurationRepository configurationRepository;
     @Autowired
     private JSONUtil json;
 
-    /**
-     * Constructs a new dataset for a Revision entity.
-     * Entity should have no previous data and its state should be DRAFT.
-     * All required field values that can be inserted automatically will be added as
-     * modified values containing some default value like revisionable id or selectionList default selection.
-     *
-     * As a result the supplied RevisionEntity will have a every required field that can be automatically set
-     * initialised to its default value.
-     *
-     * TODO: This should be made more dynamic using the configuration as a processing instruction
-     *       but for now everything is done manually.
-     *
-     * @param entity RevisionEntity for which this revision data is created.
-     */
-    public RevisionData newStudyAttachmentData(RevisionEntity entity, String path, Integer studyId) throws IOException {
+    public RevisionData newStudyVariables(RevisionEntity entity, Integer studyId, Integer fileId) throws IOException {
         if(StringUtils.isEmpty(entity.getData()) && entity.getState() != RevisionState.DRAFT)
             return null;
 
         Configuration conf = null;
-        conf = configurationRepository.findLatestConfiguration(ConfigurationType.STUDY_ATTACHMENT);
+        conf = configurationRepository.findLatestConfiguration(ConfigurationType.STUDY_VARIABLES);
 
         if(conf == null) {
             // TODO: Log error that no configuration found for study
@@ -62,12 +49,41 @@ public class FileFactory extends DataFactory {
         field.setModifiedValue(setSimpleValue(createSavedValue(time), entity.getKey().getRevisionableId() + ""));
         data.putField(field).putChange(new Change(field.getKey()));
 
-        field = new SavedDataField("file");
-        field.setModifiedValue(setSimpleValue(createSavedValue(time), path));
-        data.putField(field).putChange(new Change(field.getKey()));
-
         field = new SavedDataField("study");
         field.setModifiedValue(setSimpleValue(createSavedValue(time), studyId.toString()));
+        data.putField(field).putChange(new Change(field.getKey()));
+
+        field = new SavedDataField("file");
+        field.setModifiedValue(setSimpleValue(createSavedValue(time), fileId.toString()));
+        data.putField(field).putChange(new Change(field.getKey()));
+
+        entity.setData(json.serialize(data));
+
+        return data;
+    }
+
+    public RevisionData newVariable(RevisionEntity entity, Integer variablesId) throws IOException {
+        if(StringUtils.isEmpty(entity.getData()) && entity.getState() != RevisionState.DRAFT)
+            return null;
+
+        Configuration conf = null;
+        conf = configurationRepository.findLatestConfiguration(ConfigurationType.STUDY_VARIABLE);
+
+        if(conf == null) {
+            // TODO: Log error that no configuration found for study
+            return null;
+        }
+
+        LocalDateTime time = new LocalDateTime();
+
+        RevisionData data = createInitialRevision(entity, conf.getKey());
+
+        SavedDataField field = new SavedDataField(conf.getIdField());
+        field.setModifiedValue(setSimpleValue(createSavedValue(time), entity.getKey().getRevisionableId() + ""));
+        data.putField(field).putChange(new Change(field.getKey()));
+
+        field = new SavedDataField("variables");
+        field.setModifiedValue(setSimpleValue(createSavedValue(time), variablesId.toString()));
         data.putField(field).putChange(new Change(field.getKey()));
 
         entity.setData(json.serialize(data));

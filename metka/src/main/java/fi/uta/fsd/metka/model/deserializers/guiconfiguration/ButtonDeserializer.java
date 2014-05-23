@@ -26,7 +26,6 @@ public class ButtonDeserializer extends JsonDeserializer<Button> {
             title = node.get("&title");
         }
 
-        //TranslationObject loc = TranslationObjectDeserializer.deserialize(node, "title");
         TranslationObject loc = null;
         if(title != null) {
             loc = oc.treeToValue(title, TranslationObject.class);

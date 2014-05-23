@@ -6,9 +6,11 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import fi.uta.fsd.metka.data.enums.ContainerType;
 import fi.uta.fsd.metka.model.guiconfiguration.Button;
 import fi.uta.fsd.metka.model.guiconfiguration.Container;
+import fi.uta.fsd.metka.model.guiconfiguration.FieldTitle;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 
 import java.io.IOException;
+import java.util.Map;
 
 public class GUIConfigurationSerializer extends JsonSerializer<GUIConfiguration> {
     @Override
@@ -30,6 +32,12 @@ public class GUIConfigurationSerializer extends JsonSerializer<GUIConfiguration>
             jgen.writeObject(button);
         }
         jgen.writeEndArray();
+
+        jgen.writeObjectFieldStart("fieldTitles");
+        for(Map.Entry<String, FieldTitle> fieldTitle : value.getFieldTitles().entrySet()) {
+            jgen.writeObjectField(fieldTitle.getKey(), fieldTitle.getValue());
+        }
+        jgen.writeEndObject();
 
         jgen.writeEndObject();
     }

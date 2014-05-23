@@ -67,7 +67,7 @@ public class FileController {
         try {
             String fileName = new File(file.getOriginalFilename()).getName();
             String path = fileService.saveFile(file, fileName, id);
-            String fileRow = fileService.initNewFile(path, id, key);
+            String fileRow = fileService.initNewStudyAttachment(path, id, key);
             return fileRow;
         } catch(IOException ex) {
             // TODO: Return error

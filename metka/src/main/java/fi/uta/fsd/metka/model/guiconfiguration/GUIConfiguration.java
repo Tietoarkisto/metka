@@ -9,7 +9,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @XmlRootElement(name = "guiConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -18,6 +20,7 @@ public class GUIConfiguration implements ModelBase {
     @XmlElement private ConfigurationKey key;
     @XmlElement private final List<Container> content = new ArrayList<>();
     @XmlElement private final List<Button> buttons = new ArrayList<>();
+    @XmlElement private final Map<String, FieldTitle> fieldTitles = new HashMap<>();
 
     public ConfigurationKey getKey() {
         return key;
@@ -33,6 +36,10 @@ public class GUIConfiguration implements ModelBase {
 
     public List<Button> getButtons() {
         return buttons;
+    }
+
+    public Map<String, FieldTitle> getFieldTitles() {
+        return fieldTitles;
     }
 
     @Override

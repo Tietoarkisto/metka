@@ -3,6 +3,7 @@ package fi.uta.fsd.metka.model.guiconfiguration;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import fi.uta.fsd.metka.data.enums.ContainerType;
 import fi.uta.fsd.metka.data.enums.SectionState;
+import fi.uta.fsd.metka.model.general.TranslationObject;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -13,8 +14,9 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonIgnoreProperties("_comment")
 public class Container {
+    private static int MAX_COLUMNS = 4;
     @XmlElement private ContainerType type;
-    @XmlElement private String title; // This should change to translatable object at some point.
+    @XmlElement private TranslationObject title; // This should change to translatable object at some point.
     @XmlElement private Boolean hidden = false;
     @XmlElement private Boolean readOnly = null;
     @XmlElement private Boolean important = false;
@@ -37,11 +39,11 @@ public class Container {
         this.type = type;
     }
 
-    public String getTitle() {
+    public TranslationObject getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(TranslationObject title) {
         this.title = title;
     }
 
@@ -82,7 +84,9 @@ public class Container {
     }
 
     public void setColumns(Integer columns) {
-        this.columns = columns;
+        this.columns = columns > MAX_COLUMNS
+                ? MAX_COLUMNS
+                : (columns < 1 ? 1 : columns);
     }
 
     public Boolean getRequired() {
@@ -98,7 +102,9 @@ public class Container {
     }
 
     public void setColspan(Integer colspan) {
-        this.colspan = colspan;
+        this.colspan = colspan > MAX_COLUMNS
+                ? MAX_COLUMNS
+                : (colspan < 1 ? 1 : colspan);
     }
 
     public FieldDescription getField() {

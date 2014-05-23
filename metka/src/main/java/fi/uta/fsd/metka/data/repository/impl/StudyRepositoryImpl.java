@@ -11,7 +11,6 @@ import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.data.repository.StudyRepository;
 import fi.uta.fsd.metka.data.util.JSONUtil;
-import fi.uta.fsd.metka.data.util.StudyVariablesParser;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.RevisionData;
@@ -55,13 +54,6 @@ public class StudyRepositoryImpl implements StudyRepository {
         em.persist(entity);
 
         RevisionEntity revision = entity.createNextRevision();
-        revision.setState(RevisionState.DRAFT);
-
-        /*
-         * creates initial dataset for the first draft any exceptions thrown should force rollback
-         * automatically.
-         * This assumes the entity has empty data field and is a draft.
-        */
         RevisionData data = factory.newData(revision, acquisition_number);
         em.persist(revision);
 
@@ -82,7 +74,7 @@ public class StudyRepositoryImpl implements StudyRepository {
 
         StudyEntity study = em.find(StudyEntity.class, to.getId());
         if(study == null) {
-            // There has to be a series so you can save
+            // There has to be a study so you can save
             return false;
         }
 
@@ -221,7 +213,7 @@ public class StudyRepositoryImpl implements StudyRepository {
         // Change state in revision data to approved.
         // Serialize data back to revision entity.
         // Change state of entity to approved.
-        // Update current approved revision number on series entity
+        // Update current approved revision number on study entity
         // Entities should still be managed so no merge necessary.
         data.setState(RevisionState.APPROVED);
         data.setApprovalDate(new LocalDateTime());
@@ -235,22 +227,21 @@ public class StudyRepositoryImpl implements StudyRepository {
 
     @Override
     public RevisionData editStudy(Object studyno) throws IOException {
-        StudyEntity series = em.find(StudyEntity.class, studyno);
+        StudyEntity study = em.find(StudyEntity.class, studyno);
 
-        if(series == null) {
+        if(study == null) {
             // TODO: log suitable error
             return null;
         }
-        if(series.getCurApprovedNo() == null && series.getLatestRevisionNo() == null) {
+        if(study.getCurApprovedNo() == null && study.getLatestRevisionNo() == null) {
             // TODO: log suitable error
             System.err.println("No revision found when trying to edit study "+studyno);
             return null;
         }
 
-        //RevisionEntity latestRevision = series.getLatestRevision();
-        RevisionEntity latestRevision = em.find(RevisionEntity.class, new RevisionKey(series.getId(), series.getLatestRevisionNo()));
+        RevisionEntity latestRevision = em.find(RevisionEntity.class, new RevisionKey(study.getId(), study.getLatestRevisionNo()));
         RevisionData oldData = json.readRevisionDataFromString(latestRevision.getData());
-        if(series.getCurApprovedNo() == null || series.getCurApprovedNo().compareTo(series.getLatestRevisionNo()) < 0) {
+        if(study.getCurApprovedNo() == null || study.getCurApprovedNo().compareTo(study.getLatestRevisionNo()) < 0) {
             if(latestRevision.getState() != RevisionState.DRAFT) {
                 // TODO: log exception since data is out of sync
                 System.err.println("Latest revision should be DRAFT but is not on study "+studyno);
@@ -272,8 +263,7 @@ public class StudyRepositoryImpl implements StudyRepository {
         // Go through fields map
         // For each field generate change with operation UNCHANGED and put the field to original value
         // Add changes to new dataset
-        RevisionEntity newRevision = series.createNextRevision();
-        newRevision.setState(RevisionState.DRAFT);
+        RevisionEntity newRevision = study.createNextRevision();
         RevisionData newData = DataFactory.createNewRevisionData(newRevision, oldData);
 
         // Serialize new dataset to the new revision entity
@@ -284,7 +274,7 @@ public class StudyRepositoryImpl implements StudyRepository {
         // Set latest revision number to new revisions revision number
         // No merge needed since entity still managed
         // Return new revision data
-        series.setLatestRevisionNo(newRevision.getKey().getRevisionNo());
+        study.setLatestRevisionNo(newRevision.getKey().getRevisionNo());
         return newData;
     }
 
@@ -343,8 +333,27 @@ public class StudyRepositoryImpl implements StudyRepository {
                 // Put references to data just in case it was not already there.
                 data.putField(references);
             }
-            // Check for mergeable files
-            changes = StudyVariablesParser.merge(data, event.getType(), event.getPath(), config) | changes;
+            // Check for variable file
+            if(event.getType() != null) {
+                // Check for variable file reference
+                SavedDataField refField = getSavedDataFieldFromRevisionData(data, "variablefile", config);
+                // If missing a reference then create new variablefile saved data field
+                if(refField == null) {
+                    refField = new SavedDataField("variablefile");
+                    data.putField(refField);
+                    changes = true;
+                }
+                // If no saved reference value then set event.fileId as reference value
+                if(!refField.hasValue()) {
+                    refField.setModifiedValue(setSimpleValue(createSavedValue(time), event.getFileId().toString()));
+                    changes = true;
+                }
+                // If saved value matches event fileId then perform a merge parse operation otherwise variable file is not parsed
+                if(refField.getActualValue().equals(event.getFileId().toString())) {
+                    // TODO: Use new variables parser
+                    //changes = StudyVariablesParser.merge(data, event.getType(), event.getPath(), config) | changes;
+                }
+            }
         }
 
         // Save RevisionData back to DB
