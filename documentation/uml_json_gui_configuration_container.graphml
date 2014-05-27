@@ -149,8 +149,8 @@ defaultState : Applicaple only on SECTION containers. Determines
     Default is CLOSED.
 
 columns : Applicaple only to COLUMN container. Tells how many
-    columns should be in the ROWs within this container. Depending on
-    how it looks when used this has a maximum value of 3 or 4.
+    columns should be in the ROWs within this container. Maximum
+    number of columns is 4.
     Default is 1.
 
 required : Affects only the visual representation of the field. If field is

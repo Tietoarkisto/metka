@@ -58,6 +58,34 @@
 			"type": "REFERENCE",
 			"reference": "file_ref"
 		},
+		"software": {
+			"key": "software",
+			"translatable": false,
+			"type": "STRING",
+			"immutable": true,
+			"editable": false
+		},
+		"varfileid": {
+			"key": "varfileid",
+			"translatable": false,
+			"type": "STRING",
+			"immutable": true,
+			"editable": false
+		},
+		"casequantity": {
+			"key": "casequantity",
+			"translatable": false,
+			"type": "INTEGER",
+			"immutable": true,
+			"editable": false
+		},
+		"varquantity": {
+			"key": "varquantity",
+			"translatable": false,
+			"type": "INTEGER",
+			"immutable": true,
+			"editable": false
+		},
 		"variables": {
 			"key": "variables",
 			"translatable": false,
@@ -65,7 +93,6 @@
 			"showSaveInfo": true,
 			"reference": "variable_ref",
 			"subfields": [
-				"varlabel"
 			]
 		}
 	}

@@ -52,8 +52,16 @@ public class ReferenceContainerDataField extends DataField {
 
     @Override
     public void normalize() {
+        List<SavedReference> remove = new ArrayList<>();
         for(SavedReference reference : references) {
-            reference.normalize();
+            if(reference.isRemoved()) {
+                remove.add(reference);
+            } else {
+                reference.normalize();
+            }
+        }
+        for(SavedReference reference : remove) {
+            references.remove(reference);
         }
     }
 }

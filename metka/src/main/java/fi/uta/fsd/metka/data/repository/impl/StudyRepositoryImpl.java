@@ -11,6 +11,7 @@ import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.data.repository.StudyRepository;
 import fi.uta.fsd.metka.data.util.JSONUtil;
+import fi.uta.fsd.metka.data.variableParsing.StudyVariablesParser;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.RevisionData;
@@ -47,6 +48,9 @@ public class StudyRepositoryImpl implements StudyRepository {
 
     @Autowired
     private ConfigurationRepository configRepo;
+
+    @Autowired
+    private StudyVariablesParser variableParser;
 
     @Override
     public RevisionData getNew(Integer acquisition_number) throws IOException {
@@ -351,7 +355,7 @@ public class StudyRepositoryImpl implements StudyRepository {
                 // If saved value matches event fileId then perform a merge parse operation otherwise variable file is not parsed
                 if(refField.getActualValue().equals(event.getFileId().toString())) {
                     // TODO: Use new variables parser
-                    //changes = StudyVariablesParser.merge(data, event.getType(), event.getPath(), config) | changes;
+                    changes = variableParser.merge(data, event.getType(), config) | changes;
                 }
             }
         }

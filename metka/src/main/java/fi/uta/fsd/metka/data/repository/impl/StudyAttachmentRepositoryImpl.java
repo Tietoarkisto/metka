@@ -93,7 +93,7 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
              * This assumes the entity has empty data field and is a draft.
             */
             revision = factory.newStudyAttachmentData(revisionEntity, path, studyId);
-            em.persist(revision);
+            em.persist(revisionEntity);
 
             entity.setLatestRevisionNo(revisionEntity.getKey().getRevisionNo());
         } else {
@@ -260,6 +260,8 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
                         "SELECT l FROM FileLinkQueueEntity l " +
                         "WHERE l.targetId=:target AND l.fileId <> :file AND l.type IS NOT NULL",
                         FileLinkQueueEntity.class)
+                    .setParameter("target", targetId)
+                    .setParameter("file", fileId)
                     .getResultList();
             if(fileLinks.size() > 0) {
                 parse = false;

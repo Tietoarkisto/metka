@@ -16,6 +16,7 @@ import javax.xml.bind.annotation.XmlElement;
 public class SavedReference {
     @XmlElement private final String key;
     @XmlElement private final Integer rowId;
+    @XmlElement private Boolean removed;
     @XmlElement private SavedValue originalValue;
     @XmlElement private SavedValue modifiedValue;
 
@@ -31,6 +32,14 @@ public class SavedReference {
 
     public Integer getRowId() {
         return rowId;
+    }
+
+    public Boolean isRemoved() {
+        return (removed == null ? false : removed);
+    }
+
+    public void setRemoved(Boolean removed) {
+        this.removed = (removed == null ? false : removed);
     }
 
     public SavedValue getOriginalValue() {
@@ -116,5 +125,25 @@ public class SavedReference {
             // Set modified value to null
             modifiedValue = null;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SavedReference that = (SavedReference) o;
+
+        if (!key.equals(that.key)) return false;
+        if (!rowId.equals(that.rowId)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = key.hashCode();
+        result = 31 * result + rowId.hashCode();
+        return result;
     }
 }

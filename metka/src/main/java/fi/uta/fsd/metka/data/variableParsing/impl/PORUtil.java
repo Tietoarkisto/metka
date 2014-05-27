@@ -1,14 +1,13 @@
 package fi.uta.fsd.metka.data.variableParsing.impl;
 
-import org.apache.commons.lang3.math.NumberUtils;
 import spssio.por.PORMatrixVisitor;
+import spssio.por.PORValue;
 import spssio.por.PORValueLabels;
 import spssio.por.PORVariable;
+import spssio.util.NumberParser;
+import spssio.util.NumberSystem;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 
 class PORUtil {
     static void groupVariables(List<PORVariableHolder> list, Vector<PORVariable> variables, Vector<PORValueLabels> labels) {
@@ -25,23 +24,21 @@ class PORUtil {
 
     static class PORVariableHolder {
         private final PORVariable var;
-        private final List<PORValueLabels> labels;
+        private final List<PORVariableValueLabel> labels;
         private final List<PORVariableData> data;
-        private int missing;
 
         public PORVariableHolder(PORVariable var) {
             this.var = var;
             labels = new ArrayList<>();
             data = new ArrayList<>();
-            missing = 0;
         }
 
         public PORVariable asVariable() {
             return var;
         }
 
-        public List<PORValueLabels> getLabels() {
-            List<PORValueLabels> copy = new ArrayList<>(labels);
+        public List<PORVariableValueLabel> getLabels() {
+            List<PORVariableValueLabel> copy = new ArrayList<>(labels);
             return copy;
         }
 
@@ -53,40 +50,55 @@ class PORUtil {
         public List<PORVariableData> getNumericalDataWithoutMissing() {
             List<PORVariableData> copy = new ArrayList<>();
             for(PORVariableData d : data) {
-                if(!d.missing && !(d instanceof PORVariableDataString)) {
+                if(d.isNumerical()) {
                     copy.add(d);
-                } else if(d instanceof PORVariableDataString) {
-                    if(NumberUtils.isNumber(((PORVariableDataString) d).getValue())) {
-                        copy.add(d);
-                    }
                 }
             }
             return copy;
         }
 
         public void addLabels(PORValueLabels labels) {
-            this.labels.add(labels);
+            for(PORValue key : labels.mappings.keySet()) {
+                PORVariableValueLabel valLbl = new PORVariableValueLabel(labels.mappings.get(key), key);
+                this.labels.add(valLbl);
+            }
         }
 
         public boolean hasLabels() {return labels.size() > 0;}
 
-        public int getMissingNro() {return missing;}
-
         public void addMissing() {
-            data.add(new PORVariableData(true));
-            missing++;
+            data.add(new PORVariableDataMissing());
         }
 
         public void addInt(int i) {
-            data.add(new PORVariableDataInt(false, i));
+            data.add(new PORVariableDataInt(i));
         }
 
         public void addDouble(double d) {
-            data.add(new PORVariableDataDouble(false, d));
+            data.add(new PORVariableDataDouble(d));
         }
 
         public void addString(String s) {
-            data.add(new PORVariableDataString(false, s));
+            data.add(new PORVariableDataString(s));
+        }
+
+        public int valueCount(String value) {
+            int count = 0;
+            for(PORVariableData varD : data) {
+                if(varD.toString().equals(value)) {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
+        public boolean isNumeric() {
+            if(var.width == 0) {
+                return true;
+            } else {
+                return false;
+            }
         }
 
         @Override
@@ -95,47 +107,125 @@ class PORUtil {
         }
 
         @Override
-        public boolean equals(Object obj) {
-            if(obj instanceof PORVariableHolder) {
-                PORVariableHolder other = (PORVariableHolder)obj;
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
 
-                return var.name.equals(other.var.name);
-            }/* else if(obj instanceof PORVariable) {
-                PORVariable other = (PORVariable) obj;
+            PORVariableHolder that = (PORVariableHolder) o;
 
-                return var.name.equals(other.name);
-            }*/ else {
-                return false;
-            }
+            if (!var.name.equals(that.var.name)) return false;
+
+            return true;
         }
     }
 
-    static class PORVariableData {
-        private boolean missing = false;
+    static class PORVariableValueLabel {
+        private static NumberParser parser = new NumberParser(new NumberSystem(10, null));
+        private final String label;
+        private final PORValue porValue;
 
-        public PORVariableData(boolean missing) {
-            this.missing = missing;
+        public final String value;
+
+        PORVariableValueLabel(String label, PORValue porValue) {
+            this.label = label;
+            this.porValue = porValue;
+
+            if(isNumeric()) {
+                double dVal = asDouble();
+                int iVal = (int) dVal;
+                if(dVal == (double)iVal) {
+                    value = iVal+"";
+                } else {
+                    value = dVal+"";
+                }
+            } else {
+                value = porValue.value;
+            }
         }
 
-        public boolean isMissing() {
-            return missing;
+        String getLabel() {
+            return label;
         }
 
-        public void setMissing(boolean missing) {
-            this.missing = missing;
+        PORValue asPORValue() {
+            return porValue;
+        }
+
+        boolean isNumeric() {
+            if(porValue.type == PORValue.TYPE_NUMERIC) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        double asDouble() throws NumberFormatException {
+            if(isNumeric()) {
+                return parser.parseDouble(porValue.value);
+            }
+            throw new NumberFormatException();
+        }
+    }
+
+    static abstract class PORVariableData {
+        private final PORVariableType type;
+        private final boolean numerical;
+
+        public PORVariableData(PORVariableType type, boolean numerical) {
+            this.type = type;
+            this.numerical = numerical;
+        }
+
+        PORVariableType getType() {
+            return type;
+        }
+
+        boolean isNumerical() {
+            return numerical;
         }
 
         @Override
         public String toString() {
-            return (missing)?"SYSMISS":" ";
+            return type.name();
+        }
+
+        static enum PORVariableType {
+            SYSMISS,
+            INTEGER,
+            DOUBLE,
+            STRING
+        }
+
+        @Override
+        public int hashCode() {
+            return toString().hashCode();
+        }
+    }
+
+    static class PORVariableDataMissing extends PORVariableData {
+        public PORVariableDataMissing() {
+            super(PORVariableType.SYSMISS, false);
+        }
+
+        @Override
+        public String toString() {
+            return "SYSMISS";
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if(this == o) return true;
+            if(o == null || getClass() != o.getClass()) return false;
+
+            return true;
         }
     }
 
     static class PORVariableDataInt extends PORVariableData {
         private final int value;
 
-        public PORVariableDataInt(boolean missing, int value) {
-            super(missing);
+        public PORVariableDataInt(int value) {
+            super(PORVariableType.INTEGER, true);
             this.value = value;
         }
 
@@ -147,18 +237,58 @@ class PORUtil {
         public String toString() {
             return ""+value;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            PORVariableDataInt that = (PORVariableDataInt) o;
+
+            if (value != that.value) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = super.hashCode();
+            result = 31 * result + value;
+            return result;
+        }
     }
 
     static class PORVariableDataDouble extends PORVariableData {
         private final double value;
 
-        public PORVariableDataDouble(boolean missing, double value) {
-            super(missing);
+        public PORVariableDataDouble(double value) {
+            super(PORVariableType.DOUBLE, true);
             this.value = value;
         }
 
         public double getValue() {
             return value;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            PORVariableDataDouble that = (PORVariableDataDouble) o;
+
+            if (Double.compare(that.value, value) != 0) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = super.hashCode();
+            long temp;
+            temp = Double.doubleToLongBits(value);
+            result = 31 * result + (int) (temp ^ (temp >>> 32));
+            return result;
         }
 
         @Override
@@ -171,13 +301,32 @@ class PORUtil {
     static class PORVariableDataString extends PORVariableData {
         private final String value;
 
-        public PORVariableDataString(boolean missing, String value) {
-            super(missing);
+        public PORVariableDataString(String value) {
+            super(PORVariableType.STRING, false);
             this.value = value;
         }
 
         public String getValue() {
             return value;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            PORVariableDataString that = (PORVariableDataString) o;
+
+            if (value != null ? !value.equals(that.value) : that.value != null) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = super.hashCode();
+            result = 31 * result + (value != null ? value.hashCode() : 0);
+            return result;
         }
 
         @Override
@@ -203,7 +352,6 @@ class PORUtil {
 
         @Override
         public void matrixEnd() {
-
         }
 
         @Override
@@ -224,7 +372,6 @@ class PORUtil {
         @Override
         public void columnNumeric(int x, byte[] data, int len, double value) {
 
-            String valstr = null;
             // Determine whether an integer or decimal
             int ivalue = (int) value;
             if (value == (double) ivalue) {
@@ -247,42 +394,31 @@ class PORUtil {
     static class PORVariableDataComparator implements Comparator<PORVariableData> {
         /**
          * Compares two PORVariableData objects through numerical comparison.
-         * Missing values and non numerical String values are always smaller than numerical values.
-         *
+         * Non numerical data is always smaller than numerical data but order between non numerical data is not guaranteed.
+         * Null values are always smaller than non null values
          * @param o1
          * @param o2
          * @return -1 if o1 is smaller than o2, 0 if equal, 1 if o1 is larger than o2
          */
         @Override
         public int compare(PORVariableData o1, PORVariableData o2) {
-            if(o1.isMissing() && o2.isMissing())
+            if(!o1.isNumerical() && !o2.isNumerical())
                 return 0;
-            if(o1.isMissing())
+            if(!o1.isNumerical())
                 return -1;
-            if(o2.isMissing())
-                return 1;
-            if(o1 instanceof PORVariableDataString && !NumberUtils.isNumber(((PORVariableDataString) o1).getValue())
-                    && o2 instanceof PORVariableDataString && !NumberUtils.isNumber(((PORVariableDataString) o2).getValue()))
-                return 0;
-            if(o1 instanceof PORVariableDataString && !NumberUtils.isNumber(((PORVariableDataString) o1).getValue()))
-                return -1;
-            if(o2 instanceof PORVariableDataString && !NumberUtils.isNumber(((PORVariableDataString) o2).getValue()))
+            if(!o2.isNumerical())
                 return 1;
 
             Double d1 = null;
             Double d2 = null;
-            if(o1 instanceof PORVariableDataString)
-                d1 = NumberUtils.toDouble(((PORVariableDataString) o1).getValue());
-            else if(o1 instanceof PORVariableDataInt)
+            if(o1.type == PORVariableData.PORVariableType.INTEGER)
                 d1 = new Double(((PORVariableDataInt) o1).getValue());
-            else if(o1 instanceof PORVariableDataDouble)
+            else if(o1.type == PORVariableData.PORVariableType.DOUBLE)
                 d1 = ((PORVariableDataDouble) o1).getValue();
 
-            if(o2 instanceof PORVariableDataString)
-                d2 = NumberUtils.toDouble(((PORVariableDataString) o2).getValue());
-            else if(o1 instanceof PORVariableDataInt)
+            if(o2.type == PORVariableData.PORVariableType.INTEGER)
                 d2 = new Double(((PORVariableDataInt) o2).getValue());
-            else if(o1 instanceof PORVariableDataDouble)
+            else if(o2.type == PORVariableData.PORVariableType.DOUBLE)
                 d2 = ((PORVariableDataDouble) o2).getValue();
 
             if(d1 == null && d2 == null)

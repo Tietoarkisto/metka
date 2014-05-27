@@ -20,6 +20,7 @@ public class DataRow implements ModelAccessUtil.PathNavigable {
     @XmlElement private final String key;
     @XmlElement private final Integer rowId;
     @XmlElement private final Map<String, DataField> fields = new HashMap<>();
+    @XmlElement private Boolean removed = false;
     @XmlElement private LocalDateTime savedAt;
     @XmlElement private String savedBy;
 
@@ -35,6 +36,14 @@ public class DataRow implements ModelAccessUtil.PathNavigable {
 
     public Integer getRowId() {
         return rowId;
+    }
+
+    public Boolean isRemoved() {
+        return (removed == null ? false : removed);
+    }
+
+    public void setRemoved(Boolean removed) {
+        this.removed = (removed == null ? false : removed);
     }
 
     public LocalDateTime getSavedAt() {

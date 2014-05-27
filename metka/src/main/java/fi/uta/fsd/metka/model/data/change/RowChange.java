@@ -1,6 +1,7 @@
 package fi.uta.fsd.metka.model.data.change;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -27,8 +28,15 @@ public class RowChange {
         return changes;
     }
 
+    // Helpers
+    @JsonIgnore
     public void putChange(Change change) {
         changes.put(change.getKey(), change);
+    }
+
+    @JsonIgnore
+    public boolean hasChange(String key) {
+        return changes.get(key) != null;
     }
 
     @Override

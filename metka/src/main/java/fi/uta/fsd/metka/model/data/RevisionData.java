@@ -93,23 +93,27 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase {
     }
 
     // Helper methods
-    public Change getChange(String key) {
+    @JsonIgnore public Change getChange(String key) {
         return changes.get(key);
     }
-    public Change getChange(Field field) {
+    @JsonIgnore public Change getChange(Field field) {
         return getChange(field.getKey());
     }
-    public RevisionData putChange(Change change) {
+    @JsonIgnore public RevisionData putChange(DataField field) {
+
+        return this;
+    }
+    @JsonIgnore public RevisionData putChange(Change change) {
         changes.put(change.getKey(), change);
         return this;
     }
-    public DataField getField(String key) {
+    @JsonIgnore public DataField getField(String key) {
         return fields.get(key);
     }
-    public DataField getField(Field field) {
+    @JsonIgnore public DataField getField(Field field) {
         return getField(field.getKey());
     }
-    public RevisionData putField(DataField field) {
+    @JsonIgnore public RevisionData putField(DataField field) {
         fields.put(field.getKey(), field);
         return this;
     }

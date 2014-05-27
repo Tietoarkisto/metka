@@ -1,0 +1,10 @@
+-- Before --
+GUI configuration specified in a meeting with FSD.
+Additions after that:
+Button configurations,
+DialogTitle for FieldDescription,
+fieldTitles added to gui configuration
+
+-- 2014.05.27 additions --
+DataField:
+Added 'removed' boolean to DataRow and SavedReference. This value should be set to true if the row should be considered removed. Removed rows should not be shown on UI, should not be editable and should not be copied to new revisions.

@@ -57,6 +57,10 @@ public class VariablesFactory extends DataFactory {
         field.setModifiedValue(setSimpleValue(createSavedValue(time), fileId.toString()));
         data.putField(field).putChange(new Change(field.getKey()));
 
+        field = new SavedDataField("varfileid");
+        field.setModifiedValue(setSimpleValue(createSavedValue(time), "F1"));
+        data.putField(field).putChange(new Change(field.getKey()));
+
         entity.setData(json.serialize(data));
 
         return data;

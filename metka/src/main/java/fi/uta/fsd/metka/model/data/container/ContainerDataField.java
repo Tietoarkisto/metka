@@ -49,8 +49,18 @@ public class ContainerDataField extends DataField {
 
     @Override
     public void normalize() {
+        List<DataRow> remove = new ArrayList<>();
+        // If row is removed mark it for removal, otherwise normalize row
         for(DataRow row : rows) {
-            row.normalize();
+            if(row.isRemoved()) {
+                remove.add(row);
+            } else {
+                row.normalize();
+            }
+        }
+        // Remove all rows marked for removal
+        for(DataRow row : remove) {
+            rows.remove(row);
         }
     }
 }

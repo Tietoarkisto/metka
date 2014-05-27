@@ -48,6 +48,11 @@ public class DataField implements ModelAccessUtil.PathNavigable {
 
     @JsonIgnore
     public DataField copy() {throw new UnsupportedOperationException();}
+
+    /**
+     * Normalizes this data field for new revision.
+     * Operations depend on the actual type of field.
+     */
     @JsonIgnore
     public void normalize() {throw new UnsupportedOperationException();}
 }
