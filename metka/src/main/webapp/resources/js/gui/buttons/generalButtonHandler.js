@@ -13,7 +13,7 @@
      *                earlier and handlers should only be called if the button is actually to be shown
      */
     GUI.ButtonParser.buttonHandlers['_GENERAL'] = (function() {
-        function generalButtonRenderer(root, button) {
+        function generalButtonRenderer(button) {
             var message = MetkaJS.MessageManager.Message(null, "alert.gui.missingButtonHandler.text");
             message.data.push(button.type);
             message.data.push(MetkaJS.L10N.localize(button, "title"));

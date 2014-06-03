@@ -1,17 +1,10 @@
-(function() {
+(function () {
     'use strict';
-    GUI.ButtonParser.buttonHandlers['REMOVE'] = (function() {
-
-        function renderRemoveButton(root, button) {
-            var input = GUI.Components.viewButton(button);
-            input.click(confirmRemove);
-            root.append(input);
-        }
-
+    GUI.ButtonParser.buttonHandlers.REMOVE = (function () {
         function confirmRemove() {
             var type = MetkaJS.SingleObject.draft ? "draft" : "logical";
             var message = MetkaJS.MessageManager.Message("confirmation.remove.revision.title",
-                "confirmation.remove.revision."+type+".text",
+                    "confirmation.remove.revision."+type+".text",
                 function() {
                     MetkaJS.PathBuilder()
                         .add("remove")
@@ -26,8 +19,9 @@
             MetkaJS.MessageManager.show(message);
         }
 
-        return {
-            render: renderRemoveButton
-        }
+        return function () {
+            return this
+                .click(confirmRemove);
+        };
     }());
 }());

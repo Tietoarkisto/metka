@@ -340,8 +340,7 @@
                                 <white>true</white>
                             </options>
                             <excludes>
-                                <exclude>**/bootstrap/**</exclude>
-                                <exclude>**/jquery/**</exclude>
+                                <exclude>**/lib/**</exclude>
                             </excludes>
                         </configuration>
                     </execution>

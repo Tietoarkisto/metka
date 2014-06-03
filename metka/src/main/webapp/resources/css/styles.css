@@ -29,6 +29,73 @@ footer, header, hgroup, menu, nav, section {
     display: block;
 }
 
+/*
+Temporary Bootstrap customization rules at http://getbootstrap.com/customize/
+
+Colors:
+@brand-primary #009ee0
+
+*/
+
+/* Bootstrap overrides */
+.navbar-default {
+    background-color: white;
+    border: 0px;
+    border-top: 3px solid #005993;
+    margin-bottom: 10px;
+}
+
+.navbar-default .navbar-nav > li > a {
+    color: #005993;
+}
+
+.navbar-default .navbar-nav > li > a:hover {
+    text-decoration: underline;
+    color: #005993;
+}
+
+.navbar-default .navbar-nav > .active > a {
+    color: white;
+    background-color: #009ee0;
+}
+
+@media (min-width: 768px) {
+    .navbar-nav > li > a {
+        padding-top: 60px;
+        padding-bottom: 15px;
+    }
+}
+
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:hover,
+.navbar-default .navbar-nav > .active > a:focus {
+    color: white;
+    background-color: #009ee0;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
+    cursor: default;
+}
+
+
+.panel-default>.accordionTitle2 {
+    color: #3383bb;
+    background-color: #f2f2f2;
+}
+
+.panel-default>.accordionTitle2>.panel-title {
+    font-size: 20px;
+}
+
+.panel-default>.accordionTitle2:hover, .accordionTitle2:not(.collapsed) {
+    color: white;
+    background-color: #009ee0;
+}
+
 /* Metka code */
 body {
     height: 100%;
@@ -40,7 +107,6 @@ body {
     font-variant: normal;
     font-weight: normal;
     line-height: 1.2em;
-    min-width: 1024px;
     position: relative;
     margin: 0;
     padding: 0;
@@ -48,14 +114,6 @@ body {
     outline: 0;
     font-size: 100%;
     vertical-align: baseline;
-}
-
-header {
-    width: 100%;
-    background-color: white;
-    margin-bottom: 10px;
-    /*height: 130px;*/
-    border-top: 3px solid #005993;
 }
 
 header .headerContainer {
@@ -149,26 +207,9 @@ nav .mainNavUl li a:hover {
 }
 
 .content {
-    margin: 0 auto;
-    padding: 0;
     padding-bottom: 10px;
-    width: 1024px;
-    height: 100%;
     min-height: 600px;
     background-color: white;
-    display: block;
-    box-shadow: 10px 10px 5px #888;
-}
-
-.dynamicContent {
-    margin: 0 auto;
-    padding: 0;
-    padding-bottom: 10px;
-    width: 1024px;
-    height: 100%;
-    min-height: 50px;
-    background-color: white;
-    display: block;
     box-shadow: 10px 10px 5px #888;
 }
 
@@ -219,7 +260,7 @@ nav .mainNavUl li a:hover {
 
 /* Bootstrap init */
 .container {
-    width: 1000px !important;
+    /*width: 1000px !important;*/
 }
 
 /* Metka CSS */
@@ -245,14 +286,10 @@ nav .mainNavUl li a:hover {
 }
 
 .pageTitle {
-    display: block;
     font-size: 20px;
     color: white;
     padding: 10px 20px 10px 20px;
     background-color: #009ee0;
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
 }
 .pageTitle .floatLeft {
     float: left;
@@ -271,13 +308,7 @@ nav .mainNavUl li a:hover {
     display: block;
 }
 
-.buttonsHolder {
-    margin: 0px 10px;
-    display: block;
-    position: relative;
-    text-align: right;
-}
-.buttonsHolder input {
+.buttonsHolder button {
     margin-left: 20px;
 }
 
@@ -356,4 +387,13 @@ nav .mainNavUl li a:hover {
     border: 1px solid #aaaaaa;
     border-top: none;
     padding: 5px;
+}
+
+.containerHidden,
+.nav>li.containerHidden {
+    display: none;
+}
+
+th {
+    font-weight: bold;
 }

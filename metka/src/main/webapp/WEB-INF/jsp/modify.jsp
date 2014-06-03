@@ -15,7 +15,7 @@
 <body>
 <jsp:include page="../inc/topMenu.jsp" />
 <div class="wrapper">
-    <div class="content">
+    <div class="content container">
         <h1 class="pageTitle"><spring:message code="${context}"/> - <spring:message code="${context}.field.${configuration[context].displayId}"/>&nbsp;${single.id} - <spring:message code="general.revision"/>&nbsp;${single.revision} - <spring:message code="general.DRAFT"/>
             <div class="floatRight normalText"><input type="button" onclick="MetkaJS.PathBuilder().add('download').add(MetkaJS.SingleObject.id).add(MetkaJS.SingleObject.revision).navigate()" value="<spring:message code='general.buttons.download' />"/></div></h1>
         <jsp:include page="${page}/modify.jsp" />
@@ -25,11 +25,11 @@
             <input type="reset" class="button" value="Tyhjennä">-->
         </div>
     </div>
-    <div class="dynamicContent"></div>
+    <div id="dynamicContent" class="content container"></div>
 </div>
 <script>
     $(document).ready(function() {
-        GUI.build($(".dynamicContent"), "${context}");
+        GUI.build($('#dynamicContent'), '${context}');
     });
 </script>
 </body>

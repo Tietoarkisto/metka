@@ -71,7 +71,7 @@ public class ContainerDeserializer extends JsonDeserializer<Container> {
         if(con.getType() == ContainerType.COLUMN) {
             JsonNode columns = node.get("columns");
             if(columns != null && columns.getNodeType() == JsonNodeType.NUMBER) {
-                con.setColspan(columns.intValue());
+                con.setColumns(columns.intValue());
             }
         }
 
