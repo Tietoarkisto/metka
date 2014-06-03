@@ -422,7 +422,7 @@
 			"titlePath": "description"
 		}
 	},
-	"idField": "study_id",
+	"idField": "revisionableid",
 	"displayId": "id",
 	"fields": {
 		"aipcomplete": {
@@ -550,7 +550,7 @@
 			]
 		},
 		"id": {
-			"_comment": "This contains the automatically generated study_id_prefix+study_id combination.",
+			"_comment": "This contains the automatically generated studyno_prefix+studyno combination.",
 			"key": "id",
 			"translatable": false,
 			"immutable": true,
@@ -558,14 +558,14 @@
 			"required": true,
 			"type": "CONCAT",
 			"concatenate": [
-				"study_id_prefix",
-				"study_id"
+				"studyno_prefix",
+				"studyno"
 			],
 			"section": "basic_information"
 		},
-		"study_id_prefix": {
-			"_comment": "Contains the letter part of study id. This comes automatically from the default value of the selectionList.",
-			"key": "study_id_prefix",
+		"studyno_prefix": {
+			"_comment": "Contains the letter part of id. This comes automatically from the default value of the selectionList.",
+			"key": "studyno_prefix",
 			"translatable": false,
 			"immutable": true,
 			"editable": false,
@@ -576,9 +576,20 @@
 			"section": "basic_information"
 			
 		},
-		"study_id": {
-			"_comment": "This contains only the number part (revisionable id).",
-			"key": "study_id",
+		"studyno": {
+			"_comment": "This contains the number portion of study id (usually FSD+number). Not the same as revisionable id.",
+			"key": "revisionableid",
+			"translatable": false,
+			"immutable": true,
+			"unique": true,
+			"required": true,
+			"display": false,
+			"type": "INTEGER",
+			"section": "basic_information"
+		},
+		"revisionableid": {
+			"_comment": "This contains the general revisionable id for this study (what is found in key)",
+			"key": "revisionableid",
 			"translatable": false,
 			"immutable": true,
 			"unique": true,

@@ -1,5 +1,6 @@
 package fi.uta.fsd.metka.data.repository;
 
+import fi.uta.fsd.metka.data.entity.SequenceEntity;
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.enums.repositoryResponses.DraftRemoveResponse;
 import fi.uta.fsd.metka.data.enums.repositoryResponses.LogicalRemoveResponse;
@@ -35,4 +36,7 @@ public interface GeneralRepository {
     public RevisionData getRevision(Integer id, Integer revision) throws IOException;
 
     public String getRevisionData(Integer id, Integer revision);
+
+    @Transactional(readOnly = false) public SequenceEntity getNewSequenceValue(String key);
+    @Transactional(readOnly = false) public SequenceEntity getNewSequenceValue(String key, Integer initialValue);
 }

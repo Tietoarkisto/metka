@@ -6,13 +6,6 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 
-/**
- * Created with IntelliJ IDEA.
- * User: lasseku
- * Date: 12/11/13
- * Time: 9:23 AM
- * To change this template use File | Settings | File Templates.
- */
 @Entity
 @Table(name = "REVISION")
 public class RevisionEntity {
@@ -57,6 +50,23 @@ public class RevisionEntity {
 
     public void setData(String data) {
         this.data = data;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RevisionEntity that = (RevisionEntity) o;
+
+        if (!key.equals(that.key)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return key.hashCode();
     }
 
     @Override

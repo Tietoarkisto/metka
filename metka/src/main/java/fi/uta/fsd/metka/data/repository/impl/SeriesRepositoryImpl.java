@@ -2,9 +2,9 @@ package fi.uta.fsd.metka.data.repository.impl;
 
 import fi.uta.fsd.metka.data.entity.RevisionEntity;
 import fi.uta.fsd.metka.data.entity.impl.SeriesEntity;
-import fi.uta.fsd.metka.data.entity.key.RevisionKey;
 import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
+import fi.uta.fsd.metka.data.repository.GeneralRepository;
 import fi.uta.fsd.metka.data.repository.SeriesRepository;
 import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.model.configuration.Configuration;
@@ -37,6 +37,9 @@ public class SeriesRepositoryImpl implements SeriesRepository {
 
     @Autowired
     private ConfigurationRepository configRepo;
+
+    @Autowired
+    private GeneralRepository general;
 
     @Override
     public RevisionData getNew() throws IOException {
@@ -81,7 +84,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         }
 
         //RevisionEntity revEntity = series.getLatestRevision();
-        RevisionEntity revEntity = em.find(RevisionEntity.class, new RevisionKey(series.getId(), series.getLatestRevisionNo()));
+        RevisionEntity revEntity = em.find(RevisionEntity.class, series.latestRevisionKey());
         if(revEntity.getState() != RevisionState.DRAFT || StringUtils.isEmpty(revEntity.getData())) {
             // Only drafts can be saved and there has to be existing revision data
             // TODO: if we get here an error has to be logged since data is out of sync
@@ -175,7 +178,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
             return false;
         }
 
-        RevisionEntity entity = em.find(RevisionEntity.class, new RevisionKey(series.getId(), series.getLatestRevisionNo()));
+        RevisionEntity entity = em.find(RevisionEntity.class, series.latestRevisionKey());
         if(entity.getState() != RevisionState.DRAFT) {
             // TODO: log exception since data is out of sync
             System.err.println("Latest revision should be DRAFT but is not on series "+seriesno);
@@ -242,7 +245,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         }
 
         //RevisionEntity latestRevision = series.getLatestRevision();
-        RevisionEntity latestRevision = em.find(RevisionEntity.class, new RevisionKey(series.getId(), series.getLatestRevisionNo()));
+        RevisionEntity latestRevision = em.find(RevisionEntity.class, series.latestRevisionKey());
         RevisionData oldData = json.readRevisionDataFromString(latestRevision.getData());
         if(series.getCurApprovedNo() == null || series.getCurApprovedNo().compareTo(series.getLatestRevisionNo()) < 0) {
             if(latestRevision.getState() != RevisionState.DRAFT) {

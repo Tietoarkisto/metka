@@ -1,15 +1,22 @@
 package fi.uta.fsd.metka.data.variableParsing.impl;
 
-import spssio.por.PORMatrixVisitor;
-import spssio.por.PORValue;
-import spssio.por.PORValueLabels;
-import spssio.por.PORVariable;
+import spssio.por.*;
 import spssio.util.NumberParser;
 import spssio.util.NumberSystem;
 
 import java.util.*;
 
 class PORUtil {
+    private static NumberParser parser = new NumberParser(new NumberSystem(10, null));
+    public static Double parseDouble(String value) throws NumberFormatException {
+        parser.reset();
+        double result = parser.parseDouble(value);
+        if(result == NumberParser.DBL_ERRVALUE) {
+            throw new NumberFormatException("DBL_ERRVALUE returned");
+        }
+        return result;
+    }
+
     static void groupVariables(List<PORVariableHolder> list, Vector<PORVariable> variables, Vector<PORValueLabels> labels) {
         for(PORVariable variable : variables) {
             list.add(new PORVariableHolder(variable));
@@ -24,17 +31,75 @@ class PORUtil {
 
     static class PORVariableHolder {
         private final PORVariable var;
+        private final List<PORMissingValueHolder> missing;
         private final List<PORVariableValueLabel> labels;
         private final List<PORVariableData> data;
 
         public PORVariableHolder(PORVariable var) {
             this.var = var;
+            missing = new ArrayList<>();
             labels = new ArrayList<>();
             data = new ArrayList<>();
+
+            setMissing();
+        }
+
+        private void setMissing() {
+            for(PORMissingValue m : var.missvalues) {
+                PORMissingValueHolder holder = null;
+                switch(m.type) {
+                    case PORMissingValue.TYPE_UNASSIGNED:
+                        // Can't do anything, missing value is unfinished
+                        break;
+                    case PORMissingValue.TYPE_DISCRETE_VALUE:
+                        // There has to be exactly one missing value and the type must not be unassigned.
+                        if(m.values.length == 1 && m.values[0] != null && m.values[0].type != PORValue.TYPE_UNASSIGNED) {
+                            PORValue v = m.values[0];
+                            holder = new PORMissingDiscreteValue((v.type == PORValue.TYPE_NUMERIC), v.value);
+                        }
+                        break;
+                    case PORMissingValue.TYPE_RANGE_OPEN_LO:
+                        // There has to be exactly one missing value and the type should be numeric. We can't deal with ranges in String so those are ignored
+                        if(m.values.length == 1 && m.values[0] != null && m.values[0].type == PORValue.TYPE_NUMERIC) {
+                            holder = new PORMissingOpenLowRange(m.values[0].value);
+                        }
+                        break;
+                    case PORMissingValue.TYPE_RANGE_OPEN_HI:
+                        // There has to be exactly one missing value and the type should be numeric. We can't deal with ranges in String so those are ignored
+                        if(m.values.length == 1 && m.values[0] != null && m.values[0].type == PORValue.TYPE_NUMERIC) {
+                            holder = new PORMissingOpenHighRange(m.values[0].value);
+                        }
+                        break;
+                    case PORMissingValue.TYPE_RANGE_CLOSED:
+                        // There has to be exactly two missing values and both have to be of type numeric. We can't deal with ranges in String so those are ignored.
+                        if(m.values.length == 2 && m.values[0] != null && m.values[0].type == PORValue.TYPE_NUMERIC && m.values[1] != null && m.values[1].type == PORValue.TYPE_NUMERIC) {
+                            holder = new PORMissingClosedRange(m.values[0].value, m.values[1].value);
+                        }
+                        break;
+                }
+                if(holder != null) {
+                    if(holder.isRange()) {
+                        if(((PORMissingRangeValue)holder).isValid()) {
+                            missing.add(holder);
+                        }
+                    } else {
+                        missing.add(holder);
+                    }
+                }
+            }
         }
 
         public PORVariable asVariable() {
             return var;
+        }
+
+        List<PORMissingValueHolder> getMissing() {
+            List<PORMissingValueHolder> copy = new ArrayList<>(missing);
+            return copy;
+        }
+
+        public int getMissingSize() {
+            return missing.size();
         }
 
         public List<PORVariableValueLabel> getLabels() {
@@ -42,9 +107,17 @@ class PORUtil {
             return copy;
         }
 
+        public int getLabelsSize() {
+            return labels.size();
+        }
+
         public List<PORVariableData> getData() {
             List<PORVariableData> copy = new ArrayList<>(data);
             return copy;
+        }
+
+        public int getDataSize() {
+            return data.size();
         }
 
         public List<PORVariableData> getNumericalDataWithoutMissing() {
@@ -57,9 +130,77 @@ class PORUtil {
             return copy;
         }
 
+        /**
+         * Checks given PORValue against all present user missing values.
+         * @param value
+         * @return
+         */
+        public boolean isUserMissing(PORValue value) {
+            for(PORMissingValueHolder m : getMissing()) {
+                switch(m.getType()) {
+                    case DISCRETE:
+                        if(((PORMissingDiscreteValue)m).valueIsMissing(value)) {
+                            return true;
+                        }
+                        break;
+                    case OPEN_LO:
+                    case OPEN_HI:
+                    case RANGE_CLOSED:
+                        if(((PORMissingRangeValue)m).withinRange(value)) {
+                            return true;
+                        }
+                        break;
+                }
+            }
+            return false;
+        }
+
+        /**
+         * Checks given string value against all present user missing values.
+         * Only string type discrete values can match a string value. In all other cases nothing is returned
+         * @param value
+         * @return
+         */
+        public boolean isUserMissing(String value) {
+            for(PORMissingValueHolder m : getMissing()) {
+                if(m.getType() == PORMissingValueHolder.PORMissingType.DISCRETE) {
+                    if(((PORMissingDiscreteValue)m).valueIsMissing(value)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        /**
+         * Checks given double against all present user missing values.
+         * String type discrete missing values will give false by default but all other cases are checked.
+         * @param value
+         * @return
+         */
+        public boolean isUserMissing(Double value) {
+            for(PORMissingValueHolder m : getMissing()) {
+                switch(m.getType()) {
+                    case DISCRETE:
+                        if(((PORMissingDiscreteValue)m).valueIsMissing(value)) {
+                            return true;
+                        }
+                        break;
+                    case OPEN_LO:
+                    case OPEN_HI:
+                    case RANGE_CLOSED:
+                        if(((PORMissingRangeValue)m).withinRange(value)) {
+                            return true;
+                        }
+                        break;
+                }
+            }
+            return false;
+        }
+
         public void addLabels(PORValueLabels labels) {
             for(PORValue key : labels.mappings.keySet()) {
-                PORVariableValueLabel valLbl = new PORVariableValueLabel(labels.mappings.get(key), key);
+                PORVariableValueLabel valLbl = new PORVariableValueLabel(labels.mappings.get(key), key, isUserMissing(key));
                 this.labels.add(valLbl);
             }
         }
@@ -70,12 +211,16 @@ class PORUtil {
             data.add(new PORVariableDataMissing());
         }
 
-        public void addInt(int i) {
+        /*public void addInt(int i) {
             data.add(new PORVariableDataInt(i));
         }
 
         public void addDouble(double d) {
             data.add(new PORVariableDataDouble(d));
+        }*/
+
+        public void addNumeric(double d) {
+            data.add(new PORVariableDataNumeric(d));
         }
 
         public void addString(String s) {
@@ -101,6 +246,15 @@ class PORUtil {
             }
         }
 
+        public PORVariableValueLabel getLabel(String value) {
+            for(PORVariableValueLabel label : labels) {
+                if(label.getValue().equals(value)) {
+                    return label;
+                }
+            }
+            return null;
+        }
+
         @Override
         public int hashCode() {
             return var.name.hashCode();
@@ -119,16 +273,358 @@ class PORUtil {
         }
     }
 
+    static abstract class PORMissingValueHolder {
+        static enum PORMissingType {
+            UNASSIGNED,
+            OPEN_HI,
+            OPEN_LO,
+            DISCRETE,
+            RANGE_CLOSED
+        }
+
+        private final PORMissingType type;
+        private final boolean numeric;
+        private final boolean range;
+
+        PORMissingValueHolder(PORMissingType type, boolean numeric, boolean range) {
+            this.type = type;
+            this.numeric = numeric;
+            this.range = range;
+        }
+
+        PORMissingType getType() {
+            return type;
+        }
+
+        boolean isNumeric() {
+            return numeric;
+        }
+
+        boolean isRange() {
+            return range;
+        }
+
+        protected Double asDouble(String value) throws NumberFormatException {
+            if(isNumeric()) {
+                return PORUtil.parseDouble(value);
+            } else {
+                throw new NumberFormatException();
+            }
+        }
+
+        protected boolean isInteger(Double dValue) {
+            if(isNumeric()) {
+                int i = dValue.intValue();
+                if(dValue.equals(new Double(i))) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+
+        protected Integer asInteger(Double dValue) throws NumberFormatException {
+            if(isNumeric()) {
+                return dValue.intValue();
+            } else {
+                throw new NumberFormatException();
+            }
+        }
+    }
+
+    static class PORMissingDiscreteValue extends PORMissingValueHolder {
+        private final String value;
+        private final Double dValue;
+
+        protected PORMissingDiscreteValue(boolean numeric, String value) {
+            super(PORMissingType.DISCRETE, numeric, false);
+            this.value = value;
+            if(numeric) {
+                dValue = asDouble(value);
+            } else {
+                dValue = Double.NaN;
+            }
+        }
+
+        String getValue() {
+            return value;
+        }
+
+        Double asDouble() {
+            return dValue;
+        }
+
+        boolean isInteger() {
+            return super.isInteger(dValue);
+        }
+
+        Integer asInteger() {
+            return super.asInteger(dValue);
+        }
+
+        boolean valueIsMissing(PORValue value) throws NumberFormatException {
+            if(isNumeric() && (value.type == PORValue.TYPE_NUMERIC)) {
+                Double d = asDouble(value.value);
+                return valueIsMissing(d);
+            } else if(!isNumeric() && (value.type == PORValue.TYPE_STRING)) {
+                return valueIsMissing(value.value);
+            } else {
+                return false;
+            }
+        }
+
+        boolean valueIsMissing(String value) {
+            if(isNumeric()) {
+                return false;
+            }
+            return this.value.equals(value);
+        }
+
+        boolean valueIsMissing(Double value) {
+            if(!isNumeric()) {
+                return false;
+            }
+            return (dValue.equals(value));
+        }
+    }
+
+    static abstract class PORMissingSingleValueRange extends PORMissingValueHolder {
+        private final Double dValue;
+
+        protected PORMissingSingleValueRange(PORMissingType type, String value) {
+            super(type, true, true);
+            Double d = asDouble(value);
+            // Set dValue taking into consideration the distinct cases of 0.0d and -0.0d.
+            // This enables clear range comparisons
+            if(d.equals((type == PORMissingType.OPEN_LO) ? 0.0d : -0.0d)) {
+                dValue = (type == PORMissingType.OPEN_LO) ? -0.0d : 0.0d;
+            } else {
+                dValue = d;
+            }
+        }
+
+        Double getValue() {
+            return dValue;
+        }
+
+        boolean isInteger() {
+            return super.isInteger(dValue);
+        }
+
+        Integer asInteger() {
+            return super.asInteger(dValue);
+        }
+    }
+
+    static interface PORMissingRangeValue {
+        /**
+         * Checks to see that range value is a valid value for comparison.
+         * If range includes a NaN value it should be discarded.
+         * @return boolean False if any value in the range equals NaN.
+         */
+        boolean isValid();
+
+        /**
+         * Checks if given PORValue is within range of this range missing value.
+         * PORValue has to be numeric for comparison to take place.
+         * @param value PORValue to check for being within this range
+         * @return boolean telling if given PORValue is within this range
+         * @throws NumberFormatException
+         */
+        boolean withinRange(PORValue value) throws NumberFormatException;
+
+        /**
+         * Checks if given value is within range of this ranged missing value
+         * @param value String representation of value to be checked. Assumed to be base30 representation
+         * @return boolean telling if given value is within this range
+         * @throws NumberFormatException
+         */
+        boolean withinRange(String value) throws NumberFormatException;
+
+        /**
+         * Checks if given value is within range of this ranged missing value
+         * @param value Double value to be checked
+         * @return boolean telling if given value is within this range
+         */
+        boolean withinRange(Double value);
+
+        /**
+         * Checks if given value is within range of this ranged missing value
+         * @param value Integer value to be checked. Will be cast to Double for checks
+         * @return boolean telling if given value is within this range
+         */
+        boolean withinRange(Integer value);
+    }
+
+    static class PORMissingOpenLowRange extends PORMissingSingleValueRange implements PORMissingRangeValue {
+        PORMissingOpenLowRange(String value) {
+            super(PORMissingType.OPEN_LO, value);
+        }
+
+        @Override
+        public boolean isValid() {
+            return (!getValue().equals(Double.NaN));
+        }
+
+        @Override
+        public boolean withinRange(PORValue value) throws NumberFormatException {
+            if(value.type == PORValue.TYPE_NUMERIC) {
+                return withinRange(value.value);
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public boolean withinRange(Double value) {
+            return getValue().compareTo(value) >= 0;
+        }
+
+        @Override
+        public boolean withinRange(String value) throws NumberFormatException {
+            Double d = asDouble(value);
+            return withinRange(d);
+        }
+
+        @Override
+        public boolean withinRange(Integer value) {
+            return withinRange(new Double(value));
+        }
+    }
+
+    static class PORMissingOpenHighRange extends PORMissingSingleValueRange implements PORMissingRangeValue {
+        PORMissingOpenHighRange(String value) {
+            super(PORMissingType.OPEN_HI, value);
+        }
+
+        @Override
+        public boolean isValid() {
+            return (!getValue().equals(Double.NaN));
+        }
+
+        @Override
+        public boolean withinRange(PORValue value) throws NumberFormatException {
+            if(value.type == PORValue.TYPE_NUMERIC) {
+                return withinRange(value.value);
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public boolean withinRange(Double value) {
+            return getValue().compareTo(value) <= 0;
+        }
+
+        @Override
+        public boolean withinRange(String value) throws NumberFormatException {
+            Double d = asDouble(value);
+            return withinRange(d);
+        }
+
+        @Override
+        public boolean withinRange(Integer value) {
+            return withinRange(new Double(value));
+        }
+    }
+
+    static class PORMissingClosedRange extends PORMissingValueHolder implements PORMissingRangeValue {
+        private final Double loValue;
+        private final Double hiValue;
+
+        PORMissingClosedRange(String loValue, String hiValue) {
+            super(PORMissingType.RANGE_CLOSED, true, true);
+            Double dLo = asDouble(loValue);
+            Double dHi = asDouble(hiValue);
+
+            // Set low and high values taking into consideration the distinct cases of 0.0d and -0.0d.
+            // This enables clear range comparisons
+            if(dLo.equals(0.0d)) {
+                this.loValue = -0.0d;
+            } else {
+                this.loValue = dLo;
+            }
+
+            if(dHi.equals(-0.0d)) {
+                this.hiValue = 0.0d;
+            } else {
+                this.hiValue = dHi;
+            }
+        }
+
+        Double getLoValue() {
+            return loValue;
+        }
+
+        Double getHiValue() {
+            return hiValue;
+        }
+
+        boolean isLoInteger() {
+            return super.isInteger(loValue);
+        }
+
+        boolean isHiInteger() {
+            return super.isInteger(hiValue);
+        }
+
+        Integer loAsInteger() {
+            return super.asInteger(loValue);
+        }
+
+        Integer hiAsInteger() {
+            return super.asInteger(hiValue);
+        }
+
+        @Override
+        public boolean isValid() {
+            if(loValue.equals(Double.NaN) || hiValue.equals(Double.NaN)) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public boolean withinRange(PORValue value) throws NumberFormatException {
+            if(value.type == PORValue.TYPE_NUMERIC) {
+                return withinRange(value.value);
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public boolean withinRange(Double value) {
+            return (loValue.compareTo(value) >= 0 && hiValue.compareTo(value) <= 0);
+        }
+
+        @Override
+        public boolean withinRange(String value) throws NumberFormatException {
+            Double d = asDouble(value);
+            return withinRange(d);
+        }
+
+        @Override
+        public boolean withinRange(Integer value) {
+            return withinRange(new Double(value));
+        }
+    }
+
     static class PORVariableValueLabel {
-        private static NumberParser parser = new NumberParser(new NumberSystem(10, null));
+
         private final String label;
         private final PORValue porValue;
 
-        public final String value;
+        private final String value;
+        private final boolean missing;
 
-        PORVariableValueLabel(String label, PORValue porValue) {
+
+        PORVariableValueLabel(String label, PORValue porValue, boolean missing) {
             this.label = label;
             this.porValue = porValue;
+            this.missing = missing;
 
             if(isNumeric()) {
                 double dVal = asDouble();
@@ -151,6 +647,14 @@ class PORUtil {
             return porValue;
         }
 
+        String getValue() {
+            return value;
+        }
+
+        boolean isMissing() {
+            return missing;
+        }
+
         boolean isNumeric() {
             if(porValue.type == PORValue.TYPE_NUMERIC) {
                 return true;
@@ -161,7 +665,7 @@ class PORUtil {
 
         double asDouble() throws NumberFormatException {
             if(isNumeric()) {
-                return parser.parseDouble(porValue.value);
+                return PORUtil.parseDouble(porValue.value);
             }
             throw new NumberFormatException();
         }
@@ -191,8 +695,9 @@ class PORUtil {
 
         static enum PORVariableType {
             SYSMISS,
-            INTEGER,
-            DOUBLE,
+            //INTEGER,
+            //DOUBLE,
+            NUMERIC,
             STRING
         }
 
@@ -221,7 +726,7 @@ class PORUtil {
         }
     }
 
-    static class PORVariableDataInt extends PORVariableData {
+    /*static class PORVariableDataInt extends PORVariableData {
         private final int value;
 
         public PORVariableDataInt(int value) {
@@ -256,9 +761,9 @@ class PORUtil {
             result = 31 * result + value;
             return result;
         }
-    }
+    }*/
 
-    static class PORVariableDataDouble extends PORVariableData {
+    /*static class PORVariableDataDouble extends PORVariableData {
         private final double value;
 
         public PORVariableDataDouble(double value) {
@@ -276,6 +781,51 @@ class PORUtil {
             if (o == null || getClass() != o.getClass()) return false;
 
             PORVariableDataDouble that = (PORVariableDataDouble) o;
+
+            if (Double.compare(that.value, value) != 0) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = super.hashCode();
+            long temp;
+            temp = Double.doubleToLongBits(value);
+            result = 31 * result + (int) (temp ^ (temp >>> 32));
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            // TODO: needs formatting
+            return ""+value;
+        }
+    }*/
+
+    static class PORVariableDataNumeric extends PORVariableData {
+        private final double value;
+
+        public PORVariableDataNumeric(double value) {
+            super(PORVariableType.NUMERIC, true);
+            this.value = value;
+        }
+
+        public double getValue() {
+            return value;
+        }
+
+        public boolean isInteger() {
+            int i = (int)value;
+            return (value == (double)i);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            PORVariableDataNumeric that = (PORVariableDataNumeric) o;
 
             if (Double.compare(that.value, value) != 0) return false;
 
@@ -373,14 +923,15 @@ class PORUtil {
         public void columnNumeric(int x, byte[] data, int len, double value) {
 
             // Determine whether an integer or decimal
-            int ivalue = (int) value;
+            /*int ivalue = (int) value;
             if (value == (double) ivalue) {
                 // Integer
                 holders.get(x).addInt(ivalue);
             } else {
                 // Decimal
                 holders.get(x).addDouble(value);
-            }
+            }*/
+            holders.get(x).addNumeric(value);
         }
 
         @Override
@@ -409,7 +960,7 @@ class PORUtil {
             if(!o2.isNumerical())
                 return 1;
 
-            Double d1 = null;
+            /*Double d1 = null;
             Double d2 = null;
             if(o1.type == PORVariableData.PORVariableType.INTEGER)
                 d1 = new Double(((PORVariableDataInt) o1).getValue());
@@ -419,7 +970,10 @@ class PORUtil {
             if(o2.type == PORVariableData.PORVariableType.INTEGER)
                 d2 = new Double(((PORVariableDataInt) o2).getValue());
             else if(o2.type == PORVariableData.PORVariableType.DOUBLE)
-                d2 = ((PORVariableDataDouble) o2).getValue();
+                d2 = ((PORVariableDataDouble) o2).getValue();*/
+
+            Double d1 = ((PORVariableDataNumeric)o1).getValue();
+            Double d2 = ((PORVariableDataNumeric)o2).getValue();
 
             if(d1 == null && d2 == null)
                 return 0;

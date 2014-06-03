@@ -8,3 +8,14 @@ fieldTitles added to gui configuration
 -- 2014.05.27 additions --
 DataField:
 Added 'removed' boolean to DataRow and SavedReference. This value should be set to true if the row should be considered removed. Removed rows should not be shown on UI, should not be editable and should not be copied to new revisions.
+
+-- 2014.05.30 additions --
+Study configuration:
+study_id field changed to revisionableid. This contains the actual unique ID if every study as provided by the database. Separated from the previous id concatenation
+studyno added, this contains a value generated to StudyEntity's studyNumber field during new study creation. Forms the new number part for id field
+study_id_prefix changed to studyno_prefix. Meaning has not changed, only the key
+id changed to concatenate studyno_prefix and studyno fields. StudyNumber is no longer dependant on the actual unique id of a study but runs on a different sequence saved at SEQUENCE_HOLDER table and using STUDY as the sequence key.
+
+study_variable configuration:
+categoryvalue and categorylabel changed to value and label since these are used in two different containers
+added valuelabels container that contains subfields value, label and missing.

@@ -179,6 +179,23 @@ public class ModelAccessUtil {
 
     /**
      * Return top level ContainerDataField for given field key.
+     * Doesn't use configuration and as such must use instanceof to determine if returning correctly typed field.
+     *
+     * @param data RevisionData of the revision being manipulated.
+     * @param key Field key of the requested field.
+     * @return ContainerDataField of the requested key if one exists.
+     */
+    public static ContainerDataField getContainerDataFieldFromRevisionData(RevisionData data, String key) {
+        DataField field = data.getField(key);
+        if(field == null || !(field instanceof ContainerDataField)) {
+            return null;
+        }
+
+        return (ContainerDataField)field;
+    }
+
+    /**
+     * Return top level ContainerDataField for given field key.
      * If field does not exist in configuration returns null.
      * If field is a subfield return null, this should only be used for top level (non subfield) containers.
      * If field is not a CONTAINER field return null.
@@ -912,6 +929,11 @@ public class ModelAccessUtil {
         if(row == null || StringUtils.isEmpty(key) || containerChange == null) {
             return;
         }
+
+        // Since we are setting a value to this row we can assume it's still needed
+        // Reverse any previous decision to remove this row
+        row.setRemoved(false);
+
         DataField field = row.getField(key);
         if(field == null) {
             field = new SavedDataField(key);
@@ -920,14 +942,14 @@ public class ModelAccessUtil {
         SavedDataField saved = (field instanceof SavedDataField) ? (SavedDataField)field : null;
         if(saved != null && (!saved.hasValue() || !saved.valueEquals(value))) {
             saved.setModifiedValue(setSimpleValue(createSavedValue(time), value));
+            row.setSavedAt(time);
+            // TODO: Set saved by
             RowChange change = containerChange.get(row.getRowId());
             if(change == null) {
                 change = new RowChange(row.getRowId());
                 containerChange.put(change);
             }
-            if(!change.hasChange(saved.getKey())) {
-                change.putChange(new Change(saved.getKey()));
-            }
+            change.putChange(new Change(saved.getKey()));
         }
     }
 

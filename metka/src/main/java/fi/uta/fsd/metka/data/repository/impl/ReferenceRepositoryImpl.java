@@ -36,9 +36,10 @@ public class ReferenceRepositoryImpl implements ReferenceRepository {
 
     @Override
     public RevisionEntity getRevisionForReference(RevisionableEntity revisionable, Reference reference) {
-        RevisionKey key = new RevisionKey(
-                revisionable.getId(),
-                (reference.getApprovedOnly()) ? revisionable.getCurApprovedNo() : revisionable.getLatestRevisionNo());
+        if(reference.getApprovedOnly() && revisionable.getCurApprovedNo() == null) {
+            return null;
+        }
+        RevisionKey key = (reference.getApprovedOnly()) ? revisionable.currentApprovedRevisionKey() : revisionable.latestRevisionKey();
         RevisionEntity revision = em.find(RevisionEntity.class, key);
         return revision;
     }
@@ -59,11 +60,6 @@ public class ReferenceRepositoryImpl implements ReferenceRepository {
         if(revisionable == null) {
             return null;
         }
-
-        RevisionKey revKey = new RevisionKey(
-                revisionable.getId(),
-                (reference.getApprovedOnly()) ? revisionable.getCurApprovedNo() : revisionable.getLatestRevisionNo());
-        RevisionEntity revision = em.find(RevisionEntity.class, revKey);
-        return revision;
+        return getRevisionForReference(revisionable, reference);
     }
 }

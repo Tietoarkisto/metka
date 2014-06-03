@@ -9,6 +9,7 @@ import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.enums.FieldType;
 import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
+import fi.uta.fsd.metka.data.repository.GeneralRepository;
 import fi.uta.fsd.metka.data.repository.StudyRepository;
 import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.data.variableParsing.StudyVariablesParser;
@@ -50,15 +51,20 @@ public class StudyRepositoryImpl implements StudyRepository {
     private ConfigurationRepository configRepo;
 
     @Autowired
+    private GeneralRepository general;
+
+    @Autowired
     private StudyVariablesParser variableParser;
 
     @Override
     public RevisionData getNew(Integer acquisition_number) throws IOException {
         StudyEntity entity = new StudyEntity();
+        // Insert a new study number
+        entity.setStudyNumber(general.getNewSequenceValue(ConfigurationType.STUDY.toValue(), 10000).getSequence());
         em.persist(entity);
 
         RevisionEntity revision = entity.createNextRevision();
-        RevisionData data = factory.newData(revision, acquisition_number);
+        RevisionData data = factory.newData(revision, entity.getStudyNumber(), acquisition_number);
         em.persist(revision);
 
         entity.setLatestRevisionNo(revision.getKey().getRevisionNo());
@@ -88,7 +94,7 @@ public class StudyRepositoryImpl implements StudyRepository {
             return false;
         }
 
-        RevisionEntity revEntity = em.find(RevisionEntity.class, new RevisionKey(study.getId(), study.getLatestRevisionNo()));
+        RevisionEntity revEntity = em.find(RevisionEntity.class, study.latestRevisionKey());
         if(revEntity.getState() != RevisionState.DRAFT || StringUtils.isEmpty(revEntity.getData())) {
             // Only drafts can be saved and there has to be existing revision data
             // TODO: if we get here an error has to be logged since data is out of sync
@@ -174,7 +180,7 @@ public class StudyRepositoryImpl implements StudyRepository {
             return false;
         }
 
-        RevisionEntity entity = em.find(RevisionEntity.class, new RevisionKey(study.getId(), study.getLatestRevisionNo()));
+        RevisionEntity entity = em.find(RevisionEntity.class, study.latestRevisionKey());
         if(entity.getState() != RevisionState.DRAFT) {
             // TODO: log exception since data is out of sync
             System.err.println("Latest revision should be DRAFT but is not on study "+studyno);
@@ -243,7 +249,7 @@ public class StudyRepositoryImpl implements StudyRepository {
             return null;
         }
 
-        RevisionEntity latestRevision = em.find(RevisionEntity.class, new RevisionKey(study.getId(), study.getLatestRevisionNo()));
+        RevisionEntity latestRevision = em.find(RevisionEntity.class, study.latestRevisionKey());
         RevisionData oldData = json.readRevisionDataFromString(latestRevision.getData());
         if(study.getCurApprovedNo() == null || study.getCurApprovedNo().compareTo(study.getLatestRevisionNo()) < 0) {
             if(latestRevision.getState() != RevisionState.DRAFT) {
@@ -287,7 +293,7 @@ public class StudyRepositoryImpl implements StudyRepository {
     public void checkFileLinkQueue(Integer id, Integer revision) throws IOException {
         RevisionableEntity revisionable = em.find(RevisionableEntity.class, id);
         RevisionEntity entity = em.find(RevisionEntity.class, new RevisionKey(id, revision));
-        if(ConfigurationType.fromValue(revisionable.getType()) != ConfigurationType.STUDY || entity.getState() != RevisionState.DRAFT) {
+        if(revisionable == null || ConfigurationType.valueOf(revisionable.getType()) != ConfigurationType.STUDY || entity.getState() != RevisionState.DRAFT) {
             // id/revision doesn't match STUDY DRAFT revision, don't do checks
             return;
         }

@@ -5,11 +5,12 @@ import fi.uta.fsd.metka.data.entity.RevisionEntity;
 import fi.uta.fsd.metka.data.entity.RevisionableEntity;
 import fi.uta.fsd.metka.data.entity.impl.StudyAttachmentEntity;
 import fi.uta.fsd.metka.data.entity.impl.StudyEntity;
-import fi.uta.fsd.metka.data.entity.key.RevisionKey;
+import fi.uta.fsd.metka.data.entity.key.RevisionableKey;
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.data.enums.VariableDataType;
 import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
+import fi.uta.fsd.metka.data.repository.GeneralRepository;
 import fi.uta.fsd.metka.data.repository.StudyAttachmentRepository;
 import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.model.configuration.Configuration;
@@ -43,6 +44,9 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
     private ConfigurationRepository configRepo;
 
     @Autowired
+    private GeneralRepository general;
+
+    @Autowired
     private JSONUtil json;
 
     /**
@@ -69,7 +73,7 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
         RevisionEntity revisionEntity = null;
         for(StudyAttachmentEntity attachment : attachments) {
             revisionEntity = em.
-                    find(RevisionEntity.class, new RevisionKey(attachment.getId(), attachment.getLatestRevisionNo()));
+                    find(RevisionEntity.class, attachment.latestRevisionKey());
             revision = json.readRevisionDataFromString(revisionEntity.getData());
             SavedDataField fileField = getSavedDataFieldFromRevisionData(revision, "file");
             if(fileField != null && fileField.hasValue() && fileField.getActualValue().equals(path)) {
@@ -111,15 +115,15 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
 
     @Override
     public RevisionData getEditableStudyAttachmentRevision(Integer id) throws IOException {
-        RevisionableEntity file = em.find(RevisionableEntity.class, id);
+        RevisionableEntity file = em.find(RevisionableEntity.class, new RevisionableKey(ConfigurationType.STUDY_ATTACHMENT, id));
 
         // Sanity check
-        if(file == null || ConfigurationType.fromValue(file.getType()) != ConfigurationType.STUDY_ATTACHMENT || file.getLatestRevisionNo() == null) {
+        if(file == null || ConfigurationType.valueOf(file.getType()) != ConfigurationType.STUDY_ATTACHMENT || file.getLatestRevisionNo() == null) {
             // TODO: Log error, this should never happen.
             return null;
         }
 
-        RevisionEntity revision = em.find(RevisionEntity.class, new RevisionKey(file.getId(), file.getLatestRevisionNo()));
+        RevisionEntity revision = em.find(RevisionEntity.class, file.latestRevisionKey());
         if(revision == null) {
             // TODO: Missing revision, log error
             return null;
@@ -175,7 +179,7 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
             throw new Exception("No revision found for id "+to.getId());
         }
 
-        RevisionEntity revEntity = em.find(RevisionEntity.class, new RevisionKey(file.getId(), file.getLatestRevisionNo()));
+        RevisionEntity revEntity = em.find(RevisionEntity.class, file.latestRevisionKey());
         if(revEntity == null) {
             // TODO: Log error, revision should excist
             throw new Exception("No revision found for id "+to.getId() + " and revision "+file.getLatestRevisionNo());
@@ -244,7 +248,7 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
             // Check if study has a different variable file already using variablefile reference and fileId
             // Get latest revision, doesn't matter if it's a draft or not since file reference should be immutable
             // We can assume that we get a revision since other points before this depend on the existence of the revision
-            RevisionEntity revEntity = em.find(RevisionEntity.class, new RevisionKey(study.getId(), study.getLatestRevisionNo()));
+            RevisionEntity revEntity = em.find(RevisionEntity.class, study.latestRevisionKey());
             RevisionData data = json.readRevisionDataFromString(revEntity.getData());
             SavedDataField field = getSavedDataFieldFromRevisionData(data, "variablefile");
             if(field != null && field.hasValue()) {

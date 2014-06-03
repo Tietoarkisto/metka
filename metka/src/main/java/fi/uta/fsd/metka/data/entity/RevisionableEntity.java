@@ -21,6 +21,10 @@ public abstract class RevisionableEntity {
     @Column(name = "TYPE", insertable=false, updatable = false)
     private String type;
 
+    /*@EmbeddedId
+    @AttributeOverride(name = "type", column = @Column(name = "TYPE", insertable = false, updatable = false))
+    private RevisionableKey key;*/
+
     @Column(name = "CUR_APPROVED_NO")
     private Integer curApprovedNo;
 
@@ -33,6 +37,14 @@ public abstract class RevisionableEntity {
     @Column(name = "REMOVAL_DATE")
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate removalDate;
+
+    /*public RevisionableKey getKey() {
+        return key;
+    }
+
+    public void setKey(RevisionableKey key) {
+        this.key = key;
+    }*/
 
     public Integer getId() {
         return id;
@@ -86,13 +98,38 @@ public abstract class RevisionableEntity {
     public RevisionEntity createNextRevision() {
         RevisionEntity revision;
         if(latestRevisionNo == null) {
-            revision = new RevisionEntity(new RevisionKey(id, 1));
+            revision = new RevisionEntity(new RevisionKey(getId(), 1));
         } else {
-            revision = new RevisionEntity(new RevisionKey(id, latestRevisionNo+1));
+            revision = new RevisionEntity(new RevisionKey(getId(), latestRevisionNo+1));
         }
         revision.setState(RevisionState.DRAFT);
         return revision;
     }
+
+    public RevisionKey latestRevisionKey() {
+        return new RevisionKey(getId(), getLatestRevisionNo());
+    }
+
+    public RevisionKey currentApprovedRevisionKey() {
+        return new RevisionKey(getId(), getCurApprovedNo());
+    }
+
+    /*@Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RevisionableEntity that = (RevisionableEntity) o;
+
+        if (!key.equals(that.key)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return key.hashCode();
+    }*/
 
     @Override
     public boolean equals(Object o) {
@@ -110,6 +147,11 @@ public abstract class RevisionableEntity {
     public int hashCode() {
         return id.hashCode();
     }
+
+    /*@Override
+    public String toString() {
+        return "Entity[name="+this.getClass().getSimpleName()+", key="+key+"]";
+    }*/
 
     @Override
     public String toString() {

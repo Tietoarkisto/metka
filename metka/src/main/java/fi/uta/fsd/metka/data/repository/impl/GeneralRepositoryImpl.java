@@ -2,7 +2,7 @@ package fi.uta.fsd.metka.data.repository.impl;
 
 import fi.uta.fsd.metka.data.entity.RevisionEntity;
 import fi.uta.fsd.metka.data.entity.RevisionableEntity;
-import fi.uta.fsd.metka.data.entity.key.RevisionKey;
+import fi.uta.fsd.metka.data.entity.SequenceEntity;
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.data.enums.repositoryResponses.DraftRemoveResponse;
@@ -39,7 +39,7 @@ public class GeneralRepositoryImpl implements GeneralRepository {
                     "AND r.curApprovedNo IS NOT NULL " +
                     "ORDER BY r.id "+(forward?"ASC":"DESC"), RevisionableEntity.class)
                 .setParameter("id", currentId)
-                .setParameter("type", type.toUpperCase())
+                .setParameter("type", ConfigurationType.valueOf(type.toUpperCase()))
                 .setMaxResults(1)
                 .getResultList();
 
@@ -54,7 +54,7 @@ public class GeneralRepositoryImpl implements GeneralRepository {
         List<RevisionableEntity> list = em.createQuery("SELECT r FROM RevisionableEntity r " +
                 "WHERE r.id = :id AND r.type = :type", RevisionableEntity.class)
                 .setParameter("id", id)
-                .setParameter("type", type.toUpperCase())
+                .setParameter("type", ConfigurationType.valueOf(type.toUpperCase()))
                 .getResultList();
         if(list.size() == 0) {
             return DraftRemoveResponse.NO_REVISIONABLE;
@@ -63,7 +63,7 @@ public class GeneralRepositoryImpl implements GeneralRepository {
         if(entity.getCurApprovedNo() != null && entity.getCurApprovedNo().equals(entity.getLatestRevisionNo())) {
             return DraftRemoveResponse.NO_DRAFT;
         }
-        RevisionEntity rev = em.find(RevisionEntity.class, new RevisionKey(entity.getId(), entity.getLatestRevisionNo()));
+        RevisionEntity rev = em.find(RevisionEntity.class, entity.latestRevisionKey());
 
         if(!rev.getState().equals(RevisionState.DRAFT)) {
             // TODO: Log error since there is data discrepancy
@@ -117,9 +117,9 @@ public class GeneralRepositoryImpl implements GeneralRepository {
                 if(entity.getCurApprovedNo() == null) {
                     continue;
                 }
-                revision = em.find(RevisionEntity.class, new RevisionKey(entity.getId(), entity.getCurApprovedNo()));
+                revision = em.find(RevisionEntity.class, entity.currentApprovedRevisionKey());
             } else {
-                revision = em.find(RevisionEntity.class, new RevisionKey(entity.getId(), entity.getLatestRevisionNo()));
+                revision = em.find(RevisionEntity.class, entity.latestRevisionKey());
             }
             if(revision != null) {
                 dataList.add(json.readRevisionDataFromString(revision.getData()));
@@ -161,5 +161,24 @@ public class GeneralRepositoryImpl implements GeneralRepository {
         RevisionEntity ent = DataAccessUtils.requiredSingleResult(revisions);
 
         return (ent != null) ? ent.getData() : null;
+    }
+
+    @Override
+    public SequenceEntity getNewSequenceValue(String key) {
+        return getNewSequenceValue(key, 1);
+    }
+
+    @Override
+    public SequenceEntity getNewSequenceValue(String key, Integer initialValue) {
+        SequenceEntity seq = em.find(SequenceEntity.class, key);
+        if(seq == null) {
+            seq = new SequenceEntity();
+            seq.setKey(key);
+            seq.setSequence(initialValue);
+            em.persist(seq);
+        } else {
+            seq.setSequence(seq.getSequence()+1);
+        }
+        return seq;
     }
 }

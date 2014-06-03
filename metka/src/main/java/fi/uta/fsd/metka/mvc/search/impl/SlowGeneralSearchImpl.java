@@ -69,7 +69,7 @@ public class SlowGeneralSearchImpl implements GeneralSearch {
         for(RevisionableEntity entity : entities) {
             if(!entity.getRemoved()) {
                 if(entity.getCurApprovedNo() != null) {
-                    RevisionEntity rev = em.find(RevisionEntity.class, new RevisionKey(entity.getId(), entity.getCurApprovedNo()));
+                    RevisionEntity rev = em.find(RevisionEntity.class, entity.currentApprovedRevisionKey());
                     RevisionData data = json.readRevisionDataFromString(rev.getData());
 
                     if(data != null) {
@@ -78,7 +78,7 @@ public class SlowGeneralSearchImpl implements GeneralSearch {
                     }
                 }
                 if(entity.getCurApprovedNo() == null || !entity.getCurApprovedNo().equals(entity.getLatestRevisionNo())) {
-                    RevisionEntity rev = em.find(RevisionEntity.class, new RevisionKey(entity.getId(), entity.getLatestRevisionNo()));
+                    RevisionEntity rev = em.find(RevisionEntity.class, entity.latestRevisionKey());
                     RevisionData data = json.readRevisionDataFromString(rev.getData());
 
                     if(data != null) {
@@ -87,7 +87,7 @@ public class SlowGeneralSearchImpl implements GeneralSearch {
                     }
                 }
             } else {
-                RevisionEntity rev = em.find(RevisionEntity.class, new RevisionKey(entity.getId(), entity.getLatestRevisionNo()));
+                RevisionEntity rev = em.find(RevisionEntity.class, entity.getLatestRevisionNo());
                 RevisionData data = json.readRevisionDataFromString(rev.getData());
 
                 if(data != null) {

@@ -27,8 +27,7 @@
 			"unique": true,
 			"required": true,
 			"display": false,
-			"type": "INTEGER",
-			"section": "basic_information"
+			"type": "INTEGER"
 		},
 		"variables": {
 			"key": "variables",
@@ -44,8 +43,7 @@
 			"required": true,
 			"type": "STRING",
 			"editable": false,
-			"immutable": true,
-			"section": "variables"
+			"immutable": true
 		},
 		"varid": {
 			"key": "varid",
@@ -53,8 +51,7 @@
 			"required": true,
 			"type": "STRING",
 			"editable": false,
-			"immutable": true,
-			"section": "variables"
+			"immutable": true
 		},
 		"varlabel": {
 			"key": "varlabel",
@@ -62,8 +59,7 @@
 			"required": true,
 			"type": "STRING",
 			"editable": false,
-			"immutable": true,
-			"section": "variables"
+			"immutable": true
 		},
 		"qstnlits": {
 			"key": "qstnlits",
@@ -184,37 +180,46 @@
 			"multiline": true,
 			"subfield": true
 		},
+		"valuelabels": {
+			"key": "valuelabels",
+			"translatable": false,
+			"type": "CONTAINER",
+			"showSaveInfo": true,
+			"subfields": [
+				"value",
+				"label",
+				"missing"
+			]
+		},
 		"categories": {
 			"key": "categories",
 			"translatable": false,
 			"type": "CONTAINER",
-			"section": "variables",
 			"showSaveInfo": true,
 			"subfields": [
-				"categoryvalue",
-				"categorylabel",
-				"categorystat"
+				"value",
+				"label",
+				"categorystat",
+				"missing"
 			]
 		},
-		"categoryvalue": {
+		"value": {
 			"_comment": "Should be a REAL instead",
-			"key": "categoryvalue",
+			"key": "value",
 			"translatable": false,
 			"required": true,
 			"editable": false,
 			"immutable": true,
 			"type": "STRING",
-			"section": "variables",
 			"subfield": true
 		},
-		"categorylabel": {
-			"key": "categorylabel",
+		"label": {
+			"key": "label",
 			"translatable": false,
 			"required": true,
 			"editable": false,
 			"immutable": true,
 			"type": "STRING",
-			"section": "variables",
 			"subfield": true
 		},
 		"categorystat": {
@@ -225,14 +230,20 @@
 			"editable": false,
 			"immutable": true,
 			"type": "STRING",
-			"section": "variables",
+			"subfield": true
+		},
+		"missing": {
+			"_comment": "Only valid value is Y, might be good to move the value to a selection list",
+			"key": "missing",
+			"translatable": false,
+			"editable": false,
+			"type": "STRING",
 			"subfield": true
 		},
 		"statistics": {
 			"key": "statistics",
 			"translatable": false,
 			"type": "CONTAINER",
-			"section": "variables",
 			"showSaveInfo": true,
 			"subfields": [
 				"statisticstype",
@@ -247,7 +258,6 @@
 			"immutable": true,
 			"type": "SELECTION",
 			"selectionList": "statisticstype_list",
-			"section": "variables",
 			"subfield": true
 		},
 		"statisticsvalue": {
@@ -258,7 +268,6 @@
 			"editable": false,
 			"immutable": true,
 			"type": "STRING",
-			"section": "variables",
 			"subfield": true
 		}
 	}

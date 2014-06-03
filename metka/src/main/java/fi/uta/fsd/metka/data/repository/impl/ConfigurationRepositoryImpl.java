@@ -183,7 +183,7 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
         }
         List<ConfigurationEntity> list =
                 em.createQuery("SELECT c FROM ConfigurationEntity c WHERE c.type =:type ORDER BY c.version DESC", ConfigurationEntity.class)
-                .setParameter("type", ConfigurationType.fromValue(rev.getType()))
+                .setParameter("type", ConfigurationType.valueOf(rev.getType()))
                 .setMaxResults(1)
                 .getResultList();
 
