@@ -11,8 +11,9 @@ class PORUtil {
     public static Double parseDouble(String value) throws NumberFormatException {
         parser.reset();
         double result = parser.parseDouble(value);
-        if(result == NumberParser.DBL_ERRVALUE) {
-            throw new NumberFormatException("DBL_ERRVALUE returned");
+        int errno = parser.errno();
+        if(result == NumberParser.DBL_ERRVALUE && errno != NumberParser.E_OK) {
+            throw new NumberFormatException("DBL_ERRVALUE returned. Error: "+errno);
         }
         return result;
     }
@@ -120,11 +121,15 @@ class PORUtil {
             return data.size();
         }
 
-        public List<PORVariableData> getNumericalDataWithoutMissing() {
-            List<PORVariableData> copy = new ArrayList<>();
+        /**
+         * Return all numerical data (not SYSMISS or String) that doesn't match a user missing value.
+         * @return List of all valid numerical data, mainly used for statistics
+         */
+        public List<PORVariableDataNumeric> getValidNumericalData() {
+            List<PORVariableDataNumeric> copy = new ArrayList<>();
             for(PORVariableData d : data) {
-                if(d.isNumerical()) {
-                    copy.add(d);
+                if(d.isNumerical() && !isUserMissing(((PORVariableDataNumeric)d).getValue())) {
+                    copy.add((PORVariableDataNumeric)d);
                 }
             }
             return copy;
@@ -149,6 +154,8 @@ class PORUtil {
                         if(((PORMissingRangeValue)m).withinRange(value)) {
                             return true;
                         }
+                        break;
+                    case UNASSIGNED:
                         break;
                 }
             }
@@ -192,6 +199,8 @@ class PORUtil {
                         if(((PORMissingRangeValue)m).withinRange(value)) {
                             return true;
                         }
+                        break;
+                    case UNASSIGNED:
                         break;
                 }
             }
@@ -805,10 +814,14 @@ class PORUtil {
 
     static class PORVariableDataNumeric extends PORVariableData {
         private final double value;
+        private final boolean isInteger;
 
         public PORVariableDataNumeric(double value) {
             super(PORVariableType.NUMERIC, true);
             this.value = value;
+
+            int i = (int)value;
+            isInteger = (value == (double)i);
         }
 
         public double getValue() {
@@ -816,8 +829,7 @@ class PORUtil {
         }
 
         public boolean isInteger() {
-            int i = (int)value;
-            return (value == (double)i);
+            return this.isInteger;
         }
 
         @Override
@@ -844,7 +856,11 @@ class PORUtil {
         @Override
         public String toString() {
             // TODO: needs formatting
-            return ""+value;
+            if(isInteger()) {
+                return (int)value+"";
+            } else {
+                return ""+value;
+            }
         }
     }
 
@@ -943,6 +959,59 @@ class PORUtil {
     }
 
     static class PORVariableDataComparator implements Comparator<PORVariableData> {
+        /**
+         * Compares two PORVariableData objects and sorts them depending on their type and value
+         * Numbers are always considered smaller than strings and sysmiss values are always larger than strings.
+         *
+         * @param o1
+         * @param o2
+         * @return -1 if o1 is smaller than o2, 0 if equal, 1 if o1 is larger than o2
+         */
+        @Override
+        public int compare(PORVariableData o1, PORVariableData o2) {
+            // Two sysmiss are always equal
+            if(o1.type == PORVariableData.PORVariableType.SYSMISS && o1.type == PORVariableData.PORVariableType.SYSMISS) {
+                return 0;
+            }
+            // SYSMISS is always larger than non sysmiss
+            if(o1.type == PORVariableData.PORVariableType.SYSMISS && o2.type != PORVariableData.PORVariableType.SYSMISS) {
+                return 1;
+            }
+            if(o2.type == PORVariableData.PORVariableType.SYSMISS && o1.type != PORVariableData.PORVariableType.SYSMISS) {
+                return -1;
+            }
+
+            // String is always larger than
+            if(o1.type == PORVariableData.PORVariableType.STRING && o2.type == PORVariableData.PORVariableType.NUMERIC) {
+                return 1;
+            }
+            if(o2.type == PORVariableData.PORVariableType.STRING && o1.type == PORVariableData.PORVariableType.NUMERIC) {
+                return -1;
+            }
+
+            // Both variables have the same type, use correct comparison
+            if(o1.type == o2.type && o1.type == PORVariableData.PORVariableType.NUMERIC) {
+                // Both are numeric
+                PORVariableDataNumeric n1 = (PORVariableDataNumeric)o1;
+                PORVariableDataNumeric n2 = (PORVariableDataNumeric)o2;
+                if(n1.getValue() < n2.getValue()) {
+                    return -1;
+                }
+                if(n1.getValue() > n2.getValue()) {
+                    return 1;
+                }
+                return 0;
+            }
+            if(o1.type == o2.type && o1.type == PORVariableData.PORVariableType.STRING) {
+                // Both are strings
+                return o1.toString().compareTo(o2.toString());
+            }
+            // Don't know what is going on, treat as equal
+            return 0;
+        }
+    }
+
+    static class PORNumericVariableDataComparator implements Comparator<PORVariableData> {
         /**
          * Compares two PORVariableData objects through numerical comparison.
          * Non numerical data is always smaller than numerical data but order between non numerical data is not guaranteed.

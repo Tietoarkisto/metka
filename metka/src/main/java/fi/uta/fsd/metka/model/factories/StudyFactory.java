@@ -9,7 +9,6 @@ import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.configuration.SelectionList;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.container.SavedDataField;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalDate;
@@ -45,7 +44,7 @@ public class StudyFactory extends DataFactory {
      *
      * @param entity RevisionEntity for which this revision data is created.
      */
-    public RevisionData newData(RevisionEntity entity, Integer studyNumber, Integer acquisition_number) throws IOException {
+    public RevisionData newData(RevisionEntity entity, Integer studyNumber, Integer submissionid) throws IOException {
         if(StringUtils.isEmpty(entity.getData()) && entity.getState() != RevisionState.DRAFT)
             return null;
 
@@ -59,52 +58,38 @@ public class StudyFactory extends DataFactory {
 
         LocalDateTime time = new LocalDateTime();
 
-        RevisionData data = createInitialRevision(entity, conf.getKey());
+        RevisionData data = createInitialRevision(entity, conf, time);
 
-        SavedDataField field;
         SelectionList list;
         Field confField;
 
         // TODO: define autofill fields in the configuration.
         // These can be basically idField, CONCAT fields and SELECTION fields (insert selectionList default value if any) as well as values that are expected to be delivered to Factory.
 
-        // revisionableid
-        field = new SavedDataField(conf.getIdField());
-        field.setModifiedValue(setSimpleValue(createSavedValue(time), entity.getKey().getRevisionableId() + ""));
-        data.putField(field).putChange(new Change(field.getKey()));
-
         // Studyno_prefix, this is a string that is added to the front of study_id
-        field = new SavedDataField("studyno_prefix");
-        list = conf.getRootSelectionList(conf.getField(field.getKey()).getSelectionList());
-        field.setModifiedValue(setSimpleValue(createSavedValue(time), list.getDef()));
-        data.putField(field).putChange(new Change(field.getKey()));
+        list = conf.getRootSelectionList(conf.getField("studyno_prefix").getSelectionList());
+        setSavedDataField(data, "studyno_prefix", list.getDef(), time);
 
         // studyno, this is a separate sequence from revisionable id and forms the number base for id
-        field = new SavedDataField("studyno");
-        field.setModifiedValue(setSimpleValue(createSavedValue(time), studyNumber.toString()));
-        data.putField(field).putChange(new Change(field.getKey()));
+        setSavedDataField(data, "studyno_number", studyNumber.toString(), time);
 
-        // Acquisition_number, this is required information for creating a new study
-        field = new SavedDataField("submissionid");
-        field.setModifiedValue(setSimpleValue(createSavedValue(time), acquisition_number+""));
-        data.putField(field).putChange(new Change(field.getKey()));
+        // submissionid, this is required information for creating a new study
+        setSavedDataField(data, "submissionid", submissionid.toString(), time);
 
-        // create Study_number field, which concatenates study_id_prefix and study_id. This is the basis of study searches.
+        // create id field, which concatenates studyno_prefix and studyno. This is the basis of study searches.
         // This is more of a proof of concept for concatenate fields than anything.
-        field = new SavedDataField("id");
-        confField = conf.getField(field.getKey());
+        confField = conf.getField("id");
         String concat = "";
         for(String fieldKey : confField.getConcatenate()) {
             SavedDataField tempField = getSavedDataFieldFromRevisionData(data, fieldKey);
             concat += extractStringSimpleValue(tempField);
         }
-        field.setModifiedValue(setSimpleValue(createSavedValue(time), concat));
-        data.putField(field).putChange(new Change(field.getKey()));
+        setSavedDataField(data, "id", concat, time);
 
+        // Set dataarrivaldate
         // TODO: Tieto tulee tiipiistä, toistaiseksi käytetään kuluvaa päivää
-        field = new SavedDataField("dataarrivaldate");
-        field.setModifiedValue(setSimpleValue(createSavedValue(time), new LocalDate().toString()));
-        data.putField(field);
+        setSavedDataField(data, "dataarrivaldate", new LocalDate().toString(), time);
+
 
         entity.setData(json.serialize(data));
 

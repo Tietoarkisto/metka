@@ -23,8 +23,8 @@ public class ContainerDataField extends DataField {
         return rows;
     }
 
-    @JsonIgnore public DataRow getRow(Integer rowId) {
-
+    @JsonIgnore
+    public DataRow getRow(Integer rowId) {
         if(rowId == null || rowId < 1) {
             // Row can not be found since no rowId given.
             return null;
@@ -38,11 +38,25 @@ public class ContainerDataField extends DataField {
         return null;
     }
 
+    @JsonIgnore
+    public ContainerDataField putRow(DataRow row) {
+        if(row == null) {
+            return this;
+        }
+
+        // Check to see that the row doesn't yet exist in this container
+        // Rows should not be listed twice
+        if(getRow(row.getRowId()) == null) {
+            rows.add(row);
+        }
+        return this;
+    }
+
     @Override
     public DataField copy() {
         ContainerDataField container = new ContainerDataField(getKey());
         for(DataRow row : rows) {
-            container.getRows().add(row.copy());
+            container.putRow(row.copy());
         }
         return container;
     }

@@ -12,10 +12,7 @@ import fi.uta.fsd.metka.data.variableParsing.StudyVariablesParser;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.change.Change;
-import fi.uta.fsd.metka.model.data.change.ContainerChange;
-import fi.uta.fsd.metka.model.data.change.RowChange;
 import fi.uta.fsd.metka.model.data.container.ContainerDataField;
-import fi.uta.fsd.metka.model.data.container.DataField;
 import fi.uta.fsd.metka.model.data.container.DataRow;
 import fi.uta.fsd.metka.model.data.container.SavedDataField;
 import fi.uta.fsd.metka.model.factories.DataFactory;
@@ -25,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 import spssio.por.PORFile;
-import spssio.por.PORMissingValue;
+import spssio.por.PORVariable;
 import spssio.por.input.PORReader;
 
 import javax.persistence.EntityManager;
@@ -52,6 +49,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
 
     @Override
     public boolean merge(RevisionData study, VariableDataType type, Configuration studyConfig) throws IOException {
+        long startTime = System.currentTimeMillis();
         boolean result = false;
         // Sanity check
         if(type == null) {
@@ -211,6 +209,9 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         variablesRevision.setData(json.serialize(variablesData));
         // Final merge to make sure that changes go to database if for some reason variablesRevision has stopped being managed.
         em.merge(variablesRevision);
+
+        long endTime = System.currentTimeMillis();
+        System.err.println("Variable parsing took "+(endTime-startTime)+"ms");
         return result;
     }
 
@@ -236,28 +237,13 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
 
         // Set software field
         // TODO: look at the possibility of separating software version to different field
-        SavedDataField field = getSavedDataFieldFromRevisionData(variablesData, "software");
-        if(field == null) {
-            field = new SavedDataField("software");
-            variablesData.putField(field);
-        }
-        field.setModifiedValue(setSimpleValue(createSavedValue(time), por.getSoftware()));
+        setSavedDataField(variablesData, "software", por.getSoftware(), time);
 
         // Set varquantity field
-        field = getSavedDataFieldFromRevisionData(variablesData, "varquantity");
-        if(field == null) {
-            field = new SavedDataField("varquantity");
-            variablesData.putField(field);
-        }
-        field.setModifiedValue(setSimpleValue(createSavedValue(time), por.data.sizeX()+""));
+        setSavedDataField(variablesData, "varquantity", por.data.sizeX()+"", time);
 
         // Set casequantity field
-        field = getSavedDataFieldFromRevisionData(variablesData, "casequantity");
-        if(field == null) {
-            field = new SavedDataField("casequantity");
-            variablesData.putField(field);
-        }
-        field.setModifiedValue(setSimpleValue(createSavedValue(time), por.data.sizeY()+""));
+        setSavedDataField(variablesData, "casequantity", por.data.sizeY()+"", time);
 
         // Make VariablesHandler
         VariableHandler handler = new VariableHandler(time);
@@ -370,10 +356,11 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             // Set valuelabels CONTAINER
             setValueLabels(variableRevision, variable);
             // Set categories CONTAINER
-            // TODO: Categories implementation inaccurate and needs work
-            //setCategories(variableRevision, variable);
+            setCategories(variableRevision, variable);
+            // Set interval
+            setInterval(variableRevision, variable);
             // Set statistics CONTAINER
-            //setStatistics(variableRevision, variable);
+            setStatistics(variableRevision, variable);
         }
 
         /**
@@ -385,11 +372,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
          */
         private void setValueLabels(RevisionData variableRevision, PORUtil.PORVariableHolder variable) {
             ContainerDataField valueLabels = getContainerDataFieldFromRevisionData(variableRevision, "valuelabels");
-            ContainerChange labelsChange = (ContainerChange)variableRevision.getChange("valuelabels");
 
-            if(labelsChange == null) {
-                labelsChange = new ContainerChange("valuelabels");
-            }
 
             // TODO: Removal of previous entries is still up for debate
             /*if(variable.getLabels().size() == 0) {
@@ -405,39 +388,23 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                 return;
             }*/
 
-            // Check to see if we need to initialise categories container
-            if(valueLabels == null) {
+            // Check to see if we need to initialise valueLabels container
+            // There has to be labels to warrant a valueLabels container creation if it's not present already
+            if(variable.getLabelsSize() > 0 && valueLabels == null) {
                 valueLabels = new ContainerDataField("valuelabels");
                 variableRevision.putField(valueLabels);
             }
 
-            if(variableRevision.getChange("valueLabels") == null) {
-                variableRevision.putChange(labelsChange);
-            }
+            // Change map reference since it's used multiple times
+            Map<String, Change> changeMap = variableRevision.getChanges();
 
             // Add container rows
             for(PORUtil.PORVariableValueLabel label : variable.getLabels()) {
-                DataRow row = findRowWithFieldValue(valueLabels.getRows(), "value", label.getValue());
-                if(row == null) {
-                    row = new DataRow(valueLabels.getKey(), variableRevision.getNewRowId());
-                    valueLabels.getRows().add(row);
-                }
+                DataRow row = findOrCreateRowWithFieldValue(variableRevision, valueLabels, "value", label.getValue(), changeMap, time);
 
-                setRowSavedValue(row, "value", label.getValue(), time, labelsChange);
-                setRowSavedValue(row, "label", label.getLabel(), time, labelsChange);
-
-                // Check if label value is user missing value
-                if(label.isMissing()) {
-                    setRowSavedValue(row, "missing", "Y", time, labelsChange);
-                } else {
-                    // Check if previous missing assignment was check and reverse it
-                    DataField missField = row.getField("missing");
-                    // If missing field exists and is SavedDataField set it to null (if it's something else than SavedDataField then do nothing, we have no way of knowing what's going on.
-                    if(missField != null && missField instanceof SavedDataField) {
-                        // Sets value to null and records a change, if value was previously null then does nothing
-                        setRowSavedValue(row, "missing", null, time, labelsChange);
-                    }
-                }
+                setRowSavedValue(row, "value", label.getValue(), time, changeMap);
+                setRowSavedValue(row, "label", label.getLabel(), time, changeMap);
+                setRowSavedValue(row, "missing", (label.isMissing() ? "Y" : null), time, changeMap);
             }
         }
 
@@ -454,10 +421,6 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         private void setCategories(RevisionData variableRevision, PORUtil.PORVariableHolder variable) {
             // TODO: Rework to match new rules
             ContainerDataField categories = getContainerDataFieldFromRevisionData(variableRevision, "categories");
-            ContainerChange categoriesChange = (ContainerChange)variableRevision.getChange("categories");
-            if(categoriesChange == null) {
-                categoriesChange = new ContainerChange("categories");
-            }
 
             // TODO: Removal of previous entries is still up for debate
             /*if(variable.getLabels().size() == 0 && variable.getMissing().size() == 0) {
@@ -473,16 +436,6 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                 return;
             }*/
 
-            // Check to see if we need to initialise categories container
-            if(categories == null) {
-                categories = new ContainerDataField("categories");
-                variableRevision.putField(categories);
-            }
-
-            if(variableRevision.getChange("categories") == null) {
-                variableRevision.putChange(categoriesChange);
-            }
-
             boolean getValidFreq = false;
             for(PORUtil.PORVariableValueLabel label : variable.getLabels()) {
                 if(!label.isMissing()) {
@@ -495,8 +448,8 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             }
 
             // Calculate frequencies
-            Map<String, Integer> valid = new HashMap<>();
-            Map<String, Integer> missing = new HashMap<>();
+            Map<PORUtil.PORVariableData, Integer> valid = new HashMap<>();
+            Map<PORUtil.PORVariableData, Integer> missing = new HashMap<>();
             Integer sysmiss = 0;
 
             for(PORUtil.PORVariableData value : variable.getData()) {
@@ -518,9 +471,9 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
 
                         // If value is an user missing value add it to missing values frequency map, otherwise add it to valid frequencies map if valid frequencies are needed
                         if(variable.isUserMissing(s.getValue())) {
-                            increaseFrequencyValue(s.toString(), missing);
+                            increaseFrequencyValue(value, missing);
                         } else if(getValidFreq) {
-                            increaseFrequencyValue(s.toString(), valid);
+                            increaseFrequencyValue(value, valid);
                         }
                         break;
                     case NUMERIC:
@@ -531,77 +484,62 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                         PORUtil.PORVariableDataNumeric n = (PORUtil.PORVariableDataNumeric)value;
                         // If value is an user missing value add it to missing values frequency map, otherwise add it to valid frequencies map if valid frequencies are needed
                         if(variable.isUserMissing(n.getValue())) {
-                            increaseFrequencyValue(n.toString(), missing);
+                            increaseFrequencyValue(value, missing);
                         } else if(getValidFreq) {
-                            increaseFrequencyValue(n.toString(), valid);
+                            increaseFrequencyValue(value, valid);
                         }
                         break;
                 }
             }
 
+            // Check to see if we need to initialise categories container
+            // There has to be at least some valid or missing frequencies to warrant
+            if((valid.size() > 0 || missing.size() > 0) && categories == null) {
+                categories = new ContainerDataField("categories");
+                variableRevision.putField(categories);
+            }
+
+            // Get changeMap reference since it's used multiple times
+            Map<String, Change> changeMap = variableRevision.getChanges();
+
             // TODO: Depending on the merge tactic it might take more work to make sure that valid values always come after non valid values and in the correct order
             // Add valid values to categories, valid values map will be empty if valid value frequencies are not required and so this step is passed automatically in that case.
-            for(Map.Entry<String, Integer> value : valid.entrySet()) {
-                DataRow row = findRowWithFieldValue(categories.getRows(), "categoryvalue", value.getKey());
-                if(row == null) {
-                    row = new DataRow(categories.getKey(), variableRevision.getNewRowId());
-                    categories.getRows().add(row);
-                }
+            List<PORUtil.PORVariableData> sortedKeys = new ArrayList<>(valid.keySet());
+            Collections.sort(sortedKeys, new PORUtil.PORVariableDataComparator());
+            for(PORUtil.PORVariableData value : sortedKeys) {
+                DataRow row = findOrCreateRowWithFieldValue(variableRevision, categories, "value", value.toString(), changeMap, time);
+                PORUtil.PORVariableValueLabel label = variable.getLabel(value.toString());
+                Integer freq = valid.get(value);
 
-                setRowSavedValue(row, "value", value.getKey(), time, categoriesChange);
-                setRowSavedValue(row, "categorystat", value.getValue().toString(), time, categoriesChange);
-                // TODO: Check if value matches a label
-                // setRowSavedValue(row, "categorylabel", label.getLabel(), time, categoriesChange);
-                PORUtil.PORVariableValueLabel label = variable.getLabel(value.getKey());
-                if(label != null) {
-                    setRowSavedValue(row, "label", value.getKey(), time, categoriesChange);
-                } else {
-                    setRowSavedValue(row, "label", null, time, categoriesChange);
-                }
-
-                // Clear possible missing value since value is valid.
-                // Check if previous missing assignment was check and reverse it
-                DataField missField = row.getField("missing");
-                if(missField != null && missField instanceof SavedDataField) {
-                    // If missing field exists and is SavedDataField set it to null (if it's something else than SavedDataField then do nothing, we have no way of knowing what's going on).
-                    setRowSavedValue(row, "missing", null, time, categoriesChange);
-                }
+                setCategoryRow(row, value.toString(), (label != null) ? label.getLabel() : null, freq, false, time, changeMap);
             }
 
             // Add missing values to categories, if there are no missing values then this step is skipped automatically
-            for(Map.Entry<String, Integer> value : missing.entrySet()) {
-                DataRow row = findRowWithFieldValue(categories.getRows(), "categoryvalue", value.getKey());
-                if(row == null) {
-                    row = new DataRow(categories.getKey(), variableRevision.getNewRowId());
-                    categories.getRows().add(row);
-                }
+            sortedKeys = new ArrayList<>(missing.keySet());
+            Collections.sort(sortedKeys, new PORUtil.PORVariableDataComparator());
+            for(PORUtil.PORVariableData value : sortedKeys) {
+                DataRow row = findOrCreateRowWithFieldValue(variableRevision, categories, "value", value.toString(), changeMap, time);
+                PORUtil.PORVariableValueLabel label = variable.getLabel(value.toString());
+                Integer freq = missing.get(value);
 
-                setRowSavedValue(row, "value", value.getKey(), time, categoriesChange);
-                setRowSavedValue(row, "categorystat", value.getValue().toString(), time, categoriesChange);
-                // Set missing value since these are values determined to match user missing
-                setRowSavedValue(row, "missing", "Y", time, categoriesChange);
-
-                PORUtil.PORVariableValueLabel label = variable.getLabel(value.getKey());
-                if(label != null) {
-                    setRowSavedValue(row, "label", value.getKey(), time, categoriesChange);
-                } else {
-                    setRowSavedValue(row, "label", null, time, categoriesChange);
-                }
+                setCategoryRow(row, value.toString(), (label != null) ? label.getLabel() : null, freq, true, time, changeMap);
             }
 
-            // Add SYSMISS if they exist, otherwise remove possible existing SYSMISS related inserts
-            DataRow sysmissRow = findRowWithFieldValue(categories.getRows(), "categoryvalue", "SYSMISS");
-            if(sysmiss > 0) {
-                if(sysmissRow == null) {
-                    sysmissRow = new DataRow(categories.getKey(), variableRevision.getNewRowId());
-                    categories.getRows().add(sysmissRow);
+            // Categories container has to be present for SYSMISS value checking to make sense
+            if(categories != null) {
+                // Add SYSMISS if they exist and there are other frequencies, otherwise remove possible existing SYSMISS related inserts
+                DataRow sysmissRow = (categories != null) ? findRowWithFieldValue(categories.getRows(), "value", "SYSMISS") : null;
+                if((valid.size() > 0 || missing.size() > 0) && sysmiss > 0) {
+                    if(sysmissRow == null) {
+                        sysmissRow = new DataRow(categories.getKey(), variableRevision.getNewRowId());
+                        categories.putRow(sysmissRow);
+                    }
+
+                    setCategoryRow(sysmissRow, "SYSMISS", "SYSMISS", sysmiss, true, time, changeMap);
+                } else if(sysmissRow != null) {
+                    // If previous SYSMISS row exists then remove it
+                    removeRow(sysmissRow, variableRevision.getChanges());
                 }
-                setRowSavedValue(sysmissRow, "categoryvalue", "SYSMISS", time, categoriesChange);
-                setRowSavedValue(sysmissRow, "categorylabel", "SYSMISS", time, categoriesChange);
-                setRowSavedValue(sysmissRow, "categorystat", sysmiss+"", time, categoriesChange);
-            } else if(sysmissRow != null) {
-                // If previous SYSMISS row exists then remove it
-                removeRow(sysmissRow, categoriesChange);
             }
         }
 
@@ -611,7 +549,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
          * @param key
          * @param map
          */
-        private void increaseFrequencyValue(String key, Map<String, Integer> map) {
+        private void increaseFrequencyValue(PORUtil.PORVariableData key, Map<PORUtil.PORVariableData, Integer> map) {
             if(map.containsKey(key)) {
                 map.put(key, map.get(key)+1);
             } else {
@@ -620,53 +558,73 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         }
 
         /**
+         * Helper function for setting category row values
+         * @param row Row where the values are set
+         * @param value Category value for the row
+         * @param label Possible label for the row, can be null
+         * @param stat Frequency statistic for the row
+         * @param missing Is the category a missing category or not
+         * @param time Time instance used for any changes
+         * @param changeMap Where changes are logged
+         */
+        private void setCategoryRow(DataRow row, String value, String label, Integer stat, boolean missing, LocalDateTime time, Map<String, Change> changeMap) {
+            setRowSavedValue(row, "value", value, time, changeMap);
+            setRowSavedValue(row, "label", label, time, changeMap);
+            setRowSavedValue(row, "categorystat", stat.toString(), time, changeMap);
+            // Set missing value since these are values determined to match user missing
+            setRowSavedValue(row, "missing", (missing) ? "Y" : null, time, changeMap);
+        }
+
+        /**
+         * Set varinterval attribute for given variable revision.
+         *
+         * @param variableRevision Variable revision requiring varinterval information
+         * @param variable Variable used to determine varinterval value
+         */
+        private void setInterval(RevisionData variableRevision, PORUtil.PORVariableHolder variable) {
+            // Start from the assumption that the variable is continuous and work from there
+            boolean isContin = true;
+
+            if(!variable.isNumeric()) {
+                isContin = false;
+            }
+
+            if(isContin && variable.getLabelsSize() > 0) {
+                for(PORUtil.PORVariableValueLabel label : variable.getLabels()) {
+                    if(!label.isMissing()) {
+                        isContin = false;
+                        break;
+                    }
+                }
+            }
+
+            setSavedDataField(variableRevision, "varinterval", (isContin ? "contin" : "discrete"), time);
+        }
+
+        /**
          * Sets statistics for single variable (min, max etc.)
-         * This includes differentiating between cont and discr variables.
-         * Mean and deviation are not calculated for all variables
+         * Statistics are calculated only for numerical variables and all statistics are calculated for all numerical variables.
+         * SYSMISS and user missing values are not valid values for statistics
+         *
          * @param variableRevision Variable revision to merge variable data to.
          * @param variable Current variable
          */
         private void setStatistics(RevisionData variableRevision, PORUtil.PORVariableHolder variable) {
-            // Get varinterval data field, this should always be present and have a value of either contin or discrete and so we can add it if it's missing
-            SavedDataField varinterval = (SavedDataField)variableRevision.getField("varinterval");
-            if(varinterval == null) {
-                varinterval = new SavedDataField("varinterval");
-                variableRevision.putField(varinterval);
-                variableRevision.putChange(new Change("varinterval"));
-            }
-            // Get statistics container
-            ContainerDataField statistics = getContainerDataFieldFromRevisionData(variableRevision, "statistics");
-            ContainerChange statisticsChange = (ContainerChange)variableRevision.getChange("statistics");
-            if(statisticsChange == null) {
-                statisticsChange = new ContainerChange("statistics");
-                variableRevision.putChange(statisticsChange);
-            }
-            // Statistics are not calculated for string variables
-            // If this variable is string variable then make sure there are no statistics and exit method
             if(!variable.isNumeric()) {
-                // Variable is a string variable
-                if(statistics != null) {
-                    // Clear statistics
-                    for(DataRow row : statistics.getRows()) {
-                        removeRow(row, statisticsChange);
-                    }
-                }
-                // Set interval to discrete
-                setSavedDataField(variableRevision, "varinterval", "discrete", time);
+                // Variable is not numeric and should not contain statistics.
+
+                // TODO: removal of previous entries during merge is still up for debate
+
                 return;
             }
-            List<PORUtil.PORVariableData> data = variable.getNumericalDataWithoutMissing();
-            // TODO: Remove user missing values from data
-            Integer values = data.size(); // Non SYSMISS numerical data
-            if(values == null) values = 0;
 
-            // Set discrete or contin
-            if(variable.getLabelsSize() > 0) {
-                // TODO: Check for the special case where labels don't cover all possible values
-                setSavedDataField(variableRevision, "varinterval", "discrete", time);
-            } else {
-                setSavedDataField(variableRevision, "varinterval", "discrete", time);
-            }
+            // Get statistics container
+            ContainerDataField statistics = getContainerDataFieldFromRevisionData(variableRevision, "statistics");
+
+            // Get valid numerical data as base for calculating statistics
+            List<PORUtil.PORVariableDataNumeric> data = variable.getValidNumericalData();
+            // amount of valid values is used multiple times so it makes sense to lift it as a separate value
+            Integer values = data.size();
 
             // This variable should have statistics, create if missing
             if(statistics == null) {
@@ -674,131 +632,78 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                 variableRevision.putField(statistics);
             }
 
-            // Get all numerical data from this variable, ignore SYSMISS data
+            // These variables are needed multiple times so define them separately here
             DataRow row;
             String type;
             String statisticstype = "statisticstype";
             String statisticvalue = "statisticvalue";
+            Map<String, Change> changeMap = variableRevision.getChanges();
+
             // Set vald
             type = "vald"; // Valid values statistic
-            row = findRowWithFieldValue(statistics.getRows(), statisticstype, type);
-            row = initStatisticsRow(variableRevision, statistics, row, time, statisticstype, type, statisticsChange);
-            if(row != null) {
-                setRowSavedValue(row, statisticvalue, values.toString(), time, statisticsChange);
-            }
+            row = findOrCreateRowWithFieldValue(variableRevision, statistics, statisticstype, type, changeMap, time);
+            setRowSavedValue(row, statisticvalue, values.toString(), time, changeMap);
 
             // Set min
             type = "min";
-            row = findRowWithFieldValue(statistics.getRows(), statisticstype, type);
             if(values == 0) {
                 // clear min by setting row as removed
-                removeRow(row, statisticsChange);
+                removeRow(findRowWithFieldValue(statistics.getRows(), statisticstype, type), changeMap);
             } else {
-                row = initStatisticsRow(variableRevision, statistics, row, time, statisticstype, type, statisticsChange);
-                if(row != null) {
-                    calculateMin(statisticsChange, data, row, statisticvalue);
-                }
+                row = findOrCreateRowWithFieldValue(variableRevision, statistics, statisticstype, type, changeMap, time);
+                String min = Collections.min(data, new PORUtil.PORNumericVariableDataComparator()).toString();
+                setRowSavedValue(row, statisticvalue, min, time, changeMap);
             }
 
             // Set max
             type = "max";
-            row = findRowWithFieldValue(statistics.getRows(), statisticstype, type);
             if(values == 0) {
                 // clear max by setting row as removed
-                removeRow(row, statisticsChange);
+                removeRow(findRowWithFieldValue(statistics.getRows(), statisticstype, type), changeMap);
             } else {
-                row = initStatisticsRow(variableRevision, statistics, row, time, statisticstype, type, statisticsChange);
-                if(row != null) {
-                    calculateMax(statisticsChange, data, row, statisticvalue);
-                }
+                row = findOrCreateRowWithFieldValue(variableRevision, statistics, statisticstype, type, changeMap, time);
+                String max = Collections.max(data, new PORUtil.PORNumericVariableDataComparator()).toString();
+                setRowSavedValue(row, statisticvalue, max, time, changeMap);
             }
 
             // Set mean
             type = "mean";
-            row = findRowWithFieldValue(statistics.getRows(), statisticstype, type);
             Double mean = 0D;
             // If there are no values or variable is continuous don't add mean
             if(values == 0) {
                 // clear mean by setting row as removed
-                removeRow(row, statisticsChange);
+                removeRow(findRowWithFieldValue(statistics.getRows(), statisticstype, type), changeMap);
             } else {
-                row = initStatisticsRow(variableRevision, statistics, row, time, statisticstype, type, statisticsChange);
-                if(row != null) {
-                    mean = calculateMean(statisticsChange, data, row, statisticvalue, mean);
+                row = findOrCreateRowWithFieldValue(variableRevision, statistics, statisticstype, type, changeMap, time);
+                Integer denom = 0;
+                for(PORUtil.PORVariableDataNumeric varD : data) {
+                    mean += varD.getValue();
+                    denom++;
                 }
+                mean = mean / denom;
+                setRowSavedValue(row, statisticvalue, mean.toString(), time, changeMap);
             }
 
             // Set stdev
             type = "stdev";
-            row = findRowWithFieldValue(statistics.getRows(), statisticstype, type);
             // If there are no values or variable is continuous don't add deviation
             if(values == 0) {
                 // clear stdev by setting row as removed
-                removeRow(row, statisticsChange);
+                removeRow(findRowWithFieldValue(statistics.getRows(), statisticstype, type), changeMap);
             } else {
-                row = initStatisticsRow(variableRevision, statistics, row, time, statisticstype, type, statisticsChange);
-                if(row != null) {
-                    calculateStandardDeviation(statisticsChange, data, row, statisticvalue, mean);
+                row = findOrCreateRowWithFieldValue(variableRevision, statistics, statisticstype, type, changeMap, time);
+                Double deviation = 0D;
+                Integer denom = 0;
+                for(PORUtil.PORVariableDataNumeric varD : data) {
+                    Double value = varD.getValue();
+                    if(value != null) {
+                        deviation += Math.pow((value - mean), 2);
+                        denom++;
+                    }
                 }
+                deviation = Math.sqrt(deviation/denom);
+                setRowSavedValue(row, statisticvalue, deviation.toString(), time, changeMap);
             }
-        }
-
-        private void calculateMin(ContainerChange statisticsChange, List<PORUtil.PORVariableData> data, DataRow row, String statisticvalue) {
-            String min = Collections.min(data, new PORUtil.PORVariableDataComparator()).toString();
-
-            setRowSavedValue(row, statisticvalue, min, time, statisticsChange);
-        }
-
-        private void calculateMax(ContainerChange statisticsChange, List<PORUtil.PORVariableData> data, DataRow row, String statisticvalue) {
-            String max = Collections.max(data, new PORUtil.PORVariableDataComparator()).toString();
-
-            setRowSavedValue(row, statisticvalue, max, time, statisticsChange);
-        }
-
-        private Double calculateMean(ContainerChange statisticsChange, List<PORUtil.PORVariableData> data, DataRow row, String statisticvalue, Double mean) {
-            Integer denom = 0;
-            for(PORUtil.PORVariableData varD : data) {
-                if(varD.isNumerical()) {
-                    mean += ((PORUtil.PORVariableDataNumeric)varD).getValue();
-                    denom++;
-                }
-            }
-            mean = mean / denom;
-
-            setRowSavedValue(row, statisticvalue, mean.toString(), time, statisticsChange);
-            return mean;
-        }
-
-        private void calculateStandardDeviation(ContainerChange statisticsChange, List<PORUtil.PORVariableData> data, DataRow row, String statisticvalue, Double mean) {
-            Double deviation = 0D;
-            Integer denom = 0;
-            for(PORUtil.PORVariableData varD : data) {
-                Double value = null;
-                if(varD.isNumerical()) {
-                    value = ((PORUtil.PORVariableDataNumeric)varD).getValue();
-                }
-                if(value != null) {
-                    deviation += Math.pow((value - mean), 2);
-                    denom++;
-                }
-            }
-            deviation = Math.sqrt(deviation/denom);
-
-            setRowSavedValue(row, statisticvalue, deviation.toString(), time, statisticsChange);
-        }
-
-        private DataRow initStatisticsRow(RevisionData data, ContainerDataField container, DataRow row, LocalDateTime time, String typeKey, String type, ContainerChange changeContainer) {
-            // Sanity check
-            if(data == null || container == null || StringUtils.isEmpty(typeKey) || StringUtils.isEmpty(type) || changeContainer == null) {
-                // Can't continue
-                return null;
-            }
-            if(row == null || row.isRemoved()) {
-                row = new DataRow(container.getKey(), data.getNewRowId());
-                container.getRows().add(row);
-                setRowSavedValue(row, typeKey, type, time, changeContainer);
-            }
-            return row;
         }
     }
 }

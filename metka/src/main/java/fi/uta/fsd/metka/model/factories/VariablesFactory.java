@@ -7,8 +7,6 @@ import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.change.Change;
-import fi.uta.fsd.metka.model.data.container.SavedDataField;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,23 +41,10 @@ public class VariablesFactory extends DataFactory {
 
         LocalDateTime time = new LocalDateTime();
 
-        RevisionData data = createInitialRevision(entity, conf.getKey());
-
-        SavedDataField field = new SavedDataField(conf.getIdField());
-        field.setModifiedValue(setSimpleValue(createSavedValue(time), entity.getKey().getRevisionableId() + ""));
-        data.putField(field).putChange(new Change(field.getKey()));
-
-        field = new SavedDataField("study");
-        field.setModifiedValue(setSimpleValue(createSavedValue(time), studyId.toString()));
-        data.putField(field).putChange(new Change(field.getKey()));
-
-        field = new SavedDataField("file");
-        field.setModifiedValue(setSimpleValue(createSavedValue(time), fileId.toString()));
-        data.putField(field).putChange(new Change(field.getKey()));
-
-        field = new SavedDataField("varfileid");
-        field.setModifiedValue(setSimpleValue(createSavedValue(time), "F1"));
-        data.putField(field).putChange(new Change(field.getKey()));
+        RevisionData data = createInitialRevision(entity, conf, time);
+        setSavedDataField(data, "study", studyId.toString(), time);
+        setSavedDataField(data, "file", fileId.toString(), time);
+        setSavedDataField(data, "varfileid", "F1", time);
 
         entity.setData(json.serialize(data));
 
@@ -80,15 +65,8 @@ public class VariablesFactory extends DataFactory {
 
         LocalDateTime time = new LocalDateTime();
 
-        RevisionData data = createInitialRevision(entity, conf.getKey());
-
-        SavedDataField field = new SavedDataField(conf.getIdField());
-        field.setModifiedValue(setSimpleValue(createSavedValue(time), entity.getKey().getRevisionableId() + ""));
-        data.putField(field).putChange(new Change(field.getKey()));
-
-        field = new SavedDataField("variables");
-        field.setModifiedValue(setSimpleValue(createSavedValue(time), variablesId.toString()));
-        data.putField(field).putChange(new Change(field.getKey()));
+        RevisionData data = createInitialRevision(entity, conf, time);
+        setSavedDataField(data, "variables", variablesId.toString(), time);
 
         entity.setData(json.serialize(data));
 

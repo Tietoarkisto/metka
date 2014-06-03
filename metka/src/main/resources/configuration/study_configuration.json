@@ -559,7 +559,7 @@
 			"type": "CONCAT",
 			"concatenate": [
 				"studyno_prefix",
-				"studyno"
+				"studyno_number"
 			],
 			"section": "basic_information"
 		},
@@ -576,9 +576,9 @@
 			"section": "basic_information"
 			
 		},
-		"studyno": {
+		"studyno_number": {
 			"_comment": "This contains the number portion of study id (usually FSD+number). Not the same as revisionable id.",
-			"key": "revisionableid",
+			"key": "studyno_number",
 			"translatable": false,
 			"immutable": true,
 			"unique": true,

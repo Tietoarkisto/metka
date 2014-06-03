@@ -17,6 +17,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static fi.uta.fsd.metka.data.util.ConversionUtil.*;
 
@@ -453,7 +454,7 @@ public class ModelAccessUtil {
                 dataRow.setSavedAt(time);
                 //TODO: Set savedBy when information is available
                 if(newRow) { // Row was created at the beginning of this iteration, add it to rows list.
-                    container.getRows().add(dataRow);
+                    container.putRow(dataRow);
                 }
                 changeContainer.getRows().put(rowChangeContainer.getRowId(), rowChangeContainer);
             }
@@ -826,35 +827,125 @@ public class ModelAccessUtil {
     }
 
     /**
+     * Sets provided value to provided DataField map with the provided key.
+     * Checks to make sure the field should record a SavedDataField.
+     * If no configuration is provided defaults to simple field setting without configuration check.
+     * Returns the set field so this can be used to create new fields also.
+     * NOTICE: If given value is null and there was no field previously then no new field is created. Setting null value should only be reserved for removal of existing values
+     *
+     * @param fieldMap Map of DataFields where value should be inserted
+     * @param key Field key
+     * @param value Value to be inserted in field
+     * @param time LocalDateTime for the saved value, can be null in which case a new time instance is created
+     * @param changeMap Map of changes where insertion should be recorded
+     * @param config Configuration where given field key should be found
+     * @return The SavedDataField that was set
+     */
+    public static SavedDataField setSavedDataField(Map<String, DataField> fieldMap, String key, String value, LocalDateTime time, Map<String, Change> changeMap, Configuration config) {
+        if(fieldMap == null || StringUtils.isEmpty(key)) {
+            return null;
+        }
+
+        // If config is not null then check configuration for confirmation that the field can be set, otherwise continue on
+        if(config != null) {
+            Field field = config.getField(key);
+            if(field == null) {
+                // No field, shouldn't be able to set value
+                return null;
+            }
+            if(field.getType().isContainer()) {
+                // SavedDataField can't be set to container types
+                return null;
+            }
+        }
+
+        // If no time instance was provided then create a new one
+        if(time == null) {
+            time = new LocalDateTime();
+        }
+
+        DataField field = fieldMap.get(key);
+        if(field != null && !(field instanceof SavedDataField)) {
+            // Don't continue since field is set to something else than SavedDataField
+            return null;
+        }
+
+        // No value provided and no previous field exists, no new field needs to be created
+        if(field == null && StringUtils.isEmpty(value)) {
+            return null;
+        }
+
+        SavedDataField saved;
+        // No previous field, create SavedDataField, set value and return
+        if(field == null) {
+            saved = SavedDataField.build(key)
+                    .setValue(setSimpleValue(createSavedValue(time), value));
+            fieldMap.put(key, saved);
+            changeMap.put(key, new Change(key));
+            return saved;
+        }
+
+        // There was previous field, check for changes, if change present then set value and change
+        saved = (SavedDataField)field;
+        if((!saved.hasValue() && !StringUtils.isEmpty(value)) || !saved.valueEquals(value)) {
+            saved.setValue(setSimpleValue(createSavedValue(time), value));
+            changeMap.put(key, new Change(key));
+        }
+        // Return field no matter if changes happened or not
+        return saved;
+    }
+
+    /**
+     * Sets provided value to provided DataField map with the provided key.
+     * If no field is present previously in the map assumes that a SavedDataField should be set instead.
+     * If non SavedDataField is present then halts operation.
+     * Returns the set field so this can be used to create new fields also.
+     *
+     * @param fieldMap Map of DataFields where value should be inserted
+     * @param key Field key
+     * @param value Value to be inserted in field
+     * @param time LocalDateTime for the saved value, can be null in which case a new time instance is created
+     * @param changeMap Map of changes where insertion should be recorded
+     * @return The SavedDataField that was set
+     */
+    public static SavedDataField setSavedDataField(Map<String, DataField> fieldMap, String key, String value, LocalDateTime time, Map<String, Change> changeMap) {
+        // Funnel through to actual implementation
+        return setSavedDataField(fieldMap, key, value, time, changeMap, null);
+    }
+
+    /**
+     * Sets RevisionData field with given key to value provided.
+     * Checks the configuration to make sure that the field should be SavedDataField and that it can be
+     * inserted here.
      *
      * @param revision RevisionData to be modified
      * @param key Field key
      * @param value Value to be inserted in field
      * @param time LocalDateTime for the saved value
      * @param config Configuration where given field key should be found
+     * @return The SavedDataField that was set
      */
-    public static void setSavedDataField(RevisionData revision, String key, String value, LocalDateTime time, Configuration config) {
-        if(revision == null || StringUtils.isEmpty(key)) {
-            return;
-        }
-        if(config == null) {
-            setSavedDataField(revision, key, value, time);
+    public static SavedDataField setSavedDataField(RevisionData revision, String key, String value, LocalDateTime time, Configuration config) {
+        // TODO: Change to setRevisionSavedDataField
+        if(revision == null) {
+            return null;
         }
 
-        Field field = config.getField(key);
-        if(field == null) {
-            // No field, shouldn't be able to set value
-            return;
+        // If config is present then make sure this field is a top level field
+        if(config != null) {
+            Field field = config.getField(key);
+            if(field == null) {
+                // No field to set value to
+                return null;
+            }
+
+            if(field.getSubfield()) {
+                // Not a top level field, don't continue
+                return null;
+            }
         }
-        if(field.getType().isContainer()) {
-            // SavedDataField can't be set to container types
-            return;
-        }
-        if(field.getSubfield()) {
-            // This should only be used to set top level fields
-            return;
-        }
-        setSavedDataField(revision, key, value, time);
+
+        return setSavedDataField(revision.getFields(), key, value, time, revision.getChanges(), config);
     }
 
     /**
@@ -867,104 +958,106 @@ public class ModelAccessUtil {
      * @param key Field key
      * @param value Value to be inserted in field
      * @param time LocalDateTime for the saved value
+     * @return The SavedDataField that was set
      */
-    public static void setSavedDataField(RevisionData revision, String key, String value, LocalDateTime time) {
-        SavedDataField field = (SavedDataField)revision.getField(key);
-        if(field == null) {
-            field = new SavedDataField(key);
-            revision.putField(field);
-        }
-        if((!field.hasValue() && !StringUtils.isEmpty(value)) || !field.valueEquals(value)) {
-            field.setModifiedValue(setSimpleValue(createSavedValue(time), value));
-            revision.putChange(new Change(key));
-        }
+    public static SavedDataField setSavedDataField(RevisionData revision, String key, String value, LocalDateTime time) {
+        // TODO: Change to setRevisionSavedDataField
+        return setSavedDataField(revision, key, value, time, null);
     }
 
     /**
      * Configuration checking providing version of setRowSavedValue.
      * If provided with configuration then checks if given field can be set with saved data field value.
+     * Funnels through general setSavedDataField implementation but tries to make sure that no unnecessary changes get logged.
+     *
      * @param row DataRow where the value should be set
      * @param key Field key of the field where value should be set
      * @param value Value to be set, can be null to empty a field
-     * @param time LocalDateTime for the saved value
-     * @param containerChange ContainerChange that should contain the row change for this row
+     * @param time LocalDateTime for the saved value, can be null in which case a new time instance is created
+     * @param changeMap Map that should contain the change set for this row (for example the main changes map of a revision data)
      * @param config Configuration where given field key should be found
+     * @return The SavedDataField that was set
      */
-    public static void setRowSavedValue(DataRow row, String key, String value, LocalDateTime time, ContainerChange containerChange, Configuration config) {
-        if(row == null || StringUtils.isEmpty(key) || containerChange == null) {
-            return;
+    public static SavedDataField setRowSavedValue(DataRow row, String key, String value, LocalDateTime time, Map<String, Change> changeMap, Configuration config) {
+        if(row == null || changeMap == null) {
+            return null;
         }
-        if(config == null) {
-            setRowSavedValue(row, key, value, time, containerChange);
+        // If configuration was provided then do config checks
+        if(config != null) {
+            Field field = config.getField(key);
+            if(field == null) {
+                // No field, shouldn't be able to set value
+                return null;
+            }
+            if(!field.getSubfield()) {
+                // This should only be used to set fields that belong to containers
+                return null;
+            }
         }
 
-        Field field = config.getField(key);
-        if(field == null) {
-            // No field, shouldn't be able to set value
-            return;
+        ContainerChange containerChange = (ContainerChange)changeMap.get(row.getKey());
+        if(containerChange == null) {
+            containerChange = new ContainerChange(row.getKey());
+            //changeContainer.put(row.getKey(), containerChange);
         }
-        if(field.getType().isContainer()) {
-            // SavedDataField can't be set to container types
-            return;
+        RowChange rowChange = containerChange.get(row.getRowId());
+        if(rowChange == null) {
+            rowChange = new RowChange(row.getRowId());
+            containerChange.put(rowChange);
         }
-        if(!field.getSubfield()) {
-            // This should only be used to set fields that belong to containers
-            return;
+
+        // Set value to row using general setSavedDataField implementation with configuration.
+        // It doesn't matter if configuration is present here or not since the setSavedDataField will handle both situations equally
+        SavedDataField saved = setSavedDataField(row.getFields(), key, value, time, rowChange.getChanges(), config);
+        if(saved == null) {
+            // Some problem with setting saved field, don't continue
+            return null;
         }
-        setRowSavedValue(row, key, value, time, containerChange);
+        // If rowChange contains a change for the key then we can be sure that value has changed and we can put the changes to provided map if they are missing
+        if(rowChange.hasChange(key)) {
+            // As a shortcut we can just put the rowChange and containerChange to their respective maps.
+            // If they were there previously then nothing changes, if not then they need to be there anyway.
+            containerChange.put(rowChange);
+            changeMap.put(containerChange.getKey(), containerChange);
+        }
+        return saved;
     }
 
     /**
      * Set field in a row to given value and set change for that field if not yet present.
      * Field is assumed to be SavedDataField.
+     * Ultimately funnels through general setSavedDataField implementation. Sets change containers if value changes and they were missing previously.
      *
      * @param row DataRow where the value should be set
      * @param key Field key of the field where value should be set
      * @param value Value to be set, can be null to empty a field
-     * @param time LocalDateTime for the saved value
-     * @param containerChange ContainerChange that should contain the row change for this row
+     * @param time LocalDateTime for the saved value, can be null in which case a new time instance is created
+     * @param changeMap Map that should contain the change set for this row (for example the main changes map of a revision data)
+     * @return The SavedDataField that was set
      */
-    public static void setRowSavedValue(DataRow row, String key, String value, LocalDateTime time, ContainerChange containerChange) {
-        // Sanity check
-        if(row == null || StringUtils.isEmpty(key) || containerChange == null) {
-            return;
-        }
-
-        // Since we are setting a value to this row we can assume it's still needed
-        // Reverse any previous decision to remove this row
-        row.setRemoved(false);
-
-        DataField field = row.getField(key);
-        if(field == null) {
-            field = new SavedDataField(key);
-            row.putField(field);
-        }
-        SavedDataField saved = (field instanceof SavedDataField) ? (SavedDataField)field : null;
-        if(saved != null && (!saved.hasValue() || !saved.valueEquals(value))) {
-            saved.setModifiedValue(setSimpleValue(createSavedValue(time), value));
-            row.setSavedAt(time);
-            // TODO: Set saved by
-            RowChange change = containerChange.get(row.getRowId());
-            if(change == null) {
-                change = new RowChange(row.getRowId());
-                containerChange.put(change);
-            }
-            change.putChange(new Change(saved.getKey()));
-        }
+    public static SavedDataField setRowSavedValue(DataRow row, String key, String value, LocalDateTime time, Map<String, Change> changeMap) {
+        // Funnel through to internal implementation
+        return setRowSavedValue(row, key, value, time, changeMap, null);
     }
 
     /**
      * Marks a row for removal and adds a change if change is missing
      * @param row DataRow to be marked for removal
-     * @param containerChange ContainerChange that should contain the row change for this row
+     * @param changeMap Map that should contain the change for container where given row is present
      */
-    public static void removeRow(DataRow row, ContainerChange containerChange) {
+    public static void removeRow(DataRow row, Map<String, Change> changeMap) {
         // Sanity check
-        if(row == null || containerChange == null) {
+        if(row == null || changeMap == null || row.isRemoved()) {
+            // If row or changeMap are not present or if the row is already removed there's no point in continuing
             return;
         }
 
         row.setRemoved(true);
+        ContainerChange containerChange = (ContainerChange)changeMap.get(row.getKey());
+        if(containerChange == null) {
+            containerChange = new ContainerChange(row.getKey());
+            changeMap.put(row.getKey(), containerChange);
+        }
         RowChange rowChange = containerChange.get(row.getRowId());
         if(rowChange == null) {
             rowChange = new RowChange(row.getRowId());
@@ -988,5 +1081,30 @@ public class ModelAccessUtil {
             }
         }
         return null;
+    }
+
+    /**
+     * Uses findRowWithFieldValue to search for existing row in given rows list.
+     * If row is not found creates a new row and inserts it to the list.
+     * Since it can be assumed that it's desirable to find the field with the given value from the rows list
+     * the field is created on the row with the given value
+     *
+     * @param revision Revision containing this row. Needed to generate new row id if required
+     * @param container ContainerDataField where row should be or where new row is inserted
+     * @param key Field key of the field where the value should be found
+     * @param value Value that is searched for
+     * @param changeMap Map where the container change containing this rows changes should reside
+     * @param time Time for possible creation of row and field. Can be null
+     * @return DataRow either an existing DataRow that includes the given value or a newly created row that contains the given value
+     */
+    public static DataRow findOrCreateRowWithFieldValue(RevisionData revision, ContainerDataField container, String key, String value, Map<String, Change> changeMap, LocalDateTime time) {
+        DataRow row = findRowWithFieldValue(container.getRows(), key, value);
+        if(row == null) {
+            row = new DataRow(container.getKey(), revision.getNewRowId());
+            container.putRow(row);
+            setRowSavedValue(row, key, value, time, changeMap);
+        }
+
+        return row;
     }
 }

@@ -36,6 +36,16 @@ public class SavedDataField extends DataField {
     }
 
     /**
+     * Builder method
+     * @param key
+     * @return
+     */
+    @JsonIgnore
+    public static SavedDataField build(String key) {
+        return new SavedDataField(key);
+    }
+
+    /**
      * Convenience method for getting an up to date value.
      * If there exists a modified value then return that, otherwise return original value.
      * @return SavedValue, either modified value if exists or original value. Can return null if both are null.
@@ -43,6 +53,18 @@ public class SavedDataField extends DataField {
     @JsonIgnore
     public SavedValue getValue() {
         return (modifiedValue != null) ? modifiedValue : originalValue;
+    }
+
+    /**
+     * Convenience method for setting the modified value (the value that is most often set).
+     * Returns this instance to facilitate chaining
+     * @param value SavedValue to be set to modified value
+     * @return reference to this instance
+     */
+    @JsonIgnore
+    public SavedDataField setValue(SavedValue value) {
+        this.modifiedValue = value;
+        return this;
     }
 
     /**

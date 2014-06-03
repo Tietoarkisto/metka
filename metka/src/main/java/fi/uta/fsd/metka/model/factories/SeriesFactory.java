@@ -7,15 +7,12 @@ import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.change.Change;
-import fi.uta.fsd.metka.model.data.container.SavedDataField;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
-import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
 
 /**
  * Contains functionality related to RevisionData model and specifically to revision data related to Series.
@@ -55,11 +52,7 @@ public class SeriesFactory extends DataFactory {
 
         LocalDateTime time = new LocalDateTime();
 
-        RevisionData data = createInitialRevision(entity, conf.getKey());
-
-        SavedDataField field = new SavedDataField(conf.getIdField());
-        field.setModifiedValue(setSimpleValue(createSavedValue(time), entity.getKey().getRevisionableId() + ""));
-        data.putField(field).putChange(new Change(field.getKey()));
+        RevisionData data = createInitialRevision(entity, conf, time);
 
         entity.setData(json.serialize(data));
 

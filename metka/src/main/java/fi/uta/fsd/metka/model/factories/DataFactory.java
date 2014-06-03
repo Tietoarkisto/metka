@@ -1,23 +1,27 @@
 package fi.uta.fsd.metka.model.factories;
 
 import fi.uta.fsd.metka.data.entity.RevisionEntity;
+import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.ConfigurationKey;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.RevisionKey;
+import org.joda.time.LocalDateTime;
 
 import static fi.uta.fsd.metka.data.util.ModelAccessUtil.copyFieldsToNewRevision;
+import static fi.uta.fsd.metka.data.util.ModelAccessUtil.setSavedDataField;
 
 /**
  * Provides functionality common for all RevisionData factories
  */
 public abstract class DataFactory {
-    protected RevisionData createInitialRevision(RevisionEntity entity, ConfigurationKey config) {
+    protected RevisionData createInitialRevision(RevisionEntity entity, Configuration config, LocalDateTime time) {
         RevisionData data = new RevisionData(
                 new RevisionKey(entity.getKey().getRevisionableId(), entity.getKey().getRevisionNo()),
-                config,
+                config.getKey(),
                 1
         );
         data.setState(entity.getState());
+        setSavedDataField(data, config.getIdField(), entity.getKey().getRevisionableId().toString(), time);
         return data;
     }
 

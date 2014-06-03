@@ -7,7 +7,8 @@
     <a id="basic_information" href="#basic_information"><spring:message code="STUDY.section.basic_information"/></a>
     <a id="deposit_agreement" href="#deposit_agreement"><spring:message code="STUDY.section.deposit_agreement"/></a>
     <a id="study_description" href="#study_description"><spring:message code="STUDY.section.study_description"/></a>
-    <a id="variables" href="#variables"><spring:message code="STUDY.section.variables"/></a>
+    <%--Variables page commented away and waiting modifications--%>
+    <%--<a id="variables" href="#variables"><spring:message code="STUDY.section.variables"/></a>--%>
     <a id="file_management" href="#file_management"><spring:message code="STUDY.section.file_management"/></a>
     <a id="codebook" href="#codebook"><spring:message code="STUDY.section.codebook"/></a>
     <a id="study_errors" href="#study_errors"><spring:message code="STUDY.section.study_errors"/></a>
@@ -28,9 +29,10 @@
         <jsp:include page="sub/study_description.jsp">
             <jsp:param name="readonly" value="true" />
         </jsp:include>
-        <jsp:include page="sub/variables.jsp">
+        <%--Variables page commented away and waiting modifications--%>
+        <%--<jsp:include page="sub/variables.jsp">
             <jsp:param name="readonly" value="true" />
-        </jsp:include>
+        </jsp:include>--%>
         <jsp:include page="sub/file_management.jsp">
             <jsp:param name="readonly" value="true" />
         </jsp:include>
