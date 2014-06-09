@@ -3,18 +3,14 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.search.TopScoreDocCollector;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
 
-/**
- * Company: Proactum Oy
- * User: Eemu Bertling
- * Date: 24.1.2014
- * Time: 16:18
- */
 public class LuceneTestcases {
     @Test
+    @Ignore
     public void LuceneMemoryTest() throws Exception {
         TopScoreDocCollector collector;
         LuceneAPI api;
@@ -45,6 +41,7 @@ public class LuceneTestcases {
     }
 
     @Test
+    @Ignore
     public void LuceneFileTest() throws Exception {
         LuceneAPI api = new LuceneAPI(LuceneAPI.IndexType.FILESYSTEM_WRITABLE, "luceneTestCaseIndex");
         // Add document to index

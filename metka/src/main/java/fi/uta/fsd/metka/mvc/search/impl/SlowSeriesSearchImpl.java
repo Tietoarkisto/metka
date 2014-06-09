@@ -76,7 +76,7 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
                         result.add(container);
                     }
                 }
-                if(query.isSearchDraft() && !entity.getLatestRevisionNo().equals(entity.getCurApprovedNo())) {
+                if(query.isSearchDraft() && entity.hasDraft()) {
                     RevisionEntity rev = em.find(RevisionEntity.class, new RevisionKey(entity.getId(), entity.getLatestRevisionNo()));
                     RevisionData data = checkSearch(rev, query);
 

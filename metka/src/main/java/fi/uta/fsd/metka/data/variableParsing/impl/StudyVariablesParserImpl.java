@@ -17,12 +17,13 @@ import fi.uta.fsd.metka.model.data.container.DataRow;
 import fi.uta.fsd.metka.model.data.container.SavedDataField;
 import fi.uta.fsd.metka.model.factories.DataFactory;
 import fi.uta.fsd.metka.model.factories.VariablesFactory;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 import spssio.por.PORFile;
-import spssio.por.PORVariable;
 import spssio.por.input.PORReader;
 
 import javax.persistence.EntityManager;
@@ -157,8 +158,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
 
             variablesEntity.setLatestRevisionNo(variablesRevision.getKey().getRevisionNo());
 
-        } else if(variablesEntity.getCurApprovedNo() != null &&
-                variablesEntity.getCurApprovedNo().equals(variablesEntity.getLatestRevisionNo())) {
+        } else if(!variablesEntity.hasDraft()) {
             // No draft, should draft be created for merge or can we use approved revision?
             // For now create draft
             RevisionEntity oldVariables = em.find(RevisionEntity.class, variablesEntity.latestRevisionKey());
@@ -248,15 +248,84 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         // Make VariablesHandler
         VariableHandler handler = new VariableHandler(time);
 
+        // TODO: Update variables list and variables groupings with current information removing references no longer valid
+
+        List<StudyVariableEntity> variableEntities =
+                em.createQuery("SELECT e FROM StudyVariableEntity e WHERE e.studyVariablesId=:studyVariablesId", StudyVariableEntity.class)
+                        .setParameter("studyVariablesId", variablesData.getKey().getId())
+                        .getResultList();
+
+        List<Pair<StudyVariableEntity, PORUtil.PORVariableHolder>> listOfEntitiesAndHolders = new ArrayList<>();
+        Iterator<StudyVariableEntity> iter;
+        for(PORUtil.PORVariableHolder variable : variables) {
+            iter = variableEntities.iterator();
+            StudyVariableEntity variableEntity = null;
+            while(iter.hasNext()) {
+                variableEntity = iter.next();
+                if(variableEntity.getVariableId().equals(handler.getVariableId(variable))) {
+                    iter.remove();
+                    break;
+                }
+                variableEntity = null;
+            }
+            listOfEntitiesAndHolders.add(new ImmutablePair<>(variableEntity, variable));
+        }
+
+        for(StudyVariableEntity variableEntity : variableEntities) {
+            // All remaining rows in variableEntities should be removed since no variable was found for them in the current POR-file
+
+            // See that respective rows are removed from STUDY_VARIABLES
+            //    Remove from variables list
+            //    Remove from variable group list
+            //
+            // If there's an open DRAFT then remove that DRAFT completely
+            if(variableEntity.hasDraft()) {
+                RevisionEntity revision = em.find(RevisionEntity.class, variableEntity.latestRevisionKey());
+                if(revision != null) {
+                    em.remove(revision);
+                }
+                variableEntity.setLatestRevisionNo(variableEntity.getCurApprovedNo());
+            }
+
+            // Get remaining revisions
+            List<RevisionEntity> revisions = em.createQuery("SELECT r FROM RevisionEntity r WHERE r.key.revisionableId = :id", RevisionEntity.class)
+                    .setParameter("id", variableEntity.getId())
+                    .getResultList();
+
+            if(revisions.size() == 0) {
+                // If there's no approved revision remove variable completely from database
+                em.remove(variableEntity);
+            } else {
+                // Perform a logical removal, i.e. mark STUDY_VARIABLE as removed and mark removal date
+                variableEntity.setRemoved(true);
+                variableEntity.setRemovalDate(new LocalDateTime());
+            }
+
+            // TODO: After all these steps initiate a re-index on all affected revisions (which can include multiple revisions of one revisionable in the case of logical removal).
+        }
+
+        // listofEntitiesAndHolders should contain all variables in the POR-file as well as their existing revisionables. No revisionable is provided if it's a new variable
+
+        for(Pair<StudyVariableEntity, PORUtil.PORVariableHolder> pair : listOfEntitiesAndHolders) {
+            // Iterate through entity/holder pairs. There should always be a holder but missing entity indicates that this is a new variable.
+            // After all variables are handled there should be one non removed revisionable per variable in the current por-file.
+            // Each revisionable should have an open draft revision (this is a shortcut but it would require doing actual change checking for all variable content to guarantee that no
+            // unnecessary revisions are created. This is not required and so a new draft is provided per revisionable).
+            // Variables entity should have an open draft revision that includes references to all variables as well as non grouped references for all variables that previously were
+            // not in any groups.
+
+            // TODO: Actual implementation
+        }
+
         // Iterate through variables merging data to variables container
         for(PORUtil.PORVariableHolder variable : variables) {
             String varId = handler.getVariableId(variable);
             // Look for matching variable revisionable.
-            List<StudyVariableEntity> variableEntities =
+            /*List<StudyVariableEntity> variableEntities =
                     em.createQuery("SELECT e FROM StudyVariableEntity e WHERE e.studyVariablesId=:studyVariablesId AND e.variableId=:variableId", StudyVariableEntity.class)
                     .setParameter("studyVariablesId", variablesData.getKey().getId())
                     .setParameter("variableId", varId)
-                    .getResultList();
+                    .getResultList();*/
 
             StudyVariableEntity variableEntity = null;
             // If one doesn't exist then create one.
@@ -283,7 +352,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                 em.persist(variableRevision);
 
                 variableEntity.setLatestRevisionNo(variableRevision.getKey().getRevisionNo());
-            } else if(variableEntity.getCurApprovedNo() != null && variableEntity.getCurApprovedNo().equals(variableEntity.getLatestRevisionNo())) {
+            } else if(!variableEntity.hasDraft()) {
                 // No draft, should draft be created for merge or can we use approved revision?
                 // For now create draft
                 RevisionEntity oldVariables = em.find(RevisionEntity.class, variableEntity.latestRevisionKey());

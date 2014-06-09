@@ -10,6 +10,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
@@ -25,8 +26,8 @@ public class StartupScanner {
     @Autowired
     private JSONUtil json;
 
-    private String rootFolder = "src/main/resources/"; // Development
-    //private String rootFolder = "/usr/share/metka/"; // QA-server
+    @Value("${dir.autoload}")
+    private String rootFolder;
 
     /**
      * Gathers data configurations from file and saves them to database

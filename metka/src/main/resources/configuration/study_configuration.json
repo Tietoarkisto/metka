@@ -1454,12 +1454,14 @@
 			"key": "variables",
 			"type": "REFERENCE",
 			"translatable": false,
+			"editable": false,
 			"reference": "variables_ref"
 		},
 		"variablefile": {
 			"key": "variablefile",
 			"type": "REFERENCE",
 			"translatable": false,
+			"editable": false,
 			"reference": "variable_file_ref"
 		},
 		"files": {

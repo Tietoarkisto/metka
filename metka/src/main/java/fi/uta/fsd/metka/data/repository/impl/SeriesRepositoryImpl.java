@@ -77,9 +77,9 @@ public class SeriesRepositoryImpl implements SeriesRepository {
             return false;
         }
 
-        // We can assume there is going to be latest revision since it is always required to exist.
-        if(series.getCurApprovedNo() != null && series.getCurApprovedNo().equals(series.getLatestRevisionNo())) {
-            // If latest revision is the same as current approved revision then it is not a draft and can not be saved
+        if(!series.hasDraft()) {
+            // There's no draft according to simple check, assume this is correct. There's nothing to save.
+            // TODO: Log event that something tried to save a nonexisting draft
             return false;
         }
 
@@ -160,22 +160,10 @@ public class SeriesRepositoryImpl implements SeriesRepository {
             return false;
         }
 
-        if(series.getCurApprovedNo() == null && series.getLatestRevisionNo() == null) {
-            // TODO: log suitable error
-            System.err.println("No revision found when approving series "+seriesno);
-            return false;
-        }
-
-        if(series.getCurApprovedNo() != null && series.getCurApprovedNo().equals(series.getLatestRevisionNo())) {
+        if(!series.hasDraft()) {
             // Assume no DRAFT exists in this case. Add confirmation if necessary but it will still be an exception and
             // approval will not be done anyway.
             return true;
-        }
-
-        if(series.getCurApprovedNo() != null && series.getCurApprovedNo().compareTo(series.getLatestRevisionNo()) > 0) {
-            // TODO: log exception since data is out of sync
-            System.err.println("Current approved is larger than latest revision on series "+seriesno+". This should not happen.");
-            return false;
         }
 
         RevisionEntity entity = em.find(RevisionEntity.class, series.latestRevisionKey());
@@ -238,16 +226,11 @@ public class SeriesRepositoryImpl implements SeriesRepository {
             // TODO: log suitable error
             return null;
         }
-        if(series.getCurApprovedNo() == null && series.getLatestRevisionNo() == null) {
-            // TODO: log suitable error
-            System.err.println("No revision found when trying to edit series "+seriesno);
-            return null;
-        }
 
         //RevisionEntity latestRevision = series.getLatestRevision();
         RevisionEntity latestRevision = em.find(RevisionEntity.class, series.latestRevisionKey());
         RevisionData oldData = json.readRevisionDataFromString(latestRevision.getData());
-        if(series.getCurApprovedNo() == null || series.getCurApprovedNo().compareTo(series.getLatestRevisionNo()) < 0) {
+        if(series.hasDraft()) {
             if(latestRevision.getState() != RevisionState.DRAFT) {
                 // TODO: log exception since data is out of sync
                 System.err.println("Latest revision should be DRAFT but is not on series "+seriesno);

@@ -3,7 +3,7 @@ package fi.uta.fsd.metka.data.entity;
 import fi.uta.fsd.metka.data.entity.key.RevisionKey;
 import fi.uta.fsd.metka.data.enums.RevisionState;
 import org.hibernate.annotations.Type;
-import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 
 import javax.persistence.*;
 
@@ -35,8 +35,8 @@ public abstract class RevisionableEntity {
     private Boolean removed = false;
 
     @Column(name = "REMOVAL_DATE")
-    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate removalDate;
+    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
+    private LocalDateTime removalDate;
 
     /*public RevisionableKey getKey() {
         return key;
@@ -86,11 +86,11 @@ public abstract class RevisionableEntity {
         this.removed = (removed == null) ? false : removed;
     }
 
-    public LocalDate getRemovalDate() {
+    public LocalDateTime getRemovalDate() {
         return removalDate;
     }
 
-    public void setRemovalDate(LocalDate removalDate) {
+    public void setRemovalDate(LocalDateTime removalDate) {
         this.removalDate = removalDate;
     }
 
@@ -112,6 +112,24 @@ public abstract class RevisionableEntity {
 
     public RevisionKey currentApprovedRevisionKey() {
         return new RevisionKey(getId(), getCurApprovedNo());
+    }
+
+    /**
+     * Simple check to see if this revisionable has an open DRAFT.
+     * Assuming that everything else works as it should then there's an open draft if and only if currentApprovedNo is null
+     * or latestRevisionNo is larger than currentApprovedNo.
+     * Additional check should be made to make sure that the revision actually is what it should be but if it's not
+     * then it's a case of revision being out of sync with revisionable.
+     * @return True if there should be a draft, false otherwise
+     */
+    public boolean hasDraft() {
+        if(curApprovedNo == null) {
+            return true;
+        }
+        if(latestRevisionNo > curApprovedNo) {
+            return true;
+        }
+        return false;
     }
 
     /*@Override

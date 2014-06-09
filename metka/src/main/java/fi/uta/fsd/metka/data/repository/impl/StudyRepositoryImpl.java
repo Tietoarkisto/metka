@@ -88,8 +88,7 @@ public class StudyRepositoryImpl implements StudyRepository {
             return false;
         }
 
-        // We can assume there is going to be latest revision since it is always required to exist.
-        if(study.getCurApprovedNo() != null && study.getCurApprovedNo().equals(study.getLatestRevisionNo())) {
+        if(!study.hasDraft()) {
             // If latest revision is the same as current approved revision then it is not a draft and can not be saved
             return false;
         }
@@ -162,22 +161,10 @@ public class StudyRepositoryImpl implements StudyRepository {
             return false;
         }
 
-        if(study.getCurApprovedNo() == null && study.getLatestRevisionNo() == null) {
-            // TODO: log suitable error
-            System.err.println("No revision found when approving study "+studyno);
-            return false;
-        }
-
-        if(study.getCurApprovedNo() != null && study.getCurApprovedNo().equals(study.getLatestRevisionNo())) {
+        if(!study.hasDraft()) {
             // Assume no DRAFT exists in this case. Add confirmation if necessary but it will still be an exception and
             // approval will not be done anyway.
             return true;
-        }
-
-        if(study.getCurApprovedNo() != null && study.getCurApprovedNo().compareTo(study.getLatestRevisionNo()) > 0) {
-            // TODO: log exception since data is out of sync
-            System.err.println("Current approved is larger than latest revision on study "+studyno+". This should not happen.");
-            return false;
         }
 
         RevisionEntity entity = em.find(RevisionEntity.class, study.latestRevisionKey());
@@ -243,15 +230,10 @@ public class StudyRepositoryImpl implements StudyRepository {
             // TODO: log suitable error
             return null;
         }
-        if(study.getCurApprovedNo() == null && study.getLatestRevisionNo() == null) {
-            // TODO: log suitable error
-            System.err.println("No revision found when trying to edit study "+studyno);
-            return null;
-        }
 
         RevisionEntity latestRevision = em.find(RevisionEntity.class, study.latestRevisionKey());
         RevisionData oldData = json.readRevisionDataFromString(latestRevision.getData());
-        if(study.getCurApprovedNo() == null || study.getCurApprovedNo().compareTo(study.getLatestRevisionNo()) < 0) {
+        if(study.hasDraft()) {
             if(latestRevision.getState() != RevisionState.DRAFT) {
                 // TODO: log exception since data is out of sync
                 System.err.println("Latest revision should be DRAFT but is not on study "+studyno);

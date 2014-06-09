@@ -11,7 +11,7 @@ import fi.uta.fsd.metka.data.repository.GeneralRepository;
 import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import javassist.NotFoundException;
-import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
@@ -60,7 +60,7 @@ public class GeneralRepositoryImpl implements GeneralRepository {
             return DraftRemoveResponse.NO_REVISIONABLE;
         }
         RevisionableEntity entity = list.get(0);
-        if(entity.getCurApprovedNo() != null && entity.getCurApprovedNo().equals(entity.getLatestRevisionNo())) {
+        if(!entity.hasDraft()) {
             return DraftRemoveResponse.NO_DRAFT;
         }
         RevisionEntity rev = em.find(RevisionEntity.class, entity.latestRevisionKey());
@@ -96,27 +96,23 @@ public class GeneralRepositoryImpl implements GeneralRepository {
         if(entity.getCurApprovedNo() == null) {
             return LogicalRemoveResponse.NO_APPROVED;
         }
-        if(entity.getCurApprovedNo() != null && !entity.getCurApprovedNo().equals(entity.getLatestRevisionNo())) {
+        if(entity.hasDraft()) {
             return LogicalRemoveResponse.OPEN_DRAFT;
         }
 
         entity.setRemoved(true);
-        entity.setRemovalDate(new LocalDate());
+        entity.setRemovalDate(new LocalDateTime());
         return LogicalRemoveResponse.SUCCESS;
     }
 
     @Override
     public List<RevisionData> getLatestRevisionsForType(ConfigurationType type, Boolean approvedOnly) throws IOException {
         List<RevisionData> dataList = new ArrayList<>();
-        List<RevisionableEntity> revisionables = em.createQuery("SELECT r FROM RevisionableEntity r", RevisionableEntity.class).getResultList();
+        List<RevisionableEntity> revisionables = em.createQuery("SELECT r FROM RevisionableEntity r"+(approvedOnly? " WHERE r.curApprovedNo IS NOT NULL":""), RevisionableEntity.class).getResultList();
 
         RevisionEntity revision;
         for(RevisionableEntity entity : revisionables) {
-            revision = null;
             if(approvedOnly) {
-                if(entity.getCurApprovedNo() == null) {
-                    continue;
-                }
                 revision = em.find(RevisionEntity.class, entity.currentApprovedRevisionKey());
             } else {
                 revision = em.find(RevisionEntity.class, entity.latestRevisionKey());

@@ -134,7 +134,7 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
             return null;
         }
         // If DRAFT exists, return it
-        if(file.getCurApprovedNo() == null || !file.getCurApprovedNo().equals(file.getLatestRevisionNo())) {
+        if(file.hasDraft()) {
             // Sanity check that latest revision is indeed a DRAFT
             if(revision.getState() != RevisionState.DRAFT || data.getState() != RevisionState.DRAFT) {
                 // TODO: Log error, there is a data discrepancy

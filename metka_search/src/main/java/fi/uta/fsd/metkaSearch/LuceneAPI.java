@@ -1,6 +1,6 @@
 package fi.uta.fsd.metkaSearch;
 
-import fi.uta.fsd.metkaAmqp.Logger;
+//import fi.uta.fsd.metkaAmqp.Logger;
 import org.apache.commons.io.FileUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -31,7 +31,7 @@ import java.util.Properties;
  */
 public class LuceneAPI {
     // Initialize logger.
-    private static final Logger log = Logger.getInstance();
+    //private static final Logger log = Logger.getInstance();
 
     // TODO Read from properties
     private static String indexBaseDirectory = "/tmp/index/";
@@ -76,13 +76,13 @@ public class LuceneAPI {
             indexBaseDirectory = prop.getProperty("indexBaseDirectory", indexBaseDirectory);
 
         } catch (IOException ex) {
-            log.error(this, "" + ex.getMessage());
+            //log.error(this, "" + ex.getMessage());
         } finally {
             if (input != null) {
                 try {
                     input.close();
                 } catch (IOException e) {
-                    log.error(this, e.getMessage());
+                    //log.error(this, e.getMessage());
                 }
             }
         }
@@ -118,7 +118,7 @@ public class LuceneAPI {
             }
         }
         } catch (IOException e) {
-            log.error(this, "Error when creating lucene index!");
+            //log.error(this, "Error when creating lucene index!");
             throw e;
         }
 

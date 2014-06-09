@@ -1,5 +1,7 @@
 package fi.uta.fsd.metka.mvc.domain;
 
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.enums.FieldType;
 import fi.uta.fsd.metka.data.repository.StudyAttachmentRepository;
@@ -9,7 +11,6 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.mvc.domain.simple.ErrorMessage;
 import fi.uta.fsd.metka.mvc.domain.simple.RevisionViewDataContainer;
 import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -71,14 +72,16 @@ public class FileService {
         repository.addFileLinkEvent(studyId, revision.getKey().getId(), key, path);
 
         /*
-         * Create
+         * Create row to be sent to client
          */
-        JSONObject json = new JSONObject();
-        json.put("type", "reference");
-        json.put("key", key);
-        json.put("value", revision.getKey().getId());
+        JsonNodeFactory nf = JsonNodeFactory.instance;
 
-        return json.toString();
+        ObjectNode node = nf.objectNode();
+        node.put("type", "reference");
+        node.put("key", key);
+        node.put("value", revision.getKey().getId().toString());
+
+        return node.toString();
     }
 
     public RevisionViewDataContainer findLatestStudyAttachmentRevisionForEdit(Integer id) {

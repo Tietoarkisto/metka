@@ -77,7 +77,7 @@ public class SlowGeneralSearchImpl implements GeneralSearch {
                         result.add(container);
                     }
                 }
-                if(entity.getCurApprovedNo() == null || !entity.getCurApprovedNo().equals(entity.getLatestRevisionNo())) {
+                if(entity.hasDraft()) {
                     RevisionEntity rev = em.find(RevisionEntity.class, entity.latestRevisionKey());
                     RevisionData data = json.readRevisionDataFromString(rev.getData());
 

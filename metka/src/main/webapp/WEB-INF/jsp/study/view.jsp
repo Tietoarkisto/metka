@@ -29,10 +29,9 @@
         <jsp:include page="sub/study_description.jsp">
             <jsp:param name="readonly" value="true" />
         </jsp:include>
-        <%--Variables page commented away and waiting modifications--%>
-        <%--<jsp:include page="sub/variables.jsp">
+        <jsp:include page="sub/variables.jsp">
             <jsp:param name="readonly" value="true" />
-        </jsp:include>--%>
+        </jsp:include>
         <jsp:include page="sub/file_management.jsp">
             <jsp:param name="readonly" value="true" />
         </jsp:include>
@@ -40,31 +39,4 @@
             <jsp:param name="readonly" value="true" />
         </jsp:include>
     </form:form>
-    <%--<h1 class="pageTitle">
-        <div class="floatLeft">${study.id}&nbsp;-&nbps;${study.data.name}&nbsp;-&nbsp;</div>
-        <div class="floatLeft draftInfo">${study.data.state}</div>
-        <div class="floatLeft publishedInfo"><spring:message code="general.version"/>&nbsp;${study.data.version}</div>
-        <!--<div class="floatLeft publishedInfo smallFont">&nbsp;(julkaistu 12.3.2013)</div>-->
-        <div class="floatRight handlerInfo">${study.data.handler}</div>
-        <div class="floatRight handlerInfo"><spring:message code="general.handler"/>&nbsp;</div>
-    </h1>
-    <div class="materialPrevNextContainer">
-        <div class="prevNextContainer"><h1 class="prev">&lt;</h1><h1 class="next">&gt;</h1></div>
-    </div>
-
-    <jsp:include page="basicInformation.jsp"/>
-
-    <jsp:include page="depositAgreement.jsp"/>
-
-    <jsp:include page="description/description.jsp"/>
-
-    <jsp:include page="variables/variables.jsp"/>
-
-    <jsp:include page="fileManagement.jsp"/>
-
-    <jsp:include page="codebook.jsp"/>
-
-    <jsp:include page="errors.jsp"/>
-
-    <jsp:include page="identifiers.jsp"/>--%>
 </div>

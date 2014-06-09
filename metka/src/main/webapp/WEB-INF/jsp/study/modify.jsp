@@ -27,8 +27,7 @@
         <jsp:include page="sub/basic_information.jsp"/>
         <jsp:include page="sub/deposit_agreement.jsp"/>
         <jsp:include page="sub/study_description.jsp"/>
-        <%--Variables page commented away and waiting modifications--%>
-        <%--<jsp:include page="sub/variables.jsp"/>--%>
+        <jsp:include page="sub/variables.jsp"/>
         <jsp:include page="sub/file_management.jsp"/>
         <jsp:include page="sub/codebook.jsp"/>
     </form:form>
