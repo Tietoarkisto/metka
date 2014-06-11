@@ -8,7 +8,7 @@ import fi.uta.fsd.metka.model.data.RevisionKey;
 import org.joda.time.LocalDateTime;
 
 import static fi.uta.fsd.metka.data.util.ModelAccessUtil.copyFieldsToNewRevision;
-import static fi.uta.fsd.metka.data.util.ModelAccessUtil.setSavedDataField;
+import static fi.uta.fsd.metka.data.util.ModelFieldUtil.setSavedDataField;
 
 /**
  * Provides functionality common for all RevisionData factories

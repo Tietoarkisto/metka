@@ -1,17 +1,15 @@
 package fi.uta.fsd.metka.model.serializers.guiconfiguration;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import fi.uta.fsd.metka.model.guiconfiguration.FieldDescription;
+import fi.uta.fsd.metka.model.serializers.ObjectSerializer;
 
 import java.io.IOException;
 
-public class FieldDescriptionSerializer extends JsonSerializer<FieldDescription> {
+public class FieldDescriptionSerializer extends ObjectSerializer<FieldDescription> {
     @Override
-    public void serialize(FieldDescription value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
-        jgen.writeStartObject();
-
+    public void doSerialize(FieldDescription value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
         jgen.writeStringField("key", value.getKey());
         if(value.getDisplayType() == null) {
             jgen.writeNullField("displayType");
@@ -29,7 +27,5 @@ public class FieldDescriptionSerializer extends JsonSerializer<FieldDescription>
         jgen.writeBooleanField("showReferenceValue", value.getShowReferenceValue());
         jgen.writeStringField("handlerName", value.getHandlerName());
         jgen.writeObjectField("dialogTitle", value.getDialogTitle());
-
-        jgen.writeEndObject();
     }
 }

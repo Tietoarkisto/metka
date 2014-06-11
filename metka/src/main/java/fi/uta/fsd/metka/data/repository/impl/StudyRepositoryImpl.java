@@ -35,6 +35,8 @@ import java.io.IOException;
 import java.util.List;
 
 import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
+import static fi.uta.fsd.metka.data.util.ModelFieldUtil.*;
+import static fi.uta.fsd.metka.data.util.ModelValueUtil.*;
 
 @Repository
 public class StudyRepositoryImpl implements StudyRepository {
@@ -301,7 +303,7 @@ public class StudyRepositoryImpl implements StudyRepository {
             }
 
             // Check that references are found from data
-            ReferenceContainerDataField references = getReferenceContainerDataFieldFromRevisionData(data, event.getTargetField(), config);
+            ReferenceContainerDataField references = getSimpleReferenceContainerDataField(data, event.getTargetField(), config);
             if(references == null) { // Missing REFERENCECONTAINER, add container
                 references = new ReferenceContainerDataField(event.getTargetField());
             }
@@ -328,7 +330,7 @@ public class StudyRepositoryImpl implements StudyRepository {
             // Check for variable file
             if(event.getType() != null) {
                 // Check for variable file reference
-                SavedDataField refField = getSavedDataFieldFromRevisionData(data, "variablefile", config);
+                SavedDataField refField = getSimpleSavedDataField(data, "variablefile", config);
                 // If missing a reference then create new variablefile saved data field
                 if(refField == null) {
                     refField = new SavedDataField("variablefile");

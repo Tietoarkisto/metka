@@ -1,22 +1,20 @@
 package fi.uta.fsd.metka.model.serializers.guiconfiguration;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import fi.uta.fsd.metka.data.enums.ContainerType;
 import fi.uta.fsd.metka.model.guiconfiguration.Button;
 import fi.uta.fsd.metka.model.guiconfiguration.Container;
 import fi.uta.fsd.metka.model.guiconfiguration.FieldTitle;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
+import fi.uta.fsd.metka.model.serializers.ObjectSerializer;
 
 import java.io.IOException;
 import java.util.Map;
 
-public class GUIConfigurationSerializer extends JsonSerializer<GUIConfiguration> {
+public class GUIConfigurationSerializer extends ObjectSerializer<GUIConfiguration> {
     @Override
-    public void serialize(GUIConfiguration value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
-        jgen.writeStartObject();
-
+    public void doSerialize(GUIConfiguration value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
         jgen.writeObjectField("key", value.getKey());
 
         jgen.writeArrayFieldStart("content");
@@ -37,8 +35,6 @@ public class GUIConfigurationSerializer extends JsonSerializer<GUIConfiguration>
         for(Map.Entry<String, FieldTitle> fieldTitle : value.getFieldTitles().entrySet()) {
             jgen.writeObjectField(fieldTitle.getKey(), fieldTitle.getValue());
         }
-        jgen.writeEndObject();
-
         jgen.writeEndObject();
     }
 

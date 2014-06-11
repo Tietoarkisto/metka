@@ -5,8 +5,10 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import fi.uta.fsd.metka.model.configuration.Field;
+import fi.uta.fsd.metka.model.configuration.Option;
 import fi.uta.fsd.metka.model.configuration.Reference;
 import fi.uta.fsd.metka.model.configuration.SelectionList;
+import fi.uta.fsd.metka.model.deserializers.configuration.OptionDeserializer;
 import fi.uta.fsd.metka.model.deserializers.general.TranslationObjectDeserializer;
 import fi.uta.fsd.metka.model.deserializers.guiconfiguration.ButtonDeserializer;
 import fi.uta.fsd.metka.model.deserializers.guiconfiguration.ContainerDeserializer;
@@ -15,6 +17,7 @@ import fi.uta.fsd.metka.model.deserializers.guiconfiguration.FieldTitleDeseriali
 import fi.uta.fsd.metka.model.general.TranslationObject;
 import fi.uta.fsd.metka.model.guiconfiguration.*;
 import fi.uta.fsd.metka.model.serializers.configuration.FieldSerializer;
+import fi.uta.fsd.metka.model.serializers.configuration.OptionSerializer;
 import fi.uta.fsd.metka.model.serializers.configuration.ReferenceSerializer;
 import fi.uta.fsd.metka.model.serializers.configuration.SelectionListSerializer;
 import fi.uta.fsd.metka.model.serializers.general.TranslationObjectSerializer;
@@ -33,6 +36,7 @@ public class MetkaObjectMapper extends ObjectMapper {
 
         // Add serializers and deserializers
         SimpleModule parsers = new SimpleModule();
+
         // Add general
         parsers.addDeserializer(TranslationObject.class, new TranslationObjectDeserializer());
         parsers.addSerializer(TranslationObject.class, new TranslationObjectSerializer());
@@ -53,9 +57,14 @@ public class MetkaObjectMapper extends ObjectMapper {
         parsers.addSerializer(Button.class, new ButtonSerializer());
 
         // Data config
+        parsers.addDeserializer(Option.class, new OptionDeserializer());
+        parsers.addSerializer(Option.class, new OptionSerializer());
+
         parsers.addSerializer(Field.class, new FieldSerializer());
         parsers.addSerializer(SelectionList.class, new SelectionListSerializer());
         parsers.addSerializer(Reference.class, new ReferenceSerializer());
+
+        // Register module
         this.registerModule(parsers);
     }
 }

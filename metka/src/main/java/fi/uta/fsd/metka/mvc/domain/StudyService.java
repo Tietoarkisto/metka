@@ -18,7 +18,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
+import static fi.uta.fsd.metka.data.util.ModelFieldUtil.*;
+import static fi.uta.fsd.metka.data.util.ModelValueUtil.*;
 
 @Service
 public class StudyService {
@@ -70,8 +71,8 @@ public class StudyService {
         so.setId(data.getKey().getId());
         so.setRevision(data.getKey().getRevision());
         so.setState(UIRevisionState.fromRevisionState(data.getState()));
-        so.setByKey("id", extractStringSimpleValue(getSavedDataFieldFromRevisionData(data, "id")));
-        so.setByKey("title", extractStringSimpleValue(getSavedDataFieldFromRevisionData(data, "title")));
+        so.setByKey("id", extractStringSimpleValue(getSimpleSavedDataField(data, "id")));
+        so.setByKey("title", extractStringSimpleValue(getSimpleSavedDataField(data, "title")));
 
         return so;
     }
@@ -154,7 +155,20 @@ public class StudyService {
 
     public boolean saveStudy(TransferObject to) {
         try {
-            return repository.saveStudy(to);
+            boolean result = repository.saveStudy(to);
+            // Check for FileLinkQueue events.
+            // If given id/revision belongs to a draft revision (and it should when we are saving) then process possible FileLinkQueue events.
+            // This makes sure that any recently added file references are found from their respective REFERENCECONTAINERs.
+            // Also if there is a new POR file present then that is parsed and the data is added
+            if(result) {
+                try {
+                    repository.checkFileLinkQueue(to.getId(), to.getRevision());
+                } catch(IOException ex) {
+                    // TODO: better exception handling with messages to the user
+                    ex.printStackTrace();
+                }
+            }
+            return result;
         } catch(Exception ex) {
             // TODO: better exception handling with messages to the user
             ex.printStackTrace();

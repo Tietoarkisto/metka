@@ -2,18 +2,16 @@ package fi.uta.fsd.metka.model.serializers.guiconfiguration;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import fi.uta.fsd.metka.data.enums.VisibilityState;
 import fi.uta.fsd.metka.model.guiconfiguration.Button;
+import fi.uta.fsd.metka.model.serializers.ObjectSerializer;
 
 import java.io.IOException;
 
-public class ButtonSerializer extends JsonSerializer<Button> {
+public class ButtonSerializer extends ObjectSerializer<Button> {
     @Override
-    public void serialize(Button value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
-        jgen.writeStartObject();
-
+    public void doSerialize(Button value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
         // Write type
         if(value.getType() != null) {
             jgen.writeStringField("type", value.getType().name());
@@ -48,7 +46,5 @@ public class ButtonSerializer extends JsonSerializer<Button> {
             jgen.writeString(state.name());
         }
         jgen.writeEndArray();
-
-        jgen.writeEndObject();
     }
 }

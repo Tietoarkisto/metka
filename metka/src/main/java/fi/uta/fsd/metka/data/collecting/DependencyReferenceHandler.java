@@ -21,7 +21,7 @@ import org.springframework.util.StringUtils;
 import java.io.IOException;
 import java.util.List;
 
-import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
+import static fi.uta.fsd.metka.data.util.ModelFieldUtil.*;
 
 @Service
 class DependencyReferenceHandler extends ReferenceHandler {
@@ -133,7 +133,7 @@ class DependencyReferenceHandler extends ReferenceHandler {
 
         String value;
         ReferenceOptionTitle title = null;
-        SavedDataField sf = getSavedDataFieldFromRevisionData(data, reference.getValuePath());
+        SavedDataField sf = getSimpleSavedDataField(data, reference.getValuePath());
         if(sf == null || !sf.hasValue()) {
             // No value to save
             return;
@@ -141,7 +141,7 @@ class DependencyReferenceHandler extends ReferenceHandler {
 
         value = sf.getActualValue();
         if(!StringUtils.isEmpty(reference.getTitlePath())) {
-            sf = getSavedDataFieldFromRevisionData(data, reference.getTitlePath());
+            sf = getSimpleSavedDataField(data, reference.getTitlePath());
             Configuration config = configurations.findConfiguration(data.getConfiguration());
             if(sf != null && sf.hasValue()) {
                 if(config.getField(reference.getTitlePath()).getType() == FieldType.SELECTION) {

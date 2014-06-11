@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
+import static fi.uta.fsd.metka.data.util.ModelFieldUtil.*;
 import static fi.uta.fsd.metka.data.util.ConversionUtil.*;
 
 @Repository("seriesSearch")
@@ -52,9 +52,8 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
 
             RevisionData revData = json.readRevisionDataFromString(data);
             // Use the method with less sanity checks since there's no point in getting configuration here.
-            SavedDataField field = getSavedDataFieldFromRevisionData(revData, "seriesabb");
-            String value = extractStringSimpleValue(field);
-            if(!StringUtils.isEmpty(value)) list.add(value);
+            SavedDataField field = getSimpleSavedDataField(revData, "seriesabb");
+            if(!StringUtils.isEmpty(field.getActualValue())) list.add(field.getActualValue());
         }
         Collections.sort(list);
         return list;
@@ -127,16 +126,14 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
 
         RevisionData data = json.readRevisionDataFromString(revision.getData());
         if(!StringUtils.isEmpty(query.getByKey("seriesabb"))) {
-            SavedDataField field = getSavedDataFieldFromRevisionData(data, "seriesabb");
-            String value = extractStringSimpleValue(field);
-            if(StringUtils.isEmpty(value) || !value.toUpperCase().equals(((String)query.getByKey("seriesabb")).toUpperCase())) {
+            SavedDataField field = getSimpleSavedDataField(data, "seriesabb");
+            if(StringUtils.isEmpty(field.getActualValue()) || !field.getActualValue().toUpperCase().equals(((String)query.getByKey("seriesabb")).toUpperCase())) {
                 return null;
             }
         }
         if(!StringUtils.isEmpty(query.getByKey("seriesname"))) {
-            SavedDataField field = getSavedDataFieldFromRevisionData(data, "seriesname");
-            String value = extractStringSimpleValue(field);
-            if(StringUtils.isEmpty(value) || !value.toUpperCase().contains(((String)query.getByKey("seriesname")).toUpperCase())) {
+            SavedDataField field = getSimpleSavedDataField(data, "seriesname");
+            if(StringUtils.isEmpty(field.getActualValue()) || !field.getActualValue().toUpperCase().contains(((String)query.getByKey("seriesname")).toUpperCase())) {
                 return null;
             }
         }

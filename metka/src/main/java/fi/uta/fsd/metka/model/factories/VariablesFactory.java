@@ -14,7 +14,7 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 
-import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
+import static fi.uta.fsd.metka.data.util.ModelFieldUtil.*;
 
 /**
  * Factory related to study variables.

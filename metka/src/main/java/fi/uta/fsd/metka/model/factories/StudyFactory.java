@@ -18,7 +18,8 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 
-import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
+import static fi.uta.fsd.metka.data.util.ModelFieldUtil.*;
+import static fi.uta.fsd.metka.data.util.ModelValueUtil.*;
 
 /**
  * Contains functionality related to RevisionData model and specifically to revision data related to Study.
@@ -81,7 +82,7 @@ public class StudyFactory extends DataFactory {
         confField = conf.getField("id");
         String concat = "";
         for(String fieldKey : confField.getConcatenate()) {
-            SavedDataField tempField = getSavedDataFieldFromRevisionData(data, fieldKey);
+            SavedDataField tempField = getSimpleSavedDataField(data, fieldKey);
             concat += extractStringSimpleValue(tempField);
         }
         setSavedDataField(data, "id", concat, time);

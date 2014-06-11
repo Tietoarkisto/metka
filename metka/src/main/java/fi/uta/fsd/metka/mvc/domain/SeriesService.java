@@ -19,7 +19,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
+import static fi.uta.fsd.metka.data.util.ModelFieldUtil.*;
+import static fi.uta.fsd.metka.data.util.ModelValueUtil.*;
 
 @Service
 public class SeriesService {
@@ -164,9 +165,9 @@ public class SeriesService {
         so.setId(data.getKey().getId());
         so.setRevision(data.getKey().getRevision());
         so.setState(UIRevisionState.fromRevisionState(data.getState()));
-        so.setByKey("seriesno", extractIntegerSimpleValue(getSavedDataFieldFromRevisionData(data, "seriesno")));
-        so.setByKey("seriesabb", extractStringSimpleValue(getSavedDataFieldFromRevisionData(data, "seriesabb")));
-        so.setByKey("seriesname", extractStringSimpleValue(getSavedDataFieldFromRevisionData(data, "seriesname")));
+        so.setByKey("seriesno", extractIntegerSimpleValue(getSimpleSavedDataField(data, "seriesno")));
+        so.setByKey("seriesabb", extractStringSimpleValue(getSimpleSavedDataField(data, "seriesabb")));
+        so.setByKey("seriesname", extractStringSimpleValue(getSimpleSavedDataField(data, "seriesname")));
 
         return so;
     }

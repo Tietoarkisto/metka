@@ -1,22 +1,19 @@
 package fi.uta.fsd.metka.model.serializers.configuration;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.model.configuration.Reference;
+import fi.uta.fsd.metka.model.serializers.ObjectSerializer;
 
 import java.io.IOException;
 
 /**
  * Serializes Configuration Reference including only information pertaining to the reference type.
  */
-public class ReferenceSerializer extends JsonSerializer<Reference> {
+public class ReferenceSerializer extends ObjectSerializer<Reference> {
     @Override
-    public void serialize(Reference value, JsonGenerator jgen, SerializerProvider provider)
-            throws IOException, JsonProcessingException, IllegalArgumentException {
-        jgen.writeStartObject();
+    public void doSerialize(Reference value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
 
         jgen.writeStringField("key", value.getKey());
         jgen.writeStringField("type", value.getType().toString());
@@ -38,6 +35,5 @@ public class ReferenceSerializer extends JsonSerializer<Reference> {
                 break;
         }
 
-        jgen.writeEndObject();
     }
 }

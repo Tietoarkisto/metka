@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
+import static fi.uta.fsd.metka.data.util.ModelFieldUtil.*;
 
 @Repository
 public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository {
@@ -75,7 +76,7 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
             revisionEntity = em.
                     find(RevisionEntity.class, attachment.latestRevisionKey());
             revision = json.readRevisionDataFromString(revisionEntity.getData());
-            SavedDataField fileField = getSavedDataFieldFromRevisionData(revision, "file");
+            SavedDataField fileField = getSimpleSavedDataField(revision, "file");
             if(fileField != null && fileField.hasValue() && fileField.getActualValue().equals(path)) {
                 break;
             }
@@ -102,7 +103,7 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
             entity.setLatestRevisionNo(revisionEntity.getKey().getRevisionNo());
         } else {
             // Check that this revision belongs to given study
-            SavedDataField studyField = getSavedDataFieldFromRevisionData(revision, "study");
+            SavedDataField studyField = getSimpleSavedDataField(revision, "study");
             if(studyField == null || !studyField.hasValue() || !studyField.getActualValue().equals(studyId.toString())) {
                 // TODO: Attachment exists but it's marked for some other study, log exception, we can't continue
                 return null;
@@ -250,7 +251,7 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
             // We can assume that we get a revision since other points before this depend on the existence of the revision
             RevisionEntity revEntity = em.find(RevisionEntity.class, study.latestRevisionKey());
             RevisionData data = json.readRevisionDataFromString(revEntity.getData());
-            SavedDataField field = getSavedDataFieldFromRevisionData(data, "variablefile");
+            SavedDataField field = getSimpleSavedDataField(data, "variablefile");
             if(field != null && field.hasValue()) {
                 if(!field.getActualValue().equals(fileId.toString())) {
                     parse = false;

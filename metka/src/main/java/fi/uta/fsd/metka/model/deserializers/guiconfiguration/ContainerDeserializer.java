@@ -1,26 +1,22 @@
 package fi.uta.fsd.metka.model.deserializers.guiconfiguration;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import fi.uta.fsd.metka.data.enums.ContainerType;
 import fi.uta.fsd.metka.data.enums.SectionState;
+import fi.uta.fsd.metka.model.deserializers.ObjectDeserializer;
 import fi.uta.fsd.metka.model.general.TranslationObject;
 import fi.uta.fsd.metka.model.guiconfiguration.Container;
 import fi.uta.fsd.metka.model.guiconfiguration.FieldDescription;
 
 import java.io.IOException;
 
-public class ContainerDeserializer extends JsonDeserializer<Container> {
+public class ContainerDeserializer extends ObjectDeserializer<Container> {
 
     @Override
-    public Container deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
-        ObjectCodec oc = jp.getCodec();
-        JsonNode node = oc.readTree(jp);
-
+    public Container doDeserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
         Container con = new Container();
 
         // set type

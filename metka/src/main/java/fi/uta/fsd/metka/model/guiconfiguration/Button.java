@@ -14,7 +14,7 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 @JsonIgnoreProperties("_comment")
 public class Button {
-    @XmlElement private TranslationObject title; // TODO: Change to translation object
+    @XmlElement private TranslationObject title;
     @XmlElement private final List<String> userGroups = new ArrayList<>();
     @XmlElement private Boolean isHandler;
     @XmlElement private final List<VisibilityState> states = new ArrayList<>();

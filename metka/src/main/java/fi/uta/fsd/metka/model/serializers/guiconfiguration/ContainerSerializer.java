@@ -1,18 +1,16 @@
 package fi.uta.fsd.metka.model.serializers.guiconfiguration;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import fi.uta.fsd.metka.data.enums.ContainerType;
 import fi.uta.fsd.metka.model.guiconfiguration.Container;
+import fi.uta.fsd.metka.model.serializers.ObjectSerializer;
 
 import java.io.IOException;
 
-public class ContainerSerializer extends JsonSerializer<Container> {
+public class ContainerSerializer extends ObjectSerializer<Container> {
     @Override
-    public void serialize(Container value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
-        jgen.writeStartObject();
-
+    public void doSerialize(Container value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
         jgen.writeStringField("type", value.getType().name());
 
         if(value.getType() != ContainerType.EMPTYCELL) {
@@ -84,8 +82,6 @@ public class ContainerSerializer extends JsonSerializer<Container> {
         if(value.getType() == ContainerType.CELL || value.getType() == ContainerType.EMPTYCELL) {
             jgen.writeNumberField("colspan", value.getColspan());
         }
-
-        jgen.writeEndObject();
     }
 
     private boolean checkValidContainer(ContainerType parent, ContainerType child) {

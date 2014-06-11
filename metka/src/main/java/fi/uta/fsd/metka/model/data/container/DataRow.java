@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.data.util.ModelAccessUtil;
+import fi.uta.fsd.metka.model.data.RevisionData;
 import org.joda.time.LocalDateTime;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -66,17 +67,6 @@ public class DataRow implements ModelAccessUtil.PathNavigable {
         return fields;
     }
 
-    // Helper methods
-    @JsonIgnore
-    public DataField getField(String key) {
-        return fields.get(key);
-    }
-
-    @JsonIgnore
-    public void putField(DataField field) {
-        fields.put(field.getKey(), field);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -102,6 +92,21 @@ public class DataRow implements ModelAccessUtil.PathNavigable {
     @Override
     public String toString() {
         return "Json[name="+this.getClass().getSimpleName()+", key="+getKey()+", rowId="+rowId+"]";
+    }
+
+    // Helper methods
+    @JsonIgnore
+    public DataField getField(String key) {
+        return fields.get(key);
+    }
+
+    @JsonIgnore
+    public void putField(DataField field) {
+        fields.put(field.getKey(), field);
+    }
+
+    public static DataRow build(ContainerDataField container, RevisionData revision) {
+        return new DataRow(container.getKey(), revision.getNewRowId());
     }
 
     public DataRow copy() {

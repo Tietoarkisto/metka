@@ -1,10 +1,10 @@
 package fi.uta.fsd.metka.model.serializers.configuration;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import fi.uta.fsd.metka.model.configuration.Option;
 import fi.uta.fsd.metka.model.configuration.SelectionList;
+import fi.uta.fsd.metka.model.serializers.ObjectSerializer;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
@@ -12,12 +12,10 @@ import java.io.IOException;
 /**
  * Serializer for Configuration SelectionList pertaining information only to selection list type
  */
-public class SelectionListSerializer extends JsonSerializer<SelectionList> {
+public class SelectionListSerializer extends ObjectSerializer<SelectionList> {
 
     @Override
-    public void serialize(SelectionList value, JsonGenerator jgen, SerializerProvider provider)
-            throws IOException {
-        jgen.writeStartObject();
+    public void doSerialize(SelectionList value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
 
         jgen.writeStringField("key", value.getKey());
         jgen.writeStringField("default", value.getDef());
@@ -48,6 +46,5 @@ public class SelectionListSerializer extends JsonSerializer<SelectionList> {
                 break;
         }
 
-        jgen.writeEndObject();
     }
 }

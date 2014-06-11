@@ -1,21 +1,20 @@
 package fi.uta.fsd.metka.model.serializers.configuration;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import fi.uta.fsd.metka.model.configuration.Field;
+import fi.uta.fsd.metka.model.serializers.ObjectSerializer;
 
 import java.io.IOException;
 
 /**
  * Serializes Configuration Field including only information pertaining to the field type.
  */
-public class FieldSerializer extends JsonSerializer<Field> {
+public class FieldSerializer extends ObjectSerializer<Field> {
     @Override
     @SuppressWarnings("fallthrough")
-    public void serialize(Field value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
+    public void doSerialize(Field value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
 
-        jgen.writeStartObject();
         jgen.writeStringField("key", value.getKey());
         jgen.writeStringField("type", value.getType().toString());
         jgen.writeBooleanField("translatable", value.getTranslatable());
@@ -80,6 +79,5 @@ public class FieldSerializer extends JsonSerializer<Field> {
                 break;
         }
 
-        jgen.writeEndObject();
     }
 }
