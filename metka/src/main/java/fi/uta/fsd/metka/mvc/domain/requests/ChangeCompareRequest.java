@@ -6,16 +6,16 @@ import fi.uta.fsd.metka.data.enums.ConfigurationType;
  * Request object for comparing two revisions of a revisionable object
  */
 public class ChangeCompareRequest {
-    private Integer id;
+    private Long id;
     private Integer begin;
     private Integer end;
     private ConfigurationType type;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

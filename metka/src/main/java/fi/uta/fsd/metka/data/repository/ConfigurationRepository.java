@@ -21,6 +21,6 @@ public interface ConfigurationRepository {
     public Configuration findConfiguration(ConfigurationKey key) throws IncorrectResultSizeDataAccessException, IOException;
     public Configuration findLatestConfiguration(ConfigurationType type) throws IncorrectResultSizeDataAccessException, IOException;
     public GUIConfiguration findLatestGUIConfiguration(ConfigurationType type) throws IncorrectResultSizeDataAccessException, IOException;
-    public Configuration findLatestByRevisionableId(Integer id) throws IncorrectResultSizeDataAccessException, IOException;
-    public Configuration findConfigurationForRevision(Integer id, Integer revision) throws IncorrectResultSizeDataAccessException, IOException;
+    public Configuration findLatestByRevisionableId(Long id) throws IncorrectResultSizeDataAccessException, IOException;
+    public Configuration findConfigurationForRevision(Long id, Integer revision) throws IncorrectResultSizeDataAccessException, IOException;
 }

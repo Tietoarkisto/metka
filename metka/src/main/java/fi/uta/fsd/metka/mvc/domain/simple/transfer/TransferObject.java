@@ -16,7 +16,7 @@ import java.util.Map;
  * Move revision data between service and jsp layers
  */
 public class TransferObject {
-    private Integer id;
+    private Long id;
     private Integer revision;
     private UIRevisionState state;
     private ConfigurationKey configuration;
@@ -24,11 +24,11 @@ public class TransferObject {
 
     private final Map<String, Object> values = new HashMap<>();
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

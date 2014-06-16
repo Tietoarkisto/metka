@@ -8,7 +8,7 @@ import java.io.IOException;
 
 @Transactional
 public interface StudyRepository {
-    public RevisionData getNew(Integer acquisition_number) throws IOException;
+    public RevisionData getNew(Long acquisition_number) throws IOException;
     public boolean saveStudy(TransferObject so) throws IOException;
 
     /**
@@ -21,7 +21,7 @@ public interface StudyRepository {
      * @param id RevisionableId
      * @param revision RevisionNo
      */
-    public void checkFileLinkQueue(Integer id, Integer revision) throws IOException;
+    public void checkFileLinkQueue(Long id, Integer revision) throws IOException;
 
     public boolean approveStudy(Object id) throws IOException;
     public RevisionData editStudy(Object studyno) throws IOException;

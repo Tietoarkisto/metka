@@ -12,7 +12,7 @@ public class GUIConfigurationEntity {
     @SequenceGenerator(name="GUI_CONFIGURATION_ID_SEQ", sequenceName="GUI_CONFIGURATION_ID_SEQ", allocationSize=1)
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="GUI_CONFIGURATION_ID_SEQ")
     @Column(name = "GUI_CONFIGURATION_ID", updatable = false)
-    private Integer id;
+    private Long id;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "TYPE")
@@ -26,11 +26,11 @@ public class GUIConfigurationEntity {
     @Type(type="org.hibernate.type.StringClobType")
     private String data;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

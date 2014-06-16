@@ -16,14 +16,10 @@ public abstract class RevisionableEntity {
     @SequenceGenerator(name="REVISIONABLE_ID_SEQ", sequenceName="REVISIONABLE_ID_SEQ", allocationSize=1)
     @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="REVISIONABLE_ID_SEQ")
     @Column(name = "REVISIONABLE_ID", updatable = false)
-    private Integer id;
+    private Long id;
 
     @Column(name = "TYPE", insertable=false, updatable = false)
     private String type;
-
-    /*@EmbeddedId
-    @AttributeOverride(name = "type", column = @Column(name = "TYPE", insertable = false, updatable = false))
-    private RevisionableKey key;*/
 
     @Column(name = "CUR_APPROVED_NO")
     private Integer curApprovedNo;
@@ -38,19 +34,11 @@ public abstract class RevisionableEntity {
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
     private LocalDateTime removalDate;
 
-    /*public RevisionableKey getKey() {
-        return key;
-    }
-
-    public void setKey(RevisionableKey key) {
-        this.key = key;
-    }*/
-
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -132,23 +120,6 @@ public abstract class RevisionableEntity {
         return false;
     }
 
-    /*@Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        RevisionableEntity that = (RevisionableEntity) o;
-
-        if (!key.equals(that.key)) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return key.hashCode();
-    }*/
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -165,11 +136,6 @@ public abstract class RevisionableEntity {
     public int hashCode() {
         return id.hashCode();
     }
-
-    /*@Override
-    public String toString() {
-        return "Entity[name="+this.getClass().getSimpleName()+", key="+key+"]";
-    }*/
 
     @Override
     public String toString() {

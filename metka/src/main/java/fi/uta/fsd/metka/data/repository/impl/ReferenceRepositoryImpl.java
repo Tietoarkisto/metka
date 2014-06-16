@@ -52,7 +52,7 @@ public class ReferenceRepositoryImpl implements ReferenceRepository {
 
     @Override
     public RevisionEntity getRevisionForReferencedRevisionable(Reference reference, String value) {
-        Integer key = stringToInteger(value);
+        Long key = stringToLong(value);
         if(key == null) {
             return null;
         }

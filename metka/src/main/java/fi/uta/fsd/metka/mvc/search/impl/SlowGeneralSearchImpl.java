@@ -30,7 +30,7 @@ public class SlowGeneralSearchImpl implements GeneralSearch {
     private JSONUtil json;
 
     @Override
-    public Integer findSingleRevisionNo(Integer id) {
+    public Integer findSingleRevisionNo(Long id) {
         RevisionableEntity entity = em.find(RevisionableEntity.class, id);
         if(entity == null || (entity.getLatestRevisionNo() == null && entity.getCurApprovedNo() == null)) {
             // TODO: log error
@@ -42,7 +42,7 @@ public class SlowGeneralSearchImpl implements GeneralSearch {
     }
 
     @Override
-    public RevisionData findSingleRevision(Integer id, Integer revision, ConfigurationType type) throws IOException {
+    public RevisionData findSingleRevision(Long id, Integer revision, ConfigurationType type) throws IOException {
         RevisionEntity entity = em.find(RevisionEntity.class, new RevisionKey(id, revision));
         if(entity == null) {
             return null;

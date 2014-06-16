@@ -31,7 +31,7 @@ public class GeneralRepositoryImpl implements GeneralRepository {
     private JSONUtil json;
 
     @Override
-    public Integer getAdjancedRevisionableId(Integer currentId, String type, boolean forward)
+    public Long getAdjancedRevisionableId(Long currentId, String type, boolean forward)
             throws NotFoundException, MissingResourceException {
         List<RevisionableEntity> list = em.createQuery("SELECT r FROM RevisionableEntity r " +
                     "WHERE r.id "+(forward?">":"<")+" :id AND r.type = :type " +
@@ -50,7 +50,7 @@ public class GeneralRepositoryImpl implements GeneralRepository {
     }
 
     @Override
-    public DraftRemoveResponse removeDraft(String type, Integer id) {
+    public DraftRemoveResponse removeDraft(String type, Long id) {
         List<RevisionableEntity> list = em.createQuery("SELECT r FROM RevisionableEntity r " +
                 "WHERE r.id = :id AND r.type = :type", RevisionableEntity.class)
                 .setParameter("id", id)
@@ -83,7 +83,7 @@ public class GeneralRepositoryImpl implements GeneralRepository {
     }
 
     @Override
-    public LogicalRemoveResponse removeLogical(String type, Integer id) {
+    public LogicalRemoveResponse removeLogical(String type, Long id) {
         List<RevisionableEntity> list = em.createQuery("SELECT r FROM RevisionableEntity r " +
                 "WHERE r.id = :id AND r.type = :type", RevisionableEntity.class)
                 .setParameter("id", id)
@@ -126,7 +126,7 @@ public class GeneralRepositoryImpl implements GeneralRepository {
     }
 
     @Override
-    public RevisionData getRevision(Integer id, Integer revision) throws IOException {
+    public RevisionData getRevision(Long id, Integer revision) throws IOException {
         List<RevisionEntity> revisions =
                 em.createQuery(
                     "SELECT r FROM RevisionEntity r " +
@@ -144,7 +144,7 @@ public class GeneralRepositoryImpl implements GeneralRepository {
     }
 
     @Override
-    public String getRevisionData(Integer id, Integer revision) {
+    public String getRevisionData(Long id, Integer revision) {
         List<RevisionEntity> revisions =
                 em.createQuery(
                         "SELECT r FROM RevisionEntity r " +
@@ -161,11 +161,11 @@ public class GeneralRepositoryImpl implements GeneralRepository {
 
     @Override
     public SequenceEntity getNewSequenceValue(String key) {
-        return getNewSequenceValue(key, 1);
+        return getNewSequenceValue(key, 1L);
     }
 
     @Override
-    public SequenceEntity getNewSequenceValue(String key, Integer initialValue) {
+    public SequenceEntity getNewSequenceValue(String key, Long initialValue) {
         SequenceEntity seq = em.find(SequenceEntity.class, key);
         if(seq == null) {
             seq = new SequenceEntity();

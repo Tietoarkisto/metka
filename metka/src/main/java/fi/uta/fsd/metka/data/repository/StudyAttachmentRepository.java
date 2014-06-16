@@ -8,7 +8,7 @@ import java.io.IOException;
 
 @Transactional
 public interface StudyAttachmentRepository {
-    public RevisionData studyAttachmentForPath(String path, Integer studyId) throws IOException;
+    public RevisionData studyAttachmentForPath(String path, Long studyId) throws IOException;
 
     /**
      * Return a DRAFT revision for given STUDY_ATTACHMENT.
@@ -17,7 +17,7 @@ public interface StudyAttachmentRepository {
      * @return RevisionData for DRAFT revision for given file, if none exists one is created.
      * @throws IOException
      */
-    public RevisionData getEditableStudyAttachmentRevision(Integer id) throws IOException;
+    public RevisionData getEditableStudyAttachmentRevision(Long id) throws IOException;
 
     /**
      * Takes given TransferObject and saves possible changes to STUDY_ATTACHMENT-object.
@@ -34,10 +34,10 @@ public interface StudyAttachmentRepository {
      * Will also make a note if the file is a por file in need of parsing and adding to a STUDY.
      * It is assumed that this is handled before a DRAFT is approved so there's only need to consider current
      * latest revision (that should be a draft)
-     * @param targetId RevisionableId from where the file should be found.
-     * @param fileId RevisionableId of the File that should be linked
+     * @param studyId RevisionableId from where the file should be found.
+     * @param attachmentId RevisionableId of the File that should be linked
      * @param key Field key of the REFERENCECONTAINER where the reference should be found
      * @param path File path, used to detect a por file
      */
-    public void addFileLinkEvent(Integer targetId, Integer fileId, String key, String path) throws IOException;
+    public void addFileLinkEvent(Long studyId, Long attachmentId, String key, String path) throws IOException;
 }

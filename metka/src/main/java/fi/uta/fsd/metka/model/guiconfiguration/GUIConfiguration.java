@@ -1,7 +1,7 @@
 package fi.uta.fsd.metka.model.guiconfiguration;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import fi.uta.fsd.metka.model.ModelBase;
+import fi.uta.fsd.metka.model.interfaces.ModelBase;
 import fi.uta.fsd.metka.model.configuration.ConfigurationKey;
 
 import javax.xml.bind.annotation.XmlAccessType;

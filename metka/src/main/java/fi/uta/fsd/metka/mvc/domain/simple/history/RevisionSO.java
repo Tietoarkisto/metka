@@ -4,16 +4,16 @@ import fi.uta.fsd.metka.data.enums.RevisionState;
 import org.joda.time.LocalDateTime;
 
 public class RevisionSO {
-    private Integer id;
+    private Long id;
     private Integer revision;
     private LocalDateTime approvalDate;
     private RevisionState state;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

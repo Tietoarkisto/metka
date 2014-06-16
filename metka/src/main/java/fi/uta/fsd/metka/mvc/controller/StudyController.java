@@ -55,7 +55,7 @@ public class StudyController {
     * If no revision is found then return to search page with an error message.
     */
     @RequestMapping(value = "view/{id}", method = RequestMethod.GET)
-    public String view(Model model, @PathVariable Integer id, RedirectAttributes redirectAttributes) {
+    public String view(Model model, @PathVariable Long id, RedirectAttributes redirectAttributes) {
         Integer revision = studyService.findSingleRevisionNo(id);
         if(model.asMap().containsKey("displayableErrors")) {
             redirectAttributes.addFlashAttribute("displayableErrors", model.asMap().get("displayableErrors"));
@@ -79,7 +79,7 @@ public class StudyController {
     */
     @RequestMapping(value = "view/{id}/{revision}", method = RequestMethod.GET)
     public String viewRevision(Model model,
-                               @PathVariable Integer id, @PathVariable Integer revision,
+                               @PathVariable Long id, @PathVariable Integer revision,
                                RedirectAttributes redirectAttributes) {
         TransferObject single = null;
         Configuration config = null;
@@ -201,7 +201,7 @@ public class StudyController {
     * so you can always modify by using only the id for the series.
     */
     @RequestMapping(value="add/{acquisition_number}", method = {RequestMethod.GET})
-    public String add(@PathVariable Integer acquisition_number, RedirectAttributes redirectAttributes) {
+    public String add(@PathVariable Long acquisition_number, RedirectAttributes redirectAttributes) {
         RevisionViewDataContainer revData = studyService.newStudy(acquisition_number);
         if(revData == null || revData.getTransferObject() == null || revData.getConfiguration() == null) {
             // TODO: Show error if no new series could be created
@@ -221,7 +221,7 @@ public class StudyController {
     * actually required or is there already an open DRAFT revision).
     */
     @RequestMapping(value = "edit/{id}", method = {RequestMethod.GET})
-    public String edit(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+    public String edit(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         RevisionViewDataContainer revData = studyService.editStudy(id);
         if(revData == null || revData.getTransferObject() == null || revData.getConfiguration() == null) {
             // TODO: Notify user that no editable revision could be found or created

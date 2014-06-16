@@ -24,7 +24,7 @@ public class HistoryController {
      */
     @RequestMapping(value = "revisions/{id}", method = {RequestMethod.GET},
         produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<RevisionSO> getRevisions(@PathVariable Integer id) {
+    public @ResponseBody List<RevisionSO> getRevisions(@PathVariable Long id) {
         return service.getRevisionHistory(id);
     }
 

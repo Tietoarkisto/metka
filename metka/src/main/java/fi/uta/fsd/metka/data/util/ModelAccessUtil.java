@@ -1,10 +1,11 @@
 package fi.uta.fsd.metka.data.util;
 
 import fi.uta.fsd.metka.data.enums.FieldType;
+import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
+import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.change.ContainerChange;
 import fi.uta.fsd.metka.model.data.change.RowChange;
 import fi.uta.fsd.metka.model.data.container.*;
@@ -19,10 +20,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import static fi.uta.fsd.metka.data.util.ConversionUtil.*;
-import static fi.uta.fsd.metka.data.util.ModelFieldUtil.*;
 import static fi.uta.fsd.metka.data.util.ModelValueUtil.*;
 
-public class ModelAccessUtil {
+// TODO: Refactor to use ModelFieldUtil and move away from JSONObject
+public final class ModelAccessUtil {
+    // Private constructor to stop instantiation
+    private ModelAccessUtil() {}
+
     public static interface PathNavigable {
 
     }
@@ -85,15 +89,14 @@ public class ModelAccessUtil {
 
     public static boolean idIntegrityCheck(TransferObject to, RevisionData data, Configuration config) {
         String key = config.getIdField();
-        Pair<StatusCode, SavedDataField> pair = getSavedDataField(data, key, config);
-        SavedDataField field = pair.getRight();
+        SavedDataField field = data.dataField(SavedDataFieldCall.get(key).setConfiguration(config)).getRight();
         if(field == null) {
             // TODO: tried to check id integrity with Container field. Container field should never be id field. Log error
             // Tried to check integrity with wrong field, integrity can not be checked.
             return false;
         }
-        Integer dataIdField = extractIntegerSimpleValue(field);
-        Integer toIdField = stringToInteger(to.getByKey(key));
+        Long dataIdField = extractIntegerSimpleValue(field);
+        Long toIdField = stringToLong(to.getByKey(key));
         if(dataIdField == null) {
             // TODO: somehow id data has gone missing, log error
             // Return false since save can not continue.
@@ -203,31 +206,40 @@ public class ModelAccessUtil {
      * @param config Assumed to be the configuration for the given Revision Data.
      * @return True if there has been changes in this container, false otherwise.
      */
+    // TODO: Refactor to use ModelFieldUtil and move away from JSONObject
     private static boolean doContainerChanges(String key, Object value, LocalDateTime time, RevisionData data, Configuration config) {
+        // Non empty, non null String is expected, if not then can't continue
+        if(!(value instanceof String) || StringUtils.isEmpty((String)value)) {
+            // TODO: Possibly something wrong, log warning
+            return false;
+        }
+        // We have a container to check
+        JSONObject jsonContainer = new JSONObject((String)value);
+        // More sanity checks
+        if(!jsonContainer.get("type").equals("container")) {
+            // TODO: Wrong data, log warning
+            return false;
+        }
+        // There should be rows array
+        JSONArray rows = jsonContainer.getJSONArray("rows");
+
         Field field = config.getField(key);
         if(field.getType() != FieldType.CONTAINER) {
             // If this field's type is something other than CONTAINER return false.
             // This method is meant exclusively for handling containers and nothing else.
             return false;
         }
-        // Non empty, non null String is expected, if not then can't continue
-        if(!(value instanceof String) || StringUtils.isEmpty((String)value)) {
-            // TODO: Possibly something wrong, log warning
-            return false;
-        }
-        JSONObject jsonContainer = new JSONObject((String)value);
 
-        // More sanity checks
-        if(!jsonContainer.get("type").equals("container")) {
-            // TODO: Wrong data, log warning
-            return false;
-        }
+
+
+
         boolean changes = false;
+
         ContainerDataField container = (ContainerDataField)data.getField(field.getKey());
         if(container == null) {
             container = new ContainerDataField(field.getKey());
         }
-        JSONArray rows = jsonContainer.getJSONArray("rows");
+
         ContainerChange changeContainer = (ContainerChange)data.getChange(field.getKey());
         if(changeContainer == null) {
             changeContainer = new ContainerChange(field.getKey());
@@ -292,8 +304,7 @@ public class ModelAccessUtil {
                         savedField = new SavedDataField(subfield.getKey());
                         dataRow.putField(savedField);
                     }
-                    updateFieldValue(savedField, subfield, newValue, time);
-                    rowChangeContainer.putChange(new Change(subkey));
+                    updateFieldValue(savedField, subfield, newValue, time, rowChangeContainer.getChanges());
                 }
                 // If this field changed or if row was changed previously then row has changed.
                 rowChanges = fieldChange | rowChanges;
@@ -438,7 +449,7 @@ public class ModelAccessUtil {
             return false;
         }
 
-        Pair<StatusCode, SavedDataField> pair = getSavedDataField(data, key, config);
+        Pair<StatusCode, SavedDataField> pair = data.dataField(SavedDataFieldCall.get(key).setConfiguration(config));
         SavedDataField container = pair.getRight();
 
         // Do checking for change
@@ -451,8 +462,7 @@ public class ModelAccessUtil {
                 container = new SavedDataField(field.getKey());
                 data.putField(container);
             }
-            updateFieldValue(container, field, value, time);
-            data.putChange(new Change(field.getKey()));
+            updateFieldValue(container, field, value, time, data.getChanges());
         }
         return change;
     }
@@ -500,12 +510,12 @@ public class ModelAccessUtil {
                 break;
             }
             // TODO: Either combine INTEGER and STRING setting or then make different values that know how to handle their datatypes
-            case INTEGER: { // Assume correctness and treat value as Integer
-                Integer intValue = stringToInteger(value);
+            case INTEGER: { // Assume correctness and treat value as number
+                Long intValue = stringToLong(value);
                 if(intValue == null) { // New value is null, change depends on the old value existing.
                     change = !(oldValue == null); // If old value is null, no change, otherwise change.
                 } else {
-                    change = !(intValue.equals(stringToInteger(oldValue))); // Check equality to old value, assume integer at this point.
+                    change = !(intValue.equals(stringToLong(oldValue))); // Check equality to old value, assume integer at this point.
                 }
 
                 break;

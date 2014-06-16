@@ -25,7 +25,8 @@ public class FileService {
     @Autowired
     private ConfigurationService configService;
 
-    public String saveFile(MultipartFile file, String fileName, Integer id) throws IOException {
+    // TODO: Remove this and change file saving to filesystem move based solution
+    public String saveFile(MultipartFile file, String fileName, Long id) throws IOException {
         File dir = new File("/usr/share/metka/files/study/"+id);
         if(!dir.exists()) {
             dir.mkdirs();
@@ -46,7 +47,7 @@ public class FileService {
      * @param key Field key of the field that will contain a reference to this file
      * @return
      */
-    public String initNewStudyAttachment(String path, Integer studyId, String key) throws IOException {
+    public String initNewStudyAttachment(String path, Long studyId, String key) throws IOException {
         // TODO: Form file row
         Configuration config = configService.findLatestByRevisionableId(studyId);
 
@@ -84,7 +85,7 @@ public class FileService {
         return node.toString();
     }
 
-    public RevisionViewDataContainer findLatestStudyAttachmentRevisionForEdit(Integer id) {
+    public RevisionViewDataContainer findLatestStudyAttachmentRevisionForEdit(Long id) {
         RevisionData revision = null;
         try {
             revision = repository.getEditableStudyAttachmentRevision(id);

@@ -7,6 +7,7 @@ import fi.uta.fsd.metka.data.entity.RevisionEntity;
 import fi.uta.fsd.metka.data.enums.FieldType;
 import fi.uta.fsd.metka.data.enums.ReferenceTitleType;
 import fi.uta.fsd.metka.data.enums.SelectionListType;
+import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.configuration.Reference;
@@ -20,8 +21,6 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.List;
-
-import static fi.uta.fsd.metka.data.util.ModelFieldUtil.*;
 
 @Service
 class DependencyReferenceHandler extends ReferenceHandler {
@@ -133,7 +132,7 @@ class DependencyReferenceHandler extends ReferenceHandler {
 
         String value;
         ReferenceOptionTitle title = null;
-        SavedDataField sf = getSimpleSavedDataField(data, reference.getValuePath());
+        SavedDataField sf = data.dataField(SavedDataFieldCall.get(reference.getValuePath())).getRight();
         if(sf == null || !sf.hasValue()) {
             // No value to save
             return;
@@ -141,7 +140,7 @@ class DependencyReferenceHandler extends ReferenceHandler {
 
         value = sf.getActualValue();
         if(!StringUtils.isEmpty(reference.getTitlePath())) {
-            sf = getSimpleSavedDataField(data, reference.getTitlePath());
+            sf = data.dataField(SavedDataFieldCall.get(reference.getTitlePath())).getRight();
             Configuration config = configurations.findConfiguration(data.getConfiguration());
             if(sf != null && sf.hasValue()) {
                 if(config.getField(reference.getTitlePath()).getType() == FieldType.SELECTION) {

@@ -5,6 +5,7 @@ import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.data.util.JSONUtil;
+import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.configuration.SelectionList;
@@ -18,7 +19,6 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 
-import static fi.uta.fsd.metka.data.util.ModelFieldUtil.*;
 import static fi.uta.fsd.metka.data.util.ModelValueUtil.*;
 
 /**
@@ -45,7 +45,7 @@ public class StudyFactory extends DataFactory {
      *
      * @param entity RevisionEntity for which this revision data is created.
      */
-    public RevisionData newData(RevisionEntity entity, Integer studyNumber, Integer submissionid) throws IOException {
+    public RevisionData newData(RevisionEntity entity, Long studyNumber, Long submissionid) throws IOException {
         if(StringUtils.isEmpty(entity.getData()) && entity.getState() != RevisionState.DRAFT)
             return null;
 
@@ -69,27 +69,27 @@ public class StudyFactory extends DataFactory {
 
         // Studyno_prefix, this is a string that is added to the front of study_id
         list = conf.getRootSelectionList(conf.getField("studyno_prefix").getSelectionList());
-        setSavedDataField(data, "studyno_prefix", list.getDef(), time);
+        data.dataField(SavedDataFieldCall.set("studyno_prefix", data).setTime(time).setValue(list.getDef()));
 
         // studyno, this is a separate sequence from revisionable id and forms the number base for id
-        setSavedDataField(data, "studyno_number", studyNumber.toString(), time);
+        data.dataField(SavedDataFieldCall.set("studyno_number", data).setTime(time).setValue(studyNumber.toString()));
 
         // submissionid, this is required information for creating a new study
-        setSavedDataField(data, "submissionid", submissionid.toString(), time);
+        data.dataField(SavedDataFieldCall.set("submissionid", data).setTime(time).setValue(submissionid.toString()));
 
         // create id field, which concatenates studyno_prefix and studyno. This is the basis of study searches.
         // This is more of a proof of concept for concatenate fields than anything.
         confField = conf.getField("id");
         String concat = "";
         for(String fieldKey : confField.getConcatenate()) {
-            SavedDataField tempField = getSimpleSavedDataField(data, fieldKey);
+            SavedDataField tempField = data.dataField(SavedDataFieldCall.get(fieldKey)).getRight();
             concat += extractStringSimpleValue(tempField);
         }
-        setSavedDataField(data, "id", concat, time);
+        data.dataField(SavedDataFieldCall.set("id", data).setValue(concat).setTime(time));
 
         // Set dataarrivaldate
         // TODO: Tieto tulee tiipiistä, toistaiseksi käytetään kuluvaa päivää
-        setSavedDataField(data, "dataarrivaldate", new LocalDate().toString(), time);
+        data.dataField(SavedDataFieldCall.set("dataarrivaldate", data).setValue(new LocalDate().toString()).setTime(time));
 
 
         entity.setData(json.serialize(data));

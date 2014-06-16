@@ -3,11 +3,19 @@ package fi.uta.fsd.metka.model.data.container;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import fi.uta.fsd.metka.model.data.change.Change;
+import fi.uta.fsd.metka.model.data.change.ContainerChange;
+import fi.uta.fsd.metka.model.data.change.RowChange;
 import fi.uta.fsd.metka.model.data.value.SimpleValue;
+import org.joda.time.LocalDateTime;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import java.util.Map;
+
+import static fi.uta.fsd.metka.data.util.ModelValueUtil.createSavedValue;
+import static fi.uta.fsd.metka.data.util.ModelValueUtil.setSimpleValue;
 
 /**
  * Single reference in a reference container is saved through this
@@ -66,6 +74,25 @@ public class SavedReference {
     @JsonIgnore
     public SavedValue getValue() {
         return (modifiedValue != null) ? modifiedValue : originalValue;
+    }
+
+    /**
+     * Convenience method for setting the modified value (the value that is most often set).
+     * Creates a new Simple value with provided value and sets modified value to that.
+     * Returns this instance to facilitate chaining
+     * @param value String to be set to SimpleValue
+     * @param time LocalDateTime object to give to SimpleValue. Can be null in which case a new time instance is created
+     * @param change ContainerChange for the ReferenceContainer that contains this SavedReference
+     * @return reference to this instance
+     */
+    @JsonIgnore
+    public SavedReference setValueToSimple(String value, LocalDateTime time, ContainerChange change) {
+        if(time == null) {
+            time = new LocalDateTime();
+        }
+        this.modifiedValue = setSimpleValue(createSavedValue(time), value);
+        change.put(new RowChange(getRowId()));
+        return this;
     }
 
     /**

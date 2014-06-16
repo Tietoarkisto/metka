@@ -10,16 +10,16 @@ import java.util.Collection;
  * To change this template use File | Settings | File Templates.
  */
 public class ChangeCompareSO {
-    private Integer id;
+    private Long id;
     private Integer begin;
     private Integer end;
     private Collection<ChangeSO> changes;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

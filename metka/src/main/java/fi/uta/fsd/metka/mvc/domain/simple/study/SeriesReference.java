@@ -1,26 +1,19 @@
 package fi.uta.fsd.metka.mvc.domain.simple.study;
 
-/**
- * Created with IntelliJ IDEA.
- * User: lasseku
- * Date: 2/6/14
- * Time: 3:38 PM
- * To change this template use File | Settings | File Templates.
- */
 public class SeriesReference {
-    private Integer id;
+    private Long id;
     private String name;
 
-    public SeriesReference(Integer id, String name) {
+    public SeriesReference(Long id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

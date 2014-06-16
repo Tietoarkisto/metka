@@ -9,7 +9,7 @@ public class RevisionKey implements Serializable {
     public static final long serialVersionUID = 1L;
 
     @Column(name = "REVISIONABLE_ID", updatable = false)
-    private Integer revisionableId;
+    private Long revisionableId;
 
     @Column(name = "REVISION_NO", updatable = false)
     private Integer revisionNo;
@@ -17,16 +17,16 @@ public class RevisionKey implements Serializable {
     public RevisionKey() {
     }
 
-    public RevisionKey(Integer revisionableId, Integer revisionNo) {
+    public RevisionKey(Long revisionableId, Integer revisionNo) {
         this.revisionableId = revisionableId;
         this.revisionNo = revisionNo;
     }
 
-    public Integer getRevisionableId() {
+    public Long getRevisionableId() {
         return revisionableId;
     }
 
-    public void setRevisionableId(Integer revisionableId) {
+    public void setRevisionableId(Long revisionableId) {
         this.revisionableId = revisionableId;
     }
 

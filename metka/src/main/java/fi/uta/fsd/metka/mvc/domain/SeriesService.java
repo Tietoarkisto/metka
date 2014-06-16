@@ -3,6 +3,7 @@ package fi.uta.fsd.metka.mvc.domain;
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.enums.UIRevisionState;
 import fi.uta.fsd.metka.data.repository.SeriesRepository;
+import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.mvc.domain.simple.RevisionViewDataContainer;
@@ -19,7 +20,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static fi.uta.fsd.metka.data.util.ModelFieldUtil.*;
 import static fi.uta.fsd.metka.data.util.ModelValueUtil.*;
 
 @Service
@@ -76,7 +76,7 @@ public class SeriesService {
      * @param id Revisionable id
      * @return
      */
-    public Integer findSingleRevisionNo(Integer id) {
+    public Integer findSingleRevisionNo(Long id) {
         Integer revision = generalSearch.findSingleRevisionNo(id);
         return revision;
     }
@@ -87,8 +87,8 @@ public class SeriesService {
      * @param revision Revision number of the requested revision.
      * @return RevisionViewDataContainer containing requested revision data and its configuration
      */
-    public RevisionViewDataContainer findSingleRevision(Integer id, Integer revision) {
-        RevisionData data = null;
+    public RevisionViewDataContainer findSingleRevision(Long id, Integer revision) {
+        RevisionData data;
         try {
             data = generalSearch.findSingleRevision(id, revision, ConfigurationType.SERIES);
         } catch(IOException ex) {
@@ -121,7 +121,7 @@ public class SeriesService {
         return new RevisionViewDataContainer(single, config);
     }
 
-    public RevisionViewDataContainer editSeries(Integer seriesno) {
+    public RevisionViewDataContainer editSeries(Long seriesno) {
         try {
             RevisionData data = repository.editSeries(seriesno);
             Configuration config = configService.findByTypeAndVersion(data.getConfiguration());
@@ -165,9 +165,9 @@ public class SeriesService {
         so.setId(data.getKey().getId());
         so.setRevision(data.getKey().getRevision());
         so.setState(UIRevisionState.fromRevisionState(data.getState()));
-        so.setByKey("seriesno", extractIntegerSimpleValue(getSimpleSavedDataField(data, "seriesno")));
-        so.setByKey("seriesabb", extractStringSimpleValue(getSimpleSavedDataField(data, "seriesabb")));
-        so.setByKey("seriesname", extractStringSimpleValue(getSimpleSavedDataField(data, "seriesname")));
+        so.setByKey("seriesno", extractIntegerSimpleValue(data.dataField(SavedDataFieldCall.get("seriesno")).getRight()));
+        so.setByKey("seriesabb", extractStringSimpleValue(data.dataField(SavedDataFieldCall.get("seriesabb")).getRight()));
+        so.setByKey("seriesname", extractStringSimpleValue(data.dataField(SavedDataFieldCall.get("seriesname")).getRight()));
 
         return so;
     }

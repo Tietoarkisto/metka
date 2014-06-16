@@ -164,7 +164,7 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
     }
 
     @Override
-    public Configuration findLatestByRevisionableId(Integer id)
+    public Configuration findLatestByRevisionableId(Long id)
             throws IncorrectResultSizeDataAccessException, IOException {
         List<RevisionableEntity> revs =
                 em.createQuery("SELECT r FROM RevisionableEntity r WHERE r.id=:id", RevisionableEntity.class)
@@ -199,7 +199,7 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
     }
 
     @Override
-    public Configuration findConfigurationForRevision(Integer id, Integer revision)
+    public Configuration findConfigurationForRevision(Long id, Integer revision)
             throws IncorrectResultSizeDataAccessException, IOException {
         RevisionData rev = generalRepository.getRevision(id, revision);
         Configuration config = null;

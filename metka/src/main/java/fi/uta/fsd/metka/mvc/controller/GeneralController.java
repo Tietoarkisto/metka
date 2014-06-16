@@ -40,7 +40,7 @@ public class GeneralController {
     }
 
     @RequestMapping(value = "/prev/{type}/{id}", method = RequestMethod.GET)
-    public String prev(@PathVariable String type, @PathVariable Integer id, RedirectAttributes redirectAttributes) {
+    public String prev(@PathVariable String type, @PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             id = service.getAdjancedRevisionableId(id, type, false);
         } catch(NotFoundException e) {
@@ -57,7 +57,7 @@ public class GeneralController {
     }
 
     @RequestMapping(value = "/next/{type}/{id}", method = RequestMethod.GET)
-    public String next(@PathVariable String type, @PathVariable Integer id, RedirectAttributes redirectAttributes) {
+    public String next(@PathVariable String type, @PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             id = service.getAdjancedRevisionableId(id, type, true);
         } catch(NotFoundException e) {
@@ -81,7 +81,7 @@ public class GeneralController {
      *          otherwise they are returned to view the revisionable object
      */
     @RequestMapping(value="/remove/{type}/draft/{id}", method = RequestMethod.GET)
-    public String removeDraft(@PathVariable String type, @PathVariable Integer id, RedirectAttributes redirectAttributes) {
+    public String removeDraft(@PathVariable String type, @PathVariable Long id, RedirectAttributes redirectAttributes) {
         ErrorMessage error = new ErrorMessage();
         DraftRemoveResponse response = service.removeDraft(type, id);
         List<ErrorMessage> errors = new ArrayList<>();
@@ -134,7 +134,7 @@ public class GeneralController {
      *          otherwise they are returned to view the revisionable object
      */
     @RequestMapping(value="/remove/{type}/logical/{id}", method = RequestMethod.GET)
-    public String removeLogical(@PathVariable String type, @PathVariable Integer id, RedirectAttributes redirectAttributes) {
+    public String removeLogical(@PathVariable String type, @PathVariable Long id, RedirectAttributes redirectAttributes) {
         ErrorMessage error = new ErrorMessage();
         LogicalRemoveResponse response = service.removeLogical(type, id);
         List<ErrorMessage> errors = new ArrayList<>();
@@ -179,7 +179,7 @@ public class GeneralController {
     }
 
     @RequestMapping(value="/download/{id}/{revision}", method = RequestMethod.GET)
-    public HttpEntity<byte[]> downloadRevision(@PathVariable Integer id, @PathVariable Integer revision)
+    public HttpEntity<byte[]> downloadRevision(@PathVariable Long id, @PathVariable Integer revision)
             throws IOException {
         String data = service.getRevisionData(id, revision);
         if(StringUtils.isEmpty(data)) {

@@ -1,28 +1,30 @@
 package fi.uta.fsd.metka.data.repository.impl;
 
-import fi.uta.fsd.metka.data.entity.FileLinkQueueEntity;
 import fi.uta.fsd.metka.data.entity.RevisionEntity;
 import fi.uta.fsd.metka.data.entity.RevisionableEntity;
+import fi.uta.fsd.metka.data.entity.StudyAttachmentQueueEntity;
 import fi.uta.fsd.metka.data.entity.impl.StudyEntity;
 import fi.uta.fsd.metka.data.entity.key.RevisionKey;
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
-import fi.uta.fsd.metka.data.enums.FieldType;
 import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.data.repository.GeneralRepository;
 import fi.uta.fsd.metka.data.repository.StudyRepository;
 import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.data.variableParsing.StudyVariablesParser;
+import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
+import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
+import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.container.ReferenceContainerDataField;
 import fi.uta.fsd.metka.model.data.container.SavedDataField;
 import fi.uta.fsd.metka.model.data.container.SavedReference;
 import fi.uta.fsd.metka.model.factories.DataFactory;
 import fi.uta.fsd.metka.model.factories.StudyFactory;
 import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
+import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +38,6 @@ import java.util.List;
 
 import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
 import static fi.uta.fsd.metka.data.util.ModelFieldUtil.*;
-import static fi.uta.fsd.metka.data.util.ModelValueUtil.*;
 
 @Repository
 public class StudyRepositoryImpl implements StudyRepository {
@@ -59,10 +60,10 @@ public class StudyRepositoryImpl implements StudyRepository {
     private StudyVariablesParser variableParser;
 
     @Override
-    public RevisionData getNew(Integer acquisition_number) throws IOException {
+    public RevisionData getNew(Long acquisition_number) throws IOException {
         StudyEntity entity = new StudyEntity();
         // Insert a new study number
-        entity.setStudyNumber(general.getNewSequenceValue(ConfigurationType.STUDY.toValue(), 10000).getSequence());
+        entity.setStudyNumber(general.getNewSequenceValue(ConfigurationType.STUDY.toValue(), 10000L).getSequence());
         em.persist(entity);
 
         RevisionEntity revision = entity.createNextRevision();
@@ -201,13 +202,8 @@ public class StudyRepositoryImpl implements StudyRepository {
             return false;
         }
 
-        // TODO: Make setting aipcomplete better
-        if(data.getField("aipcomplete") == null) {
-            SavedDataField aip = new SavedDataField("aipcomplete");
-            aip.setModifiedValue(setSimpleValue(createSavedValue(new LocalDateTime()), new LocalDate().toString()));
-            data.putField(aip);
-            data.putChange(new Change("aipcomplete"));
-        }
+        // TODO: check return value for errors
+        data.dataField(SavedDataFieldCall.set("aipcomplete", data).setValue(new LocalDate().toString()));
 
         // Change state in revision data to approved.
         // Serialize data back to revision entity.
@@ -274,7 +270,7 @@ public class StudyRepositoryImpl implements StudyRepository {
 
 
     @Override
-    public void checkFileLinkQueue(Integer id, Integer revision) throws IOException {
+    public void checkFileLinkQueue(Long id, Integer revision) throws IOException {
         RevisionableEntity revisionable = em.find(RevisionableEntity.class, id);
         RevisionEntity entity = em.find(RevisionEntity.class, new RevisionKey(id, revision));
         if(revisionable == null || ConfigurationType.valueOf(revisionable.getType()) != ConfigurationType.STUDY || entity.getState() != RevisionState.DRAFT) {
@@ -288,65 +284,50 @@ public class StudyRepositoryImpl implements StudyRepository {
         boolean changes = false;
 
         // Check for existing FileLinkQueue events
-        List<FileLinkQueueEntity> events = em
-                .createQuery("SELECT e FROM FileLinkQueueEntity e WHERE e.targetId=:id", FileLinkQueueEntity.class)
-                .setParameter("id", id)
+        List<StudyAttachmentQueueEntity> events = em
+                .createQuery("SELECT e FROM StudyAttachmentQueueEntity e WHERE e.targetStudy=:study", StudyAttachmentQueueEntity.class)
+                .setParameter("study", id)
                 .getResultList();
 
         // For each FileLinkQueueEntity
-        for(FileLinkQueueEntity event : events) {
-            Field field = config.getField(event.getTargetField());
-            // Sanity check, should field actually exist in this data, is it not a REFERENCECONTAINER or is it a subfield (handle those somewhere else
-            if(field == null || field.getType() != FieldType.REFERENCECONTAINER || field.getSubfield()) {
-                // Field should not exist, is not a REFERENCECONTAINER or is a subfield, can't add reference.
-                continue;
-            }
-
+        for(StudyAttachmentQueueEntity event : events) {
             // Check that references are found from data
-            ReferenceContainerDataField references = getSimpleReferenceContainerDataField(data, event.getTargetField(), config);
+            ReferenceContainerDataField references = data.dataField(ReferenceContainerDataFieldCall.get(event.getStudyAttachmentField()).setConfiguration(config)).getRight();
             if(references == null) { // Missing REFERENCECONTAINER, add container
-                references = new ReferenceContainerDataField(event.getTargetField());
-            }
-            boolean found = false;
-            for(SavedReference reference : references.getReferences()) {
-                if(!reference.hasValue()) {
-                    continue;
-                }
-                if(reference.valueEquals(event.getFileId().toString())) {
-                    found = true;
-                    break;
-                }
-            }
-            // Reference was not found
-            if(!found) {
-                // Add missing reference
-                SavedReference reference = new SavedReference(event.getTargetField(), data.getNewRowId());
-                reference.setModifiedValue(setSimpleValue(createSavedValue(time), event.getFileId().toString()));
-                references.getReferences().add(reference);
-                changes = true;
-                // Put references to data just in case it was not already there.
+                references = new ReferenceContainerDataField(event.getStudyAttachmentField());
+                // We are going to add a reference so this needs to happen anyway.
                 data.putField(references);
             }
+
+            Pair<StatusCode, SavedReference> srPair = findOrCreateReferenceWithValue(data, references, event.getStudyAttachmentId().toString(), data.getChanges(), time);
+            if(srPair.getRight() == null) {
+                // Something wrong with getting or creating the reference, can't continue
+                // TODO: Log error
+                continue;
+            }
+            if(srPair.getLeft() == StatusCode.NEW_REFERENCE) {
+                changes = true;
+            }
+
             // Check for variable file
             if(event.getType() != null) {
                 // Check for variable file reference
-                SavedDataField refField = getSimpleSavedDataField(data, "variablefile", config);
-                // If missing a reference then create new variablefile saved data field
-                if(refField == null) {
-                    refField = new SavedDataField("variablefile");
-                    data.putField(refField);
+                SavedDataField refField = data.dataField(SavedDataFieldCall.get("variablefile").setConfiguration(config)).getRight();
+                if(refField != null && !refField.valueEquals(event.getStudyAttachmentId().toString())) {
+                    // There is already a variable file with different id, don't parse this file as a variable file
+                    continue;
+                }
+                // Try to set events study attachment id to variablefile field, then if successfull parse the file and notify of change
+                Pair<StatusCode, SavedDataField> sdPair = data.dataField(SavedDataFieldCall.set("variablefile", data).setTime(time).setValue(event.getStudyAttachmentId().toString()).setConfiguration(config));
+                if(sdPair.getRight() == null) {
+                    // Setting the value was unsuccessful don't continue with parsing
+                    // TODO: Log error
+                    continue;
+                }
+                if(sdPair.getLeft() != StatusCode.NO_CHANGE_IN_VALUE) {
                     changes = true;
                 }
-                // If no saved reference value then set event.fileId as reference value
-                if(!refField.hasValue()) {
-                    refField.setModifiedValue(setSimpleValue(createSavedValue(time), event.getFileId().toString()));
-                    changes = true;
-                }
-                // If saved value matches event fileId then perform a merge parse operation otherwise variable file is not parsed
-                if(refField.getActualValue().equals(event.getFileId().toString())) {
-                    // TODO: Use new variables parser
-                    changes = variableParser.merge(data, event.getType(), config) | changes;
-                }
+                changes = variableParser.merge(data, event.getType(), config) | changes;
             }
         }
 
@@ -356,8 +337,8 @@ public class StudyRepositoryImpl implements StudyRepository {
         }
 
         // Remove FileLinkQueue events
-        em.createQuery("DELETE FROM FileLinkQueueEntity e WHERE e.targetId=:id")
-                .setParameter("id", id)
+        em.createQuery("DELETE FROM StudyAttachmentQueueEntity e WHERE e.targetStudy=:study")
+                .setParameter("study", id)
                 .executeUpdate();
     }
 }

@@ -41,7 +41,21 @@ public class ReferenceContainerDataField extends DataField {
         return null;
     }
 
+    /**
+     * Adds reference to list if not already present
+     * @param reference
+     */
+    @JsonIgnore
+    public void putReference(SavedReference reference) {
+        if(reference.getRowId() != null || !getKey().equals(reference.getKey())) {
+            if(getReference(reference.getRowId()) == null) {
+                references.add(reference);
+            }
+        }
+    }
+
     @Override
+    @JsonIgnore
     public DataField copy() {
         ReferenceContainerDataField container = new ReferenceContainerDataField(getKey());
         for(SavedReference reference : references) {

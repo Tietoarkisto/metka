@@ -5,6 +5,7 @@ import fi.uta.fsd.metka.data.entity.RevisionableEntity;
 import fi.uta.fsd.metka.data.entity.impl.SeriesEntity;
 import fi.uta.fsd.metka.data.entity.key.RevisionKey;
 import fi.uta.fsd.metka.data.util.JSONUtil;
+import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.SavedDataField;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchSO;
@@ -22,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static fi.uta.fsd.metka.data.util.ModelFieldUtil.*;
 import static fi.uta.fsd.metka.data.util.ConversionUtil.*;
 
 @Repository("seriesSearch")
@@ -52,7 +52,7 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
 
             RevisionData revData = json.readRevisionDataFromString(data);
             // Use the method with less sanity checks since there's no point in getting configuration here.
-            SavedDataField field = getSimpleSavedDataField(revData, "seriesabb");
+            SavedDataField field = revData.dataField(SavedDataFieldCall.get("seriesabb")).getRight();
             if(!StringUtils.isEmpty(field.getActualValue())) list.add(field.getActualValue());
         }
         Collections.sort(list);
@@ -101,7 +101,7 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
 
     private TypedQuery<RevisionableEntity> formFindQuery(SeriesSearchSO query) {
         String qry = "SELECT r FROM RevisionableEntity r";
-        Integer seriesno = stringToInteger(query.getByKey("seriesno"));
+        Long seriesno = stringToLong(query.getByKey("seriesno"));
         if(query != null && (seriesno != null || !query.isSearchRemoved())) {
             qry += " WHERE ";
             if(seriesno != null) {
@@ -126,13 +126,13 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
 
         RevisionData data = json.readRevisionDataFromString(revision.getData());
         if(!StringUtils.isEmpty(query.getByKey("seriesabb"))) {
-            SavedDataField field = getSimpleSavedDataField(data, "seriesabb");
+            SavedDataField field = data.dataField(SavedDataFieldCall.get("seriesabb")).getRight();
             if(StringUtils.isEmpty(field.getActualValue()) || !field.getActualValue().toUpperCase().equals(((String)query.getByKey("seriesabb")).toUpperCase())) {
                 return null;
             }
         }
         if(!StringUtils.isEmpty(query.getByKey("seriesname"))) {
-            SavedDataField field = getSimpleSavedDataField(data, "seriesname");
+            SavedDataField field = data.dataField(SavedDataFieldCall.get("seriesname")).getRight();
             if(StringUtils.isEmpty(field.getActualValue()) || !field.getActualValue().toUpperCase().contains(((String)query.getByKey("seriesname")).toUpperCase())) {
                 return null;
             }

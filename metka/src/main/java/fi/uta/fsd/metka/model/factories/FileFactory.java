@@ -5,6 +5,7 @@ import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.data.util.JSONUtil;
+import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import org.joda.time.LocalDateTime;
@@ -13,8 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
-
-import static fi.uta.fsd.metka.data.util.ModelFieldUtil.*;
 
 /**
  * Contains functionality related to File-revisions
@@ -40,7 +39,7 @@ public class FileFactory extends DataFactory {
      *
      * @param entity RevisionEntity for which this revision data is created.
      */
-    public RevisionData newStudyAttachmentData(RevisionEntity entity, String path, Integer studyId) throws IOException {
+    public RevisionData newStudyAttachmentData(RevisionEntity entity, String path, Long studyId) throws IOException {
         if(StringUtils.isEmpty(entity.getData()) && entity.getState() != RevisionState.DRAFT)
             return null;
 
@@ -56,8 +55,8 @@ public class FileFactory extends DataFactory {
 
         RevisionData data = createInitialRevision(entity, conf, time);
 
-        setSavedDataField(data, "file", path, time);
-        setSavedDataField(data, "study", studyId.toString(), time);
+        data.dataField(SavedDataFieldCall.set("file", data).setValue(path).setTime(time));
+        data.dataField(SavedDataFieldCall.set("study", data).setValue(studyId.toString()).setTime(time));
 
         entity.setData(json.serialize(data));
 

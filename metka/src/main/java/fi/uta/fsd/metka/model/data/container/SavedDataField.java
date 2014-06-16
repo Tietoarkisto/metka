@@ -3,11 +3,17 @@ package fi.uta.fsd.metka.model.data.container;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.value.SimpleValue;
+import org.joda.time.LocalDateTime;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+
+import java.util.Map;
+
+import static fi.uta.fsd.metka.data.util.ModelValueUtil.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SavedDataField extends DataField {
@@ -57,13 +63,20 @@ public class SavedDataField extends DataField {
 
     /**
      * Convenience method for setting the modified value (the value that is most often set).
+     * Creates a new Simple value with provided value and sets modified value to that.
      * Returns this instance to facilitate chaining
-     * @param value SavedValue to be set to modified value
+     * @param value String to be set to SimpleValue
+     * @param time LocalDateTime object to give to SimpleValue. Can be null in which case a new time instance is created
+     * @param changeMap Map of changes that will contain a change notification for this field
      * @return reference to this instance
      */
     @JsonIgnore
-    public SavedDataField setValue(SavedValue value) {
-        this.modifiedValue = value;
+    public SavedDataField setValueToSimple(String value, LocalDateTime time, Map<String, Change> changeMap) {
+        if(time == null) {
+            time = new LocalDateTime();
+        }
+        this.modifiedValue = setSimpleValue(createSavedValue(time), value);
+        changeMap.put(getKey(), new Change(getKey()));
         return this;
     }
 

@@ -25,7 +25,7 @@ public class GeneralService {
      * @param forward do we want next or previous revisionable
      * @return Id of the adjanced revisionable object. If not found then error is thrown instead.
      */
-    public Integer getAdjancedRevisionableId(Integer currentId, String type, boolean forward) throws NotFoundException {
+    public Long getAdjancedRevisionableId(Long currentId, String type, boolean forward) throws NotFoundException {
         return repository.getAdjancedRevisionableId(currentId, type, forward);
     }
 
@@ -38,7 +38,7 @@ public class GeneralService {
      * @param id - Id of the revisionable object.
      * @return DraftRemoveResponse enum returned by repository. Success or failure of the operation can be determined from this.
      */
-    public DraftRemoveResponse removeDraft(String type, Integer id) {
+    public DraftRemoveResponse removeDraft(String type, Long id) {
         return repository.removeDraft(type, id);
     }
 
@@ -51,15 +51,15 @@ public class GeneralService {
      * @param id - Id of the revisionable object.
      * @return LogicalRemoveResponse enum returned by repository. Success or failure of the operation can be determined from this.
      */
-    public LogicalRemoveResponse removeLogical(String type, Integer id) {
+    public LogicalRemoveResponse removeLogical(String type, Long id) {
         return repository.removeLogical(type, id);
     }
 
-    public RevisionData getRevision(Integer id, Integer revision) throws IOException {
+    public RevisionData getRevision(Long id, Integer revision) throws IOException {
         return repository.getRevision(id, revision);
     }
 
-    public String getRevisionData(Integer id, Integer revision) {
+    public String getRevisionData(Long id, Integer revision) {
         return repository.getRevisionData(id, revision);
     }
 }

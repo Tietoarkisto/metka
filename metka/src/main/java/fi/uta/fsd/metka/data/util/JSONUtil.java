@@ -2,7 +2,7 @@ package fi.uta.fsd.metka.data.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fi.uta.fsd.metka.model.ModelBase;
+import fi.uta.fsd.metka.model.interfaces.ModelBase;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
@@ -16,7 +16,10 @@ import java.io.IOException;
  * Handles general JSON deserialization and serialization operations.
  */
 @Service
-public class JSONUtil {
+public final class JSONUtil {
+    // Private constructor to stop instantiation
+    private JSONUtil() {}
+
     @Autowired
     private ObjectMapper metkaObjectMapper;
 

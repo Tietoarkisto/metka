@@ -9,8 +9,8 @@ import java.util.List;
 
 @Transactional(readOnly = true)
 public interface HistoryRepository {
-    public List<RevisionData> getRevisionHistory(Integer id) throws IOException;
+    public List<RevisionData> getRevisionHistory(Long id) throws IOException;
 
     public List<RevisionData> getRevisionsForComparison(ChangeCompareRequest request) throws IOException;
-    public RevisionData getRevisionByKey(Integer id, Integer revision) throws IOException;
+    public RevisionData getRevisionByKey(Long id, Integer revision) throws IOException;
 }

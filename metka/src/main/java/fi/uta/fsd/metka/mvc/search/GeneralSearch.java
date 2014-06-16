@@ -16,9 +16,8 @@ public interface GeneralSearch {
      *
      * @param id Id of the requested revisionable.
      * @return Revision number of either a draft or the latest approved revision.
-     * @throws java.io.IOException
      */
-    public Integer findSingleRevisionNo(Integer id);
+    public Integer findSingleRevisionNo(Long id);
 
     /**
      * Return a specific revision.
@@ -27,7 +26,7 @@ public interface GeneralSearch {
      * @return RevisionData of the requested revision and null if revision was not found.
      * @throws java.io.IOException
      */
-    public RevisionData findSingleRevision(Integer id, Integer revision, ConfigurationType type) throws IOException;
+    public RevisionData findSingleRevision(Long id, Integer revision, ConfigurationType type) throws IOException;
 
     // TODO: Remove this
     public List<RevisionDataRemovedContainer> tempFindAllStudies() throws IOException;

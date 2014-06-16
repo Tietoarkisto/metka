@@ -3,6 +3,7 @@ package fi.uta.fsd.metka.mvc.domain;
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.enums.UIRevisionState;
 import fi.uta.fsd.metka.data.repository.StudyRepository;
+import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.mvc.domain.simple.RevisionViewDataContainer;
@@ -18,7 +19,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static fi.uta.fsd.metka.data.util.ModelFieldUtil.*;
 import static fi.uta.fsd.metka.data.util.ModelValueUtil.*;
 
 @Service
@@ -71,8 +71,8 @@ public class StudyService {
         so.setId(data.getKey().getId());
         so.setRevision(data.getKey().getRevision());
         so.setState(UIRevisionState.fromRevisionState(data.getState()));
-        so.setByKey("id", extractStringSimpleValue(getSimpleSavedDataField(data, "id")));
-        so.setByKey("title", extractStringSimpleValue(getSimpleSavedDataField(data, "title")));
+        so.setByKey("id", extractStringSimpleValue(data.dataField(SavedDataFieldCall.get("id")).getRight()));
+        so.setByKey("title", extractStringSimpleValue(data.dataField(SavedDataFieldCall.get("title")).getRight()));
 
         return so;
     }
@@ -82,7 +82,7 @@ public class StudyService {
      * @param id Revisionable id
      * @return
      */
-    public Integer findSingleRevisionNo(Integer id) {
+    public Integer findSingleRevisionNo(Long id) {
         Integer revision = generalSearch.findSingleRevisionNo(id);
         return revision;
     }
@@ -93,7 +93,7 @@ public class StudyService {
      * @param revision Revision number
      * @return Revision data converted to TransferObject
      */
-    public RevisionViewDataContainer findSingleRevision(Integer id, Integer revision) {
+    public RevisionViewDataContainer findSingleRevision(Long id, Integer revision) {
         RevisionData data = null;
 
         // Check for FileLinkQueue events.
@@ -125,8 +125,8 @@ public class StudyService {
         return new RevisionViewDataContainer(single, config);
     }
 
-    public RevisionViewDataContainer newStudy(Integer acquisition_number) {
-        RevisionData data = null;
+    public RevisionViewDataContainer newStudy(Long acquisition_number) {
+        RevisionData data;
         try {
             data = repository.getNew(acquisition_number);
         } catch(IOException ex) {
@@ -140,7 +140,7 @@ public class StudyService {
         return new RevisionViewDataContainer(single, config);
     }
 
-    public RevisionViewDataContainer editStudy(Integer id) {
+    public RevisionViewDataContainer editStudy(Long id) {
         try {
             RevisionData data = repository.editStudy(id);
             Configuration config = configService.findByTypeAndVersion(data.getConfiguration());

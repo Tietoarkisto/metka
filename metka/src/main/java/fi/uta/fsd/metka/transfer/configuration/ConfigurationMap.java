@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import fi.uta.fsd.metka.model.ModelBase;
+import fi.uta.fsd.metka.model.interfaces.ModelBase;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 
 import java.io.IOException;

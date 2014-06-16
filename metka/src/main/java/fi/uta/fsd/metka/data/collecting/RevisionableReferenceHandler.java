@@ -4,6 +4,7 @@ import fi.uta.fsd.metka.data.entity.RevisionEntity;
 import fi.uta.fsd.metka.data.entity.RevisionableEntity;
 import fi.uta.fsd.metka.data.enums.FieldType;
 import fi.uta.fsd.metka.data.enums.ReferenceTitleType;
+import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Reference;
 import fi.uta.fsd.metka.model.data.RevisionData;
@@ -15,8 +16,6 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.List;
-
-import static fi.uta.fsd.metka.data.util.ModelFieldUtil.*;
 
 @Service
 class RevisionableReferenceHandler extends ReferenceHandler {
@@ -54,7 +53,7 @@ class RevisionableReferenceHandler extends ReferenceHandler {
                 RevisionData data = json.readRevisionDataFromString(revision.getData());
                 Configuration config = configurations.findConfiguration(data.getConfiguration());
                 // TODO: Fetch value based on path, not just assumption that it's a top level field
-                SavedDataField saved = getSimpleSavedDataField(data, reference.getTitlePath());
+                SavedDataField saved = data.dataField(SavedDataFieldCall.get(reference.getTitlePath())).getRight();
                 if(saved != null) {
                     if(config.getField(reference.getTitlePath()).getType() == FieldType.SELECTION) {
                         title = new ReferenceOptionTitle(ReferenceTitleType.VALUE, saved.getActualValue());

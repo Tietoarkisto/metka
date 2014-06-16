@@ -1,11 +1,10 @@
 package fi.uta.fsd.metka.data.repository.impl;
 
-import fi.uta.fsd.metka.data.entity.FileLinkQueueEntity;
 import fi.uta.fsd.metka.data.entity.RevisionEntity;
 import fi.uta.fsd.metka.data.entity.RevisionableEntity;
+import fi.uta.fsd.metka.data.entity.StudyAttachmentQueueEntity;
 import fi.uta.fsd.metka.data.entity.impl.StudyAttachmentEntity;
 import fi.uta.fsd.metka.data.entity.impl.StudyEntity;
-import fi.uta.fsd.metka.data.entity.key.RevisionableKey;
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.data.enums.VariableDataType;
@@ -13,6 +12,7 @@ import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.data.repository.GeneralRepository;
 import fi.uta.fsd.metka.data.repository.StudyAttachmentRepository;
 import fi.uta.fsd.metka.data.util.JSONUtil;
+import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.RevisionData;
@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.util.List;
 
 import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
-import static fi.uta.fsd.metka.data.util.ModelFieldUtil.*;
 
 @Repository
 public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository {
@@ -55,18 +54,18 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
      * If no existing study attachment is found then new attachment is created.
      * Due to inability to process through information that is not yet saved to database a full search
      * has to be performed to check whether study attachment exists.
-     * TODO: Change searching for existing study attachment to use lucene
      *
      * @param path Path that should be present in the study attachment
      * @return RevisionData for a study attachment
      * @throws IOException
      */
     @Override
-    public RevisionData studyAttachmentForPath(String path, Integer studyId) throws IOException {
+    public RevisionData studyAttachmentForPath(String path, Long studyId) throws IOException {
         // Get all study attachments
         List<StudyAttachmentEntity> attachments = em.
-                createQuery("SELECT r FROM StudyAttachmentEntity r WHERE r.removed = false", StudyAttachmentEntity.class).
-                getResultList();
+                createQuery("SELECT r FROM StudyAttachmentEntity r WHERE r.removed = false AND r.filePath=:path", StudyAttachmentEntity.class)
+                .setParameter("path", path)
+                .getResultList();
 
         // Go through attachments checking their latest revision
         // If there is a 'file' field and if the value in that field matches given path then break
@@ -76,12 +75,15 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
             revisionEntity = em.
                     find(RevisionEntity.class, attachment.latestRevisionKey());
             revision = json.readRevisionDataFromString(revisionEntity.getData());
-            SavedDataField fileField = getSimpleSavedDataField(revision, "file");
+            SavedDataField fileField = revision.dataField(SavedDataFieldCall.get("file")).getRight();
             if(fileField != null && fileField.hasValue() && fileField.getActualValue().equals(path)) {
+                // Path match found
                 break;
+            } else if(fileField != null && fileField.hasValue()) {
+                // Update path to latest
+                attachment.setFilePath(fileField.getActualValue());
             }
             revision = null;
-            revisionEntity = null;
         }
 
         // No previous study attachment with path found
@@ -93,7 +95,7 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
             revisionEntity = entity.createNextRevision();
 
             /*
-             * creates initial dataset for the first draft any exceptions thrown should force rollback
+             * creates initial data set for the first draft any exceptions thrown should force rollback
              * automatically.
              * This assumes the entity has empty data field and is a draft.
             */
@@ -103,7 +105,7 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
             entity.setLatestRevisionNo(revisionEntity.getKey().getRevisionNo());
         } else {
             // Check that this revision belongs to given study
-            SavedDataField studyField = getSimpleSavedDataField(revision, "study");
+            SavedDataField studyField = revision.dataField(SavedDataFieldCall.get("study")).getRight();
             if(studyField == null || !studyField.hasValue() || !studyField.getActualValue().equals(studyId.toString())) {
                 // TODO: Attachment exists but it's marked for some other study, log exception, we can't continue
                 return null;
@@ -115,8 +117,8 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
 
 
     @Override
-    public RevisionData getEditableStudyAttachmentRevision(Integer id) throws IOException {
-        RevisionableEntity file = em.find(RevisionableEntity.class, new RevisionableKey(ConfigurationType.STUDY_ATTACHMENT, id));
+    public RevisionData getEditableStudyAttachmentRevision(Long id) throws IOException {
+        RevisionableEntity file = em.find(RevisionableEntity.class, id);
 
         // Sanity check
         if(file == null || ConfigurationType.valueOf(file.getType()) != ConfigurationType.STUDY_ATTACHMENT || file.getLatestRevisionNo() == null) {
@@ -228,22 +230,34 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
     }
 
     @Override
-    public void addFileLinkEvent(Integer targetId, Integer fileId, String key, String path) throws IOException {
-        FileLinkQueueEntity fileLink = new FileLinkQueueEntity();
-        fileLink.setTargetId(targetId);
-        fileLink.setTargetField(key);
-        fileLink.setFileId(fileId);
-        fileLink.setPath(path);
-        // Check if target is study
-        StudyEntity study = em.find(StudyEntity.class, targetId);
-        fileLink.setType(null);
-        boolean parse = true;
+    public void addFileLinkEvent(Long studyId, Long fileId, String key, String path) throws IOException {
+        StudyEntity study = em.find(StudyEntity.class, studyId);
         if(study == null) {
-            parse = false;
-            // Target is a study, commence with further checking, if a check fails then stop the operation and don't add a parsing requirement
+            // No study with given id, nothing to attach to
+            return;
         }
+        StudyAttachmentQueueEntity queue = new StudyAttachmentQueueEntity();
+        queue.setTargetStudy(studyId);
+        queue.setStudyAttachmentId(fileId);
+        queue.setStudyAttachmentField(key);
+        queue.setPath(path);
+        // Check if target is study
+
+        queue.setType(null);
+        boolean parse = true;
+        // Check if file is variable file name
         if(parse) {
-            // Check if file is variable file
+            if(!FilenameUtils.getName(path).substring(0, 3).toUpperCase().equals("DAF")) {
+                // Variable file names need to start with DAF
+                parse = false;
+            }
+        }
+        // Check if file is variable file based on file extension
+        if(parse) {
+            if(!FilenameUtils.getExtension(path).toUpperCase().equals("POR")) {
+                // For now the only option. If more variable file types are added then this needs to be changed to a switch case
+                parse = false;
+            }
         }
         if(parse) {
             // Check if study has a different variable file already using variablefile reference and fileId
@@ -251,7 +265,7 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
             // We can assume that we get a revision since other points before this depend on the existence of the revision
             RevisionEntity revEntity = em.find(RevisionEntity.class, study.latestRevisionKey());
             RevisionData data = json.readRevisionDataFromString(revEntity.getData());
-            SavedDataField field = getSimpleSavedDataField(data, "variablefile");
+            SavedDataField field = data.dataField(SavedDataFieldCall.get("variablefile")).getRight();
             if(field != null && field.hasValue()) {
                 if(!field.getActualValue().equals(fileId.toString())) {
                     parse = false;
@@ -260,13 +274,13 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
         }
         if(parse) {
             // Check if queue already contains a file with different path marked for variable parsing
-            List<FileLinkQueueEntity> fileLinks =
+            List<StudyAttachmentQueueEntity> fileLinks =
                     em.createQuery(
-                        "SELECT l FROM FileLinkQueueEntity l " +
-                        "WHERE l.targetId=:target AND l.fileId <> :file AND l.type IS NOT NULL",
-                        FileLinkQueueEntity.class)
-                    .setParameter("target", targetId)
-                    .setParameter("file", fileId)
+                        "SELECT l FROM StudyAttachmentQueueEntity l " +
+                        "WHERE l.targetStudy=:study AND l.studyAttachmentId <> :attachment AND l.type IS NOT NULL",
+                            StudyAttachmentQueueEntity.class)
+                    .setParameter("study", studyId)
+                    .setParameter("attachment", fileId)
                     .getResultList();
             if(fileLinks.size() > 0) {
                 parse = false;
@@ -275,10 +289,10 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
         if(parse) {
             // Add a variable parser type based on file extension
             if(FilenameUtils.getExtension(path).toUpperCase().equals("POR")) {
-                fileLink.setType(VariableDataType.POR);
+                queue.setType(VariableDataType.POR);
             }
         }
 
-        em.persist(fileLink);
+        em.persist(queue);
     }
 }

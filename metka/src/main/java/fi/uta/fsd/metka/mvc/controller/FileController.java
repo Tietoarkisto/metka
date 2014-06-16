@@ -51,7 +51,7 @@ public class FileController {
 
     @RequestMapping(value = "edit/{id}", method = {RequestMethod.POST},
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody RevisionViewDataContainer edit(@PathVariable Integer id) {
+    public @ResponseBody RevisionViewDataContainer edit(@PathVariable Long id) {
         RevisionViewDataContainer container = fileService.findLatestStudyAttachmentRevisionForEdit(id);
         return container;
     }
@@ -63,7 +63,7 @@ public class FileController {
      * @throws Exception
      */
     @RequestMapping(value = "upload", method = {RequestMethod.POST}, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String upload(@RequestParam("file") MultipartFile file, @RequestParam("id") Integer id, @RequestParam("targetField") String key) throws Exception {
+    public @ResponseBody String upload(@RequestParam("file") MultipartFile file, @RequestParam("id") Long id, @RequestParam("targetField") String key) throws Exception {
         try {
             String fileName = new File(file.getOriginalFilename()).getName();
             String path = fileService.saveFile(file, fileName, id);

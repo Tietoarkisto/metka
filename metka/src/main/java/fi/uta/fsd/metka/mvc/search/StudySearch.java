@@ -14,5 +14,5 @@ public interface StudySearch {
      * @return Revision number of either a draft or the latest approved revision.
      * @throws java.io.IOException
      */
-    public Integer findSingleStudyRevisionNo(Integer id);
+    public Integer findSingleStudyRevisionNo(Long id);
 }

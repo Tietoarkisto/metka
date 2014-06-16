@@ -20,7 +20,7 @@ public class HistoryService {
     @Autowired
     private HistoryRepository repository;
 
-    public List<RevisionSO> getRevisionHistory(Integer id) {
+    public List<RevisionSO> getRevisionHistory(Long id) {
         List<RevisionSO> revisions = new ArrayList<RevisionSO>();
         List<RevisionData> datas = null;
         try {

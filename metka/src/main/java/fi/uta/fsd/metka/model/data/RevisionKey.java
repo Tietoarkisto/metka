@@ -13,16 +13,16 @@ import javax.xml.bind.annotation.XmlElement;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RevisionKey implements Comparable<RevisionKey> {
-    @XmlElement private final Integer id;
+    @XmlElement private final Long id;
     @XmlElement private final Integer revision;
 
     @JsonCreator
-    public RevisionKey(@JsonProperty("id")Integer id, @JsonProperty("revision")Integer revision) {
+    public RevisionKey(@JsonProperty("id")Long id, @JsonProperty("revision")Integer revision) {
         this.id = id;
         this.revision = revision;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 

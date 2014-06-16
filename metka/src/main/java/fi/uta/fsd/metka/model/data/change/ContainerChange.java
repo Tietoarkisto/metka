@@ -26,17 +26,10 @@ public class ContainerChange extends Change {
     // Helpers
     @JsonIgnore
     public void put(RowChange row) {
-        if(row != null) {
-            rows.put(row.getRowId(), row);
-        }
+        rows.put(row.getRowId(), row);
     }
 
     public RowChange get(Integer rowId) {
-        for(RowChange row : rows.values()) {
-            if(row.getRowId().equals(rowId)) {
-                return row;
-            }
-        }
-        return null;
+        return rows.get(rowId);
     }
 }

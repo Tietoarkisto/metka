@@ -14,21 +14,23 @@ import javax.persistence.Entity;
  * These are exclusively used to speed up data manipulation operations and should not be used outside of variable parsing.
  * STUDY_VARIABLES_ID is not a key field (primary or foreign) and it is assumed to be filled when a new
  * study variable is created.
+ *
+ * TODO: Add study id as a straight reference so that no joins need to be created to find all variables of a study. The link is immutable anyway so it doesn't hurt to have it here.
  */
 @Entity
 @DiscriminatorValue(ConfigurationType.Values.STUDY_VARIABLE)
 public class StudyVariableEntity extends RevisionableEntity {
     @Column(name = "STUDY_VARIABLES_ID")
-    private Integer studyVariablesId;
+    private Long studyVariablesId;
 
     @Column(name = "VARIABLE_ID")
     private String variableId;
 
-    public Integer getStudyVariablesId() {
+    public Long getStudyVariablesId() {
         return studyVariablesId;
     }
 
-    public void setStudyVariablesId(Integer studyVariablesId) {
+    public void setStudyVariablesId(Long studyVariablesId) {
         this.studyVariablesId = studyVariablesId;
     }
 

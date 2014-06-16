@@ -9,9 +9,13 @@ import fi.uta.fsd.metka.data.enums.VariableDataType;
 import fi.uta.fsd.metka.data.repository.GeneralRepository;
 import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.data.variableParsing.StudyVariablesParser;
+import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
+import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
+import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.change.Change;
+import fi.uta.fsd.metka.model.data.change.ContainerChange;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.factories.DataFactory;
 import fi.uta.fsd.metka.model.factories.VariablesFactory;
@@ -31,7 +35,6 @@ import java.util.*;
 
 import static fi.uta.fsd.metka.data.util.ModelFieldUtil.*;
 import static fi.uta.fsd.metka.data.util.ModelValueUtil.*;
-import static fi.uta.fsd.metka.data.util.ConversionUtil.*;
 
 @Repository
 public class StudyVariablesParserImpl implements StudyVariablesParser {
@@ -58,17 +61,17 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
 
         LocalDateTime time = new LocalDateTime();
 
-        // *********************
+        // **********************
         // StudyAttachment checks
-        // *********************
+        // **********************
         // Check that study has attached variables file and get the file id, attaching the file should happen before this step so we can expect it to be present
-        SavedDataField field = getSimpleSavedDataField(study, "variablefile", studyConfig);
-        Integer varFileId;
+        SavedDataField field = study.dataField(SavedDataFieldCall.get("variablefile").setConfiguration(studyConfig)).getRight();
+        Long varFileId;
         if(field == null || !field.hasValue()) {
             // TODO: Log exception, there is no attached variables file, can't continue.
             return result;
         } else {
-            varFileId = stringToInteger(field.getActualValue());
+            varFileId = extractIntegerSimpleValue(field);
         }
 
         // Get variable file revision data
@@ -91,7 +94,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         }
 
         // Check for file path from attachment
-        field = getSimpleSavedDataField(attachmentData, "file");
+        field = attachmentData.dataField(SavedDataFieldCall.get("file")).getRight();
         if(field == null || !field.hasValue() || StringUtils.isEmpty(field.getActualValue())) {
             // TODO: Log exception, something is wrong since no path is attached to the file but we are still trying to parse it for variables
             return result;
@@ -100,8 +103,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         // *********************
         // StudyVariables checks
         // *********************
-        StudyVariablesEntity variablesEntity = null;
-        field = getSimpleSavedDataField(study, "variables", studyConfig);
+        field = study.dataField(SavedDataFieldCall.get("variables").setConfiguration(studyConfig)).getRight();
         if(field == null) {
             field = new SavedDataField("variables");
             study.putField(field);
@@ -114,19 +116,20 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                                 "WHERE v.studyId=:study", StudyVariablesEntity.class)
                         .setParameter("study", study.getKey().getId())
                         .getResultList();
+        if(varsEntityList.size() > 1) {
+            // TODO: Log error, this situation should not happen, each study should only have one variables entity
+            return result;
+        }
+
+        StudyVariablesEntity variablesEntity;
         if(varsEntityList.size() == 0) {
             // Need to create new variables object since none apparently exist for this study.
             variablesEntity = new StudyVariablesEntity();
             variablesEntity.setStudyId(study.getKey().getId());
             em.persist(variablesEntity);
         } else {
-            if(varsEntityList.size() > 1) {
-                // TODO: Log error, this situation should not happen, each study should only have one variables entity
-                return result;
-            } else {
-                // Get the variables entity
-                variablesEntity = varsEntityList.get(0);
-            }
+            // Get the variables entity
+            variablesEntity = varsEntityList.get(0);
         }
 
         // Check to see if study knows about the variables, if not attach them, if there's a value then check it matches found variables
@@ -180,12 +183,12 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             // Should not be possible
             return result;
         }
-        field = getSimpleSavedDataField(variablesData, "study");
+        field = variablesData.dataField(SavedDataFieldCall.get("study")).getRight();
         if(field == null || !field.hasValue() || !field.getActualValue().equals(study.getKey().getId().toString())) {
             // TODO: Something wrong with study link, log error, can't continue
             return result;
         }
-        field = getSimpleSavedDataField(variablesData, "file");
+        field = variablesData.dataField(SavedDataFieldCall.get("file")).getRight();
         if(field == null || !field.hasValue() || !field.getActualValue().equals(varFileId)) {
             // TODO: Something wrong with variable file link, log error, can't continue
         }
@@ -194,7 +197,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         // Actual variables parsing
         // ************************
         // File path to the actual variables file
-        field = getSimpleSavedDataField(attachmentData, "file");
+        field = attachmentData.dataField(SavedDataFieldCall.get("file")).getRight();
         String filePath = field.getActualValue();
 
         switch(type) {
@@ -234,13 +237,13 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
 
         // Set software field
         // TODO: look at the possibility of separating software version to different field
-        setSavedDataField(variablesData, "software", por.getSoftware(), time);
+        variablesData.dataField(SavedDataFieldCall.set("software", variablesData).setValue(por.getSoftware()).setTime(time));
 
         // Set varquantity field
-        setSavedDataField(variablesData, "varquantity", por.data.sizeX()+"", time);
+        variablesData.dataField(SavedDataFieldCall.set("varquantity", variablesData).setValue(por.data.sizeX()+"").setTime(time));
 
         // Set casequantity field
-        setSavedDataField(variablesData, "casequantity", por.data.sizeY()+"", time);
+        variablesData.dataField(SavedDataFieldCall.set("casequantity", variablesData).setValue(por.data.sizeY()+"").setTime(time));
 
         // Make VariablesHandler
         VariableHandler handler = new VariableHandler(time);
@@ -264,7 +267,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             listOfEntitiesAndHolders.add(new ImmutablePair<>(variableEntity, variable));
         }
 
-        ReferenceContainerDataField variablesContainer = getSimpleReferenceContainerDataField(variablesData, "variables");
+        ReferenceContainerDataField variablesContainer = variablesData.dataField(ReferenceContainerDataFieldCall.get("variables")).getRight();
 
         for(StudyVariableEntity variableEntity : variableEntities) {
             // All remaining rows in variableEntities should be removed since no variable was found for them in the current POR-file
@@ -288,15 +291,22 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                 variableEntity.setRemovalDate(new LocalDateTime());
             }
 
-            // See that respective rows are removed from STUDY_VARIABLES
-            //    Remove from variables list
-            SavedReference reference = findReferenceWithValue(variablesContainer.getReferences(), variableEntity.getId().toString());
-            removeReference(reference, variablesData.getChanges());
+            // If there is a previous variables container then remove reference from it if present
+            if(variablesContainer != null) {
+                // See that respective rows are removed from STUDY_VARIABLES
+                //    Remove from variables list
+                SavedReference reference = findReferenceWithValue(variablesContainer.getReferences(), variableEntity.getId().toString());
+                removeReference(reference, variablesData.getChanges());
+            }
             //    Remove from variable group list
             // TODO: Handle variable groupings
+
         }
 
         // listOfEntitiesAndHolders should contain all variables in the POR-file as well as their existing revisionables. No revisionable is provided if it's a new variable
+        if(listOfEntitiesAndHolders.size() > 0 && variablesContainer == null) {
+            variablesContainer = variablesData.dataField(ReferenceContainerDataFieldCall.set("variables")).getRight();
+        }
 
         for(Pair<StudyVariableEntity, PORUtil.PORVariableHolder> pair : listOfEntitiesAndHolders) {
             // Iterate through entity/holder pairs. There should always be a holder but missing entity indicates that this is a new variable.
@@ -318,11 +328,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             }
 
             // Add Saved reference if missing
-            SavedReference reference = findReferenceWithValue(variablesContainer.getReferences(), variableEntity.getId().toString());
-            if(reference == null) {
-                reference = new SavedReference(variablesContainer.getKey(), variablesData.getNewRowId());
-                variablesContainer.getReferences().add(reference);
-            }
+            SavedReference reference = findOrCreateReferenceWithValue(variablesData, variablesContainer, variableEntity.getId().toString(), time).getRight();
             // TODO: Add saved reference to ungrouped goupings if not present in any group
 
             RevisionEntity variableRevision = null;
@@ -400,11 +406,14 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             }
             // TODO: Check return values for problems and changes
             // Set varname field
-            setSavedDataField(variableRevision, "varname", variable.asVariable().getName(), time);
+            variableRevision.dataField(SavedDataFieldCall.set("varname", variableRevision).setValue(variable.asVariable().getName()).setTime(time));
             // Set varid field
-            setSavedDataField(variableRevision, "varid", variable.asVariable().getName(), time);
+            variableRevision.dataField(SavedDataFieldCall.set("varid", variableRevision).setValue(variable.asVariable().getName()).setTime(time));
             // Set varlabel field
-            setSavedDataField(variableRevision, "varlabel", StringUtils.isEmpty(StringUtils.trimAllWhitespace(variable.asVariable().label)) ? "[Muuttujalta puuttuu LABEL tieto]" : variable.asVariable().label, time);
+            String label = StringUtils.isEmpty(StringUtils.trimAllWhitespace(variable.asVariable().label))
+                    ? "[Muuttujalta puuttuu LABEL tieto]"
+                    : variable.asVariable().label;
+            variableRevision.dataField(SavedDataFieldCall.set("varlabel", variableRevision).setValue(label).setTime(time));
             // Set valuelabels CONTAINER
             setValueLabels(variableRevision, variable);
             // Set categories CONTAINER
@@ -423,13 +432,17 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
          * @param variable Current variable
          */
         private void setValueLabels(RevisionData variableRevision, PORUtil.PORVariableHolder variable) {
-            ContainerDataField valueLabels = getSimpleContainerDataField(variableRevision, "valuelabels");
+            ContainerDataField valueLabels = variableRevision.dataField(ContainerDataFieldCall.get("valuelabels")).getRight();
+
+            if(variable.getLabelsSize() == 0 && valueLabels == null) {
+                // No labels and no old container. Nothing needs to be done
+                return;
+            }
 
             // Check to see if we need to initialise valueLabels container
             // There has to be labels to warrant a valueLabels container creation if it's not present already
             if(variable.getLabelsSize() > 0 && valueLabels == null) {
-                valueLabels = new ContainerDataField("valuelabels");
-                variableRevision.putField(valueLabels);
+                valueLabels = variableRevision.dataField(ContainerDataFieldCall.set("valuelabels")).getRight();
             }
 
             // Gather existing value labels to a separate list to allow for obsolete row checking and preserving por-file defined order
@@ -457,9 +470,9 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             // We know that this row is needed and so we can set it to not removed state no matter if it was removed previously or not
             row.setRemoved(false);
 
-            setSavedDataField(row, "value", label.getValue(), time, changeMap);
-            setSavedDataField(row, "label", label.getLabel(), time, changeMap);
-            setSavedDataField(row, "missing", (label.isMissing() ? "Y" : null), time, changeMap);
+            row.dataField(SavedDataFieldCall.set("value").setTime(time).setChangeMap(changeMap).setValue(label.getValue()));
+            row.dataField(SavedDataFieldCall.set("label").setTime(time).setChangeMap(changeMap).setValue(label.getLabel()));
+            row.dataField(SavedDataFieldCall.set("missing").setTime(time).setChangeMap(changeMap).setValue(label.isMissing() ? "Y" : null));
         }
 
         /**
@@ -527,7 +540,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             }
 
             // Get categories container
-            ContainerDataField categories = getSimpleContainerDataField(variableRevision, "categories");
+            ContainerDataField categories = variableRevision.dataField(ContainerDataFieldCall.get("categories")).getRight();
             // Get changeMap reference since it's used multiple times
             Map<String, Change> changeMap = variableRevision.getChanges();
 
@@ -539,12 +552,11 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                     }
                 }
                 return;
-            } else {
-                // At least some frequencies, check that we have a container
-                if(categories == null) {
-                    categories = new ContainerDataField("categories");
-                    variableRevision.putField(categories);
-                }
+            }
+
+            // At least some frequencies, check that we have a container
+            if(categories == null) {
+                categories = variableRevision.dataField(ContainerDataFieldCall.set("categories")).getRight();
             }
 
             // Gather all old rows
@@ -568,7 +580,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                 setCategoryRow(sysmissRow, "SYSMISS", "SYSMISS", sysmiss, true, time, changeMap);
             } else if(sysmissRow != null) {
                 // If previous SYSMISS row exists then remove it
-                categories.putRow(sysmissRow);
+                categories.putRow(sysmissRow); // Insert it back to to categories container before removal or the change doesn't make any sense
                 removeRow(sysmissRow, variableRevision.getChanges());
             }
         }
@@ -632,10 +644,10 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
          */
         private void setCategoryRow(DataRow row, String value, String label, Integer stat, boolean missing, LocalDateTime time, Map<String, Change> changeMap) {
             row.setRemoved(false);
-            setSavedDataField(row, "value", value, time, changeMap);
-            setSavedDataField(row, "label", label, time, changeMap);
-            setSavedDataField(row, "categorystat", stat.toString(), time, changeMap);
-            setSavedDataField(row, "missing", (missing) ? "Y" : null, time, changeMap);
+            row.dataField(SavedDataFieldCall.set("value").setTime(time).setChangeMap(changeMap).setValue(value));
+            row.dataField(SavedDataFieldCall.set("label").setTime(time).setChangeMap(changeMap).setValue(label));
+            row.dataField(SavedDataFieldCall.set("categorystat").setTime(time).setChangeMap(changeMap).setValue(stat.toString()));
+            row.dataField(SavedDataFieldCall.set("missing").setTime(time).setChangeMap(changeMap).setValue((missing) ? "Y" : null));
         }
 
         /**
@@ -661,7 +673,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                 }
             }
 
-            setSavedDataField(variableRevision, "varinterval", (continuous ? "contin" : "discrete"), time);
+            variableRevision.dataField(SavedDataFieldCall.set("varinterval", variableRevision).setValue(continuous ? "contin" : "discrete").setTime(time));
         }
 
         /**
@@ -674,7 +686,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
          */
         private void setStatistics(RevisionData variableRevision, PORUtil.PORVariableHolder variable) {
             // Get statistics container
-            ContainerDataField statistics = getSimpleContainerDataField(variableRevision, "statistics");
+            ContainerDataField statistics = variableRevision.dataField(ContainerDataFieldCall.get("statistics")).getRight();
             // Get changeMap
             Map<String, Change> changeMap = variableRevision.getChanges();
 
@@ -695,8 +707,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
 
             // This variable should have statistics, create if missing
             if(statistics == null) {
-                statistics = new ContainerDataField("statistics");
-                variableRevision.putField(statistics);
+                statistics = variableRevision.dataField(ContainerDataFieldCall.set("statistics")).getRight();
             }
 
             List<DataRow> rows = new ArrayList<>(statistics.getRows());
@@ -711,14 +722,14 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             // Set vald
             type = "vald"; // Valid values statistic
             row = popOrCreateAndInsertRow(variableRevision, statistics, rows, statisticstype, type);
-            setSavedDataField(row, statisticvalue, values.toString(), time, changeMap);
+            row.dataField(SavedDataFieldCall.set(statisticvalue).setTime(time).setChangeMap(changeMap).setValue(values.toString()));
 
             // Set min
             type = "min";
             if(values > 0) {
                 row = popOrCreateAndInsertRow(variableRevision, statistics, rows, statisticstype, type);
                 String min = Collections.min(data, new PORUtil.PORNumericVariableDataComparator()).toString();
-                setSavedDataField(row, statisticvalue, min, time, changeMap);
+                row.dataField(SavedDataFieldCall.set(statisticvalue).setTime(time).setChangeMap(changeMap).setValue(min));
             }
 
             // Set max
@@ -726,7 +737,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             if(values > 0) {
                 row = popOrCreateAndInsertRow(variableRevision, statistics, rows, statisticstype, type);
                 String max = Collections.max(data, new PORUtil.PORNumericVariableDataComparator()).toString();
-                setSavedDataField(row, statisticvalue, max, time, changeMap);
+                row.dataField(SavedDataFieldCall.set(statisticvalue).setTime(time).setChangeMap(changeMap).setValue(max));
             }
 
             // Set mean
@@ -741,7 +752,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                     denom++;
                 }
                 mean = mean / denom;
-                setSavedDataField(row, statisticvalue, mean.toString(), time, changeMap);
+                row.dataField(SavedDataFieldCall.set(statisticvalue).setTime(time).setChangeMap(changeMap).setValue(mean.toString()));
             }
 
             // Set stdev
@@ -759,7 +770,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                     }
                 }
                 deviation = Math.sqrt(deviation/denom);
-                setSavedDataField(row, statisticvalue, deviation.toString(), time, changeMap);
+                row.dataField(SavedDataFieldCall.set(statisticvalue).setTime(time).setChangeMap(changeMap).setValue(deviation.toString()));
             }
 
             removeObsoleteRows(rows, statistics, changeMap);
@@ -780,7 +791,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         private DataRow popRowWithFieldValue(Collection<DataRow> rows, String key, String value) {
             for(Iterator<DataRow> i = rows.iterator(); i.hasNext(); ) {
                 DataRow row = i.next();
-                SavedDataField field = getSimpleSavedDataField(row, key);
+                SavedDataField field = row.dataField(SavedDataFieldCall.get(key)).getRight();
                 if(field != null && field.hasValue() && field.valueEquals(value)) {
                     i.remove();
                     return row;

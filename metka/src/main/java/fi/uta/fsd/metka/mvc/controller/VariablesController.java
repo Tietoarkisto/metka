@@ -35,7 +35,7 @@ public class VariablesController {
     * If no revision is found then return to search page with an error message.
     */
     @RequestMapping(value = "view/{id}", method = RequestMethod.GET)
-    public String view(Model model, @PathVariable Integer id, RedirectAttributes redirectAttributes) {
+    public String view(Model model, @PathVariable Long id, RedirectAttributes redirectAttributes) {
         /*Integer revision = studyService.findSingleRevisionNo(id);
         if(model.asMap().containsKey("displayableErrors")) {
             redirectAttributes.addFlashAttribute("displayableErrors", model.asMap().get("displayableErrors"));
@@ -60,7 +60,7 @@ public class VariablesController {
     */
     @RequestMapping(value = "view/{id}/{revision}", method = RequestMethod.GET)
     public String viewRevision(Model model,
-                               @PathVariable Integer id, @PathVariable Integer revision,
+                               @PathVariable Long id, @PathVariable Integer revision,
                                RedirectAttributes redirectAttributes) {
         /*TransferObject single = null;
         Configuration config = null;
@@ -178,7 +178,7 @@ public class VariablesController {
     * also has to be opened to a DRAFT state (assuming it wasn't open before).
     */
     @RequestMapping(value = "edit/{id}", method = {RequestMethod.GET})
-    public String edit(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+    public String edit(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         /*RevisionViewDataContainer revData = studyService.editStudy(id);
         if(revData == null || revData.getTransferObject() == null || revData.getConfiguration() == null) {
             // TODO: Notify user that no editable revision could be found or created

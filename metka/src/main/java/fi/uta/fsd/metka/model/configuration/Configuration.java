@@ -2,7 +2,7 @@ package fi.uta.fsd.metka.model.configuration;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import fi.uta.fsd.metka.model.ModelBase;
+import fi.uta.fsd.metka.model.interfaces.ModelBase;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -20,7 +20,7 @@ public class Configuration implements ModelBase {
     @XmlElement private final Map<String, Reference> references = new HashMap<>();
     @XmlElement private final Map<String, SelectionList> selectionLists = new HashMap<>();
     @XmlElement private final Map<String, Field> fields = new HashMap<>();
-    @XmlElement private String idField;
+    @XmlElement private String idField; // TODO: Change to nullable key and assume that null means display actual id. Remove duplicate ID:s
     @XmlElement private String displayId;
     @XmlElement private String hash; // no functionality for hash is implemented at this time.
 

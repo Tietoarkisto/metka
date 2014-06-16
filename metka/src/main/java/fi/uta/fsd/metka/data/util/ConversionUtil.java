@@ -2,14 +2,27 @@ package fi.uta.fsd.metka.data.util;
 
 import org.springframework.util.StringUtils;
 
-/**
- * Created with IntelliJ IDEA.
- * User: lasseku
- * Date: 2/25/14
- * Time: 10:27 AM
- * To change this template use File | Settings | File Templates.
- */
-public class ConversionUtil {
+public final class ConversionUtil {
+    // Private constructor to stop instantiation
+    private ConversionUtil() {};
+
+    public static Long stringToLong(Object value) throws NumberFormatException {
+        if(value == null) {
+            return null;
+        } else if(value instanceof Long || value instanceof Integer) {
+            return (Long)value;
+        } else if(!(value instanceof String)) {
+            throw new NumberFormatException("Value not String: "+value.getClass().getSimpleName());
+        } else {
+            String str = (String)value;
+            if(StringUtils.isEmpty(str)) {
+                return null;
+            } else {
+                return Long.decode(str);
+            }
+        }
+    }
+
     public static Integer stringToInteger(Object value) throws NumberFormatException {
         if(value == null) {
             return null;

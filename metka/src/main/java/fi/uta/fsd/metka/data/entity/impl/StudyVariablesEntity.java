@@ -19,13 +19,13 @@ import javax.persistence.Entity;
 @DiscriminatorValue(ConfigurationType.Values.STUDY_VARIABLES)
 public class StudyVariablesEntity extends RevisionableEntity {
     @Column(name = "STUDY_ID")
-    private Integer studyId;
+    private Long studyId;
 
-    public Integer getStudyId() {
+    public Long getStudyId() {
         return studyId;
     }
 
-    public void setStudyId(Integer studyId) {
+    public void setStudyId(Long studyId) {
         this.studyId = studyId;
     }
 }

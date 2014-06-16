@@ -18,9 +18,9 @@ import java.util.MissingResourceException;
 @Transactional(readOnly = true, noRollbackFor = {NotFoundException.class, MissingResourceException.class})
 public interface GeneralRepository {
 
-    public Integer getAdjancedRevisionableId(Integer currentId, String type, boolean forward) throws NotFoundException;
-    @Transactional(readOnly = false) public DraftRemoveResponse removeDraft(String type, Integer id);
-    @Transactional(readOnly = false) public LogicalRemoveResponse removeLogical(String type, Integer id);
+    public Long getAdjancedRevisionableId(Long currentId, String type, boolean forward) throws NotFoundException;
+    @Transactional(readOnly = false) public DraftRemoveResponse removeDraft(String type, Long id);
+    @Transactional(readOnly = false) public LogicalRemoveResponse removeLogical(String type, Long id);
 
     /**
      * Returns a list of revision data objects consisting of the latest revision of each revisionable of given type.
@@ -33,10 +33,10 @@ public interface GeneralRepository {
      */
     public List<RevisionData> getLatestRevisionsForType(ConfigurationType type, Boolean approvedOnly) throws IOException;
 
-    public RevisionData getRevision(Integer id, Integer revision) throws IOException;
+    public RevisionData getRevision(Long id, Integer revision) throws IOException;
 
-    public String getRevisionData(Integer id, Integer revision);
+    public String getRevisionData(Long id, Integer revision);
 
     @Transactional(readOnly = false) public SequenceEntity getNewSequenceValue(String key);
-    @Transactional(readOnly = false) public SequenceEntity getNewSequenceValue(String key, Integer initialValue);
+    @Transactional(readOnly = false) public SequenceEntity getNewSequenceValue(String key, Long initialValue);
 }

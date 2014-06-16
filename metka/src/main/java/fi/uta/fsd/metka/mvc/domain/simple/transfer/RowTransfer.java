@@ -9,69 +9,7 @@ import org.json.JSONObject;
  * objects when recursive containers are used (e.g. Study Variables).
  */
 public class RowTransfer {
-    /*private String key;
-    private Integer rowId;
-    private DateTime savedAt;
-    private String savedBy;
 
-    private final Map<String, Object> values = new HashMap<>();
-
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    public Integer getRowId() {
-        return rowId;
-    }
-
-    public void setRowId(Integer rowId) {
-        this.rowId = rowId;
-    }
-
-    public Map<String, Object> getValues() {
-        return values;
-    }
-
-    public DateTime getSavedAt() {
-        return savedAt;
-    }
-
-    public void setSavedAt(DateTime savedAt) {
-        this.savedAt = savedAt;
-    }
-
-    public String getSavedBy() {
-        return savedBy;
-    }
-
-    public void setSavedBy(String savedBy) {
-        this.savedBy = savedBy;
-    }
-
-    public static RowTransfer buildRowTransferFromRowContaienr(DataRow container) {
-        RowTransfer row = new RowTransfer();
-        row.setKey(container.getKey());
-        row.setRowId(container.getRowId());
-        row.setSavedAt(container.getSavedAt());
-        row.setSavedBy(container.getSavedBy());
-        for(DataField field : container.getFields().values()) {
-            if(field instanceof ContainerDataField) {
-                ContainerTransfer ct = ContainerTransfer.buildContainerTransfer((ContainerDataField)field);
-                if(ct != null) {
-                    row.values.put(ct.getKey(), ct);
-                }
-            } else {
-                SavedDataField saved = (SavedDataField)field;
-                // TODO: Handle derived values
-                row.values.put(saved.getKey(),saved.getActualValue());
-            }
-        }
-        return row;
-    }*/
 
     public static JSONObject buildJSONObject(DataRow container) {
         JSONObject json = new JSONObject();

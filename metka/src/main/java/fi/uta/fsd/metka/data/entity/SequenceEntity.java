@@ -10,7 +10,7 @@ public class SequenceEntity {
     private String key;
 
     @Column(name = "SEQUENCE")
-    private Integer sequence;
+    private Long sequence;
 
     public String getKey() {
         return key;
@@ -20,11 +20,11 @@ public class SequenceEntity {
         this.key = key;
     }
 
-    public Integer getSequence() {
+    public Long getSequence() {
         return sequence;
     }
 
-    public void setSequence(Integer sequence) {
+    public void setSequence(Long sequence) {
         this.sequence = sequence;
     }
 

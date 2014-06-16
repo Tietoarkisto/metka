@@ -4,11 +4,19 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.data.enums.RevisionState;
-import fi.uta.fsd.metka.model.ModelBase;
+import fi.uta.fsd.metka.model.access.calls.DataFieldCall;
+import fi.uta.fsd.metka.model.access.DataFieldOperator;
+import fi.uta.fsd.metka.model.access.calls.DataFieldCallBase;
+import fi.uta.fsd.metka.model.access.enums.ConfigCheck;
+import fi.uta.fsd.metka.model.access.enums.StatusCode;
+import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
+import fi.uta.fsd.metka.model.interfaces.ModelBase;
 import fi.uta.fsd.metka.model.configuration.ConfigurationKey;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.container.DataField;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDateTime;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -21,7 +29,8 @@ import java.util.Map;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "revisionData")
-public class RevisionData implements Comparable<RevisionData>, ModelBase {
+public class RevisionData implements Comparable<RevisionData>, ModelBase, DataFieldContainer {
+
     // Class
     @XmlElement private final RevisionKey key;
     @XmlElement private final ConfigurationKey configuration;
@@ -92,37 +101,6 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase {
         return rowIdSeq;
     }
 
-    // Helper methods
-    @JsonIgnore public Change getChange(String key) {
-        return changes.get(key);
-    }
-    @JsonIgnore public Change getChange(Field field) {
-        return getChange(field.getKey());
-    }
-    @JsonIgnore public RevisionData putChange(DataField field) {
-
-        return this;
-    }
-    @JsonIgnore public RevisionData putChange(Change change) {
-        changes.put(change.getKey(), change);
-        return this;
-    }
-    @JsonIgnore public DataField getField(String key) {
-        return fields.get(key);
-    }
-    @JsonIgnore public DataField getField(Field field) {
-        return getField(field.getKey());
-    }
-    @JsonIgnore public RevisionData putField(DataField field) {
-        fields.put(field.getKey(), field);
-        return this;
-    }
-    @JsonIgnore public Integer getNewRowId() {
-        rowIdSeq++;
-        return rowIdSeq;
-    }
-
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -141,12 +119,72 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase {
     }
 
     @Override
+    public String toString() {
+        return "Json[name="+this.getClass().getSimpleName()+", key="+key+"]";
+    }
+
+    // **************
+    // Helper methods
+    // **************
+
+    public Change getChange(String key) {
+        return changes.get(key);
+    }
+    public Change getChange(Field field) {
+        return getChange(field.getKey());
+    }
+    public RevisionData putChange(DataField field) {
+
+        return this;
+    }
+    public RevisionData putChange(Change change) {
+        changes.put(change.getKey(), change);
+        return this;
+    }
+    public DataField getField(String key) {
+        return fields.get(key);
+    }
+    public DataField getField(Field field) {
+        return getField(field.getKey());
+    }
+    public RevisionData putField(DataField field) {
+        fields.put(field.getKey(), field);
+        return this;
+    }
+    @JsonIgnore public Integer getNewRowId() {
+        rowIdSeq++;
+        return rowIdSeq;
+    }
+
+    // *************************
+    // Interface implementations
+    // *************************
+
+    // Comparable
+    @Override
     public int compareTo(RevisionData o) {
         return key.compareTo(o.key);
     }
 
+    // DataFieldContainer
+
+    /**
+     * Executes DataField operations on this RevisionData based on the DataFieldCall given.
+     * If SET operation is requested and no ChangeMap is provided in call then this RevisionData's change map is provided by default
+     * @param call
+     * @param <T>
+     * @return
+     */
     @Override
-    public String toString() {
-        return "Json[name="+this.getClass().getSimpleName()+", key="+key+"]";
+    public <T extends DataField> Pair<StatusCode, T> dataField(DataFieldCall<T> call) {
+        switch(call.getCallType()) {
+            case GET:
+                return DataFieldOperator.getDataFieldOperation(getFields(), call, new ConfigCheck[]{ConfigCheck.NOT_SUBFIELD});
+            case SET:
+                if(call.getChangeMap() == null) ((DataFieldCallBase<T>)call).setChangeMap(getChanges());
+                return DataFieldOperator.setDataFieldOperation(getFields(), call, new ConfigCheck[]{ConfigCheck.NOT_SUBFIELD});
+            default:
+                return new ImmutablePair<>(StatusCode.INCORRECT_PARAMETERS, null);
+        }
     }
 }

@@ -70,7 +70,7 @@ public class ConfigurationService {
         return conf;
     }
 
-    public Configuration findLatestByRevisionableId(Integer id) {
+    public Configuration findLatestByRevisionableId(Long id) {
         Configuration conf = null;
         try {
             conf = repository.findLatestByRevisionableId(id);
@@ -81,7 +81,7 @@ public class ConfigurationService {
         return conf;
     }
 
-    public Configuration findConfigurationForRevision(Integer id, Integer revision) {
+    public Configuration findConfigurationForRevision(Long id, Integer revision) {
         Configuration conf = null;
         try {
             conf = repository.findConfigurationForRevision(id, revision);

@@ -74,7 +74,7 @@ public class ErrorMessage {
         return error;
     }
 
-    public static ErrorMessage noSuchRevision(String type, Integer id, Integer revision) {
+    public static ErrorMessage noSuchRevision(String type, Long id, Integer revision) {
         ErrorMessage error = new ErrorMessage();
         error.setMsg("general.errors.revision.noRevision");
         error.getData().add("general.errors.revision.noRevision."+type);
@@ -84,7 +84,7 @@ public class ErrorMessage {
         return error;
     }
 
-    public static ErrorMessage noConfigurationForRevision(String type, Integer id, Integer revision) {
+    public static ErrorMessage noConfigurationForRevision(String type, Long id, Integer revision) {
         ErrorMessage error = new ErrorMessage();
         error.setMsg("general.errors.revision.noConfigurationForRevision");
         error.getData().add("general.errors.revision.noConfigurationForRevision."+type);
@@ -94,7 +94,7 @@ public class ErrorMessage {
         return error;
     }
 
-    public static ErrorMessage configurationSerializationError(String type, Integer id, Integer revision) {
+    public static ErrorMessage configurationSerializationError(String type, Long id, Integer revision) {
         ErrorMessage error = new ErrorMessage();
         error.setMsg("general.errors.revision.configurationSerializationError");
         error.getData().add("general.errors.revision.configurationSerializationError."+type);
@@ -104,7 +104,7 @@ public class ErrorMessage {
         return error;
     }
 
-    public static ErrorMessage guiConfigurationSerializationError(String type, Integer id, Integer revision) {
+    public static ErrorMessage guiConfigurationSerializationError(String type, Long id, Integer revision) {
         ErrorMessage error = new ErrorMessage();
         error.setMsg("general.errors.revision.guiConfigurationSerializationError");
         error.getData().add("general.errors.revision.guiConfigurationSerializationError."+type);
@@ -114,7 +114,7 @@ public class ErrorMessage {
         return error;
     }
 
-    public static ErrorMessage noViewableRevision(String type, Integer id) {
+    public static ErrorMessage noViewableRevision(String type, Long id) {
         ErrorMessage error = new ErrorMessage();
         error.setMsg("general.errors.revision.noViewableRevision");
         error.getData().add("general.errors.revision.noViewableRevision."+type);

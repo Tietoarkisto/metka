@@ -24,7 +24,7 @@ public class HistoryRepositoryImpl implements HistoryRepository {
     private JSONUtil json;
 
     @Override
-    public List<RevisionData> getRevisionHistory(Integer id) throws IOException {
+    public List<RevisionData> getRevisionHistory(Long id) throws IOException {
         List<RevisionData> revisions = new ArrayList<RevisionData>();
         List<RevisionEntity> entities =
                 em.createQuery("SELECT r FROM RevisionEntity r " +
@@ -56,7 +56,7 @@ public class HistoryRepositoryImpl implements HistoryRepository {
     }
 
     @Override
-    public RevisionData getRevisionByKey(Integer id, Integer revision) throws IOException {
+    public RevisionData getRevisionByKey(Long id, Integer revision) throws IOException {
         RevisionEntity entity = em.find(RevisionEntity.class, new RevisionKey(id, revision));
         if(entity == null) {
             return null;
