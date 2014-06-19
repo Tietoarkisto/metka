@@ -41,9 +41,9 @@ public class VariablesFactory extends DataFactory {
         LocalDateTime time = new LocalDateTime();
 
         RevisionData data = createInitialRevision(entity, conf, time);
-        data.dataField(SavedDataFieldCall.set("study", data).setTime(time).setValue(studyId.toString()));
-        data.dataField(SavedDataFieldCall.set("file", data).setTime(time).setValue(fileId.toString()));
-        data.dataField(SavedDataFieldCall.set("varfileid", data).setTime(time).setValue("F1"));
+        data.dataField(SavedDataFieldCall.set("study").setTime(time).setValue(studyId.toString()));
+        data.dataField(SavedDataFieldCall.set("file").setTime(time).setValue(fileId.toString()));
+        data.dataField(SavedDataFieldCall.set("varfileid").setTime(time).setValue("F1"));
 
         entity.setData(json.serialize(data));
 
@@ -65,7 +65,7 @@ public class VariablesFactory extends DataFactory {
         LocalDateTime time = new LocalDateTime();
 
         RevisionData data = createInitialRevision(entity, conf, time);
-        data.dataField(SavedDataFieldCall.set("variables", data).setTime(time).setValue(variablesId.toString()));
+        data.dataField(SavedDataFieldCall.set("variables").setTime(time).setValue(variablesId.toString()));
 
         entity.setData(json.serialize(data));
 

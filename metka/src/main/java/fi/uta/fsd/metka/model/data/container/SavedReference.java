@@ -3,7 +3,6 @@ package fi.uta.fsd.metka.model.data.container;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.change.ContainerChange;
 import fi.uta.fsd.metka.model.data.change.RowChange;
 import fi.uta.fsd.metka.model.data.value.SimpleValue;
@@ -12,7 +11,6 @@ import org.joda.time.LocalDateTime;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import java.util.Map;
 
 import static fi.uta.fsd.metka.data.util.ModelValueUtil.createSavedValue;
 import static fi.uta.fsd.metka.data.util.ModelValueUtil.setSimpleValue;

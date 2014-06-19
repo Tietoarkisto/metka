@@ -31,6 +31,21 @@ import java.util.Map;
 @XmlRootElement(name = "revisionData")
 public class RevisionData implements Comparable<RevisionData>, ModelBase, DataFieldContainer {
 
+    /**
+     * Initialises new revision from old revision data
+     * @param oldData Source revision
+     * @param newData Target revision
+     */
+    public static void newRevisionBuilder(RevisionData oldData, RevisionData newData) {
+
+        for(DataField field : oldData.getFields().values()) {
+            newData.fields.put(field.getKey(), field.copy());
+        }
+        for(DataField field : newData.getFields().values()) {
+            field.normalize();
+        }
+    }
+
     // Class
     @XmlElement private final RevisionKey key;
     @XmlElement private final ConfigurationKey configuration;
@@ -133,15 +148,15 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase, DataFi
     public Change getChange(Field field) {
         return getChange(field.getKey());
     }
-    public RevisionData putChange(DataField field) {
+    /*public RevisionData putChange(DataField field) {
 
         return this;
-    }
+    }*/
     public RevisionData putChange(Change change) {
         changes.put(change.getKey(), change);
         return this;
     }
-    public DataField getField(String key) {
+    /*public DataField getField(String key) {
         return fields.get(key);
     }
     public DataField getField(Field field) {
@@ -150,7 +165,8 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase, DataFi
     public RevisionData putField(DataField field) {
         fields.put(field.getKey(), field);
         return this;
-    }
+    }*/
+
     @JsonIgnore public Integer getNewRowId() {
         rowIdSeq++;
         return rowIdSeq;

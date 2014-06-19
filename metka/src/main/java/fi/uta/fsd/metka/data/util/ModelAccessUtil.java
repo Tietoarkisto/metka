@@ -1,6 +1,8 @@
 package fi.uta.fsd.metka.data.util;
 
 import fi.uta.fsd.metka.data.enums.FieldType;
+import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
+import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
@@ -15,9 +17,6 @@ import org.joda.time.LocalDateTime;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.util.StringUtils;
-
-import java.util.Arrays;
-import java.util.List;
 
 import static fi.uta.fsd.metka.data.util.ConversionUtil.*;
 import static fi.uta.fsd.metka.data.util.ModelValueUtil.*;
@@ -42,8 +41,9 @@ public final class ModelAccessUtil {
      * @param data RevisionData from which the DataField should be returned.
      * @return DataField found from the specific path.
      */
+    // TODO: Change to using DataFieldCall operations
     public static PathNavigable getFieldDotFormat(String path, RevisionData data) {
-        List<String> steps = Arrays.asList(path.split("."));
+        /*List<String> steps = Arrays.asList(path.split("."));
         PathNavigable field = null;
         for(String step : steps) {
             if(field == null) {
@@ -84,7 +84,8 @@ public final class ModelAccessUtil {
                 // TODO: ReferenceContainerDataField
             }
         }
-        return field;
+        return field;*/
+        return null;
     }
 
     public static boolean idIntegrityCheck(TransferObject to, RevisionData data, Configuration config) {
@@ -223,27 +224,19 @@ public final class ModelAccessUtil {
         // There should be rows array
         JSONArray rows = jsonContainer.getJSONArray("rows");
 
-        Field field = config.getField(key);
-        if(field.getType() != FieldType.CONTAINER) {
-            // If this field's type is something other than CONTAINER return false.
-            // This method is meant exclusively for handling containers and nothing else.
-            return false;
-        }
-
-
-
-
         boolean changes = false;
 
-        ContainerDataField container = (ContainerDataField)data.getField(field.getKey());
+        ContainerDataField container = data.dataField(ContainerDataFieldCall.get(key)).getRight();
         if(container == null) {
-            container = new ContainerDataField(field.getKey());
+            // Something went wrong with getting or creating Container
+            // TODO: Log warning
+            return changes;
         }
-
-        ContainerChange changeContainer = (ContainerChange)data.getChange(field.getKey());
+        ContainerChange changeContainer = (ContainerChange)data.getChanges().get("key");
         if(changeContainer == null) {
-            changeContainer = new ContainerChange(field.getKey());
+            changeContainer = new ContainerChange(key);
         }
+        Field field = config.getField(key);
         for(int i = 0; i < rows.length(); i++) {
             JSONObject row = rows.getJSONObject(i);
             if(row.optBoolean("change", false) == false) {
@@ -322,7 +315,6 @@ public final class ModelAccessUtil {
         } // End of row handling
 
         if(changes) {
-            data.putField(container);
             data.putChange(changeContainer);
         }
 
@@ -363,9 +355,12 @@ public final class ModelAccessUtil {
             return false;
         }
         boolean changes = false;
-        ReferenceContainerDataField referenceContainer = (ReferenceContainerDataField)data.getField(field.getKey());
+
+        ReferenceContainerDataField referenceContainer = data.dataField(ReferenceContainerDataFieldCall.get(field.getKey())).getRight();
         if(referenceContainer == null) {
-            referenceContainer = new ReferenceContainerDataField(field.getKey());
+            // Something went wrong during assignment
+            // TODO: Low warning
+            return changes;
         }
         JSONArray references = json.getJSONArray("references");
         ContainerChange changeContainer = (ContainerChange)data.getChange(field.getKey());
@@ -421,7 +416,6 @@ public final class ModelAccessUtil {
         } // End of row handling
 
         if(changes) {
-            data.putField(referenceContainer);
             data.putChange(changeContainer);
         }
 
@@ -458,11 +452,12 @@ public final class ModelAccessUtil {
         // If change has happened insert new change to data.
         // This method handles only top level fields so change can be inserted directly to data.
         if(change) {
-            if(container == null) {
+            /*if(container == null) {
                 container = new SavedDataField(field.getKey());
                 data.putField(container);
             }
-            updateFieldValue(container, field, value, time, data.getChanges());
+            updateFieldValue(container, field, value, time, data.getChanges());*/
+            data.dataField(SavedDataFieldCall.set(key).setConfiguration(config).setTime(time).setValue(value.toString()));
         }
         return change;
     }
@@ -534,19 +529,5 @@ public final class ModelAccessUtil {
             }
         }
         return change;
-    }
-
-    /**
-     * Initialises new revision from old revision data
-     * @param oldData Source revision
-     * @param newData Target revision
-     */
-    public static void copyFieldsToNewRevision(RevisionData oldData, RevisionData newData) {
-        for(DataField field : oldData.getFields().values()) {
-            newData.putField(field.copy());
-        }
-        for(DataField field : newData.getFields().values()) {
-            field.normalize();
-        }
     }
 }

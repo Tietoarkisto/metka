@@ -15,7 +15,6 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 import java.util.Map;
 
-import static fi.uta.fsd.metka.data.util.ModelValueUtil.*;
 
 /**
  * Contains static methods for handling DataFields and DataRows in RevisionData objects.

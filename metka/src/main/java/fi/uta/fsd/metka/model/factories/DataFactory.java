@@ -8,7 +8,6 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.RevisionKey;
 import org.joda.time.LocalDateTime;
 
-import static fi.uta.fsd.metka.data.util.ModelAccessUtil.copyFieldsToNewRevision;
 
 /**
  * Provides functionality common for all RevisionData factories
@@ -21,7 +20,7 @@ public abstract class DataFactory {
                 1
         );
         data.setState(entity.getState());
-        data.dataField(SavedDataFieldCall.set(config.getIdField(), data).setValue(entity.getKey().getRevisionableId().toString()).setTime(time));
+        data.dataField(SavedDataFieldCall.set(config.getIdField()).setValue(entity.getKey().getRevisionableId().toString()).setTime(time));
         return data;
     }
 
@@ -51,7 +50,7 @@ public abstract class DataFactory {
         data.setState(entity.getState());
 
         // Copies fields from old data to new data using Copy and then normalizes them
-        copyFieldsToNewRevision(oldData, data);
+        RevisionData.newRevisionBuilder(oldData, data);
 
         return data;
     }

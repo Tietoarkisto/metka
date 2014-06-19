@@ -1,5 +1,5 @@
 import fi.uta.fsd.metkaSearch.IndexerComponent;
-import fi.uta.fsd.metkaSearch.commands.indexer.IndexerCommandBase;
+import fi.uta.fsd.metkaSearch.commands.indexer.IndexerCommand;
 import fi.uta.fsd.metkaSearch.commands.indexer.XMLIndexerCommand;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,7 +18,25 @@ public class SpringLuceneTests {
     @Test
     public void someTest() {
         assertEquals(0, indexer.queueSize());
-        indexer.addCommand(new XMLIndexerCommand(IndexerCommandBase.Action.INDEX));
+        indexer.addCommand(new XMLIndexerCommand(IndexerCommand.Action.INDEX));
         assertEquals(1, indexer.queueSize());
+    }
+
+    @Test
+    public void indexerRunningTest() {
+        try {
+            int loops = 0;
+            while(indexer.isHandlerRunning()) {
+                Thread.sleep(15000);
+                loops++;
+                System.err.println("Test loops: "+loops);
+                indexer.addCommand(new XMLIndexerCommand(IndexerCommand.Action.INDEX));
+                if(loops == 5) {
+                    indexer.stopCommandHandler();
+                }
+            }
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
     }
 }

@@ -55,8 +55,8 @@ public class FileFactory extends DataFactory {
 
         RevisionData data = createInitialRevision(entity, conf, time);
 
-        data.dataField(SavedDataFieldCall.set("file", data).setValue(path).setTime(time));
-        data.dataField(SavedDataFieldCall.set("study", data).setValue(studyId.toString()).setTime(time));
+        data.dataField(SavedDataFieldCall.set("file").setValue(path).setTime(time));
+        data.dataField(SavedDataFieldCall.set("study").setValue(studyId.toString()).setTime(time));
 
         entity.setData(json.serialize(data));
 

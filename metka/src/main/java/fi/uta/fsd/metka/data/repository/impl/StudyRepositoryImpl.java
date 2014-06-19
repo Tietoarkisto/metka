@@ -203,7 +203,7 @@ public class StudyRepositoryImpl implements StudyRepository {
         }
 
         // TODO: check return value for errors
-        data.dataField(SavedDataFieldCall.set("aipcomplete", data).setValue(new LocalDate().toString()));
+        data.dataField(SavedDataFieldCall.set("aipcomplete").setValue(new LocalDate().toString()));
 
         // Change state in revision data to approved.
         // Serialize data back to revision entity.
@@ -292,11 +292,11 @@ public class StudyRepositoryImpl implements StudyRepository {
         // For each FileLinkQueueEntity
         for(StudyAttachmentQueueEntity event : events) {
             // Check that references are found from data
-            ReferenceContainerDataField references = data.dataField(ReferenceContainerDataFieldCall.get(event.getStudyAttachmentField()).setConfiguration(config)).getRight();
-            if(references == null) { // Missing REFERENCECONTAINER, add container
-                references = new ReferenceContainerDataField(event.getStudyAttachmentField());
-                // We are going to add a reference so this needs to happen anyway.
-                data.putField(references);
+            ReferenceContainerDataField references = data.dataField(ReferenceContainerDataFieldCall.set(event.getStudyAttachmentField()).setConfiguration(config)).getRight();
+            if(references == null) {
+                // Something went wrong
+                // TODO: Log some kind of exception
+                continue;
             }
 
             Pair<StatusCode, SavedReference> srPair = findOrCreateReferenceWithValue(data, references, event.getStudyAttachmentId().toString(), data.getChanges(), time);
@@ -318,7 +318,7 @@ public class StudyRepositoryImpl implements StudyRepository {
                     continue;
                 }
                 // Try to set events study attachment id to variablefile field, then if successfull parse the file and notify of change
-                Pair<StatusCode, SavedDataField> sdPair = data.dataField(SavedDataFieldCall.set("variablefile", data).setTime(time).setValue(event.getStudyAttachmentId().toString()).setConfiguration(config));
+                Pair<StatusCode, SavedDataField> sdPair = data.dataField(SavedDataFieldCall.set("variablefile").setTime(time).setValue(event.getStudyAttachmentId().toString()).setConfiguration(config));
                 if(sdPair.getRight() == null) {
                     // Setting the value was unsuccessful don't continue with parsing
                     // TODO: Log error

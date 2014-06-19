@@ -69,13 +69,13 @@ public class StudyFactory extends DataFactory {
 
         // Studyno_prefix, this is a string that is added to the front of study_id
         list = conf.getRootSelectionList(conf.getField("studyno_prefix").getSelectionList());
-        data.dataField(SavedDataFieldCall.set("studyno_prefix", data).setTime(time).setValue(list.getDef()));
+        data.dataField(SavedDataFieldCall.set("studyno_prefix").setTime(time).setValue(list.getDef()));
 
         // studyno, this is a separate sequence from revisionable id and forms the number base for id
-        data.dataField(SavedDataFieldCall.set("studyno_number", data).setTime(time).setValue(studyNumber.toString()));
+        data.dataField(SavedDataFieldCall.set("studyno_number").setTime(time).setValue(studyNumber.toString()));
 
         // submissionid, this is required information for creating a new study
-        data.dataField(SavedDataFieldCall.set("submissionid", data).setTime(time).setValue(submissionid.toString()));
+        data.dataField(SavedDataFieldCall.set("submissionid").setTime(time).setValue(submissionid.toString()));
 
         // create id field, which concatenates studyno_prefix and studyno. This is the basis of study searches.
         // This is more of a proof of concept for concatenate fields than anything.
@@ -85,11 +85,11 @@ public class StudyFactory extends DataFactory {
             SavedDataField tempField = data.dataField(SavedDataFieldCall.get(fieldKey)).getRight();
             concat += extractStringSimpleValue(tempField);
         }
-        data.dataField(SavedDataFieldCall.set("id", data).setValue(concat).setTime(time));
+        data.dataField(SavedDataFieldCall.set("id").setValue(concat).setTime(time));
 
         // Set dataarrivaldate
         // TODO: Tieto tulee tiipiistä, toistaiseksi käytetään kuluvaa päivää
-        data.dataField(SavedDataFieldCall.set("dataarrivaldate", data).setValue(new LocalDate().toString()).setTime(time));
+        data.dataField(SavedDataFieldCall.set("dataarrivaldate").setValue(new LocalDate().toString()).setTime(time));
 
 
         entity.setData(json.serialize(data));

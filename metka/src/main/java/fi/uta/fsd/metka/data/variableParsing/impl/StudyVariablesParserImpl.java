@@ -12,10 +12,10 @@ import fi.uta.fsd.metka.data.variableParsing.StudyVariablesParser;
 import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
+import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.change.Change;
-import fi.uta.fsd.metka.model.data.change.ContainerChange;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.factories.DataFactory;
 import fi.uta.fsd.metka.model.factories.VariablesFactory;
@@ -103,12 +103,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         // *********************
         // StudyVariables checks
         // *********************
-        field = study.dataField(SavedDataFieldCall.get("variables").setConfiguration(studyConfig)).getRight();
-        if(field == null) {
-            field = new SavedDataField("variables");
-            study.putField(field);
-            result = true;
-        }
+
         // Check so see if a variables object exists for this study, if not then create it otherwise create new
         List<StudyVariablesEntity> varsEntityList =
                 em.createQuery(
@@ -132,15 +127,20 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             variablesEntity = varsEntityList.get(0);
         }
 
-        // Check to see if study knows about the variables, if not attach them, if there's a value then check it matches found variables
-        if(!field.hasValue()) {
-            field.setModifiedValue(setSimpleValue(createSavedValue(time), variablesEntity.getId().toString()));
+        field = study.dataField(SavedDataFieldCall.get("variables").setConfiguration(studyConfig)).getRight();
+        if(field != null && !field.valueEquals(variablesEntity.getId().toString())) {
+            // TODO: Log error, there's a discrepancy between saved value and found variables revisionable
+            return result;
+        }
+        Pair<StatusCode, SavedDataField> pair = study.dataField(SavedDataFieldCall.set("variables").setTime(time).setValue(variablesEntity.getId().toString()).setConfiguration(studyConfig));
+        if(pair.getRight() == null) {
+            // TODO: Log error, something went wrong during assigment
+            return result;
+        }
+        // Value changed
+        if(pair.getLeft() != StatusCode.NO_CHANGE_IN_VALUE) {
+            field = pair.getRight();
             result = true;
-        } else {
-            if(!field.getActualValue().equals(variablesEntity.getId().toString())) {
-                // TODO: Log error, there's a discrepancy between saved value and found variables revisionable
-                return result;
-            }
         }
 
         // Get variables revision
@@ -237,13 +237,13 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
 
         // Set software field
         // TODO: look at the possibility of separating software version to different field
-        variablesData.dataField(SavedDataFieldCall.set("software", variablesData).setValue(por.getSoftware()).setTime(time));
+        variablesData.dataField(SavedDataFieldCall.set("software").setValue(por.getSoftware()).setTime(time));
 
         // Set varquantity field
-        variablesData.dataField(SavedDataFieldCall.set("varquantity", variablesData).setValue(por.data.sizeX()+"").setTime(time));
+        variablesData.dataField(SavedDataFieldCall.set("varquantity").setValue(por.data.sizeX()+"").setTime(time));
 
         // Set casequantity field
-        variablesData.dataField(SavedDataFieldCall.set("casequantity", variablesData).setValue(por.data.sizeY()+"").setTime(time));
+        variablesData.dataField(SavedDataFieldCall.set("casequantity").setValue(por.data.sizeY()+"").setTime(time));
 
         // Make VariablesHandler
         VariableHandler handler = new VariableHandler(time);
@@ -406,14 +406,14 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             }
             // TODO: Check return values for problems and changes
             // Set varname field
-            variableRevision.dataField(SavedDataFieldCall.set("varname", variableRevision).setValue(variable.asVariable().getName()).setTime(time));
+            variableRevision.dataField(SavedDataFieldCall.set("varname").setValue(variable.asVariable().getName()).setTime(time));
             // Set varid field
-            variableRevision.dataField(SavedDataFieldCall.set("varid", variableRevision).setValue(variable.asVariable().getName()).setTime(time));
+            variableRevision.dataField(SavedDataFieldCall.set("varid").setValue(variable.asVariable().getName()).setTime(time));
             // Set varlabel field
             String label = StringUtils.isEmpty(StringUtils.trimAllWhitespace(variable.asVariable().label))
                     ? "[Muuttujalta puuttuu LABEL tieto]"
                     : variable.asVariable().label;
-            variableRevision.dataField(SavedDataFieldCall.set("varlabel", variableRevision).setValue(label).setTime(time));
+            variableRevision.dataField(SavedDataFieldCall.set("varlabel").setValue(label).setTime(time));
             // Set valuelabels CONTAINER
             setValueLabels(variableRevision, variable);
             // Set categories CONTAINER
@@ -673,7 +673,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                 }
             }
 
-            variableRevision.dataField(SavedDataFieldCall.set("varinterval", variableRevision).setValue(continuous ? "contin" : "discrete").setTime(time));
+            variableRevision.dataField(SavedDataFieldCall.set("varinterval").setValue(continuous ? "contin" : "discrete").setTime(time));
         }
 
         /**
