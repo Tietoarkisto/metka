@@ -1,30 +1,14 @@
-(function() {
+(function () {
     'use strict';
-    GUI.Components.cells = function ($container, content, readOnly, container, context, buildContainers) {
-        $container.eachTo(content, function (i, cell) {
-            this
-                .append($('<div>', {
-                    'class': GUI.Grid.getColumnClass(container.columns, cell.colspan)
-                })
-                .me(function () {
-                    //cell.field.multichoice
-                    //cell.field.showReferenceKey
-                    //cell.field.showReferenceValue
-                    //cell.field.handlerName
-                    var type = cell.field.displayType || MetkaJS.JSConfig[context].fields[cell.field.key].type;
-                    if (['INTEGER', 'STRING', 'DATE', 'TIME', 'DATETIME', 'CONCAT', 'SELECTION', 'CONTAINER'].indexOf(type) === -1) {
-                        console.log('not implemented type', type, arguments);
-                        return;
-                    }
 
-                    var disabled = readOnly || container.readOnly || cell.readOnly || !MetkaJS.JSConfig[context].fields[cell.field.key].editable;
+    $.widget('metka.metkaCell', $.metka.metkaField, {
+        _create: function () {
+            this._super();
 
-                    if (type === 'CONTAINER') {
-                        GUI.Fields.container(this, cell, disabled, context);
-                    } else {
-                        GUI.Fields.input(this, type, cell, disabled);
-                    }
-                }));
-        });
-    }
-}());
+            this.element
+                // Columns is set for section. Parent is row and grand-parent is section.
+                .addClass(GUI.Grid.getColumnClass(this.options.parent.parent.columns, this.options.colspan))
+            this.togglable(true);
+        }
+    });
+})();

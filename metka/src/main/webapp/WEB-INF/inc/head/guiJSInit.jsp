@@ -1,6 +1,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
 
+<script src="${contextPath}/js/gui/metka.js"></script>
+<script src="${contextPath}/js/gui/metka/basicContainer.js"></script>
+<script src="${contextPath}/js/gui/metka/tab.js"></script>
+<script src="${contextPath}/js/gui/metka/section.js"></script>
+<script src="${contextPath}/js/gui/metka/column.js"></script>
+<script src="${contextPath}/js/gui/metka/field.js"></script>
+
 <%-- Include GUI parser namespace and all sub components --%>
 <script src="${contextPath}/js/gui/guiParser.js"></script>
 <script src="${contextPath}/js/gui/gridInterpreter.js"></script>
@@ -16,9 +23,6 @@
 
 <%-- UI Components --%>
 <script src="${contextPath}/js/gui/components/viewButton.js"></script>
-<script src="${contextPath}/js/gui/components/tabs.js"></script>
-<script src="${contextPath}/js/gui/components/sections.js"></script>
-<script src="${contextPath}/js/gui/components/columns.js"></script>
 <script src="${contextPath}/js/gui/components/rows.js"></script>
 <script src="${contextPath}/js/gui/components/cells.js"></script>
 
@@ -26,3 +30,4 @@
 <script src="${contextPath}/js/gui/fields/container.js"></script>
 <script src="${contextPath}/js/gui/fields/input.js"></script>
 <script src="${contextPath}/js/gui/fields/input/datetime.js"></script>
+<script src="${contextPath}/js/gui/fields/input/select.js"></script>

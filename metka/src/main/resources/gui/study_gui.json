@@ -3,22 +3,22 @@
 		"type": "STUDY",
 		"version": 1
 	},
-	"fieldTitles": {
-		"some" : {
-			"key" : "some",
-			"title" : "jotain tekstiä"
-		},
-		"other" : {
-			"key" : "other",
-			"&title" : "jotain muuta tekstiä"
-		},
-		"thing" : {
-			"key" : "thing",
-			"&title" : {
-				"default": "vielä tekstiä"
-			}
-		}
-	},
+    "fieldTitles": {
+        "some": {
+            "key" : "some",
+            "title" : "jotain tekstiä"
+        },
+        "other": {
+            "key" : "other",
+            "&title" : "jotain muuta tekstiä"
+        },
+        "thing": {
+            "key" : "thing",
+            "&title" : {
+                "default": "vielä tekstiä"
+            }
+        }
+    },
 	"content": [
 		{
 			"type": "TAB",
@@ -489,39 +489,39 @@
             ]
         }
 	],
-	"buttons": [
-		{
-			"title": "Tallenna",
-			"type": "SAVE",
-			"states": [
-				"DRAFT"
-			]
-		},
-		{
-			"title": "Hyväksy",
-			"type": "APPROVE",
-			"states": [
-				"DRAFT"
-			]
-		},
-		{
-			"title": "Muokkaa",
-			"type": "EDIT",
-			"states": [
-				"APPROVED"
-			]
-		},
-		{
-			"title": "Poista",
-			"type": "REMOVE",
-			"states": [
-				"DRAFT",
-				"APPROVED"
-			]
-		},
-		{
-			"title": "Revisiohistoria",
-			"type": "HISTORY"
-		}
-	]
+    "buttons": [
+        {
+            "title": "Tallenna",
+            "type": "SAVE",
+            "states": [
+                "DRAFT"
+            ]
+        },
+        {
+            "title": "Hyväksy",
+            "type": "APPROVE",
+            "states": [
+                "DRAFT"
+            ]
+        },
+        {
+            "title": "Muokkaa",
+            "type": "EDIT",
+            "states": [
+                "APPROVED"
+            ]
+        },
+        {
+            "title": "Poista",
+            "type": "REMOVE",
+            "states": [
+                "DRAFT",
+                "APPROVED"
+            ]
+        },
+        {
+            "title": "Revisiohistoria",
+            "type": "HISTORY"
+        }
+    ]
 }

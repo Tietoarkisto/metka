@@ -74,67 +74,117 @@
         /**
          * Takes a gui configuration with given context and builds a gui based on it.
          * The gui is added as a child to given root element.
-         *
-         * @param root Where gui is build
-         * @param context Configuration context for gui
          */
-        function buildGui(root, context) {
-            if(!MetkaJS.exists(context)) {
-                context = MetkaJS.Globals.page.toUpperCase();
+        $.widget('metka.metkaUI', $.metka.metka, {
+            options: MetkaJS.JSGUIConfig[MetkaJS.Globals.page.toUpperCase()],
+            _create: function () {
+                console.log('create ui', this.options);
+                console.log(JSON.stringify(this.options.content, null, 4));
+                this._super();
+                this.container();
+                this.addButtons();
+            },
+            addButtons: function () {
+                var $buttons = $.metka.buttons(this.options).element;
+                if ($buttons.children().length > 0) {
+                    this.element.append($buttons);
+                }
             }
-            var config = MetkaJS.JSGUIConfig[context];
+        });
 
-            // Sanity check to see that the configuration actually exists
-            if(!MetkaJS.exists(config)) {
-                return;
-            }
+        $.widget('metka.buttons', {
+            defaultElement: '<div class="buttonsHolder pull-right">',
+            _create: function () {
 
-			console.log(JSON.stringify(config, null, 4));
+                /**
+                 * Checks to see if user fulfills buttons userGroups restriction
+                 * @param button Button configuration
+                 * @returns {boolean} Is user groups restriction filled
+                 */
+                function checkButtonGroupRestriction(button) {
+                    if(MetkaJS.hasContent(button.userGroups)) {
+                        // TODO: Check users groups against this and return false if user doesn't fulfill the restriction
+                    }
 
-            (function buildContainers($container, config, readOnly) {
-                var content = {};
-                config.content.forEach(function (container) {
-                    var type = container.type;
-                    content[type] = content[type] || [];
-                    content[type].push(container);
-                });
-
-                if (content[MetkaJS.E.Container.TAB]) {
-                    GUI.Components.tabs($container, content[MetkaJS.E.Container.TAB], readOnly, buildContainers);
+                    return true;
                 }
 
-                if (content[MetkaJS.E.Container.SECTION]) {
-                    GUI.Components.sections($container, content[MetkaJS.E.Container.SECTION], readOnly, buildContainers);
+                /**
+                 * Checks to see if user fulfills buttons isHandler restriction
+                 * @param button Button configuration
+                 * @returns {boolean} Is is handler restriction filled
+                 */
+                function checkButtonHandlerRestriction(button) {
+                    if(MetkaJS.exists(button.isHandler)) {
+                        // TODO: Check if user fulfills buttons isHandler restriction
+                    }
+
+                    return true;
                 }
 
-                if (content[MetkaJS.E.Container.COLUMN]) {
-                    GUI.Components.columns($container, content[MetkaJS.E.Container.COLUMN], readOnly, context, buildContainers);
+                function checkButtonStateRestriction(button) {
+                    var show = false;
+                    if(MetkaJS.hasContent(button.states)) {
+                        var i, length;
+                        for(i = 0, length = button.states.length; i < length; i++) {
+                            var state = button.states[i];
+                            switch(state) {
+                                case MetkaJS.E.VisibilityState.DRAFT:
+                                    if(MetkaJS.SingleObject.draft) {
+                                        show = true;
+                                    }
+                                    break;
+                                case MetkaJS.E.VisibilityState.APPROVED:
+                                    if(!MetkaJS.SingleObject.draft) {
+                                        show = true;
+                                    }
+                                    break;
+                                case MetkaJS.E.VisibilityState.REMOVED:
+                                    // TODO: Check for displaying removed revisionable
+                                    break;
+                            }
+                            if(show) {
+                                break;
+                            }
+                        }
+                    } else {
+                        show = true;
+                    }
+
+                    return show;
                 }
 
-                return $container;
-            })(root, config, false);
+                this.element.append(this.options.buttons.map(function (button) {
+                    // Check if button should be displayed
+                    var display = true;
+                    // Check group
+                    display = checkButtonGroupRestriction(button);
+                    if(display === true) {
+                        display = checkButtonHandlerRestriction(button);
+                    }
+                    if(display === true) {
+                        display = checkButtonStateRestriction(button);
+                    }
 
-            buildButtons(root, config);
-        }
+                    if(display === false) {
+                        // At least one of the restrictions was not fulfilled, return without displaying the button
+                        return;
+                    }
 
-        function buildButtons(root, config) {
-            var $container = $('<div>', {
-                'class': 'buttonsHolder pull-right'
-            });
+                    if (!MetkaJS.exists(GUI.ButtonParser.buttonHandlers[button.type])) {
+                        var message = MetkaJS.MessageManager.Message(null, 'alert.gui.missingButtonHandler.text');
+                        message.data.push(button.type);
+                        message.data.push(MetkaJS.L10N.localize(button, 'title'));
+                        MetkaJS.MessageManager.show(message);
+                        return;
+                    }
 
-            // Render buttons to button area
-			config.buttons.forEach(function (button) {
-				GUI.ButtonParser.parse($container, button);
-			});
-
-            // Add buttons to root
-            if ($container.children().length > 0) {
-                root.append($container);
+                    return GUI.ButtonParser.buttonHandlers[button.type].call(GUI.Components.viewButton(button));
+                }, this));
             }
-        }
+        });
 
         return {
-            build: buildGui,
             containerHandlers: {},
             Components: {},
             Fields: {},

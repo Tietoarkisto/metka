@@ -33,8 +33,15 @@
             .toggleClass('alert-warning', cell.important);
 
         if (['DATE', 'TIME', 'DATETIME'].indexOf(type) !== -1) {
-            GUI.Fields.input.datetime($elem, type, $input, disabled);
+            GUI.Fields.input.datetime($elem, type, $input, disabled, cell.field.key);
         } else {
+            if (nodeType === 'select') {
+                // TODO: get context
+                GUI.Fields.input.select($input, cell.field.key);
+                //GUI.Fields.input.select($input, cell.field.key);
+            } else {
+                $input.val(MetkaJS.Data.get(cell.field.key));
+            }
             $elem.append($input.prop('disabled', disabled));
         }
     }

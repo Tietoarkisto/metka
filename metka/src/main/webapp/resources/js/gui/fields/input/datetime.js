@@ -1,6 +1,6 @@
-(function() {
-    'use strict';
-    GUI.Fields.input.datetime = function ($elem, type, $input, disabled) {
+$.widget('metka.metkaField', $.metka.metkaField, {
+    datetime: function (type, $input, key) {
+        'use strict';
         var setup = {
             DATE: {
                 options: {
@@ -25,13 +25,20 @@
         }[type];
         setup.options.language = 'fi';
 
-        $elem.append($('<div class="input-group date">')
+        try {
+            var defaultDate = MetkaJS.Data.get(this.options.field.key);
+            if (defaultDate) {
+                setup.options.defaultDate = defaultDate;
+            }
+        } catch (e) {}
+
+        this.element.append($('<div class="input-group date">')
             .append($input)
             //.append('<span class="input-group-addon"><span class="glyphicon glyphicon-{icon}"></span>'.supplant({icon: icon[type]}))
             .append('<span class="input-group-addon"><span class="glyphicon glyphicon-' + setup.icon + '"></span>')
             .datetimepicker(setup.options)
-            .if(disabled, function () {
+            .if(this.isDisabled(), function () {
                 this.data('DateTimePicker').disable();
             }));
     }
-}());
+});
