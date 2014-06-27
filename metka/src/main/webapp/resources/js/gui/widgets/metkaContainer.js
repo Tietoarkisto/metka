@@ -3,8 +3,15 @@
 
     var handlers = {};
 
-    $.widget('metka.metka', $.metka.metka, {
-        container: function () {
+    // static method for adding container constructors
+    $.metka.addContainerType = function (type, handler) {
+        handlers[type] = handler;
+    };
+
+    $.widget('metka.metkaContainer', $.metka.metka, {
+        _create: function () {
+            this._super();
+
             if (this.options.content) {
                 // pick content by type
                 var contents = this.options.content.reduce(function (picked, container) {
@@ -25,9 +32,10 @@
                     // add content, if exists
                     var content = contents[type];
                     if (content) {
-                        var items = content.map(handlers[type].create.call(this), this);
+                        var handler = handlers[type];
+                        var items = content.map(handler.create.call(this), this);
                         if (items.length) {
-                            handlers[type].add.call(this, items);
+                            handler.add.call(this, items);
                         }
                     }
                 }, this);
@@ -39,9 +47,16 @@
                     }
                 });
             }
-        },
-        addHandler: function (type, handler) {
-            handlers[type] = handler;
+        }
+    });
+
+    /*
+     * Shorthand method for metka widget's internal use:
+     * Usage: this.container();
+     */
+    $.widget('metka.metka', $.metka.metka, {
+        container: function () {
+            this.element.metkaContainer(this.options);
         }
     });
 })();

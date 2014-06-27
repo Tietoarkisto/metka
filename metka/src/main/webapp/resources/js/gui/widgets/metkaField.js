@@ -7,24 +7,21 @@
             //this.options.field.showReferenceKey
             //this.options.field.showReferenceValue
             //this.options.field.handlerName
-            this._super();
             var type = this.options.field.displayType || MetkaJS.JSConfig[MetkaJS.Globals.page.toUpperCase()].fields[this.options.field.key].type;
-            if (['INTEGER', 'STRING', 'DATE', 'TIME', 'DATETIME', 'CONCAT', 'SELECTION', 'CONTAINER'].indexOf(type) === -1) {
-                console.log('not implemented type', type, arguments);
-                return;
-            }
 
             if (type === 'CONTAINER') {
-                this.container();
+                this.containerField();
             } else {
-                this.input(type);
+                this.inputField(type);
             }
+
+            //this.element.metkaField(this.options.field);
         },
-        isDisabled: function () {
+        isFieldDisabled: function () {
             // TODO: disabled: MetkaJS.SingleObject.draft || (field.type === MetkaJS.E.Field.REFERENCE)
             return this.options.readOnly || !MetkaJS.JSConfig[MetkaJS.Globals.page.toUpperCase()].fields[this.options.field.key].editable;
         },
-        container: function () {
+        containerField: function () {
             var columns = [];
             var context = MetkaJS.Globals.page.toUpperCase();
             this.element.append($('<div class="form-group">')
@@ -63,7 +60,7 @@
                                     this.append($('<td>' + column + '-' + data + '</td>'));
                                 }));
                             }))))
-                .if(!this.isDisabled(), function () {
+                .if(!this.isFieldDisabled(), function () {
                     this.append($('<div>') /*class="pull-right"*/
                         .append($('<button type="button" class="btn btn-primary">')
                             .text(MetkaJS.L10N.get('general.table.add'))
@@ -80,7 +77,7 @@
                      </c:if>*/
                 }));
         },
-        input: function (type) {
+        inputField: function (type) {
             var id = GUI.id();
             this.element.append($.metka.metkaLabel(this.options).element
                 .attr('for', id));
@@ -116,7 +113,7 @@
                 } else {
                     $input.val(MetkaJS.Data.get(this.options.field.key));
                 }
-                this.element.append($input.prop('disabled', this.isDisabled()));
+                this.element.append($input.prop('disabled', this.isFieldDisabled()));
             }
         }
     });

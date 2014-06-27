@@ -1,30 +1,7 @@
 (function () {
     'use strict';
 
-    $.widget('metka.metkaTabTitle', $.metka.metka, {
-        defaultElement: '<li>',
-        _create: function () {
-            this._super();
-            this.togglable();
-
-            this.element
-                .append($('<a data-target="#' + this.options.id + '" href="javascript:void 0;" data-toggle="tab">')
-                    .text(MetkaJS.L10N.localize(this.options, 'title')));
-        }
-    });
-
-    $.widget('metka.metkaTabContent', $.metka.metka, {
-        defaultElement: '<div class="tab-pane">',
-        _create: function () {
-            this._super();
-            this.togglable();
-            this.container();
-            this.element
-                .attr('id', this.options.id);
-        }
-    });
-
-    $.metka.metka.prototype.addHandler(MetkaJS.E.Container.TAB, {
+    $.metka.addContainerType(MetkaJS.E.Container.TAB, {
         create: function () {
             return function (content) {
                 var options = {
@@ -38,7 +15,8 @@
         },
         add: function (tabs) {
             // TODO: add Array.transform or something
-            // tabs is array of objects. make it object which has arrays as properties
+            // Tabs is an array [{title: <title>, content: <content>},...].
+            // Make it an object {title: [<titles>], content: [<content>]}.
             tabs = tabs.reduce(function (o, v) {
                 $.each(o, function (k) {
                     o[k].push(v[k]);

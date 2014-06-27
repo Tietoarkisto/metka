@@ -1,5 +1,5 @@
-$.widget('metka.metkaField', $.metka.metkaField, {
-    datetime: function (type, $input, key) {
+$.widget('metka.metka', $.metka.metka, {
+    datetime: function (type, $input) {
         'use strict';
         var setup = {
             DATE: {
@@ -37,7 +37,7 @@ $.widget('metka.metkaField', $.metka.metkaField, {
             //.append('<span class="input-group-addon"><span class="glyphicon glyphicon-{icon}"></span>'.supplant({icon: icon[type]}))
             .append('<span class="input-group-addon"><span class="glyphicon glyphicon-' + setup.icon + '"></span>')
             .datetimepicker(setup.options)
-            .if(this.isDisabled(), function () {
+            .if(this.isFieldDisabled(), function () {
                 this.data('DateTimePicker').disable();
             }));
     }
