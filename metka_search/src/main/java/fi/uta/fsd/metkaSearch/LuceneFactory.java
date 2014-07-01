@@ -24,24 +24,17 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class LuceneFactory {
     // Initialize logger.
     //private static final Logger log = Logger.getInstance();
 
     // TODO Read from properties
-    private static final String indexBaseDirectory = "/tmp/index/";
-    private static final Map<IndexerConfigurationType, DirectoryInformation> indexDirectories = new HashMap<>();
-    private static final Map<IndexerConfigurationType, DirectoryInformation> indexDirectoriesWritable = new HashMap<>();
-    private static final Map<IndexerConfigurationType, DirectoryInformation> indexDirectoriesReadOnly = new HashMap<>();
+    private static final String indexBaseDirectory = "/usr/share/metka/index/";
+    private static final Map<IndexerConfigurationType, DirectoryInformation> indexDirectories = new ConcurrentHashMap<>();
 
-    private static final IndexWriterConfig writerConfig;
-    private static DirectoryInformation currentRAMDirectory;
-
-    static {
-        writerConfig = new IndexWriterConfig(Version.LUCENE_46, new WhitespaceAnalyzer(Version.LUCENE_46)); // Use whitespace analyser as default.
-        writerConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND); // Create index if missing, append if present
-    }
+    private static volatile DirectoryInformation currentRAMDirectory;
 
     // Different index types
     public enum IndexType {
@@ -62,53 +55,37 @@ public class LuceneFactory {
         }
 
         try {
-        switch (type) {
-            case MEMORY:{
-                if(currentRAMDirectory == null) {
-                    currentRAMDirectory = new DirectoryInformation(configType, new RAMDirectory());
+            switch (type) {
+                case MEMORY:{
+                    if(currentRAMDirectory == null) {
+                        currentRAMDirectory = new DirectoryInformation(configType, new RAMDirectory());
+                    }
+                    index = currentRAMDirectory;
+                    break;
                 }
-                index = currentRAMDirectory;
-                break;
-            }
-            case FILESYSTEM: {
-                index = indexDirectories.get(configType);
-                if(index == null) {
-                    File fileDirectory = new File(indexBaseDirectory+configType);
-                    if(fileDirectory.exists() && !fileDirectory.isDirectory()) throw new IOException("Index directory is not a directory!");
-                    fileDirectory.setWritable(true);
-                    index = new DirectoryInformation(configType, FSDirectory.open(fileDirectory));
-                }
-            }
-            default: {
-                index = null;
-            }
-            /*case FILESYSTEM_WRITABLE: {
-                index = indexDirectoriesWritable.get(configType);
-                if(index == null) {
+                case FILESYSTEM: {
+                    index = indexDirectories.get(configType);
+                    if(index == null) {
+                        File fileDirectory = new File(indexBaseDirectory+configType);
+                        if(fileDirectory.exists() && !fileDirectory.isDirectory()) throw new IOException("Index directory is not a directory!");
+                        fileDirectory.setWritable(true);
+                        try {
+                            Directory indexDirectory = new MMapDirectory(fileDirectory);
+                            index = new DirectoryInformation(configType, indexDirectory);
+                        } catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                        //Directory indexDirectory = FSDirectory.open(fileDirectory);
 
-                    File fileDirectory = new File(indexBaseDirectory+configType);
-                    if(fileDirectory.exists() && !fileDirectory.isDirectory()) throw new IOException("Index directory is not a directory!");
-                    fileDirectory.setWritable(true);
-                    index = new SimpleFSDirectory(fileDirectory);
-                    indexDirectoriesWritable.put(configType, index);
+                    }
+                    break;
                 }
-                break;
+                default: {
+                    index = null;
+                    break;
+                }
             }
-            default:
-            case FILESYSTEM_READONLY: {
-                index = indexDirectoriesReadOnly.get(configType);
-                if(index == null) {
-
-                    File fileDirectory = new File(indexBaseDirectory+configType);
-                    if(fileDirectory.exists() && !fileDirectory.isDirectory()) throw new IOException("Index directory is not a directory!");
-                    fileDirectory.setReadOnly();
-                    index = new SimpleFSDirectory(fileDirectory);
-                    indexDirectoriesReadOnly.put(configType, index);
-                }
-                break;
-            }*/
-        }
-        } catch (IOException e) {
+        } catch (Exception e) {
             //log.error(this, "Error when creating lucene index!");
             e.printStackTrace();
             throw e;
@@ -116,110 +93,88 @@ public class LuceneFactory {
         return index;
     }
 
-    public static DirectoryInformation getInMemoryIndexWriter() throws Exception {
-        DirectoryInformation index = getIndexDirectory(IndexType.MEMORY, null);
-        if(index.getIndexWriter() == null) {
-            try {
-                IndexWriter writer = new IndexWriter(index.getDirectory(), writerConfig); // This should fail in threaded situations
-                index.setIndexWriter(writer);
-            } catch(LockObtainFailedException ex) {
-                // This exception should only raise if two threads try to open an index writer simultaneously.
-                // Exception should only happen between creating of IndexWriter and assigning it to DirectoryInformation
-                // and so we don't really need to worry about it since the other thread should assign the writer
-                // without problems to this same object
-            }
-        }
-
-        return index;
+    /**
+     * Returns a DirectoryInformation with RAMDirectory and IndexWriter pointed at that RAMDirectory
+     * by calling getIndexWriter with null parameter.
+     * @return
+     * @throws Exception
+     */
+    public static DirectoryInformation getIndexWriter() throws Exception {
+        return getIndexWriter(null);
     }
 
+    /**
+     * Returns a DirectoryInformation with IndexWriter and either a RAMDirectory or a FSDirectory based on whether a
+     * config type was provided or not. Null config type produces a RAMDirectory.
+     * @param configType - IndexerConfigurationType. Can be null
+     * @return
+     * @throws Exception
+     */
     public static DirectoryInformation getIndexWriter(IndexerConfigurationType configType) throws Exception {
-        DirectoryInformation index = getIndexDirectory(IndexType.FILESYSTEM, configType);
-        if(index.getIndexWriter() == null) {
-            try {
-                IndexWriter writer = new IndexWriter(index.getDirectory(), writerConfig); // This should fail in threaded situations
+        DirectoryInformation index;
+        if(configType == null) {
+            index = getIndexDirectory(IndexType.MEMORY, null);
+        } else {
+            index = getIndexDirectory(IndexType.FILESYSTEM, configType);
+        }
+
+        if(index != null && index.getIndexWriter() == null) {
+            //try {
+                IndexWriter writer = IndexWriterFactory.createIndexWriter(index.getDirectory());
                 index.setIndexWriter(writer);
-            } catch(LockObtainFailedException ex) {
+            /*} catch(LockObtainFailedException ex) {
+                ex.printStackTrace();
                 // This exception should only raise if two threads try to open an index writer simultaneously.
                 // Exception should only happen between creating of IndexWriter and assigning it to DirectoryInformation
                 // and so we don't really need to worry about it since the other thread should assign the writer
-                // without problems to this same object
-            }
+                // without problems to this same object.
+                // We will however fetch the indexer again to make sure that we have the correct properties.
+                // This recursion should happen only once.
+                return getIndexWriter(configType);
+            }*/
         }
 
         return index;
     }
 
-    public static IndexReader getInMemoryIndexReader() throws Exception {
-        DirectoryInformation index = getIndexDirectory(IndexType.MEMORY, null);
-        IndexReader reader = DirectoryReader.open(index.getDirectory());
-        return reader;
-    }
-
-    public static IndexReader getInMemoryNRTIndexReader(boolean applyDeletes) throws Exception {
-        DirectoryInformation index = getIndexDirectory(IndexType.MEMORY, null);
-        if(index.getIndexWriter() == null) {
-            // No writer to open nrt reader with, return null
-            return null;
-        }
-        IndexReader reader = DirectoryReader.open(index.getIndexWriter(), applyDeletes);
-        return reader;
+    public static IndexReader getIndexReader() throws Exception {
+        return getIndexReader(null);
     }
 
     public static IndexReader getIndexReader(IndexerConfigurationType configType) throws Exception {
-        DirectoryInformation index = getIndexDirectory(IndexType.FILESYSTEM, configType);
-        IndexReader reader = DirectoryReader.open(index.getDirectory());
+        DirectoryInformation index;
+        if(configType == null) {
+            index = getIndexDirectory(IndexType.MEMORY, null);
+        } else {
+            index = getIndexDirectory(IndexType.FILESYSTEM, configType);
+        }
+        IndexReader reader = null;
+        if(index != null) {
+            reader = DirectoryReader.open(index.getDirectory());
+        }
         return reader;
+    }
+
+    public static IndexReader getNRTIndexReader(boolean applyDeletes) throws Exception {
+        return getNRTIndexReader(null, applyDeletes);
     }
 
     public static IndexReader getNRTIndexReader(IndexerConfigurationType configType, boolean applyDeletes) throws Exception {
-        DirectoryInformation index = getIndexDirectory(IndexType.FILESYSTEM, configType);
-        if(index.getIndexWriter() == null) {
+        DirectoryInformation index;
+        if(configType == null) {
+            index = getIndexDirectory(IndexType.MEMORY, null);
+        } else {
+            index = getIndexDirectory(IndexType.FILESYSTEM, configType);
+        }
+        if(index != null && index.getIndexWriter() == null) {
             // No writer to open nrt reader with, return null
             return null;
         }
-        IndexReader reader = DirectoryReader.open(index.getIndexWriter(), applyDeletes);
+
+        IndexReader reader = null;
+        if(index != null) {
+            reader = DirectoryReader.open(index.getIndexWriter(), applyDeletes);
+        }
         return reader;
     }
-
-    /*public void addDocument(Document doc) throws IOException {
-        // Open writer
-        config = new IndexWriterConfig(Version.LUCENE_46, analyzer);
-        config.setReaderPooling(true);
-        writer = new IndexWriter(index, config);
-        // Add new document
-        writer.addDocument(doc);
-        // Close writer
-        writer.close();
-    }
-
-    public void destroyIndex() throws IOException {
-        // Destroy function is probably not needed anywhere except in test case.
-        // Open writer
-        config = new IndexWriterConfig(Version.LUCENE_46, analyzer);
-        config.setReaderPooling(true);
-        writer = new IndexWriter(index, config);
-        // delete all items in the index
-        writer.deleteAll();
-        // Close writer
-        writer.close();
-        if (fileDirectory != null) {
-            // Delete files (Empty index)
-            FileUtils.deleteDirectory(fileDirectory);
-        }
-    }
-
-
-    public TopScoreDocCollector findDocuments(String field, String searchQuery) throws IOException, ParseException {
-        IndexReader reader = DirectoryReader.open(index);
-        IndexSearcher searcher = new IndexSearcher(reader);
-        TopScoreDocCollector collector = TopScoreDocCollector.create(1,true);
-        StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_46);
-
-        Query query = new QueryParser(Version.LUCENE_46, field, analyzer).parse(searchQuery);
-        searcher.search(query, collector);
-        return collector;
-    }*/
-
-
 }

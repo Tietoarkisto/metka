@@ -1,18 +1,27 @@
 package fi.uta.fsd.metkaSearch;
 
 import fi.uta.fsd.metkaSearch.commands.indexer.IndexerCommand;
-import fi.uta.fsd.metkaSearch.commands.indexer.XMLIndexerCommand;
+import fi.uta.fsd.metkaSearch.commands.indexer.WikipediaIndexerCommand;
+import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import fi.uta.fsd.metkaSearch.information.DirectoryInformation;
+import fi.uta.fsd.metkaSearch.sax.WikipediaHandler;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
+import org.apache.lucene.document.DateTools;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.util.Version;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +38,7 @@ public class IndexerComponent {
     // Indexer command handling thread. Runs until interrupted.
     // Will periodically flush written index to disk so that reader can get updates
     private final Future<Integer> commandHandler = handleCommands();
+    public static boolean handlingCommand = false;
 
     /**
      * Defines how many idle loops (i.e. loops with no new commands) must happen
@@ -56,7 +66,9 @@ public class IndexerComponent {
     }
 
     public boolean isHandlerRunning() {
-        return !commandHandler.isDone();
+        boolean done = commandHandler.isDone();
+        boolean cancelled = commandHandler.isCancelled();
+        return !done;
     }
 
     public void stopCommandHandler() {
@@ -80,12 +92,15 @@ public class IndexerComponent {
 
             @Override
             public Integer call() throws Exception {
-                indexer = LuceneFactory.getInMemoryIndexWriter();
+                //indexer = LuceneFactory.getInMemoryIndexWriter();
+                indexer = LuceneFactory.getIndexWriter(IndexerConfigurationType.TEST);
 
                 while(running) {
                     try {
+                        handlingCommand = false;
                         IndexerCommand command = commandQueue.poll(5, TimeUnit.SECONDS);
                         if(command != null) {
+                            handlingCommand = true;
                             // Reset idle loops since there's work
                             idleLoops = 0;
 
@@ -99,8 +114,10 @@ public class IndexerComponent {
                             }
                         } else {
                             // Increase idleLoops counter if index has changed
-                            if(indexChanged) idleLoops++;
-                            System.err.println("Number of idle loops: "+idleLoops);
+                            if(indexChanged) {
+                                idleLoops++;
+                                System.err.println("Number of idle loops: "+idleLoops);
+                            }
                         }
 
                         if((idleLoops >= IDLE_LOOPS_BEFORE_FLUSH)
@@ -120,24 +137,27 @@ public class IndexerComponent {
                 return 0;
             }
 
-            private void handleCommand(IndexerCommand command) throws IOException {
+            private void handleCommand(IndexerCommand command) throws IOException, SAXException {
                 System.err.println("New "+command.getType()+" Command with action: "+command.getAction());
                 switch(command.getType()) {
-                    case XML:
-                        handleXMLCommand((XMLIndexerCommand)command);
+                    case WIKIPEDIA:
+                        handleWikipediaCommand((WikipediaIndexerCommand)command);
                         break;
                 }
             }
 
-            private void handleXMLCommand(XMLIndexerCommand command) throws IOException {
+            private void handleWikipediaCommand(WikipediaIndexerCommand command) throws IOException, SAXException {
                 switch(command.getAction()) {
                     case REMOVE:
                         // Create term for identification
-                        Term term = new Term("id_path", command.getPath());
+                        if(StringUtils.isEmpty(command.getPageId())) {
+                            break;
+                        }
+                        Term term = new Term("id", command.getPageId());
                         removeDocument(term);
                         break;
                     case INDEX:
-                        indexXMLCommand(command);
+                        indexWikipediaCommand(command);
                         break;
                 }
             }
@@ -147,24 +167,32 @@ public class IndexerComponent {
              *
              * @param command
              */
-            private void indexXMLCommand(XMLIndexerCommand command) throws IOException {
+            private void indexWikipediaCommand(WikipediaIndexerCommand command) throws IOException, SAXException {
+                if(StringUtils.isEmpty(command.getPath())) {
+                    // No sense in trying to parse empty path
+                    return;
+                }
+                // Create sax parser
+                XMLReader xr;
+                try {
+                    xr = XMLReaderFactory.createXMLReader();
+                } catch(SAXException sex) {
+                    sex.printStackTrace();
+                    return;
+                }
+                // Create handler
+                WikipediaHandler handler = new WikipediaHandler(indexer, command);
+                xr.setContentHandler(handler);
+                xr.setErrorHandler(handler);
+
+                // Try parsing the file
+                FileReader fr = new FileReader(command.getPath());
+                xr.parse(new InputSource(fr));
+
                 // Get the XML-file and parse it to some format for processing
-
-                // Create analyzers map for PerFieldAnalyzerWrapper
-                Map<String, Analyzer> analyzers = new HashMap<>();
-
-                // Create Document
-                Document document = new Document();
-                // add XML-file path as a field to the
-                document.add(new StringField("id_path", command.getPath(), Field.Store.NO));
 
                 // Add fields from the XML-file to index sometimes including a different analyzer
 
-                // Create analyzer wrapper
-                PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new WhitespaceAnalyzer(USED_VERSION), analyzers);
-
-                // Add document to index with analyzer wrapper, possibly prepare for OutOfMemoryError
-                indexer.getIndexWriter().addDocument(document, analyzer);
             }
 
             private void removeDocument(Term term) throws IOException {
@@ -180,6 +208,8 @@ public class IndexerComponent {
                     try {
                         // Try to commit the writer
                         indexer.getIndexWriter().commit();
+                        // Set indexer to dirty state so that searchers know to update their index
+                        indexer.setDirty(true);
                     } catch (OutOfMemoryError er) {
                         er.printStackTrace();
                         // If we get an OutOfMemoryError then close the writer immediately

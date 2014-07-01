@@ -23,8 +23,9 @@ public interface IndexerCommand {
      * This information can contain things like object keys, indexing configurations, content for indexing etc.
      */
     public static enum Type {
+        DUMMY,
         REVISION,
-        XML,
+        WIKIPEDIA,
         JSON
         // ...
     }

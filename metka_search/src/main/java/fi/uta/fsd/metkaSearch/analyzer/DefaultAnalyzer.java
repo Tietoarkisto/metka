@@ -1,5 +1,6 @@
 package fi.uta.fsd.metkaSearch.analyzer;
 
+import fi.uta.fsd.metkaSearch.IndexerComponent;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
@@ -14,8 +15,8 @@ public class DefaultAnalyzer extends Analyzer {
     // TODO: Change to exact phrase indexing somehow
     @Override
     protected TokenStreamComponents createComponents(String fieldName, Reader reader) {
-        Tokenizer source = new StandardTokenizer(Version.LUCENE_46, reader);
-        TokenStream result = new StandardFilter(Version.LUCENE_46, source);
+        Tokenizer source = new StandardTokenizer(IndexerComponent.USED_VERSION, reader);
+        TokenStream result = new StandardFilter(IndexerComponent.USED_VERSION, source);
         TokenStreamComponents components = new TokenStreamComponents(source, result);
         return components;
     }
