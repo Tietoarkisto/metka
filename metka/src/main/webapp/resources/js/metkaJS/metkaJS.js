@@ -151,6 +151,14 @@
             return elem;
         },
 
+        Data: {
+            get: function (key) {
+                console.log('get data:', key);
+                // TODO: also use .modifiedValue
+                return MetkaJS.objectGetPropertyFromNS(MetkaJS, 'data.fields', key, 'originalValue.value.value');
+            }
+        },
+
         /**
          * Checks whether given field should be rendered as a read only field.
          * There are multiple things that have to be considered for this but restrictions are implemented as needed.
@@ -257,6 +265,35 @@
             }
 
             return true;
+        },
+
+        // TODO: move to Object.getPropertyFromNS or Object.prototype.getPropertyFromNS
+        /**
+         * @param o Get property from this object
+         * @param [ns]
+         */
+        objectGetPropertyFromNS: function (o/*[, ns]*/) {
+            var ns = $.makeArray(arguments);
+            ns.shift();
+            if (!ns.length) {
+                return o;
+            }
+            ns = Array.prototype.concat.apply([], ns.map(function (v) {
+                return typeof v === 'string' ? v.split('.') : v;
+            }));
+            return (function r(o) {
+                if (!o) {
+                    return o;
+                }
+
+                var propName = ns.shift();
+                var prop = o[propName];
+                if (ns.length) {
+                    return r(prop, ns);
+                } else {
+                    return prop;
+                }
+            })(o);
         }
     };
 }());

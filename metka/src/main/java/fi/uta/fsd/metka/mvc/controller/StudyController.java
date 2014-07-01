@@ -14,6 +14,7 @@ import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
 import fi.uta.fsd.metka.mvc.domain.simple.study.StudySearchData;
 import fi.uta.fsd.metka.transfer.configuration.ConfigurationMap;
 import fi.uta.fsd.metka.transfer.configuration.GUIConfigurationMap;
+import fi.uta.fsd.metka.mvc.search.GeneralSearch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -48,6 +49,8 @@ public class StudyController {
     private ConfigurationService configService;
     @Autowired
     private JSONUtil json;
+    @Autowired
+    private GeneralSearch generalSearch;
 
     /*
     * View single study
@@ -142,6 +145,17 @@ public class StudyController {
 
         try {
             model.asMap().put("jsGUIConfig", json.serialize(guiConfigs));
+        } catch(IOException ex) {
+            ex.printStackTrace();
+            List<ErrorMessage> errors = new ArrayList<>();
+            errors.add(ErrorMessage.guiConfigurationSerializationError("study", id, revision));
+            redirectAttributes.addFlashAttribute("displayableErrors", errors);
+            return REDIRECT_SEARCH;
+        }
+
+        // Data
+        try {
+            model.asMap().put("jsData", json.serialize(generalSearch.findSingleRevision(id, revision, ConfigurationType.STUDY)));
         } catch(IOException ex) {
             ex.printStackTrace();
             List<ErrorMessage> errors = new ArrayList<>();

@@ -71,70 +71,7 @@
             return 0;
         }
 
-        /**
-         * Takes a gui configuration with given context and builds a gui based on it.
-         * The gui is added as a child to given root element.
-         *
-         * @param root Where gui is build
-         * @param context Configuration context for gui
-         */
-        function buildGui(root, context) {
-            if(!MetkaJS.exists(context)) {
-                context = MetkaJS.Globals.page.toUpperCase();
-            }
-            var config = MetkaJS.JSGUIConfig[context];
-
-            // Sanity check to see that the configuration actually exists
-            if(!MetkaJS.exists(config)) {
-                return;
-            }
-
-			console.log(JSON.stringify(config, null, 4));
-
-            (function buildContainers($container, config, readOnly) {
-                var content = {};
-                config.content.forEach(function (container) {
-                    var type = container.type;
-                    content[type] = content[type] || [];
-                    content[type].push(container);
-                });
-
-                if (content[MetkaJS.E.Container.TAB]) {
-                    GUI.Components.tabs($container, content[MetkaJS.E.Container.TAB], readOnly, buildContainers);
-                }
-
-                if (content[MetkaJS.E.Container.SECTION]) {
-                    GUI.Components.sections($container, content[MetkaJS.E.Container.SECTION], readOnly, buildContainers);
-                }
-
-                if (content[MetkaJS.E.Container.COLUMN]) {
-                    GUI.Components.columns($container, content[MetkaJS.E.Container.COLUMN], readOnly, context, buildContainers);
-                }
-
-                return $container;
-            })(root, config, false);
-
-            buildButtons(root, config);
-        }
-
-        function buildButtons(root, config) {
-            var $container = $('<div>', {
-                'class': 'buttonsHolder pull-right'
-            });
-
-            // Render buttons to button area
-			config.buttons.forEach(function (button) {
-				GUI.ButtonParser.parse($container, button);
-			});
-
-            // Add buttons to root
-            if ($container.children().length > 0) {
-                root.append($container);
-            }
-        }
-
         return {
-            build: buildGui,
             containerHandlers: {},
             Components: {},
             Fields: {},

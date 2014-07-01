@@ -29,7 +29,7 @@
 </div>
 <script>
     $(document).ready(function() {
-        GUI.build($('#dynamicContent'), '${context}');
+        $('#dynamicContent').metkaUI();
     });
 </script>
 </body>
