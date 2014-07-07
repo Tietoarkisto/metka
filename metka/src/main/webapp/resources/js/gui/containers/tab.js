@@ -5,7 +5,7 @@
         create: function () {
             return function (content) {
                 var options = {
-                    id: GUI.id()
+                    id: $.metka.metka.prototype.autoId()
                 };
                 return {
                     title: this.children('metkaTabTitle')(content, options),

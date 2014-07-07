@@ -14,8 +14,6 @@
             } else {
                 this.inputField(type);
             }
-
-            //this.element.metkaField(this.options.field);
         },
         isFieldDisabled: function () {
             // TODO: disabled: MetkaJS.SingleObject.draft || (field.type === MetkaJS.E.Field.REFERENCE)
@@ -78,7 +76,7 @@
                 }));
         },
         inputField: function (type) {
-            var id = GUI.id();
+            var id = this.autoId();
             this.element.append($.metka.metkaLabel(this.options).element
                 .attr('for', id));
 
@@ -107,32 +105,59 @@
                 this.datetime(type, $input);
             } else {
                 if (isSelection) {
-                    // TODO: get context
-                    $input.metkaOptions(this.options);
-                    //GUI.Fields.input.select($input, cell.field.key);
+                    $input.metkaInput('select');
                 } else {
-                    $input.val(MetkaJS.Data.get(this.options.field.key));
+                    var key = this.options.field.key;
+                    $input
+                        .val(MetkaJS.Data.get(key))
+                        .change(function () {
+                            MetkaJS.Data.set(key, $(this).val());
+                        });
                 }
                 this.element.append($input.prop('disabled', this.isFieldDisabled()));
             }
-        }
-    });
+        },
+        datetime: function (type, $input) {
+            'use strict';
+            var setup = {
+                DATE: {
+                    options: {
+                        pickTime: false,
+                        format: 'YYYY-MM-DD'
+                    },
+                    icon: 'calendar'
+                },
+                TIME: {
+                    options: {
+                        pickDate: false,
+                        format: 'hh.mm'
+                    },
+                    icon: 'time'
+                },
+                DATETIME: {
+                    options: {
+                        format: 'YYYY-MM-DD hh.mm'
+                    },
+                    icon: 'calendar'
+                }
+            }[type];
+            setup.options.language = 'fi';
 
-    $.widget('metka.metkaLabel', $.metka.metka, {
-        defaultElement: '<label>',
-        _create: function () {
-            this.element
-                .text(MetkaJS.L10N.localize(this.options, 'title'));
-            if (this.options.required) {
-                this.element.append('<span class="glyphicon glyphicon-asterisk"></span>');
-            }
-        }
-    });
+            try {
+                var defaultDate = MetkaJS.Data.get(this.options.field.key);
+                if (defaultDate) {
+                    setup.options.defaultDate = defaultDate;
+                }
+            } catch (e) {}
 
-    $.widget('metka.metkaInput', $.metka.metka, {
-        _create: function () {
-            this.element
-                .toggleClass('alert-warning', this.options.important);
+            this.element.append($('<div class="input-group date">')
+                .append($input)
+                //.append('<span class="input-group-addon"><span class="glyphicon glyphicon-{icon}"></span>'.supplant({icon: icon[type]}))
+                .append('<span class="input-group-addon"><span class="glyphicon glyphicon-' + setup.icon + '"></span>')
+                .datetimepicker(setup.options)
+                .if(this.isFieldDisabled(), function () {
+                    this.data('DateTimePicker').disable();
+                }));
         }
     });
 })();

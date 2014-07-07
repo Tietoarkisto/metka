@@ -12,6 +12,8 @@ import fi.uta.fsd.metka.mvc.domain.simple.RevisionViewDataContainer;
 import fi.uta.fsd.metka.mvc.domain.simple.transfer.SearchResult;
 import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchData;
+import fi.uta.fsd.metka.mvc.search.GeneralSearch;
+import fi.uta.fsd.metka.transfer.configuration.ConfigurationMap;
 import fi.uta.fsd.metka.transfer.configuration.GUIConfigurationMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -48,6 +50,8 @@ public class SeriesController {
     private ConfigurationService configService;
     @Autowired
     private JSONUtil json;
+    @Autowired
+    private GeneralSearch generalSearch;
 
     /*
     * View single series
@@ -106,6 +110,20 @@ public class SeriesController {
             return REDIRECT_SEARCH;
         }
 
+        // Form JSConfig
+        ConfigurationMap configs = new ConfigurationMap();
+        configs.setConfiguration(config);
+        //configs.setConfiguration(fileConfig);
+        try {
+            model.asMap().put("jsConfig", json.serialize(configs));
+        } catch(IOException ex) {
+            ex.printStackTrace();
+            List<ErrorMessage> errors = new ArrayList<>();
+            errors.add(ErrorMessage.configurationSerializationError("study", id, revision));
+            redirectAttributes.addFlashAttribute("displayableErrors", errors);
+            return REDIRECT_SEARCH;
+        }
+
         // Form JSGUIConfig
         GUIConfigurationMap guiConfigs = new GUIConfigurationMap();
         GUIConfiguration guiConfig = configService.findLatestGUIByType(ConfigurationType.SERIES);
@@ -121,10 +139,21 @@ public class SeriesController {
             return REDIRECT_SEARCH;
         }
 
+        // Data
+        try {
+            model.asMap().put("jsData", json.serialize(generalSearch.findSingleRevision(id, revision, ConfigurationType.SERIES)));
+        } catch(IOException ex) {
+            ex.printStackTrace();
+            List<ErrorMessage> errors = new ArrayList<>();
+            errors.add(ErrorMessage.guiConfigurationSerializationError("study", id, revision));
+            redirectAttributes.addFlashAttribute("displayableErrors", errors);
+            return REDIRECT_SEARCH;
+        }
+
         model.asMap().put("page", "series");
-        Map<String, Configuration> configs = new HashMap<>();
-        configs.put("SERIES", config);
-        model.asMap().put("configuration", configs);
+        Map<String, Configuration> configurations = new HashMap<>();
+        configurations.put("SERIES", config);
+        model.asMap().put("configuration", configurations);
         if(single.getState() == UIRevisionState.DRAFT) {
             // TODO: this should check if the user is the handler for this revision.
             return MODIFY;

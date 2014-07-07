@@ -9,7 +9,6 @@
         // Placeholders for functionality added in other files
         E: null,
         JSConfig: null,
-        JSGUIConfig: null,
         JSConfigUtil: null,
         MessageManager: null,
         EventManager: null,
@@ -153,9 +152,16 @@
 
         Data: {
             get: function (key) {
-                console.log('get data:', key);
-                // TODO: also use .modifiedValue
-                return MetkaJS.objectGetPropertyFromNS(MetkaJS, 'data.fields', key, 'originalValue.value.value');
+                //console.log('get data:', key);
+                var data = MetkaJS.objectGetPropertyFromNS(MetkaJS, 'data.fields', key);
+                var modifiedValue = MetkaJS.objectGetPropertyFromNS(data, 'modifiedValue.value.value');
+                if (modifiedValue !== null) {
+                    return modifiedValue;
+                }
+                return MetkaJS.objectGetPropertyFromNS(data, 'originalValue.value.value');
+            },
+            set: function (key, value) {
+                return MetkaJS.objectSetPropertyFromNS(MetkaJS, 'data.fields', key, 'currentValue.value.value', value);
             }
         },
 
@@ -270,7 +276,7 @@
         // TODO: move to Object.getPropertyFromNS or Object.prototype.getPropertyFromNS
         /**
          * @param o Get property from this object
-         * @param [ns]
+         * @param [ns] Namespace. Can be string, '.' (dot) separated string, or array of strings
          */
         objectGetPropertyFromNS: function (o/*[, ns]*/) {
             var ns = $.makeArray(arguments);
@@ -282,16 +288,61 @@
                 return typeof v === 'string' ? v.split('.') : v;
             }));
             return (function r(o) {
-                if (!o) {
-                    return o;
+                if (typeof o !== 'object') {
+                    return;
+                }
+                if (o === null) {
+                    return;
                 }
 
                 var propName = ns.shift();
                 var prop = o[propName];
                 if (ns.length) {
-                    return r(prop, ns);
+                    return r(prop);
                 } else {
                     return prop;
+                }
+            })(o);
+        },
+
+        /**
+         * @param o Set property to this object
+         * @param [ns] Can be string, '.' (dot) separated string, or array of strings
+         * @param value any value
+         */
+        objectSetPropertyFromNS: function (o/*[, ns]*/,  value) {
+            var ns = $.makeArray(arguments);
+            ns.shift(); // remove o
+            value = ns.pop(); // value is last argument
+            if (!ns.length) {
+                throw 'Property name was not specified.';
+            }
+            if (!o) {
+                throw 'Object was not specified.';
+            }
+
+            ns = Array.prototype.concat.apply([], ns.map(function (v) {
+                return typeof v === 'string' ? v.split('.') : v;
+            }));
+            return (function r(o) {
+                var propName = ns.shift();
+                if (ns.length) {
+                    var prop;
+                    if (typeof o[propName] === 'undefined') {
+                        prop = o[propName] = {};
+                    } else {
+                        if (typeof o[propName] !== 'object') {
+                            throw 'Typeof property is not object.';
+                        }
+                        if (o[propName] === null) {
+                            prop = o[propName] = {};
+                            //throw 'Property is null.';
+                        }
+                        prop = o[propName];
+                    }
+                    return r(prop);
+                } else {
+                    return o[propName] = value;
                 }
             })(o);
         }

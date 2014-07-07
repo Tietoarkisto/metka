@@ -1,3 +1,6 @@
+
+define();
+
 /*
  * jQuery widgets in this project:
  *
@@ -63,3 +66,5 @@
         }
     });
 })();
+
+define("gui/widgets/metka", function(){});
