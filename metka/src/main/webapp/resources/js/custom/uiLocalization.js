@@ -130,6 +130,14 @@ $(document).ready(function() {
                 "&empty": {
                     "default": "-- Valitse --"
                 }
+            },
+
+            "&id": {
+                "default": "ID"
+            },
+
+            "&revision": {
+                "default": "Revisio"
             }
         },
 

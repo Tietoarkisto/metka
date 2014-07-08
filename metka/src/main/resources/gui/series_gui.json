@@ -14,6 +14,7 @@
                         {
                             "type": "CELL",
                             "title": "ID",
+                            "readOnly": true,
                             "field": {
                                 "key": "id"
                             }

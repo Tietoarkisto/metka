@@ -1,6 +1,24 @@
 (function () {
 	'use strict';
 
+    // TODO: move to separate file
+    // Polyfills and language extensions
+
+    // shorthand for console.log
+    window.log = console.log.bind(console);
+
+    if (!String.prototype.supplant) {
+        String.prototype.supplant = function (o) {
+            return this.replace(
+                /\{([^{}]*)\}/g,
+                function (a, b) {
+                    var r = o[b];
+                    return typeof r === 'string' || typeof r === 'number' ? r : a;
+                }
+            );
+        };
+    }
+
     /* Define MetkaJS namespace. Includes general global variables, objects, handlers and functions related to Metka-client.
      */
     window.MetkaJS = {
@@ -154,14 +172,21 @@
             get: function (key) {
                 //console.log('get data:', key);
                 var data = MetkaJS.objectGetPropertyFromNS(MetkaJS, 'data.fields', key);
-                var modifiedValue = MetkaJS.objectGetPropertyFromNS(data, 'modifiedValue.value.value');
-                if (modifiedValue !== null) {
-                    return modifiedValue;
+
+                var current = MetkaJS.objectGetPropertyFromNS(data, 'currentValue');
+                if (current !== null && typeof current !== 'undefined') {
+                    return current;
                 }
+
+                var modified = MetkaJS.objectGetPropertyFromNS(data, 'modifiedValue.value.value');
+                if (modified !== null && typeof modified !== 'undefined') {
+                    return modified;
+                }
+
                 return MetkaJS.objectGetPropertyFromNS(data, 'originalValue.value.value');
             },
             set: function (key, value) {
-                return MetkaJS.objectSetPropertyFromNS(MetkaJS, 'data.fields', key, 'currentValue.value.value', value);
+                return MetkaJS.objectSetPropertyFromNS(MetkaJS, 'data.fields', key, 'currentValue', value);
             }
         },
 

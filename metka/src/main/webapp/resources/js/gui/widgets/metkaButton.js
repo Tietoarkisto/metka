@@ -9,7 +9,7 @@
      */
 
     $.widget('metka.metkaButton', $.metka.metka, {
-        defaultElement: '<button type="button" class="btn btn-primary">',
+        defaultElement: '<button type="button" class="btn">',
         _create: function () {
             //this._super();
             //this.togglable();
@@ -17,12 +17,18 @@
             if (!$.metka.metkaButton.prototype[this.options.type]) {
                 var message = MetkaJS.MessageManager.Message(null, 'alert.gui.missingButtonHandler.text');
                 message.data.push(this.options.type);
-                message.data.push(MetkaJS.L10N.localize(button, 'title'));
+                message.data.push(MetkaJS.L10N.localize(this.options, 'title'));
                 MetkaJS.MessageManager.show(message);
                 return;
             }
-            this.element
-                .text(MetkaJS.L10N.localize(this.options, 'title'));
+
+            this.element.addClass('btn-' + (this.options.style || 'primary'));
+
+            if (MetkaJS.L10N.hasTranslation(this.options, 'title')) {
+                this.element
+                    .text(MetkaJS.L10N.localize(this.options, 'title'));
+            }
+
             this[this.options.type]();
             return this;
         },
@@ -30,6 +36,19 @@
             this.element
                 .click(function () {
                     MetkaJS.SingleObject.formAction(MetkaJS.E.Form.APPROVE);
+                });
+        },
+        DISMISS_MODAL: function () {
+            // although some bootstrap features are accessible via .data method, this wont work
+            // this.element.data('dismiss', 'modal');
+
+            this.element.attr('data-dismiss', 'modal');
+        },
+        DOWNLOAD: function () {
+            this.element
+                .text(MetkaJS.L10N.get('general.buttons.download'))
+                .click(function () {
+                    MetkaJS.PathBuilder().add('download').add(MetkaJS.SingleObject.id).add(MetkaJS.SingleObject.revision).navigate();
                 });
         },
         EDIT: function () {
@@ -41,6 +60,20 @@
         HISTORY: function () {
             this.element
                 .click(MetkaJS.RevisionHistory.revisions);
+        },
+        NEXT: function () {
+            this.element
+                .html('<span class="glyphicon glyphicon-chevron-right"></span>')
+                .click(function () {
+                    MetkaJS.SingleObject.adjacent(true);
+                });
+        },
+        PREVIOUS: function () {
+            this.element
+                .html('<span class="glyphicon glyphicon-chevron-left"></span>')
+                .click(function () {
+                    MetkaJS.SingleObject.adjacent(false);
+                });
         },
         REMOVE: function () {
             this.element
@@ -64,8 +97,35 @@
         },
         SAVE: function () {
             this.element
+                //.data('loading-text', 'Tallennetaan...')
                 .click(function () {
-                    MetkaJS.SingleObject.formAction(MetkaJS.E.Form.SAVE);
+                    //MetkaJS.SingleObject.formAction(MetkaJS.E.Form.SAVE);
+                    //return;
+                    //var $button = $(this);
+                    //$button.button('loading');
+                    var data = {
+                        id: MetkaJS.SingleObject.id,
+                        revision: MetkaJS.SingleObject.revision
+                    };
+                    $.each(MetkaJS.data.fields, function (key, value) {
+                        data["values['" + key + "']"] = MetkaJS.Data.get(key);
+                    });
+                    $.ajax({
+                        method: 'POST',
+                        url: 'http://localhost:8080/metka/series/ajaxSave',
+                        data: data,
+                        success: function () {},
+                        complete: function (xhr, status) {
+                            //$button.button('reset');
+                            $.metka.metkaModal({
+                                title: 'Saved',
+                                buttons: [{
+                                    type: 'DISMISS_MODAL',
+                                    title: 'Sulje'
+                                }]
+                            });
+                        }
+                    });
                 });
         },
         isVisible: function () {

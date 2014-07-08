@@ -17,7 +17,16 @@
         },
         isFieldDisabled: function () {
             // TODO: disabled: MetkaJS.SingleObject.draft || (field.type === MetkaJS.E.Field.REFERENCE)
-            return this.options.readOnly || !MetkaJS.JSConfig[MetkaJS.Globals.page.toUpperCase()].fields[this.options.field.key].editable;
+
+            var key = this.options.field.key;
+            var dataConf = MetkaJS.JSConfig[MetkaJS.Globals.page.toUpperCase()].fields[key];
+
+            // field is disabled, if data should be immutable and original value is set
+            if (dataConf.immutable && MetkaJS.objectGetPropertyFromNS(MetkaJS.data.fields, key, 'originalValue')) {
+                return true;
+            }
+
+            return this.options.readOnly || this.options.field.readOnly || !dataConf.editable;
         },
         containerField: function () {
             var columns = [];
@@ -107,6 +116,8 @@
                 if (isSelection) {
                     $input.metkaInput('select');
                 } else {
+                    // textarea or input elements
+
                     var key = this.options.field.key;
                     $input
                         .val(MetkaJS.Data.get(key))
@@ -152,8 +163,7 @@
 
             this.element.append($('<div class="input-group date">')
                 .append($input)
-                //.append('<span class="input-group-addon"><span class="glyphicon glyphicon-{icon}"></span>'.supplant({icon: icon[type]}))
-                .append('<span class="input-group-addon"><span class="glyphicon glyphicon-' + setup.icon + '"></span>')
+                .append('<span class="input-group-addon"><span class="glyphicon glyphicon-{icon}"></span>'.supplant(setup))
                 .datetimepicker(setup.options)
                 .if(this.isFieldDisabled(), function () {
                     this.data('DateTimePicker').disable();

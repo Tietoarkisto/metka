@@ -10,6 +10,7 @@
 <script src="${contextPath}/js/gui/widgets/metkaField.js"></script>
 <script src="${contextPath}/js/gui/widgets/metkaInput.js"></script>
 <script src="${contextPath}/js/gui/widgets/metkaLabel.js"></script>
+<script src="${contextPath}/js/gui/widgets/metkaModal.js"></script>
 <script src="${contextPath}/js/gui/widgets/metkaRow.js"></script>
 <script src="${contextPath}/js/gui/widgets/metkaCell.js"></script>
 <script src="${contextPath}/js/gui/widgets/metkaTabTitle.js"></script>
