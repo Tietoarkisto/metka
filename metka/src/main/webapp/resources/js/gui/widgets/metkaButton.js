@@ -14,12 +14,15 @@
             //this._super();
             //this.togglable();
 
-            if (!$.metka.metkaButton.prototype[this.options.type]) {
-                var message = MetkaJS.MessageManager.Message(null, 'alert.gui.missingButtonHandler.text');
-                message.data.push(this.options.type);
-                message.data.push(MetkaJS.L10N.localize(this.options, 'title'));
-                MetkaJS.MessageManager.show(message);
-                return;
+            if (this.options.type) {
+                if (!$.metka.metkaButton.prototype[this.options.type]) {
+                    var message = MetkaJS.MessageManager.Message(null, 'alert.gui.missingButtonHandler.text');
+                    message.data.push(this.options.type);
+                    message.data.push(MetkaJS.L10N.localize(this.options, 'title'));
+                    MetkaJS.MessageManager.show(message);
+                    return;
+                }
+                this[this.options.type]();
             }
 
             this.element.addClass('btn-' + (this.options.style || 'primary'));
@@ -28,9 +31,6 @@
                 this.element
                     .text(MetkaJS.L10N.localize(this.options, 'title'));
             }
-
-            this[this.options.type]();
-            return this;
         },
         APPROVE: function () {
             this.element
@@ -38,18 +38,13 @@
                     MetkaJS.SingleObject.formAction(MetkaJS.E.Form.APPROVE);
                 });
         },
-        DISMISS_MODAL: function () {
-            // although some bootstrap features are accessible via .data method, this wont work
-            // this.element.data('dismiss', 'modal');
-
-            this.element.attr('data-dismiss', 'modal');
-        },
-        DOWNLOAD: function () {
+        COMPARE: function () {
             this.element
-                .text(MetkaJS.L10N.get('general.buttons.download'))
-                .click(function () {
-                    MetkaJS.PathBuilder().add('download').add(MetkaJS.SingleObject.id).add(MetkaJS.SingleObject.revision).navigate();
-                });
+                .text(MetkaJS.L10N.get('general.revision.compare'));
+        },
+        DISMISS: function () {
+            this.element
+                .text(MetkaJS.L10N.get('general.buttons.close'));
         },
         EDIT: function () {
             this.element
@@ -59,41 +54,163 @@
         },
         HISTORY: function () {
             this.element
-                .click(MetkaJS.RevisionHistory.revisions);
-        },
-        NEXT: function () {
-            this.element
-                .html('<span class="glyphicon glyphicon-chevron-right"></span>')
                 .click(function () {
-                    MetkaJS.SingleObject.adjacent(true);
+                    function checkRadioGroups() {
+                        var beginVal = $('input[name="beginGrp"]:checked').val();
+                        var endVal = $('input[name="endGrp"]:checked').val();
+                        if (beginVal) {
+                            $('input[name="endGrp"]').each(function () {
+                                if ($(this).val() <= beginVal) {
+                                    $(this).attr('disabled', true);
+                                } else {
+                                    $(this).attr('disabled', false);
+                                }
+                            });
+                        }
+                        if (endVal) {
+                            $('input[name="beginGrp"]').each(function () {
+                                if ($(this).val() >= endVal) {
+                                    $(this).attr('disabled', true);
+                                } else {
+                                    $(this).attr('disabled', false);
+                                }
+                            });
+                        }
+                        if (beginVal || endVal) {
+                            $('#compareRevisions').attr('disabled', true);
+                        } else {
+                            $('#compareRevisions').attr('disabled', false);
+                        }
+                    }
+
+                    var $table = $('<table class="table">')
+                        .append($('<thead>')
+                            .append($('<tr>')
+                                .append((function () {
+                                    var arr = [
+                                        'general.revision',
+                                        'general.revision.publishDate',
+                                        'general.revision.compare.begin',
+                                        'general.revision.compare.end'
+                                    ];
+
+                                    if (MetkaJS.SingleObject.draft) {
+                                        arr.push('general.revision.replace');
+                                    }
+
+                                    return arr.map(function (entry) {
+                                        return $('<th>')
+                                            .text(MetkaJS.L10N.get(entry));
+                                    });
+                                })())));
+
+                    $.metka.metkaModal({
+                        title: MetkaJS.L10N.get('general.revision.revisions'),
+                        body: $table,
+                        buttons: [{
+                            type: 'COMPARE'
+                        }, {
+                            type: 'DISMISS'
+                        }]
+                    });
+
+                    $.ajax({
+                        type: 'GET',
+                        url: MetkaJS.PathBuilder().add('history').add('revisions').add(MetkaJS.SingleObject.id).build(),
+                        success: function (response) {
+                            $table
+                                .append($('<tbody>')
+                                    .append(response.map(function (row) {
+                                        return $('<tr>')
+                                            .append((function () {
+                                                var items = [
+                                                    $('<a>', {
+                                                        href: MetkaJS.PathBuilder().add(MetkaJS.Globals.page).add('view').add(MetkaJS.SingleObject.id).add(row.revision).build(),
+                                                        text: row.revision
+                                                    }),
+                                                        row.state === 'DRAFT' ? MetkaJS.L10N.get('general.DRAFT') : row.approvalDate,
+                                                    $('<input>', {
+                                                        type: 'radio',
+                                                        name: 'beginGrp',
+                                                        value: row.revision,
+                                                        change: checkRadioGroups
+                                                    }),
+                                                    $('<input>', {
+                                                        type: 'radio',
+                                                        name: 'endGrp',
+                                                        value: row.revision,
+                                                        change: checkRadioGroups
+                                                    })
+                                                ];
+
+                                                if (MetkaJS.SingleObject.draft) {
+                                                    items.push($.metka.metkaButton({
+                                                        type: 'REPLACE',
+                                                        create: function () {
+                                                            $(this).addClass('btn-xs');
+                                                        }
+                                                    }).element);
+                                                }
+
+                                                return items.map(function (entry) {
+                                                    return $('<td>')
+                                                        .append(entry);
+                                                });
+                                            })());
+                                    })));
+
+                            checkRadioGroups();
+                        },
+                        error: function (e) {
+                            alert('Error: ' + JSON.stringify(e, null, 4));
+                        }
+                    });
                 });
         },
-        PREVIOUS: function () {
+        NO: function () {
             this.element
-                .html('<span class="glyphicon glyphicon-chevron-left"></span>')
-                .click(function () {
-                    MetkaJS.SingleObject.adjacent(false);
-                });
+                .text(MetkaJS.L10N.get('general.buttons.no'));
         },
         REMOVE: function () {
             this.element
                 .click(function () {
-                    var type = MetkaJS.SingleObject.draft ? "draft" : "logical";
-                    var message = MetkaJS.MessageManager.Message("confirmation.remove.revision.title",
-                            "confirmation.remove.revision."+type+".text",
-                        function() {
-                            MetkaJS.PathBuilder()
-                                .add("remove")
-                                .add(MetkaJS.Globals.page)
-                                .add(type)
-                                .add(MetkaJS.SingleObject.id)
-                                .navigate();
-                        });
-                    message.pushData(MetkaJS.L10N.get("confirmation.remove.revision."+type+".data."+MetkaJS.Globals.page));
-                    message.pushData(MetkaJS.SingleObject.id);
-
-                    MetkaJS.MessageManager.show(message);
+                    var type = MetkaJS.SingleObject.draft ? 'draft' : 'logical';
+                    var modal = $.metka.metkaModal({
+                        title: MetkaJS.L10N.get('confirmation.remove.revision.title'),
+                        body: MetkaJS.L10N.get('confirmation.remove.revision.{type}.text'.supplant({
+                            type: type
+                        })).supplant({
+                            '0': MetkaJS.L10N.get('confirmation.remove.revision.' + type + '.data.' + MetkaJS.Globals.page),
+                            '1': MetkaJS.SingleObject.id
+                        }),
+                        buttons: [{
+                            type: 'YES',
+                            preventDismiss: true,
+                            create: function () {
+                                $(this)
+                                    .click(function () {
+                                        log('yes');
+                                        setTimeout(function () {
+                                            modal.element.modal('hide');
+                                        }, 1000);
+                                        return;
+                                        MetkaJS.PathBuilder()
+                                            .add("remove")
+                                            .add(MetkaJS.Globals.page)
+                                            .add(type)
+                                            .add(MetkaJS.SingleObject.id)
+                                            .navigate();
+                                    });
+                            }
+                        }, {
+                            type: 'NO'
+                        }]
+                    });
                 });
+        },
+        REPLACE: function () {
+            this.element
+                .text(MetkaJS.L10N.get('general.revision.replace'));
         },
         SAVE: function () {
             this.element
@@ -112,16 +229,19 @@
                     });
                     $.ajax({
                         method: 'POST',
-                        url: 'http://localhost:8080/metka/series/ajaxSave',
+                        url: MetkaJS.Globals.contextPath + '/series/ajaxSave',
                         data: data,
-                        success: function () {},
+                        dataType: 'json',
+                        success: function (data) {
+                            log('success', this, arguments, data.success)
+                        },
                         complete: function (xhr, status) {
                             //$button.button('reset');
+                            log(this, arguments)
                             $.metka.metkaModal({
                                 title: 'Saved',
                                 buttons: [{
-                                    type: 'DISMISS_MODAL',
-                                    title: 'Sulje'
+                                    type: 'DISMISS'
                                 }]
                             });
                         }

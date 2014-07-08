@@ -1,5 +1,6 @@
 package fi.uta.fsd.metka.mvc.controller;
 
+import com.fasterxml.jackson.core.JsonGenerator;
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.enums.UIRevisionState;
 import fi.uta.fsd.metka.data.util.JSONUtil;
@@ -15,7 +16,9 @@ import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchData;
 import fi.uta.fsd.metka.mvc.search.GeneralSearch;
 import fi.uta.fsd.metka.transfer.configuration.ConfigurationMap;
 import fi.uta.fsd.metka.transfer.configuration.GUIConfigurationMap;
+import fi.uta.fsd.metka.transfer.revision.RevisionSaveResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -254,9 +257,11 @@ public class SeriesController {
     }
 
     // TODO: return messages as json, rename to save
-    @RequestMapping(value="ajaxSave", method = {RequestMethod.POST})
+    @RequestMapping(value = "ajaxSave", method = {RequestMethod.POST},
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String ajaxSave(@ModelAttribute("single")TransferObject single, RedirectAttributes redirectAttributes) {
         boolean success = seriesService.saveSeries(single);
+
         List<ErrorMessage> errors = new ArrayList<>();
         if(success) {
             errors.add(ErrorMessage.saveSuccess());
@@ -265,7 +270,8 @@ public class SeriesController {
         }
 
         if(errors.size() > 0) redirectAttributes.addFlashAttribute("displayableErrors", errors);
-        return errors.toString() + "mooo";
+        return "{\"success\": true}";
+        //return new RevisionSaveResponse();
     }
 
     /*

@@ -7,6 +7,10 @@
             //console.log(JSON.stringify(this.options.content, null, 4));
             this._super();
 
+            if (!MetkaJS.SingleObject.draft) {
+                this.options.readOnly = true;
+            }
+
             this.header();
             this.container();
             this.buttonContainer();
@@ -14,25 +18,41 @@
         header: function () {
             var labelAndValue = String.prototype.supplant.bind('{label}&nbsp;{value}');
 
-            var header = '{page} - {id} - {revision}{state}'.supplant({
-                page: MetkaJS.L10N.get('type.{page}.title'.supplant({page: MetkaJS.Globals.page.toUpperCase()})),
-                id: labelAndValue({
-                    label: MetkaJS.L10N.get('general.id'),
-                    value: MetkaJS.SingleObject.id
-                }),
-                revision: labelAndValue({
-                    label: MetkaJS.L10N.get('general.revision'),
-                    value: MetkaJS.SingleObject.revision
-                }),
-                state: MetkaJS.SingleObject.draft ? ' - ' + MetkaJS.L10N.get('general.DRAFT') : ''
-            });
-
             this.element.append($('<div class="pageTitle row">')
-                .html(header)
+                .html('{page} - {id} - {revision}{state}'.supplant({
+                    page: MetkaJS.L10N.get('type.{page}.title'.supplant({page: MetkaJS.Globals.page.toUpperCase()})),
+                    id: labelAndValue({
+                        label: MetkaJS.L10N.get('general.id'),
+                        value: MetkaJS.SingleObject.id
+                    }),
+                    revision: labelAndValue({
+                        label: MetkaJS.L10N.get('general.revision'),
+                        value: MetkaJS.SingleObject.revision
+                    }),
+                    state: MetkaJS.SingleObject.draft ? ' - ' + MetkaJS.L10N.get('general.DRAFT') : ''
+                }))
                 .append($('<div class="floatRight normalText">')
-                    .append(['PREVIOUS', 'NEXT', 'DOWNLOAD'].map(function (type) {
+                    .append([function () {
+                        $(this)
+                            .html('<span class="glyphicon glyphicon-chevron-left"></span>')
+                            .click(function () {
+                                MetkaJS.SingleObject.adjacent(false);
+                            });
+                    }, function () {
+                        $(this)
+                            .html('<span class="glyphicon glyphicon-chevron-right"></span>')
+                            .click(function () {
+                                MetkaJS.SingleObject.adjacent(true);
+                            });
+                    }, function () {
+                        $(this)
+                            .text(MetkaJS.L10N.get('general.buttons.download'))
+                            .click(function () {
+                                MetkaJS.PathBuilder().add('download').add(MetkaJS.SingleObject.id).add(MetkaJS.SingleObject.revision).navigate();
+                            });
+                    }].map(function (create) {
                         return $.metka.metkaButton({
-                            type: type,
+                            create: create,
                             style: 'default'
                         }).element;
                     }))));
