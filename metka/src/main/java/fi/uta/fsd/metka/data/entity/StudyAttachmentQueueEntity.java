@@ -40,6 +40,10 @@ public class StudyAttachmentQueueEntity {
     @Column(name = "PATH")
     private String path;
 
+    @Version
+    @Column(name = "ROW_VERSION")
+    private Long version;
+
     public Long getId() {
         return id;
     }
@@ -86,5 +90,13 @@ public class StudyAttachmentQueueEntity {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 }

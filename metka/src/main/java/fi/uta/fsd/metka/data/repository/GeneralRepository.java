@@ -6,6 +6,8 @@ import fi.uta.fsd.metka.data.enums.repositoryResponses.DraftRemoveResponse;
 import fi.uta.fsd.metka.data.enums.repositoryResponses.LogicalRemoveResponse;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import javassist.NotFoundException;
+import org.apache.commons.lang3.tuple.Pair;
+import org.joda.time.LocalDateTime;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
@@ -17,6 +19,8 @@ import java.util.MissingResourceException;
  */
 @Transactional(readOnly = true, noRollbackFor = {NotFoundException.class, MissingResourceException.class})
 public interface GeneralRepository {
+
+    public Pair<Boolean, LocalDateTime> getRevisionableRemovedInfo(Long id);
 
     public Long getAdjancedRevisionableId(Long currentId, String type, boolean forward) throws NotFoundException;
     @Transactional(readOnly = false) public DraftRemoveResponse removeDraft(String type, Long id);

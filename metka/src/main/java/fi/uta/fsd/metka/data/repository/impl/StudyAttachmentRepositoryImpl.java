@@ -161,6 +161,7 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
 
             // Create new RevisionData object using the current revEntity (either new or old, doesn't matter)
             RevisionData newData = DataFactory.createNewRevisionData(newRevision, data, config.getKey());
+            // TODO: Set handler
 
             newRevision.setData(json.serialize(newData));
 
@@ -221,7 +222,8 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
             // If there were changes save and approve current revision.
             data.setState(RevisionState.APPROVED);
             data.setApprovalDate(new LocalDateTime());
-            data.setLastSave(new LocalDateTime());
+            data.setLastSaved(new LocalDateTime());
+            // TODO: set last saved by
 
             revEntity.setData(json.serialize(data));
             revEntity.setState(RevisionState.APPROVED);

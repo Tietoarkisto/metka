@@ -54,8 +54,10 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase, DataFi
     @XmlElement private RevisionState state;
     @XmlElement private Integer rowIdSeq;
     @XmlElement private LocalDateTime approvalDate;
-    @XmlElement private LocalDateTime lastSave;
-    @XmlElement private String approver;
+    @XmlElement private String approvedBy;
+    @XmlElement private LocalDateTime lastSaved;
+    @XmlElement private String lastSavedBy;
+    @XmlElement private String handler;
 
     @JsonCreator
     public RevisionData(@JsonProperty("key")RevisionKey key, @JsonProperty("configuration")ConfigurationKey configuration, @JsonProperty("rowIdSeq") Integer rowIdSeq) {
@@ -96,20 +98,36 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase, DataFi
         this.approvalDate = approvalDate;
     }
 
-    public LocalDateTime getLastSave() {
-        return lastSave;
+    public String getApprovedBy() {
+        return (approvedBy == null) ? "" : approvedBy;
     }
 
-    public void setLastSave(LocalDateTime lastSave) {
-        this.lastSave = lastSave;
+    public void setApprovedBy(String approvedBy) {
+        this.approvedBy = approvedBy;
     }
 
-    public String getApprover() {
-        return approver;
+    public LocalDateTime getLastSaved() {
+        return lastSaved;
     }
 
-    public void setApprover(String approver) {
-        this.approver = approver;
+    public void setLastSaved(LocalDateTime lastSaved) {
+        this.lastSaved = lastSaved;
+    }
+
+    public String getLastSavedBy() {
+        return (lastSavedBy == null) ? "" : lastSavedBy;
+    }
+
+    public void setLastSavedBy(String lastSavedBy) {
+        this.lastSavedBy = lastSavedBy;
+    }
+
+    public String getHandler() {
+        return (handler == null) ? "" : handler;
+    }
+
+    public void setHandler(String handler) {
+        this.handler = handler;
     }
 
     public Integer getRowIdSeq() {

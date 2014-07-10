@@ -1,6 +1,7 @@
 package fi.uta.fsd.metka.model.configuration;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.data.enums.SelectionListType;
@@ -22,6 +23,7 @@ public class SelectionList {
     @XmlElement private Boolean includeEmpty = true;
     @XmlElement private final List<String> freeText = new ArrayList<>();
     @XmlElement private String freeTextKey;
+    @XmlElement private String sublistKey;
 
     @JsonCreator
     public SelectionList(@JsonProperty("key") String key) {
@@ -78,6 +80,33 @@ public class SelectionList {
 
     public void setFreeTextKey(String freeTextKey) {
         this.freeTextKey = freeTextKey;
+    }
+
+    public String getSublistKey() {
+        return sublistKey;
+    }
+
+    public void setSublistKey(String sublistKey) {
+        this.sublistKey = sublistKey;
+    }
+
+    /**
+     * Helper method to return option with given value.
+     * Only works with LITERAL and VALUE lists.
+     * Returns null if option not found or type is wrong.
+     * @param value
+     * @return
+     */
+    public Option getOptionWithValue(String value) {
+        if(type == SelectionListType.SUBLIST || type == SelectionListType.REFERENCE) {
+            return null;
+        }
+        for(Option option : options) {
+            if(option.getValue().equals(value)) {
+                return option;
+            }
+        }
+        return null;
     }
 
     @Override

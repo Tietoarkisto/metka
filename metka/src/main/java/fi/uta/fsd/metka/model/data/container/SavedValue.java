@@ -22,7 +22,7 @@ public class SavedValue {
     }
 
     public String getSavedBy() {
-        return savedBy;
+        return (savedBy == null) ? "" : savedBy;
     }
 
     public void setSavedBy(String savedBy) {

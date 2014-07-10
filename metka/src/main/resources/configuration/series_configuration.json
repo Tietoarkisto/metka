@@ -3,19 +3,19 @@
 		"version": 1,
 		"type": "SERIES"
 	},
-	"idField": "seriesno",
-	"displayId": "seriesno",
+	"idField": "seriesid",
+	"displayId": "seriesid",
 	"fields": {
-		"id": {
-			"key": "id",
+		"seriesid": {
+			"key": "seriesid",
 			"translatable": false,
 			"immutable": true,
 			"unique": true,
 			"required": true,
 			"type": "INTEGER"
 		},
-		"seriesabb": {
-			"key": "seriesabb",
+		"seriesabbr": {
+			"key": "seriesabbr",
 			"immutable": true,
 			"translatable": false,
 			"type": "STRING"

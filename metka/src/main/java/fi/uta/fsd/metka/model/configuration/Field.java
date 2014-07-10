@@ -36,6 +36,8 @@ public class Field {
     @XmlElement private Boolean summaryField = true;
     @XmlElement private Boolean editable = true;
     @XmlElement private Boolean writable = true;
+    @XmlElement private Boolean indexed = true;
+    @XmlElement private Boolean exact = false;
 
     @JsonCreator
     public Field(@JsonProperty("key")String key) {
@@ -200,6 +202,22 @@ public class Field {
 
     public void setWritable(Boolean writable) {
         this.writable = writable;
+    }
+
+    public Boolean getIndexed() {
+        return (indexed == null) ? true : indexed;
+    }
+
+    public void setIndexed(Boolean indexed) {
+        this.indexed = (indexed == null) ? true : indexed;
+    }
+
+    public Boolean getExact() {
+        return (exact == null) ? false : exact;
+    }
+
+    public void setExact(Boolean exact) {
+        this.exact = (exact == null) ? false : exact;
     }
 
     @Override

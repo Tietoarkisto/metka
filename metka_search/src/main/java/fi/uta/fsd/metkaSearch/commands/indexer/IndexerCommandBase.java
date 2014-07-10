@@ -1,16 +1,18 @@
 package fi.uta.fsd.metkaSearch.commands.indexer;
 
+import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
+
 public abstract class IndexerCommandBase implements IndexerCommand {
-    private final Type type;
+    private final DirectoryManager.DirectoryPath path;
     private final Action action;
 
-    protected IndexerCommandBase(Type type, Action action) {
-        this.type = type;
+    protected IndexerCommandBase(DirectoryManager.DirectoryPath path, Action action) {
+        this.path = path;
         this.action = action;
     }
 
-    public Type getType() {
-        return type;
+    public DirectoryManager.DirectoryPath getPath() {
+        return path;
     }
 
     public Action getAction() {

@@ -34,6 +34,10 @@ public abstract class RevisionableEntity {
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
     private LocalDateTime removalDate;
 
+    @Version
+    @Column(name = "ROW_VERSION")
+    private Long version;
+
     public Long getId() {
         return id;
     }
@@ -80,6 +84,14 @@ public abstract class RevisionableEntity {
 
     public void setRemovalDate(LocalDateTime removalDate) {
         this.removalDate = removalDate;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     // Helper for creating new revisions

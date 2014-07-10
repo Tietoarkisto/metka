@@ -39,6 +39,7 @@ public class FieldSerializer extends ObjectSerializer<Field> {
         }
         jgen.writeBooleanField("editable", value.getEditable());
         jgen.writeBooleanField("writable", value.getWritable());
+        jgen.writeBooleanField("indexed", value.getIndexed());
 
         switch(value.getType()) {
             case REFERENCECONTAINER:
@@ -66,6 +67,7 @@ public class FieldSerializer extends ObjectSerializer<Field> {
                 /* FALLTHROUGH */
             case STRING:
                 jgen.writeBooleanField("multiline", value.getMultiline());
+                jgen.writeBooleanField("exact", value.getExact());
                 break;
             case CONCAT:
                 jgen.writeArrayFieldStart("concatenate");

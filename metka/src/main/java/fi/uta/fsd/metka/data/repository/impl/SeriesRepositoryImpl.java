@@ -101,7 +101,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         // If name field has changed record the change otherwise do no change to name field.
         // Id description field has changed record the change otherwise do no change to description field.
         // TODO: automate validation using configuration, since all needed information is there.
-        
+
         // Check ID integrity
         if (idIntegrityCheck(to, data, config)) {
             return false;
@@ -130,7 +130,8 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         // Entity should still be managed at this point so
 
         if(changes) {
-            data.setLastSave(new LocalDateTime());
+            data.setLastSaved(new LocalDateTime());
+            // TODO: Set last saved by
             revEntity.setData(json.serialize(data));
         }
 

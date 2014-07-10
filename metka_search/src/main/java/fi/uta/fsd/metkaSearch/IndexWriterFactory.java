@@ -4,6 +4,7 @@ import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.LockObtainFailedException;
 
 import java.io.IOException;
 
@@ -12,19 +13,14 @@ public class IndexWriterFactory {
 
     static {
         // Create the default writer config. Use whitespace analyser as default.
-        writerConfig = new IndexWriterConfig(IndexerComponent.USED_VERSION, new WhitespaceAnalyzer(IndexerComponent.USED_VERSION));
+        writerConfig = new IndexWriterConfig(LuceneConfig.USED_VERSION, new WhitespaceAnalyzer(LuceneConfig.USED_VERSION));
         // Set index open mode. Create index if missing, append if present
         writerConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
     }
 
-    public static IndexWriter createIndexWriter(Directory directory) {
-        try {
-            IndexWriterConfig clone = writerConfig.clone();
-            IndexWriter writer = new IndexWriter(null, null);
-            return writer;
-        } catch(Exception ex) {
-            ex.printStackTrace();
-            return null;
-        }
+    public static IndexWriter createIndexWriter(Directory directory) throws IOException {
+        IndexWriterConfig clone = writerConfig.clone();
+        IndexWriter writer = new IndexWriter(directory, clone);
+        return writer;
     }
 }
