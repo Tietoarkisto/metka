@@ -27,6 +27,9 @@
         return this;
     };
 
+    /**
+     * Conditional $.fn.me
+     */
     $.fn.if = function (x, f) {
         return x ? this.me(f) : this;
     };

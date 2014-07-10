@@ -1,5 +1,6 @@
 package fi.uta.fsd.metka.mvc.controller;
 
+import com.fasterxml.jackson.core.JsonGenerator;
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.enums.UIRevisionState;
 import fi.uta.fsd.metka.data.util.JSONUtil;
@@ -12,14 +13,15 @@ import fi.uta.fsd.metka.mvc.domain.simple.RevisionViewDataContainer;
 import fi.uta.fsd.metka.mvc.domain.simple.transfer.SearchResult;
 import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchData;
+import fi.uta.fsd.metka.mvc.search.GeneralSearch;
+import fi.uta.fsd.metka.transfer.configuration.ConfigurationMap;
 import fi.uta.fsd.metka.transfer.configuration.GUIConfigurationMap;
+import fi.uta.fsd.metka.transfer.revision.RevisionSaveResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
@@ -48,6 +50,8 @@ public class SeriesController {
     private ConfigurationService configService;
     @Autowired
     private JSONUtil json;
+    @Autowired
+    private GeneralSearch generalSearch;
 
     /*
     * View single series
@@ -106,6 +110,20 @@ public class SeriesController {
             return REDIRECT_SEARCH;
         }
 
+        // Form JSConfig
+        ConfigurationMap configs = new ConfigurationMap();
+        configs.setConfiguration(config);
+        //configs.setConfiguration(fileConfig);
+        try {
+            model.asMap().put("jsConfig", json.serialize(configs));
+        } catch(IOException ex) {
+            ex.printStackTrace();
+            List<ErrorMessage> errors = new ArrayList<>();
+            errors.add(ErrorMessage.configurationSerializationError("study", id, revision));
+            redirectAttributes.addFlashAttribute("displayableErrors", errors);
+            return REDIRECT_SEARCH;
+        }
+
         // Form JSGUIConfig
         GUIConfigurationMap guiConfigs = new GUIConfigurationMap();
         GUIConfiguration guiConfig = configService.findLatestGUIByType(ConfigurationType.SERIES);
@@ -121,10 +139,21 @@ public class SeriesController {
             return REDIRECT_SEARCH;
         }
 
+        // Data
+        try {
+            model.asMap().put("jsData", json.serialize(generalSearch.findSingleRevision(id, revision, ConfigurationType.SERIES)));
+        } catch(IOException ex) {
+            ex.printStackTrace();
+            List<ErrorMessage> errors = new ArrayList<>();
+            errors.add(ErrorMessage.guiConfigurationSerializationError("study", id, revision));
+            redirectAttributes.addFlashAttribute("displayableErrors", errors);
+            return REDIRECT_SEARCH;
+        }
+
         model.asMap().put("page", "series");
-        Map<String, Configuration> configs = new HashMap<>();
-        configs.put("SERIES", config);
-        model.asMap().put("configuration", configs);
+        Map<String, Configuration> configurations = new HashMap<>();
+        configurations.put("SERIES", config);
+        model.asMap().put("configuration", configurations);
         if(single.getState() == UIRevisionState.DRAFT) {
             // TODO: this should check if the user is the handler for this revision.
             return MODIFY;
@@ -225,6 +254,24 @@ public class SeriesController {
 
         if(errors.size() > 0) redirectAttributes.addFlashAttribute("displayableErrors", errors);
         return REDIRECT_VIEW+single.getId()+"/"+single.getRevision();
+    }
+
+    // TODO: return messages as json, rename to save
+    @RequestMapping(value = "ajaxSave", method = {RequestMethod.POST},
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody String ajaxSave(@ModelAttribute("single")TransferObject single, RedirectAttributes redirectAttributes) {
+        boolean success = seriesService.saveSeries(single);
+
+        List<ErrorMessage> errors = new ArrayList<>();
+        if(success) {
+            errors.add(ErrorMessage.saveSuccess());
+        } else {
+            errors.add(ErrorMessage.saveFail());
+        }
+
+        if(errors.size() > 0) redirectAttributes.addFlashAttribute("displayableErrors", errors);
+        return "{\"success\": true}";
+        //return new RevisionSaveResponse();
     }
 
     /*

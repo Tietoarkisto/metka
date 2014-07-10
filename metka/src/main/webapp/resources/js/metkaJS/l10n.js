@@ -9,6 +9,7 @@
         var locale = "fi";
 
         return {
+            strings: strings,
             /**
              * Insert a localisation to the pool.
              * @param key Localisation key
@@ -87,6 +88,9 @@
              * @returns {boolean} True if there is a translation version of given property
              */
             hasTranslation: function(obj, name) {
+                if (!obj) {
+                    return false;
+                }
                 if(MetkaJS.L10N.isTranslation(obj['&'+name])) {
                     return true;
                 } else {

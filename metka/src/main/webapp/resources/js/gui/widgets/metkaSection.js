@@ -7,7 +7,7 @@
             this._super();
             this.togglable();
 
-            var id = GUI.id();
+            var id = this.autoId();
 
             this.element
                 .addClass(this.options.important ? 'panel-warning' : 'panel-default')

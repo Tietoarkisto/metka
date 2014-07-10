@@ -117,6 +117,47 @@ $(document).ready(function() {
                 }
             },
 
+            "revision": {
+                "compare": {
+                    "&begin": {
+                        "default": "Alku"
+                    },
+                    "&changed": {
+                        "default": "Muutos"
+                    },
+                    "&end": {
+                        "default": "Loppu"
+                    },
+                    "&modifier": {
+                        "default": "Muuttaja"
+                    },
+                    "&modifyDate": {
+                        "default": "Muutospvm"
+                    },
+                    "&property": {
+                        "default": "Ominaisuus"
+                    },
+                    "&original": {
+                        "default": "Alkuperäinen"
+                    },
+                    "&title": {
+                        "default": "Revisioiden vertailu (revisio {0} -> revisio {1})"
+                    }
+                },
+                "&compare": {
+                    "default": "Vertaa"
+                },
+                "&publishDate": {
+                    "default": "Julkaisupvm"
+                },
+                "&replace": {
+                    "default": "Korvaa"
+                },
+                "&revisions": {
+                    "default": "Revisiot"
+                }
+            },
+
             "saveInfo": {
                 "&savedAt": {
                     "default": "Päivämäärä"
@@ -130,6 +171,14 @@ $(document).ready(function() {
                 "&empty": {
                     "default": "-- Valitse --"
                 }
+            },
+
+            "&id": {
+                "default": "ID"
+            },
+
+            "&revision": {
+                "default": "Revisio"
             }
         },
 
@@ -462,7 +511,7 @@ $(document).ready(function() {
                     },
                     "draft": {
                         "&text": {
-                            "default": "Haluatko varmasti poistaa luonnoksen {0} id:llä {1}"
+                            "default": "Haluatko varmasti poistaa luonnoksen {0} id:llä {1}?"
                         },
                         "data": {
                             "&series": {
@@ -475,7 +524,7 @@ $(document).ready(function() {
                     },
                     "logical": {
                         "&text": {
-                            "default": "Haluatko varmasti poistaa {0} id:llä {1}"
+                            "default": "Haluatko varmasti poistaa {0} id:llä {1}?"
                         },
                         "data": {
                             "&series": {
@@ -599,29 +648,6 @@ $(document).ready(function() {
     general.errors.studyAttachment.saveFail = Tiedoston tietojen tallennuksessa tapahtui virhe: {0}
     general.errors.studyAttachment.saveFailAjax = Tiedoston tietojen tallennuspyynnössä tapahtui virhe
     */
-
-
-
-
-    /*general.revision=Revisio
-
-    general.revision.publishDate=Julkaisupvm
-    general.revision.revisions=Revisiot
-    general.revision.compare=Vertaa
-    general.revision.compare.begin=Alku
-    general.revision.compare.end=Loppu
-    general.revision.replace=Korvaa
-    general.revision.compare.title=Revisioiden vertailu (revisio {0} -> revisio {1})
-    general.revision.compare.property=Ominaisuus
-    general.revision.compare.original=Alkuperäinen
-    general.revision.compare.changed=Muutos
-    general.revision.compare.modifier=Muuttaja
-    general.revision.compare.modifyDate=Muutospvm*/
-
-
-
-
-
 
 
     // *********************************** //
