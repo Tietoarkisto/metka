@@ -36,7 +36,7 @@
                 data.append("id", MetkaJS.SingleObject.id);
                 data.append("targetField", targetField);
                 $.ajax({
-                    url: MetkaJS.PathBuilder().add("file").add("upload").build(),
+                    url: MetkaJS.url('fileUpload'),
                     type: "POST",
                     data: data,
                     processData: false,

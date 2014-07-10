@@ -12,8 +12,8 @@
 <body>
 <jsp:include page="../inc/topMenu.jsp" />
 <div class="wrapper">
-    <div class="content">
-        <h1 class="pageTitle"><spring:message code="title.settings" /></h1>
+    <div class="content container">
+        <div class="pageTitle row"><spring:message code="title.settings" /></div>
         <%-- Data configuration import --%>
         <form:form method="post" action="/settings/uploadDataConfiguration" enctype="multipart/form-data" modelAttribute="uploadConfig">
             Data konfiguraatio

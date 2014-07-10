@@ -15,7 +15,7 @@
                     'Content-Type': 'application/json'
                 },
                 dataType: 'json',
-                url: MetkaJS.PathBuilder().add('history').add('revisions').add('compare').build(),
+                url: MetkaJS.url('compareRevisions'),
                 data: JSON.stringify({
                     id: MetkaJS.SingleObject.id,
                     begin: parseInt(beginVal, 10),

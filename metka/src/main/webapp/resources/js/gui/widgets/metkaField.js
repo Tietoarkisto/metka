@@ -16,13 +16,13 @@
             }
         },
         isFieldDisabled: function () {
-            // TODO: disabled: MetkaJS.SingleObject.draft || (field.type === MetkaJS.E.Field.REFERENCE)
+            // TODO: disabled: (field.type === MetkaJS.E.Field.REFERENCE)
 
             var key = this.options.field.key;
             var dataConf = MetkaJS.JSConfig[MetkaJS.Globals.page.toUpperCase()].fields[key];
 
-            // field is disabled, if data should be immutable and original value is set
-            if (dataConf.immutable && MetkaJS.objectGetPropertyFromNS(MetkaJS.data.fields, key, 'originalValue')) {
+            // if data should be immutable and original value is set, field is disabled
+            if (dataConf.immutable && MetkaJS.objectGetPropertyNS(MetkaJS.data.fields, key, 'originalValue')) {
                 return true;
             }
 
@@ -31,14 +31,15 @@
         containerField: function () {
             var columns = [];
             var context = MetkaJS.Globals.page.toUpperCase();
+            var key = this.options.field.key;
             this.element.append($('<div class="form-group">')
-                .append($('<div class="panel panel-primary">')
+                .append($('<div class="panel panel-default">')
                     .append($('<div class="panel-heading">')
                         .text(MetkaJS.L10N.localize(this.options, 'title')))
-                    .append($('<table class="table">')
+                    .append($('<table class="table table-condensed">')
                         .append($('<thead>')
                             .append($('<tr>')
-                                .eachTo(MetkaJS.JSConfig[context].fields[this.options.field.key].subfields, function (i, field) {
+                                .eachTo(MetkaJS.JSConfig[context].fields[key].subfields, function (i, field) {
                                     if (MetkaJS.JSConfig[context].fields[field].summaryField) {
                                         columns.push(field);
                                         this
@@ -62,6 +63,7 @@
                                             .text(MetkaJS.L10N.get('general.saveInfo.savedBy')));
                                 })))
                         .append($('<tbody>')
+                            // TODO: onclick open and edit
                             .eachTo(['moo1', 'moo2'], function (i, data) {
                                 this.append($('<tr>').eachTo(columns, function (i, column) {
                                     this.append($('<td>' + column + '-' + data + '</td>'));
@@ -69,19 +71,16 @@
                             }))))
                 .if(!this.isFieldDisabled(), function () {
                     this.append($('<div>') /*class="pull-right"*/
-                        .append($('<button type="button" class="btn btn-primary">')
-                            .text(MetkaJS.L10N.get('general.table.add'))
-                            .click(function () {
-                                // TODO: event handler
-                                MetkaJS.DialogHandlers['${handler}'].show('${param.field}');
-                            })));
-                    /*
-                     <c:if test="${empty param.handler or param.handler == 'generalContainerHandler'}">
-                     <jsp:include page="../../dialogs/generalContainerDialog.jsp">
-                     <jsp:param name="field" value="${param.field}" />
-                     <jsp:param name="readonly" value="${readonly}" />
-                     </jsp:include>
-                     </c:if>*/
+                        .append($.metka.metkaButton({
+                            style: 'default',
+                            create: function () {
+                                $(this)
+                                    .text(MetkaJS.L10N.get('general.table.add'))
+                                    .click(function () {
+                                        MetkaJS.DialogHandlers.generalContainerHandler.show(key);
+                                    });
+                            }
+                        })));
                 }));
         },
         inputField: function (type) {
@@ -113,6 +112,12 @@
             if (['DATE', 'TIME', 'DATETIME'].indexOf(type) !== -1) {
                 this.datetime(type, $input);
             } else {
+                $input
+                    .prop('disabled', this.isFieldDisabled())
+                    .change(function () {
+                        MetkaJS.Data.set(key, $(this).val());
+                    });
+
                 if (isSelection) {
                     $input.metkaInput('select');
                 } else {
@@ -120,12 +125,10 @@
 
                     var key = this.options.field.key;
                     $input
-                        .val(MetkaJS.Data.get(key))
-                        .change(function () {
-                            MetkaJS.Data.set(key, $(this).val());
-                        });
+                        .val(MetkaJS.Data.get(key));
                 }
-                this.element.append($input.prop('disabled', this.isFieldDisabled()));
+
+                this.element.append($input);
             }
         },
         datetime: function (type, $input) {

@@ -173,6 +173,12 @@ $(document).ready(function() {
                 }
             },
 
+            "table": {
+                "&add": {
+                    "default": "Lisää"
+                }
+            },
+
             "&id": {
                 "default": "ID"
             },
@@ -536,6 +542,104 @@ $(document).ready(function() {
                         }
                     }
                 }
+            }
+        },
+
+        "STUDY": {
+            "datakind_list": {
+                "1": "Ei tietoa",
+                "2": "Kvanti",
+                "3": "Kvali",
+                "4": "Kvanti&Kvali"
+            },
+            "anonymization_list": {
+                "1": "Anonymisoidaan FSD:ssä",
+                "2": "Anonymisoitu FSD:ssä",
+                "3": "Luovuttajan anonymisoima",
+                "4": "Ei vaadi anonymisointia",
+                "5": "Ei tietoa"
+            },
+            "yes_no_na": {
+                "1": "Kyllä",
+                "2": "Ei",
+                "3": "Ei tietoa"
+            },
+            "dataversionlabel_list": {
+                "1": "Lyhyt selite",
+                "2": "Toinen lyhyt selite"
+            },
+            "termsofuse_list": {
+                "vald": "Kaikkien käytettävissä",
+                "min": "Tutkimus, opetus, opiskelu",
+                "max": "Vain tutkimus",
+                "mean": "Lupa",
+                "stdev": "Embargo"
+            },
+            "depositortype_list": {
+                "1": "Ei tietoa",
+                "2": "Yrit./yht.",
+                "3": "Tutkija(t)"
+            },
+            "newtermsofuse_list": {
+                "1": "Kaikkien käytettävissä",
+                "2": "Tutkimus, opetus, opiskelu",
+                "3": "Vain tutkimus",
+                "4": "Lupa"
+            },
+            "agreementtype_list": {
+                "1": "Ei tietoa",
+                "2": "Ei tarvita sopimusta",
+                "3": "Könttäsopimus",
+                "4": "Norm+puite",
+                "5": "On sopimus"
+            },
+            "start_end_single": {
+                "1": "Start",
+                "2": "End",
+                "3": "Single"
+            },
+            "universeclusion_list": {
+                "1": "E",
+                "2": "I"
+            }
+        },
+        "STUDY_ATTACHMENT": {
+            "fileaip": {
+                "1": "Ei tietoa",
+                "2": "Ei",
+                "3": "Kyllä",
+                "4": "Ei relevantti"
+            },
+            "filecategory": {
+                "1": "Kyselylomake",
+                "2": "Kirjoitusohjeet"
+            },
+            "filepublication": {
+                "1": "Ei julkinen",
+                "2": "Eng",
+                "3": "Fin",
+                "4": "Fin/Eng",
+                "5": "Fin/Sve",
+                "6": "Fin/Eng/Sve",
+                "7": "Sve"
+            },
+            "yes_no_na": {
+                "1": "Kyllä",
+                "2": "Ei",
+                "3": "Ei tietoa"
+            },
+            "filelanguage": {
+                "1": "de",
+                "2": "en",
+                "3": "es",
+                "4": "st",
+                "5": "fi",
+                "6": "fr",
+                "7": "it",
+                "8": "lit",
+                "9": "ru",
+                "10": "sv",
+                "11": "xx"
             }
         }
     };

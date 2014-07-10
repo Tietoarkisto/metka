@@ -8,6 +8,32 @@
      *
      */
 
+    function FormAction(command, callback) {
+        //.data('loading-text', 'Tallennetaan...')
+        //var $button = $(this);
+        //$button.button('loading');
+        //$button.button('reset');
+        return function () {
+            this.element
+                .click(function () {
+                    var data = {
+                        id: MetkaJS.SingleObject.id,
+                        revision: MetkaJS.SingleObject.revision
+                    };
+                    $.each(MetkaJS.data.fields, function (key, value) {
+                        data["values['" + key + "']"] = MetkaJS.Data.get(key);
+                    });
+
+                    $.ajax({
+                        type: 'POST',
+                        data: data,
+                        url: MetkaJS.url(command),
+                        success: callback
+                    });
+                });
+        };
+    }
+
     $.widget('metka.metkaButton', $.metka.metka, {
         defaultElement: '<button type="button" class="btn">',
         _create: function () {
@@ -32,12 +58,9 @@
                     .text(MetkaJS.L10N.localize(this.options, 'title'));
             }
         },
-        APPROVE: function () {
-            this.element
-                .click(function () {
-                    MetkaJS.SingleObject.formAction(MetkaJS.E.Form.APPROVE);
-                });
-        },
+        APPROVE: FormAction('approve', function () {
+            location.reload();
+        }),
         COMPARE: function () {
             this.element
                 .text(MetkaJS.L10N.get('general.revision.compare'));
@@ -49,7 +72,7 @@
         EDIT: function () {
             this.element
                 .click(function () {
-                    MetkaJS.SingleObject.edit();
+                    location.href = MetkaJS.url('edit');
                 });
         },
         HISTORY: function () {
@@ -94,7 +117,7 @@
                                         'general.revision.compare.end'
                                     ];
 
-                                    if (MetkaJS.SingleObject.draft) {
+                                    if (MetkaJS.SingleObject.state === 'DRAFT') {
                                         arr.push('general.revision.replace');
                                     }
 
@@ -116,7 +139,7 @@
 
                     $.ajax({
                         type: 'GET',
-                        url: MetkaJS.PathBuilder().add('history').add('revisions').add(MetkaJS.SingleObject.id).build(),
+                        url: MetkaJS.url('listRevisions'),
                         success: function (response) {
                             $table
                                 .append($('<tbody>')
@@ -125,10 +148,10 @@
                                             .append((function () {
                                                 var items = [
                                                     $('<a>', {
-                                                        href: MetkaJS.PathBuilder().add(MetkaJS.Globals.page).add('view').add(MetkaJS.SingleObject.id).add(row.revision).build(),
+                                                        href: MetkaJS.url('view', row),
                                                         text: row.revision
                                                     }),
-                                                        row.state === 'DRAFT' ? MetkaJS.L10N.get('general.DRAFT') : row.approvalDate,
+                                                    row.state === 'DRAFT' ? MetkaJS.L10N.get('general.DRAFT') : row.approvalDate,
                                                     $('<input>', {
                                                         type: 'radio',
                                                         name: 'beginGrp',
@@ -143,11 +166,12 @@
                                                     })
                                                 ];
 
-                                                if (MetkaJS.SingleObject.draft) {
+                                                if (MetkaJS.SingleObject.state === 'DRAFT') {
                                                     items.push($.metka.metkaButton({
-                                                        type: 'REPLACE',
                                                         create: function () {
-                                                            $(this).addClass('btn-xs');
+                                                            $(this)
+                                                                .addClass('btn-xs')
+                                                                .text(MetkaJS.L10N.get('general.revision.replace'));
                                                         }
                                                     }).element);
                                                 }
@@ -174,13 +198,16 @@
         REMOVE: function () {
             this.element
                 .click(function () {
-                    var type = MetkaJS.SingleObject.draft ? 'draft' : 'logical';
+                    var type = MetkaJS.SingleObject.state === 'DRAFT' ? 'draft' : 'logical';
                     var modal = $.metka.metkaModal({
                         title: MetkaJS.L10N.get('confirmation.remove.revision.title'),
                         body: MetkaJS.L10N.get('confirmation.remove.revision.{type}.text'.supplant({
                             type: type
                         })).supplant({
-                            '0': MetkaJS.L10N.get('confirmation.remove.revision.' + type + '.data.' + MetkaJS.Globals.page),
+                            '0': MetkaJS.L10N.get('confirmation.remove.revision.{type}.data.{page}'.supplant({
+                                type: type,
+                                page: MetkaJS.Globals.page
+                            })),
                             '1': MetkaJS.SingleObject.id
                         }),
                         buttons: [{
@@ -189,17 +216,10 @@
                             create: function () {
                                 $(this)
                                     .click(function () {
-                                        log('yes');
-                                        setTimeout(function () {
-                                            modal.element.modal('hide');
-                                        }, 1000);
-                                        return;
-                                        MetkaJS.PathBuilder()
-                                            .add("remove")
-                                            .add(MetkaJS.Globals.page)
-                                            .add(type)
-                                            .add(MetkaJS.SingleObject.id)
-                                            .navigate();
+                                        modal.element.modal('hide');
+                                        location.href = MetkaJS.url('remove', {
+                                            type: type
+                                        });
                                     });
                             }
                         }, {
@@ -208,45 +228,17 @@
                     });
                 });
         },
-        REPLACE: function () {
+        SAVE: FormAction('save', function (data) {
+            $.metka.metkaModal({
+                title: 'Saved',
+                buttons: [{
+                    type: 'DISMISS'
+                }]
+            });
+        }),
+        YES: function () {
             this.element
-                .text(MetkaJS.L10N.get('general.revision.replace'));
-        },
-        SAVE: function () {
-            this.element
-                //.data('loading-text', 'Tallennetaan...')
-                .click(function () {
-                    //MetkaJS.SingleObject.formAction(MetkaJS.E.Form.SAVE);
-                    //return;
-                    //var $button = $(this);
-                    //$button.button('loading');
-                    var data = {
-                        id: MetkaJS.SingleObject.id,
-                        revision: MetkaJS.SingleObject.revision
-                    };
-                    $.each(MetkaJS.data.fields, function (key, value) {
-                        data["values['" + key + "']"] = MetkaJS.Data.get(key);
-                    });
-                    $.ajax({
-                        method: 'POST',
-                        url: MetkaJS.Globals.contextPath + '/series/ajaxSave',
-                        data: data,
-                        dataType: 'json',
-                        success: function (data) {
-                            log('success', this, arguments, data.success)
-                        },
-                        complete: function (xhr, status) {
-                            //$button.button('reset');
-                            log(this, arguments)
-                            $.metka.metkaModal({
-                                title: 'Saved',
-                                buttons: [{
-                                    type: 'DISMISS'
-                                }]
-                            });
-                        }
-                    });
-                });
+                .text(MetkaJS.L10N.get('general.buttons.yes'));
         },
         isVisible: function () {
             // Check if button should be displayed
@@ -286,12 +278,12 @@
                     var state = this.options.states[i];
                     switch(state) {
                         case MetkaJS.E.VisibilityState.DRAFT:
-                            if(MetkaJS.SingleObject.draft) {
+                            if(MetkaJS.SingleObject.state === 'DRAFT') {
                                 show = true;
                             }
                             break;
                         case MetkaJS.E.VisibilityState.APPROVED:
-                            if(!MetkaJS.SingleObject.draft) {
+                            if(MetkaJS.SingleObject.state !== 'DRAFT') {
                                 show = true;
                             }
                             break;

@@ -10,35 +10,27 @@
             var key = this.options.field.key;
             var $input = this.element;
 
-            function setOptions(options) {
-                options.forEach(function (option, i) {
-                    $input.append($('<option>', {
-                        value: option.value
-                    })
-                        // TODO: set text and value
-                        .text(MetkaJS.L10N.hasTranslation(option, 'title')
-                            ?
-                            MetkaJS.L10N.localize(option, 'title')
-                            :
-                            (
-                                MetkaJS.L10N.hasTranslation(MetkaJS.objectGetPropertyFromNS($.metka.metkaUI.prototype.options.fieldTitles, key, option.value), 'title')
-                                ?
-                                MetkaJS.L10N.localize($.metka.metkaUI.prototype.options.fieldTitles[key][option.value], 'title')
-                                :
-                                '[' + key + '-' + option.value + ']'
-                            )));
-                });
-                var value = MetkaJS.Data.get(key);
-                if (typeof value !== 'undefined') {
-                    $input.val(value);
-                } else {
-                    $input.children().first().prop('selected', true);
-                }
-            }
             var selectionListKey = MetkaJS.JSConfig[MetkaJS.Globals.page.toUpperCase()].fields[key].selectionList;
             // TODO: prevent recursion
-            (function selectInput(key2) {
-                var list = MetkaJS.objectGetPropertyFromNS(MetkaJS, 'JSConfig', MetkaJS.Globals.page.toUpperCase(), 'selectionLists', key2);
+            (function selectInput(listKey) {
+                function setOptions(options) {
+                    $input.append(options.map(function (option, i) {
+                        return $('<option>')
+                            .val(option.value)
+                            .text(
+                                MetkaJS.objectGetPropertyNS(option, 'title.value')
+                                ||
+                            MetkaJS.L10N.get([MetkaJS.Globals.page.toUpperCase(), listKey, option.value].join('.')));
+                    }));
+                    var value = MetkaJS.Data.get(key);
+                    if (typeof value !== 'undefined') {
+                        $input.val(value);
+                    } else {
+                        $input.children().first().prop('selected', true);
+                    }
+                }
+
+                var list = MetkaJS.objectGetPropertyNS(MetkaJS, 'JSConfig', MetkaJS.Globals.page.toUpperCase(), 'selectionLists', listKey);
                 if (list.type === 'SUBLIST') {
                     return selectInput(list.key);
                 }
@@ -51,9 +43,6 @@
                 }
 
                 if (list.type === 'REFERENCE') {
-                    $input.change(function () {
-                        console.log(arguments);
-                    });
                     /*var reference = MetkaJS.JSConfigUtil.getReference(list.reference);
                      if (reference.type === MetkaJS.E.Ref.DEPENDENCY) {
 
@@ -84,14 +73,17 @@
                      }
                      }*/
 
-                    // TODO: while in progress, disable input
+                    // while in progress, disable input
+                    var isDisabled = $input.prop('disabled');
+                    $input.prop('disabled', true);
+
                     $.ajax({
                         type: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
                         dataType: 'json',
-                        url: MetkaJS.PathBuilder().add('references').add('collectOptionsGroup').build(),
+                        url: MetkaJS.url('options'),
                         data: JSON.stringify({
                             key: undefined,
                             requests : [{
@@ -114,12 +106,9 @@
                                     MetkaJS.MessageManager.showAll();
                                 }
 
-                                if (!response.options) {
-                                    return;
-                                }
-
                                 setOptions(response.options);
-                                // TODO: enable input
+                                // enable input, if it was enabled before request
+                                $input.prop('disabled', isDisabled);
                             });
                         }
                     });

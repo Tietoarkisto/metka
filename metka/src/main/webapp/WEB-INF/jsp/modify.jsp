@@ -8,21 +8,16 @@
 <html lang="fi">
 <head>
     <jsp:include page="../inc/head.jsp" />
-    <script>
-        MetkaJS.SingleObject.draft = true;
-    </script>
 </head>
 <body>
 <jsp:include page="../inc/topMenu.jsp" />
 <div class="wrapper">
     <div class="content container">
-        <h1 class="pageTitle"><spring:message code="${context}"/> - <spring:message code="${context}.field.${configuration[context].displayId}"/>&nbsp;${single.id} - <spring:message code="general.revision"/>&nbsp;${single.revision} - <spring:message code="general.DRAFT"/>
-            <div class="floatRight normalText"><input type="button" onclick="MetkaJS.PathBuilder().add('download').add(MetkaJS.SingleObject.id).add(MetkaJS.SingleObject.revision).navigate()" value="<spring:message code='general.buttons.download' />"/></div></h1>
+        <div class="pageTitle row"><spring:message code="${context}"/> - <spring:message code="${context}.field.${configuration[context].displayId}"/>&nbsp;${single.id} - <spring:message code="general.revision"/>&nbsp;${single.revision} - <spring:message code="general.DRAFT"/></div>
+
         <jsp:include page="${page}/modify.jsp" />
         <div class="buttonsHolder">
-            <jsp:include page="../inc/revHistory.jsp"/>
-            <!-- TODO: Fix this reset button
-            <input type="reset" class="button" value="Tyhjennä">-->
+            <jsp:include page="../inc/revHistory.jsp" />
         </div>
     </div>
     <div id="dynamicContent" class="content container"></div>

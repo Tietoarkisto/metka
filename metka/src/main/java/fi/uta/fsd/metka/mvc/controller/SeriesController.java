@@ -16,7 +16,6 @@ import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchData;
 import fi.uta.fsd.metka.mvc.search.GeneralSearch;
 import fi.uta.fsd.metka.transfer.configuration.ConfigurationMap;
 import fi.uta.fsd.metka.transfer.configuration.GUIConfigurationMap;
-import fi.uta.fsd.metka.transfer.revision.RevisionSaveResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -154,12 +153,9 @@ public class SeriesController {
         Map<String, Configuration> configurations = new HashMap<>();
         configurations.put("SERIES", config);
         model.asMap().put("configuration", configurations);
-        if(single.getState() == UIRevisionState.DRAFT) {
-            // TODO: this should check if the user is the handler for this revision.
-            return MODIFY;
-        } else {
-            return VIEW;
-        }
+        model.asMap().put("single", single);
+
+        return VIEW;
     }
 
     /*

@@ -53,7 +53,7 @@
 						'Content-Type': 'application/json'
 					},
 					dataType: 'json',
-					url: MetkaJS.PathBuilder().add('file').add('edit').add(reference.value).build()
+					url: MetkaJS.url('fileEdit', reference)
 				}).done(function (data) {
 					// Sanity check
 					if (typeof data === 'undefined' || data === null) {
@@ -72,7 +72,7 @@
 					for (key in config.fields) {
 						if (config.fields.hasOwnProperty(key)) {
 							$('#fileManagementField' + key).val(to.values[key]);
-							if (!MetkaJS.SingleObject.draft || !config.fields[key].editable || (config.fields[key].immutable && (typeof to.values[key] !== 'undefined' && to.values[key] !== null))) {
+							if (MetkaJS.SingleObject.state !== 'DRAFT' || !config.fields[key].editable || (config.fields[key].immutable && (typeof to.values[key] !== 'undefined' && to.values[key] !== null))) {
 								$('#fileManagementField' + key).prop('readonly', true);
 							}
 						}
@@ -113,7 +113,7 @@
 				},
 				dataType: 'json',
 				data: JSON.stringify(to),
-				url: MetkaJS.PathBuilder().add('file').add('save').build()
+				url: MetkaJS.url('fileSave')
 			}).done(function (data) {
 				if (data !== null && data !== 'undefined') {
 					var message = MetkaJS.MessageManager.Message(data.title, data.msg);

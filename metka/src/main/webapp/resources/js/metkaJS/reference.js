@@ -224,7 +224,7 @@
                     'Content-Type': 'application/json'
                 },
                 dataType: 'json',
-                url: MetkaJS.PathBuilder().add('references').add('collectOptionsGroup').build(),
+                url: MetkaJS.url('options'),
                 data: JSON.stringify(request)
             }).done(function (data) {
                     if (data !== null && data.responses !== null && data.responses.length > 0) {
