@@ -52,7 +52,7 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
 
             RevisionData revData = json.readRevisionDataFromString(data);
             // Use the method with less sanity checks since there's no point in getting configuration here.
-            SavedDataField field = revData.dataField(SavedDataFieldCall.get("seriesabb")).getRight();
+            SavedDataField field = revData.dataField(SavedDataFieldCall.get("seriesabbr")).getRight();
             if(!StringUtils.isEmpty(field.getActualValue())) list.add(field.getActualValue());
         }
         Collections.sort(list);

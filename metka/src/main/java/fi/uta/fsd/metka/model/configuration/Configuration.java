@@ -2,6 +2,7 @@ package fi.uta.fsd.metka.model.configuration;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import fi.uta.fsd.metka.data.enums.SelectionListType;
 import fi.uta.fsd.metka.model.interfaces.ModelBase;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -85,9 +86,17 @@ public class Configuration implements ModelBase {
     @JsonIgnore
     public SelectionList getRootSelectionList(String key) {
         SelectionList list = getSelectionList(key);
-        while(list != null && !list.getKey().equals(key)) {
-            key = list.getKey();
+        List<SelectionList> foundLists = new ArrayList<>();
+        foundLists.add(list);
+        while(list.getType() == SelectionListType.SUBLIST) {
+            key = list.getSublistKey();
             list = getSelectionList(key);
+            if(!foundLists.contains(list)) {
+                foundLists.add(list);
+            } else {
+                // There's a loop
+                break;
+            }
         }
         return list;
     }

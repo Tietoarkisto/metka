@@ -21,6 +21,10 @@ public class RevisionEntity {
     @Type(type="org.hibernate.type.StringClobType")
     private String data;
 
+    @Version
+    @Column(name = "ROW_VERSION")
+    private Long version;
+
     public RevisionEntity() {
     }
 
@@ -50,6 +54,14 @@ public class RevisionEntity {
 
     public void setData(String data) {
         this.data = data;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     @Override

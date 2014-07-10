@@ -1,8 +1,9 @@
 package fi.uta.fsd.metkaSearch.sax;
 
-import fi.uta.fsd.metkaSearch.IndexerComponent;
+import fi.uta.fsd.metkaSearch.LuceneConfig;
+import fi.uta.fsd.metkaSearch.analyzer.FinnishVoikkoAnalyzer;
 import fi.uta.fsd.metkaSearch.commands.indexer.WikipediaIndexerCommand;
-import fi.uta.fsd.metkaSearch.information.DirectoryInformation;
+import fi.uta.fsd.metkaSearch.directory.DirectoryInformation;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
@@ -10,7 +11,12 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.TermQuery;
 import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -29,6 +35,7 @@ public class WikipediaHandler extends DefaultHandler {
         END_DOCUMENT,
         PAGE,
         REVISION,
+        CONTRIBUTOR,
         // STOP is a special state. If parser enters into stop then all event calls (except start document)
         // are returned straight away and no further parsing is done apart from possibly some finalizing actions.
         // If STOP state is reached then end document will ideally reverse all commits made during the file parsing
@@ -45,10 +52,17 @@ public class WikipediaHandler extends DefaultHandler {
     private Document currentDocument;
     private StringBuilder currentCharacters;
     private int pagecounter = 0;
+    private String currentBase;
+    private Locator locator;
+    private FinnishVoikkoAnalyzer finAnalyzer;
 
     public WikipediaHandler(DirectoryInformation indexer, WikipediaIndexerCommand command) {
         this.indexer = indexer;
         this.command = command;
+    }
+
+    public void setLocator(Locator locator) {
+        this.locator = locator;
     }
 
     /**
@@ -58,10 +72,14 @@ public class WikipediaHandler extends DefaultHandler {
      */
     @Override
     public void startDocument() throws SAXException {
-        System.err.println("Started parsing document: "+command.getPath());
+        System.err.println("Started parsing document: "+command.getFilePath());
         state = STATE.START_DOCUMENT;
         // Create analyzers map for PerFieldAnalyzerWrapper
         analyzers = new HashMap<>();
+        if(command.getPath().getLanguage().equals("fi")) { // This could be better
+             finAnalyzer = new FinnishVoikkoAnalyzer();
+            analyzers.put("text", finAnalyzer);
+        }
         documentBatch = 0;
         currentCharacters = null;
         super.startDocument();
@@ -69,6 +87,22 @@ public class WikipediaHandler extends DefaultHandler {
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+        // DEBUG
+        if(localName.equals("page")) {
+            pagecounter++;
+            if(state != STATE.STOP && pagecounter % 10 == 1) {
+                System.err.println("Started page: "+pagecounter);
+            }
+            // STRESS TESTING CUTOFF
+            if(pagecounter == 1000) {
+                try {
+                    flushIndex();
+                } catch (IOException ioe) {
+                    ioe.printStackTrace();
+                }
+                state = STATE.STOP;
+            }
+        }
         // STOP state check
         if(state == STATE.STOP) {
             return;
@@ -83,12 +117,15 @@ public class WikipediaHandler extends DefaultHandler {
                     return;
                 }
 
-                System.err.println("Started new page: "+(++pagecounter));
                 state = STATE.PAGE;
                 // Create new document
                 currentDocument = new Document();
                 // add XML-file path as a field to the
-                currentDocument.add(new StringField("path", command.getPath(), Field.Store.NO));
+                currentDocument.add(new StringField("path", command.getFilePath(), Field.Store.NO));
+                currentDocument.add(new StringField("base", currentBase, Field.Store.NO));
+                if(locator != null) {
+                    currentDocument.add(new StringField("approximateLine", locator.getLineNumber()+"", Field.Store.NO));
+                }
                 break;
             case "revision":
                 // You should only get to revision from page
@@ -98,6 +135,14 @@ public class WikipediaHandler extends DefaultHandler {
                 }
                 state = STATE.REVISION;
                 break;
+            case "contributor":
+                // You should only get to contributor from revision
+                if(state != STATE.REVISION) {
+                    state = STATE.STOP;
+                    return;
+                }
+                state = STATE.CONTRIBUTOR;
+            case "base":
             case "title":
             case "id":
             case "text":
@@ -136,6 +181,9 @@ public class WikipediaHandler extends DefaultHandler {
 
         // TODO: add more content and different analyzers
         switch(localName) {
+            case "base":
+                currentBase = currentCharacters.toString();
+                break;
             case "page":
                 if(state != STATE.PAGE) {
                     // Something is wrong with the structure, stop
@@ -145,15 +193,16 @@ public class WikipediaHandler extends DefaultHandler {
 
                 // Add current document to index
                 // Create analyzer wrapper
-                PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new WhitespaceAnalyzer(IndexerComponent.USED_VERSION), analyzers);
+                PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new WhitespaceAnalyzer(LuceneConfig.USED_VERSION), analyzers);
 
-                // TODO: Check if document already exists in the index
-                // TODO: If document already exists in the index check the revision id, if revision id equals current id then there's no need to reindex.
-                // TODO: If revision id has changed then remove old document before trying to add new document
-
-
+                // Simply remove any possible previous versions of current document. We don't want duplicates and we have to parse the file anyway.
+                BooleanQuery query = new BooleanQuery();
+                query.add(new TermQuery(new Term("base", currentBase+"")), BooleanClause.Occur.MUST);
+                query.add(new TermQuery(new Term("pageId", currentDocument.get("pageId"))), BooleanClause.Occur.MUST);
+                query.add(new TermQuery(new Term("revisionId", currentDocument.get("revisionId"))), BooleanClause.Occur.MUST);
                 // Try to add document to index
                 try {
+                    indexer.getIndexWriter().deleteDocuments(query);
                     indexer.getIndexWriter().addDocument(currentDocument, analyzer);
                 } catch(Exception ex) {
                     ex.printStackTrace();
@@ -165,6 +214,7 @@ public class WikipediaHandler extends DefaultHandler {
                 documentBatch++;
                 // If there's been more or equal number of new documents than defined DOCUMENT_BATCH_SIZE then flush index.
                 if(documentBatch >= DOCUMENT_BATCH_SIZE) {
+                    System.err.println("Parsed "+DOCUMENT_BATCH_SIZE+" pages");
                     try {
                         flushIndex();
                     } catch(IOException ex) {
@@ -182,6 +232,15 @@ public class WikipediaHandler extends DefaultHandler {
                 // Return to page level
                 state = STATE.PAGE;
                 break;
+            case "contributor":
+                if(state != STATE.CONTRIBUTOR) {
+                    // Something is wrong with the structure, stop
+                    state = STATE.STOP;
+                    return;
+                }
+                // Return to revision level
+                state = STATE.REVISION;
+                break;
             case "title":
                 addCharactersAsStringField("title");
                 break;
@@ -194,7 +253,27 @@ public class WikipediaHandler extends DefaultHandler {
                 }
                 break;
             case "text":
-                addCharactersAsStringField("text");
+                // SOME STRESS TESTING
+                String[] topics = currentCharacters.toString().split("\\s==[^=]+==\\s");
+                addCharactersAsTextField("text");
+                int num = 1;
+                for(String topic : topics) {
+                    addStringAsTextField("topic"+num, topic);
+                    if(command.getPath().getLanguage().equals("fi")) { // This could be better
+                        analyzers.put("topic"+num, finAnalyzer);
+                    }
+                    // EXTREME STRESS TESTING
+                    String[] words = topic.split("\\s",50);
+
+                    for(int wordNum = 0; wordNum < (words.length-1); wordNum++) {
+                        String word = words[wordNum];
+                        addStringAsTextField("topic"+num+".word"+(wordNum+1), word);
+                        if(command.getPath().getLanguage().equals("fi")) { // This could be better
+                            analyzers.put("topic"+num+".word"+(wordNum+1), finAnalyzer);
+                        }
+                    }
+                    num++;
+                }
                 break;
 
         }
@@ -202,6 +281,23 @@ public class WikipediaHandler extends DefaultHandler {
     }
 
     private void addCharactersAsStringField(String key) {
+        try {
+            currentDocument.add(new StringField(key, currentCharacters.toString(), Field.Store.YES));
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+        currentCharacters = null;
+    }
+
+    private void addStringAsTextField(String key, String content) {
+        try {
+            currentDocument.add(new TextField(key, content, Field.Store.YES));
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void addCharactersAsTextField(String key) {
         try {
             currentDocument.add(new TextField(key, currentCharacters.toString(), Field.Store.NO));
         } catch(Exception ex) {
@@ -217,6 +313,7 @@ public class WikipediaHandler extends DefaultHandler {
      */
     @Override
     public void endDocument() throws SAXException {
+        System.err.println("Total number of pages: "+pagecounter);
         // STOP state check
         if(state == STATE.STOP) {
             // Try rolling back latest commit.
@@ -236,6 +333,7 @@ public class WikipediaHandler extends DefaultHandler {
             // Something is wrong with the indexer, abort current thread
             Thread.currentThread().interrupt();
         }
+
         super.endDocument();
     }
 

@@ -11,6 +11,8 @@ import fi.uta.fsd.metka.data.repository.GeneralRepository;
 import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import javassist.NotFoundException;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
@@ -29,6 +31,16 @@ public class GeneralRepositoryImpl implements GeneralRepository {
     private EntityManager em;
     @Autowired
     private JSONUtil json;
+
+    @Override
+    public Pair<Boolean, LocalDateTime> getRevisionableRemovedInfo(Long id) {
+        RevisionableEntity entity = em.find(RevisionableEntity.class, id);
+        if(entity == null) {
+            // No entity found, can't return any info
+            return null;
+        }
+        return new ImmutablePair<>(entity.getRemoved(), entity.getRemovalDate());
+    }
 
     @Override
     public Long getAdjancedRevisionableId(Long currentId, String type, boolean forward)

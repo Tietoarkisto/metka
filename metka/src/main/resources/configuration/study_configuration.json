@@ -440,13 +440,6 @@
 			"selectionList": "anonymization_list",
 			"section": "basic_information"
 		},
-		"anonymizationother": {
-			"_comment": "This is a pure test field",
-			"key": "anonymizationother",
-			"translatable": false,
-			"type": "STRING",
-			"section": "basic_information"
-		},
 		"dataarrivaldate": {
 			"key": "dataarrivaldate",
 			"translatable": false,
@@ -549,23 +542,23 @@
 				"versionnotes"
 			]
 		},
-		"id": {
+		"studyid": {
 			"_comment": "This contains the automatically generated studyno_prefix+studyno combination.",
-			"key": "id",
+			"key": "studyid",
 			"translatable": false,
 			"immutable": true,
 			"unique": true,
 			"required": true,
 			"type": "CONCAT",
 			"concatenate": [
-				"studyno_prefix",
-				"studyno_number"
+				"studyid_prefix",
+				"studyid_number"
 			],
 			"section": "basic_information"
 		},
-		"studyno_prefix": {
+		"studyid_prefix": {
 			"_comment": "Contains the letter part of id. This comes automatically from the default value of the selectionList.",
-			"key": "studyno_prefix",
+			"key": "studyid_prefix",
 			"translatable": false,
 			"immutable": true,
 			"editable": false,
@@ -576,9 +569,9 @@
 			"section": "basic_information"
 			
 		},
-		"studyno_number": {
+		"studyid_number": {
 			"_comment": "This contains the number portion of study id (usually FSD+number). Not the same as revisionable id.",
-			"key": "studyno_number",
+			"key": "studyid_number",
 			"translatable": false,
 			"immutable": true,
 			"unique": true,
@@ -669,7 +662,8 @@
 			"reference": "dependency_test_ref1",
 			"section": "basic_information",
 			"writable": false,
-			"display": false
+			"display": false,
+			"indexed": false
 		},
 		"seriesiddep2": {
 			"_comment": "This is strictly a test case, should be removed",
@@ -681,7 +675,8 @@
 			"reference": "dependency_test_ref2",
 			"section": "basic_information",
 			"writable": false,
-			"display": false
+			"display": false,
+			"indexed": false
 		},
 		"submissionid": {
 			"key": "submissionid",

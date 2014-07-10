@@ -32,8 +32,9 @@
             <y:AttributeLabel>+state : RevisionState
 +approvalDate : Date
 +approvedBy : User
-+lastSave : Date
++lastSaved : Date
 +lastSavedBy : User
++handler : User
 +nextRowId : Integer</y:AttributeLabel>
             <y:MethodLabel/>
           </y:UML>
@@ -211,4 +212,3 @@ nextRowId: Global (within this RevisionData) rowId sequence. All new rows get as
     <y:Resources/>
   </data>
 </graphml>
-

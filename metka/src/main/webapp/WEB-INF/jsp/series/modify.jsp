@@ -7,14 +7,14 @@
             <form:hidden path="revision" />
             <tr>
                 <jsp:include page="../../inc/inputs/formText.jsp">
-                    <jsp:param name="field" value="seriesno" />
+                    <jsp:param name="field" value="seriesid" />
                     <jsp:param name="readonly" value="true" />
                 </jsp:include>
             </tr>
             <tr>
                 <jsp:include page="../../inc/inputs/formText.jsp">
-                    <jsp:param name="field" value="seriesabb" />
-                    <jsp:param name="readonly" value="${not empty single.values['seriesabb']}" />
+                    <jsp:param name="field" value="seriesabbr" />
+                    <jsp:param name="readonly" value="${not empty single.values['seriesabbr']}" />
                 </jsp:include>
             </tr>
             <tr>

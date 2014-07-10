@@ -17,6 +17,7 @@
         <joda-time-version>2.3</joda-time-version>
         <rabbit-version>3.2.2</rabbit-version>
         <jslint4java.version>2.0.5</jslint4java.version>
+        <lucene-version>4.8.1</lucene-version>
         <env>demo</env>
 	</properties>
 
@@ -258,6 +259,35 @@
             <version>3.1</version>
         </dependency>
 
+        <!-- Lucene -->
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+            <version>${lucene-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-queries</artifactId>
+            <version>${lucene-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-analyzers-common</artifactId>
+            <version>${lucene-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-queryparser</artifactId>
+            <version>${lucene-version}</version>
+        </dependency>
+
+        <!-- Voikko -->
+        <dependency>
+            <groupId>org.puimula.voikko</groupId>
+            <artifactId>libvoikko</artifactId>
+            <version>3.6.1</version>
+        </dependency>
+
         <!-- JSLint -->
         <dependency>
             <groupId>com.googlecode.jslint4java</groupId>
@@ -436,7 +466,7 @@
 					<name>env</name>
 					<value>prod</value>
 				</property>
-			</activation>			
+			</activation>
 		</profile>
 		<profile>
 			<id>Demo</id>
@@ -445,7 +475,7 @@
 					<name>env</name>
 					<value>demo</value>
 				</property>
-			</activation>			
+			</activation>
 		</profile>
 		<profile>
 			<id>QA</id>

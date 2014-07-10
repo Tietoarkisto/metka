@@ -1,9 +1,13 @@
 package fi.uta.fsd.metkaSearch.commands.indexer;
 
+import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
+import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
+
 /**
  * Abstract base class for all Indexer commands.
  * Contains final parameters:
- *     type - Type enum value that should be provided by the constructor in implementing class
+ *     path - DirectoryInformation path to which this command is linked. This informs the system about to which indexer
+ *            the command should go to.
  *     action - Action enum value that should be provided to the constructor from outside of the implementing class
  *              and let's the indexer know what it should do.
  *
@@ -12,29 +16,15 @@ package fi.uta.fsd.metkaSearch.commands.indexer;
  * from index in case of remove actions.
  */
 public interface IndexerCommand {
-    public Type getType();
+    public DirectoryManager.DirectoryPath getPath();
 
     public Action getAction();
 
     /**
-     * Type separates different Commands from one another.
-     * Indexing can be targeted straight to revisions, xml-files, json-files and possibly other types.
-     * Each command subclass knows information that needs to be provided to the indexer for successful indexing.
-     * This information can contain things like object keys, indexing configurations, content for indexing etc.
-     */
-    public static enum Type {
-        DUMMY,
-        REVISION,
-        WIKIPEDIA,
-        JSON
-        // ...
-    }
-
-    /**
      * Defines what indexer should do with given command.
-     * For now actions are only index and remove. Remove clears the document from index, Index adds the document to index
-     * if it's not present or creates the document, then removes the old one from index and adds the new one in its stead
-     * if already present.
+     * Current actions are index, remove and stop. Remove clears the document from index, stop requests the indexer to stop
+     * and index adds the document to index if it's not present or creates the document, then removes the old one from index
+     * and adds the new one in its stead if already present.
      * If more actions are needed they are added here.
      * Each action should correspond to a single set of instructions followed by the indexer. In this light it might make
      * sense to have INDEX only produce a document and then add one or two new commands to the queue in the form of REMOVE
@@ -44,7 +34,8 @@ public interface IndexerCommand {
      */
     public static enum Action {
         INDEX,
-        REMOVE
+        REMOVE,
+        STOP
         // ...
     }
 }

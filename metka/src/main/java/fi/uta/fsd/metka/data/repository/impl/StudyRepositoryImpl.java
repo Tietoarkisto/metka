@@ -142,7 +142,8 @@ public class StudyRepositoryImpl implements StudyRepository {
         // Entity should still be managed at this point so
 
         if(changes) {
-            data.setLastSave(new LocalDateTime());
+            data.setLastSaved(new LocalDateTime());
+            // TODO: Set last saved by
             revEntity.setData(json.serialize(data));
         }
 
@@ -242,6 +243,7 @@ public class StudyRepositoryImpl implements StudyRepository {
                 System.err.println("Revision data on study "+studyno+" was not in DRAFT state even though should have been.");
                 return null;
             }
+            // TODO: Check that handler is acceptable
             return oldData;
         }
 
@@ -255,6 +257,7 @@ public class StudyRepositoryImpl implements StudyRepository {
         // Add changes to new dataset
         RevisionEntity newRevision = study.createNextRevision();
         RevisionData newData = DataFactory.createNewRevisionData(newRevision, oldData);
+        // TODO: Set data handler
 
         // Serialize new dataset to the new revision entity
         // Persist new entity
@@ -268,7 +271,7 @@ public class StudyRepositoryImpl implements StudyRepository {
         return newData;
     }
 
-
+// TODO: Set last saved by
     @Override
     public void checkFileLinkQueue(Long id, Integer revision) throws IOException {
         RevisionableEntity revisionable = em.find(RevisionableEntity.class, id);

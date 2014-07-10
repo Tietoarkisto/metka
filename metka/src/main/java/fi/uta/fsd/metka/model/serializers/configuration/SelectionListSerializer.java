@@ -42,7 +42,7 @@ public class SelectionListSerializer extends ObjectSerializer<SelectionList> {
                 jgen.writeStringField("reference", value.getReference());
                 break;
             case SUBLIST:
-                // Sublist has no special attributes
+                jgen.writeStringField("sublistKey", value.getSublistKey());
                 break;
         }
 

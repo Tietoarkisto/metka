@@ -1,0 +1,14 @@
+-- 2014.07.08 additions --
+RevisionData:
+lastSave->lastSaved
+approver->approvedBy
+added lastSavedBy and handler attributes
+
+-- 2014.07.10 additions --
+Configuration->Field:
+added indexed and exact attributes.
+indexed defaults to true and informs indexer if the field can be skipped.
+exact is a STRING type field exclusive attribute and defaults to false. It tells the indexer if the field value is indexed "as is" or if it's run through an analyzer.
+Both of these values are temporary and should be moved to configuration formed specifically for indexer.
+Configuration->SelectionList:
+added sublistKey attribute for SUBLIST type selectionLists so now the target list for sublist comes from this value instead of the key value in the SelectionList. This allows the implementation of user helping features where they can just write the map key of the SelectionList instead of having to write the key twice. This is implemented (if there's time) at the same time as for other objects (like Field).

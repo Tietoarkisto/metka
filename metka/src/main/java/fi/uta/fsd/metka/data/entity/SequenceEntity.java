@@ -12,6 +12,10 @@ public class SequenceEntity {
     @Column(name = "SEQUENCE")
     private Long sequence;
 
+    @Version
+    @Column(name = "ROW_VERSION")
+    private Long version;
+
     public String getKey() {
         return key;
     }
@@ -26,6 +30,14 @@ public class SequenceEntity {
 
     public void setSequence(Long sequence) {
         this.sequence = sequence;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     @Override
