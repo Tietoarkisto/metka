@@ -78,19 +78,23 @@
 			]
 		},
 		"public_list": {
-			"key": "yes_no_na",
+			"key": "public_list",
+			"sublistKey": "yes_no_na",
 			"type": "SUBLIST"
 		},
 		"descpublic_list": {
-			"key": "yes_no_na",
+			"key": "descpublic_list",
+			"sublistKey": "yes_no_na",
 			"type": "SUBLIST"
 		},
 		"securityissues_list": {
-			"key": "yes_no_na",
+			"key": "securityissues_list",
+			"sublistKey": "yes_no_na",
 			"type": "SUBLIST"
 		},
 		"varpublic_list": {
-			"key": "yes_no_na",
+			"key": "varpublic_list",
+			"sublistKey": "yes_no_na",
 			"type": "SUBLIST"
 		},
 		"yes_no_na": {
@@ -254,7 +258,8 @@
 			"reference": ""
 		},
 		"timeperiodevent_list": {
-			"key": "start_end_single",
+			"key": "timeperiodevent_list",
+			"sublistKey": "start_end_single",
 			"type": "SUBLIST"
 		},
 		"sampproc_list": {
@@ -296,7 +301,8 @@
 			]
 		},
 		"colldateevent_list": {
-			"key": "start_end_single",
+			"key": "colldateevent_list",
+			"sublistKey": "start_end_single",
 			"type": "SUBLIST"
 		},
 		"analysisunitvocab_list": {

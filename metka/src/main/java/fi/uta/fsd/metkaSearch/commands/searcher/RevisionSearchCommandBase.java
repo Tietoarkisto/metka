@@ -1,12 +1,18 @@
 package fi.uta.fsd.metkaSearch.commands.searcher;
 
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
+import fi.uta.fsd.metkaSearch.LuceneConfig;
+import fi.uta.fsd.metkaSearch.analyzer.FinnishVoikkoAnalyzer;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import fi.uta.fsd.metkaSearch.results.ListBasedResultList;
 import fi.uta.fsd.metkaSearch.results.ResultHandler;
 import fi.uta.fsd.metkaSearch.results.ResultList;
 import fi.uta.fsd.metkaSearch.results.RevisionResult;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
+import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.search.IndexSearcher;
@@ -14,6 +20,8 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Special case of SearchCommandBase
@@ -37,6 +45,8 @@ public abstract class RevisionSearchCommandBase extends SearchCommandBase {
     }
 
     private final ConfigurationType configurationType;
+    private final Map<String, Analyzer> analyzers = new HashMap<>();
+
     protected RevisionSearchCommandBase(DirectoryManager.DirectoryPath path, ResultList.ResultType resultType) {
         super(path, resultType);
 
@@ -72,5 +82,19 @@ public abstract class RevisionSearchCommandBase extends SearchCommandBase {
 
             return list;
         }
+    }
+
+    protected void addTextAnalyzer(String key) {
+        if(getPath().getLanguage().equals("fi")) {
+            analyzers.put(key, FinnishVoikkoAnalyzer.ANALYZER);
+        } else {
+            // Add some other tokenizing analyzer if StandardAnalyzer is not enough
+            analyzers.put(key, new StandardAnalyzer(LuceneConfig.USED_VERSION));
+        }
+    }
+
+    protected Analyzer getAnalyzer() {
+        PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new WhitespaceAnalyzer(LuceneConfig.USED_VERSION), analyzers);
+        return analyzer;
     }
 }

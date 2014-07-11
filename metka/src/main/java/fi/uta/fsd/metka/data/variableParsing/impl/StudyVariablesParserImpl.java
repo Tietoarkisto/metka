@@ -200,11 +200,13 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         field = attachmentData.dataField(SavedDataFieldCall.get("file")).getRight();
         String filePath = field.getActualValue();
 
+        SavedDataField studyId = study.dataField(SavedDataFieldCall.get("studyid")).getRight();
+
         switch(type) {
             case POR:
                 result = true;
                 // Read POR file
-                handlePorVariables(filePath, variablesData, time);
+                handlePorVariables(filePath, studyId.getActualValue(), variablesData, time);
                 break;
         }
         variablesRevision.setData(json.serialize(variablesData));
@@ -223,7 +225,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
      * @param path Path to the por file
      * @param variablesData RevisionData of the study variables object used as a base for these variables.
      */
-    private void handlePorVariables(String path, RevisionData variablesData, LocalDateTime time) throws IOException {
+    private void handlePorVariables(String path, String studyId, RevisionData variablesData, LocalDateTime time) throws IOException {
         PORReader reader = new PORReader();
         PORFile por = reader.parse(path);
 
@@ -246,7 +248,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         variablesData.dataField(SavedDataFieldCall.set("casequantity").setValue(por.data.sizeY()+"").setTime(time));
 
         // Make VariablesHandler
-        VariableHandler handler = new VariableHandler(time);
+        VariableHandler handler = new VariableHandler(time, studyId);
 
         List<StudyVariableEntity> variableEntities =
                 em.createQuery("SELECT e FROM StudyVariableEntity e WHERE e.studyVariablesId=:studyVariablesId", StudyVariableEntity.class)
@@ -379,9 +381,11 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
      */
     private static class VariableHandler {
         private LocalDateTime time;
+        private String studyId;
 
-        VariableHandler(LocalDateTime time) {
+        VariableHandler(LocalDateTime time, String studyId) {
             this.time = time;
+            this.studyId = studyId;
         }
 
         String getVariableId(PORUtil.PORVariableHolder variable) {
@@ -408,7 +412,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             // Set varname field
             variableRevision.dataField(SavedDataFieldCall.set("varname").setValue(variable.asVariable().getName()).setTime(time));
             // Set varid field
-            variableRevision.dataField(SavedDataFieldCall.set("varid").setValue(variable.asVariable().getName()).setTime(time));
+            variableRevision.dataField(SavedDataFieldCall.set("varid").setValue(studyId+"_"+variable.asVariable().getName()).setTime(time));
             // Set varlabel field
             String label = StringUtils.isEmpty(StringUtils.trimAllWhitespace(variable.asVariable().label))
                     ? "[Muuttujalta puuttuu LABEL tieto]"

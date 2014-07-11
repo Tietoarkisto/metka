@@ -12,12 +12,18 @@ import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
 import fi.uta.fsd.metka.mvc.domain.simple.study.StudySearchSO;
 import fi.uta.fsd.metka.mvc.search.GeneralSearch;
 import fi.uta.fsd.metka.mvc.search.RevisionDataRemovedContainer;
+import fi.uta.fsd.metkaSearch.IndexerComponent;
+import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
+import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
+import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static fi.uta.fsd.metka.data.util.ModelValueUtil.*;
 
@@ -30,6 +36,15 @@ public class StudyService {
 
     @Autowired
     private ConfigurationService configService;
+
+    @Autowired
+    private IndexerComponent indexer; // Provide revision indexing services.
+
+    private static Map<String, DirectoryManager.DirectoryPath> indexerPaths = new HashMap<>();
+
+    static {
+        indexerPaths.put("fi", DirectoryManager.formPath(false, IndexerConfigurationType.REVISION, "fi", ConfigurationType.STUDY.toValue()));
+    }
 
     public List<SearchResult> searchForStudies(StudySearchSO query) {
         List<SearchResult> resultList = new ArrayList<>();
@@ -126,20 +141,29 @@ public class StudyService {
     }
 
     public RevisionViewDataContainer newStudy(Long acquisition_number) {
-        RevisionData data;
+        RevisionData revision;
         try {
-            data = repository.getNew(acquisition_number);
+            revision = repository.getNew(acquisition_number);
         } catch(IOException ex) {
             // TODO: better exception handling with messages to the user
             ex.printStackTrace();
             return null;
         }
-        Configuration config = configService.findByTypeAndVersion(data.getConfiguration());
-        TransferObject single = TransferObject.buildTransferObjectFromRevisionData(data);
+
+        // Creating new series was successful, index series
+        try {
+            indexer.addCommand(RevisionIndexerCommand.index(indexerPaths.get("fi"), revision.getKey().getId(), revision.getKey().getRevision()));
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+        }
+
+        Configuration config = configService.findByTypeAndVersion(revision.getConfiguration());
+        TransferObject single = TransferObject.buildTransferObjectFromRevisionData(revision);
 
         return new RevisionViewDataContainer(single, config);
     }
 
+    // TODO: Add information of if new revision was created or not so it can be indexed as necessary
     public RevisionViewDataContainer editStudy(Long id) {
         try {
             RevisionData data = repository.editStudy(id);
@@ -168,6 +192,7 @@ public class StudyService {
                     ex.printStackTrace();
                 }
             }
+            if(result)indexer.addCommand(RevisionIndexerCommand.index(indexerPaths.get("fi"), to.getId(), to.getRevision()));
             return result;
         } catch(Exception ex) {
             // TODO: better exception handling with messages to the user
@@ -176,9 +201,11 @@ public class StudyService {
         }
     }
 
-    public boolean approveStudy(TransferObject single) {
+    public boolean approveStudy(TransferObject to) {
         try {
-            return repository.approveStudy(single.getId());
+            boolean result = repository.approveStudy(to.getId());
+            if(result)indexer.addCommand(RevisionIndexerCommand.index(indexerPaths.get("fi"), to.getId(), to.getRevision()));
+            return result;
         } catch(Exception ex) {
             // TODO: better exception handling with messages to the user
             ex.printStackTrace();

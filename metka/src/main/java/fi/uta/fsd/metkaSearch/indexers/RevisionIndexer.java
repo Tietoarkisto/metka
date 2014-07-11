@@ -98,8 +98,10 @@ public class RevisionIndexer extends Indexer {
             return;
         }
         RevisionHandler handler = HandlerFactory.buildRevisionHandler(getIndexer(), data, config, removalInfo);
-        if(!handler.handle()) {
-            // Some error happened during command handling. possibly make note of it
+        try {
+            handler.handle();
+        } catch(Exception e) {
+            e.printStackTrace();
         }
     }
 }

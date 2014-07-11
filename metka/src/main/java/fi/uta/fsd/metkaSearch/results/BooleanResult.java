@@ -19,6 +19,6 @@ public class BooleanResult implements SearchResult {
 
     @Override
     public String toString() {
-        return result+"";
+        return "Result is: "+result;
     }
 }

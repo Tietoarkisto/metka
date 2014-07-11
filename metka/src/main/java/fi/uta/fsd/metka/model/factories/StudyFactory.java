@@ -68,24 +68,24 @@ public class StudyFactory extends DataFactory {
         // These can be basically idField, CONCAT fields and SELECTION fields (insert selectionList default value if any) as well as values that are expected to be delivered to Factory.
 
         // Studyno_prefix, this is a string that is added to the front of study_id
-        list = conf.getRootSelectionList(conf.getField("studyno_prefix").getSelectionList());
-        data.dataField(SavedDataFieldCall.set("studyno_prefix").setTime(time).setValue(list.getDef()));
+        list = conf.getRootSelectionList(conf.getField("studyid_prefix").getSelectionList());
+        data.dataField(SavedDataFieldCall.set("studyid_prefix").setTime(time).setValue(list.getDef()));
 
         // studyno, this is a separate sequence from revisionable id and forms the number base for id
-        data.dataField(SavedDataFieldCall.set("studyno_number").setTime(time).setValue(studyNumber.toString()));
+        data.dataField(SavedDataFieldCall.set("studyid_number").setTime(time).setValue(studyNumber.toString()));
 
         // submissionid, this is required information for creating a new study
         data.dataField(SavedDataFieldCall.set("submissionid").setTime(time).setValue(submissionid.toString()));
 
         // create id field, which concatenates studyno_prefix and studyno. This is the basis of study searches.
         // This is more of a proof of concept for concatenate fields than anything.
-        confField = conf.getField("id");
+        confField = conf.getField("studyid");
         String concat = "";
         for(String fieldKey : confField.getConcatenate()) {
             SavedDataField tempField = data.dataField(SavedDataFieldCall.get(fieldKey)).getRight();
             concat += extractStringSimpleValue(tempField);
         }
-        data.dataField(SavedDataFieldCall.set("id").setValue(concat).setTime(time));
+        data.dataField(SavedDataFieldCall.set("studyid").setValue(concat).setTime(time));
 
         // Set dataarrivaldate
         // TODO: Tieto tulee tiipiistä, toistaiseksi käytetään kuluvaa päivää

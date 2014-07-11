@@ -1,6 +1,7 @@
 package fi.uta.fsd.metka.model.configuration;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.model.general.TranslationObject;
 
@@ -37,6 +38,20 @@ public class Option {
 
     public void setDeprecated(Boolean deprecated) {
         this.deprecated = deprecated;
+    }
+
+    /**
+     * Helper method to return the default text from map.
+     * If default text is null for some reason then returns empty string
+     * @return
+     */
+    @JsonIgnore
+    public String getDefaultTitle() {
+        if(title == null) {
+            return "";
+        }
+        String text = title.getTexts().get("default");
+        return text == null ? "" : text;
     }
 
     @Override

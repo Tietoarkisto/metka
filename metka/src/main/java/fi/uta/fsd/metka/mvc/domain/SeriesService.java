@@ -13,12 +13,18 @@ import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchSO;
 import fi.uta.fsd.metka.mvc.search.GeneralSearch;
 import fi.uta.fsd.metka.mvc.search.RevisionDataRemovedContainer;
 import fi.uta.fsd.metka.mvc.search.SeriesSearch;
+import fi.uta.fsd.metkaSearch.IndexerComponent;
+import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
+import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
+import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static fi.uta.fsd.metka.data.util.ModelValueUtil.*;
 
@@ -34,6 +40,15 @@ public class SeriesService {
     private SeriesRepository repository;
     @Autowired
     private ConfigurationService configService;
+
+    @Autowired
+    private IndexerComponent indexer; // Provide revision indexing services.
+
+    private static Map<String, DirectoryManager.DirectoryPath> indexerPaths = new HashMap<>();
+
+    static {
+        indexerPaths.put("fi", DirectoryManager.formPath(false, IndexerConfigurationType.REVISION, "fi", ConfigurationType.SERIES.toValue()));
+    }
 
     public List<String> findAbbreviations() {
         List<String> list = null;
@@ -115,12 +130,21 @@ public class SeriesService {
             ex.printStackTrace();
             return null;
         }
+
+        // Creating new series was successful, index series
+        try {
+            indexer.addCommand(RevisionIndexerCommand.index(indexerPaths.get("fi"), revision.getKey().getId(), revision.getKey().getRevision()));
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+        }
+
         Configuration config = configService.findByTypeAndVersion(revision.getConfiguration());
         TransferObject single = TransferObject.buildTransferObjectFromRevisionData(revision);
 
         return new RevisionViewDataContainer(single, config);
     }
 
+    // TODO: Add information of if new revision was created or not so it can be indexed as necessary
     public RevisionViewDataContainer editSeries(Long seriesno) {
         try {
             RevisionData data = repository.editSeries(seriesno);
@@ -134,9 +158,12 @@ public class SeriesService {
         }
     }
 
+    // TODO: Add information of whether changes were found or not so that unnecessary indexing can be avoided
     public boolean saveSeries(TransferObject to) {
         try {
-            return repository.saveSeries(to);
+            boolean result = repository.saveSeries(to);
+            if(result)indexer.addCommand(RevisionIndexerCommand.index(indexerPaths.get("fi"), to.getId(), to.getRevision()));
+            return result;
         } catch(Exception ex) {
             // TODO: better exception handling with messages to the user
             ex.printStackTrace();
@@ -146,7 +173,9 @@ public class SeriesService {
 
     public boolean approveSeries(TransferObject to) {
         try {
-            return repository.approveSeries(to.getId());
+            boolean result = repository.approveSeries(to.getId());
+            if(result)indexer.addCommand(RevisionIndexerCommand.index(indexerPaths.get("fi"), to.getId(), to.getRevision()));
+            return result;
         } catch(Exception ex) {
             // TODO: better exception handling with messages to the user
             ex.printStackTrace();

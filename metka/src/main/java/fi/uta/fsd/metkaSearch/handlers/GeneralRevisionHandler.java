@@ -15,11 +15,13 @@ import fi.uta.fsd.metkaSearch.analyzer.FinnishVoikkoAnalyzer;
 import fi.uta.fsd.metkaSearch.directory.DirectoryInformation;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.*;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.NumericRangeQuery;
+import org.apache.lucene.util.Version;
 import org.joda.time.LocalDateTime;
 import org.springframework.util.StringUtils;
 
@@ -182,7 +184,7 @@ class GeneralRevisionHandler implements RevisionHandler {
                     // TODO: Move reference handling to a sub process which knows how to handle the different reference types
 
                     // Add value as string field for now with key being the field key
-                    document.add(new StringField(field.getKey(), saved.getActualValue(), NO));
+                    addDocument = indexReferenceField(field, saved, document);
                     break;
                 case CONTAINER:
                 case REFERENCECONTAINER:
@@ -198,7 +200,7 @@ class GeneralRevisionHandler implements RevisionHandler {
         }
         if(addDocument) {
             // TODO: Give standard analyzer finnish stopwords if language is finnish
-            PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new StandardAnalyzer(LuceneConfig.USED_VERSION), analyzers);
+            PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new WhitespaceAnalyzer(LuceneConfig.USED_VERSION), analyzers);
             indexer.getIndexWriter().addDocument(document, analyzer);
         }
         return addDocument;
@@ -232,7 +234,7 @@ class GeneralRevisionHandler implements RevisionHandler {
                 Option option = list.getOptionWithValue(saved.getActualValue());
                 if(option != null) {
                     document.add(new StringField(field.getKey()+".value", option.getValue(), NO));
-                    document.add(new StringField(field.getKey(), option.getTitle().getDefault(), NO));
+                    document.add(new StringField(field.getKey(), option.getDefaultTitle(), NO));
                 } else {
                     // Some problem so possibly log error, but do nothing for now
                     break;
@@ -256,6 +258,7 @@ class GeneralRevisionHandler implements RevisionHandler {
      */
     private boolean indexReferenceField(Field field, SavedDataField saved, Document document) {
         // TODO: Handle reference collecting. Shouldn't be that hard if we leverage some of the reference solver
+        document.add(new StringField(field.getKey()+".value", saved.getActualValue(), NO));
         if(field.getType() == FieldType.SELECTION) {
 
         } else if(field.getType() == FieldType.REFERENCE) {
@@ -269,6 +272,7 @@ class GeneralRevisionHandler implements RevisionHandler {
             analyzers.put(key, FinnishVoikkoAnalyzer.ANALYZER);
         } else {
             // Add some other tokenizing analyzer if StandardAnalyzer is not enough
+            analyzers.put(key, new StandardAnalyzer(LuceneConfig.USED_VERSION));
         }
     }
 }

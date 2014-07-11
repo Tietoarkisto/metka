@@ -22,4 +22,9 @@ public class RevisionResult implements SearchResult {
     public Integer getNo() {
         return no;
     }
+
+    @Override
+    public String toString() {
+        return "Result is "+"ID: "+id+" | NO: "+no;
+    }
 }

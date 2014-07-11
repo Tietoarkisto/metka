@@ -3,8 +3,10 @@ package fi.uta.fsd.metka.mvc.controller;
 import fi.uta.fsd.metka.mvc.domain.SettingsService;
 import fi.uta.fsd.metka.mvc.domain.requests.UploadRequest;
 import fi.uta.fsd.metka.mvc.validator.UploadRequestValidator;
+import fi.uta.fsd.metkaSearch.IndexerComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,9 +22,12 @@ public class SettingsController {
     @Autowired
     private SettingsService service;
 
+    @Autowired
+    private IndexerComponent indexer;
+
     @RequestMapping("")
-    public String settings(@ModelAttribute("uploadConfig")UploadRequest uploadConfig,
-                           @ModelAttribute("uploadMisc")UploadRequest uploadMisc) {
+    public String settings(Model model) {
+        model.addAttribute("indexers", indexer.indexerStatusList());
         return "settings";
     }
 

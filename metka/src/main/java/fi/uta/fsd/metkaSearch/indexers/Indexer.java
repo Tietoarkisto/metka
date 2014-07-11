@@ -108,13 +108,13 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>, Indexer
                     System.err.println("Took "+(end-start)+"ms to handle command");
                 } else {
                     if(idleLoops == 0) {
-                        System.err.println("Queue clear. Spent "+timeHandlingCommands+"ms handling commands");
+                        //System.err.println("Queue clear. Spent "+timeHandlingCommands+"ms handling commands");
                         timeHandlingCommands = 0L;
                     }
                     // Increase idleLoops counter if index has changed
                     if(indexChanged) {
                         idleLoops++;
-                        System.err.println("Number of idle loops: "+idleLoops);
+                        //System.err.println("Number of idle loops: "+idleLoops);
                     }
                 }
 

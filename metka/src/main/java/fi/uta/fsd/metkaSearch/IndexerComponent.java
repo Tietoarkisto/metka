@@ -9,6 +9,8 @@ import fi.uta.fsd.metkaSearch.indexers.DummyIndexer;
 import fi.uta.fsd.metkaSearch.indexers.Indexer;
 import fi.uta.fsd.metkaSearch.indexers.RevisionIndexer;
 import fi.uta.fsd.metkaSearch.indexers.WikipediaIndexer;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -46,6 +48,8 @@ public class IndexerComponent{
     private final Map<DirectoryManager.DirectoryPath, Indexer> indexers = new HashMap<>();
 
     public void addCommand(IndexerCommand command) throws IOException {
+        // TODO: Add command to database queue from where it can be removed when handled.
+        // TODO: Move actual command adding to a separate thread that reads the database queue instead so all commands are executed even if system fails before all commands are handled
         if(handlers.containsKey(command.getPath())) {
             if(handlers.get(command.getPath()).isDone()) {
                 // Start new indexer, don't use RAMDirectory. Starting a new indexer should clear the old one from map.
@@ -118,6 +122,14 @@ public class IndexerComponent{
         if(isIndexerRunning(path)) {
             handlers.get(path).cancel(true);
         }
+    }
+
+    public List<Pair<String, Boolean>> indexerStatusList() {
+        List<Pair<String, Boolean>> list = new ArrayList<>();
+        for(Map.Entry<DirectoryManager.DirectoryPath, Future<IndexerStatusMessage>> handler : handlers.entrySet()) {
+            list.add(new ImmutablePair<String, Boolean>(handler.getKey().toString(), !handler.getValue().isDone()));
+        }
+        return list;
     }
 
     /**

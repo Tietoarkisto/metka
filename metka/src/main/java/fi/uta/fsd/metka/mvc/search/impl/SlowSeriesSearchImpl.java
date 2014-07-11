@@ -4,6 +4,7 @@ import fi.uta.fsd.metka.data.entity.RevisionEntity;
 import fi.uta.fsd.metka.data.entity.RevisionableEntity;
 import fi.uta.fsd.metka.data.entity.impl.SeriesEntity;
 import fi.uta.fsd.metka.data.entity.key.RevisionKey;
+import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
 import fi.uta.fsd.metka.model.data.RevisionData;
@@ -11,6 +12,14 @@ import fi.uta.fsd.metka.model.data.container.SavedDataField;
 import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchSO;
 import fi.uta.fsd.metka.mvc.search.RevisionDataRemovedContainer;
 import fi.uta.fsd.metka.mvc.search.SeriesSearch;
+import fi.uta.fsd.metkaSearch.SearcherComponent;
+import fi.uta.fsd.metkaSearch.commands.searcher.SeriesBasicSearchCommand;
+import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
+import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
+import fi.uta.fsd.metkaSearch.results.ResultList;
+import fi.uta.fsd.metkaSearch.results.RevisionResult;
+import fi.uta.fsd.metkaSearch.results.SearchResult;
+import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -33,6 +42,9 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
 
     @Autowired
     private JSONUtil json;
+
+    @Autowired
+    private SearcherComponent searcher;
 
     @Override
     public List<String> findAbbreviations() throws IOException {
@@ -61,7 +73,7 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
 
     @Override
     public List<RevisionDataRemovedContainer> findSeries(SeriesSearchSO query) throws IOException {
-        List<RevisionDataRemovedContainer> result = new ArrayList<>();
+        /*List<RevisionDataRemovedContainer> result = new ArrayList<>();
         List<RevisionableEntity> entities = formFindQuery(query).getResultList();
         RevisionDataRemovedContainer container;
         for(RevisionableEntity entity : entities) {
@@ -95,11 +107,54 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
                     }
                 }
             }
+        }*/
+        // TODO: Make path management sensible, get path language from some common source that knows which language we should search.
+        DirectoryManager.DirectoryPath path = DirectoryManager.formPath(false, IndexerConfigurationType.REVISION, "fi", ConfigurationType.SERIES.toValue());
+        SeriesBasicSearchCommand command;
+        try {
+            command = SeriesBasicSearchCommand.build(path, query.isSearchApproved(), query.isSearchDraft(), query.isSearchRemoved(),
+                    stringToLong(query.getByKey("seriesno")), (String)query.getByKey("seriesabbr"), (String)query.getByKey("seriesname"));
+            ResultList results = searcher.executeSearch(command);
+            return collectResults(results);
+        } catch(QueryNodeException qne) {
+            // Couldn't form query command
+            qne.printStackTrace();
+            return null;
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+            return null;
         }
-        return result;
     }
 
-    private TypedQuery<RevisionableEntity> formFindQuery(SeriesSearchSO query) {
+    private List<RevisionDataRemovedContainer> collectResults(ResultList resultList) throws IOException {
+        List<RevisionDataRemovedContainer> results = new ArrayList<>();
+
+        if(resultList.getType() != ResultList.ResultType.REVISION) {
+            // This only knows how to handle revision results
+            return results;
+        }
+        RevisionableEntity entity = null;
+        for(SearchResult sResult : resultList.getResults()) {
+            RevisionResult result = (RevisionResult)sResult;
+            if(entity == null || !entity.getId().equals(result.getId())) {
+                entity = em.find(RevisionableEntity.class, result.getId());
+            }
+            // TODO: Try to remove the need to do this, although granted this isn't exactly heavy
+            if(entity.getCurApprovedNo() != null && result.getNo() < entity.getCurApprovedNo()) {
+                continue;
+            }
+
+            RevisionEntity revision = em.find(RevisionEntity.class, new RevisionKey(result.getId(), result.getNo()));
+            if(revision != null && !StringUtils.isEmpty(revision.getData())) {
+                RevisionData data = json.readRevisionDataFromString(revision.getData());
+                results.add(new RevisionDataRemovedContainer(data, entity.getRemoved()));
+            }
+        }
+
+        return results;
+    }
+
+    /*private TypedQuery<RevisionableEntity> formFindQuery(SeriesSearchSO query) {
         String qry = "SELECT r FROM RevisionableEntity r";
         Long seriesno = stringToLong(query.getByKey("seriesno"));
         if(query != null && (seriesno != null || !query.isSearchRemoved())) {
@@ -138,5 +193,5 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
             }
         }
         return data;
-    }
+    }*/
 }

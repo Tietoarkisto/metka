@@ -34,6 +34,22 @@
             <input type="file" name="file" />
             <input type="submit" value="<spring:message code="general.buttons.upload.miscJson" />"/>
         </form:form>
+        <br />
+        Indekserit
+        <table class="formTable">
+            <thead>
+            <tr>
+                <th>Path</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <c:forEach var="indexer" items="${indexers}">
+                <tr>
+                    <td>${indexer.key}</td>
+                    <td>${indexer.value == true ? "running" : "stopped"}</td>
+                </tr>
+            </c:forEach>
+        </table>
     </div>
 </div>
 </body>

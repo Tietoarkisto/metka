@@ -1,6 +1,7 @@
 import fi.uta.fsd.metka.data.entity.RevisionEntity;
 import fi.uta.fsd.metka.data.entity.RevisionableEntity;
 import fi.uta.fsd.metka.data.entity.impl.SeriesEntity;
+import fi.uta.fsd.metka.data.entity.impl.StudyEntity;
 import fi.uta.fsd.metka.data.entity.key.RevisionKey;
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metkaSearch.IndexerComponent;
@@ -250,23 +251,25 @@ public class SpringLuceneTests {
     @Test
     public void seriesUniquenessTest() throws IOException {
         DirectoryManager.DirectoryPath path = new DirectoryManager.DirectoryPath(false, IndexerConfigurationType.REVISION, "fi", ConfigurationType.SERIES.toValue());
-        SearchCommand command = SeriesAbbreviationUniquenessSearchCommand.build(path, 1L, "TS1");
+        SearchCommand command = SeriesAbbreviationUniquenessSearchCommand.build(path, 4L, "TS3");
         ResultList results = searcher.executeSearch(command);
         assertTrue(results.getResults().size() == 1);
         assertTrue(results.getResults().get(0).getType() == ResultList.ResultType.BOOLEAN);
         assertTrue(((BooleanResult)results.getResults().get(0)).getResult());
+        for(SearchResult result : results.getResults()) {
+            System.err.println(result.toString());
+        }
     }
 
     @Test
-    public void seriesBasicTest() throws IOException {
+    public void seriesBasicTest() throws IOException, QueryNodeException {
         DirectoryManager.DirectoryPath path = new DirectoryManager.DirectoryPath(false, IndexerConfigurationType.REVISION, "fi", ConfigurationType.SERIES.toValue());
-        SearchCommand command = SeriesBasicSearchCommand.build(path, true, true, true, null, "TS2", null);
+        SearchCommand command = SeriesBasicSearchCommand.build(path, true, true, true, null, "TS3", null);
         ResultList results = searcher.executeSearch(command);
         ResultList.ResultType type = results.getType();
         assertTrue(type == ResultList.ResultType.REVISION);
         for(SearchResult result : results.getResults()) {
-            RevisionResult revres = (RevisionResult)result;
-            System.err.println("ID: "+revres.getId()+" | NO: "+revres.getNo());
+            System.err.println(result.toString());
         }
         if(results.getResults().size() == 0) {
             System.err.println("No results");
@@ -274,23 +277,44 @@ public class SpringLuceneTests {
     }
 
     @Test
+    public void studyIndexTest() throws IOException {
+        DirectoryManager.DirectoryPath path = new DirectoryManager.DirectoryPath(false, IndexerConfigurationType.REVISION, "fi", ConfigurationType.STUDY.toValue());
+        List<StudyEntity> studyList = em.createQuery("SELECT s FROM StudyEntity s", StudyEntity.class).getResultList();
+        for(StudyEntity study : studyList) {
+            List<RevisionEntity> revisions = em.createQuery("SELECT r FROM RevisionEntity r WHERE r.key.revisionableId=:id", RevisionEntity.class)
+                    .setParameter("id", study.getId())
+                    .getResultList();
+            for(RevisionEntity revision : revisions) {
+                indexer.addCommand(RevisionIndexerCommand.index(path, revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo()));
+            }
+        }
+        indexer.addCommand(RevisionIndexerCommand.stop(path));
+        try {
+            while(indexer.hasRunningIndexers()) {
+                Thread.sleep(1000);
+            }
+        } catch(InterruptedException iex) {
+            iex.printStackTrace();
+        }
+    }
+
+    @Test
     public void tempSearchTest() throws IOException, QueryNodeException {
-        DirectoryManager.DirectoryPath path = new DirectoryManager.DirectoryPath(false, IndexerConfigurationType.REVISION, "fi", ConfigurationType.SERIES.toValue());
+        DirectoryManager.DirectoryPath path = new DirectoryManager.DirectoryPath(false, IndexerConfigurationType.REVISION, "fi", ConfigurationType.STUDY.toValue());
         DirectoryInformation dir = DirectoryManager.getIndexDirectory(path);
         IndexReader reader = dir.getIndexReader();
         IndexSearcher searcher = new IndexSearcher(reader);
 
-        BooleanQuery bQuery = new BooleanQuery();
-        //bQuery.add(NumericRangeQuery.newLongRange("key.id", 1, 1L, 1L, true, true), BooleanClause.Occur.MUST);
-        bQuery.add(new TermQuery(new Term("state.approved", "false")), BooleanClause.Occur.MUST);
+        Map<String, Analyzer> analyzers = new HashMap<>();
+        PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new WhitespaceAnalyzer(LuceneConfig.USED_VERSION), analyzers);
 
-        StandardQueryParser parser = new StandardQueryParser();
-        Query query = parser.parse("+seriesabbr:TS1", "key.id");
+        StandardQueryParser parser = new StandardQueryParser(analyzer);
+        Query query = parser.parse("+anonymization.value:3", "key.id");
 
         TopDocs hits = searcher.search(query, 100);
         for(ScoreDoc doc : hits.scoreDocs) {
             Document document = searcher.doc(doc.doc);
-            System.err.println(document.get("key.id"));
+            System.err.println("Search result ID: "+document.get("key.id")+" | NO: "+document.get("key.no"));
         }
         System.err.println("Hits: " + hits.totalHits);
     }

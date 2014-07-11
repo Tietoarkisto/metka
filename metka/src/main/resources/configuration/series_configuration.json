@@ -18,7 +18,8 @@
 			"key": "seriesabbr",
 			"immutable": true,
 			"translatable": false,
-			"type": "STRING"
+			"type": "STRING",
+			"exact": true
 		},
 		"seriesname": {
 			"key": "seriesname",

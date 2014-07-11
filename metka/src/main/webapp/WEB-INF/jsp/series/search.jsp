@@ -25,7 +25,7 @@
                     <jsp:param name="singlecolumn" value="false" />
                 </jsp:include>
             </tr>
-            <tr><c:set var="field" value="seriesabb" />
+            <tr><c:set var="field" value="seriesabbr" />
                 <td class="labelColumn"><form:label path="values['${field}']"><spring:message code="SERIES.field.${field}"/></form:label></td>
                 <td><form:select path="values['${field}']" items="${searchData.abbreviations}" /></td>
             </tr>
