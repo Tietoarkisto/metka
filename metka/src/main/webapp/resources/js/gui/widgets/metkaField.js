@@ -85,6 +85,7 @@
         },
         inputField: function (type) {
             var id = this.autoId();
+            var key = this.options.field.key;
             this.element.append($.metka.metkaLabel(this.options).element
                 .attr('for', id));
 
@@ -123,9 +124,12 @@
                 } else {
                     // textarea or input elements
 
-                    var key = this.options.field.key;
-                    $input
-                        .val(MetkaJS.Data.get(key));
+                    $input.val(
+                            type === 'CONCAT'
+                            ?
+                            MetkaJS.JSConfig[MetkaJS.Globals.page.toUpperCase()].fields[key].concatenate.map(MetkaJS.Data.get).join('')
+                            :
+                            MetkaJS.Data.get(key));
                 }
 
                 this.element.append($input);
