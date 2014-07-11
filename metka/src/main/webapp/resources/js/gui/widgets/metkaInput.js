@@ -4,7 +4,12 @@
     $.widget('metka.metkaInput', $.metka.metka, {
         _create: function () {
             this.element
-                .toggleClass('alert-warning', this.options.important);
+                .toggleClass('alert-warning', !!this.options.important);
+        },
+        selectInputOptionText: function (option, key) {
+            return MetkaJS.L10N.localize(option, 'title')
+                ||
+                MetkaJS.L10N.get([MetkaJS.Globals.page.toUpperCase(), key, option.value].join('.'));
         },
         select: function () {
             var key = this.options.field.key;
@@ -17,10 +22,7 @@
                     $input.append(options.map(function (option, i) {
                         return $('<option>')
                             .val(option.value)
-                            .text(
-                                MetkaJS.objectGetPropertyNS(option, 'title.value')
-                                ||
-                            MetkaJS.L10N.get([MetkaJS.Globals.page.toUpperCase(), listKey, option.value].join('.')));
+                            .text($.metka.metkaInput.prototype.selectInputOptionText(option, listKey));
                     }));
                     var value = MetkaJS.Data.get(key);
                     if (typeof value !== 'undefined') {

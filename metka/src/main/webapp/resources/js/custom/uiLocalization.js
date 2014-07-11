@@ -91,29 +91,32 @@ $(document).ready(function() {
 
         "general": {
             "buttons": {
-                "&close": {
-                    "default": "Sulje"
-                },
-                "&ok": {
-                    "default": "OK"
-                },
-                "&yes": {
-                    "default": "Kyllä"
-                },
-                "&no": {
-                    "default": "Ei"
-                },
-                "&search": {
-                    "default": "Hae"
+                "&add": {
+                    "default": "Lisää"
                 },
                 "&addSeries": {
                     "default": "Lisää sarja"
                 },
+                "&cancel": {
+                    "default": "Peruuta"
+                },
+                "&close": {
+                    "default": "Sulje"
+                },
                 "&download": {
                     "default": "Lataa"
                 },
-                "&add": {
-                    "default": "Lisää"
+                "&ok": {
+                    "default": "OK"
+                },
+                "&search": {
+                    "default": "Hae"
+                },
+                "&no": {
+                    "default": "Ei"
+                },
+                "&yes": {
+                    "default": "Kyllä"
                 }
             },
 
@@ -545,64 +548,6 @@ $(document).ready(function() {
             }
         },
 
-        "STUDY": {
-            "datakind_list": {
-                "1": "Ei tietoa",
-                "2": "Kvanti",
-                "3": "Kvali",
-                "4": "Kvanti&Kvali"
-            },
-            "anonymization_list": {
-                "1": "Anonymisoidaan FSD:ssä",
-                "2": "Anonymisoitu FSD:ssä",
-                "3": "Luovuttajan anonymisoima",
-                "4": "Ei vaadi anonymisointia",
-                "5": "Ei tietoa"
-            },
-            "yes_no_na": {
-                "1": "Kyllä",
-                "2": "Ei",
-                "3": "Ei tietoa"
-            },
-            "dataversionlabel_list": {
-                "1": "Lyhyt selite",
-                "2": "Toinen lyhyt selite"
-            },
-            "termsofuse_list": {
-                "vald": "Kaikkien käytettävissä",
-                "min": "Tutkimus, opetus, opiskelu",
-                "max": "Vain tutkimus",
-                "mean": "Lupa",
-                "stdev": "Embargo"
-            },
-            "depositortype_list": {
-                "1": "Ei tietoa",
-                "2": "Yrit./yht.",
-                "3": "Tutkija(t)"
-            },
-            "newtermsofuse_list": {
-                "1": "Kaikkien käytettävissä",
-                "2": "Tutkimus, opetus, opiskelu",
-                "3": "Vain tutkimus",
-                "4": "Lupa"
-            },
-            "agreementtype_list": {
-                "1": "Ei tietoa",
-                "2": "Ei tarvita sopimusta",
-                "3": "Könttäsopimus",
-                "4": "Norm+puite",
-                "5": "On sopimus"
-            },
-            "start_end_single": {
-                "1": "Start",
-                "2": "End",
-                "3": "Single"
-            },
-            "universeclusion_list": {
-                "1": "E",
-                "2": "I"
-            }
-        },
         "STUDY_ATTACHMENT": {
             "fileaip": {
                 "1": "Ei tietoa",
@@ -997,11 +942,6 @@ $(document).ready(function() {
     STUDY.dataversionlabel_list.option.1 = Lyhyt selite
     STUDY.dataversionlabel_list.option.2 = Toinen lyhyt selite
 
-    STUDY.statisticstype_list.option.vald = Lukumäärä
-    STUDY.statisticstype_list.option.min = Minimi
-    STUDY.statisticstype_list.option.max = Maksimi
-    STUDY.statisticstype_list.option.mean = Keskiarvo
-    STUDY.statisticstype_list.option.stdev = Keskihajonta
 
     STUDY.termsofuse_list.option.1 = Kaikkien käytettävissä
     STUDY.termsofuse_list.option.2 = Tutkimus, opetus, opiskelu

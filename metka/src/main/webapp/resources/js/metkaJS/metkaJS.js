@@ -151,7 +151,10 @@
                 var data = MetkaJS.objectGetPropertyNS(MetkaJS, 'data.fields', key);
 
                 var current = MetkaJS.objectGetPropertyNS(data, 'currentValue');
-                if (MetkaJS.exists(current)) {
+                if (typeof current !== 'undefined') {
+                    if (current === null) {
+                        return;
+                    }
                     return current;
                 }
 

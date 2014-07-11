@@ -39,15 +39,19 @@
 			"default": "1",
 			"options": [
 				{
+                    "&title": "Ei tietoa",
 					"value": "1"
 				},
 				{
+                    "&title": "Kvanti",
 					"value": "2"
 				},
 				{
+                    "&title": "Kvali",
 					"value": "3"
 				},
 				{
+                    "&title": "Kvanti&Kvali",
 					"value": "4"
 				}
 			]
@@ -61,18 +65,23 @@
 			"freeTextKey": "anonymizationother",
 			"options": [
 				{
-					"value": "1"
+                    "&title": "Anonymisoidaan FSD:ssä",
+                        "value": "1"
 				},
 				{
+                    "&title": "Anonymisoitu FSD:ssä",
 					"value": "2"
 				},
 				{
+                    "&title": "Luovuttajan anonymisoima",
 					"value": "3"
 				},
 				{
+                    "&title": "Ei vaadi anonymisointia",
 					"value": "4"
 				},
 				{
+                    "&title": "Ei tietoa",
 					"value": "5"
 				}
 			]
@@ -98,12 +107,15 @@
 			"type": "VALUE",
 			"options": [
 				{
+                    "&title": "Kyllä",
 					"value": "1"
 				},
 				{
+                    "&title": "Ei",
 					"value": "2"
 				},
 				{
+                    "&title": "Ei tietoa",
 					"value": "3"
 				}
 			]
@@ -157,9 +169,11 @@
 			"type": "VALUE",
 			"options": [
 				{
+                    "&title": "Lyhyt selite",
 					"value": "1"
 				},
 				{
+                    "&title": "Toinen lyhyt selite",
 					"value": "2"
 				}
 			]
@@ -170,19 +184,24 @@
 			"type": "VALUE",
 			"options": [
 				{
+                    "&title": "Kaikkien käytettävissä",
 					"value": "1"
 				},
 				{
+                    "&title": "Tutkimus, opetus, opiskelu",
 					"value": "2"
 				},
 				{
+                    "&title": "Vain tutkimus",
 					"value": "3"
 				},
 				{
+                    "&title": "Lupa",
 					"value": "4"
 				},
 				{
-					"value": "5"
+                    "&title": "Embargo",
+                    "value": "5"
 				}
 			]
 		},
@@ -192,12 +211,15 @@
 			"type": "VALUE",
 			"options": [
 				{
+                    "&title": "Ei tietoa",
 					"value": "1"
 				},
 				{
+                    "&title": "Yrit./yht.",
 					"value": "2"
 				},
 				{
+                    "&title": "Tutkija(t)",
 					"value": "3"
 				}
 			]
@@ -208,15 +230,19 @@
 			"type": "VALUE",
 			"options": [
 				{
+                    "&title": "Kaikkien käytettävissä",
 					"value": "1"
 				},
 				{
+                    "&title": "Tutkimus, opetus, opiskelu",
 					"value": "2"
 				},
 				{
+                    "&title": "Vain tutkimus",
 					"value": "3"
 				},
 				{
+                    "&title": "Lupa",
 					"value": "4"
 				}
 			]
@@ -227,18 +253,23 @@
 			"type": "VALUE",
 			"options": [
 				{
+                    "&title": "Ei tietoa",
 					"value": "1"
 				},
 				{
+                    "&title": "Ei tarvita sopimusta",
 					"value": "2"
 				},
 				{
+                    "&title": "Könttäsopimus",
 					"value": "3"
 				},
 				{
+                    "&title": "Norm+puite",
 					"value": "4"
 				},
 				{
+                    "&title": "On sopimus",
 					"value": "5"
 				}
 			]
@@ -273,12 +304,15 @@
 			"type": "VALUE",
 			"options": [
 				{
+                    "&title": "Start",
 					"value": "1"
 				},
 				{
+                    "&title": "End",
 					"value": "2"
 				},
 				{
+                    "&title": "Single",
 					"value": "3"
 				}
 			]
@@ -288,9 +322,11 @@
 			"type": "VALUE",
 			"options": [
 				{
+                    "&title": "E",
 					"value": "1"
 				},
 				{
+                    "&title": "I",
 					"value": "2"
 				}
 			]
@@ -325,18 +361,23 @@
 			"type": "VALUE",
 			"options": [
 				{
+                    "&title": "Lukumäärä",
 					"value": "vald"
 				},
 				{
+                    "&title": "Minimi",
 					"value": "min"
 				},
 				{
+                    "&title": "Maksimi",
 					"value": "max"
 				},
 				{
+                    "&title": "Keskiarvo",
 					"value": "mean"
 				},
 				{
+                    "&title": "Keskihajonta",
 					"value": "stdev"
 				}
 			]

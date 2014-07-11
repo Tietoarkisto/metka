@@ -18,10 +18,11 @@
                 .click(function () {
                     var data = {
                         id: MetkaJS.SingleObject.id,
-                        revision: MetkaJS.SingleObject.revision
+                        revision: MetkaJS.SingleObject.revision,
+                        values: {}
                     };
                     $.each(MetkaJS.data.fields, function (key, value) {
-                        data["values['" + key + "']"] = MetkaJS.Data.get(key);
+                        data.values[key] = MetkaJS.Data.get(key);
                     });
 
                     $.ajax({
@@ -199,7 +200,7 @@
             this.element
                 .click(function () {
                     var type = MetkaJS.SingleObject.state === 'DRAFT' ? 'draft' : 'logical';
-                    var modal = $.metka.metkaModal({
+                    $.metka.metkaModal({
                         title: MetkaJS.L10N.get('confirmation.remove.revision.title'),
                         body: MetkaJS.L10N.get('confirmation.remove.revision.{type}.text'.supplant({
                             type: type
@@ -212,12 +213,10 @@
                         }),
                         buttons: [{
                             type: 'YES',
-                            preventDismiss: true,
                             create: function () {
                                 $(this)
                                     .click(function () {
-                                        modal.element.modal('hide');
-                                        location.href = MetkaJS.url('remove', {
+                                        MetkaJS.assignUrl('remove', {
                                             type: type
                                         });
                                     });
