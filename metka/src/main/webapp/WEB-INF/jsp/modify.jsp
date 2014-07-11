@@ -13,7 +13,7 @@
 <jsp:include page="../inc/topMenu.jsp" />
 <div class="wrapper">
     <div class="content container">
-        <div class="pageTitle row"><spring:message code="${context}"/> - <spring:message code="${context}.field.${configuration[context].displayId}"/>&nbsp;${single.id} - <spring:message code="general.revision"/>&nbsp;${single.revision} - <spring:message code="general.DRAFT"/></div>
+        <div class="page-header"><spring:message code="${context}"/> - <spring:message code="${context}.field.${configuration[context].displayId}"/>&nbsp;${single.id} - <spring:message code="general.revision"/>&nbsp;${single.revision} - <spring:message code="general.DRAFT"/></div>
 
         <jsp:include page="${page}/modify.jsp" />
         <div class="buttonsHolder">

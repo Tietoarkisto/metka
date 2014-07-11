@@ -2,7 +2,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 
 <div class="popupContainer" id="vocabularyDialog">
-	<h1 class="pageTitle"><spring:message code="settings.vocabularies.editTitle" arguments="${selectedVocabulary.name}"/></h1>
+	<h1 class="page-header"><spring:message code="settings.vocabularies.editTitle" arguments="${selectedVocabulary.name}"/></h1>
 	<div class="popupRowHolder">
 		<div class="languageSelectPopup">
 			<input type="radio" name="language" value="fi"/><spring:message code="topMenu.language.finnish"/>
@@ -12,7 +12,7 @@
 	</div>
 	<br/>
 	<div class="popupRowHolder translationFi">
-		<label class="inputRowLabel"><spring:message code="settings.vocabularies.name"/></label><input type="text" value="Havaintoyksiköt"/>
+		<label class="inputRowLabel"><spring:message code="settings.vocabularies.name"/></label><input type="text" value="Havaintoyksikï¿½t"/>
 	</div>
 	<div class="popupRowHolder translationFi">
 		<label class="inputRowLabel"><spring:message code="settings.vocabularies.uri"/></label><input type="text" value=""/>

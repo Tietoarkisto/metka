@@ -18,7 +18,7 @@
         header: function () {
             var labelAndValue = String.prototype.supplant.bind('{label}&nbsp;{value}');
 
-            this.element.append($('<div class="pageTitle row">')
+            this.element.append($('<div class="page-header">')
                 .html('{page} - {id} - {revision}{state}'.supplant({
                     page: MetkaJS.L10N.get('type.{page}.title'.supplant({page: MetkaJS.Globals.page.toUpperCase()})),
                     id: labelAndValue({
@@ -31,7 +31,7 @@
                     }),
                     state: MetkaJS.SingleObject.state === 'DRAFT' ? ' - ' + MetkaJS.L10N.get('general.DRAFT') : ''
                 }))
-                .append($('<div class="floatRight normalText">')
+                .append($('<div class="pull-right normalText">')
                     .append((function () {
                         var buttonCreateFunctions = MetkaJS.SingleObject.state === 'DRAFT' ? [] : [function () {
                             $(this)

@@ -13,7 +13,7 @@
 <jsp:include page="../inc/topMenu.jsp" />
 <div class="wrapper">
     <div class="content container">
-        <div class="pageTitle row"><spring:message code="${fn:toUpperCase(page)}.search.title"/></div>
+        <div class="page-header"><spring:message code="${fn:toUpperCase(page)}.search.title"/></div>
         <jsp:include page="${page}/search.jsp" />
     </div>
 </div>

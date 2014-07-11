@@ -11,7 +11,7 @@
         <jsp:include page="../../inc/topMenu.jsp" />
         <div class="wrapper">
             <div class="content">
-				<h1 class="pageTitle"><spring:message code="binders.title"/></h1>
+				<h1 class="page-header"><spring:message code="binders.title"/></h1>
 				<div id="binderList" class="upperContainer">
 					<table class="metkaTable sortableTable" id="binderTable">
 						<thead>

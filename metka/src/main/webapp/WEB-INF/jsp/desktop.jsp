@@ -12,8 +12,8 @@
         <jsp:include page="../inc/topMenu.jsp" />
         <div class="wrapper">
             <div class="content">
-                <h1 class="pageTitle"><spring:message code="desktop.title"/></h1>
-                <!-- Tähän iffittely, että onko kääntäjä vai käsittelijä -->
+                <h1 class="page-header"><spring:message code="desktop.title"/></h1>
+                <!-- Tï¿½hï¿½n iffittely, ettï¿½ onko kï¿½ï¿½ntï¿½jï¿½ vai kï¿½sittelijï¿½ -->
                 <%--
                 <c:choose>
                 <c:if test="${user.role.name == 'HANDLER'}"/> TMS --%>

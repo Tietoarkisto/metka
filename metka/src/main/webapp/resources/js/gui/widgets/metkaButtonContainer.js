@@ -2,7 +2,7 @@
     'use strict';
 
     $.widget('metka.metkaButtonContainer', $.metka.metkaUI, {
-        defaultElement: '<div class="buttonsHolder pull-right">',
+        defaultElement: '<div class="modal-footer">',
         _create: function () {
             /*
             this.element.append(this.options.buttons.map(function (button) {

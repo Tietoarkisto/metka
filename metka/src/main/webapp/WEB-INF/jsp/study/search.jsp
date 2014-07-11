@@ -55,7 +55,7 @@
     </div>
     <c:if test="${not empty searchData.results}">
         <div class="searchResult">
-            <h1 class="pageTitle"><spring:message code="general.searchResult"/><span class="floatRight normalText"><spring:message code="general.searchResult.amount"/> ${fn:length(searchData.results)}</span> </h1>
+            <h1 class="page-header"><spring:message code="general.searchResult"/><span class="pull-right normalText"><spring:message code="general.searchResult.amount"/> ${fn:length(searchData.results)}</span> </h1>
             <table class="dataTable">
                 <thead>
                 <tr>

@@ -2,9 +2,9 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 
 <div class="popupContainer" id="relatedSeriesDialog">
-	<h1 class="pageTitle"><spring:message code="publication.view.addSeries.title"/></h1>
+	<h1 class="page-header"><spring:message code="publication.view.addSeries.title"/></h1>
 	<div class="popupRowHolder">
-		<select><option>Valitse...</option><option>Yksittäiset aineistot</option><option>Sosiaalibarometrit</option><option></option></select>
+		<select><option>Valitse...</option><option>Yksittï¿½iset aineistot</option><option>Sosiaalibarometrit</option><option></option></select>
 	</div>
 	
 	<div class="popupButtonsHolder">
