@@ -84,24 +84,31 @@
         },
 
         url: function (key, extend) {
-            return MetkaJS.Globals.contextPath + '/' + {
-                approve: '{page}/ajax/approve',
-                compareRevisions: 'history/revisions/compare',
-                download: 'download/{id}/{revision}',
-                edit: '{page}/edit/{id}',
-                fileEdit: 'file/save/{value}',
-                fileSave: 'file/save',
-                fileUpload: 'file/upload',
-                listRevisions: 'history/revisions/{id}',
-                next: 'next/{page}/{id}',
-                options: 'references/collectOptionsGroup',
-                prev: 'prev/{page}/{id}',
-                remove: 'remove/{page}/{type}/{id}',
-                save: '{page}/ajax/save',
-                search: '{page}/ajax/search',
-                seriesAdd: 'series/add',
-                view: '{page}/view/{id}/{revision}'
-            }[key].supplant($.extend({
+            return MetkaJS.Globals.contextPath + (function () {
+                if (key[0] === '/') {
+                    return key;
+                } else {
+                    return '/' + {
+                        approve: '{page}/ajax/approve',
+                        compareRevisions: 'history/revisions/compare',
+                        download: 'download/{id}/{revision}',
+                        edit: '{page}/edit/{id}',
+                        expertSearch: 'expertSearch/',
+                        fileEdit: 'file/save/{value}',
+                        fileSave: 'file/save',
+                        fileUpload: 'file/upload',
+                        listRevisions: 'history/revisions/{id}',
+                        next: 'next/{page}/{id}',
+                        options: 'references/collectOptionsGroup',
+                        prev: 'prev/{page}/{id}',
+                        remove: 'remove/{page}/{type}/{id}',
+                        save: '{page}/ajax/save',
+                        search: '{page}/ajax/search',
+                        seriesAdd: 'series/add',
+                        view: '{page}/view/{id}/{revision}'
+                    }[key];
+                }
+            })().supplant($.extend({
                 id: MetkaJS.SingleObject.id,
                 page: MetkaJS.Globals.page,
                 revision: MetkaJS.SingleObject.revision
@@ -376,7 +383,7 @@
             }
             $.ajax({
                 method: 'POST',
-                url: MetkaJS.PathBuilder().add("expertSearch").add("query").build(),
+                url: MetkaJS.url('/expertSearch/query'),
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
