@@ -3,6 +3,7 @@ package fi.uta.fsd.metkaSearch.indexers;
 import fi.uta.fsd.metkaSearch.commands.indexer.IndexerCommand;
 import fi.uta.fsd.metkaSearch.commands.indexer.WikipediaIndexerCommand;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
+import fi.uta.fsd.metkaSearch.entity.IndexerCommandRepository;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import fi.uta.fsd.metkaSearch.handlers.WikipediaHandler;
 import org.apache.lucene.index.Term;
@@ -17,18 +18,18 @@ import java.io.IOException;
 
 public class WikipediaIndexer extends Indexer {
 
-    public static WikipediaIndexer build(DirectoryManager.DirectoryPath path) throws IOException, UnsupportedOperationException {
+    public static WikipediaIndexer build(DirectoryManager.DirectoryPath path, IndexerCommandRepository commands) throws IOException, UnsupportedOperationException {
         checkPathType(path, IndexerConfigurationType.WIKIPEDIA);
         // Check additional parameters
         if(path.getAdditionalParameters() != null && path.getAdditionalParameters().length > 0) {
             throw new UnsupportedOperationException("Wikipedia indexer doesn't accept any additional parameters");
         }
-        return new WikipediaIndexer(path);
+        return new WikipediaIndexer(path, commands);
     }
 
     // Should only be used from the factory method in Indexer
-    private WikipediaIndexer(DirectoryManager.DirectoryPath path) throws IOException {
-        super(path);
+    private WikipediaIndexer(DirectoryManager.DirectoryPath path, IndexerCommandRepository commands) throws IOException {
+        super(path, commands);
     }
 
     protected void handleCommand(IndexerCommand command) throws IOException, SAXException {

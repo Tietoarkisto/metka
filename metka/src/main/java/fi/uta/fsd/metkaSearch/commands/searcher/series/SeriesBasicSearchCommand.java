@@ -1,26 +1,22 @@
-package fi.uta.fsd.metkaSearch.commands.searcher;
+package fi.uta.fsd.metkaSearch.commands.searcher.series;
 
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
-import fi.uta.fsd.metkaSearch.LuceneConfig;
+import fi.uta.fsd.metkaSearch.commands.searcher.RevisionSearchCommandBase;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import fi.uta.fsd.metkaSearch.results.*;
-import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.IntField;
-import org.apache.lucene.document.LongField;
-import org.apache.lucene.index.IndexableField;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.document.FieldType;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.apache.lucene.queryparser.flexible.standard.StandardQueryParser;
+import org.apache.lucene.queryparser.flexible.standard.config.NumericConfig;
 import org.apache.lucene.search.*;
 import org.springframework.util.StringUtils;
 
-import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class provides information and query necessary for checking series abbreviation uniqueness.
@@ -28,12 +24,12 @@ import java.util.List;
  *
  * // TODO: general field uniqueness checker for both inside a revisionable and between revisionables. This implementation is really just a test case.
  */
-public final class SeriesBasicSearchCommand extends RevisionSearchCommandBase {
-    public static SeriesBasicSearchCommand build(DirectoryManager.DirectoryPath path,
+public final class SeriesBasicSearchCommand extends RevisionSearchCommandBase<RevisionResult> {
+    public static SeriesBasicSearchCommand build(String language,
                                                  boolean allowApproved, boolean allowDraft, boolean allowRemoved,
                                                  Long revisionableId, String abbreviation, String name) throws UnsupportedOperationException, QueryNodeException {
-        checkPath(path, ConfigurationType.SERIES);
-
+        //checkPath(path, ConfigurationType.SERIES);
+        DirectoryManager.DirectoryPath path = DirectoryManager.formPath(false, IndexerConfigurationType.REVISION, language, ConfigurationType.SERIES.toValue());
         return new SeriesBasicSearchCommand(path, allowApproved, allowDraft, allowRemoved, revisionableId, abbreviation, name);
     }
 
@@ -50,38 +46,16 @@ public final class SeriesBasicSearchCommand extends RevisionSearchCommandBase {
         // If abbreviation or name are non null non empty, then add MUST conditions for
         // seriesabbr and seriesname fields. These should support wildcards but must be tested.
         List<String> qrys = new ArrayList<>();
+        Map<String, NumericConfig> nums = new HashMap<>();
 
-        BooleanQuery bQuery = new BooleanQuery();
-        // key.id should be defined somewhere along with status fields
-        if(!allowApproved) {
-            bQuery.add(new TermQuery(new Term("state.approved", "false")), BooleanClause.Occur.MUST);
-        } else {
-            bQuery.add(new TermQuery(new Term("state.approved", "true")), BooleanClause.Occur.SHOULD);
-        }
         qrys.add(((!allowApproved)?"+":"")+"state.approved:"+allowApproved);
-        if(!allowDraft) {
-            bQuery.add(new TermQuery(new Term("state.draft", "false")), BooleanClause.Occur.MUST);
-        } else {
-            bQuery.add(new TermQuery(new Term("state.draft", "true")), BooleanClause.Occur.SHOULD);
-        }
         qrys.add(((!allowDraft)?"+":"")+"state.draft:"+allowDraft);
-        if(!allowRemoved) {
-            bQuery.add(new TermQuery(new Term("state.removed", "false")), BooleanClause.Occur.MUST);
-        } else {
-            bQuery.add(new TermQuery(new Term("state.removed", "true")), BooleanClause.Occur.SHOULD);
-        }
         qrys.add(((!allowRemoved)?"+":"")+"state.removed:"+allowRemoved);
-        if(revisionableId != null) {
-            bQuery.add(NumericRangeQuery.newLongRange("key.id", 1, revisionableId, revisionableId, true, true), BooleanClause.Occur.MUST);
-        }
+
         if(revisionableId != null) qrys.add("+key.id:"+revisionableId);
-        if(!StringUtils.isEmpty(abbreviation)) {
-            bQuery.add(new TermQuery(new Term("seriesabbr", abbreviation)), BooleanClause.Occur.MUST);
-        }
+        nums.put("key.id", new NumericConfig(1, new DecimalFormat(), FieldType.NumericType.LONG));
+
         if(!StringUtils.isEmpty(abbreviation)) qrys.add("+seriesabbr:"+abbreviation);
-        if(!StringUtils.isEmpty(name)) {
-            bQuery.add(new TermQuery(new Term("seriesname", name)), BooleanClause.Occur.MUST);
-        }
         if(!StringUtils.isEmpty(name)) {
             qrys.add("+seriesname:"+name);
             addTextAnalyzer("seriesname");
@@ -96,6 +70,7 @@ public final class SeriesBasicSearchCommand extends RevisionSearchCommandBase {
         }
 
         StandardQueryParser parser = new StandardQueryParser(getAnalyzer());
+        parser.setNumericConfigMap(nums);
         query = parser.parse(qryStr, "key.id");
 
         //query = bQuery;
@@ -107,9 +82,7 @@ public final class SeriesBasicSearchCommand extends RevisionSearchCommandBase {
     }
 
     @Override
-    public ResultHandler getResulHandler() {
+    public ResultHandler<RevisionResult> getResulHandler() {
         return new BasicRevisionSearchResultHandler();
     }
-
-
 }

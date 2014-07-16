@@ -5,6 +5,7 @@ import fi.uta.fsd.metkaSearch.commands.searcher.SearchCommand;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import fi.uta.fsd.metkaSearch.results.ResultHandler;
 import fi.uta.fsd.metkaSearch.results.ResultList;
+import fi.uta.fsd.metkaSearch.results.SearchResult;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.TopDocs;
@@ -16,8 +17,8 @@ import java.io.IOException;
  *
  * TODO: Split to single-index and multi-index variants.
  */
-public class RevisionSearcher extends Searcher {
-    public static RevisionSearcher build(SearchCommand command) throws IOException, UnsupportedOperationException {
+public class RevisionSearcher<T extends SearchResult> extends Searcher<T> {
+    public static <T extends SearchResult> RevisionSearcher<T> build(SearchCommand<T> command) throws IOException, UnsupportedOperationException {
         if(command.getPath().getType() != IndexerConfigurationType.REVISION) {
             throw new UnsupportedOperationException("Path is not for a REVISION");
         }
@@ -28,19 +29,19 @@ public class RevisionSearcher extends Searcher {
             throw new UnsupportedOperationException("Additional parameter must be a ConfigurationType");
         }
 
-        return new RevisionSearcher(command);
+        return new RevisionSearcher<T>(command);
     }
 
-    private RevisionSearcher(SearchCommand command) throws IOException {
+    private RevisionSearcher(SearchCommand<T> command) throws IOException {
         super(command);
     }
 
     @Override
-    public ResultList call() throws Exception {
+    public ResultList<T> call() throws Exception {
         IndexReader reader = getIndexer().getIndexReader();
         IndexSearcher searcher = new IndexSearcher(reader);
         TopDocs results = searcher.search(getCommand().getQuery(), 100);
-        ResultHandler handler = getCommand().getResulHandler();
+        ResultHandler<T> handler = getCommand().getResulHandler();
         return handler.handle(searcher, results);
     }
 }

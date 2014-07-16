@@ -2,6 +2,7 @@ package fi.uta.fsd.metkaSearch.commands.indexer;
 
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
+import org.springframework.util.StringUtils;
 
 public class WikipediaIndexerCommand extends IndexerCommandBase {
 
@@ -12,6 +13,30 @@ public class WikipediaIndexerCommand extends IndexerCommandBase {
     }
 
     // FACTORY METHODS
+
+    public static WikipediaIndexerCommand fromParameterString(DirectoryManager.DirectoryPath path, Action action, String parameters) throws UnsupportedOperationException {
+        switch(action) {
+            case STOP:
+                if(StringUtils.isEmpty(parameters)) {
+                    return stop(path);
+                } else {
+                    throw new UnsupportedOperationException("STOP action doesn't expect any parameters");
+                }
+            case REMOVE:
+            case INDEX:
+                if(StringUtils.isEmpty(parameters)) {
+                    throw new UnsupportedOperationException(action.name()+" expects parameters");
+                } else {
+                    if(action == Action.REMOVE) {
+                        return remove(path, parameters);
+                    } else {
+                        return index(path, parameters);
+                    }
+                }
+            default:
+                throw new UnsupportedOperationException("Unsupported action");
+        }
+    }
     /**
      * Factory method for stop command on wikipedia indexer.
      *
@@ -73,5 +98,19 @@ public class WikipediaIndexerCommand extends IndexerCommandBase {
 
     public String getPageId() {
         return pageId;
+    }
+
+    @Override
+    public String toParameterString() {
+        switch(getAction()) {
+            case STOP:
+                return "";
+            case INDEX:
+                return filePath;
+            case REMOVE:
+                return pageId;
+            default:
+                return "";
+        }
     }
 }

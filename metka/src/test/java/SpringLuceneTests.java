@@ -1,5 +1,4 @@
 import fi.uta.fsd.metka.data.entity.RevisionEntity;
-import fi.uta.fsd.metka.data.entity.RevisionableEntity;
 import fi.uta.fsd.metka.data.entity.impl.SeriesEntity;
 import fi.uta.fsd.metka.data.entity.impl.StudyEntity;
 import fi.uta.fsd.metka.data.entity.key.RevisionKey;
@@ -10,8 +9,8 @@ import fi.uta.fsd.metkaSearch.SearcherComponent;
 import fi.uta.fsd.metkaSearch.analyzer.FinnishVoikkoAnalyzer;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
 import fi.uta.fsd.metkaSearch.commands.searcher.SearchCommand;
-import fi.uta.fsd.metkaSearch.commands.searcher.SeriesAbbreviationUniquenessSearchCommand;
-import fi.uta.fsd.metkaSearch.commands.searcher.SeriesBasicSearchCommand;
+import fi.uta.fsd.metkaSearch.commands.searcher.series.SeriesAbbreviationUniquenessSearchCommand;
+import fi.uta.fsd.metkaSearch.commands.searcher.series.SeriesBasicSearchCommand;
 import fi.uta.fsd.metkaSearch.directory.DirectoryInformation;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.commands.indexer.DummyIndexerCommand;
@@ -161,7 +160,7 @@ public class SpringLuceneTests {
             DirectoryInformation indexer = DirectoryManager.getIndexDirectory(path);
             IndexReader reader = indexer.getIndexReader();
             IndexSearcher searcher = new IndexSearcher(reader);
-            Query query;
+            //Query query;
             BooleanQuery bQuery;
             bQuery = new BooleanQuery();
             Map<String, Analyzer> analyzers = new HashMap<>();
@@ -250,12 +249,11 @@ public class SpringLuceneTests {
 
     @Test
     public void seriesUniquenessTest() throws IOException {
-        DirectoryManager.DirectoryPath path = new DirectoryManager.DirectoryPath(false, IndexerConfigurationType.REVISION, "fi", ConfigurationType.SERIES.toValue());
-        SearchCommand command = SeriesAbbreviationUniquenessSearchCommand.build(path, 4L, "TS3");
-        ResultList results = searcher.executeSearch(command);
+        SearchCommand<BooleanResult> command = SeriesAbbreviationUniquenessSearchCommand.build("fi", 4L, "TS3");
+        ResultList<BooleanResult> results = searcher.executeSearch(command);
         assertTrue(results.getResults().size() == 1);
         assertTrue(results.getResults().get(0).getType() == ResultList.ResultType.BOOLEAN);
-        assertTrue(((BooleanResult)results.getResults().get(0)).getResult());
+        assertTrue((results.getResults().get(0)).getResult());
         for(SearchResult result : results.getResults()) {
             System.err.println(result.toString());
         }
@@ -263,9 +261,8 @@ public class SpringLuceneTests {
 
     @Test
     public void seriesBasicTest() throws IOException, QueryNodeException {
-        DirectoryManager.DirectoryPath path = new DirectoryManager.DirectoryPath(false, IndexerConfigurationType.REVISION, "fi", ConfigurationType.SERIES.toValue());
-        SearchCommand command = SeriesBasicSearchCommand.build(path, true, true, true, null, "TS3", null);
-        ResultList results = searcher.executeSearch(command);
+        SearchCommand<RevisionResult> command = SeriesBasicSearchCommand.build("fi", true, true, true, 7L, null, null);
+        ResultList<RevisionResult> results = searcher.executeSearch(command);
         ResultList.ResultType type = results.getType();
         assertTrue(type == ResultList.ResultType.REVISION);
         for(SearchResult result : results.getResults()) {
@@ -309,12 +306,12 @@ public class SpringLuceneTests {
         PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new WhitespaceAnalyzer(LuceneConfig.USED_VERSION), analyzers);
 
         StandardQueryParser parser = new StandardQueryParser(analyzer);
-        Query query = parser.parse("+anonymization.value:3", "key.id");
+        Query query = parser.parse("+notes.note:(aineisto teksti)", "key.id");
 
         TopDocs hits = searcher.search(query, 100);
         for(ScoreDoc doc : hits.scoreDocs) {
             Document document = searcher.doc(doc.doc);
-            System.err.println("Search result ID: "+document.get("key.id")+" | NO: "+document.get("key.no"));
+            System.err.println("Search result ID: "+document.get("key.id")+" | NO: "+document.get("key.no") + " | STUDY_ID: "+document.get("studyid"));
         }
         System.err.println("Hits: " + hits.totalHits);
     }

@@ -18,6 +18,9 @@ public interface IndexerCommand {
 
     public Action getAction();
 
+    public Long getQueueId();
+    public void setQueueId(Long queueId);
+
     /**
      * Defines what indexer should do with given command.
      * Current actions are index, remove and stop. Remove clears the document from index, stop requests the indexer to stop
@@ -36,4 +39,17 @@ public interface IndexerCommand {
         STOP
         // ...
     }
+
+    /**
+     * Returns commands custom parameters, such as Revisions id and no, as a string.
+     * This is used to save the command to queue in database so that no IndexerCommands are missed
+     * in the case of server restart.
+     * Implementation differs on command and action basis but will always produce a single String
+     * that can be saved to database.
+     * There should be a corresponding static factory method called fromParameterString in every
+     * implementation that accepts a Path, an Action and the parameter string produced by this
+     * method and returns correctly initialized IndexerCommand ready for execution.
+     * @return
+     */
+    public String toParameterString();
 }

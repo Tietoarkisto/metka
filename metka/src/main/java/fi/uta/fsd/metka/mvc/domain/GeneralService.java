@@ -1,20 +1,29 @@
 package fi.uta.fsd.metka.mvc.domain;
 
+import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.enums.repositoryResponses.DraftRemoveResponse;
 import fi.uta.fsd.metka.data.enums.repositoryResponses.LogicalRemoveResponse;
 import fi.uta.fsd.metka.data.repository.GeneralRepository;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metkaSearch.IndexerComponent;
+import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
+import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
+import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 public class GeneralService {
 
     @Autowired
     private GeneralRepository repository;
+
+    @Autowired
+    private IndexerComponent indexer;
 
     /**
      * Return the id of next or previous revisionable of the same type as the current revisionable the user is looking at.
@@ -39,7 +48,16 @@ public class GeneralService {
      * @return DraftRemoveResponse enum returned by repository. Success or failure of the operation can be determined from this.
      */
     public DraftRemoveResponse removeDraft(String type, Long id) {
-        return repository.removeDraft(type, id);
+        DraftRemoveResponse response = repository.removeDraft(type, id);
+        if(response.getResponse() == DraftRemoveResponse.Response.FINAL_REVISION || response.getResponse() == DraftRemoveResponse.Response.SUCCESS) {
+            try {
+                indexer.addCommand(RevisionIndexerCommand.remove(DirectoryManager.formPath(false, IndexerConfigurationType.REVISION, "fi", ConfigurationType.valueOf(type.toUpperCase()).toValue()), response.getId(), response.getNo()));
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+                // Not much to do here really...
+            }
+        }
+        return response;
     }
 
     /**
@@ -52,7 +70,20 @@ public class GeneralService {
      * @return LogicalRemoveResponse enum returned by repository. Success or failure of the operation can be determined from this.
      */
     public LogicalRemoveResponse removeLogical(String type, Long id) {
-        return repository.removeLogical(type, id);
+        LogicalRemoveResponse response = repository.removeLogical(type, id);
+        if(response == LogicalRemoveResponse.SUCCESS) {
+            DirectoryManager.DirectoryPath path = DirectoryManager.formPath(false, IndexerConfigurationType.REVISION, "fi", ConfigurationType.fromValue(type.toUpperCase()).name());
+            List<Integer> revisions = repository.getAllRevisionNumbers(id);
+            try {
+                for(Integer revision : revisions) {
+                    indexer.addCommand(RevisionIndexerCommand.index(path, id, revision));
+                }
+            } catch(IOException ioe) {
+                ioe.printStackTrace();
+                // Can't really do that much here...
+            }
+        }
+        return response;
     }
 
     public RevisionData getRevision(Long id, Integer revision) throws IOException {

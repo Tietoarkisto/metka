@@ -4,6 +4,7 @@ import fi.uta.fsd.metkaSearch.commands.searcher.SearchCommand;
 import fi.uta.fsd.metkaSearch.directory.DirectoryInformation;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.results.ResultList;
+import fi.uta.fsd.metkaSearch.results.SearchResult;
 
 import java.io.IOException;
 import java.util.concurrent.Callable;
@@ -14,7 +15,7 @@ import java.util.concurrent.Callable;
  * for asynchronous execution of queries.
  * SearcherComponent should decide between synchronous and asynchronous implementation
  */
-public abstract class Searcher implements Callable<ResultList> {
+public abstract class Searcher<T extends SearchResult> implements Callable<ResultList<T>> {
 
     /**
      * Indexer path where this search should be performed
@@ -23,11 +24,11 @@ public abstract class Searcher implements Callable<ResultList> {
     /**
      * Command that should be executed
      */
-    private final SearchCommand command;
+    private final SearchCommand<T> command;
 
     private final DirectoryInformation indexer;
 
-    protected Searcher(SearchCommand command) throws IOException {
+    protected Searcher(SearchCommand<T> command) throws IOException {
         this.path = command.getPath();
         this.command = command;
         indexer = DirectoryManager.getIndexDirectory(path);
@@ -37,7 +38,7 @@ public abstract class Searcher implements Callable<ResultList> {
         return indexer;
     }
 
-    public SearchCommand getCommand() {
+    public SearchCommand<T> getCommand() {
         return command;
     }
 
@@ -49,5 +50,5 @@ public abstract class Searcher implements Callable<ResultList> {
      * @throws Exception
      */
     @Override
-    public abstract ResultList call() throws Exception;
+    public abstract ResultList<T> call() throws Exception;
 }

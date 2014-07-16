@@ -1,12 +1,10 @@
-package fi.uta.fsd.metkaSearch.commands.searcher;
+package fi.uta.fsd.metkaSearch.commands.searcher.series;
 
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
+import fi.uta.fsd.metkaSearch.commands.searcher.RevisionSearchCommandBase;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
-import fi.uta.fsd.metkaSearch.results.BooleanResult;
-import fi.uta.fsd.metkaSearch.results.ListBasedResultList;
-import fi.uta.fsd.metkaSearch.results.ResultHandler;
-import fi.uta.fsd.metkaSearch.results.ResultList;
+import fi.uta.fsd.metkaSearch.results.*;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.*;
 
@@ -16,10 +14,10 @@ import org.apache.lucene.search.*;
  *
  * // TODO: general field uniqueness checker for both inside a revisionable and between revisionables. This implementation is really just a test case.
  */
-public final class SeriesAbbreviationUniquenessSearchCommand extends RevisionSearchCommandBase {
-    public static SeriesAbbreviationUniquenessSearchCommand build(DirectoryManager.DirectoryPath path, Long revisionableId, String abbreviation) throws UnsupportedOperationException {
-        checkPath(path, ConfigurationType.SERIES);
-
+public final class SeriesAbbreviationUniquenessSearchCommand extends RevisionSearchCommandBase<BooleanResult> {
+    public static SeriesAbbreviationUniquenessSearchCommand build(String language, Long revisionableId, String abbreviation) throws UnsupportedOperationException {
+        //checkPath(path, ConfigurationType.SERIES);
+        DirectoryManager.DirectoryPath path = DirectoryManager.formPath(false, IndexerConfigurationType.REVISION, language, ConfigurationType.SERIES.toValue());
         return new SeriesAbbreviationUniquenessSearchCommand(path, revisionableId, abbreviation);
     }
 
@@ -45,14 +43,14 @@ public final class SeriesAbbreviationUniquenessSearchCommand extends RevisionSea
     }
 
     @Override
-    public ResultHandler getResulHandler() {
+    public ResultHandler<BooleanResult> getResulHandler() {
         return new SeriesAbbreviationUniquenessResultHandler();
     }
 
-    private static class SeriesAbbreviationUniquenessResultHandler implements ResultHandler {
+    private static class SeriesAbbreviationUniquenessResultHandler implements ResultHandler<BooleanResult> {
         @Override
-        public ResultList handle(IndexSearcher searcher, TopDocs results) {
-            ResultList list = new ListBasedResultList(ResultList.ResultType.BOOLEAN);
+        public ResultList<BooleanResult> handle(IndexSearcher searcher, TopDocs results) {
+            ResultList<BooleanResult> list = new ListBasedResultList<>(ResultList.ResultType.BOOLEAN);
             if(results.totalHits == 0) {
                 // Unique
                 list.addResult(new BooleanResult(true));

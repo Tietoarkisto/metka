@@ -4,6 +4,7 @@ import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.data.repository.GeneralRepository;
 import fi.uta.fsd.metkaSearch.commands.indexer.IndexerCommand;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
+import fi.uta.fsd.metkaSearch.entity.IndexerCommandRepository;
 import fi.uta.fsd.metkaSearch.enums.IndexerStatusMessage;
 import fi.uta.fsd.metkaSearch.indexers.DummyIndexer;
 import fi.uta.fsd.metkaSearch.indexers.Indexer;
@@ -15,23 +16,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 @Service
-public class IndexerComponent{
+public class IndexerComponent {
 
     @Autowired
     private GeneralRepository general;
 
     @Autowired
     private ConfigurationRepository configurations;
+
+    @Autowired
+    private IndexerCommandRepository commandRepository;
 
     // Pool for indexer threads.
     private ExecutorService indexerPool = Executors.newCachedThreadPool();
@@ -43,26 +48,39 @@ public class IndexerComponent{
      * All objects within a single index should be parsed for indexing using similar procedures.
      * All objects within a single index should also be searchable using similar procedures.
      */
-    private final Map<DirectoryManager.DirectoryPath, Future<IndexerStatusMessage>> handlers = new HashMap<>();
+    private final Map<DirectoryManager.DirectoryPath, Future<IndexerStatusMessage>> handlers = new ConcurrentHashMap<>();
 
-    private final Map<DirectoryManager.DirectoryPath, Indexer> indexers = new HashMap<>();
+    //private final Map<DirectoryManager.DirectoryPath, Indexer> indexers = new ConcurrentHashMap<>();
+
+    /**
+     * Executed at program startup. Clears requested status from all non handled methods and removes all handled methods from database.
+     */
+    @PostConstruct
+    public void clearCommands() {
+        commandRepository.clearAllRequests();
+        commandRepository.removeAllHandled();
+    }
 
     public void addCommand(IndexerCommand command) throws IOException {
-        // TODO: Add command to database queue from where it can be removed when handled.
+        commandRepository.addIndexerCommand(command);
         // TODO: Move actual command adding to a separate thread that reads the database queue instead so all commands are executed even if system fails before all commands are handled
         if(handlers.containsKey(command.getPath())) {
             if(handlers.get(command.getPath()).isDone()) {
                 // Start new indexer, don't use RAMDirectory. Starting a new indexer should clear the old one from map.
                 startIndexer(command.getPath());
             }
-            if(!indexers.containsKey(command.getPath())) {
+            /*if(!indexers.containsKey(command.getPath())) {
                 // Something is wrong since indexer is not in the list but it's apparently running
                 return;
-            }
+            }*/
         } else {
             startIndexer(command.getPath());
         }
-        indexers.get(command.getPath()).addCommand(command);
+        //indexers.get(command.getPath()).addCommand(command);
+    }
+
+    public void markCommandAsHandler(Long id) {
+        commandRepository.markCommandAsHandled(id);
     }
 
     public void startIndexer(DirectoryManager.DirectoryPath path) throws IOException {
@@ -71,7 +89,7 @@ public class IndexerComponent{
             clearHandlers();
 
             Indexer indexer = createIndexer(path);
-            indexers.put(path, indexer);
+            //indexers.put(path, indexer);
             handlers.put(path, indexerPool.submit(indexer));
         }
     }
@@ -87,10 +105,10 @@ public class IndexerComponent{
 
         // Remove stopped handlers and their indexers
         for(DirectoryManager.DirectoryPath path : remove) {
-            Indexer indexer = indexers.get(path);
+            /*Indexer indexer = indexers.get(path);
             if(indexer != null) {
                 indexers.remove(path);
-            }
+            }*/
             handlers.remove(path);
         }
     }
@@ -141,13 +159,16 @@ public class IndexerComponent{
         Indexer indexer = null;
         switch(path.getType())  {
             case WIKIPEDIA:
-                indexer = WikipediaIndexer.build(path);
+                indexer = WikipediaIndexer.build(path, commandRepository);
                 break;
             case DUMMY:
-                indexer = DummyIndexer.build(path);
+                indexer = DummyIndexer.build(path, commandRepository);
                 break;
             case REVISION:
-                indexer = RevisionIndexer.build(path, general, configurations);
+                indexer = RevisionIndexer.build(path, commandRepository, general, configurations);
+                break;
+            default:
+                indexer = null;
                 break;
         }
         return indexer;

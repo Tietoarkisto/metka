@@ -229,7 +229,7 @@
                     });
                     $.ajax({
                         method: 'POST',
-                        url: MetkaJS.Globals.contextPath + '/series/ajaxSave',
+                        url: MetkaJS.PathBuilder().add("series").add("ajaxSave").build(),
                         data: data,
                         dataType: 'json',
                         success: function (data) {

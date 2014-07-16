@@ -1,15 +1,13 @@
 package fi.uta.fsd.metkaSearch;
 
 import fi.uta.fsd.metkaSearch.commands.searcher.SearchCommand;
-import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.results.ResultList;
+import fi.uta.fsd.metkaSearch.results.SearchResult;
 import fi.uta.fsd.metkaSearch.searchers.RevisionSearcher;
 import fi.uta.fsd.metkaSearch.searchers.Searcher;
-import org.apache.lucene.index.IndexReader;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.concurrent.*;
 
 @Service
@@ -24,11 +22,11 @@ public class SearcherComponent {
      * @param command
      * @return
      */
-    public ResultList executeSearch(SearchCommand command) {
-        ResultList results = null;
+    public <T extends SearchResult> ResultList<T> executeSearch(SearchCommand<T> command) {
+        ResultList<T> results = null;
         try {
-            Searcher searcher = build(command);
-            Future<ResultList> operation = indexerPool.submit(searcher);
+            Searcher<T> searcher = build(command);
+            Future<ResultList<T>> operation = indexerPool.submit(searcher);
             results = operation.get();
         } catch(UnsupportedOperationException uoe) {
             uoe.printStackTrace();
@@ -47,11 +45,14 @@ public class SearcherComponent {
      * @param command
      * @return
      */
-    public static Searcher build(SearchCommand command) throws IOException, UnsupportedOperationException {
-        Searcher searcher = null;
+    public static <T extends SearchResult> Searcher<T> build(SearchCommand<T> command) throws IOException, UnsupportedOperationException {
+        Searcher<T> searcher = null;
         switch(command.getPath().getType()) {
             case REVISION:
                 searcher = RevisionSearcher.build(command);
+                break;
+            default:
+                searcher = null;
                 break;
         }
         return searcher;

@@ -21,7 +21,7 @@
         <table class="formTable">
             <tr>
                 <jsp:include page="../../inc/inputs/formText.jsp">
-                    <jsp:param name="field" value="seriesno" />
+                    <jsp:param name="field" value="seriesid" />
                     <jsp:param name="singlecolumn" value="false" />
                 </jsp:include>
             </tr>
@@ -51,8 +51,8 @@
         <table class="dataTable">
             <thead>
                 <tr>
-                    <th><spring:message code="SERIES.field.seriesno"/></th>
-                    <th><spring:message code="SERIES.field.seriesabb"/></th>
+                    <th><spring:message code="SERIES.field.seriesid"/></th>
+                    <th><spring:message code="SERIES.field.seriesabbr"/></th>
                     <th><spring:message code="SERIES.field.seriesname"/></th>
                     <th><spring:message code="general.search.result.state"/></th>
                 </tr>
@@ -60,8 +60,8 @@
             <tbody>
                 <c:forEach var="r" items="${searchData.results}">
                     <tr class="pointerClass" onclick="MetkaJS.view(${r.id},${r.revision})">
-                        <td>${r.values['seriesno']}</td>
-                        <td>${r.values['seriesabb']}</td>
+                        <td>${r.values['seriesid']}</td>
+                        <td>${r.values['seriesabbr']}</td>
                         <td>${r.values['seriesname']}</td>
                         <td><spring:message code="general.search.result.state.${r.state}"/></td>
                     </tr>

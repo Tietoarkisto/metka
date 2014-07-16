@@ -142,6 +142,7 @@ public class WikipediaHandler extends DefaultHandler {
                     return;
                 }
                 state = STATE.CONTRIBUTOR;
+                break;
             case "base":
             case "title":
             case "id":

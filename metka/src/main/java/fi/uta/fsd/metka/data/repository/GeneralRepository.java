@@ -41,6 +41,8 @@ public interface GeneralRepository {
 
     public String getRevisionData(Long id, Integer revision);
 
+    public List<Integer> getAllRevisionNumbers(Long id);
+
     @Transactional(readOnly = false) public SequenceEntity getNewSequenceValue(String key);
     @Transactional(readOnly = false) public SequenceEntity getNewSequenceValue(String key, Long initialValue);
 }

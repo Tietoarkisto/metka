@@ -6,16 +6,22 @@ import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.mvc.domain.GeneralService;
 import fi.uta.fsd.metka.mvc.domain.simple.ErrorMessage;
+import fi.uta.fsd.metka.transfer.expert.ExpertSearchQueryResponse;
+import fi.uta.fsd.metka.transfer.expert.ExpertSearchRequest;
+import fi.uta.fsd.metkaSearch.SearcherComponent;
+import fi.uta.fsd.metkaSearch.commands.searcher.SearchCommand;
+import fi.uta.fsd.metkaSearch.commands.searcher.expert.ExpertRevisionSearchCommand;
+import fi.uta.fsd.metkaSearch.results.ResultList;
+import fi.uta.fsd.metkaSearch.results.RevisionResult;
 import javassist.NotFoundException;
+import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
@@ -34,9 +40,37 @@ public class GeneralController {
     @Autowired
     private JSONUtil json;
 
+    @Autowired
+    private SearcherComponent searcher;
+
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String catchAll() {
         return "redirect:/series/search";
+    }
+
+    @RequestMapping(value = "/expertSearch", method = RequestMethod.GET)
+    public String expertSearch() {
+        return "expertSearch";
+    }
+
+    @RequestMapping(value = "/expertSearch/query", method = {RequestMethod.POST},
+            produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody ExpertSearchQueryResponse expertSearchQuery(@RequestBody ExpertSearchRequest request) {
+        if(request.getOperation() == ExpertSearchRequest.ExpertSearchOperation.QUERY) {
+            try {
+                SearchCommand<RevisionResult> command = ExpertRevisionSearchCommand.build(request.getData());
+                ResultList<RevisionResult> results = searcher.executeSearch(command);
+                return new ExpertSearchQueryResponse();
+            } catch(UnsupportedOperationException uoe) {
+                uoe.printStackTrace();
+                return new ExpertSearchQueryResponse();
+            } catch (QueryNodeException qne) {
+                qne.printStackTrace();
+                return new ExpertSearchQueryResponse();
+            }
+        } else {
+            return new ExpertSearchQueryResponse();
+        }
     }
 
     @RequestMapping(value = "/prev/{type}/{id}", method = RequestMethod.GET)
@@ -86,7 +120,7 @@ public class GeneralController {
         DraftRemoveResponse response = service.removeDraft(type, id);
         List<ErrorMessage> errors = new ArrayList<>();
         redirectAttributes.addFlashAttribute("displayableErrors", errors);
-        switch (response) {
+        switch (response.getResponse()) {
             case SUCCESS:
                 error = new ErrorMessage();
                 error.setMsg("general.errors.remove.draft.complete");

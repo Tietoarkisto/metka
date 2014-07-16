@@ -160,3 +160,7 @@ table.revisionTable tr  .changeTableColumn:last-of-type {
 #variableView table tr td:last-of-type {
     padding-left: 3px;
 }
+
+table .button {
+    width: auto;
+}

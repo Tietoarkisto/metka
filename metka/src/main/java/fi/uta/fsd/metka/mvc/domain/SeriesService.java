@@ -194,8 +194,8 @@ public class SeriesService {
         so.setId(data.getKey().getId());
         so.setRevision(data.getKey().getRevision());
         so.setState(UIRevisionState.fromRevisionState(data.getState()));
-        so.setByKey("seriesno", extractIntegerSimpleValue(data.dataField(SavedDataFieldCall.get("seriesno")).getRight()));
-        so.setByKey("seriesabb", extractStringSimpleValue(data.dataField(SavedDataFieldCall.get("seriesabb")).getRight()));
+        so.setByKey("seriesid", extractIntegerSimpleValue(data.dataField(SavedDataFieldCall.get("seriesid")).getRight()));
+        so.setByKey("seriesabbr", extractStringSimpleValue(data.dataField(SavedDataFieldCall.get("seriesabbr")).getRight()));
         so.setByKey("seriesname", extractStringSimpleValue(data.dataField(SavedDataFieldCall.get("seriesname")).getRight()));
 
         return so;

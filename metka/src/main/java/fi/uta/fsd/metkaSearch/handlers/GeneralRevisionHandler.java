@@ -2,6 +2,7 @@ package fi.uta.fsd.metkaSearch.handlers;
 
 import fi.uta.fsd.metka.data.enums.*;
 import fi.uta.fsd.metka.data.enums.FieldType;
+import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
@@ -9,7 +10,10 @@ import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.configuration.Option;
 import fi.uta.fsd.metka.model.configuration.SelectionList;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.data.container.ContainerDataField;
+import fi.uta.fsd.metka.model.data.container.DataRow;
 import fi.uta.fsd.metka.model.data.container.SavedDataField;
+import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 import fi.uta.fsd.metkaSearch.LuceneConfig;
 import fi.uta.fsd.metkaSearch.analyzer.FinnishVoikkoAnalyzer;
 import fi.uta.fsd.metkaSearch.directory.DirectoryInformation;
@@ -21,7 +25,6 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.*;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.NumericRangeQuery;
-import org.apache.lucene.util.Version;
 import org.joda.time.LocalDateTime;
 import org.springframework.util.StringUtils;
 
@@ -109,91 +112,13 @@ class GeneralRevisionHandler implements RevisionHandler {
         Map<String, Analyzer> analyzers = new HashMap<>();
 
         for(Field field : config.getFields().values()) {
-            if(field.getType().isContainer()) {
-                // Field is a container type. These are indexed into separate indexes by different handlers, Create the commands and continue
-                // TODO: Create commands to index the field
-                continue;
-            }
+            // Ignore subfields, they're indexed through container indexing
             if(field.getSubfield()) {
-                // Skip subfields, they're handled by the respective container handlers
-                continue;
-            }
-            if(!field.getWritable()) {
-                // Value is not written in revision data, nothing to index
-                continue;
-            }
-            // TODO: Get this from actual indexer configuration
-            if(!field.getIndexed()) {
-                // Field should not be indexed according to configuration
-                continue;
-            }
-            // Since field is not a container it's saved as a SavedDataField
-            Pair<StatusCode, SavedDataField> pair = data.dataField(SavedDataFieldCall.get(field.getKey()).setConfiguration(config));
-            StatusCode sc = pair.getLeft();
-            if(sc != StatusCode.FIELD_FOUND) {
-                // Field was not found on given revision data. Nothing to index
-                continue;
-            }
-            SavedDataField saved = pair.getRight();
-            if(!saved.hasValue() || StringUtils.isEmpty(saved.getActualValue())) {
-                // SavedDataField has no value to index or the value is empty, don't insert anything
                 continue;
             }
 
-            switch(field.getType()) {
-                case DATE:
-                case DATETIME:
-                case TIME:
-                    // Index all Date and time fields as StringFields since they should not be analyzed or tokenized in any way.
-                    document.add(new StringField(field.getKey(), saved.getActualValue(), NO));
-                    break;
-                case BOOLEAN:
-                    // Index boolean field as a string with 'true' or 'false' as value. Boolean field should not be analyzer or tokenized
-                    document.add(new StringField(field.getKey(), saved.getActualValue(), NO));
-                    break;
-                case CONCAT:
-                    // Index concat field as a text field which should be analyzed and tokenized unless marked as exact field in config
-                    // TODO: get information of if field is marked exact
-                    document.add(new TextField(field.getKey(), saved.getActualValue(), NO));
-                    addTextAnalyzer(analyzers, field.getKey());
-                    break;
-                case STRING:
-                    // Index string field as a text field which should be analyzed and tokenized unless marked as exact field in config
-                    // TODO: get information of if field is marked exact from actual indexer configuration
-                    if(field.getExact()) {
-                        document.add(new StringField(field.getKey(), saved.getActualValue(), NO));
-                    } else {
-                        document.add(new TextField(field.getKey(), saved.getActualValue(), NO));
-                        addTextAnalyzer(analyzers, field.getKey());
-                    }
-                    break;
-                case INTEGER:
-                    // Convert value to correct number format (integer or long, or just stick with long for everything) and index as correct number field
-                    // TODO: Correct number conversion
-                    document.add(new LongField(field.getKey(), Long.parseLong(saved.getActualValue()), NO));
-                    break;
-                case REAL:
-                    // Convert value to correct number format (float or double, or just stick with double for everything) and index as correct number field
-                    // TODO: Correct number conversion
-                    document.add(new DoubleField(field.getKey(), Double.parseDouble(saved.getActualValue()), NO));
-                    break;
-                case SELECTION:
-                    addDocument = indexSelectionField(field, saved, document);
-                    break;
-                case REFERENCE:
-                    // TODO: Move reference handling to a sub process which knows how to handle the different reference types
+            addDocument = indexField(field, data, document, "", analyzers);
 
-                    // Add value as string field for now with key being the field key
-                    addDocument = indexReferenceField(field, saved, document);
-                    break;
-                case CONTAINER:
-                case REFERENCECONTAINER:
-                    // This should never happen since container types are handled separately but this removes compiler warnings
-                    break;
-            }
-            // Add save information to index for every field.
-            document.add(new StringField(field.getKey()+".saved.date", saved.getValue().getSavedAt().toString(), YES));
-            document.add(new StringField(field.getKey()+".saved.by", saved.getValue().getSavedBy(), YES));
             if(!addDocument) {
                 break;
             }
@@ -206,6 +131,147 @@ class GeneralRevisionHandler implements RevisionHandler {
         return addDocument;
     }
 
+    private boolean indexField(Field field, DataFieldContainer fieldContainer, Document document, String root, Map<String, Analyzer> analyzers) {
+        boolean result = true;
+        if(field.getType().isContainer()) {
+            // Field is a container type. These are indexed into separate indexes by different handlers, Create the commands and continue
+            // TODO: Create commands to index the field
+
+            // For now index table into the same document as the top content.
+            // TODO: Index reference containers
+            // This will create multiple values in similar field names. Search treats these automatically
+            // as OR matches, meaning you only have to search for one of the values to find the document.
+            if(field.getType() == FieldType.CONTAINER) {
+                result = indexContainer(field, fieldContainer, document, root, analyzers);
+            }
+        } else {
+            // Try to index the field as a non container field
+            result = indexNonContainerField(field, fieldContainer, document, root, analyzers);
+        }
+        return result;
+    }
+
+    private boolean indexContainer(Field containerField, DataFieldContainer fieldContainer, Document document, String root, Map<String, Analyzer> analyzers) {
+        // TODO: Get this from actual indexer configuration
+        if(!containerField.getIndexed()) {
+            // Field should not be indexed according to configuration, this also means that none of its subfields get indexed
+            return true;
+        }
+
+        Pair<StatusCode, ContainerDataField> pair = fieldContainer.dataField(ContainerDataFieldCall.get(containerField.getKey()).setConfiguration(config));
+        if(pair.getLeft() != StatusCode.FIELD_FOUND) {
+            // Field not found for some reason, don't stop indexing
+            return true;
+        }
+        ContainerDataField container = pair.getRight();
+        boolean result = true;
+        for(DataRow row : container.getRows()) {
+            for(String key : containerField.getSubfields()) {
+                // Iterate throught configured subfields and index them as necessary
+                Field field = config.getField(key);
+                if(!field.getSubfield()) {
+                    // For some reason non subfield was returned, ignore
+                    continue;
+                }
+                result = indexField(field, row, document, container.getKey(), analyzers);
+                if(!result) {
+                    break;
+                }
+            }
+            if(!result) {
+                break;
+            }
+        }
+
+        return result;
+    }
+
+    private boolean indexNonContainerField(Field field, DataFieldContainer fieldContainer, Document document, String root, Map<String, Analyzer> analyzers) {
+        if(!field.getWritable()) {
+            // Value is not written in revision data, nothing to index
+            return true;
+        }
+        // TODO: Get this from actual indexer configuration
+        if(!field.getIndexed()) {
+            // Field should not be indexed according to configuration
+            return true;
+        }
+
+        // Since field is not a container it's saved as a SavedDataField
+        Pair<StatusCode, SavedDataField> pair = fieldContainer.dataField(SavedDataFieldCall.get(field.getKey()).setConfiguration(config));
+        if(pair.getLeft() != StatusCode.FIELD_FOUND) {
+            // Field was not found on given revision data. Nothing to index
+            return true;
+        }
+        SavedDataField saved = pair.getRight();
+        if(!saved.hasValue() || StringUtils.isEmpty(saved.getActualValue())) {
+            // SavedDataField has no value to index or the value is empty, don't insert anything
+            return true;
+        }
+        if(root == null) {
+            root = "";
+        }
+        if(!StringUtils.isEmpty(root)) {
+            root += ".";
+        }
+        boolean result = true;
+        switch(field.getType()) {
+            case DATE:
+            case DATETIME:
+            case TIME:
+                // Index all Date and time fields as StringFields since they should not be analyzed or tokenized in any way.
+                document.add(new StringField(root+field.getKey(), saved.getActualValue(), NO));
+                break;
+            case BOOLEAN:
+                // Index boolean field as a string with 'true' or 'false' as value. Boolean field should not be analyzer or tokenized
+                document.add(new StringField(root+field.getKey(), saved.getActualValue(), NO));
+                break;
+            case CONCAT:
+                // Index concat field as a text field which should be analyzed and tokenized unless marked as exact field in config
+                // TODO: get information of if field is marked exact
+                document.add(new TextField(root+field.getKey(), saved.getActualValue(), NO));
+                addTextAnalyzer(analyzers, root+field.getKey());
+                break;
+            case STRING:
+                // Index string field as a text field which should be analyzed and tokenized unless marked as exact field in config
+                // TODO: get information of if field is marked exact from actual indexer configuration
+                if(field.getExact()) {
+                    document.add(new StringField(root+field.getKey(), saved.getActualValue(), NO));
+                } else {
+                    document.add(new TextField(root+field.getKey(), saved.getActualValue(), NO));
+                    addTextAnalyzer(analyzers, root+field.getKey());
+                }
+                break;
+            case INTEGER:
+                // Convert value to correct number format (integer or long, or just stick with long for everything) and index as correct number field
+                // TODO: Correct number conversion
+                document.add(new LongField(root+field.getKey(), Long.parseLong(saved.getActualValue()), NO));
+                break;
+            case REAL:
+                // Convert value to correct number format (float or double, or just stick with double for everything) and index as correct number field
+                // TODO: Correct number conversion
+                document.add(new DoubleField(root+field.getKey(), Double.parseDouble(saved.getActualValue()), NO));
+                break;
+            case SELECTION:
+                result = indexSelectionField(field, saved, document, root);
+                break;
+            case REFERENCE:
+                // TODO: Move reference handling to a sub process which knows how to handle the different reference types
+
+                // Add value as string field for now with key being the field key
+                result = indexReferenceField(field, saved, document, root);
+                break;
+            case CONTAINER:
+            case REFERENCECONTAINER:
+                // This should never happen since container types are handled separately but this removes compiler warnings
+                break;
+        }
+        // Add save information to index for every field.
+        document.add(new StringField(root+field.getKey()+".saved.date", saved.getValue().getSavedAt().toString(), YES));
+        document.add(new StringField(root+field.getKey()+".saved.by", saved.getValue().getSavedBy(), YES));
+        return result;
+    }
+
     /**
      * Index given selection field using given value.
      * We can assume that the field is of correct type, that the saved data belongs to that field and that the actual value is non empty string
@@ -215,7 +281,7 @@ class GeneralRevisionHandler implements RevisionHandler {
      * @param document Where field should be indexed
      * @return Boolean telling if the indexing was successful. False should mean that the whole document is abandoned
      */
-    private boolean indexSelectionField(Field field, SavedDataField saved, Document document) {
+    private boolean indexSelectionField(Field field, SavedDataField saved, Document document, String root) {
         String selectionKey = field.getSelectionList();
         SelectionList list = config.getRootSelectionList(selectionKey);
 
@@ -223,25 +289,25 @@ class GeneralRevisionHandler implements RevisionHandler {
         switch(list.getType()) {
             case SUBLIST:
                 // We've hit a loop in the list configuration, can index only the value and nothing else
-                document.add(new StringField(field.getKey(), saved.getActualValue(), NO));
+                document.add(new StringField(root+field.getKey(), saved.getActualValue(), NO));
                 break;
             case LITERAL:
                 // Index only the value as title, or if wanted for uniformness then index the value as both value and title
-                document.add(new StringField(field.getKey(), saved.getActualValue(), NO));
+                document.add(new StringField(root+field.getKey(), saved.getActualValue(), NO));
                 break;
             case VALUE:
                 // Index the title to the actual field and the value to field.value field. Index only the default language from title
                 Option option = list.getOptionWithValue(saved.getActualValue());
                 if(option != null) {
-                    document.add(new StringField(field.getKey()+".value", option.getValue(), NO));
-                    document.add(new StringField(field.getKey(), option.getDefaultTitle(), NO));
+                    document.add(new StringField(root+field.getKey()+".value", option.getValue(), NO));
+                    document.add(new StringField(root+field.getKey(), option.getDefaultTitle(), NO));
                 } else {
                     // Some problem so possibly log error, but do nothing for now
                     break;
                 }
                 break;
             case REFERENCE:
-                return indexReferenceField(field, saved, document);
+                return indexReferenceField(field, saved, document, root);
         }
 
         return true;
@@ -256,9 +322,9 @@ class GeneralRevisionHandler implements RevisionHandler {
      * @param document Where field should be indexed
      * @return Boolean telling if the indexing was successful. False should mean that the whole document is abandoned
      */
-    private boolean indexReferenceField(Field field, SavedDataField saved, Document document) {
+    private boolean indexReferenceField(Field field, SavedDataField saved, Document document, String root) {
         // TODO: Handle reference collecting. Shouldn't be that hard if we leverage some of the reference solver
-        document.add(new StringField(field.getKey()+".value", saved.getActualValue(), NO));
+        document.add(new StringField(root+field.getKey()+".value", saved.getActualValue(), NO));
         if(field.getType() == FieldType.SELECTION) {
 
         } else if(field.getType() == FieldType.REFERENCE) {

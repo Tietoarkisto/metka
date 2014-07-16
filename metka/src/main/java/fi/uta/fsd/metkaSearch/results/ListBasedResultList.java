@@ -1,11 +1,13 @@
 package fi.uta.fsd.metkaSearch.results;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-public class ListBasedResultList implements ResultList {
+public class ListBasedResultList<T extends SearchResult> implements ResultList<T> {
     private final ResultType type;
-    private final List<SearchResult> results = new ArrayList<>();
+    private final List<T> results = new ArrayList<>();
 
     public ListBasedResultList(ResultType type) {
         this.type = type;
@@ -17,7 +19,7 @@ public class ListBasedResultList implements ResultList {
     }
 
     @Override
-    public boolean addResult(SearchResult result) {
+    public boolean addResult(T result) {
         if(result.getType() != type) {
             return false;
         }
@@ -31,7 +33,12 @@ public class ListBasedResultList implements ResultList {
      * @return
      */
     @Override
-    public List<SearchResult> getResults() {
+    public List<T> getResults() {
         return new ArrayList<>(results);
+    }
+
+    @Override
+    public void sort(Comparator<T> comparator) {
+        Collections.sort(results, comparator);
     }
 }

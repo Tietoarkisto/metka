@@ -8,6 +8,7 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metkaSearch.commands.indexer.IndexerCommand;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
+import fi.uta.fsd.metkaSearch.entity.IndexerCommandRepository;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import fi.uta.fsd.metkaSearch.handlers.HandlerFactory;
 import fi.uta.fsd.metkaSearch.handlers.RevisionHandler;
@@ -23,7 +24,7 @@ public class RevisionIndexer extends Indexer {
     private GeneralRepository general;
     private ConfigurationRepository configurations;
 
-    public static RevisionIndexer build(DirectoryManager.DirectoryPath path, GeneralRepository general, ConfigurationRepository configurations) throws IOException, UnsupportedOperationException {
+    public static RevisionIndexer build(DirectoryManager.DirectoryPath path, IndexerCommandRepository commands, GeneralRepository general, ConfigurationRepository configurations) throws IOException, UnsupportedOperationException {
         checkPathType(path, IndexerConfigurationType.REVISION);
         // Check that additional parameters matches requirements
         if(path.getAdditionalParameters() == null || path.getAdditionalParameters().length == 0) {
@@ -42,11 +43,11 @@ public class RevisionIndexer extends Indexer {
             throw new UnsupportedOperationException("Revision indexer needs access to general and configuration repositories");
         }
 
-        return new RevisionIndexer(path, general, configurations);
+        return new RevisionIndexer(path, commands, general, configurations);
     }
 
-    private RevisionIndexer(DirectoryManager.DirectoryPath path, GeneralRepository general, ConfigurationRepository configurations) throws IOException {
-        super(path);
+    private RevisionIndexer(DirectoryManager.DirectoryPath path, IndexerCommandRepository commands, GeneralRepository general, ConfigurationRepository configurations) throws IOException {
+        super(path, commands);
         this.general = general;
         this.configurations = configurations;
     }

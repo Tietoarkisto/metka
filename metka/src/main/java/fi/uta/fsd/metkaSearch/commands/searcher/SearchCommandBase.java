@@ -3,9 +3,10 @@ package fi.uta.fsd.metkaSearch.commands.searcher;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.results.ResultHandler;
 import fi.uta.fsd.metkaSearch.results.ResultList;
+import fi.uta.fsd.metkaSearch.results.SearchResult;
 import org.apache.lucene.search.Query;
 
-public abstract class SearchCommandBase implements SearchCommand {
+public abstract class SearchCommandBase<T extends SearchResult> implements SearchCommand<T> {
     private final DirectoryManager.DirectoryPath path;
     private final ResultList.ResultType resultType;
 
@@ -29,5 +30,5 @@ public abstract class SearchCommandBase implements SearchCommand {
     public abstract Query getQuery();
 
     @Override
-    public abstract ResultHandler getResulHandler();
+    public abstract ResultHandler<T> getResulHandler();
 }

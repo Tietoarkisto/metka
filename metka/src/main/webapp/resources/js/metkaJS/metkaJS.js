@@ -370,6 +370,25 @@
                     return o[propName] = value;
                 }
             })(o);
+        },
+        expertSearch: function() {
+            var query = $("#expertSearchQuery").val();
+            var request = {
+                operation: "QUERY",
+                data: query
+            }
+            $.ajax({
+                method: 'POST',
+                url: MetkaJS.PathBuilder().add("expertSearch").add("query").build(),
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                data: JSON.stringify(request),
+                dataType: 'json'
+            }).done(function(data) {
+                alert("Expert search complete");
+            });
         }
     };
 }());

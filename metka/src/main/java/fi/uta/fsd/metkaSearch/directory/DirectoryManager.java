@@ -64,7 +64,8 @@ public class DirectoryManager {
          * Forms a directory path that follows the form {ME|FS}:{type}/{language}[/additionalParameters...]
          * @param useRam Should the index use RAMDirectory or FSDirectory. This forms the base of the path with ME denoting memory and FS denoting file system directory.
          * @param type Base type of the index. In most cases this will be REVISION or CONTAINER
-         * @param language Language key for the index. Indexes are segregated to different directories based on their language since different languages have different analysis requirements
+         * @param language Language key for the index. Indexes are segregated to different directories based on their language since different languages have different
+         *                 analysis requirements. Language can be null or empty in which case it's assigned the value 'default'
          * @param additionalParameters Array of additional parameters for the index location such as ConfigurationType
          */
         public DirectoryPath(boolean useRam, IndexerConfigurationType type, String language, String... additionalParameters) {
@@ -86,6 +87,9 @@ public class DirectoryManager {
             if(!StringUtils.isEmpty(language)) {
                 pb.append("/");
                 pb.append(language);
+            } else {
+                pb.append("/");
+                pb.append("default");
             }
 
             for(String additional : additionalParameters) {

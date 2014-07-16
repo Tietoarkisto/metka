@@ -5,10 +5,7 @@ import fi.uta.fsd.metkaSearch.LuceneConfig;
 import fi.uta.fsd.metkaSearch.analyzer.FinnishVoikkoAnalyzer;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
-import fi.uta.fsd.metkaSearch.results.ListBasedResultList;
-import fi.uta.fsd.metkaSearch.results.ResultHandler;
-import fi.uta.fsd.metkaSearch.results.ResultList;
-import fi.uta.fsd.metkaSearch.results.RevisionResult;
+import fi.uta.fsd.metkaSearch.results.*;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
@@ -31,7 +28,7 @@ import java.util.Map;
  * It is assumed that factory methods for the different SearchCommands will check the validity of the configuration type in the path and so
  * we can just extract it from the path while assuming that it is present
  */
-public abstract class RevisionSearchCommandBase extends SearchCommandBase {
+public abstract class RevisionSearchCommandBase<T extends SearchResult> extends SearchCommandBase<T> {
     protected static void checkPath(DirectoryManager.DirectoryPath path, ConfigurationType type) throws UnsupportedOperationException {
         if(path.getType() != IndexerConfigurationType.REVISION) {
             throw new UnsupportedOperationException("Given path is not for REVISION index");
@@ -57,10 +54,31 @@ public abstract class RevisionSearchCommandBase extends SearchCommandBase {
         return configurationType;
     }
 
-    protected static class BasicRevisionSearchResultHandler implements ResultHandler {
+    protected void addTextAnalyzer(String key) {
+        if(getPath().getLanguage().equals("fi")) {
+            analyzers.put(key, FinnishVoikkoAnalyzer.ANALYZER);
+        } else {
+            // Add some other tokenizing analyzer if StandardAnalyzer is not enough
+            analyzers.put(key, new StandardAnalyzer(LuceneConfig.USED_VERSION));
+        }
+    }
+
+    protected Analyzer getAnalyzer() {
+        PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new WhitespaceAnalyzer(LuceneConfig.USED_VERSION), analyzers);
+        return analyzer;
+    }
+
+    /*@Override
+    public ResultHandler<T> getResulHandler() {
+        return new BasicRevisionSearchResultHandler();
+    }*/
+
+    protected static class BasicRevisionSearchResultHandler implements ResultHandler<RevisionResult> {
+        public BasicRevisionSearchResultHandler() {}
+
         @Override
-        public ResultList handle(IndexSearcher searcher, TopDocs results) {
-            ResultList list = new ListBasedResultList(ResultList.ResultType.REVISION);
+        public ResultList<RevisionResult> handle(IndexSearcher searcher, TopDocs results) {
+            ResultList<RevisionResult> list = new ListBasedResultList<>(ResultList.ResultType.REVISION);
             for(ScoreDoc doc : results.scoreDocs) {
                 try {
                     Document document = searcher.doc(doc.doc);
@@ -82,19 +100,5 @@ public abstract class RevisionSearchCommandBase extends SearchCommandBase {
 
             return list;
         }
-    }
-
-    protected void addTextAnalyzer(String key) {
-        if(getPath().getLanguage().equals("fi")) {
-            analyzers.put(key, FinnishVoikkoAnalyzer.ANALYZER);
-        } else {
-            // Add some other tokenizing analyzer if StandardAnalyzer is not enough
-            analyzers.put(key, new StandardAnalyzer(LuceneConfig.USED_VERSION));
-        }
-    }
-
-    protected Analyzer getAnalyzer() {
-        PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new WhitespaceAnalyzer(LuceneConfig.USED_VERSION), analyzers);
-        return analyzer;
     }
 }

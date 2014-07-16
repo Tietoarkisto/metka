@@ -69,28 +69,31 @@ public class GeneralRepositoryImpl implements GeneralRepository {
                 .setParameter("type", ConfigurationType.valueOf(type.toUpperCase()))
                 .getResultList();
         if(list.size() == 0) {
-            return DraftRemoveResponse.NO_REVISIONABLE;
+            return new DraftRemoveResponse(DraftRemoveResponse.Response.NO_REVISIONABLE, id, null);
         }
         RevisionableEntity entity = list.get(0);
         if(!entity.hasDraft()) {
-            return DraftRemoveResponse.NO_DRAFT;
+            return new DraftRemoveResponse(DraftRemoveResponse.Response.NO_DRAFT, id, null);
         }
+        Integer no = entity.getLatestRevisionNo();
         RevisionEntity rev = em.find(RevisionEntity.class, entity.latestRevisionKey());
 
         if(!rev.getState().equals(RevisionState.DRAFT)) {
             // TODO: Log error since there is data discrepancy
-            return DraftRemoveResponse.NO_DRAFT;
+            return new DraftRemoveResponse(DraftRemoveResponse.Response.NO_DRAFT, id, no);
         }
 
         em.remove(rev);
 
         if(entity.getCurApprovedNo() == null) {
             // No revisions remaining, remove the whole revisionable entity.
+
             em.remove(entity);
-            return DraftRemoveResponse.FINAL_REVISION;
+            return new DraftRemoveResponse(DraftRemoveResponse.Response.FINAL_REVISION, id, no);
         } else {
+
             entity.setLatestRevisionNo(entity.getCurApprovedNo());
-            return DraftRemoveResponse.SUCCESS;
+            return new DraftRemoveResponse(DraftRemoveResponse.Response.SUCCESS, id, no);
         }
     }
 
@@ -188,5 +191,17 @@ public class GeneralRepositoryImpl implements GeneralRepository {
             seq.setSequence(seq.getSequence()+1);
         }
         return seq;
+    }
+
+    @Override
+    public List<Integer> getAllRevisionNumbers(Long id) {
+        List<Integer> numbers = new ArrayList<>();
+        List<RevisionEntity> revisions = em.createQuery("SELECT r FROM RevisionEntity r WHERE r.key.revisionableId=:id", RevisionEntity.class)
+                .setParameter("id", id)
+                .getResultList();
+        for(RevisionEntity revision : revisions) {
+            numbers.add(revision.getKey().getRevisionNo());
+        }
+        return numbers;
     }
 }

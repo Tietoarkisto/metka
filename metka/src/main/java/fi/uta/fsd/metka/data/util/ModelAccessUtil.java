@@ -226,12 +226,12 @@ public final class ModelAccessUtil {
 
         boolean changes = false;
 
-        ContainerDataField container = data.dataField(ContainerDataFieldCall.get(key)).getRight();
-        if(container == null) {
+        ContainerDataField container = data.dataField(ContainerDataFieldCall.set(key)).getRight();
+        /*if(container == null) {
             // Something went wrong with getting or creating Container
             // TODO: Log warning
             return changes;
-        }
+        }*/
         ContainerChange changeContainer = (ContainerChange)data.getChanges().get("key");
         if(changeContainer == null) {
             changeContainer = new ContainerChange(key);

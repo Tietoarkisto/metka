@@ -44,6 +44,8 @@ public class SettingsController {
             return "settings";
         }
 
+        service.backupAndCopy(uploadConfig.getFile(), "configuration");
+
         String text = new String(uploadConfig.getFile().getBytes());
         service.insertDataConfig(text);
         return "settings";
@@ -62,6 +64,8 @@ public class SettingsController {
             return "settings";
         }
 
+        service.backupAndCopy(uploadConfig.getFile(), "gui");
+
         String text = new String(uploadConfig.getFile().getBytes());
         service.insertGUIConfig(text);
         return "settings";
@@ -79,6 +83,8 @@ public class SettingsController {
         if(result.hasErrors()) {
             return "settings";
         }
+
+        service.backupAndCopy(uploadMisc.getFile(), "misc");
 
         String text = new String(uploadMisc.getFile().getBytes());
         service.insertMisc(text);

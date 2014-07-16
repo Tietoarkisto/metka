@@ -6,6 +6,7 @@ import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 public abstract class IndexerCommandBase implements IndexerCommand {
     private final DirectoryManager.DirectoryPath path;
     private final Action action;
+    private Long queueId;
 
     protected static void checkPathType(DirectoryManager.DirectoryPath path, IndexerConfigurationType type) throws UnsupportedOperationException {
         if(path.getType() != type) {
@@ -25,4 +26,19 @@ public abstract class IndexerCommandBase implements IndexerCommand {
     public Action getAction() {
         return action;
     }
+
+    public Long getQueueId() {
+        return queueId;
+    }
+
+    public void setQueueId(Long queueId) {
+        // Make queueId immutable
+        if(this.queueId != null) {
+            return;
+        }
+        this.queueId = queueId;
+    }
+
+    @Override
+    public abstract String toParameterString();
 }

@@ -3,6 +3,7 @@ package fi.uta.fsd.metkaSearch.commands.searcher;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.results.ResultHandler;
 import fi.uta.fsd.metkaSearch.results.ResultList;
+import fi.uta.fsd.metkaSearch.results.SearchResult;
 import org.apache.lucene.search.Query;
 
 /**
@@ -11,7 +12,7 @@ import org.apache.lucene.search.Query;
  * as well as a method for getting a query that can be executed. More complex cases however might
  * require additional information.
  */
-public interface SearchCommand {
+public interface SearchCommand<T extends SearchResult> {
     /**
      * To what index should this command be directed to
      * @return
@@ -40,5 +41,5 @@ public interface SearchCommand {
      * a sensible ResultList from them.
      * @return
      */
-    public ResultHandler getResulHandler();
+    public ResultHandler<T> getResulHandler();
 }

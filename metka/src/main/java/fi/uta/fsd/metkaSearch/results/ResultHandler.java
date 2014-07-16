@@ -9,7 +9,7 @@ import org.apache.lucene.search.TopDocs;
  * it in some way to produce a ResultList with sensible results for the executed query.
  * ResultHandler will assume that it has received a TopDocs from the correct query
  */
-public interface ResultHandler {
+public interface ResultHandler<T extends SearchResult> {
     /**
      * Request handling of given results.
      *
@@ -17,5 +17,5 @@ public interface ResultHandler {
      * @param results TopDocs produced by the executed query
      * @return ResultList containing appropriate results dependant on implementor and given TopDocs
      */
-    public ResultList handle(IndexSearcher searcher, TopDocs results);
+    public ResultList<T> handle(IndexSearcher searcher, TopDocs results);
 }

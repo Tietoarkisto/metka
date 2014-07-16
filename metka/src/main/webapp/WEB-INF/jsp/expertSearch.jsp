@@ -11,7 +11,46 @@
         <jsp:include page="../inc/topMenu.jsp" />
         <div class="wrapper">
             <div class="content">
-                <a href="/dialogs/compareVersionsDialog" id="compareVersionsLink" class="fancyboxpopup fancybox.ajax fancybox.iframe">versiot</a>
+                <%-- TODO: Get text from javascript somehow --%>
+                <div class="pageTitle row">Eksperttihaku</div>
+                <div class="upperContainer">
+                    <%-- TODO: Display search field --%>
+                    <table class="formTable">
+                        <tr>
+                            <td>
+                                <div class="singleCellTitle">Hakulause</div>
+                                <textarea id="expertSearchQuery" ></textarea>
+                                <%-- TODO: Display search buttons --%>
+                                <div class="buttonsHolder">
+                                    <!-- TODO: Fix this reset button
+                                    <input type="reset" class="button" value="Tyhjennä">-->
+                                    <input type="button" id="performExpertSearchButton" class="button" value="<spring:message code='general.buttons.search'/>" onclick="MetkaJS.expertSearch()" />
+                                </div>
+                            </td>
+                            <td>
+                                <%-- TODO: Display saved searches --%>
+                                <table class="dataTable">
+                                    <thead>
+                                    <tr>
+                                        <%-- TODO: Get text from javascript somehow--%>
+                                        <th colspan="4">Tallennetut haut</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td colspan="4">--Ei hakuja--</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <%-- TODO: Display search results --%>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
             </div>
         </div>
     </body>

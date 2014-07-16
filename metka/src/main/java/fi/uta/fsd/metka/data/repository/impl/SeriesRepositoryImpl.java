@@ -2,7 +2,6 @@ package fi.uta.fsd.metka.data.repository.impl;
 
 import fi.uta.fsd.metka.data.entity.RevisionEntity;
 import fi.uta.fsd.metka.data.entity.impl.SeriesEntity;
-import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metka.data.enums.RevisionState;
 import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.data.repository.GeneralRepository;
@@ -14,10 +13,6 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.factories.DataFactory;
 import fi.uta.fsd.metka.model.factories.SeriesFactory;
 import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
-import fi.uta.fsd.metkaSearch.IndexerComponent;
-import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
-import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
-import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -26,7 +21,6 @@ import org.springframework.util.StringUtils;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.IOException;
-import java.util.Map;
 
 import static fi.uta.fsd.metka.data.util.ModelAccessUtil.*;
 

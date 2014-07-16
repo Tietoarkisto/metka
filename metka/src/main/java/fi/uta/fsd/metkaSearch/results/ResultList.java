@@ -1,5 +1,6 @@
 package fi.uta.fsd.metkaSearch.results;
 
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -9,7 +10,7 @@ import java.util.List;
  *
  * TODO: Possibly extend List so Result Lists can be iterated over but more likely provide a wrapper for contained list
  */
-public interface ResultList {
+public interface ResultList<T extends SearchResult> {
     public static enum ResultType {
         BOOLEAN, // Simple true|false result. Most often used to check restrictions for validity
         REVISION // Just a plain old revision result, should contain revision key and nothing else
@@ -29,7 +30,7 @@ public interface ResultList {
      * @param result Search Result to be added to ResultList
      * @return Was adding successful. Most common failure is trying to add a SearchResult with type that differs from ResultLists type.
      */
-    public boolean addResult(SearchResult result);
+    public boolean addResult(T result);
 
     /**
      * Returns results in a list ready to be iterated over.
@@ -38,5 +39,11 @@ public interface ResultList {
      * Client can do reordering later but that is not the problem of the search system.
      * @return
      */
-    public List<SearchResult> getResults();
+    public List<T> getResults();
+
+    /**
+     * Sorts the contained list using given comparator.
+     * @param comparator
+     */
+    public void sort(Comparator<T> comparator);
 }

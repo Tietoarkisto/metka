@@ -24,7 +24,7 @@
                 <property name="generateDdl" value="true" />
             </bean>
         </property>
-        <property name="packagesToScan" value="fi.uta.fsd.metka.data.entity" />
+        <property name="packagesToScan" value="fi.uta.fsd.metka.data.entity, fi.uta.fsd.metkaSearch.entity" />
         <property name="jpaProperties" ref="site.properties"/>
     </bean>
 

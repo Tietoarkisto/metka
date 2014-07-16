@@ -4,6 +4,7 @@ import fi.uta.fsd.metkaSearch.LuceneConfig;
 import fi.uta.fsd.metkaSearch.commands.indexer.IndexerCommand;
 import fi.uta.fsd.metkaSearch.directory.DirectoryInformation;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
+import fi.uta.fsd.metkaSearch.entity.IndexerCommandRepository;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import fi.uta.fsd.metkaSearch.enums.IndexerStatusMessage;
 import org.apache.lucene.index.Term;
@@ -11,16 +12,13 @@ import org.apache.lucene.search.Query;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Base class for all Indexers in the software.
  * Implements basic functionality common for all indexers but all specialized stuff needs to be handled elsewhere.
  */
-public abstract class Indexer implements Callable<IndexerStatusMessage>, IndexerCommandHandler {
+public abstract class Indexer implements Callable<IndexerStatusMessage>/*, IndexerCommandHandler*/ {
     protected static void checkPathType(DirectoryManager.DirectoryPath path, IndexerConfigurationType type) throws UnsupportedOperationException {
         if(path.getType() != type) {
             throw new UnsupportedOperationException("Path is for a different type");
@@ -39,13 +37,16 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>, Indexer
 
     private final DirectoryInformation indexer;
 
-    protected BlockingQueue<IndexerCommand> commandQueue = new LinkedBlockingQueue<>();
+    private final IndexerCommandRepository commands;
 
-    protected Indexer(DirectoryManager.DirectoryPath path) throws IOException {
+    //protected BlockingQueue<IndexerCommand> commandQueue = new LinkedBlockingQueue<>();
+
+    protected Indexer(DirectoryManager.DirectoryPath path, IndexerCommandRepository commands) throws IOException {
         indexer = DirectoryManager.getIndexDirectory(path);
+        this.commands = commands;
     }
 
-    @Override
+    /*@Override
     public boolean addCommand(IndexerCommand command) {
         // If this handler is in the process of quitting or has stopped running then there's no point in
         // adding the command to the queue.
@@ -57,7 +58,7 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>, Indexer
             return false;
         }
         return commandQueue.add(command);
-    }
+    }*/
 
     protected void setStatus(IndexerStatusMessage status) {
         this.status = status;
@@ -79,7 +80,8 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>, Indexer
 
         while(status != IndexerStatusMessage.STOP && status != IndexerStatusMessage.RETURNED) {
             try {
-                IndexerCommand command = commandQueue.poll(5, TimeUnit.SECONDS);
+                //IndexerCommand command = commandQueue.poll(5, TimeUnit.SECONDS);
+                IndexerCommand command = commands.getNextCommand(indexer.getPath().getType());
                 if(command != null) {
                     long start = System.currentTimeMillis();
                     System.err.println("Started new command for: "+command.getPath());
@@ -98,6 +100,8 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>, Indexer
                         // Set indexChanged to true since command was handled
                         indexChanged = true;
                     }
+                    // Assume that command was handled appropriately
+                    commands.markCommandAsHandled(command.getQueueId());
 
                     if(LuceneConfig.FORCE_FLUSH_AFTER_BATCH_OF_COMMANDS) {
                         commandBatch++;
@@ -107,8 +111,11 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>, Indexer
                     timeHandlingCommands += end-start;
                     System.err.println("Took "+(end-start)+"ms to handle command");
                 } else {
+                    if(status != IndexerStatusMessage.IDLING) {
+                        // Previous loop was handling command, post DEBUG info
+                        System.err.println("Queue clear. Spent "+timeHandlingCommands+"ms handling commands");
+                    }
                     if(idleLoops == 0) {
-                        //System.err.println("Queue clear. Spent "+timeHandlingCommands+"ms handling commands");
                         timeHandlingCommands = 0L;
                     }
                     // Increase idleLoops counter if index has changed
@@ -132,6 +139,11 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>, Indexer
                 // Check if process should continue running
                 if(Thread.currentThread().isInterrupted()) {
                     status = IndexerStatusMessage.STOP;
+                }
+                // If there was no new commands to handle, idle for 5 seconds before checking again
+                // Otherwise continue straight to next command
+                if(status == IndexerStatusMessage.IDLING) {
+                    Thread.sleep(5000);
                 }
             } catch (InterruptedException ex) {
                 // Try to close the indexer
