@@ -33,10 +33,8 @@
 <c:when test="${not empty single}">
     MetkaJS.SingleObject.id = ${single.id};
     MetkaJS.SingleObject.revision = ${single.revision};
+    MetkaJS.SingleObject.state = '${single.state}';
 </c:when>
-<c:otherwise>
-    MetkaJS.SingleObject = null;
-</c:otherwise>
 </c:choose>
 
 <%-- List displayable errors --%>

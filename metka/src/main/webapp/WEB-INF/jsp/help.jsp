@@ -11,7 +11,7 @@
         <jsp:include page="../inc/topMenu.jsp" />
         <div class="wrapper">
             <div class="content">
-	            <h1 class="pageTitle"><spring:message code="help.title"/></h1>
+	            <h1 class="page-header"><spring:message code="help.title"/></h1>
 				<div class="helpContainer">
 					<div class="help1">
 						foo

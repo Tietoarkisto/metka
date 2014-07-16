@@ -2,7 +2,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 
 <div class="popupContainer" id="standardTextDialog">
-	<h1 class="pageTitle"><spring:message code="settings.standardTexts.editTitle" arguments="${selectedStandardText.fi.key}"/></h1>
+	<h1 class="page-header"><spring:message code="settings.standardTexts.editTitle" arguments="${selectedStandardText.fi.key}"/></h1>
 	<div class="popupRowHolder">
 		<div class="languageSelectPopup">
 			<input type="radio" name="language" value="fi"/><spring:message code="topMenu.language.finnish"/>

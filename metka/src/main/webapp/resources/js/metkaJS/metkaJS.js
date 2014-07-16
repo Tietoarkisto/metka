@@ -53,49 +53,15 @@
         SingleObject: {
             id: null,
             revision: null,
-            draft: false,
-            /**
-             * Moves browser to editing current revisionable.
-             */
-            edit: function () {
-                MetkaJS.PathBuilder().
-                    add(MetkaJS.Globals.page).
-                    add('edit').
-                    add(MetkaJS.SingleObject.id).
-                    navigate();
-            },
-            /**
-             * Moves browser to adjacent revisionable.
-             * @param next If true moves to next revisionable, if false moves to previous. Default is true.
-             */
-            adjacent: function (next) {
-                if (next === null) {
-                    next = true;
-                }
-                MetkaJS.PathBuilder()
-                    .add(next ? 'next' : 'prev')
-                    .add(MetkaJS.Globals.page)
-                    .add(MetkaJS.SingleObject.id)
-                    .navigate();
-            },
-            /**
-             * Submits revision modification form to given action
-             * @param action MetkaJS.E.Form enumeration value
-             */
-            formAction: function (action) {
-                $('#revisionModifyForm').attr('action', MetkaJS.PathBuilder().add(MetkaJS.Globals.page).add(action).build());
-                $('#revisionModifyForm').submit();
-            }
+            state: null
         },
 
         // Shorthand function for viewing certain revision of certain revisionable. Forms the correct URL and navigates straight to it.
         view: function (id, revision) {
-            MetkaJS.PathBuilder()
-                .add(MetkaJS.Globals.page)
-                .add('view')
-                .add(id)
-                .add(revision)
-                .navigate();
+            MetkaJS.assignUrl('view', {
+                id: id,
+                revision: revision
+            });
         },
 
         /**
@@ -107,24 +73,35 @@
             $('#' + id).dialog('close');
         },
 
-        // Provides a new PathBuilder instance every time this is called. PathBuilder takes care of certain repeating elements in service URLs and can navigate straight to the built URL.
-        PathBuilder: function () {
-            var path = MetkaJS.Globals.contextPath;
-            return {
-                add: function (part) {
-                    if (MetkaJS.isString(part) || MetkaJS.isNumber(part)) {
-                        path += '/' + part;
-                    }
-                    return this;
-                },
-                build: function () {
-                    return path;
-                },
-                navigate: function () {
-                    location.href = path;
-                }
-            };
+        url: function (key, extend) {
+            return MetkaJS.Globals.contextPath + '/' + {
+                approve: '{page}/approve',
+                compareRevisions: 'history/revisions/compare',
+                download: 'download/{id}/{revision}',
+                edit: '{page}/edit/{id}',
+                fileEdit: 'file/save/{value}',
+                fileSave: 'file/save',
+                fileUpload: 'file/upload',
+                listRevisions: 'history/revisions/{id}',
+                next: 'next/{page}/{id}',
+                options: 'references/collectOptionsGroup',
+                prev: 'prev/{page}/{id}',
+                remove: 'remove/{page}/{type}/{id}',
+                save: '{page}/save',
+                seriesAdd: 'series/add',
+                view: '{page}/view/{id}/{revision}'
+            }[key].supplant($.extend({
+                id: MetkaJS.SingleObject.id,
+                page: MetkaJS.Globals.page,
+                revision: MetkaJS.SingleObject.revision
+            }, extend));
         },
+
+        // same as .url method, except also navigates to the url
+        assignUrl: function () {
+            location.assign(MetkaJS.url.apply(this, arguments));
+        },
+
         // Returns a jQuery wrapped page element for a given field key. Key is assumed to be for a top level input build by JSP and SpingForms but this is not checked.
         getValuesInput: function (key) {
             if (key !== null) {
@@ -171,22 +148,25 @@
         Data: {
             get: function (key) {
                 //console.log('get data:', key);
-                var data = MetkaJS.objectGetPropertyFromNS(MetkaJS, 'data.fields', key);
+                var data = MetkaJS.objectGetPropertyNS(MetkaJS, 'data.fields', key);
 
-                var current = MetkaJS.objectGetPropertyFromNS(data, 'currentValue');
-                if (current !== null && typeof current !== 'undefined') {
+                var current = MetkaJS.objectGetPropertyNS(data, 'currentValue');
+                if (typeof current !== 'undefined') {
+                    if (current === null) {
+                        return;
+                    }
                     return current;
                 }
 
-                var modified = MetkaJS.objectGetPropertyFromNS(data, 'modifiedValue.value.value');
-                if (modified !== null && typeof modified !== 'undefined') {
+                var modified = MetkaJS.objectGetPropertyNS(data, 'modifiedValue.value.value');
+                if (MetkaJS.exists(modified)) {
                     return modified;
                 }
 
-                return MetkaJS.objectGetPropertyFromNS(data, 'originalValue.value.value');
+                return MetkaJS.objectGetPropertyNS(data, 'originalValue.value.value');
             },
             set: function (key, value) {
-                return MetkaJS.objectSetPropertyFromNS(MetkaJS, 'data.fields', key, 'currentValue', value);
+                return MetkaJS.objectSetPropertyNS(MetkaJS, 'data.fields', key, 'currentValue', value);
             }
         },
 
@@ -205,7 +185,7 @@
             }
 
             // We are in an approved revision, always use readonly
-            if (!MetkaJS.SingleObject.draft) {
+            if (MetkaJS.SingleObject.state !== 'DRAFT') {
                 return true;
             }
 
@@ -233,11 +213,11 @@
          * @param variable Variable to be checked for existence
          * @return {boolean} True if variable exists and false if not
          */
-        exists: function(variable) {
-            if(variable === null) {
+        exists: function (variable) {
+            if (variable === null) {
                 return false;
             }
-            if(typeof variable === 'undefined') {
+            if (typeof variable === 'undefined') {
                 return false;
             }
 
@@ -298,12 +278,12 @@
             return true;
         },
 
-        // TODO: move to Object.getPropertyFromNS or Object.prototype.getPropertyFromNS
+        // TODO: move to Object.getPropertyNS or Object.prototype.getPropertyNS
         /**
          * @param o Get property from this object
          * @param [ns] Namespace. Can be string, '.' (dot) separated string, or array of strings
          */
-        objectGetPropertyFromNS: function (o/*[, ns]*/) {
+        objectGetPropertyNS: function (o/*[, ns]*/) {
             var ns = $.makeArray(arguments);
             ns.shift();
             if (!ns.length) {
@@ -334,8 +314,14 @@
          * @param o Set property to this object
          * @param [ns] Can be string, '.' (dot) separated string, or array of strings
          * @param value any value
+         * @returns value
+         *
+         * Example:
+         * var o = {};
+         * MetkaJS.objectSetPropertyNS(o, 'a.b.c', 'd', ['e', 'f'], 123);
+         * JSON.stringify(o); // "{"a":{"b":{"c":{"d":{"e":{"f":123}}}}}}"
          */
-        objectSetPropertyFromNS: function (o/*[, ns]*/,  value) {
+        objectSetPropertyNS: function (o, ns/*[, ns]*/,  value) {
             var ns = $.makeArray(arguments);
             ns.shift(); // remove o
             value = ns.pop(); // value is last argument

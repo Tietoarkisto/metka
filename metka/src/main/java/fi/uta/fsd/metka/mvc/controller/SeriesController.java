@@ -1,9 +1,9 @@
 package fi.uta.fsd.metka.mvc.controller;
 
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
-import fi.uta.fsd.metka.data.enums.UIRevisionState;
 import fi.uta.fsd.metka.data.util.JSONUtil;
 import fi.uta.fsd.metka.model.configuration.Configuration;
+import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import fi.uta.fsd.metka.mvc.domain.ConfigurationService;
 import fi.uta.fsd.metka.mvc.domain.SeriesService;
@@ -22,6 +22,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -152,12 +153,9 @@ public class SeriesController {
         Map<String, Configuration> configurations = new HashMap<>();
         configurations.put("SERIES", config);
         model.asMap().put("configuration", configurations);
-        if(single.getState() == UIRevisionState.DRAFT) {
-            // TODO: this should check if the user is the handler for this revision.
-            return MODIFY;
-        } else {
-            return VIEW;
-        }
+        model.asMap().put("single", single);
+
+        return VIEW;
     }
 
     /*
@@ -298,4 +296,143 @@ public class SeriesController {
         if(errors.size() > 0) redirectAttributes.addFlashAttribute("displayableErrors", errors);
         return REDIRECT_VIEW+single.getId()+"/"+single.getRevision();
     }
+
+    // TODO: Check if mappings should be defined with consumes/produces to
+    // TODO: narrow it down and make sure clients submit correct media type
+    /**
+     * Returns single series revision data, wrapped in a map, as json.
+     *
+     * @param id series id
+     * @param revision series revision
+     * @param response http servlet response
+     * @return revision data wrapped in a map as json
+     */
+    @RequestMapping(value = "ajax/view/{id}/{revision}"
+            , method = RequestMethod.GET)
+    public @ResponseBody Map<String, Object> ajaxViewRevision(
+            @PathVariable Long id
+            , @PathVariable Integer revision
+            , HttpServletResponse response) {
+        Map<String, Object> map = new HashMap<>();
+
+        try {
+            RevisionData revisionData = generalSearch
+                    .findSingleRevision(id, revision, ConfigurationType.SERIES);
+            map.put("jsData", revisionData);
+            map.put("success", true);
+        } catch (IOException e) {
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            List<ErrorMessage> errors = new ArrayList<>();
+            errors.add(ErrorMessage
+                    .guiConfigurationSerializationError("study", id, revision));
+            map.put("success", false);
+            map.put("displayableErrors", errors);
+        }
+
+        return map;
+    }
+
+    /**
+     * Search for series. Returns search data, wrapped in a map, as json.
+     *
+     * @param searchData search data
+     * @return search data wrapped in a map as json
+     */
+    @RequestMapping(value="ajax/search"
+            , method = {RequestMethod.GET, RequestMethod.POST})
+    public @ResponseBody Map<String, Object> ajaxSearch(
+            @RequestBody SeriesSearchData searchData) {
+        Map<String, Object> map = new HashMap<>();
+        List<ErrorMessage> errors = new ArrayList<>();
+
+        if(searchData.getQuery() != null) {
+            List<SearchResult> results = seriesService
+                    .searchForSeries(searchData.getQuery());
+            searchData.setResults(results);
+            searchData.setQuery(searchData.getQuery());
+        }
+
+        searchData.setAbbreviations(seriesService.findAbbreviations());
+
+        if(searchData.getQuery() != null
+                && searchData.getResults().size() == 0) {
+            errors.add(ErrorMessage.noResults("series"));
+        }
+
+        map.put("searchData", searchData);
+        map.put("displayableErrors", errors);
+
+        return map;
+    }
+
+    /**
+     * Save series. Returns status and messages of the operation, wrapped in a
+     * map, as json.
+     *
+     * @param single transfer object as json
+     * @param response http servlet response
+     * @return status and messages of operation in a map as json
+     */
+    @RequestMapping(value="ajax/save"
+            , method = RequestMethod.POST)
+    public @ResponseBody Map<String, Object> ajaxSave(
+            @RequestBody TransferObject single
+            , HttpServletResponse response) {
+        Map<String, Object> map = new HashMap<>();
+        List<ErrorMessage> errors = new ArrayList<>();
+
+        boolean success = seriesService.saveSeries(single);
+
+        if(success) {
+            errors.add(ErrorMessage.saveSuccess());
+        } else {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            errors.add(ErrorMessage.saveFail());
+        }
+
+        map.put("success", success);
+        map.put("errors", errors);
+
+        return map;
+    }
+
+    /**
+     * Approve series. Returns status and messages of the operation, wrapped
+     * in a map, as json.
+     *
+     * @param single transfer object as json
+     * @param response http servlet response
+     * @return status and messages of operation in a map as json
+     */
+    @RequestMapping(value="ajax/approve"
+            , method = RequestMethod.POST)
+    public @ResponseBody Map<String, Object> ajaxApprove(
+            @RequestBody TransferObject single
+            , HttpServletResponse response) {
+        Map<String, Object> map = new HashMap<>();
+        List<ErrorMessage> errors = new ArrayList<>();
+
+        boolean success = seriesService.saveSeries(single);
+
+        if(!success) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            errors.add(ErrorMessage.approveFailSave());
+        } else {
+            success = seriesService.approveSeries(single);
+
+            if(!success) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                errors.add(ErrorMessage.approveFailValidate());
+            } else {
+                errors.add(ErrorMessage.approveSuccess());
+            }
+        }
+
+        map.put("success", success);
+        map.put("errors", errors);
+
+        return map;
+    }
+
 }

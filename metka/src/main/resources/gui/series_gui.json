@@ -16,7 +16,7 @@
                             "title": "ID",
                             "readOnly": true,
                             "field": {
-                                "key": "id"
+                                "key": "seriesid"
                             }
                         }
                     ]
@@ -28,7 +28,7 @@
                             "type": "CELL",
                             "title": "Lyhenne",
                             "field": {
-                                "key": "seriesabb"
+                                "key": "seriesabbr"
                             }
                         }
                     ]

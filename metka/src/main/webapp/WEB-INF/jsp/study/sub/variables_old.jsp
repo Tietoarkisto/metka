@@ -130,7 +130,7 @@
                     input.data("rowId", row.rowId);
                     // TODO: Add change detector
                     input.on("change", saveTextAreaChange);
-                    input.prop("readonly", !MetkaJS.SingleObject.draft);
+                    input.prop("readonly", MetkaJS.SingleObject.state !== 'DRAFT');
 
                     var data = (row.fields[key] !== 'undefined' && row.fields[key] != null) ? row.fields[key].value : null;
                     if(data !== 'undefined' && data != null) {

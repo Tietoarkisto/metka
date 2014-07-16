@@ -91,29 +91,32 @@ $(document).ready(function() {
 
         "general": {
             "buttons": {
-                "&close": {
-                    "default": "Sulje"
-                },
-                "&ok": {
-                    "default": "OK"
-                },
-                "&yes": {
-                    "default": "Kyllä"
-                },
-                "&no": {
-                    "default": "Ei"
-                },
-                "&search": {
-                    "default": "Hae"
+                "&add": {
+                    "default": "Lisää"
                 },
                 "&addSeries": {
                     "default": "Lisää sarja"
                 },
+                "&cancel": {
+                    "default": "Peruuta"
+                },
+                "&close": {
+                    "default": "Sulje"
+                },
                 "&download": {
                     "default": "Lataa"
                 },
-                "&add": {
-                    "default": "Lisää"
+                "&ok": {
+                    "default": "OK"
+                },
+                "&search": {
+                    "default": "Hae"
+                },
+                "&no": {
+                    "default": "Ei"
+                },
+                "&yes": {
+                    "default": "Kyllä"
                 }
             },
 
@@ -170,6 +173,12 @@ $(document).ready(function() {
             "selection": {
                 "&empty": {
                     "default": "-- Valitse --"
+                }
+            },
+
+            "table": {
+                "&add": {
+                    "default": "Lisää"
                 }
             },
 
@@ -537,6 +546,46 @@ $(document).ready(function() {
                     }
                 }
             }
+        },
+
+        "STUDY_ATTACHMENT": {
+            "fileaip": {
+                "1": "Ei tietoa",
+                "2": "Ei",
+                "3": "Kyllä",
+                "4": "Ei relevantti"
+            },
+            "filecategory": {
+                "1": "Kyselylomake",
+                "2": "Kirjoitusohjeet"
+            },
+            "filepublication": {
+                "1": "Ei julkinen",
+                "2": "Eng",
+                "3": "Fin",
+                "4": "Fin/Eng",
+                "5": "Fin/Sve",
+                "6": "Fin/Eng/Sve",
+                "7": "Sve"
+            },
+            "yes_no_na": {
+                "1": "Kyllä",
+                "2": "Ei",
+                "3": "Ei tietoa"
+            },
+            "filelanguage": {
+                "1": "de",
+                "2": "en",
+                "3": "es",
+                "4": "st",
+                "5": "fi",
+                "6": "fr",
+                "7": "it",
+                "8": "lit",
+                "9": "ru",
+                "10": "sv",
+                "11": "xx"
+            }
         }
     };
 
@@ -893,11 +942,6 @@ $(document).ready(function() {
     STUDY.dataversionlabel_list.option.1 = Lyhyt selite
     STUDY.dataversionlabel_list.option.2 = Toinen lyhyt selite
 
-    STUDY.statisticstype_list.option.vald = Lukumäärä
-    STUDY.statisticstype_list.option.min = Minimi
-    STUDY.statisticstype_list.option.max = Maksimi
-    STUDY.statisticstype_list.option.mean = Keskiarvo
-    STUDY.statisticstype_list.option.stdev = Keskihajonta
 
     STUDY.termsofuse_list.option.1 = Kaikkien käytettävissä
     STUDY.termsofuse_list.option.2 = Tutkimus, opetus, opiskelu

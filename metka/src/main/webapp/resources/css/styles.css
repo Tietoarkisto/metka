@@ -96,6 +96,15 @@ a:hover {
     background-color: #009ee0;
 }
 
+.page-header {
+    font-size: 20px;
+    color: white;
+    padding: 15px 20px;
+    background-color: #009ee0;
+    margin: 0px -15px 10px -15px;
+    border-bottom: none;
+}
+
 /* Metka code */
 body {
     height: 100%;
@@ -258,11 +267,6 @@ nav .mainNavUl li a:hover {
  * Clean css *
  *************/
 
-/* Bootstrap init */
-.container {
-    /*width: 1000px !important;*/
-}
-
 /* Metka CSS */
 
 .temporary {
@@ -285,42 +289,9 @@ nav .mainNavUl li a:hover {
     -webkit-box-sizing: border-box;
 }
 
-.pageTitle {
-    font-size: 20px;
-    color: white;
-    padding: 10px 20px 10px 20px;
-    background-color: #009ee0;
-}
-.pageTitle .floatLeft {
-    float: left;
-}
-.pageTitle .floatRight {
-    display: inline-block;
-    float: right;
-}
-.pageTitle .normalText {
-    font-size: 15px;
-    font-weight: normal;
-}
-
 .searchResult {
     margin: 10px;
     display: block;
-}
-
-.buttonsHolder button {
-    margin-left: 20px;
-}
-
-.spaceClear {
-    clear: both;
-}
-
-.prevNextContainer {
-    margin: 5px 10px;
-}
-.prevNextContainer > input:last-of-type {
-    float:right;
 }
 
 .button {

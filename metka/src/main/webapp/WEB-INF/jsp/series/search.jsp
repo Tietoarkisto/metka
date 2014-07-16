@@ -42,12 +42,12 @@
     <!-- TODO: Fix this reset button
     <input type="reset" class="button" value="Tyhjennä">-->
     <input type="button" id="addNewSeriesBtn" class="button" value="<spring:message code='general.buttons.addSeries'/>"
-           onclick="MetkaJS.PathBuilder().add('series').add('add').navigate()"/>
+           onclick="MetkaJS.assignUrl('seriesAdd');"/>
     <input id="revisionSearchFormSearch" type="submit" class="button" value="<spring:message code='general.buttons.search'/>">
 </div>
 <c:if test="${not empty searchData.results}">
     <div class="searchResult">
-        <h1 class="pageTitle"><spring:message code="general.searchResult"/><span class="floatRight normalText"><spring:message code="general.searchResult.amount"/> ${fn:length(searchData.results)}</span> </h1>
+        <h1 class="page-header"><spring:message code="general.searchResult"/><span class="pull-right normalText"><spring:message code="general.searchResult.amount"/> ${fn:length(searchData.results)}</span> </h1>
         <table class="dataTable">
             <thead>
                 <tr>

@@ -2,7 +2,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 
 <div class="popupContainer" id="pidDialog">
-	<h1 class="pageTitle"><spring:message code="publication.view.addPid.title"/></h1>
+	<h1 class="page-header"><spring:message code="publication.view.addPid.title"/></h1>
 	<div class="popupRowHolder">
 		<label class="inputRowLabel"><spring:message code="publication.view.pid"/></label><input type="text" value=""/>
 	</div>

@@ -22,7 +22,7 @@
 	"content": [
 		{
 			"type": "TAB",
-			"title": "Perustiedooot",
+			"title": "Perustiedot",
 			"content": [
 				{
 					"type": "COLUMN",
@@ -66,7 +66,7 @@
                                     "title": "Aineistonumero",
                                     "readOnly": true,
                                     "field": {
-                                        "key": "id"
+                                        "key": "studyid"
                                     }
                                 },
                                 {

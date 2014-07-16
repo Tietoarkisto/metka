@@ -11,7 +11,7 @@
         <jsp:include page="../../inc/topMenu.jsp" />
         <div class="wrapper">
             <div class="content">
-            	<h1 class="pageTitle"><spring:message code="publication.view.title"/></h1>
+            	<h1 class="page-header"><spring:message code="publication.view.title"/></h1>
 				<div class="upperContainer">
 					<div class="prevNextContainer"><h1 class="prev">&lt;</h1><h1 class="next">&gt;</h1></div>
 					<div class="dataRow">

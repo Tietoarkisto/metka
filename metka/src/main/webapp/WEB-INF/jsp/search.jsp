@@ -3,6 +3,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ page session="false" %>
+
 <!DOCTYPE HTML>
 <html lang="fi">
 <head>
@@ -11,8 +12,8 @@
 <body>
 <jsp:include page="../inc/topMenu.jsp" />
 <div class="wrapper">
-    <div class="content">
-        <h1 class="pageTitle"><spring:message code="${fn:toUpperCase(page)}.search.title"/></h1>
+    <div class="content container">
+        <div class="page-header"><spring:message code="${fn:toUpperCase(page)}.search.title"/></div>
         <jsp:include page="${page}/search.jsp" />
     </div>
 </div>

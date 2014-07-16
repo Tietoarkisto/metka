@@ -2,7 +2,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 
 <div class="popupContainer" id="publicatinPersonDialog">
-	<h1 class="pageTitle"><spring:message code="publication.view.addPerson.title"/></h1>
+	<h1 class="page-header"><spring:message code="publication.view.addPerson.title"/></h1>
 	<div class="popupRowHolder">
 		<label class="inputRowLabel"><spring:message code="general.firstName"/></label><input type="text" value=""/>
 	</div>

@@ -11,7 +11,7 @@
         <jsp:include page="../../inc/topMenu.jsp" />
         <div class="wrapper">
             <div class="content">
-				<h1 class="pageTitle"><spring:message code="publication.search.title"/></h1>
+				<h1 class="page-header"><spring:message code="publication.search.title"/></h1>
 				<div class="searchFormContainer">					
 					<form action="#">
 						<div class="searchFormRowHolder">
@@ -55,7 +55,7 @@
 
 				</div>
 				<div class="searchResult">
-					<h1 class="pageTitle"><spring:message code="general.searchResult"/></h1>
+					<h1 class="page-header"><spring:message code="general.searchResult"/></h1>
 					<div class="searchResultDataContainer">					
 						<table id="publicationSearchResultTable" class="metkaTable sortableTable"> 
 							<thead> 
