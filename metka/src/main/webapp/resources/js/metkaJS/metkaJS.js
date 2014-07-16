@@ -19,6 +19,16 @@
         };
     }
 
+    $(document).ajaxError(function () {
+        $.metka.metkaModal({
+            title: MetkaJS.L10N.get('alert.error.title'),
+            buttons: [{
+                type: 'DISMISS'
+            }]
+        });
+        log('ajax error', arguments);
+    });
+
     /* Define MetkaJS namespace. Includes general global variables, objects, handlers and functions related to Metka-client.
      */
     window.MetkaJS = {
@@ -75,7 +85,7 @@
 
         url: function (key, extend) {
             return MetkaJS.Globals.contextPath + '/' + {
-                approve: '{page}/approve',
+                approve: '{page}/ajax/approve',
                 compareRevisions: 'history/revisions/compare',
                 download: 'download/{id}/{revision}',
                 edit: '{page}/edit/{id}',
@@ -87,7 +97,8 @@
                 options: 'references/collectOptionsGroup',
                 prev: 'prev/{page}/{id}',
                 remove: 'remove/{page}/{type}/{id}',
-                save: '{page}/save',
+                save: '{page}/ajax/save',
+                search: '{page}/ajax/search',
                 seriesAdd: 'series/add',
                 view: '{page}/view/{id}/{revision}'
             }[key].supplant($.extend({

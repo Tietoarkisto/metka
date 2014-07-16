@@ -211,7 +211,7 @@ $(document).ready(function() {
                     "default": "Hakutulos"
                 },
                 "&amount": {
-                    "default": "Hakutuloksia:"
+                    "default": "Hakutuloksia: {length}"
                 },
                 "state": {
                     "&title": {
@@ -491,12 +491,27 @@ $(document).ready(function() {
             "notice": {
                 "&title": {
                     "default": "Huomio"
+                },
+                "approve": {
+                    "success": "Luonnos hyväksytty onnistuneesti."
+                },
+                "save": {
+                    "success": "Luonnos tallennettu onnistuneesti."
                 }
             },
 
             "error": {
                 "&title": {
                     "default": "Virhe"
+                },
+                "approve": {
+                    "fail": {
+                        "save": "Luonnoksen hyväksymisessä tapahtui virhe tallennuksen aikana.",
+                        "validate": "Luonnoksen hyväksymisessä tapahtui virhe datan validoinnin aikana."
+                    }
+                },
+                "save": {
+                    "fail": "Luonnoksen tallentamisessa tapahtui virhe."
                 }
             },
 
@@ -545,6 +560,15 @@ $(document).ready(function() {
                         }
                     }
                 }
+            }
+        },
+
+        "SERIES": {
+            "field": {
+                "seriesid": "ID",
+                "seriesabbr": "Lyhenne",
+                "seriesname": "Nimi",
+                "state": "Tila"
             }
         },
 

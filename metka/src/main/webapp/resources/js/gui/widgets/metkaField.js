@@ -14,12 +14,21 @@
             //this.options.field.showReferenceKey
             //this.options.field.showReferenceValue
             //this.options.field.handlerName
-            var type = this.options.field.displayType || MetkaJS.JSConfig[MetkaJS.Globals.page.toUpperCase()].fields[this.options.field.key].type;
+            var type = this.options.field.displayType || MetkaJS.objectGetPropertyNS(MetkaJS, 'JSConfig', MetkaJS.Globals.page.toUpperCase(), 'fields', this.options.field.key, 'type');
+
+            if (!type) {
+                log('field type is not set', this.options);
+                return;
+            }
 
             if (type === 'CONTAINER') {
-                this.containerField();
+                this.element.metkaContainerField(this.options);
             } else {
-                this.inputField(type);
+                if (type === 'CHECKBOX') {
+                    this.checkboxField();
+                } else {
+                    this.inputField(type);
+                }
             }
         },
         isFieldDisabled: function () {
@@ -35,147 +44,10 @@
 
             return this.options.readOnly || this.options.field.readOnly || !dataConf.editable;
         },
-        containerField: function () {
-            var columns = [];
-            var context = MetkaJS.Globals.page.toUpperCase();
-            var key = this.options.field.key;
-            var $tbody = $('<tbody>');
-            var options = this.options;
-            this.element.append($('<div class="form-group">')
-                .append($('<div class="panel panel-default">')
-                    .append($('<div class="panel-heading">')
-                        .text(MetkaJS.L10N.localize(this.options, 'title')))
-                    .append($('<table class="table table-condensed">')
-                        .append($('<thead>')
-                            .append($('<tr>')
-                                .eachTo(MetkaJS.JSConfig[context].fields[key].subfields, function (i, field) {
-                                    // ui only shows summary fields
-                                    if (MetkaJS.JSConfig[context].fields[field].summaryField) {
-                                        columns.push(field);
-                                        this
-                                            .append($('<th>')
-                                                .text(MetkaJS.L10N.get(context + '.field.' + field)));
-                                    }
-                                })
-                                .eachTo(this.options.field.columnFields, function (i, field) {
-                                    columns.push(field);
-                                    this
-                                        .append($('<th>')
-                                            .text(MetkaJS.L10N.get(context + '.field.' + field)));
-                                })
-                                .if(this.options.field.showSaveInfo, function () {
-                                    columns.push('savedAt');
-                                    columns.push('savedBy');
-                                    this
-                                        .append($('<th>')
-                                            .text(MetkaJS.L10N.get('general.saveInfo.savedAt')))
-                                        .append($('<th>')
-                                            .text(MetkaJS.L10N.get('general.saveInfo.savedBy')));
-                                })))
-                        .append($tbody
-                            // TODO: onclick open and edit
-                            .eachTo(['moo1', 'moo2'], function (i, data) {
-                                this.append($('<tr>').eachTo(columns, function (i, column) {
-                                    this.append($('<td>' + column + '-' + data + '</td>'));
-                                }));
-                            }))))
-                .if(!this.isFieldDisabled(), function () {
-                    this.append($('<div>') /*class="pull-right"*/
-                        .append($.metka.metkaButton({
-                            style: 'default',
-                            create: function () {
-                                $(this)
-                                    .text(MetkaJS.L10N.get('general.table.add'))
-                                    .click(function () {
-                                        //MetkaJS.DialogHandlers.generalContainerHandler.show(key);
-                                        var modal = $.metka.metkaModal({
-                                            title: MetkaJS.L10N.get(['dialog', context, key, 'add'].join('.')),
-                                            body: $.metka.metkaContainer({
-                                                content: [{
-                                                    type: 'COLUMN',
-                                                    columns: 1,
-                                                    rows: MetkaJS.JSConfig[context].fields[key].subfields.map(function (field) {
-                                                        // clear data, so we know which fields were set when modal was open
-                                                        // TODO: containers, like MetkaModal or MetkaUI, should be instantiated with pointer to some private data, not global MetkaJS.Data
-                                                        MetkaJS.Data.set(field, null);
-
-                                                        var dataConfig = MetkaJS.JSConfig[context].fields[field];
-
-                                                        return {
-                                                            type: 'ROW',
-                                                            cells: [$.extend({}, dataConfig, {
-                                                                type: 'CELL',
-                                                                title: MetkaJS.L10N.get(context + '.field.' + field),
-                                                                field: dataConfig
-                                                            })]
-                                                        };
-                                                    })
-                                                }]
-                                            }).element,
-                                            buttons: [{
-                                                create: function () {
-                                                    $(this)
-                                                        .text(MetkaJS.L10N.get('general.buttons.add'))
-                                                        .click(function () {
-                                                            var dataRow = {};
-                                                            MetkaJS.JSConfig[context].fields[key].subfields.forEach(function (field) {
-                                                                dataRow[field] = MetkaJS.Data.get(field);
-                                                            });
-
-                                                            $tbody.append($('<tr>').eachTo(columns, function (i, field) {
-                                                                this.append($('<td>').text((function () {
-                                                                    var type = MetkaJS.JSConfig[context].fields[field].type;
-                                                                    var value = MetkaJS.Data.get(field);
-                                                                    if (type === 'STRING') {
-                                                                        return value || '-';
-                                                                    }
-                                                                    if (['DATE', 'TIME', 'DATETIME'].indexOf(type) !== -1) {
-                                                                        if (value) {
-                                                                            return moment(value).format(options.dateFormats[type]);
-                                                                        }
-                                                                        return '-';
-                                                                    }
-                                                                    if (type === 'SELECTION') {
-                                                                        if (typeof value !== 'undefined') {
-                                                                            var text;
-                                                                            if (MetkaJS.objectGetPropertyNS(MetkaJS, 'JSConfig', context, 'selectionLists', MetkaJS.JSConfig[context].fields[field].selectionList, 'options').some(function (option) {
-                                                                                if (option.value === value) {
-                                                                                    text = MetkaJS.L10N.localize(option, 'title');
-                                                                                    return true;
-                                                                                }
-                                                                            })) {
-                                                                                return text;
-                                                                            }
-
-                                                                            log('missing translation', key, value);
-                                                                            return '-';
-                                                                        }
-                                                                        return '-';
-                                                                    }
-                                                                    log('not implemented', type);
-                                                                })()));
-                                                            }));
-
-                                                            var data = JSON.parse(MetkaJS.Data.get(key) || '[]');
-                                                            data.push(dataRow);
-                                                            MetkaJS.Data.set(key, JSON.stringify(data));
-                                                        });
-                                                }
-                                            }, {
-                                                create: function () {
-                                                    $(this)
-                                                        .text(MetkaJS.L10N.get('general.buttons.cancel'))
-                                                }
-                                            }]
-                                        });
-                                    });
-                            }
-                        }).element));
-                }));
-        },
         inputField: function (type) {
             var id = this.autoId();
             var key = this.options.field.key;
+
             this.element.append($.metka.metkaLabel(this.options).element
                 .attr('for', id));
 
@@ -193,7 +65,13 @@
                     return 'textarea';
                 }
 
-                options.type = 'text';
+                if (type === 'CHECKBOX') {
+                    options.type = 'checkbox';
+                } else {
+                    // STRING, INTEGER, CONCAT
+
+                    options.type = 'text';
+                }
                 return 'input';
             }).apply(this);
 
@@ -225,6 +103,19 @@
                 this.element.append($input);
             }
         },
+        checkboxField: function () {
+            var key = this.options.field.key;
+            this.element
+                .addClass('checkbox')
+                .append($.metka.metkaLabel(this.options).element
+                    .prepend($('<input type="checkbox">')
+                        .metkaInput(this.options)
+                        .prop('disabled', this.isFieldDisabled())
+                        .change(function () {
+                            MetkaJS.Data.set(key, $(this).prop('checked'));
+                        })
+                        .prop('checked', !!MetkaJS.Data.get(key))));
+        },
         datetime: function (type, $input) {
             var key = this.options.field.key;
             var setup = {
@@ -248,12 +139,9 @@
             setup.options.format = this.options.dateFormats[type];
             setup.options.language = 'fi';
 
-            try {
-                var defaultDate = MetkaJS.Data.get(key);
-                if (defaultDate) {
-                    setup.options.defaultDate = defaultDate;
-                }
-            } catch (e) {
+            var defaultDate = MetkaJS.Data.get(key);
+            if (defaultDate) {
+                setup.options.defaultDate = defaultDate;
             }
 
             this.element.append($('<div class="input-group date">')

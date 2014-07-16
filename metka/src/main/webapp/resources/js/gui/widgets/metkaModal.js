@@ -6,6 +6,14 @@
         _create: function () {
             //this._super();
 
+            if (!this.options.buttons) {
+                this.options.buttons = [];
+            } else {
+                if (typeof this.options.buttons === 'string') {
+                    this.options.buttons = [this.options.buttons];
+                }
+            }
+
             this.element
                 .append($('<div class="modal-dialog">')
                     .append($('<div class="modal-content">')

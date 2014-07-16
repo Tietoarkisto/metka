@@ -7,9 +7,19 @@
                 .toggleClass('alert-warning', !!this.options.important);
         },
         selectInputOptionText: function (option, key) {
-            return MetkaJS.L10N.localize(option, 'title')
-                ||
-                MetkaJS.L10N.get([MetkaJS.Globals.page.toUpperCase(), key, option.value].join('.'));
+            if (MetkaJS.L10N.hasTranslation(option, 'title')) {
+                return MetkaJS.L10N.localize(option, 'title');
+            }
+
+            if (option.title) {
+                if (option.title.type === 'LITERAL') {
+                    return option.title.value;
+                }
+            }
+
+            log('unable to create option text', option, key);
+            return;
+            // MetkaJS.L10N.get([MetkaJS.Globals.page.toUpperCase(), key, option.value].join('.'));
         },
         select: function () {
             var key = this.options.field.key;

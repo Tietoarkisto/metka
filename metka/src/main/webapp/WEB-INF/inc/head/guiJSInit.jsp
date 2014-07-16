@@ -8,6 +8,7 @@
 <script src="${contextPath}/js/gui/widgets/metkaButtonContainer.js"></script>
 <script src="${contextPath}/js/gui/widgets/metkaContainer.js"></script>
 <script src="${contextPath}/js/gui/widgets/metkaField.js"></script>
+<script src="${contextPath}/js/gui/widgets/metkaContainerField.js"></script>
 <script src="${contextPath}/js/gui/widgets/metkaInput.js"></script>
 <script src="${contextPath}/js/gui/widgets/metkaLabel.js"></script>
 <script src="${contextPath}/js/gui/widgets/metkaModal.js"></script>

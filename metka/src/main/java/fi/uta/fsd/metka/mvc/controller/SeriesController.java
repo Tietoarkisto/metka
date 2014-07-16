@@ -252,24 +252,6 @@ public class SeriesController {
         return REDIRECT_VIEW+single.getId()+"/"+single.getRevision();
     }
 
-    // TODO: return messages as json, rename to save
-    @RequestMapping(value = "ajaxSave", method = {RequestMethod.POST},
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String ajaxSave(@ModelAttribute("single")TransferObject single, RedirectAttributes redirectAttributes) {
-        boolean success = seriesService.saveSeries(single);
-
-        List<ErrorMessage> errors = new ArrayList<>();
-        if(success) {
-            errors.add(ErrorMessage.saveSuccess());
-        } else {
-            errors.add(ErrorMessage.saveFail());
-        }
-
-        if(errors.size() > 0) redirectAttributes.addFlashAttribute("displayableErrors", errors);
-        return "{\"success\": true}";
-        //return new RevisionSaveResponse();
-    }
-
     /*
     * Approve series
     * First makes sure that series is saved and if successful then requests series approval.

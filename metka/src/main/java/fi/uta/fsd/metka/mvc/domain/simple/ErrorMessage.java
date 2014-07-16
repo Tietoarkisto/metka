@@ -41,35 +41,35 @@ public class ErrorMessage {
 
     public static ErrorMessage saveSuccess() {
         ErrorMessage error = new ErrorMessage();
-        error.setMsg("general.errors.save.success");
+        error.setMsg("alert.notice.save.success");
 
         return error;
     }
 
     public static ErrorMessage saveFail() {
         ErrorMessage error = new ErrorMessage();
-        error.setMsg("general.errors.save.fail");
+        error.setMsg("alert.error.save.fail");
 
         return error;
     }
 
     public static ErrorMessage approveSuccess() {
         ErrorMessage error = new ErrorMessage();
-        error.setMsg("general.errors.approve.success");
+        error.setMsg("alert.notice.approve.success");
 
         return error;
     }
 
     public static ErrorMessage approveFailSave() {
         ErrorMessage error = new ErrorMessage();
-        error.setMsg("general.errors.approve.fail.save");
+        error.setMsg("alert.error.approve.fail.save");
 
         return error;
     }
 
     public static ErrorMessage approveFailValidate() {
         ErrorMessage error = new ErrorMessage();
-        error.setMsg("general.errors.approve.fail.validate");
+        error.setMsg("alert.error.approve.fail.validate");
 
         return error;
     }

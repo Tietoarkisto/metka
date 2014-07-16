@@ -27,9 +27,27 @@
 
                     $.ajax({
                         type: 'POST',
-                        data: data,
+                        data: JSON.stringify(data),
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        dataType: 'json',
                         url: MetkaJS.url(command),
-                        success: callback
+                        success: function (data) {
+                            $.metka.metkaModal({
+                                title: data.success ? MetkaJS.L10N.get('alert.notice.title') : MetkaJS.L10N.get('alert.error.title'),
+                                body: data.errors.map(function (error) {
+                                    return MetkaJS.L10N.get(error.msg);
+                                }),
+                                buttons: [{
+                                    type: 'DISMISS'
+                                }]
+                            }).element.on('hide.bs.modal', function () {
+                                // callback gets called when modal is dismissed
+                                callback(data);
+                            });
+                        }
                     });
                 });
         };
@@ -64,7 +82,8 @@
         }),
         COMPARE: function () {
             this.element
-                .text(MetkaJS.L10N.get('general.revision.compare'));
+                .text(MetkaJS.L10N.get('general.revision.compare'))
+                .prop('disabled', true);
         },
         DISMISS: function () {
             this.element
@@ -138,57 +157,51 @@
                         }]
                     });
 
-                    $.ajax({
-                        type: 'GET',
-                        url: MetkaJS.url('listRevisions'),
-                        success: function (response) {
-                            $table
-                                .append($('<tbody>')
-                                    .append(response.map(function (row) {
-                                        return $('<tr>')
-                                            .append((function () {
-                                                var items = [
-                                                    $('<a>', {
-                                                        href: MetkaJS.url('view', row),
-                                                        text: row.revision
-                                                    }),
-                                                    row.state === 'DRAFT' ? MetkaJS.L10N.get('general.DRAFT') : row.approvalDate,
-                                                    $('<input>', {
-                                                        type: 'radio',
-                                                        name: 'beginGrp',
-                                                        value: row.revision,
-                                                        change: checkRadioGroups
-                                                    }),
-                                                    $('<input>', {
-                                                        type: 'radio',
-                                                        name: 'endGrp',
-                                                        value: row.revision,
-                                                        change: checkRadioGroups
-                                                    })
-                                                ];
+                    $.get(MetkaJS.url('listRevisions'), function (response) {
+                        $table
+                            .append($('<tbody>')
+                                .append(response.map(function (row) {
+                                    return $('<tr>')
+                                        .append((function () {
+                                            var items = [
+                                                $('<a>', {
+                                                    href: MetkaJS.url('view', row),
+                                                    text: row.revision
+                                                }),
+                                                row.state === 'DRAFT' ? MetkaJS.L10N.get('general.DRAFT') : row.approvalDate,
+                                                $('<input>', {
+                                                    type: 'radio',
+                                                    name: 'beginGrp',
+                                                    value: row.revision,
+                                                    change: checkRadioGroups
+                                                }),
+                                                $('<input>', {
+                                                    type: 'radio',
+                                                    name: 'endGrp',
+                                                    value: row.revision,
+                                                    change: checkRadioGroups
+                                                })
+                                            ];
 
-                                                if (MetkaJS.SingleObject.state === 'DRAFT') {
-                                                    items.push($.metka.metkaButton({
-                                                        create: function () {
-                                                            $(this)
-                                                                .addClass('btn-xs')
-                                                                .text(MetkaJS.L10N.get('general.revision.replace'));
-                                                        }
-                                                    }).element);
-                                                }
+                                            if (MetkaJS.SingleObject.state === 'DRAFT') {
+                                                items.push($.metka.metkaButton({
+                                                    create: function () {
+                                                        $(this)
+                                                            .addClass('btn-xs')
+                                                            .prop('disabled', true)
+                                                            .text(MetkaJS.L10N.get('general.revision.replace'));
+                                                    }
+                                                }).element);
+                                            }
 
-                                                return items.map(function (entry) {
-                                                    return $('<td>')
-                                                        .append(entry);
-                                                });
-                                            })());
-                                    })));
+                                            return items.map(function (entry) {
+                                                return $('<td>')
+                                                    .append(entry);
+                                            });
+                                        })());
+                                })));
 
-                            checkRadioGroups();
-                        },
-                        error: function (e) {
-                            alert('Error: ' + JSON.stringify(e, null, 4));
-                        }
+                        checkRadioGroups();
                     });
                 });
         },
@@ -227,14 +240,7 @@
                     });
                 });
         },
-        SAVE: FormAction('save', function (data) {
-            $.metka.metkaModal({
-                title: 'Saved',
-                buttons: [{
-                    type: 'DISMISS'
-                }]
-            });
-        }),
+        SAVE: FormAction('save', function () {}),
         YES: function () {
             this.element.text(MetkaJS.L10N.get('general.buttons.yes'));
         },

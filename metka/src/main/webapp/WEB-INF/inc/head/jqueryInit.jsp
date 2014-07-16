@@ -11,6 +11,9 @@
      * Like $.each, except 'this' refers to the jQuery object
      */
     $.fn.eachTo = function (c, f) {
+        if (!c) {
+            return this;
+        }
         var that = this;
         $.each(c, function () {
             return f.apply(that, arguments);
