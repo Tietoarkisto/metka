@@ -280,27 +280,35 @@ public final class ModelAccessUtil {
                 }
                 // Field is a single value field and fields exists
                 JSONObject fieldValue = row.optJSONObject("fields").optJSONObject(subfield.getKey());
-                SavedDataField savedField = (SavedDataField) dataRow.getField(subfield.getKey());
-                Object newValue = null;
+                // Get new value as string
+                String newValue = null;
                 if(fieldValue != null && fieldValue != JSONObject.NULL) {
                     if(!fieldValue.get("type").equals("value")) {
                         // TODO: For some reason value field with wrong time is present, log error.
                         continue;
                     }
-                    newValue = fieldValue.opt("value");
+                    newValue = fieldValue.optString("value");
                 }
-                // Check if there has been a change in field value
-                fieldChange = doValueComparison(savedField, subfield, newValue);
 
-                if(fieldChange) {
-                    if(savedField == null) {
-                        savedField = new SavedDataField(subfield.getKey());
-                        dataRow.putField(savedField);
-                    }
-                    updateFieldValue(savedField, subfield, newValue, time, rowChangeContainer.getChanges());
+                // Set the new field value
+                Pair<StatusCode, SavedDataField> pair = dataRow.dataField(
+                        SavedDataFieldCall.set(subfield.getKey())
+                                .setValue(newValue));
+                // Get the status code returned
+                StatusCode statusCode = pair.getLeft();
+
+                // Check status code for field change which would be insert or
+                // update
+                if (statusCode == StatusCode.FIELD_INSERT) {
+                    fieldChange = true;
+                } else if (statusCode == StatusCode.FIELD_UPDATE) {
+                    fieldChange = true;
                 }
-                // If this field changed or if row was changed previously then row has changed.
+
+                // If this row has changed or a row has changed previously,
+                // then this container has changed.
                 rowChanges = fieldChange | rowChanges;
+
             } // End of field handling
             if(rowChanges) {
                 dataRow.setSavedAt(time);
