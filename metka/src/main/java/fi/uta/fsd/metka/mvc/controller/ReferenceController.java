@@ -23,32 +23,6 @@ public class ReferenceController {
     @Autowired
     private ReferenceService service;
 
-    /*@RequestMapping(value = "collectOptions", method = {RequestMethod.POST},
-            produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody ReferenceOptionsResponse collectReferenceOptions(@RequestBody ReferenceOptionsRequest request) {
-        ReferenceOptionsResponse response = new ReferenceOptionsResponse(request.getKey());
-        response.setDependencyValue(request.getDependencyValue());
-
-        List<ReferenceOption> options = null;
-        try {
-            options = service.collectReferenceOptions(request);
-        } catch(IOException ex) {
-            ex.printStackTrace();
-            ErrorMessage message = new ErrorMessage();
-            message.setMsg("general.errors.reference.exceptionWhileCollecting");
-            response.getMessages().add(message);
-        }
-        if(options == null) {
-            ErrorMessage message = new ErrorMessage();
-            message.setMsg("general.errors.reference.exceptionBeforeCollecting");
-            response.getMessages().add(message);
-        } else {
-            response.setOptions(options);
-        }
-
-        return response;
-    }*/
-
     @RequestMapping(value = "collectOptionsGroup", method = {RequestMethod.POST},
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody ReferenceOptionsGroupResponse collectReferenceOptionsGroup(@RequestBody ReferenceOptionsGroupRequest requests) {

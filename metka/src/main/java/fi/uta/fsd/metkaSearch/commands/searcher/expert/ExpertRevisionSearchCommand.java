@@ -1,6 +1,9 @@
 package fi.uta.fsd.metkaSearch.commands.searcher.expert;
 
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
+import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
+import fi.uta.fsd.metka.model.configuration.Configuration;
+import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metkaSearch.commands.searcher.RevisionSearchCommandBase;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
@@ -11,17 +14,21 @@ import org.apache.lucene.document.FieldType;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.apache.lucene.queryparser.flexible.standard.StandardQueryParser;
 import org.apache.lucene.queryparser.flexible.standard.config.NumericConfig;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermQuery;
 import org.springframework.util.StringUtils;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import static fi.uta.fsd.metka.data.enums.FieldType.*;
+
 public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<RevisionResult> {
-    public static ExpertRevisionSearchCommand build(String qry) throws UnsupportedOperationException, QueryNodeException {
+    public static ExpertRevisionSearchCommand build(String qry, ConfigurationRepository configurations) throws UnsupportedOperationException, QueryNodeException {
         if(StringUtils.isEmpty(qry)) {
             throw new UnsupportedOperationException("Query string was empty, can't form expert query");
         }
@@ -45,21 +52,40 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
         }
 
         DirectoryManager.DirectoryPath path = DirectoryManager.formPath(false, iType, lang, cType.toValue());
-        return new ExpertRevisionSearchCommand(path, qry);
+        return new ExpertRevisionSearchCommand(path, qry, configurations);
     }
 
     private Query query;
-    private ExpertRevisionSearchCommand(DirectoryManager.DirectoryPath path, String qry) throws QueryNodeException {
+    private ExpertRevisionSearchCommand(DirectoryManager.DirectoryPath path, String qry, ConfigurationRepository configurations) throws QueryNodeException {
         super(path, ResultList.ResultType.REVISION);
+        Configuration config = null;
+        boolean configMode = true;
+        try {
+            config = configurations.findLatestConfiguration(ConfigurationType.fromValue(path.getAdditionalParameters()[0]));
+        } catch (IOException ioe) {
+            // Nothing much, just have to remember to account for this when necessary
+            configMode = false;
+        }
+
         //addTextAnalyzer("seriesname");
         Map<String, NumericConfig> nums = new HashMap<>();
+        // TODO: Add default numeric fields like key.id
         //nums.put("key.id", new NumericConfig(1, new DecimalFormat(), FieldType.NumericType.LONG));
 
         // TODO: Fill analyzers and numeric field info
 
-        StandardQueryParser parser = new StandardQueryParser(getAnalyzer());
-        parser.setNumericConfigMap(nums);
-        query = parser.parse(qry, "key.id");
+        /*StandardQueryParser parser = new StandardQueryParser(getAnalyzer());*/
+        StandardQueryParser parser = new StandardQueryParser();
+        if(configMode) {
+            // If we're in config mode we need to parse the query twice, once to get all the fields in the query and second time with the actual numeric configs and analyzers
+            query = parser.parse(qry, "general");
+
+            addAnalyzersAndConfigs(query, nums, config);
+
+            parser.setAnalyzer(getAnalyzer());
+            parser.setNumericConfigMap(nums);
+        }
+        query = parser.parse(qry, "general");
     }
 
     @Override
@@ -70,5 +96,53 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
     @Override
     public ResultHandler<RevisionResult> getResulHandler() {
         return new BasicRevisionSearchResultHandler();
+    }
+
+    private void addAnalyzersAndConfigs(Query query, Map<String, NumericConfig> nums, Configuration config) {
+        if(query instanceof TermQuery) {
+            addTermQuery((TermQuery)query, nums, config);
+        } else if(query instanceof BooleanQuery) {
+            addBooleanQuery((BooleanQuery)query, nums, config);
+        }
+    }
+
+    private void addBooleanQuery(BooleanQuery query, Map<String, NumericConfig> nums, Configuration config) {
+        for(BooleanClause clause : query.getClauses()) {
+            addAnalyzersAndConfigs(clause.getQuery(), nums, config);
+        }
+    }
+
+    private void addTermQuery(TermQuery query, Map<String, NumericConfig> nums, Configuration config) {
+        // TODO: Reference field end points as well as some automated values are not found on given configuration but instead need to be found through reference handling
+        String key = query.getTerm().field();
+        switch(key) {
+            case "key.id":
+                nums.put(key, new NumericConfig(1, new DecimalFormat(), FieldType.NumericType.LONG));
+                return;
+            case "key.no":
+                nums.put(key, new NumericConfig(1, new DecimalFormat(), FieldType.NumericType.INT));
+                return;
+        }
+        String[] splits = key.split(".");
+        String start = (splits.length > 0) ? splits[0] : key;
+        if(start.equals("key") || start.equals("state")) {
+            return;
+        }
+
+        String fieldKey = (splits.length > 0) ? splits[splits.length-1] : key;
+        Field field = config.getField(fieldKey);
+        if(field == null) {
+            // Can't add analyzers or numeric configs
+            return;
+        }
+        if(field.getType() == STRING || field.getType() == CONCAT) {
+            if(!field.getExact()) {
+                addTextAnalyzer(key);
+            }
+        } else if(field.getType() == INTEGER) {
+            nums.put(key, new NumericConfig(1, new DecimalFormat(), FieldType.NumericType.LONG));
+        } else if(field.getType() == REAL) {
+            nums.put(key, new NumericConfig(1, new DecimalFormat(), FieldType.NumericType.DOUBLE));
+        }
     }
 }

@@ -2,6 +2,7 @@ package fi.uta.fsd.metkaSearch;
 
 import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.data.repository.GeneralRepository;
+import fi.uta.fsd.metka.mvc.domain.ReferenceService;
 import fi.uta.fsd.metkaSearch.commands.indexer.IndexerCommand;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.entity.IndexerCommandRepository;
@@ -37,6 +38,9 @@ public class IndexerComponent {
 
     @Autowired
     private IndexerCommandRepository commandRepository;
+
+    @Autowired
+    private ReferenceService references;
 
     // Pool for indexer threads.
     private ExecutorService indexerPool = Executors.newCachedThreadPool();
@@ -165,7 +169,7 @@ public class IndexerComponent {
                 indexer = DummyIndexer.build(path, commandRepository);
                 break;
             case REVISION:
-                indexer = RevisionIndexer.build(path, commandRepository, general, configurations);
+                indexer = RevisionIndexer.build(path, commandRepository, general, configurations, references);
                 break;
             default:
                 indexer = null;

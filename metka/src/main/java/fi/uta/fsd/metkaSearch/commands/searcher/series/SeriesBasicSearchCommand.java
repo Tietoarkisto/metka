@@ -71,7 +71,7 @@ public final class SeriesBasicSearchCommand extends RevisionSearchCommandBase<Re
 
         StandardQueryParser parser = new StandardQueryParser(getAnalyzer());
         parser.setNumericConfigMap(nums);
-        query = parser.parse(qryStr, "key.id");
+        query = parser.parse(qryStr, "general");
 
         //query = bQuery;
     }

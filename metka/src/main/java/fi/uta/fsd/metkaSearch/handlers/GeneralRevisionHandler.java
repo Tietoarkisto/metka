@@ -1,5 +1,6 @@
 package fi.uta.fsd.metkaSearch.handlers;
 
+import fi.uta.fsd.metka.data.collecting.ReferenceHandler;
 import fi.uta.fsd.metka.data.enums.*;
 import fi.uta.fsd.metka.data.enums.FieldType;
 import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
@@ -14,6 +15,8 @@ import fi.uta.fsd.metka.model.data.container.ContainerDataField;
 import fi.uta.fsd.metka.model.data.container.DataRow;
 import fi.uta.fsd.metka.model.data.container.SavedDataField;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
+import fi.uta.fsd.metka.mvc.domain.ReferenceService;
+import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import fi.uta.fsd.metkaSearch.LuceneConfig;
 import fi.uta.fsd.metkaSearch.analyzer.FinnishVoikkoAnalyzer;
 import fi.uta.fsd.metkaSearch.directory.DirectoryInformation;
@@ -39,12 +42,18 @@ class GeneralRevisionHandler implements RevisionHandler {
     private final DirectoryInformation indexer;
     private final RevisionData data;
     private final Configuration config;
+    private final ReferenceService references;
     private final Pair<Boolean, LocalDateTime> removalInfo;
 
-    GeneralRevisionHandler(DirectoryInformation indexer, RevisionData data, Configuration config, Pair<Boolean, LocalDateTime> removalInfo) {
+    private final Map<String, Analyzer> analyzers = new HashMap<>();
+
+    private final StringBuilder general = new StringBuilder();
+
+    GeneralRevisionHandler(DirectoryInformation indexer, RevisionData data, Configuration config, ReferenceService references, Pair<Boolean, LocalDateTime> removalInfo) {
         this.indexer = indexer;
         this.data = data;
         this.config = config;
+        this.references = references;
         this.removalInfo = removalInfo;
     }
 
@@ -109,8 +118,6 @@ class GeneralRevisionHandler implements RevisionHandler {
             document.add(new StringField("state.saved", "false", YES));
         }
 
-        Map<String, Analyzer> analyzers = new HashMap<>();
-
         for(Field field : config.getFields().values()) {
             // Ignore subfields, they're indexed through container indexing
             if(field.getSubfield()) {
@@ -125,6 +132,8 @@ class GeneralRevisionHandler implements RevisionHandler {
         }
         if(addDocument) {
             // TODO: Give standard analyzer finnish stopwords if language is finnish
+            document.add(new TextField("general", general.toString(), NO));
+            addTextAnalyzer("general");
             PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new WhitespaceAnalyzer(LuceneConfig.USED_VERSION), analyzers);
             indexer.getIndexWriter().addDocument(document, analyzer);
         }
@@ -132,17 +141,24 @@ class GeneralRevisionHandler implements RevisionHandler {
     }
 
     private boolean indexField(Field field, DataFieldContainer fieldContainer, Document document, String root, Map<String, Analyzer> analyzers) {
+        if(root == null) {
+            root = "";
+        }
+        if(!StringUtils.isEmpty(root)) {
+            root += ".";
+        }
         boolean result = true;
         if(field.getType().isContainer()) {
             // Field is a container type. These are indexed into separate indexes by different handlers, Create the commands and continue
             // TODO: Create commands to index the field
 
             // For now index table into the same document as the top content.
-            // TODO: Index reference containers
             // This will create multiple values in similar field names. Search treats these automatically
             // as OR matches, meaning you only have to search for one of the values to find the document.
             if(field.getType() == FieldType.CONTAINER) {
                 result = indexContainer(field, fieldContainer, document, root, analyzers);
+            } else if(field.getType() == FieldType.REFERENCECONTAINER) {
+                // TODO: Index reference containers
             }
         } else {
             // Try to index the field as a non container field
@@ -173,7 +189,7 @@ class GeneralRevisionHandler implements RevisionHandler {
                     // For some reason non subfield was returned, ignore
                     continue;
                 }
-                result = indexField(field, row, document, container.getKey(), analyzers);
+                result = indexField(field, row, document, root+container.getKey(), analyzers);
                 if(!result) {
                     break;
                 }
@@ -208,12 +224,7 @@ class GeneralRevisionHandler implements RevisionHandler {
             // SavedDataField has no value to index or the value is empty, don't insert anything
             return true;
         }
-        if(root == null) {
-            root = "";
-        }
-        if(!StringUtils.isEmpty(root)) {
-            root += ".";
-        }
+
         boolean result = true;
         switch(field.getType()) {
             case DATE:
@@ -229,18 +240,12 @@ class GeneralRevisionHandler implements RevisionHandler {
             case CONCAT:
                 // Index concat field as a text field which should be analyzed and tokenized unless marked as exact field in config
                 // TODO: get information of if field is marked exact
-                document.add(new TextField(root+field.getKey(), saved.getActualValue(), NO));
-                addTextAnalyzer(analyzers, root+field.getKey());
+                indexTextOrString(field, saved.getActualValue(), root+field.getKey(), document);
                 break;
             case STRING:
                 // Index string field as a text field which should be analyzed and tokenized unless marked as exact field in config
                 // TODO: get information of if field is marked exact from actual indexer configuration
-                if(field.getExact()) {
-                    document.add(new StringField(root+field.getKey(), saved.getActualValue(), NO));
-                } else {
-                    document.add(new TextField(root+field.getKey(), saved.getActualValue(), NO));
-                    addTextAnalyzer(analyzers, root+field.getKey());
-                }
+                indexTextOrString(field, saved.getActualValue(), root+field.getKey(), document);
                 break;
             case INTEGER:
                 // Convert value to correct number format (integer or long, or just stick with long for everything) and index as correct number field
@@ -300,7 +305,7 @@ class GeneralRevisionHandler implements RevisionHandler {
                 Option option = list.getOptionWithValue(saved.getActualValue());
                 if(option != null) {
                     document.add(new StringField(root+field.getKey()+".value", option.getValue(), NO));
-                    document.add(new StringField(root+field.getKey(), option.getDefaultTitle(), NO));
+                    indexTextOrString(field, option.getDefaultTitle(), root+field.getKey(), document);
                 } else {
                     // Some problem so possibly log error, but do nothing for now
                     break;
@@ -311,6 +316,17 @@ class GeneralRevisionHandler implements RevisionHandler {
         }
 
         return true;
+    }
+
+    private void indexTextOrString(Field field, String value, String key, Document document) {
+        if(field.getExact()) {
+            document.add(new StringField(key, value, NO));
+        } else {
+            general.append(" ");
+            general.append(value);
+            document.add(new TextField(key, value, NO));
+            addTextAnalyzer(key);
+        }
     }
 
     /**
@@ -324,16 +340,25 @@ class GeneralRevisionHandler implements RevisionHandler {
      */
     private boolean indexReferenceField(Field field, SavedDataField saved, Document document, String root) {
         // TODO: Handle reference collecting. Shouldn't be that hard if we leverage some of the reference solver
-        document.add(new StringField(root+field.getKey()+".value", saved.getActualValue(), NO));
-        if(field.getType() == FieldType.SELECTION) {
-
-        } else if(field.getType() == FieldType.REFERENCE) {
-
+        ReferenceOption option = null;
+        try {
+            option = references.getCurrentFieldOption(data, root + field.getKey());
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+            // Don't stop indexing but can't index this reference
+            return true;
         }
+        if(option == null) {
+            // Nothing to index
+            return true;
+        }
+
+        document.add(new StringField(root+field.getKey()+".value", option.getValue(), NO));
+        indexTextOrString(field, option.getTitle().getValue(), root+field.getKey(), document);
         return true;
     }
 
-    private void addTextAnalyzer(Map<String, Analyzer> analyzers, String key) {
+    private void addTextAnalyzer(String key) {
         if(indexer.getPath().getLanguage().equals("fi")) {
             analyzers.put(key, FinnishVoikkoAnalyzer.ANALYZER);
         } else {

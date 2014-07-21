@@ -1,6 +1,7 @@
 package fi.uta.fsd.metka.mvc.domain;
 
 import fi.uta.fsd.metka.data.enums.UIRevisionState;
+import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.data.repository.GeneralRepository;
 import fi.uta.fsd.metka.data.repository.SavedSearchRepository;
 import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
@@ -30,13 +31,16 @@ public class ExpertSearchService {
     private GeneralRepository general;
 
     @Autowired
+    private ConfigurationRepository configurations;
+
+    @Autowired
     private SavedSearchRepository savedSearch;
 
     public ExpertSearchQueryResponse performQuery(ExpertSearchQueryRequest request) {
         ExpertSearchQueryResponse response = new ExpertSearchQueryResponse();
         response.setOperation(ExpertSearchOperation.QUERY);
         try {
-            SearchCommand<RevisionResult> command = ExpertRevisionSearchCommand.build(request.getQuery());
+            SearchCommand<RevisionResult> command = ExpertRevisionSearchCommand.build(request.getQuery(), configurations);
             List<RevisionResult> results = searcher.executeSearch(command).getResults();
 
             for(RevisionResult result : results) {

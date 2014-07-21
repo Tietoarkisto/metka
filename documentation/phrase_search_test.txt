@@ -1,0 +1,129 @@
+-- Analyzer --
+Documents are analyzed using WhiteSpaceAnalyzer as the default analyzer, using FinnishVoikkoAnalyzer for field 'phrase1' and using KeywordAnalyzer of field 'phrase2'
+
+-- Data --
+All documents contain the following fields:
+phrase1 which is a finnish voikko analyzed text field
+phrase2 which is a keyword analyzed text field
+phrase3 which is a whitespace analyzed text field
+phrase4 which is a string field and defined having keyword analyzer
+phrase5 which is a string field
+
+New document: ID (1) | Phrase (Joku fraasi)
+New document: ID (2) | Phrase (Joku toinen fraasi)
+New document: ID (3) | Phrase (Jotain tekstiä)
+New document: ID (4) | Phrase (Jotain muuta tekstiä)
+New document: ID (5) | Phrase (Teksiä josa on typoja)
+New document: ID (6) | Phrase (Tekstiä jossa on vahemman typoja)
+New document: ID (7) | Phrase (Teksti joka sisältää yhdyssanoja kuten sosiaaliturva ja sosiaalihuolto)
+
+-- Queries --
+All queries are performed for all fields except document_id
+All queries are performed with + in their field clause meaning that the query is a MUST query (document must contain result)
+All query results contain the number of results and the ID's of the documents that contain a hit.
+Results are in following order: 
+Result 1: phrase1
+Result 2: phrase2
+Result 3: phrase3
+Result 4: phrase4
+Result 5: phrase5
+
+-- Results --
+Performing query: teksti
+Result 1: 4 [3, 4, 6, 7]
+Result 2: 0 
+Result 3: 0 
+Result 4: 0 
+Result 5: 0 
+Performing query: Teksti
+Result 1: 4 [3, 4, 6, 7]
+Result 2: 0 
+Result 3: 1 [7]
+Result 4: 0 
+Result 5: 0 
+Performing query: "jotain tekstiä"
+Result 1: 1 [3]
+Result 2: 0 
+Result 3: 0 
+Result 4: 0 
+Result 5: 0 
+Performing query: "Jotain tekstiä"
+Result 1: 1 [3]
+Result 2: 1 [3]
+Result 3: 1 [3]
+Result 4: 1 [3]
+Result 5: 0 
+Performing query: (+jotain +tekstiä)
+Result 1: 2 [3, 4]
+Result 2: 0 
+Result 3: 0 
+Result 4: 0 
+Result 5: 0 
+Performing query: (+Jotain +tekstiä)
+Result 1: 2 [3, 4]
+Result 2: 0 
+Result 3: 2 [3, 4]
+Result 4: 0 
+Result 5: 0 
+Performing query: "Jotain muuta tekstiä"
+Result 1: 1 [4]
+Result 2: 1 [4]
+Result 3: 1 [4]
+Result 4: 1 [4]
+Result 5: 0 
+Performing query: vähemmän
+Result 1: 0 
+Result 2: 0 
+Result 3: 0 
+Result 4: 0 
+Result 5: 0 
+Performing query: sana
+Result 1: 1 [7]
+Result 2: 0 
+Result 3: 0 
+Result 4: 0 
+Result 5: 0 
+Performing query: sosiaali
+Result 1: 1 [7]
+Result 2: 0 
+Result 3: 0 
+Result 4: 0 
+Result 5: 0 
+Performing query: turva
+Result 1: 1 [7]
+Result 2: 0 
+Result 3: 0 
+Result 4: 0 
+Result 5: 0 
+Performing query: turpa
+Result 1: 0 
+Result 2: 0 
+Result 3: 0 
+Result 4: 0 
+Result 5: 0 
+Performing query: sosiaaliturpa
+Result 1: 1 [7]
+Result 2: 0 
+Result 3: 0 
+Result 4: 0 
+Result 5: 0 
+Performing query: sosiaali*
+Result 1: 1 [7]
+Result 2: 0 
+Result 3: 1 [7]
+Result 4: 0 
+Result 5: 0 
+Enable allow leading wildcard
+Performing query: *sana
+Result 1: 1 [7]
+Result 2: 0 
+Result 3: 0 
+Result 4: 0 
+Result 5: 0 
+Performing query: *sanoja
+Result 1: 1 [7]
+Result 2: 0 
+Result 3: 1 [7]
+Result 4: 0 
+Result 5: 0 
+Disable allow leading wildcard

@@ -1,0 +1,289 @@
+-- Analyzer --
+Documents are analyzed using WhiteSpaceAnalyzer as the default analyzer, using FinnishVoikkoAnalyzer for field 'date1' and 'date_description' and using KeywordAnalyzer of field 'date2'
+
+-- Data --
+All documents contain the following fields:
+document_id which is a running integer
+date1 which is a finnish voikko analyzed text field
+date2 which is a keyword analyzed text field
+date3 which is a whitespace analyzed text field
+date4 which is a string field
+date_description which is a finnish analyzed text field with the phrase 'Dokumentin päiväys on' appended before the date time value.
+New document: ID (1) | LocalDateTime (2014-01-01T01:01:01.000)
+New document: ID (2) | LocalDateTime (2014-02-02T02:02:02.000)
+New document: ID (3) | LocalDateTime (2014-03-03T03:03:03.000)
+New document: ID (4) | LocalDateTime (2014-04-04T04:04:04.000)
+New document: ID (5) | LocalDateTime (2014-05-05T05:05:05.000)
+
+-- Queries --
+All queries are performed for all fields except document_id
+All queries are performed with + in their field clause meaning that the query is a MUST query (document must contain result)
+All query results contain the number of results and the ID's of the documents that contain a hit.
+Results are in following order: 
+Result 1: date_description
+Result 2: date1
+Result 3: date2
+Result 4: date3
+Result 5: date4
+
+-- Results --
+Performing query: 2014
+Result 1: 5 [1, 2, 3, 4, 5]
+Result 2: 5 [1, 2, 3, 4, 5]
+Result 3: 0 
+Result 4: 0 
+Result 5: 0 
+Performing query: dokumentti
+Result 1: 5 [1, 2, 3, 4, 5]
+Result 2: 0 
+Result 3: 0 
+Result 4: 0 
+Result 5: 0 
+Performing query: päiväys
+Result 1: 5 [1, 2, 3, 4, 5]
+Result 2: 0 
+Result 3: 0 
+Result 4: 0 
+Result 5: 0 
+Performing query: 2014-01
+Result 1: 5 [1, 2, 3, 4, 5]
+Result 2: 5 [1, 2, 3, 4, 5]
+Result 3: 0 
+Result 4: 0 
+Result 5: 0 
+Performing query: "2014-01"
+Result 1: 1 [1]
+Result 2: 1 [1]
+Result 3: 0 
+Result 4: 0 
+Result 5: 0 
+Performing query: 2014*
+Result 1: 5 [1, 2, 3, 4, 5]
+Result 2: 5 [1, 2, 3, 4, 5]
+Result 3: 5 [1, 2, 3, 4, 5]
+Result 4: 5 [1, 2, 3, 4, 5]
+Result 5: 5 [1, 2, 3, 4, 5]
+Performing query: 2014-01-01T01:01:01.000
+Could not perform query on field: date_description
+Could not perform query on field: date1
+Could not perform query on field: date2
+Could not perform query on field: date3
+Could not perform query on field: date4
+Performing query: "2014-01-01T01:01:01.000"
+Result 1: 1 [1]
+Result 2: 1 [1]
+Result 3: 1 [1]
+Result 4: 1 [1]
+Result 5: 1 [1]
+Performing query: [2014-01 2014-03]
+Result 1: 0 
+Result 2: 0 
+Result 3: 2 [1, 2]
+Result 4: 2 [1, 2]
+Result 5: 2 [1, 2]
+Performing query: [2014-01* 2014-03*]
+Result 1: 0 
+Result 2: 0 
+Result 3: 2 [1, 2]
+Result 4: 2 [1, 2]
+Result 5: 2 [1, 2]
+Performing query: ["2014-01*" "2014-03*"]
+Result 1: 0 
+Result 2: 0 
+Result 3: 2 [1, 2]
+Result 4: 2 [1, 2]
+Result 5: 2 [1, 2]
+Performing query: [2014-01-01 2014-03-02]
+Result 1: 0 
+Result 2: 0 
+Result 3: 2 [1, 2]
+Result 4: 2 [1, 2]
+Result 5: 2 [1, 2]
+Performing query: [2014-01-01* 2014-03-02*]
+Result 1: 0 
+Result 2: 0 
+Result 3: 2 [1, 2]
+Result 4: 2 [1, 2]
+Result 5: 2 [1, 2]
+Performing query: ["2014-01-01*" "2014-03-02*"]
+Result 1: 0 
+Result 2: 0 
+Result 3: 2 [1, 2]
+Result 4: 2 [1, 2]
+Result 5: 2 [1, 2]
+Performing query: [2014-01-01 2014-03-03]
+Result 1: 0 
+Result 2: 0 
+Result 3: 2 [1, 2]
+Result 4: 2 [1, 2]
+Result 5: 2 [1, 2]
+Performing query: [2014-01-01* 2014-03-03*]
+Result 1: 0 
+Result 2: 0 
+Result 3: 2 [1, 2]
+Result 4: 2 [1, 2]
+Result 5: 2 [1, 2]
+Performing query: ["2014-01-01*" "2014-03-03*"]
+Result 1: 0 
+Result 2: 0 
+Result 3: 2 [1, 2]
+Result 4: 2 [1, 2]
+Result 5: 2 [1, 2]
+Performing query: [2014-01-01 2014-03-04]
+Result 1: 0 
+Result 2: 0 
+Result 3: 3 [1, 2, 3]
+Result 4: 3 [1, 2, 3]
+Result 5: 3 [1, 2, 3]
+Performing query: [2014-01-01* 2014-03-04*]
+Result 1: 0 
+Result 2: 0 
+Result 3: 3 [1, 2, 3]
+Result 4: 3 [1, 2, 3]
+Result 5: 3 [1, 2, 3]
+Performing query: ["2014-01-01*" "2014-03-04*"]
+Result 1: 0 
+Result 2: 0 
+Result 3: 3 [1, 2, 3]
+Result 4: 3 [1, 2, 3]
+Result 5: 3 [1, 2, 3]
+Performing query: [2014-02-01 2014-02-02]
+Result 1: 0 
+Result 2: 0 
+Result 3: 0 
+Result 4: 0 
+Result 5: 0 
+Performing query: [2014-02-01* 2014-02-02*]
+Result 1: 0 
+Result 2: 0 
+Result 3: 0 
+Result 4: 0 
+Result 5: 0 
+Performing query: ["2014-02-01*" "2014-02-02*"]
+Result 1: 0 
+Result 2: 0 
+Result 3: 0 
+Result 4: 0 
+Result 5: 0 
+Performing query: [2014-02-01 2014-02-03]
+Result 1: 0 
+Result 2: 0 
+Result 3: 1 [2]
+Result 4: 1 [2]
+Result 5: 1 [2]
+Performing query: [2014-02-01* 2014-02-03*]
+Result 1: 0 
+Result 2: 0 
+Result 3: 1 [2]
+Result 4: 1 [2]
+Result 5: 1 [2]
+Performing query: ["2014-02-01*" "2014-02-03*"]
+Result 1: 0 
+Result 2: 0 
+Result 3: 1 [2]
+Result 4: 1 [2]
+Result 5: 1 [2]
+Performing query: [2014-02-02 2014-02-02]
+Result 1: 0 
+Result 2: 0 
+Result 3: 0 
+Result 4: 0 
+Result 5: 0 
+Performing query: [2014-02-02* 2014-02-02*]
+Result 1: 0 
+Result 2: 0 
+Result 3: 0 
+Result 4: 0 
+Result 5: 0 
+Performing query: ["2014-02-02*" "2014-02-02*"]
+Result 1: 0 
+Result 2: 0 
+Result 3: 0 
+Result 4: 0 
+Result 5: 0 
+Performing query: [2014-02-02 2014-02-03]
+Result 1: 0 
+Result 2: 0 
+Result 3: 1 [2]
+Result 4: 1 [2]
+Result 5: 1 [2]
+Performing query: [2014-02-02* 2014-02-03*]
+Result 1: 0 
+Result 2: 0 
+Result 3: 1 [2]
+Result 4: 1 [2]
+Result 5: 1 [2]
+Performing query: ["2014-02-02*" "2014-02-03*"]
+Result 1: 0 
+Result 2: 0 
+Result 3: 1 [2]
+Result 4: 1 [2]
+Result 5: 1 [2]
+Performing query: [02-02 02-03]
+Result 1: 0 
+Result 2: 0 
+Result 3: 0 
+Result 4: 0 
+Result 5: 0 
+Performing query: [02-02* 02-03*]
+Result 1: 0 
+Result 2: 0 
+Result 3: 0 
+Result 4: 0 
+Result 5: 0 
+Performing query: ["02-02*" "02-03*"]
+Result 1: 0 
+Result 2: 0 
+Result 3: 0 
+Result 4: 0 
+Result 5: 0 
+Enable allow leading wildcard
+Performing query: *02
+Result 1: 1 [2]
+Result 2: 1 [2]
+Result 3: 0 
+Result 4: 0 
+Result 5: 0 
+Performing query: *02*
+Result 1: 1 [2]
+Result 2: 1 [2]
+Result 3: 1 [2]
+Result 4: 1 [2]
+Result 5: 1 [2]
+Performing query: *02-02*
+Result 1: 0 
+Result 2: 0 
+Result 3: 1 [2]
+Result 4: 1 [2]
+Result 5: 1 [2]
+Performing query: "*02-02*"
+Result 1: 0 
+Result 2: 0 
+Result 3: 0 
+Result 4: 0 
+Result 5: 0 
+Performing query: *"02-02"*
+Result 1: 5 [1, 2, 3, 4, 5]
+Result 2: 5 [1, 2, 3, 4, 5]
+Result 3: 5 [1, 2, 3, 4, 5]
+Result 4: 5 [1, 2, 3, 4, 5]
+Result 5: 5 [1, 2, 3, 4, 5]
+Performing query: [*02-02 *02-03]
+Result 1: 0 
+Result 2: 0 
+Result 3: 0 
+Result 4: 0 
+Result 5: 0 
+Performing query: [*02-02* *02-03*]
+Result 1: 0 
+Result 2: 0 
+Result 3: 0 
+Result 4: 0 
+Result 5: 0 
+Performing query: ["*02-02*" "*02-03*"]
+Result 1: 0 
+Result 2: 0 
+Result 3: 0 
+Result 4: 0 
+Result 5: 0 
+Disable allow leading wildcard

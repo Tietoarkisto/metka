@@ -5,6 +5,7 @@ import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.data.repository.GeneralRepository;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.mvc.domain.ReferenceService;
 import fi.uta.fsd.metkaSearch.commands.indexer.IndexerCommand;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
@@ -21,10 +22,7 @@ import org.joda.time.LocalDateTime;
 import java.io.IOException;
 
 public class RevisionIndexer extends Indexer {
-    private GeneralRepository general;
-    private ConfigurationRepository configurations;
-
-    public static RevisionIndexer build(DirectoryManager.DirectoryPath path, IndexerCommandRepository commands, GeneralRepository general, ConfigurationRepository configurations) throws IOException, UnsupportedOperationException {
+    public static RevisionIndexer build(DirectoryManager.DirectoryPath path, IndexerCommandRepository commands, GeneralRepository general, ConfigurationRepository configurations, ReferenceService references) throws IOException, UnsupportedOperationException {
         checkPathType(path, IndexerConfigurationType.REVISION);
         // Check that additional parameters matches requirements
         if(path.getAdditionalParameters() == null || path.getAdditionalParameters().length == 0) {
@@ -43,13 +41,18 @@ public class RevisionIndexer extends Indexer {
             throw new UnsupportedOperationException("Revision indexer needs access to general and configuration repositories");
         }
 
-        return new RevisionIndexer(path, commands, general, configurations);
+        return new RevisionIndexer(path, commands, general, configurations, references);
     }
 
-    private RevisionIndexer(DirectoryManager.DirectoryPath path, IndexerCommandRepository commands, GeneralRepository general, ConfigurationRepository configurations) throws IOException {
+    private GeneralRepository general;
+    private ConfigurationRepository configurations;
+    private ReferenceService references;
+
+    private RevisionIndexer(DirectoryManager.DirectoryPath path, IndexerCommandRepository commands, GeneralRepository general, ConfigurationRepository configurations, ReferenceService references) throws IOException {
         super(path, commands);
         this.general = general;
         this.configurations = configurations;
+        this.references = references;
     }
 
     protected void handleCommand(IndexerCommand command) throws IOException {
@@ -78,7 +81,7 @@ public class RevisionIndexer extends Indexer {
     }
 
     /**
-     * Create Document out of an XML file and add it to the writer.
+     * Create Document out of a revision and add it to the writer.
      *
      * @param command
      */
@@ -98,7 +101,7 @@ public class RevisionIndexer extends Indexer {
             // Can't index without configuration, make log event
             return;
         }
-        RevisionHandler handler = HandlerFactory.buildRevisionHandler(getIndexer(), data, config, removalInfo);
+        RevisionHandler handler = HandlerFactory.buildRevisionHandler(getIndexer(), data, config, references, removalInfo);
         try {
             handler.handle();
         } catch(Exception e) {

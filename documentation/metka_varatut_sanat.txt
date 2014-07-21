@@ -1,0 +1,12 @@
+Lista Metka:n varatuista sanoista joita ei saa käyttää kenttäavaimina:
+- key
+- state
+- value
+- saved
+- date
+- by
+- row
+- id
+- general
+
+Näiden kenttäavaimien välttäminen vähentää virhetilanteiden mahdollisuutta varsinkin hakujen yhteydessä. Näitä termejä voi käyttää osana muita termejä (esim. "datastate" ei aiheuta ongelmian kentän nimenä). Kenttäavain kattaa kaiken mitä hakua kirjoittaessa erotetaan pisteellä, eli esim. date.month olisi ongelmallinen, samoin title.value mutta esim. topic.titlevalue ei aiheuta ongelmia.

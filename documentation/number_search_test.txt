@@ -1,0 +1,100 @@
+-- Analyzer --
+Documents are analyzed using WhiteSpaceAnalyzer as the default analyzer, using FinnishVoikkoAnalyzer for field 'int1' and 'float1' and using KeywordAnalyzer of fields 'int2' and 'float2'
+
+-- Data --
+All documents contain the following fields:
+int1 which is a finnish voikko analyzed text field
+int2 which is a keyword analyzed text field
+int3 which is a IntField and searcher is told to regard it as an IntField
+int4 which is a IntField with seracher not told to regard it as an IntField
+float1 which is a finnish voikko analyzed text field
+float2 which is a keyword analyzed text field
+float3 which is a FloatField and searcher is told to regard it as an FloatField
+float4 which is a FloatField with seracher not told to regard it as an FloatField
+
+New document: ID (1) | Integer (1) | Float (1.5)
+New document: ID (2) | Integer (2) | Float (2.5)
+New document: ID (3) | Integer (3) | Float (3.5)
+New document: ID (4) | Integer (4) | Float (4.5)
+New document: ID (5) | Integer (5) | Float (5.5)
+
+-- Queries --
+All queries are performed for all fields except document_id
+All queries are performed with + in their field clause meaning that the query is a MUST query (document must contain result)
+All query results contain the number of results and the ID's of the documents that contain a hit.
+Results are in following order: 
+Result 1: int1
+Result 2: int2
+Result 3: int3
+Result 4: int4
+Result 5: float1
+Result 6: float2
+Result 7: float3
+Result 8: float4
+
+-- Results --
+Performing query: 1
+Result 1: 1 [1]
+Result 2: 1 [1]
+Result 3: 1 [1]
+Result 4: 0 
+Result 5: 0 
+Result 6: 0 
+Result 7: 0 
+Result 8: 0 
+Performing query: 1.1
+Result 1: 0 
+Result 2: 0 
+Result 3: 1 [1]
+Result 4: 0 
+Result 5: 0 
+Result 6: 0 
+Result 7: 0 
+Result 8: 0 
+Performing query: 1.5
+Result 1: 0 
+Result 2: 0 
+Result 3: 1 [1]
+Result 4: 0 
+Result 5: 1 [1]
+Result 6: 1 [1]
+Result 7: 1 [1]
+Result 8: 0 
+Performing query: 1*
+Result 1: 1 [1]
+Result 2: 1 [1]
+Result 3: 1 [1]
+Result 4: 0 
+Result 5: 1 [1]
+Result 6: 1 [1]
+Result 7: 0 
+Result 8: 0 
+Performing query: [1 2]
+Result 1: 2 [1, 2]
+Result 2: 2 [1, 2]
+Result 3: 2 [1, 2]
+Result 4: 0 
+Result 5: 1 [1]
+Result 6: 1 [1]
+Result 7: 0 
+Result 8: 0 
+Performing query: {1 2}
+Result 1: 0 
+Result 2: 0 
+Result 3: 0 
+Result 4: 0 
+Result 5: 1 [1]
+Result 6: 1 [1]
+Result 7: 0 
+Result 8: 0 
+Enable allow leading wildcard
+Performing query: *.5
+Result 1: 0 
+Result 2: 0 
+Could not perform query on field: int3
+Result 3: 0 
+Result 4: 5 [1, 2, 3, 4, 5]
+Result 5: 5 [1, 2, 3, 4, 5]
+Could not perform query on field: float3
+Result 6: 0 
+Disable allow leading wildcard
