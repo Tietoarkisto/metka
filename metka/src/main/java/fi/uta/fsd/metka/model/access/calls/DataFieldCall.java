@@ -10,6 +10,7 @@ import java.util.Map;
 public interface DataFieldCall<T extends DataField> {
     public static enum CallType {
         GET,
+        CHECK,
         SET
     }
 
