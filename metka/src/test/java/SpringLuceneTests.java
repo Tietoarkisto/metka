@@ -26,6 +26,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.KeywordAnalyzer;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
+import org.apache.lucene.analysis.util.CharacterUtils;
 import org.apache.lucene.document.*;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
@@ -659,13 +660,10 @@ public class SpringLuceneTests {
         System.err.println("phrase5 which is a string field");
         System.err.println("");
 
-        addPhraseDocument("Joku fraasi");
-        addPhraseDocument("Joku toinen fraasi");
-        addPhraseDocument("Jotain tekstiä");
-        addPhraseDocument("Jotain muuta tekstiä");
-        addPhraseDocument("Teksiä josa on typoja");
-        addPhraseDocument("Tekstiä jossa on vahemman typoja");
-        addPhraseDocument("Teksti joka sisältää yhdyssanoja kuten sosiaaliturva ja sosiaalihuolto");
+        addPhraseDocument("testi fraasi");
+        addPhraseDocument("testi, fraasi");
+        addPhraseDocument("testi: fraasi, teksti");
+        addPhraseDocument("kolme,. välimerkkiä!");
 
         TEST_INDEXER.getIndexWriter().commit();
 
@@ -690,28 +688,15 @@ public class SpringLuceneTests {
         System.err.println("");
         System.err.println("-- Results --");
 
-        performPhraseTestQuery("teksti");
-        performPhraseTestQuery("Teksti");
-        performPhraseTestQuery("\"jotain tekstiä\"");
-        performPhraseTestQuery("\"Jotain tekstiä\"");
-        performPhraseTestQuery("(+jotain +tekstiä)");
-        performPhraseTestQuery("(+Jotain +tekstiä)");
-        performPhraseTestQuery("\"Jotain muuta tekstiä\"");
-        performPhraseTestQuery("vähemmän");
-        performPhraseTestQuery("sana");
-        performPhraseTestQuery("sosiaali");
-        performPhraseTestQuery("turva");
-        performPhraseTestQuery("turpa");
-        performPhraseTestQuery("sosiaaliturpa");
-        performPhraseTestQuery("sosiaali*");
-        TEST_PARSER.setAllowLeadingWildcard(true);
+        performPhraseTestQuery("fraasi");
+        performPhraseTestQuery("fraasi*");
+        performPhraseTestQuery("\"fraasi\"");
+
+        /*TEST_PARSER.setAllowLeadingWildcard(true);
         System.err.println("Enable allow leading wildcard");
 
-        performPhraseTestQuery("*sana");
-        performPhraseTestQuery("*sanoja");
-
         TEST_PARSER.setAllowLeadingWildcard(false);
-        System.err.println("Disable allow leading wildcard");
+        System.err.println("Disable allow leading wildcard");*/
     }
 
     private void addPhraseDocument(String phrase) throws Exception {

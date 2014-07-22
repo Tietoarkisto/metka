@@ -14,12 +14,14 @@ import fi.uta.fsd.metkaSearch.indexers.WikipediaIndexer;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -54,8 +56,6 @@ public class IndexerComponent {
      */
     private final Map<DirectoryManager.DirectoryPath, Future<IndexerStatusMessage>> handlers = new ConcurrentHashMap<>();
 
-    //private final Map<DirectoryManager.DirectoryPath, Indexer> indexers = new ConcurrentHashMap<>();
-
     /**
      * Executed at program startup. Clears requested status from all non handled methods and removes all handled methods from database.
      */
@@ -65,26 +65,38 @@ public class IndexerComponent {
         commandRepository.removeAllHandled();
     }
 
+    /**
+     * Checks for commands that have handlers that have stopped for one reason or another.
+     * Also checks requested commands that have not been repeated for stopped handles and
+     * if stopped handler is found then marks the command as repeated, removes the requested
+     * timestamp and refires the indexer for that command.
+     */
+    @Scheduled(fixedDelay = 5000)
+    public void checkIndexers() {
+        //System.err.println("Checking for commands on stopped indexers");
+        // TODO: repeat try
+        IndexerCommand command = commandRepository.getNextCommandWithoutChange();
+        if(command != null) {
+            if(handlers.get(command.getPath()).isDone()) {
+                try {
+                    startIndexer(command.getPath());
+                } catch(IOException ioe) {
+                    ioe.printStackTrace();
+                }
+            }
+        }
+    }
+
     public void addCommand(IndexerCommand command) throws IOException {
         commandRepository.addIndexerCommand(command);
-        // TODO: Move actual command adding to a separate thread that reads the database queue instead so all commands are executed even if system fails before all commands are handled
         if(handlers.containsKey(command.getPath())) {
             if(handlers.get(command.getPath()).isDone()) {
                 // Start new indexer, don't use RAMDirectory. Starting a new indexer should clear the old one from map.
                 startIndexer(command.getPath());
             }
-            /*if(!indexers.containsKey(command.getPath())) {
-                // Something is wrong since indexer is not in the list but it's apparently running
-                return;
-            }*/
         } else {
             startIndexer(command.getPath());
         }
-        //indexers.get(command.getPath()).addCommand(command);
-    }
-
-    public void markCommandAsHandler(Long id) {
-        commandRepository.markCommandAsHandled(id);
     }
 
     public void startIndexer(DirectoryManager.DirectoryPath path) throws IOException {
@@ -99,21 +111,11 @@ public class IndexerComponent {
     }
 
     public void clearHandlers() {
-        List<DirectoryManager.DirectoryPath> remove = new ArrayList<>();
-        // Get all stopped handlers
-        for(Map.Entry<DirectoryManager.DirectoryPath, Future<IndexerStatusMessage>> handler : handlers.entrySet()) {
-            if(handler.getValue().isDone()) {
-                remove.add(handler.getKey());
+        for(Iterator<Map.Entry<DirectoryManager.DirectoryPath, Future<IndexerStatusMessage>>> i = handlers.entrySet().iterator(); i.hasNext(); ) {
+            Map.Entry<DirectoryManager.DirectoryPath, Future<IndexerStatusMessage>> e = i.next();
+            if(e.getValue().isDone()) {
+                i.remove();
             }
-        }
-
-        // Remove stopped handlers and their indexers
-        for(DirectoryManager.DirectoryPath path : remove) {
-            /*Indexer indexer = indexers.get(path);
-            if(indexer != null) {
-                indexers.remove(path);
-            }*/
-            handlers.remove(path);
         }
     }
 

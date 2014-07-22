@@ -195,7 +195,7 @@ public class StudyController {
 
         if(searchData.getQuery() != null && searchData.getResults().size() == 0) {
             List<ErrorMessage> errors = new ArrayList<>();
-            errors.add(ErrorMessage.noResults("series"));
+            errors.add(ErrorMessage.noResults("study"));
             model.asMap().put("displayableErrors", errors);
         }
 

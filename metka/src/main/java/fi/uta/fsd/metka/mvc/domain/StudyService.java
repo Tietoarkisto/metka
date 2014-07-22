@@ -86,7 +86,7 @@ public class StudyService {
         so.setId(data.getKey().getId());
         so.setRevision(data.getKey().getRevision());
         so.setState(UIRevisionState.fromRevisionState(data.getState()));
-        so.setByKey("id", extractStringSimpleValue(data.dataField(SavedDataFieldCall.get("id")).getRight()));
+        so.setByKey("studyid", extractStringSimpleValue(data.dataField(SavedDataFieldCall.get("studyid")).getRight()));
         so.setByKey("title", extractStringSimpleValue(data.dataField(SavedDataFieldCall.get("title")).getRight()));
 
         return so;

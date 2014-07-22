@@ -27,6 +27,14 @@ public interface IndexerCommandRepository {
     public IndexerCommand getNextCommand(IndexerConfigurationType type);
 
     /**
+     * Returns the next command that has not been requested yet irregardless of type.
+     * Does not mark the command as requested.
+     * This is mostly used to check that indexers are running and handling commands
+     * @return
+     */
+    public IndexerCommand getNextCommandWithoutChange();
+
+    /**
      * Sets requested value to null in all commands that have not been handled yet.
      * Used at server restart where obviously all non handled requested commands need to be requested again.
      */

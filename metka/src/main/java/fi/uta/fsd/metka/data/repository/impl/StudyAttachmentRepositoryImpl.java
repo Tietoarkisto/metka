@@ -100,6 +100,7 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
              * This assumes the entity has empty data field and is a draft.
             */
             revision = factory.newStudyAttachmentData(revisionEntity, path, studyId);
+            entity.setFilePath(path);
             em.persist(revisionEntity);
 
             entity.setLatestRevisionNo(revisionEntity.getKey().getRevisionNo());

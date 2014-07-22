@@ -46,20 +46,6 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
         this.commands = commands;
     }
 
-    /*@Override
-    public boolean addCommand(IndexerCommand command) {
-        // If this handler is in the process of quitting or has stopped running then there's no point in
-        // adding the command to the queue.
-        if(Thread.currentThread().isInterrupted() || status == IndexerStatusMessage.STOP || status == IndexerStatusMessage.RETURNED) {
-            return false;
-        }
-        // If command is meant to another indexer then don't add it
-        if(!command.getPath().equals(indexer.getPath())) {
-            return false;
-        }
-        return commandQueue.add(command);
-    }*/
-
     protected void setStatus(IndexerStatusMessage status) {
         this.status = status;
     }
@@ -79,9 +65,10 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
         long timeHandlingCommands = 0L;
 
         while(status != IndexerStatusMessage.STOP && status != IndexerStatusMessage.RETURNED) {
+            IndexerCommand command = null;
             try {
                 //IndexerCommand command = commandQueue.poll(5, TimeUnit.SECONDS);
-                IndexerCommand command = commands.getNextCommand(indexer.getPath().getType());
+                command = commands.getNextCommand(indexer.getPath().getType());
                 if(command != null) {
                     long start = System.currentTimeMillis();
                     System.err.println("Started new command for: "+command.getPath());
@@ -150,6 +137,11 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
                 indexer.getIndexWriter().close();
                 ex.printStackTrace();
                 throw new InterruptedException();
+            } catch(Exception e) {
+                if(command != null) {
+                    System.err.println("Exception while handling command: "+"("+command.getQueueId()+") "+command.getPath()+"/"+command.getAction());
+                }
+                Thread.currentThread().interrupt();
             }
         }
         if(status == IndexerStatusMessage.STOP) {

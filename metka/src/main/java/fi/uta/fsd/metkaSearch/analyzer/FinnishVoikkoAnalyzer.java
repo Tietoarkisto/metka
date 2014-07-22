@@ -8,6 +8,9 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.core.LowerCaseFilter;
+import org.apache.lucene.analysis.core.WhitespaceTokenizer;
+import org.apache.lucene.analysis.fi.FinnishLightStemFilter;
+import org.apache.lucene.analysis.standard.ClassicTokenizer;
 import org.apache.lucene.analysis.standard.StandardFilter;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.analysis.util.TokenFilterFactory;
@@ -43,10 +46,21 @@ public class FinnishVoikkoAnalyzer extends Analyzer {
         TokenStream result = new StandardFilter(LuceneConfig.USED_VERSION, source);
         result = new LowerCaseFilter(LuceneConfig.USED_VERSION, result);
         result = new FinnishTokenFilter(result, voikko);
-        result = stopFilterFactory.create(result);
+        //result = stopFilterFactory.create(result);
         TokenStreamComponents components = new TokenStreamComponents(source, result);
 
         return components;
     }
+
+    /*@Override
+    protected TokenStreamComponents createComponents(String fieldName, Reader reader) {
+        Tokenizer source = new ClassicTokenizer(LuceneConfig.USED_VERSION, reader);
+        TokenStream result = new LowerCaseFilter(LuceneConfig.USED_VERSION, source);
+        result = new FinnishTokenFilter(result, voikko);
+        //result = stopFilterFactory.create(result);
+        TokenStreamComponents components = new TokenStreamComponents(source, result);
+
+        return components;
+    }*/
 
 }

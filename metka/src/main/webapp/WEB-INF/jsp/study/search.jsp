@@ -67,7 +67,7 @@
                 <tbody>
                 <c:forEach var="r" items="${searchData.results}">
                     <tr class="pointerClass" onclick="MetkaJS.view(${r.id},${r.revision})">
-                        <td>${r.values["id"]}</td>
+                        <td>${r.values["studyid"]}</td>
                         <td>${r.values["title"]}</td>
                         <td><spring:message code="general.search.result.state.${r.state}"/></td>
                     </tr>

@@ -48,6 +48,23 @@ public class IndexerCommandRepositoryImpl implements IndexerCommandRepository {
     }
 
     @Override
+    public IndexerCommand getNextCommandWithoutChange() {
+        IndexerCommandEntity entity = null;
+        List<IndexerCommandEntity> entities = em.createQuery("SELECT e FROM IndexerCommandEntity e " +
+                "WHERE e.requested IS NULL ORDER BY e.created ASC", IndexerCommandEntity.class)
+                .setMaxResults(1)
+                .getResultList();
+        if(entities.size() == 1) {
+            entity = entities.get(0);
+        }
+        if(entity != null) {
+            return entity.buildCommandFromEntity();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     public void clearAllRequests() {
         em.createQuery("UPDATE IndexerCommandEntity e SET e.requested=NULL WHERE e.handled IS NULL").executeUpdate();
     }

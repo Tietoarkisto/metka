@@ -38,7 +38,7 @@ final class ReferenceContainerDataFieldAccessor {
                 fieldMap,
                 key,
                 config,
-                ArrayUtils.add(configChecks, ConfigCheck.TYPE_CONTAINER),
+                ArrayUtils.add(configChecks, ConfigCheck.TYPE_REFERENCECONTAINER),
                 new FieldCheck[]{FieldCheck.REFERENCE_CONTAINER_DATA_FIELD}
         );
         return new ImmutablePair<>(pair.getLeft(), (ReferenceContainerDataField)pair.getRight());

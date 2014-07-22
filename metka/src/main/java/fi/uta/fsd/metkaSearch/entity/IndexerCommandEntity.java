@@ -56,6 +56,9 @@ public class IndexerCommandEntity {
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
     private LocalDateTime handled;
 
+    @Column(name = "REPEATED")
+    private Boolean repeated;
+
     public Long getId() {
         return id;
     }
@@ -133,6 +136,14 @@ public class IndexerCommandEntity {
 
     public void setHandled(LocalDateTime handled) {
         this.handled = handled;
+    }
+
+    public Boolean getRepeated() {
+        return repeated == null ? false : repeated;
+    }
+
+    public void setRepeated(Boolean repeated) {
+        this.repeated = (repeated == null ? false : repeated);
     }
 
     @PrePersist
