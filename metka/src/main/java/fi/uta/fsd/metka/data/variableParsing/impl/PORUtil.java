@@ -7,7 +7,7 @@ import spssio.util.NumberSystem;
 import java.util.*;
 
 class PORUtil {
-    private static NumberParser parser = new NumberParser(new NumberSystem(10, null));
+    private static NumberParser parser = new NumberParser(new NumberSystem(30, null));
     public static Double parseDouble(String value) throws NumberFormatException {
         parser.reset();
         double result = parser.parseDouble(value);

@@ -3,9 +3,9 @@ package fi.uta.fsd.metkaSearch.results;
 public class RevisionResult implements SearchResult {
     private final ResultList.ResultType type = ResultList.ResultType.REVISION;
     private final Long id;
-    private final Integer no;
+    private final Long no;
 
-    public RevisionResult(Long id, Integer no) {
+    public RevisionResult(Long id, Long no) {
         this.id = id;
         this.no = no;
     }
@@ -19,7 +19,7 @@ public class RevisionResult implements SearchResult {
         return id;
     }
 
-    public Integer getNo() {
+    public Long getNo() {
         return no;
     }
 

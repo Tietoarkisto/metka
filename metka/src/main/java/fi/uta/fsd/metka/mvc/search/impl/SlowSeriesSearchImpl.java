@@ -114,7 +114,7 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
                 continue;
             }
 
-            RevisionEntity revision = em.find(RevisionEntity.class, new RevisionKey(result.getId(), result.getNo()));
+            RevisionEntity revision = em.find(RevisionEntity.class, new RevisionKey(result.getId(), result.getNo().intValue()));
             if(revision != null && !StringUtils.isEmpty(revision.getData())) {
                 RevisionData data = json.readRevisionDataFromString(revision.getData());
                 results.add(new RevisionDataRemovedContainer(data, entity.getRemoved()));

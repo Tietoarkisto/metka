@@ -37,6 +37,8 @@ public interface GeneralRepository {
      */
     public List<RevisionData> getLatestRevisionsForType(ConfigurationType type, Boolean approvedOnly) throws IOException;
 
+    public RevisionData getLatestRevisionForId(Long id, boolean approvedOnly) throws IOException;
+
     public RevisionData getRevision(Long id, Integer revision) throws IOException;
 
     public String getRevisionData(Long id, Integer revision);

@@ -46,7 +46,7 @@ public class ExpertSearchService {
             for(RevisionResult result : results) {
                 try {
                     Pair<Boolean, LocalDateTime> info = general.getRevisionableRemovedInfo(result.getId());
-                    RevisionData revision = general.getRevision(result.getId(), result.getNo());
+                    RevisionData revision = general.getRevision(result.getId(), result.getNo().intValue());
                     ExpertSearchRevisionQueryResult qr = new ExpertSearchRevisionQueryResult();
                     if(info.getLeft()) {
                         qr.setState(UIRevisionState.REMOVED);

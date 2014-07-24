@@ -289,13 +289,16 @@ public class SpringLuceneTests {
     public void studyIndexTest() throws IOException {
         DirectoryManager.DirectoryPath path = new DirectoryManager.DirectoryPath(false, IndexerConfigurationType.REVISION, "fi", ConfigurationType.STUDY.toValue());
         List<StudyEntity> studyList = em.createQuery("SELECT s FROM StudyEntity s", StudyEntity.class).getResultList();
+        long start = System.currentTimeMillis();
         for(StudyEntity study : studyList) {
-            List<RevisionEntity> revisions = em.createQuery("SELECT r FROM RevisionEntity r WHERE r.key.revisionableId=:id", RevisionEntity.class)
-                    .setParameter("id", study.getId())
-                    .getResultList();
-            for(RevisionEntity revision : revisions) {
-                indexer.addCommand(RevisionIndexerCommand.index(path, revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo()));
-            }
+            //if(study.getId() != 19) {
+                List<RevisionEntity> revisions = em.createQuery("SELECT r FROM RevisionEntity r WHERE r.key.revisionableId=:id", RevisionEntity.class)
+                        .setParameter("id", study.getId())
+                        .getResultList();
+                for(RevisionEntity revision : revisions) {
+                    indexer.addCommand(RevisionIndexerCommand.index(path, revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo()));
+                }
+            //}
         }
         indexer.addCommand(RevisionIndexerCommand.stop(path));
         try {
@@ -305,6 +308,7 @@ public class SpringLuceneTests {
         } catch(InterruptedException iex) {
             iex.printStackTrace();
         }
+        System.err.println("indexing "+studyList.size()+" studies with large (but varied) variable counts took "+ (System.currentTimeMillis()-start)/1000 + "s");
     }
 
     @Test
@@ -336,7 +340,7 @@ public class SpringLuceneTests {
 
     @Test
     public void expertSearchTest() throws IOException, QueryNodeException {
-        SearchCommand<RevisionResult> command = ExpertRevisionSearchCommand.build("+seriesid:testi", configs);
+        SearchCommand<RevisionResult> command = ExpertRevisionSearchCommand.build("variables.variables.valuelabels.label:nainen", configs);
         ResultList<RevisionResult> results = searcher.executeSearch(command);
         System.err.println("Results: "+results.getResults().size());
         for(RevisionResult result : results.getResults()) {
@@ -529,8 +533,8 @@ public class SpringLuceneTests {
         analyzers.put("float2", new KeywordAnalyzer());
 
         Map<String, NumericConfig> nums = new HashMap<>();
-        nums.put("int3", new NumericConfig(1, new DecimalFormat(), FieldType.NumericType.INT));
-        nums.put("float3", new NumericConfig(1, new DecimalFormat(), FieldType.NumericType.FLOAT));
+        nums.put("int3", new NumericConfig(4, new DecimalFormat(), FieldType.NumericType.INT));
+        nums.put("float3", new NumericConfig(4, new DecimalFormat(), FieldType.NumericType.FLOAT));
 
         TEST_ANALYZER = new PerFieldAnalyzerWrapper(new WhitespaceAnalyzer(LuceneConfig.USED_VERSION), analyzers);
         Document document;
@@ -582,17 +586,16 @@ public class SpringLuceneTests {
         System.err.println("");
         System.err.println("-- Results --");
 
-        performNumberRangeTestQuery("1");
-        performNumberRangeTestQuery("1.1");
-        performNumberRangeTestQuery("1.5");
-        performNumberRangeTestQuery("1*");
-        performNumberRangeTestQuery("[1 2]");
-        performNumberRangeTestQuery("{1 2}");
-        TEST_PARSER.setAllowLeadingWildcard(true);
+        performNumberRangeTestQuery("{1.5 3.5}");
+        performNumberRangeTestQuery("[1.5 3.5]");
+        performNumberRangeTestQuery("{1,5 3,5}");
+        performNumberRangeTestQuery("[1,5 3,5]");
+
+        /*TEST_PARSER.setAllowLeadingWildcard(true);
         System.err.println("Enable allow leading wildcard");
         performNumberRangeTestQuery("*.5");
         TEST_PARSER.setAllowLeadingWildcard(false);
-        System.err.println("Disable allow leading wildcard");
+        System.err.println("Disable allow leading wildcard");*/
     }
 
     private void addNumberRangeDateDocument(int i) throws Exception {

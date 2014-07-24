@@ -117,27 +117,36 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
         String key = query.getTerm().field();
         switch(key) {
             case "key.id":
-                nums.put(key, new NumericConfig(1, new DecimalFormat(), FieldType.NumericType.LONG));
+                nums.put(key, new NumericConfig(4, new DecimalFormat(), FieldType.NumericType.LONG));
                 return;
             case "key.no":
-                nums.put(key, new NumericConfig(1, new DecimalFormat(), FieldType.NumericType.INT));
+                nums.put(key, new NumericConfig(4, new DecimalFormat(), FieldType.NumericType.LONG));
+                return;
+            case "key.configuration.version":
+                nums.put(key, new NumericConfig(4, new DecimalFormat(), FieldType.NumericType.LONG));
                 return;
         }
         String[] splits = key.split(".");
-        String start = (splits.length > 0) ? splits[0] : key;
+        if(splits.length == 0) {
+            splits = new String[1];
+            splits[0] = key;
+        }
+        String start = splits[0];
         if(start.equals("key") || start.equals("state")) {
+
             return;
         }
 
-        String fieldKey = (splits.length > 0) ? splits[splits.length-1] : key;
-        Field field = config.getField(fieldKey);
+        Field field = config.getField(splits[splits.length-1]);
         if(field == null) {
-            // Can't add analyzers or numeric configs
+            addKeywordAnalyzer(key);
             return;
         }
         if(field.getType() == STRING || field.getType() == CONCAT) {
             if(!field.getExact()) {
                 addTextAnalyzer(key);
+            } else {
+                addWhitespaceAnalyzer(key);
             }
         } else if(field.getType() == INTEGER) {
             nums.put(key, new NumericConfig(1, new DecimalFormat(), FieldType.NumericType.LONG));

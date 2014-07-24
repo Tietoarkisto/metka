@@ -7,7 +7,28 @@
 		
 	},
 	"selectionLists": {
-		
+		"statisticstype_list": {
+			"key": "statisticstype_list",
+			"type": "LITERAL",
+			"default": "vald",
+			"options": [
+				{
+					"value": "vald"
+				},
+				{
+					"value": "min"
+				},
+				{
+					"value": "max"
+				},
+				{
+					"value": "mean"
+				},
+				{
+					"value": "stdev"
+				}
+			]
+		}
 	},
 	"references": {
 		"variables_ref": {
@@ -211,7 +232,8 @@
 			"editable": false,
 			"immutable": true,
 			"type": "STRING",
-			"subfield": true
+			"subfield": true,
+			"exact": true
 		},
 		"label": {
 			"key": "label",
@@ -220,7 +242,8 @@
 			"editable": false,
 			"immutable": true,
 			"type": "STRING",
-			"subfield": true
+			"subfield": true,
+			"exact": true
 		},
 		"categorystat": {
 			"_comment": "Should be an INTEGER instead",
@@ -230,7 +253,8 @@
 			"editable": false,
 			"immutable": true,
 			"type": "STRING",
-			"subfield": true
+			"subfield": true,
+			"exact": true
 		},
 		"missing": {
 			"_comment": "Only valid value is Y, might be good to move the value to a selection list",
@@ -238,7 +262,8 @@
 			"translatable": false,
 			"editable": false,
 			"type": "STRING",
-			"subfield": true
+			"subfield": true,
+			"exact": true
 		},
 		"statistics": {
 			"key": "statistics",
@@ -267,7 +292,7 @@
 			"required": true,
 			"editable": false,
 			"immutable": true,
-			"type": "STRING",
+			"type": "REAL",
 			"subfield": true
 		}
 	}

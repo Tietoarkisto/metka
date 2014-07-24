@@ -330,7 +330,13 @@ public class StudyRepositoryImpl implements StudyRepository {
                 if(sdPair.getLeft() != StatusCode.NO_CHANGE_IN_VALUE) {
                     changes = true;
                 }
-                changes = variableParser.merge(data, event.getType(), config) | changes;
+                try {
+                    changes = variableParser.merge(data, event.getType(), config) | changes;
+                } catch(IOException ioe) {
+                    // Couldn't handle variable file for some reason, notify the user. The file link is still removed from the queue
+                    // TODO: Log this exception with info on where it failed
+                    System.err.println("Failed to parse variables for "+id+" because of IOException.");
+                }
             }
         }
 

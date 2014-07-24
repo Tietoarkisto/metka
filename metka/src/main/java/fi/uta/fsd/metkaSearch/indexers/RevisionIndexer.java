@@ -86,24 +86,9 @@ public class RevisionIndexer extends Indexer {
      * @param command
      */
     private void indexCommand(RevisionIndexerCommand command) throws IOException {
-        RevisionData data = general.getRevision(command.getRevisionable(), command.getRevision());
-        if(data == null) {
-            // Nothing to index, possibly make a log event
-            return;
-        }
-        Pair<Boolean, LocalDateTime> removalInfo = general.getRevisionableRemovedInfo(data.getKey().getId());
-        if(removalInfo == null) {
-            // If removal info is null then that means that the actual revisionable object was not found and so there's something deeper wrong
-            return;
-        }
-        Configuration config = configurations.findConfiguration(data.getConfiguration());
-        if(config == null) {
-            // Can't index without configuration, make log event
-            return;
-        }
-        RevisionHandler handler = HandlerFactory.buildRevisionHandler(getIndexer(), data, config, references, removalInfo);
+        RevisionHandler handler = HandlerFactory.buildRevisionHandler(getIndexer(), general, configurations, references);
         try {
-            handler.handle();
+            handler.handle(command);
         } catch(Exception e) {
             e.printStackTrace();
         }

@@ -2,11 +2,14 @@ package fi.uta.fsd.metkaSearch.commands.searcher;
 
 import fi.uta.fsd.metka.data.enums.ConfigurationType;
 import fi.uta.fsd.metkaSearch.LuceneConfig;
+import fi.uta.fsd.metkaSearch.analyzer.CaseInsensitiveKeywordAnalyzer;
+import fi.uta.fsd.metkaSearch.analyzer.CaseInsensitiveWhitespaceAnalyzer;
 import fi.uta.fsd.metkaSearch.analyzer.FinnishVoikkoAnalyzer;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import fi.uta.fsd.metkaSearch.results.*;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.core.KeywordAnalyzer;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -54,6 +57,14 @@ public abstract class RevisionSearchCommandBase<T extends SearchResult> extends 
         return configurationType;
     }
 
+    protected void addKeywordAnalyzer(String key) {
+        analyzers.put(key, CaseInsensitiveKeywordAnalyzer.ANALYZER);
+    }
+
+    protected void addWhitespaceAnalyzer(String key) {
+        analyzers.put(key, CaseInsensitiveWhitespaceAnalyzer.ANALYZER);
+    }
+
     protected void addTextAnalyzer(String key) {
         if(getPath().getLanguage().equals("fi")) {
             analyzers.put(key, FinnishVoikkoAnalyzer.ANALYZER);
@@ -84,13 +95,13 @@ public abstract class RevisionSearchCommandBase<T extends SearchResult> extends 
                     Document document = searcher.doc(doc.doc);
                     IndexableField field = document.getField("key.id");
                     Long id = null;
-                    Integer no = null;
+                    Long no = null;
                     if(field != null) {
                         id = field.numericValue().longValue();
                     }
                     field = document.getField("key.no");
                     if(field != null) {
-                        no = field.numericValue().intValue();
+                        no = field.numericValue().longValue();
                     }
                     list.addResult(new RevisionResult(id, no));
                 } catch(IOException ioe) {

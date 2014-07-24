@@ -141,6 +141,18 @@ public class GeneralRepositoryImpl implements GeneralRepository {
     }
 
     @Override
+    public RevisionData getLatestRevisionForId(Long id, boolean approvedOnly) throws IOException {
+        RevisionableEntity entity = em.find(RevisionableEntity.class, id);
+        if(entity == null) {
+            return null;
+        }
+        if(approvedOnly && entity.getCurApprovedNo() == null) {
+            return null;
+        }
+        return getRevision(id, (approvedOnly) ? entity.getCurApprovedNo() : entity.getLatestRevisionNo());
+    }
+
+    @Override
     public RevisionData getRevision(Long id, Integer revision) throws IOException {
         List<RevisionEntity> revisions =
                 em.createQuery(

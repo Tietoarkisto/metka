@@ -37,6 +37,8 @@ public class ReferenceService {
     /**
      * Returns the current option depicting the value and title of given reference.
      * This is mainly used for indexing to get the actual text that needs to be indexed.
+     * This works only for reference fields and reference selections, reference containers
+     * are handled differently.
      * @param data
      * @param path
      * @return
@@ -50,7 +52,7 @@ public class ReferenceService {
             splits[0] = path;
         }
 
-        // Check that the final path element points to a field that can be a reference with a value, deal with referencecontainers separately with a different call
+        // Check that the final path element points to a field that can be a reference with a value, deal with reference containers separately with a different call
         Field field = config.getField(splits[splits.length-1]);
         if(field == null) {
             return null;
