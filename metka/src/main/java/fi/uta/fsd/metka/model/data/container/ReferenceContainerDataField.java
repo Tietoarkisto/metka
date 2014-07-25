@@ -73,7 +73,7 @@ public class ReferenceContainerDataField extends RowContainerDataField {
                 return new ImmutablePair<>(StatusCode.FOUND_ROW, reference);
             }
         }
-        return null;
+        return new ImmutablePair<>(StatusCode.NO_ROW_WITH_VALUE, null);
     }
 
     /**
