@@ -1,6 +1,6 @@
 package fi.uta.fsd.metka.mvc.controller;
 
-import fi.uta.fsd.metka.mvc.domain.ExpertSearchService;
+import fi.uta.fsd.metka.mvc.services.ExpertSearchService;
 import fi.uta.fsd.metka.transfer.expert.ExpertSearchListResponse;
 import fi.uta.fsd.metka.transfer.expert.ExpertSearchQueryRequest;
 import fi.uta.fsd.metka.transfer.expert.ExpertSearchQueryResponse;

@@ -1,8 +1,8 @@
 package fi.uta.fsd.metkaSearch;
 
-import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.data.repository.GeneralRepository;
-import fi.uta.fsd.metka.mvc.domain.ReferenceService;
+import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
+import fi.uta.fsd.metka.storage.repository.GeneralRepository;
+import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metkaSearch.commands.indexer.IndexerCommand;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.entity.IndexerCommandRepository;

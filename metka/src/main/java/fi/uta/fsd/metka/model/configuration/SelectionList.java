@@ -3,7 +3,7 @@ package fi.uta.fsd.metka.model.configuration;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import fi.uta.fsd.metka.data.enums.SelectionListType;
+import fi.uta.fsd.metka.enums.SelectionListType;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

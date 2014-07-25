@@ -1,17 +1,17 @@
 package fi.uta.fsd.metka.mvc.controller;
 
-import fi.uta.fsd.metka.data.enums.ConfigurationType;
-import fi.uta.fsd.metka.data.util.JSONUtil;
+import fi.uta.fsd.metka.enums.ConfigurationType;
+import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
-import fi.uta.fsd.metka.mvc.domain.ConfigurationService;
-import fi.uta.fsd.metka.mvc.domain.SeriesService;
-import fi.uta.fsd.metka.mvc.domain.simple.ErrorMessage;
-import fi.uta.fsd.metka.mvc.domain.simple.RevisionViewDataContainer;
-import fi.uta.fsd.metka.mvc.domain.simple.transfer.SearchResult;
-import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
-import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchData;
+import fi.uta.fsd.metka.mvc.services.ConfigurationService;
+import fi.uta.fsd.metka.mvc.services.SeriesService;
+import fi.uta.fsd.metka.mvc.services.simple.ErrorMessage;
+import fi.uta.fsd.metka.mvc.services.simple.RevisionViewDataContainer;
+import fi.uta.fsd.metka.mvc.services.simple.transfer.SearchResult;
+import fi.uta.fsd.metka.mvc.services.simple.transfer.TransferObject;
+import fi.uta.fsd.metka.mvc.services.simple.series.SeriesSearchData;
 import fi.uta.fsd.metka.mvc.search.GeneralSearch;
 import fi.uta.fsd.metka.transfer.configuration.ConfigurationMap;
 import fi.uta.fsd.metka.transfer.configuration.GUIConfigurationMap;

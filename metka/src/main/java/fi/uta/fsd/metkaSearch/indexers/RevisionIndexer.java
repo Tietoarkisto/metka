@@ -1,11 +1,9 @@
 package fi.uta.fsd.metkaSearch.indexers;
 
-import fi.uta.fsd.metka.data.enums.ConfigurationType;
-import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.data.repository.GeneralRepository;
-import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.mvc.domain.ReferenceService;
+import fi.uta.fsd.metka.enums.ConfigurationType;
+import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
+import fi.uta.fsd.metka.storage.repository.GeneralRepository;
+import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metkaSearch.commands.indexer.IndexerCommand;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
@@ -13,11 +11,9 @@ import fi.uta.fsd.metkaSearch.entity.IndexerCommandRepository;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import fi.uta.fsd.metkaSearch.handlers.HandlerFactory;
 import fi.uta.fsd.metkaSearch.handlers.RevisionHandler;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.NumericRangeQuery;
-import org.joda.time.LocalDateTime;
 
 import java.io.IOException;
 

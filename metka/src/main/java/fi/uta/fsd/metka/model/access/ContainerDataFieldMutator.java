@@ -30,7 +30,7 @@ final class ContainerDataFieldMutator {
             return pair;
         }
 
-        ContainerDataField field = new ContainerDataField(key);
+        ContainerDataField field = new ContainerDataField(key, 1);
         fieldMap.put(key, field);
         // We can just put a change into the change map. We are creating a new object here. If there was something previously in the map it was obviously incorrect.
         changeMap.put(key, new ContainerChange(key));

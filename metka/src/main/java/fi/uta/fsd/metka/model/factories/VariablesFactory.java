@@ -1,10 +1,10 @@
 package fi.uta.fsd.metka.model.factories;
 
-import fi.uta.fsd.metka.data.entity.RevisionEntity;
-import fi.uta.fsd.metka.data.enums.ConfigurationType;
-import fi.uta.fsd.metka.data.enums.RevisionState;
-import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.data.util.JSONUtil;
+import fi.uta.fsd.metka.storage.entity.RevisionEntity;
+import fi.uta.fsd.metka.enums.ConfigurationType;
+import fi.uta.fsd.metka.enums.RevisionState;
+import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
+import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;

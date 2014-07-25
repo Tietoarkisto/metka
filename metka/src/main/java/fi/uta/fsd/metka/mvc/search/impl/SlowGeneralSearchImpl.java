@@ -1,11 +1,11 @@
 package fi.uta.fsd.metka.mvc.search.impl;
 
-import fi.uta.fsd.metka.data.entity.RevisionEntity;
-import fi.uta.fsd.metka.data.entity.RevisionableEntity;
-import fi.uta.fsd.metka.data.entity.impl.StudyEntity;
-import fi.uta.fsd.metka.data.entity.key.RevisionKey;
-import fi.uta.fsd.metka.data.enums.ConfigurationType;
-import fi.uta.fsd.metka.data.util.JSONUtil;
+import fi.uta.fsd.metka.storage.entity.RevisionEntity;
+import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
+import fi.uta.fsd.metka.storage.entity.impl.StudyEntity;
+import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
+import fi.uta.fsd.metka.enums.ConfigurationType;
+import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.mvc.search.GeneralSearch;
 import fi.uta.fsd.metka.mvc.search.RevisionDataRemovedContainer;

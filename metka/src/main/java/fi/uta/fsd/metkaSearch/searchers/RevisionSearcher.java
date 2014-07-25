@@ -1,6 +1,6 @@
 package fi.uta.fsd.metkaSearch.searchers;
 
-import fi.uta.fsd.metka.data.enums.ConfigurationType;
+import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metkaSearch.commands.searcher.SearchCommand;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import fi.uta.fsd.metkaSearch.results.ResultHandler;

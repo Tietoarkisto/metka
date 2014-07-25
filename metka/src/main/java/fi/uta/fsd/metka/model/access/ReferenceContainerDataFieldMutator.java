@@ -30,7 +30,7 @@ final class ReferenceContainerDataFieldMutator {
             return pair;
         }
 
-        ReferenceContainerDataField field = new ReferenceContainerDataField(key);
+        ReferenceContainerDataField field = new ReferenceContainerDataField(key, 1);
         fieldMap.put(key, field);
         // We can just put a change into the change map. We are creating a new object here. If there was something previously in the map it was obviously incorrect.
         changeMap.put(key, new ContainerChange(key));

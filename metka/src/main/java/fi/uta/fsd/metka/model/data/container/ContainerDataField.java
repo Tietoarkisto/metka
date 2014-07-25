@@ -3,20 +3,28 @@ package fi.uta.fsd.metka.model.data.container;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
+import fi.uta.fsd.metka.model.access.enums.StatusCode;
+import fi.uta.fsd.metka.model.data.change.Change;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.joda.time.LocalDateTime;
+import org.springframework.util.StringUtils;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ContainerDataField extends DataField {
+public class ContainerDataField extends RowContainerDataField {
     @XmlElement private final List<DataRow> rows = new ArrayList<>();
 
     @JsonCreator
-    public ContainerDataField(@JsonProperty("key") String key) {
-        super(key);
+    public ContainerDataField(@JsonProperty("key") String key, @JsonProperty("rowIdSeq") Integer rowIdSeq) {
+        super(key, rowIdSeq);
     }
 
     public List<DataRow> getRows() {
@@ -24,7 +32,7 @@ public class ContainerDataField extends DataField {
     }
 
     @JsonIgnore
-    public DataRow getRow(Integer rowId) {
+    public DataRow getRowWithId(Integer rowId) {
         if(rowId == null || rowId < 1) {
             // Row can not be found since no rowId given.
             return null;
@@ -38,25 +46,64 @@ public class ContainerDataField extends DataField {
         return null;
     }
 
-    @JsonIgnore
-    public ContainerDataField putRow(DataRow row) {
-        if(row == null) {
-            return this;
+    /**
+     * Searches through a list of rows for a row containing given value in a field with given id.
+     *
+     * @param key Field key of field where value should be found
+     * @param value Value that is searched for
+     * @return DataRow that contains given value in requested field, or null if not found.
+     */
+    public Pair<StatusCode, DataRow> getRowWithFieldValue(String key, String value) {
+        for(DataRow row : rows) {
+            Pair<StatusCode, SavedDataField> pair = row.dataField(SavedDataFieldCall.get(key));
+            if(pair.getLeft() != StatusCode.FIELD_FOUND) {
+                continue;
+            }
+            SavedDataField field = pair.getRight();
+            if(field.valueEquals(value)) {
+                return new ImmutablePair<>(StatusCode.FOUND_ROW, row);
+            }
+        }
+        return new ImmutablePair<>(StatusCode.NO_ROW_WITH_VALUE, null);
+    }
+
+    /**
+     * Uses getRowWithFieldValue to search for existing row with given value in a given field.
+     * If row is not found creates a new row and inserts it to the list.
+     * Since it can be assumed that it's desirable to find the field with the given value from the rows list
+     * the field is created on the row with the given value
+     *
+     * @param key Field key of the field where the value should be found
+     * @param value Value that is searched for
+     * @param changeMap Map where the container change containing this rows changes should reside
+     * @param time Time for possible creation of row and field. Can be null
+     * @return Tuple of StatusCode and DataRow. StatusCode tells if the returned row is a new insert or not
+     */
+    public Pair<StatusCode, DataRow> getOrCreateRowWithFieldValue(String key, String value, Map<String, Change> changeMap, LocalDateTime time) {
+        if(changeMap == null || StringUtils.isEmpty(value)) {
+            return new ImmutablePair<>(StatusCode.INCORRECT_PARAMETERS, null);
         }
 
-        // Check to see that the row doesn't yet exist in this container
-        // Rows should not be listed twice
-        if(getRow(row.getRowId()) == null) {
+        Pair<StatusCode, DataRow> pair = getRowWithFieldValue(key, value);
+        if(pair.getLeft() == StatusCode.FOUND_ROW) {
+            return pair;
+        } else {
+            if(time == null) {
+                time = new LocalDateTime();
+            }
+            DataRow row = DataRow.build(this);
             rows.add(row);
+
+            row.dataField(SavedDataFieldCall.set(key).setTime(time).setValue(value).setChangeMap(changeMap));
+            return new ImmutablePair<>(StatusCode.NEW_ROW, row);
         }
-        return this;
     }
 
     @Override
     public DataField copy() {
-        ContainerDataField container = new ContainerDataField(getKey());
+        ContainerDataField container = new ContainerDataField(getKey(), getRowIdSeq());
         for(DataRow row : rows) {
-            container.putRow(row.copy());
+            container.rows.add(row.copy());
         }
         return container;
     }

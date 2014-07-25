@@ -1,12 +1,12 @@
 package fi.uta.fsd.metka.mvc.controller;
 
-import fi.uta.fsd.metka.data.enums.ConfigurationType;
+import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.mvc.domain.ConfigurationService;
-import fi.uta.fsd.metka.mvc.domain.FileService;
-import fi.uta.fsd.metka.mvc.domain.simple.ErrorMessage;
-import fi.uta.fsd.metka.mvc.domain.simple.RevisionViewDataContainer;
-import fi.uta.fsd.metka.mvc.domain.simple.transfer.TransferObject;
+import fi.uta.fsd.metka.mvc.services.ConfigurationService;
+import fi.uta.fsd.metka.mvc.services.FileService;
+import fi.uta.fsd.metka.mvc.services.simple.ErrorMessage;
+import fi.uta.fsd.metka.mvc.services.simple.RevisionViewDataContainer;
+import fi.uta.fsd.metka.mvc.services.simple.transfer.TransferObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;

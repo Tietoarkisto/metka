@@ -1,6 +1,6 @@
 package fi.uta.fsd.metka.transfer.reference;
 
-import fi.uta.fsd.metka.mvc.domain.simple.ErrorMessage;
+import fi.uta.fsd.metka.mvc.services.simple.ErrorMessage;
 
 import java.util.ArrayList;
 import java.util.List;

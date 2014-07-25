@@ -1,9 +1,9 @@
-import fi.uta.fsd.metka.data.entity.RevisionEntity;
-import fi.uta.fsd.metka.data.entity.impl.SeriesEntity;
-import fi.uta.fsd.metka.data.entity.impl.StudyEntity;
-import fi.uta.fsd.metka.data.entity.key.RevisionKey;
-import fi.uta.fsd.metka.data.enums.ConfigurationType;
-import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
+import fi.uta.fsd.metka.storage.entity.RevisionEntity;
+import fi.uta.fsd.metka.storage.entity.impl.SeriesEntity;
+import fi.uta.fsd.metka.storage.entity.impl.StudyEntity;
+import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
+import fi.uta.fsd.metka.enums.ConfigurationType;
+import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metkaSearch.IndexerComponent;
 import fi.uta.fsd.metkaSearch.LuceneConfig;
 import fi.uta.fsd.metkaSearch.SearcherComponent;
@@ -26,7 +26,6 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.KeywordAnalyzer;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
-import org.apache.lucene.analysis.util.CharacterUtils;
 import org.apache.lucene.document.*;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
@@ -46,7 +45,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -399,8 +397,6 @@ public class SpringLuceneTests {
         analyzers.put("date2", new KeywordAnalyzer());
         analyzers.put("date_description", new FinnishVoikkoAnalyzer());
         TEST_ANALYZER = new PerFieldAnalyzerWrapper(new WhitespaceAnalyzer(LuceneConfig.USED_VERSION), analyzers);
-        Document document;
-        LocalDateTime dt;
 
         System.err.println("-- Analyzer --");
         System.err.println("Documents are analyzed using WhiteSpaceAnalyzer as the default analyzer, using FinnishVoikkoAnalyzer for field 'date1' and 'date_description' and using KeywordAnalyzer of field 'date2'");
@@ -507,7 +503,6 @@ public class SpringLuceneTests {
         }
         System.err.println("Performing query: "+query);
         TEST_PERFORM_NUM = 0;
-        String field;
         performDateRangeTestQuery(query, "date_description");
         performDateRangeTestQuery(query, "date1");
         performDateRangeTestQuery(query, "date2");
@@ -537,8 +532,6 @@ public class SpringLuceneTests {
         nums.put("float3", new NumericConfig(4, new DecimalFormat(), FieldType.NumericType.FLOAT));
 
         TEST_ANALYZER = new PerFieldAnalyzerWrapper(new WhitespaceAnalyzer(LuceneConfig.USED_VERSION), analyzers);
-        Document document;
-        LocalDateTime dt;
 
         System.err.println("-- Analyzer --");
         System.err.println("Documents are analyzed using WhiteSpaceAnalyzer as the default analyzer, using FinnishVoikkoAnalyzer for field 'int1' and 'float1' and using KeywordAnalyzer of fields 'int2' and 'float2'");
@@ -619,7 +612,6 @@ public class SpringLuceneTests {
         }
         System.err.println("Performing query: "+query);
         TEST_PERFORM_NUM = 0;
-        String field;
 
         performNumberRangeTestQuery(query, "int1");
         performNumberRangeTestQuery(query, "int2");
@@ -648,8 +640,6 @@ public class SpringLuceneTests {
         analyzers.put("phrase4", new KeywordAnalyzer());
 
         TEST_ANALYZER = new PerFieldAnalyzerWrapper(new WhitespaceAnalyzer(LuceneConfig.USED_VERSION), analyzers);
-        Document document;
-        LocalDateTime dt;
 
         System.err.println("-- Analyzer --");
         System.err.println("Documents are analyzed using WhiteSpaceAnalyzer as the default analyzer, using FinnishVoikkoAnalyzer for field 'phrase1' and using KeywordAnalyzer of field 'phrase2'");
@@ -720,7 +710,6 @@ public class SpringLuceneTests {
         }
         System.err.println("Performing query: "+query);
         TEST_PERFORM_NUM = 0;
-        String field;
 
         performPhraseTestQuery(query, "phrase1");
         performPhraseTestQuery(query, "phrase2");

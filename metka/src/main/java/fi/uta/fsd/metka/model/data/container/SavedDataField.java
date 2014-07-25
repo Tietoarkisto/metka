@@ -13,10 +13,23 @@ import javax.xml.bind.annotation.XmlElement;
 
 import java.util.Map;
 
-import static fi.uta.fsd.metka.data.util.ModelValueUtil.*;
+import static fi.uta.fsd.metka.storage.util.ConversionUtil.stringToLong;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SavedDataField extends DataField {
+    public static Long valueAsInteger(SavedDataField saved) {
+        if(saved == null) {
+            return null;
+        }
+        return saved.valueAsInteger();
+    }
+
+    public static String valueAsString(SavedDataField saved) {
+        if(saved == null) {
+            return "";
+        }
+        return saved.getActualValue();
+    }
     @XmlElement private SavedValue originalValue;
     @XmlElement private SavedValue modifiedValue;
 
@@ -75,7 +88,7 @@ public class SavedDataField extends DataField {
         if(time == null) {
             time = new LocalDateTime();
         }
-        this.modifiedValue = setSimpleValue(createSavedValue(time), value);
+        this.modifiedValue = SavedValue.build(time).setToSimpleValue(value);
         changeMap.put(getKey(), new Change(getKey()));
         return this;
     }
@@ -108,16 +121,42 @@ public class SavedDataField extends DataField {
 
     /**
      * Convenience method for returning the actual value in this SavedDataField.
-     * NOTICE: Returns null if hasValue returns false or if the actual value is null.
+     * NOTICE: Returns empty string if hasValue returns false or if the actual value is null.
      *
-     * @return String containing the actual value or null if value doesn't exist
+     * @return String containing the actual value or empty string if value doesn't exist
      */
     @JsonIgnore
     public String getActualValue() {
+        String value = "";
         if(hasValue()) {
             // Assume saved value is SimpleValue, if there's some change to this later then adapt this method
-            return ((SimpleValue)getValue().getValue()).getValue();
-        } else return null;
+
+            value = ((SimpleValue)getValue().getValue()).getValue();
+            if(value == null) {
+                value = "";
+            }
+        }
+        return value;
+    }
+
+    /**
+     * If there is a value then assume SimpleValue and return it as a Long.
+     * INTEGER type is a description, not an implementation requirement.
+     * This is a convenience method and so it assumes you want the most recent value and so it uses
+     * getValue() method on SavedDataField to get value.
+     * NOTICE:  This does not check the configuration so if the value is DERIVED then only the reference part
+     *          of that value gets returned through ConversionUtil.stringToLong conversion.
+     * NOTICE:  No matter what the configuration for the field says this method returns ConversionUtil parsed integer.
+     *          This can return null.
+     * @return Integer gained by using ConversionUtil.stringToInteger on the simple value representation if value is found.
+     */
+    @JsonIgnore public Long valueAsInteger() {
+        Long number = null;
+        if(hasValue()) {
+            number = stringToLong(getActualValue());
+        }
+
+        return number;
     }
 
     @Override

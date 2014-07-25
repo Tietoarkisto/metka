@@ -1,7 +1,7 @@
 package fi.uta.fsd.metka.mvc.controller;
 
-import fi.uta.fsd.metka.mvc.domain.SettingsService;
-import fi.uta.fsd.metka.mvc.domain.requests.UploadRequest;
+import fi.uta.fsd.metka.mvc.services.SettingsService;
+import fi.uta.fsd.metka.mvc.services.requests.UploadRequest;
 import fi.uta.fsd.metka.mvc.validator.UploadRequestValidator;
 import fi.uta.fsd.metkaSearch.IndexerComponent;
 import org.springframework.beans.factory.annotation.Autowired;

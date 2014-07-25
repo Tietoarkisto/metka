@@ -1,6 +1,6 @@
 package fi.uta.fsd.metka.mvc.validator;
 
-import fi.uta.fsd.metka.mvc.domain.requests.UploadRequest;
+import fi.uta.fsd.metka.mvc.services.requests.UploadRequest;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 

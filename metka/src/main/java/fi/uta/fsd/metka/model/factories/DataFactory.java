@@ -1,6 +1,6 @@
 package fi.uta.fsd.metka.model.factories;
 
-import fi.uta.fsd.metka.data.entity.RevisionEntity;
+import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.ConfigurationKey;
@@ -16,8 +16,7 @@ public abstract class DataFactory {
     protected RevisionData createInitialRevision(RevisionEntity entity, Configuration config, LocalDateTime time) {
         RevisionData data = new RevisionData(
                 new RevisionKey(entity.getKey().getRevisionableId(), entity.getKey().getRevisionNo()),
-                config.getKey(),
-                1
+                config.getKey()
         );
         data.setState(entity.getState());
         data.dataField(SavedDataFieldCall.set(config.getIdField()).setValue(entity.getKey().getRevisionableId().toString()).setTime(time));
@@ -44,8 +43,7 @@ public abstract class DataFactory {
     public static RevisionData createNewRevisionData(RevisionEntity entity, RevisionData oldData, ConfigurationKey config) {
         RevisionData data = new RevisionData(
                 new RevisionKey(entity.getKey().getRevisionableId(), entity.getKey().getRevisionNo()),
-                config,
-                oldData.getRowIdSeq()
+                config
         );
         data.setState(entity.getState());
 

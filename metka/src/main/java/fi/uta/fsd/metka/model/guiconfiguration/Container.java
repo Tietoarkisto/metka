@@ -1,8 +1,8 @@
 package fi.uta.fsd.metka.model.guiconfiguration;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import fi.uta.fsd.metka.data.enums.ContainerType;
-import fi.uta.fsd.metka.data.enums.SectionState;
+import fi.uta.fsd.metka.enums.ContainerType;
+import fi.uta.fsd.metka.enums.SectionState;
 import fi.uta.fsd.metka.model.general.TranslationObject;
 
 import javax.xml.bind.annotation.XmlAccessType;

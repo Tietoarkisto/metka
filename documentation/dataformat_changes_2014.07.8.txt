@@ -12,3 +12,10 @@ exact is a STRING type field exclusive attribute and defaults to false. It tells
 Both of these values are temporary and should be moved to configuration formed specifically for indexer.
 Configuration->SelectionList:
 added sublistKey attribute for SUBLIST type selectionLists so now the target list for sublist comes from this value instead of the key value in the SelectionList. This allows the implementation of user helping features where they can just write the map key of the SelectionList instead of having to write the key twice. This is implemented (if there's time) at the same time as for other objects (like Field).
+
+-- 2014.07.25 additions --
+ContainerDataField and ReferenceContainerDataField both inherit now from common RowContainerDataField.
+RowId sequence moved from RevisionData to RowContainerDataField. This means slightly more data to save but it's also more sensible since RevisionData doesn't have to be moved around just for the rowId. After this rowId is only unique within a single RowContainerDataField which is enough in any case.
+SavedReference and DataRow both inherit now from common ContainerRow class.
+Moved key, rowId and removed values to ContainerRow class from SavedReference and DataRow
+Removed originalValue and modifiedValue from SavedReference and added simple reference attribute since modifying the value of a reference row is not a sensible notion.

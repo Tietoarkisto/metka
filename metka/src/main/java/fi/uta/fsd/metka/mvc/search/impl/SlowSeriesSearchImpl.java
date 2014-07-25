@@ -1,14 +1,14 @@
 package fi.uta.fsd.metka.mvc.search.impl;
 
-import fi.uta.fsd.metka.data.entity.RevisionEntity;
-import fi.uta.fsd.metka.data.entity.RevisionableEntity;
-import fi.uta.fsd.metka.data.entity.impl.SeriesEntity;
-import fi.uta.fsd.metka.data.entity.key.RevisionKey;
-import fi.uta.fsd.metka.data.util.JSONUtil;
+import fi.uta.fsd.metka.storage.entity.RevisionEntity;
+import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
+import fi.uta.fsd.metka.storage.entity.impl.SeriesEntity;
+import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
+import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.SavedDataField;
-import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchSO;
+import fi.uta.fsd.metka.mvc.services.simple.series.SeriesSearchSO;
 import fi.uta.fsd.metka.mvc.search.RevisionDataRemovedContainer;
 import fi.uta.fsd.metka.mvc.search.SeriesSearch;
 import fi.uta.fsd.metkaSearch.SearcherComponent;
@@ -28,7 +28,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static fi.uta.fsd.metka.data.util.ConversionUtil.*;
+import static fi.uta.fsd.metka.storage.util.ConversionUtil.*;
 
 @Repository("seriesSearch")
 public class SlowSeriesSearchImpl implements SeriesSearch {
@@ -61,7 +61,7 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
             RevisionData revData = json.readRevisionDataFromString(data);
             // Use the method with less sanity checks since there's no point in getting configuration here.
             SavedDataField field = revData.dataField(SavedDataFieldCall.get("seriesabbr")).getRight();
-            if(!StringUtils.isEmpty(field.getActualValue())) list.add(field.getActualValue());
+            if(field != null && !StringUtils.isEmpty(field.getActualValue())) list.add(field.getActualValue());
         }
         Collections.sort(list);
         return list;

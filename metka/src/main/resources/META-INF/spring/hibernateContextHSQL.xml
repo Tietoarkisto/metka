@@ -26,6 +26,6 @@
                 <property name="generateDdl" value="true" />
             </bean>
         </property>
-        <property name="packagesToScan" value="fi.uta.fsd.metka.data.entity" />
+        <property name="packagesToScan" value="fi.uta.fsd.metka.storage.entity" />
     </bean>
 </beans>

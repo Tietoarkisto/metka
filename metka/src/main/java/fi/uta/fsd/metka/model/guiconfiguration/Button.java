@@ -1,8 +1,8 @@
 package fi.uta.fsd.metka.model.guiconfiguration;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import fi.uta.fsd.metka.data.enums.ButtonType;
-import fi.uta.fsd.metka.data.enums.VisibilityState;
+import fi.uta.fsd.metka.enums.ButtonType;
+import fi.uta.fsd.metka.enums.VisibilityState;
 import fi.uta.fsd.metka.model.general.TranslationObject;
 
 import javax.xml.bind.annotation.XmlAccessType;

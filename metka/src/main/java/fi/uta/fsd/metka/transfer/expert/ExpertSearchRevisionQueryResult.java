@@ -1,7 +1,7 @@
 package fi.uta.fsd.metka.transfer.expert;
 
-import fi.uta.fsd.metka.data.enums.ConfigurationType;
-import fi.uta.fsd.metka.data.enums.UIRevisionState;
+import fi.uta.fsd.metka.enums.ConfigurationType;
+import fi.uta.fsd.metka.enums.UIRevisionState;
 
 public class ExpertSearchRevisionQueryResult {
     private String title;

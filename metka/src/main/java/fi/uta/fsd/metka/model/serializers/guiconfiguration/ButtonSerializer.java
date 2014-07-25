@@ -3,7 +3,7 @@ package fi.uta.fsd.metka.model.serializers.guiconfiguration;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import fi.uta.fsd.metka.data.enums.VisibilityState;
+import fi.uta.fsd.metka.enums.VisibilityState;
 import fi.uta.fsd.metka.model.guiconfiguration.Button;
 import fi.uta.fsd.metka.model.serializers.ObjectSerializer;
 

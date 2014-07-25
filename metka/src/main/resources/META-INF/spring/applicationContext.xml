@@ -27,7 +27,7 @@
 
     <import resource="hibernateContext.xml" />
 
-    <bean id="startupScanner" class="fi.uta.fsd.metka.data.automation.StartupScanner" />
+    <bean id="startupScanner" class="fi.uta.fsd.metka.automation.StartupScanner" />
 
     <bean id="metkaObjectMapper" class="fi.uta.fsd.metka.mvc.MetkaObjectMapper" />
 

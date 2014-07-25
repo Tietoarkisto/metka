@@ -11,10 +11,9 @@ public enum StatusCode {
     CONFIG_FIELD_LEVEL_MISMATCH,        // Requested field was not at right level, either a top level field was requested and config says field is a subfield or the other way around
     FIELD_TYPE_MISMATCH,                // Found field did not pass instanceof check
     INCORRECT_PARAMETERS,               // Some of the parameters provided to the method were not sufficient or were in some way incorrect
-    FOUND_ROW,                          // Used to indicate that old row was used with the request
+    NO_ROW_WITH_VALUE,                  // Used to indicate that no row with given value was found
+    FOUND_ROW,                          // Used to indicate that old row was found with the request
     NEW_ROW,                            // Used to indicate that a new row was created with the request
-    FOUND_REFERENCE,                    // Used to indicate that old reference was used with the request
-    NEW_REFERENCE,                      // Used to indicate that a new reference was created with the request
     FIELD_NOT_EDITABLE,                 // Field is not editable, it cannot be edited by user
     FIELD_NOT_MUTABLE,                  // Field is not immutable, value cannot change once given
     FIELD_NOT_WRITABLE                  // Field is not writable, it should not be written to revision data

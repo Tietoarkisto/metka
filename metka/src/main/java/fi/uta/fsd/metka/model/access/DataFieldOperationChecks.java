@@ -1,6 +1,6 @@
 package fi.uta.fsd.metka.model.access;
 
-import fi.uta.fsd.metka.data.enums.FieldType;
+import fi.uta.fsd.metka.enums.FieldType;
 import fi.uta.fsd.metka.model.access.enums.ConfigCheck;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;

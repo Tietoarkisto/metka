@@ -1,6 +1,6 @@
 package fi.uta.fsd.metka.mvc.search;
 
-import fi.uta.fsd.metka.data.enums.ConfigurationType;
+import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import org.springframework.transaction.annotation.Transactional;
 

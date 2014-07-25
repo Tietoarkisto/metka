@@ -1,6 +1,6 @@
 package fi.uta.fsd.metka.transfer.reference;
 
-import fi.uta.fsd.metka.data.enums.ReferenceTitleType;
+import fi.uta.fsd.metka.enums.ReferenceTitleType;
 
 /**
  * Provides typed title for reference option

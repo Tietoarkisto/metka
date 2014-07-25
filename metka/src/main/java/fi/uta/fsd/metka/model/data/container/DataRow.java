@@ -1,15 +1,14 @@
 package fi.uta.fsd.metka.model.data.container;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import fi.uta.fsd.metka.data.util.ModelAccessUtil;
+import fi.uta.fsd.metka.model.interfaces.Row;
+import fi.uta.fsd.metka.storage.util.ModelAccessUtil;
 import fi.uta.fsd.metka.model.access.DataFieldOperator;
 import fi.uta.fsd.metka.model.access.calls.DataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.DataFieldCallBase;
 import fi.uta.fsd.metka.model.access.enums.ConfigCheck;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
-import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.change.ContainerChange;
 import fi.uta.fsd.metka.model.data.change.RowChange;
@@ -28,34 +27,18 @@ import java.util.Map;
  * Single row of fields in a container is saved through this
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DataRow implements ModelAccessUtil.PathNavigable, DataFieldContainer {
-    @XmlElement private final String key;
-    @XmlElement private final Integer rowId;
+public class DataRow extends ContainerRow implements ModelAccessUtil.PathNavigable, DataFieldContainer, Row {
+    public static DataRow build(ContainerDataField container) {
+        return new DataRow(container.getKey(), container.getNewRowId());
+    }
+
     @XmlElement private final Map<String, DataField> fields = new HashMap<>();
-    @XmlElement private Boolean removed = false;
     @XmlElement private LocalDateTime savedAt;
     @XmlElement private String savedBy;
 
     @JsonCreator
     public DataRow(@JsonProperty("key") String key, @JsonProperty("rowId") Integer rowId) {
-        this.key = key;
-        this.rowId = rowId;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public Integer getRowId() {
-        return rowId;
-    }
-
-    public Boolean isRemoved() {
-        return (removed == null ? false : removed);
-    }
-
-    public void setRemoved(Boolean removed) {
-        this.removed = (removed == null ? false : removed);
+        super(key, rowId);
     }
 
     public LocalDateTime getSavedAt() {
@@ -79,53 +62,31 @@ public class DataRow implements ModelAccessUtil.PathNavigable, DataFieldContaine
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+    public void remove(Map<String, Change> changeMap) {
+        if(changeMap == null || isRemoved()) {
+            // If changeMap is not present or if the row is already removed there's no point in continuing
+            return;
+        }
 
-        DataRow that = (DataRow) o;
-
-        if (!getKey().equals(that.getKey())) return false;
-        if (!rowId.equals(that.rowId)) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + getKey().hashCode();
-        result = 31 * result + rowId.hashCode();
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "Json[name="+this.getClass().getSimpleName()+", key="+getKey()+", rowId="+rowId+"]";
-    }
-
-    // Helper methods
-    @JsonIgnore
-    public DataField getField(String key) {
-        return fields.get(key);
-    }
-
-    @JsonIgnore
-    public void putField(DataField field) {
-        fields.put(field.getKey(), field);
-    }
-
-    public static DataRow build(ContainerDataField container, RevisionData revision) {
-        return new DataRow(container.getKey(), revision.getNewRowId());
+        setRemoved(true);
+        ContainerChange containerChange = (ContainerChange)changeMap.get(getKey());
+        if(containerChange == null) {
+            containerChange = new ContainerChange(getKey());
+            changeMap.put(getKey(), containerChange);
+        }
+        RowChange rowChange = containerChange.get(getRowId());
+        if(rowChange == null) {
+            rowChange = new RowChange(getRowId());
+            containerChange.put(rowChange);
+        }
     }
 
     public DataRow copy() {
-        DataRow row = new DataRow(getKey(), rowId);
+        DataRow row = new DataRow(getKey(), getRowId());
         row.setSavedAt(new LocalDateTime(savedAt));
         row.setSavedBy(savedBy);
         for(DataField field : fields.values()) {
-            row.putField(field.copy());
+            row.fields.put(field.getKey(), field.copy());
         }
         return row;
     }

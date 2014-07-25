@@ -1,14 +1,10 @@
 package fi.uta.fsd.metkaSearch.handlers;
 
-import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.data.repository.GeneralRepository;
-import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.mvc.domain.ReferenceService;
+import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
+import fi.uta.fsd.metka.storage.repository.GeneralRepository;
+import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metkaSearch.directory.DirectoryInformation;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
-import org.apache.commons.lang3.tuple.Pair;
-import org.joda.time.LocalDateTime;
 
 public final class HandlerFactory {
     public static RevisionHandler buildRevisionHandler(DirectoryInformation indexer, GeneralRepository generalRepo, ConfigurationRepository configurations, ReferenceService references) throws UnsupportedOperationException {

@@ -1,6 +1,6 @@
 package fi.uta.fsd.metkaSearch.commands.indexer;
 
-import fi.uta.fsd.metka.data.enums.ConfigurationType;
+import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import org.springframework.util.StringUtils;

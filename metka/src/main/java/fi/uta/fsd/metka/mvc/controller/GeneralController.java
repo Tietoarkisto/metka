@@ -1,11 +1,11 @@
 package fi.uta.fsd.metka.mvc.controller;
 
-import fi.uta.fsd.metka.data.enums.repositoryResponses.DraftRemoveResponse;
-import fi.uta.fsd.metka.data.enums.repositoryResponses.LogicalRemoveResponse;
-import fi.uta.fsd.metka.data.util.JSONUtil;
+import fi.uta.fsd.metka.enums.repositoryResponses.DraftRemoveResponse;
+import fi.uta.fsd.metka.enums.repositoryResponses.LogicalRemoveResponse;
+import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.mvc.domain.GeneralService;
-import fi.uta.fsd.metka.mvc.domain.simple.ErrorMessage;
+import fi.uta.fsd.metka.mvc.services.GeneralService;
+import fi.uta.fsd.metka.mvc.services.simple.ErrorMessage;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;

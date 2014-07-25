@@ -1,36 +1,25 @@
 package fi.uta.fsd.metkaSearch.handlers;
 
-import fi.uta.fsd.metka.data.collecting.ReferenceHandler;
-import fi.uta.fsd.metka.data.enums.*;
-import fi.uta.fsd.metka.data.enums.FieldType;
-import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.data.repository.GeneralRepository;
+import fi.uta.fsd.metka.enums.*;
+import fi.uta.fsd.metka.enums.FieldType;
+import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
+import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
-import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.configuration.Field;
-import fi.uta.fsd.metka.model.configuration.Option;
-import fi.uta.fsd.metka.model.configuration.SelectionList;
+import fi.uta.fsd.metka.model.configuration.*;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
-import fi.uta.fsd.metka.mvc.domain.ReferenceService;
+import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
-import fi.uta.fsd.metkaSearch.LuceneConfig;
 import fi.uta.fsd.metkaSearch.analyzer.CaseInsensitiveWhitespaceAnalyzer;
-import fi.uta.fsd.metkaSearch.analyzer.FinnishVoikkoAnalyzer;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
 import fi.uta.fsd.metkaSearch.directory.DirectoryInformation;
 import fi.uta.fsd.metkaSearch.indexers.IndexerDocument;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.core.KeywordAnalyzer;
-import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.document.*;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.NumericRangeQuery;
 import org.joda.time.LocalDateTime;
@@ -45,30 +34,38 @@ import static org.apache.lucene.search.BooleanClause.Occur.*;
 
 class GeneralRevisionHandler implements RevisionHandler {
     private final DirectoryInformation indexer;
-    //private final RevisionData data;
     private final GeneralRepository general;
     private final ConfigurationRepository configurations;
     private final ReferenceService references;
-    //private final Pair<Boolean, LocalDateTime> removalInfo;
+
+    private final Map<ConfigurationKey, Configuration> configCache = new HashMap<>();
 
     GeneralRevisionHandler(DirectoryInformation indexer, GeneralRepository general,
                            ConfigurationRepository configurations, ReferenceService references) {
         this.indexer = indexer;
 
-        //this.data = data;
         this.general = general;
         this.configurations = configurations;
         this.references = references;
-        //this.removalInfo = removalInfo;
     }
 
-    /*public DirectoryInformation getIndexer() {
-        return indexer;
+    private Configuration getConfiguration(ConfigurationKey key) {
+        if(configCache.get(key) != null) {
+            return configCache.get(key);
+        } else {
+            Configuration config = null;
+            try {
+                config = configurations.findConfiguration(key);
+                if(config != null) {
+                    configCache.put(key, config);
+                }
+            } catch(IOException ioe) {
+                // No need to do anything
+                // TODO: Possibly log a message
+            }
+            return config;
+        }
     }
-
-    public RevisionData getData() {
-        return data;
-    }*/
 
     public boolean handle(RevisionIndexerCommand command) throws IOException {
         if(command == null) {
@@ -78,7 +75,7 @@ class GeneralRevisionHandler implements RevisionHandler {
         if(data == null) {
             return true;
         }
-        Configuration config = configurations.findConfiguration(data.getConfiguration());
+        Configuration config = getConfiguration(data.getConfiguration());
         if(config == null) {
             // We can't really do the indexing without an actual config
             return true;
@@ -396,7 +393,7 @@ class GeneralRevisionHandler implements RevisionHandler {
         if(revision == null) {
             return true;
         }
-        Configuration config = configurations.findConfiguration(revision.getConfiguration());
+        Configuration config = getConfiguration(revision.getConfiguration());
         if(config == null) {
             return true;
         }
@@ -411,7 +408,7 @@ class GeneralRevisionHandler implements RevisionHandler {
                 if(revision == null) {
                     continue;
                 }
-                Configuration config = configurations.findConfiguration(revision.getConfiguration());
+                Configuration config = getConfiguration(revision.getConfiguration());
                 if(config == null) {
                     continue;
                 }

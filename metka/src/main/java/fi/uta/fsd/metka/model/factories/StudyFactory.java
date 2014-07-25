@@ -1,10 +1,10 @@
 package fi.uta.fsd.metka.model.factories;
 
-import fi.uta.fsd.metka.data.entity.RevisionEntity;
-import fi.uta.fsd.metka.data.enums.ConfigurationType;
-import fi.uta.fsd.metka.data.enums.RevisionState;
-import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.data.util.JSONUtil;
+import fi.uta.fsd.metka.storage.entity.RevisionEntity;
+import fi.uta.fsd.metka.enums.ConfigurationType;
+import fi.uta.fsd.metka.enums.RevisionState;
+import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
+import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
@@ -18,8 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
-
-import static fi.uta.fsd.metka.data.util.ModelValueUtil.*;
 
 /**
  * Contains functionality related to RevisionData model and specifically to revision data related to Study.
@@ -83,7 +81,7 @@ public class StudyFactory extends DataFactory {
         String concat = "";
         for(String fieldKey : confField.getConcatenate()) {
             SavedDataField tempField = data.dataField(SavedDataFieldCall.get(fieldKey)).getRight();
-            concat += extractStringSimpleValue(tempField);
+            if(tempField != null) concat += tempField.getActualValue();
         }
         data.dataField(SavedDataFieldCall.set("studyid").setValue(concat).setTime(time));
 

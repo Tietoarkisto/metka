@@ -1,6 +1,6 @@
 package fi.uta.fsd.metka.mvc.search;
 
-import fi.uta.fsd.metka.mvc.domain.simple.series.SeriesSearchSO;
+import fi.uta.fsd.metka.mvc.services.simple.series.SeriesSearchSO;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;

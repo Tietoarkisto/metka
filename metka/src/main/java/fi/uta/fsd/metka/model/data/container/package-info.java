@@ -6,10 +6,10 @@
 })
 package fi.uta.fsd.metka.model.data.container;
 
-import fi.uta.fsd.metka.mvc.adapters.DateTimeAdapter;
-import fi.uta.fsd.metka.mvc.adapters.LocalDateTimeAdapter;
-import fi.uta.fsd.metka.mvc.adapters.LocalDateAdapter;
-import fi.uta.fsd.metka.mvc.adapters.LocalTimeAdapter;
+import fi.uta.fsd.metka.adapters.DateTimeAdapter;
+import fi.uta.fsd.metka.adapters.LocalDateTimeAdapter;
+import fi.uta.fsd.metka.adapters.LocalDateAdapter;
+import fi.uta.fsd.metka.adapters.LocalTimeAdapter;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalDate;

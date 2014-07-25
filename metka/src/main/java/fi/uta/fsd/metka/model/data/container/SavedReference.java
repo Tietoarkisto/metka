@@ -3,79 +3,45 @@ package fi.uta.fsd.metka.model.data.container;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.change.ContainerChange;
 import fi.uta.fsd.metka.model.data.change.RowChange;
 import fi.uta.fsd.metka.model.data.value.SimpleValue;
+import fi.uta.fsd.metka.model.interfaces.Row;
 import org.joda.time.LocalDateTime;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
-import static fi.uta.fsd.metka.data.util.ModelValueUtil.createSavedValue;
-import static fi.uta.fsd.metka.data.util.ModelValueUtil.setSimpleValue;
+import java.util.Map;
+
 
 /**
  * Single reference in a reference container is saved through this
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SavedReference {
-    @XmlElement private final String key;
-    @XmlElement private final Integer rowId;
-    @XmlElement private Boolean removed;
-    @XmlElement private SavedValue originalValue;
-    @XmlElement private SavedValue modifiedValue;
+public class SavedReference extends ContainerRow implements Row {
+    public static SavedReference build(ReferenceContainerDataField container) {
+        return new SavedReference(container.getKey(), container.getNewRowId());
+    }
+    @XmlElement private SavedValue reference;
 
     @JsonCreator
     public SavedReference(@JsonProperty("key") String key, @JsonProperty("rowId") Integer rowId) {
-        this.key = key;
-        this.rowId = rowId;
+        super(key, rowId);
     }
 
-    public String getKey() {
-        return key;
+    public SavedValue getReference() {
+        return reference;
     }
 
-    public Integer getRowId() {
-        return rowId;
-    }
-
-    public Boolean isRemoved() {
-        return (removed == null ? false : removed);
-    }
-
-    public void setRemoved(Boolean removed) {
-        this.removed = (removed == null ? false : removed);
-    }
-
-    public SavedValue getOriginalValue() {
-        return originalValue;
-    }
-
-    public void setOriginalValue(SavedValue originalValue) {
-        this.originalValue = originalValue;
-    }
-
-    public SavedValue getModifiedValue() {
-        return modifiedValue;
-    }
-
-    public void setModifiedValue(SavedValue modifiedValue) {
-        this.modifiedValue = modifiedValue;
+    public void setReference(SavedValue reference) {
+        this.reference = reference;
     }
 
     /**
-     * Convinience method for getting an up to date value.
-     * If there exists a modified value then return that, otherwise return original value.
-     * @return SavedValue, either modified value if exists or original value. Can return null if both are null.
-     */
-    @JsonIgnore
-    public SavedValue getValue() {
-        return (modifiedValue != null) ? modifiedValue : originalValue;
-    }
-
-    /**
-     * Convenience method for setting the modified value (the value that is most often set).
+     * Convenience method for setting the reference value.
      * Creates a new Simple value with provided value and sets modified value to that.
      * Returns this instance to facilitate chaining
      * @param value String to be set to SimpleValue
@@ -88,24 +54,24 @@ public class SavedReference {
         if(time == null) {
             time = new LocalDateTime();
         }
-        this.modifiedValue = setSimpleValue(createSavedValue(time), value);
+        this.reference = SavedValue.build(time).setToSimpleValue(value);
         change.put(new RowChange(getRowId()));
         return this;
     }
 
     /**
-     * Convinience method for checking if this reference has an actual Value
+     * Convenience method for checking if this reference has an actual Value
      * @return If there is an actual Value returns true, otherwise false
      */
     @JsonIgnore
     public boolean hasValue() {
-        if(getValue() == null || getValue().getValue() == null) {
+        if(reference == null || reference.getValue() == null) {
             return false;
         } else return true;
     }
 
     /**
-     * Convinience method for checking if the most recent value on this reference equals the given value.
+     * Convenience method for checking if the reference equals the given value.
      * NOTICE: Returns false if there is no value.
      *
      * @param compare - Value to compare
@@ -115,7 +81,7 @@ public class SavedReference {
     public boolean valueEquals(String compare) {
         if(hasValue()) {
             // Assume saved value is SimpleValue, if there's some change to this later then adapt this method
-            return ((SimpleValue)getValue().getValue()).getValue().equals(compare);
+            return ((SimpleValue)reference.getValue()).getValue().equals(compare);
         } else return false;
     }
 
@@ -129,46 +95,38 @@ public class SavedReference {
     public String getActualValue() {
         if(hasValue()) {
             // Assume saved value is SimpleValue, if there's some change to this later then adapt this method
-            return ((SimpleValue)getValue().getValue()).getValue();
+            return ((SimpleValue)reference.getValue()).getValue();
         } else return null;
     }
 
     @JsonIgnore
     public SavedReference copy() {
         SavedReference reference = new SavedReference(getKey(), getRowId());
-        reference.setModifiedValue((modifiedValue != null) ? modifiedValue.copy() : null);
-        reference.setOriginalValue((originalValue != null) ? originalValue.copy() : null);
+        reference.reference = this.reference;
         return reference;
     }
 
-    public void normalize() {
-        // If there's no modifiedValue then don't do anything
-        if(modifiedValue != null) {
-            // Set original value to current value.
-            // If modified value has something other than null then it is a valid changed value.
-            originalValue = modifiedValue;
-            // Set modified value to null
-            modifiedValue = null;
+    @Override
+    public void remove(Map<String, Change> changeMap) {
+        if(changeMap == null || isRemoved()) {
+            return;
+        }
+
+        setRemoved(true);
+        ContainerChange containerChange = (ContainerChange)changeMap.get(getKey());
+        if(containerChange == null) {
+            containerChange = new ContainerChange(getKey());
+            changeMap.put(getKey(), containerChange);
+        }
+        RowChange rowChange = containerChange.get(getRowId());
+        if(rowChange == null) {
+            rowChange = new RowChange(getRowId());
+            containerChange.put(rowChange);
         }
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        SavedReference that = (SavedReference) o;
-
-        if (!key.equals(that.key)) return false;
-        if (!rowId.equals(that.rowId)) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = key.hashCode();
-        result = 31 * result + rowId.hashCode();
-        return result;
+    public void normalize() {
+        // There's nothing to normalize since changing a referenced value of a row doesn't really make sense
+        // There either is a value or not and users have to remove a row and create new row to make 'change'
     }
 }

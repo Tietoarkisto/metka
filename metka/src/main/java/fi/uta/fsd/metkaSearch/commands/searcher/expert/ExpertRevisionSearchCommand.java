@@ -1,7 +1,7 @@
 package fi.uta.fsd.metkaSearch.commands.searcher.expert;
 
-import fi.uta.fsd.metka.data.enums.ConfigurationType;
-import fi.uta.fsd.metka.data.repository.ConfigurationRepository;
+import fi.uta.fsd.metka.enums.ConfigurationType;
+import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metkaSearch.commands.searcher.RevisionSearchCommandBase;
@@ -25,7 +25,7 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
-import static fi.uta.fsd.metka.data.enums.FieldType.*;
+import static fi.uta.fsd.metka.enums.FieldType.*;
 
 public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<RevisionResult> {
     public static ExpertRevisionSearchCommand build(String qry, ConfigurationRepository configurations) throws UnsupportedOperationException, QueryNodeException {

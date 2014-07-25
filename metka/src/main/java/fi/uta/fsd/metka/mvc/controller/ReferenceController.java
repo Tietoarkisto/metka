@@ -1,8 +1,8 @@
 package fi.uta.fsd.metka.mvc.controller;
 
-import fi.uta.fsd.metka.mvc.domain.ReferenceService;
+import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.transfer.reference.*;
-import fi.uta.fsd.metka.mvc.domain.simple.ErrorMessage;
+import fi.uta.fsd.metka.mvc.services.simple.ErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
