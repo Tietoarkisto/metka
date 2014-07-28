@@ -10,7 +10,7 @@
     <body>
         <jsp:include page="../inc/topMenu.jsp" />
         <div class="wrapper">
-            <div class="content">
+            <div class="content container">
                 <%-- TODO: Get text from javascript somehow --%>
                 <div class="pageTitle row">Eksperttihaku</div>
                 <div class="upperContainer">
@@ -53,5 +53,6 @@
                 </div>
             </div>
         </div>
+        <script data-main="${pageContext.request.contextPath}/js/page.js" src="${pageContext.request.contextPath}/lib/js/require.js"></script>
     </body>
 </html>

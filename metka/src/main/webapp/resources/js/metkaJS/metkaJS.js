@@ -1,34 +1,6 @@
 (function () {
 	'use strict';
 
-    // TODO: move to separate file
-    // Polyfills and language extensions
-
-    // shorthand for console.log
-    window.log = console.log.bind(console);
-
-    if (!String.prototype.supplant) {
-        String.prototype.supplant = function (o) {
-            return this.replace(
-                /\{([^{}]*)\}/g,
-                function (a, b) {
-                    var r = o[b];
-                    return typeof r === 'string' || typeof r === 'number' ? r : a;
-                }
-            );
-        };
-    }
-
-    $(document).ajaxError(function () {
-        $.metka.metkaModal({
-            title: MetkaJS.L10N.get('alert.error.title'),
-            buttons: [{
-                type: 'DISMISS'
-            }]
-        });
-        log('ajax error', arguments);
-    });
-
     /* Define MetkaJS namespace. Includes general global variables, objects, handlers and functions related to Metka-client.
      */
     window.MetkaJS = {
@@ -68,7 +40,7 @@
 
         // Shorthand function for viewing certain revision of certain revisionable. Forms the correct URL and navigates straight to it.
         view: function (id, revision) {
-            MetkaJS.assignUrl('view', {
+            require('./assignUrl')('view', {
                 id: id,
                 revision: revision
             });
@@ -81,43 +53,6 @@
          */
         dialogClose: function (id) {
             $('#' + id).dialog('close');
-        },
-
-        url: function (key, extend) {
-            return MetkaJS.Globals.contextPath + (function () {
-                if (key[0] === '/') {
-                    return key;
-                } else {
-                    return '/' + {
-                        approve: '{page}/ajax/approve',
-                        compareRevisions: 'history/revisions/compare',
-                        download: 'download/{id}/{revision}',
-                        edit: '{page}/edit/{id}',
-                        expertSearch: 'expertSearch/',
-                        fileEdit: 'file/save/{value}',
-                        fileSave: 'file/save',
-                        fileUpload: 'file/upload',
-                        listRevisions: 'history/revisions/{id}',
-                        next: 'next/{page}/{id}',
-                        options: 'references/collectOptionsGroup',
-                        prev: 'prev/{page}/{id}',
-                        remove: 'remove/{page}/{type}/{id}',
-                        save: '{page}/ajax/save',
-                        search: '{page}/ajax/search',
-                        seriesAdd: 'series/add',
-                        view: '{page}/view/{id}/{revision}'
-                    }[key];
-                }
-            })().supplant($.extend({
-                id: MetkaJS.SingleObject.id,
-                page: MetkaJS.Globals.page,
-                revision: MetkaJS.SingleObject.revision
-            }, extend));
-        },
-
-        // same as .url method, except also navigates to the url
-        assignUrl: function () {
-            location.assign(MetkaJS.url.apply(this, arguments));
         },
 
         // Returns a jQuery wrapped page element for a given field key. Key is assumed to be for a top level input build by JSP and SpingForms but this is not checked.
@@ -303,7 +238,7 @@
          */
         objectGetPropertyNS: function (o/*[, ns]*/) {
             var ns = $.makeArray(arguments);
-            ns.shift();
+            ns.shift(); // remove o
             if (!ns.length) {
                 return o;
             }
@@ -380,10 +315,10 @@
             var request = {
                 operation: "QUERY",
                 data: query
-            }
+            };
             $.ajax({
                 method: 'POST',
-                url: MetkaJS.url('/expertSearch/query'),
+                url: require('./modules/url')('/expertSearch/query'),
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
@@ -395,4 +330,4 @@
             });
         }
     };
-}());
+})();

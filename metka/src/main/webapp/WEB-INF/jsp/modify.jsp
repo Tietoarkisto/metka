@@ -20,12 +20,7 @@
             <jsp:include page="../inc/revHistory.jsp" />
         </div>
     </div>
-    <div id="dynamicContent" class="content container"></div>
 </div>
-<script>
-    $(document).ready(function() {
-        $('#dynamicContent').metkaUI();
-    });
-</script>
+<script data-main="${pageContext.request.contextPath}/js/page.js" src="${pageContext.request.contextPath}/lib/js/require.js"></script>
 </body>
 </html>

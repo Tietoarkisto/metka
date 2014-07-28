@@ -9,7 +9,9 @@
 
 <jsp:include page="head/metkaJSInit.jsp" />
 
-<jsp:include page="head/guiJSInit.jsp" />
+<c:if test="${not empty jsGUIConfig}">
+    <script>MetkaJS.jsGUIConfig = ${jsGUIConfig}[MetkaJS.Globals.page.toUpperCase()];</script>
+</c:if>
 
 <script src="${contextPath}/lib/js/moment-with-langs.min.js"></script>
 <script src="${contextPath}/lib/bootstrap/3.1.1/js/bootstrap.min.js"></script>

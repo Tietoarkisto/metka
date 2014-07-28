@@ -7,11 +7,9 @@
 <script src="${contextPath}/js/metkaJS/enums.js"></script>
 <script src="${contextPath}/js/metkaJS/l10n.js"></script>
 <script src="${contextPath}/js/metkaJS/messageManager.js"></script>
-<script src="${contextPath}/js/metkaJS/reference.js"></script>
 <script src="${contextPath}/js/metkaJS/tableHandler.js"></script>
 <script src="${contextPath}/js/metkaJS/jsConfigUtil.js"></script>
 <script src="${contextPath}/js/metkaJS/eventManager.js"></script>
-<script src="${contextPath}/js/metkaJS/revisionHistory.js"></script>
 
 
 <script>

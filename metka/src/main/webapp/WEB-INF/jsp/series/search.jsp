@@ -42,7 +42,7 @@
     <!-- TODO: Fix this reset button
     <input type="reset" class="button" value="Tyhjennä">-->
     <input type="button" id="addNewSeriesBtn" class="button" value="<spring:message code='general.buttons.addSeries'/>"
-           onclick="MetkaJS.assignUrl('seriesAdd');"/>
+           onclick="require('./assignUrl')('seriesAdd');"/>
     <input id="revisionSearchFormSearch" type="submit" class="button" value="<spring:message code='general.buttons.search'/>">
 </div>
 <c:if test="${not empty searchData.results}">

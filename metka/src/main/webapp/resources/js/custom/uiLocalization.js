@@ -1,4 +1,4 @@
-$(document).ready(function() {
+(function() {
     'use strict';
     /**
      * Add localizations for general UI elements such as buttons
@@ -610,6 +610,15 @@ $(document).ready(function() {
                 "10": "sv",
                 "11": "xx"
             }
+        },
+
+        "EXPERTSEARCH": {
+            "field": {
+                name: "Nimi",
+                user: "Käyttäjä",
+                date: "Pvm.",
+                remove: "Poista"
+            }
         }
     };
 
@@ -1026,4 +1035,4 @@ $(document).ready(function() {
     STUDY_ATTACHMENT.filelanguage_list.option.9 = ru
     STUDY_ATTACHMENT.filelanguage_list.option.10 = sv
     STUDY_ATTACHMENT.filelanguage_list.option.11 = xx*/
-});
+})();
