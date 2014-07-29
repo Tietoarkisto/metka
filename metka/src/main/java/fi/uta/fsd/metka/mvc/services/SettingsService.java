@@ -3,6 +3,8 @@ package fi.uta.fsd.metka.mvc.services;
 import fi.uta.fsd.metka.storage.repository.MiscJSONRepository;
 import org.apache.commons.io.FilenameUtils;
 import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -13,7 +15,7 @@ import java.io.IOException;
 
 @Service
 public class SettingsService {
-
+    private static Logger logger = LoggerFactory.getLogger(SettingsService.class);
     @Autowired
     private ConfigurationService configurationService;
 
@@ -39,9 +41,8 @@ public class SettingsService {
      * to add them to database and constantly serialize/deserialize them to and from json.
      * @param file MultipartFile containing new configuration
      * @param folder What folder under autoload folder should the file be in
-     * @throws IOException
      */
-    public void backupAndCopy(MultipartFile file, String folder) throws IOException {
+    public void backupAndCopy(MultipartFile file, String folder) {
         String confFolder = rootFolder+folder+"/";
         File dir = new File(confFolder);
         if(!dir.exists()) {
@@ -69,15 +70,15 @@ public class SettingsService {
             } while(backup.exists());
             location.renameTo(backup);
         }
-
-        file.transferTo(location);
+        try {
+            file.transferTo(location);
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+            logger.error("IOException while trying to save new configuration to file "+location.getName());
+        }
     }
 
     public void insertMisc(String text) {
-        try {
-            miscJSONRepository.insert(text);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+        miscJSONRepository.insert(text);
     }
 }

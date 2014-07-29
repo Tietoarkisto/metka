@@ -10,15 +10,13 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.TopDocs;
 
-import java.io.IOException;
-
 /**
  * For now this knows how to execute a search command aimed at revision.
  *
  * TODO: Split to single-index and multi-index variants.
  */
 public class RevisionSearcher<T extends SearchResult> extends Searcher<T> {
-    public static <T extends SearchResult> RevisionSearcher<T> build(SearchCommand<T> command) throws IOException, UnsupportedOperationException {
+    public static <T extends SearchResult> RevisionSearcher<T> build(SearchCommand<T> command) throws UnsupportedOperationException {
         if(command.getPath().getType() != IndexerConfigurationType.REVISION) {
             throw new UnsupportedOperationException("Path is not for a REVISION");
         }
@@ -32,7 +30,7 @@ public class RevisionSearcher<T extends SearchResult> extends Searcher<T> {
         return new RevisionSearcher<T>(command);
     }
 
-    private RevisionSearcher(SearchCommand<T> command) throws IOException {
+    private RevisionSearcher(SearchCommand<T> command) throws UnsupportedOperationException {
         super(command);
     }
 

@@ -3,8 +3,8 @@ package fi.uta.fsd.metka.mvc.services;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.repositoryResponses.DraftRemoveResponse;
 import fi.uta.fsd.metka.enums.repositoryResponses.LogicalRemoveResponse;
-import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metkaSearch.IndexerComponent;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
@@ -13,7 +13,6 @@ import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -50,12 +49,7 @@ public class GeneralService {
     public DraftRemoveResponse removeDraft(String type, Long id) {
         DraftRemoveResponse response = repository.removeDraft(type, id);
         if(response.getResponse() == DraftRemoveResponse.Response.FINAL_REVISION || response.getResponse() == DraftRemoveResponse.Response.SUCCESS) {
-            try {
-                indexer.addCommand(RevisionIndexerCommand.remove(DirectoryManager.formPath(false, IndexerConfigurationType.REVISION, "fi", ConfigurationType.valueOf(type.toUpperCase()).toValue()), response.getId(), response.getNo()));
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
-                // Not much to do here really...
-            }
+            indexer.addCommand(RevisionIndexerCommand.remove(DirectoryManager.formPath(false, IndexerConfigurationType.REVISION, "fi", ConfigurationType.valueOf(type.toUpperCase()).toValue()), response.getId(), response.getNo()));
         }
         return response;
     }
@@ -74,19 +68,14 @@ public class GeneralService {
         if(response == LogicalRemoveResponse.SUCCESS) {
             DirectoryManager.DirectoryPath path = DirectoryManager.formPath(false, IndexerConfigurationType.REVISION, "fi", ConfigurationType.fromValue(type.toUpperCase()).name());
             List<Integer> revisions = repository.getAllRevisionNumbers(id);
-            try {
-                for(Integer revision : revisions) {
-                    indexer.addCommand(RevisionIndexerCommand.index(path, id, revision));
-                }
-            } catch(IOException ioe) {
-                ioe.printStackTrace();
-                // Can't really do that much here...
+            for(Integer revision : revisions) {
+                indexer.addCommand(RevisionIndexerCommand.index(path, id, revision));
             }
         }
         return response;
     }
 
-    public RevisionData getRevision(Long id, Integer revision) throws IOException {
+    public RevisionData getRevision(Long id, Integer revision) {
         return repository.getRevision(id, revision);
     }
 

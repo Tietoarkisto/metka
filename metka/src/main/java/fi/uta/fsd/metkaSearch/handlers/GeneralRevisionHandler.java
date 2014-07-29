@@ -1,9 +1,8 @@
 package fi.uta.fsd.metkaSearch.handlers;
 
-import fi.uta.fsd.metka.enums.*;
+import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.FieldType;
-import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.storage.repository.GeneralRepository;
+import fi.uta.fsd.metka.enums.RevisionState;
 import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
@@ -13,10 +12,12 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
+import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
+import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import fi.uta.fsd.metkaSearch.analyzer.CaseInsensitiveWhitespaceAnalyzer;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
-import fi.uta.fsd.metkaSearch.directory.DirectoryInformation;
+import fi.uta.fsd.metkaSearch.indexers.Indexer;
 import fi.uta.fsd.metkaSearch.indexers.IndexerDocument;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
@@ -25,22 +26,21 @@ import org.apache.lucene.search.NumericRangeQuery;
 import org.joda.time.LocalDateTime;
 import org.springframework.util.StringUtils;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.apache.lucene.document.Field.Store.*;
-import static org.apache.lucene.search.BooleanClause.Occur.*;
+import static org.apache.lucene.document.Field.Store.YES;
+import static org.apache.lucene.search.BooleanClause.Occur.MUST;
 
 class GeneralRevisionHandler implements RevisionHandler {
-    private final DirectoryInformation indexer;
+    private final Indexer indexer;
     private final GeneralRepository general;
     private final ConfigurationRepository configurations;
     private final ReferenceService references;
 
     private final Map<ConfigurationKey, Configuration> configCache = new HashMap<>();
 
-    GeneralRevisionHandler(DirectoryInformation indexer, GeneralRepository general,
+    GeneralRevisionHandler(Indexer indexer, GeneralRepository general,
                            ConfigurationRepository configurations, ReferenceService references) {
         this.indexer = indexer;
 
@@ -53,21 +53,15 @@ class GeneralRevisionHandler implements RevisionHandler {
         if(configCache.get(key) != null) {
             return configCache.get(key);
         } else {
-            Configuration config = null;
-            try {
-                config = configurations.findConfiguration(key);
-                if(config != null) {
-                    configCache.put(key, config);
-                }
-            } catch(IOException ioe) {
-                // No need to do anything
-                // TODO: Possibly log a message
+            Configuration config = configurations.findConfiguration(key);
+            if(config != null) {
+                configCache.put(key, config);
             }
             return config;
         }
     }
 
-    public boolean handle(RevisionIndexerCommand command) throws IOException {
+    public boolean handle(RevisionIndexerCommand command) {
         if(command == null) {
             return true;
         }
@@ -85,7 +79,7 @@ class GeneralRevisionHandler implements RevisionHandler {
         BooleanQuery bQuery = new BooleanQuery();
         bQuery.add(NumericRangeQuery.newLongRange("key.id", 4, data.getKey().getId(), data.getKey().getId(), true, true), MUST);
         bQuery.add(NumericRangeQuery.newLongRange("key.no", 4, data.getKey().getRevision().longValue(), data.getKey().getRevision().longValue(), true, true), MUST);
-        indexer.getIndexWriter().deleteDocuments(bQuery);
+        indexer.removeDocument(bQuery);
 
         // Create document. This handler only indexes one document per request so the document can be inside the handle method.
         IndexerDocument document = new IndexerDocument(command.getPath().getLanguage());
@@ -135,7 +129,7 @@ class GeneralRevisionHandler implements RevisionHandler {
         if(addDocument) {
             document.indexText("general", document.getGeneral(), false, YES);
             PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(CaseInsensitiveWhitespaceAnalyzer.ANALYZER, document.getAnalyzers());
-            indexer.getIndexWriter().addDocument(document.getDocument(), analyzer);
+            indexer.addDocument(document.getDocument(), analyzer);
         }
         return addDocument;
     }
@@ -362,22 +356,15 @@ class GeneralRevisionHandler implements RevisionHandler {
         // TODO: Split this off in some better way, for now intercept during varibales reference handling)
         if(field.getKey().equals("variables") && field.getType() == FieldType.REFERENCE && data.getConfiguration().getType() == ConfigurationType.STUDY) {
             // This is variables reference in study. Take some time and index variables to this document
-            try {
-                return indexStudyVariables(saved, document, root+field.getKey(), data);
-            } catch(IOException ioe) {
+            boolean result = indexStudyVariables(saved, document, root+field.getKey(), data);
+            if(!result) {
                 document.indexKeywordField(root + field.getKey() + ".value", saved.getActualValue());
                 document.indexKeywordField(root + field.getKey(), saved.getActualValue());
             }
         } else {
             // TODO: Handle reference collecting. Shouldn't be that hard if we leverage some of the reference solver
             ReferenceOption option = null;
-            try {
-                option = references.getCurrentFieldOption(data, root + field.getKey());
-            } catch(IOException ioe) {
-                ioe.printStackTrace();
-                // Don't stop indexing but can't index this reference
-                return true;
-            }
+            option = references.getCurrentFieldOption(data, root + field.getKey());
             if(option == null) {
                 // Nothing to index
                 return true;
@@ -388,14 +375,14 @@ class GeneralRevisionHandler implements RevisionHandler {
         return true;
     }
 
-    private boolean indexStudyVariables(SavedDataField saved, IndexerDocument document, String root, RevisionData data) throws IOException {
+    private boolean indexStudyVariables(SavedDataField saved, IndexerDocument document, String root, RevisionData data) {
         RevisionData revision = general.getLatestRevisionForId(Long.parseLong(saved.getActualValue()), data.getState() == RevisionState.APPROVED);
         if(revision == null) {
-            return true;
+            return false;
         }
         Configuration config = getConfiguration(revision.getConfiguration());
         if(config == null) {
-            return true;
+            return false;
         }
         return indexFields(revision, document, root, config);
     }
@@ -403,20 +390,16 @@ class GeneralRevisionHandler implements RevisionHandler {
     private boolean indexStudyVariablesContainer(ReferenceContainerDataField field, IndexerDocument document, String root, RevisionData data) {
         boolean addDocument = true;
         for(SavedReference reference : field.getReferences()) {
-            try {
-                RevisionData revision = general.getLatestRevisionForId(Long.parseLong(reference.getActualValue()), data.getState() == RevisionState.APPROVED);
-                if(revision == null) {
-                    continue;
-                }
-                Configuration config = getConfiguration(revision.getConfiguration());
-                if(config == null) {
-                    continue;
-                }
-                if(!indexFields(revision, document, root, config)) {
-                    addDocument = false;
-                }
-            } catch(IOException ioe) {
-                // Just skip this variable
+            RevisionData revision = general.getLatestRevisionForId(Long.parseLong(reference.getActualValue()), data.getState() == RevisionState.APPROVED);
+            if(revision == null) {
+                continue;
+            }
+            Configuration config = getConfiguration(revision.getConfiguration());
+            if(config == null) {
+                continue;
+            }
+            if(!indexFields(revision, document, root, config)) {
+                addDocument = false;
             }
         }
         return addDocument;

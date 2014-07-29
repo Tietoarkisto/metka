@@ -1,19 +1,19 @@
 package fi.uta.fsd.metka.model.factories;
 
-import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.RevisionState;
-import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.storage.entity.RevisionEntity;
+import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
+import fi.uta.fsd.metka.storage.util.JSONUtil;
 import org.joda.time.LocalDateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
-import java.io.IOException;
 
 /**
  * Factory related to study variables.
@@ -21,12 +21,13 @@ import java.io.IOException;
  */
 @Service
 public class VariablesFactory extends DataFactory {
+    private static Logger logger = LoggerFactory.getLogger(VariablesFactory.class);
     @Autowired
     private ConfigurationRepository configurationRepository;
     @Autowired
     private JSONUtil json;
 
-    public RevisionData newStudyVariables(RevisionEntity entity, Long studyId, Long fileId) throws IOException {
+    public RevisionData newStudyVariables(RevisionEntity entity, Long studyId, Long fileId) {
         if(StringUtils.isEmpty(entity.getData()) && entity.getState() != RevisionState.DRAFT)
             return null;
 
@@ -34,7 +35,7 @@ public class VariablesFactory extends DataFactory {
         conf = configurationRepository.findLatestConfiguration(ConfigurationType.STUDY_VARIABLES);
 
         if(conf == null) {
-            // TODO: Log error that no configuration found for study
+            logger.error("No configuration found for study variables. Halting RevisionData creation.");
             return null;
         }
 
@@ -50,7 +51,7 @@ public class VariablesFactory extends DataFactory {
         return data;
     }
 
-    public RevisionData newVariable(RevisionEntity entity, Long variablesId) throws IOException {
+    public RevisionData newVariable(RevisionEntity entity, Long variablesId, Long studyId) {
         if(StringUtils.isEmpty(entity.getData()) && entity.getState() != RevisionState.DRAFT)
             return null;
 
@@ -58,7 +59,7 @@ public class VariablesFactory extends DataFactory {
         conf = configurationRepository.findLatestConfiguration(ConfigurationType.STUDY_VARIABLE);
 
         if(conf == null) {
-            // TODO: Log error that no configuration found for study
+            logger.error("No configuration found for study variable. Halting RevisionData creation.");
             return null;
         }
 
@@ -66,6 +67,7 @@ public class VariablesFactory extends DataFactory {
 
         RevisionData data = createInitialRevision(entity, conf, time);
         data.dataField(SavedDataFieldCall.set("variables").setTime(time).setValue(variablesId.toString()));
+        data.dataField(SavedDataFieldCall.set("study").setTime(time).setValue(studyId.toString()));
 
         entity.setData(json.serialize(data));
 

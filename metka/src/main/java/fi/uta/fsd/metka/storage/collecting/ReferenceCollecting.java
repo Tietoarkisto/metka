@@ -4,12 +4,11 @@ package fi.uta.fsd.metka.storage.collecting;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.configuration.Reference;
-import fi.uta.fsd.metka.transfer.reference.ReferenceOptionsRequest;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
+import fi.uta.fsd.metka.transfer.reference.ReferenceOptionsRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,8 +30,7 @@ public class ReferenceCollecting {
      * @param request Request containing all required information to provide reference options
      * @return List of ReferenceOption objects (size >= 0) defining values and titles (if reference doesn't define a title then value is copied to title).
      */
-    public List<ReferenceOption> referenceOptionCollecting(Reference reference, Field field, Configuration config, ReferenceOptionsRequest request)
-            throws IOException {
+    public List<ReferenceOption> referenceOptionCollecting(Reference reference, Field field, Configuration config, ReferenceOptionsRequest request) {
         List<ReferenceOption> options = new ArrayList<>();
         if(reference == null) {
             // TODO: Possibly needs to log an event since something has lead to a request that should not have been made

@@ -5,8 +5,6 @@ import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-
 /**
  * This is used to merge study variables from a variables file to a study structure (study_variables and study_variable).
  * There is a possibility of changes being made to provided STUDY revision data in which case caller is usually
@@ -16,5 +14,5 @@ import java.io.IOException;
  */
 @Transactional
 public interface StudyVariablesParser {
-    public boolean merge(RevisionData study, VariableDataType type, Configuration studyConfig) throws IOException;
+    public boolean merge(RevisionData study, VariableDataType type, Configuration studyConfig);
 }

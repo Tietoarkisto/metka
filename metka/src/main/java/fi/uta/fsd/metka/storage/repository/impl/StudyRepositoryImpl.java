@@ -33,7 +33,6 @@ import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.io.IOException;
 import java.util.List;
 
 import static fi.uta.fsd.metka.storage.util.ModelAccessUtil.*;
@@ -59,7 +58,7 @@ public class StudyRepositoryImpl implements StudyRepository {
     private StudyVariablesParser variableParser;
 
     @Override
-    public RevisionData getNew(Long acquisition_number) throws IOException {
+    public RevisionData getNew(Long acquisition_number) {
         StudyEntity entity = new StudyEntity();
         // Insert a new study number
         entity.setStudyNumber(general.getNewSequenceValue(ConfigurationType.STUDY.toValue(), 10000L).getSequence());
@@ -76,7 +75,7 @@ public class StudyRepositoryImpl implements StudyRepository {
 
     @Override
     // TODO: needs better reporting to user about what went wrong
-    public boolean saveStudy(TransferObject to) throws IOException {
+    public boolean saveStudy(TransferObject to) {
         // Get StudyEntity
         // Check if latest revision is different from latest approved (the first requirement since only drafts
         // can be saved and these should always be different if Revisionable has an active draft).
@@ -103,7 +102,7 @@ public class StudyRepositoryImpl implements StudyRepository {
         }
 
         // Get old revision data and its configuration.
-        RevisionData data = json.readRevisionDataFromString(revEntity.getData());
+        RevisionData data = json.deserializeRevisionData(revEntity.getData());
         Configuration config = configRepo.findConfiguration(data.getConfiguration());
 
         // Validate StudySingleSO against revision data:
@@ -156,7 +155,7 @@ public class StudyRepositoryImpl implements StudyRepository {
     *
     */
     @Override
-    public boolean approveStudy(Object studyno) throws IOException {
+    public boolean approveStudy(Object studyno) {
         StudyEntity study = em.find(StudyEntity.class, studyno);
 
         if(study == null) {
@@ -177,7 +176,7 @@ public class StudyRepositoryImpl implements StudyRepository {
             return false;
         }
 
-        RevisionData data = json.readRevisionDataFromString(entity.getData());
+        RevisionData data = json.deserializeRevisionData(entity.getData());
 
         // Check that data is also in DRAFT state and that id and revision match.
         // For each change:
@@ -202,6 +201,14 @@ public class StudyRepositoryImpl implements StudyRepository {
             return false;
         }
 
+        boolean dontApprove = false;
+
+        // Try to approve all study attachments linked to this study (this should move files from temporary location to their actual location)
+
+        // Try to approve study variables linked to this study
+
+        // Try to approve each study variable linked to this study
+
         // TODO: check return value for errors
         data.dataField(SavedDataFieldCall.set("aipcomplete").setValue(new LocalDate().toString()));
 
@@ -221,7 +228,7 @@ public class StudyRepositoryImpl implements StudyRepository {
     }
 
     @Override
-    public RevisionData editStudy(Object studyno) throws IOException {
+    public RevisionData editStudy(Object studyno) {
         StudyEntity study = em.find(StudyEntity.class, studyno);
 
         if(study == null) {
@@ -230,7 +237,7 @@ public class StudyRepositoryImpl implements StudyRepository {
         }
 
         RevisionEntity latestRevision = em.find(RevisionEntity.class, study.latestRevisionKey());
-        RevisionData oldData = json.readRevisionDataFromString(latestRevision.getData());
+        RevisionData oldData = json.deserializeRevisionData(latestRevision.getData());
         if(study.hasDraft()) {
             if(latestRevision.getState() != RevisionState.DRAFT) {
                 // TODO: log exception since data is out of sync
@@ -272,7 +279,7 @@ public class StudyRepositoryImpl implements StudyRepository {
 
 // TODO: Set last saved by
     @Override
-    public void checkFileLinkQueue(Long id, Integer revision) throws IOException {
+    public void checkFileLinkQueue(Long id, Integer revision) {
         RevisionableEntity revisionable = em.find(RevisionableEntity.class, id);
         RevisionEntity entity = em.find(RevisionEntity.class, new RevisionKey(id, revision));
         if(revisionable == null || ConfigurationType.valueOf(revisionable.getType()) != ConfigurationType.STUDY || entity.getState() != RevisionState.DRAFT) {
@@ -280,7 +287,7 @@ public class StudyRepositoryImpl implements StudyRepository {
             return;
         }
 
-        RevisionData data = json.readRevisionDataFromString(entity.getData());
+        RevisionData data = json.deserializeRevisionData(entity.getData());
         Configuration config = configRepo.findConfiguration(data.getConfiguration());
         LocalDateTime time = new LocalDateTime();
         boolean changes = false;
@@ -329,13 +336,7 @@ public class StudyRepositoryImpl implements StudyRepository {
                 if(sdPair.getLeft() != StatusCode.NO_CHANGE_IN_VALUE) {
                     changes = true;
                 }
-                try {
-                    changes = variableParser.merge(data, event.getType(), config) | changes;
-                } catch(IOException ioe) {
-                    // Couldn't handle variable file for some reason, notify the user. The file link is still removed from the queue
-                    // TODO: Log this exception with info on where it failed
-                    System.err.println("Failed to parse variables for "+id+" because of IOException.");
-                }
+                changes = variableParser.merge(data, event.getType(), config) | changes;
             }
         }
 

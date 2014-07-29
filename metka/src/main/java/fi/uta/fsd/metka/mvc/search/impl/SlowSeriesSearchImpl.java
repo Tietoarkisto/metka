@@ -1,16 +1,16 @@
 package fi.uta.fsd.metka.mvc.search.impl;
 
+import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
+import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.data.container.SavedDataField;
+import fi.uta.fsd.metka.mvc.search.RevisionDataRemovedContainer;
+import fi.uta.fsd.metka.mvc.search.SeriesSearch;
+import fi.uta.fsd.metka.mvc.services.simple.series.SeriesSearchSO;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.entity.impl.SeriesEntity;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
-import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
-import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.SavedDataField;
-import fi.uta.fsd.metka.mvc.services.simple.series.SeriesSearchSO;
-import fi.uta.fsd.metka.mvc.search.RevisionDataRemovedContainer;
-import fi.uta.fsd.metka.mvc.search.SeriesSearch;
 import fi.uta.fsd.metkaSearch.SearcherComponent;
 import fi.uta.fsd.metkaSearch.commands.searcher.series.SeriesBasicSearchCommand;
 import fi.uta.fsd.metkaSearch.results.ResultList;
@@ -22,13 +22,12 @@ import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static fi.uta.fsd.metka.storage.util.ConversionUtil.*;
+import static fi.uta.fsd.metka.storage.util.ConversionUtil.stringToLong;
 
 @Repository("seriesSearch")
 public class SlowSeriesSearchImpl implements SeriesSearch {
@@ -43,7 +42,7 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
     private SearcherComponent searcher;
 
     @Override
-    public List<String> findAbbreviations() throws IOException {
+    public List<String> findAbbreviations() {
         List<String> list = new ArrayList<>();
         list.add("");
 
@@ -58,9 +57,12 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
                 data = em.find(RevisionEntity.class, new RevisionKey(entity.getId(), entity.getLatestRevisionNo())).getData();
             }
 
-            RevisionData revData = json.readRevisionDataFromString(data);
+            RevisionData revData = json.deserializeRevisionData(data);
             // Use the method with less sanity checks since there's no point in getting configuration here.
-            SavedDataField field = revData.dataField(SavedDataFieldCall.get("seriesabbr")).getRight();
+            SavedDataField field = null;
+            if(revData != null) {
+                field = revData.dataField(SavedDataFieldCall.get("seriesabbr")).getRight();
+            }
             if(field != null && !StringUtils.isEmpty(field.getActualValue())) list.add(field.getActualValue());
         }
         Collections.sort(list);
@@ -68,7 +70,7 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
     }
 
     @Override
-    public List<RevisionDataRemovedContainer> findSeries(SeriesSearchSO query) throws IOException {
+    public List<RevisionDataRemovedContainer> findSeries(SeriesSearchSO query) {
         // TODO: Make path management sensible, get path language from some common source that knows which language we should search.
         SeriesBasicSearchCommand command;
         try {
@@ -80,13 +82,10 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
             // Couldn't form query command
             qne.printStackTrace();
             return null;
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-            return null;
         }
     }
 
-    private List<RevisionDataRemovedContainer> collectResults(ResultList<RevisionResult> resultList) throws IOException {
+    private List<RevisionDataRemovedContainer> collectResults(ResultList<RevisionResult> resultList) {
         List<RevisionDataRemovedContainer> results = new ArrayList<>();
 
         resultList.sort(new Comparator<RevisionResult>() {
@@ -109,15 +108,17 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
             if(entity == null || !entity.getId().equals(result.getId())) {
                 entity = em.find(RevisionableEntity.class, result.getId());
             }
-            // TODO: Try to remove the need to do this, although granted this isn't exactly heavy
+            // NOTICE: Try to remove the need to do this, although granted this isn't exactly heavy
             if(entity.getCurApprovedNo() != null && result.getNo() < entity.getCurApprovedNo()) {
                 continue;
             }
 
             RevisionEntity revision = em.find(RevisionEntity.class, new RevisionKey(result.getId(), result.getNo().intValue()));
             if(revision != null && !StringUtils.isEmpty(revision.getData())) {
-                RevisionData data = json.readRevisionDataFromString(revision.getData());
-                results.add(new RevisionDataRemovedContainer(data, entity.getRemoved()));
+                RevisionData data = json.deserializeRevisionData(revision.getData());
+                if(data != null) {
+                    results.add(new RevisionDataRemovedContainer(data, entity.getRemoved()));
+                }
             }
         }
 

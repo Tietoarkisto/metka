@@ -1,8 +1,8 @@
 package fi.uta.fsd.metka.mvc.controller;
 
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
-import fi.uta.fsd.metka.transfer.reference.*;
 import fi.uta.fsd.metka.mvc.services.simple.ErrorMessage;
+import fi.uta.fsd.metka.transfer.reference.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -31,15 +30,8 @@ public class ReferenceController {
             ReferenceOptionsResponse response = new ReferenceOptionsResponse(request.getKey(), request.getContainer());
             response.setDependencyValue(request.getDependencyValue());
 
-            List<ReferenceOption> options = null;
-            try {
-                options = service.collectReferenceOptions(request);
-            } catch(IOException ex) {
-                ex.printStackTrace();
-                ErrorMessage message = new ErrorMessage();
-                message.setMsg("general.errors.reference.exceptionWhileCollecting");
-                response.getMessages().add(message);
-            }
+            List<ReferenceOption> options = service.collectReferenceOptions(request);
+            
             if(options == null) {
                 ErrorMessage message = new ErrorMessage();
                 message.setMsg("general.errors.reference.exceptionBeforeCollecting");

@@ -22,6 +22,8 @@ import fi.uta.fsd.metka.model.factories.VariablesFactory;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -35,6 +37,7 @@ import java.util.*;
 
 @Repository
 public class StudyVariablesParserImpl implements StudyVariablesParser {
+    private static Logger logger = LoggerFactory.getLogger(StudyVariablesParserImpl.class);
     @PersistenceContext(name = "entityManager")
     private EntityManager em;
 
@@ -48,7 +51,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
     private GeneralRepository general;
 
     @Override
-    public boolean merge(RevisionData study, VariableDataType type, Configuration studyConfig) throws IOException {
+    public boolean merge(RevisionData study, VariableDataType type, Configuration studyConfig) {
         long startTime = System.currentTimeMillis();
         boolean result = false;
         // Sanity check
@@ -87,7 +90,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             // TODO: Attachment revision or revision data missing, can't continue, log exception
             return result;
         } else {
-            attachmentData = json.readRevisionDataFromString(attachmentRevision.getData());
+            attachmentData = json.deserializeRevisionData(attachmentRevision.getData());
         }
 
         // Check for file path from attachment
@@ -160,7 +163,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         } else if(!variablesEntity.hasDraft()) {
             // No draft, create draft since merge works only with drafts
             RevisionEntity oldVariables = em.find(RevisionEntity.class, variablesEntity.latestRevisionKey());
-            RevisionData oldData = json.readRevisionDataFromString(oldVariables.getData());
+            RevisionData oldData = json.deserializeRevisionData(oldVariables.getData());
 
             variablesRevision = variablesEntity.createNextRevision();
             variablesRevision.setState(RevisionState.DRAFT);
@@ -173,7 +176,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             variablesRevision = em.find(RevisionEntity.class, variablesEntity.latestRevisionKey());
         }
 
-        RevisionData variablesData = json.readRevisionDataFromString(variablesRevision.getData());
+        RevisionData variablesData = json.deserializeRevisionData(variablesRevision.getData());
 
         // Unnecessary sanity checks
         if(variablesData == null) {
@@ -197,13 +200,11 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         field = attachmentData.dataField(SavedDataFieldCall.get("file")).getRight();
         String filePath = field.getActualValue();
 
-        SavedDataField studyId = study.dataField(SavedDataFieldCall.get("studyid")).getRight();
-
         switch(type) {
             case POR:
                 result = true;
                 // Read POR file
-                handlePorVariables(filePath, studyId.getActualValue(), variablesData, time);
+                handlePorVariables(filePath, study.getKey().getId(), variablesData, time);
                 break;
         }
         variablesRevision.setData(json.serialize(variablesData));
@@ -222,9 +223,16 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
      * @param path Path to the por file
      * @param variablesData RevisionData of the study variables object used as a base for these variables.
      */
-    private void handlePorVariables(String path, String studyId, RevisionData variablesData, LocalDateTime time) throws IOException {
+    private void handlePorVariables(String path, Long studyId, RevisionData variablesData, LocalDateTime time) {
         PORReader reader = new PORReader();
-        PORFile por = reader.parse(path);
+        PORFile por;
+        try {
+            por = reader.parse(path);
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+            logger.error("IOException while reading POR-file with path "+path);
+            return;
+        }
 
         // Group variables to list
         List<PORUtil.PORVariableHolder> variables = new ArrayList<>();
@@ -323,6 +331,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                 variableEntity = new StudyVariableEntity();
                 variableEntity.setStudyVariablesId(variablesData.getKey().getId());
                 variableEntity.setVariableId(varId);
+                variableEntity.setStudyId(studyId);
                 em.persist(variableEntity);
             }
 
@@ -334,7 +343,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             if(variableEntity.getLatestRevisionNo() == null) {
                 // No initial revision, assume created here and add initial revision
                 variableRevision = variableEntity.createNextRevision();
-                factory.newVariable(variableRevision, variablesData.getKey().getId());
+                factory.newVariable(variableRevision, variablesData.getKey().getId(), studyId);
                 em.persist(variableRevision);
 
                 variableEntity.setLatestRevisionNo(variableRevision.getKey().getRevisionNo());
@@ -342,7 +351,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                 // No draft, should draft be created for merge or can we use approved revision?
                 // For now create draft
                 RevisionEntity oldVariables = em.find(RevisionEntity.class, variableEntity.latestRevisionKey());
-                RevisionData oldData = json.readRevisionDataFromString(oldVariables.getData());
+                RevisionData oldData = json.deserializeRevisionData(oldVariables.getData());
 
                 variableRevision = variableEntity.createNextRevision();
                 RevisionData newData = DataFactory.createNewRevisionData(variableRevision, oldData);
@@ -355,7 +364,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                 variableRevision = em.find(RevisionEntity.class, variableEntity.latestRevisionKey());
             }
 
-            RevisionData variableData = json.readRevisionDataFromString(variableRevision.getData());
+            RevisionData variableData = json.deserializeRevisionData(variableRevision.getData());
 
             // Merge variable to variable revision
             handler.mergeToData(variableData, variable);
@@ -378,9 +387,9 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
      */
     private static class VariableHandler {
         private LocalDateTime time;
-        private String studyId;
+        private Long studyId;
 
-        VariableHandler(LocalDateTime time, String studyId) {
+        VariableHandler(LocalDateTime time, Long studyId) {
             this.time = time;
             this.studyId = studyId;
         }

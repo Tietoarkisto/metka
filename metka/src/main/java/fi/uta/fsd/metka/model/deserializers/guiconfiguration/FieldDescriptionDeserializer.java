@@ -17,8 +17,7 @@ public class FieldDescriptionDeserializer extends ObjectDeserializer<FieldDescri
         JsonNode key = node.get("key");
         FieldDescription fd = new FieldDescription(key.asText());
 
-        // TODO: add deserializer for displayType, for now ignore
-        // TODO: add deserializer for multichoice, for now ignore
+        // NOTICE: displayType and multichoice are defined attributes in the specification but their implementation is not an immediate concerne so they can be skipped
 
         // Set multiline
         JsonNode multiline = node.get("multiline");

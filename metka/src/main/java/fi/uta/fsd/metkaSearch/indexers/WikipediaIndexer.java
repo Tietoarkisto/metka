@@ -14,11 +14,10 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import java.io.FileReader;
-import java.io.IOException;
 
 public class WikipediaIndexer extends Indexer {
 
-    public static WikipediaIndexer build(DirectoryManager.DirectoryPath path, IndexerCommandRepository commands) throws IOException, UnsupportedOperationException {
+    public static WikipediaIndexer build(DirectoryManager.DirectoryPath path, IndexerCommandRepository commands) throws UnsupportedOperationException {
         checkPathType(path, IndexerConfigurationType.WIKIPEDIA);
         // Check additional parameters
         if(path.getAdditionalParameters() != null && path.getAdditionalParameters().length > 0) {
@@ -28,11 +27,11 @@ public class WikipediaIndexer extends Indexer {
     }
 
     // Should only be used from the factory method in Indexer
-    private WikipediaIndexer(DirectoryManager.DirectoryPath path, IndexerCommandRepository commands) throws IOException {
+    private WikipediaIndexer(DirectoryManager.DirectoryPath path, IndexerCommandRepository commands) throws UnsupportedOperationException {
         super(path, commands);
     }
 
-    protected void handleCommand(IndexerCommand command) throws IOException, SAXException {
+    protected void handleCommand(IndexerCommand command) {
         // This is a safe type conversion since Indexers add command only accepts commands of correct type
         WikipediaIndexerCommand wCom = (WikipediaIndexerCommand) command;
 
@@ -59,7 +58,7 @@ public class WikipediaIndexer extends Indexer {
      *
      * @param command
      */
-    private void indexCommand(WikipediaIndexerCommand command) throws IOException, SAXException {
+    private void indexCommand(WikipediaIndexerCommand command) {
         if(StringUtils.isEmpty(command.getFilePath())) {
             // No sense in trying to parse empty path
             return;
@@ -78,8 +77,12 @@ public class WikipediaIndexer extends Indexer {
         xr.setErrorHandler(handler);
 
         // Try parsing the file
-        FileReader fr = new FileReader(command.getFilePath());
-        // This blocks for as long as the parsing takes
-        xr.parse(new InputSource(fr));
+        try {
+            FileReader fr = new FileReader(command.getFilePath());
+            // This blocks for as long as the parsing takes
+            xr.parse(new InputSource(fr));
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 }

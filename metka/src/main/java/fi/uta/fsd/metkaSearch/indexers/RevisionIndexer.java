@@ -1,9 +1,9 @@
 package fi.uta.fsd.metkaSearch.indexers;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
+import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
-import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metkaSearch.commands.indexer.IndexerCommand;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
@@ -15,10 +15,8 @@ import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.NumericRangeQuery;
 
-import java.io.IOException;
-
 public class RevisionIndexer extends Indexer {
-    public static RevisionIndexer build(DirectoryManager.DirectoryPath path, IndexerCommandRepository commands, GeneralRepository general, ConfigurationRepository configurations, ReferenceService references) throws IOException, UnsupportedOperationException {
+    public static RevisionIndexer build(DirectoryManager.DirectoryPath path, IndexerCommandRepository commands, GeneralRepository general, ConfigurationRepository configurations, ReferenceService references) throws UnsupportedOperationException {
         checkPathType(path, IndexerConfigurationType.REVISION);
         // Check that additional parameters matches requirements
         if(path.getAdditionalParameters() == null || path.getAdditionalParameters().length == 0) {
@@ -44,14 +42,14 @@ public class RevisionIndexer extends Indexer {
     private ConfigurationRepository configurations;
     private ReferenceService references;
 
-    private RevisionIndexer(DirectoryManager.DirectoryPath path, IndexerCommandRepository commands, GeneralRepository general, ConfigurationRepository configurations, ReferenceService references) throws IOException {
+    private RevisionIndexer(DirectoryManager.DirectoryPath path, IndexerCommandRepository commands, GeneralRepository general, ConfigurationRepository configurations, ReferenceService references) throws UnsupportedOperationException {
         super(path, commands);
         this.general = general;
         this.configurations = configurations;
         this.references = references;
     }
 
-    protected void handleCommand(IndexerCommand command) throws IOException {
+    protected void handleCommand(IndexerCommand command) {
         // This is a safe type conversion since Indexers add command only accepts commands of correct type
         RevisionIndexerCommand rCom = (RevisionIndexerCommand) command;
 
@@ -81,8 +79,8 @@ public class RevisionIndexer extends Indexer {
      *
      * @param command
      */
-    private void indexCommand(RevisionIndexerCommand command) throws IOException {
-        RevisionHandler handler = HandlerFactory.buildRevisionHandler(getIndexer(), general, configurations, references);
+    private void indexCommand(RevisionIndexerCommand command) {
+        RevisionHandler handler = HandlerFactory.buildRevisionHandler(this, general, configurations, references);
         try {
             handler.handle(command);
         } catch(Exception e) {

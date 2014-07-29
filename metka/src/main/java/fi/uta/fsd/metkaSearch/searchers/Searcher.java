@@ -6,7 +6,6 @@ import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.results.ResultList;
 import fi.uta.fsd.metkaSearch.results.SearchResult;
 
-import java.io.IOException;
 import java.util.concurrent.Callable;
 
 /**
@@ -28,10 +27,13 @@ public abstract class Searcher<T extends SearchResult> implements Callable<Resul
 
     private final DirectoryInformation indexer;
 
-    protected Searcher(SearchCommand<T> command) throws IOException {
+    protected Searcher(SearchCommand<T> command) throws UnsupportedOperationException {
         this.path = command.getPath();
         this.command = command;
         indexer = DirectoryManager.getIndexDirectory(path);
+        if(indexer == null) {
+            throw new UnsupportedOperationException("Couldn't get an indexer for Searcher with path "+path);
+        }
     }
 
     public DirectoryInformation getIndexer() {

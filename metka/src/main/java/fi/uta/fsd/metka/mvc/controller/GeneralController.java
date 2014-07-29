@@ -16,7 +16,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -177,13 +176,12 @@ public class GeneralController {
     }
 
     @RequestMapping(value="/download/{id}/{revision}", method = RequestMethod.GET)
-    public HttpEntity<byte[]> downloadRevision(@PathVariable Long id, @PathVariable Integer revision)
-            throws IOException {
+    public HttpEntity<byte[]> downloadRevision(@PathVariable Long id, @PathVariable Integer revision) {
         String data = service.getRevisionData(id, revision);
         if(StringUtils.isEmpty(data)) {
             return null;
         }
-        RevisionData revData = json.readRevisionDataFromString(data);
+        RevisionData revData = json.deserializeRevisionData(data);
         byte[] dataBytes = data.getBytes();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

@@ -36,18 +36,7 @@ public class VariablesController {
     */
     @RequestMapping(value = "view/{id}", method = RequestMethod.GET)
     public String view(Model model, @PathVariable Long id, RedirectAttributes redirectAttributes) {
-        /*Integer revision = studyService.findSingleRevisionNo(id);
-        if(model.asMap().containsKey("displayableErrors")) {
-            redirectAttributes.addFlashAttribute("displayableErrors", model.asMap().get("displayableErrors"));
-        }
-        if(revision != null) {
-            return REDIRECT_VIEW+id+"/"+revision;
-        } else {
-            List<ErrorMessage> errors = new ArrayList<>();
-            errors.add(ErrorMessage.noViewableRevision("study", id));
-            redirectAttributes.addFlashAttribute("displayableErrors", errors);
-            return REDIRECT_SEARCH;
-        }*/
+
         return null;
     }
 
@@ -62,67 +51,7 @@ public class VariablesController {
     public String viewRevision(Model model,
                                @PathVariable Long id, @PathVariable Integer revision,
                                RedirectAttributes redirectAttributes) {
-        /*TransferObject single = null;
-        Configuration config = null;
-        if(model.asMap().get("single") == null || model.asMap().get("studyconfiguration") == null) {
-            RevisionViewDataContainer revData = studyService.findSingleRevision(id, revision);
-            if(revData != null) {
-                model.asMap().put("single", revData.getTransferObject());
-                //model.asMap().put("configuration", revData.getConfiguration());
-                single = revData.getTransferObject();
-                config = revData.getConfiguration();
-            }
-        } else {
-            single = (TransferObject)model.asMap().get("single");
-            config = (Configuration)model.asMap().get("studyconfiguration");
-        }
 
-        if(single == null) {
-            List<ErrorMessage> errors = new ArrayList<>();
-            errors.add(ErrorMessage.noSuchRevision("study", id, revision));
-            redirectAttributes.addFlashAttribute("displayableErrors", errors);
-            return REDIRECT_SEARCH;
-        }
-        if(config == null) {
-            List<ErrorMessage> errors = new ArrayList<>();
-            errors.add(ErrorMessage.noConfigurationForRevision("study", id, revision));
-            redirectAttributes.addFlashAttribute("displayableErrors", errors);
-            return REDIRECT_SEARCH;
-        }
-
-        Configuration fileConfig = configService.findLatestByType(ConfigurationType.STUDY_ATTACHMENT);
-        if(fileConfig == null) {
-            List<ErrorMessage> errors = new ArrayList<>();
-            errors.add(ErrorMessage.noConfigurationForRevision("study", id, revision));
-            redirectAttributes.addFlashAttribute("displayableErrors", errors);
-            return REDIRECT_SEARCH;
-        }
-        Map<String, Configuration> configurations = new HashMap<>();
-        configurations.put(fileConfig.getKey().getType().toValue(), fileConfig);
-        configurations.put(config.getKey().getType().toValue(), config);
-        model.asMap().put("configuration", configurations);
-
-        // Form JSConfig
-        ConfigurationMap configs = new ConfigurationMap();
-        configs.setConfiguration(config);
-        configs.setConfiguration(fileConfig);
-        try {
-            model.asMap().put("jsConfig", json.serialize(configs));
-        } catch(IOException ex) {
-            ex.printStackTrace();
-            List<ErrorMessage> errors = new ArrayList<>();
-            errors.add(ErrorMessage.configurationSerializationError("study", id, revision));
-            redirectAttributes.addFlashAttribute("displayableErrors", errors);
-            return REDIRECT_SEARCH;
-        }
-        single.setUrlHash((String)model.asMap().get("urlHash"));
-        model.asMap().put("page", "study");
-        if(single.getState() == UIRevisionState.DRAFT) {
-            // TODO: this should check if the user is the handler for this revision.
-            return MODIFY;
-        } else {
-            return VIEW;
-        }*/
         return null;
     }
 
@@ -135,30 +64,7 @@ public class VariablesController {
     @RequestMapping(value="search", method = {RequestMethod.GET, RequestMethod.POST})
     //public String search(Model model, @ModelAttribute("searchData")StudySearchData searchData) {
     public String search(Model model) {
-        /*if(searchData.getQuery() != null) {
-            List<SearchResult> results = studyService.searchForStudies(searchData.getQuery());
-            if(results.size() == 1) {
-                return REDIRECT_VIEW+results.get(0).getId()+"/"+results.get(0).getRevision();
-            }
-            searchData.setResults(results);
-            searchData.setQuery(searchData.getQuery());
-        }
 
-        model.asMap().put("searchData", searchData);
-
-        if(searchData.getQuery() != null && searchData.getResults().size() == 0) {
-            List<ErrorMessage> errors = new ArrayList<>();
-            errors.add(ErrorMessage.noResults("series"));
-            model.asMap().put("displayableErrors", errors);
-        }
-
-        Configuration config = configService.findLatestByType(ConfigurationType.STUDY);
-        Map<String, Configuration> configuration = new HashMap<>();
-        configuration.put(config.getKey().getType().toValue(), config);
-        model.asMap().put("configuration", configuration);
-
-        model.asMap().put("page", "study");
-        return SEARCH;*/
         return null;
     }
 
@@ -179,15 +85,7 @@ public class VariablesController {
     */
     @RequestMapping(value = "edit/{id}", method = {RequestMethod.GET})
     public String edit(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        /*RevisionViewDataContainer revData = studyService.editStudy(id);
-        if(revData == null || revData.getTransferObject() == null || revData.getConfiguration() == null) {
-            // TODO: Notify user that no editable revision could be found or created
-            return REDIRECT_VIEW+id;
-        } else {
-            redirectAttributes.addFlashAttribute("single", revData.getTransferObject());
-            redirectAttributes.addFlashAttribute("studyconfiguration", revData.getConfiguration());
-            return REDIRECT_VIEW+revData.getTransferObject().getId()+"/"+revData.getTransferObject().getRevision();
-        }*/
+
         return null;
     }
 
@@ -200,17 +98,7 @@ public class VariablesController {
     @RequestMapping(value="save", method = {RequestMethod.POST})
     //public String save(@ModelAttribute("single")TransferObject single, RedirectAttributes redirectAttributes) {
     public String save() {
-        /*boolean success = studyService.saveStudy(single);
-        List<ErrorMessage> errors = new ArrayList<>();
-        if(success) {
-            errors.add(ErrorMessage.saveSuccess());
-        } else {
-            errors.add(ErrorMessage.saveFail());
-        }
-        if(errors.size() > 0) redirectAttributes.addFlashAttribute("displayableErrors", errors);
-        // TODO: IMPORTANT: If save failed user should not be redirected or the data should at least be the same they sent to server, otherwise users changes are lost.
 
-        return REDIRECT_VIEW+single.getId()+"/"+single.getRevision()+(single.getUrlHash() != null ? single.getUrlHash() : "");*/
         return null;
     }
 

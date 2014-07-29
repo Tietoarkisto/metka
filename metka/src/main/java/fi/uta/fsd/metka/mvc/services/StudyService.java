@@ -2,17 +2,17 @@ package fi.uta.fsd.metka.mvc.services;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.UIRevisionState;
-import fi.uta.fsd.metka.model.data.container.SavedDataField;
-import fi.uta.fsd.metka.storage.repository.StudyRepository;
 import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.mvc.services.simple.RevisionViewDataContainer;
-import fi.uta.fsd.metka.mvc.services.simple.transfer.SearchResult;
-import fi.uta.fsd.metka.mvc.services.simple.transfer.TransferObject;
-import fi.uta.fsd.metka.mvc.services.simple.study.StudySearchSO;
+import fi.uta.fsd.metka.model.data.container.SavedDataField;
 import fi.uta.fsd.metka.mvc.search.GeneralSearch;
 import fi.uta.fsd.metka.mvc.search.RevisionDataRemovedContainer;
+import fi.uta.fsd.metka.mvc.services.simple.RevisionViewDataContainer;
+import fi.uta.fsd.metka.mvc.services.simple.study.StudySearchSO;
+import fi.uta.fsd.metka.mvc.services.simple.transfer.SearchResult;
+import fi.uta.fsd.metka.mvc.services.simple.transfer.TransferObject;
+import fi.uta.fsd.metka.storage.repository.StudyRepository;
 import fi.uta.fsd.metkaSearch.IndexerComponent;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
@@ -20,7 +20,6 @@ import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -114,20 +113,9 @@ public class StudyService {
         // If given id/revision belongs to a draft revision then process possible FileLinkQueue events.
         // This makes sure that any recently added file references are found from their respective REFERENCECONTAINERs.
         // Also if there is a new POR file present then that is parsed and the data is added
-        try {
-            repository.checkFileLinkQueue(id, revision);
-        } catch(IOException ex) {
-            // TODO: better exception handling with messages to the user
-            ex.printStackTrace();
-        }
+        repository.checkFileLinkQueue(id, revision);
 
-        try {
-            data = generalSearch.findSingleRevision(id, revision, ConfigurationType.STUDY);
-        } catch(IOException ex) {
-            // TODO: better exception handling with messages to the user
-            ex.printStackTrace();
-            return null;
-        }
+        data = generalSearch.findSingleRevision(id, revision, ConfigurationType.STUDY);
 
         if(data == null) {
             return null;
@@ -140,22 +128,14 @@ public class StudyService {
     }
 
     public RevisionViewDataContainer newStudy(Long acquisition_number) {
-        RevisionData revision;
-        try {
-            revision = repository.getNew(acquisition_number);
-        } catch(IOException ex) {
-            // TODO: better exception handling with messages to the user
-            ex.printStackTrace();
+        RevisionData revision = repository.getNew(acquisition_number);
+        if(revision == null) {
             return null;
         }
 
         // Creating new series was successful, index series
-        try {
-            indexer.addCommand(RevisionIndexerCommand.index(indexerPaths.get("fi"), revision.getKey().getId(), revision.getKey().getRevision()));
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
-
+        indexer.addCommand(RevisionIndexerCommand.index(indexerPaths.get("fi"), revision.getKey().getId(), revision.getKey().getRevision()));
+        
         Configuration config = configService.findByTypeAndVersion(revision.getConfiguration());
         TransferObject single = TransferObject.buildTransferObjectFromRevisionData(revision);
 
@@ -164,51 +144,42 @@ public class StudyService {
 
     // TODO: Add information of if new revision was created or not so it can be indexed as necessary
     public RevisionViewDataContainer editStudy(Long id) {
-        try {
-            RevisionData data = repository.editStudy(id);
-            Configuration config = configService.findByTypeAndVersion(data.getConfiguration());
-            TransferObject single = TransferObject.buildTransferObjectFromRevisionData(data);
-            return new RevisionViewDataContainer(single, config);
-        } catch(Exception ex) {
-            // TODO: better exception handling with messages to the user
-            ex.printStackTrace();
-            return null;
-        }
+        RevisionData data = repository.editStudy(id);
+        Configuration config = configService.findByTypeAndVersion(data.getConfiguration());
+        TransferObject single = TransferObject.buildTransferObjectFromRevisionData(data);
+        return new RevisionViewDataContainer(single, config);
     }
 
     public boolean saveStudy(TransferObject to) {
-        try {
-            boolean result = repository.saveStudy(to);
-            // Check for FileLinkQueue events.
-            // If given id/revision belongs to a draft revision (and it should when we are saving) then process possible FileLinkQueue events.
-            // This makes sure that any recently added file references are found from their respective REFERENCECONTAINERs.
-            // Also if there is a new POR file present then that is parsed and the data is added
-            if(result) {
-                try {
-                    repository.checkFileLinkQueue(to.getId(), to.getRevision());
-                } catch(IOException ex) {
-                    // TODO: better exception handling with messages to the user
-                    ex.printStackTrace();
-                }
-            }
-            if(result)indexer.addCommand(RevisionIndexerCommand.index(indexerPaths.get("fi"), to.getId(), to.getRevision()));
-            return result;
-        } catch(Exception ex) {
-            // TODO: better exception handling with messages to the user
-            ex.printStackTrace();
-            return false;
+        boolean result = repository.saveStudy(to);
+        // Check for FileLinkQueue events.
+        // If given id/revision belongs to a draft revision (and it should when we are saving) then process possible FileLinkQueue events.
+        // This makes sure that any recently added file references are found from their respective REFERENCECONTAINERs.
+        // Also if there is a new POR file present then that is parsed and the data is added
+        if(result) {
+            repository.checkFileLinkQueue(to.getId(), to.getRevision());
         }
+        if(result) {
+            try {
+                indexer.addCommand(RevisionIndexerCommand.index(indexerPaths.get("fi"), to.getId(), to.getRevision()));
+            } catch(Exception ex) {
+                // TODO: better exception handling with messages to the user
+                ex.printStackTrace();
+            }
+        }
+        return result;
     }
 
     public boolean approveStudy(TransferObject to) {
-        try {
-            boolean result = repository.approveStudy(to.getId());
-            if(result)indexer.addCommand(RevisionIndexerCommand.index(indexerPaths.get("fi"), to.getId(), to.getRevision()));
-            return result;
-        } catch(Exception ex) {
-            // TODO: better exception handling with messages to the user
-            ex.printStackTrace();
-            return false;
+        boolean result = repository.approveStudy(to.getId());
+        if(result) {
+            try {
+                indexer.addCommand(RevisionIndexerCommand.index(indexerPaths.get("fi"), to.getId(), to.getRevision()));
+            } catch(Exception ex) {
+                // TODO: better exception handling with messages to the user
+                ex.printStackTrace();
+            }
         }
+        return result;
     }
 }

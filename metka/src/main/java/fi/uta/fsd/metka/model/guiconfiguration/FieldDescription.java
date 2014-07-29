@@ -23,7 +23,7 @@ public class FieldDescription {
     @XmlElement private Boolean showSaveInfo;
     @XmlElement private Boolean showReferenceValue;
     @XmlElement private String handlerName;
-    @XmlElement private TranslationObject dialogTitle; // TODO: This should be translation object
+    @XmlElement private TranslationObject dialogTitle;
 
     @JsonCreator
     public FieldDescription(@JsonProperty("key")String key) {

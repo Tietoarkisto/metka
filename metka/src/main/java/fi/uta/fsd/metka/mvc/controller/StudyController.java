@@ -2,19 +2,19 @@ package fi.uta.fsd.metka.mvc.controller;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.UIRevisionState;
-import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
+import fi.uta.fsd.metka.mvc.search.GeneralSearch;
 import fi.uta.fsd.metka.mvc.services.ConfigurationService;
 import fi.uta.fsd.metka.mvc.services.StudyService;
 import fi.uta.fsd.metka.mvc.services.simple.ErrorMessage;
 import fi.uta.fsd.metka.mvc.services.simple.RevisionViewDataContainer;
+import fi.uta.fsd.metka.mvc.services.simple.study.StudySearchData;
 import fi.uta.fsd.metka.mvc.services.simple.transfer.SearchResult;
 import fi.uta.fsd.metka.mvc.services.simple.transfer.TransferObject;
-import fi.uta.fsd.metka.mvc.services.simple.study.StudySearchData;
+import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.transfer.configuration.ConfigurationMap;
 import fi.uta.fsd.metka.transfer.configuration.GUIConfigurationMap;
-import fi.uta.fsd.metka.mvc.search.GeneralSearch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -128,14 +127,14 @@ public class StudyController {
         ConfigurationMap configs = new ConfigurationMap();
         configs.setConfiguration(config);
         configs.setConfiguration(fileConfig);
-        try {
-            model.asMap().put("jsConfig", json.serialize(configs));
-        } catch(IOException ex) {
-            ex.printStackTrace();
+        String result = json.serialize(configs);
+        if(result == null) {
             List<ErrorMessage> errors = new ArrayList<>();
             errors.add(ErrorMessage.configurationSerializationError("study", id, revision));
             redirectAttributes.addFlashAttribute("displayableErrors", errors);
             return REDIRECT_SEARCH;
+        } else {
+            model.asMap().put("jsConfig", result);
         }
 
         // Form JSGUIConfig
@@ -143,25 +142,25 @@ public class StudyController {
         GUIConfiguration guiConfig = configService.findLatestGUIByType(ConfigurationType.STUDY);
         guiConfigs.setConfiguration(guiConfig);
 
-        try {
-            model.asMap().put("jsGUIConfig", json.serialize(guiConfigs));
-        } catch(IOException ex) {
-            ex.printStackTrace();
+        result = json.serialize(guiConfigs);
+        if(result == null) {
             List<ErrorMessage> errors = new ArrayList<>();
             errors.add(ErrorMessage.guiConfigurationSerializationError("study", id, revision));
             redirectAttributes.addFlashAttribute("displayableErrors", errors);
             return REDIRECT_SEARCH;
+        } else {
+            model.asMap().put("jsGUIConfig", result);
         }
 
         // Data
-        try {
-            model.asMap().put("jsData", json.serialize(generalSearch.findSingleRevision(id, revision, ConfigurationType.STUDY)));
-        } catch(IOException ex) {
-            ex.printStackTrace();
+        result = json.serialize(generalSearch.findSingleRevision(id, revision, ConfigurationType.STUDY));
+        if(result == null) {
             List<ErrorMessage> errors = new ArrayList<>();
             errors.add(ErrorMessage.guiConfigurationSerializationError("study", id, revision));
             redirectAttributes.addFlashAttribute("displayableErrors", errors);
             return REDIRECT_SEARCH;
+        } else {
+            model.asMap().put("jsData", result);
         }
 
         single.setUrlHash((String)model.asMap().get("urlHash"));
@@ -218,7 +217,7 @@ public class StudyController {
     public String add(@PathVariable Long acquisition_number, RedirectAttributes redirectAttributes) {
         RevisionViewDataContainer revData = studyService.newStudy(acquisition_number);
         if(revData == null || revData.getTransferObject() == null || revData.getConfiguration() == null) {
-            // TODO: Show error if no new series could be created
+            // TODO: Show error if no new study could be created
             return REDIRECT_SEARCH;
         } else {
 

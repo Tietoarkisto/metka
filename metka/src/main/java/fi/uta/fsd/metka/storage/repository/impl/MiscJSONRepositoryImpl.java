@@ -12,7 +12,6 @@ import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.io.IOException;
 
 @Repository("miscJSONRepository")
 public class MiscJSONRepositoryImpl implements MiscJSONRepository {
@@ -48,7 +47,7 @@ public class MiscJSONRepositoryImpl implements MiscJSONRepository {
     }
 
     @Override
-    public void insert(String text) throws IOException {
+    public void insert(String text) {
         JsonNode node = json.readJsonTree(text);
         insert(node);
     }
@@ -60,7 +59,7 @@ public class MiscJSONRepositoryImpl implements MiscJSONRepository {
     }
 
     @Override
-    public JsonNode findByKey(String key) throws IOException {
+    public JsonNode findByKey(String key) {
         MiscJSONEntity entity = em.find(MiscJSONEntity.class, key);
         if(entity == null || StringUtils.isEmpty(entity.getData())) {
             return null;

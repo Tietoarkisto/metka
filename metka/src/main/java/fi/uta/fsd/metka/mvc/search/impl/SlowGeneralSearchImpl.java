@@ -9,6 +9,8 @@ import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.mvc.search.GeneralSearch;
 import fi.uta.fsd.metka.mvc.search.RevisionDataRemovedContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -16,12 +18,12 @@ import org.springframework.util.StringUtils;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 @Repository("generalSearch")
 public class SlowGeneralSearchImpl implements GeneralSearch {
+    private static Logger logger = LoggerFactory.getLogger(SlowGeneralSearchImpl.class);
 
     @PersistenceContext(name = "entityManager")
     private EntityManager em;
@@ -32,8 +34,12 @@ public class SlowGeneralSearchImpl implements GeneralSearch {
     @Override
     public Integer findSingleRevisionNo(Long id) {
         RevisionableEntity entity = em.find(RevisionableEntity.class, id);
-        if(entity == null || (entity.getLatestRevisionNo() == null && entity.getCurApprovedNo() == null)) {
-            // TODO: log error
+        if(entity == null) {
+            logger.info("User tried to find a single revision for revisionable ("+id+") but no revisionable could be found.");
+            return null;
+        }
+        if(entity.getLatestRevisionNo() == null && entity.getCurApprovedNo() == null) {
+            logger.error("Revisionable ("+id+") has no latest revision number or current approved revision number.");
             return null;
         }
 
@@ -42,19 +48,19 @@ public class SlowGeneralSearchImpl implements GeneralSearch {
     }
 
     @Override
-    public RevisionData findSingleRevision(Long id, Integer revision, ConfigurationType type) throws IOException {
+    public RevisionData findSingleRevision(Long id, Integer revision, ConfigurationType type) {
         RevisionEntity entity = em.find(RevisionEntity.class, new RevisionKey(id, revision));
         if(entity == null) {
             return null;
         }
 
         if(StringUtils.isEmpty(entity.getData())) {
-            // TODO: log error
+            logger.error("Revision ("+id+"|"+revision+") doesn't have data.");
             return null;
         }
 
-        RevisionData data = json.readRevisionDataFromString(entity.getData());
-        if(data.getConfiguration().getType() != type) {
+        RevisionData data = json.deserializeRevisionData(entity.getData());
+        if(data == null || data.getConfiguration().getType() != type) {
             return null;
         }
 
@@ -62,7 +68,7 @@ public class SlowGeneralSearchImpl implements GeneralSearch {
     }
 
     @Override
-    public List<RevisionDataRemovedContainer> tempFindAllStudies() throws IOException {
+    public List<RevisionDataRemovedContainer> tempFindAllStudies() {
         List<RevisionDataRemovedContainer> result = new ArrayList<>();
         List<StudyEntity> entities = formFindQuery().getResultList();
         RevisionDataRemovedContainer container;
@@ -70,7 +76,7 @@ public class SlowGeneralSearchImpl implements GeneralSearch {
             if(!entity.getRemoved()) {
                 if(entity.getCurApprovedNo() != null) {
                     RevisionEntity rev = em.find(RevisionEntity.class, entity.currentApprovedRevisionKey());
-                    RevisionData data = json.readRevisionDataFromString(rev.getData());
+                    RevisionData data = json.deserializeRevisionData(rev.getData());
 
                     if(data != null) {
                         container = new RevisionDataRemovedContainer(data, false);
@@ -79,7 +85,7 @@ public class SlowGeneralSearchImpl implements GeneralSearch {
                 }
                 if(entity.hasDraft()) {
                     RevisionEntity rev = em.find(RevisionEntity.class, entity.latestRevisionKey());
-                    RevisionData data = json.readRevisionDataFromString(rev.getData());
+                    RevisionData data = json.deserializeRevisionData(rev.getData());
 
                     if(data != null) {
                         container = new RevisionDataRemovedContainer(data, false);
@@ -88,7 +94,7 @@ public class SlowGeneralSearchImpl implements GeneralSearch {
                 }
             } else {
                 RevisionEntity rev = em.find(RevisionEntity.class, entity.getLatestRevisionNo());
-                RevisionData data = json.readRevisionDataFromString(rev.getData());
+                RevisionData data = json.deserializeRevisionData(rev.getData());
 
                 if(data != null) {
                     container = new RevisionDataRemovedContainer(data, true);

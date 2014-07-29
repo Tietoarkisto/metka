@@ -6,6 +6,8 @@ import fi.uta.fsd.metka.model.interfaces.ModelBase;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,43 +19,89 @@ import java.io.IOException;
  */
 @Service
 public final class JSONUtil {
+    private static Logger logger = LoggerFactory.getLogger(JSONUtil.class);
+
     // Private constructor to stop instantiation
     private JSONUtil() {}
 
     @Autowired
     private ObjectMapper metkaObjectMapper;
 
-    public Configuration readDataConfigurationFromFile(File file) throws IOException {
-        return metkaObjectMapper.readValue(file, Configuration.class);
+    public Configuration deserializeDataConfiguration(File file) {
+        return deserializeFromFile(file, Configuration.class);
     }
-    public Configuration readDataConfigurationFromString(String data) throws IOException {
-        return metkaObjectMapper.readValue(data, Configuration.class);
-    }
-
-    public GUIConfiguration readGUIConfigurationFromFile(File file) throws IOException {
-        return metkaObjectMapper.readValue(file, GUIConfiguration.class);
-    }
-    public GUIConfiguration readGUIConfigurationFromString(String data) throws IOException {
-        return metkaObjectMapper.readValue(data, GUIConfiguration.class);
+    public Configuration deserializeDataConfiguration(String data) {
+        return deserializeFromString(data, Configuration.class);
     }
 
-    public RevisionData readRevisionDataFromString(String data) throws IOException {
-        return metkaObjectMapper.readValue(data, RevisionData.class);
+    public GUIConfiguration deserializeGUIConfiguration(File file) {
+        return deserializeFromFile(file, GUIConfiguration.class);
+    }
+    public GUIConfiguration deserializeGUIConfiguration(String data) {
+        return deserializeFromString(data, GUIConfiguration.class);
     }
 
-    public String serialize(ModelBase data) throws IOException {
-        return metkaObjectMapper.writeValueAsString(data);
+    public RevisionData deserializeRevisionData(String data) {
+        return deserializeFromString(data, RevisionData.class);
     }
 
-    public String serialize(JsonNode data) throws IOException {
-        return metkaObjectMapper.writeValueAsString(data);
+    private <T extends ModelBase> T deserializeFromString(String data, Class<T> tClass) {
+        try {
+            return metkaObjectMapper.readValue(data, tClass);
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+            logger.error("IOException while parsing "+tClass.toString()+" from string data");
+            return null;
+        }
     }
 
-    public JsonNode readJsonTree(File file) throws IOException {
-        return metkaObjectMapper.readTree(file);
+    private <T extends ModelBase> T deserializeFromFile(File file, Class<T> tClass) {
+        try {
+            return metkaObjectMapper.readValue(file, tClass);
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+            logger.error("IOException while parsing "+tClass.toString()+" from file "+file.getName());
+            return null;
+        }
     }
 
-    public JsonNode readJsonTree(String data) throws IOException {
-        return metkaObjectMapper.readTree(data);
+    public String serialize(ModelBase data) {
+        try {
+            return metkaObjectMapper.writeValueAsString(data);
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+            logger.error("IOException while serializing "+data.toString());
+            return null;
+        }
+    }
+
+    public String serialize(JsonNode data) {
+        try {
+            return metkaObjectMapper.writeValueAsString(data);
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+            logger.error("IOException while serializing JsonNode");
+            return null;
+        }
+    }
+
+    public JsonNode readJsonTree(File file) {
+        try {
+            return metkaObjectMapper.readTree(file);
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+            logger.error("IOException while reading file "+file.getName());
+            return null;
+        }
+    }
+
+    public JsonNode readJsonTree(String data) {
+        try {
+            return metkaObjectMapper.readTree(data);
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+            logger.error("IOException while reading String");
+            return null;
+        }
     }
 }

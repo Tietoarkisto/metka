@@ -1,18 +1,18 @@
 package fi.uta.fsd.metka.storage.repository.impl;
 
-import fi.uta.fsd.metka.storage.entity.RevisionEntity;
-import fi.uta.fsd.metka.storage.entity.impl.SeriesEntity;
 import fi.uta.fsd.metka.enums.RevisionState;
-import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.storage.repository.GeneralRepository;
-import fi.uta.fsd.metka.storage.repository.SeriesRepository;
-import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.factories.DataFactory;
 import fi.uta.fsd.metka.model.factories.SeriesFactory;
 import fi.uta.fsd.metka.mvc.services.simple.transfer.TransferObject;
+import fi.uta.fsd.metka.storage.entity.RevisionEntity;
+import fi.uta.fsd.metka.storage.entity.impl.SeriesEntity;
+import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
+import fi.uta.fsd.metka.storage.repository.GeneralRepository;
+import fi.uta.fsd.metka.storage.repository.SeriesRepository;
+import fi.uta.fsd.metka.storage.util.JSONUtil;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -20,9 +20,9 @@ import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.io.IOException;
 
-import static fi.uta.fsd.metka.storage.util.ModelAccessUtil.*;
+import static fi.uta.fsd.metka.storage.util.ModelAccessUtil.doFieldChanges;
+import static fi.uta.fsd.metka.storage.util.ModelAccessUtil.idIntegrityCheck;
 
 @Repository
 public class SeriesRepositoryImpl implements SeriesRepository {
@@ -42,7 +42,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
     private GeneralRepository general;
 
     @Override
-    public RevisionData getNew() throws IOException {
+    public RevisionData getNew() {
         SeriesEntity entity = new SeriesEntity();
         em.persist(entity);
 
@@ -63,7 +63,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
 
     @Override
     // TODO: needs better reporting to user about what went wrong
-    public boolean saveSeries(TransferObject to) throws IOException {
+    public boolean saveSeries(TransferObject to) {
         // Get SeriesEntity
         // Check if latest revision is different from latest approved (the first requirement since only drafts
         // can be saved and these should always be different if Revisionable has an active draft).
@@ -91,7 +91,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
             return false;
         }
 
-        RevisionData data = json.readRevisionDataFromString(revEntity.getData());
+        RevisionData data = json.deserializeRevisionData(revEntity.getData());
         Configuration config = configRepo.findConfiguration(data.getConfiguration());
 
         // Validate TransferObject against revision data:
@@ -147,7 +147,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
     *       or removed.
     */
     @Override
-    public boolean approveSeries(Object seriesno) throws IOException {
+    public boolean approveSeries(Object seriesno) {
         // Get series entity
         // Compare current approved and latest revision no, if they are the same there is nothing to approve.
         // If latest revision is larger than current approved then get the revision.
@@ -174,7 +174,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
             return false;
         }
 
-        RevisionData data = json.readRevisionDataFromString(entity.getData());
+        RevisionData data = json.deserializeRevisionData(entity.getData());
 
         // Check that data is also in DRAFT state and that id and revision match.
         // For each change:
@@ -215,7 +215,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
     }
 
     @Override
-    public RevisionData editSeries(Object seriesno) throws IOException {
+    public RevisionData editSeries(Object seriesno) {
         // Get series entity
         // Do the usual checking
         // If latest revision differs from current approved get that
@@ -230,7 +230,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
 
         //RevisionEntity latestRevision = series.getLatestRevision();
         RevisionEntity latestRevision = em.find(RevisionEntity.class, series.latestRevisionKey());
-        RevisionData oldData = json.readRevisionDataFromString(latestRevision.getData());
+        RevisionData oldData = json.deserializeRevisionData(latestRevision.getData());
         if(series.hasDraft()) {
             if(latestRevision.getState() != RevisionState.DRAFT) {
                 // TODO: log exception since data is out of sync

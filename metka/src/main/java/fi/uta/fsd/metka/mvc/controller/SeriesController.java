@@ -1,18 +1,18 @@
 package fi.uta.fsd.metka.mvc.controller;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
-import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
+import fi.uta.fsd.metka.mvc.search.GeneralSearch;
 import fi.uta.fsd.metka.mvc.services.ConfigurationService;
 import fi.uta.fsd.metka.mvc.services.SeriesService;
 import fi.uta.fsd.metka.mvc.services.simple.ErrorMessage;
 import fi.uta.fsd.metka.mvc.services.simple.RevisionViewDataContainer;
+import fi.uta.fsd.metka.mvc.services.simple.series.SeriesSearchData;
 import fi.uta.fsd.metka.mvc.services.simple.transfer.SearchResult;
 import fi.uta.fsd.metka.mvc.services.simple.transfer.TransferObject;
-import fi.uta.fsd.metka.mvc.services.simple.series.SeriesSearchData;
-import fi.uta.fsd.metka.mvc.search.GeneralSearch;
+import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.transfer.configuration.ConfigurationMap;
 import fi.uta.fsd.metka.transfer.configuration.GUIConfigurationMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -112,14 +111,16 @@ public class SeriesController {
         ConfigurationMap configs = new ConfigurationMap();
         configs.setConfiguration(config);
         //configs.setConfiguration(fileConfig);
-        try {
-            model.asMap().put("jsConfig", json.serialize(configs));
-        } catch(IOException ex) {
-            ex.printStackTrace();
+        String result;
+
+        result = json.serialize(configs);
+        if(result == null) {
             List<ErrorMessage> errors = new ArrayList<>();
             errors.add(ErrorMessage.configurationSerializationError("study", id, revision));
             redirectAttributes.addFlashAttribute("displayableErrors", errors);
             return REDIRECT_SEARCH;
+        } else {
+            model.asMap().put("jsConfig", result);
         }
 
         // Form JSGUIConfig
@@ -127,25 +128,26 @@ public class SeriesController {
         GUIConfiguration guiConfig = configService.findLatestGUIByType(ConfigurationType.SERIES);
         guiConfigs.setConfiguration(guiConfig);
 
-        try {
-            model.asMap().put("jsGUIConfig", json.serialize(guiConfigs));
-        } catch(IOException ex) {
-            ex.printStackTrace();
+        result = json.serialize(guiConfigs);
+        if(result == null) {
+
             List<ErrorMessage> errors = new ArrayList<>();
             errors.add(ErrorMessage.guiConfigurationSerializationError("study", id, revision));
             redirectAttributes.addFlashAttribute("displayableErrors", errors);
             return REDIRECT_SEARCH;
+        } else {
+            model.asMap().put("jsGUIConfig", result);
         }
 
         // Data
-        try {
-            model.asMap().put("jsData", json.serialize(generalSearch.findSingleRevision(id, revision, ConfigurationType.SERIES)));
-        } catch(IOException ex) {
-            ex.printStackTrace();
+        result = json.serialize(generalSearch.findSingleRevision(id, revision, ConfigurationType.SERIES));
+        if(result == null) {
             List<ErrorMessage> errors = new ArrayList<>();
             errors.add(ErrorMessage.guiConfigurationSerializationError("study", id, revision));
             redirectAttributes.addFlashAttribute("displayableErrors", errors);
             return REDIRECT_SEARCH;
+        } else {
+            model.asMap().put("jsData", result);
         }
 
         model.asMap().put("page", "series");
@@ -296,19 +298,19 @@ public class SeriesController {
             , HttpServletResponse response) {
         Map<String, Object> map = new HashMap<>();
 
-        try {
-            RevisionData revisionData = generalSearch
-                    .findSingleRevision(id, revision, ConfigurationType.SERIES);
-            map.put("jsData", revisionData);
-            map.put("success", true);
-        } catch (IOException e) {
-            e.printStackTrace();
+        RevisionData revisionData = generalSearch.findSingleRevision(id, revision, ConfigurationType.SERIES);
+
+        if (revisionData == null) {
+
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             List<ErrorMessage> errors = new ArrayList<>();
             errors.add(ErrorMessage
                     .guiConfigurationSerializationError("study", id, revision));
             map.put("success", false);
             map.put("displayableErrors", errors);
+        } else {
+            map.put("jsData", revisionData);
+            map.put("success", true);
         }
 
         return map;

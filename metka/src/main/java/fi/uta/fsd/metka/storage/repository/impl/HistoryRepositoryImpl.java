@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +23,7 @@ public class HistoryRepositoryImpl implements HistoryRepository {
     private JSONUtil json;
 
     @Override
-    public List<RevisionData> getRevisionHistory(Long id) throws IOException {
+    public List<RevisionData> getRevisionHistory(Long id) {
         List<RevisionData> revisions = new ArrayList<RevisionData>();
         List<RevisionEntity> entities =
                 em.createQuery("SELECT r FROM RevisionEntity r " +
@@ -33,14 +32,14 @@ public class HistoryRepositoryImpl implements HistoryRepository {
                     .getResultList();
 
         for(RevisionEntity entity : entities) {
-            RevisionData data = json.readRevisionDataFromString(entity.getData());
+            RevisionData data = json.deserializeRevisionData(entity.getData());
             revisions.add(data);
         }
         return revisions;
     }
 
     @Override
-    public List<RevisionData> getRevisionsForComparison(ChangeCompareRequest request) throws IOException {
+    public List<RevisionData> getRevisionsForComparison(ChangeCompareRequest request) {
         List<RevisionEntity> entities = em.createQuery("SELECT r FROM RevisionEntity r " +
                 "WHERE r.key.revisionableId = :id AND r.key.revisionNo > :begin AND r.key.revisionNo <= :end " +
                 "ORDER BY r.key.revisionNo ASC", RevisionEntity.class)
@@ -50,18 +49,18 @@ public class HistoryRepositoryImpl implements HistoryRepository {
                 .getResultList();
         List<RevisionData> datas = new ArrayList<RevisionData>();
         for(RevisionEntity entity : entities) {
-            datas.add(json.readRevisionDataFromString(entity.getData()));
+            datas.add(json.deserializeRevisionData(entity.getData()));
         }
         return datas;
     }
 
     @Override
-    public RevisionData getRevisionByKey(Long id, Integer revision) throws IOException {
+    public RevisionData getRevisionByKey(Long id, Integer revision) {
         RevisionEntity entity = em.find(RevisionEntity.class, new RevisionKey(id, revision));
         if(entity == null) {
             return null;
         }
-        RevisionData data = json.readRevisionDataFromString(entity.getData());
+        RevisionData data = json.deserializeRevisionData(entity.getData());
         return data;
     }
 }

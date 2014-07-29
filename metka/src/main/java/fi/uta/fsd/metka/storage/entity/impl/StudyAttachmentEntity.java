@@ -16,6 +16,22 @@ public class StudyAttachmentEntity extends RevisionableEntity{
     @Column(name = "FILE_PATH")
     private String filePath;
 
+    /**
+     * Links study attachment to its parent study.
+     * Since this information should be immutable on the data it's set as non updatable here and the values should always match.
+     *
+     */
+    @Column(name = "STUDY_ID", updatable = false)
+    private Long studyId;
+
+    public Long getStudyId() {
+        return studyId;
+    }
+
+    public void setStudyId(Long studyId) {
+        this.studyId = studyId;
+    }
+
     public String getFilePath() {
         return filePath;
     }

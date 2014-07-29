@@ -4,7 +4,6 @@ import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.util.List;
 
 @Transactional(readOnly = true)
@@ -24,10 +23,9 @@ public interface GeneralSearch {
      * @param id Id of the revisionable object
      * @param revision Revision number of requested revision.
      * @return RevisionData of the requested revision and null if revision was not found.
-     * @throws java.io.IOException
      */
-    public RevisionData findSingleRevision(Long id, Integer revision, ConfigurationType type) throws IOException;
+    public RevisionData findSingleRevision(Long id, Integer revision, ConfigurationType type);
 
-    // TODO: Remove this
-    public List<RevisionDataRemovedContainer> tempFindAllStudies() throws IOException;
+    // TODO: Replace this with actual study search
+    public List<RevisionDataRemovedContainer> tempFindAllStudies();
 }

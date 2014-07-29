@@ -1,9 +1,7 @@
 package fi.uta.fsd.metka.mvc.services;
 
-import fi.uta.fsd.metka.storage.collecting.ReferenceCollecting;
 import fi.uta.fsd.metka.enums.FieldType;
 import fi.uta.fsd.metka.enums.SelectionListType;
-import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
@@ -12,14 +10,15 @@ import fi.uta.fsd.metka.model.configuration.Reference;
 import fi.uta.fsd.metka.model.configuration.SelectionList;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.SavedDataField;
-import fi.uta.fsd.metka.transfer.reference.ReferenceOptionsRequest;
+import fi.uta.fsd.metka.storage.collecting.ReferenceCollecting;
+import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
+import fi.uta.fsd.metka.transfer.reference.ReferenceOptionsRequest;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -42,9 +41,8 @@ public class ReferenceService {
      * @param data
      * @param path
      * @return
-     * @throws IOException
      */
-    public ReferenceOption getCurrentFieldOption(RevisionData data, String path) throws IOException {
+    public ReferenceOption getCurrentFieldOption(RevisionData data, String path) {
         Configuration config = configurations.findConfiguration(data.getConfiguration());
         String[] splits = path.split(".");
         if(splits.length == 0) {
@@ -123,7 +121,7 @@ public class ReferenceService {
         return null;
     }
 
-    public List<ReferenceOption> collectReferenceOptions(ReferenceOptionsRequest request) throws IOException {
+    public List<ReferenceOption> collectReferenceOptions(ReferenceOptionsRequest request) {
 
         Configuration config = configurations.findConfiguration(request.getConfType(), request.getConfVersion());
         if(config == null) {

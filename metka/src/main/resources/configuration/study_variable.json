@@ -31,6 +31,12 @@
 		}
 	},
 	"references": {
+		"study_ref": {
+			"key": "study_ref",
+			"type": "REVISIONABLE",
+			"target": "STUDY",
+			"titlePath": "title"
+		},
 		"variables_ref": {
 			"key": "variables_ref",
 			"type": "REVISIONABLE",
@@ -49,6 +55,14 @@
 			"required": true,
 			"display": false,
 			"type": "INTEGER"
+		},
+		"study": {
+			"key": "study",
+			"translatable": false,
+			"immutable": true,
+			"editable": false,
+			"type": "REFERENCE",
+			"reference": "study_ref"
 		},
 		"variables": {
 			"key": "variables",

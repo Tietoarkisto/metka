@@ -1,33 +1,28 @@
 package fi.uta.fsd.metka.storage.repository;
 
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.mvc.services.simple.transfer.TransferObject;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 
 @Transactional
 public interface StudyAttachmentRepository {
-    public RevisionData studyAttachmentForPath(String path, Long studyId) throws IOException;
+    public RevisionData studyAttachmentForPath(String path, Long studyId);
+
+    /**
+     * Creates a new study attachment with initial revision in DRAFT state
+     *
+     * @param studyId Id of the study this study attachment is attached to.
+     * @returnś
+     */
+    public RevisionData newStudyAttachment(Long studyId);
 
     /**
      * Return a DRAFT revision for given STUDY_ATTACHMENT.
      * If there's no existing DRAFT then one is created, otherwise returns an existing draft
      * @param id Revisionable id
      * @return RevisionData for DRAFT revision for given file, if none exists one is created.
-     * @throws IOException
      */
-    public RevisionData getEditableStudyAttachmentRevision(Long id) throws IOException;
-
-    /**
-     * Takes given TransferObject and saves possible changes to STUDY_ATTACHMENT-object.
-     * If no changes were found does nothing, but if there were changes saves the data and approves the STUDY_ATTACHMENT-object.
-     * This will lead to new revision being created next time the file is opened.
-     * @param to
-     * @return
-     * @throws Exception
-     */
-    public void studyAttachmentSaveAndApprove(TransferObject to) throws Exception;
+    public RevisionData getEditableStudyAttachmentRevision(Long id);
 
     /**
      * Adds a row to FILE_LINK_QUEUE for future checking that a reference actually exists in target revisionable.
@@ -39,5 +34,5 @@ public interface StudyAttachmentRepository {
      * @param key Field key of the REFERENCECONTAINER where the reference should be found
      * @param path File path, used to detect a por file
      */
-    public void addFileLinkEvent(Long studyId, Long attachmentId, String key, String path) throws IOException;
+    public void addFileLinkEvent(Long studyId, Long attachmentId, String key, String path);
 }

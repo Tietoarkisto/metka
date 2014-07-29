@@ -1,16 +1,15 @@
 package fi.uta.fsd.metka.storage.repository;
 
-import fi.uta.fsd.metka.storage.entity.SequenceEntity;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.repositoryResponses.DraftRemoveResponse;
 import fi.uta.fsd.metka.enums.repositoryResponses.LogicalRemoveResponse;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.storage.entity.SequenceEntity;
 import javassist.NotFoundException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDateTime;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.MissingResourceException;
 
@@ -33,13 +32,12 @@ public interface GeneralRepository {
      * @param type ConfigurationType of the recuested revisionable objects.
      * @param approvedOnly Should draft revisions be ignored when getting latest revision.
      * @return List of RevisionData objects fitting the given parameters
-     * @throws IOException If Jackson deserialization fails for some reason at any point.
      */
-    public List<RevisionData> getLatestRevisionsForType(ConfigurationType type, Boolean approvedOnly) throws IOException;
+    public List<RevisionData> getLatestRevisionsForType(ConfigurationType type, Boolean approvedOnly);
 
-    public RevisionData getLatestRevisionForId(Long id, boolean approvedOnly) throws IOException;
+    public RevisionData getLatestRevisionForId(Long id, boolean approvedOnly);
 
-    public RevisionData getRevision(Long id, Integer revision) throws IOException;
+    public RevisionData getRevision(Long id, Integer revision);
 
     public String getRevisionData(Long id, Integer revision);
 

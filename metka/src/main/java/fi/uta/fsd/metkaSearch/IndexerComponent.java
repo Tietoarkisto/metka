@@ -1,8 +1,8 @@
 package fi.uta.fsd.metkaSearch;
 
+import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
-import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metkaSearch.commands.indexer.IndexerCommand;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.entity.IndexerCommandRepository;
@@ -13,13 +13,14 @@ import fi.uta.fsd.metkaSearch.indexers.RevisionIndexer;
 import fi.uta.fsd.metkaSearch.indexers.WikipediaIndexer;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -31,7 +32,7 @@ import java.util.concurrent.Future;
 
 @Service
 public class IndexerComponent {
-
+    private static Logger logger = LoggerFactory.getLogger(IndexerComponent.class);
     @Autowired
     private GeneralRepository general;
 
@@ -78,16 +79,12 @@ public class IndexerComponent {
         IndexerCommand command = commandRepository.getNextCommandWithoutChange();
         if(command != null) {
             if(handlers.get(command.getPath()).isDone()) {
-                try {
-                    startIndexer(command.getPath());
-                } catch(IOException ioe) {
-                    ioe.printStackTrace();
-                }
+                startIndexer(command.getPath());
             }
         }
     }
 
-    public void addCommand(IndexerCommand command) throws IOException {
+    public void addCommand(IndexerCommand command) {
         commandRepository.addIndexerCommand(command);
         if(handlers.containsKey(command.getPath())) {
             if(handlers.get(command.getPath()).isDone()) {
@@ -99,7 +96,7 @@ public class IndexerComponent {
         }
     }
 
-    public void startIndexer(DirectoryManager.DirectoryPath path) throws IOException {
+    public void startIndexer(DirectoryManager.DirectoryPath path) {
         if(!isIndexerRunning(path)) {
             // Remove possible stopped handlers
             clearHandlers();
@@ -151,7 +148,7 @@ public class IndexerComponent {
     public List<Pair<String, Boolean>> indexerStatusList() {
         List<Pair<String, Boolean>> list = new ArrayList<>();
         for(Map.Entry<DirectoryManager.DirectoryPath, Future<IndexerStatusMessage>> handler : handlers.entrySet()) {
-            list.add(new ImmutablePair<String, Boolean>(handler.getKey().toString(), !handler.getValue().isDone()));
+            list.add(new ImmutablePair<>(handler.getKey().toString(), !handler.getValue().isDone()));
         }
         return list;
     }
@@ -161,7 +158,7 @@ public class IndexerComponent {
      * @param path
      * @return
      */
-    private Indexer createIndexer(DirectoryManager.DirectoryPath path) throws IOException {
+    private Indexer createIndexer(DirectoryManager.DirectoryPath path) {
         Indexer indexer = null;
         switch(path.getType())  {
             case WIKIPEDIA:

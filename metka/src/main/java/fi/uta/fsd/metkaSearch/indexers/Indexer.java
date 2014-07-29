@@ -7,9 +7,13 @@ import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.entity.IndexerCommandRepository;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import fi.uta.fsd.metkaSearch.enums.IndexerStatusMessage;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.Query;
-import org.xml.sax.SAXException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.concurrent.Callable;
@@ -19,6 +23,8 @@ import java.util.concurrent.Callable;
  * Implements basic functionality common for all indexers but all specialized stuff needs to be handled elsewhere.
  */
 public abstract class Indexer implements Callable<IndexerStatusMessage>/*, IndexerCommandHandler*/ {
+    private static Logger logger = LoggerFactory.getLogger(Indexer.class);
+
     protected static void checkPathType(DirectoryManager.DirectoryPath path, IndexerConfigurationType type) throws UnsupportedOperationException {
         if(path.getType() != type) {
             throw new UnsupportedOperationException("Path is for a different type");
@@ -39,10 +45,24 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
 
     private final IndexerCommandRepository commands;
 
+    private final IndexWriter indexWriter;
+
+    private final DirectoryManager.DirectoryPath path;
+
     //protected BlockingQueue<IndexerCommand> commandQueue = new LinkedBlockingQueue<>();
 
-    protected Indexer(DirectoryManager.DirectoryPath path, IndexerCommandRepository commands) throws IOException {
+    protected Indexer(DirectoryManager.DirectoryPath path, IndexerCommandRepository commands) throws UnsupportedOperationException {
+        this.path = path;
         indexer = DirectoryManager.getIndexDirectory(path);
+        if(indexer == null) {
+            throw new UnsupportedOperationException("Couldn't get an index directory for indexer with path "+path);
+        }
+        try {
+            indexWriter = indexer.getIndexWriter();
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+            throw new UnsupportedOperationException("IOException while tryting to get IndexWriter for indexer with path "+path);
+        }
         this.commands = commands;
     }
 
@@ -56,6 +76,10 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
 
     protected DirectoryInformation getIndexer() {
         return indexer;
+    }
+
+    public DirectoryManager.DirectoryPath getPath() {
+        return path;
     }
 
     @Override
@@ -151,41 +175,71 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
         return IndexerStatusMessage.RETURNED;
     }
 
-    protected abstract void handleCommand(IndexerCommand command) throws IOException, SAXException;
+    protected abstract void handleCommand(IndexerCommand command);
 
-    protected void removeDocument(Term term) throws IOException {
+    public void removeDocument(Term term) {
         // TODO: OutOfMemory checks and writer closing
-        indexer.getIndexWriter().deleteDocuments(term);
+        try {
+            indexWriter.deleteDocuments(term);
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+            logger.error("IOException while trying to delete documents with term " + term.toString());
+        }
     }
 
-    protected void removeDocument(Query query) throws IOException {
-        indexer.getIndexWriter().deleteDocuments(query);
+    public void removeDocument(Query query) {
+        try {
+            indexWriter.deleteDocuments(query);
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+            logger.error("IOException while trying to delete documents with query " + query.toString());
+        }
     }
 
-    private void flushIndex() throws IOException {
+    public void addDocument(Document document, Analyzer analyzer) {
+        try {
+            indexWriter.addDocument(document, analyzer);
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+            logger.error("IOException while trying to add document to indexer with path "+path);
+        }
+    }
+
+    private void flushIndex() {
         indexChanged = false;
         idleLoops = 0;
         commandBatch = 0;
-        if(indexer != null) {
+        try {
+            // Try to commit the writer
+            indexWriter.commit();
+
+            // Set indexer to dirty state so that searchers know to update their index
+            indexer.setDirty(true);
+        } catch (OutOfMemoryError er) {
+            er.printStackTrace();
+            // If we get an OutOfMemoryError then close the writer immediately
             try {
-                // Try to commit the writer
-                indexer.getIndexWriter().commit();
-                // Set indexer to dirty state so that searchers know to update their index
-                indexer.setDirty(true);
-            } catch (OutOfMemoryError er) {
-                er.printStackTrace();
-                // If we get an OutOfMemoryError then close the writer immediately
+                // Try closing the writer
+                indexWriter.close();
+            } catch(OutOfMemoryError erc) {
+                // As I understand it we should get another OutOfMemoryError, close the writer again
                 try {
                     // Try closing the writer
-                    indexer.getIndexWriter().close();
-                } catch(OutOfMemoryError erc) {
-                    // As I understand it we should get another OutOfMemoryError, close the writer again
-                    indexer.getIndexWriter().close();
-                } finally {
-                    // Interrupt current Thread since we can't continue indexing
-                    Thread.currentThread().interrupt();
+                    indexWriter.close();
+                } catch(IOException ioe) {
+                    ioe.printStackTrace();
+                    logger.error("IOException while trying to flush indexWriter for indexer in path "+indexer.getPath());
                 }
+            } catch(IOException ioe) {
+                ioe.printStackTrace();
+                logger.error("IOException while trying to flush indexWriter for indexer in path "+indexer.getPath());
+            } finally {
+                // Interrupt current Thread since we can't continue indexing
+                Thread.currentThread().interrupt();
             }
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+            logger.error("IOException while trying to flush indexWriter for indexer in path "+indexer.getPath());
         }
     }
 }

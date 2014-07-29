@@ -19,7 +19,6 @@ import fi.uta.fsd.metka.transfer.reference.ReferenceOptionTitle;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -42,8 +41,7 @@ class DependencyReferenceHandler extends ReferenceHandler {
      * @param options List where found values are placed as ReferenceOption objects
      */
     void collectOptions(Field field, Reference reference, Configuration config,
-                                            String dependencyValue, List<ReferenceOption> options)
-            throws IOException {
+                                            String dependencyValue, List<ReferenceOption> options) {
         Field dependencyField = config.getField(reference.getTarget());
         // TODO: All possible permutations as per specification. Implement in priority order. When more permutations start to be added then reorganize for clarity.
         switch(dependencyField.getType()) {
@@ -89,8 +87,7 @@ class DependencyReferenceHandler extends ReferenceHandler {
      */
     private void handleReferenceDependency(Field field, Reference reference, Configuration config,
                                            String dependencyValue, Reference dependencyReference,
-                                           List<ReferenceOption> options)
-            throws IOException {
+                                           List<ReferenceOption> options) {
         switch(dependencyReference.getType()) {
             case REVISIONABLE:
                 collectRevisionableDependencyValues(field, reference, dependencyValue, options);
@@ -113,15 +110,14 @@ class DependencyReferenceHandler extends ReferenceHandler {
      * @param options
      */
     private void collectRevisionableDependencyValues(Field field, Reference reference,
-                                                     String dependencyValue, List<ReferenceOption> options)
-            throws IOException {
+                                                     String dependencyValue, List<ReferenceOption> options) {
         RevisionEntity revision = repository.getRevisionForReferencedRevisionable(reference, dependencyValue);
         if(revision == null || StringUtils.isEmpty(revision.getData())) {
             // No data, can't continue
             return;
         }
 
-        RevisionData data = json.readRevisionDataFromString(revision.getData());
+        RevisionData data = json.deserializeRevisionData(revision.getData());
         if(data == null) {
             return;
         }
@@ -163,8 +159,7 @@ class DependencyReferenceHandler extends ReferenceHandler {
 
     private void collectJsonDependencyValues(Field field, Reference reference, Configuration config,
                                              String dependencyValue, Reference dependencyReference,
-                                             List<ReferenceOption> options)
-                throws IOException {
+                                             List<ReferenceOption> options) {
         MiscJSONEntity misc = repository.getMiscJsonForReference(dependencyReference);
         if(misc == null || StringUtils.isEmpty(misc.getData())) {
             // No data, can't continue

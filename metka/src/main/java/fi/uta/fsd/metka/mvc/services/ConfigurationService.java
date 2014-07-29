@@ -1,14 +1,12 @@
 package fi.uta.fsd.metka.mvc.services;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
-import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.ConfigurationKey;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
+import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
 
 @Service
 public class ConfigurationService {
@@ -16,19 +14,11 @@ public class ConfigurationService {
     private ConfigurationRepository repository;
 
     public void insertDataConfig(String text) {
-        try {
-            repository.insertDataConfig(text);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+        repository.insertDataConfig(text);
     }
 
     public void insertGUIConfig(String text) {
-        try {
-            repository.insertGUIConfig(text);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+        repository.insertGUIConfig(text);
     }
 
     public Configuration findLatestByType(ConfigurationType type) {

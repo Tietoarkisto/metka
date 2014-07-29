@@ -33,15 +33,18 @@ public class DirectoryManager {
      * Synchronized static method for fetching DirectoryInformation object based on path or creating one if one doesn't yet exist.
      * @param path
      * @return
-     * @throws IOException
      */
-    public static synchronized DirectoryInformation getIndexDirectory(DirectoryPath path) throws IOException {
+    public static synchronized DirectoryInformation getIndexDirectory(DirectoryPath path) {
         DirectoryInformation index;
 
         index = indexDirectories.get(path);
         if(index == null) {
-            index = new DirectoryInformation(path);
-            indexDirectories.put(index.getPath(), index);
+            try {
+                index = new DirectoryInformation(path);
+                indexDirectories.put(index.getPath(), index);
+            } catch(IOException ioe) {
+                ioe.printStackTrace();
+            }
         }
 
         return index;

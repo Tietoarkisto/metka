@@ -35,7 +35,6 @@ public class FieldSerializer extends ObjectSerializer<Field> {
         jgen.writeBooleanField("subfield", value.getSubfield());
         if(value.getSubfield()) {
             jgen.writeBooleanField("summaryField", value.getSummaryField());
-            // TODO: Handle field referenceKey
         }
         jgen.writeBooleanField("editable", value.getEditable());
         jgen.writeBooleanField("writable", value.getWritable());

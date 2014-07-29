@@ -1,12 +1,11 @@
 package fi.uta.fsd.metka.transfer.configuration;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import fi.uta.fsd.metka.model.interfaces.ModelBase;
 import fi.uta.fsd.metka.model.configuration.Configuration;
+import fi.uta.fsd.metka.model.interfaces.ModelBase;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -30,7 +29,7 @@ public class ConfigurationMap implements ModelBase {
 
     public static class ConfigurationMapSerializer extends JsonSerializer<ConfigurationMap> {
         @Override
-        public void serialize(ConfigurationMap value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
+        public void serialize(ConfigurationMap value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
             jgen.writeStartObject();
 
             for(Map.Entry<String, Configuration> entry : value.getConfigurations().entrySet()) {

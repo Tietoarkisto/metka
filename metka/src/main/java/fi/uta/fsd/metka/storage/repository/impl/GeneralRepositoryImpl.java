@@ -20,7 +20,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.MissingResourceException;
@@ -121,7 +120,7 @@ public class GeneralRepositoryImpl implements GeneralRepository {
     }
 
     @Override
-    public List<RevisionData> getLatestRevisionsForType(ConfigurationType type, Boolean approvedOnly) throws IOException {
+    public List<RevisionData> getLatestRevisionsForType(ConfigurationType type, Boolean approvedOnly) {
         List<RevisionData> dataList = new ArrayList<>();
         List<RevisionableEntity> revisionables = em.createQuery("SELECT r FROM RevisionableEntity r"+(approvedOnly? " WHERE r.curApprovedNo IS NOT NULL":""), RevisionableEntity.class).getResultList();
 
@@ -133,7 +132,10 @@ public class GeneralRepositoryImpl implements GeneralRepository {
                 revision = em.find(RevisionEntity.class, entity.latestRevisionKey());
             }
             if(revision != null) {
-                dataList.add(json.readRevisionDataFromString(revision.getData()));
+                RevisionData data = json.deserializeRevisionData(revision.getData());
+                if(data != null) {
+                    dataList.add(data);
+                }
             }
         }
 
@@ -141,7 +143,7 @@ public class GeneralRepositoryImpl implements GeneralRepository {
     }
 
     @Override
-    public RevisionData getLatestRevisionForId(Long id, boolean approvedOnly) throws IOException {
+    public RevisionData getLatestRevisionForId(Long id, boolean approvedOnly) {
         RevisionableEntity entity = em.find(RevisionableEntity.class, id);
         if(entity == null) {
             return null;
@@ -153,7 +155,7 @@ public class GeneralRepositoryImpl implements GeneralRepository {
     }
 
     @Override
-    public RevisionData getRevision(Long id, Integer revision) throws IOException {
+    public RevisionData getRevision(Long id, Integer revision) {
         List<RevisionEntity> revisions =
                 em.createQuery(
                     "SELECT r FROM RevisionEntity r " +
@@ -165,7 +167,7 @@ public class GeneralRepositoryImpl implements GeneralRepository {
 
         RevisionEntity ent = DataAccessUtils.requiredSingleResult(revisions);
 
-        RevisionData data = json.readRevisionDataFromString(ent.getData());
+        RevisionData data = json.deserializeRevisionData(ent.getData());
 
         return data;
     }

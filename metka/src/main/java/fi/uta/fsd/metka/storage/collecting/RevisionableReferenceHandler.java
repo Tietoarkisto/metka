@@ -14,7 +14,6 @@ import fi.uta.fsd.metka.transfer.reference.ReferenceOptionTitle;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -27,8 +26,7 @@ class RevisionableReferenceHandler extends ReferenceHandler {
      * @param reference Reference to be processed
      * @param options List where found values are placed as ReferenceOption objects
      */
-    void collectOptions(Reference reference, List<ReferenceOption> options)
-            throws IOException {
+    void collectOptions(Reference reference, List<ReferenceOption> options) {
 
         List<RevisionableEntity> entities = repository.getRevisionablesForReference(reference);
         if(entities == null) {
@@ -50,7 +48,7 @@ class RevisionableReferenceHandler extends ReferenceHandler {
                     continue;
                 }
 
-                RevisionData data = json.readRevisionDataFromString(revision.getData());
+                RevisionData data = json.deserializeRevisionData(revision.getData());
                 Configuration config = configurations.findConfiguration(data.getConfiguration());
                 // TODO: Fetch value based on path, not just assumption that it's a top level field
                 SavedDataField saved = data.dataField(SavedDataFieldCall.get(reference.getTitlePath())).getRight();

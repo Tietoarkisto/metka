@@ -1,9 +1,9 @@
 package fi.uta.fsd.metkaSearch.commands.searcher.expert;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
-import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
+import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metkaSearch.commands.searcher.RevisionSearchCommandBase;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
@@ -20,7 +20,6 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.springframework.util.StringUtils;
 
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -58,14 +57,7 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
     private Query query;
     private ExpertRevisionSearchCommand(DirectoryManager.DirectoryPath path, String qry, ConfigurationRepository configurations) throws QueryNodeException {
         super(path, ResultList.ResultType.REVISION);
-        Configuration config = null;
-        boolean configMode = true;
-        try {
-            config = configurations.findLatestConfiguration(ConfigurationType.fromValue(path.getAdditionalParameters()[0]));
-        } catch (IOException ioe) {
-            // Nothing much, just have to remember to account for this when necessary
-            configMode = false;
-        }
+        Configuration config = configurations.findLatestConfiguration(ConfigurationType.fromValue(path.getAdditionalParameters()[0]));
 
         //addTextAnalyzer("seriesname");
         Map<String, NumericConfig> nums = new HashMap<>();
@@ -76,7 +68,7 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
 
         /*StandardQueryParser parser = new StandardQueryParser(getAnalyzer());*/
         StandardQueryParser parser = new StandardQueryParser();
-        if(configMode) {
+        if(config != null) {
             // If we're in config mode we need to parse the query twice, once to get all the fields in the query and second time with the actual numeric configs and analyzers
             query = parser.parse(qry, "general");
 

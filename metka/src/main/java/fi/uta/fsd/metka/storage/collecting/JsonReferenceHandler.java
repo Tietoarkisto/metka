@@ -2,13 +2,12 @@ package fi.uta.fsd.metka.storage.collecting;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
-import fi.uta.fsd.metka.storage.entity.MiscJSONEntity;
 import fi.uta.fsd.metka.model.configuration.Reference;
+import fi.uta.fsd.metka.storage.entity.MiscJSONEntity;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -20,23 +19,14 @@ class JsonReferenceHandler extends ReferenceHandler {
      * @param reference Reference to be processed
      * @param options List where found values are placed as ReferenceOption objects
      */
-    void collectOptions(Reference reference, List<ReferenceOption> options)
-            throws IOException {
+    void collectOptions(Reference reference, List<ReferenceOption> options) {
         MiscJSONEntity entity = repository.getMiscJsonForReference(reference);
         if(entity == null || StringUtils.isEmpty(entity.getData())) {
             // No json or no data, can't continue
             return;
         }
 
-        JsonNode root = null;
-        try {
-            root = json.readJsonTree(entity.getData());
-        } catch(IOException ex) {
-            // Can't continue since can't parse data
-            // TODO: Log event.
-            ex.printStackTrace();
-            return;
-        }
+        JsonNode root = json.readJsonTree(entity.getData());
         if(root == null) {
             // No root node, can't continue
             return;

@@ -2,18 +2,18 @@ package fi.uta.fsd.metka.mvc.services;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.UIRevisionState;
-import fi.uta.fsd.metka.model.data.container.SavedDataField;
-import fi.uta.fsd.metka.storage.repository.SeriesRepository;
 import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.mvc.services.simple.RevisionViewDataContainer;
-import fi.uta.fsd.metka.mvc.services.simple.transfer.SearchResult;
-import fi.uta.fsd.metka.mvc.services.simple.transfer.TransferObject;
-import fi.uta.fsd.metka.mvc.services.simple.series.SeriesSearchSO;
+import fi.uta.fsd.metka.model.data.container.SavedDataField;
 import fi.uta.fsd.metka.mvc.search.GeneralSearch;
 import fi.uta.fsd.metka.mvc.search.RevisionDataRemovedContainer;
 import fi.uta.fsd.metka.mvc.search.SeriesSearch;
+import fi.uta.fsd.metka.mvc.services.simple.RevisionViewDataContainer;
+import fi.uta.fsd.metka.mvc.services.simple.series.SeriesSearchSO;
+import fi.uta.fsd.metka.mvc.services.simple.transfer.SearchResult;
+import fi.uta.fsd.metka.mvc.services.simple.transfer.TransferObject;
+import fi.uta.fsd.metka.storage.repository.SeriesRepository;
 import fi.uta.fsd.metkaSearch.IndexerComponent;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
@@ -21,7 +21,6 @@ import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -103,14 +102,7 @@ public class SeriesService {
      */
     public RevisionViewDataContainer findSingleRevision(Long id, Integer revision) {
         RevisionData data;
-        try {
-            data = generalSearch.findSingleRevision(id, revision, ConfigurationType.SERIES);
-        } catch(IOException ex) {
-            // TODO: better exception handling with messages to the user
-            ex.printStackTrace();
-            return null;
-        }
-
+        data = generalSearch.findSingleRevision(id, revision, ConfigurationType.SERIES);
         if(data == null) {
             return null;
         }
@@ -131,11 +123,7 @@ public class SeriesService {
         }
 
         // Creating new series was successful, index series
-        try {
-            indexer.addCommand(RevisionIndexerCommand.index(indexerPaths.get("fi"), revision.getKey().getId(), revision.getKey().getRevision()));
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
+        indexer.addCommand(RevisionIndexerCommand.index(indexerPaths.get("fi"), revision.getKey().getId(), revision.getKey().getRevision()));
 
         Configuration config = configService.findByTypeAndVersion(revision.getConfiguration());
         TransferObject single = TransferObject.buildTransferObjectFromRevisionData(revision);

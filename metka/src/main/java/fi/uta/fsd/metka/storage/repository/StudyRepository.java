@@ -4,12 +4,10 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.mvc.services.simple.transfer.TransferObject;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-
 @Transactional
 public interface StudyRepository {
-    public RevisionData getNew(Long acquisition_number) throws IOException;
-    public boolean saveStudy(TransferObject so) throws IOException;
+    public RevisionData getNew(Long acquisition_number);
+    public boolean saveStudy(TransferObject so);
 
     /**
      * If given id/revision matches a STUDY DRAFT:
@@ -21,8 +19,8 @@ public interface StudyRepository {
      * @param id RevisionableId
      * @param revision RevisionNo
      */
-    public void checkFileLinkQueue(Long id, Integer revision) throws IOException;
+    public void checkFileLinkQueue(Long id, Integer revision);
 
-    public boolean approveStudy(Object id) throws IOException;
-    public RevisionData editStudy(Object studyno) throws IOException;
+    public boolean approveStudy(Object id);
+    public RevisionData editStudy(Object studyno);
 }
