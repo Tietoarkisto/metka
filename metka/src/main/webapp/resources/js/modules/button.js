@@ -6,16 +6,17 @@ define(function (require) {
         //var $button = $(this);
         //$button.button('loading');
         //$button.button('reset');
-        return function () {
+        return function (options) {
+            var metka = require('./../metka');
             this
                 .click(function () {
                     var data = {
-                        id: MetkaJS.SingleObject.id,
-                        revision: MetkaJS.SingleObject.revision,
+                        id: metka.id,
+                        revision: metka.revision,
                         values: {}
                     };
-                    $.each(MetkaJS.data.fields, function (key, value) {
-                        data.values[key] = MetkaJS.Data.get(key);
+                    $.each(options.data.fields, function (key, value) {
+                        data.values[key] = require('./data').get(options, key);
                     });
 
                     $.ajax({
@@ -46,10 +47,15 @@ define(function (require) {
         };
     }
 
+
     var buttons = {
         APPROVE: FormAction('approve', function () {
             location.reload();
         }),
+        CANCEL: function () {
+            this
+                .text(MetkaJS.L10N.get('general.buttons.cancel'));
+        },
         COMPARE: function () {
             this
                 .text(MetkaJS.L10N.get('general.revision.compare'))
@@ -66,6 +72,7 @@ define(function (require) {
                 });
         },
         HISTORY: function () {
+            var metka = require('./../metka');
             this
                 .click(function () {
                     function checkRadioGroups() {
@@ -107,7 +114,7 @@ define(function (require) {
                                         'general.revision.compare.end'
                                     ];
 
-                                    if (MetkaJS.SingleObject.state === 'DRAFT') {
+                                    if (metka.state === 'DRAFT') {
                                         arr.push('general.revision.replace');
                                     }
 
@@ -153,8 +160,8 @@ define(function (require) {
                                                 })
                                             ];
 
-                                            if (MetkaJS.SingleObject.state === 'DRAFT') {
-                                                items.push(require('./button')()
+                                            if (metka.state === 'DRAFT') {
+                                                items.push(require('./button')()()
                                                     .addClass('btn-xs')
                                                     .prop('disabled', true)
                                                     .text(MetkaJS.L10N.get('general.revision.replace')));
@@ -176,9 +183,10 @@ define(function (require) {
                 .text(MetkaJS.L10N.get('general.buttons.no'));
         },
         REMOVE: function () {
+            var metka = require('./../metka');
             this
                 .click(function () {
-                    var type = MetkaJS.SingleObject.state === 'DRAFT' ? 'draft' : 'logical';
+                    var type = metka.state === 'DRAFT' ? 'draft' : 'logical';
                     require('./modal')({
                         title: MetkaJS.L10N.get('confirmation.remove.revision.title'),
                         body: MetkaJS.L10N.get('confirmation.remove.revision.{type}.text'.supplant({
@@ -186,9 +194,9 @@ define(function (require) {
                         })).supplant({
                             '0': MetkaJS.L10N.get('confirmation.remove.revision.{type}.data.{page}'.supplant({
                                 type: type,
-                                page: MetkaJS.Globals.page
+                                page: metka.page
                             })),
-                            '1': MetkaJS.SingleObject.id
+                            '1': metka.id
                         }),
                         buttons: [{
                             type: 'YES',
@@ -212,7 +220,8 @@ define(function (require) {
         }
     };
 
-    return function (options) {
+    return require('./inherit')(function (options) {
+        var metka = require('./../metka');
         function isVisible() {
             /**
              * Checks to see if user fulfills buttons userGroups restriction
@@ -247,12 +256,12 @@ define(function (require) {
                         var state = options.states[i];
                         switch(state) {
                             case MetkaJS.E.VisibilityState.DRAFT:
-                                if(MetkaJS.SingleObject.state === 'DRAFT') {
+                                if(metka.state === 'DRAFT') {
                                     show = true;
                                 }
                                 break;
                             case MetkaJS.E.VisibilityState.APPROVED:
-                                if(MetkaJS.SingleObject.state !== 'DRAFT') {
+                                if(metka.state !== 'DRAFT') {
                                     show = true;
                                 }
                                 break;
@@ -302,9 +311,9 @@ define(function (require) {
         }
 
         if (options.create) {
-            options.create.call($button);
+            options.create.call($button, options);
         }
 
         return $button;
-    };
+    });
 });

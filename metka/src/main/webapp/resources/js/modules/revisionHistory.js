@@ -18,7 +18,7 @@ define(function(require) {
                 dataType: 'json',
                 url: require('./url')('compareRevisions'),
                 data: JSON.stringify({
-                    id: MetkaJS.SingleObject.id,
+                    id: require('./../metka').id,
                     begin: parseInt(beginVal, 10),
                     end: parseInt(endVal, 10),
                     type: MetkaJS.Globals.page.toUpperCase()

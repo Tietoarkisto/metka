@@ -73,7 +73,7 @@ define(function (require) {
 					for (key in config.fields) {
 						if (config.fields.hasOwnProperty(key)) {
 							$('#fileManagementField' + key).val(to.values[key]);
-							if (MetkaJS.SingleObject.state !== 'DRAFT' || !config.fields[key].editable || (config.fields[key].immutable && (typeof to.values[key] !== 'undefined' && to.values[key] !== null))) {
+							if (require('./../metka').state !== 'DRAFT' || !config.fields[key].editable || (config.fields[key].immutable && (typeof to.values[key] !== 'undefined' && to.values[key] !== null))) {
 								$('#fileManagementField' + key).prop('readonly', true);
 							}
 						}

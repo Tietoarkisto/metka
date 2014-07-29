@@ -12,5 +12,4 @@
 <script src="${contextPath}/js/custom/uiLocalization.js"></script>
 <script src="${contextPath}/js/custom/dialogs.js"></script>
 <script src="${contextPath}/js/custom/general.js"></script>
-<script src="${contextPath}/js/custom/${page}.js"></script>
 <script src="${contextPath}/js/custom/table.js"></script>

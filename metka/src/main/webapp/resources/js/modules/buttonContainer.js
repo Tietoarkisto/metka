@@ -3,6 +3,6 @@ define(function (require) {
 
     return function (options) {
         this.append($('<div class="modal-footer">')
-            .append((options.buttons || []).map(require('./button'))));
+            .append((options.buttons || []).map(require('./button')(options))));
     };
 });

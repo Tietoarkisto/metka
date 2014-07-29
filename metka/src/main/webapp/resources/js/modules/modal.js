@@ -17,16 +17,11 @@ define(function (require) {
                         .append('<button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>')
                         .append($('<h4 class="modal-title">')
                             .text(MetkaJS.L10N.localize(options, 'title'))))
-                    .append(function () {
-                        var $body = $('<div class="modal-body">');
-                        if (options.body) {
-                            $body.append(options.body);
-                        }
-                        return $body;
-                    })
+                    .append($('<div class="modal-body">')
+                        .append(options.body))
                     .append($('<div class="modal-footer">')
                         .append((options.buttons || []).map(function (buttonOptions) {
-                            return require('./button')(buttonOptions)
+                            return require('./button')(options)(buttonOptions)
                                 .if(!buttonOptions.preventDismiss, function () {
                                     // although some bootstrap features are accessible via .data method, this wont work
                                     // this.element.data('dismiss', 'modal');

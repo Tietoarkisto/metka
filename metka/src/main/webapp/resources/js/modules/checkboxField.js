@@ -1,18 +1,16 @@
-define([
-    './isFieldDisabled',
-    './input',
-    './label'
-], function (isFieldDisabled, input, label) {
+define(function (require) {
+    'use strict';
+
     return function (options) {
         var key = options.field.key;
         this
             .addClass('checkbox')
-            .append(label(options)
-                .prepend(input.call($('<input type="checkbox">'), options)
-                    .prop('disabled', isFieldDisabled(options))
+            .append(require('./label')(options)
+                .prepend(require('./input').call($('<input type="checkbox">'), options)
+                    .prop('disabled', require('./isFieldDisabled')(options))
                     .change(function () {
-                        MetkaJS.Data.set(key, $(this).prop('checked'));
+                        require('./data').set(options, key, $(this).prop('checked'));
                     })
-                    .prop('checked', !!MetkaJS.Data.get(key))));
+                    .prop('checked', !!require('./data').get(options, key))));
     };
 });

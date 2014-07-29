@@ -1,16 +1,11 @@
-define([
-    './autoId',
-    './datetime',
-    './isFieldDisabled',
-    './input',
-    './selectInput',
-    './label'
-], function (autoId, datetime, isFieldDisabled, input, selectInput, label) {
+define(function (require) {
+    'use strict';
+
     return function (options, type) {
-        var id = autoId();
+        var id = require('./autoId')();
         var key = options.field.key;
 
-        this.append(label(options)
+        this.append(require('./label')(options)
             .attr('for', id));
 
         var elemOptions = {
@@ -37,28 +32,30 @@ define([
             return 'input';
         })();
 
-        var $input = input.call($('<' + nodeType + '>', elemOptions), options);
+        var $input = require('./input').call($('<' + nodeType + '>', elemOptions), options);
 
         if (['DATE', 'TIME', 'DATETIME'].indexOf(type) !== -1) {
-            datetime.call(this, options, type, $input);
+            require('./datetime').call(this, options, type, $input);
         } else {
             $input
-                .prop('disabled', isFieldDisabled(options))
+                .prop('disabled', require('./isFieldDisabled')(options))
                 .change(function () {
-                    MetkaJS.Data.set(key, $(this).val());
+                    require('./data').set(options, key, $(this).val());
                 });
 
             if (isSelection) {
-                selectInput.call($input, options);
+                require('./selectInput').call($input, options);
             } else {
                 // textarea or input elements
 
                 $input.val(
                         type === 'CONCAT'
                         ?
-                        MetkaJS.JSConfig[MetkaJS.Globals.page.toUpperCase()].fields[key].concatenate.map(MetkaJS.Data.get).join('')
+                        options.dataConf.fields[key].concatenate.map(function (key) {
+                            return require('./data').get(options, key);
+                        }).join('')
                         :
-                        MetkaJS.Data.get(key));
+                        require('./data').get(options, key));
             }
 
             this.append($input);

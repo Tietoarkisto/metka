@@ -4,29 +4,28 @@ define(function (require) {
     return function (options) {
         var columns = [];
 
-        var context = MetkaJS.Globals.page.toUpperCase();
+        var PAGE = require('./../metka').PAGE;
         var key = options.field.key;
         var $tbody = $('<tbody>');
 
         function field2TableHead(field) {
             columns.push(field);
             return $('<th>')
-                .text(MetkaJS.L10N.get(context + '.field.' + field));
+                .text(MetkaJS.L10N.get(PAGE + '.field.' + field));
         }
 
         function addRow(data) {
-            var context = MetkaJS.Globals.page.toUpperCase();
             $tbody.append($('<tr>')
                 .data(data)
                 .append(columns.map(function (column) {
                     return $('<td>').text((function () {
-                        var type = MetkaJS.objectGetPropertyNS(MetkaJS, 'JSConfig', context, 'fields', column, 'type');
+                        var type = require('./utils/getPropertyNS')(options, 'dataConf.fields', column, 'type');
                         if (!type) {
                             log('not implemented', column);
                             return '-';
                         }
 
-                        var value = MetkaJS.objectGetPropertyNS(data, column);
+                        var value = require('./utils/getPropertyNS')(data, column);
                         if (type === 'STRING' || type === 'INTEGER') {
                             return value || '-';
                         }
@@ -39,7 +38,7 @@ define(function (require) {
                         if (type === 'SELECTION') {
                             if (typeof value !== 'undefined') {
                                 var text;
-                                if (MetkaJS.objectGetPropertyNS(MetkaJS, 'JSConfig', context, 'selectionLists', MetkaJS.JSConfig[context].fields[column].selectionList, 'options').some(function (option) {
+                                if (require('./utils/getPropertyNS')(options, 'dataConf.selectionLists', options.dataConf.fields[column].selectionList, 'options').some(function (option) {
                                     if (option.value === value) {
                                         text = MetkaJS.L10N.localize(option, 'title');
                                         return true;
@@ -59,6 +58,8 @@ define(function (require) {
                 })));
         }
 
+        options.addRow = addRow;
+
         this.append($('<div class="form-group">')
             .append($('<div class="panel">')
                 .addClass('panel-' + (options.style || 'default'))
@@ -67,7 +68,7 @@ define(function (require) {
                 .append($('<table class="table table-condensed">')
                     .append($('<thead>')
                         .append($('<tr>')
-                            .append((MetkaJS.objectGetPropertyNS(options, 'dataConf.fields', key, 'subfields') || [])
+                            .append((require('./utils/getPropertyNS')(options, 'dataConf.fields', key, 'subfields') || [])
                                 .filter(function (field) {
                                     // ui only shows summary fields
                                     return !!options.dataConf.fields[field].summaryField;
@@ -87,57 +88,57 @@ define(function (require) {
                             })
                     ))
                     .append(function () {
-                        (MetkaJS.Data.get(key) || []).forEach(addRow);
+                        (require('./data').get(options, key) || []).forEach(addRow);
                         return $tbody;
                     })))
             .if(!require('./isFieldDisabled')(options), function () {
                 this.append($('<div>') /*class="pull-right"*/
-                    .append(require('./button')({
+                    .append(require('./button')(options)({
                         style: 'default'
                     })
                         .text(MetkaJS.L10N.get('general.table.add'))
                         .click(function () {
-                            //MetkaJS.DialogHandlers.generalContainerHandler.show(key);
+                            var containerOptions = {
+                                data: {},
+                                dataConf: options.dataConf,
+                                content: [{
+                                    type: 'COLUMN',
+                                    columns: 1,
+                                    rows: options.dataConf.fields[key].subfields.map(function (field) {
+                                        // clear data, so we know which fields were set when modal was open
+                                        //require('./data').set(options, field, null);
+
+                                        var dataConfig = options.dataConf.fields[field];
+
+                                        return {
+                                            type: 'ROW',
+                                            cells: [$.extend({}, dataConfig, {
+                                                type: 'CELL',
+                                                title: MetkaJS.L10N.get(PAGE + '.field.' + field),
+                                                field: dataConfig
+                                            })]
+                                        };
+                                    })
+                                }]
+                            };
                             require('./modal')({
-                                title: MetkaJS.L10N.get(['dialog', context, key, 'add'].join('.')),
-                                body: require('./container').call($('<div>'), {
-                                    dataConf: options.dataConf,
-                                    content: [{
-                                        type: 'COLUMN',
-                                        columns: 1,
-                                        rows: MetkaJS.JSConfig[context].fields[key].subfields.map(function (field) {
-                                            // clear data, so we know which fields were set when modal was open
-                                            // TODO: containers, like modal or MetkaUI, should be instantiated with pointer to some private data, not global MetkaJS.Data
-                                            MetkaJS.Data.set(field, null);
-
-                                            var dataConfig = MetkaJS.JSConfig[context].fields[field];
-
-                                            return {
-                                                type: 'ROW',
-                                                cells: [$.extend({}, dataConfig, {
-                                                    type: 'CELL',
-                                                    title: MetkaJS.L10N.get(context + '.field.' + field),
-                                                    field: dataConfig
-                                                })]
-                                            };
-                                        })
-                                    }]
-                                }),
+                                title: MetkaJS.L10N.get(['dialog', PAGE, key, 'add'].join('.')),
+                                body: require('./container').call($('<div>'), containerOptions),
                                 buttons: [{
                                     create: function () {
                                         this
                                             .text(MetkaJS.L10N.get('general.buttons.add'))
                                             .click(function () {
                                                 var dataRow = {};
-                                                MetkaJS.JSConfig[context].fields[key].subfields.forEach(function (field) {
-                                                    dataRow[field] = MetkaJS.Data.get(field);
+                                                options.dataConf.fields[key].subfields.forEach(function (field) {
+                                                    dataRow[field] = require('./data').get(containerOptions, field);
                                                 });
 
                                                 addRow(dataRow);
 
-                                                var data = JSON.parse(MetkaJS.Data.get(key) || '[]');
+                                                var data = JSON.parse(require('./data').get(options, key) || '[]');
                                                 data.push(dataRow);
-                                                MetkaJS.Data.set(key, JSON.stringify(data));
+                                                require('./data').set(options, key, JSON.stringify(data));
                                             });
                                     }
                                 }, {

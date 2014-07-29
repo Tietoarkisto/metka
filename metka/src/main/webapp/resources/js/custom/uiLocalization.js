@@ -614,10 +614,15 @@
 
         "EXPERTSEARCH": {
             "field": {
+                id: 'ID',
                 name: "Nimi",
-                user: "Käyttäjä",
-                date: "Pvm.",
-                remove: "Poista"
+                remove: "Poista",
+                revision: 'Revisio',
+                savedAt: "Pvm.",
+                savedBy: "Käyttäjä",
+                state: 'Tila',
+                title: "Otsikko",
+                type: "Tyyppi"
             }
         }
     };

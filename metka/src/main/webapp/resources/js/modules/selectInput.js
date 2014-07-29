@@ -5,7 +5,7 @@ define(function (require) {
         var key = options.field.key;
         var $input = this;
 
-        var selectionListKey = MetkaJS.JSConfig[MetkaJS.Globals.page.toUpperCase()].fields[key].selectionList;
+        var selectionListKey = options.dataConf.fields[key].selectionList;
         // TODO: prevent recursion
         (function selectInput(listKey) {
             function setOptions(options) {
@@ -28,7 +28,7 @@ define(function (require) {
                             // MetkaJS.L10N.get([MetkaJS.Globals.page.toUpperCase(), key, option.value].join('.'));
                         })());
                 }));
-                var value = MetkaJS.Data.get(key);
+                var value = require('./data').get(options, key);
                 if (typeof value !== 'undefined') {
                     $input.val(value);
                 } else {
@@ -36,11 +36,9 @@ define(function (require) {
                 }
             }
 
-            var list = MetkaJS.objectGetPropertyNS(options, 'dataConf.selectionLists', listKey);
+            var list = require('./utils/getPropertyNS')(options, 'dataConf.selectionLists', listKey);
             if (list.type === 'SUBLIST') {
-                // fixme: infinite recursion
-                return 'moo';
-                //return selectInput(list.key);
+                return selectInput(list.sublistKey);
             }
 
             if (list.includeEmpty === null || list.includeEmpty) {
@@ -85,36 +83,25 @@ define(function (require) {
                 var isDisabled = $input.prop('disabled');
                 $input.prop('disabled', true);
 
-                $.ajax({
-                    type: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    dataType: 'json',
-                    url: require('./url')('options'),
+                require('./server')('options', {
                     data: JSON.stringify({
                         key: undefined,
                         requests : [{
                             key: key,
                             container: undefined,
-                            confType: MetkaJS.JSConfigUtil.getConfigurationKey().type,
-                            confVersion: MetkaJS.JSConfigUtil.getConfigurationKey().version,
+                            confType: options.dataConf.key.type,
+                            confVersion: options.dataConf.key.version,
                             dependencyValue: undefined
                         }]
                     }),
                     success: function (data) {
                         data.responses.forEach(function (response) {
                             if (response.messages) {
-                                response.messages.forEach(function (message) {
-                                    MetkaJS.MessageManager.push(MetkaJS.MessageManager.Message(message.title, message.message));
-                                    message.data.forEach(function (data) {
-                                        MetkaJS.MessageManager.topMessage().pushData(data);
-                                    });
-                                });
-                                MetkaJS.MessageManager.showAll();
+                                log(response.messages);
                             }
-
-                            setOptions(response.options);
+                            if (response.options) {
+                                setOptions(response.options);
+                            }
                             // enable input, if it was enabled before request
                             $input.prop('disabled', isDisabled);
                         });

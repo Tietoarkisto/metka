@@ -22,7 +22,7 @@ define(function (require) {
         setup.options.format = require('./dateFormats')[type];
         setup.options.language = 'fi';
 
-        var defaultDate = MetkaJS.Data.get(key);
+        var defaultDate = require('./data').get(options, key);
         if (defaultDate) {
             setup.options.defaultDate = defaultDate;
         }
@@ -36,7 +36,7 @@ define(function (require) {
             }))
             // FIXME: kun kenttä on tyhjä ja ikonia klikataan, arvo tulee heti näkyviin mutta dp.change event ei triggeroidu. mahdollisesti korjattu datetimepickerin päivityksissä?
             .on('dp.change', function (e) {
-                MetkaJS.Data.set(key, moment(e.date).format('YYYY-MM-DDThh:mm:ss.s'));
+                require('./data').set(options, key, moment(e.date).format('YYYY-MM-DDThh:mm:ss.s'));
             });
     }
 });

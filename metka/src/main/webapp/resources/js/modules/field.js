@@ -10,7 +10,7 @@ define(function (require) {
 
         //log(this.options.dataConf === x.dataConf)
         //log(this.options.dataConf.mo === x.dataConf.mo)
-        var type = options.field.displayType || MetkaJS.objectGetPropertyNS(options, 'dataConf.fields', options.field.key, 'type');
+        var type = options.field.displayType || require('./utils/getPropertyNS')(options, 'dataConf.fields', options.field.key, 'type');
 
         if (!type) {
             log('field type is not set', options);
@@ -25,6 +25,10 @@ define(function (require) {
             } else {
                 require('./inputField').call(this, options, type);
             }
+        }
+
+        if (options.create) {
+            options.create.call(this, options);
         }
 
         return this;

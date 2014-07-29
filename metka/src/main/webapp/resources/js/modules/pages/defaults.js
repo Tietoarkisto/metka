@@ -1,23 +1,22 @@
-define([
-    '../button'
-], function (button) {
+define(function (require) {
     if (!MetkaJS.JSConfig) {
         return;
     }
 
     var options = MetkaJS.jsGUIConfig || {};
 
-    if (MetkaJS.SingleObject.state !== 'DRAFT') {
+    var metka = require('./../../metka');
+
+    if (metka.state !== 'DRAFT') {
         options.readOnly = true;
     }
 
-    var page = MetkaJS.Globals.page.toUpperCase();
-
-    options.dataConf = MetkaJS.JSConfig[page];
+    options.dataConf = MetkaJS.JSConfig[metka.PAGE];
+    options.data = MetkaJS.data;
 
     options.header = function header($header) {
         var supplant = {
-            page: page
+            page: metka.PAGE
         };
 
         var header = {
@@ -25,19 +24,19 @@ define([
             pattern: '{localized} - {id} - {revision}{state}',
             buttons: $('<div class="pull-right normalText">')
                 .append((function () {
-                    var buttonCreateFunctions = MetkaJS.SingleObject.state === 'DRAFT' ? [] : [function () {
+                    var buttonCreateFunctions = metka.state === 'DRAFT' ? [] : [function () {
                         $(this)
                             .addClass('btn-xs')
                             .html('<span class="glyphicon glyphicon-chevron-left"></span>')
                             .click(function () {
-                                require('./assignUrl')('prev');
+                                require('./../assignUrl')('prev');
                             });
                     }, function () {
                         $(this)
                             .addClass('btn-xs')
                             .html('<span class="glyphicon glyphicon-chevron-right"></span>')
                             .click(function () {
-                                require('./assignUrl')('next');
+                                require('./../assignUrl')('next');
                             });
                     }];
                     buttonCreateFunctions.push(function () {
@@ -45,12 +44,12 @@ define([
                             .addClass('btn-xs')
                             .text(MetkaJS.L10N.get('general.buttons.download'))
                             .click(function () {
-                                require('./assignUrl')('download');
+                                require('./../assignUrl')('download');
                             });
                     });
                     return buttonCreateFunctions;
                 })().map(function (create) {
-                    return button({
+                    return require('./../button')()({
                         create: create,
                         style: 'default'
                     });
@@ -59,13 +58,13 @@ define([
         var labelAndValue = String.prototype.supplant.bind('{label}&nbsp;{value}');
         supplant.id = labelAndValue({
             label: MetkaJS.L10N.get('general.id'),
-            value: MetkaJS.SingleObject.id
+            value: metka.id
         });
         supplant.revision = labelAndValue({
             label: MetkaJS.L10N.get('general.revision'),
-            value: MetkaJS.SingleObject.revision
+            value: metka.revision
         });
-        supplant.state = MetkaJS.SingleObject.state === 'DRAFT' ? ' - ' + MetkaJS.L10N.get('general.DRAFT') : '';
+        supplant.state = metka.state === 'DRAFT' ? ' - ' + MetkaJS.L10N.get('general.DRAFT') : '';
 
         supplant.localized = MetkaJS.L10N.get(header.localized.supplant(supplant));
         $header.html(header.pattern.supplant(supplant));

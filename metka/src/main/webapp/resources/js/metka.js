@@ -8,6 +8,7 @@ define([
         id: MetkaJS.SingleObject.id,
         page: MetkaJS.Globals.page,
         PAGE: MetkaJS.Globals.page.toUpperCase(),
-        revision: MetkaJS.SingleObject.revision
+        revision: MetkaJS.SingleObject.revision,
+        state: MetkaJS.SingleObject.state
     };
 });

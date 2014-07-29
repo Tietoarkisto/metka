@@ -1,18 +1,15 @@
 // page configurations
-define([
-    './pages/defaults',
-    './pages/expertSearch'
-], function (defaults, expertSearch) {
+define(function (require) {
     'use strict';
 
-    var page = MetkaJS.Globals.page;
+    var page = require('./../metka').page;
     if (typeof page !== 'string') {
         throw 'page is not set';
     }
 
     return {
-        expertSearch: expertSearch,
-        study: defaults,
-        series: defaults
+        expertSearch: require('./pages/expertSearch'),
+        study: require('./pages/defaults'),
+        series: require('./pages/series')
     }[page];
 });
