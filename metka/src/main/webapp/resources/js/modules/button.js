@@ -221,7 +221,6 @@ define(function (require) {
     };
 
     return require('./inherit')(function (options) {
-        var metka = require('./../metka');
         function isVisible() {
             /**
              * Checks to see if user fulfills buttons userGroups restriction
@@ -285,6 +284,8 @@ define(function (require) {
                 && checkButtonHandlerRestriction()
                 && checkButtonStateRestriction();
         }
+
+        var metka = require('./../metka');
 
         options = options || {};
 

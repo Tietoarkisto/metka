@@ -47,7 +47,9 @@ define(function (require) {
                                             .addClass('table-hover')
                                             .find('tbody')
                                                 .on('click', 'tr', function () {
-                                                    $query.val($(this).data('query'));
+                                                    $query
+                                                        .val($(this).data('query'))
+                                                        .change();
                                                 });
                                     require('./../server')('/expertSearch/list', {
                                         success: function (data) {
@@ -73,18 +75,7 @@ define(function (require) {
                                 query: require('./../data').get(options, 'search')
                             }),
                             success: function (data) {
-                                require('./../data').set(options, 'searchResults', data.results.map(function (result) {
-                                    return {
-                                        title: result.title,
-                                        type: MetkaJS.L10N.get('type.{type}.title'.supplant(result)),
-                                        TYPE: result.type,
-                                        id: result.id,
-                                        revision: result.revision,
-                                        state: MetkaJS.L10N.get('search.result.state.{state}'.supplant(result))
-                                    };
-                                }));
-                                $('#searchResultTable').remove();
-                                var $field = require('./../field').call($('<div>'), {
+                                var fieldOptions = {
                                     dataConf: {
                                         fields: {
                                             title: {
@@ -117,7 +108,19 @@ define(function (require) {
                                             "state"
                                         ]
                                     }
-                                })
+                                };
+                                require('./../data').set(fieldOptions, 'searchResults', data.results.map(function (result) {
+                                    return {
+                                        title: result.title,
+                                        type: MetkaJS.L10N.get('type.{type}.title'.supplant(result)),
+                                        TYPE: result.type,
+                                        id: result.id,
+                                        revision: result.no,
+                                        state: MetkaJS.L10N.get('search.result.state.{state}'.supplant(result))
+                                    };
+                                }));
+                                $('#searchResultTable').remove();
+                                var $field = require('./../field').call($('<div>'), fieldOptions)
                                     .attr('id', 'searchResultTable');
 
                                 $field.find('table')
@@ -160,42 +163,44 @@ define(function (require) {
             create: function () {
                 this
                     .click(function () {
+                        var containerOptions = {
+                            data: {},
+                            dataConf: {},
+                            content: [{
+                                type: 'COLUMN',
+                                columns: 1,
+                                rows: [
+                                    {
+                                        "type": "ROW",
+                                        "cells": [
+                                            {
+                                                "type": "CELL",
+                                                "title": "Nimi",
+                                                "colspan": 1,
+                                                "field": {
+                                                    "displayType": "STRING",
+                                                    "key": "title"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }]
+                        };
                         require('./../modal')({
                             title: 'Tallenna haku',
-                            body: require('./../container').call($('<div>'), {
-                                dataConf: {},
-                                content: [{
-                                    type: 'COLUMN',
-                                    columns: 1,
-                                    rows: [
-                                        {
-                                            "type": "ROW",
-                                            "cells": [
-                                                {
-                                                    "type": "CELL",
-                                                    "title": "Nimi",
-                                                    "colspan": 1,
-                                                    "field": {
-                                                        "displayType": "STRING",
-                                                        "key": "title"
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                }]
-                            }),
+                            body: require('./../container').call($('<div>'), containerOptions),
                             buttons: [{
                                 "&title": {
                                     "default": 'Tallenna'
                                 },
-                                create: function (options) {
+                                create: function () {
                                     this
                                         .click(function () {
                                             require('./../server')('/expertSearch/save', {
                                                 data: JSON.stringify({
                                                     query: require('./../data').get(options, 'search'),
-                                                    title: require('./../data').get(options, 'title')
+                                                    title: require('./../data').get(containerOptions, 'title')
                                                 }),
                                                 success: function (data) {
                                                     data.name = data.title;

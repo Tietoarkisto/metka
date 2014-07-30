@@ -77,11 +77,13 @@ public class IndexerComponent {
         // TODO: repeat try
         IndexerCommand command = commandRepository.getNextCommandWithoutChange();
         if(command != null) {
-            if(handlers.get(command.getPath()).isDone()) {
-                try {
-                    startIndexer(command.getPath());
-                } catch(IOException ioe) {
-                    ioe.printStackTrace();
+            if(handlers.containsKey(command.getPath())) {
+                if(handlers.get(command.getPath()).isDone()) {
+                    try {
+                        startIndexer(command.getPath());
+                    } catch (IOException ioe) {
+                        ioe.printStackTrace();
+                    }
                 }
             }
         }
