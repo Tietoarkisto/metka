@@ -41,7 +41,11 @@ define(function (require) {
                                     ]
                                 },
                                 create: function (options) {
-                                    addRow = options.addRow;
+                                    addRow = function (data) {
+                                        data.name = data.title;
+                                        delete data.title;
+                                        options.addRow(data);
+                                    };
                                     this
                                         .find('table')
                                             .addClass('table-hover')
@@ -202,11 +206,7 @@ define(function (require) {
                                                     query: require('./../data').get(options, 'search'),
                                                     title: require('./../data').get(containerOptions, 'title')
                                                 }),
-                                                success: function (data) {
-                                                    data.name = data.title;
-                                                    delete data.title;
-                                                    addRow(data);
-                                                }
+                                                success: addRow
                                             });
                                         });
                                 }
