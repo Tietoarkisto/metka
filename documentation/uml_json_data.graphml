@@ -56,7 +56,7 @@
           </y:NodeLabel>
           <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="" use3DEffect="true">
             <y:AttributeLabel>+id : Integer {id}
-+revision : Integer {id}</y:AttributeLabel>
++no : Integer {id}</y:AttributeLabel>
             <y:MethodLabel/>
           </y:UML>
         </y:UMLClassNode>

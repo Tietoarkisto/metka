@@ -33,14 +33,11 @@ public abstract class ReferenceHandler {
             // Needs an Object as its root
             return null;
         }
-        String[] path = reference.getValuePath().split("\\.");
+        String[] path = reference.getValuePathParts();
         //String[] path = (reference.getValuePath()).split("\\.");
         String valueKey = path[path.length-1];
 
-        path = null;
-        if(!StringUtils.isEmpty(reference.getTitlePath())) {
-            path = reference.getTitlePath().split("\\.");
-        }
+        path = reference.getTitlePathParts();
 
         JsonNode value = root.get(valueKey);
         String valueStr = (value != null) ? value.asText() : null;

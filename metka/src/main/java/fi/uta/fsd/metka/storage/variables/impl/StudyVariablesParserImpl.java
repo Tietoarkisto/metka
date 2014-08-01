@@ -1,14 +1,8 @@
 package fi.uta.fsd.metka.storage.variables.impl;
 
-import fi.uta.fsd.metka.storage.entity.RevisionEntity;
-import fi.uta.fsd.metka.storage.entity.impl.StudyAttachmentEntity;
-import fi.uta.fsd.metka.storage.entity.impl.StudyVariableEntity;
-import fi.uta.fsd.metka.storage.entity.impl.StudyVariablesEntity;
+import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.RevisionState;
 import fi.uta.fsd.metka.enums.VariableDataType;
-import fi.uta.fsd.metka.storage.repository.GeneralRepository;
-import fi.uta.fsd.metka.storage.util.JSONUtil;
-import fi.uta.fsd.metka.storage.variables.StudyVariablesParser;
 import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
@@ -19,6 +13,13 @@ import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.factories.DataFactory;
 import fi.uta.fsd.metka.model.factories.VariablesFactory;
+import fi.uta.fsd.metka.storage.entity.RevisionEntity;
+import fi.uta.fsd.metka.storage.entity.impl.StudyVariableEntity;
+import fi.uta.fsd.metka.storage.entity.impl.StudyVariablesEntity;
+import fi.uta.fsd.metka.storage.repository.GeneralRepository;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.util.JSONUtil;
+import fi.uta.fsd.metka.storage.variables.StudyVariablesParser;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDateTime;
@@ -35,6 +36,8 @@ import javax.persistence.PersistenceContext;
 import java.io.IOException;
 import java.util.*;
 
+
+// TODO: This class is a mess, clean it up
 @Repository
 public class StudyVariablesParserImpl implements StudyVariablesParser {
     private static Logger logger = LoggerFactory.getLogger(StudyVariablesParserImpl.class);
@@ -74,25 +77,12 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             varFileId = SavedDataField.valueAsInteger(field);
         }
 
-        // Get variable file revision data
-        StudyAttachmentEntity attachmentEntity = em.find(StudyAttachmentEntity.class, varFileId);
-        RevisionEntity attachmentRevision = null;
-        RevisionData attachmentData = null;
-        if(attachmentEntity == null || attachmentEntity.getLatestRevisionNo() == null) {
-            // TODO: Log exception since something is very wrong. There should definitely be an attachment if we get to this point
+        Pair<ReturnResult, RevisionData> dataPair = general.getLatestRevisionForIdAndType(varFileId, false, ConfigurationType.STUDY_ATTACHMENT);
+        if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
+            // TODO: Couldn't find revision data, possibly do something
             return result;
-        } else {
-            attachmentRevision = em.find(RevisionEntity.class, attachmentEntity.latestRevisionKey());
         }
-
-        // Make a sanity check just in case
-        if(attachmentRevision == null || StringUtils.isEmpty(attachmentRevision.getData())) {
-            // TODO: Attachment revision or revision data missing, can't continue, log exception
-            return result;
-        } else {
-            attachmentData = json.deserializeRevisionData(attachmentRevision.getData());
-        }
-
+        RevisionData attachmentData = dataPair.getRight();
         // Check for file path from attachment
         field = attachmentData.dataField(SavedDataFieldCall.get("file")).getRight();
         if(field == null || !field.hasValue() || StringUtils.isEmpty(field.getActualValue())) {
@@ -132,14 +122,14 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             // TODO: Log error, there's a discrepancy between saved value and found variables revisionable
             return result;
         }
-        Pair<StatusCode, SavedDataField> pair = study.dataField(SavedDataFieldCall.set("variables").setTime(time).setValue(variablesEntity.getId().toString()).setConfiguration(studyConfig));
-        if(pair.getRight() == null) {
+        Pair<StatusCode, SavedDataField> fieldPair = study.dataField(SavedDataFieldCall.set("variables").setTime(time).setValue(variablesEntity.getId().toString()).setConfiguration(studyConfig));
+        if(fieldPair.getRight() == null) {
             // TODO: Log error, something went wrong during assigment
             return result;
         }
         // Value changed
-        if(pair.getLeft() != StatusCode.NO_CHANGE_IN_VALUE) {
-            field = pair.getRight();
+        if(fieldPair.getLeft() != StatusCode.NO_CHANGE_IN_VALUE) {
+            field = fieldPair.getRight();
             result = true;
         }
 
@@ -163,12 +153,20 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         } else if(!variablesEntity.hasDraft()) {
             // No draft, create draft since merge works only with drafts
             RevisionEntity oldVariables = em.find(RevisionEntity.class, variablesEntity.latestRevisionKey());
-            RevisionData oldData = json.deserializeRevisionData(oldVariables.getData());
+            Pair<ReturnResult, RevisionData> oldData = json.deserializeRevisionData(oldVariables.getData());
+            if(oldData.getLeft() != ReturnResult.DESERIALIZATION_SUCCESS) {
+                return result;
+            }
 
             variablesRevision = variablesEntity.createNextRevision();
             variablesRevision.setState(RevisionState.DRAFT);
-            RevisionData newData = DataFactory.createNewRevisionData(variablesRevision, oldData);
-            variablesRevision.setData(json.serialize(newData));
+            RevisionData newData = DataFactory.createNewRevisionData(variablesRevision, oldData.getRight());
+            Pair<ReturnResult, String> string = json.serialize(newData);
+            if(string.getLeft() != ReturnResult.SERIALIZATION_SUCCESS) {
+                logger.error("Stopped study variables merge since new data serialization failed");
+                return result;
+            }
+            variablesRevision.setData(string.getRight());
 
             em.persist(variablesRevision);
             variablesEntity.setLatestRevisionNo(variablesRevision.getKey().getRevisionNo());
@@ -176,13 +174,14 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             variablesRevision = em.find(RevisionEntity.class, variablesEntity.latestRevisionKey());
         }
 
-        RevisionData variablesData = json.deserializeRevisionData(variablesRevision.getData());
+        dataPair = json.deserializeRevisionData(variablesRevision.getData());
 
         // Unnecessary sanity checks
-        if(variablesData == null) {
+        if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
             // Should not be possible
             return result;
         }
+        RevisionData variablesData = dataPair.getRight();
         field = variablesData.dataField(SavedDataFieldCall.get("study")).getRight();
         if(field == null || !field.hasValue() || !field.getActualValue().equals(study.getKey().getId().toString())) {
             // TODO: Something wrong with study link, log error, can't continue
@@ -207,7 +206,12 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                 handlePorVariables(filePath, study.getKey().getId(), variablesData, time);
                 break;
         }
-        variablesRevision.setData(json.serialize(variablesData));
+        Pair<ReturnResult, String> string = json.serialize(variablesData);
+        if(string.getLeft() != ReturnResult.SERIALIZATION_SUCCESS) {
+            logger.error("Failed at serializing variables data");
+            return result;
+        }
+        variablesRevision.setData(string.getRight());
         // Final merge to make sure that changes go to database if for some reason variablesRevision has stopped being managed.
         em.merge(variablesRevision);
 
@@ -351,11 +355,19 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                 // No draft, should draft be created for merge or can we use approved revision?
                 // For now create draft
                 RevisionEntity oldVariables = em.find(RevisionEntity.class, variableEntity.latestRevisionKey());
-                RevisionData oldData = json.deserializeRevisionData(oldVariables.getData());
-
+                Pair<ReturnResult, RevisionData> oldData = json.deserializeRevisionData(oldVariables.getData());
+                if(oldData.getLeft() != ReturnResult.DESERIALIZATION_SUCCESS) {
+                    logger.error("Failed at deserializing "+oldVariables.toString());
+                    continue;
+                }
                 variableRevision = variableEntity.createNextRevision();
-                RevisionData newData = DataFactory.createNewRevisionData(variableRevision, oldData);
-                variableRevision.setData(json.serialize(newData));
+                RevisionData newData = DataFactory.createNewRevisionData(variableRevision, oldData.getRight());
+                Pair<ReturnResult, String> string = json.serialize(newData);
+                if(string.getLeft() != ReturnResult.SERIALIZATION_SUCCESS) {
+                    logger.error("Failed to serialize "+newData.toString());
+                    continue;
+                }
+                variableRevision.setData(string.getRight());
 
                 em.persist(variableRevision);
                 variableEntity.setLatestRevisionNo(variableRevision.getKey().getRevisionNo());
@@ -364,13 +376,22 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                 variableRevision = em.find(RevisionEntity.class, variableEntity.latestRevisionKey());
             }
 
-            RevisionData variableData = json.deserializeRevisionData(variableRevision.getData());
+            Pair<ReturnResult, RevisionData> variableData = json.deserializeRevisionData(variableRevision.getData());
+            if(variableData.getLeft() != ReturnResult.DESERIALIZATION_SUCCESS) {
+                logger.error("Failed at deserializing "+variableRevision.toString());
+                continue;
+            }
 
             // Merge variable to variable revision
-            handler.mergeToData(variableData, variable);
+            handler.mergeToData(variableData.getRight(), variable);
 
             // Persis revision with new revision data
-            variableRevision.setData(json.serialize(variableData));
+            Pair<ReturnResult, String> string = json.serialize(variableData.getRight());
+            if(string.getLeft() != ReturnResult.SERIALIZATION_SUCCESS) {
+                logger.error("Failed at serializing "+variableData.getRight().toString());
+                continue;
+            }
+            variableRevision.setData(string.getRight());
         }
 
         // TODO: After all these steps initiate a re-index on all affected revisions (which can include multiple revisions of one revisionable in the case of logical removal).

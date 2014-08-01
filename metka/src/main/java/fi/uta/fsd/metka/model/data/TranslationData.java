@@ -1,7 +1,8 @@
 package fi.uta.fsd.metka.model.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import fi.uta.fsd.metka.model.configuration.ConfigurationKey;
+import fi.uta.fsd.metka.model.general.ConfigurationKey;
+import fi.uta.fsd.metka.model.general.RevisionKey;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

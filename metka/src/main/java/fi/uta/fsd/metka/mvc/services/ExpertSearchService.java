@@ -7,14 +7,16 @@ import fi.uta.fsd.metka.model.data.container.SavedDataField;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.SavedSearchRepository;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.expert.*;
 import fi.uta.fsd.metkaSearch.SearcherComponent;
 import fi.uta.fsd.metkaSearch.commands.searcher.SearchCommand;
 import fi.uta.fsd.metkaSearch.commands.searcher.expert.ExpertRevisionSearchCommand;
 import fi.uta.fsd.metkaSearch.results.RevisionResult;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.joda.time.LocalDateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,7 @@ import java.util.List;
 
 @Service
 public class ExpertSearchService {
+    private static Logger logger = LoggerFactory.getLogger(ExpertSearchService.class);
     @Autowired
     private SearcherComponent searcher;
 
@@ -48,7 +51,12 @@ public class ExpertSearchService {
 
         for(RevisionResult result : results) {
             Pair<Boolean, LocalDateTime> info = general.getRevisionableRemovedInfo(result.getId());
-            RevisionData revision = general.getRevision(result.getId(), result.getNo().intValue());
+            Pair<ReturnResult, RevisionData> pair = general.getRevisionData(result.getId(), result.getNo().intValue());
+            if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
+                logger.warn("Couldn't find a revision for search result "+result.toString());
+                continue;
+            }
+            RevisionData revision = pair.getRight();
             ExpertSearchRevisionQueryResult qr = new ExpertSearchRevisionQueryResult();
             if(info.getLeft()) {
                 qr.setState(UIRevisionState.REMOVED);
@@ -56,7 +64,7 @@ public class ExpertSearchService {
                 qr.setState(UIRevisionState.fromRevisionState(revision.getState()));
             }
             qr.setId(revision.getKey().getId());
-            qr.setNo(revision.getKey().getRevision());
+            qr.setNo(revision.getKey().getNo());
             qr.setType(revision.getConfiguration().getType());
             // TODO: Maybe generalize this better
             SavedDataField field;

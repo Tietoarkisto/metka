@@ -2,9 +2,11 @@ package fi.uta.fsd.metka.mvc.services;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.configuration.ConfigurationKey;
+import fi.uta.fsd.metka.model.general.ConfigurationKey;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,64 +23,23 @@ public class ConfigurationService {
         repository.insertGUIConfig(text);
     }
 
-    public Configuration findLatestByType(ConfigurationType type) {
-        Configuration conf = null;
-        try {
-            conf = repository.findLatestConfiguration(type);
-        } catch(Exception ex) {
-            // TODO: better exception handling with messages to the user
-            ex.printStackTrace();
-            return null;
-        }
-
-        return conf;
+    public Pair<ReturnResult, Configuration> findLatestByType(ConfigurationType type) {
+        return repository.findLatestConfiguration(type);
     }
 
-    public GUIConfiguration findLatestGUIByType(ConfigurationType type) {
-        GUIConfiguration conf = null;
-        try {
-            conf = repository.findLatestGUIConfiguration(type);
-        } catch(Exception ex) {
-            // TODO: better exception handling with messages to the user
-            ex.printStackTrace();
-            return null;
-        }
-
-        return conf;
+    public Pair<ReturnResult, GUIConfiguration> findLatestGUIByType(ConfigurationType type) {
+        return repository.findLatestGUIConfiguration(type);
     }
 
-    public Configuration findByTypeAndVersion(ConfigurationKey key) {
-        Configuration conf = null;
-        try {
-            conf = repository.findConfiguration(key);
-        } catch(Exception ex) {
-            // TODO: better exception handling with messages to the user
-            ex.printStackTrace();
-            return null;
-        }
-
-        return conf;
+    public Pair<ReturnResult, Configuration> findByTypeAndVersion(ConfigurationKey key) {
+        return repository.findConfiguration(key);
     }
 
-    public Configuration findLatestByRevisionableId(Long id) {
-        Configuration conf = null;
-        try {
-            conf = repository.findLatestByRevisionableId(id);
-        } catch(Exception ex) {
-            ex.printStackTrace();
-            return null;
-        }
-        return conf;
+    public Pair<ReturnResult, Configuration> findLatestByRevisionableId(Long id) {
+        return repository.findLatestByRevisionableId(id);
     }
 
-    public Configuration findConfigurationForRevision(Long id, Integer revision) {
-        Configuration conf = null;
-        try {
-            conf = repository.findConfigurationForRevision(id, revision);
-        } catch(Exception ex) {
-            ex.printStackTrace();
-            return null;
-        }
-        return conf;
+    public Pair<ReturnResult, Configuration> findConfigurationForRevision(Long id, Integer revision) {
+        return repository.findConfigurationForRevision(id, revision);
     }
 }

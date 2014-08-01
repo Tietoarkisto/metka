@@ -601,6 +601,7 @@
 				"studyid_prefix",
 				"studyid_number"
 			],
+			"exact": true,
 			"section": "basic_information"
 		},
 		"studyid_prefix": {

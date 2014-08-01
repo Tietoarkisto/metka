@@ -12,9 +12,12 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.SavedDataField;
 import fi.uta.fsd.metka.storage.collecting.ReferenceCollecting;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOptionsRequest;
 import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -26,6 +29,7 @@ import java.util.List;
  */
 @Service
 public class ReferenceService {
+    private static Logger logger = LoggerFactory.getLogger(ReferenceService.class);
 
     @Autowired
     private ReferenceCollecting references;
@@ -43,13 +47,17 @@ public class ReferenceService {
      * @return
      */
     public ReferenceOption getCurrentFieldOption(RevisionData data, String path) {
-        Configuration config = configurations.findConfiguration(data.getConfiguration());
+        Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(data.getConfiguration());
+        if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
+            logger.error("Couldn't find configuration for "+data.toString());
+            return null;
+        }
         String[] splits = path.split(".");
         if(splits.length == 0) {
             splits = new String[1];
             splits[0] = path;
         }
-
+        Configuration config = configPair.getRight();
         // Check that the final path element points to a field that can be a reference with a value, deal with reference containers separately with a different call
         Field field = config.getField(splits[splits.length-1]);
         if(field == null) {
@@ -123,10 +131,12 @@ public class ReferenceService {
 
     public List<ReferenceOption> collectReferenceOptions(ReferenceOptionsRequest request) {
 
-        Configuration config = configurations.findConfiguration(request.getConfType(), request.getConfVersion());
-        if(config == null) {
+        Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(request.getConfType(), request.getConfVersion());
+        if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
+            logger.error("Couldn't find configuration with type: "+request.getConfType()+" and version: "+request.getConfVersion());
             return null;
         }
+        Configuration config = configPair.getRight();
         Field field = config.getField(request.getKey());
         // Add types as needed, default is to return null if type can not contain a reference
         Reference reference = null;

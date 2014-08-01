@@ -12,11 +12,14 @@ import fi.uta.fsd.metka.mvc.services.simple.RevisionViewDataContainer;
 import fi.uta.fsd.metka.mvc.services.simple.study.StudySearchSO;
 import fi.uta.fsd.metka.mvc.services.simple.transfer.SearchResult;
 import fi.uta.fsd.metka.mvc.services.simple.transfer.TransferObject;
+import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.StudyRepository;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metkaSearch.IndexerComponent;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,8 +32,12 @@ import java.util.Map;
 public class StudyService {
     @Autowired
     private StudyRepository repository;
+
     @Autowired
     private GeneralSearch generalSearch;
+
+    @Autowired
+    private GeneralRepository general;
 
     @Autowired
     private ConfigurationService configService;
@@ -82,7 +89,7 @@ public class StudyService {
 
         SearchResult so = new SearchResult();
         so.setId(data.getKey().getId());
-        so.setRevision(data.getKey().getRevision());
+        so.setRevision(data.getKey().getNo());
         so.setState(UIRevisionState.fromRevisionState(data.getState()));
         so.setByKey("studyid", SavedDataField.valueAsInteger(data.dataField(SavedDataFieldCall.get("studyid")).getRight()));
         so.setByKey("title", SavedDataField.valueAsString(data.dataField(SavedDataFieldCall.get("title")).getRight()));
@@ -95,9 +102,8 @@ public class StudyService {
      * @param id Revisionable id
      * @return
      */
-    public Integer findSingleRevisionNo(Long id) {
-        Integer revision = generalSearch.findSingleRevisionNo(id);
-        return revision;
+    public Pair<ReturnResult, Integer> findSingleRevisionNo(Long id) {
+        return general.getLatestRevisionNoForIdAndType(id, false, ConfigurationType.STUDY);
     }
 
     /**
@@ -107,7 +113,6 @@ public class StudyService {
      * @return Revision data converted to TransferObject
      */
     public RevisionViewDataContainer findSingleRevision(Long id, Integer revision) {
-        RevisionData data = null;
 
         // Check for FileLinkQueue events.
         // If given id/revision belongs to a draft revision then process possible FileLinkQueue events.
@@ -115,13 +120,13 @@ public class StudyService {
         // Also if there is a new POR file present then that is parsed and the data is added
         repository.checkFileLinkQueue(id, revision);
 
-        data = generalSearch.findSingleRevision(id, revision, ConfigurationType.STUDY);
-
-        if(data == null) {
+        Pair<ReturnResult, RevisionData> pair = general.getRevisionDataOfType(id, revision, ConfigurationType.STUDY);
+        if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
+            // TODO: return actual error value to user
             return null;
         }
-
-        Configuration config = configService.findByTypeAndVersion(data.getConfiguration());
+        RevisionData data = pair.getRight();
+        Configuration config = configService.findByTypeAndVersion(data.getConfiguration()).getRight();
         TransferObject single = TransferObject.buildTransferObjectFromRevisionData(data);
 
         return new RevisionViewDataContainer(single, config);
@@ -134,9 +139,9 @@ public class StudyService {
         }
 
         // Creating new series was successful, index series
-        indexer.addCommand(RevisionIndexerCommand.index(indexerPaths.get("fi"), revision.getKey().getId(), revision.getKey().getRevision()));
-        
-        Configuration config = configService.findByTypeAndVersion(revision.getConfiguration());
+        indexer.addCommand(RevisionIndexerCommand.index(indexerPaths.get("fi"), revision.getKey().getId(), revision.getKey().getNo()));
+
+        Configuration config = configService.findByTypeAndVersion(revision.getConfiguration()).getRight();
         TransferObject single = TransferObject.buildTransferObjectFromRevisionData(revision);
 
         return new RevisionViewDataContainer(single, config);
@@ -145,7 +150,7 @@ public class StudyService {
     // TODO: Add information of if new revision was created or not so it can be indexed as necessary
     public RevisionViewDataContainer editStudy(Long id) {
         RevisionData data = repository.editStudy(id);
-        Configuration config = configService.findByTypeAndVersion(data.getConfiguration());
+        Configuration config = configService.findByTypeAndVersion(data.getConfiguration()).getRight();
         TransferObject single = TransferObject.buildTransferObjectFromRevisionData(data);
         return new RevisionViewDataContainer(single, config);
     }

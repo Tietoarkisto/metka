@@ -1,31 +1,35 @@
 package fi.uta.fsd.metka.storage.repository.impl;
 
-import fi.uta.fsd.metka.storage.entity.RevisionEntity;
-import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
-import fi.uta.fsd.metka.storage.entity.SequenceEntity;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.RevisionState;
 import fi.uta.fsd.metka.enums.repositoryResponses.DraftRemoveResponse;
 import fi.uta.fsd.metka.enums.repositoryResponses.LogicalRemoveResponse;
-import fi.uta.fsd.metka.storage.repository.GeneralRepository;
-import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import javassist.NotFoundException;
+import fi.uta.fsd.metka.storage.entity.RevisionEntity;
+import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
+import fi.uta.fsd.metka.storage.entity.SequenceEntity;
+import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
+import fi.uta.fsd.metka.storage.repository.GeneralRepository;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.util.JSONUtil;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.MissingResourceException;
 
 @Repository
 public class GeneralRepositoryImpl implements GeneralRepository {
+    private static Logger logger = LoggerFactory.getLogger(GeneralRepositoryImpl.class);
+
     @PersistenceContext(name = "entityManager")
     private EntityManager em;
     @Autowired
@@ -42,8 +46,7 @@ public class GeneralRepositoryImpl implements GeneralRepository {
     }
 
     @Override
-    public Long getAdjancedRevisionableId(Long currentId, String type, boolean forward)
-            throws NotFoundException, MissingResourceException {
+    public Pair<ReturnResult, Long> getAdjacentRevisionableId(Long currentId, String type, boolean forward) {
         List<RevisionableEntity> list = em.createQuery("SELECT r FROM RevisionableEntity r " +
                     "WHERE r.id "+(forward?">":"<")+" :id AND r.type = :type " +
                     "AND r.removed = false " +
@@ -55,9 +58,9 @@ public class GeneralRepositoryImpl implements GeneralRepository {
                 .getResultList();
 
         if(list.size() == 0) {
-            throw new NotFoundException("");
+            return new ImmutablePair<>(ReturnResult.REVISIONABLE_NOT_FOUND, null);
         }
-        return list.get(0).getId();
+        return new ImmutablePair<>(ReturnResult.REVISIONABLE_FOUND, list.get(0).getId());
     }
 
     @Override
@@ -120,72 +123,102 @@ public class GeneralRepositoryImpl implements GeneralRepository {
     }
 
     @Override
-    public List<RevisionData> getLatestRevisionsForType(ConfigurationType type, Boolean approvedOnly) {
-        List<RevisionData> dataList = new ArrayList<>();
-        List<RevisionableEntity> revisionables = em.createQuery("SELECT r FROM RevisionableEntity r"+(approvedOnly? " WHERE r.curApprovedNo IS NOT NULL":""), RevisionableEntity.class).getResultList();
-
-        RevisionEntity revision;
-        for(RevisionableEntity entity : revisionables) {
-            if(approvedOnly) {
-                revision = em.find(RevisionEntity.class, entity.currentApprovedRevisionKey());
-            } else {
-                revision = em.find(RevisionEntity.class, entity.latestRevisionKey());
-            }
-            if(revision != null) {
-                RevisionData data = json.deserializeRevisionData(revision.getData());
-                if(data != null) {
-                    dataList.add(data);
-                }
-            }
-        }
-
-        return dataList;
-    }
-
-    @Override
-    public RevisionData getLatestRevisionForId(Long id, boolean approvedOnly) {
+    public Pair<ReturnResult, RevisionData> getLatestRevisionForIdAndType(Long id, boolean approvedOnly, ConfigurationType type) {
         RevisionableEntity entity = em.find(RevisionableEntity.class, id);
         if(entity == null) {
-            return null;
+            return new ImmutablePair<>(ReturnResult.REVISIONABLE_NOT_FOUND, null);
+        }
+        if(type != null && !entity.getType().equals(type.toValue())) {
+            return new ImmutablePair<>(ReturnResult.REVISIONABLE_OF_INCORRECT_TYPE, null);
+        }
+        if(entity.getLatestRevisionNo() == null) {
+            // This is a serious error
+            return new ImmutablePair<>(ReturnResult.NO_REVISION_FOR_REVISIONABLE, null);
         }
         if(approvedOnly && entity.getCurApprovedNo() == null) {
-            return null;
+            // This is not a serious problem since approved revision
+            return new ImmutablePair<>(ReturnResult.REVISION_NOT_FOUND, null);
         }
-        return getRevision(id, (approvedOnly) ? entity.getCurApprovedNo() : entity.getLatestRevisionNo());
+        Pair<ReturnResult, RevisionData> pair = getRevisionDataOfType((approvedOnly) ? entity.currentApprovedRevisionKey() : entity.latestRevisionKey(), type);
+        if(pair.getLeft() == ReturnResult.REVISION_NOT_FOUND) {
+            // Since we know that the revision should exist upgrade the error to NO_REVISION_FOR_REVISIONABLE
+            logger.error("Revision that should exist "+((approvedOnly) ? entity.currentApprovedRevisionKey() : entity.latestRevisionKey())+" was not found for entity "+entity.toString());
+            return new ImmutablePair<>(ReturnResult.NO_REVISION_FOR_REVISIONABLE, null);
+        }
+        return pair;
     }
 
     @Override
-    public RevisionData getRevision(Long id, Integer revision) {
-        List<RevisionEntity> revisions =
-                em.createQuery(
-                    "SELECT r FROM RevisionEntity r " +
-                    "WHERE r.key.revisionableId = :id AND r.key.revisionNo = :revision",
-                    RevisionEntity.class)
-                .setParameter("id", id)
-                .setParameter("revision", revision)
-                .getResultList();
-
-        RevisionEntity ent = DataAccessUtils.requiredSingleResult(revisions);
-
-        RevisionData data = json.deserializeRevisionData(ent.getData());
-
-        return data;
+    public Pair<ReturnResult, Integer> getLatestRevisionNoForIdAndType(Long id, boolean approvedOnly, ConfigurationType type) {
+        RevisionableEntity entity = em.find(RevisionableEntity.class, id);
+        if(entity == null) {
+            return new ImmutablePair<>(ReturnResult.REVISIONABLE_NOT_FOUND, null);
+        }
+        if(type != null && !entity.getType().equals(type.toValue())) {
+            return new ImmutablePair<>(ReturnResult.REVISIONABLE_OF_INCORRECT_TYPE, null);
+        }
+        if(approvedOnly && entity.getCurApprovedNo() == null) {
+            return new ImmutablePair<>(ReturnResult.NO_REVISION_FOR_REVISIONABLE, null);
+        }
+        return new ImmutablePair<>(ReturnResult.REVISION_FOUND, (approvedOnly) ? entity.getCurApprovedNo() : entity.getLatestRevisionNo());
     }
 
     @Override
-    public String getRevisionData(Long id, Integer revision) {
-        List<RevisionEntity> revisions =
-                em.createQuery(
-                        "SELECT r FROM RevisionEntity r " +
-                                "WHERE r.key.revisionableId = :id AND r.key.revisionNo = :revision",
-                        RevisionEntity.class)
-                        .setParameter("id", id)
-                        .setParameter("revision", revision)
-                        .getResultList();
+    public Pair<ReturnResult, RevisionData> getRevisionData(Long id, Integer no) {
+        return getRevisionDataOfType(new RevisionKey(id, no), null);
+    }
 
-        RevisionEntity ent = DataAccessUtils.requiredSingleResult(revisions);
+    @Override
+    public Pair<ReturnResult, RevisionData> getRevisionDataOfType(Long id, Integer no, ConfigurationType type) {
+        return getRevisionDataOfType(new RevisionKey(id, no), type);
+    }
 
-        return (ent != null) ? ent.getData() : null;
+    @Override
+    public Pair<ReturnResult, RevisionData> getRevisionDataOfType(RevisionKey key, ConfigurationType type) {
+        RevisionEntity entity = em.find(RevisionEntity.class, key);
+        if(entity == null) {
+            // Didn't found entity
+            return new ImmutablePair<>(ReturnResult.REVISION_NOT_FOUND, null);
+        }
+        Pair<ReturnResult, RevisionData> pair = getRevisionDataFromEntity(entity);
+        // Sanity check
+        if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
+            logger.error("Couldn't get revision data from "+entity.toString());
+            return pair;
+        }
+        if(type != null && pair.getRight().getConfiguration().getType() != type) {
+            // Requested revision isn't a study variables revision
+            logger.info("Someone requested a revision of type " + type + " with id " + key.getRevisionableId() + " and no " + key.getRevisionNo() + ". " +
+                    "These do not match a revision of type " + type + " but instead a " + pair.getRight().getConfiguration().getType());
+            return new ImmutablePair<>(ReturnResult.REVISION_OF_INCORRECT_TYPE, null);
+        }
+        return pair;
+    }
+
+    private Pair<ReturnResult, RevisionData> getRevisionDataFromEntity(RevisionEntity revision) {
+        // Sanity check
+        if(StringUtils.isEmpty(revision.getData())) {
+            logger.error(revision.toString()+" was found with no data.");
+            return new ImmutablePair<>(ReturnResult.REVISION_CONTAINED_NO_DATA, null);
+        }
+        Pair<ReturnResult, RevisionData> pair = json.deserializeRevisionData(revision.getData());
+        if(pair.getLeft() == ReturnResult.DESERIALIZATION_SUCCESS) {
+            pair = new ImmutablePair<>(ReturnResult.REVISION_FOUND, pair.getRight());
+        }
+        return pair;
+    }
+
+    @Override
+    public Pair<ReturnResult, String> getRevisionDataString(Long id, Integer revision) {
+        RevisionEntity entity = em.find(RevisionEntity.class, new RevisionKey(id, revision));
+        if(entity == null) {
+            return new ImmutablePair<>(ReturnResult.REVISION_NOT_FOUND, null);
+        }
+        if(StringUtils.isEmpty(entity.getData())) {
+            return new ImmutablePair<>(ReturnResult.REVISION_CONTAINED_NO_DATA, null);
+        }
+
+        return new ImmutablePair<>(ReturnResult.REVISION_FOUND, entity.getData());
     }
 
     @Override

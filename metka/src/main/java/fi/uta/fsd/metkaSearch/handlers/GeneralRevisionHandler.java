@@ -10,15 +10,18 @@ import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.*;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.*;
+import fi.uta.fsd.metka.model.general.ConfigurationKey;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import fi.uta.fsd.metkaSearch.analyzer.CaseInsensitiveWhitespaceAnalyzer;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
 import fi.uta.fsd.metkaSearch.indexers.Indexer;
 import fi.uta.fsd.metkaSearch.indexers.IndexerDocument;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
 import org.apache.lucene.search.BooleanQuery;
@@ -49,15 +52,17 @@ class GeneralRevisionHandler implements RevisionHandler {
         this.references = references;
     }
 
-    private Configuration getConfiguration(ConfigurationKey key) {
+    private Pair<ReturnResult, Configuration> getConfiguration(ConfigurationKey key) {
         if(configCache.get(key) != null) {
-            return configCache.get(key);
+            return new ImmutablePair<>(ReturnResult.CONFIGURATION_FOUND, configCache.get(key));
         } else {
-            Configuration config = configurations.findConfiguration(key);
-            if(config != null) {
-                configCache.put(key, config);
+            Pair<ReturnResult, Configuration> pair = configurations.findConfiguration(key);
+            if(pair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
+                return pair;
+            } else {
+                configCache.put(key, pair.getRight());
+                return pair;
             }
-            return config;
         }
     }
 
@@ -65,20 +70,22 @@ class GeneralRevisionHandler implements RevisionHandler {
         if(command == null) {
             return true;
         }
-        RevisionData data = general.getRevision(command.getRevisionable(), command.getRevision());
-        if(data == null) {
+        Pair<ReturnResult, RevisionData> pair = general.getRevisionDataOfType(command.getRevisionable(), command.getRevision(), command.getType());
+        if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             return true;
         }
-        Configuration config = getConfiguration(data.getConfiguration());
-        if(config == null) {
+        RevisionData data = pair.getRight();
+        Pair<ReturnResult, Configuration> confPair = getConfiguration(data.getConfiguration());
+        if(confPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
             // We can't really do the indexing without an actual config
             return true;
         }
+        Configuration config = confPair.getRight();
         // Do some checking to see if the document actually needs to be indexed or not (don't know how at the moment)
         // TODO: Actual checking, for now just removes any previous documents from the index
         BooleanQuery bQuery = new BooleanQuery();
         bQuery.add(NumericRangeQuery.newLongRange("key.id", 4, data.getKey().getId(), data.getKey().getId(), true, true), MUST);
-        bQuery.add(NumericRangeQuery.newLongRange("key.no", 4, data.getKey().getRevision().longValue(), data.getKey().getRevision().longValue(), true, true), MUST);
+        bQuery.add(NumericRangeQuery.newLongRange("key.no", 4, data.getKey().getNo().longValue(), data.getKey().getNo().longValue(), true, true), MUST);
         indexer.removeDocument(bQuery);
 
         // Create document. This handler only indexes one document per request so the document can be inside the handle method.
@@ -91,7 +98,7 @@ class GeneralRevisionHandler implements RevisionHandler {
 
         // Do some default stuff
         document.indexIntegerField("key.id", data.getKey().getId(), YES);
-        document.indexIntegerField("key.no", data.getKey().getRevision().longValue(), YES);
+        document.indexIntegerField("key.no", data.getKey().getNo().longValue(), YES);
         document.indexKeywordField("key.configuration.type", data.getConfiguration().getType().toValue(), YES);
         document.indexIntegerField("key.configuration.version", data.getConfiguration().getVersion().longValue(), YES);
         document.indexKeywordField("state.removed", removalInfo.getLeft().toString(), YES);
@@ -376,29 +383,29 @@ class GeneralRevisionHandler implements RevisionHandler {
     }
 
     private boolean indexStudyVariables(SavedDataField saved, IndexerDocument document, String root, RevisionData data) {
-        RevisionData revision = general.getLatestRevisionForId(Long.parseLong(saved.getActualValue()), data.getState() == RevisionState.APPROVED);
-        if(revision == null) {
+        Pair<ReturnResult, RevisionData> pair = general.getLatestRevisionForIdAndType(Long.parseLong(saved.getActualValue()), data.getState() == RevisionState.APPROVED, ConfigurationType.STUDY_VARIABLES);
+        if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             return false;
         }
-        Configuration config = getConfiguration(revision.getConfiguration());
-        if(config == null) {
+        Pair<ReturnResult, Configuration> confPair = getConfiguration(pair.getRight().getConfiguration());
+        if(confPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
             return false;
         }
-        return indexFields(revision, document, root, config);
+        return indexFields(pair.getRight(), document, root, confPair.getRight());
     }
 
     private boolean indexStudyVariablesContainer(ReferenceContainerDataField field, IndexerDocument document, String root, RevisionData data) {
         boolean addDocument = true;
         for(SavedReference reference : field.getReferences()) {
-            RevisionData revision = general.getLatestRevisionForId(Long.parseLong(reference.getActualValue()), data.getState() == RevisionState.APPROVED);
-            if(revision == null) {
+            Pair<ReturnResult, RevisionData> pair = general.getLatestRevisionForIdAndType(Long.parseLong(reference.getActualValue()), data.getState() == RevisionState.APPROVED, ConfigurationType.STUDY_VARIABLE);
+            if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
                 continue;
             }
-            Configuration config = getConfiguration(revision.getConfiguration());
-            if(config == null) {
+            Pair<ReturnResult, Configuration> confPair = getConfiguration(pair.getRight().getConfiguration());
+            if(confPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
                 continue;
             }
-            if(!indexFields(revision, document, root, config)) {
+            if(!indexFields(pair.getRight(), document, root, confPair.getRight())) {
                 addDocument = false;
             }
         }

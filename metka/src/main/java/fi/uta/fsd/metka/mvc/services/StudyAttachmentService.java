@@ -5,11 +5,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.mvc.search.GeneralSearch;
 import fi.uta.fsd.metka.mvc.services.simple.ErrorMessage;
 import fi.uta.fsd.metka.mvc.services.simple.RevisionViewDataContainer;
 import fi.uta.fsd.metka.mvc.services.simple.transfer.TransferObject;
+import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.StudyAttachmentRepository;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,10 +19,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class StudyAttachmentService {
     @Autowired
-    private GeneralSearch generalSearch;
-
-    @Autowired
-    private GeneralService general;
+    private GeneralRepository general;
 
     @Autowired
     private StudyAttachmentRepository studyAttachments;
@@ -28,16 +27,12 @@ public class StudyAttachmentService {
     @Autowired
     private ConfigurationService configurations;
 
-    public Integer findLatestRevisionNumber(Long id) {
-        return generalSearch.findSingleRevisionNo(id);
+    public Pair<ReturnResult, Integer> findLatestRevisionNumber(Long id) {
+        return general.getLatestRevisionNoForIdAndType(id, false, ConfigurationType.STUDY_ATTACHMENT);
     }
 
-    public RevisionData getStudyAttachmentRevision(Long id, Integer revisionNo) {
-        RevisionData revision = general.getRevision(id, revisionNo);
-        if(revision.getConfiguration().getType() != ConfigurationType.STUDY_ATTACHMENT) {
-            return null;
-        }
-        return revision;
+    public Pair<ReturnResult, RevisionData> getStudyAttachmentRevision(Long id, Integer no) {
+        return general.getRevisionDataOfType(id, no, ConfigurationType.STUDY_ATTACHMENT);
     }
 
     /**
@@ -83,7 +78,7 @@ public class StudyAttachmentService {
             return null;
         }
         TransferObject to = TransferObject.buildTransferObjectFromRevisionData(revision);
-        Configuration config = configurations.findLatestByType(ConfigurationType.STUDY_ATTACHMENT);
+        Configuration config = configurations.findLatestByType(ConfigurationType.STUDY_ATTACHMENT).getRight();
         if(to != null && config != null) {
             RevisionViewDataContainer container = new RevisionViewDataContainer(to, config);
             return container;

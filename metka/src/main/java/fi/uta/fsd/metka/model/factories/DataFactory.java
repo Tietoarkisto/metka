@@ -3,9 +3,9 @@ package fi.uta.fsd.metka.model.factories;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
 import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.configuration.ConfigurationKey;
+import fi.uta.fsd.metka.model.general.ConfigurationKey;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.RevisionKey;
+import fi.uta.fsd.metka.model.general.RevisionKey;
 import org.joda.time.LocalDateTime;
 
 

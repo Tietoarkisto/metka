@@ -1,6 +1,8 @@
 package fi.uta.fsd.metka.storage.repository;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
@@ -27,5 +29,5 @@ public interface MiscJSONRepository {
      * @param key Requested Misc JSON key
      * @return
      */
-    public JsonNode findByKey(String key);
+    public Pair<ReturnResult, JsonNode> findByKey(String key);
 }

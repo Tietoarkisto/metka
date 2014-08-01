@@ -1,5 +1,6 @@
 package fi.uta.fsd.metka.mvc.controller;
 
+import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.mvc.services.ConfigurationService;
@@ -8,6 +9,8 @@ import fi.uta.fsd.metka.mvc.services.StudyAttachmentService;
 import fi.uta.fsd.metka.mvc.services.simple.ErrorMessage;
 import fi.uta.fsd.metka.mvc.services.simple.RevisionViewDataContainer;
 import fi.uta.fsd.metka.mvc.services.simple.transfer.TransferObject;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -52,17 +55,16 @@ public class StudyAttachmentController {
     public @ResponseBody String loadStudyAttachment(@PathVariable("id") Long id) throws Exception {
         // TODO: implement
 
-        // Get newest revision number for given study attachment
-        // This might fail for reasons like study attachment with the given id not actually existing
-        Integer revisionNo = studyAttachments.findLatestRevisionNumber(id);
-        RevisionData revision = general.getRevision(id, revisionNo);
-        if(revision == null) {
+        Pair<ReturnResult, RevisionData> dataPair = general.getRevisionData(id, ConfigurationType.STUDY_ATTACHMENT);
+        if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
             // TODO: Something has gone wrong, return information about that. Don't display the study attachment to user
+            return null;
         }
+        RevisionData revision = dataPair.getRight();
         // Get configuration for that study attachment
         // If this fails then something is seriously wrong with either the data or database
-        Configuration config = configurations.findByTypeAndVersion(revision.getConfiguration());
-        if(config == null) {
+        Pair<ReturnResult, Configuration> configPair = configurations.findByTypeAndVersion(revision.getConfiguration());
+        if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
             // TODO: Couldn't get configuration, return information about that. This should deny the possibility of showing the  study attachment too since missing configuration is quite serious.
         }
         // Get possible UI configuration for study attachment

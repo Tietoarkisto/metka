@@ -6,18 +6,20 @@ import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.SavedDataField;
-import fi.uta.fsd.metka.mvc.search.GeneralSearch;
 import fi.uta.fsd.metka.mvc.search.RevisionDataRemovedContainer;
 import fi.uta.fsd.metka.mvc.search.SeriesSearch;
 import fi.uta.fsd.metka.mvc.services.simple.RevisionViewDataContainer;
 import fi.uta.fsd.metka.mvc.services.simple.series.SeriesSearchSO;
 import fi.uta.fsd.metka.mvc.services.simple.transfer.SearchResult;
 import fi.uta.fsd.metka.mvc.services.simple.transfer.TransferObject;
+import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.SeriesRepository;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metkaSearch.IndexerComponent;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +34,7 @@ public class SeriesService {
     @Autowired
     private SeriesSearch search;
     @Autowired
-    private GeneralSearch generalSearch;
+    private GeneralRepository general;
 
     @Autowired
     private SeriesRepository repository;
@@ -89,9 +91,8 @@ public class SeriesService {
      * @param id Revisionable id
      * @return
      */
-    public Integer findSingleRevisionNo(Long id) {
-        Integer revision = generalSearch.findSingleRevisionNo(id);
-        return revision;
+    public Pair<ReturnResult, Integer> findSingleRevisionNo(Long id) {
+        return general.getLatestRevisionNoForIdAndType(id, false, ConfigurationType.SERIES);
     }
 
     /**
@@ -101,12 +102,14 @@ public class SeriesService {
      * @return RevisionViewDataContainer containing requested revision data and its configuration
      */
     public RevisionViewDataContainer findSingleRevision(Long id, Integer revision) {
-        RevisionData data;
-        data = generalSearch.findSingleRevision(id, revision, ConfigurationType.SERIES);
-        if(data == null) {
+
+        Pair<ReturnResult, RevisionData> pair = general.getRevisionDataOfType(id, revision, ConfigurationType.SERIES);
+        if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
+            // TODO: return actual error value to user
             return null;
         }
-        Configuration config = configService.findByTypeAndVersion(data.getConfiguration());
+        RevisionData data = pair.getRight();
+        Configuration config = configService.findByTypeAndVersion(data.getConfiguration()).getRight();
         TransferObject single = TransferObject.buildTransferObjectFromRevisionData(data);
 
         return new RevisionViewDataContainer(single, config);
@@ -123,9 +126,9 @@ public class SeriesService {
         }
 
         // Creating new series was successful, index series
-        indexer.addCommand(RevisionIndexerCommand.index(indexerPaths.get("fi"), revision.getKey().getId(), revision.getKey().getRevision()));
+        indexer.addCommand(RevisionIndexerCommand.index(indexerPaths.get("fi"), revision.getKey().getId(), revision.getKey().getNo()));
 
-        Configuration config = configService.findByTypeAndVersion(revision.getConfiguration());
+        Configuration config = configService.findByTypeAndVersion(revision.getConfiguration()).getRight();
         TransferObject single = TransferObject.buildTransferObjectFromRevisionData(revision);
 
         return new RevisionViewDataContainer(single, config);
@@ -135,7 +138,7 @@ public class SeriesService {
     public RevisionViewDataContainer editSeries(Long seriesno) {
         try {
             RevisionData data = repository.editSeries(seriesno);
-            Configuration config = configService.findByTypeAndVersion(data.getConfiguration());
+            Configuration config = configService.findByTypeAndVersion(data.getConfiguration()).getRight();
             TransferObject single = TransferObject.buildTransferObjectFromRevisionData(data);
             return new RevisionViewDataContainer(single, config);
         } catch(Exception ex) {
@@ -179,7 +182,7 @@ public class SeriesService {
 
         SearchResult so = new SearchResult();
         so.setId(data.getKey().getId());
-        so.setRevision(data.getKey().getRevision());
+        so.setRevision(data.getKey().getNo());
         so.setState(UIRevisionState.fromRevisionState(data.getState()));
         so.setByKey("seriesid", SavedDataField.valueAsInteger(data.dataField(SavedDataFieldCall.get("seriesid")).getRight()));
         so.setByKey("seriesabbr", SavedDataField.valueAsString(data.dataField(SavedDataFieldCall.get("seriesabbr")).getRight()));

@@ -2,18 +2,20 @@ package fi.uta.fsd.metka.mvc.controller;
 
 import fi.uta.fsd.metka.enums.repositoryResponses.DraftRemoveResponse;
 import fi.uta.fsd.metka.enums.repositoryResponses.LogicalRemoveResponse;
-import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.mvc.services.GeneralService;
 import fi.uta.fsd.metka.mvc.services.simple.ErrorMessage;
-import javassist.NotFoundException;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.util.JSONUtil;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
@@ -38,9 +40,8 @@ public class GeneralController {
 
     @RequestMapping(value = "/prev/{type}/{id}", method = RequestMethod.GET)
     public String prev(@PathVariable String type, @PathVariable Long id, RedirectAttributes redirectAttributes) {
-        try {
-            id = service.getAdjancedRevisionableId(id, type, false);
-        } catch(NotFoundException e) {
+        Pair<ReturnResult, Long> pair = service.getAdjancedRevisionableId(id, type, false);
+        if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             List<ErrorMessage> errors = new ArrayList<>();
             ErrorMessage error = new ErrorMessage();
             error.setMsg("general.errors.move.previous");
@@ -55,9 +56,8 @@ public class GeneralController {
 
     @RequestMapping(value = "/next/{type}/{id}", method = RequestMethod.GET)
     public String next(@PathVariable String type, @PathVariable Long id, RedirectAttributes redirectAttributes) {
-        try {
-            id = service.getAdjancedRevisionableId(id, type, true);
-        } catch(NotFoundException e) {
+        Pair<ReturnResult, Long> pair = service.getAdjancedRevisionableId(id, type, true);
+        if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             List<ErrorMessage> errors = new ArrayList<>();
             ErrorMessage error = new ErrorMessage();
             error.setMsg("general.errors.move.next");
@@ -175,21 +175,28 @@ public class GeneralController {
         return "redirect:/"+type+"/search";
     }
 
-    @RequestMapping(value="/download/{id}/{revision}", method = RequestMethod.GET)
-    public HttpEntity<byte[]> downloadRevision(@PathVariable Long id, @PathVariable Integer revision) {
-        String data = service.getRevisionData(id, revision);
-        if(StringUtils.isEmpty(data)) {
+    @RequestMapping(value="/download/{id}/{no}", method = RequestMethod.GET)
+    public HttpEntity<byte[]> downloadRevision(@PathVariable Long id, @PathVariable Integer no) {
+        Pair<ReturnResult, RevisionData> pair = service.getRevisionData(id, no);
+        if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
+            // TODO: Return error to user
             return null;
-        }
-        RevisionData revData = json.deserializeRevisionData(data);
-        byte[] dataBytes = data.getBytes();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Content-Disposition",
-                "attachment; filename=" + revData.getConfiguration().getType()
-                        + "_id_" + revData.getKey().getId() + "_revision_" + revData.getKey().getRevision() + ".json");
-        headers.setContentLength(dataBytes.length);
+        } else {
+            RevisionData revision = pair.getRight();
+            Pair<ReturnResult, String> string = json.serialize(revision);
+            if(string.getLeft() != ReturnResult.SERIALIZATION_SUCCESS) {
+                // TODO: Return error to user
+                return null;
+            }
+            byte[] dataBytes = string.getRight().getBytes();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("Content-Disposition",
+                    "attachment; filename=" + revision.getConfiguration().getType()
+                            + "_id_" + revision.getKey().getId() + "_revision_" + revision.getKey().getNo() + ".json");
+            headers.setContentLength(dataBytes.length);
 
-        return new HttpEntity<byte[]>(dataBytes, headers);
+            return new HttpEntity<>(dataBytes, headers);
+        }
     }
 }

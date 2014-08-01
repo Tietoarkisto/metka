@@ -1,4 +1,4 @@
-package fi.uta.fsd.metka.model.configuration;
+package fi.uta.fsd.metka.model.general;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -46,5 +46,10 @@ public class ConfigurationKey {
         int result = version.hashCode();
         result = 31 * result + type.hashCode();
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "JsonKey[name="+this.getClass().getSimpleName()+", keys={type: "+type.toValue()+", version: "+version+"}]";
     }
 }

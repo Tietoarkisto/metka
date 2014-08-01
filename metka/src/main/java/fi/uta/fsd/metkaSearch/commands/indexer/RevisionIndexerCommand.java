@@ -105,6 +105,7 @@ public class RevisionIndexerCommand extends IndexerCommandBase {
     // COMMAND IMPLEMENTATION
     private final Long  revisionable;
     private final Integer revision;
+    private final ConfigurationType type;
 
     private RevisionIndexerCommand(DirectoryManager.DirectoryPath path, Action action) {
         this(path, action, null, null);
@@ -115,6 +116,7 @@ public class RevisionIndexerCommand extends IndexerCommandBase {
         super(path, action);
         this.revisionable = revisionable;
         this.revision = revision;
+        this.type = ConfigurationType.fromValue(path.getAdditionalParameters()[0]);
     }
 
     public Long getRevisionable() {
@@ -123,6 +125,10 @@ public class RevisionIndexerCommand extends IndexerCommandBase {
 
     public Integer getRevision() {
         return revision;
+    }
+
+    public ConfigurationType getType() {
+        return type;
     }
 
     @Override

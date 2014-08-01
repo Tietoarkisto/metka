@@ -13,8 +13,6 @@ import fi.uta.fsd.metkaSearch.indexers.RevisionIndexer;
 import fi.uta.fsd.metkaSearch.indexers.WikipediaIndexer;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -32,7 +30,6 @@ import java.util.concurrent.Future;
 
 @Service
 public class IndexerComponent {
-    private static Logger logger = LoggerFactory.getLogger(IndexerComponent.class);
     @Autowired
     private GeneralRepository general;
 

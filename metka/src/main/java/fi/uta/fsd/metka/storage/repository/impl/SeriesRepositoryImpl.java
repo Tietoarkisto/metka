@@ -91,8 +91,9 @@ public class SeriesRepositoryImpl implements SeriesRepository {
             return false;
         }
 
-        RevisionData data = json.deserializeRevisionData(revEntity.getData());
-        Configuration config = configRepo.findConfiguration(data.getConfiguration());
+        // TODO: Just skip checks for now, if this raises a problem at some point then do complete checks
+        RevisionData data = json.deserializeRevisionData(revEntity.getData()).getRight();
+        Configuration config = configRepo.findConfiguration(data.getConfiguration()).getRight();
 
         // Validate TransferObject against revision data:
         // Id should match id in revision data and key.
@@ -108,7 +109,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         }
 
         // check revision
-        if(!to.getRevision().equals(data.getKey().getRevision())) {
+        if(!to.getRevision().equals(data.getKey().getNo())) {
             // TODO: data is out of sync or someone tried to change the revision, log error
             // Return false since save can not continue.
             return false;
@@ -132,7 +133,8 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         if(changes) {
             data.setLastSaved(new LocalDateTime());
             // TODO: Set last saved by
-            revEntity.setData(json.serialize(data));
+            // TODO: Just skip checks for now, if this raises a problem at some point then do complete checks
+            revEntity.setData(json.serialize(data).getRight());
         }
 
         return true;
@@ -174,7 +176,8 @@ public class SeriesRepositoryImpl implements SeriesRepository {
             return false;
         }
 
-        RevisionData data = json.deserializeRevisionData(entity.getData());
+        // TODO: Just skip checks for now, if this raises a problem at some point then do complete checks
+        RevisionData data = json.deserializeRevisionData(entity.getData()).getRight();
 
         // Check that data is also in DRAFT state and that id and revision match.
         // For each change:
@@ -190,7 +193,7 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         }
 
         if(!data.getKey().getId().equals(entity.getKey().getRevisionableId())
-                || !data.getKey().getRevision().equals(entity.getKey().getRevisionNo())) {
+                || !data.getKey().getNo().equals(entity.getKey().getRevisionNo())) {
             // TODO: log exception since data and entity keys don't match
             System.err.println("RevisionEntity and RevisionData keys do not match");
             System.err.println(data.getKey());
@@ -207,7 +210,8 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         data.setState(RevisionState.APPROVED);
         data.setApprovalDate(new LocalDateTime());
         // TODO: set approver for the data to the user who requested the data approval
-        entity.setData(json.serialize(data));
+        // TODO: Just skip checks for now, if this raises a problem at some point then do complete checks
+        entity.setData(json.serialize(data).getRight());
         entity.setState(RevisionState.APPROVED);
         series.setCurApprovedNo(series.getLatestRevisionNo());
 
@@ -230,7 +234,8 @@ public class SeriesRepositoryImpl implements SeriesRepository {
 
         //RevisionEntity latestRevision = series.getLatestRevision();
         RevisionEntity latestRevision = em.find(RevisionEntity.class, series.latestRevisionKey());
-        RevisionData oldData = json.deserializeRevisionData(latestRevision.getData());
+        // TODO: Just skip checks for now, if this raises a problem at some point then do complete checks
+        RevisionData oldData = json.deserializeRevisionData(latestRevision.getData()).getRight();
         if(series.hasDraft()) {
             if(latestRevision.getState() != RevisionState.DRAFT) {
                 // TODO: log exception since data is out of sync
@@ -258,7 +263,8 @@ public class SeriesRepositoryImpl implements SeriesRepository {
 
         // Serialize new dataset to the new revision entity
         // Persist new entity
-        newRevision.setData(json.serialize(newData));
+        // TODO: Just skip checks for now, if this raises a problem at some point then do complete checks
+        newRevision.setData(json.serialize(newData).getRight());
         em.persist(newRevision);
 
         // Set latest revision number to new revisions revision number

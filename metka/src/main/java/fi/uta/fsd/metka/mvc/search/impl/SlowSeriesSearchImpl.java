@@ -1,5 +1,6 @@
 package fi.uta.fsd.metka.mvc.search.impl;
 
+import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.SavedDataField;
@@ -10,12 +11,17 @@ import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.entity.impl.SeriesEntity;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
+import fi.uta.fsd.metka.storage.repository.GeneralRepository;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metkaSearch.SearcherComponent;
 import fi.uta.fsd.metkaSearch.commands.searcher.series.SeriesBasicSearchCommand;
 import fi.uta.fsd.metkaSearch.results.ResultList;
 import fi.uta.fsd.metkaSearch.results.RevisionResult;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -31,6 +37,7 @@ import static fi.uta.fsd.metka.storage.util.ConversionUtil.stringToLong;
 
 @Repository("seriesSearch")
 public class SlowSeriesSearchImpl implements SeriesSearch {
+    private static Logger logger = LoggerFactory.getLogger(SlowSeriesSearchImpl.class);
 
     @PersistenceContext(name = "entityManager")
     private EntityManager em;
@@ -41,6 +48,9 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
     @Autowired
     private SearcherComponent searcher;
 
+    @Autowired
+    private GeneralRepository general;
+
     @Override
     public List<String> findAbbreviations() {
         List<String> list = new ArrayList<>();
@@ -48,21 +58,14 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
 
         List<SeriesEntity> entities = em.createQuery("SELECT s FROM SeriesEntity s", SeriesEntity.class).getResultList();
         for(SeriesEntity entity : entities) {
-            String data;
-            if(entity.getCurApprovedNo() != null) {
-                //data = entity.getCurApprovedRev().getData();
-                data = em.find(RevisionEntity.class, new RevisionKey(entity.getId(), entity.getCurApprovedNo())).getData();
-            } else {
-                //data = entity.getLatestRevision().getData();
-                data = em.find(RevisionEntity.class, new RevisionKey(entity.getId(), entity.getLatestRevisionNo())).getData();
+            Pair<ReturnResult, RevisionData> pair = general.getRevisionDataOfType(entity.latestRevisionKey(), ConfigurationType.SERIES);
+            if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
+                logger.error("Didn't found revision for series "+entity.toString());
+                continue;
             }
-
-            RevisionData revData = json.deserializeRevisionData(data);
+            RevisionData revision = pair.getRight();
             // Use the method with less sanity checks since there's no point in getting configuration here.
-            SavedDataField field = null;
-            if(revData != null) {
-                field = revData.dataField(SavedDataFieldCall.get("seriesabbr")).getRight();
-            }
+            SavedDataField field = revision.dataField(SavedDataFieldCall.get("seriesabbr")).getRight();
             if(field != null && !StringUtils.isEmpty(field.getActualValue())) list.add(field.getActualValue());
         }
         Collections.sort(list);
@@ -115,10 +118,12 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
 
             RevisionEntity revision = em.find(RevisionEntity.class, new RevisionKey(result.getId(), result.getNo().intValue()));
             if(revision != null && !StringUtils.isEmpty(revision.getData())) {
-                RevisionData data = json.deserializeRevisionData(revision.getData());
-                if(data != null) {
-                    results.add(new RevisionDataRemovedContainer(data, entity.getRemoved()));
+                Pair<ReturnResult, RevisionData> pair = json.deserializeRevisionData(revision.getData());
+                if(pair.getLeft() != ReturnResult.DESERIALIZATION_SUCCESS) {
+                    logger.error("Failed to deserialize "+revision.toString());
+                    continue;
                 }
+                results.add(new RevisionDataRemovedContainer(pair.getRight(), entity.getRemoved()));
             }
         }
 

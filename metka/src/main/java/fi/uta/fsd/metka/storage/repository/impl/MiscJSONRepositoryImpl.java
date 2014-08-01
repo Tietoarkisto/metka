@@ -5,7 +5,10 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import fi.uta.fsd.metka.storage.entity.MiscJSONEntity;
 import fi.uta.fsd.metka.storage.repository.MiscJSONRepository;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -48,8 +51,10 @@ public class MiscJSONRepositoryImpl implements MiscJSONRepository {
 
     @Override
     public void insert(String text) {
-        JsonNode node = json.readJsonTree(text);
-        insert(node);
+        Pair<ReturnResult, JsonNode> node = json.deserializeToJsonTree(text);
+        if(node.getLeft() == ReturnResult.DESERIALIZATION_SUCCESS) {
+            insert(node.getRight());
+        }
     }
 
     @Override
@@ -59,11 +64,16 @@ public class MiscJSONRepositoryImpl implements MiscJSONRepository {
     }
 
     @Override
-    public JsonNode findByKey(String key) {
+    public Pair<ReturnResult, JsonNode> findByKey(String key) {
         MiscJSONEntity entity = em.find(MiscJSONEntity.class, key);
         if(entity == null || StringUtils.isEmpty(entity.getData())) {
-            return null;
+            return new ImmutablePair<>(ReturnResult.MISC_JSON_NOT_FOUND, null);
         }
-        return json.readJsonTree(entity.getData());
+        Pair<ReturnResult, JsonNode> pair = json.deserializeToJsonTree(entity.getData());
+        if(pair.getLeft() != ReturnResult.DESERIALIZATION_SUCCESS) {
+            return pair;
+        } else {
+            return new ImmutablePair<>(ReturnResult.MISC_JSON_FOUND, pair.getRight());
+        }
     }
 }

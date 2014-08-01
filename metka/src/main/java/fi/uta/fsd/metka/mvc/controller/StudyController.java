@@ -3,18 +3,21 @@ package fi.uta.fsd.metka.mvc.controller;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.UIRevisionState;
 import fi.uta.fsd.metka.model.configuration.Configuration;
+import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
-import fi.uta.fsd.metka.mvc.search.GeneralSearch;
 import fi.uta.fsd.metka.mvc.services.ConfigurationService;
+import fi.uta.fsd.metka.mvc.services.GeneralService;
 import fi.uta.fsd.metka.mvc.services.StudyService;
 import fi.uta.fsd.metka.mvc.services.simple.ErrorMessage;
 import fi.uta.fsd.metka.mvc.services.simple.RevisionViewDataContainer;
 import fi.uta.fsd.metka.mvc.services.simple.study.StudySearchData;
 import fi.uta.fsd.metka.mvc.services.simple.transfer.SearchResult;
 import fi.uta.fsd.metka.mvc.services.simple.transfer.TransferObject;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.transfer.configuration.ConfigurationMap;
 import fi.uta.fsd.metka.transfer.configuration.GUIConfigurationMap;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -49,7 +52,7 @@ public class StudyController {
     @Autowired
     private JSONUtil json;
     @Autowired
-    private GeneralSearch generalSearch;
+    private GeneralService general;
 
     /*
     * View single study
@@ -58,12 +61,12 @@ public class StudyController {
     */
     @RequestMapping(value = "view/{id}", method = RequestMethod.GET)
     public String view(Model model, @PathVariable Long id, RedirectAttributes redirectAttributes) {
-        Integer revision = studyService.findSingleRevisionNo(id);
+        Pair<ReturnResult, Integer> revision = studyService.findSingleRevisionNo(id);
         if(model.asMap().containsKey("displayableErrors")) {
             redirectAttributes.addFlashAttribute("displayableErrors", model.asMap().get("displayableErrors"));
         }
-        if(revision != null) {
-            return REDIRECT_VIEW+id+"/"+revision;
+        if(revision.getLeft() == ReturnResult.REVISION_FOUND) {
+            return REDIRECT_VIEW+id+"/"+revision.getRight();
         } else {
             List<ErrorMessage> errors = new ArrayList<>();
             errors.add(ErrorMessage.noViewableRevision("study", id));
@@ -79,14 +82,14 @@ public class StudyController {
     * If the returned single object is in DRAFT state and the current user is the handler
     * then show modify page, otherwise show view page.
     */
-    @RequestMapping(value = "view/{id}/{revision}", method = RequestMethod.GET)
+    @RequestMapping(value = "view/{id}/{no}", method = RequestMethod.GET)
     public String viewRevision(Model model,
-                               @PathVariable Long id, @PathVariable Integer revision,
+                               @PathVariable Long id, @PathVariable Integer no,
                                RedirectAttributes redirectAttributes) {
         TransferObject single = null;
         Configuration config = null;
         if(model.asMap().get("single") == null || model.asMap().get("studyconfiguration") == null) {
-            RevisionViewDataContainer revData = studyService.findSingleRevision(id, revision);
+            RevisionViewDataContainer revData = studyService.findSingleRevision(id, no);
             if(revData != null) {
                 model.asMap().put("single", revData.getTransferObject());
                 //model.asMap().put("configuration", revData.getConfiguration());
@@ -100,24 +103,25 @@ public class StudyController {
 
         if(single == null) {
             List<ErrorMessage> errors = new ArrayList<>();
-            errors.add(ErrorMessage.noSuchRevision("study", id, revision));
+            errors.add(ErrorMessage.noSuchRevision("study", id, no));
             redirectAttributes.addFlashAttribute("displayableErrors", errors);
             return REDIRECT_SEARCH;
         }
         if(config == null) {
             List<ErrorMessage> errors = new ArrayList<>();
-            errors.add(ErrorMessage.noConfigurationForRevision("study", id, revision));
+            errors.add(ErrorMessage.noConfigurationForRevision("study", id, no));
             redirectAttributes.addFlashAttribute("displayableErrors", errors);
             return REDIRECT_SEARCH;
         }
 
-        Configuration fileConfig = configService.findLatestByType(ConfigurationType.STUDY_ATTACHMENT);
-        if(fileConfig == null) {
+        Pair<ReturnResult, Configuration> configPair = configService.findLatestByType(ConfigurationType.STUDY_ATTACHMENT);
+        if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
             List<ErrorMessage> errors = new ArrayList<>();
-            errors.add(ErrorMessage.noConfigurationForRevision("study", id, revision));
+            errors.add(ErrorMessage.noConfigurationForRevision("study", id, no));
             redirectAttributes.addFlashAttribute("displayableErrors", errors);
             return REDIRECT_SEARCH;
         }
+        Configuration fileConfig = configPair.getRight();
         Map<String, Configuration> configurations = new HashMap<>();
         configurations.put(fileConfig.getKey().getType().toValue(), fileConfig);
         configurations.put(config.getKey().getType().toValue(), config);
@@ -127,40 +131,49 @@ public class StudyController {
         ConfigurationMap configs = new ConfigurationMap();
         configs.setConfiguration(config);
         configs.setConfiguration(fileConfig);
-        String result = json.serialize(configs);
-        if(result == null) {
+        Pair<ReturnResult, String> string = json.serialize(configs);
+        if(string.getLeft() != ReturnResult.SERIALIZATION_SUCCESS) {
             List<ErrorMessage> errors = new ArrayList<>();
-            errors.add(ErrorMessage.configurationSerializationError("study", id, revision));
+            errors.add(ErrorMessage.configurationSerializationError("study", id, no));
             redirectAttributes.addFlashAttribute("displayableErrors", errors);
             return REDIRECT_SEARCH;
         } else {
-            model.asMap().put("jsConfig", result);
+            model.asMap().put("jsConfig", string.getRight());
         }
 
         // Form JSGUIConfig
         GUIConfigurationMap guiConfigs = new GUIConfigurationMap();
-        GUIConfiguration guiConfig = configService.findLatestGUIByType(ConfigurationType.STUDY);
-        guiConfigs.setConfiguration(guiConfig);
+        Pair<ReturnResult, GUIConfiguration> guiPair = configService.findLatestGUIByType(ConfigurationType.STUDY);
+        if(guiPair.getLeft() == ReturnResult.CONFIGURATION_FOUND) {
+            guiConfigs.setConfiguration(guiPair.getRight());
+        }
 
-        result = json.serialize(guiConfigs);
-        if(result == null) {
+        string = json.serialize(guiConfigs);
+        if(string.getLeft() != ReturnResult.SERIALIZATION_SUCCESS) {
             List<ErrorMessage> errors = new ArrayList<>();
-            errors.add(ErrorMessage.guiConfigurationSerializationError("study", id, revision));
+            errors.add(ErrorMessage.guiConfigurationSerializationError("study", id, no));
             redirectAttributes.addFlashAttribute("displayableErrors", errors);
             return REDIRECT_SEARCH;
         } else {
-            model.asMap().put("jsGUIConfig", result);
+            model.asMap().put("jsGUIConfig", string.getRight());
         }
 
         // Data
-        result = json.serialize(generalSearch.findSingleRevision(id, revision, ConfigurationType.STUDY));
-        if(result == null) {
+        Pair<ReturnResult, RevisionData> pair = general.getRevisionData(id, no, ConfigurationType.STUDY);
+        if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             List<ErrorMessage> errors = new ArrayList<>();
-            errors.add(ErrorMessage.guiConfigurationSerializationError("study", id, revision));
+            errors.add(ErrorMessage.guiConfigurationSerializationError("study", id, no));
+            redirectAttributes.addFlashAttribute("displayableErrors", errors);
+            return REDIRECT_SEARCH;
+        }
+        string = json.serialize(pair.getRight());
+        if(string.getLeft() != ReturnResult.SERIALIZATION_SUCCESS) {
+            List<ErrorMessage> errors = new ArrayList<>();
+            errors.add(ErrorMessage.guiConfigurationSerializationError("study", id, no));
             redirectAttributes.addFlashAttribute("displayableErrors", errors);
             return REDIRECT_SEARCH;
         } else {
-            model.asMap().put("jsData", result);
+            model.asMap().put("jsData", string.getRight());
         }
 
         single.setUrlHash((String)model.asMap().get("urlHash"));
@@ -198,9 +211,11 @@ public class StudyController {
             model.asMap().put("displayableErrors", errors);
         }
 
-        Configuration config = configService.findLatestByType(ConfigurationType.STUDY);
+        Pair<ReturnResult, Configuration> configPair = configService.findLatestByType(ConfigurationType.STUDY);
         Map<String, Configuration> configuration = new HashMap<>();
-        configuration.put(config.getKey().getType().toValue(), config);
+        if(configPair.getLeft() == ReturnResult.CONFIGURATION_FOUND) {
+            configuration.put(ConfigurationType.STUDY.toValue(), configPair.getRight());
+        }
         model.asMap().put("configuration", configuration);
 
         model.asMap().put("page", "study");

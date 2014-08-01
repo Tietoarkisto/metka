@@ -10,7 +10,9 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.SavedDataField;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
+import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
@@ -45,16 +47,16 @@ public class StudyFactory extends DataFactory {
         if(StringUtils.isEmpty(entity.getData()) && entity.getState() != RevisionState.DRAFT)
             return null;
 
-        Configuration conf = null;
-        conf = configurationRepository.findLatestConfiguration(ConfigurationType.STUDY);
+        Pair<ReturnResult, Configuration> pair = configurationRepository.findLatestConfiguration(ConfigurationType.STUDY);
 
-        if(conf == null) {
+        if(pair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
             logger.error("No configuration found for study. Halting RevisionData creation.");
             return null;
         }
 
         LocalDateTime time = new LocalDateTime();
 
+        Configuration conf = pair.getRight();
         RevisionData data = createInitialRevision(entity, conf, time);
 
         SelectionList list;
@@ -84,8 +86,10 @@ public class StudyFactory extends DataFactory {
         // TODO: Tieto tulee tiipiistä, toistaiseksi käytetään kuluvaa päivää
         data.dataField(SavedDataFieldCall.set("dataarrivaldate").setValue(new LocalDate().toString()).setTime(time));
 
-
-        entity.setData(json.serialize(data));
+        Pair<ReturnResult, String> ser = json.serialize(data);
+        if(ser.getLeft() == ReturnResult.SERIALIZATION_SUCCESS) {
+            entity.setData(ser.getRight());
+        }
 
         return data;
     }

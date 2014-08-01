@@ -3,6 +3,7 @@ package fi.uta.fsd.metka.model.configuration;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import fi.uta.fsd.metka.enums.SelectionListType;
+import fi.uta.fsd.metka.model.general.ConfigurationKey;
 import fi.uta.fsd.metka.model.interfaces.ModelBase;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -121,5 +122,10 @@ public class Configuration implements ModelBase {
     @Override
     public int hashCode() {
         return key.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Json[name="+this.getClass().getSimpleName()+", key="+key+"]";
     }
 }

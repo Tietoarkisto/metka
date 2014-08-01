@@ -1,0 +1,29 @@
+package fi.uta.fsd.metka.storage.repository.enums;
+
+/**
+ * This enumeration should contain all the different codes for return results that can be sent from within storage in response to requests.
+ * ReturnResult reuse is recommended but not mandated so multiple result codes can mean basically the same thing.
+ * Some methods can return a collection of results or they can use the results indirectly in some way.
+ */
+public enum ReturnResult {
+    SERIALIZATION_SUCCESS,              // Mainly result from JSONUtil. Serialization of given resource was a success
+    DESERIALIZATION_SUCCESS,            // Mainly result from JSONUtil. Deserialization of given resource was a success
+    SERIALIZATION_FAILED,               // Mainly result from JSONUtil. Serialization of given resource was a failure
+    DESERIALIZATION_FAILED,             // Mainly result from JSONUtil. Deserialization of given resource was a failure
+    REVISION_FOUND,                     // Either RevisionEntity or RevisionData was requested and result was found successfully
+    REVISION_NOT_FOUND,                 // Either RevisionEntity or RevisionData was requested but no result was found
+    REVISION_CONTAINED_NO_DATA,         // RevisionData was requested but RevisionEntity didn't contain any data, this is a serious error
+    REVISION_OF_INCORRECT_TYPE,         // RevisionEntity or RevisionData of a certain ConfigurationType was requested but the found revision was of a different type
+    NO_REVISION_FOR_REVISIONABLE,       // Revisionable object didn't contain any revisions (either both revision number values were null or no revisions could be found from database), this is a serious error
+    REVISIONABLE_FOUND,                 // Requested revisionable was found and returned
+    REVISIONABLE_NOT_FOUND,             // Requested revisionable object couldn't be found. Either there's no revisionable for requested id, or the revisionable with the id is of different type than requested
+    REVISIONABLE_OF_INCORRECT_TYPE,     // RevisionableEntity of certain ConfigurationType was requested but the found Revisionable was of a different type
+    CONFIGURATION_CONTAINED_NO_DATA,    // Entity was found but data was empty, this is a serious error
+    CONFIGURATION_FOUND,                // Requested configuration (either data or gui) was found
+    CONFIGURATION_NOT_FOUND,            // Configuration (either data or gui) was not found
+    DATABASE_DISCREPANCY,               // Data in the database is in a state that causes errors, operations had to be stopped
+    DATABASE_INSERT_FAILED,             // Insert or merge operation failed for some reason
+    DATABASE_INSERT_SUCCESS,            // Insert or update operation was successful
+    MISC_JSON_NOT_FOUND,                // Requested miscellaneous json file was either not found or was empty.
+    MISC_JSON_FOUND                     // Requested miscellaneous json file was found
+}

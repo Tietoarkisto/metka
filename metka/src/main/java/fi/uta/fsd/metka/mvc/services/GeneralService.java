@@ -5,11 +5,12 @@ import fi.uta.fsd.metka.enums.repositoryResponses.DraftRemoveResponse;
 import fi.uta.fsd.metka.enums.repositoryResponses.LogicalRemoveResponse;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metkaSearch.IndexerComponent;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
-import javassist.NotFoundException;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,8 +34,8 @@ public class GeneralService {
      * @param forward do we want next or previous revisionable
      * @return Id of the adjanced revisionable object. If not found then error is thrown instead.
      */
-    public Long getAdjancedRevisionableId(Long currentId, String type, boolean forward) throws NotFoundException {
-        return repository.getAdjancedRevisionableId(currentId, type, forward);
+    public Pair<ReturnResult, Long> getAdjancedRevisionableId(Long currentId, String type, boolean forward) {
+        return repository.getAdjacentRevisionableId(currentId, type, forward);
     }
 
     /**
@@ -75,11 +76,46 @@ public class GeneralService {
         return response;
     }
 
-    public RevisionData getRevision(Long id, Integer revision) {
-        return repository.getRevision(id, revision);
+    /**
+     * Returns the latest revision for requested revisionable id if one is found.
+     * Doesn't check the type of found revisionable
+     * @param id Revisionable id of the requested revision
+     * @return
+     */
+    public Pair<ReturnResult, RevisionData> getRevisionData(Long id) {
+        return getRevisionData(id, (ConfigurationType)null);
     }
 
-    public String getRevisionData(Long id, Integer revision) {
+    /**
+     * Returns the latest revision for requested revisionable id if one is found.
+     * Checks the revision against provided type and doesn't return a revision if type doesn't match.
+     * @param id
+     * @param type
+     * @return
+     */
+    public Pair<ReturnResult, RevisionData> getRevisionData(Long id, ConfigurationType type) {
+        return repository.getLatestRevisionForIdAndType(id, false, type);
+    }
+
+    /**
+     * Returns a RevisionData for a specific revision id and number.
+     * Doesn't check the returned revision for type.
+     * @param id
+     * @param revision
+     * @return
+     */
+    public Pair<ReturnResult, RevisionData> getRevisionData(Long id, Integer revision) {
         return repository.getRevisionData(id, revision);
+    }
+
+    /**
+     * Returns a RevisionData for a specific revision id and number and checks to see that it matches the provided type.
+     * @param id
+     * @param revision
+     * @param type
+     * @return
+     */
+    public Pair<ReturnResult, RevisionData> getRevisionData(Long id, Integer revision, ConfigurationType type) {
+        return repository.getRevisionDataOfType(id, revision, type);
     }
 }

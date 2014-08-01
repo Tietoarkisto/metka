@@ -1,11 +1,14 @@
 package fi.uta.fsd.metka.storage.repository.impl;
 
-import fi.uta.fsd.metka.storage.entity.RevisionEntity;
-import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
-import fi.uta.fsd.metka.storage.repository.HistoryRepository;
-import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.mvc.services.requests.ChangeCompareRequest;
+import fi.uta.fsd.metka.storage.entity.RevisionEntity;
+import fi.uta.fsd.metka.storage.repository.HistoryRepository;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.util.JSONUtil;
+import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -16,6 +19,7 @@ import java.util.List;
 
 @Repository
 public class HistoryRepositoryImpl implements HistoryRepository {
+    private static Logger logger = LoggerFactory.getLogger(HistoryRepositoryImpl.class);
     @PersistenceContext(name = "entityManager")
     private EntityManager em;
 
@@ -32,8 +36,12 @@ public class HistoryRepositoryImpl implements HistoryRepository {
                     .getResultList();
 
         for(RevisionEntity entity : entities) {
-            RevisionData data = json.deserializeRevisionData(entity.getData());
-            revisions.add(data);
+            Pair<ReturnResult, RevisionData> pair = json.deserializeRevisionData(entity.getData());
+            if(pair.getLeft() != ReturnResult.DESERIALIZATION_SUCCESS) {
+                logger.error("Failed to deserialize "+entity.toString());
+                continue;
+            }
+            revisions.add(pair.getRight());
         }
         return revisions;
     }
@@ -49,18 +57,13 @@ public class HistoryRepositoryImpl implements HistoryRepository {
                 .getResultList();
         List<RevisionData> datas = new ArrayList<RevisionData>();
         for(RevisionEntity entity : entities) {
-            datas.add(json.deserializeRevisionData(entity.getData()));
+            Pair<ReturnResult, RevisionData> pair = json.deserializeRevisionData(entity.getData());
+            if(pair.getLeft() != ReturnResult.DESERIALIZATION_SUCCESS) {
+                logger.error("Failed to deserialize "+entity.toString());
+                continue;
+            }
+            datas.add(pair.getRight());
         }
         return datas;
-    }
-
-    @Override
-    public RevisionData getRevisionByKey(Long id, Integer revision) {
-        RevisionEntity entity = em.find(RevisionEntity.class, new RevisionKey(id, revision));
-        if(entity == null) {
-            return null;
-        }
-        RevisionData data = json.deserializeRevisionData(entity.getData());
-        return data;
     }
 }

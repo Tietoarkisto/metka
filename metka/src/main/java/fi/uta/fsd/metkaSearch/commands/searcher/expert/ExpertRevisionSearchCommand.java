@@ -4,12 +4,14 @@ import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metkaSearch.commands.searcher.RevisionSearchCommandBase;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import fi.uta.fsd.metkaSearch.results.ResultHandler;
 import fi.uta.fsd.metkaSearch.results.ResultList;
 import fi.uta.fsd.metkaSearch.results.RevisionResult;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.lucene.document.FieldType;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.apache.lucene.queryparser.flexible.standard.StandardQueryParser;
@@ -57,7 +59,7 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
     private Query query;
     private ExpertRevisionSearchCommand(DirectoryManager.DirectoryPath path, String qry, ConfigurationRepository configurations) throws QueryNodeException {
         super(path, ResultList.ResultType.REVISION);
-        Configuration config = configurations.findLatestConfiguration(ConfigurationType.fromValue(path.getAdditionalParameters()[0]));
+        Pair<ReturnResult, Configuration> pair = configurations.findLatestConfiguration(ConfigurationType.fromValue(path.getAdditionalParameters()[0]));
 
         //addTextAnalyzer("seriesname");
         Map<String, NumericConfig> nums = new HashMap<>();
@@ -68,11 +70,11 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
 
         /*StandardQueryParser parser = new StandardQueryParser(getAnalyzer());*/
         StandardQueryParser parser = new StandardQueryParser();
-        if(config != null) {
+        if(pair.getLeft() == ReturnResult.CONFIGURATION_FOUND) {
             // If we're in config mode we need to parse the query twice, once to get all the fields in the query and second time with the actual numeric configs and analyzers
             query = parser.parse(qry, "general");
 
-            addAnalyzersAndConfigs(query, nums, config);
+            addAnalyzersAndConfigs(query, nums, pair.getRight());
 
             parser.setAnalyzer(getAnalyzer());
             parser.setNumericConfigMap(nums);

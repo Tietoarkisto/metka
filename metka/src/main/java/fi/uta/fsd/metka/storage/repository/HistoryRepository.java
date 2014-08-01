@@ -11,5 +11,4 @@ public interface HistoryRepository {
     public List<RevisionData> getRevisionHistory(Long id);
 
     public List<RevisionData> getRevisionsForComparison(ChangeCompareRequest request);
-    public RevisionData getRevisionByKey(Long id, Integer revision);
 }

@@ -1,6 +1,7 @@
 package fi.uta.fsd.metka.model.configuration;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.enums.ReferenceType;
@@ -57,6 +58,30 @@ public class Reference {
 
     public void setApprovedOnly(Boolean approvedOnly) {
         this.approvedOnly = approvedOnly;
+    }
+
+    @JsonIgnore
+    public String[] getValuePathParts() {
+        String[] parts = valuePath.split("\\.");
+        if(parts.length == 0) {
+            parts = new String[1];
+            parts[0] = valuePath;
+        }
+        return parts;
+    }
+
+    @JsonIgnore
+    public String[] getTitlePathParts() {
+        String[] parts = titlePath.split("\\.");
+        if(parts.length > 0) {
+            return parts;
+        } else if(parts.length == 0 && titlePath != null && !titlePath.equals("")) {
+            parts = new String[1];
+            parts[0] = titlePath;
+            return parts;
+        } else {
+            return null;
+        }
     }
 
     @Override

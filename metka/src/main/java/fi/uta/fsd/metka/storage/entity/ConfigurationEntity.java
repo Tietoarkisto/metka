@@ -57,4 +57,9 @@ public class ConfigurationEntity {
     public void setData(String data) {
         this.data = data;
     }
+
+    @Override
+    public String toString() {
+        return "Entity[name="+this.getClass().getSimpleName()+", id="+id+", type="+type.toValue()+", version="+version+"]";
+    }
 }

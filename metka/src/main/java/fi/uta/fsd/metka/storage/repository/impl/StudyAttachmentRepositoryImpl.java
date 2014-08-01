@@ -4,21 +4,25 @@ import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.RevisionState;
 import fi.uta.fsd.metka.enums.VariableDataType;
 import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
+import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.SavedDataField;
 import fi.uta.fsd.metka.model.factories.DataFactory;
 import fi.uta.fsd.metka.model.factories.FileFactory;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
-import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.entity.StudyAttachmentQueueEntity;
 import fi.uta.fsd.metka.storage.entity.impl.StudyAttachmentEntity;
 import fi.uta.fsd.metka.storage.entity.impl.StudyEntity;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.StudyAttachmentRepository;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -29,6 +33,7 @@ import java.util.List;
 
 @Repository
 public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository {
+    private static Logger logger = LoggerFactory.getLogger(StudyAttachmentRepositoryImpl.class);
     @PersistenceContext(name = "entityManager")
     private EntityManager em;
 
@@ -55,7 +60,7 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
      */
     @Override
     public RevisionData studyAttachmentForPath(String path, Long studyId) {
-        // Get all study attachments
+        // Get all study attachments with requested path
         List<StudyAttachmentEntity> attachments = em.
                 createQuery("SELECT r FROM StudyAttachmentEntity r WHERE r.removed = false AND r.filePath=:path", StudyAttachmentEntity.class)
                 .setParameter("path", path)
@@ -64,20 +69,24 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
         // Go through attachments checking their latest revision
         // If there is a 'file' field and if the value in that field matches given path then break
         RevisionData revision = null;
-        RevisionEntity revisionEntity = null;
         for(StudyAttachmentEntity attachment : attachments) {
-            revisionEntity = em.
-                    find(RevisionEntity.class, attachment.latestRevisionKey());
-            revision = json.deserializeRevisionData(revisionEntity.getData());
-            SavedDataField fileField = revision.dataField(SavedDataFieldCall.get("file")).getRight();
-            if(fileField != null && fileField.hasValue() && fileField.getActualValue().equals(path)) {
-                // Path match found
-                break;
-            } else if(fileField != null && fileField.hasValue()) {
-                // Update path to latest
-                attachment.setFilePath(fileField.getActualValue());
+            Pair<ReturnResult, RevisionData> pair = general.getRevisionDataOfType(attachment.latestRevisionKey(), ConfigurationType.STUDY_ATTACHMENT);
+            if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
+                continue;
             }
-            revision = null;
+            Pair<StatusCode, SavedDataField> fieldPair = pair.getRight().dataField(SavedDataFieldCall.get("file"));
+            if(fieldPair.getLeft() != StatusCode.FIELD_FOUND) {
+                continue;
+            }
+            SavedDataField field = fieldPair.getRight();
+            if(field.valueEquals(path)) {
+                // Path match found
+                revision = pair.getRight();
+                break;
+            } else if(field.hasValue()) {
+                // Update path to latest
+                attachment.setFilePath(field.getActualValue());
+            }
         }
 
         // No previous study attachment with path found
@@ -86,7 +95,7 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
             StudyAttachmentEntity entity = new StudyAttachmentEntity();
             em.persist(entity);
 
-            revisionEntity = entity.createNextRevision();
+            RevisionEntity revisionEntity = entity.createNextRevision();
 
             /*
              * creates initial data set for the first draft any exceptions thrown should force rollback
@@ -94,11 +103,12 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
              * This assumes the entity has empty data field and is a draft.
             */
             revision = factory.newStudyAttachmentData(revisionEntity, studyId);
-            revision.dataField(SavedDataFieldCall.set("path").setValue(path));
-            entity.setFilePath(path);
-            em.persist(revisionEntity);
-
-            entity.setLatestRevisionNo(revisionEntity.getKey().getRevisionNo());
+            if(revision != null) {
+                revision.dataField(SavedDataFieldCall.set("path").setValue(path));
+                entity.setFilePath(path);
+                em.persist(revisionEntity);
+                entity.setLatestRevisionNo(revisionEntity.getKey().getRevisionNo());
+            }
         } else {
             // Check that this revision belongs to given study
             SavedDataField studyField = revision.dataField(SavedDataFieldCall.get("study")).getRight();
@@ -139,53 +149,45 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
 
     @Override
     public RevisionData getEditableStudyAttachmentRevision(Long id) {
-        RevisionableEntity file = em.find(RevisionableEntity.class, id);
-
-        // Sanity check
-        if(file == null || ConfigurationType.valueOf(file.getType()) != ConfigurationType.STUDY_ATTACHMENT || file.getLatestRevisionNo() == null) {
-            // TODO: Log error, this should never happen.
+        StudyAttachmentEntity file = em.find(StudyAttachmentEntity.class, id);
+        if(file == null) {
+            logger.warn("Couldn't find study attachment with id "+id);
+            return null;
+        }
+        Pair<ReturnResult, RevisionData> pair = general.getRevisionDataOfType(file.latestRevisionKey(), ConfigurationType.STUDY_ATTACHMENT);
+        if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
+            logger.error("No revision was returned for "+file.latestRevisionKey()+" with result: "+pair.getLeft());
             return null;
         }
 
-        RevisionEntity revision = em.find(RevisionEntity.class, file.latestRevisionKey());
-        if(revision == null) {
-            // TODO: Missing revision, log error
-            return null;
-        }
-        RevisionData data = json.deserializeRevisionData(revision.getData());
-        if(data == null) {
-            // TODO: Log error, missing data
-            return null;
-        }
+        RevisionData data = pair.getRight();
         // If DRAFT exists, return it
-        if(file.hasDraft()) {
-            // Sanity check that latest revision is indeed a DRAFT
-            if(revision.getState() != RevisionState.DRAFT || data.getState() != RevisionState.DRAFT) {
-                // TODO: Log error, there is a data discrepancy
-                return null;
-            }
-
+        if(data.getState() == RevisionState.DRAFT) {
             return data;
         } else {
-            // Latest revision should be APPROVED, make sanity check and if passed create a new DRAFT
-            if(revision.getState() != RevisionState.APPROVED || data.getState() != RevisionState.APPROVED) {
-                // TODO: Log error, there is a data discrepancy
+            // Get latest configuration for configuration key for new data
+            Pair<ReturnResult, Configuration> configPair = configRepo.findLatestConfiguration(ConfigurationType.STUDY_ATTACHMENT);
+            if(configPair.getKey() != ReturnResult.CONFIGURATION_FOUND) {
+                logger.error("Couldn't find configuration for STUDY_ATTACHMENT");
+                return null;
+            }
+            RevisionEntity newRevision = file.createNextRevision();
+
+
+            // Create new RevisionData object using the current revEntity (either new or old, doesn't matter)
+            RevisionData newData = DataFactory.createNewRevisionData(newRevision, data, configPair.getRight().getKey());
+
+            // TODO: Set handler
+
+            Pair<ReturnResult, String> string = json.serialize(newData);
+            if(string.getLeft() != ReturnResult.SERIALIZATION_SUCCESS) {
+                logger.error("Couldn't serialize "+newData.toString());
                 return null;
             }
 
-            RevisionEntity newRevision = file.createNextRevision();
+            newRevision.setData(string.getRight());
             em.persist(newRevision);
             file.setLatestRevisionNo(newRevision.getKey().getRevisionNo());
-
-            // Get latest configuration for configuration key for new data
-            Configuration config = configRepo.findLatestConfiguration(ConfigurationType.STUDY_ATTACHMENT);
-
-            // Create new RevisionData object using the current revEntity (either new or old, doesn't matter)
-            RevisionData newData = DataFactory.createNewRevisionData(newRevision, data, config.getKey());
-            // TODO: Set handler
-
-            newRevision.setData(json.serialize(newData));
-
             return newData;
         }
     }
@@ -228,11 +230,16 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
             // Get latest revision, doesn't matter if it's a draft or not since file reference should be immutable
             // We can assume that we get a revision since other points before this depend on the existence of the revision
             RevisionEntity revEntity = em.find(RevisionEntity.class, study.latestRevisionKey());
-            RevisionData data = json.deserializeRevisionData(revEntity.getData());
-            SavedDataField field = data.dataField(SavedDataFieldCall.get("variablefile")).getRight();
-            if(field != null && field.hasValue()) {
-                if(!field.getActualValue().equals(fileId.toString())) {
-                    parse = false;
+            Pair<ReturnResult, RevisionData> pair = json.deserializeRevisionData(revEntity.getData());
+            if(pair.getLeft() != ReturnResult.DESERIALIZATION_SUCCESS) {
+                logger.error("Couldn't deserialize "+revEntity.toString());
+                parse = false;
+            } else {
+                SavedDataField field = pair.getRight().dataField(SavedDataFieldCall.get("variablefile")).getRight();
+                if(field != null && field.hasValue()) {
+                    if(!field.getActualValue().equals(fileId.toString())) {
+                        parse = false;
+                    }
                 }
             }
         }

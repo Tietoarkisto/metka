@@ -2,8 +2,6 @@ package fi.uta.fsd.metka.storage.collecting;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
-import fi.uta.fsd.metka.storage.entity.MiscJSONEntity;
-import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.enums.FieldType;
 import fi.uta.fsd.metka.enums.ReferenceTitleType;
 import fi.uta.fsd.metka.enums.SelectionListType;
@@ -14,8 +12,12 @@ import fi.uta.fsd.metka.model.configuration.Reference;
 import fi.uta.fsd.metka.model.configuration.SelectionList;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.SavedDataField;
+import fi.uta.fsd.metka.storage.entity.MiscJSONEntity;
+import fi.uta.fsd.metka.storage.entity.RevisionEntity;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOptionTitle;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -117,8 +119,8 @@ class DependencyReferenceHandler extends ReferenceHandler {
             return;
         }
 
-        RevisionData data = json.deserializeRevisionData(revision.getData());
-        if(data == null) {
+        Pair<ReturnResult, RevisionData> pair = json.deserializeRevisionData(revision.getData());
+        if(pair.getLeft() != ReturnResult.DESERIALIZATION_SUCCESS) {
             return;
         }
 
@@ -126,7 +128,7 @@ class DependencyReferenceHandler extends ReferenceHandler {
 
         // TODO: If field type is SELECTION or some other type that requires multiple options and valuePath points to something that allows multiple options then add all of them.
 
-        String value;
+        RevisionData data = pair.getRight();
         ReferenceOptionTitle title = null;
         SavedDataField sf = data.dataField(SavedDataFieldCall.get(reference.getValuePath())).getRight();
         if(sf == null || !sf.hasValue()) {
@@ -134,12 +136,12 @@ class DependencyReferenceHandler extends ReferenceHandler {
             return;
         }
 
-        value = sf.getActualValue();
+        String value = sf.getActualValue();
         if(!StringUtils.isEmpty(reference.getTitlePath())) {
             sf = data.dataField(SavedDataFieldCall.get(reference.getTitlePath())).getRight();
-            Configuration config = configurations.findConfiguration(data.getConfiguration());
+            Pair<ReturnResult, Configuration> confPair = configurations.findConfiguration(data.getConfiguration());
             if(sf != null && sf.hasValue()) {
-                if(config.getField(reference.getTitlePath()).getType() == FieldType.SELECTION) {
+                if(confPair.getLeft() == ReturnResult.CONFIGURATION_FOUND && confPair.getRight().getField(reference.getTitlePath()).getType() == FieldType.SELECTION) {
                     title = new ReferenceOptionTitle(ReferenceTitleType.VALUE, sf.getActualValue());
                 } else {
                     title = new ReferenceOptionTitle(ReferenceTitleType.LITERAL, sf.getActualValue());
@@ -166,14 +168,19 @@ class DependencyReferenceHandler extends ReferenceHandler {
             return;
         }
 
-        JsonNode root = json.readJsonTree(misc.getData());
-        JsonPathParser parser = new JsonPathParser(root.get("data"), dependencyReference.getValuePath().split("\\."));
+        Pair<ReturnResult, JsonNode> pair = json.deserializeToJsonTree(misc.getData());
+        if(pair.getLeft() != ReturnResult.DESERIALIZATION_SUCCESS) {
+            // Deserialization failure
+            return;
+        }
+        JsonNode root = pair.getRight();
+        JsonPathParser parser = new JsonPathParser(root.get("data"), dependencyReference.getValuePathParts());
         root = parser.findRootObjectWithTerminatingValue(dependencyValue);
         if(root == null) {
             // No containing object found, can't continue;
             return;
         }
-        parser = new JsonPathParser(root, reference.getValuePath().split("\\."));
+        parser = new JsonPathParser(root, reference.getValuePathParts());
 
         // If field requires only a single answer then return only first option, otherwise return all
         switch(field.getType()) {

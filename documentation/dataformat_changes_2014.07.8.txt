@@ -19,3 +19,7 @@ RowId sequence moved from RevisionData to RowContainerDataField. This means slig
 SavedReference and DataRow both inherit now from common ContainerRow class.
 Moved key, rowId and removed values to ContainerRow class from SavedReference and DataRow
 Removed originalValue and modifiedValue from SavedReference and added simple reference attribute since modifying the value of a reference row is not a sensible notion.
+
+-- 2014.08.01 additions --
+Created a well formed TransferData format to facilitate client-server communications in complete JsonForm
+Changed RevisionKey->revision to RevisionKey->no to discourage the multiple meanings of 'revision' in the program.

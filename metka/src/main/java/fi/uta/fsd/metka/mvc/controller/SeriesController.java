@@ -4,17 +4,19 @@ import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
-import fi.uta.fsd.metka.mvc.search.GeneralSearch;
 import fi.uta.fsd.metka.mvc.services.ConfigurationService;
+import fi.uta.fsd.metka.mvc.services.GeneralService;
 import fi.uta.fsd.metka.mvc.services.SeriesService;
 import fi.uta.fsd.metka.mvc.services.simple.ErrorMessage;
 import fi.uta.fsd.metka.mvc.services.simple.RevisionViewDataContainer;
 import fi.uta.fsd.metka.mvc.services.simple.series.SeriesSearchData;
 import fi.uta.fsd.metka.mvc.services.simple.transfer.SearchResult;
 import fi.uta.fsd.metka.mvc.services.simple.transfer.TransferObject;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.transfer.configuration.ConfigurationMap;
 import fi.uta.fsd.metka.transfer.configuration.GUIConfigurationMap;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -48,7 +50,7 @@ public class SeriesController {
     @Autowired
     private JSONUtil json;
     @Autowired
-    private GeneralSearch generalSearch;
+    private GeneralService general;
 
     /*
     * View single series
@@ -57,12 +59,12 @@ public class SeriesController {
     */
     @RequestMapping(value = "view/{id}", method = RequestMethod.GET)
     public String view(Model model, @PathVariable Long id, RedirectAttributes redirectAttributes) {
-        Integer revision = seriesService.findSingleRevisionNo(id);
+        Pair<ReturnResult, Integer> revision = seriesService.findSingleRevisionNo(id);
         if(model.asMap().containsKey("displayableErrors")) {
             redirectAttributes.addFlashAttribute("displayableErrors", model.asMap().get("displayableErrors"));
         }
-        if(revision != null) {
-            return REDIRECT_VIEW+id+"/"+revision;
+        if(revision.getLeft() == ReturnResult.REVISION_FOUND) {
+            return REDIRECT_VIEW+id+"/"+revision.getRight();
         } else {
             List<ErrorMessage> errors = new ArrayList<>();
             errors.add(ErrorMessage.noViewableRevision("series", id));
@@ -113,7 +115,8 @@ public class SeriesController {
         //configs.setConfiguration(fileConfig);
         String result;
 
-        result = json.serialize(configs);
+        // TODO: Just skip checks for now, if this raises a problem at some point then do complete checks
+        result = json.serialize(configs).getRight();
         if(result == null) {
             List<ErrorMessage> errors = new ArrayList<>();
             errors.add(ErrorMessage.configurationSerializationError("study", id, revision));
@@ -125,10 +128,12 @@ public class SeriesController {
 
         // Form JSGUIConfig
         GUIConfigurationMap guiConfigs = new GUIConfigurationMap();
-        GUIConfiguration guiConfig = configService.findLatestGUIByType(ConfigurationType.SERIES);
+        // TODO: Just skip checks for now, if this raises a problem at some point then do complete checks
+        GUIConfiguration guiConfig = configService.findLatestGUIByType(ConfigurationType.SERIES).getRight();
         guiConfigs.setConfiguration(guiConfig);
 
-        result = json.serialize(guiConfigs);
+        // TODO: Just skip checks for now, if this raises a problem at some point then do complete checks
+        result = json.serialize(guiConfigs).getRight();
         if(result == null) {
 
             List<ErrorMessage> errors = new ArrayList<>();
@@ -140,14 +145,14 @@ public class SeriesController {
         }
 
         // Data
-        result = json.serialize(generalSearch.findSingleRevision(id, revision, ConfigurationType.SERIES));
-        if(result == null) {
+        Pair<ReturnResult, RevisionData> pair = general.getRevisionData(id, revision, ConfigurationType.SERIES);
+        if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             List<ErrorMessage> errors = new ArrayList<>();
             errors.add(ErrorMessage.guiConfigurationSerializationError("study", id, revision));
             redirectAttributes.addFlashAttribute("displayableErrors", errors);
             return REDIRECT_SEARCH;
         } else {
-            model.asMap().put("jsData", result);
+            model.asMap().put("jsData", json.serialize(pair.getRight()).getRight());
         }
 
         model.asMap().put("page", "series");
@@ -186,7 +191,8 @@ public class SeriesController {
             model.asMap().put("displayableErrors", errors);
         }
 
-        Configuration config = configService.findLatestByType(ConfigurationType.SERIES);
+        // TODO: Just skip checks for now, if this raises a problem at some point then do complete checks
+        Configuration config = configService.findLatestByType(ConfigurationType.SERIES).getRight();
         Map<String, Configuration> configuration = new HashMap<>();
         configuration.put("SERIES", config);
         model.asMap().put("configuration", configuration);
@@ -298,9 +304,9 @@ public class SeriesController {
             , HttpServletResponse response) {
         Map<String, Object> map = new HashMap<>();
 
-        RevisionData revisionData = generalSearch.findSingleRevision(id, revision, ConfigurationType.SERIES);
+        Pair<ReturnResult, RevisionData> pair = general.getRevisionData(id, revision, ConfigurationType.SERIES);
 
-        if (revisionData == null) {
+        if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
 
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             List<ErrorMessage> errors = new ArrayList<>();
@@ -309,7 +315,7 @@ public class SeriesController {
             map.put("success", false);
             map.put("displayableErrors", errors);
         } else {
-            map.put("jsData", revisionData);
+            map.put("jsData", pair.getRight());
             map.put("success", true);
         }
 

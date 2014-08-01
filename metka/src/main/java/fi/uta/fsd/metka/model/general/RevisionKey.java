@@ -1,4 +1,4 @@
-package fi.uta.fsd.metka.model.data;
+package fi.uta.fsd.metka.model.general;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -14,20 +14,20 @@ import javax.xml.bind.annotation.XmlElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RevisionKey implements Comparable<RevisionKey> {
     @XmlElement private final Long id;
-    @XmlElement private final Integer revision;
+    @XmlElement private final Integer no;
 
     @JsonCreator
-    public RevisionKey(@JsonProperty("id")Long id, @JsonProperty("revision")Integer revision) {
+    public RevisionKey(@JsonProperty("id")Long id, @JsonProperty("no")Integer no) {
         this.id = id;
-        this.revision = revision;
+        this.no = no;
     }
 
     public Long getId() {
         return id;
     }
 
-    public Integer getRevision() {
-        return revision;
+    public Integer getNo() {
+        return no;
     }
 
     @Override
@@ -38,7 +38,7 @@ public class RevisionKey implements Comparable<RevisionKey> {
         RevisionKey that = (RevisionKey) o;
 
         if (!id.equals(that.id)) return false;
-        if (!revision.equals(that.revision)) return false;
+        if (!no.equals(that.no)) return false;
 
         return true;
     }
@@ -46,7 +46,7 @@ public class RevisionKey implements Comparable<RevisionKey> {
     @Override
     public int hashCode() {
         int result = id.hashCode();
-        result = 31 * result + revision.hashCode();
+        result = 31 * result + no.hashCode();
         return result;
     }
 
@@ -54,12 +54,12 @@ public class RevisionKey implements Comparable<RevisionKey> {
     public int compareTo(RevisionKey o) {
         int result = id.compareTo(o.id);
         if(result == 0) {
-            return revision.compareTo(o.revision);
+            return no.compareTo(o.no);
         } else return result;
     }
 
     @Override
     public String toString() {
-        return "JsonKey[name="+this.getClass().getSimpleName()+", keys={id: "+id+", revision: "+revision+"}]";
+        return "JsonKey[name="+this.getClass().getSimpleName()+", keys={id: "+id+", no: "+no+"}]";
     }
 }

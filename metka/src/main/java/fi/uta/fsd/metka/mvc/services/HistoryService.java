@@ -28,7 +28,7 @@ public class HistoryService {
         for(RevisionData data : datas) {
             RevisionSO revision = new RevisionSO();
             revision.setId(data.getKey().getId());
-            revision.setRevision(data.getKey().getRevision());
+            revision.setRevision(data.getKey().getNo());
             revision.setState(data.getState());
             revision.setApprovalDate(data.getApprovalDate());
             revisions.add(revision);

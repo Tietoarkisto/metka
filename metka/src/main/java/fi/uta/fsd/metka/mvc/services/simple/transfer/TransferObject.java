@@ -1,7 +1,7 @@
 package fi.uta.fsd.metka.mvc.services.simple.transfer;
 
 import fi.uta.fsd.metka.enums.UIRevisionState;
-import fi.uta.fsd.metka.model.configuration.ConfigurationKey;
+import fi.uta.fsd.metka.model.general.ConfigurationKey;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.ContainerDataField;
 import fi.uta.fsd.metka.model.data.container.DataField;
@@ -99,7 +99,7 @@ public class TransferObject {
 
         TransferObject to = new TransferObject();
         to.setId(data.getKey().getId());
-        to.setRevision(data.getKey().getRevision());
+        to.setRevision(data.getKey().getNo());
         to.setState(UIRevisionState.fromRevisionState(data.getState()));
         to.setConfiguration(data.getConfiguration());
 
