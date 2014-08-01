@@ -294,6 +294,12 @@
             <artifactId>jslint4java-maven-plugin</artifactId>
             <version>${jslint4java.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>fi.uta.fsd.metka</groupId>
+            <artifactId>codebook</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
     <build>
        	<filters>
