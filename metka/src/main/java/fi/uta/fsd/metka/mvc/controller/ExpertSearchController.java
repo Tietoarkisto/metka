@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.ui.Model;
 
 @Controller
 @RequestMapping("/expertSearch")
@@ -20,7 +21,8 @@ public class ExpertSearchController {
     private ExpertSearchService service;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public String expertSearch() {
+    public String expertSearch(Model model) {
+        model.asMap().put("page", "expertSearch");
         return "expertSearch";
     }
 

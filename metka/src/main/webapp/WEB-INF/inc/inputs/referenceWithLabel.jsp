@@ -18,7 +18,9 @@
     <form:input path="values['${param.field}']" />
     <script>
         $(document).ready(function() {
-            MetkaJS.ReferenceHandler.handleReference("${param.field}", "${context}");
-        })
+            require(['./modules/referenceHandler'], function (referenceHandler) {
+                //referenceHandler.handleReference("${param.field}", "${context}");
+            });
+        });
     </script>
 </td>

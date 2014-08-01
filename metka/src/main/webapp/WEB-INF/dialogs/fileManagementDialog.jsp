@@ -6,7 +6,7 @@
 <c:set var="container" value="fileManagement" />
 <c:set var="context" value="STUDY_ATTACHMENT" />
 <c:set var="readonly" value="${empty param.readonly ? false : param.readonly}" />
-<script src="${pageContext.request.contextPath}/js/handlers/studyFilesHandler.js"></script>
+<!--<script src="${pageContext.request.contextPath}/js/handlers/studyFilesHandler.js"></script>-->
 <div class="largePopupContainer" id="fileManagementDialog" title="<spring:message code="${context}.dialog.fileManagement"/>" >
     <input type="hidden" id="fileManagementRowId" />
 

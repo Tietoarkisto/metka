@@ -8,9 +8,6 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.core.LowerCaseFilter;
-import org.apache.lucene.analysis.core.WhitespaceTokenizer;
-import org.apache.lucene.analysis.fi.FinnishLightStemFilter;
-import org.apache.lucene.analysis.standard.ClassicTokenizer;
 import org.apache.lucene.analysis.standard.StandardFilter;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.analysis.util.TokenFilterFactory;
@@ -20,10 +17,7 @@ import java.io.Reader;
 
 public class FinnishVoikkoAnalyzer extends Analyzer {
 
-    public static final FinnishVoikkoAnalyzer ANALYZER;
-    static{
-        ANALYZER = new FinnishVoikkoAnalyzer();
-    }
+    public static final FinnishVoikkoAnalyzer ANALYZER = new FinnishVoikkoAnalyzer();
 
     private final Voikko voikko;
     private TokenFilterFactory stopFilterFactory = new FinnishStopFilterFactory(LuceneConfig.USED_VERSION);

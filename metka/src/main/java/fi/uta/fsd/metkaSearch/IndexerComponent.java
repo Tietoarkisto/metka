@@ -75,8 +75,10 @@ public class IndexerComponent {
         // TODO: repeat try
         IndexerCommand command = commandRepository.getNextCommandWithoutChange();
         if(command != null) {
-            if(handlers.get(command.getPath()).isDone()) {
-                startIndexer(command.getPath());
+            if(handlers.containsKey(command.getPath())) {
+                if(handlers.get(command.getPath()).isDone()) {
+                    startIndexer(command.getPath());
+                }
             }
         }
     }
