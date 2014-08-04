@@ -1,12 +1,8 @@
-define([
-    './cell',
-    './inherit',
-    './togglable'
-], function (cell, inherit, togglable) {
+define(function (require) {
     'use strict';
 
-    return inherit(function (options) {
-        return togglable.call($('<div class="row">')
-            .append(options.cells.map(cell(options))), options);
+    return require('./inherit')(function (options) {
+        return require('./togglable').call($('<div class="row">')
+            .append(options.cells.map(require('./cell')(options))), options);
     });
 });

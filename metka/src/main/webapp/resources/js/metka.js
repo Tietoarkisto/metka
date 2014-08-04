@@ -1,7 +1,8 @@
-define([
-    './modules/utils/init'
-], function (utils) {
+define(function (require) {
     'use strict';
+
+    // initialize utilities
+    require('./modules/utils/init');
 
     return {
         contextPath: MetkaJS.Globals.contextPath,

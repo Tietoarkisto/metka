@@ -1,7 +1,7 @@
 define(function (require) {
     if (location.pathname.split('/').indexOf('search') !== -1) {
         var options = {
-            header: MetkaJS.L10N.get('type.SERIES.search'),
+            header: MetkaJS.L10N.get('type.STUDY.search'),
             content: [
                 {
                     "type": "TAB",
