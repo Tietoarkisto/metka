@@ -429,7 +429,49 @@
                 {
                     "type": "SECTION",
                     "title": "Tekijät ja tuottajat",
-                    "content": []
+                    "content": [
+                        {
+                            "type": "COLUMN",
+                            "columns": 1,
+                            "rows": [
+                                {
+                                    "type": "ROW",
+                                    "cells": [
+                                        {
+                                            "type": "CELL",
+                                            "title": "Aineiston tekijät",
+                                            "field": {
+                                                "key": "authors"
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "ROW",
+                                    "cells": [
+                                        {
+                                            "type": "CELL",
+                                            "title": "Aineiston muut tekijät",
+                                            "field": {
+                                                "key": "otherauthors"
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "ROW",
+                                    "cells": [
+                                        {
+                                            "type": "CELL",
+                                            "title": "Aineiston tuottaneet tahot",
+                                            "field": {
+                                                "key": "producers"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }]
                 },
                 {
                     "type": "SECTION",
@@ -459,34 +501,426 @@
                 {
                     "type": "SECTION",
                     "title": "Asiasanat ja tieteenalat",
-                    "content": []
+                    "content": [
+                        {
+                            "type": "COLUMN",
+                            "columns": 1,
+                            "rows": [{
+                                "type": "ROW",
+                                "cells": [
+                                    {
+                                        "type": "CELL",
+                                        "title": "Aineiston sisältöä kuvaavat asiasanat",
+                                        "field": {
+                                            "key": "keywords"
+                                        }
+                                    }
+                                ]
+                            }, {
+                                "type": "ROW",
+                                "cells": [
+                                    {
+                                        "type": "CELL",
+                                        "title": "Tieteenalat, jolle aineisto kuuluu",
+                                        "field": {
+                                            "key": "topics"
+                                        }
+                                    }
+                                ]
+                            }]
+                        }
+                    ]
                 },
                 {
                     "type": "SECTION",
                     "title": "Abstrakti",
-                    "content": []
+                    "content": [{
+                        "type": "COLUMN",
+                        "columns": 1,
+                        "rows": [
+                            {
+                                "type": "ROW",
+                                "cells": [
+                                    {
+                                        "type": "CELL",
+                                        "title": "Tiivistelmä",
+                                        "field": {
+                                            "key": "abstract",
+                                            "multiline": true
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }]
                 },
                 {
                     "type": "SECTION",
                     "title": "Kattavuus",
-                    "content": []
+                    "content": [
+                        {
+                            "type": "COLUMN",
+                            "columns": 1,
+                            "rows": [{
+                                "type": "ROW",
+                                "cells": [
+                                    {
+                                        "type": "CELL",
+                                        "title": "Aineiston ajallinen kattavuus",
+                                        "field": {
+                                            "key": "timeperiods"
+                                        }
+                                    }
+                                ]
+                            }, {
+                                "type": "ROW",
+                                "cells": [
+                                    {
+                                        "type": "CELL",
+                                        "title": "Maat, jota koskevaa tietoa aineisto sisältää",
+                                        "field": {
+                                            "key": "countries"
+                                        }
+                                    }
+                                ]
+                            }, {
+                                "type": "ROW",
+                                "cells": [
+                                    {
+                                        "type": "CELL",
+                                        "title": "Aineiston perusjoukot/otos (kvanti) tai aineiston kohdejoukot (kvali)",
+                                        "field": {
+                                            "key": "universes"
+                                        }
+                                    }
+                                ]
+                            }, {
+                                "type": "ROW",
+                                "cells": [
+                                    {
+                                        "type": "CELL",
+                                        "title": "Maantieteelliset alueet, jotka aineisto kattaa",
+                                        "field": {
+                                            "key": "geogcovers"
+                                        }
+                                    }
+                                ]
+                            }]
+                        }
+                    ]
                 },
                 {
                     "type": "SECTION",
                     "title": "Aineistonkeruu",
-                    "content": []
+                    "content": [
+                        {
+                            "type": "COLUMN",
+                            "columns": 1,
+                            "rows": [{
+                                "type": "ROW",
+                                "cells": [
+                                    {
+                                        "type": "CELL",
+                                        "title": "Keräyksen ajankohdat",
+                                        "field": {
+                                            "key": "colltime"
+                                        }
+                                    }
+                                ]
+                            }, {
+                                "type": "ROW",
+                                "cells": [
+                                    {
+                                        "type": "CELL",
+                                        "title": "Aineiston kerääjät",
+                                        "field": {
+                                            "key": "collectors"
+                                        }
+                                    }
+                                ]
+                            }, {
+                                "type": "ROW",
+                                "cells": [
+                                    {
+                                        "type": "CELL",
+                                        "title": "Havaintoyksiköt (kvanti) tai aineistoyksikkötyypit (kvali)",
+                                        "field": {
+                                            "key": "analysis"
+                                        }
+                                    }
+                                ]
+                            }, {
+                                "type": "ROW",
+                                "cells": [
+                                    {
+                                        "type": "CELL",
+                                        "title": "Tutkimuksen aikaulottuvuudet",
+                                        "field": {
+                                            "key": "timemethods"
+                                        }
+                                    }
+                                ]
+                            }, {
+                                "type": "ROW",
+                                "cells": [
+                                    {
+                                        "type": "CELL",
+                                        "title": "Aineiston keruumenetelmät (kvanti) tai aineistonkeruun tekniikat (kvali)",
+                                        "field": {
+                                            "key": "collmodes"
+                                        }
+                                    }
+                                ]
+                            }, {
+                                "type": "ROW",
+                                "cells": [
+                                    {
+                                        "type": "CELL",
+                                        "title": "Keruuvälineet (kvanti) tai aineistonkeruun ohjeistukset (kvali)",
+                                        "field": {
+                                            "key": "instruments"
+                                        }
+                                    }
+                                ]
+                            }, {
+                                "type": "ROW",
+                                "cells": [
+                                    {
+                                        "type": "CELL",
+                                        "title": "Otantamenetelmät tai aineiston valintatavat",
+                                        "field": {
+                                            "key": "sampprocs"
+                                        }
+                                    }
+                                ]
+                            }, {
+                                "type": "ROW",
+                                "cells": [
+                                    {
+                                        "type": "CELL",
+                                        "title": "Vastausprosentti",
+                                        "field": {
+                                            "key": "resprate"
+                                        }
+                                    }
+                                ]
+                            }, {
+                                "type": "ROW",
+                                "cells": [
+                                    {
+                                        "type": "CELL",
+                                        "title": "Lähdeaineistot",
+                                        "field": {
+                                            "key": "datasources",
+                                            "showSaveInfo": true
+                                        }
+                                    }
+                                ]
+                            }]
+                        }
+                    ]
                 },
                 {
                     "type": "SECTION",
                     "title": "Aineiston käyttö",
-                    "content": []
+                    "content": [
+                        {
+                            "type": "COLUMN",
+                            "columns": 2,
+                            "rows": [{
+                                "type": "ROW",
+                                "cells": [
+                                    {
+                                        "type": "CELL",
+                                        "colspan": 2,
+                                        "title": "TÄSTÄ PUUTTUU weightyesno check box",
+                                        "field": {
+                                            "key": "weightyesno"
+                                        }
+                                    }
+                                ]
+                            }, {
+                                "type": "ROW",
+                                "cells": [
+                                    {
+                                        "type": "CELL",
+                                        "title": "Painokertoimet",
+                                        "field": {
+                                            "key": "weight"
+                                        }
+                                    },
+                                    {
+                                        "type": "CELL",
+                                        "title": "Sisällöllinen muokkaus",
+                                        "field": {
+                                            "key": "dataprosessing"
+                                        }
+                                    }
+                                ]
+                            }, {
+                                "type": "ROW",
+                                "cells": [
+                                    {
+                                        "type": "CELL",
+                                        "title": "Tiedostot",
+                                        "field": {
+                                            "key": "collsize"
+                                        }
+                                    },
+                                    {
+                                        "type": "CELL",
+                                        "title": "Täydellisyys",
+                                        "field": {
+                                            "key": "complete"
+                                        }
+                                    }
+                                ]
+                            }, {
+                                "type": "ROW",
+                                "cells": [
+                                    {
+                                        "type": "CELL",
+                                        "title": "Huomioitavaa",
+                                        "field": {
+                                            "key": "datasetnotes"
+                                        }
+                                    }
+                                ]
+                            }, {
+                                "type": "ROW",
+                                "cells": [
+                                    {
+                                        "type": "CELL",
+                                        "colspan": 2,
+                                        "title": "Arvioinnit",
+                                        "field": {
+                                            "key": "appraisals"
+                                        }
+                                    }
+                                ]
+                            }]
+                        }
+                    ]
                 },
                 {
                     "type": "SECTION",
                     "title": "Muut materiaalit",
-                    "content": []
+                    "content": [
+                        {
+                            "type": "COLUMN",
+                            "columns": 1,
+                            "rows": [{
+                                "type": "ROW",
+                                "cells": [
+                                    {
+                                        "type": "CELL",
+                                        "title": "Käytön ja kuvailun oheismateriaalit",
+                                        "field": {
+                                            "key": "relatedmaterials"
+                                        }
+                                    }
+                                ]
+                            }, {
+                                "type": "ROW",
+                                "cells": [
+                                    {
+                                        "type": "CELL",
+                                        "title": "Linkit tietoarkiston ulkopuoliseen materiaaliin",
+                                        "field": {
+                                            "key": "othermaterials"
+                                        }
+                                    }
+                                ]
+                            }, {
+                                "type": "ROW",
+                                "cells": [
+                                    {
+                                        "type": "CELL",
+                                        "title": "Julkaisuihin liittyviä huomioita",
+                                        "field": {
+                                            "key": "publicationcomments"
+                                        }
+                                    }
+                                ]
+                            }]
+                        }
+                    ]
                 }
             ]
+        },
+        {
+            "type": "TAB",
+            "title": "Tiedostojen hallinta",
+            "content": [{
+                "type": "COLUMN",
+                "columns": 1,
+                "rows": [
+                    {
+                        "type": "ROW",
+                        "cells": [
+                            {
+                                "type": "CELL",
+                                "title": "Liitetyt tiedostot",
+                                "field": {
+                                    "key": "files",
+                                    "showSaveInfo": true,
+                                    "showReferenceKey": true
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "type": "ROW",
+                        "cells": [
+                            {
+                                "type": "CELL",
+                                "title": "Poistetut tiedostot",
+                                "field": {
+                                    "key": "removedFiles"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }]
+        },
+        {
+            "type": "TAB",
+            "title": "Koodikirja",
+            "content": [{
+                "type": "COLUMN",
+                "columns": 1,
+                "rows": [
+                    {
+                        "type": "ROW",
+                        "cells": [
+                            {
+                                "type": "CELL",
+                                "title": "Koodikirjan liitteet",
+                                "field": {
+                                    "key": "cbattachments",
+                                    "showSaveInfo": true
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }]
+        },
+        {
+            "type": "TAB",
+            "title": "Virheet",
+            "content": []
+        },
+        {
+            "type": "TAB",
+            "title": "Tunnisteet",
+            "content": []
+        },
+        {
+            "type": "TAB",
+            "title": "Import/Export",
+            "content": []
         }
 	],
     "buttons": [

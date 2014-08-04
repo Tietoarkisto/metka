@@ -9,6 +9,7 @@ define([
         page: MetkaJS.Globals.page,
         PAGE: MetkaJS.Globals.page.toUpperCase(),
         revision: MetkaJS.SingleObject.revision,
-        state: MetkaJS.SingleObject.state
+        state: MetkaJS.SingleObject.state,
+        dataConfigurations: MetkaJS.JSConfig
     };
 });

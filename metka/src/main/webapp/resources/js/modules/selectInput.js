@@ -96,7 +96,7 @@ define(function (require) {
                     }),
                     success: function (data) {
                         data.responses.forEach(function (response) {
-                            if (response.messages) {
+                            if (response.messages && response.messages.length) {
                                 log(response.messages);
                             }
                             if (response.options) {

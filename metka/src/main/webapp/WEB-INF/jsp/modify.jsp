@@ -11,16 +11,6 @@
 </head>
 <body>
 <jsp:include page="../inc/topMenu.jsp" />
-<div class="wrapper">
-    <div class="content container">
-        <div class="page-header"><spring:message code="${context}"/> - <spring:message code="${context}.field.${configuration[context].displayId}"/>&nbsp;${single.id} - <spring:message code="general.revision"/>&nbsp;${single.revision} - <spring:message code="general.DRAFT"/></div>
-
-        <jsp:include page="${page}/modify.jsp" />
-        <div class="buttonsHolder">
-            <jsp:include page="../inc/revHistory.jsp" />
-        </div>
-    </div>
-</div>
 <script data-main="${pageContext.request.contextPath}/js/page.js" src="${pageContext.request.contextPath}/lib/js/require.js"></script>
 </body>
 </html>

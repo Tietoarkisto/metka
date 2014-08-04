@@ -17,7 +17,7 @@ define(function (require) {
             return this;
         }
 
-        if (type === 'CONTAINER') {
+        if (type === 'CONTAINER' || type === 'REFERENCECONTAINER') {
             require('./containerField').call(this, options);
         } else {
             if (type === 'CHECKBOX') {

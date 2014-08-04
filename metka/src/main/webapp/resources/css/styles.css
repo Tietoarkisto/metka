@@ -109,6 +109,29 @@ a:hover {
     border-bottom: none;
 }
 
+.panel-group .panel .panel .panel-heading {
+    border-bottom: 1px solid;
+    border-color: inherit;
+}
+
+.panel-group .panel .panel .panel-footer {
+    border-top: 1px solid;
+    border-color: inherit;
+}
+
+.panel,
+.panel-group .panel .panel {
+    margin: 10px 0;
+}
+
+.panel-footer {
+    padding: 5px 15px;
+}
+
+.table {
+    table-layout: fixed;
+}
+
 /* Metka code */
 body {
     height: 100%;

@@ -24,7 +24,8 @@
         <%-- GUI configuration import --%>
         <form:form method="post" action="/settings/uploadGUIConfiguration" enctype="multipart/form-data" modelAttribute="uploadConfig">
             GUI konfiguraatio
-            <input type="file" name="file" />
+            <input id="input-id" type="file" class="file" data-upload-label="general.buttons.upload.dataConfiguration">
+            <!--<input type="file" name="file" />-->
             <input type="submit" value="<spring:message code="general.buttons.upload.guiConfiguration" />"/>
         </form:form>
         <br />
@@ -52,5 +53,12 @@
         </table>
     </div>
 </div>
+<script>
+    $('input[type="file"]').fileinput({
+        showPreview: false,
+        showRemove: false,
+        browseLabel: MetkaJS.L10N.get('general.buttons.upload.browse') + ' ...'
+    });
+</script>
 </body>
 </html>

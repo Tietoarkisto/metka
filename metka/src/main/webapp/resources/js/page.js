@@ -1,26 +1,22 @@
 // entry point for JS application
 
-define([
-    './metka',
-    './modules/pageConfig',
-    './modules/container',
-    './modules/buttonContainer',
-    './modules/header'
-], function (metka, pageConfig, container, buttonContainer, header) {
+define(function (require) {
     'use strict';
+
+    require('./metka');
 
     var options = $.extend({
         header: 'Metka',
         content: [],
         data: null,
         dataConf: null
-    }, pageConfig);
+    }, require('./modules/pageConfig'));
 
     var $container = $('<div class="content container">')
-        .append(header(options.header));
+        .append(require('./modules/header')(options.header));
 
-    container.call($container, options);
-    buttonContainer.call($container, options);
+    require('./modules/container').call($container, options);
+    require('./modules/buttonContainer').call($container, options);
 
     $('body')
         .append($('<div class="wrapper">')
