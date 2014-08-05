@@ -13,12 +13,12 @@ define(function (require) {
                 return current;
             }
 
-            var modified = require('./utils/getPropertyNS')(data, 'modifiedValue.value.value');
+            var modified = require('./utils/getPropertyNS')(data, 'value.current');
             if (MetkaJS.exists(modified)) {
                 return modified;
             }
 
-            return require('./utils/getPropertyNS')(data, 'originalValue.value.value');
+            return require('./utils/getPropertyNS')(data, 'value.original');
         },
         set: function (options, key, value) {
             return require('./utils/setPropertyNS')(options, 'data.fields', key, 'currentValue', value);
