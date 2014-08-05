@@ -609,6 +609,19 @@
                 "9": "ru",
                 "10": "sv",
                 "11": "xx"
+            },
+            "field": {
+                "fileno": "Tiedostonumero",
+                "file": "Tiedoston polku",
+                "filelabel": "Virallinen selite",
+                "filedescription": "Epävirallinen selite",
+                "filecomment": "Kommentti",
+                "filecategory": "Tyyppi",
+                "fileaip": "PAS",
+                "filelanguage": "Kieli",
+                "fileoriginal": "Alkuperäinen",
+                "filepublication": "WWW",
+                "filedip": "Ulosluovutus"
             }
         },
 
@@ -935,18 +948,7 @@
     STUDY.field.relatedmaterials = Käytön ja kuvailun oheismateriaalit
     STUDY.field.othermaterials = Linkit tietoarkiston ulkopuoliseen materiaaliin
     STUDY.field.publicationcomments = Julkaisuihin liittyviä huomioita
-
-    STUDY_ATTACHMENT.field.fileno = Tiedostonumero
-    STUDY_ATTACHMENT.field.file = Tiedoston polku
-    STUDY_ATTACHMENT.field.filelabel = Virallinen selite
-    STUDY_ATTACHMENT.field.filedescription = Epävirallinen selite
-    STUDY_ATTACHMENT.field.filecomment = Kommentti
-    STUDY_ATTACHMENT.field.filecategory = Tyyppi
-    STUDY_ATTACHMENT.field.fileaip = PAS
-    STUDY_ATTACHMENT.field.filelanguage = Kieli
-    STUDY_ATTACHMENT.field.fileoriginal = Alkuperäinen
-    STUDY_ATTACHMENT.field.filepublication = WWW
-    STUDY_ATTACHMENT.field.filedip = Ulosluovutus*/
+*/
 
     // Section translations should go to data configuration
     /*# section properties, these follow {type}.section.{section}

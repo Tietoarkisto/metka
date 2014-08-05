@@ -16,6 +16,7 @@
 <script src="${contextPath}/lib/js/moment-with-langs.min.js"></script>
 <script src="${contextPath}/lib/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 <script src="${contextPath}/lib/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script src="${contextPath}/lib/bootstrap-fileinput/js/fileinput.min.js"></script>
 
 <%-- Include general table handlers for container and reference container tables --%>
 <script src="${contextPath}/js/handlers/generalHandlers.js"></script>

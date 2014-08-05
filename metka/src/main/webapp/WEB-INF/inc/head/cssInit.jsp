@@ -7,6 +7,7 @@
 <%-- Bootstrap --%>
 <link rel="stylesheet" type="text/css" href="${contextPath}/lib/bootstrap/3.1.1/css/bootstrap.css">
 <link rel="stylesheet" type="text/css" href="${contextPath}/lib/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css">
+<link rel="stylesheet" type="text/css" href="${contextPath}/lib/bootstrap-fileinput/css/fileinput.min.css">
 
 <%-- Metka --%>
 <link rel="stylesheet" type="text/css" href="${contextPath}/css/styles.css">

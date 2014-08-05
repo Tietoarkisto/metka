@@ -9,7 +9,7 @@ define(function (require) {
 
     return {
         expertSearch: require('./pages/expertSearch'),
-        study: require('./pages/defaults'),
+        study: require('./pages/study'),
         series: require('./pages/series')
     }[page];
 });

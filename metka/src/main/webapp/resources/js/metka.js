@@ -1,7 +1,8 @@
-define([
-    './modules/utils/init'
-], function (utils) {
+define(function (require) {
     'use strict';
+
+    // initialize utilities
+    require('./modules/utils/init');
 
     return {
         contextPath: MetkaJS.Globals.contextPath,
@@ -9,6 +10,7 @@ define([
         page: MetkaJS.Globals.page,
         PAGE: MetkaJS.Globals.page.toUpperCase(),
         revision: MetkaJS.SingleObject.revision,
-        state: MetkaJS.SingleObject.state
+        state: MetkaJS.SingleObject.state,
+        dataConfigurations: MetkaJS.JSConfig
     };
 });

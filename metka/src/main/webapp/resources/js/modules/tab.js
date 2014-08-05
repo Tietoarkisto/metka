@@ -1,15 +1,11 @@
-define([
-    './autoId',
-    './inherit',
-    './togglable',
-    //'./container',
-    'require'
-], function (autoId, inherit, togglable, require) {
+define(function (require) {
     'use strict';
 
+    var togglable = require('./togglable');
+
     return {
-        create: inherit(function (options) {
-            var id = autoId();
+        create: require('./inherit')(function (options) {
+            var id = require('./autoId')();
 
             return {
                 title: togglable.call($('<li>'), options)
