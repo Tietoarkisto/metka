@@ -1,4 +1,6 @@
 define(function (require) {
+    'use strict';
+
     if (location.pathname.split('/').indexOf('search') !== -1) {
         var options = {
             header: MetkaJS.L10N.get('type.STUDY.search'),

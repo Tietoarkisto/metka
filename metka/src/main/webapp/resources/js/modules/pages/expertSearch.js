@@ -1,4 +1,6 @@
 define(function (require) {
+    'use strict';
+
     var addRow;
     var $query;
     var options = {
@@ -67,156 +69,121 @@ define(function (require) {
                 ]
             }
         ],
-        buttons: [{
-            "&title": {
-                "default": "Tee haku"
-            },
-            create: function () {
-                this
-                    .click(function () {
-                        require('./../server')('/expertSearch/query', {
-                            data: JSON.stringify({
-                                query: require('./../data').get(options, 'search')
-                            }),
-                            success: function (data) {
-                                var fieldOptions = {
-                                    dataConf: {
-                                        fields: {
-                                            title: {
-                                                type: 'STRING'
-                                            },
-                                            type: {
-                                                type: 'STRING'
-                                            },
-                                            id: {
-                                                type: 'INTEGER'
-                                            },
-                                            revision: {
-                                                type: 'INTEGER'
-                                            },
-                                            state: {
-                                                type: 'STRING'
-                                            }
-                                        }
-                                    },
-                                    style: 'primary',
-                                    readOnly: true,
-                                    field: {
-                                        displayType: 'CONTAINER',
-                                        "key": "searchResults",
-                                        "columnFields": [
-                                            "title",
-                                            "type",
-                                            "id",
-                                            "revision",
-                                            "state"
-                                        ]
-                                    }
-                                };
-                                require('./../data').set(fieldOptions, 'searchResults', data.results.map(function (result) {
-                                    return {
-                                        title: result.title,
-                                        type: MetkaJS.L10N.get('type.{type}.title'.supplant(result)),
-                                        TYPE: result.type,
-                                        id: result.id,
-                                        revision: result.no,
-                                        state: MetkaJS.L10N.get('search.result.state.{state}'.supplant(result))
-                                    };
-                                }));
-                                $('#searchResultTable').remove();
-                                var $field = require('./../field').call($('<div>'), fieldOptions)
-                                    .attr('id', 'searchResultTable');
-
-                                $field.find('table')
-                                    .addClass('table-hover')
-                                    .find('tbody')
-                                    .on('click', 'tr', function () {
-                                        var $this = $(this);
-                                        require('./../assignUrl')('view', {
-                                            id: $this.data('id'),
-                                            revision: $this.data('revision'),
-                                            page: $this.data('TYPE').toLowerCase()
-                                        });
-                                    });
-
-                                $field.find('.panel-heading')
-                                    .text(MetkaJS.L10N.get('search.result.title'))
-                                    .append($('<div class="pull-right">')
-                                        .text(MetkaJS.L10N.get('search.result.amount').supplant(data.results)));
-
-                                $('.content').append($field);
-                            }
-                        });
-                    })
-            }
-        }, {
-            "&title": {
-                "default": "Tyhjennä"
-            },
-            create: function () {
-                this.click(function () {
-                    $query
-                        .val('')
-                        .change();
+        buttons: [
+            require('./../searchButton')('/expertSearch/query', function () {
+                return {
+                    query: require('./../data').get(options, 'search')
+                };
+            }, function (data) {
+                return data.results;
+            }, function (result) {
+                return {
+                    title: result.title,
+                    type: MetkaJS.L10N.get('type.{type}.title'.supplant(result)),
+                    TYPE: result.type,
+                    id: result.id,
+                    revision: result.no,
+                    state: MetkaJS.L10N.get('search.result.state.{state}'.supplant(result))
+                };
+            }, {
+                title: {
+                    type: 'STRING'
+                },
+                type: {
+                    type: 'STRING'
+                },
+                id: {
+                    type: 'INTEGER'
+                },
+                revision: {
+                    type: 'INTEGER'
+                },
+                state: {
+                    type: 'STRING'
+                }
+            }, [
+                "title",
+                "type",
+                "id",
+                "revision",
+                "state"
+            ], function () {
+                var $this = $(this);
+                require('./../assignUrl')('view', {
+                    id: $this.data('id'),
+                    revision: $this.data('revision'),
+                    page: $this.data('TYPE').toLowerCase()
                 });
-            }
-        }, {
-            "&title": {
-                "default": "Tallenna haku"
-            },
-            create: function () {
-                this
-                    .click(function () {
-                        var containerOptions = {
-                            data: {},
-                            dataConf: {},
-                            content: [{
-                                type: 'COLUMN',
-                                columns: 1,
-                                rows: [
-                                    {
-                                        "type": "ROW",
-                                        "cells": [
-                                            {
-                                                "type": "CELL",
-                                                "title": "Nimi",
-                                                "colspan": 1,
-                                                "field": {
-                                                    "displayType": "STRING",
-                                                    "key": "title"
-                                                }
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }]
-                        };
-                        require('./../modal')({
-                            title: 'Tallenna haku',
-                            body: require('./../container').call($('<div>'), containerOptions),
-                            buttons: [{
-                                "&title": {
-                                    "default": 'Tallenna'
-                                },
-                                create: function () {
-                                    this
-                                        .click(function () {
-                                            require('./../server')('/expertSearch/save', {
-                                                data: JSON.stringify({
-                                                    query: require('./../data').get(options, 'search'),
-                                                    title: require('./../data').get(containerOptions, 'title')
-                                                }),
-                                                success: addRow
-                                            });
-                                        });
-                                }
-                            }, {
-                                type: 'CANCEL'
-                            }]
-                        });
+            }),
+            {
+                "&title": {
+                    "default": "Tyhjennä"
+                },
+                create: function () {
+                    this.click(function () {
+                        $query
+                            .val('')
+                            .change();
                     });
+                }
+            }, {
+                "&title": {
+                    "default": "Tallenna haku"
+                },
+                create: function () {
+                    this
+                        .click(function () {
+                            var containerOptions = {
+                                data: {},
+                                dataConf: {},
+                                content: [{
+                                    type: 'COLUMN',
+                                    columns: 1,
+                                    rows: [
+                                        {
+                                            "type": "ROW",
+                                            "cells": [
+                                                {
+                                                    "type": "CELL",
+                                                    "title": "Nimi",
+                                                    "colspan": 1,
+                                                    "field": {
+                                                        "displayType": "STRING",
+                                                        "key": "title"
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }]
+                            };
+                            require('./../modal')({
+                                title: 'Tallenna haku',
+                                body: require('./../container').call($('<div>'), containerOptions),
+                                buttons: [{
+                                    "&title": {
+                                        "default": 'Tallenna'
+                                    },
+                                    create: function () {
+                                        this
+                                            .click(function () {
+                                                require('./../server')('/expertSearch/save', {
+                                                    data: JSON.stringify({
+                                                        query: require('./../data').get(options, 'search'),
+                                                        title: require('./../data').get(containerOptions, 'title')
+                                                    }),
+                                                    success: addRow
+                                                });
+                                            });
+                                    }
+                                }, {
+                                    type: 'CANCEL'
+                                }]
+                            });
+                        });
+                }
             }
-        }],
+        ],
         data: {
         },
         dataConf: {
