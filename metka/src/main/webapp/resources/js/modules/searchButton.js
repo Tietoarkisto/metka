@@ -1,7 +1,7 @@
 define(function (require) {
     'use strict';
 
-    return function (url, requestData, results, mapResult, fields, columnFields, trOnClick) {
+    return function (url, requestData, getResults, mapResult, fields, columnFields, trOnClick) {
         return {
             "&title": {
                 "default": "Tee haku"
@@ -24,7 +24,8 @@ define(function (require) {
                                         columnFields: columnFields
                                     }
                                 };
-                                require('./data').set(fieldOptions, 'searchResults', results(data).map(mapResult));
+                                var results = getResults(data);
+                                require('./data').set(fieldOptions, 'searchResults', results.map(mapResult));
                                 $('#searchResultTable').remove();
 
 
@@ -41,7 +42,6 @@ define(function (require) {
                                     .text(MetkaJS.L10N.get('search.result.title'))
                                     .append($('<div class="pull-right">')
                                         .text(MetkaJS.L10N.get('search.result.amount').supplant(results)));
-
                                 $('.content').append($field);
                             }
                         });

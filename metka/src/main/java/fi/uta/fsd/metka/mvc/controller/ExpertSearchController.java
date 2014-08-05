@@ -22,7 +22,7 @@ public class ExpertSearchController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String expertSearch(Model model) {
-        model.asMap().put("page", "expertSearch");
+        model.asMap().put("configurationType", "EXPERTSEARCH");
         return "expertSearch";
     }
 

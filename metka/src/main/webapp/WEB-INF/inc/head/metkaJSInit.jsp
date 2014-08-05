@@ -13,12 +13,14 @@
 
 
 <script>
+    <c:if test="${not empty configurationType}">
     MetkaJS.configurationType = "${configurationType}";
+    </c:if>
     <c:if test="${not empty revisionId}">
-        MetkaJS.revisionId = ${revisionId};
+    MetkaJS.revisionId = ${revisionId};
     </c:if>
     <c:if test="${not empty revisionNo}">
-        MetkaJS.revisionNo = ${revisionNo};
+    MetkaJS.revisionNo = ${revisionNo};
     </c:if>
 
     //MetkaJS.Globals.page = "${page}";
