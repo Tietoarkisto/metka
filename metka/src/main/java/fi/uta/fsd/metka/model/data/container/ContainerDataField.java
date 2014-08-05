@@ -1,11 +1,12 @@
 package fi.uta.fsd.metka.model.data.container;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.data.change.Change;
+import fi.uta.fsd.metka.model.data.change.ContainerChange;
+import fi.uta.fsd.metka.model.data.change.RowChange;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDateTime;
@@ -31,19 +32,48 @@ public class ContainerDataField extends RowContainerDataField {
         return rows;
     }
 
-    @JsonIgnore
-    public DataRow getRowWithId(Integer rowId) {
+    /**
+     * Creates a new row and inserts it to this ContainerDataField and adds a change to changeMap
+     * @param changeMap
+     * @return
+     */
+    public Pair<StatusCode, DataRow> insertNewDataRow(Map<String, Change> changeMap) {
+        if(changeMap == null) {
+            return new ImmutablePair<>(StatusCode.INCORRECT_PARAMETERS, null);
+        }
+
+        ContainerChange change;
+        if(!changeMap.containsKey(getKey())) {
+            change = new ContainerChange(getKey());
+            changeMap.put(change.getKey(), change);
+        } else {
+            change = (ContainerChange)changeMap.get(getKey());
+        }
+
+        DataRow row = DataRow.build(this);
+        change.put(new RowChange(row.getRowId()));
+        rows.add(row);
+        return new ImmutablePair<>(StatusCode.NEW_ROW, row);
+    }
+
+    /**
+     * Searches through a list of rows for a row with given rowId
+     * @param rowId Row id to be searched for amongst rows
+     * @return DataRow matching given value or null if none found
+     */
+    public Pair<StatusCode, DataRow> getRowWithId(Integer rowId) {
+
         if(rowId == null || rowId < 1) {
             // Row can not be found since no rowId given.
-            return null;
+            return new ImmutablePair<>(StatusCode.INCORRECT_PARAMETERS, null);
         }
         for(DataRow row : rows) {
             if(row.getRowId().equals(rowId)) {
-                return row;
+                return new ImmutablePair<>(StatusCode.FOUND_ROW, row);
             }
         }
         // Given rowId was not found from this container
-        return null;
+        return new ImmutablePair<>(StatusCode.NO_ROW_WITH_ID, null);
     }
 
     /**

@@ -8,13 +8,13 @@ import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.SavedSearchRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.response.RemovedInfo;
 import fi.uta.fsd.metka.transfer.expert.*;
 import fi.uta.fsd.metkaSearch.SearcherComponent;
 import fi.uta.fsd.metkaSearch.commands.searcher.SearchCommand;
 import fi.uta.fsd.metkaSearch.commands.searcher.expert.ExpertRevisionSearchCommand;
 import fi.uta.fsd.metkaSearch.results.RevisionResult;
 import org.apache.commons.lang3.tuple.Pair;
-import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,15 +50,20 @@ public class ExpertSearchService {
         List<RevisionResult> results = searcher.executeSearch(command).getResults();
 
         for(RevisionResult result : results) {
-            Pair<Boolean, LocalDateTime> info = general.getRevisionableRemovedInfo(result.getId());
+            Pair<ReturnResult, RemovedInfo> infoPair = general.getRevisionableRemovedInfo(result.getId());
+            if(infoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
+                logger.warn("Revisionable was not found for id "+result.getId());
+                continue;
+            }
             Pair<ReturnResult, RevisionData> pair = general.getRevisionData(result.getId(), result.getNo().intValue());
             if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
                 logger.warn("Couldn't find a revision for search result "+result.toString());
                 continue;
             }
+            RemovedInfo info = infoPair.getRight();
             RevisionData revision = pair.getRight();
             ExpertSearchRevisionQueryResult qr = new ExpertSearchRevisionQueryResult();
-            if(info.getLeft()) {
+            if(info.getRemoved()) {
                 qr.setState(UIRevisionState.REMOVED);
             } else {
                 qr.setState(UIRevisionState.fromRevisionState(revision.getState()));

@@ -52,7 +52,7 @@ public class FileFactory extends DataFactory {
 
         LocalDateTime time = new LocalDateTime();
 
-        RevisionData data = createInitialRevision(entity, pair.getRight(), time);
+        RevisionData data = createInitialRevision(entity, pair.getRight());
 
         data.dataField(SavedDataFieldCall.set("study").setValue(studyId.toString()).setTime(time));
 

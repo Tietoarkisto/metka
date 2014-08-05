@@ -4,10 +4,10 @@
 		"type": "STUDY_VARIABLES"
 	},
 	"sections": {
-		
+
 	},
 	"selectionLists": {
-		
+
 	},
 	"references": {
 		"study_ref": {
@@ -29,19 +29,7 @@
 			"titlePath": "varlabel"
 		}
 	},
-	"idField": "id",
-	"displayId": "id",
 	"fields": {
-		"id": {
-			"key": "id",
-			"translatable": false,
-			"immutable": true,
-			"unique": true,
-			"required": true,
-			"display": false,
-			"type": "INTEGER",
-			"section": "basic_information"
-		},
 		"study": {
 			"key": "study",
 			"translatable": false,

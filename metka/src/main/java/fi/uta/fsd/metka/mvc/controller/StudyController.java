@@ -1,36 +1,12 @@
 package fi.uta.fsd.metka.mvc.controller;
 
-import fi.uta.fsd.metka.enums.ConfigurationType;
-import fi.uta.fsd.metka.enums.UIRevisionState;
-import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import fi.uta.fsd.metka.mvc.services.ConfigurationService;
 import fi.uta.fsd.metka.mvc.services.GeneralService;
 import fi.uta.fsd.metka.mvc.services.StudyService;
-import fi.uta.fsd.metka.mvc.services.simple.ErrorMessage;
-import fi.uta.fsd.metka.mvc.services.simple.RevisionViewDataContainer;
-import fi.uta.fsd.metka.mvc.services.simple.study.StudySearchData;
-import fi.uta.fsd.metka.mvc.services.simple.transfer.SearchResult;
-import fi.uta.fsd.metka.mvc.services.simple.transfer.TransferObject;
-import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
-import fi.uta.fsd.metka.transfer.configuration.ConfigurationMap;
-import fi.uta.fsd.metka.transfer.configuration.GUIConfigurationMap;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Handles all requests for study operations such as view and save.
@@ -59,7 +35,7 @@ public class StudyController {
     * Use search functions to find relevant revision for the requested study. Then redirect to viewing that specific revision.
     * If no revision is found then return to search page with an error message.
     */
-    @RequestMapping(value = "view/{id}", method = RequestMethod.GET)
+    /*@RequestMapping(value = "view/{id}", method = RequestMethod.GET)
     public String view(Model model, @PathVariable Long id, RedirectAttributes redirectAttributes) {
         Pair<ReturnResult, Integer> revision = studyService.findSingleRevisionNo(id);
         if(model.asMap().containsKey("displayableErrors")) {
@@ -73,7 +49,7 @@ public class StudyController {
             redirectAttributes.addFlashAttribute("displayableErrors", errors);
             return REDIRECT_SEARCH;
         }
-    }
+    }*/
 
     /*
     * View single study
@@ -82,7 +58,7 @@ public class StudyController {
     * If the returned single object is in DRAFT state and the current user is the handler
     * then show modify page, otherwise show view page.
     */
-    @RequestMapping(value = "view/{id}/{no}", method = RequestMethod.GET)
+    /*@RequestMapping(value = "view/{id}/{no}", method = RequestMethod.GET)
     public String viewRevision(Model model,
                                @PathVariable Long id, @PathVariable Integer no,
                                RedirectAttributes redirectAttributes) {
@@ -184,7 +160,7 @@ public class StudyController {
         } else {
             return VIEW;
         }
-    }
+    }*/
 
     /*
     * Search for study using query
@@ -192,7 +168,7 @@ public class StudyController {
     * If there is only one result then redirect to view.
     * Otherwise show search page with the result in the model.
     */
-    @RequestMapping(value="search", method = {RequestMethod.GET, RequestMethod.POST})
+    /*@RequestMapping(value="search", method = {RequestMethod.GET, RequestMethod.POST})
     public String search(Model model, @ModelAttribute("searchData")StudySearchData searchData) {
         if(searchData.getQuery() != null) {
             List<SearchResult> results = studyService.searchForStudies(searchData.getQuery());
@@ -220,7 +196,7 @@ public class StudyController {
 
         model.asMap().put("page", "study");
         return SEARCH;
-    }
+    }*/
 
     /*
     * Add new study
@@ -228,7 +204,7 @@ public class StudyController {
     * Only a DRAFT revision can be edited and only the newest revision can be a draft revision
     * so you can always modify by using only the id for the series.
     */
-    @RequestMapping(value="add/{acquisition_number}", method = {RequestMethod.GET})
+    /*@RequestMapping(value="add/{acquisition_number}", method = {RequestMethod.GET})
     public String add(@PathVariable Long acquisition_number, RedirectAttributes redirectAttributes) {
         RevisionViewDataContainer revData = studyService.newStudy(acquisition_number);
         if(revData == null || revData.getTransferObject() == null || revData.getConfiguration() == null) {
@@ -240,15 +216,16 @@ public class StudyController {
             redirectAttributes.addFlashAttribute("studyconfiguration", revData.getConfiguration());
             return REDIRECT_VIEW+revData.getTransferObject().getId()+"/"+revData.getTransferObject().getRevision();
         }
-    }
+    }*/
 
     /*
     * Edit study
     * Requests an editable revision for the study. Everything required to get an editable
     * revision for the user is done further down the line (e.g. checking if new revision is
     * actually required or is there already an open DRAFT revision).
+    * TODO: Change to ajax request
     */
-    @RequestMapping(value = "edit/{id}", method = {RequestMethod.GET})
+    /*@RequestMapping(value = "edit/{id}", method = {RequestMethod.GET})
     public String edit(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         RevisionViewDataContainer revData = studyService.editStudy(id);
         if(revData == null || revData.getTransferObject() == null || revData.getConfiguration() == null) {
@@ -259,7 +236,7 @@ public class StudyController {
             redirectAttributes.addFlashAttribute("studyconfiguration", revData.getConfiguration());
             return REDIRECT_VIEW+revData.getTransferObject().getId()+"/"+revData.getTransferObject().getRevision();
         }
-    }
+    }*/
 
     /*
     * Save study
@@ -267,7 +244,7 @@ public class StudyController {
     * further along the line so on this point the assumption can be made that changes exist.
     * Return to the modify page after including the success status of the operation.
     */
-    @RequestMapping(value="save", method = {RequestMethod.POST})
+    /*@RequestMapping(value="save", method = {RequestMethod.POST})
     public String save(@ModelAttribute("single")TransferObject single, RedirectAttributes redirectAttributes) {
         boolean success = studyService.saveStudy(single);
         List<ErrorMessage> errors = new ArrayList<>();
@@ -280,7 +257,7 @@ public class StudyController {
         // TODO: IMPORTANT: If save failed user should not be redirected or the data should at least be the same they sent to server, otherwise users changes are lost.
 
         return REDIRECT_VIEW+single.getId()+"/"+single.getRevision()+(single.getUrlHash() != null ? single.getUrlHash() : "");
-    }
+    }*/
 
     /*
     * Approve study
@@ -289,7 +266,7 @@ public class StudyController {
     * only the study id is needed for the approval process. All required validation is done
     * later in the approval process.
     */
-    @RequestMapping(value="approve", method = {RequestMethod.POST})
+    /*@RequestMapping(value="approve", method = {RequestMethod.POST})
     public String approve(@ModelAttribute("single")TransferObject single, RedirectAttributes redirectAttributes) {
         boolean success = studyService.saveStudy(single);
         List<ErrorMessage> errors = new ArrayList<>();
@@ -310,5 +287,5 @@ public class StudyController {
             redirectAttributes.addFlashAttribute("urlHash", single.getUrlHash());
         }
         return REDIRECT_VIEW+single.getId()+"/"+single.getRevision()+(single.getUrlHash() != null ? single.getUrlHash() : "");
-    }
+    }*/
 }

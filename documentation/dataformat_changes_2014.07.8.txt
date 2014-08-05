@@ -23,3 +23,4 @@ Removed originalValue and modifiedValue from SavedReference and added simple ref
 -- 2014.08.01 additions --
 Created a well formed TransferData format to facilitate client-server communications in complete JsonForm
 Changed RevisionKey->revision to RevisionKey->no to discourage the multiple meanings of 'revision' in the program.
+Removed idField from Configuration. Use displayId as indicator for this. If displayId is not present (or is empty) then use key.id from TransferData, otherwise use field where displayId points to.

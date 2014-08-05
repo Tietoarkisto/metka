@@ -34,33 +34,25 @@ public class ReferenceContainerDataField extends RowContainerDataField {
         return references;
     }
 
-    @JsonIgnore public SavedReference getReferenceWithId(Integer rowId) {
+    /**
+     * Searches through a list of references for a reference with given rowId
+     * @param rowId Row id to be searched for amongst references
+     * @return SavedReference matching given value or null if none found
+     */
+    public Pair<StatusCode, SavedReference> getReferenceWithId(Integer rowId) {
 
         if(rowId == null || rowId < 1) {
             // Row can not be found since no rowId given.
-            return null;
+            return new ImmutablePair<>(StatusCode.INCORRECT_PARAMETERS, null);
         }
         for(SavedReference reference : references) {
             if(reference.getRowId().equals(rowId)) {
-                return reference;
+                return new ImmutablePair<>(StatusCode.FOUND_ROW, reference);
             }
         }
         // Given rowId was not found from this container
-        return null;
+        return new ImmutablePair<>(StatusCode.NO_ROW_WITH_ID, null);
     }
-
-    /**
-     * Adds reference to list if not already present
-     * @param reference
-     */
-    /*@JsonIgnore
-    public void putReference(SavedReference reference) {
-        if(reference.getRowId() != null || !getKey().equals(reference.getKey())) {
-            if(getReference(reference.getRowId()) == null) {
-                references.add(reference);
-            }
-        }
-    }*/
 
     /**
      * Searches through a list of references for a reference containing given value

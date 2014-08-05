@@ -111,9 +111,7 @@ public class DataRow extends ContainerRow implements ModelAccessUtil.PathNavigab
             case GET:
                 return DataFieldOperator.getDataFieldOperation(getFields(), call, new ConfigCheck[]{ConfigCheck.IS_SUBFIELD});
             case CHECK:
-                return DataFieldOperator.checkDataFieldOperation(getFields()
-                        , call
-                        , new ConfigCheck[]{ConfigCheck.IS_SUBFIELD});
+                return DataFieldOperator.checkDataFieldOperation(getFields(), call, new ConfigCheck[]{ConfigCheck.IS_SUBFIELD});
             case SET:
                 if(call.getChangeMap() == null) {
                     // We don't need to continue since this is the result anyway

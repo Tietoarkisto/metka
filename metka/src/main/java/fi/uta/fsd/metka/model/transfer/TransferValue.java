@@ -6,8 +6,8 @@ import javax.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TransferValue {
-    @XmlElement private String current;
-    @XmlElement private String original;
+    @XmlElement private String current = "";
+    @XmlElement private String original = "";
 
     public String getCurrent() {
         return current;

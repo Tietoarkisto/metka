@@ -1,12 +1,9 @@
 package fi.uta.fsd.metka.storage.repository.impl;
 
 import fi.uta.fsd.metka.enums.RevisionState;
-import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.factories.DataFactory;
 import fi.uta.fsd.metka.model.factories.SeriesFactory;
-import fi.uta.fsd.metka.mvc.services.simple.transfer.TransferObject;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.impl.SeriesEntity;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
@@ -14,18 +11,17 @@ import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.SeriesRepository;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import org.joda.time.LocalDateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import static fi.uta.fsd.metka.storage.util.ModelAccessUtil.doFieldChanges;
-import static fi.uta.fsd.metka.storage.util.ModelAccessUtil.idIntegrityCheck;
-
 @Repository
 public class SeriesRepositoryImpl implements SeriesRepository {
+    private static Logger logger = LoggerFactory.getLogger(SeriesRepositoryImpl.class);
     @PersistenceContext(name = "entityManager")
     private EntityManager em;
 
@@ -59,85 +55,6 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         entity.setLatestRevisionNo(revision.getKey().getRevisionNo());
 
         return data;
-    }
-
-    @Override
-    // TODO: needs better reporting to user about what went wrong
-    public boolean saveSeries(TransferObject to) {
-        // Get SeriesEntity
-        // Check if latest revision is different from latest approved (the first requirement since only drafts
-        // can be saved and these should always be different if Revisionable has an active draft).
-        // Get latest revision.
-        // Check state
-        // Deserialize revision data and check that data agrees with entity.
-
-        SeriesEntity series = em.find(SeriesEntity.class, to.getId());
-        if(series == null) {
-            // There has to be a series so you can save
-            return false;
-        }
-
-        if(!series.hasDraft()) {
-            // There's no draft according to simple check, assume this is correct. There's nothing to save.
-            // TODO: Log event that something tried to save a nonexisting draft
-            return false;
-        }
-
-        //RevisionEntity revEntity = series.getLatestRevision();
-        RevisionEntity revEntity = em.find(RevisionEntity.class, series.latestRevisionKey());
-        if(revEntity.getState() != RevisionState.DRAFT || StringUtils.isEmpty(revEntity.getData())) {
-            // Only drafts can be saved and there has to be existing revision data
-            // TODO: if we get here an error has to be logged since data is out of sync
-            return false;
-        }
-
-        // TODO: Just skip checks for now, if this raises a problem at some point then do complete checks
-        RevisionData data = json.deserializeRevisionData(revEntity.getData()).getRight();
-        Configuration config = configRepo.findConfiguration(data.getConfiguration()).getRight();
-
-        // Validate TransferObject against revision data:
-        // Id should match id in revision data and key.
-        // Revision should match revision in key
-        // If previous abbreviation exists then so should match that, otherwise abort.
-        // If name field has changed record the change otherwise do no change to name field.
-        // Id description field has changed record the change otherwise do no change to description field.
-        // TODO: automate validation using configuration, since all needed information is there.
-
-        // Check ID integrity
-        if (idIntegrityCheck(to, data, config)) {
-            return false;
-        }
-
-        // check revision
-        if(!to.getRevision().equals(data.getKey().getNo())) {
-            // TODO: data is out of sync or someone tried to change the revision, log error
-            // Return false since save can not continue.
-            return false;
-        }
-
-        boolean changes = false;
-
-        LocalDateTime time = new LocalDateTime();
-
-        for(Field field : config.getFields().values()) {
-            changes = doFieldChanges(field.getKey(), to, time, data, config) | changes;
-        }
-
-        // TODO: Do CONCAT checking
-
-        // If there were changes:
-        // Serialize RevisionData.
-        // Add revision data to entity.
-        // Entity should still be managed at this point so
-
-        if(changes) {
-            data.setLastSaved(new LocalDateTime());
-            // TODO: Set last saved by
-            // TODO: Just skip checks for now, if this raises a problem at some point then do complete checks
-            revEntity.setData(json.serialize(data).getRight());
-        }
-
-        return true;
     }
 
     /*

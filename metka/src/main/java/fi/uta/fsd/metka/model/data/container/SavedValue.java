@@ -57,6 +57,23 @@ public class SavedValue {
         return (value == null) ? null : value.toString();
     }
 
+    @JsonIgnore public boolean hasValue() {
+        if(value == null) {
+            return false;
+        } else {
+            return value.hasValue();
+        }
+    }
+
+    @JsonIgnore
+    public String getActualValue() {
+        if(hasValue()) {
+            return value.getValue();
+        } else {
+            return null;
+        }
+    }
+
     /*
     * This clears existing value from this SavedValue and inserts a new SimpleValue with the given
     * value.

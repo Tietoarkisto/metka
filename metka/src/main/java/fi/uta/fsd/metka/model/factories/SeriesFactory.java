@@ -9,7 +9,6 @@ import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import org.apache.commons.lang3.tuple.Pair;
-import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,9 +48,7 @@ public class SeriesFactory extends DataFactory {
             return null;
         }
 
-        LocalDateTime time = new LocalDateTime();
-
-        RevisionData data = createInitialRevision(entity, pair.getRight(), time);
+        RevisionData data = createInitialRevision(entity, pair.getRight());
 
         Pair<ReturnResult, String> string = json.serialize(data);
         if(string.getLeft() != ReturnResult.SERIALIZATION_SUCCESS) {

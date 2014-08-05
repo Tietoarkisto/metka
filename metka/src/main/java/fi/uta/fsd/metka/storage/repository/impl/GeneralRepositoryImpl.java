@@ -11,6 +11,7 @@ import fi.uta.fsd.metka.storage.entity.SequenceEntity;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.response.RemovedInfo;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -36,13 +37,17 @@ public class GeneralRepositoryImpl implements GeneralRepository {
     private JSONUtil json;
 
     @Override
-    public Pair<Boolean, LocalDateTime> getRevisionableRemovedInfo(Long id) {
+    public Pair<ReturnResult, RemovedInfo> getRevisionableRemovedInfo(Long id) {
         RevisionableEntity entity = em.find(RevisionableEntity.class, id);
         if(entity == null) {
             // No entity found, can't return any info
-            return null;
+            return new ImmutablePair<>(ReturnResult.REVISIONABLE_NOT_FOUND, null);
         }
-        return new ImmutablePair<>(entity.getRemoved(), entity.getRemovalDate());
+        RemovedInfo info = new RemovedInfo();
+        info.setRemoved(entity.getRemoved());
+        info.setRemovedAt(entity.getRemovalDate());
+        info.setRemovedBy(entity.getRemovedBy());
+        return new ImmutablePair<>(ReturnResult.REVISIONABLE_FOUND, info);
     }
 
     @Override
@@ -250,5 +255,21 @@ public class GeneralRepositoryImpl implements GeneralRepository {
             numbers.add(revision.getKey().getRevisionNo());
         }
         return numbers;
+    }
+
+    @Override
+    public ReturnResult updateRevisionData(RevisionData revision) {
+        Pair<ReturnResult, String> string = json.serialize(revision);
+        if(string.getLeft() != ReturnResult.SERIALIZATION_SUCCESS) {
+            logger.error("Failed at serializing "+revision.toString());
+            return string.getLeft();
+        }
+        RevisionEntity entity = em.find(RevisionEntity.class, RevisionKey.fromModelKey(revision.getKey()));
+        if(entity == null) {
+            return ReturnResult.REVISION_NOT_FOUND;
+        }
+        entity.setData(string.getRight());
+        em.merge(entity);
+        return ReturnResult.REVISION_UPDATE_SUCCESSFUL;
     }
 }

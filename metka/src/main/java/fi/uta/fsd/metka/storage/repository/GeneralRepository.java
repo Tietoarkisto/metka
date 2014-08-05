@@ -7,9 +7,9 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.storage.entity.SequenceEntity;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.response.RemovedInfo;
 import javassist.NotFoundException;
 import org.apache.commons.lang3.tuple.Pair;
-import org.joda.time.LocalDateTime;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -26,7 +26,7 @@ public interface GeneralRepository {
      * @param id Id of the revisionable object to be checked
      * @return Pair<Boolean, LocalDateTime> with left value being the removal state of the revisionable (true if removed) and right value being the removal time of said object.
      */
-    public Pair<Boolean, LocalDateTime> getRevisionableRemovedInfo(Long id);
+    public Pair<ReturnResult, RemovedInfo> getRevisionableRemovedInfo(Long id);
 
     /**
      * Returns the revisionable id of the object with given type adjacent to the object with given id.
@@ -122,4 +122,11 @@ public interface GeneralRepository {
 
     @Transactional(readOnly = false) public SequenceEntity getNewSequenceValue(String key);
     @Transactional(readOnly = false) public SequenceEntity getNewSequenceValue(String key, Long initialValue);
+
+    /**
+     * Takes provided RevisionData, serializes it and tries to insert it into database
+     * @param revision RevisionData to be serialized and updated to database
+     * @return ReturnResult informing if the operation was successful or not
+     */
+    @Transactional(readOnly = false) public ReturnResult updateRevisionData(RevisionData revision);
 }

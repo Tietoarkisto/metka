@@ -4,12 +4,10 @@ import fi.uta.fsd.metka.model.access.enums.ConfigCheck;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
-import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.container.DataField;
 import fi.uta.fsd.metka.model.data.container.SavedDataField;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.joda.time.LocalDateTime;
 import org.springframework.util.StringUtils;
 
 import java.util.Map;
@@ -29,29 +27,19 @@ final class SavedDataFieldValueChecker {
      * @param fieldMap      map
      * @param key           key
      * @param value         value
-     * @param time          time
-     * @param changeMap     map
      * @param config        config
      * @param configChecks  config checks
      * @return              status code and saved data field pair
      */
-    static Pair<StatusCode, SavedDataField> checkSavedDataFieldValue (
-            Map<String, DataField> fieldMap
-            , String key
-            , String value
-            , LocalDateTime time
-            , Map<String, Change> changeMap
-            , Configuration config
-            , ConfigCheck[] configChecks
-    ) {
+    static Pair<StatusCode, SavedDataField> checkSavedDataFieldValue(Map<String, DataField> fieldMap, String key, String value, Configuration config, ConfigCheck[] configChecks) {
         // Null maps or empty key results in incorrect parameters
-        if(fieldMap == null || changeMap == null || StringUtils.isEmpty(key)) {
+        if(fieldMap == null || StringUtils.isEmpty(key)) {
             return new ImmutablePair<>(StatusCode.INCORRECT_PARAMETERS, null);
         }
 
         // Get status code and saved data field pair
-        Pair<StatusCode, SavedDataField> pair = getSavedDataField(
-                fieldMap, key, config, configChecks);
+        Pair<StatusCode, SavedDataField> pair = getSavedDataField(fieldMap, key, config, configChecks);
+
         // Status code is never null but saved data field can be null
         StatusCode statusCode = pair.getLeft();
 
@@ -102,18 +90,13 @@ final class SavedDataFieldValueChecker {
             SavedDataField savedDataField = pair.getRight();
 
             // Old and new value null or empty results in no change
-            if ( StringUtils.isEmpty(value) && (!savedDataField.hasValue()
-                    || StringUtils.isEmpty(savedDataField.getActualValue())) ) {
-                return new ImmutablePair<>(StatusCode.NO_CHANGE_IN_VALUE
-                        , savedDataField);
+            if (StringUtils.isEmpty(value) && !savedDataField.hasValue()) {
+                return new ImmutablePair<>(StatusCode.NO_CHANGE_IN_VALUE, null);
             }
 
             // Old and new value equals results in no change
-            if ( savedDataField.hasValue()
-                    && !StringUtils.isEmpty(savedDataField.getActualValue())
-                    && savedDataField.getActualValue().equals(value) ) {
-                return new ImmutablePair<>(StatusCode.NO_CHANGE_IN_VALUE
-                        , savedDataField);
+            if (savedDataField.hasValue() && savedDataField.getActualValue().equals(value) ) {
+                return new ImmutablePair<>(StatusCode.NO_CHANGE_IN_VALUE, null);
             }
 
             if (config != null  && config.getField(key) != null) {
@@ -121,30 +104,25 @@ final class SavedDataFieldValueChecker {
                 Field field = config.getField(key);
 
                 // If false value should not be written in revision data
-                if ( !field.getWritable() ) {
-                    return new ImmutablePair<>(StatusCode.FIELD_NOT_WRITABLE
-                            , null);
-                }
-
-                // Check mutability
-                if ( field.getImmutable()
-                        && savedDataField.hasValue()
-                        && !StringUtils.isEmpty(savedDataField.
-                        getActualValue()) ) {
-                    return new ImmutablePair<>(StatusCode.FIELD_NOT_MUTABLE
-                            , savedDataField);
+                if(!field.getWritable() ) {
+                    return new ImmutablePair<>(StatusCode.FIELD_NOT_WRITABLE, null);
                 }
 
                 // If false user cannot edit value
-                if ( !field.getEditable() ) {
-                    return new ImmutablePair<>(StatusCode.FIELD_NOT_EDITABLE
-                            , null);
+                if(!field.getEditable()) {
+                    return new ImmutablePair<>(StatusCode.FIELD_NOT_EDITABLE, null);
+                }
+
+                // Check mutability
+                if(field.getImmutable()
+                        && savedDataField.hasOriginalValue()
+                        && !savedDataField.getOriginalValue().getActualValue().equals(value)) {
+                    return new ImmutablePair<>(StatusCode.FIELD_NOT_MUTABLE, null);
                 }
             }
 
             // Field is writable, mutable and editable results in field update
-            return new ImmutablePair<>(
-                    StatusCode.FIELD_UPDATE, savedDataField);
+            return new ImmutablePair<>(StatusCode.FIELD_UPDATE, savedDataField);
         }
 
         // Catch all other status codes ?

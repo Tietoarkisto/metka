@@ -8,19 +8,19 @@ import javax.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TransferState {
-    @XmlElement private boolean removed;
-    @XmlElement private LocalDateTime removalDate;
-    @XmlElement private String removedBy;
-    @XmlElement private boolean approved;
-    @XmlElement private LocalDateTime approvalDate;
-    @XmlElement private String approvedBy;
-    @XmlElement private boolean draft;
-    @XmlElement private String handler;
-    @XmlElement private boolean saved;
-    @XmlElement private LocalDateTime savedDate;
-    @XmlElement private String savedBy;
+    @XmlElement private boolean removed = false;
+    @XmlElement private LocalDateTime removalDate = null;
+    @XmlElement private String removedBy = "";
+    @XmlElement private boolean approved = false;
+    @XmlElement private LocalDateTime approvalDate = null;
+    @XmlElement private String approvedBy = "";
+    @XmlElement private boolean draft = false;
+    @XmlElement private String handler = "";
+    @XmlElement private boolean saved = false;
+    @XmlElement private LocalDateTime savedDate = null;
+    @XmlElement private String savedBy = "";
 
-    public boolean isRemoved() {
+    public boolean getRemoved() {
         return removed;
     }
 

@@ -469,8 +469,7 @@
 			"titlePath": "description"
 		}
 	},
-	"idField": "revisionableid",
-	"displayId": "id",
+	"displayId": "studyid",
 	"fields": {
 		"aipcomplete": {
 			"key": "aipcomplete",
@@ -615,22 +614,11 @@
 			"type": "SELECTION",
 			"selectionList": "id_prefix_list",
 			"section": "basic_information"
-			
+
 		},
 		"studyid_number": {
 			"_comment": "This contains the number portion of study id (usually FSD+number). Not the same as revisionable id.",
 			"key": "studyid_number",
-			"translatable": false,
-			"immutable": true,
-			"unique": true,
-			"required": true,
-			"display": false,
-			"type": "INTEGER",
-			"section": "basic_information"
-		},
-		"revisionableid": {
-			"_comment": "This contains the general revisionable id for this study (what is found in key)",
-			"key": "revisionableid",
 			"translatable": false,
 			"immutable": true,
 			"unique": true,
@@ -952,7 +940,7 @@
 			"key": "producers",
 			"translatable": false,
 			"type": "CONTAINER",
-			"section": "study_description",                                   
+			"section": "study_description",
 			"subfields": [
 				"producer",
 				"producerid",

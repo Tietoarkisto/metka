@@ -1,41 +1,35 @@
 package fi.uta.fsd.metka.storage.repository.impl;
 
+import fi.uta.fsd.metka.enums.ConfigurationType;
+import fi.uta.fsd.metka.enums.RevisionState;
+import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
+import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
+import fi.uta.fsd.metka.model.access.enums.StatusCode;
+import fi.uta.fsd.metka.model.configuration.Configuration;
+import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.data.container.ReferenceContainerDataField;
+import fi.uta.fsd.metka.model.data.container.SavedDataField;
+import fi.uta.fsd.metka.model.data.container.SavedReference;
+import fi.uta.fsd.metka.model.factories.StudyFactory;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.entity.StudyAttachmentQueueEntity;
 import fi.uta.fsd.metka.storage.entity.impl.StudyEntity;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
-import fi.uta.fsd.metka.enums.ConfigurationType;
-import fi.uta.fsd.metka.enums.RevisionState;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.StudyRepository;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.storage.variables.StudyVariablesParser;
-import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
-import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
-import fi.uta.fsd.metka.model.access.enums.StatusCode;
-import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.configuration.Field;
-import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.ReferenceContainerDataField;
-import fi.uta.fsd.metka.model.data.container.SavedDataField;
-import fi.uta.fsd.metka.model.data.container.SavedReference;
-import fi.uta.fsd.metka.model.factories.DataFactory;
-import fi.uta.fsd.metka.model.factories.StudyFactory;
-import fi.uta.fsd.metka.mvc.services.simple.transfer.TransferObject;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
-
-import static fi.uta.fsd.metka.storage.util.ModelAccessUtil.*;
 
 @Repository
 public class StudyRepositoryImpl implements StudyRepository {
@@ -73,8 +67,8 @@ public class StudyRepositoryImpl implements StudyRepository {
         return data;
     }
 
-    @Override
-    // TODO: needs better reporting to user about what went wrong
+    // TODO: This is done through the generalized revision saving
+    /*@Override
     public boolean saveStudy(TransferObject to) {
         // Get StudyEntity
         // Check if latest revision is different from latest approved (the first requirement since only drafts
@@ -148,7 +142,7 @@ public class StudyRepositoryImpl implements StudyRepository {
         }
 
         return true;
-    }
+    }*/
 
     /*
     * Approve Study.
@@ -231,7 +225,8 @@ public class StudyRepositoryImpl implements StudyRepository {
         return true;
     }
 
-    @Override
+    // TODO: This is done in the generalised revision edit
+    /*@Override
     public RevisionData editStudy(Object studyno) {
         StudyEntity study = em.find(StudyEntity.class, studyno);
 
@@ -281,9 +276,8 @@ public class StudyRepositoryImpl implements StudyRepository {
         // Return new revision data
         study.setLatestRevisionNo(newRevision.getKey().getRevisionNo());
         return newData;
-    }
+    }*/
 
-// TODO: Set last saved by
     @Override
     public void checkFileLinkQueue(Long id, Integer revision) {
         RevisionableEntity revisionable = em.find(RevisionableEntity.class, id);

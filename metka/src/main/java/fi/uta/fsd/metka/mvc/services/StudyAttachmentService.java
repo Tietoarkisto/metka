@@ -1,13 +1,7 @@
 package fi.uta.fsd.metka.mvc.services;
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import fi.uta.fsd.metka.enums.ConfigurationType;
-import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.mvc.services.simple.ErrorMessage;
-import fi.uta.fsd.metka.mvc.services.simple.RevisionViewDataContainer;
-import fi.uta.fsd.metka.mvc.services.simple.transfer.TransferObject;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.StudyAttachmentRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
@@ -35,6 +29,8 @@ public class StudyAttachmentService {
         return general.getRevisionDataOfType(id, no, ConfigurationType.STUDY_ATTACHMENT);
     }
 
+    // TODO: Check that these work through the generalized service
+
     /**
      * Creates new study attachment DRAFT that is linked to the given study id.
      *
@@ -42,25 +38,25 @@ public class StudyAttachmentService {
      * @return
      */
     // TODO: Remove this if there is no further use for this method
-    public String newStudyAttachment(Long studyId) {
-        /*
+    /*public String newStudyAttachment(Long studyId) {
+        *//*
          * Find a RevisionData matching given study or create a new one if none present
-         */
+         *//*
         RevisionData revision = studyAttachments.newStudyAttachment(studyId);
         if(revision == null) {
             // TODO: There's a problem, notify user
             return null;
         }
 
-        /*
+        *//*
          * Add event to file link queue for making sure that the reference exists and if this is a variable file to parse
          * and merge it to study
-         */
+         *//*
         studyAttachments.addFileLinkEvent(studyId, revision.getKey().getId(), "files", null);
 
-        /*
+        *//*
          * Create row to be sent to client
-         */
+         *//*
         JsonNodeFactory nf = JsonNodeFactory.instance;
 
         ObjectNode node = nf.objectNode();
@@ -69,9 +65,9 @@ public class StudyAttachmentService {
         node.put("value", revision.getKey().getId().toString());
 
         return node.toString();
-    }
+    }*/
 
-    public RevisionViewDataContainer findLatestStudyAttachmentRevisionForEdit(Long id) {
+    /*public RevisionViewDataContainer findLatestStudyAttachmentRevisionForEdit(Long id) {
         RevisionData revision = null;
         revision = studyAttachments.getEditableStudyAttachmentRevision(id);
         if(revision == null) {
@@ -90,5 +86,5 @@ public class StudyAttachmentService {
     public ErrorMessage saveStudyAttachment(TransferObject to) {
         // TODO: Save changes from provided TransferObject to database
         return null;
-    }
+    }*/
 }

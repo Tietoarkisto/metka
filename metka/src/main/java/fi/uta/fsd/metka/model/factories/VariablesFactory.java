@@ -42,7 +42,7 @@ public class VariablesFactory extends DataFactory {
 
         LocalDateTime time = new LocalDateTime();
 
-        RevisionData data = createInitialRevision(entity, pair.getRight(), time);
+        RevisionData data = createInitialRevision(entity, pair.getRight());
         data.dataField(SavedDataFieldCall.set("study").setTime(time).setValue(studyId.toString()));
         data.dataField(SavedDataFieldCall.set("file").setTime(time).setValue(fileId.toString()));
         data.dataField(SavedDataFieldCall.set("varfileid").setTime(time).setValue("F1"));
@@ -70,7 +70,7 @@ public class VariablesFactory extends DataFactory {
 
         LocalDateTime time = new LocalDateTime();
 
-        RevisionData data = createInitialRevision(entity, pair.getRight(), time);
+        RevisionData data = createInitialRevision(entity, pair.getRight());
         data.dataField(SavedDataFieldCall.set("variables").setTime(time).setValue(variablesId.toString()));
         data.dataField(SavedDataFieldCall.set("study").setTime(time).setValue(studyId.toString()));
 

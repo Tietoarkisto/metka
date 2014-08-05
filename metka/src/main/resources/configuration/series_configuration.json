@@ -3,17 +3,7 @@
 		"version": 1,
 		"type": "SERIES"
 	},
-	"idField": "seriesid",
-	"displayId": "seriesid",
 	"fields": {
-		"seriesid": {
-			"key": "seriesid",
-			"translatable": false,
-			"immutable": true,
-			"unique": true,
-			"required": true,
-			"type": "INTEGER"
-		},
 		"seriesabbr": {
 			"key": "seriesabbr",
 			"immutable": true,

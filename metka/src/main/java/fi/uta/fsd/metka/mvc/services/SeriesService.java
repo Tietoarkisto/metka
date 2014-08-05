@@ -8,10 +8,6 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.SavedDataField;
 import fi.uta.fsd.metka.mvc.search.RevisionDataRemovedContainer;
 import fi.uta.fsd.metka.mvc.search.SeriesSearch;
-import fi.uta.fsd.metka.mvc.services.simple.RevisionViewDataContainer;
-import fi.uta.fsd.metka.mvc.services.simple.series.SeriesSearchSO;
-import fi.uta.fsd.metka.mvc.services.simple.transfer.SearchResult;
-import fi.uta.fsd.metka.mvc.services.simple.transfer.TransferObject;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.SeriesRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
@@ -63,7 +59,7 @@ public class SeriesService {
         return list;
     }
 
-    public List<SearchResult> searchForSeries(SeriesSearchSO query) {
+    /*public List<SearchResult> searchForSeries(SeriesSearchSO query) {
         List<SearchResult> seriesList = new ArrayList<>();
         List<RevisionDataRemovedContainer> datas = null;
         try {
@@ -84,16 +80,16 @@ public class SeriesService {
             }
         }
         return seriesList;
-    }
+    }*/
 
     /**
      * Return a default revision number for requested revisionable
      * @param id Revisionable id
      * @return
      */
-    public Pair<ReturnResult, Integer> findSingleRevisionNo(Long id) {
+    /*public Pair<ReturnResult, Integer> findSingleRevisionNo(Long id) {
         return general.getLatestRevisionNoForIdAndType(id, false, ConfigurationType.SERIES);
-    }
+    }*/
 
     /**
      * Find requested revision data and its related configuration.
@@ -101,7 +97,7 @@ public class SeriesService {
      * @param revision Revision number of the requested revision.
      * @return RevisionViewDataContainer containing requested revision data and its configuration
      */
-    public RevisionViewDataContainer findSingleRevision(Long id, Integer revision) {
+    /*public RevisionViewDataContainer findSingleRevision(Long id, Integer revision) {
 
         Pair<ReturnResult, RevisionData> pair = general.getRevisionDataOfType(id, revision, ConfigurationType.SERIES);
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
@@ -113,9 +109,9 @@ public class SeriesService {
         TransferObject single = TransferObject.buildTransferObjectFromRevisionData(data);
 
         return new RevisionViewDataContainer(single, config);
-    }
+    }*/
 
-    public RevisionViewDataContainer newSeries() {
+    /*public RevisionViewDataContainer newSeries() {
         RevisionData revision = null;
         try {
             revision = repository.getNew();
@@ -132,10 +128,10 @@ public class SeriesService {
         TransferObject single = TransferObject.buildTransferObjectFromRevisionData(revision);
 
         return new RevisionViewDataContainer(single, config);
-    }
+    }*/
 
     // TODO: Add information of if new revision was created or not so it can be indexed as necessary
-    public RevisionViewDataContainer editSeries(Long seriesno) {
+    /*public RevisionViewDataContainer editSeries(Long seriesno) {
         try {
             RevisionData data = repository.editSeries(seriesno);
             Configuration config = configService.findByTypeAndVersion(data.getConfiguration()).getRight();
@@ -146,10 +142,10 @@ public class SeriesService {
             ex.printStackTrace();
             return null;
         }
-    }
+    }*/
 
     // TODO: Add information of whether changes were found or not so that unnecessary indexing can be avoided
-    public boolean saveSeries(TransferObject to) {
+    /*public boolean saveSeries(TransferObject to) {
         try {
             boolean result = repository.saveSeries(to);
             if(result)indexer.addCommand(RevisionIndexerCommand.index(indexerPaths.get("fi"), to.getId(), to.getRevision()));
@@ -159,9 +155,9 @@ public class SeriesService {
             ex.printStackTrace();
             return false;
         }
-    }
+    }*/
 
-    public boolean approveSeries(TransferObject to) {
+    /*public boolean approveSeries(TransferObject to) {
         try {
             boolean result = repository.approveSeries(to.getId());
             if(result)indexer.addCommand(RevisionIndexerCommand.index(indexerPaths.get("fi"), to.getId(), to.getRevision()));
@@ -171,10 +167,10 @@ public class SeriesService {
             ex.printStackTrace();
             return false;
         }
-    }
+    }*/
 
     // Helper functions
-    private SearchResult resultSOFromRevisionData(RevisionData data) {
+    /*private SearchResult resultSOFromRevisionData(RevisionData data) {
         // check if data is for series
         if(data == null || data.getConfiguration().getType() != ConfigurationType.SERIES) {
             return null;
@@ -189,5 +185,5 @@ public class SeriesService {
         so.setByKey("seriesname", SavedDataField.valueAsString(data.dataField(SavedDataFieldCall.get("seriesname")).getRight()));
 
         return so;
-    }
+    }*/
 }

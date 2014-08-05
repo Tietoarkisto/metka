@@ -43,26 +43,20 @@ public final class DataFieldOperator {
     // We can suppress unchecked cast warnings since field type is set by the
     // DataFieldCall constructor and always matches up with the generic type
     @SuppressWarnings("unchecked")
-    public static <T extends DataField> Pair<StatusCode, T>
-    checkDataFieldOperation(Map<String
-            , DataField> fieldMap
-            , DataFieldCall<T> call
-            , ConfigCheck[] configChecks) {
+    public static <T extends DataField> Pair<StatusCode, T> checkDataFieldOperation(Map<String, DataField> fieldMap, DataFieldCall<T> call, ConfigCheck[] configChecks) {
         if(fieldMap == null || call == null) {
             return new ImmutablePair<>(StatusCode.INCORRECT_PARAMETERS, null);
         }
 
         switch(call.getFieldType()) {
             case SAVED_DATA_FIELD:
-                Pair<StatusCode, SavedDataField> saved =
-                        SavedDataFieldValueChecker.checkSavedDataFieldValue(
-                                fieldMap
-                                , call.getKey()
-                                , call.getValue()
-                                , call.getTime()
-                                , call.getChangeMap()
-                                , call.getConfiguration()
-                                , configChecks);
+                Pair<StatusCode, SavedDataField> saved = SavedDataFieldValueChecker
+                        .checkSavedDataFieldValue(
+                            fieldMap
+                            , call.getKey()
+                            , call.getValue()
+                            , call.getConfiguration()
+                            , configChecks);
                 return new ImmutablePair<>(saved.getLeft()
                         , (T)saved.getRight());
             // TODO: Container/ReferenceContainer cases needed (?)

@@ -22,7 +22,6 @@ public class Configuration implements ModelBase {
     @XmlElement private final Map<String, Reference> references = new HashMap<>();
     @XmlElement private final Map<String, SelectionList> selectionLists = new HashMap<>();
     @XmlElement private final Map<String, Field> fields = new HashMap<>();
-    @XmlElement private String idField; // TODO: Change to nullable key and assume that null means display actual id. Remove duplicate ID:s
     @XmlElement private String displayId;
     @XmlElement private String hash; // no functionality for hash is implemented at this time.
 
@@ -55,14 +54,6 @@ public class Configuration implements ModelBase {
 
     public Map<String, Field> getFields() {
         return fields;
-    }
-
-    public String getIdField() {
-        return idField;
-    }
-
-    public void setIdField(String idField) {
-        this.idField = idField;
     }
 
     public String getDisplayId() {

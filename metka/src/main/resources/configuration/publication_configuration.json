@@ -38,17 +38,7 @@
 			]
 		}
 	},
-	"idField": "id",
-	"displayId": "id",
 	"fields": {
-		"id": {
-			"key": "id",
-			"translatable": false,
-			"immutable": true,
-			"unique": true,
-			"required": true,
-			"type": "INTEGER"
-		},
 		"publication_year": {
 			"key": "publication_year",
 			"translatable": false,

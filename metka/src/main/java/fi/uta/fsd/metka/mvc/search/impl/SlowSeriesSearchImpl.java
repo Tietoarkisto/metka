@@ -1,12 +1,13 @@
 package fi.uta.fsd.metka.mvc.search.impl;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
+import fi.uta.fsd.metka.enums.UIRevisionState;
 import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
+import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.SavedDataField;
 import fi.uta.fsd.metka.mvc.search.RevisionDataRemovedContainer;
 import fi.uta.fsd.metka.mvc.search.SeriesSearch;
-import fi.uta.fsd.metka.mvc.services.simple.series.SeriesSearchSO;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.entity.impl.SeriesEntity;
@@ -14,10 +15,13 @@ import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
+import fi.uta.fsd.metka.transfer.revision.RevisionSearchRequest;
+import fi.uta.fsd.metka.transfer.revision.RevisionSearchResult;
 import fi.uta.fsd.metkaSearch.SearcherComponent;
 import fi.uta.fsd.metkaSearch.commands.searcher.series.SeriesBasicSearchCommand;
 import fi.uta.fsd.metkaSearch.results.ResultList;
 import fi.uta.fsd.metkaSearch.results.RevisionResult;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.slf4j.Logger;
@@ -73,23 +77,23 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
     }
 
     @Override
-    public List<RevisionDataRemovedContainer> findSeries(SeriesSearchSO query) {
+    public Pair<ReturnResult, List<RevisionSearchResult>> findSeries(RevisionSearchRequest query) {
         // TODO: Make path management sensible, get path language from some common source that knows which language we should search.
         SeriesBasicSearchCommand command;
         try {
             command = SeriesBasicSearchCommand.build("fi", query.isSearchApproved(), query.isSearchDraft(), query.isSearchRemoved(),
-                    stringToLong(query.getByKey("seriesno")), (String)query.getByKey("seriesabbr"), (String)query.getByKey("seriesname"));
+                    stringToLong(query.getByKey("seriesno")), query.getByKey("seriesabbr"), query.getByKey("seriesname"));
             ResultList<RevisionResult> results = searcher.executeSearch(command);
-            return collectResults(results);
+            return new ImmutablePair<>(ReturnResult.SEARCH_SUCCESS, collectResults(results));
         } catch(QueryNodeException qne) {
             // Couldn't form query command
             qne.printStackTrace();
-            return null;
+            return new ImmutablePair<>(ReturnResult.SEARCH_FAILED, null);
         }
     }
 
-    private List<RevisionDataRemovedContainer> collectResults(ResultList<RevisionResult> resultList) {
-        List<RevisionDataRemovedContainer> results = new ArrayList<>();
+    private List<RevisionSearchResult> collectResults(ResultList<RevisionResult> resultList) {
+        List<RevisionSearchResult> results = new ArrayList<>();
 
         resultList.sort(new Comparator<RevisionResult>() {
             @Override
@@ -123,7 +127,19 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
                     logger.error("Failed to deserialize "+revision.toString());
                     continue;
                 }
-                results.add(new RevisionDataRemovedContainer(pair.getRight(), entity.getRemoved()));
+                RevisionData data = pair.getRight();
+                RevisionSearchResult searchResult = new RevisionSearchResult();
+                searchResult.setId(data.getKey().getId());
+                searchResult.setNo(data.getKey().getNo());
+                searchResult.setState((entity.getRemoved()) ? UIRevisionState.REMOVED : UIRevisionState.fromRevisionState(data.getState()));
+                // Add SERIES specific search result values
+                Pair<StatusCode, SavedDataField> fieldPair = data.dataField(SavedDataFieldCall.get("seriesname"));
+                if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValue()) {
+                    searchResult.getValues().put("seriesname", fieldPair.getRight().getActualValue());
+                } else {
+                    searchResult.getValues().put("seriesname", "");
+                }
+                results.add(searchResult);
             }
         }
 

@@ -1,7 +1,9 @@
 package fi.uta.fsd.metka.model.data.value;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.util.StringUtils;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -19,8 +21,14 @@ public class SimpleValue extends Value {
         this.value = value;
     }
 
+    @Override
     public String getValue() {
         return value;
+    }
+
+    @Override
+    @JsonIgnore public boolean hasValue() {
+        return !StringUtils.isEmpty(value);
     }
 
     @Override

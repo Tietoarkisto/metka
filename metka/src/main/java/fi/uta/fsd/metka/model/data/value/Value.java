@@ -12,4 +12,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 @JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
 public abstract class Value {
     public abstract Value copy();
+    public abstract String getValue();
+    public abstract boolean hasValue();
 }

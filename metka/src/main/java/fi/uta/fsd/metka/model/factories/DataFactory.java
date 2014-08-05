@@ -1,25 +1,22 @@
 package fi.uta.fsd.metka.model.factories;
 
-import fi.uta.fsd.metka.storage.entity.RevisionEntity;
-import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
 import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.general.ConfigurationKey;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.general.ConfigurationKey;
 import fi.uta.fsd.metka.model.general.RevisionKey;
-import org.joda.time.LocalDateTime;
+import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 
 
 /**
  * Provides functionality common for all RevisionData factories
  */
 public abstract class DataFactory {
-    protected RevisionData createInitialRevision(RevisionEntity entity, Configuration config, LocalDateTime time) {
+    protected RevisionData createInitialRevision(RevisionEntity entity, Configuration config) {
         RevisionData data = new RevisionData(
                 new RevisionKey(entity.getKey().getRevisionableId(), entity.getKey().getRevisionNo()),
                 config.getKey()
         );
         data.setState(entity.getState());
-        data.dataField(SavedDataFieldCall.set(config.getIdField()).setValue(entity.getKey().getRevisionableId().toString()).setTime(time));
         return data;
     }
 

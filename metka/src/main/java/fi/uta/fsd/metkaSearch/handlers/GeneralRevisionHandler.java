@@ -7,7 +7,10 @@ import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
-import fi.uta.fsd.metka.model.configuration.*;
+import fi.uta.fsd.metka.model.configuration.Configuration;
+import fi.uta.fsd.metka.model.configuration.Field;
+import fi.uta.fsd.metka.model.configuration.Option;
+import fi.uta.fsd.metka.model.configuration.SelectionList;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.general.ConfigurationKey;
@@ -16,6 +19,7 @@ import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.response.RemovedInfo;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import fi.uta.fsd.metkaSearch.analyzer.CaseInsensitiveWhitespaceAnalyzer;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
@@ -26,7 +30,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.NumericRangeQuery;
-import org.joda.time.LocalDateTime;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
@@ -94,16 +97,22 @@ class GeneralRevisionHandler implements RevisionHandler {
         // This is used to determine if there's been some breaking bugs that mean that the document can't be added to the index
         boolean addDocument = true;
 
-        Pair<Boolean, LocalDateTime> removalInfo = general.getRevisionableRemovedInfo(data.getKey().getId());
+        Pair<ReturnResult, RemovedInfo> removedInfoPair = general.getRevisionableRemovedInfo(data.getKey().getId());
+        if(removedInfoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
+            // For some reason removed info check failed to find the entity. stop indexing
+            return true;
+        }
+        RemovedInfo info = removedInfoPair.getRight();
 
         // Do some default stuff
         document.indexIntegerField("key.id", data.getKey().getId(), YES);
         document.indexIntegerField("key.no", data.getKey().getNo().longValue(), YES);
         document.indexKeywordField("key.configuration.type", data.getConfiguration().getType().toValue(), YES);
         document.indexIntegerField("key.configuration.version", data.getConfiguration().getVersion().longValue(), YES);
-        document.indexKeywordField("state.removed", removalInfo.getLeft().toString(), YES);
-        if(removalInfo.getLeft()) {
-            document.indexKeywordField("state.removed.date", removalInfo.getLeft().toString(), YES);
+        document.indexKeywordField("state.removed", info.getRemoved().toString(), YES);
+        if(info.getRemoved()) {
+            document.indexKeywordField("state.removed.date", info.getRemovedAt().toString(), YES);
+            document.indexKeywordField("state.removed.by", info.getRemovedBy(), YES);
         }
 
         if(data.getState() == RevisionState.APPROVED) {

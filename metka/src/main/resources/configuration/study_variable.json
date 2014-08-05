@@ -4,7 +4,7 @@
 		"type": "STUDY_VARIABLE"
 	},
 	"sections": {
-		
+
 	},
 	"selectionLists": {
 		"statisticstype_list": {
@@ -44,18 +44,8 @@
 			"titlePath": "id"
 		}
 	},
-	"idField": "id",
-	"displayId": "id",
+    "displayId": "varid",
 	"fields": {
-		"id": {
-			"key": "id",
-			"translatable": false,
-			"immutable": true,
-			"unique": true,
-			"required": true,
-			"display": false,
-			"type": "INTEGER"
-		},
 		"study": {
 			"key": "study",
 			"translatable": false,

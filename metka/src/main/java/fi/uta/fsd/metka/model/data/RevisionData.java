@@ -190,6 +190,8 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase, DataFi
         switch(call.getCallType()) {
             case GET:
                 return DataFieldOperator.getDataFieldOperation(getFields(), call, new ConfigCheck[]{ConfigCheck.NOT_SUBFIELD});
+            case CHECK:
+                return DataFieldOperator.checkDataFieldOperation(getFields(), call, new ConfigCheck[]{ConfigCheck.NOT_SUBFIELD});
             case SET:
                 if(call.getChangeMap() == null) ((DataFieldCallBase<T>)call).setChangeMap(getChanges());
                 return DataFieldOperator.setDataFieldOperation(getFields(), call, new ConfigCheck[]{ConfigCheck.NOT_SUBFIELD});

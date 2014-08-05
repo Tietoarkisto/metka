@@ -58,6 +58,10 @@ public class RevisionKey implements Comparable<RevisionKey> {
         } else return result;
     }
 
+    public RevisionKey copy() {
+        return new RevisionKey(id, no);
+    }
+
     @Override
     public String toString() {
         return "JsonKey[name="+this.getClass().getSimpleName()+", keys={id: "+id+", no: "+no+"}]";

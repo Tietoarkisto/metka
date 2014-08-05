@@ -14,6 +14,10 @@ public final class SavedDataFieldCall extends DataFieldCallBase<SavedDataField> 
         return new SavedDataFieldCall(key, CallType.SET);
     }
 
+    public static SavedDataFieldCall check(String key) {
+        return new SavedDataFieldCall(key, CallType.CHECK);
+    }
+
     private SavedDataFieldCall(String key, CallType callType) {
         super(DataFieldType.SAVED_DATA_FIELD, key, callType);
     }

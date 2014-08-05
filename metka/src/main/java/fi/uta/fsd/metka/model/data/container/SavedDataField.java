@@ -4,13 +4,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.model.data.change.Change;
-import fi.uta.fsd.metka.model.data.value.SimpleValue;
 import org.joda.time.LocalDateTime;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-
 import java.util.Map;
 
 import static fi.uta.fsd.metka.storage.util.ConversionUtil.stringToLong;
@@ -64,6 +62,16 @@ public class SavedDataField extends DataField {
         return new SavedDataField(key);
     }
 
+    @JsonIgnore
+    public boolean hasOriginalValue() {
+        return (originalValue != null && originalValue.hasValue());
+    }
+
+    @JsonIgnore
+    public boolean hasModifiedValue() {
+        return (modifiedValue != null && modifiedValue.hasValue());
+    }
+
     /**
      * Convenience method for getting an up to date value.
      * If there exists a modified value then return that, otherwise return original value.
@@ -99,9 +107,9 @@ public class SavedDataField extends DataField {
      */
     @JsonIgnore
     public boolean hasValue() {
-        if(getValue() == null || getValue().getValue() == null) {
+        if(getValue() == null) {
             return false;
-        } else return true;
+        } else return getValue().hasValue();
     }
 
     /**
@@ -129,9 +137,8 @@ public class SavedDataField extends DataField {
     public String getActualValue() {
         String value = "";
         if(hasValue()) {
-            // Assume saved value is SimpleValue, if there's some change to this later then adapt this method
 
-            value = ((SimpleValue)getValue().getValue()).getValue();
+            value = getValue().getActualValue();
             if(value == null) {
                 value = "";
             }

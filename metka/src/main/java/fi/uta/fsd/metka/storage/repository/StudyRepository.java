@@ -1,14 +1,11 @@
 package fi.uta.fsd.metka.storage.repository;
 
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.mvc.services.simple.transfer.TransferObject;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public interface StudyRepository {
     public RevisionData getNew(Long acquisition_number);
-    public boolean saveStudy(TransferObject so);
-
     /**
      * If given id/revision matches a STUDY DRAFT:
      *   Perform checks against FileLinkQueue for any recently added files.
@@ -21,6 +18,12 @@ public interface StudyRepository {
      */
     public void checkFileLinkQueue(Long id, Integer revision);
 
+    // TODO: This is done through the generalized revision save
+    //public boolean saveStudy(TransferData transferData);
+
+    // TODO: Some parts of this need to be done in the generalised revision approval process somehow
     public boolean approveStudy(Object id);
-    public RevisionData editStudy(Object studyno);
+
+    // TODO: This is done through the generalized revision edit
+    //public RevisionData editStudy(Object studyno);
 }

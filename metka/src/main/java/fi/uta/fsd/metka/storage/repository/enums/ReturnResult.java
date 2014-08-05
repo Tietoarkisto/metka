@@ -25,5 +25,15 @@ public enum ReturnResult {
     DATABASE_INSERT_FAILED,             // Insert or merge operation failed for some reason
     DATABASE_INSERT_SUCCESS,            // Insert or update operation was successful
     MISC_JSON_NOT_FOUND,                // Requested miscellaneous json file was either not found or was empty.
-    MISC_JSON_FOUND                     // Requested miscellaneous json file was found
+    MISC_JSON_FOUND,                    // Requested miscellaneous json file was found
+    REVISION_UPDATE_SUCCESSFUL,         // RevisionData was serialized and merged successfully
+    REVISION_NOT_A_DRAFT,               // Revision was not in a draft state when draft was expected
+    NO_CHANGES_TO_SAVE,                 // Save was requested but there were no changes to save
+    SAVE_SUCCESSFUL_WITH_ERRORS,        // Save was successful (changed data was updated to database) but there were field errors
+    SAVE_SUCCESSFUL,                    // Save was successful (changed data was updated to database) and there were no field errors
+    TYPE_NOT_VALID_CONFIGURATION_TYPE,  // Given type was not one of defined Configuration types
+    APPROVE_SUCCESSFUL,                 // Approval of the requested revision was successful
+    APPROVE_FAILED,                     // Approval of the requested revision failed, errors should be marked to their respective fields
+    SEARCH_FAILED,                      // Performed search failed
+    SEARCH_SUCCESS                     // Search was performed successfully
 }

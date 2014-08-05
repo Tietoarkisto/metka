@@ -133,23 +133,12 @@
 			"target": "STUDY"
 		}
 	},
-	"idField": "fileno",
-	"displayId": "fileno",
 	"fields": {
 		"study": {
 			"_comment": "This is filled automatically for each study attachment when initial revision is created.",
 			"key": "study",
 			"type": "REFERENCE",
 			"reference": "target_study_ref"
-		},
-		"fileno": {
-			"key": "fileno",
-			"translatable": false,
-			"immutable": true,
-			"unique": true,
-			"required": true,
-			"display": true,
-			"type": "INTEGER"
 		},
 		"file": {
 			"key": "file",

@@ -48,6 +48,10 @@ public class ConfigurationKey {
         return result;
     }
 
+    public ConfigurationKey copy() {
+        return new ConfigurationKey(type, version);
+    }
+
     @Override
     public String toString() {
         return "JsonKey[name="+this.getClass().getSimpleName()+", keys={type: "+type.toValue()+", version: "+version+"}]";

@@ -6,14 +6,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.change.ContainerChange;
 import fi.uta.fsd.metka.model.data.change.RowChange;
-import fi.uta.fsd.metka.model.data.value.SimpleValue;
 import fi.uta.fsd.metka.model.interfaces.Row;
 import org.joda.time.LocalDateTime;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-
 import java.util.Map;
 
 
@@ -65,9 +63,9 @@ public class SavedReference extends ContainerRow implements Row {
      */
     @JsonIgnore
     public boolean hasValue() {
-        if(reference == null || reference.getValue() == null) {
+        if(reference == null) {
             return false;
-        } else return true;
+        } else return reference.hasValue();
     }
 
     /**
@@ -81,7 +79,7 @@ public class SavedReference extends ContainerRow implements Row {
     public boolean valueEquals(String compare) {
         if(hasValue()) {
             // Assume saved value is SimpleValue, if there's some change to this later then adapt this method
-            return ((SimpleValue)reference.getValue()).getValue().equals(compare);
+            return reference.getActualValue().equals(compare);
         } else return false;
     }
 
@@ -95,7 +93,7 @@ public class SavedReference extends ContainerRow implements Row {
     public String getActualValue() {
         if(hasValue()) {
             // Assume saved value is SimpleValue, if there's some change to this later then adapt this method
-            return ((SimpleValue)reference.getValue()).getValue();
+            return reference.getActualValue();
         } else return null;
     }
 

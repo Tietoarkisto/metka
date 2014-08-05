@@ -1,20 +1,11 @@
 package fi.uta.fsd.metka.mvc.controller;
 
-import fi.uta.fsd.metka.enums.ConfigurationType;
-import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.mvc.services.ConfigurationService;
 import fi.uta.fsd.metka.mvc.services.GeneralService;
 import fi.uta.fsd.metka.mvc.services.StudyAttachmentService;
-import fi.uta.fsd.metka.mvc.services.simple.ErrorMessage;
-import fi.uta.fsd.metka.mvc.services.simple.RevisionViewDataContainer;
-import fi.uta.fsd.metka.mvc.services.simple.transfer.TransferObject;
-import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 
 /**
@@ -33,16 +24,18 @@ public class StudyAttachmentController {
     @Autowired
     private GeneralService general;
 
+    // TODO: Check that these work with generalized operations in RevisionController
+
     /**
      * Creates a new study attachment that is attached to a study with given id.
      *
      * @return JSONObject containing append ready row in JSON format
      * @throws Exception
      */
-    @RequestMapping(value = "{id}/new", method = {RequestMethod.POST}, produces = MediaType.APPLICATION_JSON_VALUE)
+    /*@RequestMapping(value = "{id}/new", method = {RequestMethod.POST}, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String newStudyAttachment(@PathVariable("id") Long id) throws Exception {
         return studyAttachments.newStudyAttachment(id);
-    }
+    }*/
 
     /**
      * Returns newest revision for requested study attachment.
@@ -51,7 +44,7 @@ public class StudyAttachmentController {
      * @return Json string containing newest revision data of requested study attachment and all needed configurations.
      * @throws Exception
      */
-    @RequestMapping(value = "load/{id}", method = {RequestMethod.POST}, produces = MediaType.APPLICATION_JSON_VALUE)
+    /*@RequestMapping(value = "load/{id}", method = {RequestMethod.POST}, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody String loadStudyAttachment(@PathVariable("id") Long id) throws Exception {
         // TODO: implement
 
@@ -71,7 +64,7 @@ public class StudyAttachmentController {
         // TODO: Return everything as a json
 
         return null;
-    }
+    }*/
 
     /**
      * Returns the requested study attachment for given study attachment id and revision.
@@ -80,7 +73,7 @@ public class StudyAttachmentController {
      * @return Json string containing requested study attachment revision data and all needed configurations.
      * @throws Exception
      */
-    @RequestMapping(value = "load/{id}/{revision}", method = {RequestMethod.POST}, produces = MediaType.APPLICATION_JSON_VALUE)
+    /*@RequestMapping(value = "load/{id}/{revision}", method = {RequestMethod.POST}, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody RevisionViewDataContainer loadStudyAttachmentRevision(@PathVariable("id") Long id, @PathVariable("revision") Integer revision) throws Exception {
         // TODO: Implement
         // Get the revision matching given parameters
@@ -91,7 +84,7 @@ public class StudyAttachmentController {
 
         // Get possible UI configuration for study attachment
         return null;
-    }
+    }*/
 
     /**
      * User requests a DRAFT revision for a study attachment with given id.
@@ -104,7 +97,7 @@ public class StudyAttachmentController {
      * @param id Id of the study attachment requested for editing.
      * @return
      */
-    @RequestMapping(value = "edit/{id}", method = {RequestMethod.POST}, produces = MediaType.APPLICATION_JSON_VALUE)
+    /*@RequestMapping(value = "edit/{id}", method = {RequestMethod.POST}, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody RevisionViewDataContainer edit(@PathVariable Long id) {
         // TODO: Implement
         // Get editable revision for a study attachment with the given id
@@ -113,9 +106,9 @@ public class StudyAttachmentController {
         // Get configuration for new revision.
         // If this fails then something is seriously wrong with either the data or database
 
-        /*RevisionViewDataContainer container = fileService.findLatestStudyAttachmentRevisionForEdit(id);*/
+        *//*RevisionViewDataContainer container = fileService.findLatestStudyAttachmentRevisionForEdit(id);*//*
         return null;
-    }
+    }*/
 
     /**
      * Saves changes in given study attachment data to the correct revision data.
@@ -124,21 +117,24 @@ public class StudyAttachmentController {
      * NOTICE: Study attachments are not approved by user request but instead by approving
      *         the parent study they are attached to.
      *
+     * TODO: This is done using the general revision/ajax/save
+     *
      * @param to TransferObject containing the study attachment data from client
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "save", method = {RequestMethod.POST},
+    /*@RequestMapping(value = "save", method = {RequestMethod.POST},
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody ErrorMessage saveStudyAttachment(@RequestBody TransferObject to) throws Exception {
+    public @ResponseBody ErrorMessage saveStudyAttachment(@RequestBody TransferData transferData) throws Exception {
         // TODO: Implement
+
 
         // Try to save changes from given TransferObject
         // This can fail for multiple reasons, such as revision not existing or the user not being the current handler of the revision
 
-        /*ErrorMessage result = fileService.studyAttachmentSaveAndApprove(to);
-        return result;*/
+        *//*ErrorMessage result = fileService.studyAttachmentSaveAndApprove(to);
+        return result;*//*
 
         return null;
-    }
+    }*/
 }

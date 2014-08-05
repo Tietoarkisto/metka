@@ -1,31 +1,16 @@
 package fi.uta.fsd.metka.mvc.services;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
-import fi.uta.fsd.metka.enums.UIRevisionState;
-import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
-import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.SavedDataField;
 import fi.uta.fsd.metka.mvc.search.GeneralSearch;
-import fi.uta.fsd.metka.mvc.search.RevisionDataRemovedContainer;
-import fi.uta.fsd.metka.mvc.services.simple.RevisionViewDataContainer;
-import fi.uta.fsd.metka.mvc.services.simple.study.StudySearchSO;
-import fi.uta.fsd.metka.mvc.services.simple.transfer.SearchResult;
-import fi.uta.fsd.metka.mvc.services.simple.transfer.TransferObject;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.StudyRepository;
-import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metkaSearch.IndexerComponent;
-import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -51,7 +36,9 @@ public class StudyService {
         indexerPaths.put("fi", DirectoryManager.formPath(false, IndexerConfigurationType.REVISION, "fi", ConfigurationType.STUDY.toValue()));
     }
 
-    public List<SearchResult> searchForStudies(StudySearchSO query) {
+    // TODO: Check that these work in the generalized revision versions
+
+    /*public List<SearchResult> searchForStudies(StudySearchSO query) {
         List<SearchResult> resultList = new ArrayList<>();
         // TODO: Find searched studies and create search result objects for them.
 
@@ -78,10 +65,10 @@ public class StudyService {
 
 
         return resultList;
-    }
+    }*/
 
     // Helper functions
-    private SearchResult resultSOFromRevisionData(RevisionData data) {
+    /*private SearchResult resultSOFromRevisionData(RevisionData data) {
         // check if data is for series
         if(data == null || data.getConfiguration().getType() != ConfigurationType.STUDY) {
             return null;
@@ -95,16 +82,16 @@ public class StudyService {
         so.setByKey("title", SavedDataField.valueAsString(data.dataField(SavedDataFieldCall.get("title")).getRight()));
 
         return so;
-    }
+    }*/
 
     /**
      * Return a default revision number for requested revisionable
      * @param id Revisionable id
      * @return
      */
-    public Pair<ReturnResult, Integer> findSingleRevisionNo(Long id) {
+    /*public Pair<ReturnResult, Integer> findSingleRevisionNo(Long id) {
         return general.getLatestRevisionNoForIdAndType(id, false, ConfigurationType.STUDY);
-    }
+    }*/
 
     /**
      * Find requested revision data and convert it to SeriesSingle simple object
@@ -112,7 +99,7 @@ public class StudyService {
      * @param revision Revision number
      * @return Revision data converted to TransferObject
      */
-    public RevisionViewDataContainer findSingleRevision(Long id, Integer revision) {
+    /*public RevisionViewDataContainer findSingleRevision(Long id, Integer revision) {
 
         // Check for FileLinkQueue events.
         // If given id/revision belongs to a draft revision then process possible FileLinkQueue events.
@@ -186,5 +173,5 @@ public class StudyService {
             }
         }
         return result;
-    }
+    }*/
 }

@@ -57,7 +57,7 @@ public class StudyFactory extends DataFactory {
         LocalDateTime time = new LocalDateTime();
 
         Configuration conf = pair.getRight();
-        RevisionData data = createInitialRevision(entity, conf, time);
+        RevisionData data = createInitialRevision(entity, conf);
 
         SelectionList list;
         Field confField;
