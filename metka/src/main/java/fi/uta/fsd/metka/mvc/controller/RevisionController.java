@@ -27,6 +27,7 @@ public class RevisionController {
         switch(ct) {
             case STUDY_VARIABLE:
             case STUDY_VARIABLES:
+            case STUDY_ATTACHMENT:
                 // TODO: Return error
                 return null;
         }
@@ -47,7 +48,7 @@ public class RevisionController {
         // Take away types that shouldn't navigate through here
         switch(ct) {
             case STUDY_VARIABLE:
-            case STUDY_VARIABLES:
+            case STUDY_ATTACHMENT:
                 // TODO: Return error
                 return null;
         }
@@ -69,7 +70,7 @@ public class RevisionController {
         // Take away types that shouldn't navigate through here
         switch(ct) {
             case STUDY_VARIABLE:
-            case STUDY_VARIABLES:
+            case STUDY_ATTACHMENT:
                 // TODO: Return error
                 return null;
         }
@@ -128,9 +129,9 @@ public class RevisionController {
         return revisions.approve(transferData);
     }
 
-    @RequestMapping(value="ajax/search/{type}", method = {RequestMethod.GET, RequestMethod.POST})
-    public @ResponseBody RevisionSearchResponse search(@RequestBody RevisionSearchRequest searchRequest, @PathVariable String type) {
-        return revisions.search(searchRequest, type);
+    @RequestMapping(value="ajax/search", method = {RequestMethod.GET, RequestMethod.POST})
+    public @ResponseBody RevisionSearchResponse search(@RequestBody RevisionSearchRequest searchRequest) {
+        return revisions.search(searchRequest);
     }
 
     /**

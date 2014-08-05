@@ -91,6 +91,6 @@ public class TransferData implements ModelBase, TransferFieldContainer {
             }
         }
 
-        return null;
+        return data;
     }
 }

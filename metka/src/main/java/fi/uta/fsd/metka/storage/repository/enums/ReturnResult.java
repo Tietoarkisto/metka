@@ -10,6 +10,7 @@ public enum ReturnResult {
     DESERIALIZATION_SUCCESS,            // Mainly result from JSONUtil. Deserialization of given resource was a success
     SERIALIZATION_FAILED,               // Mainly result from JSONUtil. Serialization of given resource was a failure
     DESERIALIZATION_FAILED,             // Mainly result from JSONUtil. Deserialization of given resource was a failure
+    REVISION_CREATED,                   // Either new revisionable was created or new draft revision was created for revisionable, edit returns revision found if existing revision is used
     REVISION_FOUND,                     // Either RevisionEntity or RevisionData was requested and result was found successfully
     REVISION_NOT_FOUND,                 // Either RevisionEntity or RevisionData was requested but no result was found
     REVISION_CONTAINED_NO_DATA,         // RevisionData was requested but RevisionEntity didn't contain any data, this is a serious error
@@ -35,5 +36,6 @@ public enum ReturnResult {
     APPROVE_SUCCESSFUL,                 // Approval of the requested revision was successful
     APPROVE_FAILED,                     // Approval of the requested revision failed, errors should be marked to their respective fields
     SEARCH_FAILED,                      // Performed search failed
-    SEARCH_SUCCESS                     // Search was performed successfully
+    SEARCH_SUCCESS,                     // Search was performed successfully
+    VIEW_SUCCESSFUL                    // Some data was requested for viewing, data was gathered successfully
 }
