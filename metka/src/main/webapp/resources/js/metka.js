@@ -6,11 +6,11 @@ define(function (require) {
 
     return {
         contextPath: MetkaJS.Globals.contextPath,
-        id: MetkaJS.SingleObject.id,
-        page: MetkaJS.Globals.page,
-        PAGE: MetkaJS.Globals.page.toUpperCase(),
-        revision: MetkaJS.SingleObject.revision,
-        state: MetkaJS.SingleObject.state,
+        id: MetkaJS.revisionId,
+        page: MetkaJS.configurationType.toLowerCase(),
+        PAGE: MetkaJS.configurationType.toUpperCase(),
+        revision: MetkaJS.revisionNo,
+        no: MetkaJS.revisionNo,
         dataConfigurations: MetkaJS.JSConfig
     };
 });

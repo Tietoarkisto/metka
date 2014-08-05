@@ -255,12 +255,12 @@ define(function (require) {
                         var state = options.states[i];
                         switch(state) {
                             case MetkaJS.E.VisibilityState.DRAFT:
-                                if(metka.state === 'DRAFT') {
+                                if (options.data.state.draft) {
                                     show = true;
                                 }
                                 break;
                             case MetkaJS.E.VisibilityState.APPROVED:
-                                if(metka.state !== 'DRAFT') {
+                                if(options.data.state.approved) {
                                     show = true;
                                 }
                                 break;

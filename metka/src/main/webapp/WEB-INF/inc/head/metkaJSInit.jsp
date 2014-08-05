@@ -13,7 +13,15 @@
 
 
 <script>
-    MetkaJS.Globals.page = "${page}";
+    MetkaJS.configurationType = "${configurationType}";
+    <c:if test="${not empty revisionId}">
+        MetkaJS.revisionId = ${revisionId};
+    </c:if>
+    <c:if test="${not empty revisionNo}">
+        MetkaJS.revisionNo = ${revisionNo};
+    </c:if>
+
+    //MetkaJS.Globals.page = "${page}";
     MetkaJS.Globals.contextPath = "${contextPath}";
 
     // Insert localisation for text DRAFT

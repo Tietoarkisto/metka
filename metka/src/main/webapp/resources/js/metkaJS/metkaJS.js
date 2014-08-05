@@ -17,7 +17,6 @@
         // Globals-object contains global variables and sequences
         Globals: {
             page: '',
-            contextPath: '',
             strings: [],
             globalId: (function () {
                 var globalId = 0;

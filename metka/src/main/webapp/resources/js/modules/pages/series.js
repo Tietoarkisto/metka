@@ -154,7 +154,9 @@ define(function (require) {
             data: {},
             dataConf: {}
         };
-        return options;
+        return function (onLoad) {
+            onLoad(options);
+        };
     } else {
         return require('./defaults');
     }

@@ -58,7 +58,7 @@ public class RevisionController {
         return "view";
     }
 
-    @RequestMapping("view/{type}/{id}/{revision}")
+    @RequestMapping("view/{type}/{id}/{no}")
     public String viewRevision(@PathVariable String type, @PathVariable Long id, @PathVariable Integer no, Model model) {
         if(!ConfigurationType.isValue(type.toUpperCase())) {
             // TODO: Return error
