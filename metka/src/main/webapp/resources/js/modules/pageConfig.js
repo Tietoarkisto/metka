@@ -7,8 +7,10 @@ define(function (require) {
         throw 'page is not set';
     }
 
+
+
     return {
-        expertSearch: require('./pages/expertSearch'),
+        expertsearch: require('./pages/expertSearch'),
         study: require('./pages/study'),
         series: require('./pages/series')
     }[page];
