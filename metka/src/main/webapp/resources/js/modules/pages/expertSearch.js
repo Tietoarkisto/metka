@@ -39,9 +39,15 @@ define(function (require) {
                                         "columnFields": [
                                             "name",
                                             "savedBy",
-                                            "savedAt",
-                                            "remove"
-                                        ]
+                                            "savedAt"
+                                        ],
+                                        onRemove: function (row, remove) {
+                                            require('./../server')('/expertSearch/remove/{id}', {
+                                                id: row.data('id')
+                                            }, function () {
+                                                $row.remove();
+                                            });
+                                        }
                                     },
                                     create: function (options) {
                                         addRow = function (data) {
@@ -197,9 +203,6 @@ define(function (require) {
                     },
                     savedAt: {
                         type: "DATE"
-                    },
-                    remove: {
-                        type: "BUTTON"
                     }
                 }
             }

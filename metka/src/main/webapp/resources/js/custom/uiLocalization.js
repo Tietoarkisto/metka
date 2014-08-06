@@ -112,6 +112,9 @@
                 "&search": {
                     "default": "Hae"
                 },
+                "&remove": {
+                    "default": "Poista"
+                },
                 "&no": {
                     "default": "Ei"
                 },

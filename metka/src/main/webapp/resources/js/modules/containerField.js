@@ -23,7 +23,12 @@ define(function (require) {
             $tbody.append($('<tr>')
                 .data(data)
                 .append(columns.map(function (column) {
-                    return $('<td>').text((function () {
+                    return $('<td>').append((function () {
+                        if (column === 'remove') {
+                            return $('<button type="button" class="btn btn-default btn-xs">')
+                                .append('<span class="glyphicon glyphicon-remove"></span> ' + MetkaJS.L10N.get('general.buttons.remove'));
+                        }
+
                         var dataConf = options.dataConf.fields[key];
                         var type = (function () {
                             if (dataConf && dataConf.type === 'REFERENCECONTAINER') {
@@ -100,6 +105,17 @@ define(function (require) {
                             if (options.field.showSaveInfo) {
                                 var addColumn = field2TableHead('general.saveInfo');
                                 return [addColumn('savedAt'), addColumn('savedBy')];
+                            }
+                        })
+                        .append(function () {
+                            if (options.field.onRemove) {
+
+                                $tbody
+                                    .on('click', 'tr button', function () {
+                                        options.field.onRemove($(this).closest('tr'));
+                                        return false;
+                                    });
+                                return field2TableHead('general.buttons')('remove');
                             }
                         })))
                 .append(function () {
