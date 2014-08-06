@@ -13,13 +13,20 @@ import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.factories.DataFactory;
 import fi.uta.fsd.metka.model.factories.VariablesFactory;
+import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.impl.StudyVariableEntity;
 import fi.uta.fsd.metka.storage.entity.impl.StudyVariablesEntity;
+import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
+import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
+import fi.uta.fsd.metka.storage.repository.RevisionCreationRepository;
+import fi.uta.fsd.metka.storage.repository.RevisionEditRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.response.RemovedInfo;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.storage.variables.StudyVariablesParser;
+import fi.uta.fsd.metka.transfer.revision.RevisionCreateRequest;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDateTime;
@@ -48,10 +55,17 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
     private JSONUtil json;
 
     @Autowired
-    private VariablesFactory factory;
+    private GeneralRepository general;
 
     @Autowired
-    private GeneralRepository general;
+    private ConfigurationRepository configurations;
+
+
+    @Autowired
+    private RevisionCreationRepository create;
+
+    @Autowired
+    private RevisionEditRepository edit;
 
     @Override
     public boolean merge(RevisionData study, VariableDataType type, Configuration studyConfig) {
@@ -90,106 +104,36 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             return result;
         }
 
-        // *********************
-        // StudyVariables checks
-        // *********************
-
-        // Check so see if a variables object exists for this study, if not then create it otherwise create new
-        List<StudyVariablesEntity> varsEntityList =
-                em.createQuery(
-                        "SELECT v FROM StudyVariablesEntity v " +
-                                "WHERE v.studyId=:study", StudyVariablesEntity.class)
-                        .setParameter("study", study.getKey().getId())
-                        .getResultList();
-        if(varsEntityList.size() > 1) {
-            // TODO: Log error, this situation should not happen, each study should only have one variables entity
-            return result;
-        }
-
-        StudyVariablesEntity variablesEntity;
-        if(varsEntityList.size() == 0) {
-            // Need to create new variables object since none apparently exist for this study.
-            variablesEntity = new StudyVariablesEntity();
-            variablesEntity.setStudyId(study.getKey().getId());
-            em.persist(variablesEntity);
-        } else {
-            // Get the variables entity
-            variablesEntity = varsEntityList.get(0);
-        }
-
-        field = study.dataField(SavedDataFieldCall.get("variables").setConfiguration(studyConfig)).getRight();
-        if(field != null && !field.valueEquals(variablesEntity.getId().toString())) {
-            // TODO: Log error, there's a discrepancy between saved value and found variables revisionable
-            return result;
-        }
-        Pair<StatusCode, SavedDataField> fieldPair = study.dataField(SavedDataFieldCall.set("variables").setTime(time).setValue(variablesEntity.getId().toString()).setConfiguration(studyConfig));
-        if(fieldPair.getRight() == null) {
-            // TODO: Log error, something went wrong during assigment
-            return result;
-        }
-        // Value changed
-        if(fieldPair.getLeft() != StatusCode.NO_CHANGE_IN_VALUE) {
-            field = fieldPair.getRight();
+        // Get or create study variables
+        Pair<ReturnResult, Configuration> variablesConfiguration = configurations.findLatestConfiguration(ConfigurationType.STUDY_VARIABLES);
+        Pair<StatusCode, SavedDataField> fieldPair = study.dataField(SavedDataFieldCall.get("variables").setConfiguration(studyConfig));
+        if(fieldPair.getLeft() == StatusCode.FIELD_MISSING || !fieldPair.getRight().hasValue()) {
+            RevisionCreateRequest request = new RevisionCreateRequest();
+            request.setType(ConfigurationType.STUDY_VARIABLES);
+            request.getParameters().put("studyid", study.getKey().getId().toString());
+            request.getParameters().put("fileid", varFileId.toString());
+            dataPair = create.create(request);
+            if(dataPair.getLeft() != ReturnResult.REVISION_CREATED) {
+                logger.error("Couldn't create new variables revisionable for study "+study.toString()+" and file "+attachmentData.toString());
+                return result;
+            }
+            fieldPair = study.dataField(SavedDataFieldCall.set("variables").setTime(time).setValue(dataPair.getRight().getKey().getId().toString()).setConfiguration(studyConfig));
             result = true;
-        }
-
-        // Get variables revision
-        RevisionEntity variablesRevision = null;
-        if(variablesEntity.getLatestRevisionNo() == null) {
-            // No initial revision, assume created here and add initial revision
-            variablesRevision = variablesEntity.createNextRevision();
-            variablesRevision.setState(RevisionState.DRAFT);
-
-            /*
-             * creates initial dataset for the first draft any exceptions thrown should force rollback
-             * automatically.
-             * This assumes the entity has empty data field and is a draft.
-            */
-            factory.newStudyVariables(variablesRevision, study.getKey().getId(), varFileId);
-            em.persist(variablesRevision);
-
-            variablesEntity.setLatestRevisionNo(variablesRevision.getKey().getRevisionNo());
-
-        } else if(!variablesEntity.hasDraft()) {
-            // No draft, create draft since merge works only with drafts
-            RevisionEntity oldVariables = em.find(RevisionEntity.class, variablesEntity.latestRevisionKey());
-            Pair<ReturnResult, RevisionData> oldData = json.deserializeRevisionData(oldVariables.getData());
-            if(oldData.getLeft() != ReturnResult.DESERIALIZATION_SUCCESS) {
-                return result;
-            }
-
-            variablesRevision = variablesEntity.createNextRevision();
-            variablesRevision.setState(RevisionState.DRAFT);
-            RevisionData newData = DataFactory.createNewRevisionData(variablesRevision, oldData.getRight());
-            Pair<ReturnResult, String> string = json.serialize(newData);
-            if(string.getLeft() != ReturnResult.SERIALIZATION_SUCCESS) {
-                logger.error("Stopped study variables merge since new data serialization failed");
-                return result;
-            }
-            variablesRevision.setData(string.getRight());
-
-            em.persist(variablesRevision);
-            variablesEntity.setLatestRevisionNo(variablesRevision.getKey().getRevisionNo());
         } else {
-            variablesRevision = em.find(RevisionEntity.class, variablesEntity.latestRevisionKey());
-        }
-
-        dataPair = json.deserializeRevisionData(variablesRevision.getData());
-
-        // Unnecessary sanity checks
-        if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
-            // Should not be possible
-            return result;
+            dataPair = general.getLatestRevisionForIdAndType(Long.parseLong(fieldPair.getRight().getActualValue()), true, ConfigurationType.STUDY_VARIABLES);
+            if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
+                logger.error("Couldn't find revision for study variables with id "+fieldPair.getRight().getActualValue()+" even though it's referenced from study "+study.toString());
+                return result;
+            }
         }
         RevisionData variablesData = dataPair.getRight();
-        field = variablesData.dataField(SavedDataFieldCall.get("study")).getRight();
-        if(field == null || !field.hasValue() || !field.getActualValue().equals(study.getKey().getId().toString())) {
-            // TODO: Something wrong with study link, log error, can't continue
-            return result;
-        }
-        field = variablesData.dataField(SavedDataFieldCall.get("file")).getRight();
-        if(field == null || !field.hasValue() || !field.getActualValue().equals(varFileId)) {
-            // TODO: Something wrong with variable file link, log error, can't continue
+        if(variablesData.getState() != RevisionState.DRAFT) {
+            dataPair = edit.edit(TransferData.buildFromRevisionData(variablesData, RemovedInfo.FALSE));
+            if(dataPair.getLeft() != ReturnResult.REVISION_CREATED) {
+                logger.error("Couldn't create new DRAFT revision for "+variablesData.getKey().toString());
+                return result;
+            }
+            variablesData = dataPair.getRight();
         }
 
         // ************************
@@ -211,9 +155,8 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             logger.error("Failed at serializing variables data");
             return result;
         }
+        RevisionEntity variablesRevision = em.find(RevisionEntity.class, new RevisionKey(variablesData.getKey().getId(), variablesData.getKey().getNo()));
         variablesRevision.setData(string.getRight());
-        // Final merge to make sure that changes go to database if for some reason variablesRevision has stopped being managed.
-        em.merge(variablesRevision);
 
         long endTime = System.currentTimeMillis();
         System.err.println("Variable parsing took "+(endTime-startTime)+"ms");
@@ -227,6 +170,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
      * @param path Path to the por file
      * @param variablesData RevisionData of the study variables object used as a base for these variables.
      */
+    // TODO: Change this to use create and edit repositories
     private void handlePorVariables(String path, Long studyId, RevisionData variablesData, LocalDateTime time) {
         PORReader reader = new PORReader();
         PORFile por;
@@ -319,6 +263,8 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             variablesContainer = variablesData.dataField(ReferenceContainerDataFieldCall.set("variables")).getRight();
         }
 
+        Pair<ReturnResult, Configuration> variableConfiguration = configurations.findLatestConfiguration(ConfigurationType.STUDY_VARIABLE);
+
         for(Pair<StudyVariableEntity, PORUtil.PORVariableHolder> pair : listOfEntitiesAndHolders) {
             // Iterate through entity/holder pairs. There should always be a holder but missing entity indicates that this is a new variable.
             // After all variables are handled there should be one non removed revisionable per variable in the current por-file.
@@ -344,10 +290,13 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             // TODO: Add saved reference to ungrouped goupings if not present in any group
 
             RevisionEntity variableRevision = null;
+            VariablesFactory factory = new VariablesFactory();
             if(variableEntity.getLatestRevisionNo() == null) {
                 // No initial revision, assume created here and add initial revision
                 variableRevision = variableEntity.createNextRevision();
-                factory.newVariable(variableRevision, variablesData.getKey().getId(), studyId);
+                Pair<ReturnResult, RevisionData> dataPair = factory.newVariable(variableRevision.getKey().getRevisionableId(), variableRevision.getKey().getRevisionNo(),
+                        variableConfiguration.getRight(), variablesData.getKey().getId().toString(), studyId.toString());
+                variableRevision.setData(json.serialize(dataPair.getRight()).getRight());
                 em.persist(variableRevision);
 
                 variableEntity.setLatestRevisionNo(variableRevision.getKey().getRevisionNo());
@@ -361,7 +310,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                     continue;
                 }
                 variableRevision = variableEntity.createNextRevision();
-                RevisionData newData = DataFactory.createNewRevisionData(variableRevision, oldData.getRight());
+                RevisionData newData = DataFactory.createDraftRevision(variableRevision.getKey().getRevisionableId(), variableRevision.getKey().getRevisionNo(), oldData.getRight());
                 Pair<ReturnResult, String> string = json.serialize(newData);
                 if(string.getLeft() != ReturnResult.SERIALIZATION_SUCCESS) {
                     logger.error("Failed to serialize "+newData.toString());

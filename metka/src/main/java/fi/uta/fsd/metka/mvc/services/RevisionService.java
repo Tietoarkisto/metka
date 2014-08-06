@@ -13,6 +13,7 @@ import fi.uta.fsd.metkaSearch.IndexerComponent;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -105,19 +106,25 @@ public class RevisionService {
     }
 
     public RevisionOperationResponse create(RevisionCreateRequest request) {
-        Pair<ReturnResult, TransferData> operationResult = create.create(request);
+        Pair<ReturnResult, RevisionData> operationResult = create.create(request);
         if(operationResult.getLeft() == ReturnResult.REVISION_CREATED) {
-            addIndexCommand(operationResult.getRight());
+            TransferData data = TransferData.buildFromRevisionData(operationResult.getRight(), RemovedInfo.FALSE);
+            addIndexCommand(data);
+            return getResponse(new ImmutablePair<>(operationResult.getLeft(), data));
+        } else {
+            return getResponse(new ImmutablePair<ReturnResult, TransferData>(operationResult.getLeft(), null));
         }
-        return getResponse(operationResult);
     }
 
     public RevisionOperationResponse edit(TransferData transferData) {
-        Pair<ReturnResult, TransferData> operationResult = edit.edit(transferData);
+        Pair<ReturnResult, RevisionData> operationResult = edit.edit(transferData);
         if(operationResult.getLeft() == ReturnResult.REVISION_CREATED) {
-            addIndexCommand(operationResult.getRight());
+            TransferData data = TransferData.buildFromRevisionData(operationResult.getRight(), RemovedInfo.FALSE);
+            addIndexCommand(data);
+            return getResponse(new ImmutablePair<>(operationResult.getLeft(), data));
+        } else {
+            return getResponse(new ImmutablePair<ReturnResult, TransferData>(operationResult.getLeft(), null));
         }
-        return getResponse(operationResult);
     }
 
     public RevisionOperationResponse save(TransferData transferData) {

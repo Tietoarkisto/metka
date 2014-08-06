@@ -104,4 +104,8 @@ public class ExpertSearchService {
     public SavedExpertSearchItem saveExpertSearch(SavedExpertSearchItem item) {
         return savedSearch.saveExpertSearch(item);
     }
+
+    public void removeExpertSearch(Long id) {
+        savedSearch.removeExpertSearch(id);
+    }
 }

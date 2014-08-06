@@ -2,15 +2,11 @@ package fi.uta.fsd.metka.storage.repository.impl;
 
 import fi.uta.fsd.metka.enums.RevisionState;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.factories.DataFactory;
-import fi.uta.fsd.metka.model.factories.SeriesFactory;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.impl.SeriesEntity;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
-import fi.uta.fsd.metka.storage.repository.SeriesRepository;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
-import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +16,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 @Repository
-public class SeriesRepositoryImpl implements SeriesRepository {
+public class SeriesRepositoryImpl {
     private static Logger logger = LoggerFactory.getLogger(SeriesRepositoryImpl.class);
     @PersistenceContext(name = "entityManager")
     private EntityManager em;
@@ -34,7 +30,6 @@ public class SeriesRepositoryImpl implements SeriesRepository {
     @Autowired
     private GeneralRepository general;
 
-    @Override
     public RevisionData editSeries(Object seriesno) {
         // Get series entity
         // Do the usual checking
@@ -75,18 +70,19 @@ public class SeriesRepositoryImpl implements SeriesRepository {
         // For each field generate change with operation UNCHANGED and put the field to original value
         // Add changes to new dataset
         RevisionEntity newRevision = series.createNextRevision();
-        RevisionData newData = DataFactory.createNewRevisionData(newRevision, oldData);
+        //RevisionData newData = DataFactory.createNewRevisionData(newRevision, oldData);
 
         // Serialize new dataset to the new revision entity
         // Persist new entity
         // TODO: Just skip checks for now, if this raises a problem at some point then do complete checks
-        newRevision.setData(json.serialize(newData).getRight());
+        //newRevision.setData(json.serialize(newData).getRight());
         em.persist(newRevision);
 
         // Set latest revision number to new revisions revision number
         // No merge needed since entity still managed
         // Return new revision data
         series.setLatestRevisionNo(newRevision.getKey().getRevisionNo());
-        return newData;
+        //return newData;
+        return null;
     }
 }

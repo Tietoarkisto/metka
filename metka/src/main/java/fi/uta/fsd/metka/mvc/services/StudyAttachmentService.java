@@ -3,7 +3,6 @@ package fi.uta.fsd.metka.mvc.services;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
-import fi.uta.fsd.metka.storage.repository.StudyAttachmentRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +14,7 @@ public class StudyAttachmentService {
     @Autowired
     private GeneralRepository general;
 
-    @Autowired
-    private StudyAttachmentRepository studyAttachments;
+
 
     @Autowired
     private ConfigurationService configurations;

@@ -53,8 +53,7 @@ public class SavedSearchRepositoryImpl implements SavedSearchRepository {
     }
 
     @Override
-    public Long removeExpertSearch(Long id) {
+    public void removeExpertSearch(Long id) {
         em.remove(em.find(SavedExpertSearchEntity.class, id));
-        return id;
     }
 }

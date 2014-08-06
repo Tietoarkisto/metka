@@ -6,17 +6,14 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.factories.SeriesFactory;
 import fi.uta.fsd.metka.model.factories.StudyAttachmentFactory;
 import fi.uta.fsd.metka.model.factories.StudyFactory;
-import fi.uta.fsd.metka.model.transfer.TransferData;
+import fi.uta.fsd.metka.model.factories.VariablesFactory;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
-import fi.uta.fsd.metka.storage.entity.impl.SeriesEntity;
-import fi.uta.fsd.metka.storage.entity.impl.StudyAttachmentEntity;
-import fi.uta.fsd.metka.storage.entity.impl.StudyEntity;
+import fi.uta.fsd.metka.storage.entity.impl.*;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionCreationRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
-import fi.uta.fsd.metka.storage.response.RemovedInfo;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.transfer.revision.RevisionCreateRequest;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -46,7 +43,7 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
     private GeneralRepository general;
 
     @Override
-    public Pair<ReturnResult, TransferData> create(RevisionCreateRequest request) {
+    public Pair<ReturnResult, RevisionData> create(RevisionCreateRequest request) {
         // TODO: Implement type specific creation requests
         Pair<ReturnResult, Configuration> configPair;
         switch(request.getType()) {
@@ -54,6 +51,8 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
             case STUDY:
             case PUBLICATION:
             case STUDY_ATTACHMENT:
+            case STUDY_VARIABLES:
+            case STUDY_VARIABLE:
                 configPair = configurations.findLatestConfiguration(request.getType());
                 break;
             default:
@@ -99,7 +98,7 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
         revisionable.setLatestRevisionNo(revision.getKey().getRevisionNo());
         em.merge(revisionable);
 
-        return new ImmutablePair<>(ReturnResult.REVISION_CREATED, TransferData.buildFromRevisionData(dataPair.getRight(), RemovedInfo.FALSE));
+        return new ImmutablePair<>(ReturnResult.REVISION_CREATED, dataPair.getRight());
     }
 
     private ReturnResult checkRequestParameters(RevisionCreateRequest request) {
@@ -118,6 +117,26 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
                 // Check that some id is provided, assumes that this id points to a study
                 if(!request.getParameters().containsKey("id")) {
                     logger.error("Creation of STUDY_ATTACHMENT requires that study.key.id is provided in parameter 'id'");
+                    return ReturnResult.PARAMETERS_MISSING;
+                }
+                break;
+            case STUDY_VARIABLES:
+                if(!request.getParameters().containsKey("studyid")) {
+                    logger.error("Creation of STUDY_VARIABLES requires that study.key.id is provided in parameter 'studyid'");
+                    return ReturnResult.PARAMETERS_MISSING;
+                }
+                if(!request.getParameters().containsKey("fileid")) {
+                    logger.error("Creation of STUDY_VARIABLES requires that study attachment id is provided in parameter 'fileid'");
+                    return ReturnResult.PARAMETERS_MISSING;
+                }
+                break;
+            case STUDY_VARIABLE:
+                if(!request.getParameters().containsKey("studyid")) {
+                    logger.error("Creation of STUDY_VARIABLES requires that study.key.id is provided in parameter 'studyid'");
+                    return ReturnResult.PARAMETERS_MISSING;
+                }
+                if(!request.getParameters().containsKey("variablesid")) {
+                    logger.error("Creation of STUDY_VARIABLES requires that study attachment id is provided in parameter 'variablesid'");
                     return ReturnResult.PARAMETERS_MISSING;
                 }
                 break;
@@ -142,6 +161,16 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
                 revisionable = new StudyAttachmentEntity();
                 ((StudyAttachmentEntity)revisionable).setStudyId(Long.parseLong(request.getParameters().get("id")));
                 break;
+            case STUDY_VARIABLES:
+                StudyVariablesEntity svs = new StudyVariablesEntity();
+                svs.setStudyId(Long.parseLong(request.getParameters().get("studyid")));
+                revisionable = svs;
+                break;
+            case STUDY_VARIABLE:
+                StudyVariableEntity sv = new StudyVariableEntity();
+                sv.setStudyId(Long.parseLong(request.getParameters().get("studyid")));
+                sv.setStudyVariablesId(Long.parseLong(request.getParameters().get("variablesid")));
+                revisionable =sv;
             case PUBLICATION:
                 // TODO: Publication
                 break;
@@ -173,6 +202,18 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
                         request.getParameters().get("id"));
                 break;
             }
+            case STUDY_VARIABLES: {
+                VariablesFactory factory = new VariablesFactory();
+                data = factory.newStudyVariables(revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo(), configuration,
+                        request.getParameters().get("studyid"), request.getParameters().get("fileid"));
+                break;
+            }
+            case STUDY_VARIABLE: {
+                VariablesFactory factory = new VariablesFactory();
+                data = factory.newVariable(revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo(), configuration,
+                        request.getParameters().get("variablesid"), request.getParameters().get("studyid"));
+                break;
+            }
             case PUBLICATION:
                 break;
             default:
@@ -192,7 +233,7 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
         switch(request.getType()) {
             case STUDY_ATTACHMENT:
                 // TODO: Add a row for this study attachment to the newest revision of target study (which should be a DRAFT but don't check that)
-                Pair<ReturnResult, RevisionData> pair = general.getLatestRevisionForIdAndType()
+                //Pair<ReturnResult, RevisionData> pair = general.getLatestRevisionForIdAndType()
                 break;
             default:
                 // Nothing to finalize

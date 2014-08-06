@@ -41,8 +41,8 @@ define(function (require) {
                                             "savedBy",
                                             "savedAt"
                                         ],
-                                        onRemove: function (row, remove) {
-                                            require('./../server')('/expertSearch/remove/{id}', row.data(), {
+                                        onRemove: function ($row, remove) {
+                                            require('./../server')('/expertSearch/remove/{id}', $row.data(), {
                                                 success: function () {
                                                     $row.remove();
                                                 }

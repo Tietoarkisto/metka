@@ -32,11 +32,10 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
-public class StudyRepositoryImpl implements StudyRepository {
+public class StudyRepositoryImpl {
     @PersistenceContext(name = "entityManager")
     private EntityManager em;
 
-    @Autowired
     private StudyFactory factory;
 
     @Autowired
@@ -105,7 +104,6 @@ public class StudyRepositoryImpl implements StudyRepository {
         return newData;
     }*/
 
-    @Override
     public void checkFileLinkQueue(Long id, Integer revision) {
         RevisionableEntity revisionable = em.find(RevisionableEntity.class, id);
         RevisionEntity entity = em.find(RevisionEntity.class, new RevisionKey(id, revision));

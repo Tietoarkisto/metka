@@ -1,5 +1,6 @@
 package fi.uta.fsd.metka.storage.repository.impl;
 
+import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
@@ -22,7 +23,7 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
     private GeneralRepository general;
 
     @Override
-    public Pair<ReturnResult, TransferData> edit(TransferData transferData) {
-
+    public Pair<ReturnResult, RevisionData> edit(TransferData transferData) {
+        return null;
     }
 }

@@ -3,7 +3,6 @@ package fi.uta.fsd.metka.mvc.services;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.mvc.search.GeneralSearch;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
-import fi.uta.fsd.metka.storage.repository.StudyRepository;
 import fi.uta.fsd.metkaSearch.IndexerComponent;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
@@ -15,9 +14,6 @@ import java.util.Map;
 
 @Service
 public class StudyService {
-    @Autowired
-    private StudyRepository repository;
-
     @Autowired
     private GeneralSearch generalSearch;
 

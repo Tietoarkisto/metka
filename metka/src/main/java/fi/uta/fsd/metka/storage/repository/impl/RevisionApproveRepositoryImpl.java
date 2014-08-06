@@ -1,13 +1,17 @@
 package fi.uta.fsd.metka.storage.repository.impl;
 
+import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.FieldError;
 import fi.uta.fsd.metka.enums.RevisionState;
 import fi.uta.fsd.metka.enums.TransferFieldType;
+import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.data.container.ReferenceContainerDataField;
 import fi.uta.fsd.metka.model.data.container.SavedDataField;
+import fi.uta.fsd.metka.model.data.container.SavedReference;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.model.transfer.TransferField;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
@@ -153,7 +157,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
     }
 
     private ReturnResult approveStudy(RevisionData revision, TransferData transferData, Configuration configuration) {
-        ReturnResult result = ReturnResult.APPROVE_FAILED;
+        ReturnResult result = ReturnResult.APPROVE_SUCCESSFUL;
         Pair<StatusCode, SavedDataField> pair;
         // Try to approve sub revisions of study. Just get all relevant revisions and check if they are drafts, if so construct TransferData and call
         // approve recursively
@@ -163,7 +167,17 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
 
         // Try to approve study variables linked to this study, this should try to approve all study variables that are linked to it
         // If there are errors in study variables (either the collection or individual variables then just mark an error to study variables field in transferData
-        // TODO:
+        ReturnResult variablesCheckResult = checkStudyVariables(revision, transferData, configuration);
+        if(variablesCheckResult != ReturnResult.APPROVE_SUCCESSFUL) {
+            result = ReturnResult.APPROVE_FAILED;
+            TransferField field = transferData.getField("variables");
+            if(field == null) {
+                field = new TransferField("variables", TransferFieldType.VALUE);
+                transferData.getFields().put(field.getKey(), field);
+            }
+            field.getErrors().add(FieldError.APPROVE_FAILED);
+        }
+
 
         // TODO: Check that all SELECTION values are still valid (e.g. that they can be found and that the values are not marked deprecated
         // TODO: Check that other references like series are still valid (e.g. they point to existing revisionables
@@ -179,6 +193,29 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
         return result;
     }
 
+    private ReturnResult checkStudyVariables(RevisionData revision, TransferData transferData, Configuration configuration) {
+        Pair<StatusCode, SavedDataField> fieldPair = revision.dataField(SavedDataFieldCall.get("variables"));
+        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValue()) {
+            // We have variables reference and it contains a value
+            Pair<ReturnResult, RevisionData> dataPair = general.getLatestRevisionForIdAndType(Long.parseLong(fieldPair.getRight().getActualValue()), false, ConfigurationType.STUDY_VARIABLES);
+            if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
+                logger.error("Didn't find revision for study variables "+ fieldPair.getRight().getActualValue()+" even though it should have existed, not halting approval");
+                return ReturnResult.APPROVE_SUCCESSFUL;
+            }
+            RevisionData variables = dataPair.getRight();
+            if(variables.getState() != RevisionState.DRAFT) {
+                // No need for approval
+                return ReturnResult.APPROVE_SUCCESSFUL;
+            }
+            Pair<ReturnResult, TransferData> approveResult = approve(TransferData.buildFromRevisionData(variables, RemovedInfo.FALSE));
+            if(approveResult.getLeft() != ReturnResult.APPROVE_SUCCESSFUL) {
+                logger.error("Tried to approve "+variables.toString()+" and failed with result "+approveResult.getLeft());
+                return ReturnResult.APPROVE_FAILED;
+            }
+        }
+        return ReturnResult.APPROVE_SUCCESSFUL;
+    }
+
     private ReturnResult approveStudyAttachment(RevisionData revision, TransferData transferData, Configuration configuration) {
         // TODO:
 
@@ -188,12 +225,42 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
     }
 
     private ReturnResult approveStudyVariables(RevisionData revision, TransferData transferData, Configuration configuration) {
-        // TODO:
+        ReturnResult result = ReturnResult.APPROVE_SUCCESSFUL;
 
         // Loop through all variables and check if they need approval.
         // Try to approve every one but if even one fails then return APPROVE_FAILED since the process of study approval can't continue
+        Pair<StatusCode, ReferenceContainerDataField> fieldPair = revision.dataField(ReferenceContainerDataFieldCall.get("variables"));
+        if(fieldPair.getLeft() != StatusCode.FIELD_FOUND) {
+            // Nothing to loop through
+            return result;
+        }
+        ReferenceContainerDataField variables = fieldPair.getRight();
+        if(variables.getReferences().size() == 0) {
+            // Nothing to loop through
+            return result;
+        }
 
-        return ReturnResult.APPROVE_FAILED;
+        for(SavedReference reference : variables.getReferences()) {
+            // Just assume that each row is correctly formed
+            Pair<ReturnResult, RevisionData> variablePair = general.getLatestRevisionForIdAndType(Long.parseLong(reference.getActualValue()), false, ConfigurationType.STUDY_VARIABLE);
+            if(variablePair.getLeft() != ReturnResult.REVISION_FOUND) {
+                logger.error("Didn't find revision for " + reference.getActualValue() + " while approving study variables. Continuin approval.");
+                continue;
+            }
+            RevisionData variable = variablePair.getRight();
+            if(variable.getState() != RevisionState.DRAFT) {
+                // Variable doesn't require approving
+                continue;
+            }
+            Pair<ReturnResult, TransferData> approveResult = approve(TransferData.buildFromRevisionData(variable, RemovedInfo.FALSE));
+            if(approveResult.getLeft() != ReturnResult.APPROVE_SUCCESSFUL) {
+                logger.error("Tried to approve "+variable.toString()+" and failed with result "+approveResult.getLeft());
+                result = ReturnResult.APPROVE_FAILED;
+                // Continue to approve variables since, no need to mark errors on transfer data since this data will never be sent to client from here
+            }
+        }
+
+        return result;
     }
 
     private ReturnResult approveStudyVariable(RevisionData revision, TransferData transferData, Configuration configuration) {

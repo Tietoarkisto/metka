@@ -11,6 +11,7 @@ import fi.uta.fsd.metka.storage.entity.impl.StudyVariableEntity;
 import fi.uta.fsd.metka.storage.entity.impl.StudyVariablesEntity;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
+import fi.uta.fsd.metka.storage.repository.RevisionCreationRepository;
 import fi.uta.fsd.metka.storage.repository.VariablesRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
@@ -98,7 +99,7 @@ public class VariablesRepositoryImpl implements VariablesRepository {
             // TODO: Just skip checks for now, if this raises a problem at some point then do complete checks
             Configuration config = configurations.findLatestConfiguration(ConfigurationType.STUDY_VARIABLES).getRight();
             revision = variables.createNextRevision();
-            data = DataFactory.createNewRevisionData(revision, data, config.getKey());
+            data = DataFactory.createDraftRevision(revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo(), data, config.getKey());
             // TODO: Just skip checks for now, if this raises a problem at some point then do complete checks
             revision.setData(json.serialize(data).getRight());
             em.persist(revision);
@@ -144,7 +145,7 @@ public class VariablesRepositoryImpl implements VariablesRepository {
             // TODO: Just skip checks for now, if this raises a problem at some point then do complete checks
             Configuration config = configurations.findLatestConfiguration(ConfigurationType.STUDY_VARIABLES).getRight();
             revision = variable.createNextRevision();
-            data = DataFactory.createNewRevisionData(revision, data, config.getKey());
+            data = DataFactory.createDraftRevision(revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo(), data, config.getKey());
             // TODO: Just skip checks for now, if this raises a problem at some point then do complete checks
             revision.setData(json.serialize(data).getRight());
             em.persist(revision);

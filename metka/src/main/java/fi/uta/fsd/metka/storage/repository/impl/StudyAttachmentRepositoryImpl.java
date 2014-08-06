@@ -8,7 +8,6 @@ import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.SavedDataField;
-import fi.uta.fsd.metka.model.factories.DataFactory;
 import fi.uta.fsd.metka.model.factories.StudyAttachmentFactory;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.StudyAttachmentQueueEntity;
@@ -16,7 +15,6 @@ import fi.uta.fsd.metka.storage.entity.impl.StudyAttachmentEntity;
 import fi.uta.fsd.metka.storage.entity.impl.StudyEntity;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
-import fi.uta.fsd.metka.storage.repository.StudyAttachmentRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import org.apache.commons.io.FilenameUtils;
@@ -32,7 +30,7 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
-public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository {
+public class StudyAttachmentRepositoryImpl {
     private static Logger logger = LoggerFactory.getLogger(StudyAttachmentRepositoryImpl.class);
     @PersistenceContext(name = "entityManager")
     private EntityManager em;
@@ -58,7 +56,6 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
      * @param path Path that should be present in the study attachment
      * @return RevisionData for a study attachment
      */
-    @Override
     public RevisionData studyAttachmentForPath(String path, Long studyId) {
         // Get all study attachments with requested path
         List<StudyAttachmentEntity> attachments = em.
@@ -102,7 +99,7 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
              * automatically.
              * This assumes the entity has empty data field and is a draft.
             */
-            revision = factory.newData(revisionEntity, studyId);
+            //revision = factory.newData(revisionEntity, studyId);
             if(revision != null) {
                 revision.dataField(SavedDataFieldCall.set("path").setValue(path));
                 entity.setFilePath(path);
@@ -121,7 +118,6 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
         return revision;
     }
 
-    @Override
     public RevisionData getEditableStudyAttachmentRevision(Long id) {
         StudyAttachmentEntity file = em.find(StudyAttachmentEntity.class, id);
         if(file == null) {
@@ -149,11 +145,11 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
 
 
             // Create new RevisionData object using the current revEntity (either new or old, doesn't matter)
-            RevisionData newData = DataFactory.createNewRevisionData(newRevision, data, configPair.getRight().getKey());
+            //RevisionData newData = DataFactory.createNewRevisionData(newRevision, data, configPair.getRight().getKey());
 
             // TODO: Set handler
 
-            Pair<ReturnResult, String> string = json.serialize(newData);
+            /*Pair<ReturnResult, String> string = json.serialize(newData);
             if(string.getLeft() != ReturnResult.SERIALIZATION_SUCCESS) {
                 logger.error("Couldn't serialize "+newData.toString());
                 return null;
@@ -162,11 +158,11 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
             newRevision.setData(string.getRight());
             em.persist(newRevision);
             file.setLatestRevisionNo(newRevision.getKey().getRevisionNo());
-            return newData;
+            return newData;*/
+            return null;
         }
     }
 
-    @Override
     public void addFileLinkEvent(Long studyId, Long fileId, String key, String path) {
         StudyEntity study = em.find(StudyEntity.class, studyId);
         if(study == null) {

@@ -9,5 +9,5 @@ import java.util.List;
 public interface SavedSearchRepository {
     @Transactional(readOnly = true) public List<SavedExpertSearchItem> listSavedSearches();
     public SavedExpertSearchItem saveExpertSearch(SavedExpertSearchItem search);
-    public Long removeExpertSearch(Long id);
+    public void removeExpertSearch(Long id);
 }
