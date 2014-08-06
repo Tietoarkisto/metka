@@ -26,7 +26,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <form class="navbar-form" role="search" action="material.html">
+                                <form class="navbar-form">
                                     <div class="input-group">
                                         <input type="text" class="form-control" autocomplete="on" placeholder="Aineistonumero">
                                         <div class="input-group-btn">

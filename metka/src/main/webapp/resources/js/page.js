@@ -4,6 +4,7 @@ define(function (require) {
     'use strict';
 
     require('./metka');
+    require('./modules/topMenu');
 
     require('./modules/pageConfig')(function (options) {
         options = $.extend({
