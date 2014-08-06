@@ -10,7 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("revision")
+@RequestMapping("/revision")
 public class RevisionController {
     @Autowired
     private RevisionService revisions;
@@ -133,110 +133,4 @@ public class RevisionController {
     public @ResponseBody RevisionSearchResponse search(@RequestBody RevisionSearchRequest searchRequest) {
         return revisions.search(searchRequest);
     }
-
-    /**
-     * Search for series. Returns search data, wrapped in a map, as json.
-     *
-     * @param searchData search data
-     * @return search data wrapped in a map as json
-     */
-    /*@RequestMapping(value="ajax/search"
-            , method = {RequestMethod.GET, RequestMethod.POST})
-    public @ResponseBody Map<String, Object> ajaxSearch(
-            @RequestBody SeriesSearchData searchData) {
-        Map<String, Object> map = new HashMap<>();
-        List<ErrorMessage> errors = new ArrayList<>();
-
-        if(searchData.getQuery() != null) {
-            List<SearchResult> results = seriesService
-                    .searchForSeries(searchData.getQuery());
-            searchData.setResults(results);
-            searchData.setQuery(searchData.getQuery());
-        }
-
-        searchData.setAbbreviations(seriesService.findAbbreviations());
-
-        if(searchData.getQuery() != null
-                && searchData.getResults().size() == 0) {
-            errors.add(ErrorMessage.noResults("series"));
-        }
-
-        map.put("searchData", searchData);
-        map.put("displayableErrors", errors);
-
-        return map;
-    }*/
-
-    /**
-     * Save series. Returns status and messages of the operation, wrapped in a
-     * map, as json.
-     *
-     * TODO: Generalize to revision/ajax/save
-     *
-     * @param transferData transfer object as json
-     * @param response http servlet response
-     * @return status and messages of operation in a map as json
-     */
-    /*@RequestMapping(value="ajax/save"
-            , method = RequestMethod.POST)
-    public @ResponseBody Map<String, Object> ajaxSave(
-            @RequestBody TransferData transferData
-            , HttpServletResponse response) {
-        Map<String, Object> map = new HashMap<>();
-        List<ErrorMessage> errors = new ArrayList<>();
-
-        boolean success = seriesService.saveSeries(transferData);
-
-        if(success) {
-            errors.add(ErrorMessage.saveSuccess());
-        } else {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            errors.add(ErrorMessage.saveFail());
-        }
-
-        map.put("success", success);
-        map.put("errors", errors);
-
-        return map;
-    }*/
-
-    /**
-     * Approve series. Returns status and messages of the operation, wrapped
-     * in a map, as json.
-     *
-     * TODO: Generalize to revision/ajax/approve (remember that STUDY_ATTACHMENT STUDY_VARIABLES and STUDY_VARIABLE are not approved by user but by approving the study)
-     *
-     * @param transferData transfer object as json
-     * @param response http servlet response
-     * @return status and messages of operation in a map as json
-     */
-    /*@RequestMapping(value="ajax/approve"
-            , method = RequestMethod.POST)
-    public @ResponseBody Map<String, Object> ajaxApprove(
-            @RequestBody TransferData transferData
-            , HttpServletResponse response) {
-        Map<String, Object> map = new HashMap<>();
-        List<ErrorMessage> errors = new ArrayList<>();
-
-        boolean success = seriesService.saveSeries(transferData);
-
-        if(!success) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            errors.add(ErrorMessage.approveFailSave());
-        } else {
-            success = seriesService.approveSeries(transferData);
-
-            if(!success) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                errors.add(ErrorMessage.approveFailValidate());
-            } else {
-                errors.add(ErrorMessage.approveSuccess());
-            }
-        }
-
-        map.put("success", success);
-        map.put("errors", errors);
-
-        return map;
-    }*/
 }

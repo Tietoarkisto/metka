@@ -1,48 +1,50 @@
 package fi.uta.fsd.metka.model.factories;
 
-import fi.uta.fsd.metka.model.configuration.Configuration;
+import fi.uta.fsd.metka.enums.RevisionState;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.general.ConfigurationKey;
 import fi.uta.fsd.metka.model.general.RevisionKey;
-import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 
 
 /**
  * Provides functionality common for all RevisionData factories
  */
 public abstract class DataFactory {
-    protected RevisionData createInitialRevision(RevisionEntity entity, Configuration config) {
-        RevisionData data = new RevisionData(
-                new RevisionKey(entity.getKey().getRevisionableId(), entity.getKey().getRevisionNo()),
-                config.getKey()
-        );
-        data.setState(entity.getState());
+    /**
+     * Creates an empty draft RevisionData.
+     *
+     * @param id Id for the new revision data
+     * @param no Revision number for the new revision data
+     * @param config Configuration that the new revision data should use
+     * @return
+     */
+    public static RevisionData createDraftRevision(Long id, Integer no, ConfigurationKey config) {
+        RevisionData data = new RevisionData(new RevisionKey(id, no), config);
+        data.setState(RevisionState.DRAFT);
         return data;
     }
 
     /**
-     * Used to create revision data based on old revision and new entity
-     * @param entity RevisionEntity of the new revision
+     * Used to create new draft revision based on old revision data
+     * @param id Id for the new revision data
+     * @param no Revision number for the new revision data
      * @param oldData Old data to which the new data is to be based on
      * @return
      */
-    public static RevisionData createNewRevisionData(RevisionEntity entity, RevisionData oldData) {
-        return createNewRevisionData(entity, oldData, oldData.getConfiguration());
+    public static RevisionData createDraftRevision(Long id, Integer no, RevisionData oldData) {
+        return createDraftRevision(id, no, oldData, oldData.getConfiguration());
     }
 
     /**
-     * Used to create revision data based on old revision and new entity, with a specific configuration.
-     * @param entity RevisionEntity of the new revision
+     * Used to create new draft reivion based on old revision but using a specific configuration.
+     * @param id Id for the new revision data
+     * @param no Revision number for the new revision data
      * @param oldData Old data to which the new data is to be based on
      * @param config Configuration key for the new data
      * @return
      */
-    public static RevisionData createNewRevisionData(RevisionEntity entity, RevisionData oldData, ConfigurationKey config) {
-        RevisionData data = new RevisionData(
-                new RevisionKey(entity.getKey().getRevisionableId(), entity.getKey().getRevisionNo()),
-                config
-        );
-        data.setState(entity.getState());
+    public static RevisionData createDraftRevision(Long id, Integer no, RevisionData oldData, ConfigurationKey config) {
+        RevisionData data = createDraftRevision(id, no, config);
 
         // Copies fields from old data to new data using Copy and then normalizes them
         RevisionData.newRevisionBuilder(oldData, data);

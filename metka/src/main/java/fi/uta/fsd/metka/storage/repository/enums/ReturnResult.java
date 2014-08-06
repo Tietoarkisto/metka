@@ -19,6 +19,7 @@ public enum ReturnResult {
     REVISIONABLE_FOUND,                 // Requested revisionable was found and returned
     REVISIONABLE_NOT_FOUND,             // Requested revisionable object couldn't be found. Either there's no revisionable for requested id, or the revisionable with the id is of different type than requested
     REVISIONABLE_OF_INCORRECT_TYPE,     // RevisionableEntity of certain ConfigurationType was requested but the found Revisionable was of a different type
+    REVISIONABLE_NOT_CREATED,           // Revisionable creation failed due to some error
     CONFIGURATION_CONTAINED_NO_DATA,    // Entity was found but data was empty, this is a serious error
     CONFIGURATION_FOUND,                // Requested configuration (either data or gui) was found
     CONFIGURATION_NOT_FOUND,            // Configuration (either data or gui) was not found
@@ -37,5 +38,8 @@ public enum ReturnResult {
     APPROVE_FAILED,                     // Approval of the requested revision failed, errors should be marked to their respective fields
     SEARCH_FAILED,                      // Performed search failed
     SEARCH_SUCCESS,                     // Search was performed successfully
-    VIEW_SUCCESSFUL                    // Some data was requested for viewing, data was gathered successfully
+    VIEW_SUCCESSFUL,                    // Some data was requested for viewing, data was gathered successfully
+    INCORRECT_TYPE_FOR_OPERATION,       // Operation was requested for a configuration type that is not handled by that operation
+    ALL_PARAMETERS_FOUND,               // All required parameters were provided
+    PARAMETERS_MISSING                 // Some parameter that is required is instead missing
 }

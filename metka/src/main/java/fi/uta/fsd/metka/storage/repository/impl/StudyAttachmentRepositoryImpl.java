@@ -9,7 +9,7 @@ import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.SavedDataField;
 import fi.uta.fsd.metka.model.factories.DataFactory;
-import fi.uta.fsd.metka.model.factories.FileFactory;
+import fi.uta.fsd.metka.model.factories.StudyAttachmentFactory;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.StudyAttachmentQueueEntity;
 import fi.uta.fsd.metka.storage.entity.impl.StudyAttachmentEntity;
@@ -38,7 +38,7 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
     private EntityManager em;
 
     @Autowired
-    private FileFactory factory;
+    private StudyAttachmentFactory factory;
 
     @Autowired
     private ConfigurationRepository configRepo;
@@ -102,7 +102,7 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
              * automatically.
              * This assumes the entity has empty data field and is a draft.
             */
-            revision = factory.newStudyAttachmentData(revisionEntity, studyId);
+            revision = factory.newData(revisionEntity, studyId);
             if(revision != null) {
                 revision.dataField(SavedDataFieldCall.set("path").setValue(path));
                 entity.setFilePath(path);
@@ -117,32 +117,6 @@ public class StudyAttachmentRepositoryImpl implements StudyAttachmentRepository 
                 return null;
             }
         }
-
-        return revision;
-    }
-
-    /**
-     * Creates new study attachment attachmed to given study
-     *
-     * @return RevisionData for a study attachment
-     */
-    @Override
-    public RevisionData newStudyAttachment(Long studyId) {
-        StudyAttachmentEntity entity = new StudyAttachmentEntity();
-        entity.setStudyId(studyId);
-        em.persist(entity);
-
-        RevisionEntity revisionEntity = entity.createNextRevision();
-
-        /*
-         * creates initial data set for the first draft any exceptions thrown should force rollback
-         * automatically.
-         * This assumes the entity has empty data field and is a draft.
-        */
-        RevisionData revision = factory.newStudyAttachmentData(revisionEntity, studyId);
-        em.persist(revisionEntity);
-
-        entity.setLatestRevisionNo(revisionEntity.getKey().getRevisionNo());
 
         return revision;
     }

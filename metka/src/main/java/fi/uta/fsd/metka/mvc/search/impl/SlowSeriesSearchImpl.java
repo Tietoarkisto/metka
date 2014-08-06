@@ -70,7 +70,7 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
             RevisionData revision = pair.getRight();
             // Use the method with less sanity checks since there's no point in getting configuration here.
             SavedDataField field = revision.dataField(SavedDataFieldCall.get("seriesabbr")).getRight();
-            if(field != null && !StringUtils.isEmpty(field.getActualValue())) list.add(field.getActualValue());
+            if(field != null && field.hasValue()) list.add(field.getActualValue());
         }
         Collections.sort(list);
         return list;

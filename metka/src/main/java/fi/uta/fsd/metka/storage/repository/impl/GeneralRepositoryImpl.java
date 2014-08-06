@@ -33,6 +33,7 @@ public class GeneralRepositoryImpl implements GeneralRepository {
 
     @PersistenceContext(name = "entityManager")
     private EntityManager em;
+
     @Autowired
     private JSONUtil json;
 
@@ -43,10 +44,7 @@ public class GeneralRepositoryImpl implements GeneralRepository {
             // No entity found, can't return any info
             return new ImmutablePair<>(ReturnResult.REVISIONABLE_NOT_FOUND, null);
         }
-        RemovedInfo info = new RemovedInfo();
-        info.setRemoved(entity.getRemoved());
-        info.setRemovedAt(entity.getRemovalDate());
-        info.setRemovedBy(entity.getRemovedBy());
+        RemovedInfo info = new RemovedInfo(entity.getRemoved(), entity.getRemovalDate(), entity.getRemovedBy());
         return new ImmutablePair<>(ReturnResult.REVISIONABLE_FOUND, info);
     }
 

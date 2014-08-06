@@ -34,16 +34,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.Map;
 
 @Repository
 public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
     private static Logger logger = LoggerFactory.getLogger(RevisionSaveRepositoryImpl.class);
-
-    @PersistenceContext(name = "entityManager")
-    private EntityManager em;
 
     @Autowired
     private ConfigurationRepository configurations;
