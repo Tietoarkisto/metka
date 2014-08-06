@@ -109,7 +109,6 @@ define(function (require) {
                         })
                         .append(function () {
                             if (options.field.onRemove) {
-
                                 $tbody
                                     .on('click', 'tr button', function () {
                                         options.field.onRemove($(this).closest('tr'));

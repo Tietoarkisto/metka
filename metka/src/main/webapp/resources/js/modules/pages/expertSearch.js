@@ -42,10 +42,10 @@ define(function (require) {
                                             "savedAt"
                                         ],
                                         onRemove: function (row, remove) {
-                                            require('./../server')('/expertSearch/remove/{id}', {
-                                                id: row.data('id')
-                                            }, function () {
-                                                $row.remove();
+                                            require('./../server')('/expertSearch/remove/{id}', row.data(), {
+                                                success: function () {
+                                                    $row.remove();
+                                                }
                                             });
                                         }
                                     },
