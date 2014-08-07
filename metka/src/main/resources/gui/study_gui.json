@@ -910,7 +910,24 @@
         {
             "type": "TAB",
             "title": "Virheet",
-            "content": []
+            "content": [{
+                "type": "COLUMN",
+                "columns": 1,
+                "rows": [
+                    {
+                        "type": "ROW",
+                        "cells": [
+                            {
+                                "type": "CELL",
+                                "title": "Virheet",
+                                "field": {
+                                    "key": "errors"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }]
         },
         {
             "type": "TAB",

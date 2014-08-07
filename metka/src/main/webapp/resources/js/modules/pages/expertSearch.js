@@ -31,18 +31,16 @@ define(function (require) {
                                     "type": "CELL",
                                     "title": "Tallennetut haut",
                                     "colspan": 1,
-                                    "elementId": "savedSearches",
                                     "field": {
                                         "readOnly": true,
                                         "displayType": "CONTAINER",
-                                        "key": "savedSearches",
                                         "columnFields": [
                                             "name",
                                             "savedBy",
                                             "savedAt"
                                         ],
                                         onRemove: function ($row, remove) {
-                                            require('./../server')('/expertSearch/remove/{id}', $row.data(), {
+                                            require('./../server')('/expertSearch/remove/{id}', $row.data('transferRow').fields, {
                                                 success: function () {
                                                     $row.remove();
                                                 }
@@ -53,7 +51,9 @@ define(function (require) {
                                         addRow = function (data) {
                                             data.name = data.title;
                                             delete data.title;
-                                            options.addRow(data);
+                                            options.addRow({
+                                                fields: data
+                                            });
                                         };
                                         this
                                             .find('table')
@@ -61,7 +61,7 @@ define(function (require) {
                                                 .find('tbody')
                                                     .on('click', 'tr', function () {
                                                         $query
-                                                            .val($(this).data('query'))
+                                                            .val($(this).data('transferRow').fields.query)
                                                             .change();
                                                     });
                                         require('./../server')('/expertSearch/list', {

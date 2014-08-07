@@ -8,6 +8,17 @@ define(function (require) {
         var key = options.field.key;
         var $tbody = $('<tbody>');
 
+        var getPropertyNS = require('./utils/getPropertyNS');
+
+        var transferField = getPropertyNS(options, 'data.fields', key);
+
+        if (!transferField) {
+            transferField = require('./utils/setPropertyNS')(options, 'data.fields', key, {
+                rows: []
+            });
+            //throw 'no data (key: {key})'.supplant(options.field);
+        }
+
 
         function field2TableHead(prefix) {
             return function (field) {
@@ -17,14 +28,15 @@ define(function (require) {
             };
         }
 
-        var getPropertyNS = require('./utils/getPropertyNS');
-
-        function addRow(data) {
+        function addRow(transferRow) {
+            transferField.rows.push(transferRow);
             $tbody.append($('<tr>')
-                .data(data)
+                .data('transferRow', transferRow)
                 .append(columns.map(function (column) {
-                    return $('<td>').append((function () {
-                        if (column === 'remove') {
+                    var $td = $('<td>');
+                    return $td.append((function () {
+                        if (column === 'rowCommands') {
+                            $td.css('text-align', 'right');
                             return $('<button type="button" class="btn btn-default btn-xs">')
                                 .append('<span class="glyphicon glyphicon-remove"></span> ' + MetkaJS.L10N.get('general.buttons.remove'));
                         }
@@ -45,7 +57,7 @@ define(function (require) {
                             return '-';
                         }
 
-                        var value = getPropertyNS(data, column);
+                        var value = getPropertyNS(transferRow, 'fields', column);
                         if (type === 'STRING' || type === 'INTEGER') {
                             return value || '-';
                         }
@@ -90,7 +102,19 @@ define(function (require) {
                         .append(function () {
                             if (/*options.field.showReferenceKey*/getPropertyNS(options, 'dataConf.fields', key, 'showReferenceKey')) {
                                 var target = options.dataConf.references[options.dataConf.fields[key].reference].target;
-                                return field2TableHead(target + '.field')(require('./../metka').dataConfigurations[target].idField);
+
+/*
+                                require('./server')('/revision/ajax/view/{page}/{id}/{no}', {
+                                    page: target.toLocaleLowerCase()
+                                }, {
+                                    method: 'GET',
+                                    success: function (data) {
+                                        log('data', data);
+                                    }
+                                });*/
+
+
+                                //return field2TableHead(target + '.field')(require('./../metka').dataConfigurations[target].idField);
                             }
                         })
                         .append((getPropertyNS(options, 'dataConf.fields', key, 'subfields') || [])
@@ -108,13 +132,21 @@ define(function (require) {
                             }
                         })
                         .append(function () {
-                            if (options.field.onRemove) {
+                            if (!require('./isFieldDisabled')(options) || options.field.onRemove) {
+                                columns.push('rowCommands');
                                 $tbody
                                     .on('click', 'tr button', function () {
-                                        options.field.onRemove($(this).closest('tr'));
+                                        var $tr = $(this).closest('tr');
+                                        if (options.field.onRemove) {
+                                            options.field.onRemove($tr);
+                                        } else {
+                                            $tr.data('transferRow').removed = true;
+                                            $tr.remove();
+                                        }
                                         return false;
                                     });
-                                return field2TableHead('general.buttons')('remove');
+                                return $('<th>');
+                                //return field2TableHead('general.buttons')('remove');
                             }
                         })))
                 .append(function () {
@@ -225,22 +257,20 @@ define(function (require) {
                                         this
                                             .text(MetkaJS.L10N.get('general.buttons.add'))
                                             .click(function () {
-                                                var dataRow = {};
+                                                var fields = {};
                                                 options.dataConf.fields[key].subfields.forEach(function (field) {
-                                                    dataRow[field] = require('./data').get(containerOptions, field);
+                                                    fields[field] = require('./data').get(containerOptions, field);
                                                 });
 
-                                                addRow(dataRow);
-
-                                                var data = JSON.parse(require('./data').get(options, key) || '[]');
-                                                data.push(dataRow);
-                                                require('./data').set(options, key, JSON.stringify(data));
+                                                addRow({
+                                                    fields: fields
+                                                });
                                             });
                                     }
                                 }, {
                                     create: function () {
                                         this
-                                            .text(MetkaJS.L10N.get('general.buttons.cancel'))
+                                            .text(MetkaJS.L10N.get('general.buttons.cancel'));
                                     }
                                 }]
                             });

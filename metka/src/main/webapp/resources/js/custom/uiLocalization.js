@@ -106,6 +106,9 @@
                 "&download": {
                     "default": "Lataa"
                 },
+                "&upload": {
+                    "default": "Lataa"
+                },
                 "&ok": {
                     "default": "OK"
                 },
@@ -566,12 +569,119 @@
             }
         },
 
+        "EXPERTSEARCH": {
+            "field": {
+                id: 'ID',
+                name: "Nimi",
+                remove: "Poista",
+                revision: 'Revisio',
+                savedAt: "Pvm.",
+                savedBy: "Käyttäjä",
+                state: 'Tila',
+                title: "Otsikko",
+                type: "Tyyppi"
+            }
+        },
+
         "SERIES": {
             "field": {
                 "seriesid": "ID",
                 "seriesabbr": "Lyhenne",
                 "seriesname": "Nimi",
                 "state": "Tila"
+            }
+        },
+
+        "STUDY": {
+            "field": {
+                "notes": "Huomautukset",
+                "note": "Huomautus",
+                "version": "Versio",
+                "versiondate": "Päivämäärä",
+                "versionpro": "Käsittelijä",
+                "versionlabel": "Lyhyt selite",
+                "versiontext": "Julkinen selite",
+                "versionnotes": "Ei-julkinen selite",
+                "filespath": "Tiedostopolku",
+                "fileslang": "Tiedoston kieli",
+                "cbattachmentlocation": "Tiedosto",
+                "cbattachmenttitle": "Kuvaus",
+                "alttitle": "Rinnakkainen nimi",
+                "partitle": "Nimi",
+                "partitlelang": "Kieli",
+                "authortype": "Tyyppi",
+                "author": "Tekijä",
+                "affiliation": "Taustaorganisaatio",
+                "otherauthor": "Muu tekijä",
+                "otherauthoraffiliation": "Taustaorganisaatio",
+                "producer": "Tuottaja",
+                "producerid": "Tunniste",
+                "produceridtype": "Tunnistetyyppi",
+                "producerrole": "Rooli",
+                "projectnr": "Projektinumero",
+                "producerabbr": "Lyhenne",
+
+                // Kuvailu: Asiasana
+                "keywordvocab": "Sanasto",
+                "keyword": "Asiasana",
+                "keywordnovocab": "Asiasana (ei sanastoa)",
+                "keywordvocaburi": "Uri",
+                "keyworduri": "Tunniste/osoite",
+
+                // Kuvailu: Tieteenala
+                "topicvocab": "Sanasto",
+                "topic": "Tieteenala",
+
+                // Kuvailu: Ajallinen kattavuus
+                "timeperiod": "Päivämäärä",
+                "timeperiodtext": "Ajallinen kattavuus",
+                "timeperiodevent": "Aikajakso",
+
+                // Kuvailu: Maa
+                "country": "Maa",
+                "countryabbr": "Lyhenne",
+
+                // Kuvailu: Perusjoukko
+                "universe": "Perusjoukko",
+                "universeclusion": "Rajaus",
+
+                // Kuvailu: Kohdealue
+                "geogcover": "Kohdealue",
+
+                // Kuvailu: Ajankohta
+                "colldate": "Päivämäärä",
+                "colldatetext": "Ajankohta",
+                "colldateevent": "Aikajakso",
+
+                // Kuvailu: Kerääjä
+                "collector": "Kerääjä",
+                "collectoraffiliation": "Taustaorganisaatio",
+
+                "resprate": "Vastausprosentti",
+                "datasources": "Lähdeaineistot",
+                "datasource": "Lähdeaineisto",
+
+                "weight": "Painokertoimet",
+                "weightyesno": "Ei painokertoimia",
+                "dataprosessing": "Sisällöllinen muokkaus",
+                "collsize": "Tiedostot",
+                "complete": "Täydellisyys",
+                "disclaimer": "Lisävarauma",
+                "datasetnotes": "Huomioitavaa",
+                "appraisals": "Arvioinnit",
+                "appraisal": "Arviointi",
+
+                // Kuvailu: Oheismateriaali
+                "relatedmaterial": "Oheismateriaalit",
+
+                // Kuvailu: Muu materiaali
+                "othermaterialuri": "Uri",
+                "othermateriallabel": "Lyhyt kuvaus",
+                "othermaterialtext": "Tarkka kuvaus",
+
+                // Kuvailu: Huomiot
+                "publicationcomment": "Julkaisuihin liittyvä huomio"
+
             }
         },
 
@@ -625,20 +735,6 @@
                 "fileoriginal": "Alkuperäinen",
                 "filepublication": "WWW",
                 "filedip": "Ulosluovutus"
-            }
-        },
-
-        "EXPERTSEARCH": {
-            "field": {
-                id: 'ID',
-                name: "Nimi",
-                remove: "Poista",
-                revision: 'Revisio',
-                savedAt: "Pvm.",
-                savedBy: "Käyttäjä",
-                state: 'Tila',
-                title: "Otsikko",
-                type: "Tyyppi"
             }
         }
     };
@@ -757,52 +853,8 @@
     // These are translated somewhere else //
     // *********************************** //
 
-    // These should go to gui configuration
-    /*# Accordion titles, these follow {type}.accordion.{accordion section key}
-    STUDY.accordion.names = Muut nimet
-    STUDY.accordion.authors = Tekijät ja tuottajat
-    STUDY.accordion.citations = Viittaustiedot
-    STUDY.accordion.keywords = Asiasanat ja tieteenalat
-    STUDY.accordion.abstract = Abstrakti
-    STUDY.accordion.coverage = Kattavuus
-    STUDY.accordion.datacollection = Aineistonkeruu
-    STUDY.accordion.usage = Aineiston käyttö
-    STUDY.accordion.related = Muut materiaalit
+    /*
 
-    # field properties, these follow {type}.field.{key}
-    SERIES.field.seriesno=ID
-    SERIES.field.seriesabb=Lyhenne
-    SERIES.field.seriesname=Nimi
-    SERIES.field.seriesdesc=Kuvaus
-    SERIES.field.seriesnotes=Huomiot
-
-    STUDY.field.id = Aineistonumero
-    STUDY.field.title = Aineiston nimi
-    STUDY.field.entitle = Aineiston nimi (en)
-    STUDY.field.seriesid = Sarja
-    STUDY.field.submissionid = Hankinta-aineistonumero
-    STUDY.field.datakind = Aineiston laatu
-    STUDY.field.dataarrivaldate = Datan saantipvm
-    STUDY.field.public = Julkaisu
-    STUDY.field.anonymization = Anonymisointi
-    STUDY.field.descpublic = Aineiston kuvailun julkaisu
-    STUDY.field.aipcomplete = Valmis pvm
-    STUDY.field.securityissues = Tietosuoja
-    STUDY.field.varpublic = Muuttujakuvailun julkaisu
-    STUDY.field.originallocation = Alkuperäinen sijainti
-    STUDY.field.processingnotes = Huomautuksia prosessiin
-
-    STUDY.field.notes = Huomautukset
-    STUDY.field.note = Huomautus
-
-    STUDY.field.dataversions = Datan versiot
-    STUDY.field.descversions = Kuvailun versiot
-    STUDY.field.version = Versio
-    STUDY.field.versiondate = Päivämäärä
-    STUDY.field.versionpro = Käsittelijä
-    STUDY.field.versionlabel = Lyhyt selite
-    STUDY.field.versiontext = Julkinen selite
-    STUDY.field.versionnotes = Ei-julkinen selite
 
     STUDY.field.varname = Nimi
     STUDY.field.varlabel = Selite
@@ -815,142 +867,8 @@
     STUDY.field.varsecurity = Tietosuoja-asiat
     STUDY.field.categories = Arvojen selitteet
 
-    STUDY.field.files = Liitetyt tiedostot
-    STUDY.field.filespath = Tiedostopolku
-    STUDY.field.fileslang = Tiedoston kieli
 
-    STUDY.field.cbattachments = Koodikirjan liitteet
-    STUDY.field.cbattachmentlocation = Tiedosto
-    STUDY.field.cbattachmenttitle = Kuvaus
 
-    # ARKISTOINTISOPIMUS
-
-    STUDY.field.termsofuse = Ehto 1: käyttöoikeus
-    STUDY.field.agreementdate = Arkistointisopimuksen pvm
-    STUDY.field.triggerdate = Jos heräte, ilmoituspvm
-    STUDY.field.termsofusechangedate = Käyttöehdon muutospvm
-    STUDY.field.depositortype = Luovuttajan tyyppi
-    STUDY.field.triggerpro = Herätteen saaja
-    STUDY.field.newtermsofuse = Käyttöehto muutospvm jälkeen
-    STUDY.field.agreementtype = Arkistointisopimuksen tapa
-    STUDY.field.triggerlabel = Herätteen selite
-    STUDY.field.agreement = Arkistointisopimustiedosto
-    STUDY.field.agreementnotes = Lisätiedot koskien arkistointisopimusta
-    STUDY.field.permission = Menettely, jos luvanantajaa ei tavoiteta tai hän ei itse voi antaa lupaa
-    STUDY.field.specialtermsofuse = Erityisehdot
-    STUDY.field.agreementfsdnotes = Muuta kommentoitavaa
-
-    # KUVAILU
-
-    STUDY.field.alttitles = Rinnakkaiset nimet
-    STUDY.field.alttitle = Rinnakkainen nimi
-
-    # Kuvailu: Muunkieliset nimet
-    STUDY.field.partitle = Nimi
-    STUDY.field.partitlelang = Kieli
-
-    # Kuvailu: Tekijä
-    STUDY.field.authortype = Tyyppi
-    STUDY.field.author = Tekijä
-    STUDY.field.affiliation = Taustaorganisaatio
-
-    # Kuvailu: Muu tekijä
-    STUDY.field.otherauthor = Muu tekijä
-    STUDY.field.otherauthoraffiliation = Taustaorganisaatio
-
-    # Kuvailu: Tuottaja
-    STUDY.field.producer = Tuottaja
-    STUDY.field.producerid = Tunniste
-    STUDY.field.produceridtype = Tunnistetyyppi
-    STUDY.field.producerrole = Rooli
-    STUDY.field.projectnr = Projektinumero
-    STUDY.field.producerabbr = Lyhenne
-
-    STUDY.field.biblcit = Viittaustiedot
-
-    # Kuvailu: Asiasana
-    STUDY.field.keywordvocab = Sanasto
-    STUDY.field.keyword = Asiasana
-    STUDY.field.keywordnovocab = Asiasana (ei sanastoa)
-    STUDY.field.keywordvocaburi = Uri
-    STUDY.field.keyworduri = Tunniste/osoite
-
-    # Kuvailu: Tieteenala
-    STUDY.field.topicvocab = Sanasto
-    STUDY.field.topic = Tieteenala
-
-    STUDY.field.abstract = Tiivistelmä
-
-    # Kuvailu: Ajallinen kattavuus
-    STUDY.field.timeperiod = Päivämäärä
-    STUDY.field.timeperiodtext = Ajallinen kattavuus
-    STUDY.field.timeperiodevent = Aikajakso
-
-    # Kuvailu: Maa
-    STUDY.field.country = Maa
-    STUDY.field.countryabbr = Lyhenne
-
-    # Kuvailu: Perusjoukko
-    STUDY.field.universe = Perusjoukko
-    STUDY.field.universeclusion = Rajaus
-
-    # Kuvailu: Kohdealue
-    STUDY.field.geogcover = Kohdealue
-
-    # Kuvailu: Ajankohta
-    STUDY.field.colldate = Päivämäärä
-    STUDY.field.colldatetext = Ajankohta
-    STUDY.field.colldateevent = Aikajakso
-
-    # Kuvailu: Kerääjä
-    STUDY.field.collector = Kerääjä
-    STUDY.field.collectoraffiliation = Taustaorganisaatio
-
-    STUDY.field.resprate = Vastausprosentti
-    STUDY.field.datasources = Lähdeaineistot
-    STUDY.field.datasource = Lähdeaineisto
-
-    STUDY.field.weight = Painokertoimet
-    STUDY.field.weightyesno = Ei painokertoimia
-    STUDY.field.dataprosessing = Sisällöllinen muokkaus
-    STUDY.field.collsize = Tiedostot
-    STUDY.field.complete = Täydellisyys
-    STUDY.field.disclaimer = Lisävarauma
-    STUDY.field.datasetnotes = Huomioitavaa
-    STUDY.field.appraisals = Arvioinnit
-    STUDY.field.appraisal = Arviointi
-
-    # Kuvailu: Oheismateriaali
-    STUDY.field.relatedmaterial = Oheismateriaalit
-
-    # Kuvailu: Muu materiaali
-    STUDY.field.othermaterialuri = Uri
-    STUDY.field.othermateriallabel = Lyhyt kuvaus
-    STUDY.field.othermaterialtext = Tarkka kuvaus
-
-    # Kuvailu: Huomiot
-    STUDY.field.publicationcomment = Julkaisuihin liittyvä huomio
-
-    STUDY.field.partitles = Aineiston muunkieliset nimet
-    STUDY.field.authors = Aineiston tekijät
-    STUDY.field.otherauthors = Aineiston muut tekijät
-    STUDY.field.producers = Aineiston tuottaneet tahot
-    STUDY.field.keywords = Aineiston sisältöä kuvaavat asiasanat
-    STUDY.field.topics = Tieteenalat, jolle aineisto kuuluu
-    STUDY.field.timeperiods = Aineiston ajallinen kattavuus
-    STUDY.field.countries = Maat, jota koskevaa tietoa aineisto sisältää
-    STUDY.field.universes = Aineiston perusjoukot/otos (kvanti) tai aineiston kohdejoukot (kvali)
-    STUDY.field.geogcovers = Maantieteelliset alueet, jotka aineisto kattaa
-    STUDY.field.colltime = Keräyksen ajankohdat
-    STUDY.field.collectors = Aineiston kerääjät
-    STUDY.field.analysis = Havaintoyksiköt (kvanti) tai aineistoyksikkötyypit (kvali)
-    STUDY.field.timemethods = Tutkimuksen aikaulottuvuudet
-    STUDY.field.collmodes = Aineiston keruumenetelmät (kvanti) tai aineistonkeruun tekniikat (kvali)
-    STUDY.field.instruments = Keruuvälineet (kvanti) tai aineistonkeruun ohjeistukset (kvali)
-    STUDY.field.sampprocs = Otantamenetelmät tai aineiston valintatavat
-    STUDY.field.relatedmaterials = Käytön ja kuvailun oheismateriaalit
-    STUDY.field.othermaterials = Linkit tietoarkiston ulkopuoliseen materiaaliin
-    STUDY.field.publicationcomments = Julkaisuihin liittyviä huomioita
 */
 
     // Section translations should go to data configuration
@@ -966,46 +884,8 @@
     STUDY.section.import_export = Import/Export*/
 
     // Selection translations should go to data configuration
-    /*# Selection list titles, these follow {type}.{key}.option.{value}
-    STUDY.datakind_list.option.1 = Ei tietoa
-    STUDY.datakind_list.option.2 = Kvanti
-    STUDY.datakind_list.option.3 = Kvali
-    STUDY.datakind_list.option.4 = Kvanti&Kvali
+    /*
 
-    STUDY.anonymization_list.option.1 = Anonymisoidaan FSD:ssä
-    STUDY.anonymization_list.option.2 = Anonymisoitu FSD:ssä
-    STUDY.anonymization_list.option.3 = Luovuttajan anonymisoima
-    STUDY.anonymization_list.option.4 = Ei vaadi anonymisointia
-    STUDY.anonymization_list.option.5 = Ei tietoa
-
-    STUDY.yes_no_na.option.1 = Kyllä
-    STUDY.yes_no_na.option.2 = Ei
-    STUDY.yes_no_na.option.3 = Ei tietoa
-
-    STUDY.dataversionlabel_list.option.1 = Lyhyt selite
-    STUDY.dataversionlabel_list.option.2 = Toinen lyhyt selite
-
-
-    STUDY.termsofuse_list.option.1 = Kaikkien käytettävissä
-    STUDY.termsofuse_list.option.2 = Tutkimus, opetus, opiskelu
-    STUDY.termsofuse_list.option.3 = Vain tutkimus
-    STUDY.termsofuse_list.option.4 = Lupa
-    STUDY.termsofuse_list.option.5 = Embargo
-
-    STUDY.depositortype_list.option.1 = Ei tietoa
-    STUDY.depositortype_list.option.2 = Yrit./yht.
-    STUDY.depositortype_list.option.3 = Tutkija(t)
-
-    STUDY.newtermsofuse_list.option.1 = Kaikkien käytettävissä
-    STUDY.newtermsofuse_list.option.2 = Tutkimus, opetus, opiskelu
-    STUDY.newtermsofuse_list.option.3 = Vain tutkimus
-    STUDY.newtermsofuse_list.option.4 = Lupa
-
-    STUDY.agreementtype_list.option.1 = Ei tietoa
-    STUDY.agreementtype_list.option.2 = Ei tarvita sopimusta
-    STUDY.agreementtype_list.option.3 = Könttäsopimus
-    STUDY.agreementtype_list.option.4 = Norm+puite
-    STUDY.agreementtype_list.option.5 = On sopimus
 
     STUDY.start_end_single.option.1 = Start
     STUDY.start_end_single.option.2 = End

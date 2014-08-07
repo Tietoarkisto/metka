@@ -2,6 +2,7 @@ define(function (require) {
     'use strict';
 
     if (location.pathname.split('/').indexOf('search') !== -1) {
+        var data = require('./../data');
         var options = {
             header: MetkaJS.L10N.get('type.SERIES.search'),
             content: [
@@ -83,21 +84,20 @@ define(function (require) {
                 }
             ],
             buttons: [
-                require('./../searchButton')('search', function () {
+                require('./../searchButton')('/revision/ajax/search', function () {
                     return {
-                        query: {
-                            searchApproved: require('./../data').get(options, 'searchApproved'),
-                                searchDraft: require('./../data').get(options, 'searchDraft'),
-                                searchRemoved: require('./../data').get(options, 'searchRemoved'),
-                                values: {
-                                seriesid: require('./../data').get(options, 'seriesid'),
-                                    seriesabbr: require('./../data').get(options, 'seriesabbr'),
-                                    seriesname: require('./../data').get(options, 'seriesname')
-                            }
+                        type: require('./../../metka').PAGE,
+                        searchApproved: data.get(options, 'searchApproved'),
+                        searchDraft: data.get(options, 'searchDraft'),
+                        searchRemoved: data.get(options, 'searchRemoved'),
+                        values: {
+                            id: data.get(options, 'seriesid'),
+                            seriesabbr: data.get(options, 'seriesabbr'),
+                            seriesname: data.get(options, 'seriesname')
                         }
                     };
                 }, function (data) {
-                    return data.searchData.results;
+                    return data.rows;
                 }, function (result) {
                     return {
                         id: result.id,

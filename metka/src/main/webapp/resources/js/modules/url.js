@@ -28,10 +28,6 @@ define(function (require) {
                     view: '{page}/view/{id}/{revision}'
                 }[key];
             }
-        })().supplant($.extend({
-            id: metka.id,
-            page: metka.page,
-            revision: metka.revision
-        }, extend));
+        })().supplant($.extend({}, metka, extend));
     };
 });

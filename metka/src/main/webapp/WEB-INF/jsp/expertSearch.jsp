@@ -8,7 +8,6 @@
     <jsp:include page="../inc/head.jsp" />
 </head>
 <body>
-    <jsp:include page="../inc/topMenu.jsp" />
     <script data-main="${pageContext.request.contextPath}/js/page.js" src="${pageContext.request.contextPath}/lib/js/require.js"></script>
 </body>
 </html>

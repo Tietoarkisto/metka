@@ -6,15 +6,15 @@
     <div class="container">
         <nav>
             <ul class="nav navbar-nav nav navbar-nav navbar-left">
-                <li${page == "desktop" ? ' class="active"': ''}><a href="${contextPath}/desktop"><spring:message code="topmenu.desktop"/></a></li>
-                <li${page == "expertSearch" ? ' class="active"': ''}><a href="${contextPath}/expertSearch"><spring:message code="topmenu.expert"/></a></li>
-                <li${page == "study" ? ' class="active"': ''}><a href="${contextPath}/study/search"><spring:message code="topmenu.study"/></a></li>
-                <li${page == "variables" ? ' class="active"': ''}><a href="${contextPath}/variables/search"><spring:message code="topmenu.variables"/></a></li>
-                <li${page == "publication" ? ' class="active"': ''}><a href="${contextPath}/publication/search"><spring:message code="topmenu.publication"/></a></li>
-                <li${page == "series" ? ' class="active"': ''}><a href="${contextPath}/series/search"><spring:message code="topmenu.series"/></a></li>
-                <li${page == "binder" ? ' class="active"': ''}><a href="${contextPath}/binder/all"><spring:message code="topmenu.binder"/></a></li>
-                <li${page == "report" ? ' class="active"': ''}><a href="${contextPath}/report/all"><spring:message code="topmenu.report"/></a></li>
-                <li${page == "settings" ? ' class="active"': ''}><a href="${contextPath}/settings"><spring:message code="topmenu.settings"/></a></li>
+                <li${configurationType == "desktop" ? ' class="active"': ''}><a href="${contextPath}/desktop"><spring:message code="topmenu.desktop"/></a></li>
+                <li${configurationType == "expertSearch" ? ' class="active"': ''}><a href="${contextPath}/expertSearch"><spring:message code="topmenu.expert"/></a></li>
+                <li${configurationType == "study" ? ' class="active"': ''}><a href="${contextPath}/revision/search/study"><spring:message code="topmenu.study"/></a></li>
+                <li${configurationType == "variables" ? ' class="active"': ''}><a href="${contextPath}/variables/search"><spring:message code="topmenu.variables"/></a></li>
+                <li${configurationType == "publication" ? ' class="active"': ''}><a href="${contextPath}/publication/search"><spring:message code="topmenu.publication"/></a></li>
+                <li${configurationType == "series" ? ' class="active"': ''}><a href="${contextPath}/revision/search/series"><spring:message code="topmenu.series"/></a></li>
+                <li${configurationType == "binder" ? ' class="active"': ''}><a href="${contextPath}/binder/all"><spring:message code="topmenu.binder"/></a></li>
+                <li${configurationType == "report" ? ' class="active"': ''}><a href="${contextPath}/report/all"><spring:message code="topmenu.report"/></a></li>
+                <li${configurationType == "settings" ? ' class="active"': ''}><a href="${contextPath}/settings"><spring:message code="topmenu.settings"/></a></li>
             </ul>
             <div class="col-sm-3 col-md-3 pull-right">
                 <div class="row">

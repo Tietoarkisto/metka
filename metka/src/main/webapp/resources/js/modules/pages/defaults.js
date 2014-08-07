@@ -1,7 +1,7 @@
 define(function (require) {
     return function (onLoad) {
         var metka = require('./../../metka');
-        require('./../server')('/revision/ajax/view/{page}/{id}/{no}', metka, {
+        require('./../server')('/revision/ajax/view/{page}/{id}/{no}', {
             method: 'GET',
             success: function (data) {
                 log(data);
