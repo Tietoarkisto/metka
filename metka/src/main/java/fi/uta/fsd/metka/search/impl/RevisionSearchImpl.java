@@ -59,7 +59,7 @@ public class RevisionSearchImpl implements RevisionSearch {
         SeriesBasicSearchCommand command;
         try {
             command = SeriesBasicSearchCommand.build(Language.DEFAULT.toValue(), request.isSearchApproved(), request.isSearchDraft(), request.isSearchRemoved(),
-                    stringToLong(request.getByKey("seriesno")), request.getByKey("seriesabbr"), request.getByKey("seriesname"));
+                    stringToLong(request.getByKey("id")), request.getByKey("seriesabbr"), request.getByKey("seriesname"));
             ResultList<RevisionResult> results = searcher.executeSearch(command);
             return new ImmutablePair<>(ReturnResult.SEARCH_SUCCESS, collectResults(results));
         } catch(QueryNodeException qne) {
