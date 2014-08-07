@@ -9,8 +9,9 @@ define(function (require) {
                 return key;
             } else {
                 return '/' + {
-                    approve: '{page}/ajax/approve',
+                    approve: 'revision/ajax/approve',
                     compareRevisions: 'history/revisions/compare',
+                    create: 'revision/ajax/create',
                     download: 'download/{id}/{revision}',
                     edit: '{page}/edit/{id}',
                     expertSearch: 'expertSearch/',
@@ -22,10 +23,9 @@ define(function (require) {
                     options: 'references/collectOptionsGroup',
                     prev: 'prev/{page}/{id}',
                     remove: 'remove/{page}/{type}/{id}',
-                    save: '{page}/ajax/save',
+                    save: 'revision/ajax/save',
                     search: '{page}/ajax/search',
-                    seriesAdd: 'series/add',
-                    view: '{page}/view/{id}/{revision}'
+                    view: 'revision/view/{page}/{id}/{revision}'
                 }[key];
             }
         })().supplant($.extend({}, metka, extend));

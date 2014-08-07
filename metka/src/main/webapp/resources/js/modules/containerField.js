@@ -10,15 +10,15 @@ define(function (require) {
 
         var getPropertyNS = require('./utils/getPropertyNS');
 
-        var transferField = getPropertyNS(options, 'data.fields', key);
+        options.transferField.rows = options.transferField.rows || [];
+        options.transferField.type = options.transferField.type || 'CONTAINER';
 
-        if (!transferField) {
-            transferField = require('./utils/setPropertyNS')(options, 'data.fields', key, {
-                rows: []
+        if (options.transferField.type !== 'CONTAINER' && options.transferField.type !== 'REFERENCECONTAINER') {
+            throw 'illegal transferField.type (type: {type}, field: {field})'.supplant({
+                type: options.transferField.type,
+                field: key
             });
-            //throw 'no data (key: {key})'.supplant(options.field);
         }
-
 
         function field2TableHead(prefix) {
             return function (field) {
@@ -28,8 +28,7 @@ define(function (require) {
             };
         }
 
-        function addRow(transferRow) {
-            transferField.rows.push(transferRow);
+        function createRow(transferRow) {
             $tbody.append($('<tr>')
                 .data('transferRow', transferRow)
                 .append(columns.map(function (column) {
@@ -57,7 +56,32 @@ define(function (require) {
                             return '-';
                         }
 
-                        var value = getPropertyNS(transferRow, 'fields', column);
+                        var transferField = getPropertyNS(transferRow, 'fields', column);
+                        var value = (function () {
+                            if (!transferField) {
+                                log('transferField not set (column: {column})'.supplant({
+                                    column: column
+                                }));
+                                return;
+                            }
+                            if (!transferField.type) {
+                                log('transferField type not set (column: {column})'.supplant({
+                                    column: column
+                                }));
+                                return;
+                            }
+
+                            if (transferField.type !== 'VALUE') {
+                                log('not implemented (type: {type}, column: {column})'.supplant({
+                                    type: transferField.type,
+                                    column: column
+                                }));
+                                return;
+                            }
+
+                            return getPropertyNS(transferField, 'value.current');
+                        })();
+
                         if (type === 'STRING' || type === 'INTEGER') {
                             return value || '-';
                         }
@@ -90,13 +114,87 @@ define(function (require) {
                 })));
         }
 
-        options.addRow = addRow;
+        function addRow(transferRow) {
+            options.transferField.rows.push(transferRow);
+            createRow(transferRow);
+        }
+
+        function addRowFromDataObject(data) {
+            addRow(require('./map/object/transferRow')(data));
+        }
+
+        function rowDialog(data, title, button, onClose) {
+            return function () {
+                var containerOptions = {
+                    data: data.call(this),
+                    dataConf: options.dataConf,
+                    content: [
+                        {
+                            type: 'COLUMN',
+                            columns: 1,
+                            rows: options.dataConf.fields[key].subfields.map(function (field) {
+                                var dataConfig = options.dataConf.fields[field];
+
+                                return {
+                                    type: 'ROW',
+                                    cells: [$.extend({}, dataConfig, {
+                                        type: 'CELL',
+                                        title: MetkaJS.L10N.get(PAGE + '.field.' + field),
+                                        field: dataConfig
+                                    })]
+                                };
+                            })
+                        }
+                    ]
+                };
+                require('./modal')({
+                    title: MetkaJS.L10N.get(['dialog', PAGE, key, title].join('.')),
+                    body: require('./container').call($('<div>'), containerOptions),
+                    buttons: [
+                        {
+                            create: function () {
+                                this
+                                    .text(MetkaJS.L10N.get('general.buttons.' + button))
+                                    .click(function () {
+                                        var data = {};
+                                        options.dataConf.fields[key].subfields.forEach(function (field) {
+                                            data[field] = require('./data').get(containerOptions, field);
+                                        });
+
+                                        onClose(data);
+                                    });
+                            }
+                        },
+                        {
+                            create: function () {
+                                this
+                                    .text(MetkaJS.L10N.get('general.buttons.cancel'));
+                            }
+                        }
+                    ]
+                });
+            };
+        }
+
+        this.data('addRow', addRow);
+        this.data('addRowFromDataObject', addRowFromDataObject);
 
         this.append($('<div class="panel">')
             .addClass('panel-' + (options.style || 'default'))
             .append($('<div class="panel-heading">')
                 .text(MetkaJS.L10N.localize(options, 'title')))
             .append($('<table class="table table-condensed">')
+                .if(options.field.onClick || !require('./isFieldDisabled')(options), function () {
+                    this
+                        .addClass('table-hover');
+
+                    $tbody
+                        .on('click', 'tr', options.field.onClick || rowDialog(function () {
+                            return $(this).data('transferRow');
+                        }, 'add', 'ok', function (data) {
+                            log('TODO: edit row', data);
+                        }));
+                })
                 .append($('<thead>')
                     .append($('<tr>')
                         .append(function () {
@@ -150,7 +248,7 @@ define(function (require) {
                             }
                         })))
                 .append(function () {
-                    (require('./data').get(options, key) || []).forEach(addRow);
+                    options.transferField.rows.forEach(createRow);
                     return $tbody;
                 }))
             .append(function () {
@@ -225,56 +323,9 @@ define(function (require) {
                     })
                         .addClass('btn-sm')
                         .text(MetkaJS.L10N.get('general.table.add'))
-                        .click(function () {
-                            var containerOptions = {
-                                data: {},
-                                dataConf: options.dataConf,
-                                content: [{
-                                    type: 'COLUMN',
-                                    columns: 1,
-                                    rows: options.dataConf.fields[key].subfields.map(function (field) {
-                                        // clear data, so we know which fields were set when modal was open
-                                        //require('./data').set(options, field, null);
-
-                                        var dataConfig = options.dataConf.fields[field];
-
-                                        return {
-                                            type: 'ROW',
-                                            cells: [$.extend({}, dataConfig, {
-                                                type: 'CELL',
-                                                title: MetkaJS.L10N.get(PAGE + '.field.' + field),
-                                                field: dataConfig
-                                            })]
-                                        };
-                                    })
-                                }]
-                            };
-                            require('./modal')({
-                                title: MetkaJS.L10N.get(['dialog', PAGE, key, 'add'].join('.')),
-                                body: require('./container').call($('<div>'), containerOptions),
-                                buttons: [{
-                                    create: function () {
-                                        this
-                                            .text(MetkaJS.L10N.get('general.buttons.add'))
-                                            .click(function () {
-                                                var fields = {};
-                                                options.dataConf.fields[key].subfields.forEach(function (field) {
-                                                    fields[field] = require('./data').get(containerOptions, field);
-                                                });
-
-                                                addRow({
-                                                    fields: fields
-                                                });
-                                            });
-                                    }
-                                }, {
-                                    create: function () {
-                                        this
-                                            .text(MetkaJS.L10N.get('general.buttons.cancel'));
-                                    }
-                                }]
-                            });
-                        }));
+                        .click(rowDialog(function () {
+                            return {};
+                        }, 'add', 'add', addRowFromDataObject)));
                 }
 
                 if (items.length) {

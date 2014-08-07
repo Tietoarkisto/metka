@@ -16,27 +16,29 @@ define(function (require) {
                                     dataConf: {
                                         fields: fields
                                     },
+                                    data: {
+                                        fields: {
+                                            searchResults: {
+                                                type: 'CONTAINER'
+                                            }
+                                        }
+                                    },
                                     style: 'primary',
                                     readOnly: true,
                                     field: {
                                         displayType: 'CONTAINER',
                                         key: "searchResults",
-                                        columnFields: columnFields
+                                        columnFields: columnFields,
+                                        onClick: trOnClick
                                     }
                                 };
                                 var results = getResults(data);
-                                require('./data').set(fieldOptions, 'searchResults', results.map(mapResult));
+
+                                fieldOptions.data.fields.searchResults.rows = results.map(mapResult).map(require('./map/object/transferRow'));
                                 $('#searchResultTable').remove();
-
-
 
                                 var $field = require('./field').call($('<div>'), fieldOptions)
                                     .attr('id', 'searchResultTable');
-
-                                $field.find('table')
-                                    .addClass('table-hover')
-                                    .find('tbody')
-                                    .on('click', 'tr', trOnClick);
 
                                 $field.find('.panel-heading')
                                     .text(MetkaJS.L10N.get('search.result.title'))

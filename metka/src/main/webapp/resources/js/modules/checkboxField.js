@@ -3,14 +3,18 @@ define(function (require) {
 
     return function (options) {
         var key = options.field.key;
+        options.transferField.value = options.transferField.value || {
+            current: undefined
+        };
+
         this
             .addClass('checkbox')
             .append(require('./label')(options)
                 .prepend(require('./input').call($('<input type="checkbox">'), options)
                     .prop('disabled', require('./isFieldDisabled')(options))
                     .change(function () {
-                        require('./data').set(options, key, $(this).prop('checked'));
+                        options.transferField.value.current = $(this).prop('checked');
                     })
-                    .prop('checked', !!require('./data').get(options, key))));
+                    .prop('checked', !!options.transferField.value.current)));
     };
 });

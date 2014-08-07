@@ -19,7 +19,7 @@ define(function (require) {
                                     "colspan": 2,
                                     "field": {
                                         "displayType": "INTEGER",
-                                        "key": "seriesid"
+                                        "key": "id"
                                     }
                                 },
                                 {
@@ -91,7 +91,7 @@ define(function (require) {
                         searchDraft: data.get(options, 'searchDraft'),
                         searchRemoved: data.get(options, 'searchRemoved'),
                         values: {
-                            id: data.get(options, 'seriesid'),
+                            id: data.get(options, 'id'),
                             seriesabbr: data.get(options, 'seriesabbr'),
                             seriesname: data.get(options, 'seriesname')
                         }
@@ -102,13 +102,12 @@ define(function (require) {
                     return {
                         id: result.id,
                         revision: result.revision,
-                        seriesid: result.id,
                         seriesabbr: result.values.seriesabbr,
                         seriesname: result.values.seriesname,
                         state: MetkaJS.L10N.get('search.result.state.{state}'.supplant(result))
                     };
                 }, {
-                    seriesid: {
+                    id: {
                         type: 'INTEGER'
                     },
                     seriesabbr: {
@@ -121,13 +120,16 @@ define(function (require) {
                         type: 'STRING'
                     }
                 }, [
-                    "seriesid",
+                    "id",
                     "seriesabbr",
                     "seriesname",
                     "state"
                 ], function () {
-                    var $this = $(this);
-                    MetkaJS.view($this.data('id'), $this.data('revision'));
+                    var transferRow = $(this).data('transferRow');
+                    require('./../assignUrl')('view', {
+                        id: transferRow.fields.id.value.current,
+                        revision: transferRow.fields.revision.value.current
+                    });
                 }),
                 {
                     "&title": {
@@ -146,12 +148,38 @@ define(function (require) {
                     create: function () {
                         this
                             .click(function () {
-                                require('./../assignUrl')('seriesAdd');
+                                require('./../server')('create', {
+                                    data: JSON.stringify({
+                                        type: 'SERIES'
+                                    }),
+                                    success: function (response) {
+                                        if (response.result === 'REVISION_CREATED') {
+                                            require('./../assignUrl')('view', {
+                                                id: response.data.key.id,
+                                                revision: response.data.key.no,
+                                                page: response.data.configuration.type.toLowerCase()
+                                            });
+                                        }
+                                    }
+                                });
                             });
                     }
                 }
             ],
-            data: {},
+            data: {
+                fields: {
+                    searchApproved: {
+                        value: {
+                            current: true
+                        }
+                    },
+                    searchDraft: {
+                        value: {
+                            current: true
+                        }
+                    }
+                }
+            },
             dataConf: {}
         };
         return function (onLoad) {

@@ -3,6 +3,10 @@ define(function (require) {
 
     return function (options) {
 
+        if (!options.transferField) {
+            options.transferField = require('./utils/getPropertyNS')(options, 'data.fields', options.field.key) || require('./utils/setPropertyNS')(options, 'data.fields', options.field.key, {});
+        }
+
         //this.options.field.multichoice
         //this.options.field.showReferenceKey
         //this.options.field.showReferenceValue
