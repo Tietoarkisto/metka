@@ -23,7 +23,7 @@ import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionCreationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionEditRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
-import fi.uta.fsd.metka.storage.response.RemovedInfo;
+import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.storage.variables.StudyVariablesParser;
 import fi.uta.fsd.metka.transfer.revision.RevisionCreateRequest;
@@ -128,7 +128,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         }
         RevisionData variablesData = dataPair.getRight();
         if(variablesData.getState() != RevisionState.DRAFT) {
-            dataPair = edit.edit(TransferData.buildFromRevisionData(variablesData, RemovedInfo.FALSE));
+            dataPair = edit.edit(TransferData.buildFromRevisionData(variablesData, RevisionableInfo.FALSE));
             if(dataPair.getLeft() != ReturnResult.REVISION_CREATED) {
                 logger.error("Couldn't create new DRAFT revision for "+variablesData.getKey().toString());
                 return result;

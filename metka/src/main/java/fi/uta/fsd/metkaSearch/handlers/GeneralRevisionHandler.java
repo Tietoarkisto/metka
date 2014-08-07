@@ -19,7 +19,7 @@ import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
-import fi.uta.fsd.metka.storage.response.RemovedInfo;
+import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import fi.uta.fsd.metkaSearch.analyzer.CaseInsensitiveWhitespaceAnalyzer;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
@@ -97,12 +97,12 @@ class GeneralRevisionHandler implements RevisionHandler {
         // This is used to determine if there's been some breaking bugs that mean that the document can't be added to the index
         boolean addDocument = true;
 
-        Pair<ReturnResult, RemovedInfo> removedInfoPair = general.getRevisionableRemovedInfo(data.getKey().getId());
+        Pair<ReturnResult, RevisionableInfo> removedInfoPair = general.getRevisionableInfo(data.getKey().getId());
         if(removedInfoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
             // For some reason removed info check failed to find the entity. stop indexing
             return true;
         }
-        RemovedInfo info = removedInfoPair.getRight();
+        RevisionableInfo info = removedInfoPair.getRight();
 
         // Do some default stuff
         document.indexIntegerField("key.id", data.getKey().getId(), YES);

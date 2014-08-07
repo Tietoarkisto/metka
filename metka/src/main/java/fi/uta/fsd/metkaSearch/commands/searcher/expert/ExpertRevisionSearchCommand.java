@@ -1,6 +1,7 @@
 package fi.uta.fsd.metkaSearch.commands.searcher.expert;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
+import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
@@ -49,7 +50,7 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
             lang = splits[0].split(":", 2)[0];
             qry = splits.length > 1 ? splits[1] : "";
         } else {
-            lang = "fi";
+            lang = Language.DEFAULT.toValue();
         }
 
         DirectoryManager.DirectoryPath path = DirectoryManager.formPath(false, iType, lang, cType.toValue());

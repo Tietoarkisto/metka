@@ -1,6 +1,7 @@
 package fi.uta.fsd.metkaSearch.commands.searcher;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
+import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metkaSearch.LuceneConfig;
 import fi.uta.fsd.metkaSearch.analyzer.CaseInsensitiveKeywordAnalyzer;
 import fi.uta.fsd.metkaSearch.analyzer.CaseInsensitiveWhitespaceAnalyzer;
@@ -65,7 +66,7 @@ public abstract class RevisionSearchCommandBase<T extends SearchResult> extends 
     }
 
     protected void addTextAnalyzer(String key) {
-        if(getPath().getLanguage().equals("fi")) {
+        if(getPath().getLanguage().equals(Language.DEFAULT.toValue())) {
             analyzers.put(key, FinnishVoikkoAnalyzer.ANALYZER);
         } else {
             // Add some other tokenizing analyzer if StandardAnalyzer is not enough

@@ -1,16 +1,10 @@
 package fi.uta.fsd.metka.mvc.services;
 
-import fi.uta.fsd.metka.enums.ConfigurationType;
-import fi.uta.fsd.metka.mvc.search.GeneralSearch;
+import fi.uta.fsd.metka.search.GeneralSearch;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metkaSearch.IndexerComponent;
-import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
-import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class StudyService {
@@ -25,12 +19,6 @@ public class StudyService {
 
     @Autowired
     private IndexerComponent indexer; // Provide revision indexing services.
-
-    private static Map<String, DirectoryManager.DirectoryPath> indexerPaths = new HashMap<>();
-
-    static {
-        indexerPaths.put("fi", DirectoryManager.formPath(false, IndexerConfigurationType.REVISION, "fi", ConfigurationType.STUDY.toValue()));
-    }
 
     // TODO: Check that these work in the generalized revision versions
 

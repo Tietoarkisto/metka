@@ -1,4 +1,4 @@
-package fi.uta.fsd.metka.mvc.search;
+package fi.uta.fsd.metka.search;
 
 import org.springframework.transaction.annotation.Transactional;
 

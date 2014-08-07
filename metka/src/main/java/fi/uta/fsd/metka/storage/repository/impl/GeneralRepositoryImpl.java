@@ -11,7 +11,7 @@ import fi.uta.fsd.metka.storage.entity.SequenceEntity;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
-import fi.uta.fsd.metka.storage.response.RemovedInfo;
+import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -38,13 +38,15 @@ public class GeneralRepositoryImpl implements GeneralRepository {
     private JSONUtil json;
 
     @Override
-    public Pair<ReturnResult, RemovedInfo> getRevisionableRemovedInfo(Long id) {
+    public Pair<ReturnResult, RevisionableInfo> getRevisionableInfo(Long id) {
         RevisionableEntity entity = em.find(RevisionableEntity.class, id);
         if(entity == null) {
             // No entity found, can't return any info
             return new ImmutablePair<>(ReturnResult.REVISIONABLE_NOT_FOUND, null);
         }
-        RemovedInfo info = new RemovedInfo(entity.getRemoved(), entity.getRemovalDate(), entity.getRemovedBy());
+        RevisionableInfo info = new RevisionableInfo(entity.getId(), ConfigurationType.fromValue(entity.getType()),
+                entity.getCurApprovedNo(), entity.getLatestRevisionNo(),
+                entity.getRemoved(), entity.getRemovalDate(), entity.getRemovedBy());
         return new ImmutablePair<>(ReturnResult.REVISIONABLE_FOUND, info);
     }
 

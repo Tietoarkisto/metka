@@ -1,22 +1,23 @@
+import fi.uta.fsd.metka.enums.ConfigurationType;
+import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.impl.SeriesEntity;
 import fi.uta.fsd.metka.storage.entity.impl.StudyEntity;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
-import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metkaSearch.IndexerComponent;
 import fi.uta.fsd.metkaSearch.LuceneConfig;
 import fi.uta.fsd.metkaSearch.SearcherComponent;
 import fi.uta.fsd.metkaSearch.analyzer.FinnishVoikkoAnalyzer;
+import fi.uta.fsd.metkaSearch.commands.indexer.DummyIndexerCommand;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
+import fi.uta.fsd.metkaSearch.commands.indexer.WikipediaIndexerCommand;
 import fi.uta.fsd.metkaSearch.commands.searcher.SearchCommand;
 import fi.uta.fsd.metkaSearch.commands.searcher.expert.ExpertRevisionSearchCommand;
 import fi.uta.fsd.metkaSearch.commands.searcher.series.SeriesAbbreviationUniquenessSearchCommand;
 import fi.uta.fsd.metkaSearch.commands.searcher.series.SeriesBasicSearchCommand;
 import fi.uta.fsd.metkaSearch.directory.DirectoryInformation;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
-import fi.uta.fsd.metkaSearch.commands.indexer.DummyIndexerCommand;
-import fi.uta.fsd.metkaSearch.commands.indexer.WikipediaIndexerCommand;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import fi.uta.fsd.metkaSearch.results.BooleanResult;
 import fi.uta.fsd.metkaSearch.results.ResultList;
@@ -49,7 +50,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/applicationContext.xml")
@@ -148,7 +150,7 @@ public class SpringLuceneTests {
     @Test
     public void fiWikipediaIndexingTest() {
         try {
-            DirectoryManager.DirectoryPath path = DirectoryManager.formPath(false, IndexerConfigurationType.WIKIPEDIA, "fi");
+            DirectoryManager.DirectoryPath path = DirectoryManager.formPath(false, IndexerConfigurationType.WIKIPEDIA, Language.DEFAULT.toValue());
             indexer.startIndexer(path);
             if(indexer.hasRunningIndexers()) {
                 indexer.addCommand(WikipediaIndexerCommand.index(path, "/home/lasseku/wikipedia/fi/fiwiki-latest-pages-articles.xml"));
@@ -166,7 +168,7 @@ public class SpringLuceneTests {
     @Test
     public void fiWikipediaIndexSearchTest() {
         try {
-            DirectoryManager.DirectoryPath path = DirectoryManager.formPath(false, IndexerConfigurationType.WIKIPEDIA, "fi");
+            DirectoryManager.DirectoryPath path = DirectoryManager.formPath(false, IndexerConfigurationType.WIKIPEDIA, Language.DEFAULT.toValue());
             DirectoryInformation indexer = DirectoryManager.getIndexDirectory(path);
             IndexReader reader = indexer.getIndexReader();
             IndexSearcher searcher = new IndexSearcher(reader);
@@ -237,7 +239,8 @@ public class SpringLuceneTests {
 
     @Test
     public void seriesIndexTest() throws IOException {
-        DirectoryManager.DirectoryPath path = new DirectoryManager.DirectoryPath(false, IndexerConfigurationType.REVISION, "fi", ConfigurationType.SERIES.toValue());
+        DirectoryManager.DirectoryPath path = new DirectoryManager.DirectoryPath(false, IndexerConfigurationType.REVISION, Language.DEFAULT.toValue(),
+                ConfigurationType.SERIES.toValue());
         List<SeriesEntity> seriesList = em.createQuery("SELECT s FROM SeriesEntity s", SeriesEntity.class).getResultList();
         for(SeriesEntity series : seriesList) {
             List<RevisionEntity> revisions = em.createQuery("SELECT r FROM RevisionEntity r WHERE r.key.revisionableId=:id", RevisionEntity.class)
@@ -259,7 +262,7 @@ public class SpringLuceneTests {
 
     @Test
     public void seriesUniquenessTest() throws IOException {
-        SearchCommand<BooleanResult> command = SeriesAbbreviationUniquenessSearchCommand.build("fi", 4L, "TS3");
+        SearchCommand<BooleanResult> command = SeriesAbbreviationUniquenessSearchCommand.build(Language.DEFAULT.toValue(), 4L, "TS3");
         ResultList<BooleanResult> results = searcher.executeSearch(command);
         assertTrue(results.getResults().size() == 1);
         assertTrue(results.getResults().get(0).getType() == ResultList.ResultType.BOOLEAN);
@@ -271,7 +274,7 @@ public class SpringLuceneTests {
 
     @Test
     public void seriesBasicTest() throws IOException, QueryNodeException {
-        SearchCommand<RevisionResult> command = SeriesBasicSearchCommand.build("fi", false, true, true, null, null, null);
+        SearchCommand<RevisionResult> command = SeriesBasicSearchCommand.build(Language.DEFAULT.toValue(), false, true, true, null, null, null);
         ResultList<RevisionResult> results = searcher.executeSearch(command);
         ResultList.ResultType type = results.getType();
         assertTrue(type == ResultList.ResultType.REVISION);
@@ -285,7 +288,7 @@ public class SpringLuceneTests {
 
     @Test
     public void studyIndexTest() throws IOException {
-        DirectoryManager.DirectoryPath path = new DirectoryManager.DirectoryPath(false, IndexerConfigurationType.REVISION, "fi", ConfigurationType.STUDY.toValue());
+        DirectoryManager.DirectoryPath path = new DirectoryManager.DirectoryPath(false, IndexerConfigurationType.REVISION, Language.DEFAULT.toValue(), ConfigurationType.STUDY.toValue());
         List<StudyEntity> studyList = em.createQuery("SELECT s FROM StudyEntity s", StudyEntity.class).getResultList();
         long start = System.currentTimeMillis();
         for(StudyEntity study : studyList) {
@@ -311,7 +314,7 @@ public class SpringLuceneTests {
 
     @Test
     public void tempSearchTest() throws IOException, QueryNodeException {
-        DirectoryManager.DirectoryPath path = new DirectoryManager.DirectoryPath(false, IndexerConfigurationType.REVISION, "fi", ConfigurationType.STUDY.toValue());
+        DirectoryManager.DirectoryPath path = new DirectoryManager.DirectoryPath(false, IndexerConfigurationType.REVISION, Language.DEFAULT.toValue(), ConfigurationType.STUDY.toValue());
         DirectoryInformation dir = DirectoryManager.getIndexDirectory(path);
         IndexReader reader = dir.getIndexReader();
         IndexSearcher searcher = new IndexSearcher(reader);

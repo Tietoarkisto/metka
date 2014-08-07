@@ -1,25 +1,31 @@
 package fi.uta.fsd.metka.mvc.services;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
+import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import fi.uta.fsd.metka.model.transfer.TransferData;
+import fi.uta.fsd.metka.search.RevisionSearch;
 import fi.uta.fsd.metka.storage.repository.*;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
-import fi.uta.fsd.metka.storage.response.RemovedInfo;
+import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.transfer.revision.*;
 import fi.uta.fsd.metkaSearch.IndexerComponent;
+import fi.uta.fsd.metkaSearch.commands.indexer.IndexerCommand;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
-import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
-import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Contains operations common for all revisions like save and approve.
@@ -27,6 +33,8 @@ import java.util.Map;
  */
 @Service
 public class RevisionService {
+    private static Logger logger = LoggerFactory.getLogger(RevisionService.class);
+
     @Autowired
     private RevisionCreationRepository create;
 
@@ -40,6 +48,9 @@ public class RevisionService {
     private RevisionApproveRepository approve;
 
     @Autowired
+    private RevisionSearch search;
+
+    @Autowired
     private GeneralRepository general;
 
     @Autowired
@@ -48,14 +59,9 @@ public class RevisionService {
     @Autowired
     private IndexerComponent indexer;
 
-    private static Map<String, DirectoryManager.DirectoryPath> indexerPaths = new HashMap<>();
+    private final Map<RevisionKey, IndexerCommand> studyCommandBatch = new ConcurrentHashMap<>();
 
-    static {
-        // TODO: Add language paths
-        for(ConfigurationType type : ConfigurationType.values()) {
-            indexerPaths.put(type.toValue(), DirectoryManager.formPath(false, IndexerConfigurationType.REVISION, "fi", type.toValue()));
-        }
-    }
+    private volatile boolean runningBatch = false;
 
     public RevisionDataResponse view(Long id, String type) {
         RevisionDataResponse response = new RevisionDataResponse();
@@ -82,7 +88,7 @@ public class RevisionService {
             response.setResult(dataPair.getLeft());
             return response;
         }
-        Pair<ReturnResult, RemovedInfo> infoPair = general.getRevisionableRemovedInfo(dataPair.getRight().getKey().getId());
+        Pair<ReturnResult, RevisionableInfo> infoPair = general.getRevisionableInfo(dataPair.getRight().getKey().getId());
         if(infoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
             response.setResult(infoPair.getLeft());
         }
@@ -108,7 +114,7 @@ public class RevisionService {
     public RevisionOperationResponse create(RevisionCreateRequest request) {
         Pair<ReturnResult, RevisionData> operationResult = create.create(request);
         if(operationResult.getLeft() == ReturnResult.REVISION_CREATED) {
-            TransferData data = TransferData.buildFromRevisionData(operationResult.getRight(), RemovedInfo.FALSE);
+            TransferData data = TransferData.buildFromRevisionData(operationResult.getRight(), RevisionableInfo.FALSE);
             addIndexCommand(data);
             return getResponse(new ImmutablePair<>(operationResult.getLeft(), data));
         } else {
@@ -119,7 +125,7 @@ public class RevisionService {
     public RevisionOperationResponse edit(TransferData transferData) {
         Pair<ReturnResult, RevisionData> operationResult = edit.edit(transferData);
         if(operationResult.getLeft() == ReturnResult.REVISION_CREATED) {
-            TransferData data = TransferData.buildFromRevisionData(operationResult.getRight(), RemovedInfo.FALSE);
+            TransferData data = TransferData.buildFromRevisionData(operationResult.getRight(), RevisionableInfo.FALSE);
             addIndexCommand(data);
             return getResponse(new ImmutablePair<>(operationResult.getLeft(), data));
         } else {
@@ -159,28 +165,62 @@ public class RevisionService {
     public RevisionSearchResponse search(RevisionSearchRequest request) {
         RevisionSearchResponse response = new RevisionSearchResponse();
 
-        // TODO: Call correct searches
+        Pair<ReturnResult, List<RevisionSearchResult>> result = search.search(request);
+        response.setResult(result.getLeft());
+        if(result.getLeft() == ReturnResult.SEARCH_SUCCESS) {
+            for(RevisionSearchResult searchResult : result.getRight()) {
+                response.getRows().add(searchResult);
+            }
+        }
 
         return response;
     }
 
+    // TODO: Handle languages
     private void addIndexCommand(TransferData data) {
         // Separates calls to index sub components of study, should really be collected as a queue so that multiple study indexing requests are not made in a short period
         switch(data.getConfiguration().getType()) {
             case STUDY_ATTACHMENT:
-                // TODO: Get study id and index that instead
-                break;
             case STUDY_VARIABLE:
-                // TODO: Get study id and index that instead
+            case STUDY_VARIABLES: {
+                Long id = Long.parseLong(data.getField("study").getValue().getCurrent());
+                addStudyIndexerCommand(id, true);
                 break;
-            case STUDY_VARIABLES:
-                // TODO: Get study id and index that instead
-                break;
+            }
             default:
-                indexer.addCommand(RevisionIndexerCommand.index(indexerPaths.get(data.getConfiguration().getType().toValue()),
-                        data.getKey().getId(), data.getKey().getNo()));
+                indexer.addCommand(RevisionIndexerCommand.index(data.getConfiguration().getType(), Language.DEFAULT.toValue(), data.getKey().getId(), data.getKey().getNo()));
                 break;
         }
     }
 
+    private void addStudyIndexerCommand(Long id, boolean index) {
+        Pair<ReturnResult, RevisionData> pair = general.getLatestRevisionForIdAndType(id, false, ConfigurationType.STUDY);
+        if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
+            logger.error("Tried to add index command for study with id "+id+" but didn't find any revisions with result "+pair.getLeft());
+            return;
+        }
+        try {
+            // Wait while the current batch is being handled
+            while(runningBatch = true) {
+                Thread.sleep(500);
+            }
+            if(index) {
+                studyCommandBatch.put(pair.getRight().getKey(), RevisionIndexerCommand.index(ConfigurationType.STUDY, pair.getRight().getKey()));
+            } else {
+                studyCommandBatch.put(pair.getRight().getKey(), RevisionIndexerCommand.remove(ConfigurationType.STUDY, pair.getRight().getKey()));
+            }
+        } catch(InterruptedException ie) {
+            // Well damn, let's not add the index command then
+        }
+    }
+
+    @Scheduled(fixedDelay = 1 * 60 *1000)
+    private void executeStudyBatch() {
+        runningBatch = true;
+        for(IndexerCommand command : studyCommandBatch.values()) {
+            indexer.addCommand(command);
+        }
+        studyCommandBatch.clear();
+        runningBatch = false;
+    }
 }

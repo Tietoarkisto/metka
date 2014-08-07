@@ -1,5 +1,6 @@
 package fi.uta.fsd.metkaSearch.handlers;
 
+import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metkaSearch.LuceneConfig;
 import fi.uta.fsd.metkaSearch.analyzer.FinnishVoikkoAnalyzer;
 import fi.uta.fsd.metkaSearch.commands.indexer.WikipediaIndexerCommand;
@@ -76,7 +77,7 @@ public class WikipediaHandler extends DefaultHandler {
         state = STATE.START_DOCUMENT;
         // Create analyzers map for PerFieldAnalyzerWrapper
         analyzers = new HashMap<>();
-        if(command.getPath().getLanguage().equals("fi")) { // This could be better
+        if(command.getPath().getLanguage().equals(Language.DEFAULT.toValue())) { // This could be better
              finAnalyzer = new FinnishVoikkoAnalyzer();
             analyzers.put("text", finAnalyzer);
         }
@@ -260,7 +261,7 @@ public class WikipediaHandler extends DefaultHandler {
                 int num = 1;
                 for(String topic : topics) {
                     addStringAsTextField("topic"+num, topic);
-                    if(command.getPath().getLanguage().equals("fi")) { // This could be better
+                    if(command.getPath().getLanguage().equals(Language.DEFAULT.toValue())) { // This could be better
                         analyzers.put("topic"+num, finAnalyzer);
                     }
                     // EXTREME STRESS TESTING

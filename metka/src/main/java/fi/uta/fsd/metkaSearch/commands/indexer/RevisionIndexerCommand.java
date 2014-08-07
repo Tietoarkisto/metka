@@ -1,6 +1,8 @@
 package fi.uta.fsd.metkaSearch.commands.indexer;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
+import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import org.springframework.util.StringUtils;
@@ -62,6 +64,27 @@ public class RevisionIndexerCommand extends IndexerCommandBase {
         }
     }
 
+    // Stop commands
+
+    public static RevisionIndexerCommand stop(ConfigurationType type) {
+        return stop(type, Language.DEFAULT.toValue());
+    }
+    public static RevisionIndexerCommand stop(ConfigurationType type, String language) {
+        return stop(type, language, false);
+    }
+
+    /**
+     * Forms a stop command for given configuration type and language
+     * @param type
+     * @param language
+     * @param useRam
+     * @return
+     */
+    public static RevisionIndexerCommand stop(ConfigurationType type, String language, boolean useRam) {
+        DirectoryManager.DirectoryPath path = DirectoryManager.formPath(useRam, IndexerConfigurationType.REVISION, language, type.toValue());
+        return new RevisionIndexerCommand(path, Action.STOP);
+    }
+
     /**
      * Factory method for stop command on revision indexer.
      *
@@ -72,6 +95,33 @@ public class RevisionIndexerCommand extends IndexerCommandBase {
         checkPathType(path, IndexerConfigurationType.REVISION);
         checkAdditionalParams(path);
         return new RevisionIndexerCommand(path, Action.STOP);
+    }
+
+    // Index commands
+
+    public static RevisionIndexerCommand index(ConfigurationType type, RevisionKey key) {
+        return index(type, key.getId(), key.getNo());
+    }
+    public static RevisionIndexerCommand index(ConfigurationType type, Long id, Integer no) {
+        return index(type, Language.DEFAULT.toValue(), id, no);
+    }
+    public static RevisionIndexerCommand index(ConfigurationType type, String language, RevisionKey key) {
+        return index(type, language, key.getId(), key.getNo(), false);
+    }
+    public static RevisionIndexerCommand index(ConfigurationType type, String language, Long id, Integer no) {
+        return index(type, language, id, no, false);
+    }
+
+    /**
+     * Forms an index command for given configuration type and language
+     * @param type
+     * @param language
+     * @param useRam
+     * @return
+     */
+    public static RevisionIndexerCommand index(ConfigurationType type, String language, Long id, Integer no, boolean useRam) {
+        DirectoryManager.DirectoryPath path = DirectoryManager.formPath(useRam, IndexerConfigurationType.REVISION, language, type.toValue());
+        return new RevisionIndexerCommand(path, Action.INDEX, id, no);
     }
 
     /**
@@ -86,6 +136,34 @@ public class RevisionIndexerCommand extends IndexerCommandBase {
         checkPathType(path, IndexerConfigurationType.REVISION);
         checkAdditionalParams(path);
         return new RevisionIndexerCommand(path, Action.INDEX, revisionable, revision);
+    }
+
+
+    // Remove commands
+
+    public static RevisionIndexerCommand remove(ConfigurationType type, RevisionKey key) {
+        return remove(type, key.getId(), key.getNo());
+    }
+    public static RevisionIndexerCommand remove(ConfigurationType type, Long id, Integer no) {
+        return remove(type, Language.DEFAULT.toValue(), id, no);
+    }
+    public static RevisionIndexerCommand remove(ConfigurationType type, String language, RevisionKey key) {
+        return remove(type, language, key.getId(), key.getNo(), false);
+    }
+    public static RevisionIndexerCommand remove(ConfigurationType type, String language, Long id, Integer no) {
+        return remove(type, language, id, no, false);
+    }
+
+    /**
+     * Forms a remove command for given configuration type and language
+     * @param type
+     * @param language
+     * @param useRam
+     * @return
+     */
+    public static RevisionIndexerCommand remove(ConfigurationType type, String language, Long id, Integer no, boolean useRam) {
+        DirectoryManager.DirectoryPath path = DirectoryManager.formPath(useRam, IndexerConfigurationType.REVISION, language, type.toValue());
+        return new RevisionIndexerCommand(path, Action.REMOVE, id, no);
     }
 
     /**

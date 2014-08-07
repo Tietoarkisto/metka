@@ -1,9 +1,9 @@
-package fi.uta.fsd.metka.mvc.search.impl;
+package fi.uta.fsd.metka.search.impl;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.mvc.search.GeneralSearch;
-import fi.uta.fsd.metka.mvc.search.RevisionDataRemovedContainer;
+import fi.uta.fsd.metka.search.GeneralSearch;
+import fi.uta.fsd.metka.search.RevisionDataRemovedContainer;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.entity.impl.StudyEntity;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;

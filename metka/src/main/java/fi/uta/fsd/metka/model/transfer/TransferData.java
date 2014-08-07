@@ -10,7 +10,7 @@ import fi.uta.fsd.metka.model.general.ConfigurationKey;
 import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.model.interfaces.ModelBase;
 import fi.uta.fsd.metka.model.interfaces.TransferFieldContainer;
-import fi.uta.fsd.metka.storage.response.RemovedInfo;
+import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -59,7 +59,7 @@ public class TransferData implements ModelBase, TransferFieldContainer {
         return fields.get(key);
     }
 
-    public static TransferData buildFromRevisionData(RevisionData revision, RemovedInfo info) {
+    public static TransferData buildFromRevisionData(RevisionData revision, RevisionableInfo info) {
         // Create new TransferData copying the revision data's revision key and configuration key
         TransferData data = new TransferData(revision.getKey().copy(), revision.getConfiguration().copy());
 

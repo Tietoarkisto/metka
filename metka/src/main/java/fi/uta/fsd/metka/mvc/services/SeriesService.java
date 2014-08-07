@@ -1,6 +1,6 @@
 package fi.uta.fsd.metka.mvc.services;
 
-import fi.uta.fsd.metka.mvc.search.SeriesSearch;
+import fi.uta.fsd.metka.search.SeriesSearch;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.revision.SeriesAbbreviationsResponse;
 import org.springframework.beans.factory.annotation.Autowired;

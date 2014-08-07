@@ -8,7 +8,7 @@ import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.SavedSearchRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
-import fi.uta.fsd.metka.storage.response.RemovedInfo;
+import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.transfer.expert.*;
 import fi.uta.fsd.metkaSearch.SearcherComponent;
 import fi.uta.fsd.metkaSearch.commands.searcher.SearchCommand;
@@ -50,7 +50,7 @@ public class ExpertSearchService {
         List<RevisionResult> results = searcher.executeSearch(command).getResults();
 
         for(RevisionResult result : results) {
-            Pair<ReturnResult, RemovedInfo> infoPair = general.getRevisionableRemovedInfo(result.getId());
+            Pair<ReturnResult, RevisionableInfo> infoPair = general.getRevisionableInfo(result.getId());
             if(infoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
                 logger.warn("Revisionable was not found for id "+result.getId());
                 continue;
@@ -60,7 +60,7 @@ public class ExpertSearchService {
                 logger.warn("Couldn't find a revision for search result "+result.toString());
                 continue;
             }
-            RemovedInfo info = infoPair.getRight();
+            RevisionableInfo info = infoPair.getRight();
             RevisionData revision = pair.getRight();
             ExpertSearchRevisionQueryResult qr = new ExpertSearchRevisionQueryResult();
             if(info.getRemoved()) {

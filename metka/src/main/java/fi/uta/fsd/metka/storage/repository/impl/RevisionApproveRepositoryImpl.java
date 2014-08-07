@@ -1,9 +1,6 @@
 package fi.uta.fsd.metka.storage.repository.impl;
 
-import fi.uta.fsd.metka.enums.ConfigurationType;
-import fi.uta.fsd.metka.enums.FieldError;
-import fi.uta.fsd.metka.enums.RevisionState;
-import fi.uta.fsd.metka.enums.TransferFieldType;
+import fi.uta.fsd.metka.enums.*;
 import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
@@ -21,7 +18,7 @@ import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionApproveRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
-import fi.uta.fsd.metka.storage.response.RemovedInfo;
+import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metkaSearch.SearcherComponent;
 import fi.uta.fsd.metkaSearch.commands.searcher.series.SeriesAbbreviationUniquenessSearchCommand;
@@ -97,7 +94,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             RevisionableEntity revisionable = em.find(RevisionableEntity.class, data.getKey().getId());
             revisionable.setCurApprovedNo(data.getKey().getNo());
 
-            return new ImmutablePair<>(ReturnResult.APPROVE_SUCCESSFUL, TransferData.buildFromRevisionData(data, RemovedInfo.FALSE));
+            return new ImmutablePair<>(ReturnResult.APPROVE_SUCCESSFUL, TransferData.buildFromRevisionData(data, RevisionableInfo.FALSE));
         } else {
             return new ImmutablePair<>(ReturnResult.APPROVE_FAILED, transferData);
         }
@@ -139,7 +136,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
         if(!field.hasOriginalValue() && field.hasOriginalValue()) {
             // appreviation has changed from empty to containing something
             // TODO: Make this more sensible
-            ResultList<BooleanResult> results = searcher.executeSearch(SeriesAbbreviationUniquenessSearchCommand.build("fi", revision.getKey().getId(), field.getActualValue()));
+            ResultList<BooleanResult> results = searcher.executeSearch(SeriesAbbreviationUniquenessSearchCommand.build(Language.DEFAULT.toValue(), revision.getKey().getId(), field.getActualValue()));
             // Result list should contain exactly one result
             if(!results.getResults().get(0).getResult()) {
                 TransferField tf = transferData.getField("seriesabbr");
@@ -207,7 +204,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
                 // No need for approval
                 return ReturnResult.APPROVE_SUCCESSFUL;
             }
-            Pair<ReturnResult, TransferData> approveResult = approve(TransferData.buildFromRevisionData(variables, RemovedInfo.FALSE));
+            Pair<ReturnResult, TransferData> approveResult = approve(TransferData.buildFromRevisionData(variables, RevisionableInfo.FALSE));
             if(approveResult.getLeft() != ReturnResult.APPROVE_SUCCESSFUL) {
                 logger.error("Tried to approve "+variables.toString()+" and failed with result "+approveResult.getLeft());
                 return ReturnResult.APPROVE_FAILED;
@@ -252,7 +249,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
                 // Variable doesn't require approving
                 continue;
             }
-            Pair<ReturnResult, TransferData> approveResult = approve(TransferData.buildFromRevisionData(variable, RemovedInfo.FALSE));
+            Pair<ReturnResult, TransferData> approveResult = approve(TransferData.buildFromRevisionData(variable, RevisionableInfo.FALSE));
             if(approveResult.getLeft() != ReturnResult.APPROVE_SUCCESSFUL) {
                 logger.error("Tried to approve "+variable.toString()+" and failed with result "+approveResult.getLeft());
                 result = ReturnResult.APPROVE_FAILED;

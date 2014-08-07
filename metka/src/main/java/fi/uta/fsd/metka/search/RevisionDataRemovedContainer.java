@@ -1,4 +1,4 @@
-package fi.uta.fsd.metka.mvc.search;
+package fi.uta.fsd.metka.search;
 
 import fi.uta.fsd.metka.model.data.RevisionData;
 

@@ -1,5 +1,6 @@
 package fi.uta.fsd.metkaSearch.indexers;
 
+import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.container.SavedDataField;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
@@ -10,11 +11,10 @@ import fi.uta.fsd.metkaSearch.analyzer.FinnishVoikkoAnalyzer;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.*;
+import org.apache.lucene.document.Field.Store;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.lucene.document.Field.Store;
 
 public class IndexerDocument {
 
@@ -99,7 +99,7 @@ public class IndexerDocument {
     }
 
     private void addTextAnalyzer(String key) {
-        if(language.equals("fi")) {
+        if(language.equals(Language.DEFAULT.toValue())) {
             analyzers.put(key, FinnishVoikkoAnalyzer.ANALYZER);
         } else {
             // Add some other tokenizing analyzer if StandardAnalyzer is not enough

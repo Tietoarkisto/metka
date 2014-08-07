@@ -7,7 +7,7 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.storage.entity.SequenceEntity;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
-import fi.uta.fsd.metka.storage.response.RemovedInfo;
+import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import javassist.NotFoundException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +26,7 @@ public interface GeneralRepository {
      * @param id Id of the revisionable object to be checked
      * @return Pair<Boolean, LocalDateTime> with left value being the removal state of the revisionable (true if removed) and right value being the removal time of said object.
      */
-    public Pair<ReturnResult, RemovedInfo> getRevisionableRemovedInfo(Long id);
+    public Pair<ReturnResult, RevisionableInfo> getRevisionableInfo(Long id);
 
     /**
      * Returns the revisionable id of the object with given type adjacent to the object with given id.

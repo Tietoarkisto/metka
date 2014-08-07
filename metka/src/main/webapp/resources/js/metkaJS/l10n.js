@@ -6,7 +6,7 @@
      */
     MetkaJS.L10N = (function() {
         var strings = {};
-        var locale = "fi";
+        var locale = "default";
 
         return {
             strings: strings,

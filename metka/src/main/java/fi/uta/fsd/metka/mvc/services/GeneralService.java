@@ -1,6 +1,7 @@
 package fi.uta.fsd.metka.mvc.services;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
+import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.enums.repositoryResponses.DraftRemoveResponse;
 import fi.uta.fsd.metka.enums.repositoryResponses.LogicalRemoveResponse;
 import fi.uta.fsd.metka.model.data.RevisionData;
@@ -8,8 +9,6 @@ import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metkaSearch.IndexerComponent;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
-import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
-import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,7 +49,7 @@ public class GeneralService {
     public DraftRemoveResponse removeDraft(String type, Long id) {
         DraftRemoveResponse response = repository.removeDraft(type, id);
         if(response.getResponse() == DraftRemoveResponse.Response.FINAL_REVISION || response.getResponse() == DraftRemoveResponse.Response.SUCCESS) {
-            indexer.addCommand(RevisionIndexerCommand.remove(DirectoryManager.formPath(false, IndexerConfigurationType.REVISION, "fi", ConfigurationType.valueOf(type.toUpperCase()).toValue()), response.getId(), response.getNo()));
+            indexer.addCommand(RevisionIndexerCommand.remove(ConfigurationType.fromValue(type.toUpperCase()), Language.DEFAULT.toValue(), response.getId(), response.getNo()));
         }
         return response;
     }
@@ -67,10 +66,9 @@ public class GeneralService {
     public LogicalRemoveResponse removeLogical(String type, Long id) {
         LogicalRemoveResponse response = repository.removeLogical(type, id);
         if(response == LogicalRemoveResponse.SUCCESS) {
-            DirectoryManager.DirectoryPath path = DirectoryManager.formPath(false, IndexerConfigurationType.REVISION, "fi", ConfigurationType.fromValue(type.toUpperCase()).name());
             List<Integer> revisions = repository.getAllRevisionNumbers(id);
             for(Integer revision : revisions) {
-                indexer.addCommand(RevisionIndexerCommand.index(path, id, revision));
+                indexer.addCommand(RevisionIndexerCommand.index(ConfigurationType.fromValue(type), id, revision));
             }
         }
         return response;
