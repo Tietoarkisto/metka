@@ -28,8 +28,8 @@ define(function (require) {
             };
         }
 
-        function createRow(transferRow) {
-            $tbody.append($('<tr>')
+        function tr(transferRow) {
+            return $('<tr>')
                 .data('transferRow', transferRow)
                 .append(columns.map(function (column) {
                     var $td = $('<td>');
@@ -111,12 +111,16 @@ define(function (require) {
                         log('not implemented', column, type);
                         return '-';
                     })());
-                })));
+                }));
+        }
+
+        function appendRow(transferRow) {
+            $tbody.append(tr(transferRow));
         }
 
         function addRow(transferRow) {
             options.transferField.rows.push(transferRow);
-            createRow(transferRow);
+            appendRow(transferRow);
         }
 
         function addRowFromDataObject(data) {
@@ -125,8 +129,9 @@ define(function (require) {
 
         function rowDialog(data, title, button, onClose) {
             return function () {
+                var $row = $(this);
                 var containerOptions = {
-                    data: data.call(this),
+                    data: data.call($row),
                     dataConf: options.dataConf,
                     content: [
                         {
@@ -161,7 +166,7 @@ define(function (require) {
                                             data[field] = require('./data').get(containerOptions, field);
                                         });
 
-                                        onClose(data);
+                                        onClose.call($row, data);
                                     });
                             }
                         },
@@ -176,7 +181,6 @@ define(function (require) {
             };
         }
 
-        this.data('addRow', addRow);
         this.data('addRowFromDataObject', addRowFromDataObject);
 
         this.append($('<div class="panel">')
@@ -190,9 +194,11 @@ define(function (require) {
 
                     $tbody
                         .on('click', 'tr', options.field.onClick || rowDialog(function () {
-                            return $(this).data('transferRow');
+                            return this.data('transferRow');
                         }, 'add', 'ok', function (data) {
-                            log('TODO: edit row', data);
+                            var transferRow = require('./map/object/transferRow')(data);
+                            this.data('transferRow').fields = transferRow.fields;
+                            this.replaceWith(tr(transferRow));
                         }));
                 })
                 .append($('<thead>')
@@ -248,12 +254,12 @@ define(function (require) {
                             }
                         })))
                 .append(function () {
-                    options.transferField.rows.forEach(createRow);
+                    options.transferField.rows.forEach(appendRow);
                     return $tbody;
                 }))
             .append(function () {
                 var items = [];
-                if (key === 'files') {
+                /*if (key === 'files') {
                     //log(options);
 
                     var $input = $('<input type="file">');
@@ -315,15 +321,16 @@ define(function (require) {
                     });
 
                     items.push($form);
-                }
+                }*/
 
-                if (!require('./isFieldDisabled')(options) && key !== 'files') {
+                if (!require('./isFieldDisabled')(options)/* && key !== 'files'*/) {
                     items.push(require('./button')(options)({
                         style: 'default'
                     })
                         .addClass('btn-sm')
                         .text(MetkaJS.L10N.get('general.table.add'))
                         .click(rowDialog(function () {
+                            // initial data is empty
                             return {};
                         }, 'add', 'add', addRowFromDataObject)));
                 }

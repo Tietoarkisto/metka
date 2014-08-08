@@ -24,6 +24,7 @@ define(function (require) {
                             .append((function () {
                                 var buttonCreateFunctions = metka.state === 'DRAFT' ? [] : [function () {
                                     $(this)
+                                        .prop('disabled', true)
                                         .addClass('btn-xs')
                                         .html('<span class="glyphicon glyphicon-chevron-left"></span>')
                                         .click(function () {
@@ -31,6 +32,7 @@ define(function (require) {
                                         });
                                 }, function () {
                                     $(this)
+                                        .prop('disabled', true)
                                         .addClass('btn-xs')
                                         .html('<span class="glyphicon glyphicon-chevron-right"></span>')
                                         .click(function () {
@@ -39,6 +41,7 @@ define(function (require) {
                                 }];
                                 buttonCreateFunctions.push(function () {
                                     $(this)
+                                        .prop('disabled', true)
                                         .addClass('btn-xs')
                                         .text(MetkaJS.L10N.get('general.buttons.download'))
                                         .click(function () {

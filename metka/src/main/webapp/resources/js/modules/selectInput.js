@@ -8,8 +8,8 @@ define(function (require) {
         var selectionListKey = options.dataConf.fields[key].selectionList;
         // TODO: prevent recursion
         (function selectInput(listKey) {
-            function setOptions(options) {
-                $input.append(options.map(function (option, i) {
+            function setOptions(optionsList) {
+                $input.append(optionsList.map(function (option, i) {
                     return $('<option>')
                         .val(option.value)
                         .text((function () {

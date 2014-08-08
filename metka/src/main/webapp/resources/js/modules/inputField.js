@@ -40,7 +40,9 @@ define(function (require) {
             $input
                 .prop('disabled', require('./isFieldDisabled')(options))
                 .change(function () {
-                    require('./data').set(options, key, $(this).val());
+                    options.transferField.value = options.transferField.value || {};
+                    options.transferField.type = options.transferField.type || 'VALUE';
+                    options.transferField.value.current = $(this).val();
                 });
 
             if (isSelection) {
@@ -55,7 +57,7 @@ define(function (require) {
                             return require('./data').get(options, key);
                         }).join('')
                         :
-                        require('./data').get(options, key));
+                        require('./utils/getPropertyNS')(options, 'transferField.value.current') || '');
             }
 
             this.append($input);
