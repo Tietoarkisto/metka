@@ -125,14 +125,9 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
                     if(status != IndexerStatusMessage.IDLING) {
                         // Previous loop was handling command, post DEBUG info
                         System.err.println("Queue clear. Spent "+timeHandlingCommands+"ms handling commands");
-                    }
-                    if(idleLoops == 0) {
+                        status = IndexerStatusMessage.IDLING;
                         timeHandlingCommands = 0L;
-                    }
-                    // Increase idleLoops counter if index has changed
-                    if(indexChanged) {
                         idleLoops++;
-                        //System.err.println("Number of idle loops: "+idleLoops);
                     }
                 }
 
@@ -142,8 +137,8 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
                     status = IndexerStatusMessage.IDLING;
                 }
 
-                if(idleLoops >= LuceneConfig.IDLE_LOOPS_BEFORE_FLUSH
-                        || (LuceneConfig.FORCE_FLUSH_AFTER_BATCH_OF_COMMANDS && commandBatch >= LuceneConfig.MAX_COMMAND_BATCH_SIZE)) {
+                if(indexChanged && (idleLoops >= LuceneConfig.IDLE_LOOPS_BEFORE_FLUSH
+                        || (LuceneConfig.FORCE_FLUSH_AFTER_BATCH_OF_COMMANDS && commandBatch >= LuceneConfig.MAX_COMMAND_BATCH_SIZE))) {
                     flushIndex();
                 }
 

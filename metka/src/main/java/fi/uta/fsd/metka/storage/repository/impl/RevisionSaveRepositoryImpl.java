@@ -415,7 +415,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             return new ImmutablePair<>(statusCode, errors);
         }
 
-        codePair = dataFields.dataField(SavedDataFieldCall.set(field.getKey()).setValue(value).setConfiguration(configuration));
+        codePair = dataFields.dataField(SavedDataFieldCall.set(field.getKey()).setValue(value).setConfiguration(configuration).setChangeMap(changeMap));
         statusCode = codePair.getLeft();
         if(statusCode == StatusCode.FIELD_INSERT || statusCode == StatusCode.FIELD_UPDATE) {
             statusCode = StatusCode.FIELD_CHANGED;

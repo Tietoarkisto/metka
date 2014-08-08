@@ -12,10 +12,9 @@ public class TestCredentialsFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        request.setAttribute("Shib-Session-Id", "123");
+        request.setAttribute("Shib-Session-ID", "123");
         request.setAttribute("Shib-UserName", "test");
-        request.setAttribute("Shib-FirstName", "Virpi");
-        request.setAttribute("Shib-LastName", "Varis");
+        request.setAttribute("Shib-DisplayName", "Virpi Varis");
         request.setAttribute("Shib-Roles", "admin,tester");
 
         filterChain.doFilter(request, response);

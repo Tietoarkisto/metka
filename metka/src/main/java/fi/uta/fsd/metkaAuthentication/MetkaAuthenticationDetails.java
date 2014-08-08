@@ -12,15 +12,13 @@ public class MetkaAuthenticationDetails implements GrantedAuthoritiesContainer {
 
     private final String sessionId;
     private final String userName;
-    private final String firstName;
-    private final String lastName;
+    private final String displayName;
     private final String roles;
 
-    public MetkaAuthenticationDetails(String sessionId, String userName, String firstName, String lastName, String roles) {
+    public MetkaAuthenticationDetails(String sessionId, String userName, String displayName, String roles) {
         this.sessionId = sessionId;
         this.userName = userName;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.displayName = displayName;
         this.roles = roles;
     }
 
@@ -32,12 +30,8 @@ public class MetkaAuthenticationDetails implements GrantedAuthoritiesContainer {
         return userName;
     }
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
+    public String getDisplayName() {
+        return displayName;
     }
 
     @Override

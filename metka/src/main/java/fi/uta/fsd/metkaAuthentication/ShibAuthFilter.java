@@ -35,10 +35,9 @@ public class ShibAuthFilter extends AbstractPreAuthenticatedProcessingFilter
     @Override
     public MetkaAuthenticationDetails buildDetails(HttpServletRequest request) {
         String userName = (String)request.getAttribute("Shib-UserName");
-        String lastName = (String)request.getAttribute("Shib-LastName");
-        String firstName = (String)request.getAttribute("Shib-FirstName");
+        String displayName = (String)request.getAttribute("Shib-DisplayName");
         String sessionId = (String)request.getAttribute("Shib-Session-ID");
         String roles = (String)request.getAttribute("Shib-Roles");
-        return new MetkaAuthenticationDetails(sessionId, userName, firstName, lastName, roles);
+        return new MetkaAuthenticationDetails(sessionId, userName, displayName, roles);
     }
 }
