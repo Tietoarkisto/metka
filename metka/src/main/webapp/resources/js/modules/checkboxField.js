@@ -2,15 +2,15 @@ define(function (require) {
     'use strict';
 
     return function (options) {
-        var key = options.field.key;
+        log(options, require('./data')(options).get())
         this
             .addClass('checkbox')
             .append(require('./label')(options)
                 .prepend(require('./input').call($('<input type="checkbox">'), options)
                     .prop('disabled', require('./isFieldDisabled')(options))
                     .change(function () {
-                        require('./data').set(options, key, $(this).prop('checked'));
+                        require('./data')(options).set($(this).prop('checked'));
                     })
-                    .prop('checked', !!require('./data').get(options, key))));
+                    .prop('checked', !!require('./data')(options).get())));
     };
 });

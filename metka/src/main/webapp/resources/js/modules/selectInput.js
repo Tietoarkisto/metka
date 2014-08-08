@@ -8,8 +8,8 @@ define(function (require) {
         var selectionListKey = options.dataConf.fields[key].selectionList;
         // TODO: prevent recursion
         (function selectInput(listKey) {
-            function setOptions(options) {
-                $input.append(options.map(function (option, i) {
+            function setOptions(optionsList) {
+                $input.append(optionsList.map(function (option, i) {
                     return $('<option>')
                         .val(option.value)
                         .text((function () {
@@ -28,7 +28,7 @@ define(function (require) {
                             // MetkaJS.L10N.get([MetkaJS.Globals.page.toUpperCase(), key, option.value].join('.'));
                         })());
                 }));
-                var value = require('./data').get(options, key);
+                var value = require('./data')(options).get();
                 if (typeof value !== 'undefined') {
                     $input.val(value);
                 } else {

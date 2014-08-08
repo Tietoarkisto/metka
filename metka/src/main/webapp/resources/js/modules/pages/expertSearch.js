@@ -40,30 +40,25 @@ define(function (require) {
                                             "savedAt"
                                         ],
                                         onRemove: function ($row, remove) {
-                                            require('./../server')('/expertSearch/remove/{id}', $row.data('transferRow').fields, {
+                                            require('./../server')('/expertSearch/remove/{id}', require('./../map/transferRow/object')($row.data('transferRow')), {
                                                 success: function () {
                                                     $row.remove();
                                                 }
                                             });
+                                        },
+                                        onClick: function () {
+                                            $query
+                                                .val($(this).data('transferRow').fields.query.value.current)
+                                                .change();
                                         }
                                     },
                                     create: function (options) {
+                                        var $containerField = $(this);
                                         addRow = function (data) {
                                             data.name = data.title;
                                             delete data.title;
-                                            options.addRow({
-                                                fields: data
-                                            });
+                                            $containerField.data('addRowFromDataObject')(data);
                                         };
-                                        this
-                                            .find('table')
-                                                .addClass('table-hover')
-                                                .find('tbody')
-                                                    .on('click', 'tr', function () {
-                                                        $query
-                                                            .val($(this).data('transferRow').fields.query)
-                                                            .change();
-                                                    });
                                         require('./../server')('/expertSearch/list', {
                                             success: function (data) {
                                                 data.queries.forEach(addRow);
@@ -79,7 +74,7 @@ define(function (require) {
             buttons: [
                 require('./../searchButton')('/expertSearch/query', function () {
                     return {
-                        query: require('./../data').get(options, 'search')
+                        query: require('./../data')(options)('search').get()
                     };
                 }, function (data) {
                     return data.results;
@@ -115,11 +110,11 @@ define(function (require) {
                     "revision",
                     "state"
                 ], function () {
-                    var $this = $(this);
+                    var transferRow = $(this).data('transferRow');
                     require('./../assignUrl')('view', {
-                        id: $this.data('id'),
-                        revision: $this.data('revision'),
-                        page: $this.data('TYPE').toLowerCase()
+                        id: transferRow.fields.id.value.current,
+                        revision: transferRow.fields.revision.value.current,
+                        page: transferRow.fields.TYPE.value.current.toLowerCase()
                     });
                 }),
                 {
@@ -176,8 +171,8 @@ define(function (require) {
                                                 .click(function () {
                                                     require('./../server')('/expertSearch/save', {
                                                         data: JSON.stringify({
-                                                            query: require('./../data').get(options, 'search'),
-                                                            title: require('./../data').get(containerOptions, 'title')
+                                                            query: require('./../data')(options)('search').get(),
+                                                            title: require('./../data')(containerOptions)('title').get()
                                                         }),
                                                         success: addRow
                                                     });

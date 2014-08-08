@@ -7,33 +7,16 @@ define(function (require) {
         //$button.button('loading');
         //$button.button('reset');
         return function (options) {
-            var metka = require('./../metka');
             this
                 .click(function () {
-                    var data = {
-                        id: metka.id,
-                        revision: metka.revision,
-                        values: {}
-                    };
-                    $.each(options.data.fields, function (key, value) {
-                        data.values[key] = require('./data').get(options, key);
-                    });
-
-                    $.ajax({
-                        type: 'POST',
-                        data: JSON.stringify(data),
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json'
-                        },
-                        dataType: 'json',
-                        url: require('./url')(command),
+                    require('./server')(command, {
+                        data: JSON.stringify(options.data),
                         success: function (data) {
                             require('./modal')({
-                                title: data.success ? MetkaJS.L10N.get('alert.notice.title') : MetkaJS.L10N.get('alert.error.title'),
-                                body: data.errors.map(function (error) {
+                                title: data.result === 'SAVE_SUCCESSFUL' ? MetkaJS.L10N.get('alert.notice.title') : MetkaJS.L10N.get('alert.error.title'),
+                                body: ''/*data.errors.map(function (error) {
                                     return MetkaJS.L10N.get(error.msg);
-                                }),
+                                })*/,
                                 buttons: [{
                                     type: 'DISMISS'
                                 }]

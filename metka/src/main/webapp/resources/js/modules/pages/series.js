@@ -2,7 +2,6 @@ define(function (require) {
     'use strict';
 
     if (location.pathname.split('/').indexOf('search') !== -1) {
-        var data = require('./../data');
         var options = {
             header: MetkaJS.L10N.get('type.SERIES.search'),
             content: [
@@ -19,7 +18,7 @@ define(function (require) {
                                     "colspan": 2,
                                     "field": {
                                         "displayType": "INTEGER",
-                                        "key": "seriesid"
+                                        "key": "id"
                                     }
                                 },
                                 {
@@ -27,6 +26,7 @@ define(function (require) {
                                     "title": "Hyväksyttyjä",
                                     "colspan": 1,
                                     "field": {
+                                        // TODO: BOOLEAN
                                         "displayType": "CHECKBOX",
                                         "key": "searchApproved"
                                     }
@@ -51,6 +51,7 @@ define(function (require) {
                                     "title": "Luonnoksia",
                                     "colspan": 1,
                                     "field": {
+                                        // TODO: BOOLEAN
                                         "displayType": "CHECKBOX",
                                         "key": "searchDraft"
                                     }
@@ -74,6 +75,7 @@ define(function (require) {
                                     "title": "Poistettuja",
                                     "colspan": 1,
                                     "field": {
+                                        // TODO: BOOLEAN
                                         "displayType": "CHECKBOX",
                                         "key": "searchRemoved"
                                     }
@@ -87,13 +89,13 @@ define(function (require) {
                 require('./../searchButton')('/revision/ajax/search', function () {
                     return {
                         type: require('./../../metka').PAGE,
-                        searchApproved: data.get(options, 'searchApproved'),
-                        searchDraft: data.get(options, 'searchDraft'),
-                        searchRemoved: data.get(options, 'searchRemoved'),
+                        searchApproved: data('searchApproved').get(),
+                        searchDraft: data('searchDraft').get(),
+                        searchRemoved: data('searchRemoved').get(),
                         values: {
-                            id: data.get(options, 'seriesid'),
-                            seriesabbr: data.get(options, 'seriesabbr'),
-                            seriesname: data.get(options, 'seriesname')
+                            id: data('id').get(),
+                            seriesabbr: data('seriesabbr').get(),
+                            seriesname: data('seriesname').get()
                         }
                     };
                 }, function (data) {
@@ -102,13 +104,12 @@ define(function (require) {
                     return {
                         id: result.id,
                         revision: result.revision,
-                        seriesid: result.id,
                         seriesabbr: result.values.seriesabbr,
                         seriesname: result.values.seriesname,
                         state: MetkaJS.L10N.get('search.result.state.{state}'.supplant(result))
                     };
                 }, {
-                    seriesid: {
+                    id: {
                         type: 'INTEGER'
                     },
                     seriesabbr: {
@@ -121,13 +122,16 @@ define(function (require) {
                         type: 'STRING'
                     }
                 }, [
-                    "seriesid",
+                    "id",
                     "seriesabbr",
                     "seriesname",
                     "state"
                 ], function () {
-                    var $this = $(this);
-                    MetkaJS.view($this.data('id'), $this.data('revision'));
+                    var transferRow = $(this).data('transferRow');
+                    require('./../assignUrl')('view', {
+                        id: transferRow.fields.id.value.current,
+                        revision: transferRow.fields.revision.value.current
+                    });
                 }),
                 {
                     "&title": {
@@ -146,14 +150,43 @@ define(function (require) {
                     create: function () {
                         this
                             .click(function () {
-                                require('./../assignUrl')('seriesAdd');
+                                require('./../server')('create', {
+                                    data: JSON.stringify({
+                                        type: 'SERIES'
+                                    }),
+                                    success: function (response) {
+                                        if (response.result === 'REVISION_CREATED') {
+                                            require('./../assignUrl')('view', {
+                                                id: response.data.key.id,
+                                                revision: response.data.key.no,
+                                                page: response.data.configuration.type.toLowerCase()
+                                            });
+                                        }
+                                    }
+                                });
                             });
                     }
                 }
             ],
-            data: {},
+            data: {
+                fields: {
+                    searchApproved: {
+                        type: 'VALUE',
+                        value: {
+                            current: true
+                        }
+                    },
+                    searchDraft: {
+                        type: 'VALUE',
+                        value: {
+                            current: true
+                        }
+                    }
+                }
+            },
             dataConf: {}
         };
+        var data = require('./../data')(options);
         return function (onLoad) {
             onLoad(options);
         };

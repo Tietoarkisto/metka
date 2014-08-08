@@ -2,7 +2,6 @@ define(function (require) {
     'use strict';
 
     return function (options) {
-
         //this.options.field.multichoice
         //this.options.field.showReferenceKey
         //this.options.field.showReferenceValue

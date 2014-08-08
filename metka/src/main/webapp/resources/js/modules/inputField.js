@@ -40,7 +40,7 @@ define(function (require) {
             $input
                 .prop('disabled', require('./isFieldDisabled')(options))
                 .change(function () {
-                    require('./data').set(options, key, $(this).val());
+                    require('./data')(options).set($(this).val());
                 });
 
             if (isSelection) {
@@ -48,14 +48,13 @@ define(function (require) {
             } else {
                 // textarea or input elements
 
-                $input.val(
-                        type === 'CONCAT'
-                        ?
-                        options.dataConf.fields[key].concatenate.map(function (key) {
-                            return require('./data').get(options, key);
-                        }).join('')
-                        :
-                        require('./data').get(options, key));
+                $input.val(type === 'CONCAT'
+                    ?
+                    options.dataConf.fields[key].concatenate.map(function (key) {
+                        return require('./data')(options)(key).get();
+                    }).join('')
+                    :
+                    require('./data')(options).get() || '');
             }
 
             this.append($input);
