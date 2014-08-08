@@ -37,12 +37,42 @@ define(function (require) {
                             log('TODO: tyhjennä lomake')
                         });
                     }
+                },
+                {
+                    "&title": {
+                        "default": "Lisää uusi"
+                    },
+                    create: function () {
+                        this
+                            .click(function () {
+                                require('./../server')('create', {
+                                    data: JSON.stringify({
+                                        type: 'STUDY',
+                                        parameters: {
+                                            submissionid: Date.now() % 1000,
+                                            dataarrivaldate: Date.now()
+                                        }
+                                    }),
+                                    success: function (response) {
+                                        if (response.result === 'REVISION_CREATED') {
+                                            require('./../assignUrl')('view', {
+                                                id: response.data.key.id,
+                                                revision: response.data.key.no,
+                                                page: response.data.configuration.type.toLowerCase()
+                                            });
+                                        }
+                                    }
+                                });
+                            });
+                    }
                 }
             ],
             data: {},
             dataConf: {}
         };
-        return options;
+        return function (onLoad) {
+            onLoad(options);
+        };
     } else {
         return require('./defaults');
     }

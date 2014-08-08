@@ -17,7 +17,9 @@ define(function (require) {
                 }
 
                 if (createIfUndefined) {
-                    return require('./utils/setPropertyNS')(options, 'data.fields', key, {})
+                    return require('./utils/setPropertyNS')(options, 'data.fields', key, {
+                        key: key
+                    })
                 }
             }
 
@@ -48,6 +50,8 @@ define(function (require) {
 
                 transferField.rows = transferField.rows || [];
                 transferField.type = transferField.type || 'CONTAINER';
+                trasferRow.key = trasferRow.key || key;
+
                 transferField.rows.push(trasferRow);
             };
 
