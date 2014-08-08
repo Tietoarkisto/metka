@@ -884,45 +884,5 @@
     STUDY.section.import_export = Import/Export*/
 
     // Selection translations should go to data configuration
-    /*
 
-
-    STUDY.start_end_single.option.1 = Start
-    STUDY.start_end_single.option.2 = End
-    STUDY.start_end_single.option.3 = Single
-
-    STUDY.universeclusion_list.option.1 = E
-    STUDY.universeclusion_list.option.2 = I
-
-    STUDY_ATTACHMENT.fileaip_list.option.1 = Ei tietoa
-    STUDY_ATTACHMENT.fileaip_list.option.2 = Ei
-    STUDY_ATTACHMENT.fileaip_list.option.3 = Kyllä
-    STUDY_ATTACHMENT.fileaip_list.option.4 = Ei relevantti
-
-    STUDY_ATTACHMENT.filecategory_list.option.1 = Kyselylomake
-    STUDY_ATTACHMENT.filecategory_list.option.2 = Kirjoitusohjeet
-
-    STUDY_ATTACHMENT.filepublication_list.option.1 = Ei julkinen
-    STUDY_ATTACHMENT.filepublication_list.option.2 = Eng
-    STUDY_ATTACHMENT.filepublication_list.option.3 = Fin
-    STUDY_ATTACHMENT.filepublication_list.option.4 = Fin/Eng
-    STUDY_ATTACHMENT.filepublication_list.option.5 = Fin/Sve
-    STUDY_ATTACHMENT.filepublication_list.option.6 = Fin/Eng/Sve
-    STUDY_ATTACHMENT.filepublication_list.option.7 = Sve
-
-    STUDY_ATTACHMENT.yes_no_na.option.1 = Kyllä
-    STUDY_ATTACHMENT.yes_no_na.option.2 = Ei
-    STUDY_ATTACHMENT.yes_no_na.option.3 = Ei tietoa
-
-    STUDY_ATTACHMENT.filelanguage_list.option.1 = de
-    STUDY_ATTACHMENT.filelanguage_list.option.2 = en
-    STUDY_ATTACHMENT.filelanguage_list.option.3 = es
-    STUDY_ATTACHMENT.filelanguage_list.option.4 = st
-    STUDY_ATTACHMENT.filelanguage_list.option.5 = fi
-    STUDY_ATTACHMENT.filelanguage_list.option.6 = fr
-    STUDY_ATTACHMENT.filelanguage_list.option.7 = it
-    STUDY_ATTACHMENT.filelanguage_list.option.8 = lit
-    STUDY_ATTACHMENT.filelanguage_list.option.9 = ru
-    STUDY_ATTACHMENT.filelanguage_list.option.10 = sv
-    STUDY_ATTACHMENT.filelanguage_list.option.11 = xx*/
 })();

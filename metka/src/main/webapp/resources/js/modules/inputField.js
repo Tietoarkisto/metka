@@ -40,9 +40,7 @@ define(function (require) {
             $input
                 .prop('disabled', require('./isFieldDisabled')(options))
                 .change(function () {
-                    options.transferField.value = options.transferField.value || {};
-                    options.transferField.type = options.transferField.type || 'VALUE';
-                    options.transferField.value.current = $(this).val();
+                    require('./data')(options).set($(this).val());
                 });
 
             if (isSelection) {
@@ -50,14 +48,13 @@ define(function (require) {
             } else {
                 // textarea or input elements
 
-                $input.val(
-                        type === 'CONCAT'
-                        ?
-                        options.dataConf.fields[key].concatenate.map(function (key) {
-                            return require('./data').get(options, key);
-                        }).join('')
-                        :
-                        require('./utils/getPropertyNS')(options, 'transferField.value.current') || '');
+                $input.val(type === 'CONCAT'
+                    ?
+                    options.dataConf.fields[key].concatenate.map(function (key) {
+                        return require('./data')(options)(key).get();
+                    }).join('')
+                    :
+                    require('./data')(options).get() || '');
             }
 
             this.append($input);

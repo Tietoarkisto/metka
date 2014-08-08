@@ -39,19 +39,19 @@
 			"default": "1",
 			"options": [
 				{
-                    "&title": "Ei tietoa",
+                    "title": "Ei tietoa",
 					"value": "1"
 				},
 				{
-                    "&title": "Kvanti",
+                    "title": "Kvanti",
 					"value": "2"
 				},
 				{
-                    "&title": "Kvali",
+                    "title": "Kvali",
 					"value": "3"
 				},
 				{
-                    "&title": "Kvanti&Kvali",
+                    "title": "Kvanti&Kvali",
 					"value": "4"
 				}
 			]
@@ -65,23 +65,23 @@
 			"freeTextKey": "anonymizationother",
 			"options": [
 				{
-                    "&title": "Anonymisoidaan FSD:ssä",
+                    "title": "Anonymisoidaan FSD:ssä",
                         "value": "1"
 				},
 				{
-                    "&title": "Anonymisoitu FSD:ssä",
+                    "title": "Anonymisoitu FSD:ssä",
 					"value": "2"
 				},
 				{
-                    "&title": "Luovuttajan anonymisoima",
+                    "title": "Luovuttajan anonymisoima",
 					"value": "3"
 				},
 				{
-                    "&title": "Ei vaadi anonymisointia",
+                    "title": "Ei vaadi anonymisointia",
 					"value": "4"
 				},
 				{
-                    "&title": "Ei tietoa",
+                    "title": "Ei tietoa",
 					"value": "5"
 				}
 			]
@@ -111,15 +111,15 @@
 			"type": "VALUE",
 			"options": [
 				{
-                    "&title": "Kyllä",
+                    "title": "Kyllä",
 					"value": "1"
 				},
 				{
-                    "&title": "Ei",
+                    "title": "Ei",
 					"value": "2"
 				},
 				{
-                    "&title": "Ei tietoa",
+                    "title": "Ei tietoa",
 					"value": "3"
 				}
 			]
@@ -173,11 +173,11 @@
 			"type": "VALUE",
 			"options": [
 				{
-                    "&title": "Lyhyt selite",
+                    "title": "Lyhyt selite",
 					"value": "1"
 				},
 				{
-                    "&title": "Toinen lyhyt selite",
+                    "title": "Toinen lyhyt selite",
 					"value": "2"
 				}
 			]
@@ -188,23 +188,23 @@
 			"type": "VALUE",
 			"options": [
 				{
-                    "&title": "Kaikkien käytettävissä",
+                    "title": "Kaikkien käytettävissä",
 					"value": "1"
 				},
 				{
-                    "&title": "Tutkimus, opetus, opiskelu",
+                    "title": "Tutkimus, opetus, opiskelu",
 					"value": "2"
 				},
 				{
-                    "&title": "Vain tutkimus",
+                    "title": "Vain tutkimus",
 					"value": "3"
 				},
 				{
-                    "&title": "Lupa",
+                    "title": "Lupa",
 					"value": "4"
 				},
 				{
-                    "&title": "Embargo",
+                    "title": "Embargo",
                     "value": "5"
 				}
 			]
@@ -215,15 +215,15 @@
 			"type": "VALUE",
 			"options": [
 				{
-                    "&title": "Ei tietoa",
+                    "title": "Ei tietoa",
 					"value": "1"
 				},
 				{
-                    "&title": "Yrit./yht.",
+                    "title": "Yrit./yht.",
 					"value": "2"
 				},
 				{
-                    "&title": "Tutkija(t)",
+                    "title": "Tutkija(t)",
 					"value": "3"
 				}
 			]
@@ -234,19 +234,19 @@
 			"type": "VALUE",
 			"options": [
 				{
-                    "&title": "Kaikkien käytettävissä",
+                    "title": "Kaikkien käytettävissä",
 					"value": "1"
 				},
 				{
-                    "&title": "Tutkimus, opetus, opiskelu",
+                    "title": "Tutkimus, opetus, opiskelu",
 					"value": "2"
 				},
 				{
-                    "&title": "Vain tutkimus",
+                    "title": "Vain tutkimus",
 					"value": "3"
 				},
 				{
-                    "&title": "Lupa",
+                    "title": "Lupa",
 					"value": "4"
 				}
 			]
@@ -257,23 +257,23 @@
 			"type": "VALUE",
 			"options": [
 				{
-                    "&title": "Ei tietoa",
+                    "title": "Ei tietoa",
 					"value": "1"
 				},
 				{
-                    "&title": "Ei tarvita sopimusta",
+                    "title": "Ei tarvita sopimusta",
 					"value": "2"
 				},
 				{
-                    "&title": "Könttäsopimus",
+                    "title": "Könttäsopimus",
 					"value": "3"
 				},
 				{
-                    "&title": "Norm+puite",
+                    "title": "Norm+puite",
 					"value": "4"
 				},
 				{
-                    "&title": "On sopimus",
+                    "title": "On sopimus",
 					"value": "5"
 				}
 			]
@@ -309,15 +309,15 @@
 			"type": "VALUE",
 			"options": [
 				{
-                    "&title": "Start",
+                    "title": "Start",
 					"value": "1"
 				},
 				{
-                    "&title": "End",
+                    "title": "End",
 					"value": "2"
 				},
 				{
-                    "&title": "Single",
+                    "title": "Single",
 					"value": "3"
 				}
 			]
@@ -327,11 +327,11 @@
 			"type": "VALUE",
 			"options": [
 				{
-                    "&title": "E",
+                    "title": "E",
 					"value": "1"
 				},
 				{
-                    "&title": "I",
+                    "title": "I",
 					"value": "2"
 				}
 			]
@@ -367,23 +367,23 @@
 			"type": "VALUE",
 			"options": [
 				{
-                    "&title": "Lukumäärä",
+                    "title": "Lukumäärä",
 					"value": "vald"
 				},
 				{
-                    "&title": "Minimi",
+                    "title": "Minimi",
 					"value": "min"
 				},
 				{
-                    "&title": "Maksimi",
+                    "title": "Maksimi",
 					"value": "max"
 				},
 				{
-                    "&title": "Keskiarvo",
+                    "title": "Keskiarvo",
 					"value": "mean"
 				},
 				{
-                    "&title": "Keskihajonta",
+                    "title": "Keskihajonta",
 					"value": "stdev"
 				}
 			]

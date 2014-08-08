@@ -89,16 +89,25 @@ define(function (require) {
                     ].join('')))));
 
     $('.navbar-form').submit(function () {
-        require('./server')('/todo-get-study-by-id-url{id}', {
+        function error() {
+            require('./assignUrl')('/expertSearch');
+        }
+        require('./server')('/revision/studyIdSearch/{id}', {
             id: $(this).find('input[type="text"]').val()
         }, {
-            method: 'GET',
             success: function (data) {
-                log('todo: navigate to study...');
+                if (!data.rows.length) {
+                    error();
+                    return;
+                }
+
+                require('./assignUrl')('view', {
+                    page: 'study',
+                    id: data.rows[0].id,
+                    revision: data.rows[0].revision
+                });
             },
-            error: function () {
-                require('./assignUrl')('/expertSearch');
-            }
+            error: error
         });
         return false;
     });

@@ -10,16 +10,6 @@ define(function (require) {
 
         var getPropertyNS = require('./utils/getPropertyNS');
 
-        options.transferField.rows = options.transferField.rows || [];
-        options.transferField.type = options.transferField.type || 'CONTAINER';
-
-        if (options.transferField.type !== 'CONTAINER' && options.transferField.type !== 'REFERENCECONTAINER') {
-            throw 'illegal transferField.type (type: {type}, field: {field})'.supplant({
-                type: options.transferField.type,
-                field: key
-            });
-        }
-
         function field2TableHead(prefix) {
             return function (field) {
                 columns.push(field);
@@ -119,7 +109,7 @@ define(function (require) {
         }
 
         function addRow(transferRow) {
-            options.transferField.rows.push(transferRow);
+            require('./data')(options).append(transferRow);
             appendRow(transferRow);
         }
 
@@ -163,7 +153,7 @@ define(function (require) {
                                     .click(function () {
                                         var data = {};
                                         options.dataConf.fields[key].subfields.forEach(function (field) {
-                                            data[field] = require('./data').get(containerOptions, field);
+                                            data[field] = require('./data')(containerOptions)(field).get();
                                         });
 
                                         onClose.call($row, data);
@@ -254,7 +244,10 @@ define(function (require) {
                             }
                         })))
                 .append(function () {
-                    options.transferField.rows.forEach(appendRow);
+                    var rows = require('./data')(options).get();
+                    if (rows) {
+                        rows.forEach(appendRow);
+                    }
                     return $tbody;
                 }))
             .append(function () {

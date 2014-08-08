@@ -28,7 +28,7 @@ define(function (require) {
                             // MetkaJS.L10N.get([MetkaJS.Globals.page.toUpperCase(), key, option.value].join('.'));
                         })());
                 }));
-                var value = require('./data').get(options, key);
+                var value = require('./data')(options).get();
                 if (typeof value !== 'undefined') {
                     $input.val(value);
                 } else {

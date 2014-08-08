@@ -2,7 +2,6 @@ define(function (require) {
     'use strict';
 
     if (location.pathname.split('/').indexOf('search') !== -1) {
-        var data = require('./../data');
         var options = {
             header: MetkaJS.L10N.get('type.SERIES.search'),
             content: [
@@ -27,6 +26,7 @@ define(function (require) {
                                     "title": "Hyväksyttyjä",
                                     "colspan": 1,
                                     "field": {
+                                        // TODO: BOOLEAN
                                         "displayType": "CHECKBOX",
                                         "key": "searchApproved"
                                     }
@@ -51,6 +51,7 @@ define(function (require) {
                                     "title": "Luonnoksia",
                                     "colspan": 1,
                                     "field": {
+                                        // TODO: BOOLEAN
                                         "displayType": "CHECKBOX",
                                         "key": "searchDraft"
                                     }
@@ -74,6 +75,7 @@ define(function (require) {
                                     "title": "Poistettuja",
                                     "colspan": 1,
                                     "field": {
+                                        // TODO: BOOLEAN
                                         "displayType": "CHECKBOX",
                                         "key": "searchRemoved"
                                     }
@@ -87,13 +89,13 @@ define(function (require) {
                 require('./../searchButton')('/revision/ajax/search', function () {
                     return {
                         type: require('./../../metka').PAGE,
-                        searchApproved: data.get(options, 'searchApproved'),
-                        searchDraft: data.get(options, 'searchDraft'),
-                        searchRemoved: data.get(options, 'searchRemoved'),
+                        searchApproved: data('searchApproved').get(),
+                        searchDraft: data('searchDraft').get(),
+                        searchRemoved: data('searchRemoved').get(),
                         values: {
-                            id: data.get(options, 'id'),
-                            seriesabbr: data.get(options, 'seriesabbr'),
-                            seriesname: data.get(options, 'seriesname')
+                            id: data('id').get(),
+                            seriesabbr: data('seriesabbr').get(),
+                            seriesname: data('seriesname').get()
                         }
                     };
                 }, function (data) {
@@ -169,11 +171,13 @@ define(function (require) {
             data: {
                 fields: {
                     searchApproved: {
+                        type: 'VALUE',
                         value: {
                             current: true
                         }
                     },
                     searchDraft: {
+                        type: 'VALUE',
                         value: {
                             current: true
                         }
@@ -182,6 +186,7 @@ define(function (require) {
             },
             dataConf: {}
         };
+        var data = require('./../data')(options);
         return function (onLoad) {
             onLoad(options);
         };

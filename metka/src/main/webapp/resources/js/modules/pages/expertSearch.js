@@ -74,7 +74,7 @@ define(function (require) {
             buttons: [
                 require('./../searchButton')('/expertSearch/query', function () {
                     return {
-                        query: require('./../data').get(options, 'search')
+                        query: require('./../data')(options)('search').get()
                     };
                 }, function (data) {
                     return data.results;
@@ -171,8 +171,8 @@ define(function (require) {
                                                 .click(function () {
                                                     require('./../server')('/expertSearch/save', {
                                                         data: JSON.stringify({
-                                                            query: require('./../data').get(options, 'search'),
-                                                            title: require('./../data').get(containerOptions, 'title')
+                                                            query: require('./../data')(options)('search').get(),
+                                                            title: require('./../data')(containerOptions)('title').get()
                                                         }),
                                                         success: addRow
                                                     });
