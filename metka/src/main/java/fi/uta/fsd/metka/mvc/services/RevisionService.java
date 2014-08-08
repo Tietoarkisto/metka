@@ -176,6 +176,16 @@ public class RevisionService {
         return response;
     }
 
+    public RevisionSearchResponse studyIdSearch(String studyId) {
+        RevisionSearchResponse response = new RevisionSearchResponse();
+        Pair<ReturnResult, List<RevisionSearchResult>> result = search.studyIdSearch(studyId);
+        response.setResult(result.getLeft());
+        if(result.getLeft() == ReturnResult.SEARCH_SUCCESS && !result.getRight().isEmpty()) {
+            response.getRows().add(result.getRight().get(0));
+        }
+        return response;
+    }
+
     // TODO: Handle languages
     private void addIndexCommand(TransferData data) {
         // Separates calls to index sub components of study, should really be collected as a queue so that multiple study indexing requests are not made in a short period

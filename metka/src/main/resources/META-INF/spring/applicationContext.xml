@@ -25,6 +25,8 @@
         <property name="useCodeAsDefaultMessage" value="true" />
     </bean>
 
+    <import resource="securityContext.xml" />
+
     <import resource="hibernateContext.xml" />
 
     <bean id="startupScanner" class="fi.uta.fsd.metka.automation.StartupScanner" />

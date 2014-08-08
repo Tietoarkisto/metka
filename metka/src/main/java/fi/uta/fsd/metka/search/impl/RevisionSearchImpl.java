@@ -14,6 +14,7 @@ import fi.uta.fsd.metka.transfer.revision.RevisionSearchRequest;
 import fi.uta.fsd.metka.transfer.revision.RevisionSearchResult;
 import fi.uta.fsd.metkaSearch.SearcherComponent;
 import fi.uta.fsd.metkaSearch.commands.searcher.series.SeriesBasicSearchCommand;
+import fi.uta.fsd.metkaSearch.commands.searcher.study.StudyIdSearchCommand;
 import fi.uta.fsd.metkaSearch.results.ResultList;
 import fi.uta.fsd.metkaSearch.results.RevisionResult;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -52,6 +53,13 @@ public class RevisionSearchImpl implements RevisionSearch {
             default:
                 return new ImmutablePair<>(ReturnResult.INCORRECT_TYPE_FOR_OPERATION, null);
         }
+    }
+
+    @Override
+    public Pair<ReturnResult, List<RevisionSearchResult>> studyIdSearch(String studyId) {
+        StudyIdSearchCommand command = StudyIdSearchCommand.build(studyId);
+        ResultList<RevisionResult> results = searcher.executeSearch(command);
+        return new ImmutablePair<>(ReturnResult.SEARCH_SUCCESS, collectResults(results));
     }
 
     private Pair<ReturnResult, List<RevisionSearchResult>> findSeries(RevisionSearchRequest request) {
@@ -104,7 +112,9 @@ public class RevisionSearchImpl implements RevisionSearch {
 
     private List<RevisionSearchResult> collectResults(ResultList<RevisionResult> resultList) {
         List<RevisionSearchResult> results = new ArrayList<>();
-
+        if(resultList == null) {
+            return results;
+        }
         resultList.sort(new Comparator<RevisionResult>() {
             @Override
             public int compare(RevisionResult o1, RevisionResult o2) {

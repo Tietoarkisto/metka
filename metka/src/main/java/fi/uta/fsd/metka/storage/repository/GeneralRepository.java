@@ -8,17 +8,16 @@ import fi.uta.fsd.metka.storage.entity.SequenceEntity;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
-import javassist.NotFoundException;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.MissingResourceException;
 
 /**
  * Contains methods for general operations that don't require their own repositories.
  */
-@Transactional(readOnly = true, noRollbackFor = {NotFoundException.class, MissingResourceException.class})
+//@PreAuthorize("hasRole('ROLE_ADMIN')")
+@Transactional(readOnly = true)
 public interface GeneralRepository {
 
     /**
@@ -26,6 +25,7 @@ public interface GeneralRepository {
      * @param id Id of the revisionable object to be checked
      * @return Pair<Boolean, LocalDateTime> with left value being the removal state of the revisionable (true if removed) and right value being the removal time of said object.
      */
+    //@PreAuthorize("hasRole('ROLE_XXX')")
     public Pair<ReturnResult, RevisionableInfo> getRevisionableInfo(Long id);
 
     /**
@@ -116,8 +116,6 @@ public interface GeneralRepository {
      */
     public Pair<ReturnResult, Integer> getLatestRevisionNoForIdAndType(Long id, boolean approvedOnly, ConfigurationType type);
 
-    public Pair<ReturnResult, String> getRevisionDataString(Long id, Integer revision);
-
     public List<Integer> getAllRevisionNumbers(Long id);
 
     @Transactional(readOnly = false) public SequenceEntity getNewSequenceValue(String key);
@@ -129,4 +127,6 @@ public interface GeneralRepository {
      * @return ReturnResult informing if the operation was successful or not
      */
     @Transactional(readOnly = false) public ReturnResult updateRevisionData(RevisionData revision);
+
+    @Transactional(readOnly = false) public ReturnResult createNewRevision(RevisionData revision);
 }

@@ -7,8 +7,8 @@ import java.util.Map;
 
 public class RevisionSearchRequest {
     private ConfigurationType type;
-    private boolean searchApproved = true;
-    private boolean searchDraft = true;
+    private boolean searchApproved;
+    private boolean searchDraft;
     private boolean searchRemoved;
 
     private final Map<String, String> values = new HashMap<>();

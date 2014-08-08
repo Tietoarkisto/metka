@@ -76,7 +76,6 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
             query = parser.parse(qry, "general");
 
             addAnalyzersAndConfigs(query, nums, pair.getRight());
-
             parser.setAnalyzer(getAnalyzer());
             parser.setNumericConfigMap(nums);
         }

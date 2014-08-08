@@ -133,4 +133,9 @@ public class RevisionController {
     public @ResponseBody RevisionSearchResponse search(@RequestBody RevisionSearchRequest searchRequest) {
         return revisions.search(searchRequest);
     }
+
+    @RequestMapping(value = "studyIdSearch/{studyId}", method = {RequestMethod.GET, RequestMethod.POST})
+    public @ResponseBody RevisionSearchResponse studyIdSearch(@PathVariable String studyId) {
+        return revisions.studyIdSearch(studyId);
+    }
 }

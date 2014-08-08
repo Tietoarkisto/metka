@@ -54,15 +54,7 @@ public class StudyRepositoryImpl {
     // TODO: This is done in the generalised revision edit
     /*@Override
     public RevisionData editStudy(Object studyno) {
-        StudyEntity study = em.find(StudyEntity.class, studyno);
 
-        if(study == null) {
-            // TODO: log suitable error
-            return null;
-        }
-
-        RevisionEntity latestRevision = em.find(RevisionEntity.class, study.latestRevisionKey());
-        // TODO: Just skip checks for now, if this raises a problem at some point then do complete checks
         RevisionData oldData = json.deserializeRevisionData(latestRevision.getData()).getRight();
         if(study.hasDraft()) {
             if(latestRevision.getState() != RevisionState.DRAFT) {

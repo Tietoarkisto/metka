@@ -1,9 +1,6 @@
 package fi.uta.fsd.metka.storage.repository.impl;
 
-import fi.uta.fsd.metka.enums.RevisionState;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.storage.entity.RevisionEntity;
-import fi.uta.fsd.metka.storage.entity.impl.SeriesEntity;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
@@ -31,22 +28,8 @@ public class SeriesRepositoryImpl {
     private GeneralRepository general;
 
     public RevisionData editSeries(Object seriesno) {
-        // Get series entity
-        // Do the usual checking
-        // If latest revision differs from current approved get that
-        // Do the usual checking
-        // Return deserialized revision data from the already existing DRAFT
-        SeriesEntity series = em.find(SeriesEntity.class, seriesno);
 
-        if(series == null) {
-            // TODO: log suitable error
-            return null;
-        }
-
-        //RevisionEntity latestRevision = series.getLatestRevision();
-        RevisionEntity latestRevision = em.find(RevisionEntity.class, series.latestRevisionKey());
-        // TODO: Just skip checks for now, if this raises a problem at some point then do complete checks
-        RevisionData oldData = json.deserializeRevisionData(latestRevision.getData()).getRight();
+        /*RevisionData oldData = json.deserializeRevisionData(latestRevision.getData()).getRight();
         if(series.hasDraft()) {
             if(latestRevision.getState() != RevisionState.DRAFT) {
                 // TODO: log exception since data is out of sync
@@ -82,7 +65,7 @@ public class SeriesRepositoryImpl {
         // No merge needed since entity still managed
         // Return new revision data
         series.setLatestRevisionNo(newRevision.getKey().getRevisionNo());
-        //return newData;
+        //return newData;*/
         return null;
     }
 }

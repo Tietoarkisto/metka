@@ -214,19 +214,6 @@ public class GeneralRepositoryImpl implements GeneralRepository {
     }
 
     @Override
-    public Pair<ReturnResult, String> getRevisionDataString(Long id, Integer revision) {
-        RevisionEntity entity = em.find(RevisionEntity.class, new RevisionKey(id, revision));
-        if(entity == null) {
-            return new ImmutablePair<>(ReturnResult.REVISION_NOT_FOUND, null);
-        }
-        if(StringUtils.isEmpty(entity.getData())) {
-            return new ImmutablePair<>(ReturnResult.REVISION_CONTAINED_NO_DATA, null);
-        }
-
-        return new ImmutablePair<>(ReturnResult.REVISION_FOUND, entity.getData());
-    }
-
-    @Override
     public SequenceEntity getNewSequenceValue(String key) {
         return getNewSequenceValue(key, 1L);
     }
@@ -271,5 +258,13 @@ public class GeneralRepositoryImpl implements GeneralRepository {
         entity.setData(string.getRight());
         em.merge(entity);
         return ReturnResult.REVISION_UPDATE_SUCCESSFUL;
+    }
+
+    @Override
+    public ReturnResult createNewRevision(RevisionData revision) {
+        // TODO:
+        //Pair<ReturnResult, RevisionData> pair = getRevisionData(revision.getKey())
+
+        return ReturnResult.REVISION_NOT_CREATE;
     }
 }

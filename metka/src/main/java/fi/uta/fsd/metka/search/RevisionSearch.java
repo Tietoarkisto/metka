@@ -11,4 +11,6 @@ import java.util.List;
 @Transactional(readOnly = true)
 public interface RevisionSearch {
     public Pair<ReturnResult, List<RevisionSearchResult>> search(RevisionSearchRequest request);
+
+    public Pair<ReturnResult, List<RevisionSearchResult>> studyIdSearch(String studyId);
 }

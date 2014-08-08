@@ -29,7 +29,7 @@ public enum ReturnResult {
     MISC_JSON_NOT_FOUND,                // Requested miscellaneous json file was either not found or was empty.
     MISC_JSON_FOUND,                    // Requested miscellaneous json file was found
     REVISION_UPDATE_SUCCESSFUL,         // RevisionData was serialized and merged successfully
-    REVISION_NOT_A_DRAFT,               // Revision was not in a draft state when draft was expected
+    REVISION_NOT_A_DRAFT,               // Revision was not in a draft state when draft was expected or parent was not a draft when child requested edit
     NO_CHANGES_TO_SAVE,                 // Save was requested but there were no changes to save
     SAVE_SUCCESSFUL_WITH_ERRORS,        // Save was successful (changed data was updated to database) but there were field errors
     SAVE_SUCCESSFUL,                    // Save was successful (changed data was updated to database) and there were no field errors
@@ -41,5 +41,8 @@ public enum ReturnResult {
     VIEW_SUCCESSFUL,                    // Some data was requested for viewing, data was gathered successfully
     INCORRECT_TYPE_FOR_OPERATION,       // Operation was requested for a configuration type that is not handled by that operation
     ALL_PARAMETERS_FOUND,               // All required parameters were provided
-    PARAMETERS_MISSING                 // Some parameter that is required is instead missing
+    PARAMETERS_MISSING,                 // Some parameter that is required is instead missing
+    USER_NOT_HANDLER,                   // User is not the current handler of a given revision
+    CAN_CREATE_DRAFT,                   // User is allowed to create a new draft revision of object
+    REVISION_NOT_CREATE                // Some reason stopped revision creation for new draft revision
 }

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns="http://www.springframework.org/schema/security"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
+		">
+
+    <http entry-point-ref="metkaEntryPoint" use-expressions="true">
+        <intercept-url pattern="/**" access="isAuthenticated()" />
+        <custom-filter ref="testFilter" before="SECURITY_CONTEXT_FILTER"/>
+        <custom-filter ref="shibAuthFilter" after="SECURITY_CONTEXT_FILTER"/>
+    </http>
+
+    <authentication-manager alias="authenticationManager">
+        <authentication-provider ref="metkaAuthenticationProvider" />
+    </authentication-manager>
+
+    <global-method-security pre-post-annotations="enabled" order="10">
+        <expression-handler ref="metkaExpressionHandler" />
+    </global-method-security>
+
+    <beans:bean id="testFilter" class="fi.uta.fsd.metkaAuthentication.TestCredentialsFilter" />
+
+    <beans:bean id="metkaAuthenticationProvider" class="org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider" >
+        <beans:property name="preAuthenticatedUserDetailsService">
+            <beans:bean class="org.springframework.security.web.authentication.preauth.PreAuthenticatedGrantedAuthoritiesUserDetailsService" />
+        </beans:property>
+    </beans:bean>
+
+    <beans:bean id="shibAuthFilter" class="fi.uta.fsd.metkaAuthentication.ShibAuthFilter" >
+        <beans:property name="authenticationManager" ref="authenticationManager" />
+    </beans:bean>
+
+
+
+    <beans:bean id="metkaEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+        <beans:constructor-arg name="loginFormUrl" value="/login" />
+    </beans:bean>
+
+    <beans:bean id="metkaExpressionHandler" class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
+        <beans:property name="permissionEvaluator">
+            <beans:bean class="fi.uta.fsd.metkaAuthentication.MetkaPermissionEvaluator" />
+        </beans:property>
+    </beans:bean>
+</beans:beans>
