@@ -1,7 +1,6 @@
 package fi.uta.fsd.metka.storage.entity;
 
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
-import fi.uta.fsd.metka.enums.RevisionState;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDateTime;
 
@@ -91,18 +90,6 @@ public abstract class RevisionableEntity {
 
     public void setRemovedBy(String removedBy) {
         this.removedBy = removedBy;
-    }
-
-    // Helper for creating new revisions
-    public RevisionEntity createNextRevision() {
-        RevisionEntity revision;
-        if(latestRevisionNo == null) {
-            revision = new RevisionEntity(new RevisionKey(getId(), 1));
-        } else {
-            revision = new RevisionEntity(new RevisionKey(getId(), latestRevisionNo+1));
-        }
-        revision.setState(RevisionState.DRAFT);
-        return revision;
     }
 
     public RevisionKey latestRevisionKey() {

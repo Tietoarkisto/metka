@@ -128,5 +128,5 @@ public interface GeneralRepository {
      */
     @Transactional(readOnly = false) public ReturnResult updateRevisionData(RevisionData revision);
 
-    @Transactional(readOnly = false) public ReturnResult createNewRevision(RevisionData revision);
+    @Transactional(readOnly = false) public Pair<ReturnResult, RevisionKey> createNewRevision(RevisionData revision);
 }

@@ -66,4 +66,8 @@ public class RevisionKey implements Serializable {
     public static RevisionKey fromModelKey(fi.uta.fsd.metka.model.general.RevisionKey key) {
         return new RevisionKey(key.getId(), key.getNo());
     }
+
+    public fi.uta.fsd.metka.model.general.RevisionKey toModelKey() {
+        return new fi.uta.fsd.metka.model.general.RevisionKey(getRevisionableId(), getRevisionNo());
+    }
 }

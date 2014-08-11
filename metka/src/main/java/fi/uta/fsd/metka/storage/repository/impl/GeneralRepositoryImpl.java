@@ -261,10 +261,21 @@ public class GeneralRepositoryImpl implements GeneralRepository {
     }
 
     @Override
-    public ReturnResult createNewRevision(RevisionData revision) {
-        // TODO:
-        //Pair<ReturnResult, RevisionData> pair = getRevisionData(revision.getKey())
-
-        return ReturnResult.REVISION_NOT_CREATE;
+    public Pair<ReturnResult, RevisionKey> createNewRevision(RevisionData data) {
+        RevisionableEntity entity = em.find(RevisionableEntity.class, data.getKey().getId());
+        if(entity == null) {
+            return new ImmutablePair<>(ReturnResult.REVISIONABLE_NOT_FOUND, null);
+        }
+        if(entity.getLatestRevisionNo() == null) {
+            return new ImmutablePair<>(ReturnResult.NO_REVISION_FOR_REVISIONABLE, null);
+        }
+        // Let's just make this check
+        if(!entity.getLatestRevisionNo().equals(entity.getCurApprovedNo())) {
+            return new ImmutablePair<>(ReturnResult.REVISION_FOUND, null);
+        }
+        RevisionEntity revision = new RevisionEntity(new RevisionKey(entity.getId(), entity.getLatestRevisionNo()+1));
+        revision.setState(RevisionState.DRAFT);
+        em.persist(revision);
+        return new ImmutablePair<>(ReturnResult.REVISION_CREATED, revision.getKey());
     }
 }

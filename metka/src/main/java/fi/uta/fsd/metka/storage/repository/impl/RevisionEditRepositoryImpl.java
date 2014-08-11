@@ -6,8 +6,10 @@ import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.data.container.DataField;
 import fi.uta.fsd.metka.model.data.container.SavedDataField;
 import fi.uta.fsd.metka.model.transfer.TransferData;
+import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionEditRepository;
@@ -43,12 +45,25 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
             ReturnResult result = checkEditPermissions(data);
             if(result != ReturnResult.CAN_CREATE_DRAFT) {
                 logger.warn("User can't create draft revision because: "+result);
-
+                return new ImmutablePair<>(result, data);
             }
             Pair<ReturnResult, Configuration> configPair = configurations.findLatestConfiguration(data.getConfiguration().getType());
             if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
                 logger.error("Couldn't find newest configuration for "+data.getConfiguration().getType()+" so can't create new editable revision for "+data.toString());
                 return new ImmutablePair<>(configPair.getLeft(), data);
+            }
+
+            Pair<ReturnResult, RevisionKey> keyPair = general.createNewRevision(data);
+            if(keyPair.getLeft() != ReturnResult.REVISION_CREATED) {
+                return new ImmutablePair<>(keyPair.getLeft(), data);
+            }
+
+            // TODO: If update fails then the possibly created revision should be removed
+            RevisionData newData = new RevisionData(keyPair.getRight().toModelKey(), configPair.getRight().getKey());
+            copyDataToNewRevision(data, newData);
+            ReturnResult result = general.updateRevisionData(newData);
+            if(result != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
+                return new ImmutablePair<>()
             }
         }
         return new ImmutablePair<>(ReturnResult.REVISION_FOUND, data);
@@ -85,5 +100,15 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
             return ReturnResult.USER_NOT_HANDLER;
         }
         return ReturnResult.CAN_CREATE_DRAFT;
+    }
+
+    private void copyDataToNewRevision(RevisionData oldData, RevisionData newData) {
+
+        for(DataField field : oldData.getFields().values()) {
+            newData.getFields().put(field.getKey(), field.copy());
+        }
+        for(DataField field : newData.getFields().values()) {
+            field.normalize();
+        }
     }
 }
