@@ -1,7 +1,10 @@
 package fi.uta.fsd.metkaSearch.directory;
 
 //import fi.uta.fsd.metkaAmqp.Logger;
+
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
@@ -9,8 +12,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DirectoryManager {
-    // Initialize logger.
-    //private static final Logger log = Logger.getInstance();
+    private static final Logger logger = LoggerFactory.getLogger(DirectoryManager.class);
 
     private static final Map<DirectoryPath, DirectoryInformation> indexDirectories = new ConcurrentHashMap<>();
 
@@ -34,19 +36,28 @@ public class DirectoryManager {
      * @param path
      * @return
      */
-    public static synchronized DirectoryInformation getIndexDirectory(DirectoryPath path) {
+    public static synchronized DirectoryInformation getIndexDirectory(DirectoryPath path, boolean writable) {
         DirectoryInformation index;
-
-        index = indexDirectories.get(path);
-        if(index == null) {
-            try {
-                index = new DirectoryInformation(path);
-                indexDirectories.put(index.getPath(), index);
-            } catch(IOException ioe) {
-                ioe.printStackTrace();
+        try {
+            if (writable) {
+                index = getWritableDirectory(path);
+            } else {
+                index = new DirectoryInformation(path, false);
             }
+        } catch(IOException ioe) {
+            logger.error("IOException while creating DirectoryInformation.");
+            return null;
         }
 
+        return index;
+    }
+
+    private static synchronized DirectoryInformation getWritableDirectory(DirectoryPath path) throws IOException {
+        DirectoryInformation index = indexDirectories.get(path);
+        if(index == null) {
+            index = new DirectoryInformation(path, true);
+            indexDirectories.put(index.getPath(), index);
+        }
         return index;
     }
 

@@ -53,7 +53,7 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
 
     protected Indexer(DirectoryManager.DirectoryPath path, IndexerCommandRepository commands) throws UnsupportedOperationException {
         this.path = path;
-        indexer = DirectoryManager.getIndexDirectory(path);
+        indexer = DirectoryManager.getIndexDirectory(path, true);
         if(indexer == null) {
             throw new UnsupportedOperationException("Couldn't get an index directory for indexer with path "+path);
         }
@@ -95,7 +95,7 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
                 command = commands.getNextCommand(indexer.getPath().getType());
                 if(command != null) {
                     long start = System.currentTimeMillis();
-                    System.err.println("Started new command for: "+command.getPath());
+                    logger.info("Started new command for: "+command.getPath());
                     status = IndexerStatusMessage.PROCESSING;
 
                     // Reset idle loops since there's work
@@ -120,15 +120,16 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
                     // DEBUG
                     long end = System.currentTimeMillis();
                     timeHandlingCommands += end-start;
-                    System.err.println("Took "+(end-start)+"ms to handle command");
+                    logger.info("Took "+(end-start)+"ms to handle command");
                 } else {
                     if(status != IndexerStatusMessage.IDLING) {
+                        idleLoops = 0;
                         // Previous loop was handling command, post DEBUG info
-                        System.err.println("Queue clear. Spent "+timeHandlingCommands+"ms handling commands");
+                        logger.info("Queue clear. Spent "+timeHandlingCommands+"ms handling commands");
                         status = IndexerStatusMessage.IDLING;
                         timeHandlingCommands = 0L;
-                        idleLoops++;
                     }
+                    if(indexChanged) idleLoops++;
                 }
 
                 if(idleLoops > 1 && status != IndexerStatusMessage.IDLING) {
@@ -149,7 +150,7 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
                 // If there was no new commands to handle, idle for 5 seconds before checking again
                 // Otherwise continue straight to next command
                 if(status == IndexerStatusMessage.IDLING) {
-                    Thread.sleep(5000);
+                    Thread.sleep(1000);
                 }
             } catch (InterruptedException ex) {
                 // Try to close the indexer
@@ -158,7 +159,7 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
                 throw new InterruptedException();
             } catch(Exception e) {
                 if(command != null) {
-                    System.err.println("Exception while handling command: "+"("+command.getQueueId()+") "+command.getPath()+"/"+command.getAction());
+                    logger.error("Exception while handling command: "+"("+command.getQueueId()+") "+command.getPath()+"/"+command.getAction());
                 }
                 Thread.currentThread().interrupt();
             }
@@ -201,15 +202,18 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
     }
 
     private void flushIndex() {
+        logger.info("Preparing to flush index "+indexer.getPath().toString());
         indexChanged = false;
         idleLoops = 0;
         commandBatch = 0;
         try {
             // Try to commit the writer
+            logger.info("Trying index writer commit.");
             indexWriter.commit();
 
             // Set indexer to dirty state so that searchers know to update their index
-            indexer.setDirty(true);
+            // Not needed anymore sine searches always reopen the index anyway
+            //indexer.setDirty(true);
         } catch (OutOfMemoryError er) {
             er.printStackTrace();
             // If we get an OutOfMemoryError then close the writer immediately

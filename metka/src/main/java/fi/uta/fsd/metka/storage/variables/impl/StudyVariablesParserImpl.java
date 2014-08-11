@@ -16,7 +16,6 @@ import fi.uta.fsd.metka.model.factories.VariablesFactory;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.impl.StudyVariableEntity;
-import fi.uta.fsd.metka.storage.entity.impl.StudyVariablesEntity;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
@@ -293,7 +292,8 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             VariablesFactory factory = new VariablesFactory();
             if(variableEntity.getLatestRevisionNo() == null) {
                 // No initial revision, assume created here and add initial revision
-                variableRevision = variableEntity.createNextRevision();
+                // TODO: Use revision create repository
+                variableRevision = new RevisionEntity(new RevisionKey(variableEntity.getId(), 1));
                 Pair<ReturnResult, RevisionData> dataPair = factory.newVariable(variableRevision.getKey().getRevisionableId(), variableRevision.getKey().getRevisionNo(),
                         variableConfiguration.getRight(), variablesData.getKey().getId().toString(), studyId.toString());
                 variableRevision.setData(json.serialize(dataPair.getRight()).getRight());
@@ -309,7 +309,8 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                     logger.error("Failed at deserializing "+oldVariables.toString());
                     continue;
                 }
-                variableRevision = variableEntity.createNextRevision();
+                // TODO: Use revision edit repository
+                variableRevision = new RevisionEntity(new RevisionKey(variableEntity.getId(), variableEntity.getLatestRevisionNo()+1));
                 RevisionData newData = DataFactory.createDraftRevision(variableRevision.getKey().getRevisionableId(), variableRevision.getKey().getRevisionNo(), oldData.getRight());
                 Pair<ReturnResult, String> string = json.serialize(newData);
                 if(string.getLeft() != ReturnResult.SERIALIZATION_SUCCESS) {

@@ -26,11 +26,16 @@ public class DirectoryInformation {
 
     private final Directory directory;
 
-    private volatile boolean dirty = false;
+    private final boolean writable;
+
+    // Since all search operations are performed as once per command operation we don't need to keep record of if index is dirty or not
+    // since every search will reopen the index anyway
+    /*private volatile boolean dirty = false;*/
     private volatile IndexWriter indexWriter;
 
-    public DirectoryInformation(DirectoryManager.DirectoryPath path) throws IOException {
+    public DirectoryInformation(DirectoryManager.DirectoryPath path, boolean writable) throws IOException {
         this.path = path;
+        this.writable = writable;
         if(this.path == null) {
             throw new UnsupportedOperationException("Needs to have a path");
         }
@@ -40,7 +45,7 @@ public class DirectoryInformation {
         } else {
             File fileDirectory = new File(indexBaseDirectory+path.getPath().substring(3));
             if(fileDirectory.exists() && !fileDirectory.isDirectory()) throw new IOException("Index directory is not a directory!");
-            fileDirectory.setWritable(true);
+            if(writable) fileDirectory.setWritable(true);
             try {
                 directory = FSDirectory.open(fileDirectory); // This should open MMapDirectory
             } catch(Exception e) {
@@ -57,15 +62,10 @@ public class DirectoryInformation {
         return directory;
     }
 
-    public boolean isDirty() {
-        return dirty;
-    }
-
-    public void setDirty(boolean dirty) {
-        this.dirty = dirty;
-    }
-
     public IndexWriter getIndexWriter() throws IOException {
+        if(!writable) {
+            throw new UnsupportedOperationException("This DirectoryInformation is not writable, can't open index writer");
+        }
         if(indexWriter == null) {
             // This can throw LockObtainFailedException if someone has abused the way
             // this code is supposed to be used. In that case we're pretty much out of luck with this
@@ -81,12 +81,13 @@ public class DirectoryInformation {
         return DirectoryReader.open(directory);
     }
 
-    public IndexReader getNRTIndexReader(boolean applyDeletes) throws IOException {
+    /*public IndexReader getNRTIndexReader(boolean applyDeletes) throws IOException {
         if(indexWriter == null) {
-            throw new UnsupportedOperationException("No index writer to create NRT reader from");
+            getIndexWriter();
+            //throw new UnsupportedOperationException("No index writer to create NRT reader from");
         }
         return DirectoryReader.open(indexWriter, applyDeletes);
-    }
+    }*/
 
     @Override
     public boolean equals(Object o) {

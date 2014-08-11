@@ -55,7 +55,10 @@ public final class SeriesBasicSearchCommand extends RevisionSearchCommandBase<Re
         if(revisionableId != null) qrys.add("+key.id:"+revisionableId);
         nums.put("key.id", new NumericConfig(1, new DecimalFormat(), FieldType.NumericType.LONG));
 
-        if(!StringUtils.isEmpty(abbreviation)) qrys.add("+seriesabbr:"+abbreviation);
+        if(!StringUtils.isEmpty(abbreviation)) {
+            qrys.add("+seriesabbr:"+abbreviation);
+            addWhitespaceAnalyzer("seriesabbr");
+        }
         if(!StringUtils.isEmpty(name)) {
             qrys.add("+seriesname:"+name);
             addTextAnalyzer("seriesname");

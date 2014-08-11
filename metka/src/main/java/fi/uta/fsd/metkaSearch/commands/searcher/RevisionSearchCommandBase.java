@@ -18,6 +18,8 @@ import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -32,6 +34,7 @@ import java.util.Map;
  * we can just extract it from the path while assuming that it is present
  */
 public abstract class RevisionSearchCommandBase<T extends SearchResult> extends SearchCommandBase<T> {
+    private static Logger logger = LoggerFactory.getLogger(RevisionSearchCommandBase.class);
     protected static void checkPath(DirectoryManager.DirectoryPath path, ConfigurationType type) throws UnsupportedOperationException {
         if(path.getType() != IndexerConfigurationType.REVISION) {
             throw new UnsupportedOperationException("Given path is not for REVISION index");
@@ -85,10 +88,12 @@ public abstract class RevisionSearchCommandBase<T extends SearchResult> extends 
     }*/
 
     protected static class BasicRevisionSearchResultHandler implements ResultHandler<RevisionResult> {
+        private static Logger logger = LoggerFactory.getLogger(BasicRevisionSearchResultHandler.class);
         public BasicRevisionSearchResultHandler() {}
 
         @Override
         public ResultList<RevisionResult> handle(IndexSearcher searcher, TopDocs results) {
+            logger.info("Handling results and transforming them to RevisionResult list");
             ResultList<RevisionResult> list = new ListBasedResultList<>(ResultList.ResultType.REVISION);
             for(ScoreDoc doc : results.scoreDocs) {
                 try {

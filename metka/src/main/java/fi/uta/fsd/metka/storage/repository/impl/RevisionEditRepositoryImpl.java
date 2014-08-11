@@ -61,10 +61,11 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
             // TODO: If update fails then the possibly created revision should be removed
             RevisionData newData = new RevisionData(keyPair.getRight().toModelKey(), configPair.getRight().getKey());
             copyDataToNewRevision(data, newData);
-            ReturnResult result = general.updateRevisionData(newData);
-            if(result != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
-                return new ImmutablePair<>()
+            ReturnResult update = general.updateRevisionData(newData);
+            if(update != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
+                return new ImmutablePair<>(update, data);
             }
+            return new ImmutablePair<>(ReturnResult.REVISION_CREATED, newData);
         }
         return new ImmutablePair<>(ReturnResult.REVISION_FOUND, data);
     }

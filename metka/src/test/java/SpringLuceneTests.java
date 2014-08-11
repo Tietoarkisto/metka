@@ -128,7 +128,7 @@ public class SpringLuceneTests {
     public void wikipediaIndexingSearchTest() {
         try {
             DirectoryManager.DirectoryPath path = DirectoryManager.formPath(false, IndexerConfigurationType.WIKIPEDIA, "en");
-            DirectoryInformation indexer = DirectoryManager.getIndexDirectory(path);
+            DirectoryInformation indexer = DirectoryManager.getIndexDirectory(path, false);
             IndexReader reader = indexer.getIndexReader();
             IndexSearcher searcher = new IndexSearcher(reader);
             Query query;
@@ -169,7 +169,7 @@ public class SpringLuceneTests {
     public void fiWikipediaIndexSearchTest() {
         try {
             DirectoryManager.DirectoryPath path = DirectoryManager.formPath(false, IndexerConfigurationType.WIKIPEDIA, Language.DEFAULT.toValue());
-            DirectoryInformation indexer = DirectoryManager.getIndexDirectory(path);
+            DirectoryInformation indexer = DirectoryManager.getIndexDirectory(path, false);
             IndexReader reader = indexer.getIndexReader();
             IndexSearcher searcher = new IndexSearcher(reader);
             //Query query;
@@ -274,7 +274,7 @@ public class SpringLuceneTests {
 
     @Test
     public void seriesBasicTest() throws IOException, QueryNodeException {
-        SearchCommand<RevisionResult> command = SeriesBasicSearchCommand.build(Language.DEFAULT.toValue(), false, true, true, null, null, null);
+        SearchCommand<RevisionResult> command = SeriesBasicSearchCommand.build(Language.DEFAULT.toValue(), true, true, true, 1L, null, null);
         ResultList<RevisionResult> results = searcher.executeSearch(command);
         ResultList.ResultType type = results.getType();
         assertTrue(type == ResultList.ResultType.REVISION);
@@ -315,7 +315,7 @@ public class SpringLuceneTests {
     @Test
     public void tempSearchTest() throws IOException, QueryNodeException {
         DirectoryManager.DirectoryPath path = new DirectoryManager.DirectoryPath(false, IndexerConfigurationType.REVISION, Language.DEFAULT.toValue(), ConfigurationType.STUDY.toValue());
-        DirectoryInformation dir = DirectoryManager.getIndexDirectory(path);
+        DirectoryInformation dir = DirectoryManager.getIndexDirectory(path, false);
         IndexReader reader = dir.getIndexReader();
         IndexSearcher searcher = new IndexSearcher(reader);
 
@@ -352,7 +352,7 @@ public class SpringLuceneTests {
     @Test
     public void analyzerTest() throws IOException, QueryNodeException {
         //indexer.startIndexer(DirectoryManager.formPath(true, IndexerConfigurationType.DUMMY, null));
-        DirectoryInformation di = DirectoryManager.getIndexDirectory(DirectoryManager.formPath(true, IndexerConfigurationType.DUMMY, null));
+        DirectoryInformation di = DirectoryManager.getIndexDirectory(DirectoryManager.formPath(true, IndexerConfigurationType.DUMMY, null), true);
         Map<String, Analyzer> analyzers = new HashMap<>();
         analyzers.put("analyzed1", new FinnishVoikkoAnalyzer());
         analyzers.put("analyzed2", new FinnishVoikkoAnalyzer());
@@ -394,7 +394,7 @@ public class SpringLuceneTests {
 
     @Test
     public void dateRangeTest() throws Exception {
-        TEST_INDEXER = DirectoryManager.getIndexDirectory(DirectoryManager.formPath(true, IndexerConfigurationType.DUMMY, null));
+        TEST_INDEXER = DirectoryManager.getIndexDirectory(DirectoryManager.formPath(true, IndexerConfigurationType.DUMMY, null), true);
         Map<String, Analyzer> analyzers = new HashMap<>();
         analyzers.put("date1", new FinnishVoikkoAnalyzer());
         analyzers.put("date2", new KeywordAnalyzer());
@@ -523,7 +523,7 @@ public class SpringLuceneTests {
 
     @Test
     public void numberRangeTest() throws Exception {
-        TEST_INDEXER = DirectoryManager.getIndexDirectory(DirectoryManager.formPath(true, IndexerConfigurationType.DUMMY, null));
+        TEST_INDEXER = DirectoryManager.getIndexDirectory(DirectoryManager.formPath(true, IndexerConfigurationType.DUMMY, null), true);
         Map<String, Analyzer> analyzers = new HashMap<>();
         analyzers.put("int1", new FinnishVoikkoAnalyzer());
         analyzers.put("int2", new KeywordAnalyzer());
@@ -636,7 +636,7 @@ public class SpringLuceneTests {
 
     @Test
     public void phraseTest() throws Exception {
-        TEST_INDEXER = DirectoryManager.getIndexDirectory(DirectoryManager.formPath(true, IndexerConfigurationType.DUMMY, null));
+        TEST_INDEXER = DirectoryManager.getIndexDirectory(DirectoryManager.formPath(true, IndexerConfigurationType.DUMMY, null), true);
         Map<String, Analyzer> analyzers = new HashMap<>();
         analyzers.put("phrase1", new FinnishVoikkoAnalyzer());
         analyzers.put("phrase2", new KeywordAnalyzer());

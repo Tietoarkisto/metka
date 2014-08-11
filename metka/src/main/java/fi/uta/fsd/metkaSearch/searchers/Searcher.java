@@ -30,10 +30,14 @@ public abstract class Searcher<T extends SearchResult> implements Callable<Resul
     protected Searcher(SearchCommand<T> command) throws UnsupportedOperationException {
         this.path = command.getPath();
         this.command = command;
-        indexer = DirectoryManager.getIndexDirectory(path);
+        indexer = DirectoryManager.getIndexDirectory(path, false);
         if(indexer == null) {
             throw new UnsupportedOperationException("Couldn't get an indexer for Searcher with path "+path);
         }
+    }
+
+    public DirectoryManager.DirectoryPath getPath() {
+        return path;
     }
 
     public DirectoryInformation getIndexer() {

@@ -10,6 +10,7 @@ import fi.uta.fsd.metka.model.factories.VariablesFactory;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.entity.impl.*;
+import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionCreationRepository;
@@ -73,7 +74,7 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
             return new ImmutablePair<>(ReturnResult.REVISIONABLE_NOT_CREATED, null);
         }
         em.persist(revisionable);
-        RevisionEntity revision = revisionable.createNextRevision();
+        RevisionEntity revision = new RevisionEntity(new RevisionKey(revisionable.getId(), 1));
         Pair<ReturnResult, RevisionData> dataPair = createRevisionData(revision, configPair.getRight(), request);
         if(dataPair.getLeft() != ReturnResult.REVISION_CREATED) {
             logger.error("Couldn't create revision because of: "+dataPair.getLeft());

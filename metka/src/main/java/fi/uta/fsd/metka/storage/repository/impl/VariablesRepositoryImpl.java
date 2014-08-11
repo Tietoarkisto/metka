@@ -9,6 +9,7 @@ import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.impl.StudyEntity;
 import fi.uta.fsd.metka.storage.entity.impl.StudyVariableEntity;
 import fi.uta.fsd.metka.storage.entity.impl.StudyVariablesEntity;
+import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionCreationRepository;
@@ -98,7 +99,8 @@ public class VariablesRepositoryImpl implements VariablesRepository {
             // TODO: Create new variables revision
             // TODO: Just skip checks for now, if this raises a problem at some point then do complete checks
             Configuration config = configurations.findLatestConfiguration(ConfigurationType.STUDY_VARIABLES).getRight();
-            revision = variables.createNextRevision();
+            // TODO: Use revision edit repository
+            revision = new RevisionEntity(new RevisionKey(variables.getId(), variables.getLatestRevisionNo()+1));
             data = DataFactory.createDraftRevision(revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo(), data, config.getKey());
             // TODO: Just skip checks for now, if this raises a problem at some point then do complete checks
             revision.setData(json.serialize(data).getRight());
@@ -144,7 +146,8 @@ public class VariablesRepositoryImpl implements VariablesRepository {
             // TODO: Create new variables revision
             // TODO: Just skip checks for now, if this raises a problem at some point then do complete checks
             Configuration config = configurations.findLatestConfiguration(ConfigurationType.STUDY_VARIABLES).getRight();
-            revision = variable.createNextRevision();
+            // TODO: Use revision edit repository
+            revision = new RevisionEntity(new RevisionKey(variable.getId(), variable.getLatestRevisionNo()+1));
             data = DataFactory.createDraftRevision(revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo(), data, config.getKey());
             // TODO: Just skip checks for now, if this raises a problem at some point then do complete checks
             revision.setData(json.serialize(data).getRight());

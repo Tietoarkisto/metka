@@ -13,6 +13,7 @@ import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.StudyAttachmentQueueEntity;
 import fi.uta.fsd.metka.storage.entity.impl.StudyAttachmentEntity;
 import fi.uta.fsd.metka.storage.entity.impl.StudyEntity;
+import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
@@ -92,7 +93,8 @@ public class StudyAttachmentRepositoryImpl {
             StudyAttachmentEntity entity = new StudyAttachmentEntity();
             em.persist(entity);
 
-            RevisionEntity revisionEntity = entity.createNextRevision();
+            // TODO: Use revision create repository
+            RevisionEntity revisionEntity = new RevisionEntity(new RevisionKey(entity.getId(), 1));
 
             /*
              * creates initial data set for the first draft any exceptions thrown should force rollback
@@ -141,7 +143,8 @@ public class StudyAttachmentRepositoryImpl {
                 logger.error("Couldn't find configuration for STUDY_ATTACHMENT");
                 return null;
             }
-            RevisionEntity newRevision = file.createNextRevision();
+            // TODO: Use revision edit repository
+            RevisionEntity newRevision = new RevisionEntity(new RevisionKey(file.getId(), file.getLatestRevisionNo()+1));
 
 
             // Create new RevisionData object using the current revEntity (either new or old, doesn't matter)

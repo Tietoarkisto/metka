@@ -2,6 +2,7 @@ package fi.uta.fsd.metka.model.factories;
 
 import fi.uta.fsd.metka.enums.RevisionState;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.data.container.DataField;
 import fi.uta.fsd.metka.model.general.ConfigurationKey;
 import fi.uta.fsd.metka.model.general.RevisionKey;
 
@@ -47,8 +48,18 @@ public abstract class DataFactory {
         RevisionData data = createDraftRevision(id, no, config);
 
         // Copies fields from old data to new data using Copy and then normalizes them
-        RevisionData.newRevisionBuilder(oldData, data);
+        copyDataToNewRevision(oldData, data);
 
         return data;
+    }
+
+    private static void copyDataToNewRevision(RevisionData oldData, RevisionData newData) {
+
+        for(DataField field : oldData.getFields().values()) {
+            newData.getFields().put(field.getKey(), field.copy());
+        }
+        for(DataField field : newData.getFields().values()) {
+            field.normalize();
+        }
     }
 }

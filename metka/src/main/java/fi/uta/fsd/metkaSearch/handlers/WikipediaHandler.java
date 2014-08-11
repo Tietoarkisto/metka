@@ -351,7 +351,7 @@ public class WikipediaHandler extends DefaultHandler {
                 // Try to commit the writer
                 indexer.getIndexWriter().commit();
                 // Set indexer to dirty state so that searchers know to update their index
-                indexer.setDirty(true);
+                //indexer.setDirty(true);
             } catch (OutOfMemoryError er) {
                 er.printStackTrace();
                 // If we get an OutOfMemoryError then close the writer immediately
