@@ -6,17 +6,21 @@ define(function (require) {
     require('./metka');
     require('./modules/topMenu');
 
-    require('./modules/pageConfig')(function (options) {
-        options = $.extend({
+
+
+    var $container = $('<div class="content container">');
+
+    require('./modules/pageConfig')(function (pageOptions) {
+        var options = $.extend({
             header: 'Metka',
             content: [],
             data: null,
             dataConf: null
-        }, options);
+        }, pageOptions);
 
-        var $container = $('<div class="content container">')
-            .append(require('./modules/header')(options.header));
+        options.$events = $({});
 
+        $container.append(require('./modules/header')(options.header));
         require('./modules/container').call($container, options);
         require('./modules/buttonContainer').call($container, options);
 
@@ -24,4 +28,6 @@ define(function (require) {
             .append($('<div class="wrapper">')
                 .append($container));
     });
+
+
 });

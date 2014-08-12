@@ -12,7 +12,7 @@ define(function (require) {
         var type = options.field.displayType || require('./utils/getPropertyNS')(options, 'dataConf.fields', options.field.key, 'type');
 
         if (!type) {
-            log('field type is not set', options);
+            log('field type is not set', options.field.key, options);
             return this;
         }
 
@@ -24,6 +24,18 @@ define(function (require) {
             } else {
                 require('./inputField').call(this, options, type);
             }
+
+            require('./data')(options).onChange(function () {
+                this.children('.help-block').remove();
+                var errors = require('./data')(options).errors();
+                // TODO: if saving, show warning/warning
+                // TODO: if approving, show error/danger
+                if (errors.length) {
+                    this.addClass('has-error');
+                    this.append($('<p class="help-block">')
+                        .append(require('./dataValidationErrorText')(errors)));
+                }
+            }.bind(this));
         }
 
         if (options.create) {

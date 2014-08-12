@@ -5,7 +5,10 @@ define(function (require) {
         var key = options.field.key;
         var $input = this;
 
-        var selectionListKey = options.dataConf.fields[key].selectionList;
+        var selectionListKey = require('./utils/getPropertyNS')(options, 'dataConf.fields', key, 'selectionList');
+        if (!selectionListKey) {
+            return;
+        }
         // TODO: prevent recursion
         (function selectInput(listKey) {
             function setOptions(optionsList) {
@@ -28,12 +31,15 @@ define(function (require) {
                             // MetkaJS.L10N.get([MetkaJS.Globals.page.toUpperCase(), key, option.value].join('.'));
                         })());
                 }));
-                var value = require('./data')(options).get();
-                if (typeof value !== 'undefined') {
-                    $input.val(value);
-                } else {
-                    $input.children().first().prop('selected', true);
-                }
+
+                require('./data')(options).onChange(function () {
+                    var value = require('./data')(options).get();
+                    if (typeof value !== 'undefined') {
+                        $input.val(value);
+                    } else {
+                        $input.children().first().prop('selected', true);
+                    }
+                });
             }
 
             var list = require('./utils/getPropertyNS')(options, 'dataConf.selectionLists', listKey);

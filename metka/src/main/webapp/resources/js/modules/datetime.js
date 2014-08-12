@@ -22,17 +22,20 @@ define(function (require) {
         setup.options.format = require('./dateFormats')[type];
         setup.options.language = 'fi';
 
-        var defaultDate = require('./data')(options).get();
-        if (defaultDate) {
-            setup.options.defaultDate = defaultDate;
-        }
-
         this.append($('<div class="input-group date">')
             .append($input)
             .append('<span class="input-group-addon"><span class="glyphicon glyphicon-{icon}"></span>'.supplant(setup))
             .datetimepicker(setup.options)
             .if(require('./isFieldDisabled')(options), function () {
                 this.data('DateTimePicker').disable();
+            })
+            .me(function () {
+                require('./data')(options).onChange(function () {
+                    var date = require('./data')(options).get();
+                    if (date) {
+                        this.data('DateTimePicker').setDate(date);
+                    }
+                }.bind(this));
             }))
             // FIXME: kun kenttä on tyhjä ja ikonia klikataan, arvo tulee heti näkyviin mutta dp.change event ei triggeroidu. mahdollisesti korjattu datetimepickerin päivityksissä?
             .on('dp.change', function (e) {
