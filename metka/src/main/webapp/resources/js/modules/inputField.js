@@ -22,13 +22,10 @@ define(function (require) {
                 return 'textarea';
             }
 
-            if (type === 'CHECKBOX') {
-                elemOptions.type = 'checkbox';
-            } else {
-                // STRING, INTEGER, CONCAT
+            // STRING, INTEGER, CONCAT
 
-                elemOptions.type = 'text';
-            }
+            elemOptions.type = 'text';
+
             return 'input';
         })();
 
@@ -48,13 +45,15 @@ define(function (require) {
             } else {
                 // textarea or input elements
 
-                $input.val(type === 'CONCAT'
-                    ?
-                    options.dataConf.fields[key].concatenate.map(function (key) {
-                        return require('./data')(options)(key).get();
-                    }).join('')
-                    :
-                    require('./data')(options).get() || '');
+                require('./data')(options).onChange(function () {
+                    $input.val(type === 'CONCAT'
+                        ?
+                        options.dataConf.fields[key].concatenate.map(function (key) {
+                            return require('./data')(options)(key).get();
+                        }).join('')
+                        :
+                        require('./data')(options).get() || '');
+                });
             }
 
             this.append($input);

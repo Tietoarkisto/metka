@@ -7,8 +7,6 @@ define(function (require) {
                 return io(key);
             }
 
-            var getPropertyNS = require('./utils/getPropertyNS');
-
             function getTransferField(createIfUndefined) {
                 var transferField = require('./utils/getPropertyNS')(options, 'data.fields', key);
 
@@ -22,6 +20,8 @@ define(function (require) {
                     })
                 }
             }
+
+            var getPropertyNS = require('./utils/getPropertyNS');
 
             byFieldKey.get = function () {
                 var transferField = getTransferField();
@@ -38,6 +38,14 @@ define(function (require) {
                     }
                 }
             };
+            byFieldKey.errors = function () {
+                var transferField = getTransferField();
+
+                if (transferField) {
+                    return transferField.errors || [];
+                }
+                return [];
+            };
             byFieldKey.set = function (value) {
                 var transferField = getTransferField(true);
 
@@ -53,6 +61,13 @@ define(function (require) {
                 trasferRow.key = trasferRow.key || key;
 
                 transferField.rows.push(trasferRow);
+            };
+            byFieldKey.onChange = function (callback) {
+                callback();
+                if (options.$events) {
+                    // TODO: välitä data tai errors callbackille, koska se lähes aina tarvitsee jotain
+                    options.$events.on('dataChanged', callback);
+                }
             };
 
             return byFieldKey;

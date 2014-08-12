@@ -10,7 +10,6 @@ define(function (require) {
         page: MetkaJS.configurationType.toLowerCase(),
         PAGE: MetkaJS.configurationType.toUpperCase(),
         revision: MetkaJS.revisionNo,
-        no: MetkaJS.revisionNo,
-        dataConfigurations: MetkaJS.JSConfig
+        no: MetkaJS.revisionNo
     };
 });

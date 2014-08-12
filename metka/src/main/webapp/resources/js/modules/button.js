@@ -6,14 +6,33 @@ define(function (require) {
         //var $button = $(this);
         //$button.button('loading');
         //$button.button('reset');
+
         return function (options) {
             this
                 .click(function () {
+
+                    (function clearErrors(fields) {
+                        $.each(fields, function (key, field) {
+                            if (field.errors) {
+                                field.errors.length = 0
+                            }
+                            if (field.rows) {
+                                field.rows.forEach(function (row) {
+                                    if (row.errors) {
+                                        row.errors.length = 0
+                                    }
+                                    clearErrors(row.fields);
+                                });
+                            }
+
+                        });
+                    })(options.data.fields);
+
                     require('./server')(command, {
                         data: JSON.stringify(options.data),
-                        success: function (data) {
+                        success: function (response) {
                             require('./modal')({
-                                title: data.result === 'SAVE_SUCCESSFUL' ? MetkaJS.L10N.get('alert.notice.title') : MetkaJS.L10N.get('alert.error.title'),
+                                title: response.result === 'SAVE_SUCCESSFUL' ? MetkaJS.L10N.get('alert.notice.title') : MetkaJS.L10N.get('alert.error.title'),
                                 body: ''/*data.errors.map(function (error) {
                                     return MetkaJS.L10N.get(error.msg);
                                 })*/,
@@ -22,8 +41,12 @@ define(function (require) {
                                 }]
                             }).on('hide.bs.modal', function () {
                                 // callback gets called when modal is dismissed
-                                callback(data);
+                                callback(response);
                             });
+
+                            $.extend(options.data, response.data);
+                            options.$events.trigger('dataChanged');
+
                         }
                     });
                 });
@@ -32,9 +55,7 @@ define(function (require) {
 
 
     var buttons = {
-        APPROVE: FormAction('approve', function () {
-            location.reload();
-        }),
+        APPROVE: FormAction('approve', function () {}),
         CANCEL: function () {
             this
                 .text(MetkaJS.L10N.get('general.buttons.cancel'));

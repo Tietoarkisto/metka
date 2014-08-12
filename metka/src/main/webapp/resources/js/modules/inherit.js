@@ -1,4 +1,6 @@
 define(function (require) {
+    'use strict';
+
     return function (childConstructor) {
         return function (parentOptions) {
             parentOptions = parentOptions || {};
@@ -10,6 +12,7 @@ define(function (require) {
                 options.readOnly = parentOptions.readOnly || options.readOnly;
 
                 // use parent's values, if nothing else is available
+                options.$events = options.$events || parentOptions.$events;
                 options.data = options.data || parentOptions.data;
                 options.dataConf = options.dataConf || parentOptions.dataConf;
 

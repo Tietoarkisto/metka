@@ -109,8 +109,7 @@ define(function (require) {
                     "id",
                     "revision",
                     "state"
-                ], function () {
-                    var transferRow = $(this).data('transferRow');
+                ], function (transferRow) {
                     require('./../assignUrl')('view', {
                         id: transferRow.fields.id.value.current,
                         revision: transferRow.fields.revision.value.current,

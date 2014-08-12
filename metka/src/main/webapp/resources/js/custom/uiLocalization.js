@@ -86,6 +86,11 @@
                         }
                     }
                 }
+            },
+            "PUBLICATION": {
+                "&search": {
+                    "default": "Julkaisuhaku"
+                }
             }
         },
 
@@ -585,7 +590,7 @@
 
         "SERIES": {
             "field": {
-                "seriesid": "ID",
+                "id": "ID",
                 "seriesabbr": "Lyhenne",
                 "seriesname": "Nimi",
                 "state": "Tila"

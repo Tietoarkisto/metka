@@ -18,8 +18,24 @@ define(function (require) {
             };
         }
 
+        function tableError(errors) {
+            if (errors && errors.length) {
+                this
+                    .addClass('danger')
+                    .tooltip({
+                        container: 'body',
+                        title: require('./dataValidationErrorText')(errors),
+                        html: true
+                    });
+            }
+        }
+
         function tr(transferRow) {
-            return $('<tr>')
+            var $tr = $('<tr>');
+
+            tableError.call($tr, transferRow.errors);
+
+            return $tr
                 .data('transferRow', transferRow)
                 .append(columns.map(function (column) {
                     var $td = $('<td>');
@@ -54,6 +70,9 @@ define(function (require) {
                                 }));
                                 return;
                             }
+
+                            tableError.call($td, transferField.errors);
+
                             if (!transferField.type) {
                                 log('transferField type not set (column: {column})'.supplant({
                                     column: column
@@ -105,7 +124,9 @@ define(function (require) {
         }
 
         function appendRow(transferRow) {
-            $tbody.append(tr(transferRow));
+            if (!transferRow.removed) {
+                $tbody.append(tr(transferRow));
+            }
         }
 
         function addRow(transferRow) {
@@ -117,11 +138,11 @@ define(function (require) {
             addRow(require('./map/object/transferRow')(data));
         }
 
-        function rowDialog(data, title, button, onClose) {
-            return function () {
+        function rowDialog(title, button, onClose) {
+            return function (data) {
                 var $row = $(this);
                 var containerOptions = {
-                    data: data.call($row),
+                    data: data,
                     dataConf: options.dataConf,
                     content: [
                         {
@@ -179,17 +200,19 @@ define(function (require) {
                 .text(MetkaJS.L10N.localize(options, 'title')))
             .append($('<table class="table table-condensed">')
                 .if(options.field.onClick || !require('./isFieldDisabled')(options), function () {
+                    var onClick = options.field.onClick || rowDialog('add', 'ok', function (data) {
+                        var transferRow = require('./map/object/transferRow')(data);
+                        this.data('transferRow').fields = transferRow.fields;
+                        this.replaceWith(tr(transferRow));
+                    });
+
                     this
                         .addClass('table-hover');
 
                     $tbody
-                        .on('click', 'tr', options.field.onClick || rowDialog(function () {
-                            return this.data('transferRow');
-                        }, 'add', 'ok', function (data) {
-                            var transferRow = require('./map/object/transferRow')(data);
-                            this.data('transferRow').fields = transferRow.fields;
-                            this.replaceWith(tr(transferRow));
-                        }));
+                        .on('click', 'tr', function () {
+                            onClick.call(this, $(this).data('transferRow'));
+                        });
                 })
                 .append($('<thead>')
                     .append($('<tr>')
@@ -244,10 +267,13 @@ define(function (require) {
                             }
                         })))
                 .append(function () {
-                    var rows = require('./data')(options).get();
-                    if (rows) {
-                        rows.forEach(appendRow);
-                    }
+                    require('./data')(options).onChange(function () {
+                        $tbody.empty();
+                        var rows = require('./data')(options).get();
+                        if (rows) {
+                            rows.forEach(appendRow);
+                        }
+                    });
                     return $tbody;
                 }))
             .append(function () {
@@ -322,10 +348,9 @@ define(function (require) {
                     })
                         .addClass('btn-sm')
                         .text(MetkaJS.L10N.get('general.table.add'))
-                        .click(rowDialog(function () {
-                            // initial data is empty
-                            return {};
-                        }, 'add', 'add', addRowFromDataObject)));
+                        .click(function () {
+                            rowDialog('add', 'add', addRowFromDataObject).call(this, {});
+                        }));
                 }
 
                 if (items.length) {

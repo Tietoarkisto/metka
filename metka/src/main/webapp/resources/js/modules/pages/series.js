@@ -42,8 +42,23 @@ define(function (require) {
                                     "title": "Lyhenne",
                                     "colspan": 2,
                                     "field": {
-                                        "displayType": "STRING",
+                                        "displayType": "SELECTION",
                                         "key": "seriesabbr"
+                                    },
+                                    create: function () {
+                                        var $input = $(this);
+                                        require('./../server')('/series/getAbbreviations', {
+                                            method: 'GET',
+                                            success: function (data) {
+                                                if (data.abbreviations) {
+                                                    $input.append(data.abbreviations.map(function (option) {
+                                                        return $('<option>')
+                                                            .val(option)
+                                                            .text(option);
+                                                    }));
+                                                }
+                                            }
+                                        });
                                     }
                                 },
                                 {
@@ -103,7 +118,7 @@ define(function (require) {
                 }, function (result) {
                     return {
                         id: result.id,
-                        revision: result.revision,
+                        revision: result.no,
                         seriesabbr: result.values.seriesabbr,
                         seriesname: result.values.seriesname,
                         state: MetkaJS.L10N.get('search.result.state.{state}'.supplant(result))
@@ -126,8 +141,7 @@ define(function (require) {
                     "seriesabbr",
                     "seriesname",
                     "state"
-                ], function () {
-                    var transferRow = $(this).data('transferRow');
+                ], function (transferRow) {
                     require('./../assignUrl')('view', {
                         id: transferRow.fields.id.value.current,
                         revision: transferRow.fields.revision.value.current

@@ -33,8 +33,14 @@ define(function (require) {
                                     }
                                 };
                                 var results = getResults(data);
-
                                 fieldOptions.data.fields.searchResults.rows = results.map(mapResult).map(require('./map/object/transferRow'));
+
+                                // if exactly 1 search result, perform the row action
+                                if (fieldOptions.data.fields.searchResults.rows.length === 1) {
+                                    trOnClick(fieldOptions.data.fields.searchResults.rows[0]);
+                                    return;
+                                }
+
                                 $('#searchResultTable').remove();
 
                                 var $field = require('./field').call($('<div>'), fieldOptions)
