@@ -29,6 +29,8 @@ public class VariablesController {
     @Autowired
     private JSONUtil json;
 
+    // TODO: If there are any actual variable or variables specific calls add them here, otherwise the general RevisionController calls should suffice
+
     /*
     * View variables
     * Use search functions to find relevant revision for the requested study variables. Then redirect to viewing that specific revision.

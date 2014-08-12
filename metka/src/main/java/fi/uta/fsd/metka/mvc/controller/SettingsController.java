@@ -1,5 +1,6 @@
 package fi.uta.fsd.metka.mvc.controller;
 
+import fi.uta.fsd.metka.mvc.ModelUtil;
 import fi.uta.fsd.metka.mvc.services.SettingsService;
 import fi.uta.fsd.metka.mvc.services.requests.UploadRequest;
 import fi.uta.fsd.metka.mvc.validator.UploadRequestValidator;
@@ -27,7 +28,7 @@ public class SettingsController {
 
     @RequestMapping("")
     public String settings(Model model) {
-        model.addAttribute("indexers", indexer.indexerStatusList());
+        ModelUtil.initSettings(model, indexer.indexerStatusList());
         return "settings";
     }
 

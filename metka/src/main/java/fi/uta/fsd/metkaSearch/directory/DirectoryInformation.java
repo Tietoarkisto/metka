@@ -62,7 +62,7 @@ public class DirectoryInformation {
         return directory;
     }
 
-    public IndexWriter getIndexWriter() throws IOException {
+    public IndexWriter getIndexWriter() {
         if(!writable) {
             throw new UnsupportedOperationException("This DirectoryInformation is not writable, can't open index writer");
         }

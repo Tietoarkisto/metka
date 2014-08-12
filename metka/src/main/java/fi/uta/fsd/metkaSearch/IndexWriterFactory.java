@@ -1,14 +1,14 @@
 package fi.uta.fsd.metkaSearch;
 
 import fi.uta.fsd.metkaSearch.analyzer.CaseInsensitiveWhitespaceAnalyzer;
-import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
-
-import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IndexWriterFactory {
+    private static final Logger logger = LoggerFactory.getLogger(IndexWriterFactory.class);
     private static final IndexWriterConfig writerConfig;
 
     static {
@@ -18,9 +18,14 @@ public class IndexWriterFactory {
         writerConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
     }
 
-    public static IndexWriter createIndexWriter(Directory directory) throws IOException {
+    public static IndexWriter createIndexWriter(Directory directory) {
         IndexWriterConfig clone = writerConfig.clone();
-        IndexWriter writer = new IndexWriter(directory, clone);
-        return writer;
+        try {
+            IndexWriter writer = new IndexWriter(directory, clone);
+            return writer;
+        } catch(Exception e) {
+            logger.error("Exception while creating index writer: ", e);
+            return null;
+        }
     }
 }

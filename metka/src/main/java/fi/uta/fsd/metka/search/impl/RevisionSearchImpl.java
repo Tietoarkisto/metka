@@ -157,16 +157,34 @@ public class RevisionSearchImpl implements RevisionSearch {
             searchResult.setId(data.getKey().getId());
             searchResult.setNo(data.getKey().getNo());
             searchResult.setState((info.getRemoved()) ? UIRevisionState.REMOVED : UIRevisionState.fromRevisionState(data.getState()));
-            // Add SERIES specific search result values
-            Pair<StatusCode, SavedDataField> fieldPair = data.dataField(SavedDataFieldCall.get("seriesname"));
-            if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValue()) {
-                searchResult.getValues().put("seriesname", fieldPair.getRight().getActualValue());
-            } else {
-                searchResult.getValues().put("seriesname", "");
+            // Add type specific search result values
+            switch(data.getConfiguration().getType()) {
+                case SERIES:
+                    addSeriesSearchResults(searchResult, data);
+                    break;
+                case STUDY:
+                case PUBLICATION:
+                    // TODO: Add study and publication search results
+                    break;
             }
             results.add(searchResult);
         }
 
         return results;
+    }
+
+    private void addSeriesSearchResults(RevisionSearchResult searchResult, RevisionData data) {
+        Pair<StatusCode, SavedDataField> fieldPair = data.dataField(SavedDataFieldCall.get("seriesname"));
+        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValue()) {
+            searchResult.getValues().put("seriesname", fieldPair.getRight().getActualValue());
+        } else {
+            searchResult.getValues().put("seriesname", "");
+        }
+        fieldPair = data.dataField(SavedDataFieldCall.get("seriesabbr"));
+        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValue()) {
+            searchResult.getValues().put("seriesabbr", fieldPair.getRight().getActualValue());
+        } else {
+            searchResult.getValues().put("seriesabbr", "");
+        }
     }
 }

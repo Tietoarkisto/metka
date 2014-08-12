@@ -1,11 +1,15 @@
 package fi.uta.fsd.metkaSearch;
 
+import fi.uta.fsd.metka.enums.ConfigurationType;
+import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metkaSearch.commands.indexer.IndexerCommand;
+import fi.uta.fsd.metkaSearch.directory.DirectoryInformation;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.entity.IndexerCommandRepository;
+import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import fi.uta.fsd.metkaSearch.enums.IndexerStatusMessage;
 import fi.uta.fsd.metkaSearch.indexers.DummyIndexer;
 import fi.uta.fsd.metkaSearch.indexers.Indexer;
@@ -13,6 +17,9 @@ import fi.uta.fsd.metkaSearch.indexers.RevisionIndexer;
 import fi.uta.fsd.metkaSearch.indexers.WikipediaIndexer;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.lucene.index.IndexWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -30,6 +37,7 @@ import java.util.concurrent.Future;
 
 @Service
 public class IndexerComponent {
+    private static final Logger logger = LoggerFactory.getLogger(IndexerComponent.class);
     @Autowired
     private GeneralRepository general;
 
@@ -61,6 +69,30 @@ public class IndexerComponent {
     public void clearCommands() {
         commandRepository.clearAllRequests();
         commandRepository.removeAllHandled();
+
+        // Clear locks
+        for(Language lang : Language.values()) {
+            for(ConfigurationType type : ConfigurationType.values()) {
+                DirectoryManager.DirectoryPath path = DirectoryManager.formPath(false, IndexerConfigurationType.REVISION, lang.toValue(), type.toValue());
+                try {
+                    DirectoryInformation info = new DirectoryInformation(path, false);
+                    logger.info("Checking directory "+path+" for write lock.");
+                    if(IndexWriter.isLocked(info.getDirectory())) {
+                        logger.info("Directory "+path+" contained lock. Attempting to clear lock with name "+IndexWriter.WRITE_LOCK_NAME+" from directory.");
+                        IndexWriter.unlock(info.getDirectory());
+                        info.getDirectory().clearLock(IndexWriter.WRITE_LOCK_NAME);
+                        if(IndexWriter.isLocked(info.getDirectory())) {
+                            logger.error("FAIL during lock clearing for path "+path+" attempting forced delete since we know that the lock should not be in use");
+                            info.getDirectory().deleteFile(IndexWriter.WRITE_LOCK_NAME);
+                        } else {
+                            logger.error("SUCCESS during lock clearing for path "+path);
+                        }
+                    }
+                } catch(Exception e) {
+                    logger.error("Exception while clearing path "+path+" from write lock:", e);
+                }
+            }
+        }
     }
 
     /**
@@ -87,7 +119,6 @@ public class IndexerComponent {
         commandRepository.addIndexerCommand(command);
         if(handlers.containsKey(command.getPath())) {
             if(handlers.get(command.getPath()).isDone()) {
-                // Start new indexer, don't use RAMDirectory. Starting a new indexer should clear the old one from map.
                 startIndexer(command.getPath());
             }
         } else {

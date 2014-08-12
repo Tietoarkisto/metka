@@ -37,6 +37,7 @@ public class StartupScanner {
      */
     @PostConstruct
     public void scanForConfigurations() {
+        logger.info("Scanning for configurations.");
         File confDir = new File(rootFolder+"configuration");
 
         Collection<File> files = FileUtils.listFiles(confDir, FileFilterUtils.suffixFileFilter(".json"), TrueFileFilter.TRUE);
@@ -56,6 +57,7 @@ public class StartupScanner {
      */
     @PostConstruct
     public void scanForMiscJSON() {
+        logger.info("Scanning for miscellaneous json files.");
         File miscDir = new File(rootFolder+"misc");
 
         Collection<File> files = FileUtils.listFiles(miscDir, FileFilterUtils.suffixFileFilter(".json"), TrueFileFilter.TRUE);
@@ -76,6 +78,7 @@ public class StartupScanner {
      */
     @PostConstruct
     public void scanForGUIConfigurations() {
+        logger.info("Scanning for gui configurations.");
         File guiDir = new File(rootFolder+"gui");
 
         Collection<File> files = FileUtils.listFiles(guiDir, FileFilterUtils.suffixFileFilter(".json"), TrueFileFilter.TRUE);

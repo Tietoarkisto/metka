@@ -30,6 +30,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.NumericRangeQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
@@ -39,6 +41,7 @@ import static org.apache.lucene.document.Field.Store.YES;
 import static org.apache.lucene.search.BooleanClause.Occur.MUST;
 
 class GeneralRevisionHandler implements RevisionHandler {
+    private final static Logger logger = LoggerFactory.getLogger(GeneralRevisionHandler.class);
     private final Indexer indexer;
     private final GeneralRepository general;
     private final ConfigurationRepository configurations;
@@ -73,14 +76,18 @@ class GeneralRevisionHandler implements RevisionHandler {
         if(command == null) {
             return true;
         }
+        logger.info("Trying to get revision ID: "+command.getRevisionable()+" NO: "+command.getRevision());
         Pair<ReturnResult, RevisionData> pair = general.getRevisionDataOfType(command.getRevisionable(), command.getRevision(), command.getType());
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
+            logger.info("Revision not found with result "+pair.getLeft());
             return true;
         }
         RevisionData data = pair.getRight();
+        logger.info("Trying to get configuration for "+data.getConfiguration().toString());
         Pair<ReturnResult, Configuration> confPair = getConfiguration(data.getConfiguration());
         if(confPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
             // We can't really do the indexing without an actual config
+            logger.info("Configuration not found with result "+confPair.getLeft());
             return true;
         }
         Configuration config = confPair.getRight();
@@ -97,14 +104,17 @@ class GeneralRevisionHandler implements RevisionHandler {
         // This is used to determine if there's been some breaking bugs that mean that the document can't be added to the index
         boolean addDocument = true;
 
+        logger.info("Trying to find revision info.");
         Pair<ReturnResult, RevisionableInfo> removedInfoPair = general.getRevisionableInfo(data.getKey().getId());
         if(removedInfoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
             // For some reason removed info check failed to find the entity. stop indexing
+            logger.info("Revision info not found with reason "+removedInfoPair.getLeft());
             return true;
         }
         RevisionableInfo info = removedInfoPair.getRight();
 
         // Do some default stuff
+        logger.info("Forming document for revision.");
         document.indexIntegerField("key.id", data.getKey().getId(), YES);
         document.indexIntegerField("key.no", data.getKey().getNo().longValue(), YES);
         document.indexKeywordField("key.configuration.type", data.getConfiguration().getType().toValue(), YES);
@@ -140,27 +150,39 @@ class GeneralRevisionHandler implements RevisionHandler {
             document.indexKeywordField("state.saved", "false", YES);
         }
 
+        logger.info("Trying to index fields");
         addDocument = indexFields(data, document, "", config);
 
         if(addDocument) {
+            logger.info("Adding document to index.");
             document.indexText("general", document.getGeneral(), false, YES);
             PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(CaseInsensitiveWhitespaceAnalyzer.ANALYZER, document.getAnalyzers());
             indexer.addDocument(document.getDocument(), analyzer);
+        } else {
+            logger.info("Document was not added to index.");
         }
         return addDocument;
     }
 
     private boolean indexFields(RevisionData data, IndexerDocument document, String root, Configuration config) {
         boolean addDocument = true;
+
         for(Field field : config.getFields().values()) {
             // Ignore subfields, they're indexed through container indexing
             if(field.getSubfield()) {
                 continue;
             }
 
+            // TODO: Remember to remove this
+            logger.info("Indexing field "+field.getKey());
+
             addDocument = indexField(field, data, document, root, config, data);
 
+            // TODO: Remember to remove this
+            logger.info("Field "+field.getKey()+" indexed");
+
             if(!addDocument) {
+                logger.info("Field "+field.getKey()+" sent information that document should not be added to index.");
                 break;
             }
         }
@@ -311,6 +333,7 @@ class GeneralRevisionHandler implements RevisionHandler {
                 break;
         }
         // Add save information to index for every field.
+        logger.info("Adding save information for field "+field.getKey());
         document.indexKeywordField(root + field.getKey() + ".saved.date", saved.getValue().getSavedAt().toString());
         document.indexKeywordField(root + field.getKey() + ".saved.by", saved.getValue().getSavedBy());
         return result;

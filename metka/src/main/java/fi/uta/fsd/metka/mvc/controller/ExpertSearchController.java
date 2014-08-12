@@ -1,5 +1,6 @@
 package fi.uta.fsd.metka.mvc.controller;
 
+import fi.uta.fsd.metka.mvc.ModelUtil;
 import fi.uta.fsd.metka.mvc.services.ExpertSearchService;
 import fi.uta.fsd.metka.transfer.expert.ExpertSearchListResponse;
 import fi.uta.fsd.metka.transfer.expert.ExpertSearchQueryRequest;
@@ -19,7 +20,7 @@ public class ExpertSearchController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String expertSearch(Model model) {
-        model.asMap().put("configurationType", "EXPERTSEARCH");
+        ModelUtil.initExpertSearch(model);
         return "expertSearch";
     }
 

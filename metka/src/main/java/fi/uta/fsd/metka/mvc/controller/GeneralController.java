@@ -35,9 +35,10 @@ public class GeneralController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String catchAll() {
-        return "redirect:/series/search";
+        return "redirect:/expertSearch";
     }
 
+    // TODO: Move to revision controller and unify as one call
     @RequestMapping(value = "/prev/{type}/{id}", method = RequestMethod.GET)
     public String prev(@PathVariable String type, @PathVariable Long id, RedirectAttributes redirectAttributes) {
         Pair<ReturnResult, Long> pair = service.getAdjancedRevisionableId(id, type, false);
@@ -54,6 +55,7 @@ public class GeneralController {
 
     }
 
+    // TODO: Move to revision controller and unify as one call
     @RequestMapping(value = "/next/{type}/{id}", method = RequestMethod.GET)
     public String next(@PathVariable String type, @PathVariable Long id, RedirectAttributes redirectAttributes) {
         Pair<ReturnResult, Long> pair = service.getAdjancedRevisionableId(id, type, true);
@@ -69,6 +71,7 @@ public class GeneralController {
         return "redirect:/"+type+"/view/"+id;
     }
 
+    // TODO: Move to revision controller and unify as one call
     /**
      * Remove draft from revisionable. This is an actual removal and after the operation the data can not be found
      * from database anymore.
@@ -122,6 +125,7 @@ public class GeneralController {
         return "redirect:/"+type+"/search";
     }
 
+    // TODO: Move to revision controller and unify as one call
     /**
      * Remove draft from revisionable. This is an actual removal and after the operation the data can not be found
      * from database anymore.
@@ -175,6 +179,7 @@ public class GeneralController {
         return "redirect:/"+type+"/search";
     }
 
+    // TODO: Move to revision controller
     @RequestMapping(value="/download/{id}/{no}", method = RequestMethod.GET)
     public HttpEntity<byte[]> downloadRevision(@PathVariable Long id, @PathVariable Integer no) {
         Pair<ReturnResult, RevisionData> pair = service.getRevisionData(id, no);

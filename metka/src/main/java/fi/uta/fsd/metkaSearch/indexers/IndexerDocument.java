@@ -12,11 +12,14 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.*;
 import org.apache.lucene.document.Field.Store;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class IndexerDocument {
+    private static final Logger logger = LoggerFactory.getLogger(IndexerDocument.class);
 
     private final Document document = new Document();
     private final Map<String, Analyzer> analyzers = new HashMap<>();
@@ -91,6 +94,7 @@ public class IndexerDocument {
         if(exact) {
             indexWhitespaceField(key, value, store);
         } else {
+            logger.info("Trying to index non exact field "+key);
             general.append(" ");
             general.append(value);
             document.add(new TextField(key, value, store));
@@ -100,7 +104,12 @@ public class IndexerDocument {
 
     private void addTextAnalyzer(String key) {
         if(language.equals(Language.DEFAULT.toValue())) {
+            // TODO: remember to remove these
+            logger.info("Trying to add finnish analyzer "+FinnishVoikkoAnalyzer.ANALYZER+" for field "+key);
+
             analyzers.put(key, FinnishVoikkoAnalyzer.ANALYZER);
+            // TODO: remember to remove these
+            logger.info("Inserted finnish analyzer for field "+key);
         } else {
             // Add some other tokenizing analyzer if StandardAnalyzer is not enough
             analyzers.put(key, new StandardAnalyzer(LuceneConfig.USED_VERSION));

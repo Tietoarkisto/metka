@@ -44,5 +44,9 @@ public enum ReturnResult {
     PARAMETERS_MISSING,                 // Some parameter that is required is instead missing
     USER_NOT_HANDLER,                   // User is not the current handler of a given revision
     CAN_CREATE_DRAFT,                   // User is allowed to create a new draft revision of object
-    REVISION_NOT_CREATE                // Some reason stopped revision creation for new draft revision
+    REVISION_NOT_CREATE,                // Some reason stopped revision creation for new draft revision
+    EXCEPTION,                          // Unhandled exception happened at some point
+    OPERATION_SUCCESSFUL,               // General success result for operations
+    OPERATION_FAIL,                     // General fail result for operations
+    NO_RESULTS                         // General no results response for operations that request data that is not found but there is no error
 }

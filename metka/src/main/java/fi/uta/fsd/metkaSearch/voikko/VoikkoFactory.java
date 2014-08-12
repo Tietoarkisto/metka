@@ -1,22 +1,21 @@
 package fi.uta.fsd.metkaSearch.voikko;
 
 import org.puimula.libvoikko.Voikko;
-
-import java.io.File;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class VoikkoFactory {
+    private static final Logger logger = LoggerFactory.getLogger(VoikkoFactory.class);
 
-    public static Voikko create(){
+    public static Voikko create() {
         String dataPath = System.getProperty("voikko.data", "src/data/voikko");
-        return new Voikko("fi", dataPath);
-    }
-
-    /**
-     *
-     * @param dataPath Path to a folder that contains <code>2/mor-standard/voikko-fi_FI.*</code>.
-     * @return
-     */
-    public static Voikko create(String dataPath){
-        return new Voikko("fi_FI", new File(dataPath).getAbsolutePath());
+        logger.info("Creating Voikko for path "+dataPath);
+        try {
+            return new Voikko("fi", dataPath);
+        } catch (Exception e) {
+            logger.error("Exception while creating Voikko object, assume that dictionary is not found and use file system location instead");
+            // TODO: Move to some property format
+            return new Voikko("fi", "/usr/share/metka/voikko");
+        }
     }
 }

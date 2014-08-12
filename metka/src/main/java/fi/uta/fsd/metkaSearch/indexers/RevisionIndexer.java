@@ -14,8 +14,11 @@ import fi.uta.fsd.metkaSearch.handlers.RevisionHandler;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.NumericRangeQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RevisionIndexer extends Indexer {
+    private static final Logger logger = LoggerFactory.getLogger(RevisionIndexer.class);
     public static RevisionIndexer build(DirectoryManager.DirectoryPath path, IndexerCommandRepository commands, GeneralRepository general, ConfigurationRepository configurations, ReferenceService references) throws UnsupportedOperationException {
         checkPathType(path, IndexerConfigurationType.REVISION);
         // Check that additional parameters matches requirements
@@ -50,11 +53,13 @@ public class RevisionIndexer extends Indexer {
     }
 
     protected void handleCommand(IndexerCommand command) {
+        logger.info("Starting handling or revision command");
         // This is a safe type conversion since Indexers add command only accepts commands of correct type
         RevisionIndexerCommand rCom = (RevisionIndexerCommand) command;
 
         switch(rCom.getAction()) {
             case REMOVE:
+                logger.info("Performing REMOVE action on revision");
                 // Create term for identification
                 if(rCom.getRevisionable() == null || rCom.getRevision() == null) {
                     break;
@@ -66,6 +71,7 @@ public class RevisionIndexer extends Indexer {
                 removeDocument(query);
                 break;
             case INDEX:
+                logger.info("Performing INDEX action on revision");
                 indexCommand(rCom);
                 break;
             case STOP:
@@ -80,8 +86,10 @@ public class RevisionIndexer extends Indexer {
      * @param command
      */
     private void indexCommand(RevisionIndexerCommand command) {
+        logger.info("Trying to build revision handler");
         RevisionHandler handler = HandlerFactory.buildRevisionHandler(this, general, configurations, references);
         try {
+            logger.info("Trying to handle revision command");
             handler.handle(command);
         } catch(Exception e) {
             e.printStackTrace();

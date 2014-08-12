@@ -57,11 +57,9 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
         if(indexer == null) {
             throw new UnsupportedOperationException("Couldn't get an index directory for indexer with path "+path);
         }
-        try {
-            indexWriter = indexer.getIndexWriter();
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-            throw new UnsupportedOperationException("IOException while tryting to get IndexWriter for indexer with path "+path);
+        indexWriter = indexer.getIndexWriter();
+        if(indexWriter == null) {
+            throw new UnsupportedOperationException("Can't create Indexer, no indexWriter created for Indexer with path "+path);
         }
         this.commands = commands;
     }
@@ -107,6 +105,7 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
                         setStatus(IndexerStatusMessage.STOP);
                     } else {
                         // Forward handling to implementation
+                        logger.info("Trying to handle command.");
                         handleCommand(command);
                         // Set indexChanged to true since command was handled
                         indexChanged = true;
@@ -154,8 +153,9 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
                 }
             } catch (InterruptedException ex) {
                 // Try to close the indexer
+                logger.info("Closing index writer on path "+getPath().toString()+" because of interruption");
                 indexer.getIndexWriter().close();
-                ex.printStackTrace();
+                //ex.printStackTrace();
                 throw new InterruptedException();
             } catch(Exception e) {
                 if(command != null) {
