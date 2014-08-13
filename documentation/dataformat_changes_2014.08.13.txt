@@ -1,0 +1,9 @@
+-- 2014.08.13 additions --
+Data->DataField
+Split uml_json_data_field to graphs that describe only a small portion of the whole DataField construct. This includes graphs describing DataField, SavedDataField and ContainerDataField.
+Changed ContainerDataField to have language dependant rows. The actual Translatable property on Field configuration tells if these should be used or not but it should be possible to change any Container to translated container at any time since the rows will always be language specific. If container is set to Translatable=true then the Translatable value of all fields inside that container is ignored since rows are already language specific. If the whole Container is not set to Translatable=true then subfields can still be translated on field per field basis in which case the translated values are inside the actual SavedDataField as with top level fields.
+
+Data
+Changed lastSaved to lastSavedAt. Changes approval info to be language specific (i.e. it's in a language subconstruct where there's one ApprovedInfo object per language).
+Data->ApprovedInfo
+Added ApprovedInfo object that contains approvedAt and approvedBy properties. Also created SavedInfo that contains savedAt and savedBy properties and changed the appearance to those two properties to be inside that object in places they appeared previously.

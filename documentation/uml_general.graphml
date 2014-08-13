@@ -18,7 +18,7 @@
       <data key="d4"/>
       <data key="d6">
         <y:UMLNoteNode>
-          <y:Geometry height="106.0" width="309.0" x="4.0" y="511.0"/>
+          <y:Geometry height="106.0" width="309.0" x="4.0" y="537.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="101.78125" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="301.19921875" x="4.0" y="4.0">{id}
@@ -35,11 +35,11 @@ readOnly is implied.</y:NodeLabel>
       <data key="d4"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="79.0" width="172.0" x="-230.9999999999999" y="729.0"/>
+          <y:Geometry height="92.0" width="172.0" x="-230.9999999999999" y="729.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="34.265625" modelName="custom" textColor="#000000" visible="true" width="141.2998046875" x="15.35009765625" y="3.0">&lt;&lt;enumeration&gt;&gt;
-Locale<y:LabelModel>
+Language<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -47,8 +47,9 @@ Locale<y:LabelModel>
             </y:ModelParameter>
           </y:NodeLabel>
           <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="" use3DEffect="true">
-            <y:AttributeLabel>en_US
-sv_SE</y:AttributeLabel>
+            <y:AttributeLabel>default
+en
+sv</y:AttributeLabel>
             <y:MethodLabel/>
           </y:UML>
         </y:UMLClassNode>
@@ -58,14 +59,15 @@ sv_SE</y:AttributeLabel>
       <data key="d4"/>
       <data key="d6">
         <y:UMLNoteNode>
-          <y:Geometry height="79.0" width="309.0" x="4.0" y="729.0"/>
+          <y:Geometry height="92.0" width="309.0" x="4.0" y="729.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="73.84375" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="278.705078125" x="4.0" y="4.0">All locales supported by Metka as translation
-values. By definition the default locale is fi_FI
+          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="87.8125" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="301.7734375" x="4.0" y="4.0">All locales supported by Metka as translation
+values. By definition the default language is fi
 and so doesn't need to be included in this
-enumeration since any attribute typed Locale
-is never expected to have fi_FI as value.</y:NodeLabel>
+enumeration as fi since anything saved in default
+property in language specific instances is
+assumed to be in Finnish</y:NodeLabel>
         </y:UMLNoteNode>
       </data>
     </node>
@@ -94,10 +96,10 @@ is never expected to have fi_FI as value.</y:NodeLabel>
       <data key="d4"/>
       <data key="d6">
         <y:UMLNoteNode>
-          <y:Geometry height="135.0" width="308.9999999999999" x="4.000000000000114" y="838.0"/>
+          <y:Geometry height="160.0" width="308.9999999999999" x="4.000000000000114" y="838.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="129.71875" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="296.892578125" x="4.0" y="4.0">Data is a structure that contains versionable
+          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="157.65625" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="296.892578125" x="4.0" y="4.0">Data is a structure that contains revisionable
 information in a structure e.g. JSON or XML.
 Typically it contains at least a subsection
 for changes that happened in this revision
@@ -105,7 +107,9 @@ and a subsection for the actual data.
 Approved revisions are complete in the sense
 that you never need to reference other revisions
 to get a complete dataset (unless this becomes
-desirable later as an optimisation).</y:NodeLabel>
+desirable later as an optimisation).
+Translated data is contained inside the revision
+in either field values or translated containers.</y:NodeLabel>
         </y:UMLNoteNode>
       </data>
     </node>
@@ -113,7 +117,7 @@ desirable later as an optimisation).</y:NodeLabel>
       <data key="d4"/>
       <data key="d6">
         <y:UMLNoteNode>
-          <y:Geometry height="52.0" width="309.0" x="4.0" y="429.0"/>
+          <y:Geometry height="52.0" width="309.0" x="4.0" y="468.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="45.90625" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="259.955078125" x="4.0" y="4.0">Any JSON object can contain the element
@@ -126,10 +130,10 @@ This element is ignored during processing.</y:NodeLabel>
       <data key="d4"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="26.0" width="172.0" x="-230.9999999999999" y="1003.0"/>
+          <y:Geometry height="26.0" width="172.0" x="-230.9999999999999" y="660.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="121.67919921875" x="25.160400390625" y="3.0">TranslationData<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="37.52197265625" x="67.239013671875" y="3.0">User<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -147,21 +151,12 @@ This element is ignored during processing.</y:NodeLabel>
       <data key="d4"/>
       <data key="d6">
         <y:UMLNoteNode>
-          <y:Geometry height="174.0" width="308.9999999999999" x="4.000000000000114" y="1003.0"/>
+          <y:Geometry height="52.0" width="309.0" x="4.0" y="660.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="171.625" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="286.94921875" x="4.0" y="4.0">TranslationData is a special case of
-RevisionData containing additional information
-and a subset of the fields contained in data.
-It is still open if TranslationData will be a self-
-contained dataset or will it only contain all of
-the fields marked translatable. This will mostly
-depend on how to mark a revision as not
-applicaple for certain translations. Basically if
-it is possible to tell that from certain revision
-onwards a new translation is required then
-it is possible to contain only translatable data
-in TranslationData.</y:NodeLabel>
+          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="45.90625" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="276.70703125" x="4.0" y="4.0">Contains information about a single user.
+This information is brought from outside and 
+is not used as part of the authentication.</y:NodeLabel>
         </y:UMLNoteNode>
       </data>
     </node>
@@ -169,10 +164,10 @@ in TranslationData.</y:NodeLabel>
       <data key="d4"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="26.0" width="172.0" x="-230.9999999999999" y="647.0"/>
+          <y:Geometry height="28.0" width="172.0" x="-230.9999999999999" y="1015.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="37.52197265625" x="67.239013671875" y="3.0">User<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="128.490234375" x="21.7548828125" y="3.0">TranslationValue<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -190,41 +185,7 @@ in TranslationData.</y:NodeLabel>
       <data key="d4"/>
       <data key="d6">
         <y:UMLNoteNode>
-          <y:Geometry height="52.0" width="309.0" x="4.0" y="647.0"/>
-          <y:Fill color="#FFCC00" transparent="false"/>
-          <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="45.90625" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="276.70703125" x="4.0" y="4.0">Contains information about a single user.
-This information is brought from outside and 
-is not used as part of the authentication.</y:NodeLabel>
-        </y:UMLNoteNode>
-      </data>
-    </node>
-    <node id="n10">
-      <data key="d4"/>
-      <data key="d6">
-        <y:UMLClassNode>
-          <y:Geometry height="28.0" width="172.0" x="-230.9999999999999" y="1207.0"/>
-          <y:Fill color="#FFCC00" transparent="false"/>
-          <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="128.490234375" x="21.7548828125" y="3.0">TranslationValue<y:LabelModel>
-              <y:SmartNodeLabelModel distance="4.0"/>
-            </y:LabelModel>
-            <y:ModelParameter>
-              <y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="-0.03703090122767855" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/>
-            </y:ModelParameter>
-          </y:NodeLabel>
-          <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="" use3DEffect="true">
-            <y:AttributeLabel/>
-            <y:MethodLabel/>
-          </y:UML>
-        </y:UMLClassNode>
-      </data>
-    </node>
-    <node id="n11">
-      <data key="d4"/>
-      <data key="d6">
-        <y:UMLNoteNode>
-          <y:Geometry height="174.0" width="308.9999999999999" x="4.0" y="1207.0"/>
+          <y:Geometry height="174.0" width="308.9999999999999" x="4.0" y="1015.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="171.625" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="305.447265625" x="4.0" y="4.0">Most properties that expect a string value can
@@ -242,11 +203,69 @@ translations without 'default' are ignored.</y:NodeLabel>
         </y:UMLNoteNode>
       </data>
     </node>
+    <node id="n10">
+      <data key="d4"/>
+      <data key="d5"/>
+      <data key="d6">
+        <y:UMLClassNode>
+          <y:Geometry height="59.20000000000027" width="111.20000000000005" x="-230.9999999999999" y="1206.0"/>
+          <y:Fill color="#FFCC00" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="51.55029296875" x="29.824853515625023" y="3.0">Object<y:LabelModel>
+              <y:SmartNodeLabelModel distance="4.0"/>
+            </y:LabelModel>
+            <y:ModelParameter>
+              <y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="-0.03703090122767855" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/>
+            </y:ModelParameter>
+          </y:NodeLabel>
+          <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="" use3DEffect="true">
+            <y:AttributeLabel/>
+            <y:MethodLabel/>
+          </y:UML>
+        </y:UMLClassNode>
+      </data>
+    </node>
+    <node id="n11">
+      <data key="d5"/>
+      <data key="d6">
+        <y:ShapeNode>
+          <y:Geometry height="18.0" width="69.19999999999999" x="-119.79999999999984" y="1247.2000000000003"/>
+          <y:Fill color="#FFCC00" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" textColor="#000000" visible="true" width="63.220703125" x="2.9896484374999943" y="0.015625">Language<y:LabelModel>
+              <y:SmartNodeLabelModel distance="4.0"/>
+            </y:LabelModel>
+            <y:ModelParameter>
+              <y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/>
+            </y:ModelParameter>
+          </y:NodeLabel>
+          <y:Shape type="rectangle3d"/>
+        </y:ShapeNode>
+      </data>
+    </node>
+    <node id="n12">
+      <data key="d4"/>
+      <data key="d5"/>
+      <data key="d6">
+        <y:UMLNoteNode>
+          <y:Geometry height="120.5" width="308.9999999999999" x="4.0" y="1206.0"/>
+          <y:Fill color="#FFCC00" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1.0"/>
+          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="101.78125" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="308.13671875" x="4.0" y="4.0">This construct defines that any values linked to
+'Language' are separated to subobject containing
+one property per language (as listed in 'Language'
+enumerator) no matter if the content is an array
+or an object. So there can be for example a
+construct '"rows": {"default": [...], "en": [...]}' or
+'"value":{"default":{...}, "en":{...}}.</y:NodeLabel>
+        </y:UMLNoteNode>
+      </data>
+    </node>
     <edge id="e0" source="n1" target="n2">
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="17.2" sy="-18.5" tx="-0.5202020202020202" ty="-18.5"/>
+          <y:Path sx="15.999999999999886" sy="-25.0" tx="11.5" ty="-25.0"/>
           <y:LineStyle color="#000000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="none"/>
           <y:BendStyle smoothed="false"/>
@@ -257,36 +276,14 @@ translations without 'default' are ignored.</y:NodeLabel>
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="4.681818181818179" ty="-54.5"/>
+          <y:Path sx="0.0" sy="0.0" tx="17.499999999999943" ty="-67.0"/>
           <y:LineStyle color="#000000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="none"/>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e2" source="n6" target="n3">
-      <data key="d8"/>
-      <data key="d10">
-        <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
-          <y:LineStyle color="#000000" type="line" width="1.0"/>
-          <y:Arrows source="none" target="white_delta"/>
-          <y:BendStyle smoothed="false"/>
-        </y:PolyLineEdge>
-      </data>
-    </edge>
-    <edge id="e3" source="n6" target="n7">
-      <data key="d8"/>
-      <data key="d10">
-        <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="23.999999999999943" ty="-74.0"/>
-          <y:LineStyle color="#000000" type="dashed" width="1.0"/>
-          <y:Arrows source="none" target="none"/>
-          <y:BendStyle smoothed="false"/>
-        </y:PolyLineEdge>
-      </data>
-    </edge>
-    <edge id="e4" source="n8" target="n9">
+    <edge id="e2" source="n6" target="n7">
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
@@ -297,11 +294,23 @@ translations without 'default' are ignored.</y:NodeLabel>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e5" source="n10" target="n11">
+    <edge id="e3" source="n8" target="n9">
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="17.500000000000057" ty="-73.0"/>
+          <y:LineStyle color="#000000" type="dashed" width="1.0"/>
+          <y:Arrows source="none" target="none"/>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e4" source="n10" target="n12">
+      <data key="d8"/>
+      <data key="d9"/>
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:Path sx="0.0" sy="0.0" tx="2.400000000000034" ty="-30.649999999999864"/>
           <y:LineStyle color="#000000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="none"/>
           <y:BendStyle smoothed="false"/>

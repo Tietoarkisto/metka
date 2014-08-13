@@ -53,6 +53,8 @@ public class StudyController {
         return errors.removeStudyError(id);
     }
 
+
+
     /*
     * View single study
     * Use search functions to find relevant revision for the requested study. Then redirect to viewing that specific revision.

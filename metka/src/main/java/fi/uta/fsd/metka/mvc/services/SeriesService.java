@@ -16,16 +16,11 @@ public class SeriesService {
 
     public SeriesAbbreviationsResponse findAbbreviations() {
         SeriesAbbreviationsResponse response = new SeriesAbbreviationsResponse();
-        try {
-            List<String> list = search.findAbbreviations();
-            response.setResult(ReturnResult.SEARCH_SUCCESS);
-            for(String string : list) {
-                response.getAbbreviations().add(string);
-            }
-        } catch(Exception ex) {
-            // TODO: better exception handling with messages to the user
-            ex.printStackTrace();
-            response.setResult(ReturnResult.SEARCH_FAILED);
+        List<String> list = search.findAbbreviations();
+        response.setResult(ReturnResult.SEARCH_SUCCESS);
+        response.getAbbreviations().add(""); // Let's add an empty value as the first value
+        for(String string : list) {
+            response.getAbbreviations().add(string);
         }
         return response;
     }
