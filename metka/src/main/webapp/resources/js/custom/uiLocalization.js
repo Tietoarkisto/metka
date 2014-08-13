@@ -483,6 +483,14 @@
                     "&modify": {
                         "default": "Muokkaa julkaisuun liittyvää huomiota"
                     }
+                },
+                "errors": {
+                    "&add": {
+                        "default": "Lisää aineistovirhe"
+                    },
+                    "&modify": {
+                        "default": "Muokkaa aineistovirhettä"
+                    }
                 }
             },
 
@@ -685,8 +693,17 @@
                 "othermaterialtext": "Tarkka kuvaus",
 
                 // Kuvailu: Huomiot
-                "publicationcomment": "Julkaisuihin liittyvä huomio"
+                "publicationcomment": "Julkaisuihin liittyvä huomio",
 
+                // Virheet
+                "score": "Pisteet",
+                "section": "Aineiston osa",
+                "subsection": "Osio",
+                "language": "Kieli",
+                "summary": "Selite",
+                "description": "Pitkä selite",
+                "triggerDate": "Herätepäivämäärä",
+                "triggerTarget": "Herätteen saaja"
             }
         },
 

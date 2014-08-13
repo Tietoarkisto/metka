@@ -921,7 +921,7 @@
                                 "type": "CELL",
                                 "title": "Virheet",
                                 "field": {
-                                    "key": "errors"
+                                    "key": "custom_studyErrors"
                                 }
                             }
                         ]
