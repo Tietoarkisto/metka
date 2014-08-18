@@ -132,6 +132,11 @@ a:hover {
     table-layout: fixed;
 }
 
+.list-group-condensed > li,
+.list-group-condensed > a {
+    padding: 5px;
+}
+
 /* Metka code */
 body {
     height: 100%;
@@ -394,4 +399,11 @@ nav .mainNavUl li a:hover {
 
 th {
     font-weight: bold;
+}
+
+/*grouping-container*/
+.grouping-container {
+    height: 460px;
+    overflow-y: auto;
+    margin-bottom: 0px;
 }

@@ -11,7 +11,8 @@ define(function (require) {
         expertsearch: require('./pages/expertSearch'),
         study: require('./pages/study'),
         series: require('./pages/series'),
-        publication: require('./pages/publication')
+        publication: require('./pages/publication'),
+        study_variables: require('./pages/study_variables')
     };
 
     if (!pages[page]) {

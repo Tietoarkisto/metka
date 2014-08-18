@@ -21,8 +21,8 @@ define(function (require) {
                             href: 'revision/search/study',
                             text: 'study'
                         }, {
-                            ct: 'VARIABLES',
-                            href: 'revision/search/variables',
+                            ct: 'STUDY_VARIABLES',
+                            href: 'revision/search/study_variables',
                             text: 'variables'
                         }, {
                             ct: 'PUBLICATION',

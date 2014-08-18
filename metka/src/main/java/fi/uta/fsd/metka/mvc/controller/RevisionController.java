@@ -31,7 +31,6 @@ public class RevisionController {
         // Take away types that shouldn't navigate through here
         switch(ct) {
             case STUDY_VARIABLE:
-            case STUDY_VARIABLES:
             case STUDY_ATTACHMENT:
                 // TODO: Return error
                 return null;

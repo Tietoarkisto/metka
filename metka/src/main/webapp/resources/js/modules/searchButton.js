@@ -2,6 +2,7 @@ define(function (require) {
     'use strict';
 
     return function (url, requestData, getResults, mapResult, fields, columnFields, trOnClick) {
+        var args = arguments;
         return {
             "&title": {
                 "default": "Tee haku"
@@ -9,50 +10,7 @@ define(function (require) {
             create: function () {
                 this
                     .click(function () {
-                        require('./server')(url, {
-                            data: JSON.stringify(requestData()),
-                            success: function (data) {
-                                var fieldOptions = {
-                                    dataConf: {
-                                        fields: fields
-                                    },
-                                    data: {
-                                        fields: {
-                                            searchResults: {
-                                                type: 'CONTAINER'
-                                            }
-                                        }
-                                    },
-                                    style: 'primary',
-                                    readOnly: true,
-                                    field: {
-                                        displayType: 'CONTAINER',
-                                        key: "searchResults",
-                                        columnFields: columnFields,
-                                        onClick: trOnClick
-                                    }
-                                };
-                                var results = getResults(data);
-                                fieldOptions.data.fields.searchResults.rows = results.map(mapResult).map(require('./map/object/transferRow'));
-
-                                // if exactly 1 search result, perform the row action
-                                if (fieldOptions.data.fields.searchResults.rows.length === 1) {
-                                    trOnClick(fieldOptions.data.fields.searchResults.rows[0]);
-                                    return;
-                                }
-
-                                $('#searchResultTable').remove();
-
-                                var $field = require('./field').call($('<div>'), fieldOptions)
-                                    .attr('id', 'searchResultTable');
-
-                                $field.find('.panel-heading')
-                                    .text(MetkaJS.L10N.get('search.result.title'))
-                                    .append($('<div class="pull-right">')
-                                        .text(MetkaJS.L10N.get('search.result.amount').supplant(results)));
-                                $('.content').append($field);
-                            }
-                        });
+                        require('./searchResultContainer').apply(this, args);
                     })
             }
         };

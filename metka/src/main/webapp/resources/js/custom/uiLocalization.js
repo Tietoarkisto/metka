@@ -87,6 +87,11 @@
                     }
                 }
             },
+            "STUDY_VARIABLES": {
+                "&search": {
+                    "default": "Muuttujahaku"
+                }
+            },
             "PUBLICATION": {
                 "&search": {
                     "default": "Julkaisuhaku"
@@ -757,6 +762,12 @@
                 "fileoriginal": "Alkuperäinen",
                 "filepublication": "WWW",
                 "filedip": "Ulosluovutus"
+            }
+        },
+
+        STUDY_VARIABLES: {
+            field: {
+                title: 'Aineisto'
             }
         }
     };
