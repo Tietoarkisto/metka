@@ -93,6 +93,9 @@
                 }
             },
             "PUBLICATION": {
+                "&title": {
+                    "default": "Julkaisu"
+                },
                 "&search": {
                     "default": "Julkaisuhaku"
                 }
@@ -768,6 +771,15 @@
         STUDY_VARIABLES: {
             field: {
                 title: 'Aineisto'
+            }
+        },
+
+        "PUBLICATION": {
+            "field": {
+                "firstname": "Etunimi",
+                "lastname": "Sukunimi",
+                "pid": "Pysyvä tunniste",
+                "pidtype": "Tunnisteen tyyppi"
             }
         }
     };
