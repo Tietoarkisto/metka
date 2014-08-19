@@ -1,27 +1,20 @@
 package fi.uta.fsd.metka.xml.codebook;
 
-import codebook25.*;
-import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
-import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
+import codebook25.CodeBookDocument;
+import codebook25.CodeBookType;
+import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.configuration.Field;
-import fi.uta.fsd.metka.model.configuration.Option;
-import fi.uta.fsd.metka.model.configuration.SelectionList;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.ContainerDataField;
-import fi.uta.fsd.metka.model.data.container.DataRow;
 import org.apache.xmlbeans.XmlCursor;
-import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Transform given data to codebook document.
  */
+// TODO: NOTICE: go through everything and check that all values are correct and match correct language
 public class CodebookTransformer {
 
     private static final String DDI_TITLE_PREFIX_FI = "DDI-kuvailu: ";
@@ -78,7 +71,7 @@ public class CodebookTransformer {
             " tuotetuista tuloksista ja tulkinnoista.";
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(YYYY_MM_DD_PATTERN);
 
-    public CodeBookDocument createCodebook(RevisionData revisionData, Configuration configuration) throws Exception {
+    public CodeBookDocument createCodebook(Language language, RevisionData revisionData, Configuration configuration) throws Exception {
         // New codebook document
         CodeBookDocument codeBookDocument = CodeBookDocument.Factory.newInstance();
 
@@ -100,8 +93,8 @@ public class CodebookTransformer {
         xmlCursor.insertAttributeWithValue("version", "2.5");
         // Dispose cursor
         xmlCursor.dispose();
-        // Sets xml:lang attribute TODO: Get language (fi,sv,en) ?
-        String languageCode = "fi";
+        // Sets xml:lang attribute
+        String languageCode = (language == Language.DEFAULT) ? "fi" : language.toValue();
         codeBookType.setLang(languageCode);
 
         addDocumentDescription(revisionData, configuration, codeBookDocument);
@@ -121,7 +114,7 @@ public class CodebookTransformer {
      * @param codeBookDocument codebook document
      */
     private void addDocumentDescription(RevisionData revisionData, Configuration configuration, CodeBookDocument codeBookDocument) {
-        // Get codebook
+        /*// Get codebook
         CodeBookType codeBookType = codeBookDocument.getCodeBook();
         String languageCode = codeBookType.getLang();
         XmlCursor xmlCursor;
@@ -140,17 +133,17 @@ public class CodebookTransformer {
         // Create title text
         switch (languageCode) {
             case "sv":
-                titleValue = revisionData.dataField(SavedDataFieldCall.get("title")).getValue().getActualValue();
+                titleValue = revisionData.dataField(ValueDataFieldCall.get("title")).getValue().getActualValue();
                 title = DDI_TITLE_PREFIX_SV + titleValue;
                 break;
             case "en":
                 // English title is a field called 'entitle'
-                titleValue = revisionData.dataField(SavedDataFieldCall.get("entitle")).getValue().getActualValue();
+                titleValue = revisionData.dataField(ValueDataFieldCall.get("entitle")).getValue().getActualValue();
                 title = DDI_TITLE_PREFIX_EN + titleValue;
                 break;
             default:
                 // Default to finnish
-                titleValue = revisionData.dataField(SavedDataFieldCall.get("title")).getValue().getActualValue();
+                titleValue = revisionData.dataField(ValueDataFieldCall.get("title")).getValue().getActualValue();
                 title = DDI_TITLE_PREFIX_FI + titleValue;
                 break;
         }
@@ -164,19 +157,19 @@ public class CodebookTransformer {
         ContainerDataField containerDataField = revisionData.dataField(ContainerDataFieldCall.get("partitles") ).getValue();
         for (DataRow dataRow : containerDataField.getRows()) {
             stt = titlStmtType.addNewParTitl();
-            String s = dataRow.dataField( SavedDataFieldCall.get("partitlelang") ).getValue().getActualValue();
+            String s = dataRow.dataField( ValueDataFieldCall.get("partitlelang") ).getValue().getActualValue();
 
             switch (s) {
                 case "en":
                     // TODO: Is this 'partitle' or 'entitle' ?
-                    title = DDI_TITLE_PREFIX_EN + dataRow.dataField(SavedDataFieldCall.get("partitle")).getValue().getActualValue();
+                    title = DDI_TITLE_PREFIX_EN + dataRow.dataField(ValueDataFieldCall.get("partitle")).getValue().getActualValue();
                     break;
                 case "sv":
-                    title = DDI_TITLE_PREFIX_SV + dataRow.dataField(SavedDataFieldCall.get("partitle")).getValue().getActualValue();
+                    title = DDI_TITLE_PREFIX_SV + dataRow.dataField(ValueDataFieldCall.get("partitle")).getValue().getActualValue();
                     break;
                 default:
                     // Default to finnish
-                    title = DDI_TITLE_PREFIX_FI + dataRow.dataField(SavedDataFieldCall.get("partitle")).getValue().getActualValue();
+                    title = DDI_TITLE_PREFIX_FI + dataRow.dataField(ValueDataFieldCall.get("partitle")).getValue().getActualValue();
                     break;
             }
 
@@ -191,7 +184,7 @@ public class CodebookTransformer {
         idNoType.setAgency(AGENCY);
         // Set study id number
         xmlCursor = idNoType.newCursor();
-        xmlCursor.setTextValue( revisionData.dataField( SavedDataFieldCall.get("studyid_number") ).getValue().getActualValue() );
+        xmlCursor.setTextValue( revisionData.dataField( ValueDataFieldCall.get("studyid_number") ).getValue().getActualValue() );
         xmlCursor.dispose();
 
         // Add producer statement
@@ -221,7 +214,7 @@ public class CodebookTransformer {
         // TODO: In excel path is descversions.versiondate of version 1.0 ?
         containerDataField = revisionData.dataField(ContainerDataFieldCall.get("descversions") ).getValue();
         for (DataRow dataRow : containerDataField.getRows()) {
-            String versionDate = dataRow.dataField( SavedDataFieldCall.get("versiondate") ).getValue().getActualValue();
+            String versionDate = dataRow.dataField( ValueDataFieldCall.get("versiondate") ).getValue().getActualValue();
             LocalDate localDate = LocalDate.parse(versionDate);
             SimpleTextAndDateType stadt = prodStmtType.addNewProdDate();
             stadt.setDate( DATE_TIME_FORMATTER.print(localDate) );
@@ -233,11 +226,11 @@ public class CodebookTransformer {
         xmlCursor.setTextValue(FSD_NAME_FI);
         xmlCursor.dispose();
         // TODO: Address gets xht namespace ?
-        /*xmlCursor = stt.addNewAddress().newCursor();
+        *//*xmlCursor = stt.addNewAddress().newCursor();
         xmlCursor.setTextValue("");
-        xmlCursor.dispose();*/
+        xmlCursor.dispose();*//*
 
-        /* TODO: Excel incorrect for rows 25 and 26. ProdStmt type has no verStmt type */
+        *//* TODO: Excel incorrect for rows 25 and 26. ProdStmt type has no verStmt type *//*
 
         // Add bibl (?) citation
         BiblCitType biblCitType = citationType.addNewBiblCit();
@@ -254,7 +247,7 @@ public class CodebookTransformer {
         // Set location
         holdingsType.setLocation(FSD_NAME_FULL_FI);
         // Set URI
-        String holdingsURIString = HOLDINGS_BASE_URI + revisionData.dataField( SavedDataFieldCall.get("studyid") ).getValue().getActualValue();
+        String holdingsURIString = HOLDINGS_BASE_URI + revisionData.dataField( ValueDataFieldCall.get("studyid") ).getValue().getActualValue();
         holdingsType.setURI(holdingsURIString);
         // Set holdings element content
         xmlCursor = holdingsType.newCursor();
@@ -321,7 +314,7 @@ public class CodebookTransformer {
         xmlCursor = notesType.newCursor();
         xmlCursor.setTextValue(NOTES_LICENSING_SV);
         xmlCursor.dispose();
-        // Exit doc description
+        // Exit doc description*/
     }
 
     /**
@@ -332,7 +325,7 @@ public class CodebookTransformer {
      * @param codeBookDocument codebook document
      */
     private void addStudyDescription(RevisionData revisionData, Configuration configuration, CodeBookDocument codeBookDocument) {
-        CodeBookType codeBookType = codeBookDocument.getCodeBook();
+        /*CodeBookType codeBookType = codeBookDocument.getCodeBook();
 
         // Add study description to codebook
         StdyDscrType stdyDscrType = codeBookType.addNewStdyDscr();
@@ -345,13 +338,13 @@ public class CodebookTransformer {
         // Set title value TODO: Did this depend on current language ?
         SimpleTextType stt = titlStmtType.addNewTitl();
         XmlCursor xmlCursor = stt.newCursor();
-        xmlCursor.setTextValue( revisionData.dataField( SavedDataFieldCall.get("title") ).getValue().getActualValue() );
+        xmlCursor.setTextValue( revisionData.dataField( ValueDataFieldCall.get("title") ).getValue().getActualValue() );
         xmlCursor.dispose();
 
         // Add alternative title, repeatable, excel row #46
         ContainerDataField containerDataField = revisionData.dataField( ContainerDataFieldCall.get("alttitles") ).getValue();
         for (DataRow dataRow : containerDataField.getRows()) {
-            String alternativeTitle = dataRow.dataField( SavedDataFieldCall.get("alttitle") ).getValue().getActualValue();
+            String alternativeTitle = dataRow.dataField( ValueDataFieldCall.get("alttitle") ).getValue().getActualValue();
             stt = titlStmtType.addNewAltTitl();
             xmlCursor = stt.newCursor();
             xmlCursor.setTextValue(alternativeTitle);
@@ -362,8 +355,8 @@ public class CodebookTransformer {
         containerDataField = revisionData.dataField( ContainerDataFieldCall.get("partitles") ).getValue();
         for (DataRow dataRow : containerDataField.getRows()) {
             stt = titlStmtType.addNewParTitl();
-            String lang = dataRow.dataField( SavedDataFieldCall.get("partitlelang") ).getValue().getActualValue();
-            String partitle = dataRow.dataField(SavedDataFieldCall.get("partitle")).getValue().getActualValue();
+            String lang = dataRow.dataField( ValueDataFieldCall.get("partitlelang") ).getValue().getActualValue();
+            String partitle = dataRow.dataField(ValueDataFieldCall.get("partitle")).getValue().getActualValue();
 
             stt.setLang(lang);
             xmlCursor = stt.newCursor();
@@ -376,7 +369,7 @@ public class CodebookTransformer {
         idNoType.setAgency(AGENCY);
         // Set study id number
         xmlCursor = idNoType.newCursor();
-        xmlCursor.setTextValue( revisionData.dataField( SavedDataFieldCall.get("studyid_number") ).getValue().getActualValue() );
+        xmlCursor.setTextValue( revisionData.dataField( ValueDataFieldCall.get("studyid_number") ).getValue().getActualValue() );
         xmlCursor.dispose();
 
         // Back to citation
@@ -389,9 +382,9 @@ public class CodebookTransformer {
             // TODO: authortype is SELECTION type with value of the selection as it's value.
             // TODO: authortype_list is REFERENCE type. Need to get the reference from it
             // TODO: Depending on the authortype excel would indicate that the affiliation is concatenated differently
-            // String authorType = dataRow.dataField( SavedDataFieldCall.get("authortype") ).getValue().getActualValue();
-            String author = dataRow.dataField( SavedDataFieldCall.get("author") ).getValue().getActualValue();
-            String affiliation = dataRow.dataField( SavedDataFieldCall.get("affiliation") ).getValue().getActualValue();
+            // String authorType = dataRow.dataField( ValueDataFieldCall.get("authortype") ).getValue().getActualValue();
+            String author = dataRow.dataField( ValueDataFieldCall.get("author") ).getValue().getActualValue();
+            String affiliation = dataRow.dataField( ValueDataFieldCall.get("affiliation") ).getValue().getActualValue();
 
             AuthEntyType authEntyType = rspStmtType.addNewAuthEnty();
             // Set author content
@@ -408,9 +401,9 @@ public class CodebookTransformer {
             // TODO: authortype is SELECTION type with value of the selection as it's value.
             // TODO: authortype_list is REFERENCE type. Need to get the reference from it
             // TODO: Depending on the authortype excel would indicate that the affiliation is concatenated differently
-            // String authorType = dataRow.dataField( SavedDataFieldCall.get("authortype") ).getValue().getActualValue();
-            String otherAuthor = dataRow.dataField( SavedDataFieldCall.get("otherauthor") ).getValue().getActualValue();
-            String otherAuthorAffiliation = dataRow.dataField( SavedDataFieldCall.get("otherauthoraffiliation") ).getValue().getActualValue();
+            // String authorType = dataRow.dataField( ValueDataFieldCall.get("authortype") ).getValue().getActualValue();
+            String otherAuthor = dataRow.dataField( ValueDataFieldCall.get("otherauthor") ).getValue().getActualValue();
+            String otherAuthorAffiliation = dataRow.dataField( ValueDataFieldCall.get("otherauthoraffiliation") ).getValue().getActualValue();
 
             OthIdType othIdType = rspStmtType.addNewOthId();
             // Set other author content
@@ -431,12 +424,12 @@ public class CodebookTransformer {
             // TODO: Excel indicates fields like produceragency, producersetction,producerorganization.
             // TODO: Not implemented yet / missing ?
             // TODO: Need to recheck excel and fields for correct values set into fields
-            String producer = dataRow.dataField( SavedDataFieldCall.get("producer") ).getValue().getActualValue();
-            /*String producerId = dataRow.dataField( SavedDataFieldCall.get("producerid") ).getValue().getActualValue();*/
-            /*String producerIdType = dataRow.dataField( SavedDataFieldCall.get("produceridtype") ).getValue().getActualValue();*/
-            String producerRole = dataRow.dataField( SavedDataFieldCall.get("producerrole") ).getValue().getActualValue();
-            /*String projectNr = dataRow.dataField( SavedDataFieldCall.get("projectnr") ).getValue().getActualValue();*/
-            String producerAbbr = dataRow.dataField( SavedDataFieldCall.get("producerabbr") ).getValue().getActualValue();
+            String producer = dataRow.dataField( ValueDataFieldCall.get("producer") ).getValue().getActualValue();
+            *//*String producerId = dataRow.dataField( ValueDataFieldCall.get("producerid") ).getValue().getActualValue();*//*
+            *//*String producerIdType = dataRow.dataField( ValueDataFieldCall.get("produceridtype") ).getValue().getActualValue();*//*
+            String producerRole = dataRow.dataField( ValueDataFieldCall.get("producerrole") ).getValue().getActualValue();
+            *//*String projectNr = dataRow.dataField( ValueDataFieldCall.get("projectnr") ).getValue().getActualValue();*//*
+            String producerAbbr = dataRow.dataField( ValueDataFieldCall.get("producerabbr") ).getValue().getActualValue();
 
             ProducerType producerType = prodStmtType.addNewProducer();
             xmlCursor = producerType.newCursor();
@@ -478,7 +471,7 @@ public class CodebookTransformer {
         SerStmtType serStmtType = citationType.addNewSerStmt();
         // series id is SELECTION type and series_list is REFERENCE type
         // TODO: Get series and data from it.
-        String seriesId = revisionData.dataField( SavedDataFieldCall.get("seriesid") ).getValue().getActualValue();
+        String seriesId = revisionData.dataField( ValueDataFieldCall.get("seriesid") ).getValue().getActualValue();
         // Set study series URI TODO: Get correct field, should be series abbreviation like 'ess' or 'yks' etc.
         serStmtType.setURI(SERIES_BASE_URI + "placeholder");
 
@@ -505,13 +498,13 @@ public class CodebookTransformer {
         // Add version, repeatable
         containerDataField = revisionData.dataField( ContainerDataFieldCall.get("dataversions") ).getValue();
         for (DataRow dataRow : containerDataField.getRows()) {
-            String version = dataRow.dataField( SavedDataFieldCall.get("version") ).getValue().getActualValue();
+            String version = dataRow.dataField( ValueDataFieldCall.get("version") ).getValue().getActualValue();
             // versiondate is DATE type TODO: Is the format it is in parseable with defaults ?
-            String versionDate = dataRow.dataField( SavedDataFieldCall.get("versiondate") ).getValue().getActualValue();
-            // String versionPro = dataRow.dataField( SavedDataFieldCall.get("versionpro") ).getValue().getActualValue();
-            // String versionLabel = dataRow.dataField( SavedDataFieldCall.get("versionlabel") ).getValue().getActualValue();
-            // String versionText = dataRow.dataField( SavedDataFieldCall.get("versiontext") ).getValue().getActualValue();
-            // String versionNotes = dataRow.dataField( SavedDataFieldCall.get("versionnotes") ).getValue().getActualValue();
+            String versionDate = dataRow.dataField( ValueDataFieldCall.get("versiondate") ).getValue().getActualValue();
+            // String versionPro = dataRow.dataField( ValueDataFieldCall.get("versionpro") ).getValue().getActualValue();
+            // String versionLabel = dataRow.dataField( ValueDataFieldCall.get("versionlabel") ).getValue().getActualValue();
+            // String versionText = dataRow.dataField( ValueDataFieldCall.get("versiontext") ).getValue().getActualValue();
+            // String versionNotes = dataRow.dataField( ValueDataFieldCall.get("versionnotes") ).getValue().getActualValue();
 
             VersionType versionType = verStmtType.addNewVersion();
             // Set version content
@@ -526,7 +519,7 @@ public class CodebookTransformer {
         // Back to citation
         // Add bibl (?) citation, excel row #78
         BiblCitType biblCitType = citationType.addNewBiblCit();
-        String biblCitation = revisionData.dataField( SavedDataFieldCall.get("biblcit") ).getValue().getActualValue();
+        String biblCitation = revisionData.dataField( ValueDataFieldCall.get("biblcit") ).getValue().getActualValue();
         xmlCursor = biblCitType.newCursor();
         xmlCursor.setTextValue( biblCitation );
         xmlCursor.dispose();
@@ -540,9 +533,9 @@ public class CodebookTransformer {
         containerDataField = revisionData.dataField( ContainerDataFieldCall.get("authors") ).getValue();
         for (DataRow dataRow : containerDataField.getRows()) {
             // authortype is SELECTION type for authortype_list which is a REFERENCE type
-            // String authorType = dataRow.dataField( SavedDataFieldCall.get("authortype") ).getValue().getActualValue();
-            String author = dataRow.dataField( SavedDataFieldCall.get("author") ).getValue().getActualValue();
-            String affiliation = dataRow.dataField( SavedDataFieldCall.get("affiliation") ).getValue().getActualValue();
+            // String authorType = dataRow.dataField( ValueDataFieldCall.get("authortype") ).getValue().getActualValue();
+            String author = dataRow.dataField( ValueDataFieldCall.get("author") ).getValue().getActualValue();
+            String affiliation = dataRow.dataField( ValueDataFieldCall.get("affiliation") ).getValue().getActualValue();
             AuthorizingAgencyType authorizingAgencyType = studyAuthorizationType.addNewAuthorizingAgency();
             xmlCursor = authorizingAgencyType.newCursor();
             xmlCursor.setTextValue(author);
@@ -563,11 +556,11 @@ public class CodebookTransformer {
         // Add keyword, repeatable TODO: Keyword has vocab or does not and values depend on that see excel row #85 - #89
         containerDataField = revisionData.dataField( ContainerDataFieldCall.get("keywords") ).getValue();
         for (DataRow dataRow : containerDataField.getRows()) {
-            String keywordVocab = dataRow.dataField( SavedDataFieldCall.get("keywordvocab") ).getValue().getActualValue();
-            String keyword = dataRow.dataField( SavedDataFieldCall.get("keyword") ).getValue().getActualValue();
-            // String keywordNoVocab = dataRow.dataField( SavedDataFieldCall.get("keywordnovocab") ).getValue().getActualValue();
-            String keywordVocabURI = dataRow.dataField( SavedDataFieldCall.get("keywordvocaburi") ).getValue().getActualValue();
-            // String keywordURI = dataRow.dataField( SavedDataFieldCall.get("keyworduri") ).getValue().getActualValue();
+            String keywordVocab = dataRow.dataField( ValueDataFieldCall.get("keywordvocab") ).getValue().getActualValue();
+            String keyword = dataRow.dataField( ValueDataFieldCall.get("keyword") ).getValue().getActualValue();
+            // String keywordNoVocab = dataRow.dataField( ValueDataFieldCall.get("keywordnovocab") ).getValue().getActualValue();
+            String keywordVocabURI = dataRow.dataField( ValueDataFieldCall.get("keywordvocaburi") ).getValue().getActualValue();
+            // String keywordURI = dataRow.dataField( ValueDataFieldCall.get("keyworduri") ).getValue().getActualValue();
 
             KeywordType keywordType = subjectType.addNewKeyword();
             xmlCursor = keywordType.newCursor();
@@ -588,8 +581,8 @@ public class CodebookTransformer {
         containerDataField = revisionData.dataField( ContainerDataFieldCall.get("topics") ).getValue();
         for (DataRow dataRow : containerDataField.getRows()) {
             // TODO: Get references and data from them and insert correct values
-            String topicVocab = dataRow.dataField( SavedDataFieldCall.get("topicvocab") ).getValue().getActualValue();
-            String topic = dataRow.dataField( SavedDataFieldCall.get("topic") ).getValue().getActualValue();
+            String topicVocab = dataRow.dataField( ValueDataFieldCall.get("topicvocab") ).getValue().getActualValue();
+            String topic = dataRow.dataField( ValueDataFieldCall.get("topic") ).getValue().getActualValue();
 
             TopcClasType topcClasType = subjectType.addNewTopcClas();
             xmlCursor = topcClasType.newCursor();
@@ -607,7 +600,7 @@ public class CodebookTransformer {
         // Back to study info
         // Add abstract, excel row #94 TODO: This is contained in p-tags already ?
         AbstractType abstractType = stdyInfoType.addNewAbstract();
-        String abs = revisionData.dataField( SavedDataFieldCall.get("abstract") ).getValue().getActualValue();
+        String abs = revisionData.dataField( ValueDataFieldCall.get("abstract") ).getValue().getActualValue();
         xmlCursor = abstractType.newCursor();
         xmlCursor.setTextValue(abs);
         xmlCursor.dispose();
@@ -619,11 +612,11 @@ public class CodebookTransformer {
         containerDataField = revisionData.dataField( ContainerDataFieldCall.get("timeperiods") ).getValue();
         for (DataRow dataRow : containerDataField.getRows()) {
             // timeperiod is DATE type
-            String timePeriod = dataRow.dataField( SavedDataFieldCall.get("timeperiod") ).getValue().getActualValue();
+            String timePeriod = dataRow.dataField( ValueDataFieldCall.get("timeperiod") ).getValue().getActualValue();
             LocalDate localDate = LocalDate.parse(timePeriod);
-            String timePeriodText = dataRow.dataField( SavedDataFieldCall.get("timeperiodtext") ).getValue().getActualValue();
+            String timePeriodText = dataRow.dataField( ValueDataFieldCall.get("timeperiodtext") ).getValue().getActualValue();
             // timeperiodevent is SELECTION type for timeperiodevent_list which is SUBLIST type for sublistKey start_end_single
-            String timePeriodEvent = dataRow.dataField( SavedDataFieldCall.get("timeperiodevent") ).getValue().getActualValue();
+            String timePeriodEvent = dataRow.dataField( ValueDataFieldCall.get("timeperiodevent") ).getValue().getActualValue();
 
             TimePrdType timePrdType = sumDscrType.addNewTimePrd();
             xmlCursor = timePrdType.newCursor();
@@ -640,11 +633,11 @@ public class CodebookTransformer {
         containerDataField = revisionData.dataField( ContainerDataFieldCall.get("colltime") ).getValue();
         for (DataRow dataRow : containerDataField.getRows()) {
             // colldate is DATE type
-            String collDate = dataRow.dataField( SavedDataFieldCall.get("colldate") ).getValue().getActualValue();
+            String collDate = dataRow.dataField( ValueDataFieldCall.get("colldate") ).getValue().getActualValue();
             LocalDate localDate = LocalDate.parse(collDate);
-            String collDateText = dataRow.dataField( SavedDataFieldCall.get("colldatetext") ).getValue().getActualValue();
+            String collDateText = dataRow.dataField( ValueDataFieldCall.get("colldatetext") ).getValue().getActualValue();
             // colldateevent is SELECTION type for colldateevent_list
-            String collDateEvent = dataRow.dataField( SavedDataFieldCall.get("colldateevent") ).getValue().getActualValue();
+            String collDateEvent = dataRow.dataField( ValueDataFieldCall.get("colldateevent") ).getValue().getActualValue();
 
             CollDateType collDateType = sumDscrType.addNewCollDate();
             xmlCursor = collDateType.newCursor();
@@ -660,8 +653,8 @@ public class CodebookTransformer {
         // Add nation, repeatable, excel row #102 - #105
         containerDataField = revisionData.dataField( ContainerDataFieldCall.get("countries") ).getValue();
         for (DataRow dataRow : containerDataField.getRows()) {
-            String country = dataRow.dataField( SavedDataFieldCall.get("country") ).getValue().getActualValue();
-            String countryAbbr = dataRow.dataField( SavedDataFieldCall.get("countryabbr") ).getValue().getActualValue();
+            String country = dataRow.dataField( ValueDataFieldCall.get("country") ).getValue().getActualValue();
+            String countryAbbr = dataRow.dataField( ValueDataFieldCall.get("countryabbr") ).getValue().getActualValue();
 
             NationType nationType = sumDscrType.addNewNation();
             xmlCursor = nationType.newCursor();
@@ -676,7 +669,7 @@ public class CodebookTransformer {
         // TODO: Excel says in export content of nations field are copied to geogcovers ?
         containerDataField = revisionData.dataField( ContainerDataFieldCall.get("geogcovers") ).getValue();
         for (DataRow dataRow : containerDataField.getRows()) {
-            String geographicalCover = dataRow.dataField( SavedDataFieldCall.get("geogcover") ).getValue().getActualValue();
+            String geographicalCover = dataRow.dataField( ValueDataFieldCall.get("geogcover") ).getValue().getActualValue();
 
             ConceptualTextType conceptualTextType = sumDscrType.addNewGeogCover();
             xmlCursor = conceptualTextType.newCursor();
@@ -688,11 +681,11 @@ public class CodebookTransformer {
         // TODO: Analysis is a container with subfields topicvocab and topic
         containerDataField = revisionData.dataField( ContainerDataFieldCall.get("analysis") ).getValue();
         for (DataRow dataRow : containerDataField.getRows()) {
-            String analysisUnit = dataRow.dataField( SavedDataFieldCall.get("analysisunit") ).getValue().getActualValue();
-            String analysisUnitVocab = dataRow.dataField( SavedDataFieldCall.get("analysisunitvocab") ).getValue().getActualValue();
-            String analysisUnitVocabURI = dataRow.dataField( SavedDataFieldCall.get("analysisunitvocaburi") ).getValue().getActualValue();
-            String analysisUnitURI = dataRow.dataField( SavedDataFieldCall.get("analysisunituri") ).getValue().getActualValue();
-            String analysisUnitOther = dataRow.dataField( SavedDataFieldCall.get("analysisunitother") ).getValue().getActualValue();
+            String analysisUnit = dataRow.dataField( ValueDataFieldCall.get("analysisunit") ).getValue().getActualValue();
+            String analysisUnitVocab = dataRow.dataField( ValueDataFieldCall.get("analysisunitvocab") ).getValue().getActualValue();
+            String analysisUnitVocabURI = dataRow.dataField( ValueDataFieldCall.get("analysisunitvocaburi") ).getValue().getActualValue();
+            String analysisUnitURI = dataRow.dataField( ValueDataFieldCall.get("analysisunituri") ).getValue().getActualValue();
+            String analysisUnitOther = dataRow.dataField( ValueDataFieldCall.get("analysisunitother") ).getValue().getActualValue();
 
             AnlyUnitType anlyUnitType = sumDscrType.addNewAnlyUnit();
             // TODO: Some 2.1 examples have f.ex. "Henkilö" inside anlyUnit then also concept element inside it.
@@ -709,22 +702,22 @@ public class CodebookTransformer {
             // Set source, 1 archive and 2 producer TODO: What value is saved, number or text ?
             conceptType.setSource(BaseElementType.Source.Enum.forString(analysisUnitURI));
 
-            /*
+            *//*
             // Add new text (only if anlyUnit/concept=Muu havaintoyksikkö TAI Maantieteellinen alue)
             // TODO: How to check ? What path? Special handling for cases see excel row #112
             TxtType txtType = anlyUnitType.addNewTxt();
             xmlCursor = txtType.newCursor();
             xmlCursor.setTextValue(analysisUnitOther);
             xmlCursor.dispose();
-            */
+            *//*
         }
 
         // Add universe, repeatable
         containerDataField = revisionData.dataField( ContainerDataFieldCall.get("universes")).getValue();
         for (DataRow dataRow : containerDataField.getRows()) {
-            String universe = dataRow.dataField( SavedDataFieldCall.get("universe") ).getValue().getActualValue();
+            String universe = dataRow.dataField( ValueDataFieldCall.get("universe") ).getValue().getActualValue();
             // universeclusion is SELECTION type for universeclusion_list which is VALUE type
-            String universeClusion = dataRow.dataField( SavedDataFieldCall.get("universeclusion") ).getValue().getActualValue();
+            String universeClusion = dataRow.dataField( ValueDataFieldCall.get("universeclusion") ).getValue().getActualValue();
 
             UniverseType universeType = sumDscrType.addNewUniverse();
             xmlCursor = universeType.newCursor();
@@ -736,7 +729,7 @@ public class CodebookTransformer {
 
         // Add data kind
         // datakind is SELECTION type for datakind_list which is VALUE type
-        String dataKind = revisionData.dataField( SavedDataFieldCall.get("datakind") ).getValue().getActualValue();
+        String dataKind = revisionData.dataField( ValueDataFieldCall.get("datakind") ).getValue().getActualValue();
         Field field = configuration.getField("datakind");
         String dataKindSelectionListKey = field.getSelectionList();
         SelectionList selectionList = configuration.getSelectionList(dataKindSelectionListKey);
@@ -760,8 +753,8 @@ public class CodebookTransformer {
         containerDataField = revisionData.dataField( ContainerDataFieldCall.get("timemethods") ).getValue();
         for (DataRow dataRow : containerDataField.getRows()) {
             // TODO: Both lists contain REFERENCE type for topic_list / topicvocab_list which are REFERENCE type
-            String timeMethodTopic = dataRow.dataField( SavedDataFieldCall.get("topic") ).getValue().getActualValue();
-            String timeMethodTopicVocab = dataRow.dataField( SavedDataFieldCall.get("topicvocab") ).getValue().getActualValue();
+            String timeMethodTopic = dataRow.dataField( ValueDataFieldCall.get("topic") ).getValue().getActualValue();
+            String timeMethodTopicVocab = dataRow.dataField( ValueDataFieldCall.get("topicvocab") ).getValue().getActualValue();
 
             TimeMethType timeMethType = dataCollType.addNewTimeMeth();
             xmlCursor = timeMethType.newCursor();
@@ -792,9 +785,9 @@ public class CodebookTransformer {
         containerDataField = revisionData.dataField( ContainerDataFieldCall.get("collectors") ).getValue();
         for (DataRow dataRow : containerDataField.getRows()) {
             // TODO: authortype is SELECTION type for authortype_list which is REFERENCE type
-            String authorType = dataRow.dataField( SavedDataFieldCall.get("authortype") ).getValue().getActualValue();
-            String collector = dataRow.dataField( SavedDataFieldCall.get("collector") ).getValue().getActualValue();
-            String collectorAffiliation = dataRow.dataField( SavedDataFieldCall.get("collectoraffiliation") ).getValue().getActualValue();
+            String authorType = dataRow.dataField( ValueDataFieldCall.get("authortype") ).getValue().getActualValue();
+            String collector = dataRow.dataField( ValueDataFieldCall.get("collector") ).getValue().getActualValue();
+            String collectorAffiliation = dataRow.dataField( ValueDataFieldCall.get("collectoraffiliation") ).getValue().getActualValue();
 
             // TODO: Conditional values depending on collectortype (authortype ?)
             DataCollectorType dataCollectorType = dataCollType.addNewDataCollector();
@@ -813,9 +806,9 @@ public class CodebookTransformer {
         containerDataField = revisionData.dataField( ContainerDataFieldCall.get("sampprocs") ).getValue();
         for (DataRow dataRow : containerDataField.getRows()) {
             // sampproc is SELECTION type for sampproc_list which is REFERENCE type
-            String sampProc = dataRow.dataField( SavedDataFieldCall.get("sampproc") ).getValue().getActualValue();
+            String sampProc = dataRow.dataField( ValueDataFieldCall.get("sampproc") ).getValue().getActualValue();
             // sampprocdesc is REFERENCE type for sampprocdesc_ref which is DEPENDENCY type
-            String sampProcDesc = dataRow.dataField( SavedDataFieldCall.get("sampprocdesc") ).getValue().getActualValue();
+            String sampProcDesc = dataRow.dataField( ValueDataFieldCall.get("sampprocdesc") ).getValue().getActualValue();
 
             ConceptualTextType conceptualTextType = dataCollType.addNewSampProc();
             // Add concept
@@ -841,8 +834,8 @@ public class CodebookTransformer {
         containerDataField = revisionData.dataField( ContainerDataFieldCall.get("collmodes") ).getValue();
         for (DataRow dataRow : containerDataField.getRows()) {
             // TODO: Both lists contain REFERENCE type for topic_list / topicvocab_list which are REFERENCE type
-            String collModesTopic = dataRow.dataField( SavedDataFieldCall.get("topic") ).getValue().getActualValue();
-            String collModesTopicVocab = dataRow.dataField( SavedDataFieldCall.get("topicvocab") ).getValue().getActualValue();
+            String collModesTopic = dataRow.dataField( ValueDataFieldCall.get("topic") ).getValue().getActualValue();
+            String collModesTopicVocab = dataRow.dataField( ValueDataFieldCall.get("topicvocab") ).getValue().getActualValue();
 
             ConceptualTextType conceptualTextType = dataCollType.addNewCollMode();
             // Add concept
@@ -868,8 +861,8 @@ public class CodebookTransformer {
         containerDataField = revisionData.dataField( ContainerDataFieldCall.get("collmodes") ).getValue();
         for (DataRow dataRow : containerDataField.getRows()) {
             // TODO: Both lists contain REFERENCE type for topic_list / topicvocab_list which are REFERENCE type
-            String instrumentsTopic = dataRow.dataField( SavedDataFieldCall.get("topic") ).getValue().getActualValue();
-            String instrumentsTopicVocab = dataRow.dataField( SavedDataFieldCall.get("topicvocab") ).getValue().getActualValue();
+            String instrumentsTopic = dataRow.dataField( ValueDataFieldCall.get("topic") ).getValue().getActualValue();
+            String instrumentsTopicVocab = dataRow.dataField( ValueDataFieldCall.get("topicvocab") ).getValue().getActualValue();
 
             ResInstruType resInstruType = dataCollType.addNewResInstru();
             // Add concept
@@ -894,7 +887,7 @@ public class CodebookTransformer {
         SourcesType sourcesType = dataCollType.addNewSources();
         containerDataField = revisionData.dataField( ContainerDataFieldCall.get("datasources") ).getValue();
         for (DataRow dataRow : containerDataField.getRows()) {
-            String datasource = dataRow.dataField( SavedDataFieldCall.get("datasource") ).getValue().getActualValue();
+            String datasource = dataRow.dataField( ValueDataFieldCall.get("datasource") ).getValue().getActualValue();
 
             // Add new data source
             stt = sourcesType.addNewDataSrc();
@@ -905,10 +898,10 @@ public class CodebookTransformer {
 
         // Add weight, repeatable TODO: Repeatable for STRING and BOOLEAN type ?
         // TODO: Excel row #149 - #150 slightly unclear about this
-        String weightYesNo = revisionData.dataField( SavedDataFieldCall.get("weightyesno") ).getValue().getActualValue();
+        String weightYesNo = revisionData.dataField( ValueDataFieldCall.get("weightyesno") ).getValue().getActualValue();
         stt = dataCollType.addNewWeight();
         if (Boolean.parseBoolean(weightYesNo)) {
-            String weight = revisionData.dataField( SavedDataFieldCall.get("weight") ).getValue().getActualValue();
+            String weight = revisionData.dataField( ValueDataFieldCall.get("weight") ).getValue().getActualValue();
             xmlCursor = stt.newCursor();
             xmlCursor.setTextValue(weight);
             xmlCursor.dispose();
@@ -921,7 +914,7 @@ public class CodebookTransformer {
 
         // Back to method
         // Add notes, excel row #151
-        String dataProcessing = revisionData.dataField( SavedDataFieldCall.get("dataprosessing") ).getValue().getActualValue();
+        String dataProcessing = revisionData.dataField( ValueDataFieldCall.get("dataprosessing") ).getValue().getActualValue();
         NotesType notesType = methodType.addNewNotes();
         xmlCursor = notesType.newCursor();
         xmlCursor.setTextValue(dataProcessing);
@@ -931,7 +924,7 @@ public class CodebookTransformer {
         AnlyInfoType anlyInfoType = methodType.addNewAnlyInfo();
 
         // Add response rate
-        String respRate = revisionData.dataField( SavedDataFieldCall.get("resprate") ).getValue().getActualValue();
+        String respRate = revisionData.dataField( ValueDataFieldCall.get("resprate") ).getValue().getActualValue();
         stt = anlyInfoType.addNewRespRate();
         xmlCursor = stt.newCursor();
         xmlCursor.setTextValue(respRate);
@@ -940,7 +933,7 @@ public class CodebookTransformer {
         // Add data appraisal, repeatable
         containerDataField = revisionData.dataField( ContainerDataFieldCall.get("appraisals") ).getValue();
         for (DataRow dataRow : containerDataField.getRows()) {
-            String appraisal = dataRow.dataField( SavedDataFieldCall.get("appraisal") ).getValue().getActualValue();
+            String appraisal = dataRow.dataField( ValueDataFieldCall.get("appraisal") ).getValue().getActualValue();
             DataApprType dataApprType = anlyInfoType.addNewDataAppr();
             xmlCursor = dataApprType.newCursor();
             xmlCursor.setTextValue(appraisal);
@@ -962,21 +955,21 @@ public class CodebookTransformer {
         accsPlacType.setURI(ACCS_PLAC_URI);
 
         // Add original archive
-        String originalLocation = revisionData.dataField( SavedDataFieldCall.get("originallocation") ).getValue().getActualValue();
+        String originalLocation = revisionData.dataField( ValueDataFieldCall.get("originallocation") ).getValue().getActualValue();
         stt = setAvailType.addNewOrigArch();
         xmlCursor = stt.newCursor();
         xmlCursor.setTextValue(originalLocation);
         xmlCursor.dispose();
 
         // Add collection size
-        String collSize = revisionData.dataField( SavedDataFieldCall.get("collsize") ).getValue().getActualValue();
+        String collSize = revisionData.dataField( ValueDataFieldCall.get("collsize") ).getValue().getActualValue();
         stt = setAvailType.addNewCollSize();
         xmlCursor = stt.newCursor();
         xmlCursor.setTextValue(collSize);
         xmlCursor.dispose();
 
         // Add complete
-        String complete = revisionData.dataField( SavedDataFieldCall.get("complete") ).getValue().getActualValue();
+        String complete = revisionData.dataField( ValueDataFieldCall.get("complete") ).getValue().getActualValue();
         stt = setAvailType.addNewComplete();
         xmlCursor = stt.newCursor();
         xmlCursor.setTextValue(complete);
@@ -986,7 +979,7 @@ public class CodebookTransformer {
         UseStmtType useStmtType = dataAccsType.addNewUseStmt();
 
         // Add special permissions
-        String specialTOS = revisionData.dataField( SavedDataFieldCall.get("specialtermsofuse") ).getValue().getActualValue();
+        String specialTOS = revisionData.dataField( ValueDataFieldCall.get("specialtermsofuse") ).getValue().getActualValue();
         SpecPermType specPermType = useStmtType.addNewSpecPerm();
         xmlCursor = specPermType.newCursor();
         xmlCursor.setTextValue(specialTOS);
@@ -995,7 +988,7 @@ public class CodebookTransformer {
         // Add restrictions, excel row #164
         // TODO: Standard text value depends on 'termsofuse'
         // TODO: Does it mean the SELECTION type title or some other value ?
-        String tos = revisionData.dataField( SavedDataFieldCall.get("termsofuse") ).getValue().getActualValue();
+        String tos = revisionData.dataField( ValueDataFieldCall.get("termsofuse") ).getValue().getActualValue();
         field = configuration.getField("termsofuse");
         String tosSelectionListKey = field.getSelectionList();
         selectionList = configuration.getSelectionList(tosSelectionListKey);
@@ -1024,7 +1017,7 @@ public class CodebookTransformer {
         xmlCursor.dispose();
 
         // Add notes, excel row #168
-        String notes = revisionData.dataField( SavedDataFieldCall.get("datasetnotes") ).getValue().getActualValue();
+        String notes = revisionData.dataField( ValueDataFieldCall.get("datasetnotes") ).getValue().getActualValue();
         notesType = dataAccsType.addNewNotes();
         xmlCursor = notesType.newCursor();
         xmlCursor.setTextValue(notes);
@@ -1037,7 +1030,7 @@ public class CodebookTransformer {
         // Add related materials, repeatable
         containerDataField = revisionData.dataField( ContainerDataFieldCall.get("relatedmaterials") ).getValue();
         for (DataRow dataRow : containerDataField.getRows()) {
-            String relatedMaterial = dataRow.dataField( SavedDataFieldCall.get("relatedmaterial") ).getValue().getActualValue();
+            String relatedMaterial = dataRow.dataField( ValueDataFieldCall.get("relatedmaterial") ).getValue().getActualValue();
             RelMatType relMatType = othrStdyMatType.addNewRelMat();
             xmlCursor = relMatType.newCursor();
             xmlCursor.setTextValue(relatedMaterial);
@@ -1063,12 +1056,12 @@ public class CodebookTransformer {
         // Add other references, repeatable
         containerDataField = revisionData.dataField( ContainerDataFieldCall.get("publicationcomments") ).getValue();
         for (DataRow dataRow : containerDataField.getRows()) {
-            String publicationComment = dataRow.dataField( SavedDataFieldCall.get("publicationcomment") ).getValue().getActualValue();
+            String publicationComment = dataRow.dataField( ValueDataFieldCall.get("publicationcomment") ).getValue().getActualValue();
             OthRefsType othRefsType = othrStdyMatType.addNewOthRefs();
             xmlCursor = othRefsType.newCursor();
             xmlCursor.setTextValue(publicationComment);
             xmlCursor.dispose();
-        }
+        }*/
     }
 
     /**
@@ -1079,7 +1072,7 @@ public class CodebookTransformer {
      * @param codeBookDocument codebook document
      */
     private void addfileDescription(RevisionData revisionData, Configuration configuration, CodeBookDocument codeBookDocument) {
-        //TODO: Not implemented yet, excel path references variables not found in configuration
+        /*//TODO: Not implemented yet, excel path references variables not found in configuration
         // Get codebook
         CodeBookType codeBookType = codeBookDocument.getCodeBook();
 
@@ -1121,7 +1114,7 @@ public class CodebookTransformer {
         FileTypeType fileTypeType = fileTxtType.addNewFileType();
         xmlCursor = fileTypeType.newCursor();
         xmlCursor.setTextValue("placeholder");
-        xmlCursor.dispose();
+        xmlCursor.dispose();*/
     }
 
     /**
@@ -1132,7 +1125,7 @@ public class CodebookTransformer {
      * @param codeBookDocument codebook document
      */
     private void addDataDescription(RevisionData revisionData, Configuration configuration, CodeBookDocument codeBookDocument) {
-        // Get codebook
+        /*// Get codebook
         CodeBookType codeBookType = codeBookDocument.getCodeBook();
 
         // Add data description, excel row #184
@@ -1247,7 +1240,7 @@ public class CodebookTransformer {
         NotesType notesType = varType.addNewNotes();
         xmlCursor = notesType.newCursor();
         xmlCursor.setTextValue("placeholder");
-        xmlCursor.dispose();
+        xmlCursor.dispose();*/
     }
 
     /**
@@ -1258,15 +1251,15 @@ public class CodebookTransformer {
      * @param codeBookDocument codebook document
      */
     private void addOtherMaterialDescription(RevisionData revisionData, Configuration configuration, CodeBookDocument codeBookDocument) {
-        // Get codebook
+        /*// Get codebook
         CodeBookType codeBookType = codeBookDocument.getCodeBook();
 
         // Add other material, repeatable, row #209
         ContainerDataField containerDataField = revisionData.dataField( ContainerDataFieldCall.get("othermaterials") ).getValue();
         for (DataRow dataRow : containerDataField.getRows()) {
-            String otherMaterialURI = dataRow.dataField( SavedDataFieldCall.get("othermaterialuri") ).getValue().getActualValue();
-            String otherMaterialLabel = dataRow.dataField( SavedDataFieldCall.get("othermateriallabel") ).getValue().getActualValue();
-            String otherMaterialText = dataRow.dataField( SavedDataFieldCall.get("othermaterialtext") ).getValue().getActualValue();
+            String otherMaterialURI = dataRow.dataField( ValueDataFieldCall.get("othermaterialuri") ).getValue().getActualValue();
+            String otherMaterialLabel = dataRow.dataField( ValueDataFieldCall.get("othermateriallabel") ).getValue().getActualValue();
+            String otherMaterialText = dataRow.dataField( ValueDataFieldCall.get("othermaterialtext") ).getValue().getActualValue();
 
             OtherMatType otherMatType = codeBookType.addNewOtherMat();
             // Set URI
@@ -1283,7 +1276,7 @@ public class CodebookTransformer {
             xmlCursor = txtType.newCursor();
             xmlCursor.setTextValue(otherMaterialText);
             xmlCursor.dispose();
-        }
+        }*/
     }
 
 }

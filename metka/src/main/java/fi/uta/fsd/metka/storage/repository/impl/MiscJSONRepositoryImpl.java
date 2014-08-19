@@ -66,7 +66,7 @@ public class MiscJSONRepositoryImpl implements MiscJSONRepository {
     @Override
     public Pair<ReturnResult, JsonNode> findByKey(String key) {
         MiscJSONEntity entity = em.find(MiscJSONEntity.class, key);
-        if(entity == null || StringUtils.isEmpty(entity.getData())) {
+        if(entity == null || !StringUtils.hasText(entity.getData())) {
             return new ImmutablePair<>(ReturnResult.MISC_JSON_NOT_FOUND, null);
         }
         Pair<ReturnResult, JsonNode> pair = json.deserializeToJsonTree(entity.getData());

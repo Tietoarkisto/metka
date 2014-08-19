@@ -1,5 +1,9 @@
 package fi.uta.fsd.metka.transfer.reference;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import fi.uta.fsd.metka.enums.Language;
+import org.springframework.util.StringUtils;
+
 /**
  * Single reference value/title pair.
  * This is always the result of one match of a reference path.
@@ -20,6 +24,30 @@ public class ReferenceOption {
 
     public ReferenceOptionTitle getTitle() {
         return title;
+    }
+
+    /**
+     * Return information if title for given language contains text.
+     * @param language
+     * @return
+     */
+    @JsonIgnore public boolean hasTitleFor(Language language) {
+        return StringUtils.hasText(title.getValue().getTexts().get(language.toValue()));
+    }
+
+    /**
+     * Returns title for given language or for default if title for given language
+     * contains no text.
+     * Use hasTitleFor to check which one is returned.
+     * @param language
+     * @return
+     */
+    @JsonIgnore public String getTitleFor(Language language) {
+        if(hasTitleFor(language)) {
+            return title.getValue().getTexts().get(language.toValue());
+        } else {
+            return title.getValue().getTexts().get(Language.DEFAULT.toValue());
+        }
     }
 
     @Override

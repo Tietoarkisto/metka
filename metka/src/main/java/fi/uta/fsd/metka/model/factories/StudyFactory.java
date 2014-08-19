@@ -1,16 +1,18 @@
 package fi.uta.fsd.metka.model.factories;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
-import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
+import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.configuration.SelectionList;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.SavedDataField;
+import fi.uta.fsd.metka.model.data.container.ValueDataField;
+import fi.uta.fsd.metka.model.data.value.Value;
+import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +44,7 @@ public class StudyFactory extends DataFactory {
             return new ImmutablePair<>(ReturnResult.INCORRECT_TYPE_FOR_OPERATION, null);
         }
 
-        LocalDateTime time = new LocalDateTime();
+        DateTimeUserPair info = DateTimeUserPair.build();
 
         RevisionData data = createDraftRevision(id, no, configuration.getKey());
 
@@ -51,26 +53,26 @@ public class StudyFactory extends DataFactory {
 
         // Studyno_prefix, this is a string that is added to the front of study_id
         list = configuration.getRootSelectionList(configuration.getField("studyid_prefix").getSelectionList());
-        data.dataField(SavedDataFieldCall.set("studyid_prefix").setConfiguration(configuration).setTime(time).setValue(list.getDef()));
+        data.dataField(ValueDataFieldCall.set("studyid_prefix", new Value(list.getDef(), ""), Language.DEFAULT).setConfiguration(configuration).setInfo(info));
 
         // studyno, this is a separate sequence from revisionable id and forms the number base for id
-        data.dataField(SavedDataFieldCall.set("studyid_number").setConfiguration(configuration).setTime(time).setValue(studyNumber));
+        data.dataField(ValueDataFieldCall.set("studyid_number", new Value(studyNumber, ""), Language.DEFAULT).setConfiguration(configuration).setInfo(info));
 
         // submissionid, this is required information for creating a new study
-        data.dataField(SavedDataFieldCall.set("submissionid").setConfiguration(configuration).setTime(time).setValue(submissionid));
+        data.dataField(ValueDataFieldCall.set("submissionid", new Value(submissionid, ""), Language.DEFAULT).setConfiguration(configuration).setInfo(info));
 
         // create id field, which concatenates studyno_prefix and studyno. This is the basis of study searches.
         // This is more of a proof of concept for concatenate fields than anything.
         confField = configuration.getField("studyid");
         String concat = "";
         for(String fieldKey : confField.getConcatenate()) {
-            SavedDataField tempField = data.dataField(SavedDataFieldCall.get(fieldKey)).getRight();
-            if(tempField != null) concat += tempField.getActualValue();
+            ValueDataField tempField = data.dataField(ValueDataFieldCall.get(fieldKey)).getRight();
+            if(tempField != null) concat += tempField.getActualValueFor(Language.DEFAULT);
         }
-        data.dataField(SavedDataFieldCall.set("studyid").setConfiguration(configuration).setValue(concat).setTime(time));
+        data.dataField(ValueDataFieldCall.set("studyid", new Value(concat, ""), Language.DEFAULT).setConfiguration(configuration).setInfo(info));
 
         // Set dataarrivaldate
-        data.dataField(SavedDataFieldCall.set("dataarrivaldate").setValue(arrivalDate).setTime(time));
+        data.dataField(ValueDataFieldCall.set("dataarrivaldate", new Value(arrivalDate, ""), Language.DEFAULT).setConfiguration(configuration).setInfo(info));
 
         return new ImmutablePair<>(ReturnResult.REVISION_CREATED, data);
     }

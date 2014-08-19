@@ -6,24 +6,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.enums.FieldType;
 import fi.uta.fsd.metka.model.general.TranslationObject;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
 import java.util.List;
 
-@XmlAccessorType(XmlAccessType.FIELD)
 @JsonIgnoreProperties("_comment")
 public class FieldDescription {
-    @XmlElement private final String key;
-    @XmlElement private FieldType displayType; // Can be ignored for now, only defined here for completeness
-    @XmlElement private Boolean multiline;
-    @XmlElement private Boolean multichoice; // Can be ignored for now, only defined here for completeness
-    @XmlElement private final List<String> columnFields = new ArrayList<>();
-    @XmlElement private Boolean showSaveInfo;
-    @XmlElement private Boolean showReferenceValue;
-    @XmlElement private String handlerName;
-    @XmlElement private TranslationObject dialogTitle;
+    private final String key;
+    private FieldType displayType; // Can be ignored for now, only defined here for completeness
+    private Boolean multiline;
+    private Boolean multichoice; // Can be ignored for now, only defined here for completeness
+    private final List<String> columnFields = new ArrayList<>();
+    private Boolean showSaveInfo;
+    private Boolean showReferenceValue;
+    private String handlerName;
+    private TranslationObject dialogTitle;
 
     @JsonCreator
     public FieldDescription(@JsonProperty("key")String key) {

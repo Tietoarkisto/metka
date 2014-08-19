@@ -1,6 +1,7 @@
 package fi.uta.fsd.metkaSearch.commands.searcher.series;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
+import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metkaSearch.commands.searcher.RevisionSearchCommandBase;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
@@ -15,9 +16,9 @@ import org.apache.lucene.search.*;
  * // TODO: general field uniqueness checker for both inside a revisionable and between revisionables. This implementation is really just a test case.
  */
 public final class SeriesAbbreviationUniquenessSearchCommand extends RevisionSearchCommandBase<BooleanResult> {
-    public static SeriesAbbreviationUniquenessSearchCommand build(String language, Long revisionableId, String abbreviation) throws UnsupportedOperationException {
+    public static SeriesAbbreviationUniquenessSearchCommand build(Long revisionableId, String abbreviation) throws UnsupportedOperationException {
         //checkPath(path, ConfigurationType.SERIES);
-        DirectoryManager.DirectoryPath path = DirectoryManager.formPath(false, IndexerConfigurationType.REVISION, language, ConfigurationType.SERIES.toValue());
+        DirectoryManager.DirectoryPath path = DirectoryManager.formPath(false, IndexerConfigurationType.REVISION, Language.DEFAULT, ConfigurationType.SERIES.toValue());
         return new SeriesAbbreviationUniquenessSearchCommand(path, revisionableId, abbreviation);
     }
 

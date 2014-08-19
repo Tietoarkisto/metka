@@ -3,17 +3,17 @@ package fi.uta.fsd.metka.model.data.container;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.change.ContainerChange;
+import fi.uta.fsd.metka.model.data.change.RowChange;
+import fi.uta.fsd.metka.model.data.value.Value;
+import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.joda.time.LocalDateTime;
 import org.springframework.util.StringUtils;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,16 +21,15 @@ import java.util.Map;
 /**
  * List of references are saved through this
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 public class ReferenceContainerDataField extends RowContainerDataField {
-    @XmlElement private final List<SavedReference> references = new ArrayList<>();
+    private final List<ReferenceRow> references = new ArrayList<>();
 
     @JsonCreator
-    public ReferenceContainerDataField(@JsonProperty("key") String key, @JsonProperty("rowIdSeq") Integer rowIdSeq) {
-        super(key, rowIdSeq);
+    public ReferenceContainerDataField(@JsonProperty("key") String key, @JsonProperty("type") DataFieldType type, @JsonProperty("rowIdSeq") Integer rowIdSeq) {
+        super(key, type, rowIdSeq);
     }
 
-    public List<SavedReference> getReferences() {
+    public List<ReferenceRow> getReferences() {
         return references;
     }
 
@@ -39,13 +38,13 @@ public class ReferenceContainerDataField extends RowContainerDataField {
      * @param rowId Row id to be searched for amongst references
      * @return SavedReference matching given value or null if none found
      */
-    public Pair<StatusCode, SavedReference> getReferenceWithId(Integer rowId) {
+    public Pair<StatusCode, ReferenceRow> getReferenceWithId(Integer rowId) {
 
         if(rowId == null || rowId < 1) {
             // Row can not be found since no rowId given.
             return new ImmutablePair<>(StatusCode.INCORRECT_PARAMETERS, null);
         }
-        for(SavedReference reference : references) {
+        for(ReferenceRow reference : references) {
             if(reference.getRowId().equals(rowId)) {
                 return new ImmutablePair<>(StatusCode.FOUND_ROW, reference);
             }
@@ -59,8 +58,8 @@ public class ReferenceContainerDataField extends RowContainerDataField {
      * @param value Reference value that is searched for
      * @return SavedReference matching given value or null if none found
      */
-    public Pair<StatusCode, SavedReference> getReferenceWithValue(String value) {
-        for(SavedReference reference : references) {
+    public Pair<StatusCode, ReferenceRow> getReferenceWithValue(String value) {
+        for(ReferenceRow reference : references) {
             if(reference.valueEquals(value)) {
                 return new ImmutablePair<>(StatusCode.FOUND_ROW, reference);
             }
@@ -76,29 +75,30 @@ public class ReferenceContainerDataField extends RowContainerDataField {
      *
      * @param value Value that is searched for
      * @param changeMap Map where the container change containing this rows changes should reside
-     * @param time Time for possible creation of row and field. Can be null
+     * @param info DateTimeUserPair if new reference is needed. If this is null then new instance is used.
      * @return Tuple of StatusCode and SavedReference. StatusCode tells if the returned row is a new insert or not
      */
-    public Pair<StatusCode, SavedReference> getOrCreateReferenceWithValue(String value, Map<String, Change> changeMap, LocalDateTime time) {
-        if(changeMap == null || StringUtils.isEmpty(value)) {
+    public Pair<StatusCode, ReferenceRow> getOrCreateReferenceWithValue(String value, Map<String, Change> changeMap, DateTimeUserPair info) {
+        if(changeMap == null || !StringUtils.hasText(value)) {
             return new ImmutablePair<>(StatusCode.INCORRECT_PARAMETERS, null);
         }
-        Pair<StatusCode, SavedReference> pair = getReferenceWithValue(value);
+        Pair<StatusCode, ReferenceRow> pair = getReferenceWithValue(value);
         if(pair.getLeft() == StatusCode.FOUND_ROW) {
             return pair;
         } else {
-            if(time == null) {
-                time = new LocalDateTime();
+            if(info == null) {
+                info = DateTimeUserPair.build();
             }
-            SavedReference reference = SavedReference.build(this);
+            ReferenceRow reference = ReferenceRow.build(this, new Value(value, ""));
+            reference.setSaved(info);
             references.add(reference);
 
             ContainerChange change = (ContainerChange)changeMap.get(reference.getKey());
             if(change == null) {
-                change = new ContainerChange(reference.getKey());
+                change = new ContainerChange(reference.getKey(), Change.ChangeType.CONTAINER);
                 changeMap.put(change.getKey(), change);
             }
-            reference.setValueToSimple(value, time, change);
+            change.put(Language.DEFAULT, new RowChange(reference.getRowId()));
             return new ImmutablePair<>(StatusCode.NEW_ROW, reference);
         }
     }
@@ -106,8 +106,8 @@ public class ReferenceContainerDataField extends RowContainerDataField {
     @Override
     @JsonIgnore
     public DataField copy() {
-        ReferenceContainerDataField container = new ReferenceContainerDataField(getKey(), getRowIdSeq());
-        for(SavedReference reference : references) {
+        ReferenceContainerDataField container = new ReferenceContainerDataField(getKey(), getType(), getRowIdSeq());
+        for(ReferenceRow reference : references) {
             container.references.add(reference.copy());
         }
         return container;
@@ -115,15 +115,15 @@ public class ReferenceContainerDataField extends RowContainerDataField {
 
     @Override
     public void normalize() {
-        List<SavedReference> remove = new ArrayList<>();
-        for(SavedReference reference : references) {
-            if(reference.isRemoved()) {
+        List<ReferenceRow> remove = new ArrayList<>();
+        for(ReferenceRow reference : references) {
+            if(reference.getRemoved()) {
                 remove.add(reference);
             } else {
                 reference.normalize();
             }
         }
-        for(SavedReference reference : remove) {
+        for(ReferenceRow reference : remove) {
             references.remove(reference);
         }
     }

@@ -1,9 +1,12 @@
 package fi.uta.fsd.metka.model.factories;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
-import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
+import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.data.value.Value;
+import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -24,12 +27,12 @@ public class VariablesFactory extends DataFactory {
             return new ImmutablePair<>(ReturnResult.INCORRECT_TYPE_FOR_OPERATION, null);
         }
 
-        LocalDateTime time = new LocalDateTime();
+        DateTimeUserPair info = DateTimeUserPair.build(new LocalDateTime());
 
         RevisionData data = createDraftRevision(id, no, configuration.getKey());
-        data.dataField(SavedDataFieldCall.set("study").setTime(time).setValue(studyId));
-        data.dataField(SavedDataFieldCall.set("file").setTime(time).setValue(fileId));
-        data.dataField(SavedDataFieldCall.set("varfileid").setTime(time).setValue("F1"));
+        data.dataField(ValueDataFieldCall.set("study", new Value(studyId), Language.DEFAULT).setInfo(info));
+        data.dataField(ValueDataFieldCall.set("file", new Value(fileId), Language.DEFAULT).setInfo(info));
+        data.dataField(ValueDataFieldCall.set("varfileid", new Value("F1"), Language.DEFAULT).setInfo(info));
 
         return new ImmutablePair<>(ReturnResult.REVISION_CREATED, data);
     }
@@ -40,11 +43,11 @@ public class VariablesFactory extends DataFactory {
             return new ImmutablePair<>(ReturnResult.INCORRECT_TYPE_FOR_OPERATION, null);
         }
 
-        LocalDateTime time = new LocalDateTime();
+        DateTimeUserPair info = DateTimeUserPair.build(new LocalDateTime());
 
         RevisionData data = createDraftRevision(id, no, configuration.getKey());
-        data.dataField(SavedDataFieldCall.set("variables").setTime(time).setValue(variablesId));
-        data.dataField(SavedDataFieldCall.set("study").setTime(time).setValue(studyId));
+        data.dataField(ValueDataFieldCall.set("variables", new Value(variablesId), Language.DEFAULT).setInfo(info));
+        data.dataField(ValueDataFieldCall.set("study", new Value(studyId, ""), Language.DEFAULT).setInfo(info));
 
         return new ImmutablePair<>(ReturnResult.REVISION_CREATED, data);
     }

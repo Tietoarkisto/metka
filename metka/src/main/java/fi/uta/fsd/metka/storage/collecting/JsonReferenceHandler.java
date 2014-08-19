@@ -22,13 +22,13 @@ class JsonReferenceHandler extends ReferenceHandler {
      * @param options List where found values are placed as ReferenceOption objects
      */
     void collectOptions(Reference reference, List<ReferenceOption> options) {
-        if(StringUtils.isEmpty(reference.getValuePath())) {
+        if(!StringUtils.hasText(reference.getValuePath())) {
             // We have no value path, can't continue
             return;
         }
 
         MiscJSONEntity entity = repository.getMiscJsonForReference(reference);
-        if(entity == null || StringUtils.isEmpty(entity.getData())) {
+        if(entity == null || !StringUtils.hasText(entity.getData())) {
             // No json or no data, can't continue
             return;
         }

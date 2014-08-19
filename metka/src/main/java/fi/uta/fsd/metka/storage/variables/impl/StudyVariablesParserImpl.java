@@ -5,7 +5,7 @@ import fi.uta.fsd.metka.enums.RevisionState;
 import fi.uta.fsd.metka.enums.VariableDataType;
 import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
-import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
+import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
@@ -81,13 +81,13 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         // StudyAttachment checks
         // **********************
         // Check that study has attached variables file and get the file id, attaching the file should happen before this step so we can expect it to be present
-        SavedDataField field = study.dataField(SavedDataFieldCall.get("variablefile").setConfiguration(studyConfig)).getRight();
+        ValueDataField field = study.dataField(ValueDataFieldCall.get("variablefile").setConfiguration(studyConfig)).getRight();
         Long varFileId;
         if(field == null || !field.hasValue()) {
             // TODO: Log exception, there is no attached variables file, can't continue.
             return result;
         } else {
-            varFileId = SavedDataField.valueAsInteger(field);
+            varFileId = ValueDataField.valueAsInteger(field);
         }
 
         Pair<ReturnResult, RevisionData> dataPair = general.getLatestRevisionForIdAndType(varFileId, false, ConfigurationType.STUDY_ATTACHMENT);
@@ -97,15 +97,15 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         }
         RevisionData attachmentData = dataPair.getRight();
         // Check for file path from attachment
-        field = attachmentData.dataField(SavedDataFieldCall.get("file")).getRight();
-        if(field == null || !field.hasValue() || StringUtils.isEmpty(field.getActualValue())) {
+        field = attachmentData.dataField(ValueDataFieldCall.get("file")).getRight();
+        if(field == null || !field.hasValue() || !StringUtils.hasText(field.getActualValue())) {
             // TODO: Log exception, something is wrong since no path is attached to the file but we are still trying to parse it for variables
             return result;
         }
 
         // Get or create study variables
         Pair<ReturnResult, Configuration> variablesConfiguration = configurations.findLatestConfiguration(ConfigurationType.STUDY_VARIABLES);
-        Pair<StatusCode, SavedDataField> fieldPair = study.dataField(SavedDataFieldCall.get("variables").setConfiguration(studyConfig));
+        Pair<StatusCode, ValueDataField> fieldPair = study.dataField(ValueDataFieldCall.get("variables").setConfiguration(studyConfig));
         if(fieldPair.getLeft() == StatusCode.FIELD_MISSING || !fieldPair.getRight().hasValue()) {
             RevisionCreateRequest request = new RevisionCreateRequest();
             request.setType(ConfigurationType.STUDY_VARIABLES);
@@ -116,7 +116,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                 logger.error("Couldn't create new variables revisionable for study "+study.toString()+" and file "+attachmentData.toString());
                 return result;
             }
-            fieldPair = study.dataField(SavedDataFieldCall.set("variables").setTime(time).setValue(dataPair.getRight().getKey().getId().toString()).setConfiguration(studyConfig));
+            fieldPair = study.dataField(ValueDataFieldCall.set("variables").setTime(time).setValue(dataPair.getRight().getKey().getId().toString()).setConfiguration(studyConfig));
             result = true;
         } else {
             dataPair = general.getLatestRevisionForIdAndType(Long.parseLong(fieldPair.getRight().getActualValue()), true, ConfigurationType.STUDY_VARIABLES);
@@ -139,7 +139,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         // Actual variables parsing
         // ************************
         // File path to the actual variables file
-        field = attachmentData.dataField(SavedDataFieldCall.get("file")).getRight();
+        field = attachmentData.dataField(ValueDataFieldCall.get("file")).getRight();
         String filePath = field.getActualValue();
 
         switch(type) {
@@ -191,13 +191,13 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
 
         // Set software field
         // TODO: look at the possibility of separating software version to different field
-        variablesData.dataField(SavedDataFieldCall.set("software").setValue(por.getSoftware()).setTime(time));
+        variablesData.dataField(ValueDataFieldCall.set("software").setValue(por.getSoftware()).setTime(time));
 
         // Set varquantity field
-        variablesData.dataField(SavedDataFieldCall.set("varquantity").setValue(por.data.sizeX()+"").setTime(time));
+        variablesData.dataField(ValueDataFieldCall.set("varquantity").setValue(por.data.sizeX()+"").setTime(time));
 
         // Set casequantity field
-        variablesData.dataField(SavedDataFieldCall.set("casequantity").setValue(por.data.sizeY()+"").setTime(time));
+        variablesData.dataField(ValueDataFieldCall.set("casequantity").setValue(por.data.sizeY()+"").setTime(time));
 
         // Make VariablesHandler
         VariableHandler handler = new VariableHandler(time, studyId);
@@ -249,7 +249,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             if(variablesContainer != null) {
                 // See that respective rows are removed from STUDY_VARIABLES
                 //    Remove from variables list
-                SavedReference reference = variablesContainer.getReferenceWithValue(variableEntity.getId().toString()).getRight();
+                ReferenceRow reference = variablesContainer.getReferenceWithValue(variableEntity.getId().toString()).getRight();
                 reference.remove(variablesData.getChanges());
             }
             //    Remove from variable group list
@@ -285,7 +285,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             }
 
             // Add Saved reference if missing
-            SavedReference reference = variablesContainer.getOrCreateReferenceWithValue(variableEntity.getId().toString(), variablesData.getChanges(), time).getRight();
+            ReferenceRow reference = variablesContainer.getOrCreateReferenceWithValue(variableEntity.getId().toString(), variablesData.getChanges(), time).getRight();
             // TODO: Add saved reference to ungrouped goupings if not present in any group
 
             RevisionEntity variableRevision = null;
@@ -387,14 +387,14 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             }
             // TODO: Check return values for problems and changes
             // Set varname field
-            variableRevision.dataField(SavedDataFieldCall.set("varname").setValue(variable.asVariable().getName()).setTime(time));
+            variableRevision.dataField(ValueDataFieldCall.set("varname").setValue(variable.asVariable().getName()).setTime(time));
             // Set varid field
-            variableRevision.dataField(SavedDataFieldCall.set("varid").setValue(studyId+"_"+variable.asVariable().getName()).setTime(time));
+            variableRevision.dataField(ValueDataFieldCall.set("varid").setValue(studyId+"_"+variable.asVariable().getName()).setTime(time));
             // Set varlabel field
-            String label = StringUtils.isEmpty(StringUtils.trimAllWhitespace(variable.asVariable().label))
+            String label = !StringUtils.hasText(variable.asVariable().label)
                     ? "[Muuttujalta puuttuu LABEL tieto]"
                     : variable.asVariable().label;
-            variableRevision.dataField(SavedDataFieldCall.set("varlabel").setValue(label).setTime(time));
+            variableRevision.dataField(ValueDataFieldCall.set("varlabel").setValue(label).setTime(time));
             // Set valuelabels CONTAINER
             setValueLabels(variableRevision, variable);
             // Set categories CONTAINER
@@ -451,9 +451,9 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             // We know that this row is needed and so we can set it to not removed state no matter if it was removed previously or not
             row.setRemoved(false);
 
-            row.dataField(SavedDataFieldCall.set("value").setTime(time).setChangeMap(changeMap).setValue(label.getValue()));
-            row.dataField(SavedDataFieldCall.set("label").setTime(time).setChangeMap(changeMap).setValue(label.getLabel()));
-            row.dataField(SavedDataFieldCall.set("missing").setTime(time).setChangeMap(changeMap).setValue(label.isMissing() ? "Y" : null));
+            row.dataField(ValueDataFieldCall.set("value").setTime(time).setChangeMap(changeMap).setValue(label.getValue()));
+            row.dataField(ValueDataFieldCall.set("label").setTime(time).setChangeMap(changeMap).setValue(label.getLabel()));
+            row.dataField(ValueDataFieldCall.set("missing").setTime(time).setChangeMap(changeMap).setValue(label.isMissing() ? "Y" : null));
         }
 
         /**
@@ -625,10 +625,10 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
          */
         private void setCategoryRow(DataRow row, String value, String label, Integer stat, boolean missing, LocalDateTime time, Map<String, Change> changeMap) {
             row.setRemoved(false);
-            row.dataField(SavedDataFieldCall.set("value").setTime(time).setChangeMap(changeMap).setValue(value));
-            row.dataField(SavedDataFieldCall.set("label").setTime(time).setChangeMap(changeMap).setValue(label));
-            row.dataField(SavedDataFieldCall.set("categorystat").setTime(time).setChangeMap(changeMap).setValue(stat.toString()));
-            row.dataField(SavedDataFieldCall.set("missing").setTime(time).setChangeMap(changeMap).setValue((missing) ? "Y" : null));
+            row.dataField(ValueDataFieldCall.set("value").setTime(time).setChangeMap(changeMap).setValue(value));
+            row.dataField(ValueDataFieldCall.set("label").setTime(time).setChangeMap(changeMap).setValue(label));
+            row.dataField(ValueDataFieldCall.set("categorystat").setTime(time).setChangeMap(changeMap).setValue(stat.toString()));
+            row.dataField(ValueDataFieldCall.set("missing").setTime(time).setChangeMap(changeMap).setValue((missing) ? "Y" : null));
         }
 
         /**
@@ -654,7 +654,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                 }
             }
 
-            variableRevision.dataField(SavedDataFieldCall.set("varinterval").setValue(continuous ? "contin" : "discrete").setTime(time));
+            variableRevision.dataField(ValueDataFieldCall.set("varinterval").setValue(continuous ? "contin" : "discrete").setTime(time));
         }
 
         /**
@@ -703,14 +703,14 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             // Set vald
             type = "vald"; // Valid values statistic
             row = popOrCreateAndInsertRow(statistics, rows, statisticstype, type);
-            row.dataField(SavedDataFieldCall.set(statisticvalue).setTime(time).setChangeMap(changeMap).setValue(values.toString()));
+            row.dataField(ValueDataFieldCall.set(statisticvalue).setTime(time).setChangeMap(changeMap).setValue(values.toString()));
 
             // Set min
             type = "min";
             if(values > 0) {
                 row = popOrCreateAndInsertRow(statistics, rows, statisticstype, type);
                 String min = Collections.min(data, new PORUtil.PORNumericVariableDataComparator()).toString();
-                row.dataField(SavedDataFieldCall.set(statisticvalue).setTime(time).setChangeMap(changeMap).setValue(min));
+                row.dataField(ValueDataFieldCall.set(statisticvalue).setTime(time).setChangeMap(changeMap).setValue(min));
             }
 
             // Set max
@@ -718,7 +718,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             if(values > 0) {
                 row = popOrCreateAndInsertRow(statistics, rows, statisticstype, type);
                 String max = Collections.max(data, new PORUtil.PORNumericVariableDataComparator()).toString();
-                row.dataField(SavedDataFieldCall.set(statisticvalue).setTime(time).setChangeMap(changeMap).setValue(max));
+                row.dataField(ValueDataFieldCall.set(statisticvalue).setTime(time).setChangeMap(changeMap).setValue(max));
             }
 
             // Set mean
@@ -733,7 +733,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                     denom++;
                 }
                 mean = mean / denom;
-                row.dataField(SavedDataFieldCall.set(statisticvalue).setTime(time).setChangeMap(changeMap).setValue(mean.toString()));
+                row.dataField(ValueDataFieldCall.set(statisticvalue).setTime(time).setChangeMap(changeMap).setValue(mean.toString()));
             }
 
             // Set stdev
@@ -751,7 +751,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                     }
                 }
                 deviation = Math.sqrt(deviation/denom);
-                row.dataField(SavedDataFieldCall.set(statisticvalue).setTime(time).setChangeMap(changeMap).setValue(deviation.toString()));
+                row.dataField(ValueDataFieldCall.set(statisticvalue).setTime(time).setChangeMap(changeMap).setValue(deviation.toString()));
             }
 
             removeObsoleteRows(rows, statistics, changeMap);
@@ -772,7 +772,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         private DataRow popRowWithFieldValue(Collection<DataRow> rows, String key, String value) {
             for(Iterator<DataRow> i = rows.iterator(); i.hasNext(); ) {
                 DataRow row = i.next();
-                SavedDataField field = row.dataField(SavedDataFieldCall.get(key)).getRight();
+                ValueDataField field = row.dataField(ValueDataFieldCall.get(key)).getRight();
                 if(field != null && field.hasValue() && field.valueEquals(value)) {
                     i.remove();
                     return row;

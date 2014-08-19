@@ -3,13 +3,10 @@ package fi.uta.fsd.metka.model.configuration;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 
-@XmlAccessorType(XmlAccessType.FIELD)
 public class Section {
-    @XmlElement private final String key;
+    private final String key;
 
     @JsonCreator
     public Section(@JsonProperty("key")String key) {

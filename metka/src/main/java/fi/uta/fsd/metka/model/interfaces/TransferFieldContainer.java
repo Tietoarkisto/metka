@@ -5,4 +5,5 @@ import fi.uta.fsd.metka.model.transfer.TransferField;
 public interface TransferFieldContainer {
     public boolean hasField(String key);
     public TransferField getField(String key);
+    public void addField(TransferField field);
 }

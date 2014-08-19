@@ -13,4 +13,27 @@ public enum Language {
     public String toValue() {
         return value;
     }
+    public static Language fromValue(String value) {
+        switch(value) {
+            // Let's just take care of 'fi' in here
+            case "default":
+            case "fi":
+                return DEFAULT;
+            case "en":
+                return EN;
+            case "sv":
+                return SV;
+            default:
+                throw new UnsupportedOperationException(value + " is not a valid language");
+        }
+    }
+
+    private static Language[] nonDefault = {
+            EN,
+            SV
+    };
+
+    public static Language[] nonDefaultLanguages() {
+        return nonDefault;
+    }
 }

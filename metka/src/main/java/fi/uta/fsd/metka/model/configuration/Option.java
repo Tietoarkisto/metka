@@ -7,13 +7,11 @@ import fi.uta.fsd.metka.model.general.TranslationObject;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 
-@XmlAccessorType(XmlAccessType.FIELD)
 public class Option {
-    @XmlElement private final String value;
-    @XmlElement private Boolean deprecated = false;
-    @XmlElement private TranslationObject title;
+    private final String value;
+    private Boolean deprecated = false;
+    private TranslationObject title;
 
     @JsonCreator
     public Option(@JsonProperty("value")String value) {

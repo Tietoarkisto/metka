@@ -1,13 +1,15 @@
 package fi.uta.fsd.metka.storage.repository.impl;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
+import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.enums.RevisionState;
-import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
+import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.DataField;
-import fi.uta.fsd.metka.model.data.container.SavedDataField;
+import fi.uta.fsd.metka.model.data.container.ValueContainer;
+import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
@@ -75,12 +77,13 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
             case STUDY_ATTACHMENT:
             case STUDY_VARIABLES:
             case STUDY_VARIABLE:
-                Pair<StatusCode, SavedDataField> field = data.dataField(SavedDataFieldCall.get("study"));
+                Pair<StatusCode, ValueDataField> field = data.dataField(ValueDataFieldCall.get("study"));
                 if(field.getLeft() != StatusCode.FIELD_FOUND) {
                     logger.error("Didn't find study reference on "+data.toString()+" can't create new draft.");
                     return ReturnResult.REVISIONABLE_NOT_FOUND;
                 }
-                return checkStudyDraftStatus(field.getRight().valueAsInteger());
+                ValueContainer vc = field.getRight().getValueFor(Language.DEFAULT);
+                return vc == null ? ReturnResult.REVISION_FOUND : checkStudyDraftStatus(vc.valueAsInteger());
             default:
                 return ReturnResult.CAN_CREATE_DRAFT;
         }

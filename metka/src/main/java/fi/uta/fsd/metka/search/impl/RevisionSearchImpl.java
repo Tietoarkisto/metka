@@ -2,10 +2,10 @@ package fi.uta.fsd.metka.search.impl;
 
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.enums.UIRevisionState;
-import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
+import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.SavedDataField;
+import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.search.RevisionSearch;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
@@ -66,7 +66,7 @@ public class RevisionSearchImpl implements RevisionSearch {
         // TODO: get path language from some common source that knows which language we should search.
         SeriesBasicSearchCommand command;
         try {
-            command = SeriesBasicSearchCommand.build(Language.DEFAULT.toValue(), request.isSearchApproved(), request.isSearchDraft(), request.isSearchRemoved(),
+            command = SeriesBasicSearchCommand.build(request.isSearchApproved(), request.isSearchDraft(), request.isSearchRemoved(),
                     stringToLong(request.getByKey("id")), request.getByKey("seriesabbr"), request.getByKey("seriesname"));
             ResultList<RevisionResult> results = searcher.executeSearch(command);
             return new ImmutablePair<>(ReturnResult.SEARCH_SUCCESS, collectResults(results));
@@ -174,15 +174,15 @@ public class RevisionSearchImpl implements RevisionSearch {
     }
 
     private void addSeriesSearchResults(RevisionSearchResult searchResult, RevisionData data) {
-        Pair<StatusCode, SavedDataField> fieldPair = data.dataField(SavedDataFieldCall.get("seriesname"));
-        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValue()) {
-            searchResult.getValues().put("seriesname", fieldPair.getRight().getActualValue());
+        Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get("seriesname"));
+        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+            searchResult.getValues().put("seriesname", fieldPair.getRight().getActualValueFor(Language.DEFAULT));
         } else {
             searchResult.getValues().put("seriesname", "");
         }
-        fieldPair = data.dataField(SavedDataFieldCall.get("seriesabbr"));
-        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValue()) {
-            searchResult.getValues().put("seriesabbr", fieldPair.getRight().getActualValue());
+        fieldPair = data.dataField(ValueDataFieldCall.get("seriesabbr"));
+        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+            searchResult.getValues().put("seriesabbr", fieldPair.getRight().getActualValueFor(Language.DEFAULT));
         } else {
             searchResult.getValues().put("seriesabbr", "");
         }

@@ -2,8 +2,7 @@ package fi.uta.fsd.metka.model.data.container;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import fi.uta.fsd.metka.model.interfaces.Row;
-import fi.uta.fsd.metka.storage.util.ModelAccessUtil;
+import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.access.DataFieldOperator;
 import fi.uta.fsd.metka.model.access.calls.DataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.DataFieldCallBase;
@@ -13,28 +12,25 @@ import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.change.ContainerChange;
 import fi.uta.fsd.metka.model.data.change.RowChange;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
+import fi.uta.fsd.metka.storage.util.ModelAccessUtil;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDateTime;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Single row of fields in a container is saved through this
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-public class DataRow extends ContainerRow implements ModelAccessUtil.PathNavigable, DataFieldContainer, Row {
+public class DataRow extends ContainerRow implements DataFieldContainer {
     public static DataRow build(ContainerDataField container) {
         return new DataRow(container.getKey(), container.getNewRowId());
     }
 
-    @XmlElement private final Map<String, DataField> fields = new HashMap<>();
-    @XmlElement private LocalDateTime savedAt;
-    @XmlElement private String savedBy;
+    private final Map<String, DataField> fields = new HashMap<>();
+    private LocalDateTime savedAt;
+    private String savedBy;
 
     @JsonCreator
     public DataRow(@JsonProperty("key") String key, @JsonProperty("rowId") Integer rowId) {
@@ -62,23 +58,8 @@ public class DataRow extends ContainerRow implements ModelAccessUtil.PathNavigab
     }
 
     @Override
-    public void remove(Map<String, Change> changeMap) {
-        if(changeMap == null || isRemoved()) {
-            // If changeMap is not present or if the row is already removed there's no point in continuing
-            return;
-        }
-
-        setRemoved(true);
-        ContainerChange containerChange = (ContainerChange)changeMap.get(getKey());
-        if(containerChange == null) {
-            containerChange = new ContainerChange(getKey());
-            changeMap.put(getKey(), containerChange);
-        }
-        RowChange rowChange = containerChange.get(getRowId());
-        if(rowChange == null) {
-            rowChange = new RowChange(getRowId());
-            containerChange.put(rowChange);
-        }
+    public void remove(Map<String, Change> changeMap, Language language) {
+        super.remove(changeMap, language);
     }
 
     public DataRow copy() {
@@ -121,7 +102,7 @@ public class DataRow extends ContainerRow implements ModelAccessUtil.PathNavigab
                 Map<String, Change> original = call.getChangeMap();
                 ContainerChange container = (ContainerChange)original.get(getKey());
                 if(container == null) {
-                    container = new ContainerChange(getKey());
+                    container = new ContainerChange(getKey(), Change.ChangeType.CONTAINER);
                 }
                 RowChange row = container.get(getRowId());
                 if(row == null) {
@@ -130,11 +111,12 @@ public class DataRow extends ContainerRow implements ModelAccessUtil.PathNavigab
                 // Set row's change map to the call object instead
                 ((DataFieldCallBase<T>)call).setChangeMap(row.getChanges());
                 Pair<StatusCode, T> pair = DataFieldOperator.setDataFieldOperation(getFields(), call, new ConfigCheck[]{ConfigCheck.IS_SUBFIELD});
-                // If we have a value and there's been a value change then add the change objects
-                if(pair.getRight() != null && pair.getLeft() != StatusCode.NO_CHANGE_IN_VALUE) {
+                // If field was either inserted or updated then add change to original container
+                if(pair.getLeft() == StatusCode.FIELD_INSERT || pair.getLeft() == StatusCode.FIELD_UPDATE ) {
                     // Put row change to container change and put container change to the original change map.
-                    // Both of these are maps so we can just put the values without worrying about overwriting something. If they already were in the maps then we are using the same objects anyway
-                    container.put(row);
+                    // Both of these are maps so we can just put the values without worrying about overwriting something.
+                    // If they already were in the maps then we are using the same objects anyway
+                    container.put(call.getLanguage(), row);
                     original.put(container.getKey(), container);
                 }
                 return pair;

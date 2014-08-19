@@ -15,27 +15,10 @@ public final class ConversionUtil {
             throw new NumberFormatException("Value not String: "+value.getClass().getSimpleName());
         } else {
             String str = (String)value;
-            if(StringUtils.isEmpty(str)) {
+            if(!StringUtils.hasText(str)) {
                 return null;
             } else {
                 return Long.decode(str);
-            }
-        }
-    }
-
-    public static Integer stringToInteger(Object value) throws NumberFormatException {
-        if(value == null) {
-            return null;
-        } else if(value instanceof Integer) {
-            return (Integer)value;
-        } else if(!(value instanceof String)) {
-            throw new NumberFormatException("Value not String: "+value.getClass().getSimpleName());
-        } else {
-            String str = (String)value;
-            if(StringUtils.isEmpty(str)) {
-                return null;
-            } else {
-                return Integer.decode(str);
             }
         }
     }

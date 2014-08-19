@@ -5,24 +5,20 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.enums.SelectionListType;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
 import java.util.List;
 
-@XmlAccessorType(XmlAccessType.FIELD)
 @JsonIgnoreProperties("_comment")
 public class SelectionList {
-    @XmlElement private final String key;
-    @XmlElement(name = "default") @JsonProperty("default") private String def = "0";
-    @XmlElement private final List<Option> options = new ArrayList<>();
-    @XmlElement private SelectionListType type;
-    @XmlElement private String reference;
-    @XmlElement private Boolean includeEmpty = true;
-    @XmlElement private final List<String> freeText = new ArrayList<>();
-    @XmlElement private String freeTextKey;
-    @XmlElement private String sublistKey;
+    private final String key;
+    @JsonProperty("default") private String def = "0";
+    private final List<Option> options = new ArrayList<>();
+    private SelectionListType type;
+    private String reference;
+    private Boolean includeEmpty = true;
+    private final List<String> freeText = new ArrayList<>();
+    private String freeTextKey;
+    private String sublistKey;
 
     @JsonCreator
     public SelectionList(@JsonProperty("key") String key) {

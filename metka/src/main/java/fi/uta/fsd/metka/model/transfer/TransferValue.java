@@ -1,13 +1,17 @@
 package fi.uta.fsd.metka.model.transfer;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
+import fi.uta.fsd.metka.enums.FieldError;
+import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.data.container.ValueDataField;
+import fi.uta.fsd.metka.model.data.value.Value;
 
-@XmlAccessorType(XmlAccessType.FIELD)
+import java.util.ArrayList;
+import java.util.List;
+
 public class TransferValue {
-    @XmlElement private String current = "";
-    @XmlElement private String original = "";
+    private String current = "";
+    private String original = "";
+    private final List<FieldError> errors = new ArrayList<>();
 
     public String getCurrent() {
         return current;
@@ -23,5 +27,39 @@ public class TransferValue {
 
     public void setOriginal(String original) {
         this.original = original;
+    }
+
+    public List<FieldError> getErrors() {
+        return errors;
+    }
+
+    public void addError(FieldError error) {
+        boolean found = false;
+        for(FieldError e : errors) {
+            if(e == error) {
+                found = true;
+                break;
+            }
+        }
+
+        if(!found) {
+            errors.add(error);
+        }
+    }
+
+    public Value toValue() {
+        // TODO: Derived values might need to be kept here too
+        return new Value(current, "");
+    }
+
+    public static TransferValue buildFromValueDataFieldFor(Language language, ValueDataField field) {
+        TransferValue value = new TransferValue();
+        if(field.hasOriginalFor(language)) {
+            value.setOriginal(field.getOriginalFor(language).getActualValue());
+        }
+        if(field.hasCurrentFor(language)) {
+            value.setCurrent(field.getCurrentFor(language).getActualValue());
+        }
+        return value;
     }
 }

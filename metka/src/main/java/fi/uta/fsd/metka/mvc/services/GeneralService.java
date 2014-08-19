@@ -49,7 +49,9 @@ public class GeneralService {
     public DraftRemoveResponse removeDraft(String type, Long id) {
         DraftRemoveResponse response = repository.removeDraft(type, id);
         if(response.getResponse() == DraftRemoveResponse.Response.FINAL_REVISION || response.getResponse() == DraftRemoveResponse.Response.SUCCESS) {
-            indexer.addCommand(RevisionIndexerCommand.remove(ConfigurationType.fromValue(type.toUpperCase()), Language.DEFAULT.toValue(), response.getId(), response.getNo()));
+            for(Language language : Language.values()) {
+                indexer.addCommand(RevisionIndexerCommand.remove(ConfigurationType.fromValue(type.toUpperCase()), language, response.getId(), response.getNo()));
+            }
         }
         return response;
     }
@@ -68,7 +70,9 @@ public class GeneralService {
         if(response == LogicalRemoveResponse.SUCCESS) {
             List<Integer> revisions = repository.getAllRevisionNumbers(id);
             for(Integer revision : revisions) {
-                indexer.addCommand(RevisionIndexerCommand.index(ConfigurationType.fromValue(type), id, revision));
+                for(Language language : Language.values()) {
+                    indexer.addCommand(RevisionIndexerCommand.index(ConfigurationType.fromValue(type), language, id, revision));
+                }
             }
         }
         return response;

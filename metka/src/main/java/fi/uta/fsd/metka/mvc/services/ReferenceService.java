@@ -1,15 +1,16 @@
 package fi.uta.fsd.metka.mvc.services;
 
 import fi.uta.fsd.metka.enums.FieldType;
+import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.enums.SelectionListType;
-import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
+import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.configuration.Reference;
 import fi.uta.fsd.metka.model.configuration.SelectionList;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.SavedDataField;
+import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.storage.collecting.ReferenceCollecting;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
@@ -20,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -46,7 +46,7 @@ public class ReferenceService {
      * @param path
      * @return
      */
-    public ReferenceOption getCurrentFieldOption(RevisionData data, String path) {
+    public ReferenceOption getCurrentFieldOption(Language language, RevisionData data, String path) {
         Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(data.getConfiguration());
         if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
             logger.error("Couldn't find configuration for "+data.toString());
@@ -77,14 +77,14 @@ public class ReferenceService {
 
         // We are certain that the field is a field with a reference and can contain a value, next check that if the field currently has a value
         // If the field doesn't have a value then it's unnecessary to check for option since there's no selected option in any case
-        Pair<StatusCode, SavedDataField> pair = null;
+        Pair<StatusCode, ValueDataField> pair = null;
         if(splits.length == 1) {
             // We already have the correct field, it's a top level field and it's either a reference of a selection
             // Perform the saved data field call
             if(field.getSubfield()) {
                 return null;
             }
-            pair = data.dataField(SavedDataFieldCall.get(field.getKey()).setConfiguration(config));
+            pair = data.dataField(ValueDataFieldCall.get(field.getKey()).setConfiguration(config));
         } else {
             // Field should be in a container (since we're not dealing with reference containers here)
             if(!field.getSubfield()) {
@@ -102,14 +102,14 @@ public class ReferenceService {
             // Since no value was found we have nothing to index
             return null;
         }
-        SavedDataField saved = pair.getRight();
-        if(StringUtils.isEmpty(saved.getActualValue())) {
+        ValueDataField saved = pair.getRight();
+        if(!saved.hasValueFor(language)) {
             // No value, don't care
             return null;
         }
         // Get the value from the saved data field, this is used to identify the correct option from returned options
-        String value = saved.getActualValue();
-        // Check if the reference is a dependency time and if so then collect the dependency value for request
+        String value = saved.getActualValueFor(language);
+        // Check if the reference is a dependency and if so then collect the dependency value for request
         String dependency = null;
         // TODO: get dependency value
 

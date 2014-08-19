@@ -21,7 +21,7 @@ final class ReferenceContainerDataFieldMutator {
 
     public static Pair<StatusCode, ReferenceContainerDataField> setReferenceContainerDataField(Map<String, DataField> fieldMap, String key, Map<String, Change> changeMap, Configuration config,
                                                                              ConfigCheck[] configChecks) {
-        if(fieldMap == null || StringUtils.isEmpty(key) || changeMap == null) {
+        if(fieldMap == null || !StringUtils.hasText(key) || changeMap == null) {
             return new ImmutablePair<>(StatusCode.INCORRECT_PARAMETERS, null);
         }
 
@@ -30,10 +30,10 @@ final class ReferenceContainerDataFieldMutator {
             return pair;
         }
 
-        ReferenceContainerDataField field = new ReferenceContainerDataField(key, 1);
+        ReferenceContainerDataField field = new ReferenceContainerDataField(key, DataField.DataFieldType.REFERENCECONTAINER, 1);
         fieldMap.put(key, field);
         // We can just put a change into the change map. We are creating a new object here. If there was something previously in the map it was obviously incorrect.
-        changeMap.put(key, new ContainerChange(key));
+        changeMap.put(key, new ContainerChange(key, Change.ChangeType.CONTAINER));
         return new ImmutablePair<>(StatusCode.FIELD_INSERT, field);
     }
 }

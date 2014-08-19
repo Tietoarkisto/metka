@@ -1,26 +1,20 @@
 package fi.uta.fsd.metka.model.guiconfiguration;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import fi.uta.fsd.metka.model.interfaces.ModelBase;
 import fi.uta.fsd.metka.model.general.ConfigurationKey;
+import fi.uta.fsd.metka.model.interfaces.ModelBase;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@XmlRootElement(name = "guiConfiguration")
-@XmlAccessorType(XmlAccessType.FIELD)
 @JsonIgnoreProperties("_comment")
 public class GUIConfiguration implements ModelBase {
-    @XmlElement private ConfigurationKey key;
-    @XmlElement private final List<Container> content = new ArrayList<>();
-    @XmlElement private final List<Button> buttons = new ArrayList<>();
-    @XmlElement private final Map<String, FieldTitle> fieldTitles = new HashMap<>();
+    private ConfigurationKey key;
+    private final List<Container> content = new ArrayList<>();
+    private final List<Button> buttons = new ArrayList<>();
+    private final Map<String, FieldTitle> fieldTitles = new HashMap<>();
 
     public ConfigurationKey getKey() {
         return key;

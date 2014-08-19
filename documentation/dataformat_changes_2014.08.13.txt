@@ -2,8 +2,29 @@
 Data->DataField
 Split uml_json_data_field to graphs that describe only a small portion of the whole DataField construct. This includes graphs describing DataField, SavedDataField and ContainerDataField.
 Changed ContainerDataField to have language dependant rows. The actual Translatable property on Field configuration tells if these should be used or not but it should be possible to change any Container to translated container at any time since the rows will always be language specific. If container is set to Translatable=true then the Translatable value of all fields inside that container is ignored since rows are already language specific. If the whole Container is not set to Translatable=true then subfields can still be translated on field per field basis in which case the translated values are inside the actual SavedDataField as with top level fields.
+It is currently not possible to translate ReferenceContainers but it's a trivial addition if needed, references list needs to be changed to language based lists and handling has to be added to server and client but it's a lot smaller task than converting the actual Container field.
 
+Made RowChanges in ContainerChange to be languge specific and gave Change-class a changeIn parameter where the language where change happened for that field should be marked.
+
+Renamed SavedDataField to ValueDataField to better fit with Container and ReferenceContainer data fields since all of them are "saved" in the broad sense.
+Renamed SavedValue to ValueContainer to make the usage more clear
+Renamed SavedReference to ReferenceRow to fit better with DataRow as the other implementation of ContainerRow
+
+Since polymorphism in Value requires one additional property anyway and right now it's used only to separate SimpleValue and DerivedValue it makes more sense to remove polymorphism from value altogether and instead just put value and derived fields on Value class. If there comes a need for more complicated polymorphism then it can be considered again but for the time being there is no need for three separate value classes.
+
+DateTimeUserPair
+Added general DateTimeUserPair object that combines a DateTime timestamp with User's username to form information that some operation was performed at some point by some user. Old savedAt/savedBy and approvedAt/approvedBy properties have been modified to reflect this.
 Data
-Changed lastSaved to lastSavedAt. Changes approval info to be language specific (i.e. it's in a language subconstruct where there's one ApprovedInfo object per language).
-Data->ApprovedInfo
-Added ApprovedInfo object that contains approvedAt and approvedBy properties. Also created SavedInfo that contains savedAt and savedBy properties and changed the appearance to those two properties to be inside that object in places they appeared previously.
+Data->Approval information
+Changed approved info to be language specific (i.e. it's in a language subconstruct where there's one DateTimeUserPair object per language).
+
+Data polymorphism
+Changed polymorphism from "@class" to more easily understood "type" parameter. Types are always enumerators and as such are clearly defined in the Json-graphs and are little more human readable/writable.
+As before ContainerRow does not need a polymorphic type since it's always used only in strongly typed situations where either DataRow or ReferenceRow is used explicitly.
+
+Moved save information from DataRow to ContainerRow (under info parameter). This means that SavedReference also has this information and so reference can be simplified to an actual Value instead of SavedValue.
+
+TransferData has been changed to reflect these changes
+
+Configuration -> Field
+If CONTAINER type field is marked as translatable then all it's subfields (recursively) are forced to translatable=true state when configuration is inserted to database. This has to be so to allow fields to have values in other languages than DEFAULT.

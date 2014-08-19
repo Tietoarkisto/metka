@@ -1,7 +1,7 @@
 package fi.uta.fsd.metka.model.access.enums;
 
 public enum StatusCode {
-    FIELD_FOUND,                        // Field was found, it was successfully determined to be SavedDataField and was returned as such
+    FIELD_FOUND,                        // Field was found, it was successfully determined to be correct type of DataField and was returned as such
     FIELD_MISSING,                      // Field can be DataField of correct type but no field with the given key was found
     FIELD_UPDATE,                       // DataField of correct type was found, it can exist (not prohibited by configuration or existing field of different type) and was updated
     FIELD_INSERT,                       // DataField of correct type can exist (not prohibited by configuration) but no previous field was found. New field was created
@@ -18,5 +18,6 @@ public enum StatusCode {
     NEW_ROW,                            // Used to indicate that a new row was created with the request
     FIELD_NOT_EDITABLE,                 // Field is not editable, it cannot be edited by user
     FIELD_NOT_MUTABLE,                  // Field is not immutable, value cannot change once given
-    FIELD_NOT_WRITABLE                  // Field is not writable, it should not be written to revision data
+    FIELD_NOT_WRITABLE,                 // Field is not writable, it should not be written to revision data
+    FIELD_NOT_TRANSLATABLE             // Field is not translatable but value was checked or tried to set for a non default language
 }

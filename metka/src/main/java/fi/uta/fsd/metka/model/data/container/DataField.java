@@ -1,27 +1,33 @@
 package fi.uta.fsd.metka.model.data.container;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import fi.uta.fsd.metka.storage.util.ModelAccessUtil;
+import com.fasterxml.jackson.annotation.*;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-
-@XmlAccessorType(XmlAccessType.FIELD)
-@JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
-public class DataField implements ModelAccessUtil.PathNavigable {
-    @XmlElement private final String key;
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "type",
+        visible = true)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = ValueDataField.class, name = DataField.DataFieldType.Types.VALUE),
+        @JsonSubTypes.Type(value = ContainerDataField.class, name = DataField.DataFieldType.Types.CONTAINER),
+        @JsonSubTypes.Type(value = ReferenceContainerDataField.class, name = DataField.DataFieldType.Types.REFERENCECONTAINER)
+})
+public class DataField {
+    private final String key;
+    private final DataFieldType type;
 
     @JsonCreator
-    public DataField(@JsonProperty("key") String key) {
+    public DataField(@JsonProperty("key") String key, @JsonProperty("type") DataFieldType type) {
         this.key = key;
+        this.type = type;
     }
 
     public String getKey() {
         return key;
+    }
+
+    public DataFieldType getType() {
+        return type;
     }
 
     @Override
@@ -55,4 +61,37 @@ public class DataField implements ModelAccessUtil.PathNavigable {
      */
     @JsonIgnore
     public void normalize() {throw new UnsupportedOperationException();}
+
+    public static enum DataFieldType {
+        VALUE(Types.VALUE),
+        CONTAINER(Types.CONTAINER),
+        REFERENCECONTAINER(Types.REFERENCECONTAINER);
+
+        private String value;
+        private DataFieldType(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public static DataFieldType fromValue(String value) {
+            switch(value) {
+                case Types.VALUE:
+                    return VALUE;
+                case Types.CONTAINER:
+                    return CONTAINER;
+                case Types.REFERENCECONTAINER:
+                    return REFERENCECONTAINER;
+            }
+            throw new UnsupportedOperationException(value + " is not a valid DataFieldType");
+        }
+
+        public static class Types {
+            public static final String VALUE = "VALUE";
+            public static final String CONTAINER = "CONTAINER";
+            public static final String REFERENCECONTAINER = "REFERENCECONTAINER";
+        }
+    }
 }

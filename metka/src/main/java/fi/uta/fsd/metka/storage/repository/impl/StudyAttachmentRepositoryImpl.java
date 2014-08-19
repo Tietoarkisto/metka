@@ -1,34 +1,16 @@
 package fi.uta.fsd.metka.storage.repository.impl;
 
-import fi.uta.fsd.metka.enums.ConfigurationType;
-import fi.uta.fsd.metka.enums.RevisionState;
-import fi.uta.fsd.metka.enums.VariableDataType;
-import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
-import fi.uta.fsd.metka.model.access.enums.StatusCode;
-import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.SavedDataField;
 import fi.uta.fsd.metka.model.factories.StudyAttachmentFactory;
-import fi.uta.fsd.metka.storage.entity.RevisionEntity;
-import fi.uta.fsd.metka.storage.entity.StudyAttachmentQueueEntity;
-import fi.uta.fsd.metka.storage.entity.impl.StudyAttachmentEntity;
-import fi.uta.fsd.metka.storage.entity.impl.StudyEntity;
-import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
-import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.List;
 
 @Repository
 public class StudyAttachmentRepositoryImpl {
@@ -57,7 +39,7 @@ public class StudyAttachmentRepositoryImpl {
      * @param path Path that should be present in the study attachment
      * @return RevisionData for a study attachment
      */
-    public RevisionData studyAttachmentForPath(String path, Long studyId) {
+    /*public RevisionData studyAttachmentForPath(String path, Long studyId) {
         // Get all study attachments with requested path
         List<StudyAttachmentEntity> attachments = em.
                 createQuery("SELECT r FROM StudyAttachmentEntity r WHERE r.removed = false AND r.filePath=:path", StudyAttachmentEntity.class)
@@ -72,11 +54,11 @@ public class StudyAttachmentRepositoryImpl {
             if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
                 continue;
             }
-            Pair<StatusCode, SavedDataField> fieldPair = pair.getRight().dataField(SavedDataFieldCall.get("file"));
+            Pair<StatusCode, ValueDataField> fieldPair = pair.getRight().dataField(ValueDataFieldCall.get("file"));
             if(fieldPair.getLeft() != StatusCode.FIELD_FOUND) {
                 continue;
             }
-            SavedDataField field = fieldPair.getRight();
+            ValueDataField field = fieldPair.getRight();
             if(field.valueEquals(path)) {
                 // Path match found
                 revision = pair.getRight();
@@ -96,21 +78,21 @@ public class StudyAttachmentRepositoryImpl {
             // TODO: Use revision create repository
             RevisionEntity revisionEntity = new RevisionEntity(new RevisionKey(entity.getId(), 1));
 
-            /*
+            *//*
              * creates initial data set for the first draft any exceptions thrown should force rollback
              * automatically.
              * This assumes the entity has empty data field and is a draft.
-            */
+            *//*
             //revision = factory.newData(revisionEntity, studyId);
             if(revision != null) {
-                revision.dataField(SavedDataFieldCall.set("path").setValue(path));
+                revision.dataField(ValueDataFieldCall.set("path").setValue(path));
                 entity.setFilePath(path);
                 em.persist(revisionEntity);
                 entity.setLatestRevisionNo(revisionEntity.getKey().getRevisionNo());
             }
         } else {
             // Check that this revision belongs to given study
-            SavedDataField studyField = revision.dataField(SavedDataFieldCall.get("study")).getRight();
+            ValueDataField studyField = revision.dataField(ValueDataFieldCall.get("study")).getRight();
             if(studyField == null || !studyField.hasValue() || !studyField.getActualValue().equals(studyId.toString())) {
                 // TODO: Attachment exists but it's marked for some other study, log exception, we can't continue
                 return null;
@@ -118,9 +100,9 @@ public class StudyAttachmentRepositoryImpl {
         }
 
         return revision;
-    }
+    }*/
 
-    public RevisionData getEditableStudyAttachmentRevision(Long id) {
+    /*public RevisionData getEditableStudyAttachmentRevision(Long id) {
         StudyAttachmentEntity file = em.find(StudyAttachmentEntity.class, id);
         if(file == null) {
             logger.warn("Couldn't find study attachment with id "+id);
@@ -152,7 +134,7 @@ public class StudyAttachmentRepositoryImpl {
 
             // TODO: Set handler
 
-            /*Pair<ReturnResult, String> string = json.serialize(newData);
+            *//*Pair<ReturnResult, String> string = json.serialize(newData);
             if(string.getLeft() != ReturnResult.SERIALIZATION_SUCCESS) {
                 logger.error("Couldn't serialize "+newData.toString());
                 return null;
@@ -161,12 +143,12 @@ public class StudyAttachmentRepositoryImpl {
             newRevision.setData(string.getRight());
             em.persist(newRevision);
             file.setLatestRevisionNo(newRevision.getKey().getRevisionNo());
-            return newData;*/
+            return newData;*//*
             return null;
         }
-    }
+    }*/
 
-    public void addFileLinkEvent(Long studyId, Long fileId, String key, String path) {
+    /*public void addFileLinkEvent(Long studyId, Long fileId, String key, String path) {
         StudyEntity study = em.find(StudyEntity.class, studyId);
         if(study == null) {
             // No study with given id, nothing to attach to
@@ -182,7 +164,7 @@ public class StudyAttachmentRepositoryImpl {
         queue.setType(null);
         boolean parse = true;
         // Check if file is variable file name
-        if(StringUtils.isEmpty(path)) {
+        if(!StringUtils.hasText(path)) {
             parse = false;
         }
         if(parse) {
@@ -208,7 +190,7 @@ public class StudyAttachmentRepositoryImpl {
                 logger.error("Couldn't deserialize "+revEntity.toString());
                 parse = false;
             } else {
-                SavedDataField field = pair.getRight().dataField(SavedDataFieldCall.get("variablefile")).getRight();
+                ValueDataField field = pair.getRight().dataField(ValueDataFieldCall.get("variablefile")).getRight();
                 if(field != null && field.hasValue()) {
                     if(!field.getActualValue().equals(fileId.toString())) {
                         parse = false;
@@ -238,5 +220,5 @@ public class StudyAttachmentRepositoryImpl {
         }
 
         em.persist(queue);
-    }
+    }*/
 }

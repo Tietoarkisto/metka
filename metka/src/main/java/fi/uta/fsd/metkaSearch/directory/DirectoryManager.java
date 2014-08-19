@@ -2,6 +2,7 @@ package fi.uta.fsd.metkaSearch.directory;
 
 //import fi.uta.fsd.metkaAmqp.Logger;
 
+import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +28,7 @@ public class DirectoryManager {
      * @param language
      * @return
      */
-    public static DirectoryPath formPath(boolean useRam, IndexerConfigurationType type, String language, String... additionalParameters) {
+    public static DirectoryPath formPath(boolean useRam, IndexerConfigurationType type, Language language, String... additionalParameters) {
         return new DirectoryPath(useRam, type, language, additionalParameters);
     }
 
@@ -70,7 +71,7 @@ public class DirectoryManager {
         private final String path;
         private final boolean useRam;
         private final IndexerConfigurationType type;
-        private final String language;
+        private final Language language;
         private final String[] additionalParameters;
 
         /**
@@ -82,7 +83,7 @@ public class DirectoryManager {
          *                 analysis requirements. Language can be null or empty in which case it's assigned the value 'default'
          * @param additionalParameters Array of additional parameters for the index location such as ConfigurationType
          */
-        public DirectoryPath(boolean useRam, IndexerConfigurationType type, String language, String... additionalParameters) {
+        public DirectoryPath(boolean useRam, IndexerConfigurationType type, Language language, String... additionalParameters) {
             if(type == null) {
                 throw new UnsupportedOperationException("Must have type");
             }
@@ -98,7 +99,7 @@ public class DirectoryManager {
                 pb.append("FS:");
             }
             pb.append(type);
-            if(!StringUtils.isEmpty(language)) {
+            if(language != null) {
                 pb.append("/");
                 pb.append(language);
             } else {
@@ -126,7 +127,7 @@ public class DirectoryManager {
             return type;
         }
 
-        public String getLanguage() {
+        public Language getLanguage() {
             return language;
         }
 

@@ -202,7 +202,7 @@ public class GeneralRepositoryImpl implements GeneralRepository {
 
     private Pair<ReturnResult, RevisionData> getRevisionDataFromEntity(RevisionEntity revision) {
         // Sanity check
-        if(StringUtils.isEmpty(revision.getData())) {
+        if(!StringUtils.hasText(revision.getData())) {
             logger.error(revision.toString()+" was found with no data.");
             return new ImmutablePair<>(ReturnResult.REVISION_CONTAINED_NO_DATA, null);
         }

@@ -12,7 +12,6 @@ import fi.uta.fsd.metka.storage.entity.impl.StudyVariablesEntity;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
-import fi.uta.fsd.metka.storage.repository.RevisionCreationRepository;
 import fi.uta.fsd.metka.storage.repository.VariablesRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
@@ -81,7 +80,7 @@ public class VariablesRepositoryImpl implements VariablesRepository {
             return null;
         }
         RevisionEntity revision = em.find(RevisionEntity.class, variables.latestRevisionKey());
-        if(StringUtils.isEmpty(revision.getData())) {
+        if(!StringUtils.hasText(revision.getData())) {
             logger.error("Data for "+revision.toString()+" was empty");
             return null;
         }
@@ -128,7 +127,7 @@ public class VariablesRepositoryImpl implements VariablesRepository {
             return null;
         }
         RevisionEntity revision = em.find(RevisionEntity.class, variable.latestRevisionKey());
-        if(StringUtils.isEmpty(revision.getData())) {
+        if(!StringUtils.hasText(revision.getData())) {
             logger.error("Data for "+revision.toString()+" was empty");
             return null;
         }
@@ -184,7 +183,7 @@ public class VariablesRepositoryImpl implements VariablesRepository {
             logger.error("Study with id "+studyId+" should have a draft but latest revision is not in DRAFT state");
             return false;
         }
-        if(StringUtils.isEmpty(revision.getData())) {
+        if(!StringUtils.hasText(revision.getData())) {
             logger.error(revision.toString()+" has empty data");
             return false;
         }

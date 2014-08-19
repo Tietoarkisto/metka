@@ -1,9 +1,11 @@
 package fi.uta.fsd.metka.storage.repository.impl;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
+import fi.uta.fsd.metka.enums.FieldType;
 import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.general.ConfigurationKey;
+import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.general.ConfigurationKey;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import fi.uta.fsd.metka.storage.entity.ConfigurationEntity;
 import fi.uta.fsd.metka.storage.entity.GUIConfigurationEntity;
@@ -48,6 +50,8 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
 
         ConfigurationEntity entity = null;
 
+        normalizeDataConfiguration(configuration);
+
         if(list.size() == 0) {
             entity = new ConfigurationEntity();
             entity.setVersion(configuration.getKey().getVersion());
@@ -67,6 +71,27 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
         } else {
             logger.error("Serialization of configuration failed, no merge performed for "+configuration.toString());
             return pair.getLeft();
+        }
+    }
+
+    private void normalizeDataConfiguration(Configuration configuration) {
+        // Set all subfields of translatable containers to translatable true
+        for(Field field : configuration.getFields().values()) {
+            if(field.getType() == FieldType.CONTAINER) {
+                setSubfieldsToTranslatable(field, configuration);
+            }
+        }
+    }
+
+    private void setSubfieldsToTranslatable(Field field, Configuration configuration) {
+        for(String key : field.getSubfields()) {
+            Field subfield = configuration.getField(key);
+            if(subfield.getType() != FieldType.REFERENCECONTAINER) {
+                subfield.setTranslatable(true);
+            }
+            if(subfield.getType() == FieldType.CONTAINER) {
+                setSubfieldsToTranslatable(subfield, configuration);
+            }
         }
     }
 
@@ -206,7 +231,7 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
         }
 
         ConfigurationEntity entity = list.get(0);
-        if(StringUtils.isEmpty(entity.getData())) {
+        if(!StringUtils.hasText(entity.getData())) {
             logger.error("Configuration entity "+entity.toString()+" contained no data.");
             return new ImmutablePair<>(ReturnResult.CONFIGURATION_CONTAINED_NO_DATA, null);
         }
@@ -267,7 +292,7 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
         }
 
         GUIConfigurationEntity entity = list.get(0);
-        if(StringUtils.isEmpty(entity.getData())) {
+        if(!StringUtils.hasText(entity.getData())) {
             logger.error("Configuration entity "+entity.toString()+" contained no data.");
             return new ImmutablePair<>(ReturnResult.CONFIGURATION_CONTAINED_NO_DATA, null);
         }

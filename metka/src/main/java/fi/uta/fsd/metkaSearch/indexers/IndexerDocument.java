@@ -2,7 +2,7 @@ package fi.uta.fsd.metkaSearch.indexers;
 
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.configuration.Field;
-import fi.uta.fsd.metka.model.data.container.SavedDataField;
+import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import fi.uta.fsd.metkaSearch.LuceneConfig;
 import fi.uta.fsd.metkaSearch.analyzer.CaseInsensitiveKeywordAnalyzer;
@@ -24,12 +24,6 @@ public class IndexerDocument {
     private final Document document = new Document();
     private final Map<String, Analyzer> analyzers = new HashMap<>();
     private final StringBuilder general = new StringBuilder();
-
-    private final String language;
-
-    public IndexerDocument(String language) {
-        this.language = language;
-    }
 
     public Map<String, Analyzer> getAnalyzers() {return analyzers;}
     public String getGeneral() {return general.toString();}
@@ -78,19 +72,19 @@ public class IndexerDocument {
         analyzers.put(key, CaseInsensitiveWhitespaceAnalyzer.ANALYZER);
     }
 
-    public void indexText(Field field, String root, SavedDataField saved) {
-        indexText(root+field.getKey(), saved.getActualValue(), field.getExact(), Store.NO);
+    public void indexText(Language language, Field field, String root, ValueDataField saved) {
+        indexText(language, root+field.getKey(), saved.getActualValueFor(language), field.getExact(), Store.NO);
     }
 
-    public void indexText(Field field, String root, ReferenceOption option) {
-        indexText(root+field.getKey(), option.getTitle().getValue(), field.getExact(), Store.NO);
+    public void indexText(Language language, Field field, String root, ReferenceOption option) {
+        indexText(language, root+field.getKey(), option.getTitleFor(language), field.getExact(), Store.NO);
     }
 
-    public void indexText(Field field, String root, String value) {
-        indexText(root+field.getKey(), value, field.getExact(), Store.NO);
+    public void indexText(Language language, Field field, String root, String value) {
+        indexText(language, root+field.getKey(), value, field.getExact(), Store.NO);
     }
 
-    public void indexText(String key, String value, boolean exact, Store store) {
+    public void indexText(Language language, String key, String value, boolean exact, Store store) {
         if(exact) {
             indexWhitespaceField(key, value, store);
         } else {
@@ -98,18 +92,13 @@ public class IndexerDocument {
             general.append(" ");
             general.append(value);
             document.add(new TextField(key, value, store));
-            addTextAnalyzer(key);
+            addTextAnalyzer(language, key);
         }
     }
 
-    private void addTextAnalyzer(String key) {
-        if(language.equals(Language.DEFAULT.toValue())) {
-            // TODO: remember to remove these
-            logger.info("Trying to add finnish analyzer "+FinnishVoikkoAnalyzer.ANALYZER+" for field "+key);
-
+    private void addTextAnalyzer(Language language, String key) {
+        if(language == Language.DEFAULT) {
             analyzers.put(key, FinnishVoikkoAnalyzer.ANALYZER);
-            // TODO: remember to remove these
-            logger.info("Inserted finnish analyzer for field "+key);
         } else {
             // Add some other tokenizing analyzer if StandardAnalyzer is not enough
             analyzers.put(key, new StandardAnalyzer(LuceneConfig.USED_VERSION));

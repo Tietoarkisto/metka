@@ -18,7 +18,7 @@ public final class StudyIdSearchCommand extends RevisionSearchCommandBase<Revisi
     public static StudyIdSearchCommand build(String studyId) {
         //checkPath(path, ConfigurationType.STUDY);
         // Language is not a question since DEFAULT will always include study id:s and they don't differ between languages
-        DirectoryManager.DirectoryPath path = DirectoryManager.formPath(false, IndexerConfigurationType.REVISION, Language.DEFAULT.toValue(), ConfigurationType.STUDY.toValue());
+        DirectoryManager.DirectoryPath path = DirectoryManager.formPath(false, IndexerConfigurationType.REVISION, Language.DEFAULT, ConfigurationType.STUDY.toValue());
         return new StudyIdSearchCommand(path, studyId);
     }
 

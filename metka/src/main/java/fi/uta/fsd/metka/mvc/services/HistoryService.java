@@ -1,5 +1,6 @@
 package fi.uta.fsd.metka.mvc.services;
 
+import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.mvc.services.requests.ChangeCompareRequest;
 import fi.uta.fsd.metka.mvc.services.simple.history.ChangeCompareSO;
@@ -30,7 +31,9 @@ public class HistoryService {
             revision.setId(data.getKey().getId());
             revision.setRevision(data.getKey().getNo());
             revision.setState(data.getState());
-            revision.setApprovalDate(data.getApprovalDate());
+            if(data.isApprovedFor(Language.DEFAULT)) {
+                revision.setApprovalDate(data.getApproved().get(Language.DEFAULT).getTime());
+            }
             revisions.add(revision);
         }
 

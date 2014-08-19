@@ -4,15 +4,10 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-
-@XmlAccessorType(XmlAccessType.FIELD)
 public class ConfigurationKey {
 
-    @XmlElement private final Integer version;
-    @XmlElement private final ConfigurationType type;
+    private final Integer version;
+    private final ConfigurationType type;
 
     @JsonCreator
     public ConfigurationKey(@JsonProperty("type")ConfigurationType type, @JsonProperty("version")Integer version) {

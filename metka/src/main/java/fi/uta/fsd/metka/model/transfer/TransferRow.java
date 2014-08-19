@@ -7,28 +7,23 @@ import fi.uta.fsd.metka.enums.FieldError;
 import fi.uta.fsd.metka.model.data.container.ContainerRow;
 import fi.uta.fsd.metka.model.data.container.DataField;
 import fi.uta.fsd.metka.model.data.container.DataRow;
-import fi.uta.fsd.metka.model.data.container.SavedReference;
+import fi.uta.fsd.metka.model.data.container.ReferenceRow;
+import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.model.interfaces.TransferFieldContainer;
-import org.joda.time.LocalDateTime;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@XmlAccessorType(XmlAccessType.FIELD)
 public class TransferRow implements TransferFieldContainer {
-    @XmlElement private final String key;
-    @XmlElement private Integer rowId;
-    @XmlElement private String value = "";
-    @XmlElement private LocalDateTime savedAt;
-    @XmlElement private String savedBy;
-    @XmlElement private final Map<String, TransferField> fields = new HashMap<>();
-    @XmlElement private final List<FieldError> errors = new ArrayList<>();
-    @XmlElement private Boolean removed;
+    private final String key;
+    private Integer rowId;
+    private String value = "";
+    private DateTimeUserPair saved;
+    private final Map<String, TransferField> fields = new HashMap<>();
+    private final List<FieldError> errors = new ArrayList<>();
+    private Boolean removed;
 
     @JsonCreator
     public TransferRow(@JsonProperty("key")String key) {
@@ -55,20 +50,12 @@ public class TransferRow implements TransferFieldContainer {
         this.value = value;
     }
 
-    public LocalDateTime getSavedAt() {
-        return savedAt;
+    public DateTimeUserPair getSaved() {
+        return saved;
     }
 
-    public void setSavedAt(LocalDateTime savedAt) {
-        this.savedAt = savedAt;
-    }
-
-    public String getSavedBy() {
-        return savedBy;
-    }
-
-    public void setSavedBy(String savedBy) {
-        this.savedBy = savedBy;
+    public void setSaved(DateTimeUserPair saved) {
+        this.saved = saved;
     }
 
     public Map<String, TransferField> getFields() {
@@ -97,6 +84,14 @@ public class TransferRow implements TransferFieldContainer {
         return fields.get(key);
     }
 
+    @JsonIgnore
+    public void addField(TransferField field) {
+        if(hasField(field.getKey())) {
+            return;
+        }
+        fields.put(field.getKey(), field);
+    }
+
     public void addError(FieldError error) {
         boolean found = false;
         for(FieldError e : errors) {
@@ -112,19 +107,21 @@ public class TransferRow implements TransferFieldContainer {
     }
 
     public static TransferRow buildFromContainerRow(ContainerRow row) {
+        // Add common info
+        TransferRow transferRow = new TransferRow(row.getKey());
+        transferRow.setRowId(row.getRowId());
+        transferRow.setSaved(row.getSaved());
+        transferRow.setRemoved(row.getRemoved());
+
         if(row instanceof DataRow) {
-            return buildRowFromDataRow((DataRow)row);
-        } else if(row instanceof SavedReference) {
-            return buildRowFromSavedReference((SavedReference)row);
+            return buildRowFromDataRow(transferRow, (DataRow)row);
+        } else if(row instanceof ReferenceRow) {
+            return buildRowFromSavedReference(transferRow, (ReferenceRow)row);
         }
         return null;
     }
 
-    private static TransferRow buildRowFromDataRow(DataRow row) {
-        TransferRow transferRow = new TransferRow(row.getKey());
-        transferRow.setRowId(row.getRowId());
-        transferRow.setSavedAt(row.getSavedAt());
-        transferRow.setSavedBy(row.getSavedBy());
+    private static TransferRow buildRowFromDataRow(TransferRow transferRow, DataRow row) {
         for(DataField field : row.getFields().values()) {
             TransferField transferField = TransferField.buildFromDataField(field);
             if(transferField != null) {
@@ -134,13 +131,9 @@ public class TransferRow implements TransferFieldContainer {
         return transferRow;
     }
 
-    private static TransferRow buildRowFromSavedReference(SavedReference row) {
-        TransferRow transferRow = new TransferRow(row.getKey());
-        transferRow.setRowId(row.getRowId());
+    private static TransferRow buildRowFromSavedReference(TransferRow transferRow, ReferenceRow row) {
         if(row.hasValue()) {
             transferRow.setValue(row.getActualValue());
-            transferRow.setSavedAt(row.getReference().getSavedAt());
-            transferRow.setSavedBy(row.getReference().getSavedBy());
         }
         return transferRow;
     }

@@ -1,10 +1,11 @@
 package fi.uta.fsd.metka.search.impl;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
-import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
+import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.SavedDataField;
+import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.search.SeriesSearch;
 import fi.uta.fsd.metka.storage.entity.impl.SeriesEntity;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
@@ -52,9 +53,9 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
             }
             RevisionData revision = pair.getRight();
             // Use the method with less sanity checks since there's no point in getting configuration here.
-            Pair<StatusCode, SavedDataField> fieldPair = revision.dataField(SavedDataFieldCall.get("seriesabbr"));
-            if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValue()) {
-                list.add(fieldPair.getRight().getActualValue());
+            Pair<StatusCode, ValueDataField> fieldPair = revision.dataField(ValueDataFieldCall.get("seriesabbr"));
+            if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+                list.add(fieldPair.getRight().getActualValueFor(Language.DEFAULT));
             }
         }
         Collections.sort(list);

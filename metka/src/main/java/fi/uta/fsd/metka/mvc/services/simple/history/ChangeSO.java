@@ -2,8 +2,6 @@ package fi.uta.fsd.metka.mvc.services.simple.history;
 
 import fi.uta.fsd.metka.enums.ChangeOperation;
 import fi.uta.fsd.metka.enums.FieldType;
-import fi.uta.fsd.metka.model.data.container.DataField;
-import fi.uta.fsd.metka.model.data.container.SavedDataField;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,26 +81,5 @@ public class ChangeSO {
     @Override
     public int hashCode() {
         return property.hashCode();
-    }
-
-    public static class ValueStringBuilder {
-        public static void buildValueString(FieldType type, DataField field, List<String> list) {
-            // TODO: Add correct implementations for each FieldType, also the more complicated types might have requirements not yet present.
-            switch(type) {
-                case STRING:
-                case INTEGER:
-                case DATE:
-                case DATETIME:
-                case TIME:
-                    buildSimpleValue((SavedDataField)field, list);
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-
-    private static void buildSimpleValue(SavedDataField field, List<String> list) {
-        list.add(field.getValue().toString());
     }
 }

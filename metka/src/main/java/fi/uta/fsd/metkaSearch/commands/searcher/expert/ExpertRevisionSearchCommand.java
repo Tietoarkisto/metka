@@ -31,7 +31,7 @@ import static fi.uta.fsd.metka.enums.FieldType.*;
 
 public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<RevisionResult> {
     public static ExpertRevisionSearchCommand build(String qry, ConfigurationRepository configurations) throws UnsupportedOperationException, QueryNodeException {
-        if(StringUtils.isEmpty(qry)) {
+        if(!StringUtils.hasText(qry)) {
             throw new UnsupportedOperationException("Query string was empty, can't form expert query");
         }
         String[] splits = qry.split("\\s", 2);
@@ -45,12 +45,12 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
         }
 
         splits = qry.split("\\s", 2);
-        String lang;
+        Language lang;
         if(splits[0].split(":", 2)[0].equals("lang")) {
-            lang = splits[0].split(":", 2)[0];
+            lang = Language.fromValue(splits[0].split(":", 2)[0]);
             qry = splits.length > 1 ? splits[1] : "";
         } else {
-            lang = Language.DEFAULT.toValue();
+            lang = Language.DEFAULT;
         }
 
         DirectoryManager.DirectoryPath path = DirectoryManager.formPath(false, iType, lang, cType.toValue());

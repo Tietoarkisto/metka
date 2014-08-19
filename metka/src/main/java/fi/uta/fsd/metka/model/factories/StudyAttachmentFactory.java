@@ -1,13 +1,15 @@
 package fi.uta.fsd.metka.model.factories;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
-import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
+import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.data.value.Value;
+import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -35,11 +37,11 @@ public class StudyAttachmentFactory extends DataFactory {
             return new ImmutablePair<>(ReturnResult.INCORRECT_TYPE_FOR_OPERATION, null);
         }
 
-        LocalDateTime time = new LocalDateTime();
+        DateTimeUserPair info = DateTimeUserPair.build();
 
         RevisionData data = createDraftRevision(id, no, configuration.getKey());
 
-        data.dataField(SavedDataFieldCall.set("study").setValue(studyId).setConfiguration(configuration).setTime(time));
+        data.dataField(ValueDataFieldCall.set("study", new Value(studyId, ""), Language.DEFAULT).setConfiguration(configuration).setInfo(info));
 
         return new ImmutablePair<>(ReturnResult.REVISION_CREATED, data);
     }

@@ -36,14 +36,14 @@ public class RevisionIndexerCommand extends IndexerCommandBase {
     public static RevisionIndexerCommand fromParameterString(DirectoryManager.DirectoryPath path, Action action, String parameters) throws UnsupportedOperationException {
         switch(action) {
             case STOP:
-                if(StringUtils.isEmpty(parameters)) {
+                if(!StringUtils.hasText(parameters)) {
                     return stop(path);
                 } else {
                     throw new UnsupportedOperationException("STOP action doesn't expect any parameters");
                 }
             case REMOVE:
             case INDEX:
-                if(StringUtils.isEmpty(parameters)) {
+                if(!StringUtils.hasText(parameters)) {
                     throw new UnsupportedOperationException(action.name()+" expects more parameters");
                 } else {
                     String[] params = parameters.split("/");
@@ -67,9 +67,9 @@ public class RevisionIndexerCommand extends IndexerCommandBase {
     // Stop commands
 
     public static RevisionIndexerCommand stop(ConfigurationType type) {
-        return stop(type, Language.DEFAULT.toValue());
+        return stop(type, Language.DEFAULT);
     }
-    public static RevisionIndexerCommand stop(ConfigurationType type, String language) {
+    public static RevisionIndexerCommand stop(ConfigurationType type, Language language) {
         return stop(type, language, false);
     }
 
@@ -80,7 +80,7 @@ public class RevisionIndexerCommand extends IndexerCommandBase {
      * @param useRam
      * @return
      */
-    public static RevisionIndexerCommand stop(ConfigurationType type, String language, boolean useRam) {
+    public static RevisionIndexerCommand stop(ConfigurationType type, Language language, boolean useRam) {
         DirectoryManager.DirectoryPath path = DirectoryManager.formPath(useRam, IndexerConfigurationType.REVISION, language, type.toValue());
         return new RevisionIndexerCommand(path, Action.STOP);
     }
@@ -103,12 +103,12 @@ public class RevisionIndexerCommand extends IndexerCommandBase {
         return index(type, key.getId(), key.getNo());
     }
     public static RevisionIndexerCommand index(ConfigurationType type, Long id, Integer no) {
-        return index(type, Language.DEFAULT.toValue(), id, no);
+        return index(type, Language.DEFAULT, id, no);
     }
-    public static RevisionIndexerCommand index(ConfigurationType type, String language, RevisionKey key) {
+    public static RevisionIndexerCommand index(ConfigurationType type, Language language, RevisionKey key) {
         return index(type, language, key.getId(), key.getNo(), false);
     }
-    public static RevisionIndexerCommand index(ConfigurationType type, String language, Long id, Integer no) {
+    public static RevisionIndexerCommand index(ConfigurationType type, Language language, Long id, Integer no) {
         return index(type, language, id, no, false);
     }
 
@@ -119,7 +119,7 @@ public class RevisionIndexerCommand extends IndexerCommandBase {
      * @param useRam
      * @return
      */
-    public static RevisionIndexerCommand index(ConfigurationType type, String language, Long id, Integer no, boolean useRam) {
+    public static RevisionIndexerCommand index(ConfigurationType type, Language language, Long id, Integer no, boolean useRam) {
         DirectoryManager.DirectoryPath path = DirectoryManager.formPath(useRam, IndexerConfigurationType.REVISION, language, type.toValue());
         return new RevisionIndexerCommand(path, Action.INDEX, id, no);
     }
@@ -145,12 +145,12 @@ public class RevisionIndexerCommand extends IndexerCommandBase {
         return remove(type, key.getId(), key.getNo());
     }
     public static RevisionIndexerCommand remove(ConfigurationType type, Long id, Integer no) {
-        return remove(type, Language.DEFAULT.toValue(), id, no);
+        return remove(type, Language.DEFAULT, id, no);
     }
-    public static RevisionIndexerCommand remove(ConfigurationType type, String language, RevisionKey key) {
+    public static RevisionIndexerCommand remove(ConfigurationType type, Language language, RevisionKey key) {
         return remove(type, language, key.getId(), key.getNo(), false);
     }
-    public static RevisionIndexerCommand remove(ConfigurationType type, String language, Long id, Integer no) {
+    public static RevisionIndexerCommand remove(ConfigurationType type, Language language, Long id, Integer no) {
         return remove(type, language, id, no, false);
     }
 
@@ -161,7 +161,7 @@ public class RevisionIndexerCommand extends IndexerCommandBase {
      * @param useRam
      * @return
      */
-    public static RevisionIndexerCommand remove(ConfigurationType type, String language, Long id, Integer no, boolean useRam) {
+    public static RevisionIndexerCommand remove(ConfigurationType type, Language language, Long id, Integer no, boolean useRam) {
         DirectoryManager.DirectoryPath path = DirectoryManager.formPath(useRam, IndexerConfigurationType.REVISION, language, type.toValue());
         return new RevisionIndexerCommand(path, Action.REMOVE, id, no);
     }

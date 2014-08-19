@@ -1,35 +1,15 @@
 package fi.uta.fsd.metka.storage.repository.impl;
 
-import fi.uta.fsd.metka.enums.ConfigurationType;
-import fi.uta.fsd.metka.enums.RevisionState;
-import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
-import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
-import fi.uta.fsd.metka.model.access.enums.StatusCode;
-import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.ReferenceContainerDataField;
-import fi.uta.fsd.metka.model.data.container.SavedDataField;
-import fi.uta.fsd.metka.model.data.container.SavedReference;
 import fi.uta.fsd.metka.model.factories.StudyFactory;
-import fi.uta.fsd.metka.storage.entity.RevisionEntity;
-import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
-import fi.uta.fsd.metka.storage.entity.StudyAttachmentQueueEntity;
-import fi.uta.fsd.metka.storage.entity.impl.StudyEntity;
-import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
-import fi.uta.fsd.metka.storage.repository.StudyRepository;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.storage.variables.StudyVariablesParser;
-import org.apache.commons.lang3.tuple.Pair;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.List;
 
 @Repository
 public class StudyRepositoryImpl {
@@ -96,7 +76,7 @@ public class StudyRepositoryImpl {
         return newData;
     }*/
 
-    public void checkFileLinkQueue(Long id, Integer revision) {
+    /*public void checkFileLinkQueue(Long id, Integer revision) {
         RevisionableEntity revisionable = em.find(RevisionableEntity.class, id);
         RevisionEntity entity = em.find(RevisionEntity.class, new RevisionKey(id, revision));
         if(revisionable == null || ConfigurationType.valueOf(revisionable.getType()) != ConfigurationType.STUDY || entity.getState() != RevisionState.DRAFT) {
@@ -107,7 +87,7 @@ public class StudyRepositoryImpl {
         // TODO: Just skip checks for now, if this raises a problem at some point then do complete checks
         RevisionData data = json.deserializeRevisionData(entity.getData()).getRight();
         Configuration config = configRepo.findConfiguration(data.getConfiguration()).getRight();
-        LocalDateTime time = new LocalDateTime();
+        DateTimeUserPair info = DateTimeUserPair.build(new LocalDateTime());
         boolean changes = false;
 
         // Check for existing FileLinkQueue events
@@ -126,7 +106,7 @@ public class StudyRepositoryImpl {
                 continue;
             }
 
-            Pair<StatusCode, SavedReference> srPair = references.getOrCreateReferenceWithValue(event.getStudyAttachmentId().toString(), data.getChanges(), time);
+            Pair<StatusCode, ReferenceRow> srPair = references.getOrCreateReferenceWithValue(event.getStudyAttachmentId().toString(), data.getChanges(), info);
             if(srPair.getRight() == null) {
                 // Something wrong with getting or creating the reference, can't continue
                 // TODO: Log error
@@ -139,13 +119,18 @@ public class StudyRepositoryImpl {
             // Check for variable file
             if(event.getType() != null) {
                 // Check for variable file reference
-                SavedDataField refField = data.dataField(SavedDataFieldCall.get("variablefile").setConfiguration(config)).getRight();
-                if(refField != null && !refField.valueEquals(event.getStudyAttachmentId().toString())) {
+                ValueDataField refField = data.dataField(ValueDataFieldCall.get("variablefile").setConfiguration(config)).getRight();
+                if(refField != null && !refField.valueForEquals(Language.DEFAULT, event.getStudyAttachmentId().toString())) {
                     // There is already a variable file with different id, don't parse this file as a variable file
                     continue;
                 }
                 // Try to set events study attachment id to variablefile field, then if successfull parse the file and notify of change
-                Pair<StatusCode, SavedDataField> sdPair = data.dataField(SavedDataFieldCall.set("variablefile").setTime(time).setValue(event.getStudyAttachmentId().toString()).setConfiguration(config));
+                Pair<StatusCode, ValueDataField> sdPair = data.dataField(
+                        ValueDataFieldCall
+                                .set("variablefile")
+                                .setInfo(info)
+                                .setValue(event.getStudyAttachmentId().toString())
+                                .setConfiguration(config));
                 if(sdPair.getRight() == null) {
                     // Setting the value was unsuccessful don't continue with parsing
                     // TODO: Log error
@@ -168,5 +153,5 @@ public class StudyRepositoryImpl {
         em.createQuery("DELETE FROM StudyAttachmentQueueEntity e WHERE e.targetStudy=:study")
                 .setParameter("study", id)
                 .executeUpdate();
-    }
+    }*/
 }

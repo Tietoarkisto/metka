@@ -17,14 +17,14 @@ public class WikipediaIndexerCommand extends IndexerCommandBase {
     public static WikipediaIndexerCommand fromParameterString(DirectoryManager.DirectoryPath path, Action action, String parameters) throws UnsupportedOperationException {
         switch(action) {
             case STOP:
-                if(StringUtils.isEmpty(parameters)) {
+                if(!StringUtils.hasText(parameters)) {
                     return stop(path);
                 } else {
                     throw new UnsupportedOperationException("STOP action doesn't expect any parameters");
                 }
             case REMOVE:
             case INDEX:
-                if(StringUtils.isEmpty(parameters)) {
+                if(!StringUtils.hasText(parameters)) {
                     throw new UnsupportedOperationException(action.name()+" expects parameters");
                 } else {
                     if(action == Action.REMOVE) {

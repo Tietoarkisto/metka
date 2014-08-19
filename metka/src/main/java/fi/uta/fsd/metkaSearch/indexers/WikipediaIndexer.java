@@ -38,7 +38,7 @@ public class WikipediaIndexer extends Indexer {
         switch(wCom.getAction()) {
             case REMOVE:
                 // Create term for identification
-                if(StringUtils.isEmpty(wCom.getPageId())) {
+                if(!StringUtils.hasText(wCom.getPageId())) {
                     break;
                 }
                 Term term = new Term("pageId", wCom.getPageId());
@@ -59,7 +59,7 @@ public class WikipediaIndexer extends Indexer {
      * @param command
      */
     private void indexCommand(WikipediaIndexerCommand command) {
-        if(StringUtils.isEmpty(command.getFilePath())) {
+        if(!StringUtils.hasText(command.getFilePath())) {
             // No sense in trying to parse empty path
             return;
         }

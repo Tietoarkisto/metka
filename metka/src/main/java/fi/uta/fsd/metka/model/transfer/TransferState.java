@@ -1,71 +1,28 @@
 package fi.uta.fsd.metka.model.transfer;
 
-import org.joda.time.LocalDateTime;
+import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
+import java.util.HashMap;
+import java.util.Map;
 
-@XmlAccessorType(XmlAccessType.FIELD)
 public class TransferState {
-    @XmlElement private boolean removed = false;
-    @XmlElement private LocalDateTime removalDate = null;
-    @XmlElement private String removedBy = "";
-    @XmlElement private boolean approved = false;
-    @XmlElement private LocalDateTime approvalDate = null;
-    @XmlElement private String approvedBy = "";
-    @XmlElement private boolean draft = false;
-    @XmlElement private String handler = "";
-    @XmlElement private boolean saved = false;
-    @XmlElement private LocalDateTime savedDate = null;
-    @XmlElement private String savedBy = "";
+    private DateTimeUserPair removed;
+    private final Map<Language, DateTimeUserPair> approved = new HashMap<>();
+    private boolean draft = false;
+    private String handler = "";
+    private DateTimeUserPair saved;
 
-    public boolean getRemoved() {
+    public DateTimeUserPair getRemoved() {
         return removed;
     }
 
-    public void setRemoved(boolean removed) {
+    public void setRemoved(DateTimeUserPair removed) {
         this.removed = removed;
     }
 
-    public LocalDateTime getRemovalDate() {
-        return removalDate;
-    }
-
-    public void setRemovalDate(LocalDateTime removalDate) {
-        this.removalDate = removalDate;
-    }
-
-    public String getRemovedBy() {
-        return removedBy;
-    }
-
-    public void setRemovedBy(String removedBy) {
-        this.removedBy = removedBy;
-    }
-
-    public boolean isApproved() {
+    public Map<Language, DateTimeUserPair> getApproved() {
         return approved;
-    }
-
-    public void setApproved(boolean approved) {
-        this.approved = approved;
-    }
-
-    public LocalDateTime getApprovalDate() {
-        return approvalDate;
-    }
-
-    public void setApprovalDate(LocalDateTime approvalDate) {
-        this.approvalDate = approvalDate;
-    }
-
-    public String getApprovedBy() {
-        return approvedBy;
-    }
-
-    public void setApprovedBy(String approvedBy) {
-        this.approvedBy = approvedBy;
     }
 
     public boolean isDraft() {
@@ -84,27 +41,11 @@ public class TransferState {
         this.handler = handler;
     }
 
-    public boolean isSaved() {
+    public DateTimeUserPair getSaved() {
         return saved;
     }
 
-    public void setSaved(boolean saved) {
+    public void setSaved(DateTimeUserPair saved) {
         this.saved = saved;
-    }
-
-    public LocalDateTime getSavedDate() {
-        return savedDate;
-    }
-
-    public void setSavedDate(LocalDateTime savedDate) {
-        this.savedDate = savedDate;
-    }
-
-    public String getSavedBy() {
-        return savedBy;
-    }
-
-    public void setSavedBy(String savedBy) {
-        this.savedBy = savedBy;
     }
 }

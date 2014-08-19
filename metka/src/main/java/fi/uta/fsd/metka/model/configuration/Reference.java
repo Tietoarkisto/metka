@@ -6,19 +6,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.enums.ReferenceType;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-
-@XmlAccessorType(XmlAccessType.FIELD)
 @JsonIgnoreProperties("_comment")
 public class Reference {
-    @XmlElement private final String key;
-    @XmlElement private final ReferenceType type;
-    @XmlElement private final String target;
-    @XmlElement private final String valuePath;
-    @XmlElement private String titlePath = null;
-    @XmlElement private Boolean approvedOnly = true;
+    private final String key;
+    private final ReferenceType type;
+    private final String target;
+    private final String valuePath;
+    private String titlePath = null;
+    private Boolean approvedOnly = true;
 
     @JsonCreator
     public Reference(@JsonProperty("key")String key, @JsonProperty("type")ReferenceType type, @JsonProperty("target")String target, @JsonProperty("valuePath")String valuePath) {

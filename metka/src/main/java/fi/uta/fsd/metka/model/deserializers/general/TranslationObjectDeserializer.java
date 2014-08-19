@@ -16,12 +16,12 @@ public class TranslationObjectDeserializer extends ObjectDeserializer<Translatio
     @Override
     public TranslationObject doDeserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
         TranslationObject loc = new TranslationObject();
-        if(node.getNodeType() == JsonNodeType.STRING && !StringUtils.isEmpty(node.textValue())) {
+        if(node.getNodeType() == JsonNodeType.STRING && StringUtils.hasText(node.textValue())) {
             loc.getTexts().put("default", node.textValue());
             return loc;
         } else if(node.getNodeType() == JsonNodeType.OBJECT) {
             JsonNode def = node.get("default");
-            if(def != null && !StringUtils.isEmpty(def.textValue())) {
+            if(def != null && StringUtils.hasText(def.textValue())) {
                 Iterator<String> iter = ((ObjectNode)node).fieldNames();
                 while(iter.hasNext()) {
                     String lang = iter.next();
@@ -51,12 +51,12 @@ public class TranslationObjectDeserializer extends ObjectDeserializer<Translatio
         }
 
         TranslationObject loc = new TranslationObject();
-        if(text.getNodeType() == JsonNodeType.STRING && !StringUtils.isEmpty(text.textValue())) {
+        if(text.getNodeType() == JsonNodeType.STRING && StringUtils.hasText(text.textValue())) {
             loc.getTexts().put("default", text.textValue());
             return loc;
         } else if(text.getNodeType() == JsonNodeType.OBJECT) {
             JsonNode def = text.get("default");
-            if(def != null && !StringUtils.isEmpty(def.textValue())) {
+            if(def != null && StringUtils.hasText(def.textValue())) {
                 Iterator<String> iter = ((ObjectNode)text).fieldNames();
                 while(iter.hasNext()) {
                     String lang = iter.next();

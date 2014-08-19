@@ -20,16 +20,16 @@ final class ContainerDataFieldAccessor {
 
     /**
      * Returns requested field as ContainerDataField.
-     * See getSavedDataField for more details
+     * See getValueDataField for more details
      *
      * @param fieldMap Map of DataFields
      * @param key Field key
      * @param config Configuration
-     * @return See getSavedDataField for more details
+     * @return See getValueDataField for more details
      */
     static Pair<StatusCode, ContainerDataField> getContainerDataField(Map<String, DataField> fieldMap, String key, Configuration config,
                                                                       ConfigCheck[] configChecks) {
-        if(fieldMap == null || StringUtils.isEmpty(key)) {
+        if(fieldMap == null || !StringUtils.hasText(key)) {
             return new ImmutablePair<>(StatusCode.INCORRECT_PARAMETERS, null);
         }
 

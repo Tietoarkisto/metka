@@ -1,9 +1,10 @@
 package fi.uta.fsd.metka.mvc.services;
 
 import fi.uta.fsd.metka.enums.UIRevisionState;
-import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
+import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
+import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.SavedDataField;
+import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.SavedSearchRepository;
@@ -72,20 +73,21 @@ public class ExpertSearchService {
             qr.setNo(revision.getKey().getNo());
             qr.setType(revision.getConfiguration().getType());
             // TODO: Maybe generalize this better
-            SavedDataField field;
             switch(revision.getConfiguration().getType()) {
-                case STUDY:
-                    field = revision.dataField(SavedDataFieldCall.get("title")).getRight();
-                    if(field != null) {
-                        qr.setTitle(field.getActualValue());
+                case STUDY: {
+                    Pair<StatusCode, ValueDataField> field = revision.dataField(ValueDataFieldCall.get("title"));
+                    if(field.getLeft() == StatusCode.FIELD_FOUND) {
+                        qr.setTitle(field.getRight().getActualValueFor(command.getPath().getLanguage()));
                     }
                     break;
-                case SERIES:
-                    field = revision.dataField(SavedDataFieldCall.get("seriesname")).getRight();
-                    if(field != null) {
-                        qr.setTitle(field.getActualValue());
+                }
+                case SERIES: {
+                    Pair<StatusCode, ValueDataField> field = revision.dataField(ValueDataFieldCall.get("seriesname"));
+                    if(field.getLeft() == StatusCode.FIELD_FOUND) {
+                        qr.setTitle(field.getRight().getActualValueFor(command.getPath().getLanguage()));
                     }
                     break;
+                }
             }
             response.getResults().add(qr);
         }

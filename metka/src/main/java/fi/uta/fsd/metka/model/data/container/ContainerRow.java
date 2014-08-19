@@ -2,17 +2,20 @@ package fi.uta.fsd.metka.model.data.container;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.data.change.Change;
+import fi.uta.fsd.metka.model.data.change.ContainerChange;
+import fi.uta.fsd.metka.model.data.change.RowChange;
+import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
+import java.util.Map;
 
-@XmlAccessorType(XmlAccessType.FIELD)
 public class ContainerRow {
 
-    @XmlElement private final String key;
-    @XmlElement private final Integer rowId;
-    @XmlElement private Boolean removed = false;
+    private final String key;
+    private final Integer rowId;
+    private Boolean removed = false;
+    private DateTimeUserPair saved;
 
     @JsonCreator
     public ContainerRow(@JsonProperty("key") String key, @JsonProperty("rowId") Integer rowId) {
@@ -28,12 +31,20 @@ public class ContainerRow {
         return rowId;
     }
 
-    public Boolean isRemoved() {
+    public Boolean getRemoved() {
         return (removed == null ? false : removed);
     }
 
     public void setRemoved(Boolean removed) {
         this.removed = (removed == null ? false : removed);
+    }
+
+    public DateTimeUserPair getSaved() {
+        return saved;
+    }
+
+    public void setSaved(DateTimeUserPair saved) {
+        this.saved = saved;
     }
 
     @Override
@@ -47,6 +58,22 @@ public class ContainerRow {
         if (!rowId.equals(that.rowId)) return false;
 
         return true;
+    }
+
+    protected void remove(Map<String, Change> changeMap, Language language) {
+        if(changeMap == null || getRemoved()) {
+            return;
+        }
+
+        setRemoved(true);
+        ContainerChange containerChange = (ContainerChange)changeMap.get(getKey());
+        if(containerChange == null) {
+            containerChange = new ContainerChange(getKey(), Change.ChangeType.CONTAINER);
+            changeMap.put(getKey(), containerChange);
+        }
+        if(containerChange.get(getRowId()) == null) {
+            containerChange.put(language, new RowChange(getRowId()));
+        }
     }
 
     @Override

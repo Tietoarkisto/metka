@@ -5,13 +5,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import fi.uta.fsd.metka.enums.FieldType;
 import fi.uta.fsd.metka.enums.ReferenceTitleType;
 import fi.uta.fsd.metka.enums.SelectionListType;
-import fi.uta.fsd.metka.model.access.calls.SavedDataFieldCall;
+import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.configuration.Reference;
 import fi.uta.fsd.metka.model.configuration.SelectionList;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.SavedDataField;
+import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.storage.entity.MiscJSONEntity;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
@@ -114,7 +114,7 @@ class DependencyReferenceHandler extends ReferenceHandler {
     private void collectRevisionableDependencyValues(Field field, Reference reference,
                                                      String dependencyValue, List<ReferenceOption> options) {
         RevisionEntity revision = repository.getRevisionForReferencedRevisionable(reference, dependencyValue);
-        if(revision == null || StringUtils.isEmpty(revision.getData())) {
+        if(revision == null || !StringUtils.hasText(revision.getData())) {
             // No data, can't continue
             return;
         }
@@ -130,15 +130,15 @@ class DependencyReferenceHandler extends ReferenceHandler {
 
         RevisionData data = pair.getRight();
         ReferenceOptionTitle title = null;
-        SavedDataField sf = data.dataField(SavedDataFieldCall.get(reference.getValuePath())).getRight();
+        ValueDataField sf = data.dataField(ValueDataFieldCall.get(reference.getValuePath())).getRight();
         if(sf == null || !sf.hasValue()) {
             // No value to save
             return;
         }
 
         String value = sf.getActualValue();
-        if(!StringUtils.isEmpty(reference.getTitlePath())) {
-            sf = data.dataField(SavedDataFieldCall.get(reference.getTitlePath())).getRight();
+        if(StringUtils.hasText(reference.getTitlePath())) {
+            sf = data.dataField(ValueDataFieldCall.get(reference.getTitlePath())).getRight();
             Pair<ReturnResult, Configuration> confPair = configurations.findConfiguration(data.getConfiguration());
             if(sf != null && sf.hasValue()) {
                 if(confPair.getLeft() == ReturnResult.CONFIGURATION_FOUND && confPair.getRight().getField(reference.getTitlePath()).getType() == FieldType.SELECTION) {
@@ -163,7 +163,7 @@ class DependencyReferenceHandler extends ReferenceHandler {
                                              String dependencyValue, Reference dependencyReference,
                                              List<ReferenceOption> options) {
         MiscJSONEntity misc = repository.getMiscJsonForReference(dependencyReference);
-        if(misc == null || StringUtils.isEmpty(misc.getData())) {
+        if(misc == null || !StringUtils.hasText(misc.getData())) {
             // No data, can't continue
             return;
         }

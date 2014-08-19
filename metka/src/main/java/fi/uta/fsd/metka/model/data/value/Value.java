@@ -1,17 +1,52 @@
 package fi.uta.fsd.metka.model.data.value;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.util.StringUtils;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
+public class Value {
+    private final String value;
+    private final String derived;
 
-/**
- * Base class for revision data values
- */
-@XmlAccessorType(XmlAccessType.FIELD)
-@JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
-public abstract class Value {
-    public abstract Value copy();
-    public abstract String getValue();
-    public abstract boolean hasValue();
+    public Value(String value) {
+        this.value = value;
+        this.derived = "";
+    }
+
+    @JsonCreator
+    public Value(@JsonProperty("value") String value, @JsonProperty("derived") String derived) {
+        this.value = value;
+        this.derived = derived;
+    }
+
+    public String getValue() {
+        return hasValue() ? value : "";
+    }
+
+    public String getDerived() {
+        return hasDerived() ? derived : "";
+    }
+
+    @JsonIgnore public boolean hasValue() {
+        return StringUtils.hasText(value);
+    }
+
+    @JsonIgnore public boolean hasDerived() {
+        return StringUtils.hasText(derived);
+    }
+
+    @JsonIgnore public boolean valueEquals(String compare) {
+        return hasValue() && value.equals(compare);
+    }
+
+    @JsonIgnore public boolean derivedEquals(String compare) {
+        return hasDerived() && derived.equals(compare);
+    }
+
+    public Value copy() {
+        return new Value(value, derived);
+    }
+
+    // TODO: Implement debugging friendly toString
 }

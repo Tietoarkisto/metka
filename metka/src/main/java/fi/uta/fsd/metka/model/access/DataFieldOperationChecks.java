@@ -8,7 +8,7 @@ import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.container.ContainerDataField;
 import fi.uta.fsd.metka.model.data.container.DataField;
 import fi.uta.fsd.metka.model.data.container.ReferenceContainerDataField;
-import fi.uta.fsd.metka.model.data.container.SavedDataField;
+import fi.uta.fsd.metka.model.data.container.ValueDataField;
 
 final class DataFieldOperationChecks {
     // Private constructor to disable instantiation
@@ -21,7 +21,7 @@ final class DataFieldOperationChecks {
      */
     static enum FieldCheck {
         NOT_NULL,                       // Field must not be null
-        SAVED_DATA_FIELD,               // If field is not null checks to see if it's an instance of SavedDataField
+        VALUE_DATA_FIELD,               // If field is not null checks to see if it's an instance of ValueDataField
         CONTAINER_DATA_FIELD,           // If field is not null checks to see if it's an instance of ContainerDataField
         REFERENCE_CONTAINER_DATA_FIELD  // If field is not null checks to see if it's an instance of ReferenceContainerDataField
     }
@@ -87,8 +87,8 @@ final class DataFieldOperationChecks {
                         return StatusCode.FIELD_MISSING;
                     }
                     break;
-                case SAVED_DATA_FIELD:
-                    if(field != null && !(field instanceof SavedDataField)) {
+                case VALUE_DATA_FIELD:
+                    if(field != null && !(field instanceof ValueDataField)) {
                         return StatusCode.FIELD_TYPE_MISMATCH;
                     }
                     break;

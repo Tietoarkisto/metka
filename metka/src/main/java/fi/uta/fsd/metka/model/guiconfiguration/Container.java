@@ -5,31 +5,27 @@ import fi.uta.fsd.metka.enums.ContainerType;
 import fi.uta.fsd.metka.enums.SectionState;
 import fi.uta.fsd.metka.model.general.TranslationObject;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
 import java.util.List;
 
-@XmlAccessorType(XmlAccessType.FIELD)
 @JsonIgnoreProperties("_comment")
 public class Container {
     private static int MAX_COLUMNS = 4;
-    @XmlElement private ContainerType type;
-    @XmlElement private TranslationObject title; // This should change to translatable object at some point.
-    @XmlElement private Boolean hidden = false;
-    @XmlElement private Boolean readOnly = null;
-    @XmlElement private Boolean important = false;
-    @XmlElement private SectionState defaultState = SectionState.CLOSE;
-    @XmlElement private Integer columns = 1;
-    @XmlElement private Boolean required = false;
-    @XmlElement private Integer colspan = 1;
+    private ContainerType type;
+    private TranslationObject title; // This should change to translatable object at some point.
+    private Boolean hidden = false;
+    private Boolean readOnly = null;
+    private Boolean important = false;
+    private SectionState defaultState = SectionState.CLOSE;
+    private Integer columns = 1;
+    private Boolean required = false;
+    private Integer colspan = 1;
 
-    @XmlElement private FieldDescription field = null;
+    private FieldDescription field = null;
 
-    @XmlElement private final List<Container> content = new ArrayList<>();
-    @XmlElement private final List<Container> rows = new ArrayList<>();
-    @XmlElement private final List<Container> cells = new ArrayList<>();
+    private final List<Container> content = new ArrayList<>();
+    private final List<Container> rows = new ArrayList<>();
+    private final List<Container> cells = new ArrayList<>();
 
     public ContainerType getType() {
         return type;

@@ -14,7 +14,7 @@ public class DummyIndexerCommand extends IndexerCommandBase {
     public static DummyIndexerCommand fromParameterString(DirectoryManager.DirectoryPath path, Action action, String parameters) throws UnsupportedOperationException {
         checkPathType(path, IndexerConfigurationType.DUMMY);
         checkAdditionalParams(path);
-        if(!StringUtils.isEmpty(parameters)) {
+        if(StringUtils.hasText(parameters)) {
             throw new UnsupportedOperationException("Dummy command newer expects any parameters");
         }
         return new DummyIndexerCommand(path, action);

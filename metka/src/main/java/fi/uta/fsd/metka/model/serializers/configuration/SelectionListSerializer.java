@@ -26,7 +26,7 @@ public class SelectionListSerializer extends ObjectSerializer<SelectionList> {
             jgen.writeString(free);
         }
         jgen.writeEndArray();
-        if(!StringUtils.isEmpty(value.getFreeTextKey())) {
+        if(StringUtils.hasText(value.getFreeTextKey())) {
             jgen.writeStringField("freeTextKey", value.getFreeTextKey());
         }
         switch(value.getType()) {

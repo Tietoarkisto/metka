@@ -73,7 +73,8 @@ public class IndexerComponent {
         // Clear locks
         for(Language lang : Language.values()) {
             for(ConfigurationType type : ConfigurationType.values()) {
-                DirectoryManager.DirectoryPath path = DirectoryManager.formPath(false, IndexerConfigurationType.REVISION, lang.toValue(), type.toValue());
+                DirectoryManager.DirectoryPath path = DirectoryManager
+                        .formPath(false, IndexerConfigurationType.REVISION, lang, type.toValue());
                 try {
                     DirectoryInformation info = new DirectoryInformation(path, false);
                     logger.info("Checking directory "+path+" for write lock.");
@@ -156,14 +157,14 @@ public class IndexerComponent {
     }
 
     public boolean containsIndexer(DirectoryManager.DirectoryPath path) {
-        if(!StringUtils.isEmpty(path)) {
+        if(path != null && StringUtils.hasText(path.toString())) {
             return handlers.containsKey(path);
         }
         return false;
     }
 
     public boolean isIndexerRunning(DirectoryManager.DirectoryPath path) {
-        if(!StringUtils.isEmpty(path) && containsIndexer(path)) {
+        if(path != null && StringUtils.hasText(path.toString()) && containsIndexer(path)) {
             return !handlers.get(path).isDone();
         }
         return false;

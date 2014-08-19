@@ -29,7 +29,7 @@
             </y:ModelParameter>
           </y:NodeLabel>
           <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="" use3DEffect="true">
-            <y:AttributeLabel>+nextRowId : integer</y:AttributeLabel>
+            <y:AttributeLabel>+nextRowId : Integer</y:AttributeLabel>
             <y:MethodLabel/>
           </y:UML>
         </y:UMLClassNode>
@@ -77,9 +77,22 @@
         </y:UMLClassNode>
       </data>
     </node>
+    <node id="n3">
+      <data key="d4"/>
+      <data key="d5"/>
+      <data key="d6">
+        <y:UMLNoteNode>
+          <y:Geometry height="48.0" width="219.0" x="264.70659722222126" y="256.0"/>
+          <y:Fill color="#FFCC00" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1.0"/>
+          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="45.90625" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="198.103515625" x="4.0" y="4.0">RowContainerDataField should
+be abstract and doesn't have its
+own DataFieldType</y:NodeLabel>
+        </y:UMLNoteNode>
+      </data>
+    </node>
     <edge id="e0" source="n1" target="n0">
       <data key="d8"/>
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="-0.2065972222212622" ty="-30.5"/>
@@ -91,12 +104,23 @@
     </edge>
     <edge id="e1" source="n2" target="n0">
       <data key="d8"/>
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="-2.206597222221262" ty="30.5"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="white_delta"/>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e2" source="n0" target="n3">
+      <data key="d8"/>
+      <data key="d9"/>
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
+          <y:LineStyle color="#000000" type="dashed" width="1.0"/>
+          <y:Arrows source="none" target="none"/>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
       </data>

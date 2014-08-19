@@ -3,18 +3,13 @@ package fi.uta.fsd.metka.model.general;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-
 /**
  * Identifies a single Revision from a combination of id (id of the revisionable object) and revision (ordering
  * number for revisions within revisionable).
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 public class RevisionKey implements Comparable<RevisionKey> {
-    @XmlElement private final Long id;
-    @XmlElement private final Integer no;
+    private final Long id;
+    private final Integer no;
 
     @JsonCreator
     public RevisionKey(@JsonProperty("id")Long id, @JsonProperty("no")Integer no) {

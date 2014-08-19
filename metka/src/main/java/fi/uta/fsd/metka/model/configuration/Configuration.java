@@ -6,24 +6,20 @@ import fi.uta.fsd.metka.enums.SelectionListType;
 import fi.uta.fsd.metka.model.general.ConfigurationKey;
 import fi.uta.fsd.metka.model.interfaces.ModelBase;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import java.util.*;
-
-@XmlRootElement(name = "configuration")
-@XmlAccessorType(XmlAccessType.FIELD)
 @JsonIgnoreProperties("_comment")
 public class Configuration implements ModelBase {
-    @XmlElement private ConfigurationKey key;
-    @XmlElement private final Map<String, Section> sections = new HashMap<>();
-    @XmlElement private final Map<String, Reference> references = new HashMap<>();
-    @XmlElement private final Map<String, SelectionList> selectionLists = new HashMap<>();
-    @XmlElement private final Map<String, Field> fields = new HashMap<>();
-    @XmlElement private String displayId;
-    @XmlElement private String hash; // no functionality for hash is implemented at this time.
+    private ConfigurationKey key;
+    private final Map<String, Section> sections = new HashMap<>();
+    private final Map<String, Reference> references = new HashMap<>();
+    private final Map<String, SelectionList> selectionLists = new HashMap<>();
+    private final Map<String, Field> fields = new HashMap<>();
+    private String displayId;
+    private String hash; // no functionality for hash is implemented at this time.
 
     public Configuration() {
     }

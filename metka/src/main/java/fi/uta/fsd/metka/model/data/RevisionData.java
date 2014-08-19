@@ -1,47 +1,40 @@
 package fi.uta.fsd.metka.model.data;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.enums.RevisionState;
-import fi.uta.fsd.metka.model.access.calls.DataFieldCall;
 import fi.uta.fsd.metka.model.access.DataFieldOperator;
+import fi.uta.fsd.metka.model.access.calls.DataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.DataFieldCallBase;
 import fi.uta.fsd.metka.model.access.enums.ConfigCheck;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
-import fi.uta.fsd.metka.model.general.RevisionKey;
-import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
-import fi.uta.fsd.metka.model.interfaces.ModelBase;
-import fi.uta.fsd.metka.model.general.ConfigurationKey;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.container.DataField;
+import fi.uta.fsd.metka.model.general.ConfigurationKey;
+import fi.uta.fsd.metka.model.general.DateTimeUserPair;
+import fi.uta.fsd.metka.model.general.RevisionKey;
+import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
+import fi.uta.fsd.metka.model.interfaces.ModelBase;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.joda.time.LocalDateTime;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.HashMap;
 import java.util.Map;
 
-
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "revisionData")
 public class RevisionData implements Comparable<RevisionData>, ModelBase, DataFieldContainer {
 
     // Class
-    @XmlElement private final RevisionKey key;
-    @XmlElement private final ConfigurationKey configuration;
-    @XmlElement private final Map<String, Change> changes = new HashMap<>();
-    @XmlElement private final Map<String, DataField> fields = new HashMap<>();
-    @XmlElement private RevisionState state;
-    @XmlElement private LocalDateTime approvalDate;
-    @XmlElement private String approvedBy;
-    @XmlElement private LocalDateTime lastSaved;
-    @XmlElement private String lastSavedBy;
-    @XmlElement private String handler;
+    private final RevisionKey key;
+    private final ConfigurationKey configuration;
+    private final Map<String, Change> changes = new HashMap<>();
+    private final Map<String, DataField> fields = new HashMap<>();
+    private RevisionState state;
+    private String handler;
+    private final Map<Language, DateTimeUserPair> approved = new HashMap<>();
+    private DateTimeUserPair saved;
 
     @JsonCreator
     public RevisionData(@JsonProperty("key")RevisionKey key, @JsonProperty("configuration")ConfigurationKey configuration) {
@@ -73,36 +66,16 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase, DataFi
         this.state = state;
     }
 
-    public LocalDateTime getApprovalDate() {
-        return approvalDate;
+    public Map<Language, DateTimeUserPair> getApproved() {
+        return approved;
     }
 
-    public void setApprovalDate(LocalDateTime approvalDate) {
-        this.approvalDate = approvalDate;
+    public DateTimeUserPair getSaved() {
+        return saved;
     }
 
-    public String getApprovedBy() {
-        return (approvedBy == null) ? "" : approvedBy;
-    }
-
-    public void setApprovedBy(String approvedBy) {
-        this.approvedBy = approvedBy;
-    }
-
-    public LocalDateTime getLastSaved() {
-        return lastSaved;
-    }
-
-    public void setLastSaved(LocalDateTime lastSaved) {
-        this.lastSaved = lastSaved;
-    }
-
-    public String getLastSavedBy() {
-        return (lastSavedBy == null) ? "" : lastSavedBy;
-    }
-
-    public void setLastSavedBy(String lastSavedBy) {
-        this.lastSavedBy = lastSavedBy;
+    public void setSaved(DateTimeUserPair saved) {
+        this.saved = saved;
     }
 
     public String getHandler() {
@@ -144,6 +117,17 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase, DataFi
     }
     public Change getChange(Field field) {
         return getChange(field.getKey());
+    }
+
+    @JsonIgnore public boolean isApprovedFor(Language language) {
+        return approved.get(language) != null;
+    }
+    @JsonIgnore public DateTimeUserPair approveInfoFor(Language language) {
+        return approved.get(language);
+    }
+
+    @JsonIgnore public void approveRevision(Language language, DateTimeUserPair info) {
+        approved.put(language, info);
     }
 
     public RevisionData putChange(Change change) {

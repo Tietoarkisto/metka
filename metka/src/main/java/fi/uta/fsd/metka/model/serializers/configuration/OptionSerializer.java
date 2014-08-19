@@ -14,7 +14,7 @@ public class OptionSerializer extends ObjectSerializer<Option> {
     @Override
     protected void doSerialize(Option value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
         // Write value
-        if(!StringUtils.isEmpty(value.getValue())) {
+        if(StringUtils.hasText(value.getValue())) {
             jgen.writeStringField("value", value.getValue());
         } else {
             jgen.writeNullField("value");

@@ -501,7 +501,7 @@ public class SpringLuceneTests {
     }
 
     private void performDateRangeTestQuery(String query) throws Exception {
-        if(StringUtils.isEmpty(query)) {
+        if(!StringUtils.hasText(query)) {
             return;
         }
         System.err.println("Performing query: "+query);
@@ -610,7 +610,7 @@ public class SpringLuceneTests {
     }
 
     private void performNumberRangeTestQuery(String query) throws Exception {
-        if(StringUtils.isEmpty(query)) {
+        if(!StringUtils.hasText(query)) {
             return;
         }
         System.err.println("Performing query: "+query);
@@ -708,7 +708,7 @@ public class SpringLuceneTests {
     }
 
     private void performPhraseTestQuery(String query) throws Exception {
-        if(StringUtils.isEmpty(query)) {
+        if(!StringUtils.hasText(query)) {
             return;
         }
         System.err.println("Performing query: "+query);

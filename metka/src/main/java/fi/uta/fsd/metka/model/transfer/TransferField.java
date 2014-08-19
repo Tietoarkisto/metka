@@ -4,22 +4,21 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.enums.FieldError;
+import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.enums.TransferFieldType;
 import fi.uta.fsd.metka.model.data.container.*;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-@XmlAccessorType(XmlAccessType.FIELD)
 public class TransferField {
-    @XmlElement private final String key;
-    @XmlElement private final TransferFieldType type;
-    @XmlElement private TransferValue value;
-    @XmlElement private final List<TransferRow> rows = new ArrayList<>();
-    @XmlElement private final List<FieldError> errors = new ArrayList<>();
+    private final String key;
+    private final TransferFieldType type;
+    private final Map<Language, TransferValue> values = new HashMap<>();
+    private final Map<Language, List<TransferRow>> rows = new HashMap<>();
+    private final List<FieldError> errors = new ArrayList<>();
 
     @JsonCreator
     public TransferField(@JsonProperty("key")String key, @JsonProperty("type")TransferFieldType type) {
@@ -35,20 +34,40 @@ public class TransferField {
         return type;
     }
 
-    public TransferValue getValue() {
-        return value;
-    }
-
-    public void setValue(TransferValue value) {
-        this.value = value;
-    }
-
-    public List<TransferRow> getRows() {
-        return rows;
+    public Map<Language, TransferValue> getValues() {
+        return values;
     }
 
     public List<FieldError> getErrors() {
         return errors;
+    }
+
+    @JsonIgnore public TransferValue getValue(Language language) {
+        return values.get(language);
+    }
+
+    @JsonIgnore public boolean hasValueFor(Language language) {
+        return getValue(language) != null;
+    }
+
+    // TODO: Uncomment
+    /*public Map<Language, List<TransferRow>> getRows() {
+        return rows;
+    }*/
+    // TODO: Uncomment
+    @JsonIgnore public List<TransferRow> getRowsFor(Language language) {
+        return rows.get(language);
+    }
+
+    @JsonIgnore public boolean hasRows() {
+        for(Language language : Language.values()) {
+            if(hasRowsFor(language)) return true;
+        }
+        return false;
+    }
+
+    @JsonIgnore public boolean hasRowsFor(Language language) {
+        return rows.get(language) != null && !rows.get(language).isEmpty();
     }
 
     public void addError(FieldError error) {
@@ -67,32 +86,51 @@ public class TransferField {
 
     @JsonIgnore
     public TransferRow getRow(Integer rowId) {
-        for(TransferRow row : rows) {
-            if(row.getRowId() == rowId) {
-                return row;
+
+        for(Language language : Language.values()) {
+            for(TransferRow row : rows.get(language)) {
+                if(row.getRowId().equals(rowId)) {
+                    return row;
+                }
             }
         }
         return null;
     }
 
+    @JsonIgnore
+    public void addRowFor(Language language, TransferRow row) {
+        if(rows.get(language) == null) {
+            rows.put(language, new ArrayList<TransferRow>());
+        }
+        rows.get(language).add(row);
+    }
+
+    @JsonIgnore
+    public void addRowFor(Language language, TransferRow row, int index) {
+        if(rows.get(language) == null) {
+            rows.put(language, new ArrayList<TransferRow>());
+        }
+        if(rows.get(language).size() > index) {
+            addRowFor(language, row);
+        } else {
+            rows.get(language).add(index, row);
+        }
+    }
+
     public static TransferField buildFromDataField(DataField field) {
-        if(field instanceof SavedDataField) {
-            return buildValueFieldFromSavedDataField((SavedDataField) field);
+        if(field instanceof ValueDataField) {
+            return buildValueFieldFromValueDataField((ValueDataField) field);
         } else {
             return buildContainerFromDataField(field);
         }
     }
 
-    private static TransferField buildValueFieldFromSavedDataField(SavedDataField field) {
+    private static TransferField buildValueFieldFromValueDataField(ValueDataField field) {
         TransferField transferField = new TransferField(field.getKey(), TransferFieldType.VALUE);
-        TransferValue value = new TransferValue();
-        if(field.hasOriginalValue()) {
-            value.setOriginal(field.getOriginalValue().getActualValue());
+        for(Language language : Language.values()) {
+            TransferValue value = TransferValue.buildFromValueDataFieldFor(language, field);
+            transferField.values.put(language, value);
         }
-        if(field.hasModifiedValue()) {
-            value.setCurrent(field.getModifiedValue().getActualValue());
-        }
-        transferField.setValue(value);
         return transferField;
     }
 
@@ -107,10 +145,16 @@ public class TransferField {
 
     private static TransferField buildContainerFromContainerDataField(ContainerDataField field) {
         TransferField transferField = new TransferField(field.getKey(), TransferFieldType.CONTAINER);
-        for(DataRow row : field.getRows()) {
-            TransferRow transferRow = TransferRow.buildFromContainerRow(row);
-            if(transferRow != null) {
-                transferField.rows.add(transferRow);
+
+        for(Language language : Language.values()) {
+            if(!field.hasRowsFor(language)) {
+                continue;
+            }
+            for(DataRow row : field.getRowsFor(language)) {
+                TransferRow transferRow = TransferRow.buildFromContainerRow(row);
+                if(transferRow != null) {
+                    transferField.addRowFor(language, transferRow);
+                }
             }
         }
         return transferField;
@@ -118,10 +162,11 @@ public class TransferField {
 
     private static TransferField buildContainerFromReferenceContainerDataField(ReferenceContainerDataField field) {
         TransferField transferField = new TransferField(field.getKey(), TransferFieldType.REFERENCECONTAINER);
-        for(SavedReference reference : field.getReferences()) {
+        transferField.rows.put(Language.DEFAULT, new ArrayList<TransferRow>());
+        for(ReferenceRow reference : field.getReferences()) {
             TransferRow transferRow = TransferRow.buildFromContainerRow(reference);
             if(transferRow != null) {
-                transferField.rows.add(transferRow);
+                transferField.rows.get(Language.DEFAULT).add(transferRow);
             }
         }
         return transferField;
