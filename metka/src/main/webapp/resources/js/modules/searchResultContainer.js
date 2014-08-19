@@ -5,15 +5,6 @@ define(function (require) {
         require('./server')(url, {
             data: JSON.stringify(requestData()),
             success: function (data) {
-                data = {
-                    studies: [{
-                        id: 1,
-                        title: 'mooo'
-                    }, {
-                        id: 2,
-                        title: 'moo2'
-                    }]
-                };
                 var fieldOptions = {
                     dataConf: {
                         fields: fields
@@ -35,7 +26,6 @@ define(function (require) {
                     }
                 };
                 var results = getResults(data);
-                log(data)
                 fieldOptions.data.fields.searchResults.rows = results.map(mapResult).map(require('./map/object/transferRow'));
 
                 // if exactly 1 search result, perform the row action
