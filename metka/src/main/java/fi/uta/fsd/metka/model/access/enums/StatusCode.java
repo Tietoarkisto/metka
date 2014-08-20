@@ -16,6 +16,7 @@ public enum StatusCode {
     NO_ROW_WITH_VALUE,                  // Used to indicate that no row with given value was found
     FOUND_ROW,                          // Used to indicate that old row was found with the request
     NEW_ROW,                            // Used to indicate that a new row was created with the request
+    ROW_CHANGE,                         // Operation changed row in some way that modified changes map
     FIELD_NOT_EDITABLE,                 // Field is not editable, it cannot be edited by user
     FIELD_NOT_MUTABLE,                  // Field is not immutable, value cannot change once given
     FIELD_NOT_WRITABLE,                 // Field is not writable, it should not be written to revision data

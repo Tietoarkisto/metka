@@ -50,11 +50,10 @@ public class TransferField {
         return getValue(language) != null;
     }
 
-    // TODO: Uncomment
-    /*public Map<Language, List<TransferRow>> getRows() {
+    public Map<Language, List<TransferRow>> getRows() {
         return rows;
-    }*/
-    // TODO: Uncomment
+    }
+
     @JsonIgnore public List<TransferRow> getRowsFor(Language language) {
         return rows.get(language);
     }

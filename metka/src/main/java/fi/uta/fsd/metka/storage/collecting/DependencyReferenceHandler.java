@@ -3,15 +3,18 @@ package fi.uta.fsd.metka.storage.collecting;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import fi.uta.fsd.metka.enums.FieldType;
+import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.enums.ReferenceTitleType;
 import fi.uta.fsd.metka.enums.SelectionListType;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
+import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.configuration.Reference;
 import fi.uta.fsd.metka.model.configuration.SelectionList;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.ValueDataField;
+import fi.uta.fsd.metka.model.general.TranslationObject;
 import fi.uta.fsd.metka.storage.entity.MiscJSONEntity;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
@@ -23,6 +26,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 
+// TODO: Actual handling of language, for now always fetches values from default
 @Service
 class DependencyReferenceHandler extends ReferenceHandler {
     /**
@@ -130,27 +134,31 @@ class DependencyReferenceHandler extends ReferenceHandler {
 
         RevisionData data = pair.getRight();
         ReferenceOptionTitle title = null;
-        ValueDataField sf = data.dataField(ValueDataFieldCall.get(reference.getValuePath())).getRight();
-        if(sf == null || !sf.hasValue()) {
+        Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get(reference.getValuePath()));
+        if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
             // No value to save
             return;
         }
 
-        String value = sf.getActualValue();
+        String value = fieldPair.getRight().getActualValueFor(Language.DEFAULT);
         if(StringUtils.hasText(reference.getTitlePath())) {
-            sf = data.dataField(ValueDataFieldCall.get(reference.getTitlePath())).getRight();
+            fieldPair = data.dataField(ValueDataFieldCall.get(reference.getTitlePath()));
             Pair<ReturnResult, Configuration> confPair = configurations.findConfiguration(data.getConfiguration());
-            if(sf != null && sf.hasValue()) {
+            if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+                TranslationObject to = new TranslationObject();
+                to.getTexts().put(Language.DEFAULT.toValue(), fieldPair.getRight().getActualValueFor(Language.DEFAULT));
                 if(confPair.getLeft() == ReturnResult.CONFIGURATION_FOUND && confPair.getRight().getField(reference.getTitlePath()).getType() == FieldType.SELECTION) {
-                    title = new ReferenceOptionTitle(ReferenceTitleType.VALUE, sf.getActualValue());
+                    title = new ReferenceOptionTitle(ReferenceTitleType.VALUE, to);
                 } else {
-                    title = new ReferenceOptionTitle(ReferenceTitleType.LITERAL, sf.getActualValue());
+                    title = new ReferenceOptionTitle(ReferenceTitleType.LITERAL, to);
                 }
             }
         }
 
         if(title == null) {
-            title = new ReferenceOptionTitle(ReferenceTitleType.LITERAL, value);
+            TranslationObject to = new TranslationObject();
+            to.getTexts().put(Language.DEFAULT.toValue(), value);
+            title = new ReferenceOptionTitle(ReferenceTitleType.LITERAL, to);
         }
 
         // Add option to options list.

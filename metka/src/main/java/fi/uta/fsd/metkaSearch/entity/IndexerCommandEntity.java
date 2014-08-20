@@ -1,5 +1,6 @@
 package fi.uta.fsd.metkaSearch.entity;
 
+import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metkaSearch.commands.indexer.DummyIndexerCommand;
 import fi.uta.fsd.metkaSearch.commands.indexer.IndexerCommand;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
@@ -71,7 +72,7 @@ public class IndexerCommandEntity {
         boolean useRam = path.substring(0, 2).equals("ME");
         String[] parameters = path.substring(3).split("/");
         IndexerConfigurationType type = IndexerConfigurationType.valueOf(parameters[0]);
-        String language = parameters[1];
+        Language language = Language.fromValue(parameters[1]);
         String[] additionals;
         if(parameters.length > 2) {
             additionals = new String[parameters.length-2];

@@ -163,12 +163,15 @@ public class VariablesRepositoryImpl implements VariablesRepository {
      * @param studyId
      * @return
      */
-    private boolean canMakeDraftRevision(Long studyId) {
-        StudyEntity study = em.find(StudyEntity.class, studyId);
-        if(study == null) {
+    private boolean canMakeDraftRevision(String studyId) {
+        List<StudyEntity> studies = em.createQuery("SELECT s FROM StudyEntity s WHERE s.studyId=:studyId", StudyEntity.class)
+                .setParameter("studyId", studyId)
+                .getResultList();
+        if(studies == null || studies.isEmpty()) {
             logger.error("No study found with id "+studyId+" when determining DRAFT potential");
             return false;
         }
+        StudyEntity study = studies.get(0);
         if(study.getCurApprovedNo() != null && study.getLatestRevisionNo().equals(study.getCurApprovedNo())) {
             logger.info("Can't make new draft since study with id "+studyId+" is not in DRAFT state according to revision numbers");
             return false;

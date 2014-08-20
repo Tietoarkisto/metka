@@ -31,10 +31,9 @@ public class ContainerDataField extends RowContainerDataField {
         super(key, type, rowIdSeq);
     }
 
-    // TODO: Uncomment
-    /*public Map<Language, List<DataRow>> getRows() {
+    public Map<Language, List<DataRow>> getRows() {
         return rows;
-    }*/
+    }
 
     @JsonIgnore public List<DataRow> getRowsFor(Language language) {
         return rows.get(language);

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.value.Value;
 
@@ -75,8 +76,12 @@ public class ReferenceRow extends ContainerRow {
         return new ReferenceRow(getKey(), getRowId(), getReference());
     }
 
-    public void remove(Map<String, Change> changeMap) {
-        super.remove(changeMap, Language.DEFAULT);
+    public StatusCode remove(Map<String, Change> changeMap) {
+        return super.remove(changeMap, Language.DEFAULT);
+    }
+
+    public StatusCode restore(Map<String, Change> changeMap) {
+        return super.restore(changeMap, Language.DEFAULT);
     }
 
     public void normalize() {

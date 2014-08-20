@@ -3,6 +3,7 @@ package fi.uta.fsd.metka.storage.variables;
 import fi.uta.fsd.metka.enums.VariableDataType;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.storage.variables.enums.ParseResult;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -14,5 +15,5 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Transactional
 public interface StudyVariablesParser {
-    public boolean merge(RevisionData study, VariableDataType type, Configuration studyConfig);
+    public ParseResult merge(RevisionData study, VariableDataType type, Configuration studyConfig);
 }

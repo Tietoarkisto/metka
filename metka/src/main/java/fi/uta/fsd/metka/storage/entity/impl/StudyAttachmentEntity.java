@@ -21,14 +21,14 @@ public class StudyAttachmentEntity extends RevisionableEntity{
      * Since this information should be immutable on the data it's set as non updatable here and the values should always match.
      *
      */
-    @Column(name = "STUDY_ID", updatable = false)
-    private Long studyId;
+    @Column(name = "STUDYID", updatable = false)
+    private String studyId;
 
-    public Long getStudyId() {
+    public String getStudyId() {
         return studyId;
     }
 
-    public void setStudyId(Long studyId) {
+    public void setStudyId(String studyId) {
         this.studyId = studyId;
     }
 

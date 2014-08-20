@@ -79,5 +79,6 @@ public abstract class DataFieldCallBase<T extends DataField> implements DataFiel
 
     public DataFieldCallBase<T> setLanguage(Language language) {
         this.language = language;
+        return this;
     }
 }

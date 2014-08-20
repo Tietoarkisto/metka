@@ -1,8 +1,11 @@
 package fi.uta.fsd.metka.storage.repository.impl;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
+import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.model.factories.SeriesFactory;
 import fi.uta.fsd.metka.model.factories.StudyAttachmentFactory;
 import fi.uta.fsd.metka.model.factories.StudyFactory;
@@ -116,8 +119,8 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
                 break;
             case STUDY_ATTACHMENT:
                 // Check that some id is provided, assumes that this id points to a study
-                if(!request.getParameters().containsKey("id")) {
-                    logger.error("Creation of STUDY_ATTACHMENT requires that study.key.id is provided in parameter 'id'");
+                if(!request.getParameters().containsKey("studyid")) {
+                    logger.error("Creation of STUDY_ATTACHMENT requires that studyid is provided in parameter 'studyid'");
                     return ReturnResult.PARAMETERS_MISSING;
                 }
                 break;
@@ -133,11 +136,15 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
                 break;
             case STUDY_VARIABLE:
                 if(!request.getParameters().containsKey("studyid")) {
-                    logger.error("Creation of STUDY_VARIABLES requires that study.key.id is provided in parameter 'studyid'");
+                    logger.error("Creation of STUDY_VARIABLE requires that study.key.id is provided in parameter 'studyid'");
                     return ReturnResult.PARAMETERS_MISSING;
                 }
                 if(!request.getParameters().containsKey("variablesid")) {
-                    logger.error("Creation of STUDY_VARIABLES requires that study attachment id is provided in parameter 'variablesid'");
+                    logger.error("Creation of STUDY_VARIABLE requires that study variables id is provided in parameter 'variablesid'");
+                    return ReturnResult.PARAMETERS_MISSING;
+                }
+                if(!request.getParameters().containsKey("varid")) {
+                    logger.error("Creation of STUDY_VARIABLE requires that variables varid is provided in parameter 'varid'");
                     return ReturnResult.PARAMETERS_MISSING;
                 }
                 break;
@@ -160,18 +167,19 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
             case STUDY_ATTACHMENT:
                 // Check that some id is provided, assumes that this id points to a study
                 revisionable = new StudyAttachmentEntity();
-                ((StudyAttachmentEntity)revisionable).setStudyId(Long.parseLong(request.getParameters().get("id")));
+                ((StudyAttachmentEntity)revisionable).setStudyId(request.getParameters().get("studyid"));
                 break;
             case STUDY_VARIABLES:
                 StudyVariablesEntity svs = new StudyVariablesEntity();
-                svs.setStudyId(Long.parseLong(request.getParameters().get("studyid")));
+                svs.setStudyId(request.getParameters().get("studyid"));
                 revisionable = svs;
                 break;
             case STUDY_VARIABLE:
                 StudyVariableEntity sv = new StudyVariableEntity();
-                sv.setStudyId(Long.parseLong(request.getParameters().get("studyid")));
+                sv.setStudyId(request.getParameters().get("studyid"));
                 sv.setStudyVariablesId(Long.parseLong(request.getParameters().get("variablesid")));
-                revisionable =sv;
+                sv.setVarId(request.getParameters().get("varid"));
+                revisionable = sv;
             case PUBLICATION:
                 // TODO: Publication
                 break;
@@ -212,7 +220,7 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
             case STUDY_VARIABLE: {
                 VariablesFactory factory = new VariablesFactory();
                 data = factory.newVariable(revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo(), configuration,
-                        request.getParameters().get("variablesid"), request.getParameters().get("studyid"));
+                        request.getParameters().get("variablesid"), request.getParameters().get("studyid"), request.getParameters().get("varid"));
                 break;
             }
             case PUBLICATION:
@@ -235,6 +243,10 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
             case STUDY_ATTACHMENT:
                 // TODO: Add a row for this study attachment to the newest revision of target study (which should be a DRAFT but don't check that)
                 //Pair<ReturnResult, RevisionData> pair = general.getLatestRevisionForIdAndType()
+                break;
+            case STUDY:
+                ValueDataField studyid = data.dataField(ValueDataFieldCall.get("studyid")).getRight();
+                ((StudyEntity)revisionable).setStudyId(studyid.getActualValueFor(Language.DEFAULT));
                 break;
             default:
                 // Nothing to finalize

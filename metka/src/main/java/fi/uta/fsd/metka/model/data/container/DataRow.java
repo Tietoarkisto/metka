@@ -12,7 +12,6 @@ import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.change.ContainerChange;
 import fi.uta.fsd.metka.model.data.change.RowChange;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
-import fi.uta.fsd.metka.storage.util.ModelAccessUtil;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDateTime;
@@ -58,8 +57,13 @@ public class DataRow extends ContainerRow implements DataFieldContainer {
     }
 
     @Override
-    public void remove(Map<String, Change> changeMap, Language language) {
-        super.remove(changeMap, language);
+    public StatusCode remove(Map<String, Change> changeMap, Language language) {
+        return super.remove(changeMap, language);
+    }
+
+    @Override
+    public StatusCode restore(Map<String, Change> changeMap, Language language) {
+        return super.restore(changeMap, language);
     }
 
     public DataRow copy() {

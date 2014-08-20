@@ -22,6 +22,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 
+// TODO: Actual language handling, for now only collects for DEFAULT language
 @Service
 class RevisionableReferenceHandler extends ReferenceHandler {
     private static Logger logger = LoggerFactory.getLogger(RevisionableReferenceHandler.class);
@@ -30,11 +31,10 @@ class RevisionableReferenceHandler extends ReferenceHandler {
      * Analyses a revisionable reference and collects the values defined by that reference.
      *
      * TODO: At the moment handles only titlePaths of top level non container fields. When others are handled it should be made sure that the path actually terminates on a value, not an object of collection
-     * @param language Language for which these references are collected. This also determines to which language the titles are placed
      * @param reference Reference to be processed
      * @param options List where found values are placed as ReferenceOption objects
      */
-    void collectOptions(Language language, Reference reference, List<ReferenceOption> options) {
+    void collectOptions(Reference reference, List<ReferenceOption> options) {
 
         List<RevisionableEntity> entities = repository.getRevisionablesForReference(reference);
         if(entities == null) {
@@ -72,8 +72,7 @@ class RevisionableReferenceHandler extends ReferenceHandler {
                 ValueDataField saved = data.dataField(ValueDataFieldCall.get(reference.getTitlePath())).getRight();
                 if(saved != null) {
                     TranslationObject to = new TranslationObject();
-                    to.getTexts().put(Language.DEFAULT.toValue(), "");
-                    to.getTexts().put(language.toValue(), saved.getActualValueFor(language));
+                    to.getTexts().put(Language.DEFAULT.toValue(), saved.getActualValueFor(Language.DEFAULT));
                     if(config.getField(reference.getTitlePath()).getType() == FieldType.SELECTION) {
                         // TODO: Fix if different languages are needed
                         title = new ReferenceOptionTitle(ReferenceTitleType.VALUE, to);
@@ -84,8 +83,7 @@ class RevisionableReferenceHandler extends ReferenceHandler {
             }
             if(title == null) {
                 TranslationObject to = new TranslationObject();
-                to.getTexts().put(Language.DEFAULT.toValue(), "");
-                to.getTexts().put(language.toValue(), entity.getId().toString());
+                to.getTexts().put(Language.DEFAULT.toValue(), entity.getId().toString());
                 title = new ReferenceOptionTitle(ReferenceTitleType.LITERAL, to);
             }
             options.add(new ReferenceOption(entity.getId().toString(), title));

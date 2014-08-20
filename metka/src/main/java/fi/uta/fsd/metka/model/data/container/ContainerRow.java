@@ -3,6 +3,7 @@ package fi.uta.fsd.metka.model.data.container;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.change.ContainerChange;
 import fi.uta.fsd.metka.model.data.change.RowChange;
@@ -60,9 +61,9 @@ public class ContainerRow {
         return true;
     }
 
-    protected void remove(Map<String, Change> changeMap, Language language) {
+    protected StatusCode remove(Map<String, Change> changeMap, Language language) {
         if(changeMap == null || getRemoved()) {
-            return;
+            return StatusCode.NO_CHANGE_IN_VALUE;
         }
 
         setRemoved(true);
@@ -74,6 +75,24 @@ public class ContainerRow {
         if(containerChange.get(getRowId()) == null) {
             containerChange.put(language, new RowChange(getRowId()));
         }
+        return StatusCode.ROW_CHANGE;
+    }
+
+    protected StatusCode restore(Map<String, Change> changeMap, Language language) {
+        if(changeMap == null || !getRemoved()) {
+            return StatusCode.NO_CHANGE_IN_VALUE;
+        }
+
+        setRemoved(false);
+        ContainerChange containerChange = (ContainerChange)changeMap.get(getKey());
+        if(containerChange == null) {
+            containerChange = new ContainerChange(getKey(), Change.ChangeType.CONTAINER);
+            changeMap.put(getKey(), containerChange);
+        }
+        if(containerChange.get(getRowId()) == null) {
+            containerChange.put(language, new RowChange(getRowId()));
+        }
+        return StatusCode.ROW_CHANGE;
     }
 
     @Override

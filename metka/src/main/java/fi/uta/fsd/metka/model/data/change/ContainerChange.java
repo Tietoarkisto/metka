@@ -16,10 +16,10 @@ public class ContainerChange extends Change {
         super(key, type);
     }
 
-    // TODO: Uncomment
-    /*public Map<Language, Map<Integer, RowChange>> getRows() {
+
+    public Map<Language, Map<Integer, RowChange>> getRows() {
         return rows;
-    }*/
+    }
 
     @JsonIgnore public Map<Integer, RowChange> getRowsFor(Language language) {
         return rows.get(language);

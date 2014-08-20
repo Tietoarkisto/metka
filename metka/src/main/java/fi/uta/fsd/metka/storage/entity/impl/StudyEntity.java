@@ -10,4 +10,15 @@ import javax.persistence.*;
  */
 @Entity
 @DiscriminatorValue(ConfigurationType.Values.STUDY)
-public class StudyEntity extends RevisionableEntity {}
+public class StudyEntity extends RevisionableEntity {
+    @Column(name = "STUDYID", updatable = false, unique = true)
+    private String studyId;
+
+    public String getStudyId() {
+        return studyId;
+    }
+
+    public void setStudyId(String studyId) {
+        this.studyId = studyId;
+    }
+}

@@ -18,14 +18,14 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue(ConfigurationType.Values.STUDY_VARIABLES)
 public class StudyVariablesEntity extends RevisionableEntity {
-    @Column(name = "STUDY_ID")
-    private Long studyId;
+    @Column(name = "STUDYID", updatable = false, unique = true)
+    private String studyId;
 
-    public Long getStudyId() {
+    public String getStudyId() {
         return studyId;
     }
 
-    public void setStudyId(Long studyId) {
+    public void setStudyId(String studyId) {
         this.studyId = studyId;
     }
 }

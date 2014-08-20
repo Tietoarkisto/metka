@@ -43,7 +43,7 @@ public class ReferenceCollecting {
         // Distinguish between reference types and forward the request to separate handlers.
         switch(reference.getType()) {
             case REVISIONABLE:
-                revisionableHandler.collectOptions(request.getLanguage(), reference, options);
+                revisionableHandler.collectOptions(reference, options);
                 break;
             case JSON:
                 jsonHandler.collectOptions(reference, options);
