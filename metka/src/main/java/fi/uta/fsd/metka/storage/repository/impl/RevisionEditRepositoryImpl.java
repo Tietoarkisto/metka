@@ -16,6 +16,7 @@ import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionEditRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -98,8 +99,8 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
         if(pair.getRight().getState() != RevisionState.DRAFT) {
             return ReturnResult.REVISION_NOT_A_DRAFT;
         }
-        // TODO: get user name
-        String userName = "";
+
+        String userName = AuthenticationUtil.getUserName();
         if(!pair.getRight().getHandler().equals(userName)) {
             return ReturnResult.USER_NOT_HANDLER;
         }

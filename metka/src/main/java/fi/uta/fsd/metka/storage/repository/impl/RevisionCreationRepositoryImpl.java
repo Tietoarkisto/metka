@@ -6,10 +6,7 @@ import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.ValueDataField;
-import fi.uta.fsd.metka.model.factories.SeriesFactory;
-import fi.uta.fsd.metka.model.factories.StudyAttachmentFactory;
-import fi.uta.fsd.metka.model.factories.StudyFactory;
-import fi.uta.fsd.metka.model.factories.VariablesFactory;
+import fi.uta.fsd.metka.model.factories.*;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.entity.impl.*;
@@ -161,8 +158,11 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
                 revisionable = new SeriesEntity();
                 break;
             case STUDY:
-
                 revisionable = new StudyEntity();
+                break;
+            case PUBLICATION:
+                PublicationEntity p = new PublicationEntity();
+                revisionable = p;
                 break;
             case STUDY_ATTACHMENT:
                 // Check that some id is provided, assumes that this id points to a study
@@ -180,8 +180,6 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
                 sv.setStudyVariablesId(Long.parseLong(request.getParameters().get("variablesid")));
                 sv.setVarId(request.getParameters().get("varid"));
                 revisionable = sv;
-            case PUBLICATION:
-                // TODO: Publication
                 break;
             default:
                 // shouldn't happen
@@ -223,8 +221,11 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
                         request.getParameters().get("variablesid"), request.getParameters().get("studyid"), request.getParameters().get("varid"));
                 break;
             }
-            case PUBLICATION:
+            case PUBLICATION: {
+                PublicationFactory factory = new PublicationFactory();
+                data = factory.newData(revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo(), configuration);
                 break;
+            }
             default:
                 // Shouldn't happen
                 return new ImmutablePair<>(ReturnResult.INCORRECT_TYPE_FOR_OPERATION, null);

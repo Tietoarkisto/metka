@@ -48,5 +48,7 @@ public enum ReturnResult {
     EXCEPTION,                          // Unhandled exception happened at some point
     OPERATION_SUCCESSFUL,               // General success result for operations
     OPERATION_FAIL,                     // General fail result for operations
-    NO_RESULTS                         // General no results response for operations that request data that is not found but there is no error
+    NO_RESULTS,                         // General no results response for operations that request data that is not found but there is no error
+    WRONG_USER,                         // User with the wrong user name tried to perform operation that is restricted to one user at a time (e.g. saving a revision)
+    WRONG_ROLES                        // Role(s) the user has don't allow them to perform the requested operation
 }

@@ -23,10 +23,10 @@ import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionSaveRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +57,11 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         if(revision.getState() != RevisionState.DRAFT) {
             logger.warn("Revision "+revision.toString()+" was not in DRAFT state when tried to initiate save");
             return new ImmutablePair<>(ReturnResult.REVISION_NOT_A_DRAFT, transferData);
+        }
+
+        if(!revision.getHandler().equals(AuthenticationUtil.getUserName())) {
+            logger.warn("User "+AuthenticationUtil.getUserName()+" tried to save revision belonging to "+revision.getHandler());
+            return new ImmutablePair<>(ReturnResult.WRONG_USER, transferData);
         }
 
         Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(revision.getConfiguration());
