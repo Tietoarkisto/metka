@@ -1,11 +1,10 @@
 package fi.uta.fsd.metka.mvc.controller;
 
-import fi.uta.fsd.metka.enums.repositoryResponses.DraftRemoveResponse;
-import fi.uta.fsd.metka.enums.repositoryResponses.LogicalRemoveResponse;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.mvc.services.GeneralService;
 import fi.uta.fsd.metka.mvc.services.simple.ErrorMessage;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,114 +70,6 @@ public class GeneralController {
         return "redirect:/"+type+"/view/"+id;
     }
 
-    // TODO: Move to revision controller and unify as one call
-    /**
-     * Remove draft from revisionable. This is an actual removal and after the operation the data can not be found
-     * from database anymore.
-     * @param id - Id of the revisionable entity from where the draft is to be removed
-     * @param type - Type of the removed object (used to return the user to correct page).
-     * @return View name. If removal fails then the user is returned to the edit page (where the button is)
-     *          otherwise they are returned to view the revisionable object
-     */
-    @RequestMapping(value="/remove/{type}/draft/{id}", method = RequestMethod.GET)
-    public String removeDraft(@PathVariable String type, @PathVariable Long id, RedirectAttributes redirectAttributes) {
-        ErrorMessage error = new ErrorMessage();
-        DraftRemoveResponse response = service.removeDraft(type, id);
-        List<ErrorMessage> errors = new ArrayList<>();
-        redirectAttributes.addFlashAttribute("displayableErrors", errors);
-        switch (response.getResponse()) {
-            case SUCCESS:
-                error = new ErrorMessage();
-                error.setMsg("general.errors.remove.draft.complete");
-                error.getData().add("general.errors.remove.draft.complete."+type);
-                error.getData().add(id+"");
-                errors.add(error);
-
-                return "redirect:/"+type+"/view/"+id;
-            case NO_DRAFT:
-                error = new ErrorMessage();
-                error.setTitle("alert.error.title");
-                error.setMsg("general.errors.remove.draft.noDraft");
-                error.getData().add("general.errors.remove.draft.noDraft."+type);
-                error.getData().add(id+"");
-                errors.add(error);
-
-                return "redirect:/"+type+"/search";
-            case NO_REVISIONABLE:
-                error = new ErrorMessage();
-                error.setTitle("alert.error.title");
-                error.setMsg("general.errors.remove.draft.noObject");
-                error.getData().add("general.errors.remove.draft.noObject."+type);
-                error.getData().add(id+"");
-                errors.add(error);
-
-                return "redirect:/"+type+"/search";
-            case FINAL_REVISION:
-                error = new ErrorMessage();
-                error.setMsg("general.errors.remove.draft.final");
-                error.getData().add("general.errors.remove.draft.final."+type);
-                error.getData().add(id+"");
-                errors.add(error);
-
-                return "redirect:/"+type+"/search";
-        }
-        return "redirect:/"+type+"/search";
-    }
-
-    // TODO: Move to revision controller and unify as one call
-    /**
-     * Remove draft from revisionable. This is an actual removal and after the operation the data can not be found
-     * from database anymore.
-     * @param id - Id of the revisionable entity from where the draft is to be removed
-     * @param type - Type of the removed object (used to return the user to correct page).
-     * @return View name. If removal fails then the user is returned to the edit page (where the button is)
-     *          otherwise they are returned to view the revisionable object
-     */
-    @RequestMapping(value="/remove/{type}/logical/{id}", method = RequestMethod.GET)
-    public String removeLogical(@PathVariable String type, @PathVariable Long id, RedirectAttributes redirectAttributes) {
-        ErrorMessage error = new ErrorMessage();
-        LogicalRemoveResponse response = service.removeLogical(type, id);
-        List<ErrorMessage> errors = new ArrayList<>();
-        redirectAttributes.addFlashAttribute("displayableErrors", errors);
-        switch (response) {
-            case SUCCESS:
-                error = new ErrorMessage();
-                error.setMsg("general.errors.remove.logical.complete");
-                error.getData().add("general.errors.remove.logical.complete."+type);
-                error.getData().add(id+"");
-                errors.add(error);
-
-                return "redirect:/"+type+"/search";
-            case OPEN_DRAFT:
-                error = new ErrorMessage();
-                error.setTitle("alert.error.title");
-                error.setMsg("general.errors.remove.logical.draft");
-                error.getData().add("general.errors.remove.logical.draft."+type);
-                error.getData().add(id+"");
-                errors.add(error);
-
-                return "redirect:/"+type+"/view/"+id;
-            case NO_REVISIONABLE:
-                error = new ErrorMessage();
-                error.setTitle("alert.error.title");
-                error.setMsg("general.errors.remove.logical.noObject");
-                error.getData().add("general.errors.remove.logical.noObject."+type);
-                error.getData().add(id+"");
-                errors.add(error);
-
-                return "redirect:/"+type+"/search";
-            case NO_APPROVED:
-                error = new ErrorMessage();
-                error.setMsg("general.errors.remove.logical.noApproved");
-                error.getData().add("general.errors.remove.logical.noApprived."+type);
-                error.getData().add(id+"");
-                errors.add(error);
-
-                return "redirect:/"+type+"/view/"+id;
-        }
-        return "redirect:/"+type+"/search";
-    }
-
     // TODO: Move to revision controller
     @RequestMapping(value="/download/{id}/{no}", method = RequestMethod.GET)
     public HttpEntity<byte[]> downloadRevision(@PathVariable Long id, @PathVariable Integer no) {
@@ -188,8 +79,8 @@ public class GeneralController {
             return null;
         } else {
             RevisionData revision = pair.getRight();
-            Pair<ReturnResult, String> string = json.serialize(revision);
-            if(string.getLeft() != ReturnResult.SERIALIZATION_SUCCESS) {
+            Pair<SerializationResults, String> string = json.serialize(revision);
+            if(string.getLeft() != SerializationResults.SERIALIZATION_SUCCESS) {
                 // TODO: Return error to user
                 return null;
             }

@@ -13,6 +13,7 @@ import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -63,14 +64,14 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
             entity = list.get(0);
         }
 
-        Pair<ReturnResult, String> pair = json.serialize(configuration);
-        if(pair.getLeft() == ReturnResult.SERIALIZATION_SUCCESS) {
+        Pair<SerializationResults, String> pair = json.serialize(configuration);
+        if(pair.getLeft() == SerializationResults.SERIALIZATION_SUCCESS) {
             entity.setData(pair.getRight());
             em.merge(entity);
             return ReturnResult.DATABASE_INSERT_SUCCESS;
         } else {
             logger.error("Serialization of configuration failed, no merge performed for "+configuration.toString());
-            return pair.getLeft();
+            return ReturnResult.DATABASE_INSERT_FAILED;
         }
     }
 
@@ -118,36 +119,36 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
             entity = list.get(0);
         }
 
-        Pair<ReturnResult, String> pair = json.serialize(configuration);
-        if(pair.getLeft() == ReturnResult.SERIALIZATION_SUCCESS) {
+        Pair<SerializationResults, String> pair = json.serialize(configuration);
+        if(pair.getLeft() == SerializationResults.SERIALIZATION_SUCCESS) {
             entity.setData(pair.getRight());
             em.merge(entity);
             return ReturnResult.DATABASE_INSERT_SUCCESS;
         } else {
             logger.error("Serialization of guiconfiguration failed, no merge performed for "+configuration.toString());
-            return pair.getLeft();
+            return ReturnResult.DATABASE_INSERT_FAILED;
         }
     }
 
     @Override
     public ReturnResult insertDataConfig(String text) {
-        Pair<ReturnResult, Configuration> pair = json.deserializeDataConfiguration(text);
-        if(pair.getLeft() == ReturnResult.DESERIALIZATION_SUCCESS) {
+        Pair<SerializationResults, Configuration> pair = json.deserializeDataConfiguration(text);
+        if(pair.getLeft() == SerializationResults.DESERIALIZATION_SUCCESS) {
             return insert(pair.getRight());
         } else {
             logger.error("Failed to deserialize configuration for insertion.");
-            return pair.getLeft();
+            return ReturnResult.DATABASE_INSERT_FAILED;
         }
     }
 
     @Override
     public ReturnResult insertGUIConfig(String text) {
-        Pair<ReturnResult, GUIConfiguration> pair = json.deserializeGUIConfiguration(text);
-        if(pair.getLeft() == ReturnResult.DESERIALIZATION_SUCCESS) {
+        Pair<SerializationResults, GUIConfiguration> pair = json.deserializeGUIConfiguration(text);
+        if(pair.getLeft() == SerializationResults.DESERIALIZATION_SUCCESS) {
             return insert(pair.getRight());
         } else {
             logger.error("Failed to deserialize guiconfiguration for insertion.");
-            return pair.getLeft();
+            return ReturnResult.DATABASE_INSERT_FAILED;
         }
     }
 
@@ -236,10 +237,10 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
             return new ImmutablePair<>(ReturnResult.CONFIGURATION_CONTAINED_NO_DATA, null);
         }
 
-        Pair<ReturnResult, Configuration> pair = json.deserializeDataConfiguration(entity.getData());
-        if(pair.getLeft() != ReturnResult.DESERIALIZATION_SUCCESS) {
+        Pair<SerializationResults, Configuration> pair = json.deserializeDataConfiguration(entity.getData());
+        if(pair.getLeft() != SerializationResults.DESERIALIZATION_SUCCESS) {
             logger.error("Deserialization failed for configuration "+entity.toString());
-            return pair;
+            return new ImmutablePair<>(ReturnResult.CONFIGURATION_NOT_VALID, null);
         } else {
             return new ImmutablePair<>(ReturnResult.CONFIGURATION_FOUND, pair.getRight());
         }
@@ -297,10 +298,10 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
             return new ImmutablePair<>(ReturnResult.CONFIGURATION_CONTAINED_NO_DATA, null);
         }
 
-        Pair<ReturnResult, GUIConfiguration> pair = json.deserializeGUIConfiguration(entity.getData());
-        if(pair.getLeft() != ReturnResult.DESERIALIZATION_SUCCESS) {
+        Pair<SerializationResults, GUIConfiguration> pair = json.deserializeGUIConfiguration(entity.getData());
+        if(pair.getLeft() != SerializationResults.DESERIALIZATION_SUCCESS) {
             logger.error("Deserialization failed for configuration "+entity.toString());
-            return pair;
+            return new ImmutablePair<>(ReturnResult.CONFIGURATION_NOT_VALID, null);
         } else {
             return new ImmutablePair<>(ReturnResult.CONFIGURATION_FOUND, pair.getRight());
         }

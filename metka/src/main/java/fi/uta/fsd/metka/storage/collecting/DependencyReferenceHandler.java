@@ -18,6 +18,7 @@ import fi.uta.fsd.metka.model.general.TranslationObject;
 import fi.uta.fsd.metka.storage.entity.MiscJSONEntity;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOptionTitle;
 import org.apache.commons.lang3.tuple.Pair;
@@ -123,8 +124,8 @@ class DependencyReferenceHandler extends ReferenceHandler {
             return;
         }
 
-        Pair<ReturnResult, RevisionData> pair = json.deserializeRevisionData(revision.getData());
-        if(pair.getLeft() != ReturnResult.DESERIALIZATION_SUCCESS) {
+        Pair<SerializationResults, RevisionData> pair = json.deserializeRevisionData(revision.getData());
+        if(pair.getLeft() != SerializationResults.DESERIALIZATION_SUCCESS) {
             return;
         }
 
@@ -176,8 +177,8 @@ class DependencyReferenceHandler extends ReferenceHandler {
             return;
         }
 
-        Pair<ReturnResult, JsonNode> pair = json.deserializeToJsonTree(misc.getData());
-        if(pair.getLeft() != ReturnResult.DESERIALIZATION_SUCCESS) {
+        Pair<SerializationResults, JsonNode> pair = json.deserializeToJsonTree(misc.getData());
+        if(pair.getLeft() != SerializationResults.DESERIALIZATION_SUCCESS) {
             // Deserialization failure
             return;
         }

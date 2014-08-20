@@ -15,10 +15,8 @@ import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.storage.entity.impl.StudyVariableEntity;
-import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.storage.repository.GeneralRepository;
-import fi.uta.fsd.metka.storage.repository.RevisionCreationRepository;
-import fi.uta.fsd.metka.storage.repository.RevisionEditRepository;
+import fi.uta.fsd.metka.storage.repository.*;
+import fi.uta.fsd.metka.storage.repository.enums.RemoveResult;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.storage.variables.StudyVariablesParser;
@@ -61,6 +59,8 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
     @Autowired
     private ConfigurationRepository configurations;
 
+    @Autowired
+    private RevisionRemoveRepository remove;
 
     @Autowired
     private RevisionCreationRepository create;
@@ -254,13 +254,20 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             // All remaining rows in variableEntities should be removed since no variable was found for them in the current POR-file
 
             // We don't need to check here if there's draft or not, let's just call draft and logical remove both
-            general.removeDraft(ConfigurationType.STUDY_VARIABLE.toValue(), variableEntity.getId());
-            general.removeLogical(ConfigurationType.STUDY_VARIABLE.toValue(), variableEntity.getId());
+            Pair<ReturnResult, RevisionData> dataPair = general.getLatestRevisionForIdAndType(variableEntity.getId(), false, ConfigurationType.STUDY_VARIABLE);
+            // TODO: This operation is somewhat heavy but enough for now
+            if(dataPair.getLeft() == ReturnResult.REVISION_FOUND) {
+                if(remove.remove(TransferData.buildFromRevisionData(dataPair.getRight(), RevisionableInfo.FALSE)) == RemoveResult.SUCCESS_DRAFT) {
+                    dataPair = general.getLatestRevisionForIdAndType(variableEntity.getId(), false, ConfigurationType.STUDY_VARIABLE);
+                    remove.remove(TransferData.buildFromRevisionData(dataPair.getRight(), RevisionableInfo.FALSE));
+                }
+            }
 
             if(variablesContainer != null) {
                 // See that respective rows are removed from STUDY_VARIABLES
                 //    Remove from variables list
                 ReferenceRow reference = variablesContainer.getReferenceWithValue(variableEntity.getId().toString()).getRight();
+                // TODO: is this enough if the variable was removed completely
                 if(reference.remove(variablesData.getChanges()) == StatusCode.ROW_CHANGE) {
                     result = resultCheck(result, ParseResult.REVISION_CHANGES);
                 }

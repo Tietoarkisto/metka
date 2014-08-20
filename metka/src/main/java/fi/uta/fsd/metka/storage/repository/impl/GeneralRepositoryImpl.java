@@ -2,8 +2,6 @@ package fi.uta.fsd.metka.storage.repository.impl;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.RevisionState;
-import fi.uta.fsd.metka.enums.repositoryResponses.DraftRemoveResponse;
-import fi.uta.fsd.metka.enums.repositoryResponses.LogicalRemoveResponse;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
@@ -11,11 +9,11 @@ import fi.uta.fsd.metka.storage.entity.SequenceEntity;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,65 +67,6 @@ public class GeneralRepositoryImpl implements GeneralRepository {
     }
 
     @Override
-    public DraftRemoveResponse removeDraft(String type, Long id) {
-        List<RevisionableEntity> list = em.createQuery("SELECT r FROM RevisionableEntity r " +
-                "WHERE r.id = :id AND r.type = :type", RevisionableEntity.class)
-                .setParameter("id", id)
-                .setParameter("type", ConfigurationType.valueOf(type.toUpperCase()))
-                .getResultList();
-        if(list.size() == 0) {
-            return new DraftRemoveResponse(DraftRemoveResponse.Response.NO_REVISIONABLE, id, null);
-        }
-        RevisionableEntity entity = list.get(0);
-        if(!entity.hasDraft()) {
-            return new DraftRemoveResponse(DraftRemoveResponse.Response.NO_DRAFT, id, null);
-        }
-        Integer no = entity.getLatestRevisionNo();
-        RevisionEntity rev = em.find(RevisionEntity.class, entity.latestRevisionKey());
-
-        if(!rev.getState().equals(RevisionState.DRAFT)) {
-            // TODO: Log error since there is data discrepancy
-            return new DraftRemoveResponse(DraftRemoveResponse.Response.NO_DRAFT, id, no);
-        }
-
-        em.remove(rev);
-
-        if(entity.getCurApprovedNo() == null) {
-            // No revisions remaining, remove the whole revisionable entity.
-
-            em.remove(entity);
-            return new DraftRemoveResponse(DraftRemoveResponse.Response.FINAL_REVISION, id, no);
-        } else {
-
-            entity.setLatestRevisionNo(entity.getCurApprovedNo());
-            return new DraftRemoveResponse(DraftRemoveResponse.Response.SUCCESS, id, no);
-        }
-    }
-
-    @Override
-    public LogicalRemoveResponse removeLogical(String type, Long id) {
-        List<RevisionableEntity> list = em.createQuery("SELECT r FROM RevisionableEntity r " +
-                "WHERE r.id = :id AND r.type = :type", RevisionableEntity.class)
-                .setParameter("id", id)
-                .setParameter("type", type.toUpperCase())
-                .getResultList();
-        if(list.size() == 0) {
-            return LogicalRemoveResponse.NO_REVISIONABLE;
-        }
-        RevisionableEntity entity = list.get(0);
-        if(entity.getCurApprovedNo() == null) {
-            return LogicalRemoveResponse.NO_APPROVED;
-        }
-        if(entity.hasDraft()) {
-            return LogicalRemoveResponse.OPEN_DRAFT;
-        }
-
-        entity.setRemoved(true);
-        entity.setRemovalDate(new LocalDateTime());
-        return LogicalRemoveResponse.SUCCESS;
-    }
-
-    @Override
     public Pair<ReturnResult, RevisionData> getLatestRevisionForIdAndType(Long id, boolean approvedOnly, ConfigurationType type) {
         RevisionableEntity entity = em.find(RevisionableEntity.class, id);
         if(entity == null) {
@@ -174,6 +113,11 @@ public class GeneralRepositoryImpl implements GeneralRepository {
     }
 
     @Override
+    public Pair<ReturnResult, RevisionData> getRevisionData(RevisionKey key) {
+        return getRevisionDataOfType(key, null);
+    }
+
+    @Override
     public Pair<ReturnResult, RevisionData> getRevisionDataOfType(Long id, Integer no, ConfigurationType type) {
         return getRevisionDataOfType(new RevisionKey(id, no), type);
     }
@@ -206,11 +150,12 @@ public class GeneralRepositoryImpl implements GeneralRepository {
             logger.error(revision.toString()+" was found with no data.");
             return new ImmutablePair<>(ReturnResult.REVISION_CONTAINED_NO_DATA, null);
         }
-        Pair<ReturnResult, RevisionData> pair = json.deserializeRevisionData(revision.getData());
-        if(pair.getLeft() == ReturnResult.DESERIALIZATION_SUCCESS) {
-            pair = new ImmutablePair<>(ReturnResult.REVISION_FOUND, pair.getRight());
+        Pair<SerializationResults, RevisionData> pair = json.deserializeRevisionData(revision.getData());
+        if(pair.getLeft() == SerializationResults.DESERIALIZATION_SUCCESS) {
+            return new ImmutablePair<>(ReturnResult.REVISION_FOUND, pair.getRight());
+        } else {
+            return new ImmutablePair<>(ReturnResult.REVISION_NOT_VALID, null);
         }
-        return pair;
     }
 
     @Override
@@ -246,10 +191,10 @@ public class GeneralRepositoryImpl implements GeneralRepository {
 
     @Override
     public ReturnResult updateRevisionData(RevisionData revision) {
-        Pair<ReturnResult, String> string = json.serialize(revision);
-        if(string.getLeft() != ReturnResult.SERIALIZATION_SUCCESS) {
+        Pair<SerializationResults, String> string = json.serialize(revision);
+        if(string.getLeft() != SerializationResults.SERIALIZATION_SUCCESS) {
             logger.error("Failed at serializing "+revision.toString());
-            return string.getLeft();
+            return ReturnResult.REVISION_NOT_VALID;
         }
         RevisionEntity entity = em.find(RevisionEntity.class, RevisionKey.fromModelKey(revision.getKey()));
         if(entity == null) {

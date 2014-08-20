@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeType;
 import fi.uta.fsd.metka.storage.entity.MiscJSONEntity;
 import fi.uta.fsd.metka.storage.repository.MiscJSONRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -51,8 +52,8 @@ public class MiscJSONRepositoryImpl implements MiscJSONRepository {
 
     @Override
     public void insert(String text) {
-        Pair<ReturnResult, JsonNode> node = json.deserializeToJsonTree(text);
-        if(node.getLeft() == ReturnResult.DESERIALIZATION_SUCCESS) {
+        Pair<SerializationResults, JsonNode> node = json.deserializeToJsonTree(text);
+        if(node.getLeft() == SerializationResults.DESERIALIZATION_SUCCESS) {
             insert(node.getRight());
         }
     }
@@ -69,9 +70,9 @@ public class MiscJSONRepositoryImpl implements MiscJSONRepository {
         if(entity == null || !StringUtils.hasText(entity.getData())) {
             return new ImmutablePair<>(ReturnResult.MISC_JSON_NOT_FOUND, null);
         }
-        Pair<ReturnResult, JsonNode> pair = json.deserializeToJsonTree(entity.getData());
-        if(pair.getLeft() != ReturnResult.DESERIALIZATION_SUCCESS) {
-            return pair;
+        Pair<SerializationResults, JsonNode> pair = json.deserializeToJsonTree(entity.getData());
+        if(pair.getLeft() != SerializationResults.DESERIALIZATION_SUCCESS) {
+            return new ImmutablePair<>(ReturnResult.MISC_JSON_NOT_FOUND, null);
         } else {
             return new ImmutablePair<>(ReturnResult.MISC_JSON_FOUND, pair.getRight());
         }

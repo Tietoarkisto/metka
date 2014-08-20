@@ -120,6 +120,16 @@ public class RevisionController {
         return revisions.edit(transferData);
     }
 
+    @RequestMapping(value="ajax/remove", method = RequestMethod.POST)
+    public @ResponseBody RevisionOperationResponse remove(@RequestBody TransferData transferData) {
+        return revisions.remove(transferData);
+    }
+
+    @RequestMapping(value="ajax/restore", method = RequestMethod.POST)
+    public @ResponseBody RevisionOperationResponse restore(@RequestBody TransferData transferData) {
+        return revisions.restore(transferData);
+    }
+
     @RequestMapping(value="ajax/save", method = RequestMethod.POST)
     public @ResponseBody RevisionOperationResponse save(@RequestBody TransferData transferData) {
         RevisionOperationResponse response = null;
@@ -130,7 +140,7 @@ public class RevisionController {
             logger.error("Exception while performing SAVE command on revision:", e);
             response = new RevisionOperationResponse();
             response.setData(transferData);
-            response.setResult(ReturnResult.EXCEPTION);
+            response.setResult(ReturnResult.EXCEPTION.name());
             return response;
         }
     }

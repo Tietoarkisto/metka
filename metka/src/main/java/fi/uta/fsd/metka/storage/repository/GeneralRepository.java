@@ -1,8 +1,6 @@
 package fi.uta.fsd.metka.storage.repository;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
-import fi.uta.fsd.metka.enums.repositoryResponses.DraftRemoveResponse;
-import fi.uta.fsd.metka.enums.repositoryResponses.LogicalRemoveResponse;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.storage.entity.SequenceEntity;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
@@ -40,33 +38,6 @@ public interface GeneralRepository {
     public Pair<ReturnResult, Long> getAdjacentRevisionableId(Long currentId, String type, boolean forward);
 
     /**
-     * Remove draft revision from given revisionable object.
-     * This performs an actual removal to the revision.
-     * If DRAFT exists for the revisionable then it is removed from database and latest revision number of
-     * revisionable is set to current approved revision number (since there can always be only one DRAFT).
-     * After this, if there is no more revisions on the revisionable (i.e. current approved number was null)
-     * then the whole revisionable is removed from database.
-     *
-     * @param type
-     * @param id
-     * @return
-     */
-    @Transactional(readOnly = false) public DraftRemoveResponse removeDraft(String type, Long id);
-
-    /**
-     * Performs a logical removal on requested revisionable object.
-     * If the revisionable doesn't have any DRAFT revisions then it is marked as removed and
-     * removal time is set to database.
-     * TODO: Indicate this on the revision data somehow if need be
-     * @param type
-     * @param id
-     * @return
-     */
-    @Transactional(readOnly = false) public LogicalRemoveResponse removeLogical(String type, Long id);
-
-    // TODO: Reverse logical removal
-
-    /**
      * Returns the revision data with given id and number.
      * Forwards the call to revision key variant with null type.
      * @param id RevisionableId of the requested revision
@@ -74,6 +45,7 @@ public interface GeneralRepository {
      * @return Pair with ReturnResult in the left value and returned RevisionData in the right value, or null if no RevisionData is returned.
      */
     public Pair<ReturnResult, RevisionData> getRevisionData(Long id, Integer no);
+    public Pair<ReturnResult, RevisionData> getRevisionData(RevisionKey key);
 
     /**
      * Returns the revision data with given id and number and checks that it is of the requested type.

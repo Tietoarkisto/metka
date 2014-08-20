@@ -5,7 +5,7 @@ import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.MiscJSONRepository;
-import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
@@ -43,8 +43,8 @@ public class StartupScanner {
         Collection<File> files = FileUtils.listFiles(confDir, FileFilterUtils.suffixFileFilter(".json"), TrueFileFilter.TRUE);
 
         for (File file : files) {
-            Pair<ReturnResult, Configuration> conf = json.deserializeDataConfiguration(file);
-            if(conf.getLeft() != ReturnResult.DESERIALIZATION_SUCCESS) {
+            Pair<SerializationResults, Configuration> conf = json.deserializeDataConfiguration(file);
+            if(conf.getLeft() != SerializationResults.DESERIALIZATION_SUCCESS) {
                 logger.error("Failed at deserializing "+file.getName());
                 continue;
             }
@@ -63,9 +63,9 @@ public class StartupScanner {
         Collection<File> files = FileUtils.listFiles(miscDir, FileFilterUtils.suffixFileFilter(".json"), TrueFileFilter.TRUE);
 
         for (File file : files) {
-            Pair<ReturnResult, JsonNode> misc = json.deserializeToJsonTree(file);
+            Pair<SerializationResults, JsonNode> misc = json.deserializeToJsonTree(file);
 
-            if(misc.getLeft() != ReturnResult.DESERIALIZATION_SUCCESS){
+            if(misc.getLeft() != SerializationResults.DESERIALIZATION_SUCCESS){
                 logger.error("Failed at deserializing "+file.getName());
                 continue;
             }
@@ -84,9 +84,9 @@ public class StartupScanner {
         Collection<File> files = FileUtils.listFiles(guiDir, FileFilterUtils.suffixFileFilter(".json"), TrueFileFilter.TRUE);
 
         for (File file : files) {
-            Pair<ReturnResult, GUIConfiguration> gui = json.deserializeGUIConfiguration(file);
+            Pair<SerializationResults, GUIConfiguration> gui = json.deserializeGUIConfiguration(file);
 
-            if(gui.getLeft() != ReturnResult.DESERIALIZATION_SUCCESS) {
+            if(gui.getLeft() != SerializationResults.DESERIALIZATION_SUCCESS) {
                 logger.error("Failed at deserializing "+file.getName());
                 continue;
             }

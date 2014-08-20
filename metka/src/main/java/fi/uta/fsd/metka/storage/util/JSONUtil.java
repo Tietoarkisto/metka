@@ -7,7 +7,7 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import fi.uta.fsd.metka.model.interfaces.ModelBase;
 import fi.uta.fsd.metka.model.transfer.TransferData;
-import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -31,85 +31,85 @@ public final class JSONUtil {
     @Autowired
     private ObjectMapper metkaObjectMapper;
 
-    public Pair<ReturnResult, Configuration> deserializeDataConfiguration(File file) {
+    public Pair<SerializationResults, Configuration> deserializeDataConfiguration(File file) {
         return deserializeFromFile(file, Configuration.class);
     }
-    public Pair<ReturnResult, Configuration> deserializeDataConfiguration(String data) {
+    public Pair<SerializationResults, Configuration> deserializeDataConfiguration(String data) {
         return deserializeFromString(data, Configuration.class);
     }
 
-    public Pair<ReturnResult, GUIConfiguration> deserializeGUIConfiguration(File file) {
+    public Pair<SerializationResults, GUIConfiguration> deserializeGUIConfiguration(File file) {
         return deserializeFromFile(file, GUIConfiguration.class);
     }
-    public Pair<ReturnResult, GUIConfiguration> deserializeGUIConfiguration(String data) {
+    public Pair<SerializationResults, GUIConfiguration> deserializeGUIConfiguration(String data) {
         return deserializeFromString(data, GUIConfiguration.class);
     }
 
-    public Pair<ReturnResult, RevisionData> deserializeRevisionData(String data) {
+    public Pair<SerializationResults, RevisionData> deserializeRevisionData(String data) {
         return deserializeFromString(data, RevisionData.class);
     }
 
-    public Pair<ReturnResult, TransferData> deserializeTransferData(String data) {
+    public Pair<SerializationResults, TransferData> deserializeTransferData(String data) {
         return deserializeFromString(data, TransferData.class);
     }
 
-    private <T extends ModelBase> Pair<ReturnResult, T> deserializeFromString(String data, Class<T> tClass) {
+    private <T extends ModelBase> Pair<SerializationResults, T> deserializeFromString(String data, Class<T> tClass) {
         try {
-            return new ImmutablePair<>(ReturnResult.DESERIALIZATION_SUCCESS, metkaObjectMapper.readValue(data, tClass));
+            return new ImmutablePair<>(SerializationResults.DESERIALIZATION_SUCCESS, metkaObjectMapper.readValue(data, tClass));
         } catch(IOException ioe) {
             ioe.printStackTrace();
             logger.error("IOException while parsing "+tClass.toString()+" from string data");
-            return new ImmutablePair<>(ReturnResult.DESERIALIZATION_FAILED, null);
+            return new ImmutablePair<>(SerializationResults.DESERIALIZATION_FAILED, null);
         }
     }
 
-    private <T extends ModelBase> Pair<ReturnResult, T> deserializeFromFile(File file, Class<T> tClass) {
+    private <T extends ModelBase> Pair<SerializationResults, T> deserializeFromFile(File file, Class<T> tClass) {
         try {
-            return new ImmutablePair<>(ReturnResult.DESERIALIZATION_SUCCESS, metkaObjectMapper.readValue(file, tClass));
+            return new ImmutablePair<>(SerializationResults.DESERIALIZATION_SUCCESS, metkaObjectMapper.readValue(file, tClass));
         } catch(IOException ioe) {
             ioe.printStackTrace();
             logger.error("IOException while parsing "+tClass.toString()+" from file "+file.getName());
-            return new ImmutablePair<>(ReturnResult.DESERIALIZATION_FAILED, null);
+            return new ImmutablePair<>(SerializationResults.DESERIALIZATION_FAILED, null);
         }
     }
 
-    public Pair<ReturnResult, String> serialize(ModelBase data) {
+    public Pair<SerializationResults, String> serialize(ModelBase data) {
         try {
-            return new ImmutablePair<>(ReturnResult.SERIALIZATION_SUCCESS, metkaObjectMapper.writeValueAsString(data));
+            return new ImmutablePair<>(SerializationResults.SERIALIZATION_SUCCESS, metkaObjectMapper.writeValueAsString(data));
         } catch(IOException ioe) {
             ioe.printStackTrace();
             logger.error("IOException while serializing "+data.toString());
-            return new ImmutablePair<>(ReturnResult.SERIALIZATION_FAILED, null);
+            return new ImmutablePair<>(SerializationResults.SERIALIZATION_FAILED, null);
         }
     }
 
-    public Pair<ReturnResult, String> serialize(JsonNode data) {
+    public Pair<SerializationResults, String> serialize(JsonNode data) {
         try {
-            return new ImmutablePair<>(ReturnResult.SERIALIZATION_SUCCESS, metkaObjectMapper.writeValueAsString(data));
+            return new ImmutablePair<>(SerializationResults.SERIALIZATION_SUCCESS, metkaObjectMapper.writeValueAsString(data));
         } catch(IOException ioe) {
             ioe.printStackTrace();
             logger.error("IOException while serializing JsonNode");
-            return new ImmutablePair<>(ReturnResult.SERIALIZATION_FAILED, null);
+            return new ImmutablePair<>(SerializationResults.SERIALIZATION_FAILED, null);
         }
     }
 
-    public Pair<ReturnResult, JsonNode> deserializeToJsonTree(File file) {
+    public Pair<SerializationResults, JsonNode> deserializeToJsonTree(File file) {
         try {
-            return new ImmutablePair<>(ReturnResult.DESERIALIZATION_SUCCESS, metkaObjectMapper.readTree(file));
+            return new ImmutablePair<>(SerializationResults.DESERIALIZATION_SUCCESS, metkaObjectMapper.readTree(file));
         } catch(IOException ioe) {
             ioe.printStackTrace();
             logger.error("IOException while reading file "+file.getName());
-            return new ImmutablePair<>(ReturnResult.DESERIALIZATION_FAILED, null);
+            return new ImmutablePair<>(SerializationResults.DESERIALIZATION_FAILED, null);
         }
     }
 
-    public Pair<ReturnResult, JsonNode> deserializeToJsonTree(String data) {
+    public Pair<SerializationResults, JsonNode> deserializeToJsonTree(String data) {
         try {
-            return new ImmutablePair<>(ReturnResult.DESERIALIZATION_SUCCESS, metkaObjectMapper.readTree(data));
+            return new ImmutablePair<>(SerializationResults.DESERIALIZATION_SUCCESS, metkaObjectMapper.readTree(data));
         } catch(IOException ioe) {
             ioe.printStackTrace();
             logger.error("IOException while reading String");
-            return new ImmutablePair<>(ReturnResult.DESERIALIZATION_FAILED, null);
+            return new ImmutablePair<>(SerializationResults.DESERIALIZATION_FAILED, null);
         }
     }
 }

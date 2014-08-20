@@ -12,6 +12,7 @@ import fi.uta.fsd.metka.model.general.TranslationObject;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOptionTitle;
 import org.apache.commons.lang3.tuple.Pair;
@@ -56,8 +57,8 @@ class RevisionableReferenceHandler extends ReferenceHandler {
                     continue;
                 }
 
-                Pair<ReturnResult, RevisionData> dataPair = json.deserializeRevisionData(revision.getData());
-                if(dataPair.getLeft() != ReturnResult.DESERIALIZATION_SUCCESS) {
+                Pair<SerializationResults, RevisionData> dataPair = json.deserializeRevisionData(revision.getData());
+                if(dataPair.getLeft() != SerializationResults.DESERIALIZATION_SUCCESS) {
                     logger.error("Failed at deserializing "+revision.toString());
                     continue;
                 }

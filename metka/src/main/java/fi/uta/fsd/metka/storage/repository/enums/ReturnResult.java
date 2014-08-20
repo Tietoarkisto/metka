@@ -6,15 +6,12 @@ package fi.uta.fsd.metka.storage.repository.enums;
  * Some methods can return a collection of results or they can use the results indirectly in some way.
  */
 public enum ReturnResult {
-    SERIALIZATION_SUCCESS,              // Mainly result from JSONUtil. Serialization of given resource was a success
-    DESERIALIZATION_SUCCESS,            // Mainly result from JSONUtil. Deserialization of given resource was a success
-    SERIALIZATION_FAILED,               // Mainly result from JSONUtil. Serialization of given resource was a failure
-    DESERIALIZATION_FAILED,             // Mainly result from JSONUtil. Deserialization of given resource was a failure
     REVISION_CREATED,                   // Either new revisionable was created or new draft revision was created for revisionable, edit returns revision found if existing revision is used
     REVISION_FOUND,                     // Either RevisionEntity or RevisionData was requested and result was found successfully
     REVISION_NOT_FOUND,                 // Either RevisionEntity or RevisionData was requested but no result was found
     REVISION_CONTAINED_NO_DATA,         // RevisionData was requested but RevisionEntity didn't contain any data, this is a serious error
     REVISION_OF_INCORRECT_TYPE,         // RevisionEntity or RevisionData of a certain ConfigurationType was requested but the found revision was of a different type
+    REVISION_NOT_VALID,                 // There's something wrong with revision
     NO_REVISION_FOR_REVISIONABLE,       // Revisionable object didn't contain any revisions (either both revision number values were null or no revisions could be found from database), this is a serious error
     REVISIONABLE_FOUND,                 // Requested revisionable was found and returned
     REVISIONABLE_NOT_FOUND,             // Requested revisionable object couldn't be found. Either there's no revisionable for requested id, or the revisionable with the id is of different type than requested
@@ -50,5 +47,5 @@ public enum ReturnResult {
     OPERATION_FAIL,                     // General fail result for operations
     NO_RESULTS,                         // General no results response for operations that request data that is not found but there is no error
     WRONG_USER,                         // User with the wrong user name tried to perform operation that is restricted to one user at a time (e.g. saving a revision)
-    WRONG_ROLES                        // Role(s) the user has don't allow them to perform the requested operation
+    CONFIGURATION_NOT_VALID, WRONG_ROLES                        // Role(s) the user has don't allow them to perform the requested operation
 }

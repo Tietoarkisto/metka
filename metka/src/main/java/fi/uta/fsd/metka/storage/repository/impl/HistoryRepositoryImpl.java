@@ -4,7 +4,7 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.mvc.services.requests.ChangeCompareRequest;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.repository.HistoryRepository;
-import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -36,8 +36,8 @@ public class HistoryRepositoryImpl implements HistoryRepository {
                     .getResultList();
 
         for(RevisionEntity entity : entities) {
-            Pair<ReturnResult, RevisionData> pair = json.deserializeRevisionData(entity.getData());
-            if(pair.getLeft() != ReturnResult.DESERIALIZATION_SUCCESS) {
+            Pair<SerializationResults, RevisionData> pair = json.deserializeRevisionData(entity.getData());
+            if(pair.getLeft() != SerializationResults.DESERIALIZATION_SUCCESS) {
                 logger.error("Failed to deserialize "+entity.toString());
                 continue;
             }
@@ -57,8 +57,8 @@ public class HistoryRepositoryImpl implements HistoryRepository {
                 .getResultList();
         List<RevisionData> datas = new ArrayList<RevisionData>();
         for(RevisionEntity entity : entities) {
-            Pair<ReturnResult, RevisionData> pair = json.deserializeRevisionData(entity.getData());
-            if(pair.getLeft() != ReturnResult.DESERIALIZATION_SUCCESS) {
+            Pair<SerializationResults, RevisionData> pair = json.deserializeRevisionData(entity.getData());
+            if(pair.getLeft() != SerializationResults.DESERIALIZATION_SUCCESS) {
                 logger.error("Failed to deserialize "+entity.toString());
                 continue;
             }

@@ -25,6 +25,7 @@ import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionApproveRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metkaSearch.SearcherComponent;
@@ -96,10 +97,10 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
                 data.getApproved().put(language, info);
             }
             data.setState(RevisionState.APPROVED);
-            Pair<ReturnResult, String> string = json.serialize(data);
-            if(string.getLeft() != ReturnResult.SERIALIZATION_SUCCESS) {
+            Pair<SerializationResults, String> string = json.serialize(data);
+            if(string.getLeft() != SerializationResults.SERIALIZATION_SUCCESS) {
                 logger.error("Couldn't serialize data "+data.toString()+", halting approval process");
-                return new ImmutablePair<>(string.getLeft(), transferData);
+                return new ImmutablePair<>(ReturnResult.APPROVE_FAILED, transferData);
             }
 
             RevisionEntity revision = em.find(RevisionEntity.class, new RevisionKey(data.getKey().getId(), data.getKey().getNo()));

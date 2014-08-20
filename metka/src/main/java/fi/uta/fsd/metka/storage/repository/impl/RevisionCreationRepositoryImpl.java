@@ -15,6 +15,7 @@ import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionCreationRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.transfer.revision.RevisionCreateRequest;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -83,12 +84,12 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
             return new ImmutablePair<>(dataPair.getLeft(), null);
         }
 
-        Pair<ReturnResult, String> string = json.serialize(dataPair.getRight());
-        if(string.getLeft() != ReturnResult.SERIALIZATION_SUCCESS) {
+        Pair<SerializationResults, String> string = json.serialize(dataPair.getRight());
+        if(string.getLeft() != SerializationResults.SERIALIZATION_SUCCESS) {
             logger.error("Couldn't serialize revision "+dataPair.getRight().toString());
             logger.error("Removing revisionable "+revisionable.toString());
             em.remove(revisionable);
-            return new ImmutablePair<>(string.getLeft(), null);
+            return new ImmutablePair<>(ReturnResult.REVISION_NOT_CREATE, null);
         }
 
         revision.setData(string.getRight());

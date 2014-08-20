@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import fi.uta.fsd.metka.model.configuration.Reference;
 import fi.uta.fsd.metka.storage.entity.MiscJSONEntity;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
@@ -33,8 +34,8 @@ class JsonReferenceHandler extends ReferenceHandler {
             return;
         }
 
-        Pair<ReturnResult, JsonNode> pair = json.deserializeToJsonTree(entity.getData());
-        if(pair.getLeft() != ReturnResult.DESERIALIZATION_SUCCESS) {
+        Pair<SerializationResults, JsonNode> pair = json.deserializeToJsonTree(entity.getData());
+        if(pair.getLeft() != SerializationResults.DESERIALIZATION_SUCCESS) {
             // No root node, can't continue
             return;
         }

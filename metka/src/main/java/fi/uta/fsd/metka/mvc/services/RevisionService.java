@@ -9,6 +9,7 @@ import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.search.RevisionSearch;
 import fi.uta.fsd.metka.storage.repository.*;
+import fi.uta.fsd.metka.storage.repository.enums.RemoveResult;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.transfer.revision.*;
@@ -46,6 +47,12 @@ public class RevisionService {
 
     @Autowired
     private RevisionApproveRepository approve;
+
+    @Autowired
+    private RevisionRemoveRepository remove;
+
+    @Autowired
+    private RevisionRestoreRepository restore;
 
     @Autowired
     private RevisionSearch search;
@@ -155,9 +162,47 @@ public class RevisionService {
         return getResponse(operationResult);
     }
 
+    public RevisionOperationResponse remove(TransferData transferData) {
+        RevisionOperationResponse response = new RevisionOperationResponse();
+        RemoveResult result = remove.remove(transferData);
+        response.setResult(result.name());
+
+        switch(result) {
+            case FINAL_REVISION:
+                // TODO: In case of study we should most likely remove all sub objects too since they won't point to anything.
+                // TODO: We should also check that references will get removed from revisions (from which point is the question).
+                //       For example if only revision of study attachment is removed then the row should be removed from study too.
+            case SUCCESS_DRAFT:
+                // One remove operation should be enough for both of these since there should only be one affected document
+                addRemoveCommand(transferData);
+                break;
+            case SUCCESS_LOGICAL:
+                // In this case we need to reindex all affected documents instead
+                // TODO: Add indexing commands for all revisions of revisionable
+                break;
+            default:
+                // Errors don't need special handling
+                break;
+        }
+
+        return response;
+    }
+
+    public RevisionOperationResponse restore(TransferData transferData) {
+        RevisionOperationResponse response = new RevisionOperationResponse();
+        RemoveResult result = restore.restore(transferData);
+        response.setResult(result.name());
+
+        if(result == RemoveResult.SUCCESS_RESTORE) {
+            // TODO: Reindex all revisions
+        }
+
+        return response;
+    }
+
     private RevisionOperationResponse getResponse(Pair<ReturnResult, TransferData> pair) {
         RevisionOperationResponse response = new RevisionOperationResponse();
-        response.setResult(pair.getLeft());
+        response.setResult(pair.getLeft().name());
         response.setData(pair.getRight());
         return response;
     }
@@ -184,6 +229,26 @@ public class RevisionService {
             response.getRows().add(result.getRight().get(0));
         }
         return response;
+    }
+
+    private void addRemoveCommand(TransferData data) {
+        switch(data.getConfiguration().getType()) {
+            case STUDY_ATTACHMENT:
+            case STUDY_VARIABLE:
+            case STUDY_VARIABLES: {
+                // In these cases we need to reindex study/studies instead of removing something
+                Long id = Long.parseLong(data.getField("study").getValue(Language.DEFAULT).getCurrent());
+                addStudyIndexerCommand(id, true);
+                break;
+            }
+            default:
+                for(Language language : Language.values()) {
+                    indexer.addCommand(
+                            RevisionIndexerCommand
+                                    .remove(data.getConfiguration().getType(), language, data.getKey().getId(), data.getKey().getNo()));
+                }
+                break;
+        }
     }
 
     private void addIndexCommand(TransferData data) {
@@ -217,6 +282,9 @@ public class RevisionService {
             // Wait while the current batch is being handled
             while(runningBatch = true) {
                 Thread.sleep(500);
+            }
+            if(studyCommandBatch.containsKey(pair.getRight().getKey())) {
+                return;
             }
             if(index) {
                 studyCommandBatch.put(pair.getRight().getKey(), RevisionIndexerCommand.index(ConfigurationType.STUDY, pair.getRight().getKey()));
