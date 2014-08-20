@@ -43,7 +43,7 @@ define(function (require) {
                                 },
                                 {
                                     "type": "CELL",
-                                    "title": "-",
+                                    "title": "Viimeisin muutospvm",
                                     "horizontal": true,
                                     "field": {
                                         "key": "savedAt"

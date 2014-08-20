@@ -61,8 +61,7 @@ Colors:
 
 @media (min-width: 768px) {
     .navbar-nav > li > a {
-        padding-top: 60px;
-        padding-bottom: 15px;
+        padding: 60px 10px 15px 10px;
     }
 }
 
