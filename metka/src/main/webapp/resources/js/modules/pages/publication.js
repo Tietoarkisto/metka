@@ -35,7 +35,7 @@ define(function (require) {
                             "cells": [
                                 {
                                     "type": "CELL",
-                                    "title": "Julkaisu lisäyspvm",
+                                    "title": "Julkaisun lisäyspvm",
                                     "horizontal": true,
                                     "field": {
                                         "key": "publicationfirstsaved"
@@ -191,9 +191,6 @@ define(function (require) {
                 require('./../searchButton')('/revision/ajax/search', function () {
                     return {
                         type: require('./../../metka').PAGE,
-                        searchApproved: data('searchApproved').get(),
-                        searchDraft: data('searchDraft').get(),
-                        searchRemoved: data('searchRemoved').get(),
                         values: {
                             id: data('id').get(),
                             seriesabbr: data('seriesabbr').get(),
@@ -205,7 +202,7 @@ define(function (require) {
                 }, function (result) {
                     return {
                         id: result.id,
-                        revision: result.no,
+                        no: result.no,
                         seriesabbr: result.values.seriesabbr,
                         seriesname: result.values.seriesname,
                         state: MetkaJS.L10N.get('search.result.state.{state}'.supplant(result))
@@ -219,7 +216,7 @@ define(function (require) {
                 ], function (transferRow) {
                     require('./../assignUrl')('view', {
                         id: transferRow.fields.id.value.current,
-                        revision: transferRow.fields.revision.value.current
+                        no: transferRow.fields.no.value.current
                     });
                 }),
                 {
@@ -247,7 +244,7 @@ define(function (require) {
                                         if (response.result === 'REVISION_CREATED') {
                                             require('./../assignUrl')('view', {
                                                 id: response.data.key.id,
-                                                revision: response.data.key.no,
+                                                no: response.data.key.no,
                                                 page: response.data.configuration.type.toLowerCase()
                                             });
                                         }
@@ -266,6 +263,12 @@ define(function (require) {
                         "options": [
                             {
                                 "&title": {
+                                    "default": ""
+                                },
+                                "value": ''
+                            },
+                            {
+                                "&title": {
                                     "default": "Kyllä"
                                 },
                                 "value": 1
@@ -282,6 +285,12 @@ define(function (require) {
                         "key": "langs",
                         "type": "VALUE",
                         "options": [
+                            {
+                                "&title": {
+                                    "default": ""
+                                },
+                                "value": ''
+                            },
                             {
                                 "&title": {
                                     "default": "Suomi"
@@ -387,6 +396,7 @@ define(function (require) {
                 }
             }
         };
+        var data = require('./../data')(options);
         return function (onLoad) {
             onLoad(options);
         };

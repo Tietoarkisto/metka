@@ -1,138 +1,203 @@
 {
-	"key": {
-		"version": 1,
-		"type": "PUBLICATION"
-	},
+    "key": {
+        "version": 1,
+        "type": "PUBLICATION"
+    },
     "selectionLists": {
-		"yes_no": {
-			"key": "yes_no",
-			"type": "VALUE",
-			"options": [
-				{
-					"value": 1
-				},
-				{
-					"value": 0
-				}
-			]
-		},
-		"langs": {
-			"key": "langs",
-			"type": "VALUE",
-			"options": [
-				{
-					"value": 0
-				},
-				{
-					"value": 1
-				}
-			]
-		},
-		"notification_way": {
-			"key": "notification_way",
-			"type": "VALUE",
-			"options": [
-				{
-					"value": 0
-				}
-			]
-		}
-	},
-	"fields": {
-		"publication_year": {
-			"key": "publication_year",
-			"translatable": false,
-			"type": "INTEGER"
-		},
-		"can_publish": {
-			"key": "can_publish",
-			"translatable": false,
-			"type": "SELECTION",
-			"selectionList": "yes_no"
-		},
-		"publication_lang": {
-			"key": "publication_lang",
-			"translatable": false,
-			"type": "SELECTION",
-			"selectionList": "langs"
-		},
-		"notification_way": {
-			"key": "notification_way",
-			"translatable": false,
-			"type": "SELECTION",
-			"selectionList": "notification_way"
-		},
-		"publication_title": {
-			"key": "publication_title",
-			"type": "STRING"
-		},
-		"relPubl": {
-			"key": "relPubl",
-			"type": "STRING"
-		},
-		"notices": {
-			"key": "notices",
-			"type": "STRING"
-		},
-		"persons": {
-			"key": "persons",
-			"type": "CONTAINER",
-			"subfields": [
-				"subfield_surname",
-				"subfield_first_name"
-			]
-		},
-		"subfield_surname": {
-			"key": "surname",
-			"type": "STRING",
-			"subfield": true
-		},
-		"subfield_first_name": {
-			"key": "first_name",
-			"type": "STRING",
-			"subfield": true
-		},
-		"pids": {
-			"key": "pids",
-			"type": "CONTAINER",
-			"subfields": [
-				"subfield_pid",
-				"subfield_pid_type"
-			]
-		},
-		"subfield_pid": {
-			"key": "pid",
-			"type": "STRING",
-			"subfield": true
-		},
-		"subfield_pid_type": {
-			"_comment": "Derived is an old type and not supported, changing to STRING for the moment.",
-			"key": "pid_type",
-			"type": "STRING",
-			"subfield": true
-		},
-		"studies": {
-			"key": "studies",
-			"type": "REFERENCE"
-		},
-		"series": {
-			"key": "series",
-			"type": "REFERENCE"
-		},
-		"first_saved": {
-			"_comment": "This can be computed from the revision history and might not be required as part of the datamodel.",
-			"key": "first_saved",
-			"type": "DATE"
-		},
-		"last_modified": {
-			"_comment": "This can be computed from the revision history and might not be required as part of the datamodel.",
-			"key": "last_modified",
-			"type": "DATE"
-		},
-		"handler": {
-			"_comment": "This can be computed from the revision history and might not be required as part of the datamodel.",
-			"key": "handler",
-			"type": "REFERENCE"
-		}
-	}
+        "yes_no": {
+            "key": "yes_no",
+            "type": "VALUE",
+            "options": [
+                {
+                    "&title": {
+                        "default": "Kyllä"
+                    },
+                    "value": 1
+                },
+                {
+                    "&title": {
+                        "default": "Ei"
+                    },
+                    "value": 0
+                }
+            ]
+        },
+        "langs": {
+            "key": "langs",
+            "type": "VALUE",
+            "options": [
+                {
+                    "&title": {
+                        "default": "Suomi"
+                    },
+                    "value": "fi"
+                },
+                {
+                    "&title": {
+                        "default": "Englanti"
+                    },
+                    "value": "en"
+                },
+                {
+                    "&title": {
+                        "default": "Ruotsi"
+                    },
+                    "value": "sv"
+                },
+                {
+                    "&title": {
+                        "default": "Muu"
+                    },
+                    "value": "other"
+                }
+            ]
+        },
+        "publicationannouncement_list": {
+            "key": "publicationannouncement_list",
+            "type": "VALUE",
+            "options": [
+                {
+                    "&title": {
+                        "default": "Ei tietoa"
+                    },
+                    "value": 0
+                },
+                {
+                    "&title": {
+                        "default": "Alkup. tutkija ilmoit."
+                    },
+                    "value": 1
+                },
+                {
+                    "&title": {
+                        "default": "Oma paikannus"
+                    },
+                    "value": 2
+                },
+                {
+                    "&title": {
+                        "default": "käyttäjä ilmoit."
+                    },
+                    "value": 3
+                }
+            ]
+        }
+    },
+    "fields": {
+        "publicationyear": {
+            "key": "publicationyear",
+            "translatable": false,
+            "required": true,
+            "type": "INTEGER"
+        },
+        "publicationpublic": {
+            "key": "publicationpublic",
+            "translatable": false,
+            "type": "SELECTION",
+            "required": true,
+            "selectionList": "yes_no"
+        },
+        "publicationid": {
+            "key": "publicationid",
+            "translatable": false,
+            "required": true,
+            "type": "INTEGER"
+        },
+        "publicationfirstsaved": {
+            "_comment": "This can be computed from the revision history and might not be required as part of the datamodel.",
+            "key": "publicationfirstsaved",
+            "required": true,
+            "type": "DATE"
+        },
+        "publicationannouncement": {
+            "key": "publicationannouncement",
+            "translatable": false,
+            "required": true,
+            "type": "SELECTION",
+            "selectionList": "publicationannouncement_list"
+        },
+        "publicationlanguage": {
+            "key": "publicationlanguage",
+            "translatable": false,
+            "required": true,
+            "type": "SELECTION",
+            "selectionList": "langs"
+        },
+        "publicationtitle": {
+            "key": "publicationtitle",
+            "required": true,
+            "type": "STRING"
+        },
+        "publicationrelpubl": {
+            "key": "publicationrelpubl",
+            "required": true,
+            "type": "STRING"
+        },
+        "publicationnotes": {
+            "key": "publicationnotes",
+            "type": "STRING"
+        },
+        "publicationauthors": {
+            "key": "publicationauthors",
+            "translatable": false,
+            "type": "CONTAINER",
+            "subfields": [
+                "firstname",
+                "lastname"
+            ]
+        },
+        "firstname": {
+            "key": "firstname",
+            "type": "STRING",
+            "subfield": true,
+            "summaryField": true
+        },
+        "lastname": {
+            "key": "lastname",
+            "type": "STRING",
+            "subfield": true,
+            "summaryField": true
+        },
+        "publicationpids": {
+            "key": "publicationpids",
+            "type": "CONTAINER",
+            "subfields": [
+                "pid",
+                "pidtype"
+            ]
+        },
+        "pid": {
+            "key": "pid",
+            "type": "STRING",
+            "subfield": true,
+            "summaryField": true
+        },
+        "pidtype": {
+            "_comment": "Derived is an old type and not supported, changing to STRING for the moment.",
+            "key": "pidtype",
+            "type": "STRING",
+            "subfield": true,
+            "summaryField": true
+        },
+        "studies": {
+            "key": "studies",
+            "type": "REFERENCE"
+        },
+        "series": {
+            "key": "series",
+            "type": "REFERENCE"
+        },
+        "savedAt": {
+            "_comment": "This can be computed from the revision history and might not be required as part of the datamodel.",
+            "key": "savedAt",
+            "required": true,
+            "type": "DATE"
+        },
+        "savedBy": {
+            "_comment": "This can be computed from the revision history and might not be required as part of the datamodel.",
+            "key": "savedBy",
+            "required": true,
+            "type": "REFERENCE"
+        }
+    }
 }

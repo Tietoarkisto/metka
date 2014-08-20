@@ -35,7 +35,7 @@ define(function (require) {
                                             }, ['title'], function (transferRow) {
                                                 require('./../assignUrl')('view', {
                                                     id: transferRow.fields.id.value.current,
-                                                    revision: '???'
+                                                    no: '???'
                                                 });
                                             }
                                         );

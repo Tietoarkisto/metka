@@ -99,6 +99,11 @@
                 "&search": {
                     "default": "Julkaisuhaku"
                 }
+            },
+            "BINDERS": {
+                "&title": {
+                    "default": "Mapit"
+                }
             }
         },
 
