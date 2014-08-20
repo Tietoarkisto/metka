@@ -8,12 +8,12 @@ import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import fi.uta.fsd.metkaSearch.results.ResultHandler;
 import fi.uta.fsd.metkaSearch.results.ResultList;
 import fi.uta.fsd.metkaSearch.results.RevisionResult;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.FieldType;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.apache.lucene.queryparser.flexible.standard.StandardQueryParser;
 import org.apache.lucene.queryparser.flexible.standard.config.NumericConfig;
 import org.apache.lucene.search.Query;
-import org.springframework.util.StringUtils;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -22,10 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This class provides information and query necessary for checking series abbreviation uniqueness.
- * This class as with most search commands is final since
- *
- * // TODO: general field uniqueness checker for both inside a revisionable and between revisionables. This implementation is really just a test case.
+ * This class provides information and query necessary for performing basic series test from Series search page.
  */
 public final class SeriesBasicSearchCommand extends RevisionSearchCommandBase<RevisionResult> {
     public static SeriesBasicSearchCommand build(boolean allowApproved, boolean allowDraft, boolean allowRemoved,
@@ -57,28 +54,20 @@ public final class SeriesBasicSearchCommand extends RevisionSearchCommandBase<Re
         if(revisionableId != null) qrys.add("+key.id:"+revisionableId);
         nums.put("key.id", new NumericConfig(1, new DecimalFormat(), FieldType.NumericType.LONG));
 
-        if(StringUtils.hasText(abbreviation)) {
+        if(StringUtils.isNotBlank(abbreviation)) {
             qrys.add("+seriesabbr:"+abbreviation);
             addWhitespaceAnalyzer("seriesabbr");
         }
-        if(StringUtils.hasText(name)) {
+        if(StringUtils.isNotBlank(name)) {
             qrys.add("+seriesname:"+name);
             addTextAnalyzer("seriesname");
         }
 
-        String qryStr = "";
-        for(String qry : qrys) {
-            if(qryStr.length() > 0) {
-                qryStr += " ";
-            }
-            qryStr += qry;
-        }
+        String qryStr = StringUtils.join(qrys, " ");
 
         StandardQueryParser parser = new StandardQueryParser(getAnalyzer());
         parser.setNumericConfigMap(nums);
         query = parser.parse(qryStr, "general");
-
-        //query = bQuery;
     }
 
     @Override

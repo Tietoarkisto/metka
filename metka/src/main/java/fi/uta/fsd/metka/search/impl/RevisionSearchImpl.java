@@ -13,7 +13,9 @@ import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.transfer.revision.RevisionSearchRequest;
 import fi.uta.fsd.metka.transfer.revision.RevisionSearchResult;
 import fi.uta.fsd.metkaSearch.SearcherComponent;
+import fi.uta.fsd.metkaSearch.commands.searcher.publication.PublicationBasicSearchCommand;
 import fi.uta.fsd.metkaSearch.commands.searcher.series.SeriesBasicSearchCommand;
+import fi.uta.fsd.metkaSearch.commands.searcher.study.StudyBasicSearchCommand;
 import fi.uta.fsd.metkaSearch.commands.searcher.study.StudyIdSearchCommand;
 import fi.uta.fsd.metkaSearch.results.ResultList;
 import fi.uta.fsd.metkaSearch.results.RevisionResult;
@@ -63,7 +65,6 @@ public class RevisionSearchImpl implements RevisionSearch {
     }
 
     private Pair<ReturnResult, List<RevisionSearchResult>> findSeries(RevisionSearchRequest request) {
-        // TODO: get path language from some common source that knows which language we should search.
         SeriesBasicSearchCommand command;
         try {
             command = SeriesBasicSearchCommand.build(request.isSearchApproved(), request.isSearchDraft(), request.isSearchRemoved(),
@@ -72,41 +73,36 @@ public class RevisionSearchImpl implements RevisionSearch {
             return new ImmutablePair<>(ReturnResult.SEARCH_SUCCESS, collectResults(results));
         } catch(QueryNodeException qne) {
             // Couldn't form query command
-            qne.printStackTrace();
+            logger.error("Exception while performing basic series search:", qne);
             return new ImmutablePair<>(ReturnResult.SEARCH_FAILED, null);
         }
     }
 
     private Pair<ReturnResult, List<RevisionSearchResult>> findStudies(RevisionSearchRequest request) {
-        // TODO: get path language from some common source that knows which language we should search.
-        // TODO: Implement study basic search
-        /*StudyBasicSearchCommand command;
-        try {
-            command = StudyBasicSearchCommand.build(Language.DEFAULT.toValue(), request.isSearchApproved(), request.isSearchDraft(), request.isSearchRemoved(),);
+        StudyBasicSearchCommand command;
+        /*try {
+            command = StudyBasicSearchCommand.build(request.isSearchApproved(), request.isSearchDraft(), request.isSearchRemoved(),);
             ResultList<RevisionResult> results = searcher.executeSearch(command);
             return new ImmutablePair<>(ReturnResult.SEARCH_SUCCESS, collectResults(results));
         } catch(QueryNodeException qne) {
             // Couldn't form query command
-            qne.printStackTrace();
+            logger.error("Exception while performing basic study search:", qne);
             return new ImmutablePair<>(ReturnResult.SEARCH_FAILED, null);
         }*/
         return null;
     }
 
     private Pair<ReturnResult, List<RevisionSearchResult>> findPublications(RevisionSearchRequest request) {
-        // TODO: get path language from some common source that knows which language we should search.
-        // TODO: Implement publication basic search
-        /*PublicationBasicSearchCommand command;
-        try {
-            command = PublicationBasicSearchCommand.build(Language.DEFAULT.toValue(), request.isSearchApproved(), request.isSearchDraft(), request.isSearchRemoved(),);
+        PublicationBasicSearchCommand command;
+        /*try {
+            command = PublicationBasicSearchCommand.build(request.isSearchApproved(), request.isSearchDraft(), request.isSearchRemoved(), );
             ResultList<RevisionResult> results = searcher.executeSearch(command);
             return new ImmutablePair<>(ReturnResult.SEARCH_SUCCESS, collectResults(results));
         } catch(QueryNodeException qne) {
             // Couldn't form query command
-            qne.printStackTrace();
+            logger.error("Exception while performing basic publication search:", qne);
             return new ImmutablePair<>(ReturnResult.SEARCH_FAILED, null);
-        }
-        */
+        }*/
         return null;
     }
 
@@ -163,8 +159,10 @@ public class RevisionSearchImpl implements RevisionSearch {
                     addSeriesSearchResults(searchResult, data);
                     break;
                 case STUDY:
+                    addStudySearchResults(searchResult, data);
+                    break;
                 case PUBLICATION:
-                    // TODO: Add study and publication search results
+                    addPublicationSearchResults(searchResult, data);
                     break;
             }
             results.add(searchResult);
@@ -186,5 +184,35 @@ public class RevisionSearchImpl implements RevisionSearch {
         } else {
             searchResult.getValues().put("seriesabbr", "");
         }
+    }
+
+    private void addStudySearchResults(RevisionSearchResult searchResult, RevisionData data) {
+        /*Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get("seriesname"));
+        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+            searchResult.getValues().put("seriesname", fieldPair.getRight().getActualValueFor(Language.DEFAULT));
+        } else {
+            searchResult.getValues().put("seriesname", "");
+        }
+        fieldPair = data.dataField(ValueDataFieldCall.get("seriesabbr"));
+        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+            searchResult.getValues().put("seriesabbr", fieldPair.getRight().getActualValueFor(Language.DEFAULT));
+        } else {
+            searchResult.getValues().put("seriesabbr", "");
+        }*/
+    }
+
+    private void addPublicationSearchResults(RevisionSearchResult searchResult, RevisionData data) {
+        /*Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get("seriesname"));
+        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+            searchResult.getValues().put("seriesname", fieldPair.getRight().getActualValueFor(Language.DEFAULT));
+        } else {
+            searchResult.getValues().put("seriesname", "");
+        }
+        fieldPair = data.dataField(ValueDataFieldCall.get("seriesabbr"));
+        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+            searchResult.getValues().put("seriesabbr", fieldPair.getRight().getActualValueFor(Language.DEFAULT));
+        } else {
+            searchResult.getValues().put("seriesabbr", "");
+        }*/
     }
 }

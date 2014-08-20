@@ -10,8 +10,7 @@ import fi.uta.fsd.metka.search.SeriesSearch;
 import fi.uta.fsd.metka.storage.entity.impl.SeriesEntity;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
-import fi.uta.fsd.metka.storage.util.JSONUtil;
-import fi.uta.fsd.metkaSearch.SearcherComponent;
+import fi.uta.fsd.metka.transfer.revision.RevisionSearchResult;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +21,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Repository("seriesSearch")
@@ -30,12 +30,6 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
 
     @PersistenceContext(name = "entityManager")
     private EntityManager em;
-
-    @Autowired
-    private JSONUtil json;
-
-    @Autowired
-    private SearcherComponent searcher;
 
     @Autowired
     private GeneralRepository general;
@@ -60,6 +54,37 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
         }
         Collections.sort(list);
         return list;
+    }
+
+    @Override
+    public List<RevisionSearchResult> findNames() {
+        List<RevisionSearchResult> results = new ArrayList<>();
+
+        List<SeriesEntity> entities = em.createQuery("SELECT s FROM SeriesEntity s", SeriesEntity.class).getResultList();
+        for(SeriesEntity entity : entities) {
+            Pair<ReturnResult, RevisionData> pair = general.getRevisionDataOfType(entity.latestRevisionKey(), ConfigurationType.SERIES);
+            if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
+                logger.error("Didn't find revision for series "+entity.toString());
+                continue;
+            }
+            RevisionSearchResult result = new RevisionSearchResult();
+            RevisionData revision = pair.getRight();
+            result.setId(revision.getKey().getId());
+            Pair<StatusCode, ValueDataField> fieldPair = revision.dataField(ValueDataFieldCall.get("seriesname"));
+            result.getValues().put("seriesname",
+                    fieldPair.getLeft() == StatusCode.FIELD_FOUND
+                            ? fieldPair.getRight().getActualValueFor(Language.DEFAULT)
+                            : "");
+            results.add(result);
+        }
+        Collections.sort(results, new Comparator<RevisionSearchResult>() {
+            @Override
+            public int compare(RevisionSearchResult o1, RevisionSearchResult o2) {
+                int result = o1.getValues().get("seriesname").compareTo(o2.getValues().get("seriesname"));
+                return result != 0 ? result : o1.getId().compareTo(o2.getId());
+            }
+        });
+        return results;
     }
 
 

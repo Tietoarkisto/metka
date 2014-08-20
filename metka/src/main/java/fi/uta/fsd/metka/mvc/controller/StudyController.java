@@ -44,4 +44,6 @@ public class StudyController {
     public @ResponseBody StudyVariablesStudiesResponse listStudiesWithVariables() {
         return service.collectStudiesWithVariables();
     }
+
+    // TODO: Collect single study attachment revision history
 }

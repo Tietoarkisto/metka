@@ -1,6 +1,7 @@
 package fi.uta.fsd.metka.mvc.controller;
 
 import fi.uta.fsd.metka.mvc.services.SeriesService;
+import fi.uta.fsd.metka.transfer.revision.RevisionSearchResponse;
 import fi.uta.fsd.metka.transfer.revision.SeriesAbbreviationsResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,8 +21,12 @@ public class SeriesController {
     private SeriesService seriesService;
 
     @RequestMapping(value="getAbbreviations", method = RequestMethod.GET)
-    public @ResponseBody
-    SeriesAbbreviationsResponse getAbbreviations() {
+    public @ResponseBody SeriesAbbreviationsResponse getAbbreviations() {
         return seriesService.findAbbreviations();
+    }
+
+    @RequestMapping(value="getNames", method = RequestMethod.GET)
+    public @ResponseBody RevisionSearchResponse getNames() {
+        return seriesService.findNames();
     }
 }
