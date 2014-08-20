@@ -87,7 +87,15 @@
                     }
                 }
             },
+            "STUDY_VARIABLES": {
+                "&search": {
+                    "default": "Muuttujahaku"
+                }
+            },
             "PUBLICATION": {
+                "&title": {
+                    "default": "Julkaisu"
+                },
                 "&search": {
                     "default": "Julkaisuhaku"
                 }
@@ -483,6 +491,14 @@
                     "&modify": {
                         "default": "Muokkaa julkaisuun liittyvää huomiota"
                     }
+                },
+                "errors": {
+                    "&add": {
+                        "default": "Lisää aineistovirhe"
+                    },
+                    "&modify": {
+                        "default": "Muokkaa aineistovirhettä"
+                    }
                 }
             },
 
@@ -685,8 +701,17 @@
                 "othermaterialtext": "Tarkka kuvaus",
 
                 // Kuvailu: Huomiot
-                "publicationcomment": "Julkaisuihin liittyvä huomio"
+                "publicationcomment": "Julkaisuihin liittyvä huomio",
 
+                // Virheet
+                "score": "Pisteet",
+                "section": "Aineiston osa",
+                "subsection": "Osio",
+                "language": "Kieli",
+                "summary": "Selite",
+                "description": "Pitkä selite",
+                "triggerDate": "Herätepäivämäärä",
+                "triggerTarget": "Herätteen saaja"
             }
         },
 
@@ -740,6 +765,21 @@
                 "fileoriginal": "Alkuperäinen",
                 "filepublication": "WWW",
                 "filedip": "Ulosluovutus"
+            }
+        },
+
+        STUDY_VARIABLES: {
+            field: {
+                title: 'Aineisto'
+            }
+        },
+
+        "PUBLICATION": {
+            "field": {
+                "firstname": "Etunimi",
+                "lastname": "Sukunimi",
+                "pid": "Pysyvä tunniste",
+                "pidtype": "Tunnisteen tyyppi"
             }
         }
     };

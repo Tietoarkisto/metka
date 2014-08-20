@@ -105,7 +105,7 @@ define(function (require) {
                                 var text;
                                 if (getPropertyNS(options, 'dataConf.selectionLists', options.dataConf.fields[column].selectionList, 'options').some(function (option) {
                                     if (option.value === value) {
-                                        text = MetkaJS.L10N.localize(option, 'title');
+                                        text = require('./selectInput').optionText(option);
                                         return true;
                                     }
                                 })) {
@@ -125,13 +125,15 @@ define(function (require) {
 
         function appendRow(transferRow) {
             if (!transferRow.removed) {
-                $tbody.append(tr(transferRow));
+                var $tr = tr(transferRow)
+                $tbody.append($tr);
+                return $tr;
             }
         }
 
         function addRow(transferRow) {
             require('./data')(options).append(transferRow);
-            appendRow(transferRow);
+            return appendRow(transferRow);
         }
 
         function addRowFromDataObject(data) {
@@ -139,10 +141,12 @@ define(function (require) {
         }
 
         function rowDialog(title, button, onClose) {
-            return function (data) {
-                var $row = $(this);
+            return function (transferRow) {
+                // copy data, so if dialog is dismissed, original data won't change
+                transferRow = $.extend(true, {}, transferRow);
+
                 var containerOptions = {
-                    data: data,
+                    data: transferRow,
                     dataConf: options.dataConf,
                     content: [
                         {
@@ -172,12 +176,10 @@ define(function (require) {
                                 this
                                     .text(MetkaJS.L10N.get('general.buttons.' + button))
                                     .click(function () {
-                                        var data = {};
-                                        options.dataConf.fields[key].subfields.forEach(function (field) {
-                                            data[field] = require('./data')(containerOptions)(field).get();
-                                        });
-
-                                        onClose.call($row, data);
+                                        var $tr = onClose(transferRow);
+                                        if (options.field.onRowChange) {
+                                            options.field.onRowChange($tr, transferRow);
+                                        }
                                     });
                             }
                         },
@@ -194,24 +196,27 @@ define(function (require) {
 
         this.data('addRowFromDataObject', addRowFromDataObject);
 
+        // TODO: errors for entire container from options.errors
+
         this.append($('<div class="panel">')
             .addClass('panel-' + (options.style || 'default'))
             .append($('<div class="panel-heading">')
                 .text(MetkaJS.L10N.localize(options, 'title')))
             .append($('<table class="table table-condensed">')
                 .if(options.field.onClick || !require('./isFieldDisabled')(options), function () {
-                    var onClick = options.field.onClick || rowDialog('add', 'ok', function (data) {
-                        var transferRow = require('./map/object/transferRow')(data);
-                        this.data('transferRow').fields = transferRow.fields;
-                        this.replaceWith(tr(transferRow));
-                    });
 
                     this
                         .addClass('table-hover');
 
                     $tbody
                         .on('click', 'tr', function () {
-                            onClick.call(this, $(this).data('transferRow'));
+                            var $tr = $(this);
+                            var onClick = options.field.onClick || rowDialog('modify', 'ok', function (transferRow) {
+                                //this.data('transferRow').fields = transferRow.fields;
+                                return $tr.replaceWith(tr(transferRow));
+                            });
+
+                            onClick.call(this, $tr.data('transferRow'));
                         });
                 })
                 .append($('<thead>')
@@ -349,7 +354,7 @@ define(function (require) {
                         .addClass('btn-sm')
                         .text(MetkaJS.L10N.get('general.table.add'))
                         .click(function () {
-                            rowDialog('add', 'add', addRowFromDataObject).call(this, {});
+                            rowDialog('add', 'add', addRow)({});
                         }));
                 }
 

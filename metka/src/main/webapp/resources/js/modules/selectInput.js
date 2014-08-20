@@ -1,7 +1,7 @@
 define(function (require) {
     'use strict';
 
-    return function (options) {
+    function SelectInput(options) {
         var key = options.field.key;
         var $input = this;
 
@@ -15,21 +15,7 @@ define(function (require) {
                 $input.append(optionsList.map(function (option, i) {
                     return $('<option>')
                         .val(option.value)
-                        .text((function () {
-                            if (MetkaJS.L10N.hasTranslation(option, 'title')) {
-                                return MetkaJS.L10N.localize(option, 'title');
-                            }
-
-                            if (option.title) {
-                                if (option.title.type === 'LITERAL') {
-                                    return option.title.value;
-                                }
-                            }
-
-                            log('unable to create option text', option, listKey);
-                            return;
-                            // MetkaJS.L10N.get([MetkaJS.Globals.page.toUpperCase(), key, option.value].join('.'));
-                        })());
+                        .text(SelectInput.optionText(option));
                 }));
 
                 require('./data')(options).onChange(function () {
@@ -38,6 +24,9 @@ define(function (require) {
                         $input.val(value);
                     } else {
                         $input.children().first().prop('selected', true);
+                        if (!(list.includeEmpty === null || list.includeEmpty)) {
+                            $input.change();
+                        }
                     }
                 });
             }
@@ -117,5 +106,25 @@ define(function (require) {
                 setOptions(list.options);
             }
         })(selectionListKey);
+    }
+
+    SelectInput.optionText = function (option) {
+        if (MetkaJS.L10N.hasTranslation(option, 'title')) {
+            return MetkaJS.L10N.localize(option, 'title');
+        }
+
+        if (option.title) {
+            if (option.title.type === 'LITERAL') {
+                return option.title.value;
+            }
+        }
+
+        return option.value;
+
+        //log('unable to create option text', option, listKey);
+        //return;
+        // MetkaJS.L10N.get([MetkaJS.Globals.page.toUpperCase(), key, option.value].join('.'));
     };
+
+    return SelectInput;
 });

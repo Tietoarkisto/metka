@@ -36,7 +36,6 @@ define(function (require) {
                         {
                             "type": "ROW",
                             "cells": [
-                                // TODO: tyypiksi select ja vaihtoehdot {searchData.abbreviations}
                                 {
                                     "type": "CELL",
                                     "title": "Lyhenne",
@@ -46,7 +45,7 @@ define(function (require) {
                                         "key": "seriesabbr"
                                     },
                                     create: function () {
-                                        var $input = $(this);
+                                        var $input = $(this).find('select');
                                         require('./../server')('/series/getAbbreviations', {
                                             method: 'GET',
                                             success: function (data) {

@@ -8,6 +8,7 @@ import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.transfer.study.StudyError;
 import fi.uta.fsd.metka.transfer.study.StudyErrorListResponse;
+import fi.uta.fsd.metka.transfer.study.StudyVariablesStudiesResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class StudyController {
     private static final String MODIFY = "modify";
 
     @Autowired
-    private StudyService studyService;
+    private StudyService service;
     @Autowired
     private ConfigurationService configService;
     @Autowired
@@ -53,7 +54,10 @@ public class StudyController {
         return errors.removeStudyError(id);
     }
 
-
+    @RequestMapping("studiesWithVariables")
+    public @ResponseBody StudyVariablesStudiesResponse listStudiesWithVariables() {
+        return service.collectStudiesWithVariables();
+    }
 
     /*
     * View single study
