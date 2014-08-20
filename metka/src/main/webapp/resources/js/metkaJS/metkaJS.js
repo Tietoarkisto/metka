@@ -27,25 +27,6 @@
         },
 
         /**
-         * Contains information of the revisionable object currently being viewed.
-         * This is se to null if the object is not found in model.
-         * Also provides shorthand functions for navigating related to the object.
-         */
-        SingleObject: {
-            id: null,
-            revision: null,
-            state: null
-        },
-
-        // Shorthand function for viewing certain revision of certain revisionable. Forms the correct URL and navigates straight to it.
-        view: function (id, revision) {
-            require('./assignUrl')('view', {
-                id: id,
-                revision: revision
-            });
-        },
-
-        /**
          * General close function for dialogs.
          * Closes the dialog with provided id.
          * @param id - Id of the dialog

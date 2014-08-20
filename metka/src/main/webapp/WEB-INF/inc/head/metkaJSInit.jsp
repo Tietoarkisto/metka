@@ -36,15 +36,6 @@
     MetkaJS.L10N.put("general.errors.title.noImplementation", "<spring:message code='general.errors.title.noImplementation' />");
     MetkaJS.L10N.put("general.errors.container.dialog.noImplementation", "<spring:message code='general.errors.container.dialog.noImplementation' />");
 
-<%-- Initialise single object if applicable --%>
-<c:choose>
-<c:when test="${not empty single}">
-    MetkaJS.SingleObject.id = ${single.id};
-    MetkaJS.SingleObject.revision = ${single.revision};
-    MetkaJS.SingleObject.state = '${single.state}';
-</c:when>
-</c:choose>
-
 <%-- List displayable errors --%>
 <c:if test="${not empty displayableErrors}">
 <c:forEach items="${displayableErrors}" var="errorObject">

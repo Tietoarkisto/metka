@@ -6,8 +6,6 @@ define(function (require) {
     require('./metka');
     require('./modules/topMenu');
 
-
-
     var $container = $('<div class="content container">');
 
     require('./modules/pageConfig')(function (pageOptions) {
@@ -28,6 +26,4 @@ define(function (require) {
             .append($('<div class="wrapper">')
                 .append($container));
     });
-
-
 });

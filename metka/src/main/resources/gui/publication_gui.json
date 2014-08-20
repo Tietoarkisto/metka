@@ -6,6 +6,83 @@
     "content": [
         {
             "type": "COLUMN",
+            "columns": 3,
+            "rows": [
+                {
+                    "type": "ROW",
+                    "cells": [
+                        {
+                            "type": "CELL",
+                            "title": "Julkaisuvuosi",
+                            "field": {
+                                "key": "publicationyear"
+                            }
+                        },
+                        {
+                            "type": "CELL",
+                            "title": "Voiko julkaista",
+                            "field": {
+                                "key": "publicationpublic"
+                            }
+                        },
+                        {
+                            "type": "CELL",
+                            "title": "Julkaisu id-nro",
+                            "field": {
+                                "key": "publicationid"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "ROW",
+                    "cells": [
+                        {
+                            "type": "CELL",
+                            "title": "1. Tallennuspvm",
+                            "field": {
+                                "key": "publicationfirstsaved"
+                            }
+                        },
+                        {
+                            "type": "CELL",
+                            "title": "Julkaisun ilmoitustapa",
+                            "field": {
+                                "key": "publicationannouncement"
+                            }
+                        },
+                        {
+                            "type": "CELL",
+                            "title": "Julkaisun kieli",
+                            "field": {
+                                "key": "publicationlanguage"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "ROW",
+                    "cells": [
+                        {
+                            "type": "CELL",
+                            "title": "Viimeisin muutospvm",
+                            "field": {
+                                "key": "savedAt"
+                            }
+                        },
+                        {
+                            "type": "CELL",
+                            "title": "Käsittelijä",
+                            "field": {
+                                "key": "savedBy"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "COLUMN",
             "columns": 1,
             "rows": [
                 {
@@ -13,46 +90,9 @@
                     "cells": [
                         {
                             "type": "CELL",
-                            "title": "ID",
-                            "readOnly": true,
+                            "title": "Julkaisun otsikko",
                             "field": {
-                                "key": "seriesid"
-                            }
-                        }
-                    ]
-                },
-                {
-                    "type": "ROW",
-                    "cells": [
-                        {
-                            "type": "CELL",
-                            "title": "Lyhenne",
-                            "field": {
-                                "key": "seriesabbr"
-                            }
-                        }
-                    ]
-                },
-                {
-                    "type": "ROW",
-                    "cells": [
-                        {
-                            "type": "CELL",
-                            "title": "Nimi",
-                            "field": {
-                                "key": "seriesname"
-                            }
-                        }
-                    ]
-                },
-                {
-                    "type": "ROW",
-                    "cells": [
-                        {
-                            "type": "CELL",
-                            "title": "Kuvaus",
-                            "field": {
-                                "key": "seriesdesc",
+                                "key": "publicationtitle",
                                 "multiline": true
                             }
                         }
@@ -63,10 +103,71 @@
                     "cells": [
                         {
                             "type": "CELL",
-                            "title": "Huomiot",
+                            "title": "relPubl-tiedot",
                             "field": {
-                                "key": "seriesnotes",
+                                "key": "publicationrelpubl",
                                 "multiline": true
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "ROW",
+                    "cells": [
+                        {
+                            "type": "CELL",
+                            "title": "Julkaisun huomautukset",
+                            "field": {
+                                "key": "publicationnotes",
+                                "multiline": true
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "ROW",
+                    "cells": [
+                        {
+                            "type": "CELL",
+                            "title": "Liittyvät henkilöt",
+                            "field": {
+                                "key": "publicationauthors"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "ROW",
+                    "cells": [
+                        {
+                            "type": "CELL",
+                            "title": "Pysyvät tunnisteet",
+                            "field": {
+                                "key": "publicationpids"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "ROW",
+                    "cells": [
+                        {
+                            "type": "CELL",
+                            "title": "Liittyvät aineistot",
+                            "field": {
+                                "key": "studies"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "ROW",
+                    "cells": [
+                        {
+                            "type": "CELL",
+                            "title": "Liittyvät sarjat",
+                            "field": {
+                                "key": "series"
                             }
                         }
                     ]

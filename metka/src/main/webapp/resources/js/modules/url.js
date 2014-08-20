@@ -12,7 +12,7 @@ define(function (require) {
                     approve: 'revision/ajax/approve',
                     compareRevisions: 'history/revisions/compare',
                     create: 'revision/ajax/create',
-                    download: 'download/{id}/{revision}',
+                    download: 'download/{id}/{no}',
                     edit: '{page}/edit/{id}',
                     expertSearch: 'expertSearch/',
                     fileEdit: 'file/save/{value}',
@@ -25,7 +25,7 @@ define(function (require) {
                     remove: 'remove/{page}/{type}/{id}',
                     save: 'revision/ajax/save',
                     search: '{page}/ajax/search',
-                    view: 'revision/view/{page}/{id}/{revision}'
+                    view: 'revision/view/{page}/{id}/{no}'
                 }[key];
             }
         })().supplant($.extend({}, metka, extend));

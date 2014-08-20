@@ -57,7 +57,7 @@ define(function (require) {
                                         if (response.result === 'REVISION_CREATED') {
                                             require('./../assignUrl')('view', {
                                                 id: response.data.key.id,
-                                                revision: response.data.key.no,
+                                                no: response.data.key.no,
                                                 page: response.data.configuration.type.toLowerCase()
                                             });
                                         }

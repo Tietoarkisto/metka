@@ -82,7 +82,7 @@ define(function (require) {
                             '</div>'/*,
 
                             '<div class="languageSelect">',
-                                '<input type="radio" name="language" value="fi"/>fi',
+                                '<input type="radio" name="language" value="default"/>fi',
                                 '<input type="radio" name="language" value="en"/>en',
                                 '<input type="radio" name="language" value="sv"/>sv',
                             '</div>'*/
@@ -104,7 +104,7 @@ define(function (require) {
                 require('./assignUrl')('view', {
                     page: 'study',
                     id: data.rows[0].id,
-                    revision: data.rows[0].revision
+                    no: data.rows[0].revision
                 });
             },
             error: error

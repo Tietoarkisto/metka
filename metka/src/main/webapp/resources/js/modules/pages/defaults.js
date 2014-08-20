@@ -256,25 +256,25 @@ define(function (require) {
                                             "&title": {
                                                 "default": "Suomi"
                                             },
-                                            "value": 'fi'
+                                            "value": "fi"
                                         },
                                         {
                                             "&title": {
                                                 "default": "Englanti"
                                             },
-                                            "value": 'en'
+                                            "value": "en"
                                         },
                                         {
                                             "&title": {
                                                 "default": "Ruotsi"
                                             },
-                                            "value": 'sv'
+                                            "value": "sv"
                                         },
                                         {
                                             "&title": {
                                                 "default": "Muu"
                                             },
-                                            "value": 'other'
+                                            "value": "other"
                                         }
                                     ]
                                 },
@@ -442,7 +442,7 @@ define(function (require) {
 
                     var header = {
                         localized: 'type.{page}.title',
-                        pattern: '{localized} - {id} - {revision}{state}',
+                        pattern: '{localized} - {id} - {no}{state}',
                         buttons: $('<div class="pull-right normalText">')
                             .append((function () {
                                 var buttonCreateFunctions = metka.state === 'DRAFT' ? [] : [function () {
@@ -484,7 +484,7 @@ define(function (require) {
                         label: MetkaJS.L10N.get('general.id'),
                         value: metka.id
                     });
-                    supplant.revision = labelAndValue({
+                    supplant.no = labelAndValue({
                         label: MetkaJS.L10N.get('general.revision'),
                         value: metka.revision
                     });

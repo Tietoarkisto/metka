@@ -8,10 +8,11 @@ define(function (require) {
     }
 
     var pages = {
+        binders: require('./pages/binders'),
         expertsearch: require('./pages/expertSearch'),
-        study: require('./pages/study'),
-        series: require('./pages/series'),
         publication: require('./pages/publication'),
+        series: require('./pages/series'),
+        study: require('./pages/study'),
         study_variables: require('./pages/study_variables')
     };
 

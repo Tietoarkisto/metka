@@ -84,7 +84,7 @@ define(function (require) {
                         type: MetkaJS.L10N.get('type.{type}.title'.supplant(result)),
                         TYPE: result.type,
                         id: result.id,
-                        revision: result.no,
+                        no: result.no,
                         state: MetkaJS.L10N.get('search.result.state.{state}'.supplant(result))
                     };
                 }, {
@@ -97,7 +97,7 @@ define(function (require) {
                     id: {
                         type: 'INTEGER'
                     },
-                    revision: {
+                    no: {
                         type: 'INTEGER'
                     },
                     state: {
@@ -107,12 +107,12 @@ define(function (require) {
                     "title",
                     "type",
                     "id",
-                    "revision",
+                    "no",
                     "state"
                 ], function (transferRow) {
                     require('./../assignUrl')('view', {
                         id: transferRow.fields.id.value.current,
-                        revision: transferRow.fields.revision.value.current,
+                        no: transferRow.fields.no.value.current,
                         page: transferRow.fields.TYPE.value.current.toLowerCase()
                     });
                 }),
