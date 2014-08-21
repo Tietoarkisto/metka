@@ -76,7 +76,7 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
         }
         em.persist(revisionable);
         RevisionEntity revision = new RevisionEntity(new RevisionKey(revisionable.getId(), 1));
-        Pair<ReturnResult, RevisionData> dataPair = createRevisionData(revision, configPair.getRight(), request);
+        Pair<ReturnResult, RevisionData> dataPair = createRevisionData(revisionable, revision, configPair.getRight(), request);
         if(dataPair.getLeft() != ReturnResult.REVISION_CREATED) {
             logger.error("Couldn't create revision because of: "+dataPair.getLeft());
             logger.error("Removing revisionable "+revisionable.toString());
@@ -163,6 +163,7 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
                 break;
             case PUBLICATION:
                 PublicationEntity p = new PublicationEntity();
+                p.setPublicationId(general.getNewSequenceValue(ConfigurationType.PUBLICATION.toValue(), 2000L).getSequence());
                 revisionable = p;
                 break;
             case STUDY_ATTACHMENT:
@@ -189,7 +190,7 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
         return revisionable;
     }
 
-    private Pair<ReturnResult, RevisionData> createRevisionData(RevisionEntity revision, Configuration configuration, RevisionCreateRequest request) {
+    private Pair<ReturnResult, RevisionData> createRevisionData(RevisionableEntity revisionable, RevisionEntity revision, Configuration configuration, RevisionCreateRequest request) {
         Pair<ReturnResult, RevisionData> data = null;
         switch(request.getType()) {
             case SERIES: {
@@ -224,7 +225,7 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
             }
             case PUBLICATION: {
                 PublicationFactory factory = new PublicationFactory();
-                data = factory.newData(revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo(), configuration);
+                data = factory.newData(revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo(), configuration, ((PublicationEntity)revisionable).getPublicationId().toString());
                 break;
             }
             default:

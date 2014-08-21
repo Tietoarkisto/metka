@@ -101,6 +101,8 @@
             "key": "publicationid",
             "translatable": false,
             "required": true,
+            "immutable": true,
+            "editable": false,
             "type": "INTEGER"
         },
         "publicationfirstsaved": {
