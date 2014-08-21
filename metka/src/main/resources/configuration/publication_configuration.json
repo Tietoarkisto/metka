@@ -12,13 +12,13 @@
                     "&title": {
                         "default": "Kyllä"
                     },
-                    "value": 1
+                    "value": "1"
                 },
                 {
                     "&title": {
                         "default": "Ei"
                     },
-                    "value": 0
+                    "value": "0"
                 }
             ]
         },
@@ -60,25 +60,25 @@
                     "&title": {
                         "default": "Ei tietoa"
                     },
-                    "value": 0
+                    "value": "0"
                 },
                 {
                     "&title": {
                         "default": "Alkup. tutkija ilmoit."
                     },
-                    "value": 1
+                    "value": "1"
                 },
                 {
                     "&title": {
                         "default": "Oma paikannus"
                     },
-                    "value": 2
+                    "value": "2"
                 },
                 {
                     "&title": {
                         "default": "käyttäjä ilmoit."
                     },
-                    "value": 3
+                    "value": "3"
                 }
             ]
         }

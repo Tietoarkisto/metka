@@ -400,6 +400,11 @@ th {
     font-weight: bold;
 }
 
+.btn-group-translation-lang>.btn {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
 /*grouping-container*/
 .grouping-container {
     height: 460px;
