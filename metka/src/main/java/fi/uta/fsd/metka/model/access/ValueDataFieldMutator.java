@@ -66,12 +66,12 @@ final class ValueDataFieldMutator {
         }
 
         // Old value is not empty and equals new value, no change in value
-        if(pair.getRight().valueForEquals(language, value.getValue())) {
+        if(pair.getLeft() == StatusCode.FIELD_FOUND && pair.getRight().valueForEquals(language, value.getValue())) {
             return new ImmutablePair<>(StatusCode.NO_CHANGE_IN_VALUE, pair.getRight());
         }
 
         // No previous field, create ValueDataField, set value and return
-        StatusCode statusCode = StatusCode.NO_CHANGE_IN_VALUE;
+        StatusCode statusCode;
         if(pair.getLeft() == StatusCode.FIELD_MISSING) {
             ValueDataField field = ValueDataField.build(key);
             field.setCurrentFor(language, ValueContainer.build(info, value));
@@ -86,7 +86,7 @@ final class ValueDataFieldMutator {
         }
 
         if(changeMap.get(key) == null) {
-            changeMap.put(key, new Change(key, Change.ChangeType.VALUE));
+            changeMap.put(key, new Change(key));
         }
         changeMap.get(key).setChangeIn(language);
         return new ImmutablePair<>(statusCode, pair.getRight());

@@ -25,8 +25,8 @@ public class ReferenceContainerDataField extends RowContainerDataField {
     private final List<ReferenceRow> references = new ArrayList<>();
 
     @JsonCreator
-    public ReferenceContainerDataField(@JsonProperty("key") String key, @JsonProperty("type") DataFieldType type, @JsonProperty("rowIdSeq") Integer rowIdSeq) {
-        super(key, type, rowIdSeq);
+    public ReferenceContainerDataField(@JsonProperty("key") String key, @JsonProperty("rowIdSeq") Integer rowIdSeq) {
+        super(key, rowIdSeq);
     }
 
     public List<ReferenceRow> getReferences() {
@@ -95,7 +95,7 @@ public class ReferenceContainerDataField extends RowContainerDataField {
 
             ContainerChange change = (ContainerChange)changeMap.get(reference.getKey());
             if(change == null) {
-                change = new ContainerChange(reference.getKey(), Change.ChangeType.CONTAINER);
+                change = new ContainerChange(reference.getKey());
                 changeMap.put(change.getKey(), change);
             }
             change.put(Language.DEFAULT, new RowChange(reference.getRowId()));
@@ -106,7 +106,8 @@ public class ReferenceContainerDataField extends RowContainerDataField {
     @Override
     @JsonIgnore
     public DataField copy() {
-        ReferenceContainerDataField container = new ReferenceContainerDataField(getKey(), getType(), getRowIdSeq());
+        ReferenceContainerDataField container = new ReferenceContainerDataField(getKey(), getRowIdSeq());
+        //container.setType(getType());
         for(ReferenceRow reference : references) {
             container.references.add(reference.copy());
         }

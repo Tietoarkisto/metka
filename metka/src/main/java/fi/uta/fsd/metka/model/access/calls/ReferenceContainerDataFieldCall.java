@@ -1,6 +1,5 @@
 package fi.uta.fsd.metka.model.access.calls;
 
-import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.ReferenceContainerDataField;
 
 public final class ReferenceContainerDataFieldCall extends DataFieldCallBase<ReferenceContainerDataField> {
@@ -12,10 +11,6 @@ public final class ReferenceContainerDataFieldCall extends DataFieldCallBase<Ref
     // SET factories
     public static ReferenceContainerDataFieldCall set(String key) {
         return new ReferenceContainerDataFieldCall(key, CallType.SET);
-    }
-
-    public static ReferenceContainerDataFieldCall set(String key, RevisionData revision) {
-        return (ReferenceContainerDataFieldCall)set(key).setChangeMap(revision.getChanges());
     }
 
     private ReferenceContainerDataFieldCall(String key, CallType callType) {

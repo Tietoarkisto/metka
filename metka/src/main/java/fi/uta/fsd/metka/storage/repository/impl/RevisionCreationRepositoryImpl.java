@@ -2,11 +2,16 @@ package fi.uta.fsd.metka.storage.repository.impl;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
+import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.data.container.ReferenceContainerDataField;
+import fi.uta.fsd.metka.model.data.container.ReferenceRow;
 import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.model.factories.*;
+import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.entity.impl.*;
@@ -27,6 +32,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Repository
 public class RevisionCreationRepositoryImpl implements RevisionCreationRepository {
@@ -167,7 +173,7 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
                 revisionable = p;
                 break;
             case STUDY_ATTACHMENT:
-                // Check that some id is provided, assumes that this id points to a study
+                // Check that some studyid is provided, assumes that this studyid points to a valid study
                 revisionable = new StudyAttachmentEntity();
                 ((StudyAttachmentEntity)revisionable).setStudyId(request.getParameters().get("studyid"));
                 break;
@@ -208,7 +214,7 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
             case STUDY_ATTACHMENT: {
                 StudyAttachmentFactory factory = new StudyAttachmentFactory();
                 data = factory.newData(revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo(), configuration,
-                        request.getParameters().get("id"));
+                        request.getParameters().get("studyid"));
                 break;
             }
             case STUDY_VARIABLES: {
@@ -243,17 +249,54 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
      */
     private void finalizeRevisionable(RevisionCreateRequest request, RevisionableEntity revisionable, RevisionData data) {
         switch(request.getType()) {
+            case STUDY:
+                finalizeStudy((StudyEntity) revisionable, data);
+            break;
             case STUDY_ATTACHMENT:
                 // TODO: Add a row for this study attachment to the newest revision of target study (which should be a DRAFT but don't check that)
-                //Pair<ReturnResult, RevisionData> pair = general.getLatestRevisionForIdAndType()
-                break;
-            case STUDY:
-                ValueDataField studyid = data.dataField(ValueDataFieldCall.get("studyid")).getRight();
-                ((StudyEntity)revisionable).setStudyId(studyid.getActualValueFor(Language.DEFAULT));
+                finalizeStudyAttachment((StudyAttachmentEntity)revisionable, data);
                 break;
             default:
                 // Nothing to finalize
                 break;
         }
+    }
+
+    private void finalizeStudy(StudyEntity revisionable, RevisionData data) {
+        ValueDataField studyid = data.dataField(ValueDataFieldCall.get("studyid")).getRight();
+        revisionable.setStudyId(studyid.getActualValueFor(Language.DEFAULT));
+    }
+
+    private void finalizeStudyAttachment(StudyAttachmentEntity revisionable, RevisionData data) {
+        // We can be reasonably sure that studyid is actually set on study attachment entity
+        List<StudyEntity> studies = em.createQuery("SELECT s FROM StudyEntity s WHERE s.studyId=:studyId", StudyEntity.class)
+                .setParameter("studyId", revisionable.getStudyId())
+                .getResultList();
+        if(studies.isEmpty()) {
+            logger.error("Didn't find study entity for study attachment finalization on "+revisionable.toString());
+            return;
+        }
+        StudyEntity study = studies.get(0);
+
+        // Get the latest revision for study and, if it exists, get or create files reference container
+        Pair<ReturnResult, RevisionData> dataPair = general.getRevisionData(study.latestRevisionKey());
+        if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
+            logger.error("Didn't find  latest revision for study with revision key "+study.latestRevisionKey());
+            return;
+        }
+
+        RevisionData studyRevision = dataPair.getRight();
+        Pair<StatusCode, ReferenceContainerDataField> filesPair = studyRevision.dataField(ReferenceContainerDataFieldCall.get("files"));
+        if(filesPair.getLeft() != StatusCode.FIELD_FOUND) {
+            filesPair = studyRevision.dataField(ReferenceContainerDataFieldCall.set("files"));
+            if(filesPair.getLeft() != StatusCode.FIELD_INSERT) {
+                logger.error("Couldn't create files reference container for study "+studyRevision.toString());
+                return;
+            }
+        }
+        ReferenceContainerDataField files = filesPair.getRight();
+
+        // If the new study attachment is not found from the references, it shouldn't be, then add a reference to the list for the study attachment and update the study revision
+        Pair<StatusCode, ReferenceRow> referencePair = files.getOrCreateReferenceWithValue(revisionable.getId().toString(), studyRevision.getChanges(), DateTimeUserPair.build());
     }
 }

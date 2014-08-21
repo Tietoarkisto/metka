@@ -6,7 +6,6 @@ import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.Map;
@@ -101,7 +100,7 @@ public class DirectoryManager {
             pb.append(type);
             if(language != null) {
                 pb.append("/");
-                pb.append(language);
+                pb.append(language.toValue());
             } else {
                 pb.append("/");
                 pb.append("default");

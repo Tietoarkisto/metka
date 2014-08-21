@@ -12,8 +12,8 @@ public class ContainerChange extends Change {
     private final Map<Language, Map<Integer, RowChange>> rows = new HashMap<>();
 
     @JsonCreator
-    public ContainerChange(@JsonProperty("key") String key, @JsonProperty("type") ChangeType type) {
-        super(key, type);
+    public ContainerChange(@JsonProperty("key") String key) {
+        super(key);
     }
 
 

@@ -27,8 +27,8 @@ public class ContainerDataField extends RowContainerDataField {
     private final Map<Language, List<DataRow>> rows = new HashMap<>();
 
     @JsonCreator
-    public ContainerDataField(@JsonProperty("key") String key, @JsonProperty("type") DataFieldType type, @JsonProperty("rowIdSeq") Integer rowIdSeq) {
-        super(key, type, rowIdSeq);
+    public ContainerDataField(@JsonProperty("key") String key, @JsonProperty("rowIdSeq") Integer rowIdSeq) {
+        super(key, rowIdSeq);
     }
 
     public Map<Language, List<DataRow>> getRows() {
@@ -183,7 +183,8 @@ public class ContainerDataField extends RowContainerDataField {
 
     @Override
     public DataField copy() {
-        ContainerDataField container = new ContainerDataField(getKey(), DataFieldType.CONTAINER, getRowIdSeq());
+        ContainerDataField container = new ContainerDataField(getKey(), getRowIdSeq());
+        //container.setType(getType());
         for(Language language : Language.values()) {
             if(!hasRowsFor(language)) {
                 continue;

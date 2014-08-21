@@ -30,10 +30,10 @@ final class ReferenceContainerDataFieldMutator {
             return pair;
         }
 
-        ReferenceContainerDataField field = new ReferenceContainerDataField(key, DataField.DataFieldType.REFERENCECONTAINER, 1);
+        ReferenceContainerDataField field = new ReferenceContainerDataField(key, 1);
         fieldMap.put(key, field);
         // We can just put a change into the change map. We are creating a new object here. If there was something previously in the map it was obviously incorrect.
-        changeMap.put(key, new ContainerChange(key, Change.ChangeType.CONTAINER));
+        changeMap.put(key, new ContainerChange(key));
         return new ImmutablePair<>(StatusCode.FIELD_INSERT, field);
     }
 }

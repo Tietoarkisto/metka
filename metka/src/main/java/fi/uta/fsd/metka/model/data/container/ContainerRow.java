@@ -69,7 +69,7 @@ public class ContainerRow {
         setRemoved(true);
         ContainerChange containerChange = (ContainerChange)changeMap.get(getKey());
         if(containerChange == null) {
-            containerChange = new ContainerChange(getKey(), Change.ChangeType.CONTAINER);
+            containerChange = new ContainerChange(getKey());
             changeMap.put(getKey(), containerChange);
         }
         if(containerChange.get(getRowId()) == null) {
@@ -86,7 +86,7 @@ public class ContainerRow {
         setRemoved(false);
         ContainerChange containerChange = (ContainerChange)changeMap.get(getKey());
         if(containerChange == null) {
-            containerChange = new ContainerChange(getKey(), Change.ChangeType.CONTAINER);
+            containerChange = new ContainerChange(getKey());
             changeMap.put(getKey(), containerChange);
         }
         if(containerChange.get(getRowId()) == null) {

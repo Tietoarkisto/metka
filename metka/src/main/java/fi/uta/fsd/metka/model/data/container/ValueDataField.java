@@ -15,16 +15,16 @@ public class ValueDataField extends DataField {
      * @return
      */
     public static ValueDataField build(String key) {
-        return new ValueDataField(key, DataFieldType.VALUE);
+        return new ValueDataField(key);
     }
 
     private final Map<Language, ValueContainer> original = new HashMap<>();
     private final Map<Language, ValueContainer> current = new HashMap<>();
 
     @JsonCreator
-    public ValueDataField(@JsonProperty("key") String key, @JsonProperty("type") DataFieldType type) {
+    public ValueDataField(@JsonProperty("key") String key) {
         // Let's just assume that polymorphism works and that the given type is a correct type
-        super(key, type);
+        super(key);
     }
 
     public Map<Language, ValueContainer> getOriginal() {
@@ -136,7 +136,7 @@ public class ValueDataField extends DataField {
 
     @Override
     public DataField copy() {
-        ValueDataField field = new ValueDataField(getKey(), getType());
+        ValueDataField field = new ValueDataField(getKey());
         for(Map.Entry<Language, ValueContainer> e : original.entrySet()) {
             field.original.entrySet().add(e);
         }

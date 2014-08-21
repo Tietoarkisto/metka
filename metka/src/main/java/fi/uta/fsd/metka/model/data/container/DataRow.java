@@ -106,7 +106,7 @@ public class DataRow extends ContainerRow implements DataFieldContainer {
                 Map<String, Change> original = call.getChangeMap();
                 ContainerChange container = (ContainerChange)original.get(getKey());
                 if(container == null) {
-                    container = new ContainerChange(getKey(), Change.ChangeType.CONTAINER);
+                    container = new ContainerChange(getKey());
                 }
                 RowChange row = container.get(getRowId());
                 if(row == null) {

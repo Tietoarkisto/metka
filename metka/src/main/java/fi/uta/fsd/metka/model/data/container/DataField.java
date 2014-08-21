@@ -14,17 +14,22 @@ import com.fasterxml.jackson.annotation.*;
 })
 public class DataField {
     private final String key;
-    private final DataFieldType type;
+    private DataFieldType type;
 
-    @JsonCreator
-    public DataField(@JsonProperty("key") String key, @JsonProperty("type") DataFieldType type) {
+    public DataField(String key) {
         this.key = key;
-        this.type = type;
     }
 
     public String getKey() {
         return key;
     }
+
+    // Immutable
+    /*public void setType(DataFieldType type) {
+        if(this.type == null) {
+            this.type = type;
+        }
+    }*/
 
     public DataFieldType getType() {
         return type;

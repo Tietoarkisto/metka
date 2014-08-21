@@ -17,14 +17,13 @@ import java.util.Set;
         @JsonSubTypes.Type(value = ContainerChange.class, name = DataField.DataFieldType.Types.CONTAINER)
 })
 public class Change {
-    private final ChangeType type;
+    private ChangeType type;
     private final String key;
     private final Set<Language> changeIn = new HashSet<>();
 
     @JsonCreator
-    public Change(@JsonProperty("key") String key, @JsonProperty("type") ChangeType type) {
+    public Change(@JsonProperty("key") String key) {
         this.key = key;
-        this.type = type;
     }
 
     public String getKey() {
