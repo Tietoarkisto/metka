@@ -6,8 +6,8 @@ define(function (require) {
     $('body')
         .prepend($('<header class="navbar navbar-default navbar-static-top">')
             .append($('<div class="container">')
-                .append($('<nav>')
-                    .append($('<ul class="nav navbar-nav nav navbar-nav navbar-left">')
+                .append($('<nav class="row">')
+                    .append($('<ul class="col-sm-8 nav navbar-nav nav navbar-nav navbar-left">')
                         .append([{
                             ct: 'DESKTOP',
                             href: 'desktop',
@@ -57,35 +57,29 @@ define(function (require) {
                             return $li;
                         })))
                         .append([
-                            '<div class="col-sm-3 col-md-3 pull-right">',
+                            '<div class="col-sm-4">',
                                 '<div class="row">',
-                                    '<div class="col-md-12">',
+                                    '<div class="col-md-12" style="padding-top: 20px;">',
+                                        '<a href="#" class="navbar-link pull-right">Kirjaudu ulos</a>',
+                                    '</div>',
+                                '</div>',
+                                '<div class="row">',
+                                    '<div class="text-right col-sm-4 navbar-text" style="margin-left: 0px; margin-right: 0px; margin-bottom: 0px;">',
+                                    '</div>',
+                                    '<div class="col-sm-8">',
                                         '<div class="row">',
-                                            '<div class="col-md-12" style="padding-top: 30px; padding-right: 30px;">',
-                                                '<a href="#" class="navbar-link pull-right">Kirjaudu ulos</a>',
-                                            '</div>',
-                                        '</div>',
-                                        '<div class="row">',
-                                            '<div class="col-md-12">',
-                                                '<form class="navbar-form">',
-                                                    '<div class="input-group">',
-                                                        '<input type="text" class="form-control" autocomplete="on" placeholder="Aineistonumero">',
-                                                        '<div class="input-group-btn">',
-                                                            '<button class="btn btn-primary" type="submit">Hae</button>',
-                                                        '</div>',
+                                            '<form class="navbar-form">',
+                                                '<div class="input-group">',
+                                                    '<input type="text" class="form-control" autocomplete="on" placeholder="Aineistonumero">',
+                                                    '<div class="input-group-btn">',
+                                                        '<button class="btn btn-primary" type="submit">Hae</button>',
                                                     '</div>',
-                                                '</form>',
-                                            '</div>',
+                                                '</div>',
+                                            '</form>',
                                         '</div>',
                                     '</div>',
                                 '</div>',
-                            '</div>'/*,
-
-                            '<div class="languageSelect">',
-                                '<input type="radio" name="language" value="default"/>fi',
-                                '<input type="radio" name="language" value="en"/>en',
-                                '<input type="radio" name="language" value="sv"/>sv',
-                            '</div>'*/
+                            '</div>'
                     ].join('')))));
 
     $('.navbar-form').submit(function () {
