@@ -20,6 +20,7 @@ public enum ReturnResult {
     CONFIGURATION_CONTAINED_NO_DATA,    // Entity was found but data was empty, this is a serious error
     CONFIGURATION_FOUND,                // Requested configuration (either data or gui) was found
     CONFIGURATION_NOT_FOUND,            // Configuration (either data or gui) was not found
+    CONFIGURATION_NOT_VALID,            // Configuration had problems either during serialization or deserialization
     DATABASE_DISCREPANCY,               // Data in the database is in a state that causes errors, operations had to be stopped
     DATABASE_INSERT_FAILED,             // Insert or merge operation failed for some reason
     DATABASE_INSERT_SUCCESS,            // Insert or update operation was successful
@@ -47,5 +48,7 @@ public enum ReturnResult {
     OPERATION_FAIL,                     // General fail result for operations
     NO_RESULTS,                         // General no results response for operations that request data that is not found but there is no error
     WRONG_USER,                         // User with the wrong user name tried to perform operation that is restricted to one user at a time (e.g. saving a revision)
-    CONFIGURATION_NOT_VALID, WRONG_ROLES                        // Role(s) the user has don't allow them to perform the requested operation
+    WRONG_ROLES,                        // Role(s) the user has don't allow them to perform the requested operation
+    REFERENCE_FOUND,                    // Requested reference information was found
+    REFERENCE_MISSING                  // Requested reference information was not found
 }

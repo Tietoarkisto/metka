@@ -10,12 +10,16 @@ import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.configuration.Reference;
 import fi.uta.fsd.metka.model.configuration.SelectionList;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.data.container.ReferenceRow;
 import fi.uta.fsd.metka.model.data.container.ValueDataField;
+import fi.uta.fsd.metka.model.transfer.TransferRow;
 import fi.uta.fsd.metka.storage.collecting.ReferenceCollecting;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOptionsRequest;
+import fi.uta.fsd.metka.transfer.reference.ReferenceRowRequest;
+import fi.uta.fsd.metka.transfer.reference.ReferenceRowResponse;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -158,5 +162,17 @@ public class ReferenceService {
 
         return references.referenceOptionCollecting(reference, field, config, request);
 
+    }
+
+    public ReferenceRowResponse getReferenceRow(ReferenceRowRequest request) {
+        ReferenceRowResponse response = new ReferenceRowResponse();
+        Pair<ReturnResult, ReferenceRow> pair = references.getReferenceRow(request);
+
+        response.setResult(pair.getLeft());
+        if(pair.getLeft() == ReturnResult.REFERENCE_FOUND) {
+            response.setRow(TransferRow.buildFromContainerRow(pair.getRight()));
+        }
+
+        return response;
     }
 }

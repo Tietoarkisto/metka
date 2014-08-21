@@ -31,7 +31,7 @@ public class ReferenceController {
             response.setDependencyValue(request.getDependencyValue());
 
             List<ReferenceOption> options = service.collectReferenceOptions(request);
-            
+
             if(options == null) {
                 ErrorMessage message = new ErrorMessage();
                 message.setMsg("general.errors.reference.exceptionBeforeCollecting");
@@ -43,5 +43,10 @@ public class ReferenceController {
         }
 
         return responses;
+    }
+
+    @RequestMapping(value = "referenceRowRequest", method = RequestMethod.POST)
+    public @ResponseBody ReferenceRowResponse referenceRowRequest(@RequestBody ReferenceRowRequest request) {
+        return service.getReferenceRow(request);
     }
 }

@@ -251,9 +251,8 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
         switch(request.getType()) {
             case STUDY:
                 finalizeStudy((StudyEntity) revisionable, data);
-            break;
+                break;
             case STUDY_ATTACHMENT:
-                // TODO: Add a row for this study attachment to the newest revision of target study (which should be a DRAFT but don't check that)
                 finalizeStudyAttachment((StudyAttachmentEntity)revisionable, data);
                 break;
             default:
@@ -267,6 +266,11 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
         revisionable.setStudyId(studyid.getActualValueFor(Language.DEFAULT));
     }
 
+    /**
+     * Adds
+     * @param revisionable
+     * @param data
+     */
     private void finalizeStudyAttachment(StudyAttachmentEntity revisionable, RevisionData data) {
         // We can be reasonably sure that studyid is actually set on study attachment entity
         List<StudyEntity> studies = em.createQuery("SELECT s FROM StudyEntity s WHERE s.studyId=:studyId", StudyEntity.class)
@@ -296,7 +300,15 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
         }
         ReferenceContainerDataField files = filesPair.getRight();
 
-        // If the new study attachment is not found from the references, it shouldn't be, then add a reference to the list for the study attachment and update the study revision
+        // There shouldn't be a study attachment reference in the files container at this point but you never know, so let's get or create the reference
         Pair<StatusCode, ReferenceRow> referencePair = files.getOrCreateReferenceWithValue(revisionable.getId().toString(), studyRevision.getChanges(), DateTimeUserPair.build());
+
+        // If new row was inserted then we now have a change in study revision, update revision to database
+        if(referencePair.getLeft() == StatusCode.NEW_ROW) {
+            ReturnResult updateResult = general.updateRevisionData(studyRevision);
+            if(updateResult != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
+                logger.error("Could not update "+studyRevision.toString()+", received result "+updateResult);
+            }
+        }
     }
 }
