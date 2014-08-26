@@ -4,10 +4,14 @@ define(function (require) {
     return {
         create: function create(options) {
             function refreshData(callback) {
+
                 require('./../../server')('/study/listErrors/{id}/{no}', {
                     method: 'GET',
                     success: function (response) {
-                        fieldOptions.data.fields.errors.rows = response.errors.map(require('./../../map/object/transferRow'));
+                        var objectToTransferRow = require('./../../map/object/transferRow');
+                        fieldOptions.data.fields.errors.rows.DEFAULT = response.errors.map(function (result) {
+                            return objectToTransferRow(result, 'DEFAULT');
+                        });
                         fieldOptions.$events.trigger('dataChanged');
                     }
                 });
@@ -258,7 +262,7 @@ define(function (require) {
                     showSaveInfo: true,
                     onRowChange: function ($tr, transferRow) {
                         require('./../../server')('/study/updateError/', {
-                            data: JSON.stringify(require('./../../map/transferRow/object')(transferRow)),
+                            data: JSON.stringify(require('./../../map/transferRow/object')(transferRow, 'DEFAULT')),
                             success: function (response) {
                                 refreshData();
                             }
@@ -267,7 +271,7 @@ define(function (require) {
                     onRemove: function ($tr) {
                         $tr.find('button').prop('disabled', true);
                         require('./../../server')('/study/removeError/{id}', {
-                            id: $tr.data('transferRow').fields.id.value.current
+                            id: $tr.data('transferRow').fields.id.values.DEFAULT.current
                         }, {
                             method: 'GET',
                             success: function () {

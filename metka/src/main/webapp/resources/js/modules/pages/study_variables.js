@@ -4,6 +4,7 @@ define(function (require) {
         var options;
         if (location.pathname.split('/').indexOf('search') !== -1) {
             options = {
+                $events: $({}),
                 header: MetkaJS.L10N.get('type.STUDY_VARIABLES.search'),
                 content: [
                     {
@@ -34,7 +35,7 @@ define(function (require) {
                                                 }
                                             }, ['title'], function (transferRow) {
                                                 require('./../assignUrl')('view', {
-                                                    id: transferRow.fields.id.value.current,
+                                                    id: transferRow.fields.id.values.DEFAULT.current,
                                                     no: '???'
                                                 });
                                             }

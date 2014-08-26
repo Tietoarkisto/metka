@@ -13,7 +13,8 @@ define(function (require) {
                     data: {
                         fields: {
                             searchResults: {
-                                type: 'CONTAINER'
+                                type: 'CONTAINER',
+                                rows: {}
                             }
                         }
                     },
@@ -27,11 +28,14 @@ define(function (require) {
                     }
                 };
                 var results = getResults(data);
-                fieldOptions.data.fields.searchResults.rows = results.map(mapResult).map(require('./map/object/transferRow'));
+                var objectToTransferRow = require('./map/object/transferRow');
+                fieldOptions.data.fields.searchResults.rows.DEFAULT = results.map(mapResult).map(function (result) {
+                    return objectToTransferRow(result, 'DEFAULT');
+                });
 
                 // if exactly 1 search result, perform the row action
-                if (fieldOptions.data.fields.searchResults.rows.length === 1) {
-                    trOnClick(fieldOptions.data.fields.searchResults.rows[0]);
+                if (fieldOptions.data.fields.searchResults.rows.DEFAULT.length === 1) {
+                    trOnClick(fieldOptions.data.fields.searchResults.rows.DEFAULT[0]);
                     return;
                 }
 
