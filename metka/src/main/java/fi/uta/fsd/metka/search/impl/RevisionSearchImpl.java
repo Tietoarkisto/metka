@@ -1,7 +1,6 @@
 package fi.uta.fsd.metka.search.impl;
 
 import fi.uta.fsd.metka.enums.Language;
-import fi.uta.fsd.metka.enums.UIRevisionState;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.data.RevisionData;
@@ -149,10 +148,7 @@ public class RevisionSearchImpl implements RevisionSearch {
                 continue;
             }
             RevisionData data = pair.getRight();
-            RevisionSearchResult searchResult = new RevisionSearchResult();
-            searchResult.setId(data.getKey().getId());
-            searchResult.setNo(data.getKey().getNo());
-            searchResult.setState((info.getRemoved()) ? UIRevisionState.REMOVED : UIRevisionState.fromRevisionState(data.getState()));
+            RevisionSearchResult searchResult = RevisionSearchResult.build(data, info);
             // Add type specific search result values
             switch(data.getConfiguration().getType()) {
                 case SERIES:

@@ -4,6 +4,11 @@
     /* Define MetkaJS namespace. Includes general global variables, objects, handlers and functions related to Metka-client.
      */
     window.MetkaJS = {
+        User: {
+            userName: null,
+            displayName: null,
+            role: null
+        },
         DialogHandlers: {}, // This is used to collect and reference custom dialog handlers used throughout the application
         TableBuilders: {}, // This is used to collect and reference custom table builders used throughout the application
         // Placeholders for functionality added in other files

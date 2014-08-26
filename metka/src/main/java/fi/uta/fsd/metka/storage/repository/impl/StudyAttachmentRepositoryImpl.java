@@ -149,24 +149,9 @@ public class StudyAttachmentRepositoryImpl {
     }*/
 
     /*public void addFileLinkEvent(Long studyId, Long fileId, String key, String path) {
-        StudyEntity study = em.find(StudyEntity.class, studyId);
-        if(study == null) {
-            // No study with given id, nothing to attach to
-            return;
-        }
-        StudyAttachmentQueueEntity queue = new StudyAttachmentQueueEntity();
-        queue.setTargetStudy(studyId);
-        queue.setStudyAttachmentId(fileId);
-        queue.setStudyAttachmentField(key);
-        queue.setPath(path);
-        // Check if target is study
 
-        queue.setType(null);
         boolean parse = true;
         // Check if file is variable file name
-        if(!StringUtils.hasText(path)) {
-            parse = false;
-        }
         if(parse) {
             if(!FilenameUtils.getName(path).substring(0, 3).toUpperCase().equals("DAF")) {
                 // Variable file names need to start with DAF

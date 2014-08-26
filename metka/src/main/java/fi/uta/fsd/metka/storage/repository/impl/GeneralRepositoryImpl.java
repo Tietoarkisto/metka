@@ -6,6 +6,7 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.entity.SequenceEntity;
+import fi.uta.fsd.metka.storage.entity.impl.StudyEntity;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
@@ -17,6 +18,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -34,6 +36,9 @@ public class GeneralRepositoryImpl implements GeneralRepository {
 
     @Autowired
     private JSONUtil json;
+
+    @Value("${dir.file}")
+    private String fileRoot;
 
     @Override
     public Pair<ReturnResult, RevisionableInfo> getRevisionableInfo(Long id) {
@@ -222,5 +227,14 @@ public class GeneralRepositoryImpl implements GeneralRepository {
         revision.setState(RevisionState.DRAFT);
         em.persist(revision);
         return new ImmutablePair<>(ReturnResult.REVISION_CREATED, revision.getKey());
+    }
+
+    @Override
+    public Pair<ReturnResult, String> getStudyFileDirectory(long id) {
+        StudyEntity study = em.find(StudyEntity.class, id);
+        if(study == null) {
+            return new ImmutablePair<>(ReturnResult.REVISIONABLE_NOT_FOUND, null);
+        }
+        return new ImmutablePair<>(ReturnResult.REVISIONABLE_FOUND, fileRoot+study.getStudyId());
     }
 }

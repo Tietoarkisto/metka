@@ -1,15 +1,23 @@
 package fi.uta.fsd.metka.mvc.controller;
 
+import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.mvc.ModelUtil;
 import fi.uta.fsd.metka.mvc.services.SettingsService;
 import fi.uta.fsd.metka.mvc.services.requests.UploadRequest;
 import fi.uta.fsd.metka.mvc.validator.UploadRequestValidator;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metkaSearch.IndexerComponent;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -90,5 +98,25 @@ public class SettingsController {
         String text = new String(uploadMisc.getFile().getBytes());
         service.insertMisc(text);
         return "settings";
+    }
+
+    @RequestMapping(value="downloadReport", method = RequestMethod.GET)
+    public HttpEntity<byte[]> downloadReport() {
+        Object report = service.generateReport();
+        if(report == null) {
+            // TODO: Return error to user
+            return null;
+        } else {
+            // Assumes report.toString generates valid xml representation
+            String string = report.toString();
+            byte[] dataBytes = string.getBytes();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_XML);
+            headers.set("Content-Disposition",
+                    "attachment; filename=report.xml");
+            headers.setContentLength(dataBytes.length);
+
+            return new HttpEntity<>(dataBytes, headers);
+        }
     }
 }

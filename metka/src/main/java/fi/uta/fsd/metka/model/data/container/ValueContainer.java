@@ -77,6 +77,10 @@ public class ValueContainer {
         return stringToLong(getActualValue());
     }
 
+    @JsonIgnore public boolean valueAsBoolean() {
+        return Boolean.parseBoolean(getActualValue());
+    }
+
     @JsonIgnore public boolean valueEquals(String compare) {
         return hasValue() && value.valueEquals(compare);
     }

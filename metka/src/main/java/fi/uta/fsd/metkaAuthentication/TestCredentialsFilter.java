@@ -15,9 +15,12 @@ public class TestCredentialsFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         request.setAttribute("Shib-Session-ID", "Metka-session-"+RANDOM.nextInt(Integer.MAX_VALUE));
+
+
         request.setAttribute("Shib-UserName", "Metka-test-user-"+RANDOM.nextInt(100));
         request.setAttribute("Shib-DisplayName", "Virpi Varis");
-        request.setAttribute("Shib-Roles", "admin,tester");
+
+        request.setAttribute("Shib-Roles", "metka:basic-user");
 
         filterChain.doFilter(request, response);
     }

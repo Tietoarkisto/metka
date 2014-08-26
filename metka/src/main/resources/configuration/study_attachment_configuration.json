@@ -11,16 +11,20 @@
 			"type": "VALUE",
 			"options": [
 				{
-					"value": "1"
+					"value": "1",
+					"title": "ei tietoa"
 				},
 				{
-					"value": "2"
+					"value": "2",
+					"title": "ei"
 				},
 				{
-					"value": "3"
+					"value": "3",
+					"title": "kyllä"
 				},
 				{
-					"value": "4"
+					"value": "4",
+					"title": "ei relevantti"
 				}
 			]
 		},
@@ -29,10 +33,76 @@
 			"type": "VALUE",
 			"options": [
 				{
-					"value": "1"
+					"value": "1",
+					"title": "kyselylomake (quf/arguF tai orig)"
 				},
 				{
-					"value": "2"
+					"value": "2",
+					"title": "data (daF/arF tai orig)"
+				},
+				{
+					"value": "3",
+					"title": "syntaksi (syF)"
+				},
+				{
+					"value": "4",
+					"title": "anonymisointiprosessi (anF/aranF)"
+				},
+				{
+					"value": "5",
+					"title": "haastattelukysymykset (iqF/ariqf tai orig)"
+				},
+				{
+					"value": "6",
+					"title": "litteraatioesimerkki(teF/arteF tai orig)"
+				},
+				{
+					"value": "7",
+					"title": "kirjoitusohjeet (wiF/arwiF tai orig)"
+				},
+				{
+					"value": "8",
+					"title": "erillinen avovastaustiedosto (avoF/aravoF tai orig)"
+				},
+				{
+					"value": "9",
+					"title": "haastatteluohjeet (iiF/ariiF tai orig)"
+				},
+				{
+					"value": "10",
+					"title": "kirjoitusohjeet (wiF/arwiF tai orig)"
+				},
+				{
+					"value": "11",
+					"title": "litterointiohjeet (tiF/artiF tai orig)"
+				},
+				{
+					"value": "12",
+					"title": "havainnoinnin ohjeistus (oiF/aroiF tai orig)"
+				},
+				{
+					"value": "13",
+					"title": "esite tutkittaville (isF/arisF tai orig)"
+				},
+				{
+					"value": "14",
+					"title": "virikemateriaali (stF/arstF tai orig)"
+				},
+				{
+					"value": "15",
+					"title": "tutkimuskutsu (riF/arriF tai orig)"
+				},
+				{
+					"value": "16",
+					"title": "taustatiedot (biF/arbiF tai orig)"
+				},
+				{
+					"value": "17",
+					"title": "keruupyyntö (crF/arcrF tai orig)"
+				},
+				{
+					"value": "18",
+					"title": "muut tiedostot"
 				}
 			]
 		},
@@ -88,25 +158,32 @@
 			"type": "VALUE",
 			"options": [
 				{
-					"value": "1"
+					"value": "1",
+					"title": "ei julk."
 				},
 				{
-					"value": "2"
+					"value": "2",
+					"title": "eng"
 				},
 				{
-					"value": "3"
+					"value": "3",
+					"title": "fin"
 				},
 				{
-					"value": "4"
+					"value": "4",
+					"title": "fin/eng"
 				},
 				{
-					"value": "5"
+					"value": "5",
+					"title": "fin/sve"
 				},
 				{
-					"value": "6"
+					"value": "6",
+					"title": "fin/eng/sve"
 				},
 				{
-					"value": "7"
+					"value": "7",
+					"title": "sve"
 				}
 			]
 		},
@@ -115,13 +192,16 @@
 			"type": "VALUE",
 			"options": [
 				{
-					"value": "1"
+					"value": "1",
+					"title": "kyllä"
 				},
 				{
-					"value": "2"
+					"value": "2",
+					"title": "ei"
 				},
 				{
-					"value": "3"
+					"value": "3",
+					"title": "ei tietoa"
 				}
 			]
 		}
@@ -131,14 +211,34 @@
 			"key": "target_study_ref",
 			"type": "REVISIONABLE",
 			"target": "STUDY"
+		},
+		"studyid_ref": {
+			"key": "studyid_ref",
+			"type": "DEPENDENCY",
+			"target": "study",
+			"titlePath": "studyid"
 		}
 	},
 	"fields": {
+		"parsed": {
+			"_comment": "This informs the system that variable file has been parsed and there is no need to parse it again on save, setting this to false and saving the attachment will force a new parse on variable file",
+			"key": "parsed",
+			"translatable": false,
+			"type": "BOOLEAN",
+			"editable": false
+		},
 		"study": {
 			"_comment": "This is filled automatically for each study attachment when initial revision is created.",
 			"key": "study",
 			"type": "REFERENCE",
 			"reference": "target_study_ref"
+		},
+		"studyid": {
+			"key": "studyid",
+			"type": "REFERENCE",
+			"reference": "studyid_ref",
+			"editable": false,
+			"writable": false
 		},
 		"file": {
 			"key": "file",
@@ -147,26 +247,12 @@
 			"required": true,
 			"type": "STRING"
 		},
-		"filelabel": {
-			"key": "filelabel",
+		"fileaip": {
+			"key": "fileaip",
 			"translatable": false,
 			"required": true,
-			"type": "STRING",
-			"multiline": true
-		},
-		"filedescription": {
-			"key": "filedescription",
-			"translatable": false,
-			"required": true,
-			"type": "STRING",
-			"multiline": true
-		},
-		"filecomment": {
-			"key": "filecomment",
-			"translatable": false,
-			"required": true,
-			"type": "STRING",
-			"multiline": true
+			"type": "SELECTION",
+			"selectionList": "fileaip_list"
 		},
 		"filecategory": {
 			"key": "filecategory",
@@ -175,12 +261,24 @@
 			"type": "SELECTION",
 			"selectionList": "filecategory_list"
 		},
-		"fileaip": {
-			"key": "fileaip",
+		"filecomment": {
+			"key": "filecomment",
+			"translatable": false,
+			"type": "STRING",
+			"multiline": true
+		},
+		"filedescription": {
+			"key": "filedescription",
+			"translatable": false,
+			"type": "STRING",
+			"multiline": true
+		},
+		"filedip": {
+			"key": "filedip",
 			"translatable": false,
 			"required": true,
 			"type": "SELECTION",
-			"selectionList": "fileaip_list"
+			"selectionList": "filedip_list"
 		},
 		"filelanguage": {
 			"key": "filelanguage",
@@ -188,6 +286,12 @@
 			"required": true,
 			"type": "SELECTION",
 			"selectionList": "filelanguage_list"
+		},
+		"filenotes": {
+			"key": "filenotes",
+			"translatable": false,
+			"type": "STRING",
+			"multiline": true
 		},
 		"fileoriginal": {
 			"key": "fileoriginal",
@@ -202,13 +306,6 @@
 			"required": true,
 			"type": "SELECTION",
 			"selectionList": "filepublication_list"
-		},
-		"filedip": {
-			"key": "filedip",
-			"translatable": false,
-			"required": true,
-			"type": "SELECTION",
-			"selectionList": "filedip_list"
 		}
 	}
 }

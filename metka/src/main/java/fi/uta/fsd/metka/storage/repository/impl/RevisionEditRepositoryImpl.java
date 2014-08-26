@@ -16,6 +16,7 @@ import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionEditRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -43,6 +44,17 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
             return dataPair;
         }
         RevisionData data = dataPair.getRight();
+        Pair<ReturnResult, RevisionableInfo> infoPair = general.getRevisionableInfo(data.getKey().getId());
+        if(infoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
+            logger.error("No revisionable for object for which revision was already found "+data.toString());
+            return new ImmutablePair<>(infoPair.getLeft(), data);
+        }
+
+        if(infoPair.getRight().getRemoved()) {
+            logger.info("Can't create draft for removed Revisionable "+data.toString());
+            return new ImmutablePair<>(ReturnResult.REVISIONABLE_REMOVED, data);
+        }
+
         if(data.getState() != RevisionState.DRAFT) {
             // Data is not draft, we need a new revision
             ReturnResult result = checkEditPermissions(data);

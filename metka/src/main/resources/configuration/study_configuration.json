@@ -473,7 +473,7 @@
 	"fields": {
 		"aipcomplete": {
 			"key": "aipcomplete",
-			"translatable": false,
+			"translatable": true,
 			"immutable": true,
 			"type": "DATE",
 			"editable": false,
@@ -652,13 +652,6 @@
 			"type": "STRING",
 			"section": "basic_information",
 			"multiline": true
-		},
-		"entitle": {
-			"_comment": "Partitle is a column in 'Muunkieliset nimet' table",
-			"key": "entitle",
-			"type": "STRING",
-			"translatable": false,
-			"section": "basic_information"
 		},
 		"processingnotes": {
 			"key": "processingnotes",
@@ -1500,7 +1493,6 @@
 			"translatable": false,
 			"type": "REFERENCECONTAINER",
 			"reference": "attachment_ref",
-			"section": "file_management",
 			"subfields": [
 				"filespath",
 				"fileslang"
@@ -1511,7 +1503,6 @@
 		"filespath": {
 			"key": "filespath",
 			"translatable": false,
-			"section": "file_management",
 			"type": "REFERENCE",
 			"reference": "files_path_ref",
 			"subfield": true,
@@ -1520,17 +1511,15 @@
 		"fileslang": {
 			"key": "fileslang",
 			"translatable": false,
-			"section": "file_management",
 			"type": "REFERENCE",
 			"reference": "files_lang_ref",
 			"subfield": true,
 			"writable": false
 		},
-		"filenotes": {
-			"key": "filenotes",
+		"allfilesnotes": {
+			"key": "allfilesnotes",
 			"translatable": false,
 			"required": false,
-			"section": "file_management",
 			"type": "STRING",
 			"multiline": true
 		},
@@ -1538,7 +1527,6 @@
 			"key": "cbattachments",
 			"translatable": false,
 			"type": "CONTAINER",
-			"section": "codebook",
 			"showSaveInfo": true,
 			"subfields": [
 				"cbattachmentlocation",
@@ -1551,7 +1539,6 @@
 			"required": true,
 			"immutable": true,
 			"type": "STRING",
-			"section": "codebook",
 			"subfield": true
 		},
 		"cbattachmenttitle": {
@@ -1560,7 +1547,6 @@
 			"required": true,
 			"type": "STRING",
 			"multiline": true,
-			"section": "codebook",
 			"subfield": true
 		}
 	}

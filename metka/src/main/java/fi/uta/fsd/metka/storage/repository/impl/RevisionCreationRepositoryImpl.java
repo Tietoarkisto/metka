@@ -32,7 +32,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.List;
 
 @Repository
 public class RevisionCreationRepositoryImpl implements RevisionCreationRepository {
@@ -123,14 +122,14 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
                 break;
             case STUDY_ATTACHMENT:
                 // Check that some id is provided, assumes that this id points to a study
-                if(!request.getParameters().containsKey("studyid")) {
-                    logger.error("Creation of STUDY_ATTACHMENT requires that studyid is provided in parameter 'studyid'");
+                if(!request.getParameters().containsKey("study")) {
+                    logger.error("Creation of STUDY_ATTACHMENT requires that study.key.id is provided in parameter 'study'");
                     return ReturnResult.PARAMETERS_MISSING;
                 }
                 break;
             case STUDY_VARIABLES:
-                if(!request.getParameters().containsKey("studyid")) {
-                    logger.error("Creation of STUDY_VARIABLES requires that study.key.id is provided in parameter 'studyid'");
+                if(!request.getParameters().containsKey("study")) {
+                    logger.error("Creation of STUDY_VARIABLES requires that study.key.id is provided in parameter 'study'");
                     return ReturnResult.PARAMETERS_MISSING;
                 }
                 if(!request.getParameters().containsKey("fileid")) {
@@ -139,8 +138,8 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
                 }
                 break;
             case STUDY_VARIABLE:
-                if(!request.getParameters().containsKey("studyid")) {
-                    logger.error("Creation of STUDY_VARIABLE requires that study.key.id is provided in parameter 'studyid'");
+                if(!request.getParameters().containsKey("study")) {
+                    logger.error("Creation of STUDY_VARIABLE requires that study.key.id is provided in parameter 'study'");
                     return ReturnResult.PARAMETERS_MISSING;
                 }
                 if(!request.getParameters().containsKey("variablesid")) {
@@ -158,8 +157,13 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
         return ReturnResult.ALL_PARAMETERS_FOUND;
     }
 
+    /**
+     * Creates correctly sub typed RevisionableEntity based on request
+     * @param request    RevisionCreateRequest
+     * @return RevisionableEntity
+     */
     private RevisionableEntity createRevisionable(RevisionCreateRequest request) {
-        RevisionableEntity revisionable = null;
+        RevisionableEntity revisionable;
         switch(request.getType()) {
             case SERIES:
                 revisionable = new SeriesEntity();
@@ -169,22 +173,22 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
                 break;
             case PUBLICATION:
                 PublicationEntity p = new PublicationEntity();
-                p.setPublicationId(general.getNewSequenceValue(ConfigurationType.PUBLICATION.toValue(), 2000L).getSequence());
+                p.setPublicationId(general.getNewSequenceValue(ConfigurationType.PUBLICATION.toValue(), 3000L).getSequence());
                 revisionable = p;
                 break;
             case STUDY_ATTACHMENT:
-                // Check that some studyid is provided, assumes that this studyid points to a valid study
-                revisionable = new StudyAttachmentEntity();
-                ((StudyAttachmentEntity)revisionable).setStudyId(request.getParameters().get("studyid"));
+                StudyAttachmentEntity sae = new StudyAttachmentEntity();
+                sae.setStudy(Long.parseLong(request.getParameters().get("study")));
+                revisionable = sae;
                 break;
             case STUDY_VARIABLES:
                 StudyVariablesEntity svs = new StudyVariablesEntity();
-                svs.setStudyId(request.getParameters().get("studyid"));
+                svs.setStudy(Long.parseLong(request.getParameters().get("study")));
                 revisionable = svs;
                 break;
             case STUDY_VARIABLE:
                 StudyVariableEntity sv = new StudyVariableEntity();
-                sv.setStudyId(request.getParameters().get("studyid"));
+                sv.setStudy(Long.parseLong(request.getParameters().get("study")));
                 sv.setStudyVariablesId(Long.parseLong(request.getParameters().get("variablesid")));
                 sv.setVarId(request.getParameters().get("varid"));
                 revisionable = sv;
@@ -196,8 +200,17 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
         return revisionable;
     }
 
-    private Pair<ReturnResult, RevisionData> createRevisionData(RevisionableEntity revisionable, RevisionEntity revision, Configuration configuration, RevisionCreateRequest request) {
-        Pair<ReturnResult, RevisionData> data = null;
+    /**
+     * Uses a DataFactory subclass to create initial RevisionData. Pulls parameters from request.
+     * @param revisionable     RevisionableEntity
+     * @param revision         RevisionEntity
+     * @param configuration    Configuration
+     * @param request          RevisionCreateRequest
+     * @return Pair - ReturnResult, RevisionData
+     */
+    private Pair<ReturnResult, RevisionData> createRevisionData(RevisionableEntity revisionable, RevisionEntity revision,
+                                                                Configuration configuration, RevisionCreateRequest request) {
+        Pair<ReturnResult, RevisionData> data;
         switch(request.getType()) {
             case SERIES: {
                 SeriesFactory factory = new SeriesFactory();
@@ -214,7 +227,7 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
             case STUDY_ATTACHMENT: {
                 StudyAttachmentFactory factory = new StudyAttachmentFactory();
                 data = factory.newData(revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo(), configuration,
-                        request.getParameters().get("studyid"));
+                        request.getParameters().get("study"));
                 break;
             }
             case STUDY_VARIABLES: {
@@ -243,9 +256,9 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
 
     /**
      * This is called to insert any possible values that could not be assigned before RevisionData creation
-     * @param request
-     * @param revisionable
-     * @param data
+     * @param request         RevisionCreateRequest
+     * @param revisionable    RevisionableEntity
+     * @param data            RevisionData
      */
     private void finalizeRevisionable(RevisionCreateRequest request, RevisionableEntity revisionable, RevisionData data) {
         switch(request.getType()) {
@@ -253,7 +266,7 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
                 finalizeStudy((StudyEntity) revisionable, data);
                 break;
             case STUDY_ATTACHMENT:
-                finalizeStudyAttachment((StudyAttachmentEntity)revisionable, data);
+                finalizeStudyAttachment((StudyAttachmentEntity)revisionable);
                 break;
             default:
                 // Nothing to finalize
@@ -261,31 +274,25 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
         }
     }
 
+    /**
+     * Set generated study id into StudyEntity
+     * @param revisionable StudyEntity
+     * @param data         RevisionData
+     */
     private void finalizeStudy(StudyEntity revisionable, RevisionData data) {
         ValueDataField studyid = data.dataField(ValueDataFieldCall.get("studyid")).getRight();
         revisionable.setStudyId(studyid.getActualValueFor(Language.DEFAULT));
     }
 
     /**
-     * Adds
-     * @param revisionable
-     * @param data
+     * Adds study attachment reference to "files" reference container on target study if it's yet not present (should not be).
+     * @param revisionable StudyAttachmentEntity used for all relevant info about study attachment
      */
-    private void finalizeStudyAttachment(StudyAttachmentEntity revisionable, RevisionData data) {
-        // We can be reasonably sure that studyid is actually set on study attachment entity
-        List<StudyEntity> studies = em.createQuery("SELECT s FROM StudyEntity s WHERE s.studyId=:studyId", StudyEntity.class)
-                .setParameter("studyId", revisionable.getStudyId())
-                .getResultList();
-        if(studies.isEmpty()) {
-            logger.error("Didn't find study entity for study attachment finalization on "+revisionable.toString());
-            return;
-        }
-        StudyEntity study = studies.get(0);
-
+    private void finalizeStudyAttachment(StudyAttachmentEntity revisionable) {
         // Get the latest revision for study and, if it exists, get or create files reference container
-        Pair<ReturnResult, RevisionData> dataPair = general.getRevisionData(study.latestRevisionKey());
+        Pair<ReturnResult, RevisionData> dataPair = general.getLatestRevisionForIdAndType(revisionable.getStudy(), false, ConfigurationType.STUDY);
         if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
-            logger.error("Didn't find  latest revision for study with revision key "+study.latestRevisionKey());
+            logger.error("Didn't find  latest revision for study with id "+revisionable.getStudy()+" with result "+dataPair.getLeft());
             return;
         }
 

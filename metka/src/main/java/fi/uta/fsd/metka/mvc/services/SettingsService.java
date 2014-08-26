@@ -81,4 +81,9 @@ public class SettingsService {
     public void insertMisc(String text) {
         miscJSONRepository.insert(text);
     }
+
+    // User report repository to generate example report
+    public Object generateReport() {
+        return null;
+    }
 }

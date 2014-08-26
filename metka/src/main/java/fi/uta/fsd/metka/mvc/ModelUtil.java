@@ -18,6 +18,7 @@ public final class ModelUtil {
         MetkaAuthenticationDetails details = AuthenticationUtil.getAuthenticationDetails();
         model.asMap().put("uDisplayName", details.getDisplayName());
         model.asMap().put("uUserName", details.getUserName());
+        model.asMap().put("uRole", details.getRole().toJsonString());
     }
 
     public static void initRevisionModel(Model model, ConfigurationType type) {

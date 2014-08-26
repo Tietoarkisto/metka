@@ -1,7 +1,10 @@
 package fi.uta.fsd.metka.mvc.services;
 
+import fi.uta.fsd.metka.enums.ConfigurationType;
+import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.search.StudySearch;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.transfer.revision.RevisionSearchResponse;
 import fi.uta.fsd.metka.transfer.revision.RevisionSearchResult;
 import fi.uta.fsd.metka.transfer.study.StudyVariablesStudiesResponse;
 import fi.uta.fsd.metka.transfer.study.StudyVariablesStudyPair;
@@ -37,6 +40,21 @@ public class StudyService {
                 return o1.getTitle().compareTo(o2.getTitle());
             }
         });
+        return response;
+    }
+
+    public RevisionSearchResponse collectAttachmentHistory(TransferData transferData) {
+        RevisionSearchResponse response = new RevisionSearchResponse();
+        if(transferData.getConfiguration().getType() != ConfigurationType.STUDY_ATTACHMENT) {
+            response.setResult(ReturnResult.INCORRECT_TYPE_FOR_OPERATION);
+            return response;
+        }
+
+        Pair<ReturnResult, List<RevisionSearchResult>> results = search.collectAttachmentHistory(transferData.getKey().getId());
+        response.setResult(results.getLeft());
+        if(results.getLeft() == ReturnResult.SEARCH_SUCCESS) {
+            response.getRows().addAll(results.getRight());
+        }
         return response;
     }
 }

@@ -17,6 +17,8 @@ public enum ReturnResult {
     REVISIONABLE_NOT_FOUND,             // Requested revisionable object couldn't be found. Either there's no revisionable for requested id, or the revisionable with the id is of different type than requested
     REVISIONABLE_OF_INCORRECT_TYPE,     // RevisionableEntity of certain ConfigurationType was requested but the found Revisionable was of a different type
     REVISIONABLE_NOT_CREATED,           // Revisionable creation failed due to some error
+    REVISIONABLE_NOT_REMOVED,           // Revisionable was not marked as removed when it was expected to be
+    REVISIONABLE_REMOVED,               // Revisionable was marked as removed and changes can't be made
     CONFIGURATION_CONTAINED_NO_DATA,    // Entity was found but data was empty, this is a serious error
     CONFIGURATION_FOUND,                // Requested configuration (either data or gui) was found
     CONFIGURATION_NOT_FOUND,            // Configuration (either data or gui) was not found
@@ -50,5 +52,6 @@ public enum ReturnResult {
     WRONG_USER,                         // User with the wrong user name tried to perform operation that is restricted to one user at a time (e.g. saving a revision)
     WRONG_ROLES,                        // Role(s) the user has don't allow them to perform the requested operation
     REFERENCE_FOUND,                    // Requested reference information was found
-    REFERENCE_MISSING                  // Requested reference information was not found
+    REFERENCE_MISSING,                  // Requested reference information was not found
+    MALFORMED_QUERY                    // Search query (usually expert search) was in some way invalid and could not be parsed to actual query
 }

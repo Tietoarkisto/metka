@@ -80,6 +80,115 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
     }
 
     @Override
+    public ParseResult parse(RevisionData attachment, VariableDataType type) {
+        long startTime = System.currentTimeMillis();
+        // Sanity check
+        if(type == null) {
+            return ParseResult.NO_TYPE_GIVEN;
+        }
+
+        DateTimeUserPair info = DateTimeUserPair.build();
+
+        // Let's get the target study. We can make some assumptions when making this call since we shouldn't be here if this can fail.
+        Pair<ReturnResult, RevisionData> dataPair = general.getLatestRevisionForIdAndType(
+                Long.parseLong(attachment.dataField(ValueDataFieldCall.get("study")).getRight().getActualValueFor(DEFAULT)),
+                false,
+                ConfigurationType.STUDY);
+        if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
+            return ParseResult.DID_NOT_FIND_STUDY;
+        }
+        RevisionData study = dataPair.getRight();
+        // **********************
+        // StudyAttachment checks
+        // **********************
+        // Check that study has attached variables file and get the file id,
+        // attaching the file should happen before this step so we can expect it to be present
+        Pair<StatusCode, ValueDataField> fieldPair = study.dataField(ValueDataFieldCall.get("variablefile"));
+        if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || !fieldPair.getRight().hasValueFor(DEFAULT)) {
+            StatusCode setResult = study.dataField(
+                    ValueDataFieldCall.set("variablefile", new Value(attachment.getKey().getId().toString()), DEFAULT).setInfo(info))
+                    .getLeft();
+            if(!(setResult == StatusCode.FIELD_UPDATE || setResult == StatusCode.FIELD_INSERT)) {
+                logger.error("Study update failed with result "+setResult);
+                return ParseResult.NO_CHANGES;
+            }
+        }
+
+        // Check for file path from attachment
+        fieldPair = attachment.dataField(ValueDataFieldCall.get("file"));
+        if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || !fieldPair.getRight().hasValueFor(DEFAULT)) {
+            logger.error("Did not find path in "+attachment.toString()+" even though shouldn't arrive at this point without path.");
+            return ParseResult.VARIABLES_FILE_HAD_NO_PATH;
+        }
+
+        ParseResult result = ParseResult.NO_CHANGES;
+
+        // Get or create study variables
+        fieldPair = study.dataField(ValueDataFieldCall.get("variables"));
+        if(fieldPair.getLeft() == StatusCode.FIELD_MISSING || !fieldPair.getRight().hasValueFor(DEFAULT)) {
+            RevisionCreateRequest request = new RevisionCreateRequest();
+            request.setType(ConfigurationType.STUDY_VARIABLES);
+            request.getParameters().put("study", study.getKey().getId().toString());
+            request.getParameters().put("fileid", attachment.getKey().getId().toString());
+            dataPair = create.create(request);
+            if(dataPair.getLeft() != ReturnResult.REVISION_CREATED) {
+                logger.error("Couldn't create new variables revisionable for study "+study.toString()+" and file "+attachment.toString());
+                return ParseResult.COULD_NOT_CREATE_VARIABLES;
+            }
+            fieldPair = study.dataField(
+                    ValueDataFieldCall
+                            .set("variables", new Value(dataPair.getRight().getKey().getId().toString()), DEFAULT)
+                            .setInfo(info));
+            result = ParseResult.REVISION_CHANGES;
+        } else {
+            dataPair = general.getLatestRevisionForIdAndType(
+                    Long.parseLong(fieldPair.getRight().getActualValueFor(DEFAULT)), true, ConfigurationType.STUDY_VARIABLES);
+            if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
+                logger.error("Couldn't find revision for study variables with id "+fieldPair.getRight().getActualValueFor(DEFAULT)
+                        +" even though it's referenced from study "+study.toString());
+                return ParseResult.DID_NOT_FIND_VARIABLES;
+            }
+        }
+
+        RevisionData variablesData = dataPair.getRight();
+        if(variablesData.getState() != RevisionState.DRAFT) {
+            dataPair = edit.edit(TransferData.buildFromRevisionData(variablesData, RevisionableInfo.FALSE));
+            if(dataPair.getLeft() != ReturnResult.REVISION_CREATED) {
+                logger.error("Couldn't create new DRAFT revision for "+variablesData.getKey().toString());
+                return resultCheck(result, ParseResult.COULD_NOT_CREATE_VARIABLES_DRAFT);
+            }
+            variablesData = dataPair.getRight();
+        }
+
+        // ************************
+        // Actual variables parsing
+        // ************************
+        ParseResult variablesResult = ParseResult.NO_CHANGES;
+        switch(type) {
+            case POR:
+                // Read POR file
+                variablesResult = handlePorVariables(
+                        attachment.dataField(ValueDataFieldCall.get("file")).getRight().getActualValueFor(DEFAULT),
+                        variablesData,
+                        info);
+                result = resultCheck(result, variablesResult);
+                break;
+        }
+
+        if(variablesResult == ParseResult.REVISION_CHANGES) {
+            ReturnResult updateResult = general.updateRevisionData(variablesData);
+            if(updateResult != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
+                logger.error("Could not update revision data for "+variablesData.toString()+" with result "+updateResult);
+                return resultCheck(result, ParseResult.VARIABLES_SERIALIZATION_FAILED);
+            }
+        }
+
+        long endTime = System.currentTimeMillis();
+        System.err.println("Variable parsing took "+(endTime-startTime)+"ms");
+        return result;
+    }
+
+    /*@Override
     public ParseResult merge(RevisionData study, VariableDataType type, Configuration studyConfig) {
         long startTime = System.currentTimeMillis();
         // Sanity check
@@ -154,9 +263,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             variablesData = dataPair.getRight();
         }
 
-        // ************************
-        // Actual variables parsing
-        // ************************
+
         ParseResult variablesResult = ParseResult.NO_CHANGES;
         switch(type) {
             case POR:
@@ -180,7 +287,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         long endTime = System.currentTimeMillis();
         System.err.println("Variable parsing took "+(endTime-startTime)+"ms");
         return result;
-    }
+    }*/
 
     /**
      * Parses a por file into a variable structure for a study.
@@ -190,7 +297,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
      * @param variablesData RevisionData of the study variables object used as a base for these variables.
      */
     // TODO: Change this to use create and edit repositories
-    private ParseResult handlePorVariables(String path, String studyId, RevisionData variablesData, DateTimeUserPair info) {
+    private ParseResult handlePorVariables(String path, RevisionData variablesData, DateTimeUserPair info) {
         PORReader reader = new PORReader();
         PORFile por;
         try {
@@ -226,7 +333,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         result = checkResultForUpdate(fieldPair, result);
 
         // Make VariablesHandler
-        VariableHandler handler = new VariableHandler(info, studyId);
+        VariableHandler handler = new VariableHandler(info, variablesData.dataField(ValueDataFieldCall.get("study")).getRight().getActualValueFor(DEFAULT));
 
         List<StudyVariableEntity> variableEntities =
                 em.createQuery("SELECT e FROM StudyVariableEntity e WHERE e.studyVariablesId=:studyVariablesId", StudyVariableEntity.class)
@@ -290,7 +397,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         }
 
         Pair<ReturnResult, Configuration> variableConfiguration = configurations.findLatestConfiguration(ConfigurationType.STUDY_VARIABLE);
-
+        Pair<StatusCode, ValueDataField> studyField = variablesData.dataField(ValueDataFieldCall.get("study"));
         for(Pair<StudyVariableEntity, PORUtil.PORVariableHolder> pair : listOfEntitiesAndHolders) {
             // Iterate through entity/holder pairs. There should always be a holder but missing entity indicates that this is a new variable.
             // After all variables are handled there should be one non removed revisionable per variable in the current por-file.
@@ -306,12 +413,12 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             if(variableEntity == null) {
                 RevisionCreateRequest request = new RevisionCreateRequest();
                 request.setType(ConfigurationType.STUDY_VARIABLE);
-                request.getParameters().put("studyid", studyId);
+                request.getParameters().put("study", studyField.getRight().getActualValueFor(DEFAULT));
                 request.getParameters().put("variablesid", variablesData.getKey().getId().toString());
                 request.getParameters().put("varid", varId);
                 dataPair = create.create(request);
                 if(dataPair.getLeft() != ReturnResult.REVISION_CREATED) {
-                    logger.error("Couldn't create new variable revisionable for studyid "+studyId+" and variables "+variablesData.toString());
+                    logger.error("Couldn't create new variable revisionable for studyid "+studyField.getRight().getActualValueFor(DEFAULT)+" and variables "+variablesData.toString());
                     return resultCheck(result, ParseResult.COULD_NOT_CREATE_VARIABLES);
                 }
             } else {
@@ -405,6 +512,14 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                     : variable.asVariable().label;
             fieldPair = variableRevision.dataField(ValueDataFieldCall.set("varlabel", new Value(label), DEFAULT).setInfo(info));
             checkResultForUpdate(fieldPair, result);
+
+            // TODO: Copy varlabel content to a row in qustnlits if there's not already rows in there
+            /*Pair<StatusCode, ContainerDataField> qstns = variableRevision.dataField(ContainerDataFieldCall.set("qstnlits"));
+            checkResultForUpdate(qstns, result);
+
+            if(!qstns.getRight().hasRowsFor(DEFAULT)) {
+                Pair<StatusCode, DataRow> row = qstns.getRight().insertNewDataRow(DEFAULT, variable);
+            }*/
 
             // Set valuelabels CONTAINER
             ParseResult operationResult = setValueLabels(variableRevision, variable);

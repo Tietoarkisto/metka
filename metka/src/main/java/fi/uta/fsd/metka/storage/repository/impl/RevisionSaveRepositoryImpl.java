@@ -23,7 +23,10 @@ import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.GeneralRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionSaveRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.variables.StudyVariablesParser;
+import fi.uta.fsd.metka.storage.variables.enums.ParseResult;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -44,6 +47,9 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
 
     @Autowired
     private GeneralRepository general;
+
+    @Autowired
+    private StudyVariablesParser parser;
 
     @Override
     public Pair<ReturnResult, TransferData> saveRevision(TransferData transferData) {
@@ -102,14 +108,14 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
 
     /**
      * Do type specific save operations if any
-     * @param revision RevisionData to save
+     * @param revision RevisionData to finalize
      * @param transferData TransferData sent to request and that will be returned to UI
      * @param configuration Configuration of revision data
      */
-    private void typeSave(RevisionData revision, TransferData transferData, Configuration configuration) {
+    private void finalizeSave(RevisionData revision, TransferData transferData, Configuration configuration) {
         switch(revision.getConfiguration().getType()) {
             case STUDY_ATTACHMENT:
-                saveStudyAttachment(revision, transferData, configuration);
+                finalizeStudyAttachment(revision, transferData, configuration);
                 break;
             default:
                 break;
@@ -117,13 +123,62 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
     }
 
     /**
-     * This will check that the correct reference is found from
-     * @param revision
-     * @param transferData
-     * @param configuration
+     * If this study attachment is not marked parsed and has a path then check if that path could be a por file that needs parsing.
+     * If so then parse that por file and mark this study attachment as parsed.
+     * TODO: Should translation parses be handled as part of this for example as translations of file-field
+     * @param revision         RevisionData
+     * @param transferData     TransferData
+     * @param configuration    Configuration
      */
-    private void saveStudyAttachment(RevisionData revision, TransferData transferData, Configuration configuration) {
+    private void finalizeStudyAttachment(RevisionData revision, TransferData transferData, Configuration configuration) {
+        Pair<StatusCode, ValueDataField> fieldPair = revision.dataField(ValueDataFieldCall.get("parsed").setConfiguration(configuration));
+        if(!(fieldPair.getLeft() == StatusCode.FIELD_MISSING
+                || (fieldPair.getLeft() == StatusCode.FIELD_FOUND
+                    && (!fieldPair.getRight().hasValueFor(Language.DEFAULT)
+                       || !fieldPair.getRight().getValueFor(Language.DEFAULT).valueAsBoolean())))) {
+            // Either the attachment is parsed or there's some other problem
+            return;
+        }
 
+        fieldPair = revision.dataField(ValueDataFieldCall.get("file"));
+        if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+            // We have no file path, no need to continue
+            return;
+        }
+
+        String path = fieldPair.getRight().getActualValueFor(Language.DEFAULT);
+        // Check if file is variable file name
+        boolean parse = !FilenameUtils.getName(path).substring(0, 3).toUpperCase().equals("DAF");
+        // Check if file is variable file based on file extension
+        if(parse) {
+            if(!FilenameUtils.getExtension(path).toUpperCase().equals("POR")) {
+                // For now the only option. If more variable file types are added then this needs to be changed to a switch case
+                parse = false;
+            }
+        }
+        Pair<ReturnResult, RevisionData> dataPair = general.getLatestRevisionForIdAndType(
+                revision.dataField(ValueDataFieldCall.get("study")).getRight().getValueFor(Language.DEFAULT).valueAsInteger(),
+                false,
+                ConfigurationType.STUDY);
+        if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
+            parse = false;
+        }
+        if(parse) {
+            // Check if study has a different variable file already using variablefile reference and fileId
+            // Get latest revision, doesn't matter if it's a draft or not since file reference should be immutable
+            // We can assume that we get a revision since other points before this depend on the existence of the revision
+            fieldPair = dataPair.getRight().dataField(ValueDataFieldCall.get("variablefile"));
+            if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().valueForEquals(Language.DEFAULT, revision.getKey().getId().toString())) {
+                parse = false;
+            }
+        }
+        if(parse) {
+            // File is a variable file, initiate variable parsing
+            ParseResult result = parser.parse(revision, VariableDataType.POR);
+            if(result == ParseResult.REVISION_CHANGES) {
+                general.updateRevisionData(dataPair.getRight());
+            }
+        }
     }
 
     private static class SaveHandler {

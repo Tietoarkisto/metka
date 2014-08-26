@@ -101,4 +101,11 @@ public interface GeneralRepository {
     @Transactional(readOnly = false) public ReturnResult updateRevisionData(RevisionData revision);
 
     @Transactional(readOnly = false) public Pair<ReturnResult, RevisionKey> createNewRevision(RevisionData revision);
+
+    /**
+     * Returns file directory path for given study based on property value and study id.
+     * @param study    Revisionable id of study
+     * @return ReturnResult, String pair pointing to root directory of study files if entity was found
+     */
+    public Pair<ReturnResult, String> getStudyFileDirectory(long study);
 }

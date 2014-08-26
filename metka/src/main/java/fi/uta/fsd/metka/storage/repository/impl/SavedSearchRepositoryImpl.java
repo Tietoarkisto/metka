@@ -3,6 +3,7 @@ package fi.uta.fsd.metka.storage.repository.impl;
 import fi.uta.fsd.metka.storage.entity.SavedExpertSearchEntity;
 import fi.uta.fsd.metka.storage.repository.SavedSearchRepository;
 import fi.uta.fsd.metka.transfer.expert.SavedExpertSearchItem;
+import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Repository;
 
@@ -19,8 +20,14 @@ public class SavedSearchRepositoryImpl implements SavedSearchRepository {
     @Override
     public List<SavedExpertSearchItem> listSavedSearches() {
         List<SavedExpertSearchItem> items = new ArrayList<>();
+        // This gets all saved searches
         List<SavedExpertSearchEntity> entities = em.createQuery("SELECT e FROM SavedExpertSearchEntity e", SavedExpertSearchEntity.class)
                 .getResultList();
+
+        // This gets only the searches current user has saved
+        /*List<SavedExpertSearchEntity> entities = em.createQuery("SELECT e FROM SavedExpertSearchEntity e WHERE e.savedBy=:user", SavedExpertSearchEntity.class)
+                .setParameter("user", AuthenticationUtil.getUserName())
+                .getResultList();*/
         for(SavedExpertSearchEntity entity : entities) {
             SavedExpertSearchItem item = new SavedExpertSearchItem();
             item.setId(entity.getId());
@@ -39,7 +46,7 @@ public class SavedSearchRepositoryImpl implements SavedSearchRepository {
         entity.setTitle(search.getTitle());
         entity.setQuery(search.getQuery());
         entity.setSavedAt(new LocalDate());
-        // TODO: Set savedBy
+        entity.setSavedBy(AuthenticationUtil.getUserName());
         em.persist(entity);
 
         SavedExpertSearchItem item = new SavedExpertSearchItem();
@@ -54,6 +61,9 @@ public class SavedSearchRepositoryImpl implements SavedSearchRepository {
 
     @Override
     public void removeExpertSearch(Long id) {
-        em.remove(em.find(SavedExpertSearchEntity.class, id));
+        SavedExpertSearchEntity entity = em.find(SavedExpertSearchEntity.class, id);
+        if(entity.getSavedBy().equals(AuthenticationUtil.getUserName())) {
+            em.remove(entity);
+        }
     }
 }
