@@ -6,6 +6,7 @@ define(function (require) {
     return function (onLoad) {
         var options = {
             header: MetkaJS.L10N.get('topmenu.expert'),
+            $events: $({}),
             content: [
                 {
                     "type": "COLUMN",
@@ -40,7 +41,7 @@ define(function (require) {
                                             "savedAt"
                                         ],
                                         onRemove: function ($row, remove) {
-                                            require('./../server')('/expertSearch/remove/{id}', require('./../map/transferRow/object')($row.data('transferRow')), {
+                                            require('./../server')('/expertSearch/remove/{id}', require('./../map/transferRow/object')($row.data('transferRow'), 'DEFAULT'), {
                                                 success: function () {
                                                     $row.remove();
                                                 }
@@ -48,12 +49,12 @@ define(function (require) {
                                         },
                                         onClick: function () {
                                             $query
-                                                .val($(this).data('transferRow').fields.query.value.current)
+                                                .val($(this).data('transferRow').fields.query.values.DEFAULT.current)
                                                 .change();
                                         }
                                     },
                                     create: function (options) {
-                                        var $containerField = $(this);
+                                        var $containerField = $(this).children();
                                         addRow = function (data) {
                                             data.name = data.title;
                                             delete data.title;
@@ -74,7 +75,7 @@ define(function (require) {
             buttons: [
                 require('./../searchButton')('/expertSearch/query', function () {
                     return {
-                        query: require('./../data')(options)('search').get()
+                        query: require('./../data')(options)('search').getByLang('DEFAULT')
                     };
                 }, function (data) {
                     return data.results;
@@ -137,6 +138,7 @@ define(function (require) {
                                 var containerOptions = {
                                     data: {},
                                     dataConf: {},
+                                    $events: $({}),
                                     content: [{
                                         type: 'COLUMN',
                                         columns: 1,
@@ -170,8 +172,8 @@ define(function (require) {
                                                 .click(function () {
                                                     require('./../server')('/expertSearch/save', {
                                                         data: JSON.stringify({
-                                                            query: require('./../data')(options)('search').get(),
-                                                            title: require('./../data')(containerOptions)('title').get()
+                                                            query: require('./../data')(options)('search').getByLang('DEFAULT'),
+                                                            title: require('./../data')(containerOptions)('title').getByLang('DEFAULT')
                                                         }),
                                                         success: addRow
                                                     });

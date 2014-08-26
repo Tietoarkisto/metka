@@ -6,6 +6,7 @@ define(function (require) {
             data: JSON.stringify(requestData()),
             success: function (data) {
                 var fieldOptions = {
+                    $events: $({}),
                     dataConf: {
                         fields: fields
                     },
@@ -34,10 +35,10 @@ define(function (require) {
                     return;
                 }
 
-                $('#searchResultTable').remove();
+                $('.content').children('.searchResults').remove();
 
                 var $field = require('./field').call($('<div>'), fieldOptions)
-                    .attr('id', 'searchResultTable');
+                    .addClass('searchResults');
 
                 $field.find('.panel-heading')
                     .text(MetkaJS.L10N.get('search.result.title'))

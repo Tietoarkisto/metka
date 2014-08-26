@@ -13,10 +13,9 @@ define(function (require) {
             header: 'Metka',
             content: [],
             data: null,
-            dataConf: null
+            dataConf: null,
+            $events: $({})
         }, pageOptions);
-
-        options.$events = $({});
 
         $container.append(require('./modules/header')(options.header));
         require('./modules/container').call($container, options);

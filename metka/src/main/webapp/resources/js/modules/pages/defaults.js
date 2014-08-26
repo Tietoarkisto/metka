@@ -10,43 +10,18 @@ define(function (require) {
 
                 options.dataConf = data.configuration;
                 options.data = data.transferData;
+                options.$events = $({});
 
                 options.header = function header($header) {
                     var supplant = {
                         page: metka.PAGE
                     };
 
-                    var lang = 'default';
                     var header = {
                         localized: 'type.{page}.title',
                         pattern: '{localized} - {id} - {no}{state}',
                         buttons: $('<div class="pull-right btn-toolbar">')
-                            .append($('<div class="btn-group btn-group-xs btn-group-translation-lang" data-toggle="buttons">')
-                                // 'change' event instead of 'click', because these are radio buttons styled as regular buttons
-                                .on('change', 'label > input', function () {
-                                    $('body').trigger('translationLangChanged', [$(this).val()]);
-                                })
-                                .append([{
-                                    text: ' fi',
-                                    code: 'default'
-                                }, {
-                                    text: 'en',
-                                    code: 'en'
-                                }, {
-                                    text: 'sv',
-                                    code: 'sv'
-                                }].map(function (o) {
-                                        var $input = $('<input type="radio" name="options">')
-                                            .val(o.code);
-                                        var $label = $('<label class="btn btn-default">')
-                                            .append($input, ' ', o.text);
-                                        if (lang === o.code) {
-                                            $label.addClass('active');
-                                            $input.prop('checked', true);
-                                        }
-
-                                        return $label;
-                                    })))
+                            .append(require('./../languageRadioInputGroup')(options, 'translation-lang', 'DEFAULT'))
                             .append($('<div class="btn-group btn-group-xs">')
                                 .append([{
                                     icon: 'glyphicon-chevron-left',
@@ -65,7 +40,7 @@ define(function (require) {
                                     })))
                             .append($('<div class="btn-group btn-group-xs">')
                                 .append($('<button type="button" class="btn btn-default">')
-                                    .prop('disabled', true)
+                                    //.prop('disabled', true)
                                     .text(MetkaJS.L10N.get('general.buttons.download'))
                                     .click(function () {
                                         require('./../assignUrl')('download');

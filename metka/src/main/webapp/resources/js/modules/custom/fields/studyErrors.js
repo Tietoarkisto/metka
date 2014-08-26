@@ -247,7 +247,7 @@ define(function (require) {
                         errors: {
                             type: 'CONTAINER',
                             //var results = getResults(data);
-                            rows: []
+                            rows: {}
                         }
                     }
                 },
@@ -279,7 +279,7 @@ define(function (require) {
                 '&title': options['&title']
             };
 
-            require('./../../field').call(this, fieldOptions);
+            require('./../../field').call(this.children().first(), fieldOptions);
 
             refreshData();
         }

@@ -1,15 +1,15 @@
 define(function (require) {
     'use strict';
 
-    return function (options) {
+    return function (options, lang) {
         var $input = $('<input type="checkbox">')
             .prop('disabled', require('./isFieldDisabled')(options))
             .change(function () {
-                require('./data')(options).set($(this).prop('checked'));
+                require('./data')(options).setByLang(lang, $(this).prop('checked'));
             });
 
         require('./data')(options).onChange(function () {
-            $input.prop('checked', !!require('./data')(options).get());
+            $input.prop('checked', !!require('./data')(options).getByLang(lang));
         });
 
         this

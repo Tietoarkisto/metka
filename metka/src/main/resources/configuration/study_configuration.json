@@ -810,7 +810,7 @@
 		},
 		"termsofuse": {
 			"key": "termsofuse",
-			"translatable": false,
+			"translatable": true,
 			"required": true,
 			"type": "SELECTION",
 			"selectionList": "termsofuse_list",
@@ -894,7 +894,7 @@
 		},
 		"specialtermsofuse": {
 			"key": "specialtermsofuse",
-			"translatable": false,
+			"translatable": true,
 			"type": "STRING",
 			"section": "deposit_agreement",
 			"multiline": true
