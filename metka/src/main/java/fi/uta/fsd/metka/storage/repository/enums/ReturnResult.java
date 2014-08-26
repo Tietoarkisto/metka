@@ -53,5 +53,8 @@ public enum ReturnResult {
     WRONG_ROLES,                        // Role(s) the user has don't allow them to perform the requested operation
     REFERENCE_FOUND,                    // Requested reference information was found
     REFERENCE_MISSING,                  // Requested reference information was not found
-    MALFORMED_QUERY                    // Search query (usually expert search) was in some way invalid and could not be parsed to actual query
+    MALFORMED_QUERY,                    // Search query (usually expert search) was in some way invalid and could not be parsed to actual query
+    PAGE_CREATED,                       // Binder page was created in response to save operation
+    PAGE_UPDATED,                       // Binder page was updated
+    PAGE_REMOVED                       // Binder page was removed successfully
 }

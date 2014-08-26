@@ -50,4 +50,9 @@ public final class ModelUtil {
         model.asMap().put("configurationType", "SETTINGS");
         model.asMap().put("indexers", pairs);
     }
+
+    public static void initBinder(Model model) {
+        addUserInfo(model);
+        model.asMap().put("configurationType", "BINDER");
+    }
 }

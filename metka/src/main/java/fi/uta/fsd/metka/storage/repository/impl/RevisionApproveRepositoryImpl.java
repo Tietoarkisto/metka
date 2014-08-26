@@ -105,6 +105,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             finalizeApproval(data);
 
             data.setState(RevisionState.APPROVED);
+            data.setHandler("");
             Pair<SerializationResults, String> string = json.serialize(data);
             if(string.getLeft() != SerializationResults.SERIALIZATION_SUCCESS) {
                 logger.error("Couldn't serialize data "+data.toString()+", halting approval process");
@@ -455,6 +456,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             }
 
             if(fixdip) {
+                // TODO: We need to inform the user that this value was changed automatically
                 // We need to fix filedip to 2 (i.e. 'No'), let's just assume that this succeeds
                 revision.dataField(ValueDataFieldCall.set("filedip", new Value("2"), Language.DEFAULT));
             }

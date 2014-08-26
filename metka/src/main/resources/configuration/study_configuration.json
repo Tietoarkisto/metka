@@ -417,10 +417,34 @@
 			"type": "REVISIONABLE",
 			"target": "PUBLICATION"
 		},
+		"publicationid_ref": {
+			"key": "publicationid_ref",
+			"type": "DEPENDENCY",
+			"target": "publications",
+			"titlePath": "publicationid"
+		},
+		"publicationtitle_ref": {
+			"key": "publicationtitle_ref",
+			"type": "DEPENDENCY",
+			"target": "publications",
+			"titlePath": "publicationtitle"
+		},
 		"study_ref": {
 			"key": "study_ref",
 			"type": "REVISIONABLE",
 			"target": "STUDY"
+		},
+		"studyid_ref": {
+			"key": "studyid_ref",
+			"type": "DEPENDENCY",
+			"target": "studies",
+			"titlePath": "studyid"
+		},
+		"studytitle_ref": {
+			"key": "studytitle_ref",
+			"type": "DEPENDENCY",
+			"target": "studies",
+			"titlePath": "title"
 		},
 		"variables_ref": {
 			"key": "variables_ref",
@@ -443,7 +467,6 @@
 			"key": "files_path_ref",
 			"type": "DEPENDENCY",
 			"target": "files",
-			"valuePath": "fileno",
 			"titlePath": "file"
 		},
 		"files_lang_ref": {
@@ -587,6 +610,62 @@
 				"versiontext",
 				"versionnotes"
 			]
+		},
+		"publications": {
+			"key": "publications",
+			"translatable": false,
+			"type": "REFERENCECONTAINER",
+			"reference": "publication_ref",
+			"subfields": [
+				"publicationid",
+				"publicationtitle"
+			],
+			"showReferenceKey": false,
+			"showSaveInfo": true
+		},
+		"publicationid": {
+			"key": "publicationid",
+			"translatable": false,
+			"type": "REFERENCE",
+			"reference": "publicationid_ref",
+			"subfield": true,
+			"writable": false
+		},
+		"publicationtitle": {
+			"key": "publicationtitle",
+			"translatable": false,
+			"type": "REFERENCE",
+			"reference": "publicationtitle_ref",
+			"subfield": true,
+			"writable": false
+		},
+		"studies": {
+			"key": "studies",
+			"translatable": false,
+			"type": "REFERENCECONTAINER",
+			"reference": "study_ref",
+			"subfields": [
+				"studyid_col",
+				"studytitle_col"
+			],
+			"showReferenceKey": false,
+			"showSaveInfo": true
+		},
+		"studyid_col": {
+			"key": "studyid_col",
+			"translatable": false,
+			"type": "REFERENCE",
+			"reference": "studyid_ref",
+			"subfield": true,
+			"writable": false
+		},
+		"studytitle_col": {
+			"key": "studytitle_col",
+			"translatable": false,
+			"type": "REFERENCE",
+			"reference": "studytitle_ref",
+			"subfield": true,
+			"writable": false
 		},
 		"studyid": {
 			"_comment": "This contains the automatically generated studyno_prefix+studyno combination.",

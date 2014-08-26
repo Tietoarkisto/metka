@@ -11,14 +11,15 @@ import javax.persistence.*;
 @Entity
 @DiscriminatorValue(ConfigurationType.Values.STUDY)
 public class StudyEntity extends RevisionableEntity {
-    @Column(name = "STUDYID", updatable = false, unique = true)
+    @Column(name = "STUDYID", unique = true)
     private String studyId;
 
     public String getStudyId() {
         return studyId;
     }
 
+    // StudyId has to be immutable
     public void setStudyId(String studyId) {
-        this.studyId = studyId;
+        if(this.studyId == null) this.studyId = studyId;
     }
 }

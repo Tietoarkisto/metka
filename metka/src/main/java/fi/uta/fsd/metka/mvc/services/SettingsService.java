@@ -1,6 +1,7 @@
 package fi.uta.fsd.metka.mvc.services;
 
 import fi.uta.fsd.metka.storage.repository.MiscJSONRepository;
+import fi.uta.fsd.metka.storage.repository.ReportRepository;
 import org.apache.commons.io.FilenameUtils;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
@@ -21,6 +22,9 @@ public class SettingsService {
 
     @Autowired
     private MiscJSONRepository miscJSONRepository;
+
+    @Autowired
+    private ReportRepository reports;
 
     @Value("${dir.autoload}")
     private String rootFolder;
@@ -83,7 +87,8 @@ public class SettingsService {
     }
 
     // User report repository to generate example report
-    public Object generateReport() {
-        return null;
+    public String generateReport() {
+        // Here we could choose which report to generate based on some parameter
+        return reports.gatherGeneralReport();
     }
 }

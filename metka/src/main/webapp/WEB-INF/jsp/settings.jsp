@@ -46,6 +46,11 @@
                 </tr>
             </c:forEach>
         </table>
+
+        <button type="button" class="btn btn-default" onclick="require(['./modules/assignUrl'], function (assignUrl) {assignUrl('/settings/downloadReport');})">
+            Lataa raportti
+        </button>
+
     </div>
 </div>
 <script>
