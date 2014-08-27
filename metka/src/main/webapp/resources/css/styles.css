@@ -171,9 +171,6 @@ header .headerContainer #logo {
     width: 207px;
 }
 
-nav {
-    display: inline-block;
-}
 nav .mainNavUl {
     list-style: none;
 }
