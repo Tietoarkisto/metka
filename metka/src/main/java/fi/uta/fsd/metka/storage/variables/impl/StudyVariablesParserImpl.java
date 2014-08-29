@@ -54,7 +54,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
     private EntityManager em;
 
     @Autowired
-    private GeneralRepository general;
+    private RevisionRepository revisions;
 
     @Autowired
     private ConfigurationRepository configurations;
@@ -90,7 +90,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         DateTimeUserPair info = DateTimeUserPair.build();
 
         // Let's get the target study. We can make some assumptions when making this call since we shouldn't be here if this can fail.
-        Pair<ReturnResult, RevisionData> dataPair = general.getLatestRevisionForIdAndType(
+        Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(
                 Long.parseLong(attachment.dataField(ValueDataFieldCall.get("study")).getRight().getActualValueFor(DEFAULT)),
                 false,
                 ConfigurationType.STUDY);
@@ -141,7 +141,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                             .setInfo(info));
             result = ParseResult.REVISION_CHANGES;
         } else {
-            dataPair = general.getLatestRevisionForIdAndType(
+            dataPair = revisions.getLatestRevisionForIdAndType(
                     Long.parseLong(fieldPair.getRight().getActualValueFor(DEFAULT)), true, ConfigurationType.STUDY_VARIABLES);
             if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
                 logger.error("Couldn't find revision for study variables with id "+fieldPair.getRight().getActualValueFor(DEFAULT)
@@ -176,7 +176,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         }
 
         if(variablesResult == ParseResult.REVISION_CHANGES) {
-            ReturnResult updateResult = general.updateRevisionData(variablesData);
+            ReturnResult updateResult = revisions.updateRevisionData(variablesData);
             if(updateResult != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
                 logger.error("Could not update revision data for "+variablesData.toString()+" with result "+updateResult);
                 return resultCheck(result, ParseResult.VARIABLES_SERIALIZATION_FAILED);
@@ -205,13 +205,13 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         // attaching the file should happen before this step so we can expect it to be present
         ValueDataField field = study.dataField(ValueDataFieldCall.get("variablefile").setConfiguration(studyConfig)).getRight();
         Long varFileId;
-        if(field == null || !field.hasValueFor(DEFAULT)) {
+        if(field == null || !field.containsValueFor(DEFAULT)) {
             return ParseResult.NO_VARIABLES_FILE;
         } else {
             varFileId = field.getValueFor(DEFAULT).valueAsInteger();
         }
 
-        Pair<ReturnResult, RevisionData> dataPair = general.getLatestRevisionForIdAndType(varFileId, false, ConfigurationType.STUDY_ATTACHMENT);
+        Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(varFileId, false, ConfigurationType.STUDY_ATTACHMENT);
         if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
             // TODO: Couldn't find revision data, possibly do something
             return ParseResult.DID_NOT_FIND_VARIABLES_FILE;
@@ -219,7 +219,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         RevisionData attachmentData = dataPair.getRight();
         // Check for file path from attachment
         field = attachmentData.dataField(ValueDataFieldCall.get("file")).getRight();
-        if(field == null || !field.hasValueFor(DEFAULT)) {
+        if(field == null || !field.containsValueFor(DEFAULT)) {
             // TODO: Log exception, something is wrong since no path is attached to the file but we are still trying to parse it for variables
             return ParseResult.VARIABLES_FILE_HAD_NO_PATH;
         }
@@ -228,7 +228,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
 
         // Get or create study variables
         Pair<StatusCode, ValueDataField> fieldPair = study.dataField(ValueDataFieldCall.get("variables").setConfiguration(studyConfig));
-        if(fieldPair.getLeft() == StatusCode.FIELD_MISSING || !fieldPair.getRight().hasValueFor(DEFAULT)) {
+        if(fieldPair.getLeft() == StatusCode.FIELD_MISSING || !fieldPair.getRight().containsValueFor(DEFAULT)) {
             RevisionCreateRequest request = new RevisionCreateRequest();
             request.setType(ConfigurationType.STUDY_VARIABLES);
             request.getParameters().put("studyid", study.getKey().getId().toString());
@@ -244,7 +244,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                             .setInfo(info).setConfiguration(studyConfig));
             result = ParseResult.REVISION_CHANGES;
         } else {
-            dataPair = general.getLatestRevisionForIdAndType(
+            dataPair = revisions.getLatestRevisionForIdAndType(
                     Long.parseLong(fieldPair.getRight().getActualValueFor(DEFAULT)), true, ConfigurationType.STUDY_VARIABLES);
             if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
                 logger.error("Couldn't find revision for study variables with id "+fieldPair.getRight().getActualValueFor(DEFAULT)
@@ -277,7 +277,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         }
 
         if(variablesResult == ParseResult.REVISION_CHANGES) {
-            ReturnResult updateResult = general.updateRevisionData(variablesData);
+            ReturnResult updateResult = revisions.updateRevisionData(variablesData);
             if(updateResult != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
                 logger.error("Could not update revision data for "+variablesData.toString()+" with result "+updateResult);
                 return resultCheck(result, ParseResult.VARIABLES_SERIALIZATION_FAILED);
@@ -361,11 +361,11 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             // All remaining rows in variableEntities should be removed since no variable was found for them in the current POR-file
 
             // We don't need to check here if there's draft or not, let's just call draft and logical remove both
-            Pair<ReturnResult, RevisionData> dataPair = general.getLatestRevisionForIdAndType(variableEntity.getId(), false, ConfigurationType.STUDY_VARIABLE);
+            Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(variableEntity.getId(), false, ConfigurationType.STUDY_VARIABLE);
             // TODO: This operation is somewhat heavy but enough for now
             if(dataPair.getLeft() == ReturnResult.REVISION_FOUND) {
                 if(remove.remove(TransferData.buildFromRevisionData(dataPair.getRight(), RevisionableInfo.FALSE)) == RemoveResult.SUCCESS_DRAFT) {
-                    dataPair = general.getLatestRevisionForIdAndType(variableEntity.getId(), false, ConfigurationType.STUDY_VARIABLE);
+                    dataPair = revisions.getLatestRevisionForIdAndType(variableEntity.getId(), false, ConfigurationType.STUDY_VARIABLE);
                     remove.remove(TransferData.buildFromRevisionData(dataPair.getRight(), RevisionableInfo.FALSE));
                 }
             }
@@ -422,7 +422,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                     return resultCheck(result, ParseResult.COULD_NOT_CREATE_VARIABLES);
                 }
             } else {
-                dataPair = general.getLatestRevisionForIdAndType(variableEntity.getId(), false, ConfigurationType.STUDY_VARIABLE);
+                dataPair = revisions.getLatestRevisionForIdAndType(variableEntity.getId(), false, ConfigurationType.STUDY_VARIABLE);
                 if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
                     logger.error("Couldn't find revision for study variable with id "+variableEntity.getId()
                             +" even though StudyVariableEntity existed.");
@@ -449,7 +449,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             ParseResult mergeResult = handler.mergeToData(variableData, variable);
 
             if(mergeResult == ParseResult.REVISION_CHANGES) {
-                ReturnResult updateResult = general.updateRevisionData(variableData);
+                ReturnResult updateResult = revisions.updateRevisionData(variableData);
                 if(updateResult != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
                     logger.error("Could not update revision data for "+variableData.toString()+" with result "+updateResult);
                 }

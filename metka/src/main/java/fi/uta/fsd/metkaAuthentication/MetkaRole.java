@@ -2,6 +2,9 @@ package fi.uta.fsd.metkaAuthentication;
 
 import fi.uta.fsd.metka.enums.Language;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Normalized role for Metka-application. Implemented as a class instead of enum for ease of use with web page.
  * Role permissions are layered so that higher permissions can do anything lower permissions can and more.
@@ -74,65 +77,14 @@ public final class MetkaRole implements Comparable<MetkaRole> {
     private final MetkaRoleName roleName;
     private final Language defaultLanguage;
 
-    // Search permissions
-    private final boolean canPerformSearch;
-    private final boolean canSaveExpertSearch;
-    private final boolean canRemoveNotOwnedExpertSearch;
-
-    // General revision permissions
-    private final boolean canViewRevision;
-    private final boolean canCreateRevision;
-    private final boolean canEditRevision;
-    private final boolean canApproveRevision;
-    private final boolean canForceClaimRevision;
-    private final boolean canRemoveRevision;
-    private final boolean canRestoreRevisions;
-
-    // Import and Export permissions
-    private final boolean canImportRevision;
-    private final boolean canExportRevision;
-
-    // Study specific permissions
-    private final boolean canRemoveStudyVersions;
-    private final boolean canAddStudyErrors;
-
-    // Series specific permissions
-    private final boolean canRemoveSeries;
-
-    // Program settings permissions
-    private final boolean canViewSettingsPage;
-    private final boolean canGenerateReports;
-    private final boolean canUploadConfigurations;
-    private final boolean canUploadJson;
+    private final Set<Permission> permissions = new HashSet<>();
 
     private MetkaRole(MetkaRoleBuilder builder) {
         roleName                        = builder.roleName;
         defaultLanguage                 = builder.defaultLanguage;
 
-        canPerformSearch                = builder.canPerformSearch;
-        canSaveExpertSearch             = builder.canSaveExpertSearch;
-        canRemoveNotOwnedExpertSearch   = builder.canRemoveNotOwnedExpertSearch;
-
-        canViewRevision                 = builder.canViewRevision;
-        canCreateRevision               = builder.canCreateRevision;
-        canEditRevision                 = builder.canEditRevision;
-        canApproveRevision              = builder.canApproveRevision;
-        canForceClaimRevision           = builder.canForceClaimRevision;
-        canRemoveRevision               = builder.canRemoveRevision;
-        canRestoreRevisions             = builder.canRestoreRevisions;
-
-        canImportRevision               = builder.canImportRevision;
-        canExportRevision               = builder.canExportRevision;
-
-        canRemoveStudyVersions          = builder.canRemoveStudyVersions;
-        canAddStudyErrors               = builder.canAddStudyErrors;
-
-        canRemoveSeries                 = builder.canRemoveSeries;
-
-        canViewSettingsPage             = builder.canViewSettingsPage;
-        canGenerateReports              = builder.canGenerateReports;
-        canUploadConfigurations         = builder.canUploadConfigurations;
-        canUploadJson                   = builder.canUploadJson;
+        // Add all builder defined permissions
+        permissions.addAll(builder.permissions);
     }
 
     @Override
@@ -162,26 +114,18 @@ public final class MetkaRole implements Comparable<MetkaRole> {
 
         json += "\"roleName\": \"" + roleName.name() + "\",";
         json += "\"defaultLanguage\": \""+defaultLanguage.toValue()+"\",";
-        json += "\"canPerformSearch\": " + canPerformSearch + ",";
-        json += "\"canSaveExpertSearch\": " + canSaveExpertSearch + ",";
-        json += "\"canRemoveNotOwnedExpertSearch\": " + canRemoveNotOwnedExpertSearch + ",";
-        json += "\"canViewRevision\": " + canViewRevision + ",";
-        json += "\"canCreateRevision\": " + canCreateRevision + ",";
-        json += "\"canEditRevision\": " + canEditRevision + ",";
-        json += "\"canApproveRevision\": " + canApproveRevision + ",";
-        json += "\"canForceClaimRevision\": " + canForceClaimRevision + ",";
-        json += "\"canRemoveRevision\": " + canRemoveRevision + ",";
-        json += "\"canRestoreRevisions\": " + canRestoreRevisions + ",";
-        json += "\"canImportRevision\": " + canImportRevision + ",";
-        json += "\"canExportRevision\": " + canExportRevision + ",";
-        json += "\"canRemoveStudyVersions\": " + canRemoveStudyVersions + ",";
-        json += "\"canAddStudyErrors\": " + canAddStudyErrors + ",";
-        json += "\"canRemoveSeries\": " + canRemoveSeries + ",";
-        json += "\"canViewSettingsPage\": " + canViewSettingsPage + ",";
-        json += "\"canGenerateReports\": " + canGenerateReports + ",";
-        json += "\"canUploadConfigurations\": " + canUploadConfigurations + ",";
-        json += "\"canUploadJson\": " + canUploadJson;
-
+        json += "\"permissions\": {";
+        boolean notFirst = false;
+        for(Permission permission : Permission.values()) {
+            if(notFirst) {
+                json += ",";
+            }
+            json += "\""+permission.toPermission()+"\": "+permissions.contains(permission);
+            if(!notFirst) {
+                notFirst = true;
+            }
+        }
+        json += "}";
         json += "}";
         return json;
     }
@@ -194,80 +138,12 @@ public final class MetkaRole implements Comparable<MetkaRole> {
         return defaultLanguage;
     }
 
-    public boolean isCanPerformSearch() {
-        return canPerformSearch;
-    }
-
-    public boolean isCanSaveExpertSearch() {
-        return canSaveExpertSearch;
-    }
-
-    public boolean isCanRemoveNotOwnedExpertSearch() {
-        return canRemoveNotOwnedExpertSearch;
-    }
-
-    public boolean isCanViewRevision() {
-        return canViewRevision;
-    }
-
-    public boolean isCanCreateRevision() {
-        return canCreateRevision;
-    }
-
-    public boolean isCanEditRevision() {
-        return canEditRevision;
-    }
-
-    public boolean isCanApproveRevision() {
-        return canApproveRevision;
-    }
-
-    public boolean isCanForceClaimRevision() {
-        return canForceClaimRevision;
-    }
-
-    public boolean isCanRemoveRevision() {
-        return canRemoveRevision;
-    }
-
-    public boolean isCanRestoreRevisions() {
-        return canRestoreRevisions;
-    }
-
-    public boolean isCanImportRevision() {
-        return canImportRevision;
-    }
-
-    public boolean isCanExportRevision() {
-        return canExportRevision;
-    }
-
-    public boolean isCanRemoveStudyVersions() {
-        return canRemoveStudyVersions;
-    }
-
-    public boolean isCanAddStudyErrors() {
-        return canAddStudyErrors;
-    }
-
-    public boolean isCanRemoveSeries() {
-        return canRemoveSeries;
-    }
-
-    public boolean isCanViewSettingsPage() {
-        return canViewSettingsPage;
-    }
-
-    public boolean isCanGenerateReports() {
-        return canGenerateReports;
-    }
-
-    public boolean isCanUploadConfigurations() {
-        return canUploadConfigurations;
-    }
-
-    public boolean isCanUploadJson() {
-        return canUploadJson;
+    public boolean hasPermission(String permission) {
+        // If given string is not a valid permission then throw exception.
+        if(!Permission.isPermission(permission)) {
+            throw new RuntimeException("Not a valid permission name");
+        }
+        return permissions.contains(Permission.fromPermission(permission));
     }
 
     public static enum MetkaRoleName {
@@ -335,105 +211,88 @@ public final class MetkaRole implements Comparable<MetkaRole> {
      * Builds rule sets for MetkaRole.
      */
     private static class MetkaRoleBuilder {
-        // Since permissions are layered the properties are listed above the static method that changes them for ease of reading.
-
         private MetkaRoleName roleName = MetkaRoleName.UNKNOWN;
-
-        public static MetkaRoleBuilder getUnknown() {
-            return new MetkaRoleBuilder();
-        }
-
-        private boolean canPerformSearch = false;
-        private boolean canSaveExpertSearch = false;
-        private boolean canViewRevision = false;
-
-        private boolean canViewSettingsPage = false;
-        private boolean canGenerateReports = false;
-
-        public static MetkaRoleBuilder getReader() {
-            MetkaRoleBuilder role = getUnknown();
-
-            role.roleName = MetkaRoleName.READER;
-
-            role.canPerformSearch = true;
-            role.canSaveExpertSearch = true;
-            role.canViewRevision = true;
-            role.canViewSettingsPage = true;
-            role.canGenerateReports = true;
-
-            return role;
-        }
-
-        private boolean canRemoveNotOwnedExpertSearch = false;
-        private boolean canCreateRevision = false;
-        private boolean canEditRevision = false;
-        private boolean canApproveRevision = false;
-        private boolean canForceClaimRevision = false;
-        private boolean canRemoveRevision = false;
-        private boolean canImportRevision = false;
-        private boolean canExportRevision = false;
-        private boolean canAddStudyErrors = false;
-
-        public static MetkaRoleBuilder getUser() {
-            MetkaRoleBuilder role = getReader();
-
-            role.roleName = MetkaRoleName.USER;
-
-            role.canRemoveNotOwnedExpertSearch = true;
-            role.canCreateRevision = true;
-            role.canEditRevision = true;
-            role.canApproveRevision = true;
-            role.canForceClaimRevision = true;
-            role.canRemoveRevision = true;
-            role.canImportRevision = true;
-            role.canExportRevision = true;
-            role.canAddStudyErrors = true;
-
-
-            return role;
-        }
-
         private Language defaultLanguage = Language.DEFAULT;
 
-        public static MetkaRoleBuilder getTranslator() {
-            MetkaRoleBuilder role = getUser();
+        private Set<Permission> permissions = new HashSet<>();
 
-            role.roleName = MetkaRoleName.TRANSLATOR;
-            role.defaultLanguage = Language.EN;
+        // Set all permissions to false so that we have a list of all permissions used by system.
+        // This is mainly a concession to ease UI development so that we have every permission on json.
+        public static MetkaRoleBuilder getUnknown() {
+            MetkaRoleBuilder role = new MetkaRoleBuilder();
 
             return role;
         }
 
-        private boolean canRestoreRevisions = false;
-        private boolean canRemoveStudyVersions = false;
-        private boolean canRemoveSeries = false;
-        private boolean canUploadConfigurations = false;
-        private boolean canUploadJson = false;
+        public static MetkaRoleBuilder getReader() {
+            return getUnknown()
+                    .setRoleName(MetkaRoleName.READER)
+                    .grant(Permission.HAS_MINIMUM_PERMISSION)
+                    .grant(Permission.CAN_PERFORM_SEARCH)
+                    .grant(Permission.CAN_SAVE_EXPERT_SEARCH)
+                    .grant(Permission.CAN_VIEW_REVISION)
+                    .grant(Permission.CAN_VIEW_SETTINGS_PAGE)
+                    .grant(Permission.CAN_GENERATE_REPORTS)
+                    .grant(Permission.CAN_VIEW_BINDER_PAGES)
+                    .grant(Permission.CAN_VIEW_STUDY_ERRORS)
+                    .grant(Permission.CAN_EDIT_STUDY_ERRORS);
+        }
+
+        public static MetkaRoleBuilder getUser() {
+            return getReader()
+                    .setRoleName(MetkaRoleName.USER)
+                    .grant(Permission.CAN_REMOVE_NOT_OWNED_EXPERT_SEARCH)
+                    .grant(Permission.CAN_CREATE_REVISION)
+                    .grant(Permission.CAN_EDIT_REVISION)
+                    .grant(Permission.CAN_APPROVE_REVISION)
+                    .grant(Permission.CAN_FORCE_CLAIM_REVISION)
+                    .grant(Permission.CAN_IMPORT_REVISION)
+                    .grant(Permission.CAN_EXPORT_REVISION)
+                    .grant(Permission.CAN_REMOVE_STUDY_ERRORS)
+                    .grant(Permission.CAN_EDIT_BINDER_PAGES);
+        }
+
+        public static MetkaRoleBuilder getTranslator() {
+            return getUser()
+                    .setRoleName(MetkaRoleName.TRANSLATOR)
+                    .setDefaultLanguage(Language.EN);
+        }
 
         public static MetkaRoleBuilder getDataAdmin() {
-            MetkaRoleBuilder role = getUser();
-
-            role.roleName = MetkaRoleName.DATA_ADMIN;
-
-            role.canRestoreRevisions = true;
-            role.canRemoveStudyVersions = true;
-            role.canRemoveSeries = true;
-            role.canUploadConfigurations = true;
-            role.canUploadJson = true;
-
-            return role;
+            return getUser()
+                    .setRoleName(MetkaRoleName.DATA_ADMIN)
+                    .grant(Permission.CAN_FORCE_RELEASE_REVISION)
+                    .grant(Permission.CAN_REMOVE_REVISION)
+                    .grant(Permission.CAN_RESTORE_REVISION)
+                    .grant(Permission.CAN_REMOVE_STUDY_VERSIONS)
+                    .grant(Permission.CAN_UPLOAD_CONFIGURATIONS)
+                    .grant(Permission.CAN_UPLOAD_JSON);
         }
 
         public static MetkaRoleBuilder getAdmin() {
-            MetkaRoleBuilder role = getUnknown();
-
-            role.roleName = MetkaRoleName.ADMIN;
-
-            return role;
+            return getDataAdmin()
+                    .setRoleName(MetkaRoleName.ADMIN)
+                    .grant(Permission.CAN_VIEW_API_USERS)
+                    .grant(Permission.CAN_EDIT_API_USERS);
         }
 
         public MetkaRole build() {
             return new MetkaRole(this);
+        }
+
+        private MetkaRoleBuilder setRoleName(MetkaRoleName name) {
+            this.roleName = name;
+            return this;
+        }
+
+        private MetkaRoleBuilder setDefaultLanguage(Language language) {
+            this.defaultLanguage = language;
+            return this;
+        }
+
+        private MetkaRoleBuilder grant(Permission p) {
+            permissions.add(p);
+            return this;
         }
     }
 }

@@ -17,8 +17,9 @@ import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.entity.impl.*;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.storage.repository.GeneralRepository;
+import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionCreationRepository;
+import fi.uta.fsd.metka.storage.repository.SequenceRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
@@ -47,11 +48,13 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
     private JSONUtil json;
 
     @Autowired
-    private GeneralRepository general;
+    private RevisionRepository revisions;
+
+    @Autowired
+    private SequenceRepository sequences;
 
     @Override
     public Pair<ReturnResult, RevisionData> create(RevisionCreateRequest request) {
-        // TODO: Implement type specific creation requests
         Pair<ReturnResult, Configuration> configPair;
         switch(request.getType()) {
             case SERIES:
@@ -173,7 +176,7 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
                 break;
             case PUBLICATION:
                 PublicationEntity p = new PublicationEntity();
-                p.setPublicationId(general.getNewSequenceValue(ConfigurationType.PUBLICATION.toValue(), 3000L).getSequence());
+                p.setPublicationId(sequences.getNewSequenceValue(ConfigurationType.PUBLICATION.toValue(), 3000L).getSequence());
                 revisionable = p;
                 break;
             case STUDY_ATTACHMENT:
@@ -220,7 +223,7 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
             case STUDY: {
                 StudyFactory factory = new StudyFactory();
                 data = factory.newData(revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo(), configuration,
-                        general.getNewSequenceValue(ConfigurationType.STUDY.toValue(), 10000L).getSequence().toString(),
+                        sequences.getNewSequenceValue(ConfigurationType.STUDY.toValue(), 10000L).getSequence().toString(),
                         request.getParameters().get("submissionid"), request.getParameters().get("dataarrivaldate"));
                 break;
             }
@@ -290,7 +293,7 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
      */
     private void finalizeStudyAttachment(StudyAttachmentEntity revisionable) {
         // Get the latest revision for study and, if it exists, get or create files reference container
-        Pair<ReturnResult, RevisionData> dataPair = general.getLatestRevisionForIdAndType(revisionable.getStudy(), false, ConfigurationType.STUDY);
+        Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(revisionable.getStudy(), false, ConfigurationType.STUDY);
         if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
             logger.error("Didn't find  latest revision for study with id "+revisionable.getStudy()+" with result "+dataPair.getLeft());
             return;
@@ -312,7 +315,7 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
 
         // If new row was inserted then we now have a change in study revision, update revision to database
         if(referencePair.getLeft() == StatusCode.NEW_ROW) {
-            ReturnResult updateResult = general.updateRevisionData(studyRevision);
+            ReturnResult updateResult = revisions.updateRevisionData(studyRevision);
             if(updateResult != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
                 logger.error("Could not update "+studyRevision.toString()+", received result "+updateResult);
             }

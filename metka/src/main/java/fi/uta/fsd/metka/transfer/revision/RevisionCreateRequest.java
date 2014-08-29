@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RevisionCreateRequest {
+
     private ConfigurationType type;
     private final Map<String, String> parameters = new HashMap<>();
 

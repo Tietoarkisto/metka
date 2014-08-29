@@ -6,7 +6,7 @@ import fi.uta.fsd.metka.search.GeneralSearch;
 import fi.uta.fsd.metka.search.RevisionDataRemovedContainer;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.entity.impl.StudyEntity;
-import fi.uta.fsd.metka.storage.repository.GeneralRepository;
+import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class SlowGeneralSearchImpl implements GeneralSearch {
     private EntityManager em;
 
     @Autowired
-    private GeneralRepository general;
+    private RevisionRepository revisions;
 
     @Override
     public List<RevisionDataRemovedContainer> tempFindAllStudies() {
@@ -34,7 +34,7 @@ public class SlowGeneralSearchImpl implements GeneralSearch {
         for(RevisionableEntity entity : entities) {
             if(!entity.getRemoved()) {
                 if(entity.getCurApprovedNo() != null) {
-                    Pair<ReturnResult, RevisionData> pair = general.getRevisionDataOfType(entity.currentApprovedRevisionKey(), ConfigurationType.STUDY);
+                    Pair<ReturnResult, RevisionData> pair = revisions.getRevisionDataOfType(entity.currentApprovedRevisionKey(), ConfigurationType.STUDY);
 
                     if(pair.getLeft() == ReturnResult.REVISION_FOUND) {
                         container = new RevisionDataRemovedContainer(pair.getRight(), false);
@@ -42,7 +42,7 @@ public class SlowGeneralSearchImpl implements GeneralSearch {
                     }
                 }
                 if(entity.hasDraft()) {
-                    Pair<ReturnResult, RevisionData> pair = general.getRevisionDataOfType(entity.latestRevisionKey(), ConfigurationType.STUDY);
+                    Pair<ReturnResult, RevisionData> pair = revisions.getRevisionDataOfType(entity.latestRevisionKey(), ConfigurationType.STUDY);
 
                     if(pair.getLeft() == ReturnResult.REVISION_FOUND) {
                         container = new RevisionDataRemovedContainer(pair.getRight(), false);
@@ -50,7 +50,7 @@ public class SlowGeneralSearchImpl implements GeneralSearch {
                     }
                 }
             } else {
-                Pair<ReturnResult, RevisionData> pair = general.getRevisionDataOfType(entity.currentApprovedRevisionKey(), ConfigurationType.STUDY);
+                Pair<ReturnResult, RevisionData> pair = revisions.getRevisionDataOfType(entity.currentApprovedRevisionKey(), ConfigurationType.STUDY);
 
                 if(pair.getLeft() == ReturnResult.REVISION_FOUND) {
                     container = new RevisionDataRemovedContainer(pair.getRight(), true);

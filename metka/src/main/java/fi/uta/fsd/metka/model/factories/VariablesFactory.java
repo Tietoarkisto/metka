@@ -47,7 +47,7 @@ public class VariablesFactory extends DataFactory {
 
         RevisionData data = createDraftRevision(id, no, configuration.getKey());
         data.dataField(ValueDataFieldCall.set("variables", new Value(variablesId), Language.DEFAULT).setInfo(info));
-        data.dataField(ValueDataFieldCall.set("study", new Value(studyId, ""), Language.DEFAULT).setInfo(info));
+        data.dataField(ValueDataFieldCall.set("study", new Value(studyId), Language.DEFAULT).setInfo(info));
         // Set varid field
         data.dataField(ValueDataFieldCall.set("varid", new Value(varId), Language.DEFAULT).setInfo(info));
 

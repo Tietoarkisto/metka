@@ -50,7 +50,7 @@ public abstract class DataFieldCallBase<T extends DataField> implements DataFiel
      * @return
      */
     public DataFieldCallBase<T> setValue(String value) {
-        return setValue(new Value(value, ""));
+        return setValue(new Value(value));
     }
 
     /**

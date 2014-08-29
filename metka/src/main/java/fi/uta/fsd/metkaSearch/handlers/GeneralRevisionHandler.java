@@ -18,7 +18,7 @@ import fi.uta.fsd.metka.model.general.ConfigurationKey;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.storage.repository.GeneralRepository;
+import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
@@ -44,7 +44,7 @@ import static org.apache.lucene.search.BooleanClause.Occur.MUST;
 class GeneralRevisionHandler implements RevisionHandler {
     private final static Logger logger = LoggerFactory.getLogger(GeneralRevisionHandler.class);
     private final Indexer indexer;
-    private final GeneralRepository general;
+    private final RevisionRepository revisions;
     private final ConfigurationRepository configurations;
     private final ReferenceService references;
 
@@ -58,11 +58,11 @@ class GeneralRevisionHandler implements RevisionHandler {
     // adding the document to index since it's not actually translated at all.
     private boolean contentForLanguage = false;
 
-    GeneralRevisionHandler(Indexer indexer, GeneralRepository general,
+    GeneralRevisionHandler(Indexer indexer, RevisionRepository revisions,
                            ConfigurationRepository configurations, ReferenceService references) {
         this.indexer = indexer;
 
-        this.general = general;
+        this.revisions = revisions;
         this.configurations = configurations;
         this.references = references;
         language = indexer.getPath().getLanguage();
@@ -93,7 +93,7 @@ class GeneralRevisionHandler implements RevisionHandler {
             return false;
         }
         logger.info("Trying to get revision ID: "+command.getRevisionable()+" NO: "+command.getRevision());
-        Pair<ReturnResult, RevisionData> pair = general.getRevisionDataOfType(command.getRevisionable(), command.getRevision(), command.getType());
+        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionDataOfType(command.getRevisionable(), command.getRevision(), command.getType());
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             logger.info("Revision not found with result "+pair.getLeft());
             return false;
@@ -115,7 +115,7 @@ class GeneralRevisionHandler implements RevisionHandler {
         indexer.removeDocument(bQuery);
 
         logger.info("Trying to find revision info.");
-        Pair<ReturnResult, RevisionableInfo> removedInfoPair = general.getRevisionableInfo(data.getKey().getId());
+        Pair<ReturnResult, RevisionableInfo> removedInfoPair = revisions.getRevisionableInfo(data.getKey().getId());
         if(removedInfoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
             // For some reason removed info check failed to find the entity. stop indexing
             logger.info("Revision info not found with reason "+removedInfoPair.getLeft());
@@ -175,7 +175,7 @@ class GeneralRevisionHandler implements RevisionHandler {
 
         if(contentForLanguage) {
             logger.info("Adding document to index.");
-            document.indexText(language, "general", document.getGeneral(), false, YES);
+            document.indexText(language, "revisions", document.getGeneral(), false, YES);
             PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(CaseInsensitiveWhitespaceAnalyzer.ANALYZER, document.getAnalyzers());
             indexer.addDocument(document.getDocument(), analyzer);
             return true;
@@ -350,7 +350,7 @@ class GeneralRevisionHandler implements RevisionHandler {
      */
     private void indexSelectionField(Field field, ValueDataField saved, IndexerDocument document, String root, Configuration config, RevisionData data) {
         // If field is not translatable we are going to use DEFAULT as the indexing language, this needs to be detected in indexText methods too
-        // We have to check this here instead of some more general method since we have to pass actual requested language on to other methods
+        // We have to check this here instead of some more revisions method since we have to pass actual requested language on to other methods
         Language inputLang = field.getTranslatable() ? language : Language.DEFAULT;
 
         String selectionKey = field.getSelectionList();
@@ -420,7 +420,7 @@ class GeneralRevisionHandler implements RevisionHandler {
     private void indexStudyVariables(ValueDataField saved, IndexerDocument document, String root, RevisionData data) {
         // There shouldn't be different study variables objects for different languages so we can assume that the value is always found
         // from DEFAULT language
-        Pair<ReturnResult, RevisionData> pair = general.getLatestRevisionForIdAndType(
+        Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(
                 Long.parseLong(saved.getActualValueFor(Language.DEFAULT)),
                 data.getState() == RevisionState.APPROVED, ConfigurationType.STUDY_VARIABLES);
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
@@ -438,7 +438,7 @@ class GeneralRevisionHandler implements RevisionHandler {
     private void indexStudyVariablesContainer(ReferenceContainerDataField field, IndexerDocument document,
                                                  String root, RevisionData data) {
         for(ReferenceRow reference : field.getReferences()) {
-            Pair<ReturnResult, RevisionData> pair = general.getLatestRevisionForIdAndType(Long.parseLong(reference.getActualValue()), data.getState() == RevisionState.APPROVED, ConfigurationType.STUDY_VARIABLE);
+            Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(Long.parseLong(reference.getActualValue()), data.getState() == RevisionState.APPROVED, ConfigurationType.STUDY_VARIABLE);
             if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
                 logger.error("Didn't find revision for referenced study variable "+reference.getActualValue());
                 continue;

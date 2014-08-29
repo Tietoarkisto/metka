@@ -2,8 +2,11 @@ package fi.uta.fsd.metka.storage.repository.impl;
 
 import fi.uta.fsd.metka.storage.entity.SavedExpertSearchEntity;
 import fi.uta.fsd.metka.storage.repository.SavedSearchRepository;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.expert.SavedExpertSearchItem;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Repository;
 
@@ -29,12 +32,7 @@ public class SavedSearchRepositoryImpl implements SavedSearchRepository {
                 .setParameter("user", AuthenticationUtil.getUserName())
                 .getResultList();*/
         for(SavedExpertSearchEntity entity : entities) {
-            SavedExpertSearchItem item = new SavedExpertSearchItem();
-            item.setId(entity.getId());
-            item.setTitle(entity.getTitle());
-            item.setQuery(entity.getQuery());
-            item.setSavedAt(entity.getSavedAt().toString());
-            item.setSavedBy(entity.getSavedBy());
+            SavedExpertSearchItem item = formSavedExpertSearchItem(entity);
             items.add(item);
         }
         return items;
@@ -49,12 +47,7 @@ public class SavedSearchRepositoryImpl implements SavedSearchRepository {
         entity.setSavedBy(AuthenticationUtil.getUserName());
         em.persist(entity);
 
-        SavedExpertSearchItem item = new SavedExpertSearchItem();
-        item.setId(entity.getId());
-        item.setTitle(entity.getTitle());
-        item.setQuery(entity.getQuery());
-        item.setSavedAt(entity.getSavedAt().toString());
-        item.setSavedBy(entity.getSavedBy());
+        SavedExpertSearchItem item = formSavedExpertSearchItem(entity);
 
         return item;
     }
@@ -62,8 +55,25 @@ public class SavedSearchRepositoryImpl implements SavedSearchRepository {
     @Override
     public void removeExpertSearch(Long id) {
         SavedExpertSearchEntity entity = em.find(SavedExpertSearchEntity.class, id);
-        if(entity.getSavedBy().equals(AuthenticationUtil.getUserName())) {
-            em.remove(entity);
+        em.remove(entity);
+    }
+
+    @Override
+    public Pair<ReturnResult, SavedExpertSearchItem> getSavedExpertSearch(Long id) {
+        SavedExpertSearchEntity entity = em.find(SavedExpertSearchEntity.class, id);
+        return new ImmutablePair<>(entity == null ? ReturnResult.NO_RESULTS : ReturnResult.SEARCH_SUCCESS, formSavedExpertSearchItem(entity));
+    }
+
+    private SavedExpertSearchItem formSavedExpertSearchItem(SavedExpertSearchEntity entity) {
+        if(entity == null) {
+            return null;
         }
+        SavedExpertSearchItem item = new SavedExpertSearchItem();
+        item.setId(entity.getId());
+        item.setTitle(entity.getTitle());
+        item.setQuery(entity.getQuery());
+        item.setSavedAt(entity.getSavedAt().toString());
+        item.setSavedBy(entity.getSavedBy());
+        return item;
     }
 }

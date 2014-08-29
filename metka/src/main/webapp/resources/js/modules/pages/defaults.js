@@ -5,7 +5,7 @@ define(function (require) {
             method: 'GET',
             success: function (data) {
                 $.extend(options, data.gui);
-                options.readOnly = !data.transferData.state.draft;
+                options.readOnly = !data.transferData.state.draft || !(data.transferData.state.handler === MetkaJS.User.userName);
 
                 options.dataConf = data.configuration;
                 options.data = data.transferData;

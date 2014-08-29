@@ -4,7 +4,7 @@ define(function (require) {
     'use strict';
     return function (key, extend) {
         var metka = require('./../metka');
-        return metka.contextPath + (function () {
+        return metka.contextPath + "/web" + (function () {
             if (key[0] === '/') {
                 return key;
             } else {

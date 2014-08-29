@@ -1,42 +1,18 @@
 package fi.uta.fsd.metka.mvc.services;
 
-import fi.uta.fsd.metka.storage.repository.StudyErrorsRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.study.StudyError;
 import fi.uta.fsd.metka.transfer.study.StudyErrorListResponse;
-import fi.uta.fsd.metka.transfer.study.StudyErrorResponse;
-import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import fi.uta.fsd.metkaAuthentication.Permission;
+import org.springframework.security.access.prepost.PreAuthorize;
 
-import java.util.List;
+@PreAuthorize("hasPermission('"+ Permission.Values.CAN_VIEW_STUDY_ERRORS +"', 'PERMISSION')")
+public interface StudyErrorService {
+    StudyErrorListResponse getStudyErrorList(Long id, Integer no);
 
-@Service
-public class StudyErrorService {
-    @Autowired
-    private StudyErrorsRepository errors;
+    @PreAuthorize("hasPermission('"+ Permission.Values.CAN_EDIT_STUDY_ERRORS +"', 'PERMISSION')")
+    ReturnResult insertOrUpdateStudyError(StudyError error);
 
-    public StudyErrorListResponse getStudyErrorList(Long id, Integer no) {
-        List<StudyError> list = errors.listErrorsForStudy(id, no);
-        StudyErrorListResponse response = new StudyErrorListResponse();
-        response.setResult(list.isEmpty()? ReturnResult.NO_RESULTS : ReturnResult.OPERATION_SUCCESSFUL);
-        response.setErrors(list);
-        return response;
-    }
-
-    public StudyErrorResponse getStudyError(Long id) {
-        Pair<ReturnResult, StudyError> pair = errors.loadStudyError(id);
-        StudyErrorResponse response = new StudyErrorResponse();
-        response.setResult(pair.getLeft());
-        response.setError(pair.getRight());
-        return response;
-    }
-
-    public ReturnResult insertOrUpdateStudyError(StudyError error) {
-        return errors.updateStudyError(error);
-    }
-
-    public ReturnResult removeStudyError(Long id) {
-        return errors.deleteStudyError(id);
-    }
+    @PreAuthorize("hasPermission('"+ Permission.Values.CAN_REMOVE_STUDY_ERRORS +"', 'PERMISSION')")
+    ReturnResult removeStudyError(Long id);
 }

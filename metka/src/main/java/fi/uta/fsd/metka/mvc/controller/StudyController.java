@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
  * All requests contain base address /study
  */
 @Controller
-@RequestMapping("/study")
+@RequestMapping("study")
 public class StudyController {
 
     @Autowired
@@ -26,7 +26,6 @@ public class StudyController {
     @Autowired
     private StudyErrorService errors;
 
-    // TODO: Add study specific ajax calls like binder list, errors list and error operations (add, modify, remove)
     @RequestMapping(value="listErrors/{id}/{no}", method = RequestMethod.GET)
     public @ResponseBody StudyErrorListResponse listStudyErrors(@PathVariable Long id, @PathVariable Integer no) {
         return errors.getStudyErrorList(id, no);
@@ -48,8 +47,7 @@ public class StudyController {
     }
 
     @RequestMapping("attachmentHistory")
-    public @ResponseBody RevisionSearchResponse listStudiesWithVariables(@RequestBody TransferData transferData) {
-        // TODO: implement
+    public @ResponseBody RevisionSearchResponse collectAttachmentHistory(@RequestBody TransferData transferData) {
         return service.collectAttachmentHistory(transferData);
     }
 }

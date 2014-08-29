@@ -22,7 +22,7 @@ import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.storage.repository.GeneralRepository;
+import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionApproveRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
@@ -61,7 +61,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
     private ConfigurationRepository configurations;
 
     @Autowired
-    private GeneralRepository general;
+    private RevisionRepository revisions;
 
     @Autowired
     private JSONUtil json;
@@ -71,7 +71,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
 
     @Override
     public Pair<ReturnResult, TransferData> approve(TransferData transferData) {
-        Pair<ReturnResult, RevisionData> dataPair = general.getLatestRevisionForIdAndType(transferData.getKey().getId(),
+        Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(transferData.getKey().getId(),
                 false, transferData.getConfiguration().getType());
         if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
             logger.error("No revision to approve for "+transferData.getKey().toString());
@@ -157,10 +157,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
                 tf = new TransferField("seriesabbr", TransferFieldType.VALUE);
                 transferData.getFields().put(tf.getKey(), tf);
             }
-            if(!tf.hasValueFor(Language.DEFAULT)) {
-                tf.getValues().put(Language.DEFAULT, new TransferValue());
-            }
-            tf.getValues().get(Language.DEFAULT).addError(FieldError.MISSING_VALUE);
+            tf.addErrorFor(Language.DEFAULT, FieldError.MISSING_VALUE);
             logger.warn("Series is missing abbreviation, can't approve until it is set");
             result = ReturnResult.APPROVE_FAILED;
         }
@@ -179,13 +176,13 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
                 if(tf == null) {
                     // We should really have this field but let's be careful
                     tf = new TransferField("seriesabbr", TransferFieldType.VALUE);
-                    transferData.getFields().put(tf.getKey(), tf);
+                    transferData.addField(tf);
                 }
-                if(!tf.hasValueFor(Language.DEFAULT)) {
+                if(!tf.containsValueFor(Language.DEFAULT)) {
                     TransferValue tv = TransferValue.buildFromValueDataFieldFor(Language.DEFAULT, pair.getRight());
-                    tf.getValues().put(Language.DEFAULT, tv);
+                    tf.addValueFor(Language.DEFAULT, tv);
                 }
-                tf.getValues().get(Language.DEFAULT).addError(FieldError.NOT_UNIQUE);
+                tf.addErrorFor(Language.DEFAULT, FieldError.NOT_UNIQUE);
                 logger.warn("Series abbreviation is not unique, can't approve until it is changed to unique value");
                 result = ReturnResult.APPROVE_FAILED;
             }
@@ -215,7 +212,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             // We know that if study variables approval failed there has to be variables field in transfer data since it's added during checking
             // if it was missing before
             TransferField field = transferData.getField("variables");
-            field.getValues().get(Language.DEFAULT).addError(FieldError.APPROVE_FAILED);
+            field.addErrorFor(Language.DEFAULT, FieldError.APPROVE_FAILED);
         }
 
         // TODO: Check all required fields using restriction configuration
@@ -298,7 +295,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
 
         for(ReferenceRow reference : variables.getReferences()) {
             // Just assume that each row is correctly formed
-            Pair<ReturnResult, RevisionData> variablePair = general.getLatestRevisionForIdAndType(Long.parseLong(reference.getActualValue()), false, ConfigurationType.STUDY_VARIABLE);
+            Pair<ReturnResult, RevisionData> variablePair = revisions.getLatestRevisionForIdAndType(Long.parseLong(reference.getActualValue()), false, ConfigurationType.STUDY_VARIABLE);
             if(variablePair.getLeft() != ReturnResult.REVISION_FOUND) {
                 logger.error("Didn't find revision for " + reference.getActualValue() + " while approving study variables. Continuin approval.");
                 continue;
@@ -354,7 +351,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
                 // We have approved value for this language, check if it's missing from aipcomplete
                 if(aipcompletePair.getLeft() != StatusCode.FIELD_FOUND || !aipcompletePair.getRight().hasValueFor(language)) {
                     aipcompletePair = revision.dataField(ValueDataFieldCall
-                            .set("aipcomplete", new Value(new LocalDate(revision.getApproved().get(language).getTime()).toString(), ""), language)
+                            .set("aipcomplete", new Value(new LocalDate(revision.getApproved().get(language).getTime()).toString()), language)
                             .setInfo(DateTimeUserPair.build())
                             .setChangeMap(revision.getChanges()));
                 }
@@ -372,7 +369,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
         // From this point onwards we can assume that all relevant fields have values since we can't be here without approved values
         String pathFromRoot = "/";
 
-        Pair<ReturnResult, String> fileDirectory = general.getStudyFileDirectory(
+        Pair<ReturnResult, String> fileDirectory = revisions.getStudyFileDirectory(
                 Long.parseLong(revision.dataField(ValueDataFieldCall.get("study")).getRight().getActualValueFor(Language.DEFAULT)));
 
         if(fileDirectory.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
@@ -658,7 +655,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
         TransferField tf = transferData.getField("files");
         for(ReferenceRow reference : pair.getRight().getReferences()) {
             Pair<ReturnResult, RevisionData> variablePair =
-                    general.getLatestRevisionForIdAndType(
+                    revisions.getLatestRevisionForIdAndType(
                         Long.parseLong(reference.getActualValue()),
                         false, ConfigurationType.STUDY_ATTACHMENT);
             if(variablePair.getLeft() != ReturnResult.REVISION_FOUND) {
@@ -694,12 +691,12 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             if(field == null) {
                 field = new TransferField("variables", TransferFieldType.VALUE);
                 TransferValue transferValue = TransferValue.buildFromValueDataFieldFor(Language.DEFAULT, fieldPair.getRight());
-                field.getValues().put(Language.DEFAULT, transferValue);
+                field.addValueFor(Language.DEFAULT, transferValue);
                 transferData.getFields().put(field.getKey(), field);
             }
 
             // We have variables reference and it contains a value
-            Pair<ReturnResult, RevisionData> dataPair = general.getLatestRevisionForIdAndType(
+            Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(
                     Long.parseLong(fieldPair.getRight().getActualValueFor(Language.DEFAULT)), false, ConfigurationType.STUDY_VARIABLES);
             if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
                 logger.error("Didn't find revision for study variables "+ fieldPair.getRight().getActualValueFor(Language.DEFAULT)+" even though it should have existed, not halting approval");

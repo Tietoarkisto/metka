@@ -89,7 +89,7 @@ public class ReferenceContainerDataField extends RowContainerDataField {
             if(info == null) {
                 info = DateTimeUserPair.build();
             }
-            ReferenceRow reference = ReferenceRow.build(this, new Value(value, ""));
+            ReferenceRow reference = ReferenceRow.build(this, new Value(value));
             reference.setSaved(info);
             references.add(reference);
 

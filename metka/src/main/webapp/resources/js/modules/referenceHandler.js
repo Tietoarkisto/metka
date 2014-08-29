@@ -352,7 +352,7 @@ define(function (require) {
 
                 if (includeEmpty) {
                     option = $('<option>', {value: null});
-                    option.append(MetkaJS.L10N.get('general.list.empty'));
+                    option.append(MetkaJS.L10N.get('general.selection.empty'));
                     select.append(option);
                 }
                 for (i = 0, length = options.length; i < length; i++) {

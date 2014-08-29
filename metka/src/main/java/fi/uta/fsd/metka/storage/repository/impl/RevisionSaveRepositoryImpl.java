@@ -12,15 +12,15 @@ import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.change.ContainerChange;
 import fi.uta.fsd.metka.model.data.change.RowChange;
 import fi.uta.fsd.metka.model.data.container.*;
+import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 import fi.uta.fsd.metka.model.interfaces.TransferFieldContainer;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.model.transfer.TransferField;
 import fi.uta.fsd.metka.model.transfer.TransferRow;
-import fi.uta.fsd.metka.model.transfer.TransferValue;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.storage.repository.GeneralRepository;
+import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionSaveRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.variables.StudyVariablesParser;
@@ -46,14 +46,14 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
     private ConfigurationRepository configurations;
 
     @Autowired
-    private GeneralRepository general;
+    private RevisionRepository revisions;
 
     @Autowired
     private StudyVariablesParser parser;
 
     @Override
     public Pair<ReturnResult, TransferData> saveRevision(TransferData transferData) {
-        Pair<ReturnResult, RevisionData> revisionPair = general.getRevisionDataOfType(transferData.getKey().getId(), transferData.getKey().getNo(), transferData.getConfiguration().getType());
+        Pair<ReturnResult, RevisionData> revisionPair = revisions.getRevisionDataOfType(transferData.getKey().getId(), transferData.getKey().getNo(), transferData.getConfiguration().getType());
         if(revisionPair.getLeft() != ReturnResult.REVISION_FOUND) {
             logger.error("Couldn't find Revision "+transferData.getKey().toString()+" while saving.");
             return new ImmutablePair<>(revisionPair.getLeft(), transferData);
@@ -93,7 +93,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             // Set revision save info
             revision.setSaved(info);
 
-            ReturnResult result = general.updateRevisionData(revision);
+            ReturnResult result = revisions.updateRevisionData(revision);
             if(result != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
                 return new ImmutablePair<>(result, transferData);
             } else {
@@ -156,7 +156,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 parse = false;
             }
         }
-        Pair<ReturnResult, RevisionData> dataPair = general.getLatestRevisionForIdAndType(
+        Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(
                 revision.dataField(ValueDataFieldCall.get("study")).getRight().getValueFor(Language.DEFAULT).valueAsInteger(),
                 false,
                 ConfigurationType.STUDY);
@@ -176,7 +176,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             // File is a variable file, initiate variable parsing
             ParseResult result = parser.parse(revision, VariableDataType.POR);
             if(result == ParseResult.REVISION_CHANGES) {
-                general.updateRevisionData(dataPair.getRight());
+                revisions.updateRevisionData(dataPair.getRight());
             }
         }
     }
@@ -570,9 +570,9 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                         fieldPair.getRight().setCurrentFor(language, null);
                         fieldPair.getRight().setOriginalFor(language, null);
                     }
-                    if (tf.hasValueFor(language)) {
+                    if (tf.hasCurrentFor(language)) {
                         tf.addError(FieldError.NOT_TRANSLATABLE);
-                        tf.getValues().put(language, null);
+                        tf.addValueFor(language, null);
                         returnPair.setRight(true);
                     }
                 }
@@ -589,29 +589,29 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         private void saveValueFor(Language language, MutablePair<StatusCode, Boolean> returnPair, Field field,
                                   Configuration configuration, TransferField transferField, DataFieldContainer dataFields,
                                   Map<String, Change> changeMap) {
-            TransferValue transferValue = transferField.getValue(language);
-
+            Value value = transferField.asValue(language);
             Pair<StatusCode, ValueDataField> codePair = dataFields.dataField(
                     ValueDataFieldCall
-                            .check(field.getKey(), transferValue.toValue(), language)
+                            .check(field.getKey(), value, language)
                             .setConfiguration(configuration));
             StatusCode statusCode = codePair.getLeft();
             if (!(statusCode == StatusCode.FIELD_INSERT || statusCode == StatusCode.FIELD_UPDATE)) {
                 switch (statusCode) {
                     case FIELD_NOT_MUTABLE:
-                        transferValue.addError(FieldError.IMMUTABLE);
+                        transferField.addErrorFor(language, FieldError.IMMUTABLE);
+                        returnPair.setRight(true);
                         break;
                     case FIELD_NOT_EDITABLE:
-                        transferValue.addError(FieldError.NOT_EDITABLE);
+                        transferField.addErrorFor(language, FieldError.NOT_EDITABLE);
+                        returnPair.setRight(true);
                         break;
                     default:
                         break;
                 }
-                returnPair.setRight(true);
             } else {
                 codePair = dataFields.dataField(
                         ValueDataFieldCall
-                                .set(field.getKey(), transferValue.toValue(), language)
+                                .set(field.getKey(), value, language)
                                 .setInfo(info)
                                 .setConfiguration(configuration)
                                 .setChangeMap(changeMap));

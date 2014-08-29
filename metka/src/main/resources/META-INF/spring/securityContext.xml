@@ -7,7 +7,7 @@
 		">
 
     <http entry-point-ref="metkaEntryPoint" use-expressions="true">
-        <intercept-url pattern="/**" access="isAuthenticated()" />
+        <intercept-url pattern="/web/**" access="isAuthenticated()" />
         <custom-filter ref="testFilter" before="SECURITY_CONTEXT_FILTER"/>
         <custom-filter ref="shibAuthFilter" after="SECURITY_CONTEXT_FILTER"/>
     </http>
@@ -31,8 +31,6 @@
     <beans:bean id="shibAuthFilter" class="fi.uta.fsd.metkaAuthentication.ShibAuthFilter" >
         <beans:property name="authenticationManager" ref="authenticationManager" />
     </beans:bean>
-
-
 
     <beans:bean id="metkaEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
         <beans:constructor-arg name="loginFormUrl" value="/login" />

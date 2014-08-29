@@ -85,10 +85,6 @@ public class ValueContainer {
         return hasValue() && value.valueEquals(compare);
     }
 
-    @JsonIgnore public boolean derivedEquals(String compare) {
-        return hasValue() && value.derivedEquals(compare);
-    }
-
     public ValueContainer copy() {
         return new ValueContainer(saved.copy(), value.copy());
     }

@@ -7,6 +7,7 @@ import fi.uta.fsd.metka.enums.FieldError;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.enums.TransferFieldType;
 import fi.uta.fsd.metka.model.data.container.*;
+import fi.uta.fsd.metka.model.data.value.Value;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,12 +43,40 @@ public class TransferField {
         return errors;
     }
 
-    @JsonIgnore public TransferValue getValue(Language language) {
+    /**
+     * Puts given value to values map with given language and returns the previous value.
+     * @param language    Language
+     * @param value       TransferValue
+     * @return  TransferValue
+     */
+    @JsonIgnore public TransferValue addValueFor(Language language, TransferValue value) {
+        TransferValue previous = values.get(language);
+        values.put(language, value);
+        return previous;
+    }
+
+    @JsonIgnore public TransferValue getValueFor(Language language) {
         return values.get(language);
     }
 
+    @JsonIgnore public boolean containsValueFor(Language language) {
+        return getValueFor(language) != null;
+    }
+
+    @JsonIgnore public boolean hasOriginalFor(Language language) {
+        return containsValueFor(language) && getValueFor(language).hasOriginal();
+    }
+
+    @JsonIgnore public boolean hasCurrentFor(Language language) {
+        return containsValueFor(language) && getValueFor(language).hasCurrent();
+    }
+
     @JsonIgnore public boolean hasValueFor(Language language) {
-        return getValue(language) != null;
+        return containsValueFor(language) && getValueFor(language).hasValue();
+    }
+
+    @JsonIgnore public Value asValue(Language language) {
+        return new Value(hasValueFor(language) ? getValueFor(language).getCurrent() : "");
     }
 
     public Map<Language, List<TransferRow>> getRows() {
@@ -69,7 +98,7 @@ public class TransferField {
         return rows.get(language) != null && !rows.get(language).isEmpty();
     }
 
-    public void addError(FieldError error) {
+    @JsonIgnore public void addError(FieldError error) {
         boolean found = false;
         for(FieldError e : errors) {
             if(e == error) {
@@ -81,6 +110,20 @@ public class TransferField {
         if(!found) {
             errors.add(error);
         }
+    }
+
+    /**
+     * Adds error for value under given language, if value is missing a new empty value is created
+     * @param language     Language
+     * @param error        FieldError
+     */
+    @JsonIgnore public void addErrorFor(Language language, FieldError error) {
+        TransferValue value = getValueFor(language);
+        if(value == null) {
+            value = new TransferValue();
+            addValueFor(language, value);
+        }
+        value.addError(error);
     }
 
     @JsonIgnore

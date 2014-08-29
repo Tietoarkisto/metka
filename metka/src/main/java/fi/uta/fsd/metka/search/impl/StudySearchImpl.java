@@ -10,7 +10,7 @@ import fi.uta.fsd.metka.search.StudySearch;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.impl.StudyEntity;
 import fi.uta.fsd.metka.storage.entity.impl.StudyVariablesEntity;
-import fi.uta.fsd.metka.storage.repository.GeneralRepository;
+import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.transfer.revision.RevisionSearchResult;
@@ -34,7 +34,7 @@ public class StudySearchImpl implements StudySearch {
     private EntityManager em;
 
     @Autowired
-    private GeneralRepository general;
+    private RevisionRepository revisions;
 
     @Override
     public Pair<ReturnResult, List<RevisionSearchResult>> getStudiesWithVariables() {
@@ -44,7 +44,7 @@ public class StudySearchImpl implements StudySearch {
         }
         List<RevisionSearchResult> results = new ArrayList<>();
         for(StudyVariablesEntity entity : entities) {
-            Pair<ReturnResult, RevisionData> dataPair = general.getLatestRevisionForIdAndType(entity.getStudy(), false, ConfigurationType.STUDY);
+            Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(entity.getStudy(), false, ConfigurationType.STUDY);
             if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
                 continue;
             }
@@ -68,7 +68,7 @@ public class StudySearchImpl implements StudySearch {
         StudyEntity study = studies.get(0);
 
         // Get the latest revision for study and, if it exists, get or create files reference container
-        return general.getRevisionData(study.latestRevisionKey());
+        return revisions.getRevisionData(study.latestRevisionKey());
     }
 
     @Override
@@ -79,12 +79,12 @@ public class StudySearchImpl implements StudySearch {
                 .setParameter("attachmentId", attachmentId)
                 .getResultList();
 
-        Pair<ReturnResult, RevisionableInfo> infoPair = general.getRevisionableInfo(attachmentId);
+        Pair<ReturnResult, RevisionableInfo> infoPair = this.revisions.getRevisionableInfo(attachmentId);
         if(infoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
             return new ImmutablePair<>(infoPair.getLeft(), results);
         }
         for(RevisionEntity revision : revisions) {
-            Pair<ReturnResult, RevisionData> dataPair = general.getRevisionData(revision.getKey());
+            Pair<ReturnResult, RevisionData> dataPair = this.revisions.getRevisionData(revision.getKey());
             if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
                 logger.error("Could not find revision for study attachment with key "+revision.getKey().toString());
                 continue;

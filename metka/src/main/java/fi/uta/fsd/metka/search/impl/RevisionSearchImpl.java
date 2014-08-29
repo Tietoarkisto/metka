@@ -6,7 +6,7 @@ import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.search.RevisionSearch;
-import fi.uta.fsd.metka.storage.repository.GeneralRepository;
+import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.transfer.revision.RevisionSearchRequest;
@@ -37,7 +37,7 @@ public class RevisionSearchImpl implements RevisionSearch {
     private static Logger logger = LoggerFactory.getLogger(RevisionSearchImpl.class);
 
     @Autowired
-    private GeneralRepository general;
+    private RevisionRepository revisions;
 
     @Autowired
     private SearcherComponent searcher;
@@ -130,7 +130,7 @@ public class RevisionSearchImpl implements RevisionSearch {
         for(RevisionResult result : resultList.getResults()) {
             RevisionableInfo info = null;
             if(infoPair == null || !infoPair.getRight().getId().equals(result.getId())) {
-                infoPair = general.getRevisionableInfo(result.getId());
+                infoPair = revisions.getRevisionableInfo(result.getId());
                 if(infoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
                     logger.error("Couldn't find info for revisionable "+result.getId());
                     continue;
@@ -142,7 +142,7 @@ public class RevisionSearchImpl implements RevisionSearch {
                 continue;
             }
 
-            Pair<ReturnResult, RevisionData> pair = general.getRevisionData(result.getId(), result.getNo().intValue());
+            Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(result.getId(), result.getNo().intValue());
             if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
                 logger.error("Failed to find revision for id: "+result.getId()+" and no: "+result.getNo());
                 continue;
@@ -184,13 +184,13 @@ public class RevisionSearchImpl implements RevisionSearch {
 
     private void addStudySearchResults(RevisionSearchResult searchResult, RevisionData data) {
         /*Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get("seriesname"));
-        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().containsValueFor(Language.DEFAULT)) {
             searchResult.getValues().put("seriesname", fieldPair.getRight().getActualValueFor(Language.DEFAULT));
         } else {
             searchResult.getValues().put("seriesname", "");
         }
         fieldPair = data.dataField(ValueDataFieldCall.get("seriesabbr"));
-        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().containsValueFor(Language.DEFAULT)) {
             searchResult.getValues().put("seriesabbr", fieldPair.getRight().getActualValueFor(Language.DEFAULT));
         } else {
             searchResult.getValues().put("seriesabbr", "");
@@ -199,13 +199,13 @@ public class RevisionSearchImpl implements RevisionSearch {
 
     private void addPublicationSearchResults(RevisionSearchResult searchResult, RevisionData data) {
         /*Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get("seriesname"));
-        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().containsValueFor(Language.DEFAULT)) {
             searchResult.getValues().put("seriesname", fieldPair.getRight().getActualValueFor(Language.DEFAULT));
         } else {
             searchResult.getValues().put("seriesname", "");
         }
         fieldPair = data.dataField(ValueDataFieldCall.get("seriesabbr"));
-        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().containsValueFor(Language.DEFAULT)) {
             searchResult.getValues().put("seriesabbr", fieldPair.getRight().getActualValueFor(Language.DEFAULT));
         } else {
             searchResult.getValues().put("seriesabbr", "");

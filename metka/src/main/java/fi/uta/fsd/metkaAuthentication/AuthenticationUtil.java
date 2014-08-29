@@ -6,6 +6,7 @@ import org.springframework.security.authentication.AuthenticationCredentialsNotF
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.ui.Model;
 
 /**
  * Grants easy access to authentication details of current user
@@ -15,6 +16,15 @@ public final class AuthenticationUtil {
 
     // Disable instantiation
     private AuthenticationUtil() {}
+
+    public static String getModelName(String destination, Model model) {
+        MetkaAuthenticationDetails details = getDetails();
+        if(details == null || !details.getRole().hasPermission(Permission.Values.HAS_MINIMUM_PERMISSION)) {
+            model.asMap().put("configurationType", "AUTH_ERROR");
+            return "authError";
+        }
+        return destination;
+    }
 
     public static String getUserName() throws AuthenticationCredentialsNotFoundException {
         MetkaAuthenticationDetails details = getDetails();

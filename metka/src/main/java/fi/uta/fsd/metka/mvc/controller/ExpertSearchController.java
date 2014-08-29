@@ -6,6 +6,7 @@ import fi.uta.fsd.metka.transfer.expert.ExpertSearchListResponse;
 import fi.uta.fsd.metka.transfer.expert.ExpertSearchQueryRequest;
 import fi.uta.fsd.metka.transfer.expert.ExpertSearchQueryResponse;
 import fi.uta.fsd.metka.transfer.expert.SavedExpertSearchItem;
+import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -13,7 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/expertSearch")
+@RequestMapping("expertSearch")
 public class ExpertSearchController {
     @Autowired
     private ExpertSearchService service;
@@ -21,7 +22,7 @@ public class ExpertSearchController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String expertSearch(Model model) {
         ModelUtil.initExpertSearch(model);
-        return "expertSearch";
+        return AuthenticationUtil.getModelName("revision", model);
     }
 
     @RequestMapping(value = "query", method = {RequestMethod.POST},

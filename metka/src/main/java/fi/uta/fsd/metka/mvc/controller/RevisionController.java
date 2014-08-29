@@ -6,6 +6,7 @@ import fi.uta.fsd.metka.mvc.ModelUtil;
 import fi.uta.fsd.metka.mvc.services.RevisionService;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.revision.*;
+import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/revision")
+@RequestMapping("revision")
 public class RevisionController {
     private static final Logger logger = LoggerFactory.getLogger(RevisionController.class);
     @Autowired
@@ -38,7 +39,7 @@ public class RevisionController {
 
         ModelUtil.initRevisionModel(model, ct);
 
-        return "search";
+        return AuthenticationUtil.getModelName("revision", model);
     }
 
     @RequestMapping("view/{type}/{id}")
@@ -59,7 +60,7 @@ public class RevisionController {
 
         ModelUtil.initRevisionModel(model, ct, id);
 
-        return "view";
+        return AuthenticationUtil.getModelName("revision", model);
     }
 
     @RequestMapping("view/{type}/{id}/{no}")
@@ -80,7 +81,7 @@ public class RevisionController {
 
         ModelUtil.initRevisionModel(model, ct, id, no);
 
-        return "view";
+        return AuthenticationUtil.getModelName("revision", model);
     }
 
     /**

@@ -1,53 +1,23 @@
 package fi.uta.fsd.metka.mvc.services;
 
-import fi.uta.fsd.metka.storage.repository.BinderRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.binder.BinderListResponse;
-import fi.uta.fsd.metka.transfer.binder.BinderPageListEntry;
 import fi.uta.fsd.metka.transfer.binder.SaveBinderPageRequest;
-import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import fi.uta.fsd.metkaAuthentication.Permission;
+import org.springframework.security.access.prepost.PreAuthorize;
 
-import java.util.List;
+@PreAuthorize("hasPermission('"+ Permission.Values.CAN_VIEW_BINDER_PAGES +"', 'PERMISSION')")
+public interface BinderService {
+    @PreAuthorize("hasPermission('"+ Permission.Values.CAN_EDIT_BINDER_PAGES +"', 'PERMISSION')")
+    BinderListResponse saveBinderPage(SaveBinderPageRequest request);
 
-@Service
-public class BinderService {
-    @Autowired
-    private BinderRepository binder;
+    @PreAuthorize("hasPermission('"+ Permission.Values.CAN_EDIT_BINDER_PAGES +"', 'PERMISSION')")
+    ReturnResult removePage(Long pageId);
 
-    public BinderListResponse saveBinderPage(SaveBinderPageRequest request) {
-        Pair<ReturnResult, BinderPageListEntry> result = binder.saveBinderPage(request);
-        BinderListResponse response = new BinderListResponse();
-        response.setResult(result.getLeft());
-        if(result.getRight() != null) {
-            response.getPages().add(result.getRight());
-        }
-        return response;
-    }
+    BinderListResponse listBinderPages();
 
-    public ReturnResult removePage(Long pageId) {
-        return binder.removePage(pageId);
-    }
+    BinderListResponse binderContent(Long binderId);
 
-    public BinderListResponse listStudyBinderPages(Long id) {
-        return formBinderListResponse(binder.listStudyBinderPages(id));
-    }
-
-    public BinderListResponse listBinderPages() {
-        return formBinderListResponse(binder.listBinderPages());
-    }
-
-    public BinderListResponse binderContent(Long binderId) {
-        return formBinderListResponse(binder.binderContent(binderId));
-    }
-
-    private BinderListResponse formBinderListResponse(Pair<ReturnResult, List<BinderPageListEntry>> pair) {
-        BinderListResponse response = new BinderListResponse();
-        response.setResult(pair.getLeft());
-        if(pair.getRight() != null && !pair.getRight().isEmpty()) {
-            response.getPages().addAll(pair.getRight());
-        }
-        return response;
-    }
+    @PreAuthorize("hasPermission('"+ Permission.Values.CAN_VIEW_REVISION +"', 'PERMISSION')")
+    BinderListResponse listStudyBinderPages(Long id);
 }
