@@ -2,17 +2,15 @@ define(function (require) {
     'use strict';
 
     return function (options, lang) {
-        /*if (!lang) {
-            throw 'language missing';
-        }*/
         var columns = [];
 
         var PAGE = require('./../metka').PAGE;
+        var getPropertyNS = require('./utils/getPropertyNS');
         var key = options.field.key;
+        var fieldOptions = getPropertyNS(options, 'dataConf.fields', key) || {};
         var $thead = $('<thead>');
         var $tbody = $('<tbody>');
 
-        var getPropertyNS = require('./utils/getPropertyNS');
 
         function field2TableHead(prefix) {
             return function (field) {
@@ -52,10 +50,9 @@ define(function (require) {
                                 .append('<span class="glyphicon glyphicon-remove"></span> ' + MetkaJS.L10N.get('general.buttons.remove'));
                         }
 
-                        var dataConf = options.dataConf.fields[key];
                         var type = (function () {
-                            if (dataConf && dataConf.type === 'REFERENCECONTAINER') {
-                                var target = options.dataConf.references[dataConf.reference].target;
+                            if (fieldOptions.type === 'REFERENCECONTAINER') {
+                                var target = options.dataConf.references[fieldOptions.reference].target;
                                 var field = require('./../metka').dataConfigurations[target].fields[column];
                                 return field ? field.type : false;
                             } else {
@@ -136,7 +133,7 @@ define(function (require) {
 
         function appendRow(transferRow) {
             if (!transferRow.removed) {
-                var $tr = tr(transferRow)
+                var $tr = tr(transferRow);
                 $tbody.append($tr);
                 return $tr;
             }
@@ -164,12 +161,16 @@ define(function (require) {
                     data: transferRow,
                     dataConf: options.dataConf,
                     $events: $({}),
+                    defaultLang: fieldOptions.translatable ? lang : options.defaultLang,
                     content: [
                         {
                             type: 'COLUMN',
                             columns: 1,
                             rows: options.dataConf.fields[key].subfields.map(function (field) {
-                                var dataConfig = options.dataConf.fields[field];
+                                var dataConfig = $.extend(true, {}, options.dataConf.fields[field]);
+                                if (fieldOptions.translatable) {
+                                    dataConfig.translatable = false;
+                                }
 
                                 return {
                                     type: 'ROW',
@@ -183,6 +184,7 @@ define(function (require) {
                         }
                     ]
                 };
+
                 var $modal = require('./modal')({
                     title: MetkaJS.L10N.get(['dialog', PAGE, key, title].join('.')),
                     body: require('./container').call($('<div>'), containerOptions),
@@ -208,10 +210,8 @@ define(function (require) {
                     ]
                 });
 
-                var fieldOptions = require('./utils/getPropertyNS')(options, 'dataConf.fields', key) || {};
-
-                // if translatable container or has translatable subfields, show language selector
-                if (fieldOptions.translatable || require('./containerHasTranslatableSubfields')(options)) {
+                // if not translatable container and has translatable subfields, show language selector
+                if (!fieldOptions.translatable && require('./containerHasTranslatableSubfields')(options)) {
                     $modal.find('.modal-header').append(require('./languageRadioInputGroup')(containerOptions, 'dialog-translation-lang', $('input[name="translation-lang"]:checked').val()));
                 }
             };
@@ -222,8 +222,7 @@ define(function (require) {
         var $panelHeading = $('<div class="panel-heading">')
             .text(MetkaJS.L10N.localize(options, 'title'));
 
-        var fieldDataOptions = require('./utils/getPropertyNS')(options, 'dataConf.fields', key) || {};
-        if (fieldDataOptions.translatable) {
+        if (fieldOptions.translatable) {
             require('./langLabel')($panelHeading, lang);
         }
 
@@ -276,8 +275,8 @@ define(function (require) {
                                     return !!options.dataConf.fields[field].summaryField;
                                 })
                                 .forEach(function (field) {
-                                    // if subfield is translatable
-                                    if (options.dataConf.fields[field].translatable) {
+                                    // if container is not translatable && subfield is translatable, add columns
+                                    if (!fieldOptions.translatable && options.dataConf.fields[field].translatable) {
                                         ['DEFAULT', 'EN', 'SV'].forEach(function (lang) {
                                             response.push(require('./langLabel')(th(field).data('lang', lang), lang));
                                         });

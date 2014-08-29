@@ -7,6 +7,7 @@ define(function (require) {
             success: function (data) {
                 var fieldOptions = {
                     $events: $({}),
+                    defaultLang: 'DEFAULT',
                     dataConf: {
                         fields: fields
                     },
@@ -30,7 +31,7 @@ define(function (require) {
                 var results = getResults(data);
                 var objectToTransferRow = require('./map/object/transferRow');
                 fieldOptions.data.fields.searchResults.rows.DEFAULT = results.map(mapResult).map(function (result) {
-                    return objectToTransferRow(result, 'DEFAULT');
+                    return objectToTransferRow(result, fieldOptions.defaultLang);
                 });
 
                 // if exactly 1 search result, perform the row action

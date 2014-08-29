@@ -8,8 +8,8 @@ define(function (require) {
     }
 
     var pages = {
-        binders: require('./pages/binders'),
         expert: require('./pages/expert'),
+        binder: require('./pages/binder'),
         publication: require('./pages/publication'),
         series: require('./pages/series'),
         study: require('./pages/study'),

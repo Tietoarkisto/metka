@@ -26,7 +26,7 @@ define(function (require) {
         function createInput(lang) {
             function onTranslationLangChange(e, currentLang) {
                 if (fieldDataOptions.translatable) {
-                    var isVisible = lang === 'DEFAULT' || lang === currentLang;
+                    var isVisible = lang === options.defaultLang || lang === currentLang;
                     $langField.toggleClass('hiddenByTranslationState', !isVisible);
                     if (isVisible) {
                         if (lang === currentLang) {
@@ -42,14 +42,14 @@ define(function (require) {
                         var $table = $langField.find('table');
                         $table.find('> thead > tr > th').each(function (i) {
                             var lang = $(this).data('lang');
-                            var isVisible = (!lang && currentLang === 'DEFAULT') || lang === 'DEFAULT' || lang === currentLang;
+                            var isVisible = (!lang && currentLang === options.defaultLang) || lang === options.defaultLang || lang === currentLang;
                             $table.find('tr').children(':nth-child({i})'.supplant({
                                 i: i + 1
                             })).toggleClass('hiddenByTranslationState', !isVisible);
                         });
                     } else {
                         // toggle visibility
-                        $langField.toggleClass('hiddenByTranslationState', currentLang !== 'DEFAULT');
+                        $langField.toggleClass('hiddenByTranslationState', currentLang !== options.defaultLang);
                     }
                 }
             }
@@ -77,7 +77,7 @@ define(function (require) {
             $elem.append($langField);
 
             options.$events.on('translationLangChanged', onTranslationLangChange);
-            onTranslationLangChange(undefined, $('input[name="translation-lang"]:checked').val() || 'DEFAULT');
+            onTranslationLangChange(undefined, $('input[name="translation-lang"]:checked').val() || options.defaultLang);
         }
 
         var $elem = this;
@@ -98,10 +98,12 @@ define(function (require) {
 
         var fieldDataOptions = require('./utils/getPropertyNS')(options, 'dataConf.fields', key) || {};
 
-        createInput('DEFAULT');
+        createInput(options.defaultLang);
 
-        if (fieldDataOptions.translatable) {
-            ['EN', 'SV'].forEach(createInput);
+        if (fieldDataOptions.translatable && (options.translatable !== false)) {
+            ['DEFAULT', 'EN', 'SV'].filter(function (lang) {
+                return lang !== options.defaultLang;
+            }).forEach(createInput);
         }
 
         // add TransferField error listener

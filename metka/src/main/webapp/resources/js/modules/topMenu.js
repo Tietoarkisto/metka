@@ -59,7 +59,7 @@ define(function (require) {
     if (MetkaJS.User.role.permissions.canViewSettingsPage) {
         items.push({
             ct: 'SETTINGS',
-                href: 'settings',
+            href: 'settings',
             text: 'settings'
         });
     }

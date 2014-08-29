@@ -4,7 +4,6 @@ define(function (require) {
     if (location.pathname.split('/').indexOf('search') !== -1) {
         var options = {
             header: MetkaJS.L10N.get('type.SERIES.search'),
-            $events: $({}),
             content: [
                 {
                     "type": "COLUMN",
@@ -104,13 +103,13 @@ define(function (require) {
                 require('./../searchButton')('/revision/ajax/search', function () {
                     return {
                         type: require('./../../metka').PAGE,
-                        searchApproved: data('searchApproved').getByLang('DEFAULT'),
-                        searchDraft: data('searchDraft').getByLang('DEFAULT'),
-                        searchRemoved: data('searchRemoved').getByLang('DEFAULT'),
+                        searchApproved: data('searchApproved').getByLang(options.defaultLang),
+                        searchDraft: data('searchDraft').getByLang(options.defaultLang),
+                        searchRemoved: data('searchRemoved').getByLang(options.defaultLang),
                         values: {
-                            id: data('id').getByLang('DEFAULT'),
-                            seriesabbr: data('seriesabbr').getByLang('DEFAULT'),
-                            seriesname: data('seriesname').getByLang('DEFAULT')
+                            id: data('id').getByLang(options.defaultLang),
+                            seriesabbr: data('seriesabbr').getByLang(options.defaultLang),
+                            seriesname: data('seriesname').getByLang(options.defaultLang)
                         }
                     };
                 }, function (data) {
@@ -201,12 +200,12 @@ define(function (require) {
                         }
                     }
                 }
-            },
-            dataConf: {}
+            }
         };
         var data = require('./../data')(options);
-        return function (onLoad) {
-            onLoad(options);
+        return function (defaultOptions, onLoad) {
+            $.extend(defaultOptions, options);
+            onLoad();
         };
     } else {
         return require('./defaults');

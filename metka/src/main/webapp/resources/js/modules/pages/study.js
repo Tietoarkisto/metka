@@ -66,12 +66,11 @@ define(function (require) {
                             });
                     }
                 }
-            ],
-            data: {},
-            dataConf: {}
+            ]
         };
-        return function (onLoad) {
-            onLoad(options);
+        return function (defaultOptions, onLoad) {
+            $.extend(defaultOptions, options);
+            onLoad();
         };
     } else {
         return require('./defaults');
