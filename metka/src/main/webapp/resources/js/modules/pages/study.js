@@ -50,7 +50,7 @@ define(function (require) {
                                         type: 'STUDY',
                                         parameters: {
                                             submissionid: Date.now() % 1000,
-                                            dataarrivaldate: Date.now()
+                                            dataarrivaldate: moment(Date.now()).format('YYYY-MM-DDThh:mm:ss.s')
                                         }
                                     }),
                                     success: function (response) {

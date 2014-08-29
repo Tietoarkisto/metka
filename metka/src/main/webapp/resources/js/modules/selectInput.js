@@ -39,7 +39,8 @@ define(function (require) {
             if (list.includeEmpty === null || list.includeEmpty) {
                 $input
                     .append($('<option>')
-                        .prop('disabled', true)
+                        //.prop('disabled', true)
+                        .val('')
                         .text(MetkaJS.L10N.get('general.selection.empty')));
             }
 

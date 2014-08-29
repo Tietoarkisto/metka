@@ -15,14 +15,16 @@ define(function (require) {
                             if (field.errors) {
                                 field.errors.length = 0
                             }
-                            $.each(field.values, function (lang) {
-                                if (lang.errors) {
-                                    lang.errors.length = 0
-                                }
-                            });
+                            if (field.values) {
+                                $.each(field.values, function (lang) {
+                                    if (lang.errors) {
+                                        lang.errors.length = 0
+                                    }
+                                });
+                            }
                             if (field.rows) {
-                                $.each(field.rows, function (lang) {
-                                    lang.forEach(function (row) {
+                                $.each(field.rows, function (lang, rows) {
+                                    rows.forEach(function (row) {
                                         if (row.errors) {
                                             row.errors.length = 0
                                         }
