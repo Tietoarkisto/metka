@@ -14,7 +14,7 @@ define(function (require) {
                     create: 'revision/ajax/create',
                     download: 'download/{id}/{no}',
                     edit: '{page}/edit/{id}',
-                    expertSearch: 'expertSearch/',
+                    expert: 'expert/',
                     fileEdit: 'file/save/{value}',
                     fileSave: 'file/save',
                     fileUpload: 'file/upload',

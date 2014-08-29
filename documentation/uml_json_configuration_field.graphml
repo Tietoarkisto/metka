@@ -18,7 +18,7 @@
       <data key="d4"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="271.0202675840976" width="241.227981651376" x="1048.5" y="545.4208333333333"/>
+          <y:Geometry height="258.0202675840976" width="241.227981651376" x="1048.5" y="545.4208333333333"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="39.9150390625" x="100.656471294438" y="3.0">Field<y:LabelModel>
@@ -31,7 +31,6 @@
           <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="" use3DEffect="true">
             <y:AttributeLabel>+key : String {id}
 +translatable : Boolean = true
-+notToLang : String [0..*]
 +immutable : Boolean = false
 +display : Boolean = true
 +unique : Boolean = false
@@ -88,18 +87,15 @@ TIME
       <data key="d4"/>
       <data key="d6">
         <y:UMLNoteNode>
-          <y:Geometry height="846.2177981651369" width="409.60000000000014" x="1427.149770642202" y="545.4208333333333"/>
+          <y:Geometry height="807.2177981651369" width="409.60000000000014" x="1427.149770642202" y="545.4208333333333"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="842.125" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="408.0625" x="4.0" y="4.0">key: identifies the field inside this configuration.
+          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="800.21875" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="408.0625" x="4.0" y="4.0">key: identifies the field inside this configuration.
     all versionable objects use only one configuration
     so there should be no clashes.
  
 translatable: denotes if this field can be translated.
     Default = true.
-
-notToLang: List of language codes to which the field should
-    not be translated.
  
 immutable: If true then value can not change once given.
     practically means that all attempts to modify a
@@ -192,13 +188,13 @@ exact: TEMPORARY. Tells the indexer if this STRING field is indexed
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="2.448394495412458" sy="-84.09109452174843" tx="6.775000000000091" ty="-78.86688617379058">
+          <y:Path sx="2.448394495412458" sy="-80.05750604319115" tx="6.775000000000091" ty="-78.86688617379058">
             <y:Point x="1171.5623853211005" y="497.5798165137612"/>
             <y:Point x="836.8532110091742" y="497.5798165137612"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="none"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="31.9375" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="74.04296875" x="-332.7091669205133" y="-42.0582316080729">+type
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="31.9375" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="74.04296875" x="-332.7091669205133" y="-42.0983927408854">+type
 {readOnly}<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
           </y:EdgeLabel>
           <y:BendStyle smoothed="false"/>
@@ -214,7 +210,7 @@ exact: TEMPORARY. Tells the indexer if this STRING field is indexed
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="standard" target="none"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="94.357421875" x="12.429003266042173" y="-4.502145013208292">+subfields 0..n<y:LabelModel>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="94.357421875" x="9.082831981600748" y="-0.04711617314751493">+subfields 0..n<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -230,7 +226,7 @@ exact: TEMPORARY. Tells the indexer if this STRING field is indexed
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="-95.113990825688" sy="16.569032874617847" tx="-135.5199541284403" ty="-130.39516736890477"/>
+          <y:Path sx="-95.113990825688" sy="15.77426785836977" tx="-135.5199541284403" ty="-130.39516736890477"/>
           <y:LineStyle color="#000000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="none"/>
           <y:BendStyle smoothed="false"/>
@@ -241,7 +237,7 @@ exact: TEMPORARY. Tells the indexer if this STRING field is indexed
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="38.73463302752248" sy="-112.99553179301769" tx="-26.086467889909045" ty="-402.2196011707326"/>
+          <y:Path sx="38.73463302752248" sy="-107.57548728341871" tx="23.55022935779789" ty="-382.17425257393836"/>
           <y:LineStyle color="#000000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="none"/>
           <y:BendStyle smoothed="false"/>

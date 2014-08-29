@@ -34,7 +34,7 @@ public class GeneralController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String catchAll() {
-        return "redirect:/web/expertSearch";
+        return "redirect:/web/expert";
     }
 
     // TODO: Move to revision controller and unify as one call

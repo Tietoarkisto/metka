@@ -595,7 +595,7 @@
             }
         },
 
-        "EXPERTSEARCH": {
+        "EXPERT": {
             "field": {
                 id: 'ID',
                 name: "Nimi",

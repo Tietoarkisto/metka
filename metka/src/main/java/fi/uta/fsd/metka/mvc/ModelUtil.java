@@ -42,7 +42,7 @@ public final class ModelUtil {
 
     public static void initExpertSearch(Model model) {
         addUserInfo(model);
-        model.asMap().put("configurationType", "EXPERTSEARCH");
+        model.asMap().put("configurationType", "EXPERT");
     }
 
     public static void initSettings(Model model, List<Pair<String, Boolean>> pairs) {

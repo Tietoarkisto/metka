@@ -16,8 +16,8 @@ define(function (require) {
     ];
     if (MetkaJS.User.role.permissions.hasMinimumPermission) {
         items.push({
-            ct: 'EXPERTSEARCH',
-            href: 'expertSearch',
+            ct: 'EXPERT',
+            href: 'expert',
             text: 'expert'
         });
     }
@@ -109,7 +109,7 @@ define(function (require) {
 
     $('.navbar-form').submit(function () {
         function error() {
-            require('./assignUrl')('/expertSearch');
+            require('./assignUrl')('/expert');
         }
         require('./server')('/revision/studyIdSearch/{id}', {
             id: $(this).find('input[type="text"]').val()

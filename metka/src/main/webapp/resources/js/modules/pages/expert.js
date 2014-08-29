@@ -41,7 +41,7 @@ define(function (require) {
                                             "savedAt"
                                         ],
                                         onRemove: function ($row, remove) {
-                                            require('./../server')('/expertSearch/remove/{id}', require('./../map/transferRow/object')($row.data('transferRow'), 'DEFAULT'), {
+                                            require('./../server')('/expert/remove/{id}', require('./../map/transferRow/object')($row.data('transferRow'), 'DEFAULT'), {
                                                 success: function () {
                                                     $row.remove();
                                                 }
@@ -60,7 +60,7 @@ define(function (require) {
                                             delete data.title;
                                             $containerField.data('addRowFromDataObject')(data);
                                         };
-                                        require('./../server')('/expertSearch/list', {
+                                        require('./../server')('/expert/list', {
                                             success: function (data) {
                                                 data.queries.forEach(addRow);
                                             }
@@ -73,7 +73,7 @@ define(function (require) {
                 }
             ],
             buttons: [
-                require('./../searchButton')('/expertSearch/query', function () {
+                require('./../searchButton')('/expert/query', function () {
                     return {
                         query: require('./../data')(options)('search').getByLang('DEFAULT')
                     };
@@ -170,7 +170,7 @@ define(function (require) {
                                         create: function () {
                                             this
                                                 .click(function () {
-                                                    require('./../server')('/expertSearch/save', {
+                                                    require('./../server')('/expert/save', {
                                                         data: JSON.stringify({
                                                             query: require('./../data')(options)('search').getByLang('DEFAULT'),
                                                             title: require('./../data')(containerOptions)('title').getByLang('DEFAULT')

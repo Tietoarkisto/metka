@@ -9,7 +9,7 @@ define(function (require) {
 
     var pages = {
         binders: require('./pages/binders'),
-        expertsearch: require('./pages/expertSearch'),
+        expert: require('./pages/expert'),
         publication: require('./pages/publication'),
         series: require('./pages/series'),
         study: require('./pages/study'),
