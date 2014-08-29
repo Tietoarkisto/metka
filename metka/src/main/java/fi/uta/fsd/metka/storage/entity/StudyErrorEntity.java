@@ -15,11 +15,8 @@ public class StudyErrorEntity {
     @Column(name = "STUDY_ERRORS_ID", updatable = false)
     private Long id;
 
-    @Column(name = "STUDY_ID")
+    @Column(name = "STUDY_ID", updatable = false)
     private Long studyId;
-
-    @Column(name = "STUDY_REVISION")
-    private Integer studyRevision;
 
     @Column(name = "ADDED_BY")
     private String addedBy;
@@ -59,6 +56,14 @@ public class StudyErrorEntity {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getStudyId() {
+        return studyId;
+    }
+
+    public void setStudyId(Long studyId) {
+        this.studyId = studyId;
     }
 
     public String getAddedBy() {

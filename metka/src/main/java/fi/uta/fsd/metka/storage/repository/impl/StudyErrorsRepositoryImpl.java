@@ -23,10 +23,9 @@ public class StudyErrorsRepositoryImpl implements StudyErrorsRepository {
     @Override
     public List<StudyError> listErrorsForStudy(Long studyId, Integer revisionNo) {
         List<StudyErrorEntity> errors = em.createQuery(
-                "SELECT e FROM StudyErrorEntity e WHERE e.studyId=:studyId AND e.studyRevision=:revision",
+                "SELECT e FROM StudyErrorEntity e WHERE e.studyId=:studyId ORDER BY e.addedAt ASC",
                 StudyErrorEntity.class)
                 .setParameter("studyId", studyId)
-                .setParameter("revision", revisionNo)
                 .getResultList();
 
         List<StudyError> result = new ArrayList<>();
@@ -52,6 +51,7 @@ public class StudyErrorsRepositoryImpl implements StudyErrorsRepository {
         StudyErrorEntity entity;
         if(error.getId() == null) {
             entity = new StudyErrorEntity();
+            entity.setStudyId(error.getStudyId());
             entity.setAddedAt(new LocalDateTime());
             entity.setAddedBy(AuthenticationUtil.getUserName());
             em.persist(entity);

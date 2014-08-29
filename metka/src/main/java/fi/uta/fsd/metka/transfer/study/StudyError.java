@@ -5,6 +5,7 @@ import org.joda.time.LocalDateTime;
 
 public class StudyError {
     private Long id;
+    private Long studyId;
     private String addedBy;
     private LocalDateTime addedAt;
     private Integer score;
@@ -22,6 +23,14 @@ public class StudyError {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getStudyId() {
+        return studyId;
+    }
+
+    public void setStudyId(Long studyId) {
+        this.studyId = studyId;
     }
 
     public String getAddedBy() {
