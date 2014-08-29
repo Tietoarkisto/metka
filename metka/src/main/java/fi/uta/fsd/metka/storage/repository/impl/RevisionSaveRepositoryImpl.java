@@ -12,13 +12,13 @@ import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.change.ContainerChange;
 import fi.uta.fsd.metka.model.data.change.RowChange;
 import fi.uta.fsd.metka.model.data.container.*;
+import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 import fi.uta.fsd.metka.model.interfaces.TransferFieldContainer;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.model.transfer.TransferField;
 import fi.uta.fsd.metka.model.transfer.TransferRow;
-import fi.uta.fsd.metka.model.transfer.TransferValue;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionSaveRepository;
@@ -570,9 +570,9 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                         fieldPair.getRight().setCurrentFor(language, null);
                         fieldPair.getRight().setOriginalFor(language, null);
                     }
-                    if (tf.hasValueFor(language)) {
+                    if (tf.hasCurrentFor(language)) {
                         tf.addError(FieldError.NOT_TRANSLATABLE);
-                        tf.getValues().put(language, null);
+                        tf.addValueFor(language, null);
                         returnPair.setRight(true);
                     }
                 }
@@ -589,29 +589,29 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         private void saveValueFor(Language language, MutablePair<StatusCode, Boolean> returnPair, Field field,
                                   Configuration configuration, TransferField transferField, DataFieldContainer dataFields,
                                   Map<String, Change> changeMap) {
-            TransferValue transferValue = transferField.getValue(language);
-
+            Value value = transferField.asValue(language);
             Pair<StatusCode, ValueDataField> codePair = dataFields.dataField(
                     ValueDataFieldCall
-                            .check(field.getKey(), transferValue.toValue(), language)
+                            .check(field.getKey(), value, language)
                             .setConfiguration(configuration));
             StatusCode statusCode = codePair.getLeft();
             if (!(statusCode == StatusCode.FIELD_INSERT || statusCode == StatusCode.FIELD_UPDATE)) {
                 switch (statusCode) {
                     case FIELD_NOT_MUTABLE:
-                        transferValue.addError(FieldError.IMMUTABLE);
+                        transferField.addErrorFor(language, FieldError.IMMUTABLE);
+                        returnPair.setRight(true);
                         break;
                     case FIELD_NOT_EDITABLE:
-                        transferValue.addError(FieldError.NOT_EDITABLE);
+                        transferField.addErrorFor(language, FieldError.NOT_EDITABLE);
+                        returnPair.setRight(true);
                         break;
                     default:
                         break;
                 }
-                returnPair.setRight(true);
             } else {
                 codePair = dataFields.dataField(
                         ValueDataFieldCall
-                                .set(field.getKey(), transferValue.toValue(), language)
+                                .set(field.getKey(), value, language)
                                 .setInfo(info)
                                 .setConfiguration(configuration)
                                 .setChangeMap(changeMap));

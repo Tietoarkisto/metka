@@ -205,7 +205,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         // attaching the file should happen before this step so we can expect it to be present
         ValueDataField field = study.dataField(ValueDataFieldCall.get("variablefile").setConfiguration(studyConfig)).getRight();
         Long varFileId;
-        if(field == null || !field.hasValueFor(DEFAULT)) {
+        if(field == null || !field.containsValueFor(DEFAULT)) {
             return ParseResult.NO_VARIABLES_FILE;
         } else {
             varFileId = field.getValueFor(DEFAULT).valueAsInteger();
@@ -219,7 +219,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         RevisionData attachmentData = dataPair.getRight();
         // Check for file path from attachment
         field = attachmentData.dataField(ValueDataFieldCall.get("file")).getRight();
-        if(field == null || !field.hasValueFor(DEFAULT)) {
+        if(field == null || !field.containsValueFor(DEFAULT)) {
             // TODO: Log exception, something is wrong since no path is attached to the file but we are still trying to parse it for variables
             return ParseResult.VARIABLES_FILE_HAD_NO_PATH;
         }
@@ -228,7 +228,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
 
         // Get or create study variables
         Pair<StatusCode, ValueDataField> fieldPair = study.dataField(ValueDataFieldCall.get("variables").setConfiguration(studyConfig));
-        if(fieldPair.getLeft() == StatusCode.FIELD_MISSING || !fieldPair.getRight().hasValueFor(DEFAULT)) {
+        if(fieldPair.getLeft() == StatusCode.FIELD_MISSING || !fieldPair.getRight().containsValueFor(DEFAULT)) {
             RevisionCreateRequest request = new RevisionCreateRequest();
             request.setType(ConfigurationType.STUDY_VARIABLES);
             request.getParameters().put("studyid", study.getKey().getId().toString());

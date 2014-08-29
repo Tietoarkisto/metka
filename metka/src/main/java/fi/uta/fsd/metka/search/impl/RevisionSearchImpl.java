@@ -184,13 +184,13 @@ public class RevisionSearchImpl implements RevisionSearch {
 
     private void addStudySearchResults(RevisionSearchResult searchResult, RevisionData data) {
         /*Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get("seriesname"));
-        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().containsValueFor(Language.DEFAULT)) {
             searchResult.getValues().put("seriesname", fieldPair.getRight().getActualValueFor(Language.DEFAULT));
         } else {
             searchResult.getValues().put("seriesname", "");
         }
         fieldPair = data.dataField(ValueDataFieldCall.get("seriesabbr"));
-        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().containsValueFor(Language.DEFAULT)) {
             searchResult.getValues().put("seriesabbr", fieldPair.getRight().getActualValueFor(Language.DEFAULT));
         } else {
             searchResult.getValues().put("seriesabbr", "");
@@ -199,13 +199,13 @@ public class RevisionSearchImpl implements RevisionSearch {
 
     private void addPublicationSearchResults(RevisionSearchResult searchResult, RevisionData data) {
         /*Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get("seriesname"));
-        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().containsValueFor(Language.DEFAULT)) {
             searchResult.getValues().put("seriesname", fieldPair.getRight().getActualValueFor(Language.DEFAULT));
         } else {
             searchResult.getValues().put("seriesname", "");
         }
         fieldPair = data.dataField(ValueDataFieldCall.get("seriesabbr"));
-        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().containsValueFor(Language.DEFAULT)) {
             searchResult.getValues().put("seriesabbr", fieldPair.getRight().getActualValueFor(Language.DEFAULT));
         } else {
             searchResult.getValues().put("seriesabbr", "");

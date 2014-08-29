@@ -157,10 +157,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
                 tf = new TransferField("seriesabbr", TransferFieldType.VALUE);
                 transferData.getFields().put(tf.getKey(), tf);
             }
-            if(!tf.hasValueFor(Language.DEFAULT)) {
-                tf.getValues().put(Language.DEFAULT, new TransferValue());
-            }
-            tf.getValues().get(Language.DEFAULT).addError(FieldError.MISSING_VALUE);
+            tf.addErrorFor(Language.DEFAULT, FieldError.MISSING_VALUE);
             logger.warn("Series is missing abbreviation, can't approve until it is set");
             result = ReturnResult.APPROVE_FAILED;
         }
@@ -179,13 +176,13 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
                 if(tf == null) {
                     // We should really have this field but let's be careful
                     tf = new TransferField("seriesabbr", TransferFieldType.VALUE);
-                    transferData.getFields().put(tf.getKey(), tf);
+                    transferData.addField(tf);
                 }
-                if(!tf.hasValueFor(Language.DEFAULT)) {
+                if(!tf.containsValueFor(Language.DEFAULT)) {
                     TransferValue tv = TransferValue.buildFromValueDataFieldFor(Language.DEFAULT, pair.getRight());
-                    tf.getValues().put(Language.DEFAULT, tv);
+                    tf.addValueFor(Language.DEFAULT, tv);
                 }
-                tf.getValues().get(Language.DEFAULT).addError(FieldError.NOT_UNIQUE);
+                tf.addErrorFor(Language.DEFAULT, FieldError.NOT_UNIQUE);
                 logger.warn("Series abbreviation is not unique, can't approve until it is changed to unique value");
                 result = ReturnResult.APPROVE_FAILED;
             }
@@ -215,7 +212,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             // We know that if study variables approval failed there has to be variables field in transfer data since it's added during checking
             // if it was missing before
             TransferField field = transferData.getField("variables");
-            field.getValues().get(Language.DEFAULT).addError(FieldError.APPROVE_FAILED);
+            field.addErrorFor(Language.DEFAULT, FieldError.APPROVE_FAILED);
         }
 
         // TODO: Check all required fields using restriction configuration
@@ -354,7 +351,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
                 // We have approved value for this language, check if it's missing from aipcomplete
                 if(aipcompletePair.getLeft() != StatusCode.FIELD_FOUND || !aipcompletePair.getRight().hasValueFor(language)) {
                     aipcompletePair = revision.dataField(ValueDataFieldCall
-                            .set("aipcomplete", new Value(new LocalDate(revision.getApproved().get(language).getTime()).toString(), ""), language)
+                            .set("aipcomplete", new Value(new LocalDate(revision.getApproved().get(language).getTime()).toString()), language)
                             .setInfo(DateTimeUserPair.build())
                             .setChangeMap(revision.getChanges()));
                 }
@@ -694,7 +691,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             if(field == null) {
                 field = new TransferField("variables", TransferFieldType.VALUE);
                 TransferValue transferValue = TransferValue.buildFromValueDataFieldFor(Language.DEFAULT, fieldPair.getRight());
-                field.getValues().put(Language.DEFAULT, transferValue);
+                field.addValueFor(Language.DEFAULT, transferValue);
                 transferData.getFields().put(field.getKey(), field);
             }
 

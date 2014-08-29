@@ -122,13 +122,6 @@
 			"reference": "series_select_ref",
 			"includeEmpty": true
 		},
-		"dependency_test_list": {
-			"_comment": "This is strictly a test case, should be removed",
-			"key": "dependency_test_list",
-			"type": "REFERENCE",
-			"reference": "dependency_test_ref2",
-			"includeEmpty": true
-		},
 		"id_prefix_list": {
 			"key": "id_prefix_list",
 			"type": "LITERAL",
@@ -367,22 +360,6 @@
 			"target": "SERIES",
 			"titlePath": "seriesname"
 		},
-		"dependency_test_ref1": {
-			"_comment": "This is strictly a test case, should be removed",
-			"key": "dependency_test_ref1",
-			"type": "DEPENDENCY",
-			"target": "seriesiddep1",
-			"valuePath": "key",
-			"titlePath": "data"
-		},
-		"dependency_test_ref2": {
-			"_comment": "This is strictly a test case, should be removed",
-			"key": "dependency_test_ref2",
-			"type": "DEPENDENCY",
-			"target": "seriesid",
-			"valuePath": "values.key",
-			"titlePath": "name"
-		},
 		"publication_ref": {
 			"key": "publication_ref",
 			"type": "REVISIONABLE",
@@ -493,7 +470,7 @@
 		},
 		"dataversions": {
 			"key": "dataversions",
-			"translatable": false,
+			"translatable": true,
 			"type": "CONTAINER",
 			"subfields": [
 				"version",
@@ -558,7 +535,7 @@
 		},
 		"descversions": {
 			"key": "descversions",
-			"translatable": false,
+			"translatable": true,
 			"type": "CONTAINER",
 			"subfields": [
 				"version",
@@ -632,34 +609,9 @@
 			"immutable": true,
 			"unique": true,
 			"required": true,
-			"type": "CONCAT",
-			"concatenate": [
-				"studyid_prefix",
-				"studyid_number"
-			],
-			"exact": true
-		},
-		"studyid_prefix": {
-			"_comment": "Contains the letter part of id. This comes automatically from the default value of the selectionList.",
-			"key": "studyid_prefix",
-			"translatable": false,
-			"immutable": true,
 			"editable": false,
-			"required": true,
-			"display": false,
-			"type": "SELECTION",
-			"selectionList": "id_prefix_list"
-
-		},
-		"studyid_number": {
-			"_comment": "This contains the number portion of study id (usually FSD+number). Not the same as revisionable id.",
-			"key": "studyid_number",
-			"translatable": false,
-			"immutable": true,
-			"unique": true,
-			"required": true,
-			"display": false,
-			"type": "INTEGER"
+			"type": "STRING",
+			"exact": true
 		},
 		"notes": {
 			"key": "notes",
@@ -708,30 +660,6 @@
 			"type": "SELECTION",
 			"selectionList": "series_list"
 		},
-		"seriesiddep1": {
-			"_comment": "This is strictly a test case, should be removed",
-			"key": "seriesiddep1",
-			"translatable": false,
-			"editable": false,
-			"type": "REFERENCE",
-			"multiline": false,
-			"reference": "dependency_test_ref1",
-			"writable": false,
-			"display": false,
-			"indexed": false
-		},
-		"seriesiddep2": {
-			"_comment": "This is strictly a test case, should be removed",
-			"key": "seriesiddep2",
-			"translatable": false,
-			"type": "SELECTION",
-			"multiline": true,
-			"selectionList": "dependency_test_list",
-			"reference": "dependency_test_ref2",
-			"writable": false,
-			"display": false,
-			"indexed": false
-		},
 		"submissionid": {
 			"key": "submissionid",
 			"translatable": false,
@@ -742,8 +670,8 @@
 		},
 		"title": {
 			"key": "title",
-			"type": "STRING",
-			"notToLang": ["en_US"]
+			"translatable": true,
+			"type": "STRING"
 		},
 		"varpublic": {
 			"key": "varpublic",

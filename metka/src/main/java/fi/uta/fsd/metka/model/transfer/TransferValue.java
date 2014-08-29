@@ -1,9 +1,10 @@
 package fi.uta.fsd.metka.model.transfer;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import fi.uta.fsd.metka.enums.FieldError;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.data.container.ValueDataField;
-import fi.uta.fsd.metka.model.data.value.Value;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,18 @@ public class TransferValue {
         return errors;
     }
 
+    @JsonIgnore public boolean hasOriginal() {
+        return StringUtils.hasText(original);
+    }
+
+    @JsonIgnore public boolean hasCurrent() {
+        return StringUtils.hasText(current);
+    }
+
+    @JsonIgnore public boolean hasValue() {
+        return hasCurrent() || hasOriginal();
+    }
+
     public void addError(FieldError error) {
         boolean found = false;
         for(FieldError e : errors) {
@@ -45,11 +58,6 @@ public class TransferValue {
         if(!found) {
             errors.add(error);
         }
-    }
-
-    public Value toValue() {
-        // TODO: Derived values might need to be kept here too
-        return new Value(current, "");
     }
 
     public static TransferValue buildFromValueDataFieldFor(Language language, ValueDataField field) {

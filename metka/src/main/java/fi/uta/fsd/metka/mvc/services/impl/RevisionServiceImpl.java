@@ -229,7 +229,7 @@ public class RevisionServiceImpl implements RevisionService {
             case STUDY_VARIABLE:
             case STUDY_VARIABLES: {
                 // In these cases we need to reindex study/studies instead of removing something
-                Long id = Long.parseLong(data.getField("study").getValue(Language.DEFAULT).getCurrent());
+                Long id = Long.parseLong(data.getField("study").getValueFor(Language.DEFAULT).getCurrent());
                 indexer.addStudyIndexerCommand(id, true);
                 break;
             }
@@ -249,7 +249,7 @@ public class RevisionServiceImpl implements RevisionService {
             case STUDY_ATTACHMENT:
             case STUDY_VARIABLE:
             case STUDY_VARIABLES: {
-                Long id = Long.parseLong(data.getField("study").getValue(Language.DEFAULT).getCurrent());
+                Long id = Long.parseLong(data.getField("study").getValueFor(Language.DEFAULT).getCurrent());
                 indexer.addStudyIndexerCommand(id, true);
                 break;
             }

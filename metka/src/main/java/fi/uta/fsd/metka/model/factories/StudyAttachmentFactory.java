@@ -41,7 +41,7 @@ public class StudyAttachmentFactory extends DataFactory {
 
         RevisionData data = createDraftRevision(id, no, configuration.getKey());
 
-        data.dataField(ValueDataFieldCall.set("study", new Value(studyId, ""), Language.DEFAULT).setConfiguration(configuration).setInfo(info));
+        data.dataField(ValueDataFieldCall.set("study", new Value(studyId), Language.DEFAULT).setConfiguration(configuration).setInfo(info));
 
         return new ImmutablePair<>(ReturnResult.REVISION_CREATED, data);
     }

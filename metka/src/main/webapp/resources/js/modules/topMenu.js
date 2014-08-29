@@ -64,7 +64,6 @@ define(function (require) {
         });
     }
 
-
     $('body')
         .prepend($('<header class="navbar navbar-default navbar-static-top">')
             .append($('<div class="container">')
