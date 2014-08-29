@@ -52,7 +52,7 @@ define(function (require) {
     if (MetkaJS.User.role.permissions.canViewBinderPages) {
         items.push({
             ct: 'BINDER',
-            href: 'binder/all',
+            href: 'binder',
             text: 'binder'
         });
     }
