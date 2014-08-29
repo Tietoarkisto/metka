@@ -1,5 +1,5 @@
 define(function (require) {
-    return function (options, type, $input) {
+    return function (options, type, $input, lang) {
         var key = options.field.key;
         var setup = {
             DATE: {
@@ -31,7 +31,7 @@ define(function (require) {
             })
             .me(function () {
                 require('./data')(options).onChange(function () {
-                    var date = require('./data')(options).get();
+                    var date = require('./data')(options).getByLang(lang);
                     if (date) {
                         this.data('DateTimePicker').setDate(date);
                     }
@@ -39,7 +39,7 @@ define(function (require) {
             }))
             // FIXME: kun kenttä on tyhjä ja ikonia klikataan, arvo tulee heti näkyviin mutta dp.change event ei triggeroidu. mahdollisesti korjattu datetimepickerin päivityksissä?
             .on('dp.change', function (e) {
-                require('./data')(options).set(moment(e.date).format('YYYY-MM-DDThh:mm:ss.s'));
+                require('./data')(options).setByLang(lang, moment(e.date).format('YYYY-MM-DDThh:mm:ss.s'));
             });
     }
 });

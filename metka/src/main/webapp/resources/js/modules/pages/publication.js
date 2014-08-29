@@ -189,14 +189,27 @@ define(function (require) {
             ],
             buttons: [
                 require('./../searchButton')('/revision/ajax/search', function () {
-                    return {
+                    var response = {
                         type: require('./../../metka').PAGE,
-                        values: {
-                            id: data('id').get(),
-                            seriesabbr: data('seriesabbr').get(),
-                            seriesname: data('seriesname').get()
-                        }
+                        values: {}
                     };
+                    [
+                        'publicationfirstsaved',
+                        'savedAt',
+                        'publicationyear',
+                        'studyname',
+                        'seriesname',
+                        'lastname',
+                        'firstname',
+                        'publicationtitle',
+                        'publicationrelpubl',
+                        'publicationlanguage',
+                        'publicationpublic',
+                        'savedBy'
+                    ].forEach(function (field) {
+                        response.values[field] = data(field).getByLang('DEFAULT');
+                    });
+                    return response;
                 }, function (data) {
                     return data.rows;
                 }, function (result) {

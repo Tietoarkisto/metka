@@ -11,5 +11,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 public interface GeneralService {
     Pair<ReturnResult, Long> getAdjancedRevisionableId(Long currentId, String type, boolean forward);
 
+    @PreAuthorize("hasPermission('"+ Permission.Values.CAN_EXPORT_REVISION+"', 'PERMISSION')")
     Pair<ReturnResult, RevisionData> getRevisionData(Long id, Integer revision);
 }

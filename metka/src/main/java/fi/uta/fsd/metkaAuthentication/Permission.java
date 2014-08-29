@@ -1,6 +1,9 @@
 package fi.uta.fsd.metkaAuthentication;
 
 public  enum Permission {
+    // Valid role
+    HAS_MINIMUM_PERMISSION(Values.HAS_MINIMUM_PERMISSION),
+
     // Search permissions
     CAN_PERFORM_SEARCH(Values.CAN_PERFORM_SEARCH),
     CAN_SAVE_EXPERT_SEARCH(Values.CAN_SAVE_EXPERT_SEARCH),
@@ -67,6 +70,9 @@ public  enum Permission {
     }
 
     public static final class Values {
+        // Valid role
+        public static final String HAS_MINIMUM_PERMISSION = "hasMinimumPermission";
+
         // Search permissions
         public static final String CAN_PERFORM_SEARCH = "canPerformSearch";
         public static final String CAN_SAVE_EXPERT_SEARCH = "canSaveExpertSearch";

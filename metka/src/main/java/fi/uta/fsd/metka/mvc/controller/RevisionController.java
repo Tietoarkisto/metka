@@ -6,6 +6,7 @@ import fi.uta.fsd.metka.mvc.ModelUtil;
 import fi.uta.fsd.metka.mvc.services.RevisionService;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.revision.*;
+import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ public class RevisionController {
 
         ModelUtil.initRevisionModel(model, ct);
 
-        return "revision";
+        return AuthenticationUtil.getModelName("revision", model);
     }
 
     @RequestMapping("view/{type}/{id}")
@@ -59,7 +60,7 @@ public class RevisionController {
 
         ModelUtil.initRevisionModel(model, ct, id);
 
-        return "revision";
+        return AuthenticationUtil.getModelName("revision", model);
     }
 
     @RequestMapping("view/{type}/{id}/{no}")
@@ -80,7 +81,7 @@ public class RevisionController {
 
         ModelUtil.initRevisionModel(model, ct, id, no);
 
-        return "revision";
+        return AuthenticationUtil.getModelName("revision", model);
     }
 
     /**

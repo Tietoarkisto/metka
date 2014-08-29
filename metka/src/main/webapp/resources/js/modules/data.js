@@ -38,11 +38,34 @@ define(function (require) {
                     }
                 }
             };
+            byFieldKey.getByLang = function (lang) {
+                var transferField = getTransferField();
+
+                if (transferField) {
+                    if (transferField.type === 'VALUE') {
+                        var current = getPropertyNS(transferField, 'values', lang, 'current');
+                        if (MetkaJS.exists(current)) {
+                            return current;
+                        }
+                        return getPropertyNS(transferField, 'values', lang, 'original');
+                    } else {
+                        return getPropertyNS(transferField, 'rows', lang);
+                    }
+                }
+            };
             byFieldKey.errors = function () {
                 var transferField = getTransferField();
 
                 if (transferField) {
                     return transferField.errors || [];
+                }
+                return [];
+            };
+            byFieldKey.errorsByLang = function (lang) {
+                var transferField = getTransferField();
+
+                if (transferField && transferField[lang]) {
+                    return transferField[lang].errors || [];
                 }
                 return [];
             };
@@ -53,6 +76,14 @@ define(function (require) {
                 transferField.type = transferField.type || 'VALUE';
                 transferField.value.current = value;
             };
+            byFieldKey.setByLang = function (lang, value) {
+                var transferField = getTransferField(true);
+
+                transferField.values = transferField.values || {};
+                transferField.values[lang] = transferField.values[lang] || {};
+                transferField.type = transferField.type || 'VALUE';
+                transferField.values[lang].current = value;
+            };
             byFieldKey.append = function (trasferRow) {
                 var transferField = getTransferField(true);
 
@@ -61,6 +92,16 @@ define(function (require) {
                 trasferRow.key = trasferRow.key || key;
 
                 transferField.rows.push(trasferRow);
+            };
+            byFieldKey.appendByLang = function (lang, trasferRow) {
+                var transferField = getTransferField(true);
+
+                transferField.rows = transferField.rows || {};
+                transferField.rows[lang] = transferField.rows[lang] || [];
+                transferField.type = transferField.type || 'CONTAINER';
+                trasferRow.key = trasferRow.key || key;
+
+                transferField.rows[lang].push(trasferRow);
             };
             byFieldKey.onChange = function (callback) {
                 callback();

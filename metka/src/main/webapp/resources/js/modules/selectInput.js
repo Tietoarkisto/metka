@@ -1,7 +1,7 @@
 define(function (require) {
     'use strict';
 
-    function SelectInput(options) {
+    function SelectInput(options, lang) {
         var key = options.field.key;
         var $input = this;
 
@@ -19,7 +19,7 @@ define(function (require) {
                 }));
 
                 require('./data')(options).onChange(function () {
-                    var value = require('./data')(options).get();
+                    var value = require('./data')(options).getByLang(lang);
                     if (typeof value !== 'undefined') {
                         $input.val(value);
                     } else {

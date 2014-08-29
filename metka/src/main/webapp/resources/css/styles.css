@@ -171,9 +171,6 @@ header .headerContainer #logo {
     width: 207px;
 }
 
-nav {
-    display: inline-block;
-}
 nav .mainNavUl {
     list-style: none;
 }
@@ -405,9 +402,28 @@ th {
     padding-right: 10px;
 }
 
-/*grouping-container*/
+/*variables grouping container*/
 .grouping-container {
     height: 460px;
     overflow-y: auto;
     margin-bottom: 0px;
+}
+
+.table th > .label-lang,
+.panel-heading > .label-lang {
+    font-size: 55%;
+}
+
+.label-EN {
+    color: white;
+    background-color: #02267e;
+}
+
+.label-SV {
+    color: #026ba8;
+    background-color: #fecc02;
+}
+
+.hiddenByTranslationState {
+    display: none;
 }

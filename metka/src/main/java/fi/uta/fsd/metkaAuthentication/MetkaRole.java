@@ -227,6 +227,7 @@ public final class MetkaRole implements Comparable<MetkaRole> {
         public static MetkaRoleBuilder getReader() {
             return getUnknown()
                     .setRoleName(MetkaRoleName.READER)
+                    .grant(Permission.HAS_MINIMUM_PERMISSION)
                     .grant(Permission.CAN_PERFORM_SEARCH)
                     .grant(Permission.CAN_SAVE_EXPERT_SEARCH)
                     .grant(Permission.CAN_VIEW_REVISION)

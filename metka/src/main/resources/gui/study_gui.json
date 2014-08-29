@@ -39,18 +39,6 @@
 									}
 								}
 							]
-						},
-						{
-							"type": "ROW",
-							"cells": [
-								{
-									"type": "CELL",
-									"title": "Aineiston nimi (en)",
-									"field": {
-										"key": "entitle"
-									}
-								}
-							]
 						}
 					]
 				},

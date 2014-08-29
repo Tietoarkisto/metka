@@ -1,10 +1,10 @@
 define(function (require) {
     'use strict';
 
-    return function (options, type) {
+    return function (options, type, lang) {
         var id = require('./autoId')();
         var key = options.field.key;
-        var $label = require('./label')(options)
+        var $label = require('./label')(options, lang)
             .attr('for', id);
 
         var $field = (function () {
@@ -54,16 +54,16 @@ define(function (require) {
         var $input = require('./input').call($('<' + nodeType + '>', elemOptions), options);
 
         if (['DATE', 'TIME', 'DATETIME'].indexOf(type) !== -1) {
-            require('./datetime').call($field, options, type, $input);
+            require('./datetime').call($field, options, type, $input, lang);
         } else {
             $input
                 .prop('disabled', require('./isFieldDisabled')(options))
                 .change(function () {
-                    require('./data')(options).set($(this).val());
+                    require('./data')(options).setByLang(lang, $(this).val());
                 });
 
             if (isSelection) {
-                require('./selectInput').call($input, options);
+                require('./selectInput').call($input, options, lang);
             } else {
                 // textarea or input elements
 
@@ -71,10 +71,10 @@ define(function (require) {
                     $input.val(type === 'CONCAT'
                         ?
                         options.dataConf.fields[key].concatenate.map(function (key) {
-                            return require('./data')(options)(key).get();
+                            return require('./data')(options)(key).getByLang(lang);
                         }).join('')
                         :
-                        require('./data')(options).get() || '');
+                        require('./data')(options).getByLang(lang) || '');
                 });
             }
 

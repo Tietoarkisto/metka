@@ -10,21 +10,26 @@ define(function (require) {
         return function (options) {
             this
                 .click(function () {
-
                     (function clearErrors(fields) {
                         $.each(fields, function (key, field) {
                             if (field.errors) {
                                 field.errors.length = 0
                             }
+                            $.each(field.values, function (lang) {
+                                if (lang.errors) {
+                                    lang.errors.length = 0
+                                }
+                            });
                             if (field.rows) {
-                                field.rows.forEach(function (row) {
-                                    if (row.errors) {
-                                        row.errors.length = 0
-                                    }
-                                    clearErrors(row.fields);
+                                $.each(field.rows, function (lang) {
+                                    lang.forEach(function (row) {
+                                        if (row.errors) {
+                                            row.errors.length = 0
+                                        }
+                                        clearErrors(row.fields);
+                                    });
                                 });
                             }
-
                         });
                     })(options.data.fields);
 

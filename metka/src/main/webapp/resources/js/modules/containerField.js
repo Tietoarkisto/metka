@@ -1,11 +1,15 @@
 define(function (require) {
     'use strict';
 
-    return function (options) {
+    return function (options, lang) {
+        /*if (!lang) {
+            throw 'language missing';
+        }*/
         var columns = [];
 
         var PAGE = require('./../metka').PAGE;
         var key = options.field.key;
+        var $thead = $('<thead>');
         var $tbody = $('<tbody>');
 
         var getPropertyNS = require('./utils/getPropertyNS');
@@ -37,8 +41,10 @@ define(function (require) {
 
             return $tr
                 .data('transferRow', transferRow)
-                .append(columns.map(function (column) {
-                    var $td = $('<td>');
+                .append(columns.map(function (column, i) {
+                    var $td = $('<td>')
+                        .toggleClass('hiddenByTranslationState', $thead.children('tr').children().eq(i).hasClass('hiddenByTranslationState'));
+
                     return $td.append((function () {
                         if (column === 'rowCommands') {
                             $td.css('text-align', 'right');
@@ -71,7 +77,7 @@ define(function (require) {
                                 return;
                             }
 
-                            tableError.call($td, transferField.errors);
+                            tableError.call($td, (transferField.errors || []).concat(transferField[lang] ? transferField[lang].errors : []));
 
                             if (!transferField.type) {
                                 log('transferField type not set (column: {column})'.supplant({
@@ -88,7 +94,12 @@ define(function (require) {
                                 return;
                             }
 
-                            return getPropertyNS(transferField, 'value.current');
+                            var columnLang = $thead.children('tr').children().eq(i).data('lang') || lang;
+                            if (columnLang) {
+                                return getPropertyNS(transferField, 'values', columnLang, 'current');
+                            } else {
+                                return getPropertyNS(transferField, 'value.current');
+                            }
                         })();
 
                         if (type === 'STRING' || type === 'INTEGER') {
@@ -132,12 +143,16 @@ define(function (require) {
         }
 
         function addRow(transferRow) {
-            require('./data')(options).append(transferRow);
+            if (lang) {
+                require('./data')(options).appendByLang(lang, transferRow);
+            } else {
+                require('./data')(options).append(transferRow);
+            }
             return appendRow(transferRow);
         }
 
         function addRowFromDataObject(data) {
-            addRow(require('./map/object/transferRow')(data));
+            addRow(require('./map/object/transferRow')(data, lang));
         }
 
         function rowDialog(title, button, onClose) {
@@ -148,6 +163,7 @@ define(function (require) {
                 var containerOptions = {
                     data: transferRow,
                     dataConf: options.dataConf,
+                    $events: $({}),
                     content: [
                         {
                             type: 'COLUMN',
@@ -167,7 +183,7 @@ define(function (require) {
                         }
                     ]
                 };
-                require('./modal')({
+                var $modal = require('./modal')({
                     title: MetkaJS.L10N.get(['dialog', PAGE, key, title].join('.')),
                     body: require('./container').call($('<div>'), containerOptions),
                     buttons: [
@@ -191,17 +207,29 @@ define(function (require) {
                         }
                     ]
                 });
+
+                var fieldOptions = require('./utils/getPropertyNS')(options, 'dataConf.fields', key) || {};
+
+                // if translatable container or has translatable subfields, show language selector
+                if (fieldOptions.translatable || require('./containerHasTranslatableSubfields')(options)) {
+                    $modal.find('.modal-header').append(require('./languageRadioInputGroup')(containerOptions, 'dialog-translation-lang', $('input[name="translation-lang"]:checked').val()));
+                }
             };
         }
 
         this.data('addRowFromDataObject', addRowFromDataObject);
 
-        // TODO: errors for entire container from options.errors
+        var $panelHeading = $('<div class="panel-heading">')
+            .text(MetkaJS.L10N.localize(options, 'title'));
+
+        var fieldDataOptions = require('./utils/getPropertyNS')(options, 'dataConf.fields', key) || {};
+        if (fieldDataOptions.translatable) {
+            require('./langLabel')($panelHeading, lang);
+        }
 
         this.append($('<div class="panel">')
             .addClass('panel-' + (options.style || 'default'))
-            .append($('<div class="panel-heading">')
-                .text(MetkaJS.L10N.localize(options, 'title')))
+            .append($panelHeading)
             .append($('<table class="table table-condensed">')
                 .if(options.field.onClick || !require('./isFieldDisabled')(options), function () {
 
@@ -219,7 +247,7 @@ define(function (require) {
                             onClick.call(this, $tr.data('transferRow'));
                         });
                 })
-                .append($('<thead>')
+                .append($thead
                     .append($('<tr>')
                         .append(function () {
                             if (/*options.field.showReferenceKey*/getPropertyNS(options, 'dataConf.fields', key, 'showReferenceKey')) {
@@ -239,12 +267,26 @@ define(function (require) {
                                 //return field2TableHead(target + '.field')(require('./../metka').dataConfigurations[target].idField);
                             }
                         })
-                        .append((getPropertyNS(options, 'dataConf.fields', key, 'subfields') || [])
-                            .filter(function (field) {
-                                // ui only shows summary fields
-                                return !!options.dataConf.fields[field].summaryField;
-                            })
-                            .map(field2TableHead(PAGE + '.field')))
+                        .append(function () {
+                            var response = [];
+                            var th = field2TableHead(PAGE + '.field');
+                            (getPropertyNS(options, 'dataConf.fields', key, 'subfields') || [])
+                                .filter(function (field) {
+                                    // ui only shows summary fields
+                                    return !!options.dataConf.fields[field].summaryField;
+                                })
+                                .forEach(function (field) {
+                                    // if subfield is translatable
+                                    if (options.dataConf.fields[field].translatable) {
+                                        ['DEFAULT', 'EN', 'SV'].forEach(function (lang) {
+                                            response.push(require('./langLabel')(th(field).data('lang', lang), lang));
+                                        });
+                                    } else {
+                                        response.push(th(field));
+                                    }
+                                });
+                            return response;
+                        })
                         .append((options.field.columnFields || [])
                             .map(field2TableHead(PAGE + '.field')))
                         .append(function () {
@@ -268,13 +310,18 @@ define(function (require) {
                                         return false;
                                     });
                                 return $('<th>');
-                                //return field2TableHead('general.buttons')('remove');
                             }
                         })))
                 .append(function () {
                     require('./data')(options).onChange(function () {
                         $tbody.empty();
-                        var rows = require('./data')(options).get();
+                        var rows = (function () {
+                            if (lang) {
+                                return require('./data')(options).getByLang(lang);
+                            } else {
+                                return require('./data')(options).get();
+                            }
+                        })();
                         if (rows) {
                             rows.forEach(appendRow);
                         }

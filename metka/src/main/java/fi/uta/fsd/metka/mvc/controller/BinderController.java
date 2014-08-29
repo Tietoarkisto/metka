@@ -5,6 +5,7 @@ import fi.uta.fsd.metka.mvc.services.BinderService;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.binder.BinderListResponse;
 import fi.uta.fsd.metka.transfer.binder.SaveBinderPageRequest;
+import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,7 +20,7 @@ public class BinderController {
     @RequestMapping("")
     public String settings(Model model) {
         ModelUtil.initBinder(model);
-        return "revision";
+        return AuthenticationUtil.getModelName("revision", model);
     }
 
     @RequestMapping(value="saveBinderPage", method = RequestMethod.POST)

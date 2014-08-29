@@ -4,6 +4,7 @@ define(function (require) {
     if (location.pathname.split('/').indexOf('search') !== -1) {
         var options = {
             header: MetkaJS.L10N.get('type.SERIES.search'),
+            $events: $({}),
             content: [
                 {
                     "type": "COLUMN",
@@ -103,13 +104,13 @@ define(function (require) {
                 require('./../searchButton')('/revision/ajax/search', function () {
                     return {
                         type: require('./../../metka').PAGE,
-                        searchApproved: data('searchApproved').get(),
-                        searchDraft: data('searchDraft').get(),
-                        searchRemoved: data('searchRemoved').get(),
+                        searchApproved: data('searchApproved').getByLang('DEFAULT'),
+                        searchDraft: data('searchDraft').getByLang('DEFAULT'),
+                        searchRemoved: data('searchRemoved').getByLang('DEFAULT'),
                         values: {
-                            id: data('id').get(),
-                            seriesabbr: data('seriesabbr').get(),
-                            seriesname: data('seriesname').get()
+                            id: data('id').getByLang('DEFAULT'),
+                            seriesabbr: data('seriesabbr').getByLang('DEFAULT'),
+                            seriesname: data('seriesname').getByLang('DEFAULT')
                         }
                     };
                 }, function (data) {
@@ -142,8 +143,8 @@ define(function (require) {
                     "state"
                 ], function (transferRow) {
                     require('./../assignUrl')('view', {
-                        id: transferRow.fields.id.value.current,
-                        no: transferRow.fields.no.value.current
+                        id: transferRow.fields.id.values.DEFAULT.current,
+                        no: transferRow.fields.no.values.DEFAULT.current
                     });
                 }),
                 {
@@ -185,14 +186,18 @@ define(function (require) {
                 fields: {
                     searchApproved: {
                         type: 'VALUE',
-                        value: {
-                            current: true
+                        values: {
+                            DEFAULT: {
+                                current: true
+                            }
                         }
                     },
                     searchDraft: {
                         type: 'VALUE',
-                        value: {
-                            current: true
+                        values: {
+                            DEFAULT: {
+                                current: true
+                            }
                         }
                     }
                 }
