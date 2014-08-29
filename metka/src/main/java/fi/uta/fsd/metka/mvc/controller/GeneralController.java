@@ -32,13 +32,13 @@ public class GeneralController {
     @Autowired
     private JSONUtil json;
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @RequestMapping(value = "", method = RequestMethod.GET)
     public String catchAll() {
-        return "redirect:/expertSearch";
+        return "redirect:/web/expertSearch";
     }
 
     // TODO: Move to revision controller and unify as one call
-    @RequestMapping(value = "/prev/{type}/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "prev/{type}/{id}", method = RequestMethod.GET)
     public String prev(@PathVariable String type, @PathVariable Long id, RedirectAttributes redirectAttributes) {
         Pair<ReturnResult, Long> pair = service.getAdjancedRevisionableId(id, type, false);
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
@@ -50,12 +50,12 @@ public class GeneralController {
 
             redirectAttributes.addFlashAttribute("displayableErrors", errors);
         }
-        return "redirect:/"+type+"/view/"+id;
+        return "redirect:/web/revision/"+type+"/view/"+id;
 
     }
 
     // TODO: Move to revision controller and unify as one call
-    @RequestMapping(value = "/next/{type}/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "next/{type}/{id}", method = RequestMethod.GET)
     public String next(@PathVariable String type, @PathVariable Long id, RedirectAttributes redirectAttributes) {
         Pair<ReturnResult, Long> pair = service.getAdjancedRevisionableId(id, type, true);
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
@@ -67,11 +67,11 @@ public class GeneralController {
 
             redirectAttributes.addFlashAttribute("displayableErrors", errors);
         }
-        return "redirect:/"+type+"/view/"+id;
+        return "redirect:/web/revision/"+type+"/view/"+id;
     }
 
     // TODO: Move to revision controller
-    @RequestMapping(value="/download/{id}/{no}", method = RequestMethod.GET)
+    @RequestMapping(value="download/{id}/{no}", method = RequestMethod.GET)
     public HttpEntity<byte[]> downloadRevision(@PathVariable Long id, @PathVariable Integer no) {
         Pair<ReturnResult, RevisionData> pair = service.getRevisionData(id, no);
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {

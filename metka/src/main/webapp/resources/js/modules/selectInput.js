@@ -40,7 +40,7 @@ define(function (require) {
                 $input
                     .append($('<option>')
                         .prop('disabled', true)
-                        .text(MetkaJS.L10N.get('general.list.empty')));
+                        .text(MetkaJS.L10N.get('general.selection.empty')));
             }
 
             if (list.type === 'REFERENCE') {

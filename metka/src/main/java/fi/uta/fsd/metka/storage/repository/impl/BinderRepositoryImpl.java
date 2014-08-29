@@ -6,10 +6,11 @@ import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.ValueDataField;
+import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.search.StudySearch;
 import fi.uta.fsd.metka.storage.entity.BinderPageEntity;
 import fi.uta.fsd.metka.storage.repository.BinderRepository;
-import fi.uta.fsd.metka.storage.repository.GeneralRepository;
+import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.binder.BinderPageListEntry;
 import fi.uta.fsd.metka.transfer.binder.SaveBinderPageRequest;
@@ -38,7 +39,7 @@ public class BinderRepositoryImpl implements BinderRepository {
     private StudySearch studies;
 
     @Autowired
-    private GeneralRepository general;
+    private RevisionRepository revisions;
 
     @Override
     public Pair<ReturnResult, BinderPageListEntry> saveBinderPage(SaveBinderPageRequest request) {
@@ -105,7 +106,7 @@ public class BinderRepositoryImpl implements BinderRepository {
     private Pair<ReturnResult, List<BinderPageListEntry>> formPageList(List<BinderPageEntity> entities) {
         List<BinderPageListEntry> pages = new ArrayList<>();
         for(BinderPageEntity entity : entities) {
-            Pair<ReturnResult, RevisionData> pair = general.getLatestRevisionForIdAndType(entity.getStudy(), false, ConfigurationType.STUDY);
+            Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(entity.getStudy(), false, ConfigurationType.STUDY);
             if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
                 continue;
             }
@@ -122,7 +123,7 @@ public class BinderRepositoryImpl implements BinderRepository {
         Pair<StatusCode, ValueDataField> field = study.dataField(ValueDataFieldCall.get("studyid"));
         entry.setStudyId(field.getLeft() != StatusCode.FIELD_FOUND ? "" : field.getRight().getActualValueFor(Language.DEFAULT));
         entry.setDescription(page.getDescription());
-        entry.setHandler(study.getHandler());
+        entry.setSaved(new DateTimeUserPair(page.getSavedAt(), page.getSavedBy()));
         field = study.dataField(ValueDataFieldCall.get("title"));
         entry.setStudyTitle(field.getLeft() != StatusCode.FIELD_FOUND ? "" : field.getRight().getActualValueFor(Language.DEFAULT));
         return entry;

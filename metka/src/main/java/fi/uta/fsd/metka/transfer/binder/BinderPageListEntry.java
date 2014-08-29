@@ -1,11 +1,13 @@
 package fi.uta.fsd.metka.transfer.binder;
 
+import fi.uta.fsd.metka.model.general.DateTimeUserPair;
+
 public class BinderPageListEntry {
     private Long pageId;
     private Long study;
     private String studyId;
     private String studyTitle;
-    private String handler;
+    private DateTimeUserPair saved;
     private Long binderId;
     private String description;
 
@@ -41,12 +43,12 @@ public class BinderPageListEntry {
         this.studyTitle = studyTitle;
     }
 
-    public String getHandler() {
-        return handler;
+    public DateTimeUserPair getSaved() {
+        return saved;
     }
 
-    public void setHandler(String handler) {
-        this.handler = handler;
+    public void setSaved(DateTimeUserPair saved) {
+        this.saved = saved;
     }
 
     public Long getBinderId() {

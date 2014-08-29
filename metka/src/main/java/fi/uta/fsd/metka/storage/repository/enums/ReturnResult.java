@@ -56,5 +56,6 @@ public enum ReturnResult {
     MALFORMED_QUERY,                    // Search query (usually expert search) was in some way invalid and could not be parsed to actual query
     PAGE_CREATED,                       // Binder page was created in response to save operation
     PAGE_UPDATED,                       // Binder page was updated
-    PAGE_REMOVED                       // Binder page was removed successfully
+    PAGE_REMOVED,                       // Binder page was removed successfully
+    API_AUTHENTICATION_FAILED          // Authentication in API-method failed
 }

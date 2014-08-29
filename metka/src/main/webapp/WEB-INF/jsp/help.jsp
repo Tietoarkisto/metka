@@ -8,25 +8,6 @@
     	<jsp:include page="../inc/head.jsp" />
     </head>
     <body>
-        <jsp:include page="../inc/topMenu.jsp" />
-        <div class="wrapper">
-            <div class="content">
-	            <h1 class="page-header"><spring:message code="help.title"/></h1>
-				<div class="helpContainer">
-					<div class="help1">
-						foo
-					</div>
-					<div class="help2">
-						bar
-					</div>
-					<div class="help3">
-						foobar
-					</div>
-					<div class="help4">
-						foo
-					</div>
-	            </div>
-        	</div>
-        </div>
+
     </body>
 </html>

@@ -8,7 +8,7 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.search.SeriesSearch;
 import fi.uta.fsd.metka.storage.entity.impl.SeriesEntity;
-import fi.uta.fsd.metka.storage.repository.GeneralRepository;
+import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.revision.RevisionSearchResult;
 import org.apache.commons.lang3.tuple.Pair;
@@ -32,7 +32,7 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
     private EntityManager em;
 
     @Autowired
-    private GeneralRepository general;
+    private RevisionRepository revisions;
 
     @Override
     public List<String> findAbbreviations() {
@@ -40,7 +40,7 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
 
         List<SeriesEntity> entities = em.createQuery("SELECT s FROM SeriesEntity s", SeriesEntity.class).getResultList();
         for(SeriesEntity entity : entities) {
-            Pair<ReturnResult, RevisionData> pair = general.getRevisionDataOfType(entity.latestRevisionKey(), ConfigurationType.SERIES);
+            Pair<ReturnResult, RevisionData> pair = revisions.getRevisionDataOfType(entity.latestRevisionKey(), ConfigurationType.SERIES);
             if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
                 logger.error("Didn't find revision for series "+entity.toString());
                 continue;
@@ -62,7 +62,7 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
 
         List<SeriesEntity> entities = em.createQuery("SELECT s FROM SeriesEntity s", SeriesEntity.class).getResultList();
         for(SeriesEntity entity : entities) {
-            Pair<ReturnResult, RevisionData> pair = general.getRevisionDataOfType(entity.latestRevisionKey(), ConfigurationType.SERIES);
+            Pair<ReturnResult, RevisionData> pair = revisions.getRevisionDataOfType(entity.latestRevisionKey(), ConfigurationType.SERIES);
             if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
                 logger.error("Didn't find revision for series "+entity.toString());
                 continue;

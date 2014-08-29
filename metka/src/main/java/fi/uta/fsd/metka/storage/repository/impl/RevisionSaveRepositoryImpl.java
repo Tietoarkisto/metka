@@ -20,7 +20,7 @@ import fi.uta.fsd.metka.model.transfer.TransferField;
 import fi.uta.fsd.metka.model.transfer.TransferRow;
 import fi.uta.fsd.metka.model.transfer.TransferValue;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.storage.repository.GeneralRepository;
+import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionSaveRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.variables.StudyVariablesParser;
@@ -46,14 +46,14 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
     private ConfigurationRepository configurations;
 
     @Autowired
-    private GeneralRepository general;
+    private RevisionRepository revisions;
 
     @Autowired
     private StudyVariablesParser parser;
 
     @Override
     public Pair<ReturnResult, TransferData> saveRevision(TransferData transferData) {
-        Pair<ReturnResult, RevisionData> revisionPair = general.getRevisionDataOfType(transferData.getKey().getId(), transferData.getKey().getNo(), transferData.getConfiguration().getType());
+        Pair<ReturnResult, RevisionData> revisionPair = revisions.getRevisionDataOfType(transferData.getKey().getId(), transferData.getKey().getNo(), transferData.getConfiguration().getType());
         if(revisionPair.getLeft() != ReturnResult.REVISION_FOUND) {
             logger.error("Couldn't find Revision "+transferData.getKey().toString()+" while saving.");
             return new ImmutablePair<>(revisionPair.getLeft(), transferData);
@@ -93,7 +93,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             // Set revision save info
             revision.setSaved(info);
 
-            ReturnResult result = general.updateRevisionData(revision);
+            ReturnResult result = revisions.updateRevisionData(revision);
             if(result != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
                 return new ImmutablePair<>(result, transferData);
             } else {
@@ -156,7 +156,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 parse = false;
             }
         }
-        Pair<ReturnResult, RevisionData> dataPair = general.getLatestRevisionForIdAndType(
+        Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(
                 revision.dataField(ValueDataFieldCall.get("study")).getRight().getValueFor(Language.DEFAULT).valueAsInteger(),
                 false,
                 ConfigurationType.STUDY);
@@ -176,7 +176,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             // File is a variable file, initiate variable parsing
             ParseResult result = parser.parse(revision, VariableDataType.POR);
             if(result == ParseResult.REVISION_CHANGES) {
-                general.updateRevisionData(dataPair.getRight());
+                revisions.updateRevisionData(dataPair.getRight());
             }
         }
     }

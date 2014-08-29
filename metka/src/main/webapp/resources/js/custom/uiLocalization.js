@@ -898,41 +898,4 @@
     general.errors.studyAttachment.saveFailAjax = Tiedoston tietojen tallennuspyynnössä tapahtui virhe
     */
 
-
-    // *********************************** //
-    // These are translated somewhere else //
-    // *********************************** //
-
-    /*
-
-
-    STUDY.field.varname = Nimi
-    STUDY.field.varlabel = Selite
-    STUDY.field.qstnlit = Kysymysteksti
-    STUDY.field.preqtxt = Esiteksti
-    STUDY.field.postqtxt = Jälkiteksti
-    STUDY.field.ivuinstr = Haastattelijan ohje
-    STUDY.field.varnotes = Huomiot
-    STUDY.field.vartext = Lisätiedot
-    STUDY.field.varsecurity = Tietosuoja-asiat
-    STUDY.field.categories = Arvojen selitteet
-
-
-
-*/
-
-    // Section translations should go to data configuration
-    /*# section properties, these follow {type}.section.{section}
-    STUDY.section.basic_information = Perustiedot
-    STUDY.section.deposit_agreement = Arkistointisopimus
-    STUDY.section.study_description = Kuvailu
-    STUDY.section.variables = Muuttujat
-    STUDY.section.file_management = Tiedostojen hallinta
-    STUDY.section.codebook = Koodikirja
-    STUDY.section.study_errors = Virheet
-    STUDY.section.identifiers = Tunnisteet
-    STUDY.section.import_export = Import/Export*/
-
-    // Selection translations should go to data configuration
-
 })();

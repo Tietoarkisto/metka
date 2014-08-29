@@ -4,6 +4,9 @@ import fi.uta.fsd.metka.mvc.ModelUtil;
 import fi.uta.fsd.metka.mvc.services.SettingsService;
 import fi.uta.fsd.metka.mvc.services.requests.UploadRequest;
 import fi.uta.fsd.metka.mvc.validator.UploadRequestValidator;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.transfer.settings.APIUserListResponse;
+import fi.uta.fsd.metka.transfer.settings.NewAPIUserRequest;
 import fi.uta.fsd.metkaSearch.IndexerComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -12,12 +15,10 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping(value = "/settings")
+@RequestMapping(value = "settings")
 public class SettingsController {
 
     @Autowired
@@ -48,10 +49,7 @@ public class SettingsController {
             return "settings";
         }
 
-        service.backupAndCopy(uploadConfig.getFile(), "configuration");
-
-        String text = new String(uploadConfig.getFile().getBytes());
-        service.insertDataConfig(text);
+        service.uploadDataConfig(uploadConfig.getFile());
         return "settings";
     }
 
@@ -68,10 +66,7 @@ public class SettingsController {
             return "settings";
         }
 
-        service.backupAndCopy(uploadConfig.getFile(), "gui");
-
-        String text = new String(uploadConfig.getFile().getBytes());
-        service.insertGUIConfig(text);
+        service.uploadGuiConfig(uploadConfig.getFile());
         return "settings";
     }
 
@@ -88,10 +83,7 @@ public class SettingsController {
             return "settings";
         }
 
-        service.backupAndCopy(uploadMisc.getFile(), "misc");
-
-        String text = new String(uploadMisc.getFile().getBytes());
-        service.insertMisc(text);
+        service.uploadJson(uploadMisc.getFile());
         return "settings";
     }
 
@@ -112,5 +104,20 @@ public class SettingsController {
 
             return new HttpEntity<>(dataBytes, headers);
         }
+    }
+
+    @RequestMapping(value="listAPIUsers", method = RequestMethod.GET)
+    public @ResponseBody APIUserListResponse listAPIUsers() {
+        return service.listAPIUsers();
+    }
+
+    @RequestMapping(value="newAPIUsers", method = RequestMethod.POST)
+    public @ResponseBody APIUserListResponse newAPIUsers(@RequestBody NewAPIUserRequest request) {
+        return service.newAPIUser(request);
+    }
+
+    @RequestMapping(value="removeAPIUser/{key}", method = RequestMethod.GET)
+    public @ResponseBody ReturnResult removeAPIUser(@PathVariable String key) {
+        return service.removeAPIUser(key);
     }
 }

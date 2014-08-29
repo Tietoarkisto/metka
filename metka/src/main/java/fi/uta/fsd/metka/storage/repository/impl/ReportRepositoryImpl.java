@@ -11,7 +11,7 @@ import fi.uta.fsd.metka.model.data.container.ReferenceContainerDataField;
 import fi.uta.fsd.metka.model.data.container.ReferenceRow;
 import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.storage.entity.impl.StudyEntity;
-import fi.uta.fsd.metka.storage.repository.GeneralRepository;
+import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.ReportRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import org.apache.commons.lang3.tuple.Pair;
@@ -43,7 +43,7 @@ public class ReportRepositoryImpl implements ReportRepository {
     private EntityManager em;
 
     @Autowired
-    private GeneralRepository general;
+    private RevisionRepository revisions;
 
     /**
      * Generates simple XML-report of all studies and returns it in string form
@@ -55,7 +55,7 @@ public class ReportRepositoryImpl implements ReportRepository {
         List<GeneralStudyReportObject> reportStudies = new ArrayList<>();
 
         for(StudyEntity study : studies) {
-            Pair<ReturnResult, RevisionData> dataPair = general.getLatestRevisionForIdAndType(study.getId(), false, ConfigurationType.STUDY);
+            Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(study.getId(), false, ConfigurationType.STUDY);
             if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
                 logger.error("Did not find revision for study with id "+study.getId()+". Returned result was "+ dataPair.getLeft());
                 continue;
@@ -83,7 +83,7 @@ public class ReportRepositoryImpl implements ReportRepository {
             Pair<StatusCode, ReferenceContainerDataField> references = revision.dataField(ReferenceContainerDataFieldCall.get("publications"));
             if(references.getLeft() == StatusCode.FIELD_FOUND && !references.getRight().getReferences().isEmpty()) {
                 for(ReferenceRow reference : references.getRight().getReferences()) {
-                    dataPair = general.getLatestRevisionForIdAndType(Long.parseLong(reference.getActualValue()), false, ConfigurationType.PUBLICATION);
+                    dataPair = revisions.getLatestRevisionForIdAndType(Long.parseLong(reference.getActualValue()), false, ConfigurationType.PUBLICATION);
                     if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
                         continue;
                     }
@@ -98,7 +98,7 @@ public class ReportRepositoryImpl implements ReportRepository {
             // Varquantity
             field = revision.dataField(ValueDataFieldCall.get("variables"));
             if(field.getLeft() == StatusCode.FIELD_FOUND && field.getRight().hasValueFor(Language.DEFAULT)) {
-                dataPair = general.getLatestRevisionForIdAndType(field.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY_VARIABLES);
+                dataPair = revisions.getLatestRevisionForIdAndType(field.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY_VARIABLES);
                 if(dataPair.getLeft() == ReturnResult.REVISION_FOUND) {
                     field = dataPair.getRight().dataField(ValueDataFieldCall.get("varquantity"));
                     if(field.getLeft() == StatusCode.FIELD_FOUND) {

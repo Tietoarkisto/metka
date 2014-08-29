@@ -6,7 +6,7 @@ import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
-import fi.uta.fsd.metka.storage.repository.GeneralRepository;
+import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRemoveRepository;
 import fi.uta.fsd.metka.storage.repository.enums.RemoveResult;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
@@ -39,11 +39,11 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
     private EntityManager em;
 
     @Autowired
-    private GeneralRepository general;
+    private RevisionRepository revisions;
 
     @Override
     public RemoveResult remove(TransferData transferData) {
-        Pair<ReturnResult, RevisionData> pair = general.getRevisionData(RevisionKey.fromModelKey(transferData.getKey()));
+        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(RevisionKey.fromModelKey(transferData.getKey()));
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             return RemoveResult.NOT_FOUND;
         }
@@ -78,7 +78,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
     }
 
     private RemoveResult removeLogical(RevisionData data) {
-        Pair<ReturnResult, RevisionData> pair = general.getLatestRevisionForIdAndType(data.getKey().getId(), false, data.getConfiguration().getType());
+        Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(data.getKey().getId(), false, data.getConfiguration().getType());
 
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             // This should never happen since we found the revision data provided for this method

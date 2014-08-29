@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * as well as the ajax-requests for single variable operations.
  */
 @Controller
-@RequestMapping("/variables")
+@RequestMapping("variables")
 public class VariablesController {
     // TODO: If there are any actual variable or variables specific calls add them here, otherwise the general RevisionController calls should suffice
 }

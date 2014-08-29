@@ -11,7 +11,7 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.ReferenceContainerDataField;
 import fi.uta.fsd.metka.model.data.container.ReferenceRow;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.storage.repository.GeneralRepository;
+import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOptionsRequest;
@@ -32,7 +32,7 @@ public class ReferenceCollecting {
     private static final Logger logger = LoggerFactory.getLogger(ReferenceCollecting.class);
 
     @Autowired
-    private GeneralRepository general;
+    private RevisionRepository revisions;
 
     @Autowired
     private ConfigurationRepository configurations;
@@ -84,7 +84,7 @@ public class ReferenceCollecting {
             return new ImmutablePair<>(ReturnResult.PARAMETERS_MISSING, null);
         }
 
-        Pair<ReturnResult, RevisionData> dataPair = general.getRevisionDataOfType(request.getId(), request.getNo(), request.getType());
+        Pair<ReturnResult, RevisionData> dataPair = revisions.getRevisionDataOfType(request.getId(), request.getNo(), request.getType());
         if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
             return new ImmutablePair<>(dataPair.getLeft(), null);
         }

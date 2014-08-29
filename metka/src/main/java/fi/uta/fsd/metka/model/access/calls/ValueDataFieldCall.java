@@ -21,6 +21,6 @@ public final class ValueDataFieldCall extends DataFieldCallBase<ValueDataField> 
     }
 
     private ValueDataFieldCall(String key, CallType callType) {
-        super(DataFieldType.SAVED_DATA_FIELD, key, callType);
+        super(DataFieldType.VALUE_DATA_FIELD, key, callType);
     }
 }

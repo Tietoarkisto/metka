@@ -8,46 +8,55 @@ define(function (require) {
             .append($('<div class="container">')
                 .append($('<nav class="row">')
                     .append($('<ul class="col-sm-8 nav navbar-nav nav navbar-nav navbar-left">')
-                        .append([{
+                        .append([
+                        /*{
                             ct: 'DESKTOP',
                             href: 'desktop',
                             text: 'desktop'
-                        }, {
+                        },*/
+                        {
                             ct: 'EXPERTSEARCH',
                             href: 'expertSearch',
                             text: 'expert'
-                        }, {
+                        },
+                        {
                             ct: 'STUDY',
                             href: 'revision/search/study',
                             text: 'study'
-                        }, {
+                        },
+                        {
                             ct: 'STUDY_VARIABLES',
                             href: 'revision/search/study_variables',
                             text: 'variables'
-                        }, {
+                        },
+                        {
                             ct: 'PUBLICATION',
                             href: 'revision/search/publication',
                             text: 'publication'
-                        }, {
+                        },
+                        {
                             ct: 'SERIES',
                             href: 'revision/search/series',
                             text: 'series'
-                        }, {
+                        },
+                        {
                             ct: 'BINDER',
                             href: 'binder/all',
                             text: 'binder'
-                        }, {
+                        },
+                        /*{
                             ct: 'REPORT',
                             href: 'report/all',
                             text: 'report'
-                        }, {
+                        },*/
+                        {
                             ct: 'SETTINGS',
                             href: 'settings',
                             text: 'settings'
                         }].map(function (li) {
                             var $li = $('<li>')
                                 .append($('<a>', {
-                                    href: metka.contextPath + '/' + li.href
+                                    href: metka.contextPath + "/web" + '/' + li.href
                                 })
                                     .text(MetkaJS.L10N.get('topmenu.' + li.text)));
 

@@ -13,7 +13,7 @@ import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.storage.repository.GeneralRepository;
+import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionEditRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
@@ -33,18 +33,18 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
     private ConfigurationRepository configurations;
 
     @Autowired
-    private GeneralRepository general;
+    private RevisionRepository revisions;
 
     @Override
     public Pair<ReturnResult, RevisionData> edit(TransferData transferData) {
-        Pair<ReturnResult, RevisionData> dataPair = general.getLatestRevisionForIdAndType(
+        Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(
                 transferData.getKey().getId(), false, transferData.getConfiguration().getType());
         if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
             logger.error("No revision for "+transferData.getConfiguration().getType()+" with id "+transferData.getKey().getId()+". Can't get editable revision.");
             return dataPair;
         }
         RevisionData data = dataPair.getRight();
-        Pair<ReturnResult, RevisionableInfo> infoPair = general.getRevisionableInfo(data.getKey().getId());
+        Pair<ReturnResult, RevisionableInfo> infoPair = revisions.getRevisionableInfo(data.getKey().getId());
         if(infoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
             logger.error("No revisionable for object for which revision was already found "+data.toString());
             return new ImmutablePair<>(infoPair.getLeft(), data);
@@ -68,7 +68,7 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
                 return new ImmutablePair<>(configPair.getLeft(), data);
             }
 
-            Pair<ReturnResult, RevisionKey> keyPair = general.createNewRevision(data);
+            Pair<ReturnResult, RevisionKey> keyPair = revisions.createNewRevision(data);
             if(keyPair.getLeft() != ReturnResult.REVISION_CREATED) {
                 return new ImmutablePair<>(keyPair.getLeft(), data);
             }
@@ -76,7 +76,7 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
             // TODO: If update fails then the possibly created revision should be removed
             RevisionData newData = new RevisionData(keyPair.getRight().toModelKey(), configPair.getRight().getKey());
             copyDataToNewRevision(data, newData);
-            ReturnResult update = general.updateRevisionData(newData);
+            ReturnResult update = revisions.updateRevisionData(newData);
             if(update != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
                 return new ImmutablePair<>(update, data);
             }
@@ -103,7 +103,7 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
     }
 
     private ReturnResult checkStudyDraftStatus(Long id) {
-        Pair<ReturnResult, RevisionData> pair = general.getLatestRevisionForIdAndType(id, false, ConfigurationType.STUDY);
+        Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(id, false, ConfigurationType.STUDY);
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             logger.error("Didn't find revision for study id "+id+" with result "+pair.getLeft());
             return pair.getLeft();

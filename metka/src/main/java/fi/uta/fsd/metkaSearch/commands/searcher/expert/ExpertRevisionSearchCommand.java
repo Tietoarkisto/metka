@@ -64,8 +64,6 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
 
         //addTextAnalyzer("seriesname");
         Map<String, NumericConfig> nums = new HashMap<>();
-        // TODO: Add default numeric fields like key.id
-        //nums.put("key.id", new NumericConfig(1, new DecimalFormat(), FieldType.NumericType.LONG));
 
         // TODO: Fill analyzers and numeric field info
 

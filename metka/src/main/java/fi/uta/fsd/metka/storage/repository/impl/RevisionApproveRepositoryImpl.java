@@ -22,7 +22,7 @@ import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.storage.repository.GeneralRepository;
+import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionApproveRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
@@ -61,7 +61,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
     private ConfigurationRepository configurations;
 
     @Autowired
-    private GeneralRepository general;
+    private RevisionRepository revisions;
 
     @Autowired
     private JSONUtil json;
@@ -71,7 +71,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
 
     @Override
     public Pair<ReturnResult, TransferData> approve(TransferData transferData) {
-        Pair<ReturnResult, RevisionData> dataPair = general.getLatestRevisionForIdAndType(transferData.getKey().getId(),
+        Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(transferData.getKey().getId(),
                 false, transferData.getConfiguration().getType());
         if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
             logger.error("No revision to approve for "+transferData.getKey().toString());
@@ -298,7 +298,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
 
         for(ReferenceRow reference : variables.getReferences()) {
             // Just assume that each row is correctly formed
-            Pair<ReturnResult, RevisionData> variablePair = general.getLatestRevisionForIdAndType(Long.parseLong(reference.getActualValue()), false, ConfigurationType.STUDY_VARIABLE);
+            Pair<ReturnResult, RevisionData> variablePair = revisions.getLatestRevisionForIdAndType(Long.parseLong(reference.getActualValue()), false, ConfigurationType.STUDY_VARIABLE);
             if(variablePair.getLeft() != ReturnResult.REVISION_FOUND) {
                 logger.error("Didn't find revision for " + reference.getActualValue() + " while approving study variables. Continuin approval.");
                 continue;
@@ -372,7 +372,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
         // From this point onwards we can assume that all relevant fields have values since we can't be here without approved values
         String pathFromRoot = "/";
 
-        Pair<ReturnResult, String> fileDirectory = general.getStudyFileDirectory(
+        Pair<ReturnResult, String> fileDirectory = revisions.getStudyFileDirectory(
                 Long.parseLong(revision.dataField(ValueDataFieldCall.get("study")).getRight().getActualValueFor(Language.DEFAULT)));
 
         if(fileDirectory.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
@@ -658,7 +658,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
         TransferField tf = transferData.getField("files");
         for(ReferenceRow reference : pair.getRight().getReferences()) {
             Pair<ReturnResult, RevisionData> variablePair =
-                    general.getLatestRevisionForIdAndType(
+                    revisions.getLatestRevisionForIdAndType(
                         Long.parseLong(reference.getActualValue()),
                         false, ConfigurationType.STUDY_ATTACHMENT);
             if(variablePair.getLeft() != ReturnResult.REVISION_FOUND) {
@@ -699,7 +699,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             }
 
             // We have variables reference and it contains a value
-            Pair<ReturnResult, RevisionData> dataPair = general.getLatestRevisionForIdAndType(
+            Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(
                     Long.parseLong(fieldPair.getRight().getActualValueFor(Language.DEFAULT)), false, ConfigurationType.STUDY_VARIABLES);
             if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
                 logger.error("Didn't find revision for study variables "+ fieldPair.getRight().getActualValueFor(Language.DEFAULT)+" even though it should have existed, not halting approval");

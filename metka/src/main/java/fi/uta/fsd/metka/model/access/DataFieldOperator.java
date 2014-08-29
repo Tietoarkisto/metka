@@ -25,10 +25,12 @@ public final class DataFieldOperator {
         if(fieldMap == null || call == null) {
             return new ImmutablePair<>(StatusCode.INCORRECT_PARAMETERS, null);
         }
+        Pair<StatusCode, T> field;
         switch(call.getFieldType()) {
-            case SAVED_DATA_FIELD:
-                Pair<StatusCode, ValueDataField> saved = ValueDataFieldAccessor.getValueDataField(fieldMap, call.getKey(), call.getConfiguration(), configChecks);
-                return new ImmutablePair<>(saved.getLeft(), (T)saved.getRight());
+            case VALUE_DATA_FIELD:
+                /*Pair<StatusCode, ValueDataField> saved = ValueDataFieldAccessor.getValueDataField(fieldMap, call.getKey(), call.getConfiguration(), configChecks);*/
+                Pair<StatusCode, ValueDataField> value = ValueDataFieldAccessor.getValueDataField(fieldMap, call.getKey(), call.getConfiguration(), configChecks);
+                return new ImmutablePair<>(value.getLeft(), (T)value.getRight());
             case CONTAINER_DATA_FIELD:
                 Pair<StatusCode, ContainerDataField> container = ContainerDataFieldAccessor.getContainerDataField(fieldMap, call.getKey(), call.getConfiguration(), configChecks);
                 return new ImmutablePair<>(container.getLeft(), (T)container.getRight());
@@ -49,7 +51,7 @@ public final class DataFieldOperator {
         }
 
         switch(call.getFieldType()) {
-            case SAVED_DATA_FIELD:
+            case VALUE_DATA_FIELD:
                 Pair<StatusCode, ValueDataField> saved = ValueDataFieldInspector
                         .checkValueDataFieldValue(
                                 call.getLanguage(),
@@ -77,7 +79,7 @@ public final class DataFieldOperator {
             return new ImmutablePair<>(StatusCode.INCORRECT_PARAMETERS, null);
         }
         switch(call.getFieldType()) {
-            case SAVED_DATA_FIELD:
+            case VALUE_DATA_FIELD:
                 Pair<StatusCode, ValueDataField> saved = ValueDataFieldMutator
                         .setValueDataField(
                                 call.getLanguage(), fieldMap, call.getKey(), call.getValue(), call.getInfo(), call.getChangeMap(),

@@ -11,7 +11,7 @@ import fi.uta.fsd.metka.storage.entity.ConfigurationEntity;
 import fi.uta.fsd.metka.storage.entity.GUIConfigurationEntity;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.storage.repository.GeneralRepository;
+import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
@@ -37,7 +37,7 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
     private JSONUtil json;
 
     @Autowired
-    private GeneralRepository generalRepository;
+    private RevisionRepository revisions;
 
     @Override
     public ReturnResult insert(Configuration configuration) {
@@ -210,7 +210,7 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
 
     @Override
     public Pair<ReturnResult, Configuration> findConfigurationForRevision(Long id, Integer no) {
-        Pair<ReturnResult, RevisionData> pair = generalRepository.getRevisionData(id, no);
+        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(id, no);
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             return new ImmutablePair<>(pair.getLeft(), null);
         }

@@ -14,7 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/revision")
+@RequestMapping("revision")
 public class RevisionController {
     private static final Logger logger = LoggerFactory.getLogger(RevisionController.class);
     @Autowired
@@ -38,7 +38,7 @@ public class RevisionController {
 
         ModelUtil.initRevisionModel(model, ct);
 
-        return "search";
+        return "revision";
     }
 
     @RequestMapping("view/{type}/{id}")
@@ -59,7 +59,7 @@ public class RevisionController {
 
         ModelUtil.initRevisionModel(model, ct, id);
 
-        return "view";
+        return "revision";
     }
 
     @RequestMapping("view/{type}/{id}/{no}")
@@ -80,7 +80,7 @@ public class RevisionController {
 
         ModelUtil.initRevisionModel(model, ct, id, no);
 
-        return "view";
+        return "revision";
     }
 
     /**

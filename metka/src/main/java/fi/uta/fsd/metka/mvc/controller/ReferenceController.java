@@ -17,7 +17,7 @@ import java.util.List;
  * Handles all requests pertaining to references such as collecting reference options.
  */
 @Controller
-@RequestMapping("/references")
+@RequestMapping("references")
 public class ReferenceController {
     @Autowired
     private ReferenceService service;

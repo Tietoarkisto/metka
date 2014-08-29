@@ -2,10 +2,14 @@ package fi.uta.fsd.metkaSearch;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.storage.repository.GeneralRepository;
+import fi.uta.fsd.metka.storage.repository.RevisionRepository;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metkaSearch.commands.indexer.IndexerCommand;
+import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
 import fi.uta.fsd.metkaSearch.directory.DirectoryInformation;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.entity.IndexerCommandRepository;
@@ -39,7 +43,7 @@ import java.util.concurrent.Future;
 public class IndexerComponent {
     private static final Logger logger = LoggerFactory.getLogger(IndexerComponent.class);
     @Autowired
-    private GeneralRepository general;
+    private RevisionRepository revisions;
 
     @Autowired
     private ConfigurationRepository configurations;
@@ -52,6 +56,10 @@ public class IndexerComponent {
 
     // Pool for indexer threads.
     private ExecutorService indexerPool = Executors.newCachedThreadPool();
+
+    private final Map<RevisionKey, IndexerCommand> studyCommandBatch = new ConcurrentHashMap<>();
+
+    private volatile boolean runningBatch = false;
 
     /**
      * Map of indexers.
@@ -199,12 +207,48 @@ public class IndexerComponent {
                 indexer = DummyIndexer.build(path, commandRepository);
                 break;
             case REVISION:
-                indexer = RevisionIndexer.build(path, commandRepository, general, configurations, references);
+                indexer = RevisionIndexer.build(path, commandRepository, revisions, configurations, references);
                 break;
             default:
                 indexer = null;
                 break;
         }
         return indexer;
+    }
+
+    public void addStudyIndexerCommand(Long id, boolean index) {
+        Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(id, false, ConfigurationType.STUDY);
+        if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
+            logger.error("Tried to add index command for study with id "+id+" but didn't find any revisions with result "+pair.getLeft());
+            return;
+        }
+        try {
+            // Wait while the current batch is being handled
+            while(runningBatch = true) {
+                Thread.sleep(500);
+            }
+            if(studyCommandBatch.containsKey(pair.getRight().getKey())) {
+                return;
+            }
+            for(Language lang : Language.values()) {
+                if (index) {
+                    studyCommandBatch.put(pair.getRight().getKey(), RevisionIndexerCommand.index(ConfigurationType.STUDY, lang, pair.getRight().getKey()));
+                } else {
+                    studyCommandBatch.put(pair.getRight().getKey(), RevisionIndexerCommand.remove(ConfigurationType.STUDY, lang, pair.getRight().getKey()));
+                }
+            }
+        } catch(InterruptedException ie) {
+            // Well damn, let's not add the index command then
+        }
+    }
+
+    @Scheduled(fixedDelay = 1 * 60 *1000)
+    private void executeStudyBatch() {
+        runningBatch = true;
+        for(IndexerCommand command : studyCommandBatch.values()) {
+            addCommand(command);
+        }
+        studyCommandBatch.clear();
+        runningBatch = false;
     }
 }

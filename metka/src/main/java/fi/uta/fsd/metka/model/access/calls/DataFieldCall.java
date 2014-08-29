@@ -17,7 +17,7 @@ public interface DataFieldCall<T extends DataField> {
     }
 
     public static enum DataFieldType {
-        SAVED_DATA_FIELD,
+        VALUE_DATA_FIELD,
         CONTAINER_DATA_FIELD,
         REFERENCE_CONTAINER_DATA_FIELD
     }

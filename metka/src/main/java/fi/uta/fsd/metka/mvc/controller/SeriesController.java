@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * All requests contain base address /series
  */
 @Controller
-@RequestMapping("/series")
+@RequestMapping("series")
 public class SeriesController {
 
     @Autowired

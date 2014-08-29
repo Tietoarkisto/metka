@@ -3,7 +3,7 @@ package fi.uta.fsd.metkaSearch.indexers;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.storage.repository.GeneralRepository;
+import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metkaSearch.commands.indexer.IndexerCommand;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 
 public class RevisionIndexer extends Indexer {
     private static final Logger logger = LoggerFactory.getLogger(RevisionIndexer.class);
-    public static RevisionIndexer build(DirectoryManager.DirectoryPath path, IndexerCommandRepository commands, GeneralRepository general, ConfigurationRepository configurations, ReferenceService references) throws UnsupportedOperationException {
+    public static RevisionIndexer build(DirectoryManager.DirectoryPath path, IndexerCommandRepository commands, RevisionRepository revisions, ConfigurationRepository configurations, ReferenceService references) throws UnsupportedOperationException {
         checkPathType(path, IndexerConfigurationType.REVISION);
         // Check that additional parameters matches requirements
         if(path.getAdditionalParameters() == null || path.getAdditionalParameters().length == 0) {
@@ -34,20 +34,20 @@ public class RevisionIndexer extends Indexer {
             // Additional parameter must be a String representation of one of the ConfigurationTypes
             throw new UnsupportedOperationException("Additional parameter doesn't match any configuration type");
         }
-        if(general == null || configurations == null) {
-            throw new UnsupportedOperationException("Revision indexer needs access to general and configuration repositories");
+        if(revisions == null || configurations == null) {
+            throw new UnsupportedOperationException("Revision indexer needs access to revision and configuration repositories");
         }
 
-        return new RevisionIndexer(path, commands, general, configurations, references);
+        return new RevisionIndexer(path, commands, revisions, configurations, references);
     }
 
-    private GeneralRepository general;
+    private RevisionRepository revisions;
     private ConfigurationRepository configurations;
     private ReferenceService references;
 
-    private RevisionIndexer(DirectoryManager.DirectoryPath path, IndexerCommandRepository commands, GeneralRepository general, ConfigurationRepository configurations, ReferenceService references) throws UnsupportedOperationException {
+    private RevisionIndexer(DirectoryManager.DirectoryPath path, IndexerCommandRepository commands, RevisionRepository revisions, ConfigurationRepository configurations, ReferenceService references) throws UnsupportedOperationException {
         super(path, commands);
-        this.general = general;
+        this.revisions = revisions;
         this.configurations = configurations;
         this.references = references;
     }
@@ -87,7 +87,7 @@ public class RevisionIndexer extends Indexer {
      */
     private void indexCommand(RevisionIndexerCommand command) {
         logger.info("Trying to build revision handler");
-        RevisionHandler handler = HandlerFactory.buildRevisionHandler(this, general, configurations, references);
+        RevisionHandler handler = HandlerFactory.buildRevisionHandler(this, revisions, configurations, references);
         try {
             logger.info("Trying to handle revision command");
             handler.handle(command);

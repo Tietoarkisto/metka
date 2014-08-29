@@ -13,7 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/expertSearch")
+@RequestMapping("expertSearch")
 public class ExpertSearchController {
     @Autowired
     private ExpertSearchService service;
@@ -21,7 +21,7 @@ public class ExpertSearchController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String expertSearch(Model model) {
         ModelUtil.initExpertSearch(model);
-        return "expertSearch";
+        return "revision";
     }
 
     @RequestMapping(value = "query", method = {RequestMethod.POST},
