@@ -17,7 +17,7 @@ public class TestCredentialsFilter extends OncePerRequestFilter {
         request.setAttribute("Shib-Session-ID", "Metka-session-"+RANDOM.nextInt(Integer.MAX_VALUE));
 
 
-        request.setAttribute("Shib-UserName", "Metka-test-user-"+RANDOM.nextInt(100));
+        request.setAttribute("Shib-UserName", "Metka-test-user-"/*+RANDOM.nextInt(100)*/);
         request.setAttribute("Shib-DisplayName", "Virpi Varis");
 
         request.setAttribute("Shib-Roles", "metka:basic-user");

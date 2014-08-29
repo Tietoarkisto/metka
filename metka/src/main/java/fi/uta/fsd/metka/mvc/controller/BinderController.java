@@ -38,7 +38,7 @@ public class BinderController {
         return service.listStudyBinderPages(id);
     }
 
-    @RequestMapping(value="listBinderPages", method = RequestMethod.GET)
+    @RequestMapping(value="listBinderPages", method = {RequestMethod.GET, RequestMethod.POST})
     public @ResponseBody
     BinderListResponse listBinderPages() {
         return service.listBinderPages();

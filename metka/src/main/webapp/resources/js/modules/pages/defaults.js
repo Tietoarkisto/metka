@@ -1,16 +1,14 @@
 define(function (require) {
-    return function (onLoad) {
+    return function (options, onLoad) {
         var metka = require('./../../metka');
         require('./../server')('/revision/ajax/view/{page}/{id}/{no}', {
             method: 'GET',
             success: function (data) {
-
-                var options = data.gui;
+                $.extend(options, data.gui);
                 options.readOnly = !data.transferData.state.draft;
 
                 options.dataConf = data.configuration;
                 options.data = data.transferData;
-                options.$events = $({});
 
                 options.header = function header($header) {
                     var supplant = {
@@ -21,7 +19,7 @@ define(function (require) {
                         localized: 'type.{page}.title',
                         pattern: '{localized} - {id} - {no}{state}',
                         buttons: $('<div class="pull-right btn-toolbar">')
-                            .append(require('./../languageRadioInputGroup')(options, 'translation-lang', 'DEFAULT'))
+                            .append(require('./../languageRadioInputGroup')(options, 'translation-lang', options.defaultLang))
                             .append($('<div class="btn-group btn-group-xs">')
                                 .append([{
                                     icon: 'glyphicon-chevron-left',
@@ -68,7 +66,7 @@ define(function (require) {
                     return $header;
                 };
 
-                onLoad(options);
+                onLoad();
             }
         });
     };

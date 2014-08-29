@@ -15,6 +15,7 @@ define(function (require) {
                 options.$events = options.$events || parentOptions.$events;
                 options.data = options.data || parentOptions.data;
                 options.dataConf = options.dataConf || parentOptions.dataConf;
+                options.defaultLang = options.defaultLang || parentOptions.defaultLang;
 
                 return childConstructor.call(this, options);
             };

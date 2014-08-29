@@ -1,10 +1,8 @@
 define(function (require) {
     'use strict';
-    return function (onLoad) {
-        var options;
+    return function (options, onLoad) {
         if (location.pathname.split('/').indexOf('search') !== -1) {
-            options = {
-                $events: $({}),
+            $.extend(options, {
                 header: MetkaJS.L10N.get('type.STUDY_VARIABLES.search'),
                 content: [
                     {
@@ -49,9 +47,9 @@ define(function (require) {
                 buttons: [],
                 data: {},
                 dataConf: {}
-            };
+            });
         } else {
-            options = {
+            $.extend(options, {
                 "content": [
                     {
                         "type": "TAB",
@@ -123,9 +121,9 @@ define(function (require) {
                         ]
                     }
                 ]
-            };
+            });
         }
-        onLoad(options);
+        onLoad();
     };
 
 });

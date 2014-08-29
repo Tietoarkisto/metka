@@ -8,15 +8,16 @@ define(function (require) {
 
     var $container = $('<div class="content container">');
 
-    require('./modules/pageConfig')(function (pageOptions) {
-        var options = $.extend({
-            header: 'Metka',
-            content: [],
-            data: null,
-            dataConf: null,
-            $events: $({})
-        }, pageOptions);
+    var options = {
+        header: 'Metka',
+        content: [],
+        data: {},
+        dataConf: {},
+        $events: $({}),
+        defaultLang: 'DEFAULT'
+    };
 
+    require('./modules/pageConfig')(options, function () {
         $container.append(require('./modules/header')(options.header));
         require('./modules/container').call($container, options);
         require('./modules/buttonContainer').call($container, options);

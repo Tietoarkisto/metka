@@ -8,7 +8,7 @@ define(function (require) {
     }
 
     var pages = {
-        binders: require('./pages/binders'),
+        binder: require('./pages/binder'),
         expertsearch: require('./pages/expertSearch'),
         publication: require('./pages/publication'),
         series: require('./pages/series'),

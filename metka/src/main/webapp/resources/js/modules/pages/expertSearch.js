@@ -3,10 +3,9 @@ define(function (require) {
 
     var addRow;
     var $query;
-    return function (onLoad) {
-        var options = {
+    return function (options, onLoad) {
+        $.extend(options, {
             header: MetkaJS.L10N.get('topmenu.expert'),
-            $events: $({}),
             content: [
                 {
                     "type": "COLUMN",
@@ -41,7 +40,7 @@ define(function (require) {
                                             "savedAt"
                                         ],
                                         onRemove: function ($row, remove) {
-                                            require('./../server')('/expertSearch/remove/{id}', require('./../map/transferRow/object')($row.data('transferRow'), 'DEFAULT'), {
+                                            require('./../server')('/expertSearch/remove/{id}', require('./../map/transferRow/object')($row.data('transferRow'), options.defaultLang), {
                                                 success: function () {
                                                     $row.remove();
                                                 }
@@ -75,7 +74,7 @@ define(function (require) {
             buttons: [
                 require('./../searchButton')('/expertSearch/query', function () {
                     return {
-                        query: require('./../data')(options)('search').getByLang('DEFAULT')
+                        query: require('./../data')(options)('search').getByLang(options.defaultLang)
                     };
                 }, function (data) {
                     return data.results;
@@ -139,6 +138,7 @@ define(function (require) {
                                     data: {},
                                     dataConf: {},
                                     $events: $({}),
+                                    defaultLang: options.defaultLang,
                                     content: [{
                                         type: 'COLUMN',
                                         columns: 1,
@@ -172,8 +172,8 @@ define(function (require) {
                                                 .click(function () {
                                                     require('./../server')('/expertSearch/save', {
                                                         data: JSON.stringify({
-                                                            query: require('./../data')(options)('search').getByLang('DEFAULT'),
-                                                            title: require('./../data')(containerOptions)('title').getByLang('DEFAULT')
+                                                            query: require('./../data')(options)('search').getByLang(options.defaultLang),
+                                                            title: require('./../data')(containerOptions)('title').getByLang(options.defaultLang)
                                                         }),
                                                         success: addRow
                                                     });
@@ -202,7 +202,7 @@ define(function (require) {
                     }
                 }
             }
-        };
-        onLoad(options);
+        });
+        onLoad();
     }
 });

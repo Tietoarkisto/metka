@@ -10,7 +10,7 @@ define(function (require) {
                     success: function (response) {
                         var objectToTransferRow = require('./../../map/object/transferRow');
                         fieldOptions.data.fields.errors.rows.DEFAULT = response.errors.map(function (result) {
-                            return objectToTransferRow(result, 'DEFAULT');
+                            return objectToTransferRow(result, fieldOptions.defaultLang);
                         });
                         fieldOptions.$events.trigger('dataChanged');
                     }
@@ -19,6 +19,7 @@ define(function (require) {
 
             var fieldOptions = {
                 $events: $({}),
+                defaultLang: options.defaultLang,
                 dataConf: {
                     fields: {
                         errors: {
@@ -262,7 +263,7 @@ define(function (require) {
                     showSaveInfo: true,
                     onRowChange: function ($tr, transferRow) {
                         require('./../../server')('/study/updateError/', {
-                            data: JSON.stringify(require('./../../map/transferRow/object')(transferRow, 'DEFAULT')),
+                            data: JSON.stringify(require('./../../map/transferRow/object')(transferRow, fieldOptions.defaultLang)),
                             success: function (response) {
                                 refreshData();
                             }

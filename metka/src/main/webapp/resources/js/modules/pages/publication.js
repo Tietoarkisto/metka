@@ -207,7 +207,7 @@ define(function (require) {
                         'publicationpublic',
                         'savedBy'
                     ].forEach(function (field) {
-                        response.values[field] = data(field).getByLang('DEFAULT');
+                        response.values[field] = data(field).getByLang(options.defaultLang);
                     });
                     return response;
                 }, function (data) {
@@ -410,8 +410,9 @@ define(function (require) {
             }
         };
         var data = require('./../data')(options);
-        return function (onLoad) {
-            onLoad(options);
+        return function (defaultOptions, onLoad) {
+            $.extend(defaultOptions, options);
+            onLoad();
         };
     } else {
         return require('./defaults');
