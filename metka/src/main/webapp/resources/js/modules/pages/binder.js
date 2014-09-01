@@ -5,6 +5,22 @@ define(function (require) {
     return function (options, onLoad) {
         $.extend(options, {
             header: MetkaJS.L10N.get('type.BINDERS.title'),
+            dataConf: {
+                fields: {
+                    studyId: {
+                        type: 'STRING'
+                    },
+                    studyTitle: {
+                        type: 'STRING'
+                    },
+                    binderId: {
+                        type: 'INTEGER'
+                    },
+                    description: {
+                        type: 'STRING'
+                    }
+                }
+            },
             content: [
                 {
                     "type": "COLUMN",
@@ -20,67 +36,38 @@ define(function (require) {
                                     "readOnly": true,
                                     "displayType": "CONTAINER",
                                     "columnFields": [
-                                        "studyNo",
-                                        "studyName",
-                                        "mapNo",
-                                        "mapped"
+                                        "studyId",
+                                        "studyTitle",
+                                        "savedBy",
+                                        "binderId",
+                                        "description"
                                     ],
-                                    onRemove: function ($row, remove) {
-                                        require('./../server')('/expertSearch/remove/{id}', require('./../map/transferRow/object')($row.data('transferRow'), options.defaultLang), {
-                                            success: function () {
-                                                $row.remove();
-                                            }
-                                        });
-                                    },
                                     onClick: function () {
-                                        $query
-                                            .val($(this).data('transferRow').fields.query.values.DEFAULT.current)
-                                            .change();
+                                        require('./../assignUrl')('view', {
+                                            id: $(this).data('transferRow').fields.id.values.DEFAULT.current,
+                                            no: '???'
+                                        });
                                     }
                                 },
                                 create: function (options) {
                                     var $containerField = $(this).children();
                                     addRow = function (data) {
-                                        data.name = data.title;
-                                        delete data.title;
                                         $containerField.data('addRowFromDataObject')(data);
                                     };
-                                    require('./../server')('/expertSearch/list', {
-                                        success: function (data) {
-                                            data.queries.forEach(addRow);
-                                        }
-                                    });
-                                }
-                            },
-                            {
-                                "type": "CELL",
-                                "field": {
-
-                                },
-                                create: function create(options) {
-                                    require('./../searchResultContainer')(
-                                        '/binder/listBinderPages',
-                                        function () {
-                                            return '';
-                                        },
-                                        function (data) {
-                                            return data.pages || [];
-                                        }, function (result) {
-                                            return result;
-                                        }, {
-                                            title: {
-                                                type: 'STRING'
-                                            },
-                                            id: {
-                                                type: 'INTEGER'
-                                            }
-                                        }, ['title'], function (transferRow) {
-                                            require('./../assignUrl')('view', {
-                                                id: transferRow.fields.id.values.DEFAULT.current,
-                                                no: '???'
-                                            });
-                                        }
-                                    );
+                                    var data = {
+                                        pages: [{
+                                            studyId: 'FSD123',
+                                            studyTitle: 'wqewqeewrerw',
+                                            savedBy: 'me',
+                                            binderId: '30',
+                                            description: 'asfasffdafsa'
+                                        }]
+                                    }
+                                    //require('./../server')('/binder/listBinderPages', {
+                                    //    success: function (data) {
+                                            data.pages.forEach(addRow);
+                                    //    }
+                                    //});
                                 }
                             }
                         ]

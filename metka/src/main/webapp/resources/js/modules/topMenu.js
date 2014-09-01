@@ -72,7 +72,7 @@ define(function (require) {
                         .append(items.map(function (li) {
                             var $li = $('<li>')
                                 .append($('<a>', {
-                                    href: metka.contextPath + "/web" + '/' + li.href
+                                    href: require('./url')('/' + li.href)
                                 })
                                     .text(MetkaJS.L10N.get('topmenu.' + li.text)));
 

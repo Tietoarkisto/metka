@@ -4,9 +4,10 @@ define(function (require) {
         require('./../server')('/revision/ajax/view/{page}/{id}/{no}', {
             method: 'GET',
             success: function (data) {
+                metka.revision = metka.no = data.transferData.key.no;
+                history.replaceState(undefined, '', require('./../url')('view'));
                 $.extend(options, data.gui);
                 options.readOnly = !data.transferData.state.draft || !(data.transferData.state.handler === MetkaJS.User.userName);
-
                 options.dataConf = data.configuration;
                 options.data = data.transferData;
 

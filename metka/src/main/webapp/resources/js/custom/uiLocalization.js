@@ -786,6 +786,16 @@
                 "pid": "Pysyvä tunniste",
                 "pidtype": "Tunnisteen tyyppi"
             }
+        },
+
+        "BINDER": {
+            "field": {
+                "studyId": "Aineistonro",
+                "studyTitle": "Aineiston nimi",
+                "savedBy": "Käsittelijä",
+                "binderId": "Mappinro",
+                "description": "Mapitettu aineisto"
+            }
         }
     };
 

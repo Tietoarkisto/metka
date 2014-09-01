@@ -4,7 +4,7 @@ define(function (require) {
     'use strict';
     return function (key, extend) {
         var metka = require('./../metka');
-        return metka.contextPath + "/web" + (function () {
+        return metka.contextPath + '/web' + (function () {
             if (key[0] === '/') {
                 return key;
             } else {
@@ -28,6 +28,8 @@ define(function (require) {
                     view: 'revision/view/{page}/{id}/{no}'
                 }[key];
             }
-        })().supplant($.extend({}, metka, extend));
+        })().supplant($.extend({
+            no: ''
+        }, metka, extend));
     };
 });
