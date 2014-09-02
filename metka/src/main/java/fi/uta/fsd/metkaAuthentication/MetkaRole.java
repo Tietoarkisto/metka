@@ -138,12 +138,16 @@ public final class MetkaRole implements Comparable<MetkaRole> {
         return defaultLanguage;
     }
 
+    public boolean hasPermission(Permission permission) {
+        return permissions.contains(permission);
+    }
+
     public boolean hasPermission(String permission) {
         // If given string is not a valid permission then throw exception.
         if(!Permission.isPermission(permission)) {
             throw new RuntimeException("Not a valid permission name");
         }
-        return permissions.contains(Permission.fromPermission(permission));
+        return hasPermission(Permission.fromPermission(permission));
     }
 
     public static enum MetkaRoleName {

@@ -7,5 +7,6 @@ public enum ButtonType {
     REMOVE,
     HISTORY,
     CLAIM,
+    RELEASE,
     RESTORE
 }

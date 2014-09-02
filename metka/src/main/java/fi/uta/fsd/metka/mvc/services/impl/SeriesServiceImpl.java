@@ -5,8 +5,7 @@ import fi.uta.fsd.metka.search.SeriesSearch;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.revision.RevisionSearchResponse;
 import fi.uta.fsd.metka.transfer.revision.RevisionSearchResult;
-import fi.uta.fsd.metka.transfer.revision.SeriesAbbreviationsResponse;
-import org.apache.commons.lang3.tuple.Pair;
+import fi.uta.fsd.metka.transfer.series.SeriesAbbreviationsResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -44,7 +44,7 @@ public class ValueContainer {
 
     @Override
     public String toString() {
-        return (value == null) ? null : value.toString();
+        return "Json[name="+this.getClass().getSimpleName()+"]";
     }
 
     @JsonIgnore public boolean hasValue() {

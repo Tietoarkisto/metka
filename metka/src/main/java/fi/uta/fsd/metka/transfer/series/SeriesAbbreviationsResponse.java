@@ -1,4 +1,4 @@
-package fi.uta.fsd.metka.transfer.revision;
+package fi.uta.fsd.metka.transfer.series;
 
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 

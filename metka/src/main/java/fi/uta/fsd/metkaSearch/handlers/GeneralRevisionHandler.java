@@ -180,7 +180,7 @@ class GeneralRevisionHandler implements RevisionHandler {
             indexer.addDocument(document.getDocument(), analyzer);
             return true;
         } else {
-            logger.info("Document was not added to index because content was not found for requested language.");
+            logger.info("Document was not added to index because content was not found for requested language ("+command.getPath().getLanguage()+").");
             return false;
         }
     }

@@ -5,15 +5,15 @@ import fi.uta.fsd.metka.enums.ButtonType;
 import fi.uta.fsd.metka.enums.VisibilityState;
 import fi.uta.fsd.metka.model.general.TranslationObject;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @JsonIgnoreProperties("_comment")
 public class Button {
     private TranslationObject title;
-    private final List<String> userGroups = new ArrayList<>();
+    private final Set<String> permissions = new HashSet<>();
     private Boolean isHandler;
-    private final List<VisibilityState> states = new ArrayList<>();
+    private final Set<VisibilityState> states = new HashSet<>();
     private ButtonType type;
 
     public TranslationObject getTitle() {
@@ -24,8 +24,8 @@ public class Button {
         this.title = title;
     }
 
-    public List<String> getUserGroups() {
-        return userGroups;
+    public Set<String> getPermissions() {
+        return permissions;
     }
 
     public Boolean getHandler() {
@@ -36,7 +36,7 @@ public class Button {
         isHandler = handler;
     }
 
-    public List<VisibilityState> getStates() {
+    public Set<VisibilityState> getStates() {
         return states;
     }
 

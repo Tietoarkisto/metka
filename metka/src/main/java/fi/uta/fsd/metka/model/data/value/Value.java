@@ -34,5 +34,8 @@ public class Value {
         return new Value(value);
     }
 
-    // TODO: Implement debugging friendly toString
+    @Override
+    public String toString() {
+        return "Json[name="+this.getClass().getSimpleName()+", value="+value+"]";
+    }
 }

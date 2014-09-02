@@ -18,31 +18,21 @@ public class FieldSerializer extends ObjectSerializer<Field> {
         jgen.writeStringField("key", value.getKey());
         jgen.writeStringField("type", value.getType().toString());
         jgen.writeBooleanField("translatable", value.getTranslatable());
-        jgen.writeArrayFieldStart("notToLang");
-        for(String str : value.getNotToLang()) {
-            jgen.writeString(str);
-        }
-        jgen.writeEndArray();
         jgen.writeBooleanField("immutable", value.getImmutable());
         jgen.writeBooleanField("display", value.getDisplay());
         jgen.writeBooleanField("unique", value.getUnique());
         jgen.writeBooleanField("required", value.getRequired()); // TODO: Required is going to be more complicated later
-        if(value.getSection() == null) {
-            jgen.writeNullField("section");
-        } else {
-            jgen.writeStringField("section", value.getSection());
-        }
         jgen.writeBooleanField("subfield", value.getSubfield());
-        if(value.getSubfield()) {
-            jgen.writeBooleanField("summaryField", value.getSummaryField());
-        }
         jgen.writeBooleanField("editable", value.getEditable());
         jgen.writeBooleanField("writable", value.getWritable());
         jgen.writeBooleanField("indexed", value.getIndexed());
 
+        if(!value.getType().isContainer()) {
+            jgen.writeBooleanField("exact", value.getExact());
+        }
+
         switch(value.getType()) {
             case REFERENCECONTAINER:
-                jgen.writeBooleanField("showReferenceKey", value.getShowReferenceKey());
                 jgen.writeStringField("reference", value.getReference());
                 /* FALLTHROUGH */
             case CONTAINER:
@@ -51,7 +41,6 @@ public class FieldSerializer extends ObjectSerializer<Field> {
                 } else {
                     jgen.writeNumberField("maxValues", value.getMaxValues());
                 }
-                jgen.writeBooleanField("showSaveInfo", value.getShowSaveInfo());
                 jgen.writeArrayFieldStart("subfields");
                 for(String str : value.getSubfields()) {
                     jgen.writeString(str);
@@ -63,10 +52,6 @@ public class FieldSerializer extends ObjectSerializer<Field> {
                 break;
             case REFERENCE:
                 jgen.writeStringField("reference", value.getReference());
-                /* FALLTHROUGH */
-            case STRING:
-                jgen.writeBooleanField("multiline", value.getMultiline());
-                jgen.writeBooleanField("exact", value.getExact());
                 break;
             case CONCAT:
                 jgen.writeArrayFieldStart("concatenate");

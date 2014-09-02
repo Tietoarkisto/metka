@@ -9,7 +9,7 @@ import java.util.List;
 
 @Transactional(readOnly = true)
 public interface StudyErrorsRepository {
-    public List<StudyError> listErrorsForStudy(Long studyId, Integer revisionNo);
+    public List<StudyError> listErrorsForStudy(Long studyId);
     public Pair<ReturnResult, StudyError> loadStudyError(Long id);
     @Transactional(readOnly = false) public ReturnResult updateStudyError(StudyError error);
     @Transactional(readOnly = false) public ReturnResult deleteStudyError(Long id);

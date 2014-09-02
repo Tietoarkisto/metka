@@ -19,14 +19,12 @@
 		"seriesdesc": {
 			"key": "seriesdesc",
 			"type": "STRING",
-			"required": true,
-			"multiline": true
+			"required": true
 		},
 		"seriesnotes": {
 			"key": "seriesnotes",
 			"type": "STRING",
-			"translatable": false,
-			"multiline": true
+			"translatable": false
 		}
 	}
 }

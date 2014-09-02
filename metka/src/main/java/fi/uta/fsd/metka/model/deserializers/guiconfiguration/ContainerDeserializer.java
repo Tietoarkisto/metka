@@ -76,7 +76,10 @@ public class ContainerDeserializer extends ObjectDeserializer<Container> {
             JsonNode content = node.get("content");
             if(content != null && content.getNodeType() == JsonNodeType.ARRAY) {
                 for(JsonNode container : content) {
-                    con.getContent().add(oc.treeToValue(container, Container.class));
+                    Container c = oc.treeToValue(container, Container.class);
+                    if(con.getType().canContain(c.getType())) {
+                        con.getContent().add(c);
+                    }
                 }
             }
         }
@@ -85,7 +88,10 @@ public class ContainerDeserializer extends ObjectDeserializer<Container> {
             JsonNode rows = node.get("rows");
             if(rows != null && rows.getNodeType() == JsonNodeType.ARRAY) {
                 for(JsonNode row : rows) {
-                    con.getRows().add(oc.treeToValue(row, Container.class));
+                    Container c = oc.treeToValue(row, Container.class);
+                    if(con.getType().canContain(c.getType())) {
+                        con.getRows().add(c);
+                    }
                 }
             }
         }
@@ -94,7 +100,10 @@ public class ContainerDeserializer extends ObjectDeserializer<Container> {
             JsonNode cells = node.get("cells");
             if(cells != null && cells.getNodeType() == JsonNodeType.ARRAY) {
                 for(JsonNode cell : cells) {
-                    con.getCells().add(oc.treeToValue(cell, Container.class));
+                    Container c = oc.treeToValue(cell, Container.class);
+                    if(con.getType().canContain(c.getType())) {
+                        con.getCells().add(c);
+                    }
                 }
             }
         }

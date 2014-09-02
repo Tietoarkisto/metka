@@ -30,7 +30,7 @@
           </y:NodeLabel>
           <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="" use3DEffect="true">
             <y:AttributeLabel>+title : TranslationText
-+hidden : Boolean
++hidden : Boolean = false
 +content : Container [0..*] {ordered}
 +readOnly : TRUE|NULL
 +important : Boolean
@@ -110,7 +110,7 @@ EMPTYCELL</y:AttributeLabel>
     SECTION
     COLUMN
     ROW
-    CELL
+    CELL|EMPTYCELL
 
 title : Text displayed on the GUI where this Container is located.
     In addition to the obvious TAB, SECTION and CELL titles that will

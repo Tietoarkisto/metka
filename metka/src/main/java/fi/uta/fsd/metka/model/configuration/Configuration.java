@@ -14,7 +14,6 @@ import java.util.Map;
 @JsonIgnoreProperties("_comment")
 public class Configuration implements ModelBase {
     private ConfigurationKey key;
-    private final Map<String, Section> sections = new HashMap<>();
     private final Map<String, Reference> references = new HashMap<>();
     private final Map<String, SelectionList> selectionLists = new HashMap<>();
     private final Map<String, Field> fields = new HashMap<>();
@@ -34,10 +33,6 @@ public class Configuration implements ModelBase {
 
     public void setKey(ConfigurationKey key) {
         this.key = key;
-    }
-
-    public Map<String, Section> getSections() {
-        return sections;
     }
 
     public Map<String, Reference> getReferences() {

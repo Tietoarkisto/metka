@@ -52,7 +52,7 @@ public final class DataFieldOperator {
 
         switch(call.getFieldType()) {
             case VALUE_DATA_FIELD:
-                Pair<StatusCode, ValueDataField> saved = ValueDataFieldInspector
+                Pair<StatusCode, ValueDataField> pair = ValueDataFieldInspector
                         .checkValueDataFieldValue(
                                 call.getLanguage(),
                                 fieldMap,
@@ -60,12 +60,13 @@ public final class DataFieldOperator {
                                 call.getValue(),
                                 call.getConfiguration(),
                                 configChecks);
-                return new ImmutablePair<>(saved.getLeft()
-                        , (T)saved.getRight());
-            // TODO: Container/ReferenceContainer cases needed (?)
+                return new ImmutablePair<>(pair.getLeft(), (T)pair.getRight());
+            case CONTAINER_DATA_FIELD:
+                return new ImmutablePair<>(StatusCode.INCORRECT_PARAMETERS, null);
+            case REFERENCE_CONTAINER_DATA_FIELD:
+                return new ImmutablePair<>(StatusCode.INCORRECT_PARAMETERS, null);
             default:
-                return new ImmutablePair<>(StatusCode.INCORRECT_PARAMETERS
-                        , null);
+                return new ImmutablePair<>(StatusCode.INCORRECT_PARAMETERS, null);
         }
     }
 

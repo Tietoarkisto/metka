@@ -1,6 +1,7 @@
 package fi.uta.fsd.metka.mvc.controller;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
+import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.mvc.ModelUtil;
 import fi.uta.fsd.metka.mvc.services.RevisionService;
@@ -151,9 +152,19 @@ public class RevisionController {
         return revisions.approve(transferData);
     }
 
-    @RequestMapping(value="ajax/search", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value="ajax/search", method = RequestMethod.POST)
     public @ResponseBody RevisionSearchResponse search(@RequestBody RevisionSearchRequest searchRequest) {
         return revisions.search(searchRequest);
+    }
+
+    @RequestMapping(value = "ajax/claim", method = {RequestMethod.GET, RequestMethod.POST})
+    public @ResponseBody ReturnResult claim(@RequestBody RevisionKey key) {
+        return revisions.claimRevision(key);
+    }
+
+    @RequestMapping(value = "ajax/release", method = {RequestMethod.GET, RequestMethod.POST})
+    public @ResponseBody ReturnResult release(@RequestBody RevisionKey key) {
+        return revisions.releaseRevision(key);
     }
 
     @RequestMapping(value = "studyIdSearch/{studyId}", method = {RequestMethod.GET, RequestMethod.POST})

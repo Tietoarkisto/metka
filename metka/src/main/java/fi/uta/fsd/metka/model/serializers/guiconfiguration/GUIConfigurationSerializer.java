@@ -41,6 +41,7 @@ public class GUIConfigurationSerializer extends ObjectSerializer<GUIConfiguratio
     private boolean checkValidContainer(ContainerType type) {
         // Cells and Rows are never part of content array on their own but instead always within a COLUMN container
         if(type == ContainerType.CELL) return false;
+        if(type == ContainerType.EMPTYCELL) return false;
         if(type == ContainerType.ROW) return false;
         return true;
     }

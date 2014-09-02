@@ -11,8 +11,8 @@ import java.util.List;
 @JsonIgnoreProperties("_comment")
 public class Container {
     private static int MAX_COLUMNS = 4;
+    private TranslationObject title;
     private ContainerType type;
-    private TranslationObject title; // This should change to translatable object at some point.
     private Boolean hidden = false;
     private Boolean readOnly = null;
     private Boolean important = false;
@@ -52,11 +52,11 @@ public class Container {
     }
 
     public Boolean getReadOnly() {
-        return (readOnly != null && readOnly == false) ? null : readOnly;
+        return (readOnly != null && !readOnly) ? null : readOnly;
     }
 
     public void setReadOnly(Boolean readOnly) {
-        this.readOnly = (readOnly != null && readOnly == false) ? null : readOnly;
+        this.readOnly = (readOnly != null && !readOnly) ? null : readOnly;
     }
 
     public Boolean getImportant() {

@@ -5,9 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.model.general.TranslationObject;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-
 public class Option {
     private final String value;
     private Boolean deprecated = false;
@@ -31,11 +28,11 @@ public class Option {
     }
 
     public Boolean getDeprecated() {
-        return deprecated;
+        return deprecated == null ? false : deprecated;
     }
 
     public void setDeprecated(Boolean deprecated) {
-        this.deprecated = deprecated;
+        this.deprecated = deprecated == null ? false : deprecated;
     }
 
     /**

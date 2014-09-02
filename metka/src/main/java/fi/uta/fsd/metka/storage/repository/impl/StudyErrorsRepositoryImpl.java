@@ -21,7 +21,7 @@ public class StudyErrorsRepositoryImpl implements StudyErrorsRepository {
     private EntityManager em;
 
     @Override
-    public List<StudyError> listErrorsForStudy(Long studyId, Integer revisionNo) {
+    public List<StudyError> listErrorsForStudy(Long studyId) {
         List<StudyErrorEntity> errors = em.createQuery(
                 "SELECT e FROM StudyErrorEntity e WHERE e.studyId=:studyId ORDER BY e.addedAt ASC",
                 StudyErrorEntity.class)

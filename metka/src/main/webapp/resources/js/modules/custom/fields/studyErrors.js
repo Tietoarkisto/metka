@@ -5,7 +5,7 @@ define(function (require) {
         create: function create(options) {
             function refreshData(callback) {
 
-                require('./../../server')('/study/listErrors/{id}/{no}', {
+                require('./../../server')('/study/listErrors/{id}', {
                     method: 'GET',
                     success: function (response) {
                         var objectToTransferRow = require('./../../map/object/transferRow');

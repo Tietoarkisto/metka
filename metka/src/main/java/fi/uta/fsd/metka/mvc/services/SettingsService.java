@@ -5,20 +5,22 @@ import fi.uta.fsd.metka.transfer.settings.APIUserListResponse;
 import fi.uta.fsd.metka.transfer.settings.NewAPIUserRequest;
 import fi.uta.fsd.metkaAuthentication.Permission;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
 //@PreAuthorize("hasPermission('canViewSettingsPage', 'PERMISSION')")
 @PreAuthorize("hasPermission('"+ Permission.Values.CAN_VIEW_SETTINGS_PAGE +"', 'PERMISSION')")
+@Transactional
 public interface SettingsService {
 
     // Uses report repository to generate example report
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_GENERATE_REPORTS +"', 'PERMISSION')")
-    String generateReport();
+    @Transactional(readOnly = true) String generateReport();
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_VIEW_API_USERS +"', 'PERMISSION')")
-    APIUserListResponse listAPIUsers();
+    @Transactional(readOnly = true) APIUserListResponse listAPIUsers();
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_EDIT_API_USERS +"', 'PERMISSION')")
     APIUserListResponse newAPIUser(NewAPIUserRequest request);

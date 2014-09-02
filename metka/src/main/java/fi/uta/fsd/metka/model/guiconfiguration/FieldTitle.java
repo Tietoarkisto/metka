@@ -1,11 +1,9 @@
 package fi.uta.fsd.metka.model.guiconfiguration;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import fi.uta.fsd.metka.model.general.TranslationObject;
 
-@JsonIgnoreProperties("_comment")
 public class FieldTitle {
-    private String key; // This should change to translatable object at some point.
+    private String key;
     private TranslationObject title;
 
     public String getKey() {

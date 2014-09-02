@@ -151,14 +151,12 @@
         "firstname": {
             "key": "firstname",
             "type": "STRING",
-            "subfield": true,
-            "summaryField": true
+            "subfield": true
         },
         "lastname": {
             "key": "lastname",
             "type": "STRING",
-            "subfield": true,
-            "summaryField": true
+            "subfield": true
         },
         "publicationpids": {
             "key": "publicationpids",
@@ -171,15 +169,12 @@
         "pid": {
             "key": "pid",
             "type": "STRING",
-            "subfield": true,
-            "summaryField": true
+            "subfield": true
         },
         "pidtype": {
-            "_comment": "Derived is an old type and not supported, changing to STRING for the moment.",
             "key": "pidtype",
             "type": "STRING",
-            "subfield": true,
-            "summaryField": true
+            "subfield": true
         },
         "studies": {
             "key": "studies",

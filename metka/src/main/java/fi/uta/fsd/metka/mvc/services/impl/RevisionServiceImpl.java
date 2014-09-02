@@ -4,6 +4,7 @@ import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.mvc.services.RevisionService;
@@ -61,6 +62,9 @@ public class RevisionServiceImpl implements RevisionService {
 
     @Autowired
     private IndexerComponent indexer;
+
+    @Autowired
+    private RevisionHandlerRepository handler;
 
     @Override public RevisionDataResponse view(Long id, String type) {
         RevisionDataResponse response = new RevisionDataResponse();
@@ -221,6 +225,16 @@ public class RevisionServiceImpl implements RevisionService {
             response.getRows().add(result.getRight().get(0));
         }
         return response;
+    }
+
+    @Override
+    public ReturnResult claimRevision(RevisionKey key) {
+        return handler.claim(fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(key));
+    }
+
+    @Override
+    public ReturnResult releaseRevision(RevisionKey key) {
+        return handler.release(fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(key));
     }
 
     private void addRemoveCommand(TransferData data) {

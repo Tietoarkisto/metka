@@ -15,8 +15,8 @@ public class StudyErrorServiceImpl implements StudyErrorService {
     @Autowired
     private StudyErrorsRepository errors;
 
-    @Override public StudyErrorListResponse getStudyErrorList(Long id, Integer no) {
-        List<StudyError> list = errors.listErrorsForStudy(id, no);
+    @Override public StudyErrorListResponse getStudyErrorList(Long id) {
+        List<StudyError> list = errors.listErrorsForStudy(id);
         StudyErrorListResponse response = new StudyErrorListResponse();
         response.setResult(list.isEmpty()? ReturnResult.NO_RESULTS : ReturnResult.OPERATION_SUCCESSFUL);
         response.setErrors(list);

@@ -2,7 +2,7 @@ package fi.uta.fsd.metka.mvc.controller;
 
 import fi.uta.fsd.metka.mvc.services.SeriesService;
 import fi.uta.fsd.metka.transfer.revision.RevisionSearchResponse;
-import fi.uta.fsd.metka.transfer.revision.SeriesAbbreviationsResponse;
+import fi.uta.fsd.metka.transfer.series.SeriesAbbreviationsResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

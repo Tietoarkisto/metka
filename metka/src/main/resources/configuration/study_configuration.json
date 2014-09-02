@@ -508,8 +508,6 @@
 			"key": "versionnotes",
 			"translatable": false,
 			"type": "STRING",
-			"summaryField": false,
-			"multiline": true,
 			"subfield": true
 		},
 		"versionpro": {
@@ -523,8 +521,6 @@
 			"key": "versiontext",
 			"required": true,
 			"type": "STRING",
-			"summaryField": false,
-			"multiline": true,
 			"subfield": true
 		},
 		"descpublic": {
@@ -554,9 +550,7 @@
 			"subfields": [
 				"publicationid",
 				"publicationtitle"
-			],
-			"showReferenceKey": false,
-			"showSaveInfo": true
+			]
 		},
 		"publicationid": {
 			"key": "publicationid",
@@ -582,9 +576,7 @@
 			"subfields": [
 				"studyid_col",
 				"studytitle_col"
-			],
-			"showReferenceKey": false,
-			"showSaveInfo": true
+			]
 		},
 		"studyid_col": {
 			"key": "studyid_col",
@@ -619,28 +611,24 @@
 			"type": "CONTAINER",
 			"subfields": [
 				"note"
-			],
-			"showSaveInfo": true
+			]
 		},
 		"note": {
 			"key": "note",
 			"translatable": false,
 			"required": true,
 			"type": "STRING",
-			"multiline": true,
 			"subfield": true
 		},
 		"originallocation": {
 			"key": "originallocation",
 			"translatable": false,
-			"type": "STRING",
-			"multiline": true
+			"type": "STRING"
 		},
 		"processingnotes": {
 			"key": "processingnotes",
 			"translatable": false,
-			"type": "STRING",
-			"multiline": true
+			"type": "STRING"
 		},
 		"public": {
 			"key": "public",
@@ -729,45 +717,38 @@
 		"triggerlabel": {
 			"key": "triggerlabel",
 			"translatable": false,
-			"type": "STRING",
-			"multiline": false
+			"type": "STRING"
 		},
 		"agreement": {
 			"key": "agreement",
 			"_comment": "TODO: Tässä pitäisi olla linkki sopimukseen.",
 			"translatable": false,
-			"type": "STRING",
-			"multiline": false
+			"type": "STRING"
 		},
 		"agreementnotes": {
 			"key": "agreementnotes",
 			"translatable": false,
-			"type": "STRING",
-			"multiline": true
+			"type": "STRING"
 		},
 		"permission": {
 			"key": "permission",
 			"translatable": false,
-			"type": "STRING",
-			"multiline": true
+			"type": "STRING"
 		},
 		"specialtermsofuse": {
 			"key": "specialtermsofuse",
 			"translatable": true,
-			"type": "STRING",
-			"multiline": true
+			"type": "STRING"
 		},
 		"agreementfsdnotes": {
 			"key": "agreementfsdnotes",
 			"translatable": false,
-			"type": "STRING",
-			"multiline": true
+			"type": "STRING"
 		},
 		"alttitles": {
 			"key": "alttitles",
 			"translatable": false,
 			"type": "CONTAINER",
-			"showSaveInfo": true,
 			"subfields": [
 				"alttitle"
 			]
@@ -776,8 +757,7 @@
 			"key": "alttitle",
 			"translatable": false,
 			"type": "STRING",
-			"subfield": true,
-			"multiline": false
+			"subfield": true
 		},
 		"partitles": {
 			"key": "partitles",
@@ -816,8 +796,7 @@
 			"required": true,
 			"type": "SELECTION",
 			"selectionList": "authortype_list",
-			"subfield": true,
-			"summaryField": false
+			"subfield": true
 		},
 		"author": {
 			"key": "author",
@@ -906,8 +885,7 @@
 			"key": "biblcit",
 			"translatable": false,
 			"required": true,
-			"type": "STRING",
-			"multiline": true
+			"type": "STRING"
 		},
 		"keywords": {
 			"key": "keywords",
@@ -982,8 +960,7 @@
 		"abstract": {
             "key": "abstract",
             "translatable": false,
-            "type": "STRING",
-            "multiline": true
+            "type": "STRING"
 		},
 		"timeperiods": {
 			"key": "timeperiods",
@@ -1199,8 +1176,7 @@
 			"required": false,
 			"type": "STRING",
 			"writable": false,
-			"subfield": true,
-			"summaryField": true
+			"subfield": true
 		},
 		"resprate": {
 			"key": "resprate",
@@ -1211,7 +1187,6 @@
 			"key": "datasources",
 			"translatable": false,
 			"type": "CONTAINER",
-			"showSaveInfo": true,
 			"subfields": [
 				"datasource"
 			]
@@ -1220,13 +1195,11 @@
 			"key": "datasource",
 			"translatable": false,
 			"type": "STRING",
-			"multiline": true,
 			"subfield": true
 		},
 		"weight": {
 			"key": "weight",
 			"translatable": false,
-			"multiline": true,
 			"type": "STRING"
 		},
 		"weightyesno": {
@@ -1237,31 +1210,26 @@
 		"dataprosessing": {
 			"key": "dataprosessing",
 			"translatable": false,
-			"type": "STRING",
-			"multiline": true
+			"type": "STRING"
 		},
 		"collsize": {
 			"key": "collsize",
 			"translatable": false,
-			"type": "STRING",
-			"multiline": true
+			"type": "STRING"
 		},
 		"complete": {
 			"key": "complete",
 			"translatable": false,
-			"type": "STRING",
-			"multiline": true
+			"type": "STRING"
 		},
 		"datasetnotes": {
 			"key": "datasetnotes",
 			"translatable": false,
-			"type": "STRING",
-			"multiline": true
+			"type": "STRING"
 		},
 		"appraisals": {
 			"key": "appraisals",
 			"translatable": false,
-			"showSaveInfo": true,
 			"type": "CONTAINER",
 			"subfields": [
 				"appraisal"
@@ -1271,7 +1239,6 @@
 			"key": "appraisal",
 			"translatable": false,
 			"type": "STRING",
-			"multiline": true,
 			"subfield": true
 		},
 		"relatedmaterials": {
@@ -1286,7 +1253,6 @@
 			"key": "relatedmaterial",
 			"translatable": false,
 			"type": "STRING",
-			"multiline": true,
 			"subfield": true
 		},
 		"othermaterials": {
@@ -1309,14 +1275,12 @@
 			"key": "othermateriallabel",
 			"translatable": false,
 			"type": "STRING",
-			"multiline": true,
 			"subfield": true
 		},
 		"othermaterialtext": {
 			"key": "othermaterialtext",
 			"translatable": false,
 			"type": "STRING",
-			"multiline": true,
 			"subfield": true
 		},
 		"publicationcomments": {
@@ -1331,7 +1295,6 @@
 			"key": "publicationcomment",
 			"translatable": false,
 			"type": "STRING",
-			"multiline": true,
 			"subfield": true
 		},
 		"variables": {
@@ -1356,9 +1319,7 @@
 			"subfields": [
 				"filespath",
 				"fileslang"
-			],
-			"showReferenceKey": true,
-			"showSaveInfo": true
+			]
 		},
 		"filespath": {
 			"key": "filespath",
@@ -1380,14 +1341,12 @@
 			"key": "allfilesnotes",
 			"translatable": false,
 			"required": false,
-			"type": "STRING",
-			"multiline": true
+			"type": "STRING"
 		},
 		"cbattachments": {
 			"key": "cbattachments",
 			"translatable": false,
 			"type": "CONTAINER",
-			"showSaveInfo": true,
 			"subfields": [
 				"cbattachmentlocation",
 				"cbattachmenttitle"
@@ -1406,7 +1365,6 @@
 			"translatable": false,
 			"required": true,
 			"type": "STRING",
-			"multiline": true,
 			"subfield": true
 		}
 	}

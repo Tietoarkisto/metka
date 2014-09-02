@@ -34,8 +34,8 @@ public class ButtonSerializer extends ObjectSerializer<Button> {
         }
 
         // Write userGroups
-        jgen.writeArrayFieldStart("userGroups");
-        for(String group : value.getUserGroups()) {
+        jgen.writeArrayFieldStart("permissions");
+        for(String group : value.getPermissions()) {
             jgen.writeString(group);
         }
         jgen.writeEndArray();

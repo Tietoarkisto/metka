@@ -3,8 +3,6 @@
 		"version": 1,
 		"type": "STUDY_ATTACHMENT"
 	},
-	"sections": {
-	},
 	"selectionLists": {
 		"fileaip_list": {
 			"key": "fileaip_list",
@@ -264,14 +262,12 @@
 		"filecomment": {
 			"key": "filecomment",
 			"translatable": false,
-			"type": "STRING",
-			"multiline": true
+			"type": "STRING"
 		},
 		"filedescription": {
 			"key": "filedescription",
 			"translatable": false,
-			"type": "STRING",
-			"multiline": true
+			"type": "STRING"
 		},
 		"filedip": {
 			"key": "filedip",
@@ -290,8 +286,7 @@
 		"filenotes": {
 			"key": "filenotes",
 			"translatable": false,
-			"type": "STRING",
-			"multiline": true
+			"type": "STRING"
 		},
 		"fileoriginal": {
 			"key": "fileoriginal",

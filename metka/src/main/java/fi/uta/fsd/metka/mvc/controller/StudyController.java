@@ -26,9 +26,9 @@ public class StudyController {
     @Autowired
     private StudyErrorService errors;
 
-    @RequestMapping(value="listErrors/{id}/{no}", method = RequestMethod.GET)
-    public @ResponseBody StudyErrorListResponse listStudyErrors(@PathVariable Long id, @PathVariable Integer no) {
-        return errors.getStudyErrorList(id, no);
+    @RequestMapping(value="listErrors/{id}", method = RequestMethod.GET)
+    public @ResponseBody StudyErrorListResponse listStudyErrors(@PathVariable Long id) {
+        return errors.getStudyErrorList(id);
     }
 
     @RequestMapping(value="updateError", method = RequestMethod.POST)

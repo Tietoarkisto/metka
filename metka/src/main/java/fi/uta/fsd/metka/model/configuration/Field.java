@@ -11,25 +11,18 @@ import java.util.List;
 @JsonIgnoreProperties("_comment")
 public class Field {
     private final String key;
+    private FieldType type;
     private Boolean translatable = true;
-    private final List<String> notToLang = new ArrayList<>();
     private Boolean immutable = false;
     private Boolean display = true;
-    private Integer maxValues = null;
-    private String selectionList = null;
-    private String section = null;
-    private FieldType type;
-    private Boolean subfield = false;
-    private final List<String> subfields = new ArrayList<>();
     private Boolean unique = false;
     private Boolean required = false;
+    private Integer maxValues = null;
+    private String selectionList = null;
     private final List<String> concatenate = new ArrayList<>();
+    private Boolean subfield = false;
+    private final List<String> subfields = new ArrayList<>();
     private String reference = null;
-    private String referenceKey = null;
-    private Boolean showReferenceKey = false;
-    private Boolean showSaveInfo = false;
-    private Boolean multiline = false;
-    private Boolean summaryField = true;
     private Boolean editable = true;
     private Boolean writable = true;
     private Boolean indexed = true;
@@ -50,10 +43,6 @@ public class Field {
 
     public void setTranslatable(Boolean translatable) {
         this.translatable = translatable;
-    }
-
-    public List<String> getNotToLang() {
-        return notToLang;
     }
 
     public Boolean getImmutable() {
@@ -88,14 +77,6 @@ public class Field {
         this.selectionList = selectionList;
     }
 
-    public String getSection() {
-        return section;
-    }
-
-    public void setSection(String section) {
-        this.section = section;
-    }
-
     public FieldType getType() {
         return type;
     }
@@ -110,14 +91,6 @@ public class Field {
 
     public void setSubfield(Boolean subfield) {
         this.subfield = (subfield == null) ? false : subfield;
-    }
-
-    public Boolean getSummaryField() {
-        return (summaryField == null) ? true : summaryField;
-    }
-
-    public void setSummaryField(Boolean summaryField) {
-        this.summaryField = (summaryField == null) ? true : summaryField;
     }
 
     public List<String> getSubfields() {
@@ -152,38 +125,6 @@ public class Field {
         this.reference = reference;
     }
 
-    public String getReferenceKey() {
-        return referenceKey;
-    }
-
-    public void setReferenceKey(String referenceKey) {
-        this.referenceKey = referenceKey;
-    }
-
-    public Boolean getShowReferenceKey() {
-        return showReferenceKey;
-    }
-
-    public void setShowReferenceKey(Boolean showReferenceKey) {
-        this.showReferenceKey = showReferenceKey;
-    }
-
-    public Boolean getShowSaveInfo() {
-        return showSaveInfo;
-    }
-
-    public void setShowSaveInfo(Boolean showSaveInfo) {
-        this.showSaveInfo = showSaveInfo;
-    }
-
-    public Boolean getMultiline() {
-        return (multiline == null) ? false :multiline;
-    }
-
-    public void setMultiline(Boolean multiline) {
-        this.multiline = (multiline == null) ? false : multiline;
-    }
-
     public Boolean getEditable() {
         return editable;
     }
@@ -209,11 +150,11 @@ public class Field {
     }
 
     public Boolean getExact() {
-        return (exact == null) ? false : exact;
+        return (exact == null) ? true : exact;
     }
 
     public void setExact(Boolean exact) {
-        this.exact = (exact == null) ? false : exact;
+        this.exact = (exact == null) ? true : exact;
     }
 
     @Override

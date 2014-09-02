@@ -36,11 +36,11 @@ public class ButtonDeserializer extends ObjectDeserializer<Button> {
         }
 
         // Set user groups
-        JsonNode groups = node.get("userGroups");
+        JsonNode groups = node.get("permissions");
         if(groups != null && groups.getNodeType() == JsonNodeType.ARRAY) {
             for(JsonNode group : groups) {
                 if(group.getNodeType() == JsonNodeType.STRING) {
-                    btn.getUserGroups().add(group.textValue());
+                    btn.getPermissions().add(group.textValue());
                 }
             }
         }

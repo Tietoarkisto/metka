@@ -3,9 +3,6 @@
 		"version": 1,
 		"type": "STUDY_VARIABLE"
 	},
-	"sections": {
-
-	},
 	"selectionLists": {
 		"statisticstype_list": {
 			"key": "statisticstype_list",
@@ -100,7 +97,6 @@
 			"translatable": false,
 			"required": true,
 			"type": "STRING",
-			"multiline": true,
 			"subfield": true
 		},
 		"preqtxts": {
@@ -117,7 +113,6 @@
 			"translatable": false,
 			"required": true,
 			"type": "STRING",
-			"multiline": true,
 			"subfield": true
 		},
 		"postqtxts": {
@@ -134,7 +129,6 @@
 			"translatable": false,
 			"required": true,
 			"type": "STRING",
-			"multiline": true,
 			"subfield": true
 		},
 		"ivuinstrs": {
@@ -151,7 +145,6 @@
 			"translatable": false,
 			"required": true,
 			"type": "STRING",
-			"multiline": true,
 			"subfield": true
 		},
 		"varnotes": {
@@ -168,7 +161,6 @@
 			"translatable": false,
 			"required": true,
 			"type": "STRING",
-			"multiline": true,
 			"subfield": true
 		},
 		"vartexts": {
@@ -185,7 +177,6 @@
 			"translatable": false,
 			"required": true,
 			"type": "STRING",
-			"multiline": true,
 			"subfield": true
 		},
 		"varsecuritys": {
@@ -202,14 +193,12 @@
 			"translatable": false,
 			"required": true,
 			"type": "STRING",
-			"multiline": true,
 			"subfield": true
 		},
 		"valuelabels": {
 			"key": "valuelabels",
 			"translatable": false,
 			"type": "CONTAINER",
-			"showSaveInfo": true,
 			"subfields": [
 				"value",
 				"label",
@@ -220,7 +209,6 @@
 			"key": "categories",
 			"translatable": false,
 			"type": "CONTAINER",
-			"showSaveInfo": true,
 			"subfields": [
 				"value",
 				"label",
@@ -273,7 +261,6 @@
 			"key": "statistics",
 			"translatable": false,
 			"type": "CONTAINER",
-			"showSaveInfo": true,
 			"subfields": [
 				"statisticstype",
 				"statisticsvalue"
