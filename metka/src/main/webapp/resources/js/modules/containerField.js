@@ -143,6 +143,7 @@ define(function (require) {
             if (!transferRow.removed) {
                 var $tr = tr(transferRow);
                 $tbody.append($tr);
+                $tbody.trigger('rowAppended', [$tr, columns]);
                 return $tr;
             }
         }

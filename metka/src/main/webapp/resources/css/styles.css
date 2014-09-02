@@ -295,6 +295,10 @@ nav .mainNavUl li a:hover {
     margin-top: 20px;
     text-align: right; }
 
+.label {
+    padding: .3em .6em;
+}
+
 /*************
  * Clean css *
  *************/

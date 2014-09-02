@@ -2,11 +2,12 @@ package fi.uta.fsd.metka.transfer.binder;
 
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BinderListResponse {
     private ReturnResult result;
-    private List<BinderPageListEntry> pages;
+    private final List<BinderPageListEntry> pages = new ArrayList<>();
 
     public ReturnResult getResult() {
         return result;
@@ -18,9 +19,5 @@ public class BinderListResponse {
 
     public List<BinderPageListEntry> getPages() {
         return pages;
-    }
-
-    public void setPages(List<BinderPageListEntry> pages) {
-        this.pages = pages;
     }
 }

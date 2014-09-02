@@ -716,7 +716,11 @@
                 "summary": "Selite",
                 "description": "Pitkä selite",
                 "triggerDate": "Herätepäivämäärä",
-                "triggerTarget": "Herätteen saaja"
+                "triggerTarget": "Herätteen saaja",
+
+                // Mapit
+                "binderId": "Mappinumero",
+                "binderDescription": "Mapitetun aineiston kuvaus"
             }
         },
 
@@ -775,7 +779,7 @@
 
         STUDY_VARIABLES: {
             field: {
-                title: 'Aineisto'
+                title: "Aineisto"
             }
         },
 

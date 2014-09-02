@@ -50,7 +50,10 @@ public class BinderRepositoryImpl implements BinderRepository {
         RevisionData study = pair.getRight();
 
         ReturnResult result = null;
-        BinderPageEntity page = em.find(BinderPageEntity.class, request.getPageId());
+        BinderPageEntity page = null;
+        if(request.getPageId() != null) {
+            page = em.find(BinderPageEntity.class, request.getPageId());
+        }
         if(page == null) {
             page = new BinderPageEntity();
             page.setBinderId(request.getBinderId());

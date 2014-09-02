@@ -214,6 +214,18 @@
                                     }
                                 }
                             ]
+                        },
+                        {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Liittyvät mapit",
+                                    "field": {
+                                        "key": "custom_studyRelatedBinders"
+                                    }
+                                }
+                            ]
                         }
                     ]
                 }

@@ -39,13 +39,13 @@ public class BinderController {
         return service.listStudyBinderPages(id);
     }
 
-    @RequestMapping(value="listBinderPages", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value="listBinderPages", method = {RequestMethod.GET})
     public @ResponseBody
     BinderListResponse listBinderPages() {
         return service.listBinderPages();
     }
 
-    @RequestMapping(value="binderContent/{binderId}", method = RequestMethod.POST)
+    @RequestMapping(value="binderContent/{binderId}", method = RequestMethod.GET)
     public @ResponseBody
     BinderListResponse binderContent(@PathVariable Long binderId) {
         return service.binderContent(binderId);
