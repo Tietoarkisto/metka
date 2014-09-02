@@ -10,6 +10,11 @@ define(function (require) {
                     success: function (response) {
                         var objectToTransferRow = require('./../../map/object/transferRow');
                         fieldOptions.data.fields.errors.rows.DEFAULT = response.errors.map(function (result) {
+                            result.savedAt = result.addedAt;
+                            result.savedBy = result.addedBy;
+                            result.score = result.score + '';
+                            delete result.addedAt;
+                            delete result.addedBy;
                             return objectToTransferRow(result, fieldOptions.defaultLang);
                         });
                         fieldOptions.$events.trigger('dataChanged');
@@ -76,7 +81,7 @@ define(function (require) {
                         },
                         triggerDate: {
                             key: 'triggerDate',
-                            type: 'DATETIME',
+                            type: 'DATE',
                             summaryField: false
                         },
                         triggerTarget: {
@@ -88,7 +93,7 @@ define(function (require) {
                     "selectionLists": {
                         "score_list": {
                             "key": "score_list",
-                            "type": "VALUE",
+                            "type": "LITERAL",
                             "options": [
                                 {
                                     "value": "1"
@@ -262,8 +267,13 @@ define(function (require) {
                     columnFields: [],
                     showSaveInfo: true,
                     onRowChange: function ($tr, transferRow) {
+                        var data = require('./../../map/transferRow/object')(transferRow, fieldOptions.defaultLang);
+                        data.studyId = MetkaJS.revisionId;
+                        data.triggerDate = moment(data.triggerDate).format('YYYY-MM-DD');
+                        delete data.savedAt;
+                        delete data.savedBy;
                         require('./../../server')('/study/updateError/', {
-                            data: JSON.stringify(require('./../../map/transferRow/object')(transferRow, fieldOptions.defaultLang)),
+                            data: JSON.stringify(data),
                             success: function (response) {
                                 refreshData();
                             }

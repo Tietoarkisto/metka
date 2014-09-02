@@ -55,9 +55,17 @@ define(function (require) {
                                 var target = options.dataConf.references[fieldOptions.reference].target;
                                 var field = require('./../metka').dataConfigurations[target].fields[column];
                                 return field ? field.type : false;
-                            } else {
-                                return getPropertyNS(options, 'dataConf.fields', column, 'type');
                             }
+                            var type = getPropertyNS(options, 'dataConf.fields', column, 'type');
+                            if (type) {
+                                return type;
+                            }
+
+                            return {
+                                savedAt: 'DATE',
+                                savedBy: 'STRING'
+                            }[column];
+
                         })();
 
                         if (!type) {
