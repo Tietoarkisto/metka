@@ -4,19 +4,21 @@
 		"version": 1
 	},
     "fieldTitles": {
-        "some": {
-            "key" : "some",
-            "title" : "jotain tekstiä"
+        "publicationid": {
+            "key" : "publicationid",
+            "title" : "Julkaisun id"
         },
-        "other": {
-            "key" : "other",
-            "&title" : "jotain muuta tekstiä"
+        "publicationtitle": {
+            "key" : "publicationtitle",
+            "title" : "Julkaisun nimi"
         },
-        "thing": {
-            "key" : "thing",
-            "&title" : {
-                "default": "vielä tekstiä"
-            }
+        "studyid_col": {
+            "key" : "studyid_col",
+            "title" : "Aineiston numero"
+        },
+        "studytitle_col": {
+            "key" : "studytitle_col",
+            "title" : "Aineiston nimi"
         }
     },
 	"content": [
@@ -186,7 +188,10 @@
                                     "title": "Huomautukset",
                                     "field": {
                                         "key": "notes",
-                                        "showSaveInfo": true
+                                        "showSaveInfo": true,
+                                        "columnFields": [
+                                            "note"
+                                        ]
                                     }
                                 }
                             ]
@@ -198,7 +203,14 @@
                                     "type": "CELL",
                                     "title": "Datan versiot",
                                     "field": {
-                                        "key": "dataversions"
+                                        "key": "dataversions",
+                                        "columnFields": [
+                                            "version",
+                                            "versiondate",
+                                            "versionpro",
+                                            "versionlabel",
+                                            "versiontext"
+                                        ]
                                     }
                                 }
                             ]
@@ -210,7 +222,46 @@
                                     "type": "CELL",
                                     "title": "Kuvailun versiot",
                                     "field": {
-                                        "key": "descversions"
+                                        "key": "descversions",
+                                        "columnFields": [
+                                            "version",
+                                            "versiondate",
+                                            "versionpro",
+                                            "versionlabel",
+                                            "versiontext"
+                                        ]
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Liittyvät julkaisut",
+                                    "field": {
+                                        "key": "publications",
+                                        "columnFields": [
+                                            "publicationid",
+                                            "publicationtitle"
+                                        ]
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Liittyvät aineistot",
+                                    "field": {
+                                        "key": "studies",
+                                        "columnFields": [
+                                            "studyid_col",
+                                            "studytitle_col"
+                                        ]
                                     }
                                 }
                             ]

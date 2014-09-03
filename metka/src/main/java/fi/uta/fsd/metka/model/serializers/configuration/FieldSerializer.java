@@ -34,6 +34,7 @@ public class FieldSerializer extends ObjectSerializer<Field> {
         switch(value.getType()) {
             case REFERENCECONTAINER:
                 jgen.writeStringField("reference", value.getReference());
+                jgen.writeStringField("bidirectional", value.getBidirectional());
                 /* FALLTHROUGH */
             case CONTAINER:
                 if(value.getMaxValues() == null) {

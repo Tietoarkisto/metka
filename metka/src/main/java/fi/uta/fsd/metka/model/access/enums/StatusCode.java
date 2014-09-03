@@ -20,5 +20,5 @@ public enum StatusCode {
     FIELD_NOT_EDITABLE,                 // Field is not editable, it cannot be edited by user
     FIELD_NOT_MUTABLE,                  // Field is not immutable, value cannot change once given
     FIELD_NOT_WRITABLE,                 // Field is not writable, it should not be written to revision data
-    FIELD_NOT_TRANSLATABLE             // Field is not translatable but value was checked or tried to set for a non default language
+    ROW_REMOVED, FIELD_NOT_TRANSLATABLE             // Field is not translatable but value was checked or tried to set for a non default language
 }

@@ -27,6 +27,7 @@ public class Field {
     private Boolean writable = true;
     private Boolean indexed = true;
     private Boolean exact = false;
+    private String bidirectional = "";
 
     @JsonCreator
     public Field(@JsonProperty("key")String key) {
@@ -155,6 +156,14 @@ public class Field {
 
     public void setExact(Boolean exact) {
         this.exact = (exact == null) ? true : exact;
+    }
+
+    public String getBidirectional() {
+        return bidirectional;
+    }
+
+    public void setBidirectional(String bidirectional) {
+        this.bidirectional = bidirectional;
     }
 
     @Override

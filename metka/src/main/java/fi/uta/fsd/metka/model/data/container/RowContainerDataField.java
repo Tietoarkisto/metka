@@ -1,6 +1,9 @@
 package fi.uta.fsd.metka.model.data.container;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import fi.uta.fsd.metka.enums.Language;
+
+import java.util.Set;
 
 public abstract class RowContainerDataField extends DataField {
 
@@ -18,4 +21,6 @@ public abstract class RowContainerDataField extends DataField {
     @JsonIgnore public Integer getNewRowId() {
         return rowIdSeq++;
     }
+
+    public abstract Set<Integer> getRowIdsFor(Language language);
 }

@@ -83,6 +83,25 @@
             ]
         }
     },
+    "references": {
+    	"study_ref": {
+			"key": "study_ref",
+			"type": "REVISIONABLE",
+			"target": "STUDY"
+		},
+		"studyid_ref": {
+			"key": "studyid_ref",
+			"type": "DEPENDENCY",
+			"target": "studies",
+			"titlePath": "studyid"
+		},
+		"studytitle_ref": {
+			"key": "studytitle_ref",
+			"type": "DEPENDENCY",
+			"target": "studies",
+			"titlePath": "title"
+		}
+    },
     "fields": {
         "publicationyear": {
             "key": "publicationyear",
@@ -177,9 +196,32 @@
             "subfield": true
         },
         "studies": {
-            "key": "studies",
-            "type": "REFERENCE"
-        },
+			"key": "studies",
+			"translatable": false,
+			"type": "REFERENCECONTAINER",
+			"reference": "study_ref",
+			"subfields": [
+				"studyid_col",
+				"studytitle_col"
+			],
+			"bidirectional": "publications"
+		},
+		"studyid_col": {
+			"key": "studyid_col",
+			"translatable": false,
+			"type": "REFERENCE",
+			"reference": "studyid_ref",
+			"subfield": true,
+			"writable": false
+		},
+		"studytitle_col": {
+			"key": "studytitle_col",
+			"translatable": false,
+			"type": "REFERENCE",
+			"reference": "studytitle_ref",
+			"subfield": true,
+			"writable": false
+		},
         "series": {
             "key": "series",
             "type": "REFERENCE"

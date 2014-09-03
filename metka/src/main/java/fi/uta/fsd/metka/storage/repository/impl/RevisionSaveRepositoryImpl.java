@@ -7,6 +7,7 @@ import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
+import fi.uta.fsd.metka.model.configuration.Reference;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.change.ContainerChange;
@@ -14,11 +15,13 @@ import fi.uta.fsd.metka.model.data.change.RowChange;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
+import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 import fi.uta.fsd.metka.model.interfaces.TransferFieldContainer;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.model.transfer.TransferField;
 import fi.uta.fsd.metka.model.transfer.TransferRow;
+import fi.uta.fsd.metka.model.transfer.TransferValue;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionSaveRepository;
@@ -36,7 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
@@ -82,12 +85,12 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         DateTimeUserPair info = DateTimeUserPair.build();
 
         // Do actual change checking for field values
-        SaveHandler handler = new SaveHandler(info);
+        SaveHandler handler = new SaveHandler(info, revision.getKey());
         Pair<Boolean, Boolean> changesAndErrors = handler.saveFields(configuration, transferData, revision);
 
         // TODO: Do CONCAT checking
 
-        // TODO: Do type specific operations if any
+        finalizeSave(revision, transferData, configuration);
 
         if(changesAndErrors.getLeft()) {
             // Set revision save info
@@ -125,7 +128,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
     /**
      * If this study attachment is not marked parsed and has a path then check if that path could be a por file that needs parsing.
      * If so then parse that por file and mark this study attachment as parsed.
-     * TODO: Should translation parses be handled as part of this for example as translations of file-field
+     * TODO: translation parses should be handled as part of this by checking the last letter before file-extension
      * @param revision         RevisionData
      * @param transferData     TransferData
      * @param configuration    Configuration
@@ -165,7 +168,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         }
         if(parse) {
             // Check if study has a different variable file already using variablefile reference and fileId
-            // Get latest revision, doesn't matter if it's a draft or not since file reference should be immutable
+            // Get latest revision, doesn't matter if it's a draft or not since file reference should be non editable so only changes come through this process
             // We can assume that we get a revision since other points before this depend on the existence of the revision
             fieldPair = dataPair.getRight().dataField(ValueDataFieldCall.get("variablefile"));
             if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().valueForEquals(Language.DEFAULT, revision.getKey().getId().toString())) {
@@ -175,17 +178,34 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         if(parse) {
             // File is a variable file, initiate variable parsing
             ParseResult result = parser.parse(revision, VariableDataType.POR);
+            fieldPair = revision.dataField(ValueDataFieldCall.set("parsed", new Value("true"), Language.DEFAULT).setConfiguration(configuration));
+            TransferField parsed = transferData.getField("parsed");
+            if(parsed == null) {
+                parsed = new TransferField("parsed", TransferFieldType.VALUE);
+                transferData.addField(parsed);
+            }
+            parsed.addValueFor(Language.DEFAULT, TransferValue.buildFromValueDataFieldFor(Language.DEFAULT, fieldPair.getRight()));
             if(result == ParseResult.REVISION_CHANGES) {
                 revisions.updateRevisionData(dataPair.getRight());
             }
         }
     }
 
-    private static class SaveHandler {
+    private class SaveHandler {
         private final DateTimeUserPair info;
+        private final RevisionKey key;
 
-        private SaveHandler(DateTimeUserPair info) {
+        /**
+         * Contains list of bidirectional references that need to be verified to be up to date.
+         * Long|(String|Boolean) Where Long is the revisionable id of the target revisionable,
+         * String is the field key of the bidirectional field and Boolean is either true if the value
+         * should exist or false if the value should not exist (i.e. the corresponding row was removed),
+         */
+        private final List<ImmutablePair<Long, ImmutablePair<String, Boolean>>> bidirectional = new ArrayList<>();
+
+        private SaveHandler(DateTimeUserPair info, RevisionKey key) {
             this.info = info;
+            this.key = key;
         }
 
         private Pair<Boolean, Boolean> saveFields(Configuration configuration, TransferData transferData, RevisionData revisionData) {
@@ -204,7 +224,106 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 if (saveResult.getLeft() == StatusCode.FIELD_CHANGED && !result.getLeft()) result.setLeft(true);
                 if (saveResult.getRight() && !result.getRight()) result.setRight(true);
             }
+
+            // Check bidirectional fields. This requires some custom code in certain cases.
+
+            // First lets sort the List so that we're going to handle one revisionable at a time
+            Collections.sort(bidirectional, new Comparator<ImmutablePair<Long, ImmutablePair<String, Boolean>>>() {
+                @Override
+                public int compare(ImmutablePair<Long, ImmutablePair<String, Boolean>> o1, ImmutablePair<Long, ImmutablePair<String, Boolean>> o2) {
+                    int result = o1.getLeft().compareTo(o2.getLeft());
+                    if(result == 0) {
+                        result = o1.getRight().getLeft().compareTo(o2.getRight().getLeft());
+                    }
+                    return result;
+                }
+            });
+
+            // Next let's iterate through one revisionable at a time
+            List<Pair<String, Boolean>> revisionablePairs = new ArrayList<>();
+            Long revisionableId = null;
+            for(Pair<Long, ? extends Pair<String, Boolean>> pair : bidirectional) {
+                if(pair.getLeft().equals(revisionableId)) {
+                    revisionablePairs.add(pair.getRight());
+                    continue;
+                }
+                if(revisionableId != null) {
+                    // Do check
+                    checkBidirectionality(revisionableId, revisionablePairs, info);
+
+                    // Reset loop
+                    revisionableId = pair.getLeft();
+                    revisionablePairs.clear();
+                } else {
+                    revisionableId = pair.getLeft();
+                    revisionablePairs.add(pair.getRight());
+                }
+            }
+
             return result;
+        }
+
+        private void checkBidirectionality(Long id, List<Pair<String, Boolean>> pairs, DateTimeUserPair info) {
+            Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(id, false, null);
+            if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
+                // Something is wrong
+                logger.error("Tried to force bidirectionality for a revisionable that is nonexistent");
+                return;
+            }
+            RevisionData data = dataPair.getRight();
+            Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(data.getConfiguration());
+            if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
+                logger.error("Couldn't find configuration for revision "+data.toString()+" while checking bidirectional values.");
+                return;
+            }
+            Configuration config = configPair.getRight();
+            // For now assumes that strings are all top level field keys.
+            boolean changes = false;
+            for(Pair<String, Boolean> pair : pairs) {
+                Pair<StatusCode, ReferenceContainerDataField> fieldPair = data.dataField(ReferenceContainerDataFieldCall.set(pair.getLeft()));
+                // let's make sure we have a field
+                if(fieldPair.getRight() == null) {
+                    logger.error("Failed to create ReferenceContainerDataField while forcing bidirectionality with result "+fieldPair.getLeft());
+                    continue;
+                }
+                ReferenceContainerDataField field = fieldPair.getRight();
+                if(pair.getRight()) {
+                    // Make sure we have the reference
+                    Pair<StatusCode, ReferenceRow> rowPair = field.getOrCreateReferenceWithValue(key.getId().toString(), data.getChanges(), info);
+                    if(rowPair.getLeft() == StatusCode.NEW_ROW) {
+                        changes = true;
+                    }
+                } else {
+                    // Remove the reference if it exists
+                    Pair<StatusCode, ReferenceRow> rowPair = field.getReferenceWithValue(key.getId().toString());
+                    if(rowPair.getLeft() == StatusCode.FOUND_ROW) {
+                        field.removeReference(rowPair.getRight().getRowId(), data.getChanges(), info);
+                    }
+                    if(rowPair.getLeft() == StatusCode.NEW_ROW) {
+                        changes = true;
+                    }
+                }
+            }
+            if(changes) {
+                doTypeSpecificBidirectionality(data, pairs, info);
+
+                revisions.updateRevisionData(data);
+            }
+        }
+
+        /**
+         * Do things that are part of bidirectionality on a type specific level.
+         * @param data     RevisionData
+         * @param pairs    Pair
+         * @param info     DateTimeUserPair
+         */
+        private void doTypeSpecificBidirectionality(RevisionData data, List<Pair<String, Boolean>> pairs, DateTimeUserPair info) {
+            switch(data.getConfiguration().getType()) {
+                default:
+                    return;
+                case STUDY:
+                    return;
+            }
         }
 
         private Pair<StatusCode, Boolean> saveField(Field field, Configuration configuration, TransferFieldContainer transferFields, DataFieldContainer dataFields, Map<String, Change> changeMap) {
@@ -277,7 +396,6 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 }
             }
 
-            // TODO: Check that all rows exist in TransferData and if not then add missing rows. Make sure that no duplicate rowId:s are used in container
             // Return value tracker for individual rows
             MutablePair<StatusCode, Boolean> returnPair = new MutablePair<>(StatusCode.NO_CHANGE_IN_VALUE, false);
             ContainerDataField container = codePair.getRight();
@@ -349,6 +467,24 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             if (transferField.hasRowsFor(language)) {
                 for (TransferRow tr : transferField.getRowsFor(language)) {
                     DataRow row = null;
+                    // We have no mechanism on UI at the moment for restoring rows only check change from not removed to removed
+                    if(tr.getRemoved() && tr.getRowId() == null) {
+                        // Row was added and then removed before any saving was done, we can skip this row.
+                        continue;
+                    } else if (tr.getRemoved()) {
+                        // Removed value of a row was changed
+                        Pair<StatusCode, DataRow> removePair = container.removeRow(tr.getRowId(), changeMap, info);
+                        if(removePair.getLeft() != StatusCode.NO_CHANGE_IN_VALUE) {
+                            if(removePair.getLeft() == StatusCode.ROW_CHANGE) {
+                                // Row was changed but not removed completely, continue on but mark as changed
+                                changes = true;
+                            } else if(removePair.getLeft() == StatusCode.ROW_REMOVED) {
+                                // Row was removed completely, no need to continue on with saving
+                                changes = true;
+                                continue;
+                            }
+                        }
+                    }
                     if (tr.getRowId() == null && tr.getFields().size() > 0) {
                         // New row that has some fields in it. Create row in preparation for saving
                         Pair<StatusCode, DataRow> rowPair = container.insertNewDataRow(language, containerChange);
@@ -366,13 +502,6 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                             continue;
                         }
                         row = rowPair.getRight();
-                        if (tr.getRemoved() != row.getRemoved()) {
-                            // Removed value of a row was changed
-                            // TODO: If someone is trying to reinstate a removed row then check that they have necessary role
-                            row.setRemoved(tr.getRemoved());
-                            row.setSaved(info);
-                            changes = true;
-                        }
                     }
                     if (row != null) {
                         // Row was found, go through the subfields and forward calls to field saving
@@ -401,6 +530,8 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                         }
                     }
                 }
+
+                cleanExtraRowsFromTransferField(language, transferField, container);
             }
 
 
@@ -414,11 +545,11 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
          * Saves changes to single ReferenceContainerDataField in provided DataFieldContainer from single REFERENCECONTAINER type TransferField in provided TransferFieldContainer.
          *
          * @param field          Field configuration of the field to be saved
-         * @param configuration  Configuration of the RevisionData being handled. This is needed for SELECTION fields, REFERENCEs etc.
+         * @param configuration  Configuration of the RevisionData being handled. This is needed for SELECTION fields, REFERENCE etc.
          * @param transferFields TransferFieldContainer that should contain the TransferField described by Field configuration
          * @param dataFields     DataFieldContainer that should contain the ReferenceContainerDataField described by Field configuration
          * @param changeMap      Map of changes that should contain changes for field being checked
-         * @return Pair<StatusCode, Boolean> statusAndErrors pair. Left value indicates the returned status of the final operation performed, right value indicates that errors were marked somewhere within the TransferFields
+         * @return StatusCode|Boolean statusAndErrors pair. Left value indicates the returned status of the final operation performed, right value indicates that errors were marked somewhere within the TransferFields
          */
         private Pair<StatusCode, Boolean> saveReferenceContainer(Field field, Configuration configuration, TransferFieldContainer transferFields,
                                                                  DataFieldContainer dataFields, Map<String, Change> changeMap) {
@@ -463,8 +594,6 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             boolean changes = false;
             ReferenceContainerDataField container = codePair.getRight();
 
-            // TODO: Missing rows should be inserted but also changing the order should be possible, so how do we decide where to inser the new row
-
             // Check that all rows that exist are present
             for (int i = 0; i < container.getReferences().size(); i++) {
                 ReferenceRow reference = container.getReferences().get(0);
@@ -480,19 +609,48 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             }
             // Regardless of if there are missing rows we are going to save the changes in existing and new rows
             // but no rows are going to be deleted because of them missing from TransferField
+            Reference ref = configuration.getReference(field.getReference());
             if (tf.hasRowsFor(Language.DEFAULT)) {
                 for (TransferRow tr : tf.getRowsFor(Language.DEFAULT)) {
+                    // We have no mechanism on UI at the moment for restoring rows only check change from not removed to removed
+                    if(tr.getRemoved() && tr.getRowId() == null) {
+                        // Row was added and then removed before any saving was done, we can skip this row.
+                        continue;
+                    } else if (tr.getRemoved()) {
+                        // Removed value of a row was changed
+                        Pair<StatusCode, ReferenceRow> removePair = container.removeReference(tr.getRowId(), changeMap, info);
+                        if(removePair.getLeft() == StatusCode.ROW_CHANGE || removePair.getLeft() == StatusCode.ROW_REMOVED) {
+                            if(removePair.getLeft() == StatusCode.ROW_CHANGE) {
+                                // Row was changed but not removed completely, continue on but mark as changed
+                                changes = true;
+                            } else {
+                                // Row was removed completely, no need to continue on with saving
+                                changes = true;
+                                continue;
+                            }
+                            if(ref.getType() == ReferenceType.REVISIONABLE && StringUtils.hasText(field.getBidirectional())) {
+                                bidirectional.add(new ImmutablePair<>(removePair.getRight().getReference().asInteger(),
+                                        new ImmutablePair<>(field.getBidirectional(), false)));
+                            }
+                        }
+                    }
                     if (!StringUtils.hasText(tr.getValue())) {
-                        // There should always be a value on existing row. If value is missing add error, set return value and skip this row. Saved reference value is immutable so nothing gets deleted through setting the value to null.
+                        // There should always be a value on existing row. If value is missing add error, set return value and skip this row.
+                        // Saved reference value is immutable so nothing gets deleted through setting the value to null.
                         tr.addError(FieldError.MISSING_VALUE);
                         returnPair.setRight(true);
                     } else if (tr.getRowId() == null) {
                         // New row, insert new SavedReference
                         Pair<StatusCode, ReferenceRow> referencePair = container.getOrCreateReferenceWithValue(tr.getValue(), changeMap, info);
                         if (referencePair.getLeft() == StatusCode.NEW_ROW) {
+                            referencePair.getRight().setUnapproved(true);
                             changes = true;
                             tr.setRowId(referencePair.getRight().getRowId());
                         }
+                        if(ref.getType() == ReferenceType.REVISIONABLE && StringUtils.hasText(field.getBidirectional())) {
+                                bidirectional.add(new ImmutablePair<>(referencePair.getRight().getReference().asInteger(),
+                                        new ImmutablePair<>(field.getBidirectional(), false)));
+                            }
                     } else {
                         // Old row, the only thing that can change is "removed". The actual reference value on SavedReference is immutable
                         // and is locked in when the row is created
@@ -507,16 +665,11 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                             // Something tried to change the value, add error, set return value and continue
                             tr.addError(FieldError.IMMUTABLE);
                             returnPair.setRight(true);
-                            continue;
-                        }
-                        if (tr.getRemoved() != reference.getRemoved()) {
-                            // Removed value of a row was changed
-                            // TODO: If someone is trying to reinstate a removed row then check that they have necessary role
-                            reference.setRemoved(tr.getRemoved());
-                            changes = true;
                         }
                     }
                 }
+                // Clean transfer field from rows that are permanently removed
+                cleanExtraRowsFromTransferField(Language.DEFAULT, tf, container);
             }
 
             if (changes) {
@@ -527,6 +680,20 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             return returnPair;
         }
 
+        private void cleanExtraRowsFromTransferField(Language language, TransferField tf, RowContainerDataField container) {
+            Set<Integer> ids = container.getRowIdsFor(language);
+            if(ids.isEmpty() && tf.hasRowsFor(language)) {
+                tf.getRowsFor(language).clear();
+                return;
+            }
+            for(Iterator<TransferRow> i = tf.getRowsFor(Language.DEFAULT).iterator(); i.hasNext(); ) {
+                TransferRow tr = i.next();
+                if(!ids.contains(tr.getRowId())) {
+                    i.remove();
+                }
+            }
+        }
+
         /**
          * Saves changes to single ValueDataField in provided DataFieldContainer from single VALUE type TransferField in provided TransferFieldContainer.
          *
@@ -535,7 +702,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
          * @param transferFields TransferFieldContainer that should contain the TransferField described by Field configuration
          * @param dataFields     DataFieldContainer that should contain the ValueDataField described by Field configuration
          * @param changeMap      Map of changes that should contain changes for field being checked
-         * @return Pair<Boolean, Boolean> changesAndErrors pair. Left value indicates that changes have taken place, right value indicates that errors were marked somewhere within the TransferFields
+         * @return Boolean|Boolean changesAndErrors pair. Left value indicates that changes have taken place, right value indicates that errors were marked somewhere within the TransferFields
          */
         private Pair<StatusCode, Boolean> saveValue(Field field, Configuration configuration, TransferFieldContainer transferFields, DataFieldContainer dataFields, Map<String, Change> changeMap) {
             if (field.getType() == FieldType.CONCAT) {

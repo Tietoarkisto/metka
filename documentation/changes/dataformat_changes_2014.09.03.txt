@@ -1,0 +1,11 @@
+-- previous changes --
+Made sure that specifications match reality and removed many deprecated properties such as "showSaveInfo" from DataConfiguration->Field.
+
+-- 03.09.2014 changes --
+DataConfig->Field
+Added property bidirectional to Field. This is only used on REFERENCECONTAINER type fields that point to REVISIONABLE as their reference. This property should contain a field-key from the other end of the reference and that field should be a REFERENCECONTAINER field. When revision is saved the system makes sure that a reference to the saved object is found from the other end of the reference.
+You can achieve kind of half bidirectionality by only specifying bidirectional property on one side of the reference in which case only new references coming from that side get added to the other end. It breaks uniformity pretty badly since if A->B but not A<-B then it's really hard to say if data is in valid state or not.
+Of course in only one side of the reference can be edited and added to then bidirectionality needs to only be defined on the editable side since the other side can not modify the data on either side in any way.
+
+Data->ContainerRow
+Added property unapproved. This informs the system that the row was added during the current revision and can be removed without repercussions from the revision just like if field doesn't have a value, then value is saved and later still during the same revision that value is removed again the system recognizes this and doesn't consider it a change. So if a row is added (either container or reference) to a draft and later in that draft the row is removed then the whole row is removed from the container and any change markings are erased also since effectively nothing has changed.

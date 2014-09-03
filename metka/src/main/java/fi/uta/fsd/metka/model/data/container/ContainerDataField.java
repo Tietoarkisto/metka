@@ -14,10 +14,7 @@ import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ContainerDataField extends RowContainerDataField {
     /**
@@ -78,6 +75,7 @@ public class ContainerDataField extends RowContainerDataField {
         }
 
         DataRow row = DataRow.build(this);
+        row.setUnapproved(true);
         containerChange.put(language, new RowChange(row.getRowId()));
         containerChange.setChangeIn(language);
         addRow(language, row);
@@ -113,6 +111,21 @@ public class ContainerDataField extends RowContainerDataField {
             Pair<StatusCode, DataRow> rowPair = getRowWithIdFrom(language, rowId);
             if(rowPair.getLeft() == StatusCode.FOUND_ROW) {
                 return rowPair;
+            }
+        }
+        // Given rowId was not found from this container
+        return new ImmutablePair<>(StatusCode.NO_ROW_WITH_ID, null);
+    }
+
+    public Pair<StatusCode, Language> getLanguageFor(Integer rowId) {
+        if(rowId == null || rowId < 1) {
+            // Row can not be found since no rowId given.
+            return new ImmutablePair<>(StatusCode.INCORRECT_PARAMETERS, null);
+        }
+        for(Language language : Language.values()) {
+            Pair<StatusCode, DataRow> rowPair = getRowWithIdFrom(language, rowId);
+            if(rowPair.getLeft() == StatusCode.FOUND_ROW) {
+                return new ImmutablePair<>(rowPair.getLeft(), language);
             }
         }
         // Given rowId was not found from this container
@@ -179,6 +192,55 @@ public class ContainerDataField extends RowContainerDataField {
             row.dataField(ValueDataFieldCall.set(key, value, language).setInfo(info).setChangeMap(changeMap));
             return new ImmutablePair<>(StatusCode.NEW_ROW, row);
         }
+    }
+
+    public Pair<StatusCode, DataRow> removeRow(Integer rowId, Map<String, Change> changeMap, DateTimeUserPair info) {
+        Pair<StatusCode, DataRow> rowPair = getRowWithId(rowId);
+        if(rowPair.getLeft() != StatusCode.FOUND_ROW) {
+            return rowPair;
+        }
+        DataRow row = rowPair.getRight();
+        // We know that the row exists so it has to have a language
+        Language language = getLanguageFor(rowId).getRight();
+
+        StatusCode status = row.changeStatusFor(language, true, changeMap, info);
+        if(status == StatusCode.NO_CHANGE_IN_VALUE) {
+            return new ImmutablePair<>(status, row);
+        }
+        // Row was removed, check that if it's an unapproved row then remove it completely. We don't need to keep removed unapproved rows.
+        if(status == StatusCode.ROW_CHANGE && row.getUnapproved() && row.getRemoved()) {
+            List<DataRow> rows = getRowsFor(language);
+            for(Iterator<DataRow> i = rows.iterator(); i.hasNext();) {
+                DataRow next = i.next();
+                if(next.getRowId().equals(rowId)) {
+                    i.remove();
+                    status = StatusCode.ROW_REMOVED;
+                    break;
+                }
+            }
+            if(status == StatusCode.ROW_REMOVED) {
+                ContainerChange cc = (ContainerChange)changeMap.get(getKey());
+                // This check shouldn't really fail
+                if(cc != null) {
+                    if(cc.get(rowId) != null) {
+                        cc.getRowsFor(language).remove(rowId);
+                    }
+                }
+            }
+        }
+        return new ImmutablePair<>(status, row);
+    }
+
+    @Override
+    public Set<Integer> getRowIdsFor(Language language) {
+        Set<Integer> ids = new HashSet<>();
+        if(!hasRowsFor(language)) {
+            return ids;
+        }
+        for(DataRow row : getRowsFor(language)) {
+            ids.add(row.getRowId());
+        }
+        return ids;
     }
 
     @Override

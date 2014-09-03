@@ -18,7 +18,7 @@
       <data key="d4"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="27.0" width="184.0" x="1048.960069444442" y="431.5"/>
+          <y:Geometry height="27.0" width="184.0" x="947.9600694444421" y="431.5"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="109.2568359375" x="37.37158203125" y="3.0">ReferenceRow<y:LabelModel>
@@ -39,7 +39,7 @@
       <data key="d4"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="27.0" width="184.0" x="1048.960069444442" y="497.33333333333326"/>
+          <y:Geometry height="27.0" width="184.0" x="947.9600694444421" y="508.33333333333326"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="69.50146484375" x="57.249267578125" y="3.0">DataRow<y:LabelModel>
@@ -60,17 +60,20 @@
       <data key="d4"/>
       <data key="d6">
         <y:UMLNoteNode>
-          <y:Geometry height="122.83333333333326" width="319.20486111111063" x="699.7552083333314" y="269.8333333333335"/>
+          <y:Geometry height="164.49999999999994" width="319.20486111111063" x="699.7552083333314" y="196.66666666666683"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="115.75" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="318.349609375" x="4.0" y="4.0">+key: Tells which container this row belongs to.
+          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="157.65625" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="318.349609375" x="4.0" y="4.0">+key: Tells which container this row belongs to.
 +rowId: Unique id whithin the RevisionData this row
     is part of.
 +removed: Tells that this row should be considered
     remod. Don't display this row and don't copy it to
     the next revision.
 +info: DateTimeUserPair when this container row
-    was last modified and by whom.</y:NodeLabel>
+    was last modified and by whom.
++unapproved: Tells if the row has yet to have been
+    approved. If this is true and row is removed it is
+    removed in actuality from the data.</y:NodeLabel>
         </y:UMLNoteNode>
       </data>
     </node>
@@ -78,10 +81,10 @@
       <data key="d4"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="92.83333333333326" width="184.0" x="699.7552083333314" y="431.5"/>
+          <y:Geometry height="103.83333333333326" width="203.0" x="699.7552083333314" y="431.5"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="106.603515625" x="38.6982421875" y="3.0">ContainerRow<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="106.603515625" x="48.1982421875" y="3.0">ContainerRow<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -92,7 +95,8 @@
             <y:AttributeLabel>+key : Field {id}
 +rowId : Integer {id}
 +removed : Boolean = false
-+saved : DateTimeUserPair</y:AttributeLabel>
++saved : DateTimeUserPair
++unapproved : Boolean = false</y:AttributeLabel>
             <y:MethodLabel/>
           </y:UML>
         </y:UMLClassNode>
@@ -118,7 +122,7 @@ on its own.</y:NodeLabel>
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="28.74479166666856" ty="-34.16992399565686"/>
+          <y:Path sx="0.0" sy="0.0" tx="31.71300384963977" ty="-38.21878393051028"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="white_delta"/>
           <y:BendStyle smoothed="false"/>
@@ -129,7 +133,7 @@ on its own.</y:NodeLabel>
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="-67.60243055555532" ty="-1.3199536451748488"/>
+          <y:Path sx="0.0" sy="0.0" tx="-58.102430555555316" ty="5.6916553595656545"/>
           <y:LineStyle color="#000000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="none"/>
           <y:BendStyle smoothed="false"/>
@@ -140,7 +144,7 @@ on its own.</y:NodeLabel>
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="44.24479166666856" ty="32.38774875621887"/>
+          <y:Path sx="0.0" sy="0.0" tx="45.50376471920497" ty="38.41666666666663"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="white_delta"/>
           <y:BendStyle smoothed="false"/>
@@ -151,7 +155,7 @@ on its own.</y:NodeLabel>
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="-67.60243055555532" sy="-8.416666666666629" tx="0.0" ty="0.0"/>
+          <y:Path sx="-58.102430555555316" sy="-9.916666666666629" tx="0.0" ty="0.0"/>
           <y:LineStyle color="#000000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="none"/>
           <y:BendStyle smoothed="false"/>

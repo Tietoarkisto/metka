@@ -14,9 +14,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * List of references are saved through this
@@ -101,6 +99,51 @@ public class ReferenceContainerDataField extends RowContainerDataField {
             change.put(Language.DEFAULT, new RowChange(reference.getRowId()));
             return new ImmutablePair<>(StatusCode.NEW_ROW, reference);
         }
+    }
+
+    public Pair<StatusCode, ReferenceRow> removeReference(Integer rowId, Map<String, Change> changeMap, DateTimeUserPair info) {
+        Pair<StatusCode, ReferenceRow> rowPair = getReferenceWithId(rowId);
+        if(rowPair.getLeft() != StatusCode.FOUND_ROW) {
+            return rowPair;
+        }
+        ReferenceRow row = rowPair.getRight();
+
+        StatusCode status = row.changeStatusFor(Language.DEFAULT, true, changeMap, info);
+        if(status == StatusCode.NO_CHANGE_IN_VALUE) {
+            return new ImmutablePair<>(status, row);
+        }
+        // Row was removed, check that if it's an unapproved row then remove it completely. We don't need to keep removed unapproved rows.
+        if(status == StatusCode.ROW_CHANGE && row.getUnapproved() && row.getRemoved()) {
+            for(Iterator<ReferenceRow> i = references.iterator(); i.hasNext();) {
+                ReferenceRow next = i.next();
+                if(next.getRowId().equals(rowId)) {
+                    i.remove();
+                    status = StatusCode.ROW_REMOVED;
+                    break;
+                }
+            }
+            if(status == StatusCode.ROW_REMOVED) {
+                ContainerChange cc = (ContainerChange)changeMap.get(getKey());
+                // This check shouldn't really fail
+                if(cc != null) {
+                    if(cc.get(rowId) != null) {
+                        cc.getRowsFor(Language.DEFAULT).remove(rowId);
+                    }
+                }
+            }
+        }
+        return new ImmutablePair<>(status, row);
+    }
+
+    @Override
+    public Set<Integer> getRowIdsFor(Language language) {
+        Set<Integer> ids = new HashSet<>();
+        if(language == Language.DEFAULT) {
+            for(ReferenceRow reference : references) {
+                ids.add(reference.getRowId());
+            }
+        }
+        return ids;
     }
 
     @Override

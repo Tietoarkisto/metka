@@ -1,0 +1,91 @@
+{   "_comment" : "the structure of vocabulary in topic (FSD) there is not term other - and there is no need to text field",
+    "key" : "Controlled Vocabulary for testing",
+    "data" : 
+        [ {
+            "copyright" : "who has copyright",
+            "license" : "license used",
+            "Adaptation" : "explain adaptation",
+            "codeListID" : "id",
+            "&codeListName" : {
+                "default" : "nimi",
+                "en" : "name",
+                "sv" : "namnet"
+            },
+            "codeListAgencyName" : "agency name",
+            "codeListVersionID" : "1.0.0",
+            "codeListURN" : "urn for code list",
+            "codeListSchemeURN" : "urn for scheme",
+            "&codeListURI" : {
+                "default" : "http://www.uri.html",
+                "en" : "http://www.enuri.html"
+            },
+            "selector" : "the elements in which vocabulary is used",
+            "_comment" : "tästä alkavat termit",
+            "terms" : [
+                {
+                    "id" : "1",
+                    "key" : "term1",
+                    "&term" : {
+                        "default": "Termi 1",
+                        "en": "Term 1",
+                        "sv": "Term 1"
+                    }
+                },
+                {
+                    "id" : "2",
+                    "key" : "http://www.uri.fi/term2",
+                    "&term" : {
+                        "default": "Termi 2",
+                        "en": "Term 2",
+                        "sv": "Term 2"
+                    }
+                },
+                {
+                    "id" : "3",
+                    "key" : "term3",
+                    "&term" : {
+                        "default": "Termi 3",
+                        "en": "Term 3",
+                        "sv": "Term 3"
+                    }
+                },
+                {
+                    "id" : "4",
+                    "key" : "term4",
+                    "&term" : {
+                        "default": "Termi 4",
+                        "en": "Term 4",
+                        "sv": "Term 4"
+                    }
+                },
+                {
+                    "id" : "5",
+                    "key" : "term5",
+                    "&term" : {
+                        "default": "Termi 5",
+                        "en": "Term 5",
+                        "sv": "Term 5"
+                    }
+                },
+                {
+                    "id" : "6",
+                    "key" : "term6",
+                    "&term" : {
+                        "default": "Termi 6",
+                        "en": "Term 6",
+                        "sv": "Term 6"
+                    }
+                },
+                {
+                    "id" : "7",
+                    "key" : "term7",
+                    "&term" : {
+                        "default": "Termi 7",
+                        "en": "Term 7",
+                        "sv": "Term 7"
+                    }
+                }
+        
+            ] }
+        ] 
+}

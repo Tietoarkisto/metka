@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.util.StringUtils;
 
+import static fi.uta.fsd.metka.storage.util.ConversionUtil.stringToLong;
+
 /**
  * This contains only immutable value string and functions for checking its content and equality.
  * This is somewhat unnecessary and mostly here to strongly type value.
@@ -28,6 +30,14 @@ public class Value {
 
     @JsonIgnore public boolean valueEquals(String compare) {
         return hasValue() && value.equals(compare);
+    }
+
+    @JsonIgnore public Long asInteger() {
+        return stringToLong(value);
+    }
+
+    @JsonIgnore public boolean asBoolean() {
+        return Boolean.parseBoolean(value);
     }
 
     public Value copy() {

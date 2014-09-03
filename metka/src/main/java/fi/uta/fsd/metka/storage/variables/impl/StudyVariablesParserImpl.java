@@ -374,9 +374,11 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                 // See that respective rows are removed from STUDY_VARIABLES
                 //    Remove from variables list
                 ReferenceRow reference = variablesContainer.getReferenceWithValue(variableEntity.getId().toString()).getRight();
-                // TODO: is this enough if the variable was removed completely
-                if(reference.remove(variablesData.getChanges()) == StatusCode.ROW_CHANGE) {
-                    result = resultCheck(result, ParseResult.REVISION_CHANGES);
+                if(reference != null) {
+                    StatusCode status = variablesContainer.removeReference(reference.getRowId(), variablesData.getChanges(), info).getLeft();
+                    if(status == StatusCode.ROW_CHANGE || status == StatusCode.ROW_REMOVED) {
+                        result = resultCheck(result, ParseResult.REVISION_CHANGES);
+                    }
                 }
             }
             //    Remove from variable group list
@@ -570,7 +572,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                 result = resultCheck(result, setValueLabelRow(row, label, variableRevision.getChanges()));
             }
 
-            result = resultCheck(result, removeObsoleteRows(rows, valueLabels, variableRevision.getChanges()));
+            result = resultCheck(result, removeObsoleteRows(rows, valueLabels, variableRevision.getChanges(), info));
 
             return result;
         }
@@ -580,7 +582,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             ParseResult result = ParseResult.NO_CHANGES;
 
             // We know that this row is needed and so we can set it to not removed state no matter if it was removed previously or not
-            StatusCode restoreResult = row.restore(changeMap, DEFAULT);
+            StatusCode restoreResult = row.restore(changeMap, DEFAULT, info);
             if(restoreResult == StatusCode.ROW_CHANGE) {
                 result = ParseResult.REVISION_CHANGES;
             }
@@ -672,9 +674,9 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             if(valid.size() == 0 && missing.size() == 0) {
                 // No frequencies, remove all frequency rows and return
                 if(categories != null) {
-                    for(DataRow row : categories.getRowsFor(DEFAULT)) {
-                        StatusCode removeResult = row.remove(changeMap, DEFAULT);
-                        if(removeResult == StatusCode.ROW_CHANGE) {
+                    for(Integer id : categories.getRowIdsFor(DEFAULT)) {
+                        StatusCode removeResult = categories.removeRow(id, changeMap, info).getLeft();
+                        if(removeResult == StatusCode.ROW_CHANGE || removeResult == StatusCode.ROW_REMOVED) {
                             result = ParseResult.REVISION_CHANGES;
                         }
                     }
@@ -709,8 +711,8 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             } else if(sysmissRow != null) {
                 // SYSMISS row is not needed but existed previously, mark as removed
                 categories.getRowsFor(DEFAULT).add(sysmissRow); // Insert it back to to categories container before removal or the change doesn't make any sense
-                StatusCode removeResult = sysmissRow.remove(changeMap, DEFAULT);
-                if(removeResult == StatusCode.ROW_CHANGE) {
+                StatusCode removeResult = categories.removeRow(sysmissRow.getRowId(), changeMap, info).getLeft();
+                if(removeResult == StatusCode.ROW_CHANGE || removeResult == StatusCode.ROW_REMOVED) {
                     result = resultCheck(result, ParseResult.REVISION_CHANGES);
                 }
             }
@@ -777,7 +779,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         private ParseResult setCategoryRow(DataRow row, String value, String label, Integer stat, boolean missing, Map<String, Change> changeMap) {
             ParseResult result = ParseResult.NO_CHANGES;
 
-            StatusCode restoreResult = row.restore(changeMap, DEFAULT);
+            StatusCode restoreResult = row.restore(changeMap, DEFAULT, info);
             if(restoreResult == StatusCode.ROW_CHANGE) {
                 result = ParseResult.REVISION_CHANGES;
             }
@@ -846,9 +848,9 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             if(!variable.isNumeric()) {
                 // Variable is not numeric and should not contain statistics.
                 if(statistics != null) {
-                    for(DataRow row : statistics.getRowsFor(DEFAULT)) {
-                        StatusCode removeResult = row.remove(changeMap, DEFAULT);
-                        if(removeResult == StatusCode.ROW_CHANGE) {
+                    for(Integer id : statistics.getRowIdsFor(DEFAULT)) {
+                        StatusCode removeResult = statistics.removeRow(id, changeMap, info).getLeft();
+                        if(removeResult == StatusCode.ROW_CHANGE || removeResult == StatusCode.ROW_REMOVED) {
                             result = ParseResult.REVISION_CHANGES;
                         }
                     }
@@ -935,7 +937,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                 checkResultForUpdate(fieldPair, result);
             }
 
-            result = resultCheck(result, removeObsoleteRows(rows, statistics, changeMap));
+            result = resultCheck(result, removeObsoleteRows(rows, statistics, changeMap, info));
 
             return result;
         }
@@ -992,12 +994,12 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
          * @param target Container where removed rows are added
          * @param changeMap Change map where target containers changes should be
          */
-        private static ParseResult removeObsoleteRows(Collection<DataRow> rows, ContainerDataField target, Map<String, Change> changeMap) {
+        private static ParseResult removeObsoleteRows(Collection<DataRow> rows, ContainerDataField target, Map<String, Change> changeMap, DateTimeUserPair info) {
             ParseResult result = ParseResult.NO_CHANGES;
             for(DataRow row : rows) {
                 target.addRow(DEFAULT, row);
-                StatusCode status = row.remove(changeMap, DEFAULT);
-                if(status == StatusCode.ROW_CHANGE) {
+                StatusCode status = target.removeRow(row.getRowId(), changeMap, info).getLeft();
+                if(status == StatusCode.ROW_CHANGE || status == StatusCode.ROW_REMOVED) {
                     result = ParseResult.REVISION_CHANGES;
                 }
             }

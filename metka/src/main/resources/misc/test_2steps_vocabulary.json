@@ -1,0 +1,161 @@
+{   "_comment" : "the structure of vocabulary in topic (CESSDA) there is not term other - and there is no need to text field",
+    "_comment" : "The upper level terms are used as help to find the right narrower (lower level) terms, the user can't only choose the upper level term",
+    "key" : "Controlled Vocabulary for testing",
+    "data" : 
+        [ {
+            "copyright" : "who has copyright",
+            "license" : "license used",
+            "Adaptation" : "explain adaptation",
+            "codeListID" : "id",
+            "&codeListName" : {
+                "default" : "nimi",
+                "en" : "name",
+                "sv" : "namnet"
+            },
+            "codeListAgencyName" : "agency name",
+            "codeListVersionID" : "1.0.0",
+            "codeListURN" : "urn for code list",
+            "codeListSchemeURN" : "urn for scheme",
+            "&codeListURI": {
+                "default" : "http://www.uri.html",
+                "en" : "http://www.enuri.html"
+            },
+            "selector": "the elements in which vocabulary is used",
+            "_comment": "tästä alkavat termit",
+            "terms": [
+                {
+                    "id" : "1",
+                    "key" : "term1",
+                    "&term" : {
+                        "default": "Termi 1",
+                        "en": "Term 1",
+                        "sv": "Term 1"
+                    },
+                    "term_ll" : [
+                        {
+                            "id" : "1.1",
+                            "key" : "ll_term1.1",
+                            "&termll" : {
+                                "default" : "Alatason termi 1",
+                                "en" : "Lower level term 1",
+                                "sv" : "Sn�vare term 1"
+                            }
+                        },
+                        {
+                            "id" : "1.2",
+                            "key" : "http://www.testi.fi/ll_term1.2",
+                            "&termll" : {
+                                "default" : "Alatason termi 2",
+                                "en" : "Lower level term 2",
+                                "sv" : "Snävare term 2"
+                            }
+                        },
+                        {
+                            "id" : "1.3",
+                            "key" : "ll_term1.3",
+                            "&termll" : {
+                                "default" : "Alatason termi 3",
+                                "en" : "Lower level term 3",
+                                "sv" : "Snävare term 3"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id" : "2",
+                    "key" : "http://www.uri.fi/term2",
+                    "&term" : {
+                        "default": "Termi 2",
+                        "en": "Term 2",
+                        "sv": "Term 2"
+                    },
+                    "term_ll" : [
+                        {
+                            "id" : "2.1",
+                            "key" : "ll_term2.1",
+                            "&termll" : {
+                                "default" : "Alatason termi 1",
+                                "en" : "Lower level term 1",
+                                "sv" : "Snävare term 1"
+                            }
+                        },
+                        {
+                            "id" : "2.2",
+                            "key" : "http://www.testi.fi/ll_term2.2",
+                            "&termll" : {
+                                "default" : "Alatason termi 2",
+                                "en" : "Lower level term 2",
+                                "sv" : "Snävare term 2"
+                            }
+                        },
+                        {
+                            "id" : "2.3",
+                            "key" : "ll_term2.3",
+                            "&termll" : {
+                                "default" : "Alatason termi 3",
+                                "en" : "Lower level term 3",
+                                "sv" : "Snävare term 3"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id" : "3",
+                    "key" : "term3",
+                    "&term" : {
+                        "default": "Termi 3",
+                        "en": "Term 3",
+                        "sv": "Term 3"
+                    },
+                    "term_ll" : [
+                        {
+                            "id" : "3.1",
+                            "key" : "ll_term3.1",
+                            "&termll" : {
+                                "default" : "Alatason termi 1",
+                                "en" : "Lower level term 1",
+                                "sv" : "Snävare term 1"
+                            }
+                        },
+                        {
+                            "id" : "3.2",
+                            "key" : "http://www.testi.fi/ll_term3.2",
+                            "&termll" : {
+                                "default" : "Alatason termi 2",
+                                "en" : "Lower level term 2",
+                                "sv" : "Snävare term 2"
+                            }
+                        },
+                        {
+                            "id" : "3.3",
+                            "key" : "ll_term3.3",
+                            "&termll" : {
+                                "default" : "Alatason termi 3",
+                                "en" : "Lower level term 3",
+                                "sv" : "Snävare term 3"
+                            }
+                        },
+                        {
+                            "id" : "3.4",
+                            "key" : "ll_term3.4",
+                            "&termll" : {
+                                "default" : "Alatason termi 4",
+                                "en" : "Lower level term 4",
+                                "sv" : "Snävare term 4"
+                            }
+                        },
+                        {
+                            "id" : "3.5",
+                            "key" : "ll_term3.5",
+                            "&termll" : {
+                                "default" : "Alatason termi 5",
+                                "en" : "Lower level term 5",
+                                "sv" : "Snävare term 5"
+                            }
+                        }
+                    ]
+                }
+        
+            ] }
+        ] 
+}

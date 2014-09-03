@@ -11,6 +11,7 @@ import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.change.ContainerChange;
 import fi.uta.fsd.metka.model.data.change.RowChange;
+import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -56,14 +57,8 @@ public class DataRow extends ContainerRow implements DataFieldContainer {
         return fields;
     }
 
-    @Override
-    public StatusCode remove(Map<String, Change> changeMap, Language language) {
-        return super.remove(changeMap, language);
-    }
-
-    @Override
-    public StatusCode restore(Map<String, Change> changeMap, Language language) {
-        return super.restore(changeMap, language);
+    public StatusCode restore(Map<String, Change> changeMap, Language language, DateTimeUserPair info) {
+        return super.changeStatusFor(language, false, changeMap, info);
     }
 
     public DataRow copy() {

@@ -17,6 +17,7 @@ public class ContainerRow {
     private final Integer rowId;
     private Boolean removed = false;
     private DateTimeUserPair saved;
+    private Boolean unapproved = false;
 
     @JsonCreator
     public ContainerRow(@JsonProperty("key") String key, @JsonProperty("rowId") Integer rowId) {
@@ -48,6 +49,14 @@ public class ContainerRow {
         this.saved = saved;
     }
 
+    public Boolean getUnapproved() {
+        return unapproved == null ? false : unapproved;
+    }
+
+    public void setUnapproved(Boolean unapproved) {
+        this.unapproved = unapproved == null ? false : unapproved;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -61,12 +70,12 @@ public class ContainerRow {
         return true;
     }
 
-    protected StatusCode remove(Map<String, Change> changeMap, Language language) {
-        if(changeMap == null || getRemoved()) {
+    public StatusCode changeStatusFor(Language language, boolean newStatus, Map<String, Change> changeMap, DateTimeUserPair info) {
+        if(changeMap == null || removed == newStatus) {
             return StatusCode.NO_CHANGE_IN_VALUE;
         }
 
-        setRemoved(true);
+        removed = newStatus;
         ContainerChange containerChange = (ContainerChange)changeMap.get(getKey());
         if(containerChange == null) {
             containerChange = new ContainerChange(getKey());
@@ -75,23 +84,7 @@ public class ContainerRow {
         if(containerChange.get(getRowId()) == null) {
             containerChange.put(language, new RowChange(getRowId()));
         }
-        return StatusCode.ROW_CHANGE;
-    }
-
-    protected StatusCode restore(Map<String, Change> changeMap, Language language) {
-        if(changeMap == null || !getRemoved()) {
-            return StatusCode.NO_CHANGE_IN_VALUE;
-        }
-
-        setRemoved(false);
-        ContainerChange containerChange = (ContainerChange)changeMap.get(getKey());
-        if(containerChange == null) {
-            containerChange = new ContainerChange(getKey());
-            changeMap.put(getKey(), containerChange);
-        }
-        if(containerChange.get(getRowId()) == null) {
-            containerChange.put(language, new RowChange(getRowId()));
-        }
+        setSaved(info);
         return StatusCode.ROW_CHANGE;
     }
 

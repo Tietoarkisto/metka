@@ -7,6 +7,7 @@ import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.value.Value;
+import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 
 import java.util.Map;
 
@@ -76,12 +77,8 @@ public class ReferenceRow extends ContainerRow {
         return new ReferenceRow(getKey(), getRowId(), getReference());
     }
 
-    public StatusCode remove(Map<String, Change> changeMap) {
-        return super.remove(changeMap, Language.DEFAULT);
-    }
-
-    public StatusCode restore(Map<String, Change> changeMap) {
-        return super.restore(changeMap, Language.DEFAULT);
+    public StatusCode restore(Map<String, Change> changeMap, DateTimeUserPair info) {
+        return super.changeStatusFor(Language.DEFAULT, false, changeMap, info);
     }
 
     public void normalize() {

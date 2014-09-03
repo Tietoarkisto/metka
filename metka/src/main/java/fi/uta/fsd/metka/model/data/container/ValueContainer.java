@@ -6,8 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 
-import static fi.uta.fsd.metka.storage.util.ConversionUtil.stringToLong;
-
 /**
  * Immutable class to combine DateTimeUserPair and Value to one object.
  * This class and all of its components are immutable so the usage has to be clear.
@@ -74,11 +72,11 @@ public class ValueContainer {
      * @return Long gained by using ConversionUtil.stringToLong on the simple value representation if value is found.
      */
     @JsonIgnore public Long valueAsInteger() {
-        return stringToLong(getActualValue());
+        return hasValue() ? getValue().asInteger() : null;
     }
 
     @JsonIgnore public boolean valueAsBoolean() {
-        return Boolean.parseBoolean(getActualValue());
+        return hasValue() ? getValue().asBoolean() : null;
     }
 
     @JsonIgnore public boolean valueEquals(String compare) {

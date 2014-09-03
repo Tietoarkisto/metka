@@ -550,7 +550,8 @@
 			"subfields": [
 				"publicationid",
 				"publicationtitle"
-			]
+			],
+			"bidirectional": "studies"
 		},
 		"publicationid": {
 			"key": "publicationid",
@@ -576,7 +577,8 @@
 			"subfields": [
 				"studyid_col",
 				"studytitle_col"
-			]
+			],
+			"bidirectional": "studies"
 		},
 		"studyid_col": {
 			"key": "studyid_col",
