@@ -110,10 +110,11 @@ define(function (require) {
                     "no",
                     "state"
                 ], function (transferRow) {
+                    log(transferRow);
                     require('./../assignUrl')('view', {
-                        id: transferRow.fields.id.value.current,
-                        no: transferRow.fields.no.value.current,
-                        page: transferRow.fields.TYPE.value.current.toLowerCase()
+                        id: transferRow.fields.id.values.DEFAULT.current,
+                        no: transferRow.fields.no.values.DEFAULT.current,
+                        page: transferRow.fields.TYPE.values.DEFAULT.current.toLowerCase()
                     });
                 }),
                 {

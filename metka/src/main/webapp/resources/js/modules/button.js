@@ -193,7 +193,7 @@ define(function (require) {
             this
                 .text(MetkaJS.L10N.get('general.buttons.no'));
         },
-        REMOVE: function () {
+        REMOVE: function (options) {
             var metka = require('./../metka');
             this
                 .click(function () {
@@ -214,8 +214,22 @@ define(function (require) {
                             create: function () {
                                 $(this)
                                     .click(function () {
-                                        require('./assignUrl')('remove', {
-                                            type: type
+                                        require('./server')('/revision/ajax/remove', {
+                                            data: JSON.stringify(options.data),
+                                            success: function (response) {
+                                                switch(response.result) {
+                                                    case "SUCCESS_LOGICAL":
+                                                        require('./assignUrl')('view');
+                                                        break;
+                                                    case "SUCCESS_DRAFT":
+                                                        require('./assignUrl')('view', {no: ''});
+                                                        break;
+                                                    case "FINAL_REVISION":
+                                                        require('./assignUrl')('searchPage');
+                                                        break;
+                                                }
+
+                                            }
                                         });
                                     });
                             }

@@ -101,7 +101,7 @@ define(function (require) {
                     }
                 ],
                 buttons: [
-                    require('./../searchButton')('/revision/ajax/search', function () {
+                    require('./../searchButton')('searchAjax', function () {
                         log(options.defaultLang, data('searchApproved').getByLang(options.defaultLang))
                         return {
                             type: require('./../../metka').PAGE,

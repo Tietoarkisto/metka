@@ -90,7 +90,7 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
             IndexerCommand command = null;
             try {
                 //IndexerCommand command = commandQueue.poll(5, TimeUnit.SECONDS);
-                command = commands.getNextCommand(indexer.getPath().getType(), indexer.getPath().getLanguage());
+                command = commands.getNextCommand(indexer.getPath().getType(), indexer.getPath().toString());
                 if(command != null) {
                     long start = System.currentTimeMillis();
                     logger.info("Started new command for: "+command.getPath());

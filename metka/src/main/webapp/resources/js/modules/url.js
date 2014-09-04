@@ -24,7 +24,8 @@ define(function (require) {
                     prev: 'prev/{page}/{id}',
                     remove: 'remove/{page}/{type}/{id}',
                     save: 'revision/ajax/save',
-                    search: '{page}/ajax/search',
+                    searchPage: 'revision/search/{page}',
+                    searchAjax: 'revision/ajax/search',
                     view: 'revision/view/{page}/{id}/{no}',
                     viewAjax: 'revision/ajax/view/{page}/{id}/{no}'
                 }[key];

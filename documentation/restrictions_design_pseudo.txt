@@ -1,0 +1,60 @@
+Data (pseudo)
+operations : [0..* Restriction]
+
+Restriction (pseudo)
+operation : [SAVE|APPROVE|REMOVE]
+conditions : [0..* Condition] {ordered}
+
+Condition (pseudo)
+target : [Target]
+type : [VALUE|NOT_EMPTY|IS_EMPTY|EQUALS|UNIQUE|INCREASING|DECREASING]
+conditions : [0..* Condition] {ordered}
+
+Target (pseudo)
+type: [FIELD|QUERY|VALUE]
+target: String
+
+- At some point we need some sort of expression system to allow dynamically generating conditions from parametrised conditions
+- Container conditions should be formed as trees to facilitate ease of use, field paths are not supported in conditions.
+- Each operation should have their own conditions keeping in mind if APPROVE operation is running then SAVE has to have successfully completed already
+
+Conditions we need
+* Value (Target VALUE)
+	- Plain string value that is used as subcondition of some specific type of conditions
+	- Does nothing on its own (is always true except when actually requested by some other condition)
+* Non empty (Target FIELD|QUERY)
+	- Restriction applies if given field has non empty value
+	- Top level fields can only target other top level fields
+	- Container fields can target top level fields and fields in their own container row
+	- For non container fields this means there has to be non empty value
+	- For container fields this means there has to be rows (rows can still be basically empty in case of CONTAINER and need to be checked separately)
+	- For query this means that query needs to return results
+* Is empty (Target FIELD|QUERY)
+	- Restriction applies if targeted content has no value
+	- Top level fields can only target other top level fields
+	- Container fields can target top level fields and fields in their own container row
+	- For non container fields this means there has to be empty value
+	- For container fields this means there has to be no rows
+	- For query this means that query needs to return 0 results
+* Equals (Target FIELD)
+	- Restriction applies if given field has value that equals subconditions
+	- Top level fields can only target other top level fields
+	- Container fields can target top level fields and fields in their own container row
+	- Needs to have one or more VALUE type sub conditions that contain the values that we are comparing to
+	- Needs to target non container field (containers can't equal anything)
+* Uniqueness (Target FIELD)
+	- Must target non container field (plain containers can't be unique in any meaningful sense and revisionable containers should  always contain only one reference with the same value by default).
+	- Top level field must be unique between revisionables (field can have the same value from revision to revision but other revisionables can't have the same value in any revision).
+	- Container fields must be unique within their container so that no other row in the container has the same value in the field with the same key
+	- Field can remain the same or change throughout the revisions, the value is only compared to other revisionables
+* Increasing (Target FIELD)
+	- Uses natural sorting to find this out
+	- For top level fields value must increase between revisions, never decrease
+	- For container fields value must increase between non removed rows even through reordering rows
+* Decreasing (Target FIELD)
+	- Uses natural sorting to find this out
+	- For top level fields value must decrease between revisions, never increase
+	- For container fields value must increase between non removed rows even through reordering rows
+
+Example
+

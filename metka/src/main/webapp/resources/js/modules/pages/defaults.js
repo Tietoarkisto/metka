@@ -6,6 +6,9 @@ define(function (require) {
         require('./../server')('viewAjax', {
             method: 'GET',
             success: function (data) {
+                if(!data || !data.transferData) {
+                    require('./../assignUrl')('searchPage');
+                }
                 metka.revision = metka.no = data.transferData.key.no;
                 history.replaceState(undefined, '', require('./../url')('view'));
                 $.extend(options, data.gui);

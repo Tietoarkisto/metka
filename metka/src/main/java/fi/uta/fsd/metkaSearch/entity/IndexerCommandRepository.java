@@ -1,6 +1,5 @@
 package fi.uta.fsd.metkaSearch.entity;
 
-import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metkaSearch.commands.indexer.IndexerCommand;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +24,7 @@ public interface IndexerCommandRepository {
      * @param type IndexerConfigurationType of the command that is returned
      * @return
      */
-    public IndexerCommand getNextCommand(IndexerConfigurationType type, Language language);
+    public IndexerCommand getNextCommand(IndexerConfigurationType type, String path);
 
     /**
      * Returns the next command that has not been requested yet irregardless of type.
