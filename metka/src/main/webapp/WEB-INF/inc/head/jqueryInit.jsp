@@ -6,38 +6,6 @@
 <script src="${contextPath}/lib/jquery/jquery-ui.js"></script>
 <script src="${contextPath}/lib/jquery/jquery.fileupload.js"></script>
 
-<script>
-    /**
-     * Like $.each, except 'this' refers to the jQuery object
-     */
-    $.fn.eachTo = function (c, f) {
-        if (!c) {
-            return this;
-        }
-        var that = this;
-        $.each(c, function () {
-            return f.apply(that, arguments);
-        });
-        return this;
-    };
-
-    /**
-     * Calls 'f' in the context of jQuery object.
-     * Useful when jQuery object needs to be: instantiated, manipulated using custom logic and then chained/returned
-     */
-    $.fn.me = function (f) {
-        f.call(this);
-        return this;
-    };
-
-    /**
-     * Conditional $.fn.me
-     */
-    $.fn.if = function (x, f) {
-        return x ? this.me(f) : this;
-    };
-</script>
-
 <%--
 <script src="${contextPath}/js/jquery/jquery.tablesorter.min.js"></script>
 <script src="${contextPath}/js/jquery/jquery.dataTables.min.js"></script>

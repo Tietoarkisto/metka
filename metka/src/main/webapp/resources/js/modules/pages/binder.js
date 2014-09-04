@@ -44,10 +44,9 @@ define(function (require) {
                                         "binderId",
                                         "description"
                                     ]
-
                                 },
                                 create: function (options) {
-                                    var $containerField = $(this).children();
+                                    var $containerField = $(this).children().first();
                                     var $tbody = $containerField.find('tbody').first();
                                     $tbody
                                         .on('rowAppended', function (e, $tr, columns) {

@@ -25,7 +25,8 @@ define(function (require) {
                     remove: 'remove/{page}/{type}/{id}',
                     save: 'revision/ajax/save',
                     search: '{page}/ajax/search',
-                    view: 'revision/view/{page}/{id}/{no}'
+                    view: 'revision/view/{page}/{id}/{no}',
+                    viewAjax: 'revision/ajax/view/{page}/{id}/{no}'
                 }[key];
             }
         })().supplant($.extend({

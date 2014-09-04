@@ -1,7 +1,9 @@
 define(function (require) {
+    'use strict';
+
     return function (options, onLoad) {
         var metka = require('./../../metka');
-        require('./../server')('/revision/ajax/view/{page}/{id}/{no}', {
+        require('./../server')('viewAjax', {
             method: 'GET',
             success: function (data) {
                 metka.revision = metka.no = data.transferData.key.no;

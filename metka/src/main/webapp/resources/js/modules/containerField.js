@@ -167,6 +167,7 @@ define(function (require) {
                 transferRow = $.extend(true, {}, transferRow);
 
                 var containerOptions = {
+                    title: MetkaJS.L10N.get(['dialog', PAGE, key, title].join('.')),
                     data: transferRow,
                     dataConf: options.dataConf,
                     $events: $({}),
@@ -191,33 +192,24 @@ define(function (require) {
                                 };
                             })
                         }
-                    ]
+                    ],
+                    buttons: [{
+                        create: function () {
+                            this
+                                .text(MetkaJS.L10N.get('general.buttons.' + button))
+                                .click(function () {
+                                    var $tr = onClose(transferRow);
+                                    if (options.field.onRowChange) {
+                                        options.field.onRowChange($tr, transferRow);
+                                    }
+                                });
+                        }
+                    }, {
+                        type: 'CANCEL'
+                    }]
                 };
 
-                var $modal = require('./modal')({
-                    title: MetkaJS.L10N.get(['dialog', PAGE, key, title].join('.')),
-                    body: require('./container').call($('<div>'), containerOptions),
-                    buttons: [
-                        {
-                            create: function () {
-                                this
-                                    .text(MetkaJS.L10N.get('general.buttons.' + button))
-                                    .click(function () {
-                                        var $tr = onClose(transferRow);
-                                        if (options.field.onRowChange) {
-                                            options.field.onRowChange($tr, transferRow);
-                                        }
-                                    });
-                            }
-                        },
-                        {
-                            create: function () {
-                                this
-                                    .text(MetkaJS.L10N.get('general.buttons.cancel'));
-                            }
-                        }
-                    ]
-                });
+                var $modal = require('./modal')(containerOptions);
 
                 // if not translatable container and has translatable subfields, show language selector
                 if (!fieldOptions.translatable && require('./containerHasTranslatableSubfields')(options)) {
@@ -337,86 +329,33 @@ define(function (require) {
                     return $tbody;
                 }))
             .append(function () {
-                var items = [];
-                /*if (key === 'files') {
-                    //log(options);
+                var buttons = (options.buttons || []);
+                if (!require('./isFieldDisabled')(options)) {
 
-                    var $input = $('<input type="file">');
-                    var $form = $('<form>')
-                    $form.append($input);
-
-                    $input.fileinput({
-                        showPreview: false,
-                        showRemove: false,
-                        browseLabel: 'Valitse ...',
-                        uploadLabel: 'Lataa'
-                        //browseLabel: MetkaJS.L10N.get('general.buttons.upload.browse') + ' ...',
-                        //uploadLabel: MetkaJS.L10N.get('general.buttons.upload.dataConfiguration')
-                    });
-
-                    $form.find('.input-group').addClass('input-group-sm');
-
-                    $form.find('.kv-fileinput-caption').click(function () {
-                        $input.click();
-                    });
-
-                    $form.find('button[type="submit"]').prop('disabled', true);
-                    $input.change(function () {
-                        var isSelected = !!$input.val();
-                        $form.find('button[type="submit"]').prop('disabled', !isSelected);
-                        if (isSelected) {
-                            $form.find('.kv-caption-icon').show();
-                        } else {
-                            $form[0].reset();
+                    buttons.push({
+                        create: function () {
+                            this
+                                .text(MetkaJS.L10N.get('general.table.add'))
+                                .click(function () {
+                                    rowDialog('add', 'add', addRow)({});
+                                });
                         }
                     });
-
-                    $form.submit(function () {
-                        function success(data) {
-                            if (data) {
-                                data = JSON.parse(data);
-                                data.temporary = true;
-                                addRow(data);
-                            }
-                        }
-
-                        success('{"type":"reference","key":"files","value":"4"}');
-                        return false;
-                        var data = new FormData();
-                        data.append('file', $input[0].files[0]);
-                        data.append('id', require('./../metka').id);
-                        data.append('targetField', key);
-                        $.ajax({
-                            url: require('./url')('fileUpload'),
-                            type: "POST",
-                            data: data,
-                            processData: false,
-                            contentType: false,
-                            dataType: 'json',
-                            success: success
-                        });
-
-                        return false;
-                    });
-
-                    items.push($form);
-                }*/
-
-                if (!require('./isFieldDisabled')(options)/* && key !== 'files'*/) {
-                    items.push(require('./button')(options)({
-                        style: 'default'
-                    })
-                        .addClass('btn-sm')
-                        .text(MetkaJS.L10N.get('general.table.add'))
-                        .click(function () {
-                            rowDialog('add', 'add', addRow)({});
-                        }));
                 }
 
-                if (items.length) {
+                buttons = buttons.map(function (button) {
+                    button.style = 'default';
+                    return button;
+                }).map(require('./button')(options));
+
+                buttons.forEach(function ($button) {
+                    $button.addClass('btn-sm');
+                });
+
+                if (buttons.length) {
                     return $('<div class="panel-footer clearfix">')
                         .append($('<div class="pull-right">')
-                            .append(items));
+                            .append(buttons));
                 }
             }));
     };

@@ -2,6 +2,7 @@ define(function (require) {
     'use strict';
 
     var customFields = {
+        custom_studyAttachments: require('./custom/fields/studyAttachments'),
         custom_studyRelatedBinders: require('./custom/fields/studyRelatedBinders'),
         custom_studyErrors: require('./custom/fields/studyErrors'),
         custom_studyVariablesBasic: require('./custom/fields/studyVariablesBasic'),
