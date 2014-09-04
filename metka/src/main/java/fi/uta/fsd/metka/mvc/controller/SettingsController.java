@@ -107,6 +107,13 @@ public class SettingsController {
         }
     }
 
+    @RequestMapping(value="indexEverything", method = RequestMethod.GET)
+    public String indexEverything(Model model) {
+        ModelUtil.initSettings(model, indexer.indexerStatusList());
+        indexer.indexEverything();
+        return AuthenticationUtil.getModelName("settings", model);
+    }
+
     @RequestMapping(value="listAPIUsers", method = RequestMethod.GET)
     public @ResponseBody APIUserListResponse listAPIUsers() {
         return service.listAPIUsers();

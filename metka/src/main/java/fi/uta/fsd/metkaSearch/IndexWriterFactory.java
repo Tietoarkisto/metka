@@ -9,17 +9,17 @@ import org.slf4j.LoggerFactory;
 
 public class IndexWriterFactory {
     private static final Logger logger = LoggerFactory.getLogger(IndexWriterFactory.class);
-    private static final IndexWriterConfig writerConfig;
+    private static final IndexWriterConfig writerAppendConfig;
 
     static {
         // Create the default writer config. Use whitespace analyser as default.
-        writerConfig = new IndexWriterConfig(LuceneConfig.USED_VERSION, CaseInsensitiveWhitespaceAnalyzer.ANALYZER);
+        writerAppendConfig = new IndexWriterConfig(LuceneConfig.USED_VERSION, CaseInsensitiveWhitespaceAnalyzer.ANALYZER);
         // Set index open mode. Create index if missing, append if present
-        writerConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
+        writerAppendConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
     }
 
     public static IndexWriter createIndexWriter(Directory directory) {
-        IndexWriterConfig clone = writerConfig.clone();
+        IndexWriterConfig clone = writerAppendConfig.clone();
         try {
             IndexWriter writer = new IndexWriter(directory, clone);
             return writer;

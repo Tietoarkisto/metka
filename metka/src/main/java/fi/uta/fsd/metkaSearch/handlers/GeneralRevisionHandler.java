@@ -170,7 +170,6 @@ class GeneralRevisionHandler implements RevisionHandler {
             document.indexKeywordField("state.saved", "false", YES);
         }
 
-        logger.info("Trying to index fields");
         indexFields(data, document, "", config);
 
         if(contentForLanguage) {
@@ -293,7 +292,6 @@ class GeneralRevisionHandler implements RevisionHandler {
             return;
         }
 
-        boolean result = true;
         switch(field.getType()) {
             case DATE:
             case DATETIME:
@@ -337,6 +335,8 @@ class GeneralRevisionHandler implements RevisionHandler {
         // Add save information to index for every field.
         document.indexKeywordField(root + field.getKey() + ".saved.time", saved.getValueFor(inputLang).getSaved().getTime().toString());
         document.indexKeywordField(root + field.getKey() + ".saved.user", saved.getValueFor(inputLang).getSaved().getUser());
+
+        if(inputLang == language) contentForLanguage = true;
     }
 
     /**

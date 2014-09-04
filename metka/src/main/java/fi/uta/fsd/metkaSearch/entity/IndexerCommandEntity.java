@@ -20,6 +20,7 @@ public class IndexerCommandEntity {
 
         entity.setPath(command.getPath());
         entity.setAction(command.getAction());
+        entity.setLanguage(command.getPath().getLanguage());
         entity.setParameters(command.toParameterString());
 
         return entity;
@@ -37,6 +38,10 @@ public class IndexerCommandEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "TYPE", updatable = false)
     private IndexerConfigurationType type;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "LANGUAGE", updatable = false)
+    private Language language;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "ACTION", updatable = false)
@@ -137,6 +142,18 @@ public class IndexerCommandEntity {
 
     public void setHandled(LocalDateTime handled) {
         this.handled = handled;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public Language getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(Language language) {
+        this.language = language;
     }
 
     public Boolean getRepeated() {

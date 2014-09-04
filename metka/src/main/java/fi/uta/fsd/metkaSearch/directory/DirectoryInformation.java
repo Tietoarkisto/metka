@@ -4,14 +4,19 @@ import fi.uta.fsd.metkaSearch.IndexWriterFactory;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.store.AlreadyClosedException;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.RAMDirectory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 
 public class DirectoryInformation {
+    private static final Logger logger = LoggerFactory.getLogger(DirectoryInformation.class);
+
     // TODO Read from properties
     private static final String indexBaseDirectory = "/usr/share/metka/index/";
 
@@ -62,6 +67,25 @@ public class DirectoryInformation {
         return directory;
     }
 
+    public void clearIndex() {
+        if(indexWriter != null) {
+            try {
+                indexWriter.close();
+            } catch(Exception e) {
+
+            }
+
+        }
+        indexWriter = IndexWriterFactory.createIndexWriter(directory);
+
+        try {
+            indexWriter.deleteAll();
+            indexWriter.commit();
+        } catch(IOException ioe) {
+            logger.error("IOException while trying to clear all documents from index "+directory.toString(), ioe);
+        }
+    }
+
     public IndexWriter getIndexWriter() {
         if(!writable) {
             throw new UnsupportedOperationException("This DirectoryInformation is not writable, can't open index writer");
@@ -71,6 +95,14 @@ public class DirectoryInformation {
             // this code is supposed to be used. In that case we're pretty much out of luck with this
             // DirectoryInformation
             indexWriter = IndexWriterFactory.createIndexWriter(directory);
+        }
+        try {
+            indexWriter.commit();
+        } catch(AlreadyClosedException ace) {
+            indexWriter = IndexWriterFactory.createIndexWriter(directory);
+        } catch(IOException ioe) {
+            logger.error("IOException while performing test commit on index in directory "+directory.toString(), ioe);
+            return null;
         }
         return indexWriter;
     }

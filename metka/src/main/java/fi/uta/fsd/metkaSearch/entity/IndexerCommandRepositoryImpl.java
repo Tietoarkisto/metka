@@ -1,5 +1,6 @@
 package fi.uta.fsd.metkaSearch.entity;
 
+import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metkaSearch.commands.indexer.IndexerCommand;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import org.joda.time.LocalDateTime;
@@ -29,11 +30,12 @@ public class IndexerCommandRepositoryImpl implements IndexerCommandRepository {
     }
 
     @Override
-    public IndexerCommand getNextCommand(IndexerConfigurationType type) {
+    public IndexerCommand getNextCommand(IndexerConfigurationType type, Language language) {
         IndexerCommandEntity entity = null;
         List<IndexerCommandEntity> entities = em.createQuery("SELECT e FROM IndexerCommandEntity e " +
-                "WHERE e.requested IS NULL AND e.type=:type ORDER BY e.created ASC", IndexerCommandEntity.class)
+                "WHERE e.requested IS NULL AND e.type=:type AND e.language=:language ORDER BY e.created ASC", IndexerCommandEntity.class)
                 .setParameter("type", type)
+                .setParameter("language", language)
                 .setMaxResults(1)
                 .getResultList();
         if(entities.size() == 1) {

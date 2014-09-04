@@ -20,6 +20,7 @@ public final class AuthenticationUtil {
     public static String getModelName(String destination, Model model) {
         MetkaAuthenticationDetails details = getDetails();
         if(details == null || !details.getRole().hasPermission(Permission.HAS_MINIMUM_PERMISSION)) {
+            logger.error("User "+getUserName()+" didn't have minimum permission. Forwarded to AUTH_ERROR page.");
             model.asMap().put("configurationType", "AUTH_ERROR");
             return "authError";
         }

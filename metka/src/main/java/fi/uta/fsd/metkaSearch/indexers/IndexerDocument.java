@@ -88,7 +88,6 @@ public class IndexerDocument {
         if(exact) {
             indexWhitespaceField(key, value, store);
         } else {
-            logger.info("Trying to index non exact field "+key);
             general.append(" ");
             general.append(value);
             document.add(new TextField(key, value, store));

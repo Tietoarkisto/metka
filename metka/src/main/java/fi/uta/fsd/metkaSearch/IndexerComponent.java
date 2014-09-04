@@ -5,6 +5,7 @@ import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
+import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
@@ -30,10 +31,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -42,6 +42,10 @@ import java.util.concurrent.Future;
 @Service
 public class IndexerComponent {
     private static final Logger logger = LoggerFactory.getLogger(IndexerComponent.class);
+
+    @PersistenceContext(name = "entityManager")
+    private EntityManager em;
+
     @Autowired
     private RevisionRepository revisions;
 
@@ -121,6 +125,32 @@ public class IndexerComponent {
                     startIndexer(command.getPath());
                 }
             }
+        }
+    }
+
+    /**
+     * Creates indexing commands for every revision in every language in database
+     */
+    public void indexEverything() {
+        List<RevisionableEntity> entities = em.createQuery("SELECT e FROM RevisionableEntity e", RevisionableEntity.class).getResultList();
+        List<IndexerCommand> commands = new ArrayList<>();
+        for(RevisionableEntity entity : entities) {
+            List<Integer> nos = revisions.getAllRevisionNumbers(entity.getId());
+            for(Integer no : nos) {
+                for(Language language : Language.values()) {
+                    commands.add(RevisionIndexerCommand.index(ConfigurationType.fromValue(entity.getType()), language, entity.getId(), no));
+                }
+            }
+        }
+        for(ConfigurationType type : ConfigurationType.values()) {
+            for(Language language : Language.values()) {
+                IndexerCommand command = RevisionIndexerCommand.stop(type, language);
+                DirectoryManager.getIndexDirectory(command.getPath(), true).clearIndex();
+                addCommand(command);
+            }
+        }
+        for(IndexerCommand command : commands) {
+            addCommand(command);
         }
     }
 

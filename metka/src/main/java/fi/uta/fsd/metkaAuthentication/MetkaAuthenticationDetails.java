@@ -1,5 +1,7 @@
 package fi.uta.fsd.metkaAuthentication;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthoritiesContainer;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -9,7 +11,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class MetkaAuthenticationDetails implements GrantedAuthoritiesContainer {
-
+    private static final Logger logger = LoggerFactory.getLogger(MetkaAuthenticationDetails.class);
     private final String sessionId;
     private final String userName;
     private final String displayName;
@@ -48,10 +50,12 @@ public class MetkaAuthenticationDetails implements GrantedAuthoritiesContainer {
 
     @Override
     public Set<? extends GrantedAuthority> getGrantedAuthorities() {
-        String[] aRoles = StringUtils.commaDelimitedListToStringArray(roles);
+        String[] aRoles = StringUtils.delimitedListToStringArray(roles, ";");
         String topRole = null;
         for(String role : aRoles) {
+            role = StringUtils.trimAllWhitespace(role);
             role = role.toUpperCase();
+            logger.info("User "+userName+" has role "+role);
             if (!role.startsWith("ROLE_")) {
                 role = "ROLE_" + roleFromShibbolethRole(role);
             }

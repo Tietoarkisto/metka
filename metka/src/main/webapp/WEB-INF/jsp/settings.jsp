@@ -52,6 +52,10 @@
             Lataa raportti
         </button>
 
+        <button type="button" class="btn btn-default" onclick="require(['./modules/assignUrl'], function (assignUrl) {assignUrl('/settings/indexEverything');})">
+            Indeksoi kaikki
+        </button>
+
     </div>
 </div>
 <script>

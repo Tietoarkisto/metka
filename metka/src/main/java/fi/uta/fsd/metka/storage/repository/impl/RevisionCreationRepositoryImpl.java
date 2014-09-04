@@ -236,13 +236,13 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
             case STUDY_VARIABLES: {
                 VariablesFactory factory = new VariablesFactory();
                 data = factory.newStudyVariables(revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo(), configuration,
-                        request.getParameters().get("studyid"), request.getParameters().get("fileid"));
+                        request.getParameters().get("study"), request.getParameters().get("fileid"));
                 break;
             }
             case STUDY_VARIABLE: {
                 VariablesFactory factory = new VariablesFactory();
                 data = factory.newVariable(revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo(), configuration,
-                        request.getParameters().get("variablesid"), request.getParameters().get("studyid"), request.getParameters().get("varid"));
+                        request.getParameters().get("variablesid"), request.getParameters().get("study"), request.getParameters().get("varid"));
                 break;
             }
             case PUBLICATION: {
