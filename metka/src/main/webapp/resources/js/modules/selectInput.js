@@ -32,8 +32,11 @@ define(function (require) {
             }
 
             var list = require('./utils/getPropertyNS')(options, 'dataConf.selectionLists', listKey);
+            if (!list) {
+                log('list not found', listKey, options);
+            }
             if (list.type === 'SUBLIST') {
-                return selectInput(list.sublistKey);
+                return selectInput(list.sublistKey || list.key);
             }
 
             if (list.includeEmpty === null || list.includeEmpty) {

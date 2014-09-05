@@ -705,12 +705,12 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                 if(sysmissRow == null) {
                     sysmissRow = DataRow.build(categories);
                 }
-                categories.getRowsFor(DEFAULT).add(sysmissRow);
+                categories.addRow(DEFAULT, sysmissRow);
 
                 result = resultCheck(result, setCategoryRow(sysmissRow, "SYSMISS", "SYSMISS", sysmiss, true, changeMap));
             } else if(sysmissRow != null) {
                 // SYSMISS row is not needed but existed previously, mark as removed
-                categories.getRowsFor(DEFAULT).add(sysmissRow); // Insert it back to to categories container before removal or the change doesn't make any sense
+                categories.addRow(DEFAULT, sysmissRow); // Insert it back to to categories container before removal or the change doesn't make any sense
                 StatusCode removeResult = categories.removeRow(sysmissRow.getRowId(), changeMap, info).getLeft();
                 if(removeResult == StatusCode.ROW_CHANGE || removeResult == StatusCode.ROW_REMOVED) {
                     result = resultCheck(result, ParseResult.REVISION_CHANGES);
@@ -1007,6 +1007,9 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         }
 
         private static List<DataRow> gatherAndClear(ContainerDataField field) {
+            if(field.getRowsFor(DEFAULT) == null) {
+                return new ArrayList<>();
+            }
             List<DataRow> rows = new ArrayList<>(field.getRowsFor(DEFAULT));
             field.getRowsFor(DEFAULT).clear();
             return rows;

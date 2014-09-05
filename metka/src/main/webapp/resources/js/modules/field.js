@@ -2,12 +2,12 @@ define(function (require) {
     'use strict';
 
     var customFields = {
-        custom_studyAttachments: require('./custom/fields/studyAttachments'),
         custom_studyRelatedBinders: require('./custom/fields/studyRelatedBinders'),
         custom_studyErrors: require('./custom/fields/studyErrors'),
         custom_studyVariablesBasic: require('./custom/fields/studyVariablesBasic'),
         custom_studyVariablesGrouped: require('./custom/fields/studyVariablesGrouped'),
-        custom_studyVariablesGrouping: require('./custom/fields/studyVariablesGrouping')
+        custom_studyVariablesGrouping: require('./custom/fields/studyVariablesGrouping'),
+        files: require('./custom/fields/files')
     };
 
     return function (options) {

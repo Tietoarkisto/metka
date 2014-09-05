@@ -144,14 +144,14 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         }
 
         fieldPair = revision.dataField(ValueDataFieldCall.get("file"));
-        if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+        if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || !fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
             // We have no file path, no need to continue
             return;
         }
 
         String path = fieldPair.getRight().getActualValueFor(Language.DEFAULT);
         // Check if file is variable file name
-        boolean parse = !FilenameUtils.getName(path).substring(0, 3).toUpperCase().equals("DAF");
+        boolean parse = FilenameUtils.getName(path).substring(0, 3).toUpperCase().equals("DAF");
         // Check if file is variable file based on file extension
         if(parse) {
             if(!FilenameUtils.getExtension(path).toUpperCase().equals("POR")) {

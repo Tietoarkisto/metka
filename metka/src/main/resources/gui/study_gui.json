@@ -913,7 +913,9 @@
                                 "type": "CELL",
                                 "title": "Liitetyt tiedostot",
                                 "field": {
-                                    "key": "custom_studyAttachments"
+                                    "key": "files",
+                                    "showSaveInfo": true,
+                                    "showReferenceKey": true
                                 }
                             }
                         ]

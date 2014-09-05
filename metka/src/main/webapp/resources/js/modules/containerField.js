@@ -52,6 +52,7 @@ define(function (require) {
 
                         var type = (function () {
                             if (fieldOptions.type === 'REFERENCECONTAINER') {
+                                return;
                                 var target = options.dataConf.references[fieldOptions.reference].target;
                                 var field = require('./../metka').dataConfigurations[target].fields[column];
                                 return field ? field.type : false;
