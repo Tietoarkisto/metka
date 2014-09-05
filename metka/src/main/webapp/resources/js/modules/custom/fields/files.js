@@ -31,7 +31,6 @@ define(function (require) {
                                              options.data = data.transferData;
                                              options.header = function header($header) {
                                              }*/
-                                            var ;
                                             var options = $.extend(data.gui, {
                                                 title: 'Muokkaa tiedostoa',
                                                 data: data.transferData,
