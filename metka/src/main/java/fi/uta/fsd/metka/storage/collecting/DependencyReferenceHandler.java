@@ -2,17 +2,18 @@ package fi.uta.fsd.metka.storage.collecting;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
-import fi.uta.fsd.metka.enums.*;
+import fi.uta.fsd.metka.enums.FieldType;
+import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.enums.ReferenceTitleType;
+import fi.uta.fsd.metka.enums.SelectionListType;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
-import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.configuration.Field;
-import fi.uta.fsd.metka.model.configuration.Reference;
-import fi.uta.fsd.metka.model.configuration.SelectionList;
+import fi.uta.fsd.metka.model.configuration.*;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.model.general.TranslationObject;
 import fi.uta.fsd.metka.storage.entity.MiscJSONEntity;
+import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
@@ -30,6 +31,9 @@ import java.util.List;
 class DependencyReferenceHandler extends ReferenceHandler {
     @Autowired
     private RevisionRepository revisions;
+
+    @Autowired
+    private ConfigurationRepository configurations;
 
     /**
      * Analyses a dependency reference and collects needed values defined by that reference.
@@ -123,12 +127,12 @@ class DependencyReferenceHandler extends ReferenceHandler {
         if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
             return;
         }
+        RevisionData data = dataPair.getRight();
 
         // TODO: fields that are not top level value fields, for now assume this is the case.
 
         // TODO: If field type is SELECTION or some other type that requires multiple options and valuePath points to something that allows multiple options then add all of them.
 
-        RevisionData data = dataPair.getRight();
         ReferenceOptionTitle title = null;
         Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get(reference.getValuePath()));
         if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || !fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
@@ -147,6 +151,25 @@ class DependencyReferenceHandler extends ReferenceHandler {
                     title = new ReferenceOptionTitle(ReferenceTitleType.VALUE, to);
                 } else {
                     title = new ReferenceOptionTitle(ReferenceTitleType.LITERAL, to);
+                }
+            }
+        }
+
+        if(title == null) {
+            Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(data.getConfiguration());
+            Field targetField = null;
+            if(configPair.getLeft() == ReturnResult.CONFIGURATION_FOUND) {
+                targetField = configPair.getRight().getField(reference.getValuePath());
+            }
+            if(targetField != null && targetField.getType() == FieldType.SELECTION) {
+                SelectionList list = configPair.getRight().getRootSelectionList(targetField.getSelectionList());
+                if(list != null) {
+                    Option option = list.getOptionWithValue(value);
+                    if(option != null) {
+                        TranslationObject to = new TranslationObject();
+                        to.getTexts().put(Language.DEFAULT.toValue(), option.getDefaultTitle());
+                        title = new ReferenceOptionTitle(list.getType() == SelectionListType.LITERAL ? ReferenceTitleType.LITERAL : ReferenceTitleType.VALUE, to);
+                    }
                 }
             }
         }
