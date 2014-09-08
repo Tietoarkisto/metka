@@ -11,13 +11,16 @@ define(function (require) {
         var $thead = $('<thead>');
         var $tbody = $('<tbody>');
 
-
         function field2TableHead(prefix) {
             return function (field) {
                 columns.push(field);
-                return $('<th>')
-                    .text(MetkaJS.L10N.get(prefix + '.' + field));
+                return th(prefix, field);
             };
+        }
+
+        function th(prefix, field) {
+            return $('<th>')
+                .text(MetkaJS.L10N.get(prefix + '.' + field));
         }
 
         function tableError(errors) {
@@ -31,42 +34,46 @@ define(function (require) {
                     });
             }
         }
-
         function tr(transferRow) {
             var $tr = $('<tr>');
 
             tableError.call($tr, transferRow.errors);
 
-            return $tr
+            $tr
                 .data('transferRow', transferRow)
                 .append(columns.map(function (column, i) {
                     var $td = $('<td>')
                         .toggleClass('hiddenByTranslationState', $thead.children('tr').children().eq(i).hasClass('hiddenByTranslationState'));
 
                     return $td.append((function () {
-                        if (column === 'rowCommands') {
-                            $td.css('text-align', 'right');
-                            return $('<button type="button" class="btn btn-default btn-xs">')
-                                .append('<span class="glyphicon glyphicon-remove"></span> ' + MetkaJS.L10N.get('general.buttons.remove'));
-                        }
-
                         var type = (function () {
+                            var metka = require('./../metka');
                             if (fieldOptions.type === 'REFERENCECONTAINER') {
-                                return;
+                                var $span = $('<span>');
+                                require('./server')('options', {
+                                    data: JSON.stringify({
+                                        key: key,
+                                        requests : [{
+                                            key: column,
+                                            container: key,
+                                            confType: options.dataConf.key.type,
+                                            confVersion: options.dataConf.key.version,
+                                            dependencyValue: transferRow.value
+                                        }]
+                                    }),
+                                    success: function (data) {
+                                        log(data);
+                                    }
+                                });
+                                return $span;
                                 var target = options.dataConf.references[fieldOptions.reference].target;
-                                var field = require('./../metka').dataConfigurations[target].fields[column];
+                                var field = metka.dataConfigurations[target].fields[column];
                                 return field ? field.type : false;
                             }
                             var type = getPropertyNS(options, 'dataConf.fields', column, 'type');
                             if (type) {
                                 return type;
                             }
-
-                            return {
-                                savedAt: 'DATE',
-                                savedBy: 'STRING'
-                            }[column];
-
                         })();
 
                         if (!type) {
@@ -138,6 +145,23 @@ define(function (require) {
                         return '-';
                     })());
                 }));
+
+            if (options.field.showSaveInfo) {
+                $tr.append(
+                    $('<td>')
+                        .text(moment(transferRow.saved.time).format(require('./dateFormats')['DATE'])),
+                    $('<td>')
+                        .text(transferRow.saved.user));
+            }
+
+            if (options.field.hasRowCommands) {
+                $tr.append($('<td>')
+                    .css('text-align', 'right')
+                    .html($('<button type="button" class="btn btn-default btn-xs">')
+                        .append('<span class="glyphicon glyphicon-remove"></span> ' + MetkaJS.L10N.get('general.buttons.remove'))));
+            }
+
+            return $tr;
         }
 
         function appendRow(transferRow) {
@@ -233,7 +257,6 @@ define(function (require) {
             .append($panelHeading)
             .append($('<table class="table table-condensed">')
                 .if(options.field.onClick || !require('./isFieldDisabled')(options), function () {
-
                     this
                         .addClass('table-hover');
 
@@ -292,13 +315,12 @@ define(function (require) {
                             .map(field2TableHead(PAGE + '.field')))
                         .append(function () {
                             if (options.field.showSaveInfo) {
-                                var addColumn = field2TableHead('general.saveInfo');
-                                return [addColumn('savedAt'), addColumn('savedBy')];
+                                return [th('general.saveInfo', 'savedAt'), th('general.saveInfo', 'savedBy')];
                             }
                         })
                         .append(function () {
                             if (!require('./isFieldDisabled')(options) || options.field.onRemove) {
-                                columns.push('rowCommands');
+                                options.field.hasRowCommands = true;
                                 $tbody
                                     .on('click', 'tr button', function () {
                                         var $tr = $(this).closest('tr');

@@ -81,14 +81,13 @@ define(function (require) {
                             }
                             return $li;
                         })))
-                        .append([
-                            '<div class="col-sm-4">',
-                                '<div class="row">',
-                                    '<div class="col-md-12" style="padding-top: 20px;">',
-                                        '<a href="#" class="navbar-link pull-right">Kirjaudu ulos</a>',
-                                    '</div>',
-                                '</div>',
-                                '<div class="row">',
+                        .append($('<div class="col-sm-4">')
+                            .append($('<div class="row">')
+                                .append($('<div class="col-md-12" style="padding-top: 20px;">')
+                                    .append($('<span class="pull-right">')
+                                        .text(MetkaJS.User.displayName + ' | ')
+                                        .append('<a href="#" class="navbar-link">Kirjaudu ulos</a>'))),
+                                ['<div class="row">',
                                     '<div class="text-right col-sm-4 navbar-text" style="margin-left: 0px; margin-right: 0px; margin-bottom: 0px;">',
                                     '</div>',
                                     '<div class="col-sm-8">',
@@ -103,9 +102,7 @@ define(function (require) {
                                             '</form>',
                                         '</div>',
                                     '</div>',
-                                '</div>',
-                            '</div>'
-                    ].join('')))));
+                                '</div>'].join(''))))));
 
     $('.navbar-form').submit(function () {
         function error() {
