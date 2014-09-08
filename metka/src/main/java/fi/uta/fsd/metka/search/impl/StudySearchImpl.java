@@ -50,7 +50,10 @@ public class StudySearchImpl implements StudySearch {
             }
             RevisionSearchResult result = new RevisionSearchResult();
             result.setId(entity.getId());
-            result.getValues().put("title", dataPair.getRight().dataField(ValueDataFieldCall.get("title")).getRight().getActualValueFor(Language.DEFAULT));
+            Pair<StatusCode, ValueDataField> fieldPair = dataPair.getRight().dataField(ValueDataFieldCall.get("title"));
+            String title = (fieldPair.getLeft() == StatusCode.FIELD_FOUND) ? fieldPair.getRight().getActualValueFor(Language.DEFAULT) : "[Aineistolla ei ole nimeä]";
+
+            result.getValues().put("title", title);
             results.add(result);
         }
         return new ImmutablePair<>(ReturnResult.OPERATION_SUCCESSFUL, results);

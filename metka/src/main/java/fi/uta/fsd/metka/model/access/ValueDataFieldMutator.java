@@ -78,6 +78,7 @@ final class ValueDataFieldMutator {
             fieldMap.put(key, field);
 
             statusCode = StatusCode.FIELD_INSERT;
+            pair = new ImmutablePair<>(statusCode, field);
         } else if(pair.getLeft() == StatusCode.FIELD_FOUND) {
             pair.getRight().setCurrentFor(language, ValueContainer.build(info, value));
             statusCode = StatusCode.FIELD_UPDATE;

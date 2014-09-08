@@ -3,7 +3,7 @@ define(function (require) {
 
     return function (url/*[, urlOpts]*/, options) {
         var mockData = {
-            '/study/studiesWithVariables': {
+            /*'/study/studiesWithVariables': {
                 studies: [{
                     id: 1,
                     title: 'mooasdfasdf'
@@ -14,7 +14,7 @@ define(function (require) {
                     id: 3,
                     title: 'mooaadfsdfasdf'
                 }]
-            },
+            },*/
             '/studyAttachments': {
 
             }

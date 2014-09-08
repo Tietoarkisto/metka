@@ -41,6 +41,7 @@ define(function (require) {
             }
 
             if (options.field.multiline) {
+                elemOptions.rows = '4';
                 return 'textarea';
             }
 
