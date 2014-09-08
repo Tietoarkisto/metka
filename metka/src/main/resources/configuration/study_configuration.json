@@ -415,7 +415,7 @@
 			"key": "files_path_ref",
 			"type": "DEPENDENCY",
 			"target": "files",
-			"titlePath": "file"
+			"valuePath": "file"
 		},
 		"files_lang_ref": {
 			"key": "files_lang_ref",

@@ -1,17 +1,9 @@
 package fi.uta.fsd.metka.mvc.services.impl;
 
-import fi.uta.fsd.metka.enums.Language;
-import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.mvc.services.HistoryService;
-import fi.uta.fsd.metka.mvc.services.requests.ChangeCompareRequest;
-import fi.uta.fsd.metka.mvc.services.simple.history.ChangeCompareSO;
-import fi.uta.fsd.metka.mvc.services.simple.history.RevisionSO;
 import fi.uta.fsd.metka.storage.repository.HistoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class HistoryServiceImpl implements HistoryService {
@@ -19,7 +11,7 @@ public class HistoryServiceImpl implements HistoryService {
     @Autowired
     private HistoryRepository repository;
 
-    @Override public List<RevisionSO> getRevisionHistory(Long id) {
+    /*@Override public List<RevisionSO> getRevisionHistory(Long id) {
         List<RevisionSO> revisions = new ArrayList<RevisionSO>();
         List<RevisionData> datas = null;
         datas = repository.getRevisionHistory(id);
@@ -36,7 +28,7 @@ public class HistoryServiceImpl implements HistoryService {
         }
 
         return revisions;
-    }
+    }*/
 
     /**
      * Compares revision between two revision numbers (inclusive) and collects all changes that have happened after
@@ -44,8 +36,8 @@ public class HistoryServiceImpl implements HistoryService {
      * @param request User selected values for revision comparison.
      * @return
      */
-    @Override public ChangeCompareSO compareRevisions(ChangeCompareRequest request) {
+    /*@Override public ChangeCompareSO compareRevisions(ChangeCompareRequest request) {
 
         return null;
-    }
+    }*/
 }

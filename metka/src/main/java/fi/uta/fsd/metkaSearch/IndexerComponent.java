@@ -256,7 +256,7 @@ public class IndexerComponent {
         }
         try {
             // Wait while the current batch is being handled
-            while(runningBatch = true) {
+            while(runningBatch) {
                 Thread.sleep(500);
             }
             if(studyCommandBatch.containsKey(pair.getRight().getKey())) {

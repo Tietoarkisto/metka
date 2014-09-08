@@ -9,15 +9,15 @@ import fi.uta.fsd.metka.model.configuration.Reference;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.model.general.TranslationObject;
-import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
+import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
-import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOptionTitle;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -27,6 +27,9 @@ import java.util.List;
 @Service
 class RevisionableReferenceHandler extends ReferenceHandler {
     private static Logger logger = LoggerFactory.getLogger(RevisionableReferenceHandler.class);
+
+    @Autowired
+    private RevisionRepository revisions;
 
     /**
      * Analyses a revisionable reference and collects the values defined by that reference.
@@ -51,15 +54,8 @@ class RevisionableReferenceHandler extends ReferenceHandler {
             ReferenceOptionTitle title = null;
             if(StringUtils.hasText(reference.getTitlePath())) {
                 // Title is requested
-                RevisionEntity revision = repository.getRevisionForReference(entity, reference);
-                if(revision == null || !StringUtils.hasText(revision.getData())) {
-                    // TODO: There's a data problem, log event
-                    continue;
-                }
-
-                Pair<SerializationResults, RevisionData> dataPair = json.deserializeRevisionData(revision.getData());
-                if(dataPair.getLeft() != SerializationResults.DESERIALIZATION_SUCCESS) {
-                    logger.error("Failed at deserializing "+revision.toString());
+                Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(entity.getId(), reference.getApprovedOnly(), null);
+                if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
                     continue;
                 }
                 Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(dataPair.getRight().getConfiguration());

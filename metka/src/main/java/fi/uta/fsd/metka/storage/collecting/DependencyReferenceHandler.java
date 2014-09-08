@@ -2,10 +2,7 @@ package fi.uta.fsd.metka.storage.collecting;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
-import fi.uta.fsd.metka.enums.FieldType;
-import fi.uta.fsd.metka.enums.Language;
-import fi.uta.fsd.metka.enums.ReferenceTitleType;
-import fi.uta.fsd.metka.enums.SelectionListType;
+import fi.uta.fsd.metka.enums.*;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
@@ -16,12 +13,13 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.model.general.TranslationObject;
 import fi.uta.fsd.metka.storage.entity.MiscJSONEntity;
-import fi.uta.fsd.metka.storage.entity.RevisionEntity;
+import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOptionTitle;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -30,6 +28,9 @@ import java.util.List;
 // TODO: Actual handling of language, for now always fetches values from default
 @Service
 class DependencyReferenceHandler extends ReferenceHandler {
+    @Autowired
+    private RevisionRepository revisions;
+
     /**
      * Analyses a dependency reference and collects needed values defined by that reference.
      * Configuration is required since content of options depends on another field inside the same configuration,
@@ -118,14 +119,8 @@ class DependencyReferenceHandler extends ReferenceHandler {
      */
     private void collectRevisionableDependencyValues(Field field, Reference reference,
                                                      String dependencyValue, List<ReferenceOption> options) {
-        RevisionEntity revision = repository.getRevisionForReferencedRevisionable(reference, dependencyValue);
-        if(revision == null || !StringUtils.hasText(revision.getData())) {
-            // No data, can't continue
-            return;
-        }
-
-        Pair<SerializationResults, RevisionData> pair = json.deserializeRevisionData(revision.getData());
-        if(pair.getLeft() != SerializationResults.DESERIALIZATION_SUCCESS) {
+        Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(Long.parseLong(dependencyValue), false, null);
+        if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
             return;
         }
 
@@ -133,10 +128,10 @@ class DependencyReferenceHandler extends ReferenceHandler {
 
         // TODO: If field type is SELECTION or some other type that requires multiple options and valuePath points to something that allows multiple options then add all of them.
 
-        RevisionData data = pair.getRight();
+        RevisionData data = dataPair.getRight();
         ReferenceOptionTitle title = null;
         Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get(reference.getValuePath()));
-        if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+        if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || !fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
             // No value to save
             return;
         }

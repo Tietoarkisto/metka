@@ -26,9 +26,9 @@ public class VoikkoFactory {
         } finally {
             Closeables.closeQuietly(inputStream);
         }
-        logger.info("Creating Voikko for path "+p.getProperty("dir.voikko"));
+        logger.info("Creating Voikko for path "+p.getProperty("dir.dictionary"));
         try {
-            return new Voikko("fi", p.getProperty("dir.voikko"));
+            return new Voikko("fi", p.getProperty("dir.dictionary"));
         } catch (Exception e) {
             logger.error("Exception while creating Voikko object.", e);
             throw e;

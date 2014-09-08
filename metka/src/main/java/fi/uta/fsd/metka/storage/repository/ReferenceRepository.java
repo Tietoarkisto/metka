@@ -1,9 +1,8 @@
 package fi.uta.fsd.metka.storage.repository;
 
-import fi.uta.fsd.metka.storage.entity.MiscJSONEntity;
-import fi.uta.fsd.metka.storage.entity.RevisionEntity;
-import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.model.configuration.Reference;
+import fi.uta.fsd.metka.storage.entity.MiscJSONEntity;
+import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -27,7 +26,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public interface ReferenceRepository {
     public List<RevisionableEntity> getRevisionablesForReference(Reference reference);
-    public RevisionEntity getRevisionForReference(RevisionableEntity revisionable, Reference reference);
     public MiscJSONEntity getMiscJsonForReference(Reference reference);
-    public RevisionEntity getRevisionForReferencedRevisionable(Reference reference, String value);
+    /*public RevisionEntity getRevisionForReference(RevisionableEntity revisionable, Reference reference);
+    public RevisionEntity getRevisionForReferencedRevisionable(Reference reference, String value);*/
 }

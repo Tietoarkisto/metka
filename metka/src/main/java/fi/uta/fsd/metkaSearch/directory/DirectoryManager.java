@@ -19,7 +19,7 @@ public class DirectoryManager {
 
     private final Map<DirectoryPath, DirectoryInformation> indexDirectories = new ConcurrentHashMap<>();
 
-    @Value("${dir.autoload}")
+    @Value("${dir.index}")
     private String indexBaseDirectory;
 
     // Hide default Constructor

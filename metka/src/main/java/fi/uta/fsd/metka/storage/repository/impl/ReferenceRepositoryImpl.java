@@ -1,19 +1,15 @@
 package fi.uta.fsd.metka.storage.repository.impl;
 
-import fi.uta.fsd.metka.storage.entity.MiscJSONEntity;
-import fi.uta.fsd.metka.storage.entity.RevisionEntity;
-import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
-import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.enums.ConfigurationType;
-import fi.uta.fsd.metka.storage.repository.ReferenceRepository;
 import fi.uta.fsd.metka.model.configuration.Reference;
+import fi.uta.fsd.metka.storage.entity.MiscJSONEntity;
+import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
+import fi.uta.fsd.metka.storage.repository.ReferenceRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.*;
-
-import static fi.uta.fsd.metka.storage.util.ConversionUtil.*;
+import java.util.List;
 
 @Repository("referenceRepository")
 public class ReferenceRepositoryImpl implements ReferenceRepository {
@@ -32,7 +28,7 @@ public class ReferenceRepositoryImpl implements ReferenceRepository {
                         .setParameter("removed", false)
                         .getResultList();
         return entities;
-    }
+    }/*
 
     @Override
     public RevisionEntity getRevisionForReference(RevisionableEntity revisionable, Reference reference) {
@@ -42,13 +38,13 @@ public class ReferenceRepositoryImpl implements ReferenceRepository {
         RevisionKey key = (reference.getApprovedOnly()) ? revisionable.currentApprovedRevisionKey() : revisionable.latestRevisionKey();
         RevisionEntity revision = em.find(RevisionEntity.class, key);
         return revision;
-    }
+    }*/
 
     @Override
     public MiscJSONEntity getMiscJsonForReference(Reference reference) {
         MiscJSONEntity entity = em.find(MiscJSONEntity.class, reference.getTarget());
         return entity;
-    }
+    }/*
 
     @Override
     public RevisionEntity getRevisionForReferencedRevisionable(Reference reference, String value) {
@@ -61,5 +57,5 @@ public class ReferenceRepositoryImpl implements ReferenceRepository {
             return null;
         }
         return getRevisionForReference(revisionable, reference);
-    }
+    }*/
 }
