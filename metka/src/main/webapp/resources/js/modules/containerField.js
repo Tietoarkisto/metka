@@ -62,7 +62,7 @@ define(function (require) {
                                         }]
                                     }),
                                     success: function (data) {
-                                        log(data);
+                                        $td.text(data.responses.length && data.responses[0].options.length && data.responses[0].options[0].title.value.default);
                                     }
                                 });
                                 return $span;
@@ -273,24 +273,11 @@ define(function (require) {
                 })
                 .append($thead
                     .append($('<tr>')
-                        .append(function () {
-                            if (/*options.field.showReferenceKey*/getPropertyNS(options, 'dataConf.fields', key, 'showReferenceKey')) {
+                        /*.append(function () {
+                            if (options.field.showReferenceKey ??? getPropertyNS(options, 'dataConf.fields', key, 'showReferenceKey')) {
                                 var target = options.dataConf.references[options.dataConf.fields[key].reference].target;
-
-/*
-                                require('./server')('/revision/ajax/view/{page}/{id}/{no}', {
-                                    page: target.toLocaleLowerCase()
-                                }, {
-                                    method: 'GET',
-                                    success: function (data) {
-                                        log('data', data);
-                                    }
-                                });*/
-
-
-                                //return field2TableHead(target + '.field')(require('./../metka').dataConfigurations[target].idField);
                             }
-                        })
+                        })*/
                         .append(function () {
                             var response = [];
                             var th = field2TableHead(PAGE + '.field');
@@ -354,12 +341,11 @@ define(function (require) {
             .append(function () {
                 var buttons = (options.buttons || []);
                 if (!require('./isFieldDisabled')(options)) {
-
                     buttons.push({
                         create: function () {
                             this
                                 .text(MetkaJS.L10N.get('general.table.add'))
-                                .click(function () {
+                                .click(options.field.onAdd || function () {
                                     rowDialog('add', 'add', addRow)({});
                                 });
                         }
