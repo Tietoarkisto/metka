@@ -915,7 +915,11 @@
                                 "field": {
                                     "key": "files",
                                     "showSaveInfo": true,
-                                    "showReferenceKey": true
+                                    "showReferenceKey": true,
+                                    "columnFields": [
+                                        "filespath",
+                                        "fileslang"
+                                    ]
                                 }
                             }
                         ]
