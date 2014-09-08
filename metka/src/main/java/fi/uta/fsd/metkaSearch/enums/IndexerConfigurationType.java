@@ -7,11 +7,10 @@ package fi.uta.fsd.metkaSearch.enums;
  * This information can contain things like object keys, indexing configurations, content for indexing etc.
  */
 public enum IndexerConfigurationType {
-    DUMMY, // Used only for simple testing, doesn't do anything
+    DUMMY, // Used for testing, no set content
     REVISION, // Used to index top level information about a revision
     CONTAINER, // Used to index container information from revision
     REFERENCECONTAINER, // Used to index reference container information from revision
-    WIKIPEDIA, // Should be removed from production
     JSON
     // ...
 }

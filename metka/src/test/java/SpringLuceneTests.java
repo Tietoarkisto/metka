@@ -62,6 +62,9 @@ public class SpringLuceneTests {
     @Autowired
     private ConfigurationRepository configs;
 
+    @Autowired
+    private DirectoryManager manager;
+
     @PersistenceContext(name = "entityManager")
     private EntityManager em;
 
@@ -142,7 +145,7 @@ public class SpringLuceneTests {
     @Test
     public void tempSearchTest() throws IOException, QueryNodeException {
         DirectoryManager.DirectoryPath path = new DirectoryManager.DirectoryPath(false, IndexerConfigurationType.REVISION, Language.DEFAULT, ConfigurationType.STUDY.toValue());
-        DirectoryInformation dir = DirectoryManager.getIndexDirectory(path, false);
+        DirectoryInformation dir = manager.getIndexDirectory(path, false);
         IndexReader reader = dir.getIndexReader();
         IndexSearcher searcher = new IndexSearcher(reader);
 
@@ -179,7 +182,7 @@ public class SpringLuceneTests {
     @Test
     public void analyzerTest() throws IOException, QueryNodeException {
         //indexer.startIndexer(DirectoryManager.formPath(true, IndexerConfigurationType.DUMMY, null));
-        DirectoryInformation di = DirectoryManager.getIndexDirectory(DirectoryManager.formPath(true, IndexerConfigurationType.DUMMY, null), true);
+        DirectoryInformation di = manager.getIndexDirectory(DirectoryManager.formPath(true, IndexerConfigurationType.DUMMY, null), true);
         Map<String, Analyzer> analyzers = new HashMap<>();
         analyzers.put("analyzed1", new FinnishVoikkoAnalyzer());
         analyzers.put("analyzed2", new FinnishVoikkoAnalyzer());
@@ -221,7 +224,7 @@ public class SpringLuceneTests {
 
     @Test
     public void dateRangeTest() throws Exception {
-        TEST_INDEXER = DirectoryManager.getIndexDirectory(DirectoryManager.formPath(true, IndexerConfigurationType.DUMMY, null), true);
+        TEST_INDEXER = manager.getIndexDirectory(DirectoryManager.formPath(true, IndexerConfigurationType.DUMMY, null), true);
         Map<String, Analyzer> analyzers = new HashMap<>();
         analyzers.put("date1", new FinnishVoikkoAnalyzer());
         analyzers.put("date2", new KeywordAnalyzer());
@@ -350,7 +353,7 @@ public class SpringLuceneTests {
 
     @Test
     public void numberRangeTest() throws Exception {
-        TEST_INDEXER = DirectoryManager.getIndexDirectory(DirectoryManager.formPath(true, IndexerConfigurationType.DUMMY, null), true);
+        TEST_INDEXER = manager.getIndexDirectory(DirectoryManager.formPath(true, IndexerConfigurationType.DUMMY, null), true);
         Map<String, Analyzer> analyzers = new HashMap<>();
         analyzers.put("int1", new FinnishVoikkoAnalyzer());
         analyzers.put("int2", new KeywordAnalyzer());
@@ -463,7 +466,7 @@ public class SpringLuceneTests {
 
     @Test
     public void phraseTest() throws Exception {
-        TEST_INDEXER = DirectoryManager.getIndexDirectory(DirectoryManager.formPath(true, IndexerConfigurationType.DUMMY, null), true);
+        TEST_INDEXER = manager.getIndexDirectory(DirectoryManager.formPath(true, IndexerConfigurationType.DUMMY, null), true);
         Map<String, Analyzer> analyzers = new HashMap<>();
         analyzers.put("phrase1", new FinnishVoikkoAnalyzer());
         analyzers.put("phrase2", new KeywordAnalyzer());
@@ -614,144 +617,4 @@ public class SpringLuceneTests {
         }
 
     }
-
-    /*@Test
-    public void newPathTest() throws IOException {
-        try {
-            DirectoryManager.DirectoryPath path = DirectoryManager.formPath(true, IndexerConfigurationType.DUMMY, null);
-            indexer.startIndexer(path);
-            while(indexer.hasRunningIndexers()) {
-                indexer.addCommand(DummyIndexerCommand.stop(path));
-                Thread.sleep(1000);
-            }
-        } catch(InterruptedException iex) {
-            iex.printStackTrace();
-        }
-    }*/
-
-    /*@Test
-    public void indexerRunningTest() throws IOException {
-        try {
-            int loops = 0;
-            DirectoryManager.DirectoryPath path = DirectoryManager.formPath(true, IndexerConfigurationType.DUMMY, null);
-            indexer.startIndexer(path);
-            while(indexer.hasRunningIndexers()) {
-                Thread.sleep(15000);
-                loops++;
-                System.err.println("Test loops: "+loops);
-                indexer.addCommand(DummyIndexerCommand.index(path));
-                if(loops == 5) {
-                    indexer.stopIndexer(path);
-                }
-            }
-        } catch (InterruptedException ex) {
-            ex.printStackTrace();
-        }
-    }*/
-
-    /*@Test
-    public void wikipediaIndexingTest() {
-        try {
-            DirectoryManager.DirectoryPath path = DirectoryManager.formPath(false, IndexerConfigurationType.WIKIPEDIA, "en");
-            indexer.startIndexer(path);
-            if(indexer.hasRunningIndexers()) {
-                indexer.addCommand(WikipediaIndexerCommand.index(path, "/home/lasseku/wikipedia/en/enwiki-latest-pages-articles1.xml-p000000010p000010000"));
-                indexer.addCommand(WikipediaIndexerCommand.index(path, "/home/lasseku/wikipedia/en/enwiki-latest-pages-articles2.xml-p000010002p000024999"));
-                indexer.addCommand(WikipediaIndexerCommand.index(path, "/home/lasseku/wikipedia/en/enwiki-latest-pages-articles3.xml-p000025001p000055000"));
-                indexer.addCommand(WikipediaIndexerCommand.index(path, "/home/lasseku/wikipedia/en/enwiki-latest-pages-articles4.xml-p000055002p000104998"));
-                indexer.addCommand(WikipediaIndexerCommand.index(path, "/home/lasseku/wikipedia/en/enwiki-latest-pages-articles5.xml-p000105002p000184999"));
-                indexer.addCommand(WikipediaIndexerCommand.index(path, "/home/lasseku/wikipedia/en/enwiki-latest-pages-articles6.xml-p000185003p000305000"));
-                indexer.addCommand(WikipediaIndexerCommand.stop(path));
-            }
-            while(indexer.hasRunningIndexers()) {
-                Thread.sleep(1000);
-            }
-            System.err.println("Indexing complete");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }*/
-
-    /*@Test
-    public void wikipediaIndexingSearchTest() {
-        try {
-            DirectoryManager.DirectoryPath path = DirectoryManager.formPath(false, IndexerConfigurationType.WIKIPEDIA, Language.EN);
-            DirectoryInformation indexer = DirectoryManager.getIndexDirectory(path, false);
-            IndexReader reader = indexer.getIndexReader();
-            IndexSearcher searcher = new IndexSearcher(reader);
-            Query query;
-            BooleanQuery bQuery;
-            //query = new TermQuery(new Term("pageId", "6944"));
-            bQuery = new BooleanQuery();
-            query = new WildcardQuery(new Term("pageId", "6???"));
-            bQuery.add(query, BooleanClause.Occur.MUST);
-            query = new WildcardQuery(new Term("title", "C*"));
-            bQuery.add(query, BooleanClause.Occur.MUST);
-            query = new WildcardQuery(new Term("pageId", "???7"));
-            bQuery.add(query, BooleanClause.Occur.MUST_NOT);
-            printSearchResult(searcher, bQuery);
-        } catch(Exception ex) {
-            ex.printStackTrace();
-        }
-    }*/
-
-    /*@Test
-    public void fiWikipediaIndexingTest() {
-        try {
-            DirectoryManager.DirectoryPath path = DirectoryManager.formPath(false, IndexerConfigurationType.WIKIPEDIA, Language.DEFAULT.toValue());
-            indexer.startIndexer(path);
-            if(indexer.hasRunningIndexers()) {
-                indexer.addCommand(WikipediaIndexerCommand.index(path, "/home/lasseku/wikipedia/fi/fiwiki-latest-pages-articles.xml"));
-                indexer.addCommand(WikipediaIndexerCommand.stop(path));
-            }
-            while(indexer.hasRunningIndexers()) {
-                Thread.sleep(1000);
-            }
-            System.err.println("Indexing complete");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }*/
-
-    /*@Test
-    public void fiWikipediaIndexSearchTest() {
-        try {
-            DirectoryManager.DirectoryPath path = DirectoryManager.formPath(false, IndexerConfigurationType.WIKIPEDIA, Language.DEFAULT.toValue());
-            DirectoryInformation indexer = DirectoryManager.getIndexDirectory(path, false);
-            IndexReader reader = indexer.getIndexReader();
-            IndexSearcher searcher = new IndexSearcher(reader);
-            //Query query;
-            BooleanQuery bQuery;
-            bQuery = new BooleanQuery();
-            Map<String, Analyzer> analyzers = new HashMap<>();
-            FinnishVoikkoAnalyzer voikkoAnalyzer = new FinnishVoikkoAnalyzer();
-            for(int i = 1; i <= 5; i++) {
-                for(int j = 1; j <= 30; j++) {
-                    analyzers.put("topic"+i+".word"+j, voikkoAnalyzer);
-                }
-            }
-            PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new WhitespaceAnalyzer(LuceneConfig.USED_VERSION), analyzers);
-            StandardQueryParser parser = new StandardQueryParser(analyzer);
-            parser.setAllowLeadingWildcard(true);
-            //bQuery.add(parser.parse("title:*", "pageId"), BooleanClause.Occur.MUST);
-            for(int i = 1; i <= 5; i++) {
-                BooleanQuery subB = new BooleanQuery();
-                for(int j = 1; j <= 30; j++) {
-                    subB.add(parser.parse("topic"+i+".word"+j+":kansa", "pageId"), BooleanClause.Occur.SHOULD);
-                }
-                bQuery.add(subB, BooleanClause.Occur.MUST);
-            }
-
-            printSearchResult(searcher, bQuery);
-        } catch(Exception ex) {
-            ex.printStackTrace();
-        }
-    }*/
-
-    /*@Test
-    public void emTest() {
-        RevisionEntity revision = em.find(RevisionEntity.class, new RevisionKey(1L, 1));
-        System.err.println(revision.getState());
-        assertNotNull(revision);
-    }*/
 }

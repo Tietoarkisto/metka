@@ -4,7 +4,6 @@ import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metkaSearch.commands.indexer.DummyIndexerCommand;
 import fi.uta.fsd.metkaSearch.commands.indexer.IndexerCommand;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
-import fi.uta.fsd.metkaSearch.commands.indexer.WikipediaIndexerCommand;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import org.hibernate.annotations.Type;
@@ -174,9 +173,6 @@ public class IndexerCommandEntity {
         switch(type) {
             case DUMMY:
                 command = DummyIndexerCommand.fromParameterString(getPath(), action, parameters);
-                break;
-            case WIKIPEDIA:
-                command = WikipediaIndexerCommand.fromParameterString(getPath(), action, parameters);
                 break;
             case REVISION:
                 command = RevisionIndexerCommand.fromParameterString(getPath(), action, parameters);

@@ -100,6 +100,18 @@
 			"type": "DEPENDENCY",
 			"target": "studies",
 			"titlePath": "title"
+		},
+		"series_ref": {
+			"key": "series_ref",
+			"type": "REVISIONABLE",
+			"target": "SERIES"
+		},
+		"seriesname_ref": {
+			"key": "seriesname_ref",
+			"type": "DEPENDENCY",
+			"target": "series",
+			"titlePath": "seriesname"
+			
 		}
     },
     "fields": {
@@ -224,19 +236,20 @@
 		},
         "series": {
             "key": "series",
-            "type": "REFERENCE"
+            "type": "REFERENCECONTAINER",
+            "translatable": false,
+            "reference": "series_ref",
+            "subfields": [
+            	"seriesname"
+            ]
         },
-        "savedAt": {
-            "_comment": "This can be computed from the revision history and might not be required as part of the datamodel.",
-            "key": "savedAt",
-            "required": true,
-            "type": "DATE"
-        },
-        "savedBy": {
-            "_comment": "This can be computed from the revision history and might not be required as part of the datamodel.",
-            "key": "savedBy",
-            "required": true,
-            "type": "REFERENCE"
+        "seriesname": {
+        	"key": "seriesname",
+        	"type": "REFERENCE",
+        	"translatable": false,
+        	"subfield": true,
+        	"writable": false,
+        	"reference": "seriesname_ref"
         }
     }
 }

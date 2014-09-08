@@ -6,17 +6,20 @@ import fi.uta.fsd.metkaSearch.entity.IndexerCommandRepository;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 
 public class DummyIndexer extends Indexer {
-    public static DummyIndexer build(DirectoryManager.DirectoryPath path, IndexerCommandRepository commands) throws UnsupportedOperationException {
+    public static DummyIndexer build(DirectoryManager manager, DirectoryManager.DirectoryPath path, IndexerCommandRepository commands) throws UnsupportedOperationException {
         checkPathType(path, IndexerConfigurationType.DUMMY);
         // Check additional parameters
+        if(manager == null) {
+            throw new UnsupportedOperationException("Needs a DirectoryManager");
+        }
         if(path.getAdditionalParameters() != null && path.getAdditionalParameters().length > 0) {
             throw new UnsupportedOperationException("Dummy indexer doesn't accept additional parameters");
         }
-        return new DummyIndexer(path, commands);
+        return new DummyIndexer(manager, path, commands);
     }
 
-    private DummyIndexer(DirectoryManager.DirectoryPath path, IndexerCommandRepository commands) throws UnsupportedOperationException {
-        super(path, commands);
+    private DummyIndexer(DirectoryManager manager, DirectoryManager.DirectoryPath path, IndexerCommandRepository commands) throws UnsupportedOperationException {
+        super(manager, path, commands);
     }
 
     @Override

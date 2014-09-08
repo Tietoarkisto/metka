@@ -19,8 +19,11 @@ import org.slf4j.LoggerFactory;
 
 public class RevisionIndexer extends Indexer {
     private static final Logger logger = LoggerFactory.getLogger(RevisionIndexer.class);
-    public static RevisionIndexer build(DirectoryManager.DirectoryPath path, IndexerCommandRepository commands, RevisionRepository revisions, ConfigurationRepository configurations, ReferenceService references) throws UnsupportedOperationException {
+    public static RevisionIndexer build(DirectoryManager manager, DirectoryManager.DirectoryPath path, IndexerCommandRepository commands, RevisionRepository revisions, ConfigurationRepository configurations, ReferenceService references) throws UnsupportedOperationException {
         checkPathType(path, IndexerConfigurationType.REVISION);
+        if(manager == null) {
+            throw new UnsupportedOperationException("Needs a directory manager");
+        }
         // Check that additional parameters matches requirements
         if(path.getAdditionalParameters() == null || path.getAdditionalParameters().length == 0) {
             // There has to be one and only one additional parameter
@@ -38,15 +41,15 @@ public class RevisionIndexer extends Indexer {
             throw new UnsupportedOperationException("Revision indexer needs access to revision and configuration repositories");
         }
 
-        return new RevisionIndexer(path, commands, revisions, configurations, references);
+        return new RevisionIndexer(manager, path, commands, revisions, configurations, references);
     }
 
     private RevisionRepository revisions;
     private ConfigurationRepository configurations;
     private ReferenceService references;
 
-    private RevisionIndexer(DirectoryManager.DirectoryPath path, IndexerCommandRepository commands, RevisionRepository revisions, ConfigurationRepository configurations, ReferenceService references) throws UnsupportedOperationException {
-        super(path, commands);
+    private RevisionIndexer(DirectoryManager manager, DirectoryManager.DirectoryPath path, IndexerCommandRepository commands, RevisionRepository revisions, ConfigurationRepository configurations, ReferenceService references) throws UnsupportedOperationException {
+        super(manager, path, commands);
         this.revisions = revisions;
         this.configurations = configurations;
         this.references = references;

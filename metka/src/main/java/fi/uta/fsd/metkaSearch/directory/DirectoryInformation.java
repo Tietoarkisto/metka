@@ -10,15 +10,13 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.RAMDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
 
 public class DirectoryInformation {
     private static final Logger logger = LoggerFactory.getLogger(DirectoryInformation.class);
-
-    // TODO Read from properties
-    private static final String indexBaseDirectory = "/usr/share/metka/index/";
 
     /**
      * Functions as an identifier for DirectoryInformation.
@@ -38,11 +36,20 @@ public class DirectoryInformation {
     /*private volatile boolean dirty = false;*/
     private volatile IndexWriter indexWriter;
 
-    public DirectoryInformation(DirectoryManager.DirectoryPath path, boolean writable) throws IOException {
+    public DirectoryInformation(String indexBaseDirectory, DirectoryManager.DirectoryPath path, boolean writable) throws IOException {
         this.path = path;
         this.writable = writable;
         if(this.path == null) {
             throw new UnsupportedOperationException("Needs to have a path");
+        }
+
+        if(!StringUtils.hasText(indexBaseDirectory)) {
+            throw new UnsupportedOperationException("Index base directory is an empty path");
+        }
+
+        File base = new File(indexBaseDirectory);
+        if(!base.exists() || !base.isDirectory()) {
+            throw new UnsupportedOperationException("Index base directory doesn't exist or is not a directory");
         }
 
         if(path.isUseRam()) {

@@ -17,6 +17,7 @@ public class Configuration implements ModelBase {
     private final Map<String, Reference> references = new HashMap<>();
     private final Map<String, SelectionList> selectionLists = new HashMap<>();
     private final Map<String, Field> fields = new HashMap<>();
+    private final List<Operation> restrictions = new ArrayList<>();
     private String displayId;
     private String hash; // no functionality for hash is implemented at this time.
 
@@ -53,6 +54,10 @@ public class Configuration implements ModelBase {
 
     public void setDisplayId(String displayId) {
         this.displayId = displayId;
+    }
+
+    public List<Operation> getRestrictions() {
+        return restrictions;
     }
 
     // Helper functions

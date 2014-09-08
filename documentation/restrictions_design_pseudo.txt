@@ -1,8 +1,8 @@
 Data (pseudo)
-operations : [0..* Restriction]
+restrictions : [0..* Operation]
 
-Restriction (pseudo)
-operation : [SAVE|APPROVE|REMOVE]
+Operation (pseudo)
+type : [SAVE|APPROVE|REMOVE]
 conditions : [0..* Condition] {ordered}
 
 Condition (pseudo)
@@ -18,10 +18,19 @@ target: String
 - Container conditions should be formed as trees to facilitate ease of use, field paths are not supported in conditions.
 - Each operation should have their own conditions keeping in mind if APPROVE operation is running then SAVE has to have successfully completed already
 
-Conditions we need
+Target
+* Type is either
+	- FIELD meaning field key. This should always be a key in the current document although in the case of REVISIONABLE references we might need to make an exception
+	- VALUE is a simple value, it is used as a subcondition in some conditions and doesn't really do anything on its own
+	- QUERY is a lucene query the results of which are used for some condition checks.
+	  This needs some predefined variables, like {id} might be replaced with the current key.id of the revision.
+* Target is a String, meaning of which is dependent on the type. For FIELDs it's the field key, for VALUEs it's the value and for QUERYs it's the lucene query to be executed
+
+Conditions
 * Value (Target VALUE)
 	- Plain string value that is used as subcondition of some specific type of conditions
 	- Does nothing on its own (is always true except when actually requested by some other condition)
+	- Target must be of type VALUE
 * Non empty (Target FIELD|QUERY)
 	- Restriction applies if given field has non empty value
 	- Top level fields can only target other top level fields
@@ -57,4 +66,38 @@ Conditions we need
 	- For container fields value must increase between non removed rows even through reordering rows
 
 Example
+Series might contain the following restriction configuration
+restrictions: [
+{
+	type: APPROVE
+	conditions: [
+	{
+		target: {
+			type: FIELD
+			target: seriesabbr
+		}
+		type: UNIQUE
+	}
+	]
+}
+{
+	type: DELETE
+	conditions: [
+	{
+		target: {
+			type: QUERY
+			target: STUDY seriesid.value:{id}
+		}
+		type: IS_EMPTY
+	}
+	{
+		target: {
+			type: QUERY
+			target: PUBLICATION series:{id}
+		}
+		type: IS_EMPTY
+	}
+	]
+}
+]
 

@@ -41,6 +41,8 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
     // Counter for processed commands. Used to detect when to force flush the index if that setting is true.
     private int commandBatch = 0;
 
+    private final DirectoryManager manager;
+
     private final DirectoryInformation indexer;
 
     private final IndexerCommandRepository commands;
@@ -51,9 +53,10 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
 
     //protected BlockingQueue<IndexerCommand> commandQueue = new LinkedBlockingQueue<>();
 
-    protected Indexer(DirectoryManager.DirectoryPath path, IndexerCommandRepository commands) throws UnsupportedOperationException {
+    protected Indexer(DirectoryManager manager, DirectoryManager.DirectoryPath path, IndexerCommandRepository commands) throws UnsupportedOperationException {
         this.path = path;
-        indexer = DirectoryManager.getIndexDirectory(path, true);
+        this.manager = manager;
+        indexer = manager.getIndexDirectory(path, true);
         if(indexer == null) {
             throw new UnsupportedOperationException("Couldn't get an index directory for indexer with path "+path);
         }

@@ -6,15 +6,21 @@ import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Service
 public class DirectoryManager {
     private static final Logger logger = LoggerFactory.getLogger(DirectoryManager.class);
 
-    private static final Map<DirectoryPath, DirectoryInformation> indexDirectories = new ConcurrentHashMap<>();
+    private final Map<DirectoryPath, DirectoryInformation> indexDirectories = new ConcurrentHashMap<>();
+
+    @Value("${dir.autoload}")
+    private String indexBaseDirectory;
 
     // Hide default Constructor
     private DirectoryManager() {}
@@ -36,13 +42,13 @@ public class DirectoryManager {
      * @param path
      * @return
      */
-    public static synchronized DirectoryInformation getIndexDirectory(DirectoryPath path, boolean writable) {
+    public synchronized DirectoryInformation getIndexDirectory(DirectoryPath path, boolean writable) {
         DirectoryInformation index;
         try {
             if (writable) {
                 index = getWritableDirectory(path);
             } else {
-                index = new DirectoryInformation(path, false);
+                index = new DirectoryInformation(indexBaseDirectory, path, false);
             }
         } catch(IOException ioe) {
             logger.error("IOException while creating DirectoryInformation.");
@@ -52,10 +58,10 @@ public class DirectoryManager {
         return index;
     }
 
-    private static synchronized DirectoryInformation getWritableDirectory(DirectoryPath path) throws IOException {
+    private synchronized DirectoryInformation getWritableDirectory(DirectoryPath path) throws IOException {
         DirectoryInformation index = indexDirectories.get(path);
         if(index == null) {
-            index = new DirectoryInformation(path, true);
+            index = new DirectoryInformation(indexBaseDirectory, path, true);
             indexDirectories.put(index.getPath(), index);
         }
         return index;

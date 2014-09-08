@@ -22,12 +22,12 @@ public final class FinnishTokenFilter extends TokenFilter {
     protected final PositionIncrementAttribute posincAttr = addAttribute(PositionIncrementAttribute.class);
     private List<String> wordbasesList;
     private Deque<String> wordQueue;
-    public FinnishTokenFilter(TokenStream input) {
+    public FinnishTokenFilter(TokenStream input) throws IOException {
         this(input, null);
 
     }
 
-    public FinnishTokenFilter(TokenStream input, Voikko voikko) {
+    public FinnishTokenFilter(TokenStream input, Voikko voikko) throws IOException {
         super(input);
         this.voikko = voikko == null ? VoikkoFactory.create() : voikko;
         wordbasesList = new ArrayList<String>();

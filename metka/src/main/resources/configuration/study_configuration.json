@@ -421,8 +421,7 @@
 			"key": "files_lang_ref",
 			"type": "DEPENDENCY",
 			"target": "files",
-			"valuePath": "fileno",
-			"titlePath": "filelanguage"
+			"valuePath": "filelanguage"
 		},
 		"sampproc_ref": {
 			"key": "sampproc_ref",

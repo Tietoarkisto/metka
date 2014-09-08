@@ -19,7 +19,6 @@ import fi.uta.fsd.metkaSearch.enums.IndexerStatusMessage;
 import fi.uta.fsd.metkaSearch.indexers.DummyIndexer;
 import fi.uta.fsd.metkaSearch.indexers.Indexer;
 import fi.uta.fsd.metkaSearch.indexers.RevisionIndexer;
-import fi.uta.fsd.metkaSearch.indexers.WikipediaIndexer;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.lucene.index.IndexWriter;
@@ -33,7 +32,10 @@ import org.springframework.util.StringUtils;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -57,6 +59,9 @@ public class IndexerComponent {
 
     @Autowired
     private ReferenceService references;
+
+    @Autowired
+    private DirectoryManager manager;
 
     // Pool for indexer threads.
     private ExecutorService indexerPool = Executors.newCachedThreadPool();
@@ -88,7 +93,7 @@ public class IndexerComponent {
                 DirectoryManager.DirectoryPath path = DirectoryManager
                         .formPath(false, IndexerConfigurationType.REVISION, lang, type.toValue());
                 try {
-                    DirectoryInformation info = new DirectoryInformation(path, false);
+                    DirectoryInformation info = manager.getIndexDirectory(path, false);
                     logger.info("Checking directory "+path+" for write lock.");
                     if(IndexWriter.isLocked(info.getDirectory())) {
                         logger.info("Directory "+path+" contained lock. Attempting to clear lock with name "+IndexWriter.WRITE_LOCK_NAME+" from directory.");
@@ -145,7 +150,7 @@ public class IndexerComponent {
         for(ConfigurationType type : ConfigurationType.values()) {
             for(Language language : Language.values()) {
                 IndexerCommand command = RevisionIndexerCommand.stop(type, language);
-                DirectoryManager.getIndexDirectory(command.getPath(), true).clearIndex();
+                manager.getIndexDirectory(command.getPath(), true).clearIndex();
                 addCommand(command);
             }
         }
@@ -230,14 +235,11 @@ public class IndexerComponent {
     private Indexer createIndexer(DirectoryManager.DirectoryPath path) {
         Indexer indexer = null;
         switch(path.getType())  {
-            case WIKIPEDIA:
-                indexer = WikipediaIndexer.build(path, commandRepository);
-                break;
             case DUMMY:
-                indexer = DummyIndexer.build(path, commandRepository);
+                indexer = DummyIndexer.build(manager, path, commandRepository);
                 break;
             case REVISION:
-                indexer = RevisionIndexer.build(path, commandRepository, revisions, configurations, references);
+                indexer = RevisionIndexer.build(manager, path, commandRepository, revisions, configurations, references);
                 break;
             default:
                 indexer = null;
