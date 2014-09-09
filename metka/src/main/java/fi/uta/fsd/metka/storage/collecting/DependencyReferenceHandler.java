@@ -172,6 +172,7 @@ class DependencyReferenceHandler extends ReferenceHandler {
                     }
                 }
             }
+            // TODO: Can we resolve title from behind reference?
         }
 
         if(title == null) {

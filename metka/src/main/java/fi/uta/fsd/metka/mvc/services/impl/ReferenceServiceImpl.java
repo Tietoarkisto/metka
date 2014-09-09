@@ -12,15 +12,15 @@ import fi.uta.fsd.metka.model.configuration.SelectionList;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.ReferenceRow;
 import fi.uta.fsd.metka.model.data.container.ValueDataField;
+import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.model.transfer.TransferRow;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.storage.collecting.ReferenceCollecting;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
+import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
-import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
-import fi.uta.fsd.metka.transfer.reference.ReferenceOptionsRequest;
-import fi.uta.fsd.metka.transfer.reference.ReferenceRowRequest;
-import fi.uta.fsd.metka.transfer.reference.ReferenceRowResponse;
+import fi.uta.fsd.metka.storage.response.RevisionableInfo;
+import fi.uta.fsd.metka.transfer.reference.*;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +41,9 @@ public class ReferenceServiceImpl implements ReferenceService {
 
     @Autowired
     private ConfigurationRepository configurations;
+
+    @Autowired
+    private RevisionRepository revisions;
 
     /**
      * Returns the current option depicting the value and title of given reference.
@@ -175,5 +178,19 @@ public class ReferenceServiceImpl implements ReferenceService {
         }
 
         return response;
+    }
+
+    @Override
+    public ReferenceStatusResponse getReferenceStatus(Long id) {
+        Pair<ReturnResult, RevisionableInfo> info = revisions.getRevisionableInfo(id);
+        if(info.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
+            return new ReferenceStatusResponse(false, null);
+        } else {
+            if(info.getRight().getRemoved()) {
+                return new ReferenceStatusResponse(true, new DateTimeUserPair(info.getRight().getRemovedAt(), info.getRight().getRemovedBy()));
+            } else {
+                return new ReferenceStatusResponse(true, null);
+            }
+        }
     }
 }

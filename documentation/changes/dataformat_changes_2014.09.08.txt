@@ -2,3 +2,8 @@
 DataConfig
 Added data restriction configurations to DataConfig. These can be split into separate configuration file but for now DataConfig is a good enough place for them.
 See restrictions_dedisn_pseudo.txt for some specifications on how different parts of the restriction configuration work.
+
+-- 09.09.2014 changes --
+DataConfig
+Reworked restrictions somewhat since the previous specification didn't give required results and possibilities.
+See restrictions_dedisn_pseudo.txt for some specifications on how different parts of the restriction configuration work.

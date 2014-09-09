@@ -69,6 +69,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
 
         if(entities.isEmpty()) {
             em.remove(em.find(RevisionableEntity.class, data.getKey().getId()));
+            // TODO: If revision is some kind of sub object then remove references to this object.
             return RemoveResult.FINAL_REVISION;
         } else {
             RevisionableEntity entity = em.find(RevisionableEntity.class, data.getKey().getId());

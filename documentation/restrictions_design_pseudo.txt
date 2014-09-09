@@ -1,101 +1,148 @@
+Restrictions are separated to different [Operations] (SAVE, APPROVE, DELETE).
+Restrictions should be placed into the configuration that is most relevant for the operation so for example SAVE restrictions for single variable are most natural in the STUDY_VARIABLE configuration but APPROVE restrictions are most natural in STUDY configuration because STUDY_VARIABLE is checked for approval during STUDY approval and not on its own process.
+
+If FIELD target points to a reference field then validation is continued as though the data on the other side of the reference was part of the currently processed revision data (only REVISIONABLE references and some parts of DEPENDENCY references are processed for now, for other cases condition automatically returns true if it targets a reference).
+
+Restrictions are parsed in the order they have been placed in the array and in the order they are encountered in depth. This means that if there are separate checks for a container and contents of that container, if the checks for container fail then the whole tree fails and no further checks are performed. Also if a check early in the array fails then rest of the array is not processed.
+
+Conditions that can't be checked for current target always return true. For example trying to check equality for QUERY result returns true automatically since the condition can not be performed.
+This means that checks that are not implemented yet don't stop the operation but can be configured in advance if it's known that those checks will be done in the future.
+
+If NAMED target doesn't find a target it automatically returns false since there was a clear problem somewhere in the configuration.
+
+If configuration doesn't contain the field named in FIELD type target then false is returned automatically since there's a problem somewhere in configuration.
+
+--
+
 Data (pseudo)
 restrictions : [0..* Operation]
+namedTargets : [0..* Target] (Map)
 
 Operation (pseudo)
 type : [SAVE|APPROVE|REMOVE]
-conditions : [0..* Condition] {ordered}
+targets : [0..* Target] {ordered}
 
-Condition (pseudo)
-target : [Target]
-type : [VALUE|NOT_EMPTY|IS_EMPTY|EQUALS|UNIQUE|INCREASING|DECREASING]
-conditions : [0..* Condition] {ordered}
+- Each operation should have their own conditions keeping in mind if APPROVE operation is running then SAVE has to have successfully completed already
+
+--
 
 Target (pseudo)
-type: [FIELD|QUERY|VALUE]
-target: String
-
-- At some point we need some sort of expression system to allow dynamically generating conditions from parametrised conditions
-- Container conditions should be formed as trees to facilitate ease of use, field paths are not supported in conditions.
-- Each operation should have their own conditions keeping in mind if APPROVE operation is running then SAVE has to have successfully completed already
+type : [FIELD|NAMED|QUERY]
+content : String
+targets : [0..* Target]
+checks: [0..* Check]
 
 Target
 * Type is either
-	- FIELD meaning field key. This should always be a key in the current document although in the case of REVISIONABLE references we might need to make an exception
-	- VALUE is a simple value, it is used as a subcondition in some conditions and doesn't really do anything on its own
-	- QUERY is a lucene query the results of which are used for some condition checks.
+	- FIELD meaning field key. This should always be a key in the current document with current document being the document that has lead to this field 
+	  (if for example jumping from one REVISIONABLE to another through a reference)
+	- NAMED means that the target is defined in named targets list on the configuration that this Target is located. 
+	  In practice this means that the named target should be fetched and used in place of NAMED type Target.
+	  Named Target is replaced 'as is' and so there should not be any targets or checks on it.
+	- VALUE is a simple value, it is used as an expression in some specific conditions. Terminates recursion and should not have checks or targets.
+	- QUERY is a lucene query the results of which are used for some specific conditions. Terminates recursion and should not have targets but can have checks (for example NOT_EMPTY)
 	  This needs some predefined variables, like {id} might be replaced with the current key.id of the revision.
-* Target is a String, meaning of which is dependent on the type. For FIELDs it's the field key, for VALUEs it's the value and for QUERYs it's the lucene query to be executed
+* Content is a String, meaning of which is dependent on the type. For FIELDs it's the field key, for VALUEs it's the value, for QUERYs it's the lucene query to be executed and for NAMED it's the name of the named Target
+* Targets is an array of Target objects that need their conditions checked too. This is only processed if current Target is of type FIELD and can contain other FIELDS (like a container or REVISIONABLE reference).
+* Checks is an array of Checks that should be performed on the current Target. These range from field UNIQUENESS checks to making sure that value increases between container rows.
 
-Conditions
-* Value (Target VALUE)
-	- Plain string value that is used as subcondition of some specific type of conditions
-	- Does nothing on its own (is always true except when actually requested by some other condition)
-	- Target must be of type VALUE
+--
+
+Check (pseudo)
+condition : Condition
+restrictors : [0..* Target]
+
+Check
+* Condition is a condition to be evaluated. If this check is enabled (restrictors all return true) and condition evaluates to true then true is returned for this check.
+  Also if this check is not enabled (even a single restrictor returned false) then this check returns true.
+* Restrictors is an array of Targets that are parsed as normal (starting from the base of the original RevisionData) and all of which have to return true before this check to be evaluated.
+  If any of the restrictors return false this Check return true automatically (think of it as enabling or disabling the check based on conditions)
+
+--
+
+Condition (pseudo)
+type : [NOT_EMPTY|IS_EMPTY|EQUALS|UNIQUE|INCREASING|DECREASING]
+target : Target
+
+Condition type
 * Non empty (Target FIELD|QUERY)
-	- Restriction applies if given field has non empty value
-	- Top level fields can only target other top level fields
-	- Container fields can target top level fields and fields in their own container row
-	- For non container fields this means there has to be non empty value
-	- For container fields this means there has to be rows (rows can still be basically empty in case of CONTAINER and need to be checked separately)
+	- For non container fields this means that the field has to exist and there has to be non empty value
+	- For container fields this means the container must exist and there has to be rows (rows can still be basically empty in case of CONTAINER and need to be checked separately)
 	- For query this means that query needs to return results
 * Is empty (Target FIELD|QUERY)
-	- Restriction applies if targeted content has no value
-	- Top level fields can only target other top level fields
-	- Container fields can target top level fields and fields in their own container row
-	- For non container fields this means there has to be empty value
-	- For container fields this means there has to be no rows
+	- For non container fields this means that the field must not exist or there has to be empty value
+	- For container fields this means that the field must not exist or there has to be no rows
 	- For query this means that query needs to return 0 results
 * Equals (Target FIELD)
-	- Restriction applies if given field has value that equals subconditions
-	- Top level fields can only target other top level fields
-	- Container fields can target top level fields and fields in their own container row
-	- Needs to have one or more VALUE type sub conditions that contain the values that we are comparing to
-	- Needs to target non container field (containers can't equal anything)
-* Uniqueness (Target FIELD)
-	- Must target non container field (plain containers can't be unique in any meaningful sense and revisionable containers should  always contain only one reference with the same value by default).
+	- Top level fields can only target other top level fields or values
+	- Fields in containers can target top level fields, fields in their own container row or values
+	- Containers and queries are not valid targets
+* Uniqueness (Target FIELD|QUERY)
 	- Top level field must be unique between revisionables (field can have the same value from revision to revision but other revisionables can't have the same value in any revision).
-	- Container fields must be unique within their container so that no other row in the container has the same value in the field with the same key
-	- Field can remain the same or change throughout the revisions, the value is only compared to other revisionables
+	- Fields in containers must be unique within their container and within the revision so that no other row in the container has the same value in the field with the same key in the same revision.
+	- Query must return one and only one result, 0 or more than 1 results are both not considered unique.
+	  This means that badly formed query is not considered unique.
+	- Containers are not valid targets
 * Increasing (Target FIELD)
 	- Uses natural sorting to find this out
 	- For top level fields value must increase between revisions, never decrease
-	- For container fields value must increase between non removed rows even through reordering rows
+	- For fields in containers value must increase between non removed rows even through reordering rows
+	- Containers and queries are not valid targets
 * Decreasing (Target FIELD)
 	- Uses natural sorting to find this out
 	- For top level fields value must decrease between revisions, never increase
-	- For container fields value must increase between non removed rows even through reordering rows
+	- For fields in containers value must increase between non removed rows even through reordering rows
+	- Containers and queries are not valid targets
+
+Target is a target used by some (mainly EQUALS) condition types. Target on condition should never contain any checks or targets of its own. If it's a field then usually it has to be either a top level field or a field within the row currently handled.
+
+----
+
+
 
 Example
 Series might contain the following restriction configuration
 restrictions: [
 {
 	type: APPROVE
-	conditions: [
+	targets: [
 	{
-		target: {
-			type: FIELD
-			target: seriesabbr
+		type: FIELD
+		content: seriesabbr
+		check: [
+		{
+			condition: {
+				type: UNIQUE
+			}
 		}
-		type: UNIQUE
+		]
 	}
 	]
 }
 {
 	type: DELETE
-	conditions: [
+	targets: [
 	{
-		target: {
-			type: QUERY
-			target: STUDY seriesid.value:{id}
+		type: QUERY
+		content: STUDY seriesid.value:{id}
+		check: [
+		{
+			condition: {
+				type: IS_EMPTY
+			}
 		}
-		type: IS_EMPTY
+		]
 	}
 	{
-		target: {
-			type: QUERY
-			target: PUBLICATION series:{id}
+		type: QUERY
+		content: PUBLICATION series:{id}
+		check: [
+		{
+			condition: {
+				type: IS_EMPTY
+			}
 		}
-		type: IS_EMPTY
+		]
 	}
 	]
 }

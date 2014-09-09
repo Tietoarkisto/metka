@@ -9,10 +9,18 @@ import java.util.List;
 
 public class Operation {
     private final OperationType type;
-    private final List<Condition> conditions = new ArrayList<>();
+    private final List<Target> targets = new ArrayList<>();
 
     @JsonCreator
     public Operation(@JsonProperty("type")OperationType type) {
         this.type = type;
+    }
+
+    public OperationType getType() {
+        return type;
+    }
+
+    public List<Target> getTargets() {
+        return targets;
     }
 }

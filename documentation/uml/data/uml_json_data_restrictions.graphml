@@ -16,7 +16,6 @@
     <data key="d7"/>
     <node id="n0">
       <data key="d4"/>
-      <data key="d5"/>
       <data key="d6">
         <y:UMLClassNode>
           <y:Geometry height="91.0" width="156.0" x="326.5" y="-233.0"/>
@@ -41,10 +40,9 @@ DELETE</y:AttributeLabel>
     </node>
     <node id="n1">
       <data key="d4"/>
-      <data key="d5"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="149.0" width="156.0" x="326.5" y="-86.0"/>
+          <y:Geometry height="133.0" width="156.0" x="326.5" y="138.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="34.265625" modelName="custom" textColor="#000000" visible="true" width="141.2998046875" x="7.35009765625" y="3.0">&lt;&lt;enumeration&gt;&gt;
@@ -56,8 +54,7 @@ ConditionType<y:LabelModel>
             </y:ModelParameter>
           </y:NodeLabel>
           <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="" use3DEffect="true">
-            <y:AttributeLabel>VALUE
-NOT_EMPTY
+            <y:AttributeLabel>NOT_EMPTY
 IS_EMPTY
 EQUALS
 UNIQUE
@@ -70,10 +67,9 @@ DECREASING</y:AttributeLabel>
     </node>
     <node id="n2">
       <data key="d4"/>
-      <data key="d5"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="91.0" width="156.0" x="326.5" y="119.0"/>
+          <y:Geometry height="103.0" width="156.0" x="326.5" y="-112.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="34.265625" modelName="custom" textColor="#000000" visible="true" width="141.2998046875" x="7.35009765625" y="3.0">&lt;&lt;enumeration&gt;&gt;
@@ -87,7 +83,8 @@ TargetType<y:LabelModel>
           <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="" use3DEffect="true">
             <y:AttributeLabel>FIELD
 QUERY
-VALUE</y:AttributeLabel>
+VALUE
+NAMED</y:AttributeLabel>
             <y:MethodLabel/>
           </y:UML>
         </y:UMLClassNode>
@@ -95,7 +92,6 @@ VALUE</y:AttributeLabel>
     </node>
     <node id="n3">
       <data key="d4"/>
-      <data key="d5"/>
       <data key="d6">
         <y:UMLClassNode>
           <y:Geometry height="77.0" width="156.0" x="80.0" y="-233.0"/>
@@ -110,7 +106,7 @@ VALUE</y:AttributeLabel>
           </y:NodeLabel>
           <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="" use3DEffect="true">
             <y:AttributeLabel>+type : OperationType
-+conditions : Condition
++targets : Target
              [0..*] {ordered}</y:AttributeLabel>
             <y:MethodLabel/>
           </y:UML>
@@ -119,10 +115,9 @@ VALUE</y:AttributeLabel>
     </node>
     <node id="n4">
       <data key="d4"/>
-      <data key="d5"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="91.0" width="156.0" x="80.0" y="-83.0"/>
+          <y:Geometry height="61.0" width="156.0" x="80.0" y="141.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="74.3447265625" x="40.82763671875" y="3.0">Condition<y:LabelModel>
@@ -133,11 +128,8 @@ VALUE</y:AttributeLabel>
             </y:ModelParameter>
           </y:NodeLabel>
           <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="" use3DEffect="true">
-            <y:AttributeLabel>+target : Target
-+type : ConditionType
-+conditions : Condition
-            [0..*] {ordered}
-</y:AttributeLabel>
+            <y:AttributeLabel>+type : ConditionType
++target : Target</y:AttributeLabel>
             <y:MethodLabel/>
           </y:UML>
         </y:UMLClassNode>
@@ -145,10 +137,9 @@ VALUE</y:AttributeLabel>
     </node>
     <node id="n5">
       <data key="d4"/>
-      <data key="d5"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="63.0" width="156.0" x="80.0" y="119.0"/>
+          <y:Geometry height="116.0" width="156.0" x="80.0" y="-112.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="52.38818359375" x="51.805908203125" y="3.0">Target<y:LabelModel>
@@ -160,7 +151,35 @@ VALUE</y:AttributeLabel>
           </y:NodeLabel>
           <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="" use3DEffect="true">
             <y:AttributeLabel>+type : TargetType
-+target : String</y:AttributeLabel>
++content : String
++targets : Target
+             [0..*] {ordered}
++checks : Check
+             [0..*] {ordered}</y:AttributeLabel>
+            <y:MethodLabel/>
+          </y:UML>
+        </y:UMLClassNode>
+      </data>
+    </node>
+    <node id="n6">
+      <data key="d4"/>
+      <data key="d6">
+        <y:UMLClassNode>
+          <y:Geometry height="77.0" width="156.0" x="80.0" y="34.0"/>
+          <y:Fill color="#FFCC00" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="47.9638671875" x="54.01806640625" y="3.0">Check<y:LabelModel>
+              <y:SmartNodeLabelModel distance="4.0"/>
+            </y:LabelModel>
+            <y:ModelParameter>
+              <y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="-0.03703090122767855" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/>
+            </y:ModelParameter>
+          </y:NodeLabel>
+          <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="" use3DEffect="true">
+            <y:AttributeLabel>+condition : Condition
++restrictors : Target
+            [0..*] {ordered}
+</y:AttributeLabel>
             <y:MethodLabel/>
           </y:UML>
         </y:UMLClassNode>
@@ -168,10 +187,9 @@ VALUE</y:AttributeLabel>
     </node>
     <edge id="e0" source="n3" target="n0">
       <data key="d8"/>
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="13.0" ty="-7.0"/>
+          <y:Path sx="12.147873279999999" sy="-12.33243648000007" tx="0.10359935999986192" ty="-19.33243648000007"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="diamond" target="none"/>
           <y:BendStyle smoothed="false"/>
@@ -180,10 +198,9 @@ VALUE</y:AttributeLabel>
     </edge>
     <edge id="e1" source="n4" target="n1">
       <data key="d8"/>
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="8.0" ty="-26.0"/>
+          <y:Path sx="39.49473535999988" sy="-5.19583488000012" tx="-3.896400640000138" ty="-38.19583488000012"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="diamond" target="none"/>
           <y:BendStyle smoothed="false"/>
@@ -192,17 +209,27 @@ VALUE</y:AttributeLabel>
     </edge>
     <edge id="e2" source="n5" target="n2">
       <data key="d8"/>
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="4.0" ty="-14.0"/>
+          <y:Path sx="27.75068415999999" sy="-31.868709120000005" tx="8.103599359999862" ty="-25.368709120000005"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="diamond" target="none"/>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e3" source="n3" target="n4">
+    <edge id="e3" source="n3" target="n5">
+      <data key="d8"/>
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="20.253968253968253"/>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="diamond" target="none"/>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e4" source="n6" target="n4">
       <data key="d8"/>
       <data key="d9"/>
       <data key="d10">
@@ -214,7 +241,7 @@ VALUE</y:AttributeLabel>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e4" source="n4" target="n5">
+    <edge id="e5" source="n5" target="n6">
       <data key="d8"/>
       <data key="d9"/>
       <data key="d10">

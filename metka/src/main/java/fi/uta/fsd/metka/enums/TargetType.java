@@ -1,5 +1,5 @@
 package fi.uta.fsd.metka.enums;
 
 public enum TargetType {
-    FIELD, QUERY, VALUE
+    FIELD, QUERY, VALUE, NAMED
 }
