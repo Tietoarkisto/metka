@@ -2,7 +2,7 @@ define(function (require) {
     'use strict';
 
     return function (url) {
-        return function (options) {
+        return function (options, onSuccess) {
             return function () {
                 (function clearErrors(fields) {
                     $.each(fields, function (key, field) {
@@ -42,7 +42,7 @@ define(function (require) {
                             }]
                         });
 
-                        // TODO: referenceRow -haulla lisää rivi
+                        onSuccess(response.data);
 
                         $.extend(options.data, response.data);
                         options.$events.trigger('dataChanged');

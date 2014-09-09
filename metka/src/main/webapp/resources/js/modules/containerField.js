@@ -10,6 +10,7 @@ define(function (require) {
         var fieldOptions = getPropertyNS(options, 'dataConf.fields', key) || {};
         var $thead = $('<thead>');
         var $tbody = $('<tbody>');
+        var EMPTY = '-';
 
         function field2TableHead(prefix) {
             return function (field) {
@@ -45,40 +46,30 @@ define(function (require) {
                     var $td = $('<td>')
                         .toggleClass('hiddenByTranslationState', $thead.children('tr').children().eq(i).hasClass('hiddenByTranslationState'));
 
+                    if (fieldOptions.type === 'REFERENCECONTAINER') {
+                        require('./server')('options', {
+                            data: JSON.stringify({
+                                key: key,
+                                requests : [{
+                                    key: column,
+                                    container: key,
+                                    confType: options.dataConf.key.type,
+                                    confVersion: options.dataConf.key.version,
+                                    dependencyValue: transferRow.value
+                                }]
+                            }),
+                            success: function (data) {
+                                $td.text(data.responses.length && data.responses[0].options.length ? data.responses[0].options[0].title.value.default : EMPTY);
+                            }
+                        });
+                        return $td;
+                    }
                     return $td.append((function () {
-                        var type = (function () {
-                            var metka = require('./../metka');
-                            if (fieldOptions.type === 'REFERENCECONTAINER') {
-                                var $span = $('<span>');
-                                require('./server')('options', {
-                                    data: JSON.stringify({
-                                        key: key,
-                                        requests : [{
-                                            key: column,
-                                            container: key,
-                                            confType: options.dataConf.key.type,
-                                            confVersion: options.dataConf.key.version,
-                                            dependencyValue: transferRow.value
-                                        }]
-                                    }),
-                                    success: function (data) {
-                                        $td.text(data.responses.length && data.responses[0].options.length && data.responses[0].options[0].title.value.default);
-                                    }
-                                });
-                                return $span;
-                                var target = options.dataConf.references[fieldOptions.reference].target;
-                                var field = metka.dataConfigurations[target].fields[column];
-                                return field ? field.type : false;
-                            }
-                            var type = getPropertyNS(options, 'dataConf.fields', column, 'type');
-                            if (type) {
-                                return type;
-                            }
-                        })();
+                        var type = getPropertyNS(options, 'dataConf.fields', column, 'type');
 
                         if (!type) {
                             log('not implemented', column);
-                            return '-';
+                            return EMPTY;
                         }
 
                         var transferField = getPropertyNS(transferRow, 'fields', column);
@@ -116,13 +107,13 @@ define(function (require) {
                         })();
 
                         if (type === 'STRING' || type === 'INTEGER') {
-                            return value || '-';
+                            return value || EMPTY;
                         }
                         if (['DATE', 'TIME', 'DATETIME'].indexOf(type) !== -1) {
                             if (value) {
                                 return moment(value).format(require('./dateFormats')[type]);
                             }
-                            return '-';
+                            return EMPTY;
                         }
                         if (type === 'SELECTION') {
                             if (typeof value !== 'undefined') {
@@ -137,12 +128,12 @@ define(function (require) {
                                 }
 
                                 log('missing translation', key, value);
-                                return '-';
+                                return EMPTY;
                             }
-                            return '-';
+                            return EMPTY;
                         }
                         log('not implemented', column, type);
-                        return '-';
+                        return EMPTY;
                     })());
                 }));
 
@@ -165,11 +156,26 @@ define(function (require) {
         }
 
         function appendRow(transferRow) {
-            if (!transferRow.removed) {
+            function append() {
                 var $tr = tr(transferRow);
                 $tbody.append($tr);
                 $tbody.trigger('rowAppended', [$tr, columns]);
                 return $tr;
+            }
+
+            if (fieldOptions.type === 'REFERENCECONTAINER') {
+                require('./server')('/references/referenceStatus/{value}', transferRow, {
+                    method: 'GET',
+                    success: function (response) {
+                        if (response.exists && !response.removed) {
+                            append();
+                        }
+                    }
+                });
+            } else {
+                if (!transferRow.removed) {
+                    append();
+                }
             }
         }
 
@@ -186,8 +192,8 @@ define(function (require) {
             addRow(require('./map/object/transferRow')(data, lang));
         }
 
-        function rowDialog(title, button, onClose) {
-            return function (transferRow) {
+        function rowDialog(title, button) {
+            return function (transferRow, onClose) {
                 // copy data, so if dialog is dismissed, original data won't change
                 transferRow = $.extend(true, {}, transferRow);
 
@@ -263,12 +269,10 @@ define(function (require) {
                     $tbody
                         .on('click', 'tr', function () {
                             var $tr = $(this);
-                            var onClick = options.field.onClick || rowDialog('modify', 'ok', function (transferRow) {
-                                //this.data('transferRow').fields = transferRow.fields;
-                                return $tr.replaceWith(tr(transferRow));
-                            });
-
-                            onClick.call(this, $tr.data('transferRow'));
+                            (options.field.onClick || rowDialog('modify', 'ok'))
+                                .call(this, $tr.data('transferRow'), function (transferRow) {
+                                    return $tr.replaceWith(tr(transferRow));
+                                });
                         });
                 })
                 .append($thead
@@ -345,8 +349,9 @@ define(function (require) {
                         create: function () {
                             this
                                 .text(MetkaJS.L10N.get('general.table.add'))
-                                .click(options.field.onAdd || function () {
-                                    rowDialog('add', 'add', addRow)({});
+                                .click(function () {
+                                    (options.field.onAdd || rowDialog('add', 'add'))
+                                        .call(this, {}, addRow);
                                 });
                         }
                     });

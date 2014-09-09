@@ -1,7 +1,9 @@
 define(function (require) {
     'use strict';
 
-    function view(requestOptions) {
+    function view(requestOptions, onSaveSuccess) {
+
+        var metka = require('./../../../metka');
         require('./../../server')('viewAjax', $.extend({
             page: 'study_attachment'
         }, requestOptions), {
@@ -170,11 +172,24 @@ define(function (require) {
                     buttons: [{
                         create: function () {
                             this
-                                .text(MetkaJS.L10N.get('general.buttons.ok'))
-                                .click(require('./../../formAction')('save')(options));
+                                .text(MetkaJS.L10N.get('general.buttons.save'))
+                                .click(require('./../../formAction')('save')(options, function (data) {
+                                    require('./../../server')('/references/referenceRowRequest', {
+                                        data: JSON.stringify({
+                                            type: 'STUDY',
+                                            id: metka.id,
+                                            no: metka.no,
+                                            path: 'files',
+                                            reference: data.key.id
+                                        }),
+                                        success: function (data) {
+                                            onSaveSuccess(data.row);
+                                        }
+                                    });
+                                }));
                         }
                     }, {
-                        type: 'DISMISS'
+                        type: 'CANCEL'
                     }]
                 });
                 require('./../../modal')(options);
@@ -188,12 +203,12 @@ define(function (require) {
         } else {
             return {
                 field: {
-                    onClick: function (transferRow) {
+                    onClick: function (transferRow, replaceTr) {
                         view({
                             id: transferRow.value
-                        });
+                        }, replaceTr);
                     },
-                    onAdd: function () {
+                    onAdd: function (originalEmptyData, addRow) {
                         require('./../../server')('create', {
                             data: JSON.stringify({
                                 type: 'STUDY_ATTACHMENT',
@@ -203,7 +218,7 @@ define(function (require) {
                             }),
                             success: function (response) {
                                 if (response.result === 'REVISION_CREATED') {
-                                    view(response.data.key);
+                                    view(response.data.key, addRow);
                                 }
                             }
                         });

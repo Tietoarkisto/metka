@@ -2,7 +2,9 @@ define(function (require) {
     'use strict';
 
     var buttons = {
-        APPROVE: require('./formAction')('approve'),
+        APPROVE: function (options) {
+            this.click(require('./formAction')('approve')(options));
+        },
         CANCEL: function () {
             this
                 .text(MetkaJS.L10N.get('general.buttons.cancel'));
@@ -179,7 +181,9 @@ define(function (require) {
                     });
                 });
         },
-        SAVE: require('./formAction')('save'),
+        SAVE: function (options) {
+            this.click(require('./formAction')('save')(options));
+        },
         YES: function () {
             this.text(MetkaJS.L10N.get('general.buttons.yes'));
         }

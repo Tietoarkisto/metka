@@ -130,6 +130,9 @@
                 "&ok": {
                     "default": "OK"
                 },
+                "&save": {
+                    "default": "Tallenna"
+                },
                 "&search": {
                     "default": "Hae"
                 },
