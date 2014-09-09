@@ -94,8 +94,14 @@ define(function (require) {
 
         var key = options.field.key;
 
-        if (customFields[key]) {
-            $.extend(true, options, customFields[key]);
+        var customField = customFields[key];
+        switch (typeof customField) {
+            case 'object':
+                $.extend(true, options, customField);
+                break;
+            case 'function':
+                $.extend(true, options, customField(options));
+                break;
         }
 
         var fieldDataOptions = require('./utils/getPropertyNS')(options, 'dataConf.fields', key) || {};

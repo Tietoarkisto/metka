@@ -405,6 +405,11 @@ th {
     font-weight: bold;
 }
 
+td {
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
 .btn-group-translation-lang>.btn {
     padding-left: 10px;
     padding-right: 10px;
