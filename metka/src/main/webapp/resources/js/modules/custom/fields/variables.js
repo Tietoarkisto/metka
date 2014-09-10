@@ -5,12 +5,12 @@ define(function (require) {
         function view(requestOptions, onSaveSuccess) {
             var metka = require('./../../../metka');
             require('./../../server')('viewAjax', $.extend({
-                page: 'study_attachment'
+                page: 'study_variable'
             }, requestOptions), {
                 method: 'GET',
                 success: function (data) {
                     var modalOptions = $.extend(data.gui, {
-                        title: 'Muokkaa tiedostoa',
+                        title: 'Muokkaa muuttujaa',
                         data: data.transferData,
                         dataConf: data.configuration,
                         $events: $({}),
@@ -26,10 +26,10 @@ define(function (require) {
                                         "cells": [
                                             {
                                                 "type": "CELL",
-                                                "title": "Tiedoston polku",
+                                                "title": "Nimi",
                                                 "horizontal": true,
                                                 "field": {
-                                                    "key": "file"
+                                                    "key": "varname"
                                                 }
                                             }
                                         ]
@@ -39,11 +39,10 @@ define(function (require) {
                                         "cells": [
                                             {
                                                 "type": "CELL",
-                                                "title": "Virallinen selite",
+                                                "title": "Selite",
                                                 "horizontal": true,
                                                 "field": {
-                                                    "key": "filedescription",
-                                                    "multiline": true
+                                                    "key": "varlabel"
                                                 }
                                             }
                                         ]
@@ -53,11 +52,13 @@ define(function (require) {
                                         "cells": [
                                             {
                                                 "type": "CELL",
-                                                "title": "Epävirallinen selite",
+                                                "title": "Kysymystekstit",
                                                 "horizontal": true,
                                                 "field": {
-                                                    "key": "filenotes",
-                                                    "multiline": true
+                                                    "key": "qstnlits",
+                                                    "columnFields": [
+                                                        "qstnlit"
+                                                    ]
                                                 }
                                             }
                                         ]
@@ -67,11 +68,13 @@ define(function (require) {
                                         "cells": [
                                             {
                                                 "type": "CELL",
-                                                "title": "Kommentti",
+                                                "title": "Esitekstit",
                                                 "horizontal": true,
                                                 "field": {
-                                                    "key": "filecomment",
-                                                    "multiline": true
+                                                    "key": "preqtxts",
+                                                    "columnFields": [
+                                                        "preqtxt"
+                                                    ]
                                                 }
                                             }
                                         ]
@@ -81,10 +84,13 @@ define(function (require) {
                                         "cells": [
                                             {
                                                 "type": "CELL",
-                                                "title": "Tyyppi",
+                                                "title": "Jälkitekstit",
                                                 "horizontal": true,
                                                 "field": {
-                                                    "key": "filecategory"
+                                                    "key": "postqtxts",
+                                                    "columnFields": [
+                                                        "postqtxt"
+                                                    ]
                                                 }
                                             }
                                         ]
@@ -94,10 +100,13 @@ define(function (require) {
                                         "cells": [
                                             {
                                                 "type": "CELL",
-                                                "title": "PAS",
+                                                "title": "Haastattelijan ohjeet",
                                                 "horizontal": true,
                                                 "field": {
-                                                    "key": "fileaip"
+                                                    "key": "ivuinstrs",
+                                                    "columnFields": [
+                                                        "ivuinstr"
+                                                    ]
                                                 }
                                             }
                                         ]
@@ -107,10 +116,13 @@ define(function (require) {
                                         "cells": [
                                             {
                                                 "type": "CELL",
-                                                "title": "Kieli",
+                                                "title": "Huomiot",
                                                 "horizontal": true,
                                                 "field": {
-                                                    "key": "filelanguage"
+                                                    "key": "varnotes",
+                                                    "columnFields": [
+                                                        "varnote"
+                                                    ]
                                                 }
                                             }
                                         ]
@@ -120,10 +132,13 @@ define(function (require) {
                                         "cells": [
                                             {
                                                 "type": "CELL",
-                                                "title": "Alkuperäinen kieli",
+                                                "title": "Lisätiedot",
                                                 "horizontal": true,
                                                 "field": {
-                                                    "key": "fileoriginal"
+                                                    "key": "vartexts",
+                                                    "columnFields": [
+                                                        "vartext"
+                                                    ]
                                                 }
                                             }
                                         ]
@@ -133,35 +148,49 @@ define(function (require) {
                                         "cells": [
                                             {
                                                 "type": "CELL",
-                                                "title": "WWW",
+                                                "title": "Tietosuoja-asiat",
                                                 "horizontal": true,
                                                 "field": {
-                                                    "key": "filepublication"
+                                                    "key": "varsecuritys",
+                                                    "columnFields": [
+                                                        "varsecurity"
+                                                    ]
                                                 }
                                             }
                                         ]
                                     },
+                                    /*{
+                                        "type": "ROW",
+                                        "cells": [
+                                            {
+                                                "type": "CELL",
+                                                "title": "Arvojen selitteet",
+                                                "horizontal": true,
+                                                "readOnly": true,
+                                                "field": {
+                                                    "displayType": "CONTAINER",
+                                                    "key": "statisticstype",
+                                                    "columnFields": [
+                                                        "statisticstype",
+                                                        "statisticsvalue"
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    },*/
                                     {
                                         "type": "ROW",
                                         "cells": [
                                             {
                                                 "type": "CELL",
-                                                "title": "Ulosluovutus",
+                                                "title": "Arvojen selitteet",
                                                 "horizontal": true,
                                                 "field": {
-                                                    "key": "filedip"
-                                                }
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "type": "ROW",
-                                        "cells": [
-                                            {
-                                                "type": "CELL",
-                                                "title": "Tiedostohistoria",
-                                                "field": {
-                                                    "key": "custom_fileHistory"
+                                                    "key": "statistics",
+                                                    "columnFields": [
+                                                        "statisticstype",
+                                                        "statisticsvalue"
+                                                    ]
                                                 }
                                             }
                                         ]
@@ -197,49 +226,14 @@ define(function (require) {
             });
         }
 
-        if (require('./../../isFieldDisabled')(options)) {
-            return {};
-        } else {
-            return {
-                field: {
-                    onClick: function (transferRow, replaceTr) {
-                        view({
-                            id: transferRow.value
-                        }, replaceTr);
-                    },
-                    onAdd: function (originalEmptyData, addRow) {
-                        require('./../../server')('create', {
-                            data: JSON.stringify({
-                                type: 'STUDY_ATTACHMENT',
-                                parameters: {
-                                    study: require('./../../../metka').id
-                                }
-                            }),
-                            success: function (response) {
-                                if (response.result === 'REVISION_CREATED') {
-                                    view(response.data.key, addRow);
-                                }
-                            }
-                        });
-                    },
-                    onRemove: function ($tr) {
-                        require('./../../server')('viewAjax', $.extend({
-                            page: 'study_attachment',
-                            id: $tr.data('transferRow').value
-                        }), {
-                            method: 'GET',
-                            success: function (data) {
-                                require('./../../server')('/revision/ajax/remove', {
-                                    data: JSON.stringify(data.transferData),
-                                    success: function (response) {
-                                        $tr.remove();
-                                    }
-                                });
-                            }
-                        });
-                    }
+        return {
+            field: {
+                onClick: function (transferRow, replaceTr) {
+                    view({
+                        id: transferRow.value
+                    }, replaceTr);
                 }
-            };
-        }
+            }
+        };
     };
 });

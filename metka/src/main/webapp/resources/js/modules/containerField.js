@@ -35,6 +35,7 @@ define(function (require) {
                     });
             }
         }
+
         function tr(transferRow) {
             var $tr = $('<tr>');
 
@@ -163,7 +164,7 @@ define(function (require) {
                 return $tr;
             }
 
-            if (fieldOptions.type === 'REFERENCECONTAINER') {
+            if (fieldOptions.type === 'REFERENCECONTAINER' && key === 'files') {
                 require('./server')('/references/referenceStatus/{value}', transferRow, {
                     method: 'GET',
                     success: function (response) {
@@ -224,20 +225,23 @@ define(function (require) {
                             })
                         }
                     ],
-                    buttons: [{
-                        create: function () {
-                            this
-                                .text(MetkaJS.L10N.get('general.buttons.' + button))
-                                .click(function () {
-                                    var $tr = onClose(transferRow);
-                                    if (options.field.onRowChange) {
-                                        options.field.onRowChange($tr, transferRow);
-                                    }
-                                });
+                    buttons: [
+                        {
+                            create: function () {
+                                this
+                                    .text(MetkaJS.L10N.get('general.buttons.' + button))
+                                    .click(function () {
+                                        var $tr = onClose(transferRow);
+                                        if (options.field.onRowChange) {
+                                            options.field.onRowChange($tr, transferRow);
+                                        }
+                                    });
+                            }
+                        },
+                        {
+                            type: 'CANCEL'
                         }
-                    }, {
-                        type: 'CANCEL'
-                    }]
+                    ]
                 };
 
                 var $modal = require('./modal')(containerOptions);
@@ -278,10 +282,10 @@ define(function (require) {
                 .append($thead
                     .append($('<tr>')
                         /*.append(function () {
-                            if (options.field.showReferenceKey ??? getPropertyNS(options, 'dataConf.fields', key, 'showReferenceKey')) {
-                                var target = options.dataConf.references[options.dataConf.fields[key].reference].target;
-                            }
-                        })*/
+                         if (options.field.showReferenceKey ??? getPropertyNS(options, 'dataConf.fields', key, 'showReferenceKey')) {
+                         var target = options.dataConf.references[options.dataConf.fields[key].reference].target;
+                         }
+                         })*/
                         .append(function () {
                             var response = [];
                             var th = field2TableHead(PAGE + '.field');

@@ -24,7 +24,13 @@
 			"type": "REVISIONABLE",
 			"target": "STUDY_VARIABLE",
 			"titlePath": "varlabel"
-		}
+		},
+        "varlabel_ref": {
+            "key": "varlabel_ref",
+            "type": "DEPENDENCY",
+            "target": "variables",
+            "valuePath": "varlabel"
+        }
 	},
 	"fields": {
 		"study": {
@@ -77,8 +83,17 @@
 			"type": "REFERENCECONTAINER",
 			"reference": "variable_ref",
 			"subfields": [
+                "varlabel"
 			]
 		},
+		"varlabel": {
+            "key": "varlabel",
+            "translatable": false,
+            "type": "REFERENCE",
+            "reference": "varlabel_ref",
+            "subfield": true,
+            "writable": false
+        },
 		"vargroups": {
 			"key": "vargroups",
 			"type": "CONTAINER",
@@ -99,6 +114,7 @@
 			"subfield": true,
 			"reference": "variable_ref",
 			"subfields": [
+				"varlabel"
 			]
 		}
 	}

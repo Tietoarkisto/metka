@@ -3,7 +3,9 @@ define(function (require) {
 
     var buttons = {
         APPROVE: function (options) {
-            this.click(require('./formAction')('approve')(options));
+            this.click(require('./formAction')('approve')(options, function (response) {
+                require('./assignUrl')('view');
+            }));
         },
         CANCEL: function () {
             this
@@ -18,11 +20,10 @@ define(function (require) {
             this
                 .text(MetkaJS.L10N.get('general.buttons.close'));
         },
-        EDIT: function () {
-            this
-                .click(function () {
-                    require('./assignUrl')('edit');
-                });
+        EDIT: function (options) {
+            this.click(require('./formAction')('edit')(options, function (response) {
+                require('./assignUrl')('view');
+            }));
         },
         HISTORY: function () {
             var metka = require('./../metka');
@@ -182,7 +183,10 @@ define(function (require) {
                 });
         },
         SAVE: function (options) {
-            this.click(require('./formAction')('save')(options));
+            this.click(require('./formAction')('save')(options, function (response) {
+                $.extend(options.data, response.data);
+                options.$events.trigger('dataChanged');
+            }));
         },
         YES: function () {
             this.text(MetkaJS.L10N.get('general.buttons.yes'));

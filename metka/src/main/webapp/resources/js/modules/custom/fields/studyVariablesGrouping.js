@@ -1,6 +1,7 @@
 define(function (require) {
     'use strict';
 
+    return {};
     return {
         create: function create(options) {
             function setButtonStates() {

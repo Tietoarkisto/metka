@@ -4,10 +4,10 @@ define(function (require) {
     var customFields = {
         custom_studyRelatedBinders: require('./custom/fields/studyRelatedBinders'),
         custom_studyErrors: require('./custom/fields/studyErrors'),
-        custom_studyVariablesBasic: require('./custom/fields/studyVariablesBasic'),
         custom_studyVariablesGrouped: require('./custom/fields/studyVariablesGrouped'),
         custom_studyVariablesGrouping: require('./custom/fields/studyVariablesGrouping'),
-        files: require('./custom/fields/files')
+        files: require('./custom/fields/files'),
+        variables: require('./custom/fields/variables')
     };
 
     return function (options) {
