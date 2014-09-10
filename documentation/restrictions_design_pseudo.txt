@@ -12,6 +12,10 @@ If NAMED target doesn't find a target it automatically returns false since there
 
 If configuration doesn't contain the field named in FIELD type target then false is returned automatically since there's a problem somewhere in configuration.
 
+Only FIELD targets that can sensibly handle them should have subtargets, any other target type should never use them unless an actual need is found for example subtarget queries within queries. Target is an operation path informing the system in which order and to which content it should perform validation. All other target types terminate, meaning no further sub targets are processed.
+
+If field targets a reference and has sub targets but no reference can be found true is returned automatically for simplicity. This means that existence of reference can't be determined by sub targets and should always be determined with NOT_EMPTY condition on the actual referencing field.
+
 --
 
 Data (pseudo)
@@ -56,7 +60,7 @@ Check
 * Condition is a condition to be evaluated. If this check is enabled (restrictors all return true) and condition evaluates to true then true is returned for this check.
   Also if this check is not enabled (even a single restrictor returned false) then this check returns true.
 * Restrictors is an array of Targets that are parsed as normal (starting from the base of the original RevisionData) and all of which have to return true before this check to be evaluated.
-  If any of the restrictors return false this Check return true automatically (think of it as enabling or disabling the check based on conditions)
+  If any of the restrictors return false this Check will return true automatically (think of it as enabling or disabling the check based on conditions)
 
 --
 
@@ -82,6 +86,7 @@ Condition type
 	- Fields in containers must be unique within their container and within the revision so that no other row in the container has the same value in the field with the same key in the same revision.
 	- Query must return one and only one result, 0 or more than 1 results are both not considered unique.
 	  This means that badly formed query is not considered unique.
+	- Null or otherwise empty values are never considered unique.
 	- Containers are not valid targets
 * Increasing (Target FIELD)
 	- Uses natural sorting to find this out

@@ -78,6 +78,28 @@
 			"reference": "variable_ref",
 			"subfields": [
 			]
+		},
+		"vargroups": {
+			"key": "vargroups",
+			"type": "CONTAINER",
+			"subfields": [
+				"vargrouptitle",
+				"vargroupvars"
+			]
+		},
+		"vargrouptitle": {
+			"key": "vargrouptitle",
+			"type": "STRING",
+			"subfield": true,
+			"immutable": true
+		},
+		"vargroupvars": {
+			"key": "vargroupvars",
+			"type": "REFERENCECONTAINER",
+			"subfield": true,
+			"reference": "variable_ref",
+			"subfields": [
+			]
 		}
 	}
 }

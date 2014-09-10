@@ -70,6 +70,10 @@ final class ValueDataFieldMutator {
             return new ImmutablePair<>(StatusCode.NO_CHANGE_IN_VALUE, pair.getRight());
         }
 
+        if(info == null) {
+            info = DateTimeUserPair.build();
+        }
+
         // No previous field, create ValueDataField, set value and return
         StatusCode statusCode;
         if(pair.getLeft() == StatusCode.FIELD_MISSING) {

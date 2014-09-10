@@ -17,7 +17,8 @@ import java.util.Set;
         @JsonSubTypes.Type(value = ContainerChange.class, name = DataField.DataFieldType.Types.CONTAINER)
 })
 public class Change {
-    private ChangeType type;
+    @JsonIgnore private DataField.DataFieldType type;
+
     private final String key;
     private final Set<Language> changeIn = new HashSet<>();
 
@@ -30,8 +31,12 @@ public class Change {
         return key;
     }
 
-    public ChangeType getType() {
+    public DataField.DataFieldType getType() {
         return type;
+    }
+
+    public void setType(DataField.DataFieldType type) {
+        this.type = type;
     }
 
     public Set<Language> getChangeIn() {

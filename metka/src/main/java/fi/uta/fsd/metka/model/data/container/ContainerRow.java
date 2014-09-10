@@ -1,6 +1,7 @@
 package fi.uta.fsd.metka.model.data.container;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
@@ -11,13 +12,15 @@ import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 
 import java.util.Map;
 
-public class ContainerRow {
+public abstract class ContainerRow {
 
     private final String key;
     private final Integer rowId;
     private Boolean removed = false;
     private DateTimeUserPair saved;
     private Boolean unapproved = false;
+
+    @JsonIgnore private RowContainerDataField parent;
 
     @JsonCreator
     public ContainerRow(@JsonProperty("key") String key, @JsonProperty("rowId") Integer rowId) {
@@ -56,6 +59,16 @@ public class ContainerRow {
     public void setUnapproved(Boolean unapproved) {
         this.unapproved = unapproved == null ? false : unapproved;
     }
+
+    public RowContainerDataField getParent() {
+        return parent;
+    }
+
+    public void setParent(RowContainerDataField parent) {
+        this.parent = parent;
+    }
+
+    public abstract void initParents();
 
     @Override
     public boolean equals(Object o) {

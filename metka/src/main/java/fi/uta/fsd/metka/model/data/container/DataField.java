@@ -1,6 +1,7 @@
 package fi.uta.fsd.metka.model.data.container;
 
 import com.fasterxml.jackson.annotation.*;
+import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
@@ -12,27 +13,27 @@ import com.fasterxml.jackson.annotation.*;
         @JsonSubTypes.Type(value = ContainerDataField.class, name = DataField.DataFieldType.Types.CONTAINER),
         @JsonSubTypes.Type(value = ReferenceContainerDataField.class, name = DataField.DataFieldType.Types.REFERENCECONTAINER)
 })
-public class DataField {
+public abstract class DataField {
     private final String key;
-    private DataFieldType type;
+
+    @JsonIgnore private DataFieldType type;
+
+    @JsonIgnore private DataFieldContainer parent;
 
     public DataField(String key) {
         this.key = key;
     }
 
-    public String getKey() {
-        return key;
-    }
-
-    // Immutable
-    /*public void setType(DataFieldType type) {
-        if(this.type == null) {
-            this.type = type;
-        }
-    }*/
-
     public DataFieldType getType() {
         return type;
+    }
+
+    public void setType(DataFieldType type) {
+        this.type = type;
+    }
+
+    public String getKey() {
+        return key;
     }
 
     @Override
@@ -66,6 +67,16 @@ public class DataField {
      */
     @JsonIgnore
     public void normalize() {throw new UnsupportedOperationException();}
+
+    public DataFieldContainer getParent() {
+        return parent;
+    }
+
+    public void setParent(DataFieldContainer parent) {
+        this.parent = parent;
+    }
+
+    public abstract void initParents();
 
     public static enum DataFieldType {
         VALUE(Types.VALUE),

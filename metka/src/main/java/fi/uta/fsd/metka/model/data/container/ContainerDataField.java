@@ -47,6 +47,16 @@ public class ContainerDataField extends RowContainerDataField {
         return false;
     }
 
+    @Override
+    public void initParents() {
+        for(Language l : Language.values()) {
+            for(DataRow row : getRowsFor(l)) {
+                row.setParent(this);
+                row.initParents();
+            }
+        }
+    }
+
     /**
      * Inserts a row to given language if row with same id doesn't exist yet in any language
      * @param language

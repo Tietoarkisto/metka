@@ -47,20 +47,48 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
         splits = qry.split("\\s", 2);
         Language lang;
         if(splits[0].split(":", 2)[0].equals("lang")) {
-            lang = Language.fromValue(splits[0].split(":", 2)[0]);
+            lang = Language.fromValue(splits[0].split(":", 2)[1]);
             qry = splits.length > 1 ? splits[1] : "";
         } else {
             lang = Language.DEFAULT;
         }
 
-        DirectoryManager.DirectoryPath path = DirectoryManager.formPath(false, iType, lang, cType.toValue());
-        return new ExpertRevisionSearchCommand(path, qry, configurations);
+        DirectoryManager.DirectoryPath path =  DirectoryManager.formPath(false, iType, lang, cType.toValue());
+        Pair<ReturnResult, Configuration> pair = configurations.findLatestConfiguration(ConfigurationType.fromValue(path.getAdditionalParameters()[0]));
+        return new ExpertRevisionSearchCommand(path, qry, pair.getRight());
+    }
+
+    public static ExpertRevisionSearchCommand build(String qry, Configuration configuration) throws UnsupportedOperationException, QueryNodeException {
+        if(!StringUtils.hasText(qry)) {
+            throw new UnsupportedOperationException("Query string was empty, can't form expert query");
+        }
+        String[] splits = qry.split("\\s", 2);
+        IndexerConfigurationType iType = IndexerConfigurationType.REVISION;
+        ConfigurationType cType;
+        if(ConfigurationType.isValue(splits[0])) {
+            cType = ConfigurationType.fromValue(splits[0]);
+            qry = splits.length > 1 ? splits[1] : "";
+        } else {
+            cType = ConfigurationType.STUDY;
+        }
+
+        splits = qry.split("\\s", 2);
+        Language lang;
+        if(splits[0].split(":", 2)[0].equals("lang")) {
+            lang = Language.fromValue(splits[0].split(":", 2)[1]);
+            qry = splits.length > 1 ? splits[1] : "";
+        } else {
+            lang = Language.DEFAULT;
+        }
+
+        DirectoryManager.DirectoryPath path =  DirectoryManager.formPath(false, iType, lang, cType.toValue());
+        return new ExpertRevisionSearchCommand(path, qry, configuration);
     }
 
     private Query query;
-    private ExpertRevisionSearchCommand(DirectoryManager.DirectoryPath path, String qry, ConfigurationRepository configurations) throws QueryNodeException {
+
+    private ExpertRevisionSearchCommand(DirectoryManager.DirectoryPath path, String qry, Configuration configuration) throws QueryNodeException {
         super(path, ResultList.ResultType.REVISION);
-        Pair<ReturnResult, Configuration> pair = configurations.findLatestConfiguration(ConfigurationType.fromValue(path.getAdditionalParameters()[0]));
 
         //addTextAnalyzer("seriesname");
         Map<String, NumericConfig> nums = new HashMap<>();
@@ -69,11 +97,11 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
 
         /*StandardQueryParser parser = new StandardQueryParser(getAnalyzer());*/
         StandardQueryParser parser = new StandardQueryParser();
-        if(pair.getLeft() == ReturnResult.CONFIGURATION_FOUND) {
+        if(configuration != null) {
             // If we're in config mode we need to parse the query twice, once to get all the fields in the query and second time with the actual numeric configs and analyzers
             query = parser.parse(qry, "general");
 
-            addAnalyzersAndConfigs(query, nums, pair.getRight());
+            addAnalyzersAndConfigs(query, nums, configuration);
             parser.setAnalyzer(getAnalyzer());
             parser.setNumericConfigMap(nums);
         }

@@ -86,14 +86,16 @@ define(function (require) {
                                 .append($('<div class="col-md-12" style="padding-top: 20px;">')
                                     .append($('<span class="pull-right">')
                                         .text(MetkaJS.User.displayName + ' | ')
-                                        .append('<a href="#" class="navbar-link">Kirjaudu ulos</a>'))),
+                                        .append($('<a>', {
+                                            href: "https://"+window.location.hostname+"/Shibboleth.sso/Logout"
+                                        }).text(MetkaJS.L10N.get("topmenu.logout")))
+                                )),
                                 ['<div class="row">',
                                     '<div class="text-right col-sm-4 navbar-text" style="margin-left: 0px; margin-right: 0px; margin-bottom: 0px;">',
                                     '</div>',
                                     '<div class="col-sm-8">',
-                                        '<div class="row">',
-                                            '<form class="navbar-form">',
-                                                '<div class="input-group">',
+                                        '<div class="row">', '<form class="navbar-form">',
+                                    '<div class="input-group">',
                                                     '<input type="text" class="form-control" autocomplete="on" placeholder="Aineistonumero">',
                                                     '<div class="input-group-btn">',
                                                         '<button class="btn btn-primary" type="submit">Hae</button>',

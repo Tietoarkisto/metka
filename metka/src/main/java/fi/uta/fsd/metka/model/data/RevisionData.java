@@ -130,6 +130,13 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase, DataFi
         approved.put(language, info);
     }
 
+    @JsonIgnore public void initParents() {
+        for(DataField field : fields.values()) {
+            field.setParent(this);
+            field.initParents();
+        }
+    }
+
     public RevisionData putChange(Change change) {
         changes.put(change.getKey(), change);
         return this;

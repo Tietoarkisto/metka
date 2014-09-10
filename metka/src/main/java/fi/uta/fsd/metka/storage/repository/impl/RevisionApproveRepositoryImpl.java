@@ -7,6 +7,7 @@ import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
+import fi.uta.fsd.metka.model.configuration.Operation;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.change.ContainerChange;
@@ -22,16 +23,14 @@ import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
-import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionApproveRepository;
+import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
+import fi.uta.fsd.metka.storage.restrictions.RestrictionValidator;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metkaSearch.SearcherComponent;
-import fi.uta.fsd.metkaSearch.commands.searcher.series.SeriesAbbreviationUniquenessSearchCommand;
-import fi.uta.fsd.metkaSearch.results.BooleanResult;
-import fi.uta.fsd.metkaSearch.results.ResultList;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -69,6 +68,9 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
     @Autowired
     private SearcherComponent searcher;
 
+    @Autowired
+    private RestrictionValidator validator;
+
     @Override
     public Pair<ReturnResult, TransferData> approve(TransferData transferData) {
         Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(transferData.getKey().getId(),
@@ -90,6 +92,17 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
 
         // Do validation
         ReturnResult result = approveData(data, transferData);
+        if(result == ReturnResult.APPROVE_SUCCESSFUL) {
+            for(Operation operation : configPair.getRight().getRestrictions()) {
+                if(operation.getType() != OperationType.APPROVE) {
+                    continue;
+                }
+                if(!validator.validate(data, operation.getTargets())) {
+                    result = ReturnResult.APPROVE_FAILED_DURING_VALIDATION;
+                    break;
+                }
+            }
+        }
 
         // If validation was successful then check all languages that should be approved (i.e. which languages have content
         // that has changed in this revision).
@@ -121,7 +134,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
 
             return new ImmutablePair<>(ReturnResult.APPROVE_SUCCESSFUL, TransferData.buildFromRevisionData(data, RevisionableInfo.FALSE));
         } else {
-            return new ImmutablePair<>(ReturnResult.APPROVE_FAILED, transferData);
+            return new ImmutablePair<>(result, transferData);
         }
     }
 
@@ -165,7 +178,8 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
         // Let's assume that we have not managed to change immutable value and instead just check that if value is set in this revision
         // We know that if current result is APPROVE_SUCCESSFUL then we do have some kind of value to check.
         if(result == ReturnResult.APPROVE_SUCCESSFUL) {
-            ResultList<BooleanResult> results =
+            // This should be performed by RestrictionValidation although we don't get failure conditions yet
+            /*ResultList<BooleanResult> results =
                     searcher
                             .executeSearch(
                                     SeriesAbbreviationUniquenessSearchCommand
@@ -185,7 +199,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
                 tf.addErrorFor(Language.DEFAULT, FieldError.NOT_UNIQUE);
                 logger.warn("Series abbreviation is not unique, can't approve until it is changed to unique value");
                 result = ReturnResult.APPROVE_FAILED;
-            }
+            }*/
         }
 
         return result;
@@ -480,13 +494,10 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
     private Set<Language> hasChanges(RevisionData data, Configuration configuration) {
         Set<Language> changesIn = new HashSet<>();
         for(Change change : data.getChanges().values()) {
-            switch(change.getType()) {
-                case VALUE:
-                    checkValueChange(changesIn, change, data, configuration);
-                    break;
-                case CONTAINER:
-                    checkContainerChange(changesIn, (ContainerChange)change, data, data, configuration);
-                    break;
+            if(change instanceof ContainerChange) {
+                checkContainerChange(changesIn, (ContainerChange)change, data, data, configuration);
+            } else {
+                checkValueChange(changesIn, change, data, configuration);
             }
         }
         return changesIn;
@@ -494,13 +505,10 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
 
     private void checkContainerRowChange(Set<Language> changesIn, RowChange rowChange, DataRow row, RevisionData data, Configuration configuration) {
         for(Change change : rowChange.getChanges().values()) {
-            switch(change.getType()) {
-                case VALUE:
-                    checkValueChange(changesIn, change, row, configuration);
-                    break;
-                case CONTAINER:
-                    checkContainerChange(changesIn, (ContainerChange)change, row, data, configuration);
-                    break;
+            if(change instanceof ContainerChange) {
+                checkContainerChange(changesIn, (ContainerChange)change, row, data, configuration);
+            } else {
+                checkValueChange(changesIn, change, row, configuration);
             }
         }
     }

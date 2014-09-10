@@ -39,6 +39,9 @@
             },
             "&settings": {
                 "default": "Asetukset"
+            },
+            "&logout": {
+                "default": "Kirjaudu ulos"
             }
         },
 

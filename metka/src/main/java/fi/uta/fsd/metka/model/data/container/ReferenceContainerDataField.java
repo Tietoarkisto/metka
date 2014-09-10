@@ -31,6 +31,14 @@ public class ReferenceContainerDataField extends RowContainerDataField {
         return references;
     }
 
+    @Override
+    public void initParents() {
+        for(ReferenceRow reference : references) {
+            reference.setParent(this);
+            reference.initParents();
+        }
+    }
+
     /**
      * Searches through a list of references for a reference with given rowId
      * @param rowId Row id to be searched for amongst references

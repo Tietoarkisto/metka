@@ -57,5 +57,5 @@ public enum ReturnResult {
     PAGE_CREATED,                       // Binder page was created in response to save operation
     PAGE_UPDATED,                       // Binder page was updated
     PAGE_REMOVED,                       // Binder page was removed successfully
-    API_AUTHENTICATION_FAILED          // Authentication in API-method failed
+    APPROVE_FAILED_DURING_VALIDATION, API_AUTHENTICATION_FAILED          // Authentication in API-method failed
 }

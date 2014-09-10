@@ -6,6 +6,7 @@ import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.value.Value;
+import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -30,7 +31,9 @@ public class PublicationFactory extends DataFactory {
 
         RevisionData data = createDraftRevision(id, no, configuration.getKey());
 
-        data.dataField(ValueDataFieldCall.set("publicationid", new Value(publicationId), Language.DEFAULT).setConfiguration(configuration));
+        DateTimeUserPair info = DateTimeUserPair.build();
+
+        data.dataField(ValueDataFieldCall.set("publicationid", new Value(publicationId), Language.DEFAULT).setInfo(info).setConfiguration(configuration));
 
         return new ImmutablePair<>(ReturnResult.REVISION_CREATED, data);
     }

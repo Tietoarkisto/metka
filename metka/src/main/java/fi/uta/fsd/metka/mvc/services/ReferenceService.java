@@ -10,14 +10,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@PreAuthorize("hasPermission('"+ Permission.Values.CAN_VIEW_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "')")
 @Transactional(readOnly = true)
 public interface ReferenceService {
     ReferenceOption getCurrentFieldOption(Language language, RevisionData data, String path);
 
+    @PreAuthorize("hasPermission('"+ Permission.Values.CAN_VIEW_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "')")
     List<ReferenceOption> collectReferenceOptions(ReferenceOptionsRequest request);
 
+    @PreAuthorize("hasPermission('"+ Permission.Values.CAN_VIEW_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "')")
     ReferenceRowResponse getReferenceRow(ReferenceRowRequest request);
 
+    @PreAuthorize("hasPermission('"+ Permission.Values.CAN_VIEW_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "')")
     ReferenceStatusResponse getReferenceStatus(Long id);
 }

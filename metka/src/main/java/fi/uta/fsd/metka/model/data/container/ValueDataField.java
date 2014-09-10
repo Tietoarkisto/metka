@@ -94,6 +94,9 @@ public class ValueDataField extends DataField {
         return getValueFor(language) != null && getValueFor(language).hasValue();
     }
 
+    @Override
+    public void initParents() {}
+
     @JsonIgnore
     public boolean originalForEquals(Language language, String compare) {
         return hasOriginalFor(language) && getOriginalFor(language).valueEquals(compare);

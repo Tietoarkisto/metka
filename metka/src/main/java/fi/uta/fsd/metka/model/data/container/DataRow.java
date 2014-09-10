@@ -61,6 +61,14 @@ public class DataRow extends ContainerRow implements DataFieldContainer {
         return super.changeStatusFor(language, false, changeMap, info);
     }
 
+    @Override
+    public void initParents() {
+        for(DataField field : fields.values()) {
+            field.setParent(this);
+            field.initParents();
+        }
+    }
+
     public DataRow copy() {
         DataRow row = new DataRow(getKey(), getRowId());
         row.setSavedAt(new LocalDateTime(savedAt));

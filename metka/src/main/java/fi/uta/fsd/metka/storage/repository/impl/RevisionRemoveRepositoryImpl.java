@@ -1,15 +1,20 @@
 package fi.uta.fsd.metka.storage.repository.impl;
 
+import fi.uta.fsd.metka.enums.OperationType;
 import fi.uta.fsd.metka.enums.RevisionState;
+import fi.uta.fsd.metka.model.configuration.Configuration;
+import fi.uta.fsd.metka.model.configuration.Operation;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
-import fi.uta.fsd.metka.storage.repository.RevisionRepository;
+import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRemoveRepository;
+import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.RemoveResult;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.restrictions.RestrictionValidator;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDateTime;
@@ -41,6 +46,12 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
     @Autowired
     private RevisionRepository revisions;
 
+    @Autowired
+    private ConfigurationRepository configurations;
+
+    @Autowired
+    private RestrictionValidator validator;
+
     @Override
     public RemoveResult remove(TransferData transferData) {
         Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(RevisionKey.fromModelKey(transferData.getKey()));
@@ -60,8 +71,27 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
             logger.error("User "+AuthenticationUtil.getUserName()+" tried to remove draft belonging to "+data.getHandler());
             return RemoveResult.WRONG_USER;
         }
+        Pair<ReturnResult, Configuration> pair = configurations.findConfiguration(data.getConfiguration());
+        if(pair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
+            logger.error("Could not find configuration for data "+data.toString());
+            return RemoveResult.CONFIGURATION_NOT_FOUND;
+        }
 
-        em.remove(em.find(RevisionEntity.class, RevisionKey.fromModelKey(data.getKey())));
+        boolean result = true;
+        for(Operation operation : pair.getRight().getRestrictions()) {
+            if(operation.getType() != OperationType.DELETE) {
+                continue;
+            }
+            if(!validator.validate(data, operation.getTargets())) {
+                result = false;
+                break;
+            }
+        }
+        if(result) {
+            em.remove(em.find(RevisionEntity.class, RevisionKey.fromModelKey(data.getKey())));
+        } else {
+            return RemoveResult.RESTRICTION_VALIDATION_FAILURE;
+        }
 
         List<RevisionEntity> entities = em.createQuery("SELECT r FROM RevisionEntity r WHERE r.key.revisionableId=:id", RevisionEntity.class)
                 .setParameter("id", data.getKey().getId())
@@ -87,6 +117,27 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         }
         if(pair.getRight().getState() == RevisionState.DRAFT) {
             return RemoveResult.OPEN_DRAFT;
+        }
+
+        Pair<ReturnResult, Configuration> confPair = configurations.findConfiguration(pair.getRight().getConfiguration());
+        if(confPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
+            logger.error("Could not find configuration for data "+data.toString());
+            return RemoveResult.CONFIGURATION_NOT_FOUND;
+        }
+
+        boolean result = true;
+        for(Operation operation : confPair.getRight().getRestrictions()) {
+            if(operation.getType() != OperationType.DELETE) {
+                continue;
+            }
+            if(!validator.validate(data, operation.getTargets())) {
+                result = false;
+                break;
+            }
+        }
+
+        if(!result) {
+            return RemoveResult.RESTRICTION_VALIDATION_FAILURE;
         }
 
         RevisionableEntity entity = em.find(RevisionableEntity.class, data.getKey().getId());

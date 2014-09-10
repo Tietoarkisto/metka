@@ -149,12 +149,10 @@ public class RevisionServiceImpl implements RevisionService {
         if(operationResult.getLeft() == ReturnResult.SAVE_SUCCESSFUL_WITH_ERRORS) {
             addIndexCommand(operationResult.getRight());
         }
-        if(operationResult.getLeft() != ReturnResult.SAVE_SUCCESSFUL) {
-            return getResponse(operationResult);
+        if(operationResult.getLeft() == ReturnResult.SAVE_SUCCESSFUL || operationResult.getLeft() == ReturnResult.NO_CHANGES_TO_SAVE) {
+            operationResult = approve.approve(operationResult.getRight());
+            addIndexCommand(operationResult.getRight());
         }
-
-        operationResult = approve.approve(operationResult.getRight());
-        addIndexCommand(operationResult.getRight());
         return getResponse(operationResult);
     }
 
@@ -168,6 +166,10 @@ public class RevisionServiceImpl implements RevisionService {
                 // TODO: In case of study we should most likely remove all sub objects too since they won't point to anything.
                 // TODO: We should also check that references will get removed from revisions (from which point is the question).
                 //       For example if only revision of study attachment is removed then the row should be removed from study too.
+
+                // For now remove the extra document
+                indexer.addCommand(RevisionIndexerCommand.remove(transferData.getConfiguration().getType(), transferData.getKey()));
+                break;
             case SUCCESS_DRAFT:
                 // One remove operation should be enough for both of these since there should only be one affected document
                 addRemoveCommand(transferData);
