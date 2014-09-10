@@ -11,7 +11,6 @@ define(function (require) {
         }
 
         var $body = $('<div class="modal-body">');
-
         if (options.content) {
             require('./container').call($body, options);
         } else {

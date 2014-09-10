@@ -782,7 +782,17 @@
 
         STUDY_VARIABLES: {
             field: {
-                title: "Aineisto"
+                title: "Aineisto",
+                varlabel: "Muuttuja",
+                qstnlit: "Kysymysteksti",
+                preqtxt: "Esiteksti",
+                postqtxt: "Jälkiteksti",
+                ivuinstr: "Haastattelijan ohje",
+                varnote: "Huomio",
+                vartext: "Lisätieto",
+                varsecurity: "Tietosuoja-asia",
+                statisticstype: "Arvo",
+                statisticsvalue: "Selite"
             }
         },
 

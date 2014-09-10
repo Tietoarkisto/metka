@@ -42,10 +42,7 @@ define(function (require) {
                             }]
                         });
 
-                        onSuccess(response.data);
-
-                        $.extend(options.data, response.data);
-                        options.$events.trigger('dataChanged');
+                        onSuccess(response);
                     }
                 });
             };

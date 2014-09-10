@@ -1,0 +1,136 @@
+{
+	"key": {
+		"type": "STUDY_VARIABLES",
+		"version": 1
+	},
+    "fieldTitles": {
+        "varlabel": {
+            "key" : "varlabel",
+            "title" : "Muuttuja"
+        },
+        "publicationtitle": {
+            "key" : "publicationtitle",
+            "title" : "Julkaisun nimi"
+        },
+        "studyid_col": {
+            "key" : "studyid_col",
+            "title" : "Aineiston numero"
+        },
+        "varlabel_col": {
+            "key" : "varlabel_col",
+            "title" : "Muuttuja"
+        }
+    },
+    "content": [
+        {
+            "type": "TAB",
+            "title": "Perusnäkymä",
+            "content": [
+                {
+                    "type": "COLUMN",
+                    "columns": 1,
+                    "rows": [
+                        {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Muuttujat",
+                                    "field": {
+                                        "key": "variables",
+                                        "showSaveInfo": false,
+                                        "showReferenceKey": false,
+                                        "columnFields": [
+                                            "varlabel"
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "TAB",
+            "title": "Ryhmitelty näkymä",
+            "content": [
+                {
+                    "type": "COLUMN",
+                    "columns": 1,
+                    "rows": [
+                        {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "field": {
+                                        "key": "custom_studyVariablesGrouped"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "TAB",
+            "title": "Muuttujien ryhmittely",
+            "content": [
+                {
+                    "type": "COLUMN",
+                    "columns": 1,
+                    "rows": [
+                        {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "field": {
+                                        "key": "custom_studyVariablesGrouping"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "buttons": [
+        {
+            "title": "Tallenna",
+            "type": "SAVE",
+            "states": [
+                "DRAFT"
+            ]
+        },
+        {
+            "title": "Hyväksy",
+            "type": "APPROVE",
+            "states": [
+                "DRAFT"
+            ]
+        },
+        {
+            "title": "Muokkaa",
+            "type": "EDIT",
+            "states": [
+                "APPROVED"
+            ]
+        },
+        {
+            "title": "Poista",
+            "type": "REMOVE",
+            "states": [
+                "DRAFT",
+                "APPROVED"
+            ]
+        },
+        {
+            "title": "Revisiohistoria",
+            "type": "HISTORY"
+        }
+    ]
+}
