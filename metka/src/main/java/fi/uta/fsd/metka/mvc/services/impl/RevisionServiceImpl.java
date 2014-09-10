@@ -239,6 +239,26 @@ public class RevisionServiceImpl implements RevisionService {
         return handler.release(fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(key));
     }
 
+    @Override
+    public RevisionSearchResponse collectRevisionHistory(RevisionHistoryRequest request) {
+        RevisionSearchResponse response = new RevisionSearchResponse();
+
+        Pair<ReturnResult, List<RevisionSearchResult>> results = search.collectRevisionHistory(request);
+        response.setResult(results.getLeft());
+        if(results.getLeft() == ReturnResult.SEARCH_SUCCESS) {
+            response.getRows().addAll(results.getRight());
+        }
+        return response;
+    }
+
+    @Override
+    public RevisionCompareResponse revisionCompare(RevisionCompareRequest request) {
+        List<RevisionCompareResponseRow> rows = search.compareRevisions(request);
+        RevisionCompareResponse response = new RevisionCompareResponse(rows.isEmpty() ? ReturnResult.NO_RESULTS : ReturnResult.OPERATION_SUCCESSFUL);
+        response.getRows().addAll(rows);
+        return response;
+    }
+
     private void addRemoveCommand(TransferData data) {
         switch(data.getConfiguration().getType()) {
             case STUDY_ATTACHMENT:

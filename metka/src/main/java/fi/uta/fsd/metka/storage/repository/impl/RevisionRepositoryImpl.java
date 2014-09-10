@@ -165,7 +165,7 @@ public class RevisionRepositoryImpl implements RevisionRepository {
     @Override
     public List<Integer> getAllRevisionNumbers(Long id) {
         List<Integer> numbers = new ArrayList<>();
-        List<RevisionEntity> revisions = em.createQuery("SELECT r FROM RevisionEntity r WHERE r.key.revisionableId=:id", RevisionEntity.class)
+        List<RevisionEntity> revisions = em.createQuery("SELECT r FROM RevisionEntity r WHERE r.key.revisionableId=:id ORDER BY r.key.revisionNo ASC", RevisionEntity.class)
                 .setParameter("id", id)
                 .getResultList();
         for(RevisionEntity revision : revisions) {

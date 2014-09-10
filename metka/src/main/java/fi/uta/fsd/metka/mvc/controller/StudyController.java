@@ -1,10 +1,8 @@
 package fi.uta.fsd.metka.mvc.controller;
 
-import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.mvc.services.StudyErrorService;
 import fi.uta.fsd.metka.mvc.services.StudyService;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
-import fi.uta.fsd.metka.transfer.revision.RevisionSearchResponse;
 import fi.uta.fsd.metka.transfer.study.StudyError;
 import fi.uta.fsd.metka.transfer.study.StudyErrorListResponse;
 import fi.uta.fsd.metka.transfer.study.StudyVariablesStudiesResponse;
@@ -46,8 +44,8 @@ public class StudyController {
         return service.collectStudiesWithVariables();
     }
 
-    @RequestMapping("attachmentHistory")
+    /*@RequestMapping("attachmentHistory")
     public @ResponseBody RevisionSearchResponse collectAttachmentHistory(@RequestBody TransferData transferData) {
         return service.collectAttachmentHistory(transferData);
-    }
+    }*/
 }

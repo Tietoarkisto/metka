@@ -50,4 +50,8 @@ public interface RevisionService {
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_EDIT_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "') " +
             "and hasPermission(#key, '" + PermissionCheck.Values.RELEASE_REVISION + "')")
     ReturnResult releaseRevision(RevisionKey key);
+
+    @Transactional(readOnly = true) RevisionSearchResponse collectRevisionHistory(RevisionHistoryRequest request);
+
+    @Transactional(readOnly = true) RevisionCompareResponse revisionCompare(RevisionCompareRequest request);
 }

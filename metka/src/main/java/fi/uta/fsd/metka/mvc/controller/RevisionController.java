@@ -171,4 +171,14 @@ public class RevisionController {
     public @ResponseBody RevisionSearchResponse studyIdSearch(@PathVariable String studyId) {
         return revisions.studyIdSearch(studyId);
     }
+
+    @RequestMapping(value = "revisionHistory", method = RequestMethod.POST)
+    public @ResponseBody RevisionSearchResponse collectAttachmentHistory(@RequestBody RevisionHistoryRequest request) {
+        return revisions.collectRevisionHistory(request);
+    }
+
+    @RequestMapping(value = "revisionCompare", method = RequestMethod.POST)
+    public @ResponseBody RevisionCompareResponse revisionCompare(@RequestBody RevisionCompareRequest request) {
+        return revisions.revisionCompare(request);
+    }
 }
