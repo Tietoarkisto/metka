@@ -4,15 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RevisionHistoryRequest {
-    private final Long id;
+    private Long id;
     private final List<String> requestFields = new ArrayList<>();
 
-    public RevisionHistoryRequest(Long id) {
-        this.id = id;
-    }
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public List<String> getRequestFields() {

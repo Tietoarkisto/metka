@@ -1,25 +1,31 @@
 package fi.uta.fsd.metka.transfer.revision;
 
 public class RevisionCompareRequest {
-    private final Long id;
-    private final Integer begin;
-    private final Integer end;
-
-    public RevisionCompareRequest(Long id, Integer begin, Integer end) {
-        this.id = id;
-        this.begin = begin;
-        this.end = end;
-    }
+    private Long id;
+    private Integer begin;
+    private Integer end;
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Integer getBegin() {
         return begin;
     }
 
+    public void setBegin(Integer begin) {
+        this.begin = begin;
+    }
+
     public Integer getEnd() {
         return end;
+    }
+
+    public void setEnd(Integer end) {
+        this.end = end;
     }
 }
