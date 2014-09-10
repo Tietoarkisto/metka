@@ -226,50 +226,14 @@ define(function (require) {
             });
         }
 
-        if (require('./../../isFieldDisabled')(options)) {
-            return {};
-        } else {
-            return {
-                field: {
-                    onClick: function (transferRow, replaceTr) {
-                        view({
-                            id: transferRow.value
-                        }, replaceTr);
-                    },
-                    onAdd: function (originalEmptyData, addRow) {
-                        require('./../../server')('create', {
-                            data: JSON.stringify({
-                                type: 'STUDY_VARIABLE',
-                                parameters: {
-                                    study: require('./../../../metka').id,
-                                    variablesid: '???'
-                                }
-                            }),
-                            success: function (response) {
-                                if (response.result === 'REVISION_CREATED') {
-                                    view(response.data.key, addRow);
-                                }
-                            }
-                        });
-                    }/*,
-                    onRemove: function ($tr) {
-                        require('./../../server')('viewAjax', $.extend({
-                            page: 'study_attachment',
-                            id: $tr.data('transferRow').value
-                        }), {
-                            method: 'GET',
-                            success: function (data) {
-                                require('./../../server')('/revision/ajax/remove', {
-                                    data: JSON.stringify(data.transferData),
-                                    success: function (response) {
-                                        $tr.remove();
-                                    }
-                                });
-                            }
-                        });
-                    }*/
+        return {
+            field: {
+                onClick: function (transferRow, replaceTr) {
+                    view({
+                        id: transferRow.value
+                    }, replaceTr);
                 }
-            };
-        }
+            }
+        };
     };
 });

@@ -36,6 +36,7 @@
                                 {
                                     "type": "CELL",
                                     "title": "Muuttujat",
+                                    "readOnly": true,
                                     "field": {
                                         "key": "variables",
                                         "showSaveInfo": false,
