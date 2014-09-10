@@ -59,7 +59,7 @@ public abstract class DataField {
     }
 
     @JsonIgnore
-    public DataField copy() {throw new UnsupportedOperationException();}
+    public abstract DataField copy();
 
     /**
      * Normalizes this data field for new revision.

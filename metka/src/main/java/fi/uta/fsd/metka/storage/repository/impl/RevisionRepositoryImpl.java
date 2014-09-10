@@ -176,6 +176,8 @@ public class RevisionRepositoryImpl implements RevisionRepository {
 
     @Override
     public ReturnResult updateRevisionData(RevisionData revision) {
+        RevisionableEntity revisionableEntity = em.find(RevisionableEntity.class, revision.getKey().getId());
+
         Pair<SerializationResults, String> string = json.serialize(revision);
         if(string.getLeft() != SerializationResults.SERIALIZATION_SUCCESS) {
             logger.error("Failed at serializing "+revision.toString());
@@ -187,6 +189,11 @@ public class RevisionRepositoryImpl implements RevisionRepository {
         }
         entity.setData(string.getRight());
         em.merge(entity);
+
+        if(revisionableEntity.getLatestRevisionNo() < entity.getKey().getRevisionNo()) {
+            revisionableEntity.setLatestRevisionNo(entity.getKey().getRevisionNo());
+        }
+
         return ReturnResult.REVISION_UPDATE_SUCCESSFUL;
     }
 

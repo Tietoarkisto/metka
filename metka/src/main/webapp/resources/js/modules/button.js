@@ -22,7 +22,9 @@ define(function (require) {
         },
         EDIT: function (options) {
             this.click(require('./formAction')('edit')(options, function (response) {
-                require('./assignUrl')('view');
+                require('./assignUrl')('view', {
+                    no: ''
+                });
             }));
         },
         HISTORY: function () {
@@ -50,10 +52,10 @@ define(function (require) {
                                 }
                             });
                         }
-                        if (beginVal || endVal) {
-                            $('#compareRevisions').attr('disabled', true);
+                        if (beginVal >= endVal) {
+                            $('#compareRevisions').prop('disabled', true);
                         } else {
-                            $('#compareRevisions').attr('disabled', false);
+                            $('#compareRevisions').prop('disabled', false);
                         }
                     }
 
@@ -67,10 +69,10 @@ define(function (require) {
                                         'general.revision.compare.begin',
                                         'general.revision.compare.end'
                                     ];
-
+/*
                                     if (metka.state === 'DRAFT') {
                                         arr.push('general.revision.replace');
-                                    }
+                                    }*/
 
                                     return arr.map(function (entry) {
                                         return $('<th>')
@@ -82,53 +84,104 @@ define(function (require) {
                         title: MetkaJS.L10N.get('general.revision.revisions'),
                         body: $table,
                         buttons: [{
-                            type: 'COMPARE'
+                            type: 'COMPARE',
+                            //preventDismiss: true,
+                            create: function () {
+                                this
+                                    .attr('id', 'compareRevisions')
+                                    .click(function () {
+                                        var $table = $('<table class="table">')
+                                            .append($('<thead>')
+                                                .append($('<tr>')
+                                                    .append([
+                                                            'Kenttä[kieli]',
+                                                            'Alkuperäinen arvo',
+                                                            'Nykyinen arvo'
+                                                        ].map(function (entry) {
+                                                            return $('<th>')
+                                                                .text(entry);
+                                                        }))));
+                                        require('./modal')({
+                                            title: MetkaJS.L10N.get('general.revision.revisions'),
+                                            body: $table,
+                                            buttons: [{
+                                                type: 'DISMISS'
+                                            }]
+                                        });
+
+                                        require('./server')('/revision/revisionCompare', {
+                                            data: JSON.stringify({
+                                                id: metka.id,
+                                                begin: $('input[name="beginGrp"]:checked').val(),
+                                                end: $('input[name="endGrp"]:checked').val()
+                                            }),
+                                            success: function (response) {
+                                                if (response.result === 'OPERATION_SUCCESSFUL') {
+                                                    $table
+                                                        .append($('<tbody>')
+                                                            .append(response.rows.map(function (row) {
+                                                                return $('<tr>')
+                                                                    .append([row.key, row.original, row.current].map(function (entry) {
+                                                                        return $('<td>')
+                                                                            .text(entry);
+                                                                    }));
+                                                            })));
+                                                }
+                                            }
+                                        });
+                                    });
+
+                            }
                         }, {
                             type: 'DISMISS'
                         }]
                     });
+                    require('./server')('/revision/revisionHistory', {
+                        data: JSON.stringify({
+                            id: metka.id
+                        }),
+                        success: function (response) {
+                            $table
+                                .append($('<tbody>')
+                                    .append(response.rows.map(function (row) {
+                                        return $('<tr>')
+                                            .append((function () {
+                                                var items = [
+                                                    $('<a>', {
+                                                        href: require('./url')('view', row),
+                                                        text: row.no
+                                                    }),
+                                                        row.state === 'DRAFT' ? MetkaJS.L10N.get('general.DRAFT') : row.state,
+                                                    $('<input>', {
+                                                        type: 'radio',
+                                                        name: 'beginGrp',
+                                                        value: row.no,
+                                                        change: checkRadioGroups
+                                                    }),
+                                                    $('<input>', {
+                                                        type: 'radio',
+                                                        name: 'endGrp',
+                                                        value: row.no,
+                                                        change: checkRadioGroups
+                                                    })
+                                                ];
 
-                    $.get(require('./url')('listRevisions'), function (response) {
-                        $table
-                            .append($('<tbody>')
-                                .append(response.map(function (row) {
-                                    return $('<tr>')
-                                        .append((function () {
-                                            var items = [
-                                                $('<a>', {
-                                                    href: require('./url')('view', row),
-                                                    text: row.revision
-                                                }),
-                                                    row.state === 'DRAFT' ? MetkaJS.L10N.get('general.DRAFT') : row.approvalDate,
-                                                $('<input>', {
-                                                    type: 'radio',
-                                                    name: 'beginGrp',
-                                                    value: row.revision,
-                                                    change: checkRadioGroups
-                                                }),
-                                                $('<input>', {
-                                                    type: 'radio',
-                                                    name: 'endGrp',
-                                                    value: row.revision,
-                                                    change: checkRadioGroups
-                                                })
-                                            ];
+                                                if (metka.state === 'DRAFT') {
+                                                    items.push(require('./button')()()
+                                                        .addClass('btn-xs')
+                                                        .prop('disabled', true)
+                                                        .text(MetkaJS.L10N.get('general.revision.replace')));
+                                                }
 
-                                            if (metka.state === 'DRAFT') {
-                                                items.push(require('./button')()()
-                                                    .addClass('btn-xs')
-                                                    .prop('disabled', true)
-                                                    .text(MetkaJS.L10N.get('general.revision.replace')));
-                                            }
+                                                return items.map(function (entry) {
+                                                    return $('<td>')
+                                                        .append(entry);
+                                                });
+                                            })());
+                                    })));
 
-                                            return items.map(function (entry) {
-                                                return $('<td>')
-                                                    .append(entry);
-                                            });
-                                        })());
-                                })));
-
-                        checkRadioGroups();
+                            checkRadioGroups();
+                        }
                     });
                 });
         },

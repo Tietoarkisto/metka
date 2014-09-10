@@ -13,7 +13,7 @@ define(function (require) {
                     compareRevisions: 'history/revisions/compare',
                     create: 'revision/ajax/create',
                     download: 'download/{id}/{no}',
-                    edit: '{page}/edit/{id}',
+                    edit: 'revision/ajax/edit',
                     expert: 'expert/',
                     fileEdit: 'file/save/{value}',
                     fileSave: 'file/save',

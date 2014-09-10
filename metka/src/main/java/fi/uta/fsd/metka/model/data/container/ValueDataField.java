@@ -140,12 +140,13 @@ public class ValueDataField extends DataField {
     @Override
     public DataField copy() {
         ValueDataField field = new ValueDataField(getKey());
-        for(Map.Entry<Language, ValueContainer> e : original.entrySet()) {
-            field.original.entrySet().add(e);
+        for(Language l : original.keySet()) {
+            field.original.put(l, original.get(l).copy());
         }
-        for(Map.Entry<Language, ValueContainer> e : current.entrySet()) {
-            field.current.entrySet().add(e);
+        for(Language l : current.keySet()) {
+            field.current.put(l, current.get(l).copy());
         }
+
         return field;
     }
 
