@@ -138,6 +138,7 @@ define(function (require) {
                 }
             }, 'a')
             .data({
+                deactivateAll: deactivateAll,
                 remove: function () {
                     var removed = activeNodes();
 
@@ -185,7 +186,6 @@ define(function (require) {
                     })) {
                         deactivateAll();
                         Array.prototype.push.apply(addTo, nodes);
-                        log(path)
                         if (path.length) {
                             path.reverse().forEach(function (node, i) {
                                 var $icon = $div.children().filter(function () {

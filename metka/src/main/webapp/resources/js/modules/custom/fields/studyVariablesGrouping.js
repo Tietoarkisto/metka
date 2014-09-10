@@ -133,7 +133,80 @@ define(function (require) {
                             .append($moveToVariables)))
                     .append($('<div class="col-xs-5 well well-sm">')
                         .append($groupView
-                            .addClass('grouping-container'))));
+                            .addClass('grouping-container'))))
+                .append($('<div class="row">')
+                    .append($('<div class="col-xs-offset-7">')
+                        .append(require('./../../button')()({
+                            style: 'default',
+                            "&title": {
+                                "default": "Lisää ryhmä"
+                            },
+                            create: function () {
+                                this
+                                    .addClass('btn-sm')
+                                    .click(function () {
+                                        // TODO this is mostly same as saving expert search queries. group shared code together
+                                        var containerOptions = {
+                                            data: {},
+                                            dataConf: {},
+                                            $events: $({}),
+                                            defaultLang: options.defaultLang,
+                                            content: [{
+                                                type: 'COLUMN',
+                                                columns: 1,
+                                                rows: [
+                                                    {
+                                                        "type": "ROW",
+                                                        "cells": [
+                                                            {
+                                                                "type": "CELL",
+                                                                "title": "Nimi",
+                                                                "colspan": 1,
+                                                                "field": {
+                                                                    "displayType": "STRING",
+                                                                    "key": "title"
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            }]
+                                        };
+                                        require('./../../modal')({
+                                            title: 'Lisää ryhmä',
+                                            body: require('./../../container').call($('<div>'), containerOptions),
+                                            buttons: [{
+                                                "&title": {
+                                                    "default": 'OK'
+                                                },
+                                                create: function () {
+                                                    this
+                                                        .click(function () {
+                                                            var title = require('./../../data')(containerOptions)('title').getByLang(options.defaultLang);
+                                                            require('./../../data')(options)('vargroups').appendByLang(options.defaultLang, require('./../../map/object/transferRow')({
+                                                                vargrouptitle: title,
+                                                                vargroupvars: []
+                                                            }, options.defaultLang));
+
+                                                            // always add to root
+                                                            $groupView.data('deactivateAll')();
+
+                                                            $groupView.data('add')([{
+                                                                text: title,
+                                                                children: [],
+                                                                active: true
+                                                            }]);
+                                                            transferToGroups = true;
+                                                            setButtonStates();
+                                                        });
+                                                }
+                                            }, {
+                                                type: 'CANCEL'
+                                            }]
+                                        });
+                                    });
+                            }
+                        }))));
 
             setButtonStates();
         }
