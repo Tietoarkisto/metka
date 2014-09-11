@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TransferValue {
-    private String current = "";
-    private String original = "";
+    private String current = null;
+    private String original = null;
     private final List<FieldError> errors = new ArrayList<>();
 
     public String getCurrent() {

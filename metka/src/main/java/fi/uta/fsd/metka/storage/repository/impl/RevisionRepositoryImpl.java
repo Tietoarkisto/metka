@@ -195,7 +195,7 @@ public class RevisionRepositoryImpl implements RevisionRepository {
             revisionableEntity.setLatestRevisionNo(entity.getKey().getRevisionNo());
         }
 
-        if(revision.getState() == RevisionState.APPROVED && revision.getKey().getId() > revisionableEntity.getCurApprovedNo()) {
+        if(revision.getState() == RevisionState.APPROVED && (revisionableEntity.getCurApprovedNo() == null || revision.getKey().getId() > revisionableEntity.getCurApprovedNo())) {
             revisionableEntity.setCurApprovedNo(revision.getKey().getNo());
         }
 

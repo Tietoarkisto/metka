@@ -141,9 +141,9 @@ define(function (require) {
             if (options.field.showSaveInfo) {
                 $tr.append(
                     $('<td>')
-                        .text(moment(transferRow.saved.time).format(require('./dateFormats')['DATE'])),
+                        .text(transferRow.saved ? moment(transferRow.saved.time).format(require('./dateFormats')['DATE']) : " "),
                     $('<td>')
-                        .text(transferRow.saved.user));
+                        .text(transferRow.saved ? transferRow.saved.user : " "));
             }
 
             if (options.field.hasRowCommands) {

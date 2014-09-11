@@ -63,7 +63,7 @@ public class ContainerDataField extends RowContainerDataField {
      * @param row
      */
     @JsonIgnore public void addRow(Language language, DataRow row) {
-        if(getRowWithId(row.getRowId()) != null) {
+        if(getRowWithId(row.getRowId()).getLeft() == StatusCode.FOUND_ROW) {
             // Can't add second row with same id. Possibly should inform user but this should never happen anyway
             return;
         }
