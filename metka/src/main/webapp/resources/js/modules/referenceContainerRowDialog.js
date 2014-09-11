@@ -34,7 +34,12 @@ define(function (require) {
                                                 onSaveSuccess(data.row);
                                             }
                                         });
-                                    }));
+                                    },
+                                    [
+                                        'SAVE_SUCCESSFUL',
+                                        'SAVE_SUCCESSFUL_WITH_ERRORS',
+                                        'NO_CHANGES_TO_SAVE'
+                                    ]));
                             }
                         }, {
                             type: 'CANCEL'

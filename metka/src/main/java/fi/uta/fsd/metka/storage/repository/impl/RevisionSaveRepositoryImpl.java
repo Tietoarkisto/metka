@@ -40,6 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
+import java.io.File;
 import java.util.*;
 
 @Repository
@@ -152,11 +153,23 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
 
         String path = fieldPair.getRight().getActualValueFor(Language.DEFAULT);
         // Check if file is variable file name
+        File file = new File(path);
+        if(!file.exists() || !file.isFile()) {
+            return;
+        }
         boolean parse = FilenameUtils.getName(path).substring(0, 3).toUpperCase().equals("DAF");
         // Check if file is variable file based on file extension
         if(parse) {
             if(!FilenameUtils.getExtension(path).toUpperCase().equals("POR")) {
                 // For now the only option. If more variable file types are added then this needs to be changed to a switch case
+                parse = false;
+            }
+        }
+        if(parse) {
+            Pair<StatusCode, ValueDataField> orig = revision.dataField(ValueDataFieldCall.get("fileoriginal"));
+            if(orig.getLeft() != StatusCode.FIELD_FOUND || !orig.getRight().hasValueFor(Language.DEFAULT)) {
+                parse = false;
+            } else if(orig.getRight().getActualValueFor(Language.DEFAULT).equals("1")) {
                 parse = false;
             }
         }

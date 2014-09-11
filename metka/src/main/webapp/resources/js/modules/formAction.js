@@ -2,7 +2,7 @@ define(function (require) {
     'use strict';
 
     return function (url) {
-        return function (options, onSuccess) {
+        return function (options, onSuccess, successConditions) {
             return function () {
                 (function clearErrors(fields) {
                     $.each(fields, function (key, field) {
@@ -33,8 +33,18 @@ define(function (require) {
                     data: JSON.stringify(options.data),
                     success: function (response) {
                         require('./modal')({
-                            title: response.result === 'SAVE_SUCCESSFUL' ? MetkaJS.L10N.get('alert.notice.title') : MetkaJS.L10N.get('alert.error.title'),
-                            body: ''/*data.errors.map(function (error) {
+                            title: function() {
+                                if(!successConditions) {
+                                    return MetkaJS.L10N.get('alert.error.title');
+                                }
+                                for(var i = 0; i<successConditions.length; i++) {
+                                    if(successConditions[i] === response.result) {
+                                        return MetkaJS.L10N.get('alert.notice.title');
+                                    }
+                                }
+                                return MetkaJS.L10N.get('alert.error.title');
+                            }(),
+                            body: response.result /*data.errors.map(function (error) {
                              return MetkaJS.L10N.get(error.msg);
                              })*/,
                             buttons: [{

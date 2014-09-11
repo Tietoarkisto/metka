@@ -120,7 +120,7 @@ define(function (require) {
                                         "cells": [
                                             {
                                                 "type": "CELL",
-                                                "title": "Alkuperäinen kieli",
+                                                "title": "Alkuperäinen",
                                                 "horizontal": true,
                                                 "field": {
                                                     "key": "fileoriginal"
@@ -186,7 +186,12 @@ define(function (require) {
                                                 onSaveSuccess(data.row);
                                             }
                                         });
-                                    }));
+                                    },
+                                    [
+                                        'SAVE_SUCCESSFUL',
+                                        'SAVE_SUCCESSFUL_WITH_ERRORS',
+                                        'NO_CHANGES_TO_SAVE'
+                                    ]));
                             }
                         }, {
                             type: 'CANCEL'

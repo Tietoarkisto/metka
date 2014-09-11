@@ -188,10 +188,15 @@ public class RevisionRepositoryImpl implements RevisionRepository {
             return ReturnResult.REVISION_NOT_FOUND;
         }
         entity.setData(string.getRight());
+        entity.setState(revision.getState());
         em.merge(entity);
 
         if(revisionableEntity.getLatestRevisionNo() < entity.getKey().getRevisionNo()) {
             revisionableEntity.setLatestRevisionNo(entity.getKey().getRevisionNo());
+        }
+
+        if(revision.getState() == RevisionState.APPROVED && revision.getKey().getId() > revisionableEntity.getCurApprovedNo()) {
+            revisionableEntity.setCurApprovedNo(revision.getKey().getNo());
         }
 
         return ReturnResult.REVISION_UPDATE_SUCCESSFUL;

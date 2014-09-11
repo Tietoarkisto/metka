@@ -335,10 +335,13 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         // Make VariablesHandler
         VariableHandler handler = new VariableHandler(info, variablesData.dataField(ValueDataFieldCall.get("study")).getRight().getActualValueFor(DEFAULT));
 
-        List<StudyVariableEntity> variableEntities =
-                em.createQuery("SELECT e FROM StudyVariableEntity e WHERE e.studyVariablesId=:studyVariablesId", StudyVariableEntity.class)
-                        .setParameter("studyVariablesId", variablesData.getKey().getId())
-                        .getResultList();
+        List<StudyVariableEntity> variableEntities = em.createQuery("SELECT e FROM StudyVariableEntity e", StudyVariableEntity.class).getResultList();
+        for(Iterator<StudyVariableEntity> i = variableEntities.iterator(); i.hasNext(); ) {
+            StudyVariableEntity temp = i.next();
+            if(!temp.getStudyVariablesId().equals(variablesData.getKey().getId())) {
+                i.remove();
+            }
+        }
 
         List<Pair<StudyVariableEntity, PORUtil.PORVariableHolder>> listOfEntitiesAndHolders = new ArrayList<>();
         for(PORUtil.PORVariableHolder variable : variables) {

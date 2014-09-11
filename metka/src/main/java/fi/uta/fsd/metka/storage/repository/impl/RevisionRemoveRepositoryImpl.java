@@ -71,7 +71,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
             logger.error("User "+AuthenticationUtil.getUserName()+" tried to remove draft belonging to "+data.getHandler());
             return RemoveResult.WRONG_USER;
         }
-        Pair<ReturnResult, Configuration> pair = configurations.findConfiguration(data.getConfiguration());
+        /*Pair<ReturnResult, Configuration> pair = configurations.findConfiguration(data.getConfiguration());
         if(pair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
             logger.error("Could not find configuration for data "+data.toString());
             return RemoveResult.CONFIGURATION_NOT_FOUND;
@@ -91,7 +91,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
             em.remove(em.find(RevisionEntity.class, RevisionKey.fromModelKey(data.getKey())));
         } else {
             return RemoveResult.RESTRICTION_VALIDATION_FAILURE;
-        }
+        }*/
 
         List<RevisionEntity> entities = em.createQuery("SELECT r FROM RevisionEntity r WHERE r.key.revisionableId=:id", RevisionEntity.class)
                 .setParameter("id", data.getKey().getId())

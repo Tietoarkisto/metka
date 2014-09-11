@@ -5,7 +5,10 @@ define(function (require) {
         APPROVE: function (options) {
             this.click(require('./formAction')('approve')(options, function (response) {
                 require('./assignUrl')('view');
-            }));
+            },
+            [
+                'APPROVE_SUCCESSFUL'
+            ]));
         },
         CANCEL: function () {
             this
@@ -25,7 +28,11 @@ define(function (require) {
                 require('./assignUrl')('view', {
                     no: ''
                 });
-            }));
+            },
+            [
+                'REVISION_FOUND',
+                'REVISION_CREATED'
+            ]));
         },
         HISTORY: function () {
             var metka = require('./../metka');
@@ -239,7 +246,12 @@ define(function (require) {
             this.click(require('./formAction')('save')(options, function (response) {
                 $.extend(options.data, response.data);
                 options.$events.trigger('dataChanged');
-            }));
+            },
+            [
+                'SAVE_SUCCESSFUL',
+                'SAVE_SUCCESSFUL_WITH_ERRORS',
+                'NO_CHANGES_TO_SAVE'
+            ]));
         },
         YES: function () {
             this.text(MetkaJS.L10N.get('general.buttons.yes'));

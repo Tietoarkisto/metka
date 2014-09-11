@@ -44,7 +44,7 @@ public class StudySearchImpl implements StudySearch {
         }
         List<RevisionSearchResult> results = new ArrayList<>();
         for(StudyVariablesEntity entity : entities) {
-            Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(entity.getStudy(), false, ConfigurationType.STUDY);
+            Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(entity.getStudyVariablesStudy(), false, ConfigurationType.STUDY);
             if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
                 continue;
             }

@@ -19,9 +19,6 @@ import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.model.transfer.TransferField;
 import fi.uta.fsd.metka.model.transfer.TransferValue;
-import fi.uta.fsd.metka.storage.entity.RevisionEntity;
-import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
-import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionApproveRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
@@ -125,12 +122,20 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
                 return new ImmutablePair<>(ReturnResult.APPROVE_FAILED, transferData);
             }
 
-            RevisionEntity revision = em.find(RevisionEntity.class, new RevisionKey(data.getKey().getId(), data.getKey().getNo()));
+            ReturnResult updateResult = revisions.updateRevisionData(data);
+
+            /*RevisionEntity revision = em.find(RevisionEntity.class, new RevisionKey(data.getKey().getId(), data.getKey().getNo()));
             revision.setState(RevisionState.APPROVED);
-            revision.setData(string.getRight());
+            revision.setData(string.getRight());*/
+
+            /*
 
             RevisionableEntity revisionable = em.find(RevisionableEntity.class, data.getKey().getId());
-            revisionable.setCurApprovedNo(data.getKey().getNo());
+            revisionable.setCurApprovedNo(data.getKey().getNo());*/
+
+            if(updateResult != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
+                return new ImmutablePair<>(updateResult, transferData);
+            }
 
             return new ImmutablePair<>(ReturnResult.APPROVE_SUCCESSFUL, TransferData.buildFromRevisionData(data, RevisionableInfo.FALSE));
         } else {
@@ -239,6 +244,11 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
 
     private ReturnResult approveStudyAttachment(RevisionData revision) {
         if(checkTopFieldForValue(revision, "file", Language.DEFAULT) == ReturnResult.APPROVE_FAILED) {
+            return ReturnResult.APPROVE_FAILED;
+        }
+
+        File file = new File(revision.dataField(ValueDataFieldCall.get("file")).getRight().getActualValueFor(Language.DEFAULT));
+        if(!file.exists() || file.isDirectory()) {
             return ReturnResult.APPROVE_FAILED;
         }
 

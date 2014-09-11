@@ -181,17 +181,17 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
                 break;
             case STUDY_ATTACHMENT:
                 StudyAttachmentEntity sae = new StudyAttachmentEntity();
-                sae.setStudy(Long.parseLong(request.getParameters().get("study")));
+                sae.setStudyAttachmentStudy(Long.parseLong(request.getParameters().get("study")));
                 revisionable = sae;
                 break;
             case STUDY_VARIABLES:
                 StudyVariablesEntity svs = new StudyVariablesEntity();
-                svs.setStudy(Long.parseLong(request.getParameters().get("study")));
+                svs.setStudyVariablesStudy(Long.parseLong(request.getParameters().get("study")));
                 revisionable = svs;
                 break;
             case STUDY_VARIABLE:
                 StudyVariableEntity sv = new StudyVariableEntity();
-                sv.setStudy(Long.parseLong(request.getParameters().get("study")));
+                sv.setStudyVariableStudy(Long.parseLong(request.getParameters().get("study")));
                 sv.setStudyVariablesId(Long.parseLong(request.getParameters().get("variablesid")));
                 sv.setVarId(request.getParameters().get("varid"));
                 revisionable = sv;
@@ -293,9 +293,9 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
      */
     private void finalizeStudyAttachment(StudyAttachmentEntity revisionable) {
         // Get the latest revision for study and, if it exists, get or create files reference container
-        Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(revisionable.getStudy(), false, ConfigurationType.STUDY);
+        Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(revisionable.getStudyAttachmentStudy(), false, ConfigurationType.STUDY);
         if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
-            logger.error("Didn't find  latest revision for study with id "+revisionable.getStudy()+" with result "+dataPair.getLeft());
+            logger.error("Didn't find  latest revision for study with id "+revisionable.getStudyAttachmentStudy()+" with result "+dataPair.getLeft());
             return;
         }
 

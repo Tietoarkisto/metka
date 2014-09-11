@@ -7,16 +7,16 @@ import org.joda.time.LocalDateTime;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "STUDY_ERRORS")
+@Table(name = "STUDY_ERROR")
 public class StudyErrorEntity {
     @Id
-    @SequenceGenerator(name="STUDY_ERRORS_ID_SEQ", sequenceName="STUDY_ERRORS_ID_SEQ", allocationSize=1)
-    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="STUDY_ERRORS_ID_SEQ")
-    @Column(name = "STUDY_ERRORS_ID", updatable = false)
+    @SequenceGenerator(name="STUDY_ERROR_ID_SEQ", sequenceName="STUDY_ERROR_ID_SEQ", allocationSize=1)
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="STUDY_ERROR_ID_SEQ")
+    @Column(name = "STUDY_ERROR_ID", updatable = false)
     private Long id;
 
-    @Column(name = "STUDY_ID", updatable = false)
-    private Long studyId;
+    @Column(name = "STUDY_ERROR_STUDY", updatable = false)
+    private Long studyErrorStudy;
 
     @Column(name = "ADDED_BY")
     private String addedBy;
@@ -58,12 +58,12 @@ public class StudyErrorEntity {
         this.id = id;
     }
 
-    public Long getStudyId() {
-        return studyId;
+    public Long getStudyErrorStudy() {
+        return studyErrorStudy;
     }
 
-    public void setStudyId(Long studyId) {
-        this.studyId = studyId;
+    public void setStudyErrorStudy(Long studyErrorStudy) {
+        this.studyErrorStudy = studyErrorStudy;
     }
 
     public String getAddedBy() {

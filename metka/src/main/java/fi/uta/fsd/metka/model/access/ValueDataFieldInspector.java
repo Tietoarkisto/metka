@@ -127,7 +127,7 @@ final class ValueDataFieldInspector {
                 }
 
                 // Check mutability
-                if(field.getImmutable() && !valueDataField.originalForEquals(language, value.getValue())) {
+                if(field.getImmutable() && valueDataField.hasOriginalFor(language) && !valueDataField.originalForEquals(language, value.getValue())) {
                     return new ImmutablePair<>(StatusCode.FIELD_NOT_MUTABLE, null);
                 }
             }
