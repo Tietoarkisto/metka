@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.enums.RevisionState;
+import fi.uta.fsd.metka.enums.UIRevisionState;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.DataField;
 import fi.uta.fsd.metka.model.general.ConfigurationKey;
@@ -76,9 +77,10 @@ public class TransferData implements ModelBase, TransferFieldContainer {
             data.state.getApproved().put(language, revision.getApproved().get(language));
         }
         if(revision.getState() == RevisionState.DRAFT) {
-            data.state.setDraft(true);
             data.state.setHandler(revision.getHandler());
         }
+
+        data.state.setUiState(info.getRemoved() ? UIRevisionState.REMOVED : UIRevisionState.fromRevisionState(revision.getState()));
 
         data.state.setSaved(revision.getSaved());
 

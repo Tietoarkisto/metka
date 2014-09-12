@@ -1,7 +1,6 @@
 package fi.uta.fsd.metkaExternal;
 
 import fi.uta.fsd.metka.storage.repository.APIRepository;
-import org.joda.time.LocalDateTime;
 import org.springframework.security.crypto.codec.Base64;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -31,9 +30,10 @@ public class ExternalUtil {
             return false;
         }
 
-        if(user.getLastAccess().plusSeconds(1).compareTo(new LocalDateTime()) >= 0) {
+        // This can be used to check call frequency
+        /*if(user.getLastAccess().plusSeconds(1).compareTo(new LocalDateTime()) >= 0) {
             return false;
-        }
+        }*/
 
         if((permission & user.getPermissions()) != permission) {
             return false;

@@ -6,62 +6,72 @@ import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.transfer.revision.RevisionSearchRequest;
+import fi.uta.fsd.metkaSearch.LuceneConfig;
 import fi.uta.fsd.metkaSearch.commands.searcher.RevisionSearchCommandBase;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import fi.uta.fsd.metkaSearch.results.ResultHandler;
 import fi.uta.fsd.metkaSearch.results.ResultList;
 import fi.uta.fsd.metkaSearch.results.RevisionResult;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.lucene.document.FieldType;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.apache.lucene.queryparser.flexible.standard.StandardQueryParser;
 import org.apache.lucene.queryparser.flexible.standard.config.NumericConfig;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.*;
+import org.apache.lucene.search.spans.SpanQuery;
 import org.springframework.util.StringUtils;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static fi.uta.fsd.metka.enums.FieldType.*;
 
 public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<RevisionResult> {
+    public static ExpertRevisionSearchCommand build(RevisionSearchRequest request, Configuration configuration)
+            throws UnsupportedOperationException, QueryNodeException {
+        List<String> qrys = new ArrayList<>();
+
+        qrys.add(((!request.isSearchApproved())?"+":"")+"state.approved:"+request.isSearchApproved());
+        qrys.add(((!request.isSearchDraft())?"+":"")+"state.draft:"+request.isSearchDraft());
+        qrys.add(((!request.isSearchRemoved())?"+":"")+"state.removed:"+request.isSearchRemoved());
+
+        for(String key : request.getValues().keySet()) {
+            if(!StringUtils.hasText(request.getByKey(key))) {
+                continue;
+            }
+            qrys.add("+"+key+":("+request.getByKey(key)+")");
+        }
+
+        String qryStr = StringUtils.collectionToDelimitedString(qrys, " ");
+
+        DirectoryManager.DirectoryPath path = DirectoryManager.formPath(false, IndexerConfigurationType.REVISION, Language.DEFAULT, request.getType().toValue());
+        return new ExpertRevisionSearchCommand(path, qryStr, configuration);
+    }
+
     public static ExpertRevisionSearchCommand build(String qry, ConfigurationRepository configurations) throws UnsupportedOperationException, QueryNodeException {
         if(!StringUtils.hasText(qry)) {
             throw new UnsupportedOperationException("Query string was empty, can't form expert query");
         }
-        String[] splits = qry.split("\\s", 2);
-        IndexerConfigurationType iType = IndexerConfigurationType.REVISION;
-        ConfigurationType cType;
-        if(ConfigurationType.isValue(splits[0])) {
-            cType = ConfigurationType.fromValue(splits[0]);
-            qry = splits.length > 1 ? splits[1] : "";
-        } else {
-            cType = ConfigurationType.STUDY;
-        }
-
-        splits = qry.split("\\s", 2);
-        Language lang;
-        if(splits[0].split(":", 2)[0].equals("lang")) {
-            lang = Language.fromValue(splits[0].split(":", 2)[1]);
-            qry = splits.length > 1 ? splits[1] : "";
-        } else {
-            lang = Language.DEFAULT;
-        }
-
-        DirectoryManager.DirectoryPath path =  DirectoryManager.formPath(false, iType, lang, cType.toValue());
-        Pair<ReturnResult, Configuration> pair = configurations.findLatestConfiguration(ConfigurationType.fromValue(path.getAdditionalParameters()[0]));
-        return new ExpertRevisionSearchCommand(path, qry, pair.getRight());
+        Pair<DirectoryManager.DirectoryPath, String> pathPair = extractPath(qry);
+        Pair<ReturnResult, Configuration> pair = configurations.findLatestConfiguration(ConfigurationType.fromValue(pathPair.getLeft().getAdditionalParameters()[0]));
+        return new ExpertRevisionSearchCommand(pathPair.getLeft(), pathPair.getRight(), pair.getRight());
     }
 
     public static ExpertRevisionSearchCommand build(String qry, Configuration configuration) throws UnsupportedOperationException, QueryNodeException {
         if(!StringUtils.hasText(qry)) {
             throw new UnsupportedOperationException("Query string was empty, can't form expert query");
         }
+        Pair<DirectoryManager.DirectoryPath, String> pathPair = extractPath(qry);
+        return new ExpertRevisionSearchCommand(pathPair.getLeft(), pathPair.getRight(), configuration);
+    }
+
+    private static Pair<DirectoryManager.DirectoryPath, String> extractPath(String qry) {
         String[] splits = qry.split("\\s", 2);
         IndexerConfigurationType iType = IndexerConfigurationType.REVISION;
         ConfigurationType cType;
@@ -82,7 +92,7 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
         }
 
         DirectoryManager.DirectoryPath path =  DirectoryManager.formPath(false, iType, lang, cType.toValue());
-        return new ExpertRevisionSearchCommand(path, qry, configuration);
+        return new ImmutablePair<>(path, qry);
     }
 
     private Query query;
@@ -93,10 +103,9 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
         //addTextAnalyzer("seriesname");
         Map<String, NumericConfig> nums = new HashMap<>();
 
-        // TODO: Fill analyzers and numeric field info
-
         /*StandardQueryParser parser = new StandardQueryParser(getAnalyzer());*/
         StandardQueryParser parser = new StandardQueryParser();
+        parser.setAllowLeadingWildcard(true);
         if(configuration != null) {
             // If we're in config mode we need to parse the query twice, once to get all the fields in the query and second time with the actual numeric configs and analyzers
             query = parser.parse(qry, "general");
@@ -120,10 +129,15 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
 
     private void addAnalyzersAndConfigs(Query query, Map<String, NumericConfig> nums, Configuration config) {
         if(query instanceof TermQuery) {
-            addTermQuery((TermQuery)query, nums, config);
+            addTermQuery((TermQuery) query, nums, config);
+        } else if(query instanceof MultiTermQuery) {
+            addMultiQuery((MultiTermQuery)query, nums, config);
+        } else if(query instanceof SpanQuery) {
+            addSpanQuery((SpanQuery)query, nums, config);
         } else if(query instanceof BooleanQuery) {
             addBooleanQuery((BooleanQuery)query, nums, config);
         }
+        // TODO: Some query types might still be missed in which case they don't have correct numeric configurations etc.
     }
 
     private void addBooleanQuery(BooleanQuery query, Map<String, NumericConfig> nums, Configuration config) {
@@ -133,17 +147,24 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
     }
 
     private void addTermQuery(TermQuery query, Map<String, NumericConfig> nums, Configuration config) {
+        addField(query.getTerm().field(), nums, config);
+    }
+
+    private void addMultiQuery(MultiTermQuery query, Map<String, NumericConfig> nums, Configuration config) {
+        addField(query.getField(), nums, config);
+    }
+
+    private void addSpanQuery(SpanQuery query, Map<String, NumericConfig> nums, Configuration config) {
+        addField(query.getField(), nums, config);
+    }
+
+    private void addField(String key, Map<String, NumericConfig> nums, Configuration config) {
         // TODO: Reference field end points as well as some automated values are not found on given configuration but instead need to be found through reference handling
-        String key = query.getTerm().field();
         switch(key) {
             case "key.id":
-                nums.put(key, new NumericConfig(4, new DecimalFormat(), FieldType.NumericType.LONG));
-                return;
             case "key.no":
-                nums.put(key, new NumericConfig(4, new DecimalFormat(), FieldType.NumericType.LONG));
-                return;
             case "key.configuration.version":
-                nums.put(key, new NumericConfig(4, new DecimalFormat(), FieldType.NumericType.LONG));
+                nums.put(key, new NumericConfig(LuceneConfig.PRECISION_STEP, new DecimalFormat(), FieldType.NumericType.LONG));
                 return;
         }
         String[] splits = key.split(".");
@@ -153,7 +174,6 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
         }
         String start = splits[0];
         if(start.equals("key") || start.equals("state")) {
-
             return;
         }
 
@@ -169,9 +189,9 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
                 addWhitespaceAnalyzer(key);
             }
         } else if(field.getType() == INTEGER) {
-            nums.put(key, new NumericConfig(1, new DecimalFormat(), FieldType.NumericType.LONG));
+            nums.put(key, new NumericConfig(LuceneConfig.PRECISION_STEP, new DecimalFormat(), FieldType.NumericType.LONG));
         } else if(field.getType() == REAL) {
-            nums.put(key, new NumericConfig(1, new DecimalFormat(), FieldType.NumericType.DOUBLE));
+            nums.put(key, new NumericConfig(LuceneConfig.PRECISION_STEP, new DecimalFormat(), FieldType.NumericType.DOUBLE));
         }
     }
 }

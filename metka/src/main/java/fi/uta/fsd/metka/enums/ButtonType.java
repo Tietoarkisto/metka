@@ -8,5 +8,9 @@ public enum ButtonType {
     HISTORY,
     CLAIM,
     RELEASE,
-    RESTORE
+    RESTORE,
+    SEARCH,
+    ADD,
+    RESET,
+    CLEAR
 }

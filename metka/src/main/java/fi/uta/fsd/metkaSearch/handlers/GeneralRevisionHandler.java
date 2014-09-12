@@ -131,10 +131,10 @@ class GeneralRevisionHandler implements RevisionHandler {
 
         // Do some default stuff
         logger.info("Forming document for revision.");
-        document.indexIntegerField("key.id", data.getKey().getId(), YES);
-        document.indexIntegerField("key.no", data.getKey().getNo().longValue(), YES);
+        document.indexIntegerField("key.id", data.getKey().getId(), true);
+        document.indexIntegerField("key.no", data.getKey().getNo().longValue(), true);
         document.indexKeywordField("key.configuration.type", data.getConfiguration().getType().toValue(), YES);
-        document.indexIntegerField("key.configuration.version", data.getConfiguration().getVersion().longValue(), YES);
+        document.indexIntegerField("key.configuration.version", data.getConfiguration().getVersion().longValue(), true);
         document.indexKeywordField("state.removed", info.getRemoved().toString(), YES);
         if(info.getRemoved()) {
             document.indexKeywordField("state.removed.time", info.getRemovedAt().toString(), YES);

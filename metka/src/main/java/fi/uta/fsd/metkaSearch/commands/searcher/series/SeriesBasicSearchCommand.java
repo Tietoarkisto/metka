@@ -2,6 +2,7 @@ package fi.uta.fsd.metkaSearch.commands.searcher.series;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metkaSearch.LuceneConfig;
 import fi.uta.fsd.metkaSearch.commands.searcher.RevisionSearchCommandBase;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
@@ -24,6 +25,7 @@ import java.util.Map;
 /**
  * This class provides information and query necessary for performing basic series test from Series search page.
  */
+@Deprecated
 public final class SeriesBasicSearchCommand extends RevisionSearchCommandBase<RevisionResult> {
     public static SeriesBasicSearchCommand build(boolean allowApproved, boolean allowDraft, boolean allowRemoved,
                                                  Long revisionableId, String abbreviation, String name) throws UnsupportedOperationException, QueryNodeException {
@@ -37,13 +39,6 @@ public final class SeriesBasicSearchCommand extends RevisionSearchCommandBase<Re
                                      boolean allowApproved, boolean allowDraft, boolean allowRemoved,
                                      Long revisionableId, String abbreviation, String name) throws QueryNodeException {
         super(path, ResultList.ResultType.REVISION);
-        // Create new boolean query.
-        // For each of allowApproved, allowDraft and allowRemoved if they are false
-        // then set a new MUST condition where their respective fields must be false.
-        // This allows for filtering based on status of revision or revisionable.
-        // If given revisionableId is not null then add a condition where key.id must match given revisionableId
-        // If abbreviation or name are non null non empty, then add MUST conditions for
-        // seriesabbr and seriesname fields. These should support wildcards but must be tested.
         List<String> qrys = new ArrayList<>();
         Map<String, NumericConfig> nums = new HashMap<>();
 
@@ -52,7 +47,7 @@ public final class SeriesBasicSearchCommand extends RevisionSearchCommandBase<Re
         qrys.add(((!allowRemoved)?"+":"")+"state.removed:"+allowRemoved);
 
         if(revisionableId != null) qrys.add("+key.id:"+revisionableId);
-        nums.put("key.id", new NumericConfig(1, new DecimalFormat(), FieldType.NumericType.LONG));
+        nums.put("key.id", new NumericConfig(LuceneConfig.PRECISION_STEP, new DecimalFormat(), FieldType.NumericType.LONG));
 
         if(StringUtils.isNotBlank(abbreviation)) {
             qrys.add("+seriesabbr:"+abbreviation);

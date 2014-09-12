@@ -5,6 +5,7 @@ import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
+import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.change.ContainerChange;
@@ -12,13 +13,14 @@ import fi.uta.fsd.metka.model.data.change.RowChange;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 import fi.uta.fsd.metka.search.RevisionSearch;
+import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.transfer.revision.*;
 import fi.uta.fsd.metkaSearch.SearcherComponent;
+import fi.uta.fsd.metkaSearch.commands.searcher.expert.ExpertRevisionSearchCommand;
 import fi.uta.fsd.metkaSearch.commands.searcher.publication.PublicationBasicSearchCommand;
-import fi.uta.fsd.metkaSearch.commands.searcher.series.SeriesBasicSearchCommand;
 import fi.uta.fsd.metkaSearch.commands.searcher.study.StudyBasicSearchCommand;
 import fi.uta.fsd.metkaSearch.commands.searcher.study.StudyIdSearchCommand;
 import fi.uta.fsd.metkaSearch.results.ResultList;
@@ -35,8 +37,6 @@ import org.springframework.util.StringUtils;
 
 import java.util.*;
 
-import static fi.uta.fsd.metka.storage.util.ConversionUtil.stringToLong;
-
 @Repository
 public class RevisionSearchImpl implements RevisionSearch {
     private static Logger logger = LoggerFactory.getLogger(RevisionSearchImpl.class);
@@ -47,9 +47,13 @@ public class RevisionSearchImpl implements RevisionSearch {
     @Autowired
     private SearcherComponent searcher;
 
+    @Autowired
+    private ConfigurationRepository configurations;
+
     @Override
     public Pair<ReturnResult, List<RevisionSearchResult>> search(RevisionSearchRequest request) {
-        switch(request.getType()) {
+        return performBasicSearch(request);
+        /*switch(request.getType()) {
             case SERIES:
                 return findSeries(request);
             case STUDY:
@@ -58,7 +62,7 @@ public class RevisionSearchImpl implements RevisionSearch {
                 return findPublications(request);
             default:
                 return new ImmutablePair<>(ReturnResult.INCORRECT_TYPE_FOR_OPERATION, null);
-        }
+        }*/
     }
 
     @Override
@@ -120,8 +124,8 @@ public class RevisionSearchImpl implements RevisionSearch {
 
         Map<String, MutablePair<String, String>> changes = new HashMap<>();
 
-        for(int i = 0; i < nos.size(); i++) {
-            Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(request.getId(), nos.get(i));
+        for(Integer no : nos) {
+            Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(request.getId(), nos.get(no));
             if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
                 continue;
             }
@@ -244,7 +248,23 @@ public class RevisionSearchImpl implements RevisionSearch {
         }
     }
 
-    private Pair<ReturnResult, List<RevisionSearchResult>> findSeries(RevisionSearchRequest request) {
+    private Pair<ReturnResult, List<RevisionSearchResult>> performBasicSearch(RevisionSearchRequest request) {
+        Pair<ReturnResult, Configuration> configPair = configurations.findLatestConfiguration(request.getType());
+        if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
+            return new ImmutablePair<>(configPair.getLeft(), null);
+        }
+        try {
+            ExpertRevisionSearchCommand command = ExpertRevisionSearchCommand.build(request, configPair.getRight());
+            ResultList<RevisionResult> results = searcher.executeSearch(command);
+            return new ImmutablePair<>(ReturnResult.SEARCH_SUCCESS, collectResults(results));
+        } catch(QueryNodeException qne) {
+            // Couldn't form query command
+            logger.error("Exception while performing basic series search:", qne);
+            return new ImmutablePair<>(ReturnResult.SEARCH_FAILED, null);
+        }
+    }
+
+    /*private Pair<ReturnResult, List<RevisionSearchResult>> findSeries(RevisionSearchRequest request) {
         SeriesBasicSearchCommand command;
         try {
             command = SeriesBasicSearchCommand.build(request.isSearchApproved(), request.isSearchDraft(), request.isSearchRemoved(),
@@ -256,7 +276,7 @@ public class RevisionSearchImpl implements RevisionSearch {
             logger.error("Exception while performing basic series search:", qne);
             return new ImmutablePair<>(ReturnResult.SEARCH_FAILED, null);
         }
-    }
+    }*/
 
     private Pair<ReturnResult, List<RevisionSearchResult>> findStudies(RevisionSearchRequest request) {
         StudyBasicSearchCommand command;

@@ -30,23 +30,21 @@ public class IndexerDocument {
     public Document getDocument() {return document;}
 
     public void indexIntegerField(String key, Long value) {
-        indexIntegerField(key, value, Store.NO);
-        // TODO: Check precision
+        indexIntegerField(key, value, false);
     }
 
-    public void indexIntegerField(String key, Long value, Store store) {
-        document.add(new LongField(key, value, store));
-        // TODO: Check precision
+    public void indexIntegerField(String key, Long value, boolean store) {
+        LongField lf = new LongField(key, value, (store) ? LuceneConfig.LONG_TYPE_STORE : LuceneConfig.LONG_TYPE);
+        document.add(lf);
     }
 
     public void indexRealField(String key, Double value) {
-        indexRealField(key, value, Store.NO);
-        // TODO: Check precision
+        indexRealField(key, value, false);
     }
 
-    public void indexRealField(String key, Double value, Store store) {
-        document.add(new DoubleField(key, value, store));
-        // TODO: Check precision
+    public void indexRealField(String key, Double value, boolean store) {
+        DoubleField df = new DoubleField(key, value, (store) ? LuceneConfig.DOUBLE_TYPE_STORE : LuceneConfig.DOUBLE_TYPE);
+        document.add(df);
     }
 
     public void indexStringField(String key, String value, Store store) {

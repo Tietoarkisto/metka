@@ -67,8 +67,6 @@
             <version>3.2.4.RELEASE</version>
         </dependency>
 
-
-
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
@@ -353,6 +351,7 @@
 				<directory>src/main/resources</directory>
 				<includes>
 					<include>**/*.properties</include>
+                    <include>log4j.xml</include>
 				</includes>
 			</resource>
 			<resource>
@@ -360,6 +359,7 @@
 				<directory>src/main/resources</directory>
 				<excludes>
 					<exclude>**/*.properties</exclude>
+                    <exclude>log4j.xml</exclude>
 				</excludes>
 			</resource>
 		</resources>

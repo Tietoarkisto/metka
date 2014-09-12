@@ -19,6 +19,7 @@ import java.util.Map;
 /**
  * This class provides information and query necessary for performing basic series test from Series search page.
  */
+@Deprecated
 public final class PublicationBasicSearchCommand extends RevisionSearchCommandBase<RevisionResult> {
     // TODO: Factory
 

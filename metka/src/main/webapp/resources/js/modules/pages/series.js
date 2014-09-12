@@ -19,7 +19,7 @@ define(function (require) {
                                         "colspan": 2,
                                         "field": {
                                             "displayType": "INTEGER",
-                                            "key": "id"
+                                            "key": "key.id"
                                         }
                                     },
                                     {
@@ -109,7 +109,7 @@ define(function (require) {
                             searchDraft: data('searchDraft').getByLang(options.defaultLang),
                             searchRemoved: data('searchRemoved').getByLang(options.defaultLang),
                             values: {
-                                id: data('id').getByLang(options.defaultLang),
+                                'key.id': data('key.id').getByLang(options.defaultLang),
                                 seriesabbr: data('seriesabbr').getByLang(options.defaultLang),
                                 seriesname: data('seriesname').getByLang(options.defaultLang)
                             }

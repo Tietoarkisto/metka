@@ -361,8 +361,8 @@ public class SpringLuceneTests {
         analyzers.put("float2", new KeywordAnalyzer());
 
         Map<String, NumericConfig> nums = new HashMap<>();
-        nums.put("int3", new NumericConfig(4, new DecimalFormat(), FieldType.NumericType.INT));
-        nums.put("float3", new NumericConfig(4, new DecimalFormat(), FieldType.NumericType.FLOAT));
+        nums.put("int3", new NumericConfig(LuceneConfig.PRECISION_STEP, new DecimalFormat(), FieldType.NumericType.INT));
+        nums.put("float3", new NumericConfig(LuceneConfig.PRECISION_STEP, new DecimalFormat(), FieldType.NumericType.FLOAT));
 
         TEST_ANALYZER = new PerFieldAnalyzerWrapper(new WhitespaceAnalyzer(LuceneConfig.USED_VERSION), analyzers);
 
