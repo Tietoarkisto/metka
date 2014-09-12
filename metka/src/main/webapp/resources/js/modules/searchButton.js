@@ -12,7 +12,10 @@ define(function (require) {
                     .click(function () {
                         require('./searchResultContainer').apply(this, args);
                     })
-            }
+            },
+            permissions: [
+                "canPerformSearch"
+            ]
         };
     };
 });
