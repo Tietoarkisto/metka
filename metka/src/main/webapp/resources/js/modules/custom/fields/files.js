@@ -202,7 +202,7 @@ define(function (require) {
             });
         }
 
-        if (require('./../../isFieldDisabled')(options)) {
+        if (require('./../../isFieldDisabled')(options, options.defaultLang)) {
             return {};
         } else {
             return {

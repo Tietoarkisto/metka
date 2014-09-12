@@ -94,16 +94,11 @@ define(function (require) {
                         }]
                     }),
                     success: function (data) {
-                        data.responses.forEach(function (response) {
-                            if (response.messages && response.messages.length) {
-                                log(response.messages);
-                            }
-                            if (response.options) {
-                                setOptions(response.options);
-                            }
-                            // enable input, if it was enabled before request
-                            $input.prop('disabled', isDisabled);
-                        });
+                        if (data.responses && data.responses.length && data.responses[0].options) {
+                            setOptions(data.responses[0].options);
+                        }
+                        // enable input, if it was enabled before request
+                        $input.prop('disabled', isDisabled);
                     }
                 });
             } else {
@@ -119,7 +114,7 @@ define(function (require) {
 
         if (option.title) {
             if (option.title.type === 'LITERAL') {
-                return option.title.value;
+                return option.title.value.default;
             }
         }
 
