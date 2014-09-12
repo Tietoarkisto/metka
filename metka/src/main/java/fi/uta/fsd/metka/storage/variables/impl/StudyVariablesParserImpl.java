@@ -878,7 +878,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             DataRow row;
             String type;
             String statisticstype = "statisticstype";
-            String statisticvalue = "statisticvalue";
+            String statisticvalue = "statisticsvalue";
 
             // Set vald
             type = "vald"; // Valid values statistic
