@@ -1,18 +1,34 @@
 define(function (require) {
     'use strict';
 
+    function isHandler(options) {
+        return options.data.state.handler === MetkaJS.User.userName;
+    }
+
     var buttons = {
         APPROVE: function (options) {
-            this.click(require('./formAction')('approve')(options, function (response) {
-                require('./assignUrl')('view');
-            },
-            [
-                'APPROVE_SUCCESSFUL'
-            ]));
+            this
+                .click(require('./formAction')('approve')(options, function (response) {
+                    require('./assignUrl')('view');
+                },
+                [
+                    'APPROVE_SUCCESSFUL'
+                ]));
         },
         CANCEL: function () {
             this
                 .text(MetkaJS.L10N.get('general.buttons.cancel'));
+        },
+        CLAIM: function (options) {
+            this
+                .click(function () {
+                    require('./server')('/revision/ajax/claim', {
+                        data: JSON.stringify(options.data.key),
+                        success: function (response) {
+                            require('./assignUrl')('view');
+                        }
+                    });
+                });
         },
         COMPARE: function () {
             this
@@ -242,16 +258,28 @@ define(function (require) {
                     });
                 });
         },
+        RELEASE: function (options) {
+            this
+                .click(function () {
+                    require('./server')('/revision/ajax/release', {
+                        data: JSON.stringify(options.data.key),
+                        success: function (response) {
+                            require('./assignUrl')('view');
+                        }
+                    });
+                });
+        },
         SAVE: function (options) {
-            this.click(require('./formAction')('save')(options, function (response) {
-                $.extend(options.data, response.data);
-                options.$events.trigger('dataChanged');
-            },
-            [
-                'SAVE_SUCCESSFUL',
-                'SAVE_SUCCESSFUL_WITH_ERRORS',
-                'NO_CHANGES_TO_SAVE'
-            ]));
+            this
+                .click(require('./formAction')('save')(options, function (response) {
+                    $.extend(options.data, response.data);
+                    options.$events.trigger('dataChanged');
+                },
+                [
+                    'SAVE_SUCCESSFUL',
+                    'SAVE_SUCCESSFUL_WITH_ERRORS',
+                    'NO_CHANGES_TO_SAVE'
+                ]));
         },
         YES: function () {
             this.text(MetkaJS.L10N.get('general.buttons.yes'));
@@ -260,67 +288,39 @@ define(function (require) {
 
     return require('./inherit')(function (options) {
         function isVisible() {
-            /**
-             * Checks to see if user fulfills buttons userGroups restriction
-             * @param button Button configuration
-             * @returns {boolean} Is user groups restriction filled
-             */
-            function checkButtonGroupRestriction() {
-                if(MetkaJS.hasContent(options.userGroups)) {
-                    // TODO: Check users groups against this and return false if user doesn't fulfill the restriction
-                }
-
-                return true;
-            }
-            /**
-             * Checks to see if user fulfills buttons isHandler restriction
-             * @param button Button configuration
-             * @returns {boolean} Is is handler restriction filled
-             */
-            function checkButtonHandlerRestriction() {
-                if(MetkaJS.exists(options.isHandler)) {
-                    // TODO: Check if user fulfills buttons isHandler restriction
-                }
-
-                return true;
-            }
-
-            function checkButtonStateRestriction() {
-                var show = false;
-                if(MetkaJS.hasContent(options.states)) {
-                    var i, length;
-                    for(i = 0, length = options.states.length; i < length; i++) {
-                        var state = options.states[i];
-                        switch(state) {
-                            case MetkaJS.E.VisibilityState.DRAFT:
-                                if (options.data.state.draft) {
-                                    show = true;
-                                }
-                                break;
-                            case MetkaJS.E.VisibilityState.APPROVED:
-                                if(options.data.state.approved) {
-                                    show = true;
-                                }
-                                break;
-                            case MetkaJS.E.VisibilityState.REMOVED:
-                                // TODO: Check for displaying removed revisionable
-                                break;
-                        }
-                        if(show) {
-                            break;
-                        }
+            if (options.data && options.data.state && options.data.state.uiState === 'DRAFT' && options.hasOwnProperty('isHandler')) {
+                if (options.isHandler) {
+                    if (options.data.state.handler !== MetkaJS.User.userName) {
+                        return false;
                     }
                 } else {
-                    show = true;
+                    if (options.data.state.handler === MetkaJS.User.userName) {
+                        return false;
+                    }
                 }
-
-                return show;
             }
 
-            // Check if button should be displayed
-            return checkButtonGroupRestriction()
-                && checkButtonHandlerRestriction()
-                && checkButtonStateRestriction();
+            if (options.states && options.states.length) {
+                // if every state mismatch
+                if (options.states.every(function (state) {
+                    return options.data.state.uiState !== state;
+                })) {
+                    //log('state', options)
+                    return false;
+                }
+            }
+
+            if (options.permissions && options.permissions.length) {
+                // if some permission is not given
+                if (options.permissions.some(function (permission) {
+                    return !MetkaJS.User.role.permissions[permission];
+                })) {
+                    //log('permissions', options)
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         var metka = require('./../metka');

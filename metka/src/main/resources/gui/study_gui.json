@@ -999,15 +999,23 @@
         {
             "title": "Tallenna",
             "type": "SAVE",
+            "isHandler": true,
             "states": [
                 "DRAFT"
+            ],
+            "permissions": [
+                "canEditRevision"
             ]
         },
         {
             "title": "Hyväksy",
             "type": "APPROVE",
+            "isHandler": true,
             "states": [
                 "DRAFT"
+            ],
+            "permissions": [
+                "canApproveRevision"
             ]
         },
         {
@@ -1015,6 +1023,9 @@
             "type": "EDIT",
             "states": [
                 "APPROVED"
+            ],
+            "permissions": [
+                "canEditRevision"
             ]
         },
         {
@@ -1023,11 +1034,62 @@
             "states": [
                 "DRAFT",
                 "APPROVED"
+            ],
+            "isHandler": true,
+            "permissions": [
+                "canRemoveRevision"
+            ]
+        },
+        {
+            "title": "Palauta",
+            "type": "RESTORE",
+            "states": [
+                "REMOVED"
+            ],
+            "permissions": [
+                "canRestoreRevision"
+            ]
+        },
+        {
+            "title": "Ota haltuun",
+            "type": "CLAIM",
+            "isHandler": false,
+            "states": [
+                "DRAFT"
+            ],
+            "permissions": [
+                "canEditRevision",
+                "canForceClaimRevision"
+            ]
+        },
+        {
+            "title": "Vapauta",
+            "type": "RELEASE",
+            "isHandler": true,
+            "states": [
+                "DRAFT"
+            ],
+            "permissions": [
+                "canEditRevision"
+            ]
+        },
+        {
+            "title": "Vapauta toisen hallussa oleva",
+            "type": "RELEASE",
+            "isHandler": false,
+            "states": [
+                "DRAFT"
+            ],
+            "permissions": [
+                "canForceReleaseRevision"
             ]
         },
         {
             "title": "Revisiohistoria",
-            "type": "HISTORY"
+            "type": "HISTORY",
+            "permissions": [
+                "canViewRevision"
+            ]
         }
     ]
 }
