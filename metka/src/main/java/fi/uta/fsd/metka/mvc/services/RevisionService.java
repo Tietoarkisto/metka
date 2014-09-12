@@ -2,7 +2,6 @@ package fi.uta.fsd.metka.mvc.services;
 
 import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.model.transfer.TransferData;
-import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.revision.*;
 import fi.uta.fsd.metkaAuthentication.Permission;
 import fi.uta.fsd.metkaAuthentication.PermissionCheck;
@@ -45,11 +44,11 @@ public interface RevisionService {
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_EDIT_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "') " +
             "and hasPermission(#key, '" + PermissionCheck.Values.CLAIM_REVISION + "')")
-    ReturnResult claimRevision(RevisionKey key);
+    RevisionOperationResponse claimRevision(RevisionKey key);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_EDIT_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "') " +
             "and hasPermission(#key, '" + PermissionCheck.Values.RELEASE_REVISION + "')")
-    ReturnResult releaseRevision(RevisionKey key);
+    RevisionOperationResponse releaseRevision(RevisionKey key);
 
     @Transactional(readOnly = true) RevisionSearchResponse collectRevisionHistory(RevisionHistoryRequest request);
 

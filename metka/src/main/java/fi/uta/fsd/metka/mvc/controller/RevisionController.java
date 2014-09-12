@@ -158,12 +158,12 @@ public class RevisionController {
     }
 
     @RequestMapping(value = "ajax/claim", method = {RequestMethod.GET, RequestMethod.POST})
-    public @ResponseBody ReturnResult claim(@RequestBody RevisionKey key) {
+    public @ResponseBody RevisionOperationResponse claim(@RequestBody RevisionKey key) {
         return revisions.claimRevision(key);
     }
 
     @RequestMapping(value = "ajax/release", method = {RequestMethod.GET, RequestMethod.POST})
-    public @ResponseBody ReturnResult release(@RequestBody RevisionKey key) {
+    public @ResponseBody RevisionOperationResponse release(@RequestBody RevisionKey key) {
         return revisions.releaseRevision(key);
     }
 
