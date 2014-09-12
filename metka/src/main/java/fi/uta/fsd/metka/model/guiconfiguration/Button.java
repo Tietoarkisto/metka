@@ -13,6 +13,7 @@ public class Button {
     private TranslationObject title;
     private final Set<String> permissions = new HashSet<>();
     private Boolean isHandler;
+    private Boolean hasHandler;
     private final Set<VisibilityState> states = new HashSet<>();
     private ButtonType type;
 
@@ -28,12 +29,20 @@ public class Button {
         return permissions;
     }
 
-    public Boolean getHandler() {
+    public Boolean getIsHandler() {
         return isHandler;
     }
 
-    public void setHandler(Boolean handler) {
-        isHandler = handler;
+    public void setIsHandler(Boolean isHandler) {
+        this.isHandler = isHandler;
+    }
+
+    public Boolean getHasHandler() {
+        return hasHandler;
+    }
+
+    public void setHasHandler(Boolean hasHandler) {
+        this.hasHandler = hasHandler;
     }
 
     public Set<VisibilityState> getStates() {

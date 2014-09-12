@@ -32,7 +32,13 @@ public class ButtonDeserializer extends ObjectDeserializer<Button> {
         // Set handler
         JsonNode handler = node.get("isHandler");
         if(handler != null && handler.getNodeType() == JsonNodeType.BOOLEAN) {
-            btn.setHandler(handler.booleanValue());
+            btn.setIsHandler(handler.booleanValue());
+        }
+
+        // Set handler
+        handler = node.get("hasHandler");
+        if(handler != null && handler.getNodeType() == JsonNodeType.BOOLEAN) {
+            btn.setHasHandler(handler.booleanValue());
         }
 
         // Set user groups

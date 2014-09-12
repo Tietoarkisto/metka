@@ -13,19 +13,6 @@
                     "cells": [
                         {
                             "type": "CELL",
-                            "title": "ID",
-                            "readOnly": true,
-                            "field": {
-                                "key": "seriesid"
-                            }
-                        }
-                    ]
-                },
-                {
-                    "type": "ROW",
-                    "cells": [
-                        {
-                            "type": "CELL",
                             "title": "Lyhenne",
                             "field": {
                                 "key": "seriesabbr"
@@ -74,39 +61,114 @@
             ]
         }
 	],
-	"buttons": [
-		{
-			"title": "Tallenna",
-			"type": "SAVE",
-			"states": [
-				"DRAFT"
-			]
-		},
-		{
-			"title": "Hyväksy",
-			"type": "APPROVE",
-			"states": [
-				"DRAFT"
-			]
-		},
-		{
-			"title": "Muokkaa",
-			"type": "EDIT",
-			"states": [
-				"APPROVED"
-			]
-		},
-		{
-			"title": "Poista",
-			"type": "REMOVE",
-			"states": [
-				"DRAFT",
-				"APPROVED"
-			]
-		},
-		{
-			"title": "Revisiohistoria",
-			"type": "HISTORY"
-		}
-	]
+    "buttons": [
+        {
+            "title": "Tallenna",
+            "type": "SAVE",
+            "isHandler": true,
+            "states": [
+                "DRAFT"
+            ],
+            "permissions": [
+                "canEditRevision"
+            ]
+        },
+        {
+            "title": "Hyväksy",
+            "type": "APPROVE",
+            "isHandler": true,
+            "states": [
+                "DRAFT"
+            ],
+            "permissions": [
+                "canApproveRevision"
+            ]
+        },
+        {
+            "title": "Tee luonnos",
+            "type": "EDIT",
+            "states": [
+                "APPROVED"
+            ],
+            "permissions": [
+                "canEditRevision"
+            ]
+        },
+        {
+            "title": "Poista",
+            "type": "REMOVE",
+            "states": [
+                "DRAFT",
+                "APPROVED"
+            ],
+            "isHandler": true,
+            "permissions": [
+                "canRemoveRevision"
+            ]
+        },
+        {
+            "title": "Palauta",
+            "type": "RESTORE",
+            "states": [
+                "REMOVED"
+            ],
+            "permissions": [
+                "canRestoreRevision"
+            ]
+        },
+        {
+            "title": "Aloita muokkaus",
+            "type": "CLAIM",
+            "hasHandler": false,
+            "states": [
+                "DRAFT"
+            ],
+            "permissions": [
+                "canEditRevision"
+            ]
+        },
+        {
+            "title": "Ota haltuun",
+            "type": "CLAIM",
+            "hasHandler": true,
+            "isHandler": false,
+            "states": [
+                "DRAFT"
+            ],
+            "permissions": [
+                "canEditRevision",
+                "canForceClaimRevision"
+            ]
+        },
+        {
+            "title": "Lopeta muokkaus",
+            "type": "RELEASE",
+            "isHandler": true,
+            "states": [
+                "DRAFT"
+            ],
+            "permissions": [
+                "canEditRevision"
+            ]
+        },
+        {
+            "title": "Vapauta luonnos",
+            "type": "RELEASE",
+            "isHandler": false,
+            "hasHandler": true,
+            "states": [
+                "DRAFT"
+            ],
+            "permissions": [
+                "canForceReleaseRevision"
+            ]
+        },
+        {
+            "title": "Revisiohistoria",
+            "type": "HISTORY",
+            "permissions": [
+                "canViewRevision"
+            ]
+        }
+    ]
 }

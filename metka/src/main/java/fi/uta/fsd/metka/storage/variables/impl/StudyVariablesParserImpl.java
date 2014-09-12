@@ -571,7 +571,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
 
             // Add container rows
             for(PORUtil.PORVariableValueLabel label : variable.getLabels()) {
-                DataRow row = popOrCreateAndInsertRow(valueLabels, rows, "value", label.getValue());
+                DataRow row = popOrCreateAndInsertRow(valueLabels, rows, "value", label.getValue(), variableRevision.getChanges());
                 result = resultCheck(result, setValueLabelRow(row, label, variableRevision.getChanges()));
             }
 
@@ -761,7 +761,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             List<PORUtil.PORVariableData> sortedKeys = new ArrayList<>(frequencies.keySet());
             Collections.sort(sortedKeys, new PORUtil.PORVariableDataComparator());
             for(PORUtil.PORVariableData value : sortedKeys) {
-                DataRow row = popOrCreateAndInsertRow(target, rows, "value", value.toString());
+                DataRow row = popOrCreateAndInsertRow(target, rows, "value", value.toString(), revision.getChanges());
                 PORUtil.PORVariableValueLabel label = variable.getLabel(value.toString());
                 Integer freq = frequencies.get(value);
 
@@ -882,7 +882,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
 
             // Set vald
             type = "vald"; // Valid values statistic
-            row = popOrCreateAndInsertRow(statistics, rows, statisticstype, type);
+            row = popOrCreateAndInsertRow(statistics, rows, statisticstype, type, variableRevision.getChanges());
             Pair<StatusCode, ValueDataField> fieldPair = row.dataField(
                     ValueDataFieldCall.set(statisticvalue, new Value(values.toString()), DEFAULT).setInfo(info).setChangeMap(changeMap));
             checkResultForUpdate(fieldPair, result);
@@ -890,7 +890,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             // Set min
             type = "min";
             if(values > 0) {
-                row = popOrCreateAndInsertRow(statistics, rows, statisticstype, type);
+                row = popOrCreateAndInsertRow(statistics, rows, statisticstype, type, variableRevision.getChanges());
                 String min = Collections.min(data, new PORUtil.PORNumericVariableDataComparator()).toString();
                 fieldPair = row.dataField(ValueDataFieldCall.set(statisticvalue, new Value(min), DEFAULT).setInfo(info).setChangeMap(changeMap));
                 checkResultForUpdate(fieldPair, result);
@@ -899,7 +899,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             // Set max
             type = "max";
             if(values > 0) {
-                row = popOrCreateAndInsertRow(statistics, rows, statisticstype, type);
+                row = popOrCreateAndInsertRow(statistics, rows, statisticstype, type, variableRevision.getChanges());
                 String max = Collections.max(data, new PORUtil.PORNumericVariableDataComparator()).toString();
                 fieldPair = row.dataField(ValueDataFieldCall.set(statisticvalue, new Value(max), DEFAULT).setInfo(info).setChangeMap(changeMap));
                 checkResultForUpdate(fieldPair, result);
@@ -910,7 +910,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             Double mean = 0D;
             // If there are no values or variable is continuous don't add mean
             if(values > 0) {
-                row = popOrCreateAndInsertRow(statistics, rows, statisticstype, type);
+                row = popOrCreateAndInsertRow(statistics, rows, statisticstype, type, variableRevision.getChanges());
                 Integer denom = 0;
                 for(PORUtil.PORVariableDataNumeric varD : data) {
                     mean += varD.getValue();
@@ -925,7 +925,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             type = "stdev";
             // If there are no values or variable is continuous don't add deviation
             if(values > 0) {
-                row = popOrCreateAndInsertRow(statistics, rows, statisticstype, type);
+                row = popOrCreateAndInsertRow(statistics, rows, statisticstype, type, variableRevision.getChanges());
                 Double deviation = 0D;
                 Integer denom = 0;
                 for(PORUtil.PORVariableDataNumeric varD : data) {
@@ -980,12 +980,14 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
          * @param rows Collection of rows to search through for correct existing row
          * @param key Field key of the field where given value should be
          * @param value Value to search for
+         * @param changeMap Map where this rows containers should reside
          * @return Either an existing or newly created DataRow that has been inserted to the given container already
          */
-        private DataRow popOrCreateAndInsertRow(ContainerDataField target, Collection<DataRow> rows, String key, String value) {
+        private DataRow popOrCreateAndInsertRow(ContainerDataField target, Collection<DataRow> rows, String key, String value, Map<String, Change> changeMap) {
             DataRow row = popRowWithFieldValue(rows, key, value);
             if(row == null) {
                 row = DataRow.build(target);
+                row.dataField(ValueDataFieldCall.set(key, new Value(value), DEFAULT).setChangeMap(changeMap));
             }
             target.addRow(DEFAULT, row);
             return row;

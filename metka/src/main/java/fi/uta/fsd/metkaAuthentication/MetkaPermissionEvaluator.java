@@ -67,6 +67,7 @@ public class MetkaPermissionEvaluator implements PermissionEvaluator {
                 if(!(target instanceof RevisionKey)) {
                     throw new RuntimeException("Target has to be a revision key");
                 }
+                hasPermission = claimReleaseCheck((RevisionKey)target, check);
                 break;
             case CLAIM_REVISION:
                 if(!(target instanceof RevisionKey)) {

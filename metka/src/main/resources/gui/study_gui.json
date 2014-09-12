@@ -1019,7 +1019,7 @@
             ]
         },
         {
-            "title": "Muokkaa",
+            "title": "Tee luonnos",
             "type": "EDIT",
             "states": [
                 "APPROVED"
@@ -1051,8 +1051,20 @@
             ]
         },
         {
+            "title": "Aloita muokkaus",
+            "type": "CLAIM",
+            "hasHandler": false,
+            "states": [
+                "DRAFT"
+            ],
+            "permissions": [
+                "canEditRevision"
+            ]
+        },
+        {
             "title": "Ota haltuun",
             "type": "CLAIM",
+            "hasHandler": true,
             "isHandler": false,
             "states": [
                 "DRAFT"
@@ -1063,7 +1075,7 @@
             ]
         },
         {
-            "title": "Vapauta",
+            "title": "Lopeta muokkaus",
             "type": "RELEASE",
             "isHandler": true,
             "states": [
@@ -1074,9 +1086,10 @@
             ]
         },
         {
-            "title": "Vapauta toisen hallussa oleva",
+            "title": "Vapauta luonnos",
             "type": "RELEASE",
             "isHandler": false,
+            "hasHandler": true,
             "states": [
                 "DRAFT"
             ],

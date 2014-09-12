@@ -288,15 +288,14 @@ define(function (require) {
 
     return require('./inherit')(function (options) {
         function isVisible() {
-            if (options.data && options.data.state && options.data.state.uiState === 'DRAFT' && options.hasOwnProperty('isHandler')) {
-                if (options.isHandler) {
-                    if (options.data.state.handler !== MetkaJS.User.userName) {
-                        return false;
-                    }
-                } else {
-                    if (options.data.state.handler === MetkaJS.User.userName) {
-                        return false;
-                    }
+            if (options.data && options.data.state && options.data.state.uiState === 'DRAFT' && options.hasOwnProperty('hasHandler') && options.hasHandler !== null) {
+                if (!!options.hasHandler !== !!options.data.state.handler) {
+                    return false;
+                }
+            }
+            if (options.data && options.data.state && options.data.state.uiState === 'DRAFT' && options.hasOwnProperty('isHandler') && options.isHandler !== null) {
+                if (options.isHandler !== (options.data.state.handler === MetkaJS.User.userName)) {
+                    return false;
                 }
             }
 

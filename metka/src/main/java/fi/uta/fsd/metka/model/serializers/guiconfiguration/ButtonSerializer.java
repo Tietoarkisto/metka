@@ -27,10 +27,17 @@ public class ButtonSerializer extends ObjectSerializer<Button> {
         }
 
         // Write isHandler
-        if(value.getHandler() != null) {
-            jgen.writeBooleanField("isHandler", value.getHandler());
+        if(value.getIsHandler() != null) {
+            jgen.writeBooleanField("isHandler", value.getIsHandler());
         } else {
             jgen.writeNullField("isHandler");
+        }
+
+        // Write isHandler
+        if(value.getHasHandler() != null) {
+            jgen.writeBooleanField("hasHandler", value.getHasHandler());
+        } else {
+            jgen.writeNullField("hasHandler");
         }
 
         // Write userGroups
