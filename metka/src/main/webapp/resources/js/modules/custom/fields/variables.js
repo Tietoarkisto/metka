@@ -53,7 +53,6 @@ define(function (require) {
                                             {
                                                 "type": "CELL",
                                                 "title": "Kysymystekstit",
-                                                "horizontal": true,
                                                 "field": {
                                                     "key": "qstnlits",
                                                     "columnFields": [
@@ -69,7 +68,6 @@ define(function (require) {
                                             {
                                                 "type": "CELL",
                                                 "title": "Esitekstit",
-                                                "horizontal": true,
                                                 "field": {
                                                     "key": "preqtxts",
                                                     "columnFields": [
@@ -85,7 +83,6 @@ define(function (require) {
                                             {
                                                 "type": "CELL",
                                                 "title": "Jälkitekstit",
-                                                "horizontal": true,
                                                 "field": {
                                                     "key": "postqtxts",
                                                     "columnFields": [
@@ -101,7 +98,6 @@ define(function (require) {
                                             {
                                                 "type": "CELL",
                                                 "title": "Haastattelijan ohjeet",
-                                                "horizontal": true,
                                                 "field": {
                                                     "key": "ivuinstrs",
                                                     "columnFields": [
@@ -117,7 +113,6 @@ define(function (require) {
                                             {
                                                 "type": "CELL",
                                                 "title": "Huomiot",
-                                                "horizontal": true,
                                                 "field": {
                                                     "key": "varnotes",
                                                     "columnFields": [
@@ -133,7 +128,6 @@ define(function (require) {
                                             {
                                                 "type": "CELL",
                                                 "title": "Lisätiedot",
-                                                "horizontal": true,
                                                 "field": {
                                                     "key": "vartexts",
                                                     "columnFields": [
@@ -149,7 +143,6 @@ define(function (require) {
                                             {
                                                 "type": "CELL",
                                                 "title": "Tietosuoja-asiat",
-                                                "horizontal": true,
                                                 "field": {
                                                     "key": "varsecuritys",
                                                     "columnFields": [
@@ -165,7 +158,6 @@ define(function (require) {
                                             {
                                                 "type": "CELL",
                                                 "title": "Arvojen selitteet",
-                                                "horizontal": true,
                                                 "readOnly": true,
                                                 "field": {
                                                     "displayType": "CONTAINER",
@@ -184,7 +176,7 @@ define(function (require) {
                                             {
                                                 "type": "CELL",
                                                 "title": "Arvojen selitteet",
-                                                "horizontal": true,
+                                                "readOnly": true,
                                                 "field": {
                                                     "key": "statistics",
                                                     "columnFields": [
