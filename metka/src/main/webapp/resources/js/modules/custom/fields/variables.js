@@ -152,24 +152,6 @@ define(function (require) {
                                             }
                                         ]
                                     },
-                                    /*{
-                                        "type": "ROW",
-                                        "cells": [
-                                            {
-                                                "type": "CELL",
-                                                "title": "Arvojen selitteet",
-                                                "readOnly": true,
-                                                "field": {
-                                                    "displayType": "CONTAINER",
-                                                    "key": "statisticstype",
-                                                    "columnFields": [
-                                                        "statisticstype",
-                                                        "statisticsvalue"
-                                                    ]
-                                                }
-                                            }
-                                        ]
-                                    },*/
                                     {
                                         "type": "ROW",
                                         "cells": [
@@ -178,7 +160,29 @@ define(function (require) {
                                                 "title": "Arvojen selitteet",
                                                 "readOnly": true,
                                                 "field": {
+                                                    "displayHeader": false,
+                                                    "displayType": "CONTAINER",
+                                                    "key": "categories",
+                                                    "columnFields": [
+                                                        "value",
+                                                        "label",
+                                                        "categorystat",
+                                                        "missing"
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "ROW",
+                                        "cells": [
+                                            {
+                                                "type": "CELL",
+                                                "title": "Statistiikka",
+                                                "readOnly": true,
+                                                "field": {
                                                     "key": "statistics",
+                                                    "displayHeader": false,
                                                     "columnFields": [
                                                         "statisticstype",
                                                         "statisticsvalue"

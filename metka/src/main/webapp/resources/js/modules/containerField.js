@@ -107,7 +107,7 @@ define(function (require) {
                             }
                         })();
 
-                        if (type === 'STRING' || type === 'INTEGER') {
+                        if (type === 'STRING' || type === 'INTEGER' || type === 'REAL') {
                             return value || EMPTY;
                         }
                         if (['DATE', 'TIME', 'DATETIME'].indexOf(type) !== -1) {
@@ -279,57 +279,62 @@ define(function (require) {
                                 });
                         });
                 })
-                .append($thead
-                    .append($('<tr>')
-                        /*.append(function () {
-                         if (options.field.showReferenceKey ??? getPropertyNS(options, 'dataConf.fields', key, 'showReferenceKey')) {
-                         var target = options.dataConf.references[options.dataConf.fields[key].reference].target;
-                         }
-                         })*/
-                        .append(function () {
-                            var response = [];
-                            var th = field2TableHead(PAGE + '.field');
-                            (getPropertyNS(options, 'dataConf.fields', key, 'subfields') || [])
-                                .filter(function (field) {
-                                    // ui only shows summary fields
-                                    return !!options.dataConf.fields[field].summaryField;
-                                })
-                                .forEach(function (field) {
-                                    // if container is not translatable && subfield is translatable, add columns
-                                    if (!fieldOptions.translatable && options.dataConf.fields[field].translatable) {
-                                        ['DEFAULT', 'EN', 'SV'].forEach(function (lang) {
-                                            response.push(require('./langLabel')(th(field).data('lang', lang), lang));
-                                        });
-                                    } else {
-                                        response.push(th(field));
-                                    }
-                                });
-                            return response;
-                        })
-                        .append((options.field.columnFields || [])
-                            .map(field2TableHead(PAGE + '.field')))
-                        .append(function () {
-                            if (options.field.showSaveInfo) {
-                                return [th('general.saveInfo', 'savedAt'), th('general.saveInfo', 'savedBy')];
-                            }
-                        })
-                        .append(function () {
-                            if (!require('./isFieldDisabled')(options) || options.field.onRemove) {
-                                options.field.hasRowCommands = true;
-                                $tbody
-                                    .on('click', 'tr button', function () {
-                                        var $tr = $(this).closest('tr');
-                                        if (options.field.onRemove) {
-                                            options.field.onRemove($tr);
+                .me(function () {
+                    $thead
+                        .append($('<tr>')
+                            /*.append(function () {
+                             if (options.field.showReferenceKey ??? getPropertyNS(options, 'dataConf.fields', key, 'showReferenceKey')) {
+                             var target = options.dataConf.references[options.dataConf.fields[key].reference].target;
+                             }
+                             })*/
+                            .append(function () {
+                                var response = [];
+                                var th = field2TableHead(PAGE + '.field');
+                                (getPropertyNS(options, 'dataConf.fields', key, 'subfields') || [])
+                                    .filter(function (field) {
+                                        // ui only shows summary fields
+                                        return !!options.dataConf.fields[field].summaryField;
+                                    })
+                                    .forEach(function (field) {
+                                        // if container is not translatable && subfield is translatable, add columns
+                                        if (!fieldOptions.translatable && options.dataConf.fields[field].translatable) {
+                                            ['DEFAULT', 'EN', 'SV'].forEach(function (lang) {
+                                                response.push(require('./langLabel')(th(field).data('lang', lang), lang));
+                                            });
                                         } else {
-                                            $tr.data('transferRow').removed = true;
-                                            $tr.remove();
+                                            response.push(th(field));
                                         }
-                                        return false;
                                     });
-                                return $('<th>');
-                            }
-                        })))
+                                return response;
+                            })
+                            .append((options.field.columnFields || [])
+                                .map(field2TableHead(PAGE + '.field')))
+                            .append(function () {
+                                if (options.field.showSaveInfo) {
+                                    return [th('general.saveInfo', 'savedAt'), th('general.saveInfo', 'savedBy')];
+                                }
+                            })
+                            .append(function () {
+                                if (!require('./isFieldDisabled')(options) || options.field.onRemove) {
+                                    options.field.hasRowCommands = true;
+                                    $tbody
+                                        .on('click', 'tr button', function () {
+                                            var $tr = $(this).closest('tr');
+                                            if (options.field.onRemove) {
+                                                options.field.onRemove($tr);
+                                            } else {
+                                                $tr.data('transferRow').removed = true;
+                                                $tr.remove();
+                                            }
+                                            return false;
+                                        });
+                                    return $('<th>');
+                                }
+                            }));
+                    if (!options.field.hasOwnProperty('displayHeader') || options.field.displayHeader) {
+                        this.append($thead);
+                    }
+                })
                 .append(function () {
                     require('./data')(options).onChange(function () {
                         $tbody.empty();

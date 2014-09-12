@@ -6,23 +6,28 @@
 	"selectionLists": {
 		"statisticstype_list": {
 			"key": "statisticstype_list",
-			"type": "LITERAL",
+			"type": "VALUE",
 			"default": "vald",
 			"options": [
 				{
-					"value": "vald"
+					"value": "vald",
+                    "title": "Lukumäärä"
 				},
 				{
-					"value": "min"
+					"value": "min",
+                    "title": "Minimi"
 				},
 				{
-					"value": "max"
+					"value": "max",
+                    "title": "Maksimi"
 				},
 				{
-					"value": "mean"
+					"value": "mean",
+                    "title": "Keskiarvo"
 				},
 				{
-					"value": "stdev"
+					"value": "stdev",
+                    "title": "Keskihajonta"
 				}
 			]
 		}
