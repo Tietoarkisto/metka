@@ -155,7 +155,9 @@ define(function (require) {
 
                     $div
                         .trigger('change');
-
+                    if (events.onDragged) {
+                        events.onDragged(removed);
+                    }
                     return removed;
                 },
                 add: function (nodes) {
@@ -167,6 +169,9 @@ define(function (require) {
                             if (node.active) {
                                 if (node.children) {
                                     addTo = node.children;
+                                    if (events.onDropped) {
+                                        events.onDropped(node, nodes);
+                                    }
                                 } else {
                                     addTo = array;
                                 }
@@ -208,20 +213,14 @@ define(function (require) {
                         $div.append(children(nodes, 0));
                     }
 
-                    var container = $div,
-                        scrollTo = $div.children('.active');
-
-                    container.scrollTop(
-                            scrollTo.offset().top - container.offset().top + container.scrollTop()
-                    );
-
                     $div
+                        .scrollTop($div.children('.active').offset().top - $div.offset().top + $div.scrollTop())
                         .trigger('change');
-                    return;
                 },
                 move: function move(to) {
                     to.data('add')($div.data('remove')());
-                }
+                },
+                activeNodes: activeNodes
             });
 
         if (events.onClick) {

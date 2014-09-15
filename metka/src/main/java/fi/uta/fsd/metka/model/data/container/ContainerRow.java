@@ -95,7 +95,7 @@ public abstract class ContainerRow {
             changeMap.put(getKey(), containerChange);
         }
         if(containerChange.get(getRowId()) == null) {
-            containerChange.put(language, new RowChange(getRowId()));
+            containerChange.put(new RowChange(getRowId()));
         }
         setSaved(info);
         return StatusCode.ROW_CHANGE;

@@ -41,6 +41,7 @@
                                         "key": "variables",
                                         "showSaveInfo": false,
                                         "showReferenceKey": false,
+                                        "displayHeader": false,
                                         "columnFields": [
                                             "varlabel"
                                         ]

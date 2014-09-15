@@ -80,6 +80,15 @@ define(function (require) {
             }
         });
     }
+    /*
+    if (window.process) {
+        window.process = {};
+    }
+    if (window.process.nextTick) {
+        window.process.nextTick = function (f) {
+            setTimeout(f, 0);
+        };
+    }*/
 
     // other stuff
     $(document).ajaxError(function () {

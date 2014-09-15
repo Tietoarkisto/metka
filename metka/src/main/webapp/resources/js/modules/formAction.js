@@ -22,7 +22,9 @@ define(function (require) {
                                     if (row.errors) {
                                         row.errors.length = 0
                                     }
-                                    clearErrors(row.fields);
+                                    if (row.fields) {
+                                        clearErrors(row.fields);
+                                    }
                                 });
                             });
                         }

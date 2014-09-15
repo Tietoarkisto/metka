@@ -556,11 +556,11 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
 
     private void checkContainerChangeFor(Set<Language> changesIn, ContainerChange change, RevisionData data,
                                          Configuration configuration, ContainerDataField field, Language language) {
-        if(!change.hasRowsFor(language)) {
+        if(!change.hasRows()) {
             // No rows for given language, continue loop
             return;
         }
-        for(RowChange rowChange : change.getRowsFor(language).values()) {
+        for(RowChange rowChange : change.getRows().values()) {
             // Check only changed rows.
             Pair<StatusCode, DataRow> rowPair = field.getRowWithIdFrom(language, rowChange.getRowId());
             if(rowPair.getLeft() != StatusCode.FOUND_ROW) {
@@ -598,7 +598,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
 
         // This is somewhat too complicated but keeps the general theme of checking only the references marked as changed
         // If something is missed with this then that just means there's an error somewhere else.
-        for(RowChange rowChange : change.getRowsFor(Language.DEFAULT).values()) {
+        for(RowChange rowChange : change.getRows().values()) {
             Pair<StatusCode, ReferenceRow> rowPair = field.getReferenceWithId(rowChange.getRowId());
             if(rowPair.getLeft() != StatusCode.FOUND_ROW) {
                 // No row, no change

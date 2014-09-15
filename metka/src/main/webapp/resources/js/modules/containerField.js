@@ -51,7 +51,7 @@ define(function (require) {
                         require('./server')('options', {
                             data: JSON.stringify({
                                 key: key,
-                                requests : [{
+                                requests: [{
                                     key: column,
                                     container: key,
                                     confType: options.dataConf.key.type,

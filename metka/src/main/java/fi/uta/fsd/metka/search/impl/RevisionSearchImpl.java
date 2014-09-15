@@ -168,7 +168,7 @@ public class RevisionSearchImpl implements RevisionSearch {
             root = root + change.getKey();
             for(Language l : Language.values()) {
                 String langKey = root+"["+l.toValue()+"].";
-                for(RowChange rowChange : change.getRowsFor(l).values()) {
+                for(RowChange rowChange : change.getRows().values()) {
                     DataRow row = containerPair.getRight().getRowWithId(rowChange.getRowId()).getRight();
                     if(row == null) {
                         continue;
@@ -199,7 +199,7 @@ public class RevisionSearchImpl implements RevisionSearch {
                 root = root+".";
             }
             root = root + change.getKey()+".";
-            for(RowChange rowChange : change.getRowsFor(Language.DEFAULT).values()) {
+            for(RowChange rowChange : change.getRows().values()) {
                 String rowKey = root + rowChange.getRowId();
                 ReferenceRow refRow = referenceContainerPair.getRight().getReferenceWithId(rowChange.getRowId()).getRight();
                 if(refRow == null) {

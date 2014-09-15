@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ContainerChange extends Change {
-    private final Map<Language, Map<Integer, RowChange>> rows = new HashMap<>();
+    private final Map<Integer, RowChange> rows = new HashMap<>();
 
     @JsonCreator
     public ContainerChange(@JsonProperty("key") String key) {
@@ -17,34 +17,21 @@ public class ContainerChange extends Change {
     }
 
 
-    public Map<Language, Map<Integer, RowChange>> getRows() {
+    public Map<Integer, RowChange> getRows() {
         return rows;
     }
 
-    @JsonIgnore public Map<Integer, RowChange> getRowsFor(Language language) {
-        return rows.get(language);
-    }
-
-    @JsonIgnore public boolean hasRowsFor(Language language) {
-        return rows.get(language) != null && !rows.get(language).isEmpty();
+    @JsonIgnore public boolean hasRows() {
+        return !rows.isEmpty();
     }
 
     // Helpers
     @JsonIgnore
-    public void put(Language language, RowChange row) {
-        if(rows.get(language) == null) {
-            rows.put(language, new HashMap<Integer, RowChange>());
-        }
-        getRowsFor(language).put(row.getRowId(), row);
-        setChangeIn(language);
+    public void put(RowChange row) {
+        rows.put(row.getRowId(), row);
     }
 
     public RowChange get(Integer rowId) {
-        for(Language language : Language.values()) {
-            if(hasRowsFor(language) && getRowsFor(language).get(rowId) != null) {
-                return getRowsFor(language).get(rowId);
-            }
-        }
-        return null;
+        return rows.get(rowId);
     }
 }

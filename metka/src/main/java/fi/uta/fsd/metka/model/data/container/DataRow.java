@@ -101,17 +101,21 @@ public class DataRow extends ContainerRow implements DataFieldContainer {
             case CHECK:
                 return DataFieldOperator.checkDataFieldOperation(getFields(), call, new ConfigCheck[]{ConfigCheck.IS_SUBFIELD});
             case SET:
-                if(call.getChangeMap() == null) {
+                if(call.getContainerChange() == null && call.getChangeMap() == null) {
                     // We don't need to continue since this is the result anyway
                     return new ImmutablePair<>(StatusCode.INCORRECT_PARAMETERS, null);
                 }
                 // Get original change map from the call object and get ContainerChange and RowChange or create them if not present
                 // TODO: Fix change dublication
-                Map<String, Change> original = call.getChangeMap();
-                ContainerChange container = (ContainerChange)original.get(getKey());
+                Map<String, Change> changeMap = call.getChangeMap();
+                ContainerChange container = call.getContainerChange() == null
+                        ? (ContainerChange)call.getChangeMap().get(getKey())
+                        : call.getContainerChange();
+
                 if(container == null) {
                     container = new ContainerChange(getKey());
                 }
+
                 RowChange row = container.get(getRowId());
                 if(row == null) {
                     row = new RowChange(getRowId());
@@ -119,13 +123,13 @@ public class DataRow extends ContainerRow implements DataFieldContainer {
                 // Set row's change map to the call object instead
                 ((DataFieldCallBase<T>)call).setChangeMap(row.getChanges());
                 Pair<StatusCode, T> pair = DataFieldOperator.setDataFieldOperation(getFields(), call, new ConfigCheck[]{ConfigCheck.IS_SUBFIELD});
+
                 // If field was either inserted or updated then add change to original container
                 if(pair.getLeft() == StatusCode.FIELD_INSERT || pair.getLeft() == StatusCode.FIELD_UPDATE ) {
-                    // Put row change to container change and put container change to the original change map.
-                    // Both of these are maps so we can just put the values without worrying about overwriting something.
-                    // If they already were in the maps then we are using the same objects anyway
-                    container.put(call.getLanguage(), row);
-                    original.put(container.getKey(), container);
+                    container.put(row);
+                    if(call.getContainerChange() == null) {
+                        changeMap.put(container.getKey(), container);
+                    }
                 }
                 return pair;
             default:

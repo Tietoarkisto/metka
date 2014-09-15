@@ -97,6 +97,7 @@
 		"vargroups": {
 			"key": "vargroups",
 			"type": "CONTAINER",
+            "translatable": false,
 			"subfields": [
 				"vargrouptitle",
 				"vargroupvars"

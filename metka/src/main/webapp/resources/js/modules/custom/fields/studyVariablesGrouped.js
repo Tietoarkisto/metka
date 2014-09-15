@@ -1,7 +1,7 @@
 define(function (require) {
     'use strict';
 
-    return {};
+    //return {};
     return {
         create: function create(options) {
             this.append(require('./../../treeView')([{

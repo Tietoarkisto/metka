@@ -3,6 +3,7 @@ package fi.uta.fsd.metka.model.access.calls;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.change.Change;
+import fi.uta.fsd.metka.model.data.change.ContainerChange;
 import fi.uta.fsd.metka.model.data.container.DataField;
 import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
@@ -15,6 +16,7 @@ public abstract class DataFieldCallBase<T extends DataField> implements DataFiel
     private Value value;
     private Configuration configuration;
     private Map<String, Change> changeMap;
+    private ContainerChange containerChange;
     private DateTimeUserPair info;
     private final DataFieldType fieldType;
     private Language language;
@@ -36,6 +38,9 @@ public abstract class DataFieldCallBase<T extends DataField> implements DataFiel
     public DateTimeUserPair getInfo() {return info;}
     public DataFieldType getFieldType() {return fieldType;}
     public Language getLanguage() {return language;}
+    public ContainerChange getContainerChange() {
+        return containerChange;
+    }
 
     // Setters
     public DataFieldCallBase<T> setConfiguration(Configuration configuration) {
@@ -79,6 +84,11 @@ public abstract class DataFieldCallBase<T extends DataField> implements DataFiel
 
     public DataFieldCallBase<T> setLanguage(Language language) {
         this.language = language;
+        return this;
+    }
+
+    public DataFieldCallBase<T> setContainerChange(ContainerChange change) {
+        this.containerChange = change;
         return this;
     }
 }

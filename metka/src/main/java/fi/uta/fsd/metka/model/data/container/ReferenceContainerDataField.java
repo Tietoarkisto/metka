@@ -104,7 +104,7 @@ public class ReferenceContainerDataField extends RowContainerDataField {
                 change = new ContainerChange(reference.getKey());
                 changeMap.put(change.getKey(), change);
             }
-            change.put(Language.DEFAULT, new RowChange(reference.getRowId()));
+            change.put(new RowChange(reference.getRowId()));
             return new ImmutablePair<>(StatusCode.NEW_ROW, reference);
         }
     }
@@ -135,7 +135,7 @@ public class ReferenceContainerDataField extends RowContainerDataField {
                 // This check shouldn't really fail
                 if(cc != null) {
                     if(cc.get(rowId) != null) {
-                        cc.getRowsFor(Language.DEFAULT).remove(rowId);
+                        cc.getRows().remove(rowId);
                     }
                 }
             }

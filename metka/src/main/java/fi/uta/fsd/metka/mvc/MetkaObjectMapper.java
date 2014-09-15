@@ -2,6 +2,7 @@ package fi.uta.fsd.metka.mvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.deser.std.MapDeserializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import fi.uta.fsd.metka.model.configuration.Field;
@@ -22,6 +23,8 @@ import fi.uta.fsd.metka.model.serializers.configuration.ReferenceSerializer;
 import fi.uta.fsd.metka.model.serializers.configuration.SelectionListSerializer;
 import fi.uta.fsd.metka.model.serializers.general.TranslationObjectSerializer;
 import fi.uta.fsd.metka.model.serializers.guiconfiguration.*;
+
+import java.util.Map;
 
 /**
  * Custom Jackson ObjectMapper to be used by METKA.
