@@ -45,6 +45,81 @@ define(function (require) {
                                 };
                             });
 
+                            require('./../../data')(options).onChange(function () {
+                                $groups.empty();
+                                var rows = (function () {
+                                    return require('./../../data')(options)('vargroups').getByLang(options.defaultLang);
+                                })() || [];
+
+                                rows = rows.filter(function (row) {
+                                    // TODO: set as removed
+                                    //row.removed = true;
+                                    return row.fields && row.fields.vargrouptitle;
+                                });
+
+                                $groupView = require('./../../treeView')(rows.map(function (transferRow) {
+                                    return {
+                                        text: transferRow.fields.vargrouptitle.values.DEFAULT.current,
+                                        children: transferRow.fields.vargroupvars ? transferRow.fields.vargroupvars.rows.DEFAULT.map(function (transferRow) {
+                                            var groupedVariable = variables.find(function (variable) {
+                                                return variable.value === transferRow.value;
+                                            });
+                                            variables.splice(variables.indexOf(groupedVariable), 1);
+                                            return {
+                                                text: groupedVariable.text
+                                            };
+                                        }) : [],
+                                        appendVar: function (transferRow2) {
+                                            if (!transferRow.fields.vargroupvars) {
+                                                transferRow.fields.vargroupvars = {
+                                                    key: 'vargroupvars',
+                                                    rows: {
+                                                        DEFAULT: []
+                                                    },
+                                                    type: 'REFERENCECONTAINER'
+                                                };
+                                            }
+                                            log('appended', transferRow)
+                                            transferRow.fields.vargroupvars.rows.DEFAULT.push(transferRow2);
+                                        }
+                                    };
+                                }), {
+                                    onClick: function (node) {
+                                        return node.children ? 'activateOne' : 'deactivateDirectoriesAndToggle';
+                                    },
+                                    onChange: function (activeItems) {
+                                        if (activeItems.some(function (item) {
+                                            return item.children;
+                                        })) {
+                                            transferFromGroups = false;
+                                            transferToGroups = true;
+                                        } else {
+                                            transferToGroups = transferFromGroups = !!activeItems.length;
+                                        }
+                                        setButtonStates();
+                                    },
+                                    onDropped: function (parent, nodes) {
+                                        nodes.forEach(function (node) {
+                                            parent.appendVar({
+                                                key: 'vargroupvars',
+                                                value: node.value
+                                            });
+                                        });
+                                    },
+                                    onDragged: function (nodes) {
+                                        log('drag', nodes)
+                                        return
+                                        nodes.forEach(function (node) {
+                                            node.transferRow.removed = true;
+                                        });
+                                    }
+                                });
+
+                                $groups.append($groupView
+                                    .addClass('grouping-container'));
+                            });
+
+
                             $variableView = require('./../../treeView')(variables, {
                                 onClick: function () {
                                     return 'toggle';
@@ -66,76 +141,6 @@ define(function (require) {
             var transferToVariables = true;
             var transferFromGroups = false;
             var transferToGroups = false;
-
-            require('./../../data')(options).onChange(function () {
-                $groups.empty();
-                var rows = (function () {
-                    return require('./../../data')(options)('vargroups').getByLang(options.defaultLang);
-                })() || [];
-
-                rows = rows.filter(function (row) {
-                    // TODO: set as removed
-                    //row.removed = true;
-                    return row.fields && row.fields.vargrouptitle;
-                });
-
-                $groupView = require('./../../treeView')(rows.map(function (transferRow) {
-                    return {
-                        text: transferRow.fields.vargrouptitle.values.DEFAULT.current,
-                        children: transferRow.fields.vargroupvars ? transferRow.fields.vargroupvars.rows.DEFAULT.map(function (transferRow) {
-                            return {
-                                text: transferRow.value
-                            };
-                        }) : [],
-                        appendVar: function (transferRow2) {
-                            if (!transferRow.fields.vargroupvars) {
-                                transferRow.fields.vargroupvars = {
-                                    key: 'vargroupvars',
-                                    rows: {
-                                        DEFAULT: []
-                                    },
-                                    type: 'REFERENCECONTAINER'
-                                };
-                            }
-                            log('appended', transferRow)
-                            transferRow.fields.vargroupvars.rows.DEFAULT.push(transferRow2);
-                        }
-                    };
-                }), {
-                    onClick: function (node) {
-                        return node.children ? 'activateOne' : 'deactivateDirectoriesAndToggle';
-                    },
-                    onChange: function (activeItems) {
-                        if (activeItems.some(function (item) {
-                            return item.children;
-                        })) {
-                            transferFromGroups = false;
-                            transferToGroups = true;
-                        } else {
-                            transferToGroups = transferFromGroups = !!activeItems.length;
-                        }
-                        setButtonStates();
-                    },
-                    onDropped: function (parent, nodes) {
-                        nodes.forEach(function (node) {
-                            parent.appendVar({
-                                key: 'vargroupvars',
-                                value: node.value
-                            });
-                        });
-                    },
-                    onDragged: function (nodes) {
-                        log('drag', nodes)
-                        return
-                        nodes.forEach(function (node) {
-                            node.transferRow.removed = true;
-                        });
-                    }
-                });
-
-                $groups.append($groupView
-                    .addClass('grouping-container'));
-            });
 
             var $moveToGroup = require('./../../button')()({
                 create: function () {
