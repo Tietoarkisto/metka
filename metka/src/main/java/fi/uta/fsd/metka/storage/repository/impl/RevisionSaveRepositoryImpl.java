@@ -404,7 +404,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             }
 
             if (codePair.getLeft() == StatusCode.FIELD_MISSING) {
-                codePair = dataFields.dataField(ContainerDataFieldCall.set(field.getKey()).setConfiguration(configuration));
+                codePair = dataFields.dataField(ContainerDataFieldCall.set(field.getKey()).setConfiguration(configuration).setChangeMap(changeMap));
                 if (codePair.getLeft() != StatusCode.FIELD_INSERT) {
                     return new ImmutablePair<>(codePair.getLeft(), false);
                 }
@@ -538,7 +538,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                             }
                             if (fieldSaveResult.getLeft() == StatusCode.FIELD_CHANGED) {
                                 // Make sure that row change is in the container change since there has been an actual change.
-                                containerChange.put(language, rowChange);
+                                containerChange.put(rowChange);
                                 changes = true;
                             }
                         }
@@ -598,7 +598,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             }
 
             if (codePair.getLeft() == StatusCode.FIELD_MISSING) {
-                codePair = dataFields.dataField(ReferenceContainerDataFieldCall.set(field.getKey()).setConfiguration(configuration));
+                codePair = dataFields.dataField(ReferenceContainerDataFieldCall.set(field.getKey()).setConfiguration(configuration).setChangeMap(changeMap));
                 if (codePair.getLeft() != StatusCode.FIELD_INSERT) {
                     return new ImmutablePair<>(codePair.getLeft(), false);
                 }

@@ -40,6 +40,9 @@
             "&settings": {
                 "default": "Asetukset"
             },
+            "&help": {
+                "default": "Ohjeet"
+            },
             "&logout": {
                 "default": "Kirjaudu ulos"
             }
@@ -91,6 +94,9 @@
                 }
             },
             "STUDY_VARIABLES": {
+                "&title": {
+                    "default": "Muuttujat"
+                },
                 "&search": {
                     "default": "Muuttujahaku"
                 }
@@ -522,6 +528,25 @@
                         "default": "Muokkaa tiedostoa"
                     }
                 }
+            },
+
+            "STUDY_VARIABLES": {
+                "vargroups": {
+                    "&add": {
+                        "default": "Lisää muuttujaryhmä"
+                    },
+                    "&modify": {
+                        "default": "Muokkaa muuttujaryhmää"
+                    }
+                },
+                "vargrouptexts": {
+                    "&add": {
+                        "default": "Lisää muuttujaryhmän teksti"
+                    },
+                    "&modify": {
+                        "default": "Muokkaa muuttujaryhmän tekstiä"
+                    }
+                }
             }
         },
 
@@ -795,7 +820,8 @@
                 vartext: "Lisätieto",
                 varsecurity: "Tietosuoja-asia",
                 statisticstype: "Arvo",
-                statisticsvalue: "Selite"
+                statisticsvalue: "Selite",
+                vargrouptext: "Teksti"
             }
         },
 

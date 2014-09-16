@@ -58,7 +58,7 @@ define(function (require) {
             require('./datetime').call($field, options, type, $input, lang);
         } else {
             $input
-                .prop('disabled', require('./isFieldDisabled')(options))
+                .prop('disabled', require('./isFieldDisabled')(options, lang))
                 .change(function () {
                     require('./data')(options).setByLang(lang, $(this).val());
                 });

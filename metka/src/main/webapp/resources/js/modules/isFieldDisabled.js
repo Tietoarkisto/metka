@@ -1,7 +1,7 @@
 define(function (require) {
     'use strict';
 
-    return function (options) {
+    return function (options, lang) {
         if (options.field.type == 'REFERENCE') {
             return true;
         }
@@ -9,7 +9,7 @@ define(function (require) {
         var key = options.field.key;
 
         // if data should be immutable and original value is set, field is disabled
-        if (require('./utils/getPropertyNS')(options, 'dataConf.fields', key, 'immutable') && require('./utils/getPropertyNS')(options.data.fields, key, 'originalValue')) {
+        if (require('./utils/getPropertyNS')(options, 'dataConf.fields', key, 'immutable') && typeof require('./utils/getPropertyNS')(options.data.fields, key, 'values', lang, 'original') === 'string') {
             return true;
         }
 

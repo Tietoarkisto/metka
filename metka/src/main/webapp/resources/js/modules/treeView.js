@@ -87,7 +87,8 @@ define(function (require) {
         var $div = $('<div class="list-group list-group-condensed">')
             .append(children(root, 0))
             .on({
-                activate: function () {
+                // IE triggers native activate/deactivate events. Must use different event names.
+                metkaActivate: function () {
                     var $this = $(this);
                     $this
                         .addClass('active')
@@ -96,7 +97,7 @@ define(function (require) {
                     $this
                         .trigger('change');
                 },
-                deactivate: function () {
+                metkaDectivate: function () {
                     var $this = $(this);
                     $this
                         .removeClass('active')
@@ -134,7 +135,7 @@ define(function (require) {
 
                     deactivateAll();
 
-                    $this.trigger('activate');
+                    $this.trigger('metkaActivate');
                 }
             }, 'a')
             .data({
@@ -155,28 +156,36 @@ define(function (require) {
 
                     $div
                         .trigger('change');
-
+                    if (events.onDragged) {
+                        events.onDragged(removed);
+                    }
                     return removed;
                 },
                 add: function (nodes) {
                     var addTo = root;
                     var path = [];
+                    var parent;
 
                     if (root.some(function recur(node, i, array) {
                         var found = (function () {
                             if (node.active) {
                                 if (node.children) {
                                     addTo = node.children;
+                                    parent = node;
                                 } else {
                                     addTo = array;
                                 }
                                 return true;
                             } else {
                                 if (node.children) {
-                                    return node.children.some(recur);
-                                } else {
-                                    return false;
+                                    if (node.children.some(recur)) {
+                                        if (!parent) {
+                                            parent = node;
+                                        }
+                                        return true;
+                                    }
                                 }
+                                return false;
                             }
                         })();
                         if (found && node.children) {
@@ -184,6 +193,10 @@ define(function (require) {
                         }
                         return found;
                     })) {
+                        if (events.onDropped) {
+                            events.onDropped(parent, nodes);
+                        }
+
                         deactivateAll();
                         Array.prototype.push.apply(addTo, nodes);
                         if (path.length) {
@@ -208,26 +221,23 @@ define(function (require) {
                         $div.append(children(nodes, 0));
                     }
 
-                    var container = $div,
-                        scrollTo = $div.children('.active');
-
-                    container.scrollTop(
-                            scrollTo.offset().top - container.offset().top + container.scrollTop()
-                    );
-
                     $div
+                        .scrollTop($div.children('.active').offset().top - $div.offset().top + $div.scrollTop())
                         .trigger('change');
-                    return;
                 },
                 move: function move(to) {
                     to.data('add')($div.data('remove')());
-                }
+                },
+                activeNodes: activeNodes
             });
 
         if (events.onClick) {
-            $div.on('click', 'a', function () {
+            $div.on('click', 'a', function (e) {
                 var $this = $(this);
-                $this.trigger(events.onClick($this.data('node')));
+                var eventName = events.onClick($this.data('node'));
+                if (eventName) {
+                    $this.trigger(eventName);
+                }
             });
         }
 

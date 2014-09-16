@@ -138,7 +138,9 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase, DataFi
     }
 
     public RevisionData putChange(Change change) {
-        changes.put(change.getKey(), change);
+        if(change.getKey() != null) {
+            changes.put(change.getKey(), change);
+        }
         return this;
     }
 

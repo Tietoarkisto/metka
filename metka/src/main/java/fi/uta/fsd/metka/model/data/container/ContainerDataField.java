@@ -86,7 +86,7 @@ public class ContainerDataField extends RowContainerDataField {
 
         DataRow row = DataRow.build(this);
         row.setUnapproved(true);
-        containerChange.put(language, new RowChange(row.getRowId()));
+        containerChange.put(new RowChange(row.getRowId()));
         containerChange.setChangeIn(language);
         addRow(language, row);
         return new ImmutablePair<>(StatusCode.NEW_ROW, row);
@@ -180,12 +180,12 @@ public class ContainerDataField extends RowContainerDataField {
      * @param language The language for which the search is performed and where row is created
      * @param key Field key of the field where the value should be found
      * @param value Value that is searched for
-     * @param changeMap Map where the container change containing this rows changes should reside
+     * @param change Container change containing this rows change
      * @param info DateTimeUserPair for possible creation of row and field. Can be null
      * @return Tuple of StatusCode and DataRow. StatusCode tells if the returned row is a new insert or not
      */
-    public Pair<StatusCode, DataRow> getOrCreateRowWithFieldValue(Language language, String key, Value value, Map<String, Change> changeMap, DateTimeUserPair info) {
-        if(changeMap == null || !value.hasValue()) {
+    public Pair<StatusCode, DataRow> getOrCreateRowWithFieldValue(Language language, String key, Value value, ContainerChange change, DateTimeUserPair info) {
+        if(change == null || !value.hasValue()) {
             return new ImmutablePair<>(StatusCode.INCORRECT_PARAMETERS, null);
         }
 
@@ -199,7 +199,7 @@ public class ContainerDataField extends RowContainerDataField {
             DataRow row = DataRow.build(this);
             addRow(language, row);
 
-            row.dataField(ValueDataFieldCall.set(key, value, language).setInfo(info).setChangeMap(changeMap));
+            row.dataField(ValueDataFieldCall.set(key, value, language).setInfo(info).setContainerChange(change));
             return new ImmutablePair<>(StatusCode.NEW_ROW, row);
         }
     }
@@ -233,7 +233,7 @@ public class ContainerDataField extends RowContainerDataField {
                 // This check shouldn't really fail
                 if(cc != null) {
                     if(cc.get(rowId) != null) {
-                        cc.getRowsFor(language).remove(rowId);
+                        cc.getRows().remove(rowId);
                     }
                 }
             }

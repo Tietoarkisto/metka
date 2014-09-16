@@ -26,7 +26,7 @@ define(function (require) {
             .append($input)
             .append('<span class="input-group-addon"><span class="glyphicon glyphicon-{icon}"></span>'.supplant(setup))
             .datetimepicker(setup.options)
-            .if(require('./isFieldDisabled')(options), function () {
+            .if(require('./isFieldDisabled')(options, lang), function () {
                 this.data('DateTimePicker').disable();
             })
             .me(function () {

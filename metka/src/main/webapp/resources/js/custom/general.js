@@ -2,17 +2,6 @@
 $(document).ready(function () {
 	'use strict';
 
-	function changeToTab(tab) {
-		if (!tab.hasClass('selected')) {
-			$('.tabNavi a').removeClass('selected');
-			tab.addClass('selected');
-			var selectedId = tab.attr('id');
-			$('.tabs').hide();
-			$('.tab_' + selectedId).show();
-			sessionStorage.setItem('currentTab', selectedId);
-		}
-	}
-
 	function toggleAccordion(accordionTitle) {
 		accordionTitle.next().toggle();
 		accordionTitle.toggleClass('selected');
@@ -101,26 +90,6 @@ $(document).ready(function () {
     document.title = MetkaJS.L10N.get("page.title");
 
 	$('.datepicker').datepicker();
-
-	// Init tab navigation
-
-	$('.tabNavi a').click(function (e) {
-		e.preventDefault();
-		changeToTab($(this));
-	});
-
-	changeToTab((function () {
-		if (location.hash && location.hash.length > 0) {
-			return $(location.hash);
-		}
-		if (sessionStorage.getItem('currentTab')) {
-			var $resume = $('#' + sessionStorage.getItem('currentTab'));
-			if ($resume.length) {
-				return $resume;
-			}
-		}
-		return $('.tabNavi a').first();
-	}()));
 
 	$('.accordionContent').hide();
 	$('.accordionTitle').click(function () {

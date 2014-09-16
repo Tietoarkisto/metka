@@ -3,6 +3,7 @@ package fi.uta.fsd.metka.model.access.calls;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.change.Change;
+import fi.uta.fsd.metka.model.data.change.ContainerChange;
 import fi.uta.fsd.metka.model.data.container.DataField;
 import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
@@ -30,4 +31,5 @@ public interface DataFieldCall<T extends DataField> {
     public DateTimeUserPair getInfo();
     public DataFieldType getFieldType();
     public Language getLanguage();
+    public ContainerChange getContainerChange();
 }

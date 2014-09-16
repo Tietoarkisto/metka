@@ -1,321 +1,313 @@
 {
-	"key": {
-		"version": 1,
-		"type": "STUDY_VARIABLE"
-	},
-	"selectionLists": {
-		"statisticstype_list": {
-			"key": "statisticstype_list",
-			"type": "VALUE",
-			"default": "vald",
-			"options": [
-				{
-					"value": "vald",
+    "key": {
+        "version": 1,
+        "type": "STUDY_VARIABLE"
+    },
+    "selectionLists": {
+        "statisticstype_list": {
+            "key": "statisticstype_list",
+            "type": "VALUE",
+            "default": "vald",
+            "options": [
+                {
+                    "value": "vald",
                     "title": "Lukumäärä"
-				},
-				{
-					"value": "min",
+                },
+                {
+                    "value": "min",
                     "title": "Minimi"
-				},
-				{
-					"value": "max",
+                },
+                {
+                    "value": "max",
                     "title": "Maksimi"
-				},
-				{
-					"value": "mean",
+                },
+                {
+                    "value": "mean",
                     "title": "Keskiarvo"
-				},
-				{
-					"value": "stdev",
+                },
+                {
+                    "value": "stdev",
                     "title": "Keskihajonta"
-				}
-			]
-		}
-	},
-	"references": {
-		"study_ref": {
-			"key": "study_ref",
-			"type": "REVISIONABLE",
-			"target": "STUDY",
-			"titlePath": "title"
-		},
-		"variables_ref": {
-			"key": "variables_ref",
-			"type": "REVISIONABLE",
-			"target": "STUDY_VARIABLES",
-			"titlePath": "id"
-		}
-	},
+                }
+            ]
+        }
+    },
+    "references": {
+        "study_ref": {
+            "key": "study_ref",
+            "type": "REVISIONABLE",
+            "target": "STUDY",
+            "titlePath": "title"
+        },
+        "variables_ref": {
+            "key": "variables_ref",
+            "type": "REVISIONABLE",
+            "target": "STUDY_VARIABLES",
+            "titlePath": "id"
+        }
+    },
     "displayId": "varid",
-	"fields": {
-		"study": {
-			"key": "study",
-			"translatable": false,
-			"immutable": true,
-			"editable": false,
-			"type": "REFERENCE",
-			"reference": "study_ref"
-		},
-		"variables": {
-			"key": "variables",
-			"translatable": false,
-			"immutable": true,
-			"editable": false,
-			"type": "REFERENCE",
-			"reference": "variables_ref"
-		},
-		"varname": {
-			"key": "varname",
-			"translatable": false,
-			"required": true,
-			"type": "STRING",
-			"editable": false,
-			"immutable": true
-		},
-		"varid": {
-			"key": "varid",
-			"translatable": false,
-			"required": true,
-			"type": "STRING",
-			"editable": false,
-			"immutable": true
-		},
-		"varlabel": {
-			"key": "varlabel",
-			"translatable": false,
-			"required": true,
-			"type": "STRING",
-			"editable": false,
-			"immutable": true
-		},
-		"varinterval": {
-			"key": "varinterval",
-			"translatable": false,
-			"required": true,
-			"type": "STRING",
-			"editable": false,
-			"immutable": true
-		},
-		"qstnlits": {
-			"key": "qstnlits",
-			"translatable": true,
-			"required": true,
-			"type": "CONTAINER",
-			"subfields": [
-				"qstnlit"
-			]
-		},
-		"qstnlit": {
-			"key": "qstnlit",
-			"translatable": true,
-			"required": true,
-			"type": "STRING",
-			"subfield": true
-		},
-		"preqtxts": {
-			"key": "preqtxts",
-			"translatable": true,
-			"required": true,
-			"type": "CONTAINER",
-			"subfields": [
-				"preqtxt"
-			]
-		},
-		"preqtxt": {
-			"key": "preqtxt",
-			"translatable": true,
-			"required": true,
-			"type": "STRING",
-			"subfield": true
-		},
-		"postqtxts": {
-			"key": "postqtxts",
-			"translatable": true,
-			"required": true,
-			"type": "CONTAINER",
-			"subfields": [
-				"postqtxt"
-			]
-		},
-		"postqtxt": {
-			"key": "postqtxt",
-			"translatable": true,
-			"required": true,
-			"type": "STRING",
-			"subfield": true
-		},
-		"ivuinstrs": {
-			"key": "ivuinstrs",
-			"translatable": true,
-			"required": true,
-			"type": "CONTAINER",
-			"subfields": [
-				"ivuinstr"
-			]
-		},
-		"ivuinstr": {
-			"key": "ivuinstr",
-			"translatable": true,
-			"required": true,
-			"type": "STRING",
-			"subfield": true
-		},
-		"varnotes": {
-			"key": "varnotes",
-			"translatable": true,
-			"required": true,
-			"type": "CONTAINER",
-			"subfields": [
-				"varnote"
-			]
-		},
-		"varnote": {
-			"key": "varnote",
-			"translatable": true,
-			"required": true,
-			"type": "STRING",
-			"subfield": true
-		},
-		"vartexts": {
-			"key": "vartexts",
-			"translatable": true,
-			"required": true,
-			"type": "CONTAINER",
-			"subfields": [
-				"vartext"
-			]
-		},
-		"vartext": {
-			"key": "vartext",
-			"translatable": true,
-			"required": true,
-			"type": "STRING",
-			"subfield": true
-		},
-		"varsecurities": {
-			"key": "varsecurities",
-			"translatable": true,
-			"required": true,
-			"type": "CONTAINER",
-			"subfields": [
-				"varsecurity"
-			]
-		},
-		"varsecurity": {
-			"key": "varsecurity",
-			"translatable": true,
-			"required": true,
-			"type": "STRING",
-			"subfield": true
-		},
-		"valuelabels": {
-			"key": "valuelabels",
-			"translatable": false,
-			"type": "CONTAINER",
-			"subfields": [
-				"value",
-				"label",
-				"missing"
-			]
-		},
-		"categories": {
-			"key": "categories",
-			"translatable": false,
-			"type": "CONTAINER",
-			"subfields": [
-				"value",
-				"label",
-				"categorystat",
-				"missing"
-			]
-		},
-		"value": {
-			"_comment": "Should be a REAL instead",
-			"key": "value",
-			"translatable": false,
-			"required": true,
-			"editable": false,
-			"immutable": true,
-			"type": "STRING",
-			"subfield": true,
-			"exact": true
-		},
-		"label": {
-			"key": "label",
-			"translatable": false,
-			"required": true,
-			"editable": false,
-			"immutable": true,
-			"type": "STRING",
-			"subfield": true,
-			"exact": true
-		},
-		"categorystat": {
-			"_comment": "Should be an INTEGER instead",
-			"key": "categorystat",
-			"translatable": false,
-			"required": true,
-			"editable": false,
-			"immutable": true,
-			"type": "STRING",
-			"subfield": true,
-			"exact": true
-		},
-		"missing": {
-			"_comment": "Only valid value is Y, might be good to move the value to a selection list",
-			"key": "missing",
-			"translatable": false,
-			"editable": false,
-			"type": "STRING",
-			"subfield": true,
-			"exact": true
-		},
-		"statistics": {
-			"key": "statistics",
-			"translatable": false,
-			"type": "CONTAINER",
-			"subfields": [
-				"statisticstype",
-				"statisticsvalue"
-			]
-		},
-		"statisticstype": {
-			"key": "statisticstype",
-			"translatable": false,
-			"required": true,
-			"editable": false,
-			"immutable": true,
-			"type": "SELECTION",
-			"selectionList": "statisticstype_list",
-			"subfield": true
-		},
-		"statisticsvalue": {
-			"key": "statisticsvalue",
-			"translatable": false,
-			"required": true,
-			"editable": false,
-			"immutable": true,
-			"type": "REAL",
-			"subfield": true
-		},
-		"translations": {
-			"_comment": "This container should contain a list of language codes represented in this variable from translatable fields. So for example if varlabel contains english text this container should have a row with value en",
-			"key": "translations",
-			"type": "CONTAINER",
-			"translatable": false,
-			"editable": false,
-			"subfields": [
-				"translation"
-			]
-		},
-		"translation": {
-			"_comment": "This should contain a single language code that is represented in this variable.",
-			"key": "translation",
-			"type": "STRING",
-			"required": true,
-			"immutale": true,
-			"subfield": true
-			
-		}
-	}
+    "fields": {
+        "study": {
+            "key": "study",
+            "translatable": false,
+            "immutable": true,
+            "editable": false,
+            "type": "REFERENCE",
+            "reference": "study_ref"
+        },
+        "variables": {
+            "key": "variables",
+            "translatable": false,
+            "immutable": true,
+            "editable": false,
+            "type": "REFERENCE",
+            "reference": "variables_ref"
+        },
+        "varname": {
+            "key": "varname",
+            "translatable": false,
+            "required": true,
+            "type": "STRING",
+            "editable": false,
+            "immutable": true
+        },
+        "varid": {
+            "key": "varid",
+            "translatable": false,
+            "required": true,
+            "type": "STRING",
+            "editable": false,
+            "immutable": true
+        },
+        "varlabel": {
+            "key": "varlabel",
+            "translatable": false,
+            "required": true,
+            "type": "STRING",
+            "editable": false,
+            "immutable": true
+        },
+        "qstnlits": {
+            "key": "qstnlits",
+            "translatable": false,
+            "required": true,
+            "type": "CONTAINER",
+            "subfields": [
+                "qstnlit"
+            ]
+        },
+        "qstnlit": {
+            "key": "qstnlit",
+            "translatable": false,
+            "required": true,
+            "type": "STRING",
+            "subfield": true
+        },
+        "preqtxts": {
+            "key": "preqtxts",
+            "translatable": false,
+            "required": true,
+            "type": "CONTAINER",
+            "subfields": [
+                "preqtxt"
+            ]
+        },
+        "preqtxt": {
+            "key": "preqtxt",
+            "translatable": false,
+            "required": true,
+            "type": "STRING",
+            "subfield": true
+        },
+        "postqtxts": {
+            "key": "postqtxts",
+            "translatable": false,
+            "required": true,
+            "type": "CONTAINER",
+            "subfields": [
+                "postqtxt"
+            ]
+        },
+        "postqtxt": {
+            "key": "postqtxt",
+            "translatable": false,
+            "required": true,
+            "type": "STRING",
+            "subfield": true
+        },
+        "ivuinstrs": {
+            "key": "ivuinstrs",
+            "translatable": false,
+            "required": true,
+            "type": "CONTAINER",
+            "subfields": [
+                "ivuinstr"
+            ]
+        },
+        "ivuinstr": {
+            "key": "ivuinstr",
+            "translatable": false,
+            "required": true,
+            "type": "STRING",
+            "subfield": true
+        },
+        "varnotes": {
+            "key": "varnotes",
+            "translatable": false,
+            "required": true,
+            "type": "CONTAINER",
+            "subfields": [
+                "varnote"
+            ]
+        },
+        "varnote": {
+            "key": "varnote",
+            "translatable": false,
+            "required": true,
+            "type": "STRING",
+            "subfield": true
+        },
+        "vartexts": {
+            "key": "vartexts",
+            "translatable": false,
+            "required": true,
+            "type": "CONTAINER",
+            "subfields": [
+                "vartext"
+            ]
+        },
+        "vartext": {
+            "key": "vartext",
+            "translatable": false,
+            "required": true,
+            "type": "STRING",
+            "subfield": true
+        },
+        "varsecuritys": {
+            "key": "varsecuritys",
+            "translatable": false,
+            "required": true,
+            "type": "CONTAINER",
+            "subfields": [
+                "varsecurity"
+            ]
+        },
+        "varsecurity": {
+            "key": "varsecurity",
+            "translatable": false,
+            "required": true,
+            "type": "STRING",
+            "subfield": true
+        },
+        "valuelabels": {
+            "key": "valuelabels",
+            "translatable": false,
+            "type": "CONTAINER",
+            "subfields": [
+                "value",
+                "label",
+                "missing"
+            ]
+        },
+        "categories": {
+            "key": "categories",
+            "translatable": false,
+            "type": "CONTAINER",
+            "subfields": [
+                "value",
+                "label",
+                "categorystat",
+                "missing"
+            ]
+        },
+        "value": {
+            "_comment": "Should be a REAL instead",
+            "key": "value",
+            "translatable": false,
+            "required": true,
+            "editable": false,
+            "immutable": true,
+            "type": "STRING",
+            "subfield": true,
+            "exact": true
+        },
+        "label": {
+            "key": "label",
+            "translatable": false,
+            "required": true,
+            "editable": false,
+            "immutable": true,
+            "type": "STRING",
+            "subfield": true,
+            "exact": true
+        },
+        "categorystat": {
+            "_comment": "Should be an INTEGER instead",
+            "key": "categorystat",
+            "translatable": false,
+            "required": true,
+            "editable": false,
+            "immutable": true,
+            "type": "STRING",
+            "subfield": true,
+            "exact": true
+        },
+        "missing": {
+            "_comment": "Only valid value is Y, might be good to move the value to a selection list",
+            "key": "missing",
+            "translatable": false,
+            "editable": false,
+            "type": "STRING",
+            "subfield": true,
+            "exact": true
+        },
+        "statistics": {
+            "key": "statistics",
+            "translatable": false,
+            "type": "CONTAINER",
+            "subfields": [
+                "statisticstype",
+                "statisticsvalue"
+            ]
+        },
+        "statisticstype": {
+            "key": "statisticstype",
+            "translatable": false,
+            "required": true,
+            "editable": false,
+            "immutable": true,
+            "type": "SELECTION",
+            "selectionList": "statisticstype_list",
+            "subfield": true
+        },
+        "statisticsvalue": {
+            "key": "statisticsvalue",
+            "translatable": false,
+            "required": true,
+            "editable": false,
+            "immutable": true,
+            "type": "REAL",
+            "subfield": true
+        },
+        "translations": {
+            "_comment": "This container should contain a list of language codes represented in this variable from translatable fields. So for example if varlabel contains english text this container should have a row with value en",
+            "key": "translations",
+            "type": "CONTAINER",
+            "translatable": false,
+            "editable": false,
+            "subfields": [
+                "translation"
+            ]
+        },
+        "translation": {
+            "_comment": "This should contain a single language code that is represented in this variable.",
+            "key": "translation",
+            "type": "STRING",
+            "required": true,
+            "immutable": true,
+            "subfield": true
+
+        }
+    }
 }

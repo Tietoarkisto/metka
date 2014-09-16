@@ -51,7 +51,7 @@ define(function (require) {
                         require('./server')('options', {
                             data: JSON.stringify({
                                 key: key,
-                                requests : [{
+                                requests: [{
                                     key: column,
                                     container: key,
                                     confType: options.dataConf.key.type,
@@ -266,7 +266,7 @@ define(function (require) {
             .addClass('panel-' + (options.style || 'default'))
             .append($panelHeading)
             .append($('<table class="table table-condensed">')
-                .if(options.field.onClick || !require('./isFieldDisabled')(options), function () {
+                .if(options.field.onClick || !require('./isFieldDisabled')(options, lang), function () {
                     this
                         .addClass('table-hover');
 
@@ -315,7 +315,7 @@ define(function (require) {
                                 }
                             })
                             .append(function () {
-                                if (!require('./isFieldDisabled')(options) || options.field.onRemove) {
+                                if (!require('./isFieldDisabled')(options, lang) || options.field.onRemove) {
                                     options.field.hasRowCommands = true;
                                     $tbody
                                         .on('click', 'tr button', function () {
@@ -353,7 +353,7 @@ define(function (require) {
                 }))
             .append(function () {
                 var buttons = (options.buttons || []);
-                if (!require('./isFieldDisabled')(options)) {
+                if (!require('./isFieldDisabled')(options, lang)) {
                     buttons.push({
                         create: function () {
                             this
