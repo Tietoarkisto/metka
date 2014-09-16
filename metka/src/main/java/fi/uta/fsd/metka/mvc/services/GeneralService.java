@@ -1,5 +1,6 @@
 package fi.uta.fsd.metka.mvc.services;
 
+import codebook25.CodeBookDocument;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metkaAuthentication.Permission;
@@ -14,4 +15,6 @@ public interface GeneralService {
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_EXPORT_REVISION+"', '" + PermissionCheck.Values.PERMISSION + "')")
     Pair<ReturnResult, RevisionData> getRevisionData(Long id, Integer revision);
+
+    Pair<ReturnResult, CodeBookDocument> exportDDI(Long id, Integer no);
 }

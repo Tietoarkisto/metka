@@ -50,6 +50,11 @@ define(function (require) {
                 'REVISION_CREATED'
             ]));
         },
+        EXPORT_DDI: function(options) {
+            this.click( function() {
+                require('./assignUrl')('ddiexport')
+            });
+        },
         HISTORY: function () {
             var metka = require('./../metka');
             this

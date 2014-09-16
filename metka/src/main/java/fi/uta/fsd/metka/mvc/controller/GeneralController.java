@@ -1,5 +1,7 @@
 package fi.uta.fsd.metka.mvc.controller;
 
+import codebook25.CodeBookDocument;
+import fi.uta.fsd.metka.ddi.DDIBuilder;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.mvc.services.GeneralService;
 import fi.uta.fsd.metka.mvc.services.simple.ErrorMessage;
@@ -32,6 +34,9 @@ public class GeneralController {
 
     @Autowired
     private JSONUtil json;
+
+    @Autowired
+    private DDIBuilder ddiBuilder;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String catchAll() {
@@ -109,5 +114,23 @@ public class GeneralController {
 
             return new HttpEntity<>(dataBytes, headers);
         }
+    }
+
+    // TODO: Move to revision controller
+    @RequestMapping(value="revision/ddi/export/{id}/{no}", method = RequestMethod.GET)
+    public HttpEntity<byte[]> ddiExport(@PathVariable Long id, @PathVariable Integer no) {
+        Pair<ReturnResult, CodeBookDocument> pair = service.exportDDI(id, no);
+        if(pair.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
+            // Operation was not successful
+            return null;
+        }
+        byte[] dataBytes = pair.getRight().toString().getBytes();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Content-Disposition",
+                "attachment; filename=id_" + id + "_revision_" + no + "ddi.xml");
+        headers.setContentLength(dataBytes.length);
+
+        return new HttpEntity<>(dataBytes, headers);
     }
 }

@@ -12,5 +12,6 @@ public enum ButtonType {
     SEARCH,
     ADD,
     RESET,
-    CLEAR
+    CLEAR,
+    EXPORT_DDI
 }

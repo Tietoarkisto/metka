@@ -1,9 +1,16 @@
 package fi.uta.fsd.metka.mvc.services.impl;
 
+import codebook25.CodeBookDocument;
+import fi.uta.fsd.metka.ddi.DDIBuilder;
+import fi.uta.fsd.metka.enums.ConfigurationType;
+import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.mvc.services.GeneralService;
+import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +20,12 @@ public class GeneralServiceImpl implements GeneralService {
 
     @Autowired
     private RevisionRepository revisions;
+
+    @Autowired
+    private ConfigurationRepository configurations;
+
+    @Autowired
+    private DDIBuilder ddiBuilder;
 
     // TODO: Move to revision service
     /**
@@ -37,5 +50,25 @@ public class GeneralServiceImpl implements GeneralService {
      */
     @Override public Pair<ReturnResult, RevisionData> getRevisionData(Long id, Integer revision) {
         return revisions.getRevisionData(id, revision);
+    }
+
+    @Override
+    public Pair<ReturnResult, CodeBookDocument> exportDDI(Long id, Integer no) {
+        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(id, no);
+        if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
+            // TODO: Return error to user
+            return new ImmutablePair<>(pair.getLeft(), null);
+        } else if(pair.getRight().getConfiguration().getType() != ConfigurationType.STUDY) {
+            // Only applicaple to studies
+            return new ImmutablePair<>(ReturnResult.INCORRECT_TYPE_FOR_OPERATION, null);
+        } else {
+            RevisionData revision = pair.getRight();
+            Pair<ReturnResult, Configuration> configurationPair = configurations.findConfiguration(revision.getConfiguration());
+            if(configurationPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
+                return new ImmutablePair<>(configurationPair.getLeft(), null);
+            }
+            Pair<ReturnResult, CodeBookDocument> cb = ddiBuilder.buildDDIDocument(Language.DEFAULT, revision, configurationPair.getRight());
+            return cb;
+        }
     }
 }

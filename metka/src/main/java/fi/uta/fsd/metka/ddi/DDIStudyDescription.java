@@ -8,19 +8,14 @@ import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.configuration.Field;
-import fi.uta.fsd.metka.model.configuration.Option;
-import fi.uta.fsd.metka.model.configuration.SelectionList;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.ContainerDataField;
 import fi.uta.fsd.metka.model.data.container.DataRow;
 import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.names.Fields;
-import fi.uta.fsd.metka.names.Lists;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import org.apache.commons.lang3.tuple.Pair;
-import org.joda.time.LocalDate;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -117,7 +112,7 @@ class DDIStudyDescription {
 
         addTitleInfo(revisionData, language, citationType);
 
-        // Add id number, repeatable TODO: How is this repeatable ?
+        /*// Add id number, repeatable TODO: How is this repeatable ?
         IDNoType idNoType = titlStmtType.addNewIDNo();
         idNoType.setAgency(AGENCY);
         // Set study id number
@@ -180,10 +175,10 @@ class DDIStudyDescription {
             // TODO: Not implemented yet / missing ?
             // TODO: Need to recheck excel and fields for correct values set into fields
             String producer = dataRow.dataField( ValueDataFieldCall.get("producer") ).getValue().getActualValue();
-            /*String producerId = dataRow.dataField( ValueDataFieldCall.get("producerid") ).getValue().getActualValue();*/
-            /*String producerIdType = dataRow.dataField( ValueDataFieldCall.get("produceridtype") ).getValue().getActualValue();*/
+            *//*String producerId = dataRow.dataField( ValueDataFieldCall.get("producerid") ).getValue().getActualValue();*//*
+            *//*String producerIdType = dataRow.dataField( ValueDataFieldCall.get("produceridtype") ).getValue().getActualValue();*//*
             String producerRole = dataRow.dataField( ValueDataFieldCall.get("producerrole") ).getValue().getActualValue();
-            /*String projectNr = dataRow.dataField( ValueDataFieldCall.get("projectnr") ).getValue().getActualValue();*/
+            *//*String projectNr = dataRow.dataField( ValueDataFieldCall.get("projectnr") ).getValue().getActualValue();*//*
             String producerAbbr = dataRow.dataField( ValueDataFieldCall.get("producerabbr") ).getValue().getActualValue();
 
             ProducerType producerType = prodStmtType.addNewProducer();
@@ -218,7 +213,7 @@ class DDIStudyDescription {
         // Set abbreviation
         distrbtrType.setAbbr(AGENCY);
         // Set URI
-        distrbtrType.setURI(FSD_DISTRIBUTOR_BASE_URI);
+        distrbtrType.setURI(FSD_DISTRIBUTOR_BASE_URI);*/
 
         // TODO: Example XMLs have depositr and depDate elements inside distStmt. Not mentioned in excel ?
 
@@ -349,7 +344,7 @@ class DDIStudyDescription {
     }
 
     private static void addStudyAuthorization(RevisionData revisionData, StdyDscrType stdyDscrType) {
-        // TODO: Add study authorization
+        /*// TODO: Add study authorization
         // TODO: Example XMLs neither had studyAuthorization element or children. Check if excel is correct ?
         // Back to study description
         // Add study authorization
@@ -370,7 +365,7 @@ class DDIStudyDescription {
             authorizingAgencyType.setAffiliation(affiliation);
             // Set abbreviation TODO: Where to get this ?
             authorizingAgencyType.setAbbr("placeholder");
-        }
+        }*/
     }
 
     private static void addStudyInfo(StdyDscrType stdyDscrType, RevisionData revision, Language language) {
@@ -388,7 +383,7 @@ class DDIStudyDescription {
     }
 
     private static void addStudyInfoSubject(StdyInfoType stdyInfo, RevisionData revision) {
-        // Add subject, excel row #84
+        /*// Add subject, excel row #84
         SubjectType subjectType= stdyInfo.addNewSubject();
 
         // Add keyword, repeatable TODO: Keyword has vocab or does not and values depend on that see excel row #85 - #89
@@ -433,11 +428,11 @@ class DDIStudyDescription {
             // Set topic class source TODO: What is the value stored, number or text?
             // 1 archive, 2 producer
             topcClasType.setSource(BaseElementType.Source.Enum.forInt(2));
-        }
+        }*/
     }
 
     private static void addStudyInfoSumDesc(StdyInfoType stdyInfo, RevisionData revision, Language language) {
-        // TODO: Add sum description
+        /*// TODO: Add sum description
         // Add summary description
         SumDscrType sumDscrType = stdyInfo.addNewSumDscr();
 
@@ -538,14 +533,14 @@ class DDIStudyDescription {
             // Set source, 1 archive and 2 producer TODO: What value is saved, number or text ?
             conceptType.setSource(BaseElementType.Source.Enum.forString(analysisUnitURI));
 
-            /*
+            *//*
             // Add new text (only if anlyUnit/concept=Muu havaintoyksikkö TAI Maantieteellinen alue)
             // TODO: How to check ? What path? Special handling for cases see excel row #112
             TxtType txtType = anlyUnitType.addNewTxt();
             xmlCursor = txtType.newCursor();
             xmlCursor.setTextValue(analysisUnitOther);
             xmlCursor.dispose();
-            */
+            *//*
         }
 
         // Add universe, repeatable
@@ -575,7 +570,7 @@ class DDIStudyDescription {
         DataKindType dataKindType = sumDscrType.addNewDataKind();
         xmlCursor = dataKindType.newCursor();
         xmlCursor.setTextValue(dataKindSelectedOptionValueTranslatedTitle);
-        xmlCursor.dispose();
+        xmlCursor.dispose();*/
     }
 
     private static void addMethod(StdyDscrType stdyDscrType, RevisionData revision, Language language) {
@@ -593,7 +588,7 @@ class DDIStudyDescription {
     }
 
     private static void addMethodDataColl(MethodType methodType, RevisionData revision, Language language) {
-        // TODO: Add data coll
+        /*// TODO: Add data coll
         // Add data column
         DataCollType dataCollType = methodType.addNewDataColl();
 
@@ -759,7 +754,7 @@ class DDIStudyDescription {
             xmlCursor = stt.newCursor();
             xmlCursor.setTextValue("placeholder");
             xmlCursor.dispose();
-        }
+        }*/
     }
 
     private static void addMethodAnalyzeInfo(MethodType methodType, RevisionData revision, Language language) {
@@ -851,7 +846,7 @@ class DDIStudyDescription {
     }
 
     private static void addOtherStudyMaterial(StdyDscrType stdyDscrType, RevisionData revision, Language language, RevisionRepository revisions) {
-        OthrStdyMatType othr = stdyDscrType.addNewOthrStdyMat();
+        /*OthrStdyMatType othr = stdyDscrType.addNewOthrStdyMat();
 
         // TODO: Add othr stdy mat
 
@@ -893,6 +888,6 @@ class DDIStudyDescription {
             xmlCursor = othRefsType.newCursor();
             xmlCursor.setTextValue(publicationComment);
             xmlCursor.dispose();
-        }
+        }*/
     }
 }

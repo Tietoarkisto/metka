@@ -27,7 +27,8 @@ define(function (require) {
                     searchPage: 'revision/search/{page}',
                     searchAjax: 'revision/ajax/search',
                     view: 'revision/view/{page}/{id}/{no}',
-                    viewAjax: 'revision/ajax/view/{page}/{id}/{no}'
+                    viewAjax: 'revision/ajax/view/{page}/{id}/{no}',
+                    ddiexport: 'revision/ddi/export/{id}/{no}'
                 }[key];
             }
         })().supplant($.extend({
