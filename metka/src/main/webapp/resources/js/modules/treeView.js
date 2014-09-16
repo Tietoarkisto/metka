@@ -163,25 +163,28 @@ define(function (require) {
                 add: function (nodes) {
                     var addTo = root;
                     var path = [];
+                    var parent;
 
                     if (root.some(function recur(node, i, array) {
                         var found = (function () {
                             if (node.active) {
                                 if (node.children) {
                                     addTo = node.children;
-                                    if (events.onDropped) {
-                                        events.onDropped(node, nodes);
-                                    }
+                                    parent = node;
                                 } else {
                                     addTo = array;
                                 }
                                 return true;
                             } else {
                                 if (node.children) {
-                                    return node.children.some(recur);
-                                } else {
-                                    return false;
+                                    if (node.children.some(recur)) {
+                                        if (!parent) {
+                                            parent = node;
+                                        }
+                                        return true;
+                                    }
                                 }
+                                return false;
                             }
                         })();
                         if (found && node.children) {
@@ -189,6 +192,10 @@ define(function (require) {
                         }
                         return found;
                     })) {
+                        if (events.onDropped) {
+                            events.onDropped(parent, nodes);
+                        }
+
                         deactivateAll();
                         Array.prototype.push.apply(addTo, nodes);
                         if (path.length) {

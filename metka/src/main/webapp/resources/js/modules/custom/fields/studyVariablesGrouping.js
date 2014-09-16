@@ -9,6 +9,26 @@ define(function (require) {
                 $moveToVariables.prop('disabled', !transferFromGroups || !transferToVariables);
             }
 
+            function group(text, children, transferRow) {
+                return {
+                    text: text,
+                    children: children,
+                    appendVar: function (transferRow_var) {
+                        if (!transferRow.fields.vargroupvars) {
+                            transferRow.fields.vargroupvars = {
+                                key: 'vargroupvars',
+                                rows: {
+                                    DEFAULT: []
+                                },
+                                type: 'REFERENCECONTAINER'
+                            };
+                        }
+                        transferRow.fields.vargroupvars.rows.DEFAULT.push(transferRow_var);
+                    },
+                    transferRow: transferRow
+                };
+            }
+
             var $variables = $('<div class="col-xs-5 well well-sm">');
             var $variableView;
             var $groups = $('<div class="col-xs-5 well well-sm">');
@@ -45,79 +65,66 @@ define(function (require) {
                                 };
                             });
 
-                            require('./../../data')(options).onChange(function () {
-                                $groups.empty();
-                                var rows = (function () {
-                                    return require('./../../data')(options)('vargroups').getByLang(options.defaultLang);
-                                })() || [];
+                            $groups.empty();
+                            var rows = (function () {
+                                return require('./../../data')(options)('vargroups').getByLang(options.defaultLang);
+                            })() || [];
 
-                                rows = rows.filter(function (row) {
-                                    // TODO: set as removed
-                                    //row.removed = true;
-                                    return row.fields && row.fields.vargrouptitle;
-                                });
-
-                                $groupView = require('./../../treeView')(rows.map(function (transferRow) {
-                                    return {
-                                        text: transferRow.fields.vargrouptitle.values.DEFAULT.current,
-                                        children: transferRow.fields.vargroupvars ? transferRow.fields.vargroupvars.rows.DEFAULT.map(function (transferRow) {
-                                            var groupedVariable = variables.find(function (variable) {
-                                                return variable.value === transferRow.value;
-                                            });
-                                            variables.splice(variables.indexOf(groupedVariable), 1);
-                                            return {
-                                                text: groupedVariable.text
-                                            };
-                                        }) : [],
-                                        appendVar: function (transferRow2) {
-                                            if (!transferRow.fields.vargroupvars) {
-                                                transferRow.fields.vargroupvars = {
-                                                    key: 'vargroupvars',
-                                                    rows: {
-                                                        DEFAULT: []
-                                                    },
-                                                    type: 'REFERENCECONTAINER'
-                                                };
-                                            }
-                                            log('appended', transferRow)
-                                            transferRow.fields.vargroupvars.rows.DEFAULT.push(transferRow2);
-                                        }
-                                    };
-                                }), {
-                                    onClick: function (node) {
-                                        return node.children ? 'activateOne' : 'deactivateDirectoriesAndToggle';
-                                    },
-                                    onChange: function (activeItems) {
-                                        if (activeItems.some(function (item) {
-                                            return item.children;
-                                        })) {
-                                            transferFromGroups = false;
-                                            transferToGroups = true;
-                                        } else {
-                                            transferToGroups = transferFromGroups = !!activeItems.length;
-                                        }
-                                        setButtonStates();
-                                    },
-                                    onDropped: function (parent, nodes) {
-                                        nodes.forEach(function (node) {
-                                            parent.appendVar({
-                                                key: 'vargroupvars',
-                                                value: node.value
-                                            });
-                                        });
-                                    },
-                                    onDragged: function (nodes) {
-                                        log('drag', nodes)
-                                        return
-                                        nodes.forEach(function (node) {
-                                            node.transferRow.removed = true;
-                                        });
-                                    }
-                                });
-
-                                $groups.append($groupView
-                                    .addClass('grouping-container'));
+                            rows = rows.filter(function (row) {
+                                // TODO: set as removed
+                                //row.removed = true;
+                                return row.fields && row.fields.vargrouptitle;
                             });
+
+                            $groupView = require('./../../treeView')(rows.map(function (transferRow) {
+                                return group(
+                                    transferRow.fields.vargrouptitle.values.DEFAULT.current,
+                                    transferRow.fields.vargroupvars ? transferRow.fields.vargroupvars.rows.DEFAULT.map(function (transferRow) {
+                                        var groupedVariable = variables.find(function (variable) {
+                                            return variable.value === transferRow.value;
+                                        });
+                                        variables.splice(variables.indexOf(groupedVariable), 1);
+                                        return {
+                                            text: groupedVariable.text,
+                                            transferRow: transferRow
+                                        };
+                                    }) : [],
+                                    transferRow
+                                );
+                            }), {
+                                onClick: function (node) {
+                                    return node.children ? 'activateOne' : 'deactivateDirectoriesAndToggle';
+                                },
+                                onChange: function (activeItems) {
+                                    if (activeItems.some(function (item) {
+                                        return item.children;
+                                    })) {
+                                        transferFromGroups = false;
+                                        transferToGroups = true;
+                                    } else {
+                                        transferToGroups = transferFromGroups = !!activeItems.length;
+                                    }
+                                    setButtonStates();
+                                },
+                                onDropped: function (parent, nodes) {
+                                    nodes.forEach(function (node) {
+                                        var transferRow = {
+                                            key: 'vargroupvars',
+                                            value: node.value
+                                        };
+                                        node.transferRow = transferRow;
+                                        parent.appendVar(transferRow);
+                                    });
+                                },
+                                onDragged: function (nodes) {
+                                    nodes.forEach(function (node) {
+                                        node.transferRow.removed = true;
+                                    });
+                                }
+                            });
+
+                            $groups.append($groupView
+                                .addClass('grouping-container'));
 
 
                             $variableView = require('./../../treeView')(variables, {
@@ -132,15 +139,21 @@ define(function (require) {
 
                             $variables.append($variableView
                                 .addClass('grouping-container'));
+
+                            transferFromVariables = false;
+                            transferToVariables = true;
+                            transferFromGroups = false;
+                            transferToGroups = false;
+                            setButtonStates();
                         }
                     });
                 }
             });
 
-            var transferFromVariables = false;
-            var transferToVariables = true;
-            var transferFromGroups = false;
-            var transferToGroups = false;
+            var transferFromVariables;
+            var transferToVariables;
+            var transferFromGroups;
+            var transferToGroups;
 
             var $moveToGroup = require('./../../button')()({
                 create: function () {
@@ -238,12 +251,7 @@ define(function (require) {
                                                             // always add to root
                                                             $groupView.data('deactivateAll')();
 
-                                                            $groupView.data('add')([{
-                                                                text: title,
-                                                                children: [],
-                                                                active: true,
-                                                                vars: transferRow.fields.vargroupvars
-                                                            }]);
+                                                            $groupView.data('add')([group(title, [], transferRow)]);
                                                             transferToGroups = true;
                                                             setButtonStates();
                                                         });
@@ -256,7 +264,6 @@ define(function (require) {
                             }
                         }))));
 
-            setButtonStates();
         }
     };
 });
