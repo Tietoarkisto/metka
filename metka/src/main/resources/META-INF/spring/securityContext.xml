@@ -10,7 +10,7 @@
 
     <http entry-point-ref="metkaEntryPoint" use-expressions="true">
         <intercept-url pattern="/web/**" access="isAuthenticated()" />
-        <custom-filter ref="testFilter" before="SECURITY_CONTEXT_FILTER"/>
+        <!--<custom-filter ref="testFilter" before="SECURITY_CONTEXT_FILTER"/>-->
         <custom-filter ref="shibAuthFilter" after="SECURITY_CONTEXT_FILTER"/>
     </http>
 

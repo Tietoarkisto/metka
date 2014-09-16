@@ -148,6 +148,12 @@ public class IndexerComponent {
             }
         }
         for(ConfigurationType type : ConfigurationType.values()) {
+            switch(type) {
+                case STUDY_ATTACHMENT:
+                case STUDY_VARIABLES:
+                case STUDY_VARIABLE:
+                    continue;
+            }
             for(Language language : Language.values()) {
                 IndexerCommand command = RevisionIndexerCommand.stop(type, language);
                 manager.getIndexDirectory(command.getPath(), true).clearIndex();

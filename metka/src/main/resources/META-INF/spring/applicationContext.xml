@@ -7,7 +7,7 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
 		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd">
 
-    <context:component-scan base-package="fi.uta.fsd.metka, fi.uta.fsd.metkaSearch">
+    <context:component-scan base-package="fi.uta.fsd.metka, fi.uta.fsd.metkaSearch, fi.uta.fsd.metkaAmqp">
         <context:exclude-filter expression="org.springframework.stereotype.Controller" type="annotation" />
     </context:component-scan>
 

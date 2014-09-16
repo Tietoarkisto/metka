@@ -457,7 +457,10 @@
                                         "title": "Rinnakkaiset nimet",
                                         "field": {
                                             "key": "alttitles",
-                                            "showSaveInfo": true
+                                            "showSaveInfo": true,
+                                            "columnFields": [
+                                                "alttitle"
+                                            ]
                                         }
                                     }
                                 ]

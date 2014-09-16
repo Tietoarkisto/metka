@@ -144,7 +144,7 @@ define(function (require) {
                                                 "type": "CELL",
                                                 "title": "Tietosuoja-asiat",
                                                 "field": {
-                                                    "key": "varsecuritys",
+                                                    "key": "varsecurities",
                                                     "columnFields": [
                                                         "varsecurity"
                                                     ]

@@ -21,7 +21,7 @@ public class FieldSerializer extends ObjectSerializer<Field> {
         jgen.writeBooleanField("immutable", value.getImmutable());
         jgen.writeBooleanField("display", value.getDisplay());
         jgen.writeBooleanField("unique", value.getUnique());
-        jgen.writeBooleanField("required", value.getRequired()); // TODO: Required is going to be more complicated later
+        jgen.writeBooleanField("required", value.getRequired()); // TODO: Required should be replaced with restriction configurations
         jgen.writeBooleanField("subfield", value.getSubfield());
         jgen.writeBooleanField("editable", value.getEditable());
         jgen.writeBooleanField("writable", value.getWritable());

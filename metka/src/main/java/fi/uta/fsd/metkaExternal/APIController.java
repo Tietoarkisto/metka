@@ -1,5 +1,6 @@
 package fi.uta.fsd.metkaExternal;
 
+import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
@@ -59,7 +60,7 @@ public class APIController {
         }
 
         RevisionCreateRequest revReq = new RevisionCreateRequest();
-        revReq.setType(request.getType());
+        revReq.setType(ConfigurationType.STUDY);
         revReq.getParameters().putAll(request.getParameters());
         Pair<ReturnResult, RevisionData> result = create.create(revReq);
         if(result.getLeft() != ReturnResult.REVISION_CREATED) {

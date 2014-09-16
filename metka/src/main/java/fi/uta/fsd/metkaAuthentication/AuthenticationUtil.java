@@ -36,6 +36,16 @@ public final class AuthenticationUtil {
         return getDetails();
     }
 
+    public static void clearAuthenticationDetails() throws AuthenticationCredentialsNotFoundException {
+        MetkaAuthenticationDetails details = getAuthenticationDetails();
+        if(details == null) {
+            return;
+        }
+
+        SecurityContext context = SecurityContextHolder.getContext();
+        context.setAuthentication(null);
+    }
+
     private static MetkaAuthenticationDetails getDetails() throws AuthenticationCredentialsNotFoundException {
         SecurityContext context = SecurityContextHolder.getContext();
         if(context == null) {

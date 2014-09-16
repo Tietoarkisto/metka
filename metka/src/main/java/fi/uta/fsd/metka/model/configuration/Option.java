@@ -3,6 +3,7 @@ package fi.uta.fsd.metka.model.configuration;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.general.TranslationObject;
 
 public class Option {
@@ -43,10 +44,22 @@ public class Option {
     @JsonIgnore
     public String getDefaultTitle() {
         if(title == null) {
-            return "";
+            return "-";
         }
         String text = title.getTexts().get("default");
         return text == null ? "" : text;
+    }
+
+    @JsonIgnore
+    public String getTitleFor(Language language) {
+        if(title == null) {
+            return "-";
+        }
+        if(title.getTexts().containsKey(language.toValue())) {
+            return title.getTexts().get(language.toValue());
+        } else {
+            return getDefaultTitle();
+        }
     }
 
     @Override

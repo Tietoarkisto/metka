@@ -97,16 +97,18 @@
 		"vargroups": {
 			"key": "vargroups",
 			"type": "CONTAINER",
+			"translatable": false,
 			"subfields": [
 				"vargrouptitle",
-				"vargroupvars"
+				"vargroupvars",
+				"vargrouptexts"
 			]
 		},
 		"vargrouptitle": {
 			"key": "vargrouptitle",
 			"type": "STRING",
-			"subfield": true,
-			"immutable": true
+			"translatable": false,
+			"subfield": true
 		},
 		"vargroupvars": {
 			"key": "vargroupvars",
@@ -116,6 +118,20 @@
 			"subfields": [
 				"varlabel"
 			]
+		},
+		"vargrouptexts": {
+			"key": "vargrouptexts",
+			"type": "CONTAINER",
+			"translatable": true,
+			"subfield": true,
+			"subfields": [
+				"vargrouptext"
+			]
+		},
+		"vargrouptext": {
+			"key": "vargrouptext",
+			"type": "STRING",
+			"subfield": true
 		}
 	}
 }

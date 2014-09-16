@@ -748,7 +748,7 @@
 		},
 		"alttitles": {
 			"key": "alttitles",
-			"translatable": false,
+			"translatable": true,
 			"type": "CONTAINER",
 			"subfields": [
 				"alttitle"
@@ -1210,17 +1210,17 @@
 		},
 		"dataprosessing": {
 			"key": "dataprosessing",
-			"translatable": false,
+			"translatable": true,
 			"type": "STRING"
 		},
 		"collsize": {
 			"key": "collsize",
-			"translatable": false,
+			"translatable": true,
 			"type": "STRING"
 		},
 		"complete": {
 			"key": "complete",
-			"translatable": false,
+			"translatable": true,
 			"type": "STRING"
 		},
 		"datasetnotes": {
@@ -1230,7 +1230,7 @@
 		},
 		"appraisals": {
 			"key": "appraisals",
-			"translatable": false,
+			"translatable": true,
 			"type": "CONTAINER",
 			"subfields": [
 				"appraisal"
@@ -1258,7 +1258,7 @@
 		},
 		"othermaterials": {
 			"key": "othermaterials",
-			"translatable": false,
+			"translatable": true,
 			"type": "CONTAINER",
 			"subfields": [
 				"othermaterialuri",

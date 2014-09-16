@@ -346,6 +346,7 @@
  			<filter>src/profile/filter-${env}.properties</filter>
  		</filters>
 		<resources>
+            <!-- Filter resources -->
 			<resource>
 				<filtering>true</filtering>
 				<directory>src/main/resources</directory>
@@ -362,6 +363,7 @@
                     <exclude>log4j.xml</exclude>
 				</excludes>
 			</resource>
+
 		</resources>
         <plugins>
             <plugin>
@@ -501,6 +503,12 @@
 			<id>Demo</id>
 			<properties>
                 <env>demo</env>
+			</properties>
+		</profile>
+        <profile>
+			<id>Demo2</id>
+			<properties>
+                <env>demo2</env>
 			</properties>
 		</profile>
 		<profile>

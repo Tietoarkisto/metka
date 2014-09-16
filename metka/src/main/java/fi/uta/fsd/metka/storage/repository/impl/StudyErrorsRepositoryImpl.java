@@ -4,10 +4,12 @@ import fi.uta.fsd.metka.storage.entity.StudyErrorEntity;
 import fi.uta.fsd.metka.storage.repository.StudyErrorsRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.study.StudyError;
+import fi.uta.fsd.metkaAmqp.Messenger;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -19,6 +21,11 @@ import java.util.List;
 public class StudyErrorsRepositoryImpl implements StudyErrorsRepository {
     @PersistenceContext(name = "entityManager")
     private EntityManager em;
+
+    private static final Integer THRESHOLD = 10;
+
+    @Autowired
+    private Messenger messenger;
 
     @Override
     public List<StudyError> listErrorsForStudy(Long studyId) {
@@ -63,8 +70,20 @@ public class StudyErrorsRepositoryImpl implements StudyErrorsRepository {
         }
         updateStudyErrorEntity(entity, error);
         em.merge(entity);
-        // TODO: Calculate total score and send notification if too high
-        // TODO: Send notification with trigger date and target
+
+        List<StudyErrorEntity> entities = em.createQuery("SELECT e FROM StudyErrorEntity e WHERE e.studyErrorStudy=:study", StudyErrorEntity.class)
+                .setParameter("study", error.getStudyId())
+                .getResultList();
+
+        Integer points = 0;
+        for(StudyErrorEntity e : entities) {
+            points += e.getScore();
+        }
+        if(points >= THRESHOLD) {
+            // TODO: Check how to decide the trigger recipient and where to send it.
+            messenger.sendAmqpMessage(Messenger.AmqpMessageType.STUDY_ERROR_POINTS_OVER_TRESHOLD);
+        }
+
         return ReturnResult.OPERATION_SUCCESSFUL;
     }
 

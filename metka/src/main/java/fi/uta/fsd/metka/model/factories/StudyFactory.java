@@ -9,6 +9,8 @@ import fi.uta.fsd.metka.model.configuration.SelectionList;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
+import fi.uta.fsd.metka.names.Fields;
+import fi.uta.fsd.metka.names.Lists;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -51,8 +53,8 @@ public class StudyFactory extends DataFactory {
         Field confField;
 
         // Create studyid field. studyid_prefix and studyid_number were redundant and were removed
-        list = configuration.getRootSelectionList("id_prefix_list");
-        data.dataField(ValueDataFieldCall.set("studyid", new Value(list.getDef()+studyNumber), Language.DEFAULT).setConfiguration(configuration).setInfo(info));
+        list = configuration.getRootSelectionList(Lists.ID_PREFIX_LIST);
+        data.dataField(ValueDataFieldCall.set(Fields.STUDYID, new Value(list.getDef()+studyNumber), Language.DEFAULT).setConfiguration(configuration).setInfo(info));
 
         // submissionid, this is required information for creating a new study
         data.dataField(ValueDataFieldCall.set("submissionid", new Value(submissionid), Language.DEFAULT).setConfiguration(configuration).setInfo(info));

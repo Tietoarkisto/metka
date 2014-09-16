@@ -88,9 +88,17 @@
 			"editable": false,
 			"immutable": true
 		},
+		"varinterval": {
+			"key": "varinterval",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"editable": false,
+			"immutable": true
+		},
 		"qstnlits": {
 			"key": "qstnlits",
-			"translatable": false,
+			"translatable": true,
 			"required": true,
 			"type": "CONTAINER",
 			"subfields": [
@@ -99,14 +107,14 @@
 		},
 		"qstnlit": {
 			"key": "qstnlit",
-			"translatable": false,
+			"translatable": true,
 			"required": true,
 			"type": "STRING",
 			"subfield": true
 		},
 		"preqtxts": {
 			"key": "preqtxts",
-			"translatable": false,
+			"translatable": true,
 			"required": true,
 			"type": "CONTAINER",
 			"subfields": [
@@ -115,14 +123,14 @@
 		},
 		"preqtxt": {
 			"key": "preqtxt",
-			"translatable": false,
+			"translatable": true,
 			"required": true,
 			"type": "STRING",
 			"subfield": true
 		},
 		"postqtxts": {
 			"key": "postqtxts",
-			"translatable": false,
+			"translatable": true,
 			"required": true,
 			"type": "CONTAINER",
 			"subfields": [
@@ -131,14 +139,14 @@
 		},
 		"postqtxt": {
 			"key": "postqtxt",
-			"translatable": false,
+			"translatable": true,
 			"required": true,
 			"type": "STRING",
 			"subfield": true
 		},
 		"ivuinstrs": {
 			"key": "ivuinstrs",
-			"translatable": false,
+			"translatable": true,
 			"required": true,
 			"type": "CONTAINER",
 			"subfields": [
@@ -147,14 +155,14 @@
 		},
 		"ivuinstr": {
 			"key": "ivuinstr",
-			"translatable": false,
+			"translatable": true,
 			"required": true,
 			"type": "STRING",
 			"subfield": true
 		},
 		"varnotes": {
 			"key": "varnotes",
-			"translatable": false,
+			"translatable": true,
 			"required": true,
 			"type": "CONTAINER",
 			"subfields": [
@@ -163,14 +171,14 @@
 		},
 		"varnote": {
 			"key": "varnote",
-			"translatable": false,
+			"translatable": true,
 			"required": true,
 			"type": "STRING",
 			"subfield": true
 		},
 		"vartexts": {
 			"key": "vartexts",
-			"translatable": false,
+			"translatable": true,
 			"required": true,
 			"type": "CONTAINER",
 			"subfields": [
@@ -179,14 +187,14 @@
 		},
 		"vartext": {
 			"key": "vartext",
-			"translatable": false,
+			"translatable": true,
 			"required": true,
 			"type": "STRING",
 			"subfield": true
 		},
-		"varsecuritys": {
-			"key": "varsecuritys",
-			"translatable": false,
+		"varsecurities": {
+			"key": "varsecurities",
+			"translatable": true,
 			"required": true,
 			"type": "CONTAINER",
 			"subfields": [
@@ -195,7 +203,7 @@
 		},
 		"varsecurity": {
 			"key": "varsecurity",
-			"translatable": false,
+			"translatable": true,
 			"required": true,
 			"type": "STRING",
 			"subfield": true
@@ -282,7 +290,6 @@
 			"subfield": true
 		},
 		"statisticsvalue": {
-			"_comment": "Should be a REAL instead",
 			"key": "statisticsvalue",
 			"translatable": false,
 			"required": true,
@@ -290,6 +297,25 @@
 			"immutable": true,
 			"type": "REAL",
 			"subfield": true
+		},
+		"translations": {
+			"_comment": "This container should contain a list of language codes represented in this variable from translatable fields. So for example if varlabel contains english text this container should have a row with value en",
+			"key": "translations",
+			"type": "CONTAINER",
+			"translatable": false,
+			"editable": false,
+			"subfields": [
+				"translation"
+			]
+		},
+		"translation": {
+			"_comment": "This should contain a single language code that is represented in this variable.",
+			"key": "translation",
+			"type": "STRING",
+			"required": true,
+			"immutale": true,
+			"subfield": true
+			
 		}
 	}
 }

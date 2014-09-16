@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +36,20 @@ public class GeneralController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String catchAll() {
         return "redirect:/web/expert";
+    }
+
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public String catchAllSlash() {
+        return "redirect:/web/expert";
+    }
+
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    public String logout(HttpServletRequest request) {
+        /*request.getSession(false).invalidate();
+        SecurityContextHolder.clearContext();
+
+        return "redirect:https://"+request.getServerName()+"/Shibboleth.sso/Logout";*/
+        return "redirect:/j_spring_security_logout";
     }
 
     // TODO: Move to revision controller and unify as one call
