@@ -18,7 +18,8 @@ define(function (require) {
             var column = 'varlabel';
 
             require('./../../data')(options).onChange(function () {
-                $variables.empty();
+                require('./../../preloader')($variables);
+                require('./../../preloader')($groups);
                 var rows = (function () {
                     return require('./../../data')(options)(key).getByLang(options.defaultLang);
                 })();
@@ -111,8 +112,10 @@ define(function (require) {
                                 }
                             });
 
-                            $variables.append($variableView
-                                .addClass('grouping-container'));
+                            $variables
+                                .empty()
+                                .append($variableView
+                                    .addClass('grouping-container'));
 
                             transferFromVariables = false;
                             transferToVariables = true;
