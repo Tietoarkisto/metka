@@ -54,6 +54,7 @@ define(function (require) {
                                             "title": "Kysymystekstit",
                                             "field": {
                                                 "key": "qstnlits",
+                                                "displayHeader": false,
                                                 "columnFields": [
                                                     "qstnlit"
                                                 ]
@@ -69,6 +70,7 @@ define(function (require) {
                                             "title": "Esitekstit",
                                             "field": {
                                                 "key": "preqtxts",
+                                                "displayHeader": false,
                                                 "columnFields": [
                                                     "preqtxt"
                                                 ]
@@ -84,6 +86,7 @@ define(function (require) {
                                             "title": "Jälkitekstit",
                                             "field": {
                                                 "key": "postqtxts",
+                                                "displayHeader": false,
                                                 "columnFields": [
                                                     "postqtxt"
                                                 ]
@@ -99,6 +102,7 @@ define(function (require) {
                                             "title": "Haastattelijan ohjeet",
                                             "field": {
                                                 "key": "ivuinstrs",
+                                                "displayHeader": false,
                                                 "columnFields": [
                                                     "ivuinstr"
                                                 ]
@@ -114,6 +118,7 @@ define(function (require) {
                                             "title": "Huomiot",
                                             "field": {
                                                 "key": "varnotes",
+                                                "displayHeader": false,
                                                 "columnFields": [
                                                     "varnote"
                                                 ]
@@ -129,6 +134,7 @@ define(function (require) {
                                             "title": "Lisätiedot",
                                             "field": {
                                                 "key": "vartexts",
+                                                "displayHeader": false,
                                                 "columnFields": [
                                                     "vartext"
                                                 ]
@@ -144,6 +150,7 @@ define(function (require) {
                                             "title": "Tietosuoja-asiat",
                                             "field": {
                                                 "key": "varsecuritys",
+                                                "displayHeader": false,
                                                 "columnFields": [
                                                     "varsecurity"
                                                 ]

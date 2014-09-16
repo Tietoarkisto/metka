@@ -64,8 +64,8 @@ define(function (require) {
             byFieldKey.errorsByLang = function (lang) {
                 var transferField = getTransferField();
 
-                if (transferField && transferField[lang]) {
-                    return transferField[lang].errors || [];
+                if (transferField && transferField.values && transferField.values[lang]) {
+                    return transferField.values[lang].errors || [];
                 }
                 return [];
             };

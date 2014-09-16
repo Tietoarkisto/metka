@@ -170,8 +170,10 @@ public class TransferField {
     private static TransferField buildValueFieldFromValueDataField(ValueDataField field) {
         TransferField transferField = new TransferField(field.getKey(), TransferFieldType.VALUE);
         for(Language language : Language.values()) {
-            TransferValue value = TransferValue.buildFromValueDataFieldFor(language, field);
-            transferField.values.put(language, value);
+            if(field.hasValueFor(language)) {
+                TransferValue value = TransferValue.buildFromValueDataFieldFor(language, field);
+                transferField.values.put(language, value);
+            }
         }
         return transferField;
     }

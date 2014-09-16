@@ -81,8 +81,10 @@ define(function (require) {
 
                 var $elem = this;
 
+
                 require('./../../data')(options).onChange(function onChange() {
-                    $elem.empty();
+
+                    require('./../../preloader')($elem);
                     var rows = (function () {
                         return require('./../../data')(options)(key).getByLang(options.defaultLang);
                     })();
@@ -108,7 +110,7 @@ define(function (require) {
                                     };
                                 });
 
-                                $elem.append(require('./../../treeView')((require('./../../data')(options)('vargroups').getByLang(options.defaultLang) || []).filter(function (row) {
+                                $elem.empty().append(require('./../../treeView')((require('./../../data')(options)('vargroups').getByLang(options.defaultLang) || []).filter(function (row) {
                                     return row.fields && row.fields.vargrouptitle;
                                 }).map(function (transferRow) {
                                     return require('./../../treeViewVariableGroup')(

@@ -186,7 +186,6 @@ define(function (require) {
                             }
                         ]
                     }
-
                 ],
                 buttons: [
                     require('./../searchButton')('/revision/ajax/search', function () {
