@@ -87,7 +87,8 @@ define(function (require) {
         var $div = $('<div class="list-group list-group-condensed">')
             .append(children(root, 0))
             .on({
-                activate: function () {
+                // IE triggers native activate/deactivate events. Must use different event names.
+                metkaActivate: function () {
                     var $this = $(this);
                     $this
                         .addClass('active')
@@ -96,7 +97,7 @@ define(function (require) {
                     $this
                         .trigger('change');
                 },
-                deactivate: function () {
+                metkaDectivate: function () {
                     var $this = $(this);
                     $this
                         .removeClass('active')
@@ -134,7 +135,7 @@ define(function (require) {
 
                     deactivateAll();
 
-                    $this.trigger('activate');
+                    $this.trigger('metkaActivate');
                 }
             }, 'a')
             .data({
@@ -237,9 +238,6 @@ define(function (require) {
                 if (eventName) {
                     $this.trigger(eventName);
                 }
-                log('f')
-                e.preventDefault();
-                return false;
             });
         }
 
