@@ -231,9 +231,15 @@ define(function (require) {
             });
 
         if (events.onClick) {
-            $div.on('click', 'a', function () {
+            $div.on('click', 'a', function (e) {
                 var $this = $(this);
-                $this.trigger(events.onClick($this.data('node')));
+                var eventName = events.onClick($this.data('node'));
+                if (eventName) {
+                    $this.trigger(eventName);
+                }
+                log('f')
+                e.preventDefault();
+                return false;
             });
         }
 

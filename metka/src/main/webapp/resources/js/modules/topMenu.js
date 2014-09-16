@@ -87,6 +87,9 @@ define(function (require) {
                                     .append($('<span class="pull-right">')
                                         .text(MetkaJS.User.displayName + ' | ')
                                         .append($('<a>', {
+                                            target: '_blank',
+                                            href: MetkaJS.Globals.contextPath + '/html/guide/guide.html'
+                                        }).text(MetkaJS.L10N.get('topmenu.help')), ' | ', $('<a>', {
                                             href: "https://"+window.location.hostname+"/Shibboleth.sso/Logout"
                                         }).text(MetkaJS.L10N.get("topmenu.logout")))
                                 )),

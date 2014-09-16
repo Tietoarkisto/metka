@@ -9,26 +9,6 @@ define(function (require) {
                 $moveToVariables.prop('disabled', !transferFromGroups || !transferToVariables);
             }
 
-            function group(text, children, transferRow) {
-                return {
-                    text: text,
-                    children: children,
-                    appendVar: function (transferRow_var) {
-                        if (!transferRow.fields.vargroupvars) {
-                            transferRow.fields.vargroupvars = {
-                                key: 'vargroupvars',
-                                rows: {
-                                    DEFAULT: []
-                                },
-                                type: 'REFERENCECONTAINER'
-                            };
-                        }
-                        transferRow.fields.vargroupvars.rows.DEFAULT.push(transferRow_var);
-                    },
-                    transferRow: transferRow
-                };
-            }
-
             var $variables = $('<div class="col-xs-5 well well-sm">');
             var $variableView;
             var $groups = $('<div class="col-xs-5 well well-sm">');
@@ -57,7 +37,6 @@ define(function (require) {
                             })
                         }),
                         success: function (data) {
-                            // TODO: listaa ainoastaan muuttujat, jotka eivät ole ryhmissä
                             var variables = data.responses.map(function (response) {
                                 return {
                                     text: response.options[0].title.value.default,
@@ -65,21 +44,15 @@ define(function (require) {
                                 };
                             });
 
-                            $groups.empty();
-                            var rows = (function () {
-                                return require('./../../data')(options)('vargroups').getByLang(options.defaultLang);
-                            })() || [];
-
-                            rows = rows.filter(function (row) {
+                            $groupView = require('./../../treeView')((require('./../../data')(options)('vargroups').getByLang(options.defaultLang) || []).filter(function (row) {
                                 // TODO: set as removed
                                 //row.removed = true;
                                 return row.fields && row.fields.vargrouptitle;
-                            });
-
-                            $groupView = require('./../../treeView')(rows.map(function (transferRow) {
-                                return group(
+                            }).map(function (transferRow) {
+                                return require('./../../treeViewVariableGroup')(
                                     transferRow.fields.vargrouptitle.values.DEFAULT.current,
                                     transferRow.fields.vargroupvars ? transferRow.fields.vargroupvars.rows.DEFAULT.map(function (transferRow) {
+                                        // TODO: Array.prototype.findIndex
                                         var groupedVariable = variables.find(function (variable) {
                                             return variable.value === transferRow.value;
                                         });
@@ -123,9 +96,10 @@ define(function (require) {
                                 }
                             });
 
-                            $groups.append($groupView
-                                .addClass('grouping-container'));
-
+                            $groups
+                                .empty()
+                                .append($groupView
+                                    .addClass('grouping-container'));
 
                             $variableView = require('./../../treeView')(variables, {
                                 onClick: function () {
@@ -251,7 +225,9 @@ define(function (require) {
                                                             // always add to root
                                                             $groupView.data('deactivateAll')();
 
-                                                            $groupView.data('add')([group(title, [], transferRow)]);
+                                                            var group = require('./../../treeViewVariableGroup')(title, [], transferRow);
+                                                            group.active = true;
+                                                            $groupView.data('add')([group]);
                                                             transferToGroups = true;
                                                             setButtonStates();
                                                         });

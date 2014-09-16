@@ -104,35 +104,80 @@
         {
             "title": "Tallenna",
             "type": "SAVE",
+            "isHandler": true,
             "states": [
                 "DRAFT"
+            ],
+            "permissions": [
+                "canEditRevision"
             ]
         },
         {
-            "title": "Hyväksy",
-            "type": "APPROVE",
-            "states": [
-                "DRAFT"
-            ]
-        },
-        {
-            "title": "Muokkaa",
+            "title": "Tee luonnos",
             "type": "EDIT",
             "states": [
                 "APPROVED"
+            ],
+            "permissions": [
+                "canEditRevision"
             ]
         },
         {
-            "title": "Poista",
-            "type": "REMOVE",
+            "title": "Palauta",
+            "type": "RESTORE",
             "states": [
-                "DRAFT",
-                "APPROVED"
+                "REMOVED"
+            ],
+            "permissions": [
+                "canRestoreRevision"
             ]
         },
         {
-            "title": "Revisiohistoria",
-            "type": "HISTORY"
+            "title": "Aloita muokkaus",
+            "type": "CLAIM",
+            "hasHandler": false,
+            "states": [
+                "DRAFT"
+            ],
+            "permissions": [
+                "canEditRevision"
+            ]
+        },
+        {
+            "title": "Ota haltuun",
+            "type": "CLAIM",
+            "hasHandler": true,
+            "isHandler": false,
+            "states": [
+                "DRAFT"
+            ],
+            "permissions": [
+                "canEditRevision",
+                "canForceClaimRevision"
+            ]
+        },
+        {
+            "title": "Lopeta muokkaus",
+            "type": "RELEASE",
+            "isHandler": true,
+            "states": [
+                "DRAFT"
+            ],
+            "permissions": [
+                "canEditRevision"
+            ]
+        },
+        {
+            "title": "Vapauta luonnos",
+            "type": "RELEASE",
+            "isHandler": false,
+            "hasHandler": true,
+            "states": [
+                "DRAFT"
+            ],
+            "permissions": [
+                "canForceReleaseRevision"
+            ]
         }
     ]
 }

@@ -404,7 +404,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             }
 
             if (codePair.getLeft() == StatusCode.FIELD_MISSING) {
-                codePair = dataFields.dataField(ContainerDataFieldCall.set(field.getKey()).setConfiguration(configuration));
+                codePair = dataFields.dataField(ContainerDataFieldCall.set(field.getKey()).setConfiguration(configuration).setChangeMap(changeMap));
                 if (codePair.getLeft() != StatusCode.FIELD_INSERT) {
                     return new ImmutablePair<>(codePair.getLeft(), false);
                 }
