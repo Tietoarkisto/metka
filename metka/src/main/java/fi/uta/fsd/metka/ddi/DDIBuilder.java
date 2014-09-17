@@ -13,6 +13,7 @@ import fi.uta.fsd.metka.model.data.container.ContainerDataField;
 import fi.uta.fsd.metka.model.data.container.DataRow;
 import fi.uta.fsd.metka.model.data.container.ValueContainer;
 import fi.uta.fsd.metka.model.data.container.ValueDataField;
+import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -34,6 +35,8 @@ public class DDIBuilder {
 
     @Autowired
     private RevisionRepository revisions;
+    @Autowired
+    private ReferenceService references;
 
     public Pair<ReturnResult, CodeBookDocument> buildDDIDocument(Language language, RevisionData revisionData, Configuration configuration) {
         // Create the codebook xml document
@@ -52,7 +55,7 @@ public class DDIBuilder {
         DDIHeader.fillDDIHeader(codeBookType, language);
 
         DDIDocumentDescription.addDocumentDescription(revisionData, language, configuration, codeBookType);
-        DDIStudyDescription.addStudyDescription(revisionData, language, configuration, codeBookType, revisions);
+        DDIStudyDescription.addStudyDescription(revisionData, language, configuration, codeBookType, revisions, references);
         DDIFileDescription.addfileDescription(revisionData, language, configuration, codeBookType, revisions);
         DDIDataDescription.addDataDescription(revisionData, language, configuration, codeBookType, revisions);
         DDIOtherMaterialDescription.addOtherMaterialDescription(revisionData, language, configuration, codeBookType);

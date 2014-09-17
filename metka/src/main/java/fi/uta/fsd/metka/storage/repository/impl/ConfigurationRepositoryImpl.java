@@ -78,7 +78,7 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
     private void normalizeDataConfiguration(Configuration configuration) {
         // Set all subfields of translatable containers to translatable true
         for(Field field : configuration.getFields().values()) {
-            if(field.getType() == FieldType.CONTAINER) {
+            if(field.getType() == FieldType.CONTAINER && field.getTranslatable()) {
                 setSubfieldsToTranslatable(field, configuration);
             }
         }

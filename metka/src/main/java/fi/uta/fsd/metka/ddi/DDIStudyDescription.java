@@ -13,6 +13,7 @@ import fi.uta.fsd.metka.model.configuration.Option;
 import fi.uta.fsd.metka.model.configuration.SelectionList;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.*;
+import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.names.Lists;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
@@ -93,7 +94,7 @@ class DDIStudyDescription {
         WEIGHT_NO.put(Language.SV, "Datamaterialet innehåller inga viktvariabler.");
     }
 
-    static void addStudyDescription(RevisionData revision, Language language, Configuration configuration, CodeBookType codeBookType, RevisionRepository revisions) {
+    static void addStudyDescription(RevisionData revision, Language language, Configuration configuration, CodeBookType codeBookType, RevisionRepository revisions, ReferenceService references) {
         // Add study description to codebook
         StdyDscrType stdyDscrType = codeBookType.addNewStdyDscr();
 
@@ -101,7 +102,7 @@ class DDIStudyDescription {
 
         addStudyAuthorization(revision, stdyDscrType);
 
-        addStudyInfo(stdyDscrType, revision, language);
+        addStudyInfo(stdyDscrType, revision, language, configuration, references);
 
         addMethod(stdyDscrType, revision, language);
 
@@ -401,10 +402,10 @@ class DDIStudyDescription {
         }*/
     }
 
-    private static void addStudyInfo(StdyDscrType stdyDscrType, RevisionData revision, Language language) {
+    private static void addStudyInfo(StdyDscrType stdyDscrType, RevisionData revision, Language language, Configuration configuration, ReferenceService references) {
         StdyInfoType stdyInfo = stdyDscrType.addNewStdyInfo();
 
-        addStudyInfoSubject(stdyInfo, revision);
+        addStudyInfoSubject(stdyInfo, revision, language, configuration, references);
 
         Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField( ValueDataFieldCall.get(Fields.ABSTRACT));
         if(hasValue(valueFieldPair, language)) {
@@ -415,9 +416,15 @@ class DDIStudyDescription {
 
     }
 
-    private static void addStudyInfoSubject(StdyInfoType stdyInfo, RevisionData revision) {
+    private static void addStudyInfoSubject(StdyInfoType stdyInfo, RevisionData revision, Language language, Configuration configuration, ReferenceService references) {
+        SubjectType subject= stdyInfo.addNewSubject();
+        Pair<StatusCode, ContainerDataField> containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.KEYWORDS));
+        if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
+            addStudyInfoSubjectKeywords(subject, containerPair.getRight(), configuration, references);
+        }
+
         /*// Add subject, excel row #84
-        SubjectType subjectType= stdyInfo.addNewSubject();
+
 
         // Add keyword, repeatable TODO: Keyword has vocab or does not and values depend on that see excel row #85 - #89
         containerDataField = revisionData.dataField( ContainerDataFieldCall.get("keywords") ).getValue();
@@ -462,6 +469,19 @@ class DDIStudyDescription {
             // 1 archive, 2 producer
             topcClasType.setSource(BaseElementType.Source.Enum.forInt(2));
         }*/
+    }
+
+    private static void addStudyInfoSubjectKeywords(SubjectType subject, ContainerDataField container, Configuration configuration, ReferenceService references) {
+        for(DataRow row : container.getRowsFor(Language.DEFAULT)) {
+            if(row.getRemoved()) {
+                continue;
+            }
+            String keywordvocab = null;
+            String keyword = null;
+
+            Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.KEYWORDVOCAB));
+
+        }
     }
 
     private static void addStudyInfoSumDesc(StdyInfoType stdyInfo, RevisionData revision, Language language) {

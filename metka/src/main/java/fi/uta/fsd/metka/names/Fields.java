@@ -88,6 +88,17 @@ public final class Fields {
     public static final String PIDDDI = "pidddi";
     public static final String DATASOURCES = "datasources";
     public static final String DATASOURCE = "datasource";
+    public static final String KEYWORDS = "keywords";
+    public static final String KEYWORDVOCAB = "keywordvocab";
+    public static final String KEYWORD = "keyword";
+    public static final String KEYWORDNOVOCAB = "keywordnovocab";
+    public static final String KEYWORDVOCABURI = "keywordvocaburi";
+    public static final String KEYWORDURI = "keyworduri";
+    public static final String TOPICS = "topics";
+    public static final String TOPICVOCAB = "topicvocab";
+    public static final String TOPIC = "topic";
+    public static final String TOPICVOCABURI = "topicvocaburi";
+    public static final String TOPICURI = "topicuri";
 
 
     private Fields() {}
