@@ -112,6 +112,10 @@ final class ValueDataFieldInspector {
                 return new ImmutablePair<>(StatusCode.NO_CHANGE_IN_VALUE, null);
             }
 
+            if(valueDataField.hasValueFor(language) && value.isNull()) {
+                return new ImmutablePair<>(StatusCode.NO_CHANGE_IN_VALUE, null);
+            }
+
             if (config != null  && config.getField(key) != null) {
                 // Check field configuration
                 Field field = config.getField(key);

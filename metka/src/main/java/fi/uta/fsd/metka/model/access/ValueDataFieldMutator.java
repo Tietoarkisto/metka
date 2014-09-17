@@ -66,8 +66,13 @@ final class ValueDataFieldMutator {
         }
 
         // Old value is not empty and equals new value, no change in value
-        if(pair.getLeft() == StatusCode.FIELD_FOUND && pair.getRight().valueForEquals(language, value.getValue())) {
-            return new ImmutablePair<>(StatusCode.NO_CHANGE_IN_VALUE, pair.getRight());
+        if(pair.getLeft() == StatusCode.FIELD_FOUND) {
+            if(pair.getRight().valueForEquals(language, value.getValue())) {
+                return new ImmutablePair<>(StatusCode.NO_CHANGE_IN_VALUE, pair.getRight());
+            }
+            if(pair.getRight().hasValueFor(language) && value.isNull()) {
+                return new ImmutablePair<>(StatusCode.NO_CHANGE_IN_VALUE, pair.getRight());
+            }
         }
 
         if(info == null) {

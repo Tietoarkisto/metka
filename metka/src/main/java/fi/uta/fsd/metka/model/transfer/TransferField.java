@@ -76,7 +76,7 @@ public class TransferField {
     }
 
     @JsonIgnore public Value asValue(Language language) {
-        return new Value(hasValueFor(language) ? getValueFor(language).getCurrent() : "");
+        return new Value(hasValueFor(language) ? getValueFor(language).getCurrent() : null);
     }
 
     public Map<Language, List<TransferRow>> getRows() {
@@ -170,10 +170,8 @@ public class TransferField {
     private static TransferField buildValueFieldFromValueDataField(ValueDataField field) {
         TransferField transferField = new TransferField(field.getKey(), TransferFieldType.VALUE);
         for(Language language : Language.values()) {
-            if(field.hasValueFor(language)) {
-                TransferValue value = TransferValue.buildFromValueDataFieldFor(language, field);
-                transferField.values.put(language, value);
-            }
+            TransferValue value = TransferValue.buildFromValueDataFieldFor(language, field);
+            if(value != null) transferField.values.put(language, value);
         }
         return transferField;
     }

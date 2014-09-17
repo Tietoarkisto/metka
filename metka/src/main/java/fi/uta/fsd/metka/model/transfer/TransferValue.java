@@ -68,6 +68,9 @@ public class TransferValue {
         if(field.hasCurrentFor(language)) {
             value.setCurrent(field.getCurrentFor(language).getActualValue());
         }
+        if(value.getCurrent() == null && value.getOriginal() == null) {
+            return null;
+        }
         return value;
     }
 }

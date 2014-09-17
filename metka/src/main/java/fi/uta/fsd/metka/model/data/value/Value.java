@@ -40,6 +40,10 @@ public class Value {
         return Boolean.parseBoolean(value);
     }
 
+    @JsonIgnore public boolean isNull() {return value == null;}
+
+    @JsonIgnore public boolean isEmpty() {return !isNull() && !StringUtils.hasText(value);}
+
     public Value copy() {
         return new Value(value);
     }

@@ -6,7 +6,6 @@ import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.ValueDataField;
-import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.search.StudySearch;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.impl.StudyEntity;
@@ -63,7 +62,7 @@ public class StudySearchImpl implements StudySearch {
     @Override
     public Pair<ReturnResult, RevisionData> getLatestRevisionWithStudyId(String studyId) {
         List<StudyEntity> studies = em.createQuery("SELECT s FROM StudyEntity s WHERE s.studyId=:studyId", StudyEntity.class)
-                .setParameter(Fields.STUDYID, studyId)
+                .setParameter("studyId", studyId)
                 .getResultList();
         if(studies.isEmpty()) {
             return new ImmutablePair<>(ReturnResult.REVISIONABLE_NOT_FOUND, null);
