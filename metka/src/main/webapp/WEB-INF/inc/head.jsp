@@ -20,5 +20,3 @@
 
 <%-- Include general table handlers for container and reference container tables --%>
 <script src="${contextPath}/js/handlers/generalHandlers.js"></script>
-
-<jsp:include page="head/customJSInit.jsp" />
