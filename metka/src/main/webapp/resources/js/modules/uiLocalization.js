@@ -1,11 +1,12 @@
-(function() {
+define(function (require) {
     'use strict';
+
     /**
      * Add localizations for general UI elements such as buttons
      * as well as all error messages even though most of these will not be needed at one time
      */
 
-    var uiTranslations = {
+    require('./addTranslation')('', {
         "page": {
             "&title": {
                 "default": "Yhteiskuntatieteellinen tietoarkisto - Metka"
@@ -652,31 +653,6 @@
         "STUDY": {
             "field": {
                 "notes": "Huomautukset",
-                "note": "Huomautus",
-                "version": "Versio",
-                "versiondate": "Päivämäärä",
-                "versionpro": "Käsittelijä",
-                "versionlabel": "Lyhyt selite",
-                "versiontext": "Julkinen selite",
-                "versionnotes": "Ei-julkinen selite",
-                "filespath": "Tiedostopolku",
-                "fileslang": "Tiedoston kieli",
-                "cbattachmentlocation": "Tiedosto",
-                "cbattachmenttitle": "Kuvaus",
-                "alttitle": "Rinnakkainen nimi",
-                "partitle": "Nimi",
-                "partitlelang": "Kieli",
-                "authortype": "Tyyppi",
-                "author": "Tekijä",
-                "affiliation": "Taustaorganisaatio",
-                "otherauthor": "Muu tekijä",
-                "otherauthoraffiliation": "Taustaorganisaatio",
-                "producer": "Tuottaja",
-                "producerid": "Tunniste",
-                "produceridtype": "Tunnistetyyppi",
-                "producerrole": "Rooli",
-                "projectnr": "Projektinumero",
-                "producerabbr": "Lyhenne",
 
                 // Kuvailu: Asiasana
                 "keywordvocab": "Sanasto",
@@ -689,30 +665,6 @@
                 "topicvocab": "Sanasto",
                 "topic": "Tieteenala",
 
-                // Kuvailu: Ajallinen kattavuus
-                "timeperiod": "Päivämäärä",
-                "timeperiodtext": "Ajallinen kattavuus",
-                "timeperiodevent": "Aikajakso",
-
-                // Kuvailu: Maa
-                "country": "Maa",
-                "countryabbr": "Lyhenne",
-
-                // Kuvailu: Perusjoukko
-                "universe": "Perusjoukko",
-                "universeclusion": "Rajaus",
-
-                // Kuvailu: Kohdealue
-                "geogcover": "Kohdealue",
-
-                // Kuvailu: Ajankohta
-                "colldate": "Päivämäärä",
-                "colldatetext": "Ajankohta",
-                "colldateevent": "Aikajakso",
-
-                // Kuvailu: Kerääjä
-                "collector": "Kerääjä",
-                "collectoraffiliation": "Taustaorganisaatio",
 
                 "resprate": "Vastausprosentti",
                 "datasources": "Lähdeaineistot",
@@ -725,33 +677,7 @@
                 "complete": "Täydellisyys",
                 "disclaimer": "Lisävarauma",
                 "datasetnotes": "Huomioitavaa",
-                "appraisals": "Arvioinnit",
-                "appraisal": "Arviointi",
-
-                // Kuvailu: Oheismateriaali
-                "relatedmaterial": "Oheismateriaalit",
-
-                // Kuvailu: Muu materiaali
-                "othermaterialuri": "Uri",
-                "othermateriallabel": "Lyhyt kuvaus",
-                "othermaterialtext": "Tarkka kuvaus",
-
-                // Kuvailu: Huomiot
-                "publicationcomment": "Julkaisuihin liittyvä huomio",
-
-                // Virheet
-                "score": "Pisteet",
-                "section": "Aineiston osa",
-                "subsection": "Osio",
-                "language": "Kieli",
-                "summary": "Selite",
-                "description": "Pitkä selite",
-                "triggerDate": "Herätepäivämäärä",
-                "triggerTarget": "Herätteen saaja",
-
-                // Mapit
-                "binderId": "Mappinumero",
-                "binderDescription": "Mapitetun aineiston kuvaus"
+                "appraisals": "Arvioinnit"
             }
         },
 
@@ -808,23 +734,6 @@
             }
         },
 
-        STUDY_VARIABLES: {
-            field: {
-                title: "Aineisto",
-                varlabel: "Muuttuja",
-                qstnlit: "Kysymysteksti",
-                preqtxt: "Esiteksti",
-                postqtxt: "Jälkiteksti",
-                ivuinstr: "Haastattelijan ohje",
-                varnote: "Huomio",
-                vartext: "Lisätieto",
-                varsecurity: "Tietosuoja-asia",
-                statisticstype: "Arvo",
-                statisticsvalue: "Selite",
-                vargrouptext: "Teksti"
-            }
-        },
-
         "PUBLICATION": {
             "field": {
                 "firstname": "Etunimi",
@@ -832,41 +741,8 @@
                 "pid": "Pysyvä tunniste",
                 "pidtype": "Tunnisteen tyyppi"
             }
-        },
-
-        "BINDER": {
-            "field": {
-                "studyId": "Aineistonro",
-                "studyTitle": "Aineiston nimi",
-                "savedBy": "Käsittelijä",
-                "binderId": "Mappinro",
-                "description": "Mapitettu aineisto"
-            }
         }
-    };
-
-    function addTranslation(path, root) {
-        for(var prop in root) {
-            if(root.hasOwnProperty(prop)) {
-                var curPath = path;
-                if(curPath.length > 0) {
-                    curPath += '.';
-                }
-                if(MetkaJS.isString(root[prop])) {
-                    curPath += prop;
-                    MetkaJS.L10N.put(curPath, root[prop]);
-                } else if(prop.charAt(0) === '&') {
-                    curPath += prop.slice(1);
-                    MetkaJS.L10N.put(curPath, root[prop]);
-                } else {
-                    curPath += prop;
-                    addTranslation(curPath, root[prop]);
-                }
-            }
-        }
-    }
-
-    addTranslation("", uiTranslations);
+    });
 
     /*# Virheviestejä, kannattaa keksiä parempia jossain välissä
     general.errors.title.noImplementation = Ei käsittelijää
@@ -954,4 +830,4 @@
     general.errors.studyAttachment.saveFailAjax = Tiedoston tietojen tallennuspyynnössä tapahtui virhe
     */
 
-})();
+});
