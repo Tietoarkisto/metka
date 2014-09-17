@@ -33,6 +33,20 @@ define(function (require) {
                                         "cells": [
                                             {
                                                 "type": "CELL",
+                                                "title": "Hankinta-aineistonumero",
+                                                "horizontal": true,
+                                                "colspan": 2,
+                                                "field": {
+                                                    "key": "submissionid"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "ROW",
+                                        "cells": [
+                                            {
+                                                "type": "CELL",
                                                 "title": "Aineiston nimi",
                                                 "horizontal": true,
                                                 "colspan": 2,
@@ -47,10 +61,10 @@ define(function (require) {
                                         "cells": [
                                             {
                                                 "type": "CELL",
-                                                "title": "Luovuttajan ym. sukunimi",
+                                                "title": "Tekijän sukunimi",
                                                 "horizontal": true,
                                                 "field": {
-                                                    "key": "publicationfirstsaved"
+                                                    "key": "author.lastname"
                                                 }
                                             },
                                             {
@@ -58,7 +72,7 @@ define(function (require) {
                                                 "title": "Etunimi",
                                                 "horizontal": true,
                                                 "field": {
-                                                    "key": "savedAt"
+                                                    "key": "author.firstname"
                                                 }
                                             }
                                         ]
@@ -68,11 +82,11 @@ define(function (require) {
                                         "cells": [
                                             {
                                                 "type": "CELL",
-                                                "title": "Luovuttajan ym. org.",
+                                                "title": "Tekijän organisaatio",
                                                 "horizontal": true,
                                                 "colspan": 2,
                                                 "field": {
-                                                    "key": "studyname"
+                                                    "key": "authororganization"
                                                 }
                                             }
                                         ]
@@ -82,11 +96,11 @@ define(function (require) {
                                         "cells": [
                                             {
                                                 "type": "CELL",
-                                                "title": "Luovuttajan ym. laitos",
+                                                "title": "Tuottajan nimi",
                                                 "horizontal": true,
                                                 "colspan": 2,
                                                 "field": {
-                                                    "key": "studyname"
+                                                    "key": "producername"
                                                 }
                                             }
                                         ]
@@ -96,18 +110,11 @@ define(function (require) {
                                         "cells": [
                                             {
                                                 "type": "CELL",
-                                                "title": "Tuottajan ym. sukunimi",
+                                                "title": "Tuottajan rooli",
                                                 "horizontal": true,
+                                                "colspan": 2,
                                                 "field": {
-                                                    "key": "publicationfirstsaved"
-                                                }
-                                            },
-                                            {
-                                                "type": "CELL",
-                                                "title": "Etunimi",
-                                                "horizontal": true,
-                                                "field": {
-                                                    "key": "savedAt"
+                                                    "key": "producerrole"
                                                 }
                                             }
                                         ]
@@ -122,6 +129,342 @@ define(function (require) {
                                                 "colspan": 2,
                                                 "field": {
                                                     "key": "studyname"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "ROW",
+                                        "cells": [
+                                            {
+                                                "type": "CELL",
+                                                "title": "Aineiston laatu",
+                                                "horizontal": true,
+                                                "colspan": 2,
+                                                "field": {
+                                                    "key": "datakind"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "ROW",
+                                        "cells": [
+                                            {
+                                                "type": "CELL",
+                                                "title": "Anonymisointi",
+                                                "horizontal": true,
+                                                "colspan": 2,
+                                                "field": {
+                                                    "key": "anonymization"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "ROW",
+                                        "cells": [
+                                            {
+                                                "type": "CELL",
+                                                "title": "Tietosuoja",
+                                                "horizontal": true,
+                                                "colspan": 2,
+                                                "field": {
+                                                    "key": "securityissues"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "ROW",
+                                        "cells": [
+                                            {
+                                                "type": "CELL",
+                                                "title": "Julkaisu",
+                                                "horizontal": true,
+                                                "colspan": 2,
+                                                "field": {
+                                                    "key": "publication"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "ROW",
+                                        "cells": [
+                                            {
+                                                "type": "CELL",
+                                                "title": "Valmis-päivämäärä",
+                                                "horizontal": true,
+                                                "field": {
+                                                    "key": "publicationfirstsaved"
+                                                }
+                                            },
+                                            {
+                                                "type": "CELL",
+                                                "title": "-",
+                                                "horizontal": true,
+                                                "field": {
+                                                    "key": "savedAt"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "ROW",
+                                        "cells": [
+                                            {
+                                                "type": "CELL",
+                                                "title": "Ehto 1: käyttöoikeus",
+                                                "horizontal": true,
+                                                "colspan": 2,
+                                                "field": {
+                                                    "key": "termsofuse"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "ROW",
+                                        "cells": [
+                                            {
+                                                "type": "CELL",
+                                                "title": "Käyttöehto muutospvm jälkeen",
+                                                "horizontal": true,
+                                                "colspan": 2,
+                                                "field": {
+                                                    "key": "newtermsofuse"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "ROW",
+                                        "cells": [
+                                            {
+                                                "type": "CELL",
+                                                "title": "Käyttöehdon muutospvm",
+                                                "horizontal": true,
+                                                "field": {
+                                                    "key": "termsofusechangedate"
+                                                }
+                                            },
+                                            {
+                                                "type": "CELL",
+                                                "title": "-",
+                                                "horizontal": true,
+                                                "field": {
+                                                    "key": "termsofusechangedate.until"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "ROW",
+                                        "cells": [
+                                            {
+                                                "type": "CELL",
+                                                "title": "Arkistointisopimuksen tapa",
+                                                "horizontal": true,
+                                                "colspan": 2,
+                                                "field": {
+                                                    "key": "agreementtype"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "ROW",
+                                        "cells": [
+                                            {
+                                                "type": "CELL",
+                                                "title": "Luovuttajan tyyppi",
+                                                "horizontal": true,
+                                                "colspan": 2,
+                                                "field": {
+                                                    "key": "depositortype"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "ROW",
+                                        "cells": [
+                                            {
+                                                "type": "CELL",
+                                                "title": "Käsittelijä",
+                                                "horizontal": true,
+                                                "colspan": 2,
+                                                "field": {
+                                                    "key": "publication.savedBy"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "ROW",
+                                        "cells": [
+                                            {
+                                                "type": "CELL",
+                                                "title": "URN-tunniste",
+                                                "horizontal": true,
+                                                "colspan": 2,
+                                                "field": {
+                                                    "key": "packageurn"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "ROW",
+                                        "cells": [
+                                            {
+                                                "type": "CELL",
+                                                "title": "Abstrakti",
+                                                "horizontal": true,
+                                                "colspan": 2,
+                                                "field": {
+                                                    "key": "abstract"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "ROW",
+                                        "cells": [
+                                            {
+                                                "type": "CELL",
+                                                "title": "Tieteenala",
+                                                "horizontal": true,
+                                                "colspan": 2,
+                                                "field": {
+                                                    "key": "topic"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "ROW",
+                                        "cells": [
+                                            {
+                                                "type": "CELL",
+                                                "title": "Ajallinen kattavuus",
+                                                "horizontal": true,
+                                                "field": {
+                                                    "key": "timeperiod"
+                                                }
+                                            },
+                                            {
+                                                "type": "CELL",
+                                                "title": "-",
+                                                "horizontal": true,
+                                                "field": {
+                                                    "key": "timeperiod.until"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "ROW",
+                                        "cells": [
+                                            {
+                                                "type": "CELL",
+                                                "title": "Aineistonkeruun ajankohta",
+                                                "horizontal": true,
+                                                "field": {
+                                                    "key": "colltime"
+                                                }
+                                            },
+                                            {
+                                                "type": "CELL",
+                                                "title": "-",
+                                                "horizontal": true,
+                                                "field": {
+                                                    "key": "colltime.until"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "ROW",
+                                        "cells": [
+                                            {
+                                                "type": "CELL",
+                                                "title": "Maa",
+                                                "horizontal": true,
+                                                "colspan": 2,
+                                                "field": {
+                                                    "key": "country"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "ROW",
+                                        "cells": [
+                                            {
+                                                "type": "CELL",
+                                                "title": "Aineiston kerääjän nimi",
+                                                "horizontal": true,
+                                                "colspan": 2,
+                                                "field": {
+                                                    "key": "collector"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "ROW",
+                                        "cells": [
+                                            {
+                                                "type": "CELL",
+                                                "title": "Havainto/aineistoyksikkö",
+                                                "horizontal": true,
+                                                "colspan": 2,
+                                                "field": {
+                                                    "key": "analysisunit"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "ROW",
+                                        "cells": [
+                                            {
+                                                "type": "CELL",
+                                                "title": "Aikaulottuvuus",
+                                                "horizontal": true,
+                                                "colspan": 2,
+                                                "field": {
+                                                    "key": "timemethod"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "ROW",
+                                        "cells": [
+                                            {
+                                                "type": "CELL",
+                                                "title": "Otantamenetelmä",
+                                                "horizontal": true,
+                                                "colspan": 2,
+                                                "field": {
+                                                    "key": "sampproc"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "ROW",
+                                        "cells": [
+                                            {
+                                                "type": "CELL",
+                                                "title": "Keruumenetelmä",
+                                                "horizontal": true,
+                                                "colspan": 2,
+                                                "field": {
+                                                    "key": "collmode"
                                                 }
                                             }
                                         ]
@@ -146,8 +489,8 @@ define(function (require) {
                             'studyid',
                             'title'
                         ].forEach(function (field) {
-                                response.values[field] = data(field).getByLang(options.defaultLang);
-                            });
+                            response.values[field] = data(field).getByLang(options.defaultLang);
+                        });
                         return response;
                     }, function (data) {
                         return data.rows;
@@ -212,12 +555,162 @@ define(function (require) {
                 ],
                 data: {},
                 dataConf: {
+                    "selectionLists": {
+                        "roles": {
+                            "key": "roles",
+                            "type": "VALUE",
+                            "options": [
+                                {
+                                    "&title": {
+                                        "default": "a"
+                                    },
+                                    "value": 'a'
+                                },
+                                {
+                                    "&title": {
+                                        "default": "b"
+                                    },
+                                    "value": 'b'
+                                }
+                            ]
+                        },
+                        "studies": {
+                            "key": "roles",
+                            "type": "VALUE",
+                            "options": [
+                                {
+                                    "&title": {
+                                        "default": "a"
+                                    },
+                                    "value": 'a'
+                                },
+                                {
+                                    "&title": {
+                                        "default": "b"
+                                    },
+                                    "value": 'b'
+                                }
+                            ]
+                        }
+                    },
                     fields: {
                         title: {
                             type: 'STRING'
                         },
                         studyid: {
                             type: 'STRING'
+                        },
+                        submissionid: {
+                            "type": "INTEGER"
+                        },
+                        author: {
+                            lastname: {
+                                "type": "STRING"
+                            },
+                            firstname: {
+                                "type": "STRING"
+                            }
+                        },
+                        authororganization: {
+                            "type": "STRING"
+                        },
+                        producername: {
+                            "type": "STRING"
+                        },
+                        producerrole: {
+                            "type": "SELECTION",
+                            "selectionList": "roles"
+                        },
+                        studyname: {
+                            "type": "SELECTION",
+                            "selectionList": "studies"
+                        },
+                        datakind: {
+                            "type": "SELECTION",
+                            "selectionList": "studies"
+                        },
+                        anonymization: {
+                            "type": "STRING"
+                        },
+                        securityissues: {
+                            "type": "STRING"
+                        },
+                        publication: {
+                            "type": "SELECTION",
+                            "selectionList": "studies",
+
+                            savedBy: {
+                                "type": "STRING"
+                            }
+                        },
+                        publicationfirstsaved: {
+                            type: 'DATE'
+                        },
+                        savedAt: {
+                            type: 'DATE'
+                        },
+                        termsofuse: {
+                            "type": "STRING"
+                        },
+                        newtermsofuse: {
+                            "type": "SELECTION",
+                            "selectionList": "studies"
+                        },
+                        termsofusechangedate: {
+                            "type": "DATE",
+                            until: {
+                                "type": "DATE"
+                            }
+                        },
+                        agreementtype: {
+                            "type": "SELECTION",
+                            "selectionList": "studies"
+                        },
+                        depositortype: {
+                            "type": "SELECTION",
+                            "selectionList": "studies"
+                        },
+                        packageurn: {
+                            "type": "STRING"
+                        },
+                        abstract: {
+                            "type": "STRING"
+                        },
+                        topic: {
+                            "type": "SELECTION",
+                            "selectionList": "studies"
+                        },
+                        timeperiod: {
+                            "type": "DATE",
+                            until: {
+                                "type": "DATE"
+                            }
+                        },
+                        colltime: {
+                            "type": "DATE",
+                            until: {
+                                "type": "DATE"
+                            }
+                        },
+                        country: {
+                            "type": "STRING"
+                        },
+                        collector: {
+                            "type": "STRING"
+                        },
+                        analysisunit: {
+                            "type": "SELECTION",
+                            "selectionList": "studies"
+                        },
+                        timemethod: {
+                            "type": "SELECTION",
+                            "selectionList": "studies"
+                        },
+                        sampproc: {
+                            "type": "STRING"
+                        },
+                        collmode: {
+                            "type": "STRING"
                         }
                     }
                 }

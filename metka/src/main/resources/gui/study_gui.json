@@ -375,7 +375,7 @@
                                 },
                                 {
                                     "type": "CELL",
-                                    "title": "Käyttöehto muutospvm jälkeen",
+                                    "title": "Arkistointisopimuksen tapa",
                                     "field": {
                                         "key": "agreementtype"
                                     }
