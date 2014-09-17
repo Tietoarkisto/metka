@@ -1,0 +1,49 @@
+{
+	"key": "topic_vocabularies",
+	"data": [
+		{
+			"vocab": "Test 1",
+			"vocaburi": "URI for test 1 vocabulary",
+			"topics": [
+				{
+					"topic": "Topic 1",
+					"topicuri": "URI for topic 1"
+				},
+				{
+					"topic": "Topic 2",
+					"topicuri": "URI for topic 2"
+				},
+				{
+					"topic": "Topic 3",
+					"topicuri": "URI for topic 3"
+				},
+				{
+					"topic": "Topic 4",
+					"topicuri": "URI for topic 4"
+				}
+			]
+		},
+		{
+			"vocab": "Test 2",
+			"vocaburi": "URI for test 2 vocabulary",
+			"topics": [
+				{
+					"topic": "Topic 5",
+					"topicuri": "URI for topic 5"
+				},
+				{
+					"topic": "Topic 6",
+					"topicuri": "URI for topic 6"
+				},
+				{
+					"topic": "Topic 7",
+					"topicuri": "URI for topic 7"
+				},
+				{
+					"topic": "Topic 8",
+					"topicuri": "URI for topic 8"
+				}
+			]
+		}
+	]
+}

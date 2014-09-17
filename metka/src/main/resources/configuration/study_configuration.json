@@ -351,6 +351,32 @@
 					"value": "stdev"
 				}
 			]
+		},
+		"keywordvocab_list": {
+			"key": "keywordvocab_list",
+			"type": "REFERENCE",
+			"reference": "keywordvocab_ref",
+			"includeEmpty": false,
+			"freeText": ["Other"],
+			"freeTextKey": "keywordnovocab"
+		},
+		"keyword_list": {
+			"key": "keyword_list",
+			"type": "REFERENCE",
+			"reference": "keyword_ref",
+			"includeEmpty": true
+		},
+		"topicvocab_list": {
+			"key": "topicvocab_list",
+			"type": "REFERENCE",
+			"reference": "topicvocab_ref",
+			"includeEmpty": false
+		},
+		"topic_list": {
+			"key": "topic_list",
+			"type": "REFERENCE",
+			"reference": "topic_ref",
+			"includeEmpty": true
 		}
 	},
 	"references": {
@@ -437,6 +463,54 @@
 			"target": "sampproc",
 			"valuePath": "key",
 			"titlePath": "description"
+		},
+		"keywordvocab_ref": {
+			"key": "keywordvocab_ref",
+			"type": "JSON",
+			"target": "keyword_vocabularies",
+			"valuePath": "vocab"
+		},
+		"keywordvocaburi_ref": {
+			"key": "keywordvocaburi_ref",
+			"type": "DEPENDENCY",
+			"target": "keywordvocab",
+			"valuePath": "vocaburi"
+		},
+		"keyword_ref": {
+			"key": "keyword_ref",
+			"type": "DEPENDENCY",
+			"target": "keywordvocab",
+			"valuePath": "keywords.keyword"
+		},
+		"keyworduri_ref": {
+			"key": "keyworduri_ref",
+			"type": "DEPENDENCY",
+			"target": "keyword",
+			"valuePath": "keyworduri"
+		},
+		"topicvocab_ref": {
+			"key": "topicvocab_ref",
+			"type": "JSON",
+			"target": "topic_vocabularies",
+			"valuePath": "vocab"
+		},
+		"topicvocaburi_ref": {
+			"key": "topicvocaburi_ref",
+			"type": "DEPENDENCY",
+			"target": "topicvocab",
+			"valuePath": "vocaburi"
+		},
+		"topic_ref": {
+			"key": "topic_ref",
+			"type": "DEPENDENCY",
+			"target": "topicvocab",
+			"valuePath": "topics.topic"
+		},
+		"topicuri_ref": {
+			"key": "topicuri_ref",
+			"type": "DEPENDENCY",
+			"target": "topic",
+			"valuePath": "topicuri"
 		}
 	},
 	"displayId": "studyid",
@@ -903,34 +977,42 @@
 		"keywordvocab": {
 			"key": "keywordvocab",
 			"translatable": false,
-			"type": "STRING",
-			"subfield": true
-		},
-		"keyword": {
-			"key": "keyword",
-			"_comment": "TODO: Edit box added instead of drop down list, will be read to drop down list from vocabulary later?",
-			"translatable": false,
-			"required": true,
-			"type": "STRING",
-			"subfield": true
-		},
-		"keywordnovocab": {
-			"key": "keywordnovocab",
-			"translatable": false,
-			"required": true,
-			"type": "STRING",
+			"type": "SELECTION",
+			"selectionList": "keywordvocab_list",
 			"subfield": true
 		},
 		"keywordvocaburi": {
 			"key": "keywordvocaburi",
 			"translatable": false,
+			"type": "REFERENCE",
+			"reference": "keywordvocaburi_ref",
+			"editable": false,
+			"writable": false,
+			"subfield": true
+		},
+		"keyword": {
+			"key": "keyword",
+			"translatable": false,
+			"required": true,
+			"type": "SELECTION",
+			"selectionList": "keyword_list",
+			"subfield": true
+		},
+		"keywordnovocab": {
+			"_comment": "This is the 'other' value for keywordvocab",
+			"key": "keywordnovocab",
+			"translatable": false,
 			"type": "STRING",
+			"writable": false,
 			"subfield": true
 		},
 		"keyworduri": {
 			"key": "keyworduri",
 			"translatable": false,
-			"type": "STRING",
+			"type": "REFERENCE",
+			"reference": "keyworduri_ref",
+			"writable": false,
+			"editable": false,
 			"subfield": true
 		},
 		"topics": {
@@ -939,15 +1021,25 @@
 			"type": "CONTAINER",
 			"subfields": [
 				"topicvocab",
-				"topic"
+				"topic",
+				"topicvocaburi",
+				"topicuri"
 			]
 		},
 		"topicvocab": {
 			"key": "topicvocab",
 			"translatable": false,
-			"required": true,
 			"type": "SELECTION",
 			"selectionList": "topicvocab_list",
+			"subfield": true
+		},
+		"topicvocaburi": {
+			"key": "topicvocaburi",
+			"translatable": false,
+			"type": "REFERENCE",
+			"reference": "topicvocaburi_ref",
+			"editable": false,
+			"writable": false,
 			"subfield": true
 		},
 		"topic": {
@@ -956,6 +1048,15 @@
 			"required": true,
 			"type": "SELECTION",
 			"selectionList": "topic_list",
+			"subfield": true
+		},
+		"topicuri": {
+			"key": "topicuri",
+			"translatable": false,
+			"type": "REFERENCE",
+			"reference": "topicuri_ref",
+			"writable": false,
+			"editable": false,
 			"subfield": true
 		},
 		"abstract": {
@@ -1186,7 +1287,7 @@
 		},
 		"datasources": {
 			"key": "datasources",
-			"translatable": false,
+			"translatable": true,
 			"type": "CONTAINER",
 			"subfields": [
 				"datasource"
@@ -1194,13 +1295,13 @@
 		},
 		"datasource": {
 			"key": "datasource",
-			"translatable": false,
+			"translatable": true,
 			"type": "STRING",
 			"subfield": true
 		},
 		"weight": {
 			"key": "weight",
-			"translatable": false,
+			"translatable": true,
 			"type": "STRING"
 		},
 		"weightyesno": {
@@ -1244,7 +1345,7 @@
 		},
 		"relatedmaterials": {
 			"key": "relatedmaterials",
-			"translatable": false,
+			"translatable": true,
 			"type": "CONTAINER",
 			"subfields": [
 				"relatedmaterial"
@@ -1252,7 +1353,7 @@
 		},
 		"relatedmaterial": {
 			"key": "relatedmaterial",
-			"translatable": false,
+			"translatable": true,
 			"type": "STRING",
 			"subfield": true
 		},
@@ -1286,7 +1387,7 @@
 		},
 		"publicationcomments": {
 			"key": "publicationcomments",
-			"translatable": false,
+			"translatable": true,
 			"type": "CONTAINER",
 			"subfields": [
 				"publicationcomment"
@@ -1294,7 +1395,7 @@
 		},
 		"publicationcomment": {
 			"key": "publicationcomment",
-			"translatable": false,
+			"translatable": true,
 			"type": "STRING",
 			"subfield": true
 		},

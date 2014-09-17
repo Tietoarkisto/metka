@@ -14,13 +14,15 @@ import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.xmlbeans.XmlCursor;
+
+import static fi.uta.fsd.metka.ddi.DDIBuilder.fillTextType;
+import static fi.uta.fsd.metka.ddi.DDIBuilder.hasValue;
 
 class DDIFileDescription {
     static void addfileDescription(RevisionData revisionData, Language language, Configuration configuration, CodeBookType codeBookType, RevisionRepository revisions) {
         Pair<StatusCode, ValueDataField> valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
         // This operation is so large that it's cleaner just to return than to wrap everything inside this one IF
-        if(valueFieldPair.getLeft() != StatusCode.FIELD_FOUND || !valueFieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+        if(!hasValue(valueFieldPair, Language.DEFAULT)) {
             return;
         }
 
@@ -34,7 +36,7 @@ class DDIFileDescription {
         RevisionData variables = revisionDataPair.getRight();
 
         valueFieldPair = variables.dataField(ValueDataFieldCall.get(Fields.FILE));
-        if(valueFieldPair.getLeft() != StatusCode.FIELD_FOUND || !valueFieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+        if(!hasValue(valueFieldPair, Language.DEFAULT)) {
             Logger.error(DDIFileDescription.class, "Variables revision "+variables.toString()+" did not contain file reference although it should be present.");
             return;
         }
@@ -65,35 +67,25 @@ class DDIFileDescription {
     }
 
     private static void setDimensions(RevisionData variables, FileTxtType fileTxtType) {
-        Pair<StatusCode, ValueDataField> valueFieldPair;// Add dimensions
+        ;// Add dimensions
         DimensnsType dimensnsType = fileTxtType.addNewDimensns();
-        valueFieldPair = variables.dataField(ValueDataFieldCall.get(Fields.CASEQUANTITY));
-        if(valueFieldPair.getLeft() == StatusCode.FIELD_FOUND && valueFieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+        Pair<StatusCode, ValueDataField> valueFieldPair = variables.dataField(ValueDataFieldCall.get(Fields.CASEQUANTITY));
+        if(hasValue(valueFieldPair, Language.DEFAULT)) {
             // Add case quantity
-            SimpleTextType stt = dimensnsType.addNewCaseQnty();
-            XmlCursor xmlCursor = stt.newCursor();
-            xmlCursor.setTextValue(valueFieldPair.getRight().getActualValueFor(Language.DEFAULT));
-            xmlCursor.dispose();
+            fillTextType(dimensnsType.addNewCaseQnty(), valueFieldPair, Language.DEFAULT);
         }
 
         valueFieldPair = variables.dataField(ValueDataFieldCall.get(Fields.VARQUANTITY));
-        if(valueFieldPair.getLeft() == StatusCode.FIELD_FOUND && valueFieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+        if(hasValue(valueFieldPair, Language.DEFAULT)) {
             // Add case quantity
-            SimpleTextType stt = dimensnsType.addNewVarQnty();
-            XmlCursor xmlCursor = stt.newCursor();
-            xmlCursor.setTextValue(valueFieldPair.getRight().getActualValueFor(Language.DEFAULT));
-            xmlCursor.dispose();
+            fillTextType(dimensnsType.addNewVarQnty(), valueFieldPair, Language.DEFAULT);
         }
     }
 
     private static void setSoftware(RevisionData variables, FileTxtType fileTxtType) {
-        Pair<StatusCode, ValueDataField> valueFieldPair;
-        valueFieldPair = variables.dataField(ValueDataFieldCall.get(Fields.SOFTWARE));
-        if(valueFieldPair.getLeft() == StatusCode.FIELD_FOUND && valueFieldPair.getRight().hasValueFor(Language.DEFAULT)) {
-            SoftwareType softwareType = fileTxtType.addNewSoftware();
-            XmlCursor xmlCursor = softwareType.newCursor();
-            xmlCursor.setTextValue(valueFieldPair.getRight().getActualValueFor(Language.DEFAULT));
-            xmlCursor.dispose();
+        Pair<StatusCode, ValueDataField> valueFieldPair = variables.dataField(ValueDataFieldCall.get(Fields.SOFTWARE));
+        if(hasValue(valueFieldPair, Language.DEFAULT)) {
+            SoftwareType softwareType = fillTextType(fileTxtType.addNewSoftware(), valueFieldPair, Language.DEFAULT);
 
             // We can't separate version in any easy way from software information since it doesn't come in two distinct fields in POR-file
             softwareType.setVersion(valueFieldPair.getRight().getActualValueFor(Language.DEFAULT));
@@ -102,22 +94,17 @@ class DDIFileDescription {
 
     private static void setFileNameAndID(RevisionData variables, RevisionData attachment, FileTxtType fileTxtType) {
         Pair<StatusCode, ValueDataField> valueFieldPair = attachment.dataField(ValueDataFieldCall.get(Fields.FILE));
-        if(valueFieldPair.getLeft() == StatusCode.FIELD_FOUND && valueFieldPair.getRight().hasValueFor(Language.DEFAULT)) {
-            SimpleTextType stt = fileTxtType.addNewFileName();
-            XmlCursor xmlCursor = stt.newCursor();
-            xmlCursor.setTextValue(FilenameUtils.getName(valueFieldPair.getRight().getActualValueFor(Language.DEFAULT)));
-            xmlCursor.dispose();
-            // Set ID
-
+        if(hasValue(valueFieldPair, Language.DEFAULT)) {
             // TODO: What does file type actually mean? For now use upper case file extension
             // Add file type
-            FileTypeType fileTypeType = fileTxtType.addNewFileType();
-            xmlCursor = fileTypeType.newCursor();
-            xmlCursor.setTextValue(FilenameUtils.getExtension(valueFieldPair.getRight().getActualValueFor(Language.DEFAULT)).toUpperCase());
-            xmlCursor.dispose();
+            fillTextType(fileTxtType.addNewFileType(), FilenameUtils.getExtension(valueFieldPair.getRight().getActualValueFor(Language.DEFAULT)).toUpperCase());
 
+            // Set file name
+            SimpleTextType stt = fillTextType(fileTxtType.addNewFileName(), FilenameUtils.getName(valueFieldPair.getRight().getActualValueFor(Language.DEFAULT)));
+
+            // set ID
             valueFieldPair = variables.dataField(ValueDataFieldCall.get(Fields.VARFILEID));
-            if(valueFieldPair.getLeft() == StatusCode.FIELD_FOUND && valueFieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+            if(hasValue(valueFieldPair, Language.DEFAULT)) {
                 stt.setID(valueFieldPair.getRight().getActualValueFor(Language.DEFAULT));
             }
         }
@@ -126,10 +113,8 @@ class DDIFileDescription {
     private static void setFileDescription(Language language, RevisionData attachment, FileDscrType fileDscrType) {
         Pair<StatusCode, ValueDataField> valueFieldPair = attachment.dataField(ValueDataFieldCall.get(Fields.FILEDESCRIPTION));
         // TODO: Is this actually a translatable field
-        if(valueFieldPair.getLeft() == StatusCode.FIELD_FOUND && valueFieldPair.getRight().hasValueFor(language)) {
-            XmlCursor xmlCursor = fileDscrType.newCursor();
-            xmlCursor.setTextValue(valueFieldPair.getRight().getActualValueFor(language));
-            xmlCursor.dispose();
+        if(hasValue(valueFieldPair, language)) {
+            fillTextType(fileDscrType, valueFieldPair, language);
         }
     }
 }

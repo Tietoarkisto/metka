@@ -76,6 +76,18 @@ public final class Fields {
     public static final String SERIESABBR = "seriesabbr";
     public static final String SERIESNAME = "seriesname";
     public static final String SERIESDESC = "seriesdesc";
+    public static final String WEIGHTYESNO = "weightyesno";
+    public static final String WEIGHT = "weight";
+    public static final String RELATEDMATERIALS = "relatedmaterials";
+    public static final String RELATEDMATERIAL = "relatedmaterial";
+    public static final String PUBLICATIONCOMMENTS = "publicationcomments";
+    public static final String PUBLICATIONCOMMENT = "publicationcomment";
+    public static final String STUDIES = "studies";
+    public static final String PUBLICATIONS = "publications";
+    public static final String PUBLICATIONRELPUBL = "publicationrelpubl";
+    public static final String PIDDDI = "pidddi";
+    public static final String DATASOURCES = "datasources";
+    public static final String DATASOURCE = "datasource";
 
 
     private Fields() {}

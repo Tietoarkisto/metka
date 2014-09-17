@@ -163,6 +163,7 @@
         },
         "publicationrelpubl": {
             "key": "publicationrelpubl",
+            "translatable": false,
             "required": true,
             "type": "STRING"
         },
@@ -250,6 +251,36 @@
         	"subfield": true,
         	"writable": false,
         	"reference": "seriesname_ref"
+        },
+        "pidddifi": {
+        	"key": "pidddifi",
+        	"type": "STRING",
+        	"translatable": false,
+        	"editable": false
+        },
+        "pidddien": {
+        	"key": "pidddien",
+        	"type": "STRING",
+        	"translatable": false,
+        	"editable": false
+        },
+        "pidddisv": {
+        	"key": "pidddisv",
+        	"type": "STRING",
+        	"translatable": false,
+        	"editable": false
+        },
+        "pidaip": {
+        	"key": "pidaip",
+        	"type": "STRING",
+        	"translatable": false,
+        	"editable": false
+        },
+        "piddip": {
+        	"key": "piddip",
+        	"type": "STRING",
+        	"translatable": false,
+        	"editable": false
         }
     }
 }

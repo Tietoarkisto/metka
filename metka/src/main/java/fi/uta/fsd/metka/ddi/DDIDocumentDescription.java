@@ -15,14 +15,18 @@ import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.names.Lists;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.xmlbeans.XmlCursor;
 import org.joda.time.LocalDate;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static fi.uta.fsd.metka.ddi.DDIBuilder.fillTextType;
+import static fi.uta.fsd.metka.ddi.DDIBuilder.hasValue;
+
 class DDIDocumentDescription {
+    private static final String BIBL_CIT_FORMAT = "MRDF";
+
     private static final Map<Language, String> DDI_TITLE_PREFIXES = new HashMap<>();
     private static final Map<Language, String> PRODUCER = new HashMap<>();
     private static final Map<Language, String> COPYRIGHT = new HashMap<>();
@@ -32,6 +36,7 @@ class DDIDocumentDescription {
     private static final Map<Language, String> HOLDINGS_LOCATION = new HashMap<>();
     private static final Map<Language, String> HOLDINGS_URI_BASE = new HashMap<>();
     private static final Map<Language, String> NOTES = new HashMap<>();
+    private static final Map<Language, String> BIBL_CIT_POST = new HashMap<>();
 
     static {
         DDI_TITLE_PREFIXES.put(Language.DEFAULT, "DDI-kuvailu: ");
@@ -69,6 +74,10 @@ class DDIDocumentDescription {
         NOTES.put(Language.DEFAULT, "FSD:n aineistokuvailut (FSD metadata records), jonka tekijä on Suomen yhteiskuntatieteellinen tietoarkisto (Finnish Social Science Data Archive), on lisensoitu Creative Commons Nimeä 4.0 Kansainvälinen (CC BY 4.0) -lisenssillä.");
         NOTES.put(Language.EN, "FSD:n aineistokuvailut (FSD metadata records) by Suomen yhteiskuntatieteellinen tietoarkisto (Finnish Social Science Data Archive) is licensed under a Creative Commons Attribution 4.0 International (CC BY 4.0) license.");
         NOTES.put(Language.SV, "FSD:n aineistokuvailut (FSD metadata records) av Suomen yhteiskuntatieteellinen tietoarkisto (Finlands samhällsvetenskapliga dataarkiv) är licensierad under en Creative Commons Erkännande 4.0 Internationell (CC BY 4.0) licens.");
+
+        BIBL_CIT_POST.put(Language.DEFAULT, " [koodikirja]. Yhteiskuntatieteellinen tietoarkisto [tuottaja ja jakaja].");
+        BIBL_CIT_POST.put(Language.EN, " [codebook]. Finnish Social Science Data Archive [producer and distributor].");
+        BIBL_CIT_POST.put(Language.SV, " [kodbok]. Finlands samhällsvetenskapliga dataarkiv [producent och distributör].");
     }
 
     static void addDocumentDescription(RevisionData revisionData, Language language, Configuration configuration, CodeBookType codeBookType) {
@@ -78,8 +87,8 @@ class DDIDocumentDescription {
         // Add citation information
         addCitationType(revisionData, language, configuration, docDscrType);
 
-        // TODO: Controlled voca used
-        /*// Back to doc description
+        /*// TODO: Controlled vocab used
+        // Back to doc description
         // Add controlled vocabulary used, repeatable, excel row #31 - #39
         ControlledVocabUsedType controlledVocabUsedType = docDscrType.addNewControlledVocabUsed();
         // Add code list id ?
@@ -126,12 +135,8 @@ class DDIDocumentDescription {
         // Back to doc description
         // Add notes, repeatable, excel row #40 - #41
         for(Language l : Language.values()) {
-            NotesType notesType = docDscrType.addNewNotes();
+            NotesType notesType = fillTextType(docDscrType.addNewNotes(), NOTES.get(l));
             notesType.setLang(DDIBuilder.getXmlLang(l));
-
-            XmlCursor xmlCursor = notesType.newCursor();
-            xmlCursor.setTextValue(NOTES.get(l));
-            xmlCursor.dispose();
         }
     }
 
@@ -142,15 +147,13 @@ class DDIDocumentDescription {
         TitlStmtType titlStmtType = citationType.addNewTitlStmt();
 
         // Add titles
-        Pair<StatusCode, ValueDataField> valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.TITLE));
-        if(valueFieldPair.getLeft() == StatusCode.FIELD_FOUND) {
+
             // Add content of title field
-            addTitleField(language, titlStmtType, valueFieldPair.getRight());
-        }
+        addTitleField(revisionData, language, titlStmtType);
         // TODO: Do we need to get actual partitles here also
 
         // Add ID no
-        valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.STUDYID));
+        Pair<StatusCode, ValueDataField> valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.STUDYID));
         String agency = null;
         if(valueFieldPair.getLeft() == StatusCode.FIELD_FOUND && valueFieldPair.getRight().hasValueFor(Language.DEFAULT)) {
             agency = addIDNo(titlStmtType, valueFieldPair.getRight(), configuration.getRootSelectionList(Lists.ID_PREFIX_LIST));
@@ -165,36 +168,24 @@ class DDIDocumentDescription {
             addContainerVersion(language, citationType, containerPair.getRight());
         }
 
-        // TODO: BiblCit
-
-        /*// Add bibl (?) citation
-        BiblCitType biblCitType = citationType.addNewBiblCit();
-        // Set format
-        biblCitType.setFormat(MRDF);
-        // Set bibl (?) citation content, TODO: Concatenated value. Where to get all values
-        String biblCitation = title + BIBL_CITATION_TEXT;
-        xmlCursor = biblCitType.newCursor();
-        xmlCursor.setTextValue(biblCitation);
-        xmlCursor.dispose();*/
+        valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.TITLE));
+        if(hasValue(valueFieldPair, language)) {
+            BiblCitType biblCitType = fillTextType(citationType.addNewBiblCit(), valueFieldPair.getRight().getActualValueFor(language)+BIBL_CIT_POST.get(language));
+            biblCitType.setFormat(BIBL_CIT_FORMAT);
+        }
 
         // Add holdings
         addHoldingsInfo(revisionData, language, citationType);
     }
 
     private static void addHoldingsInfo(RevisionData revisionData, Language language, CitationType citationType) {
-        // Add holdings
-        HoldingsType holdingsType = citationType.addNewHoldings();
-        // Set location
+        HoldingsType holdingsType = fillTextType(citationType.addNewHoldings(), HOLDINGS.get(language));
         holdingsType.setLocation(HOLDINGS_LOCATION.get(language));
-        // Set URI
+
         Pair<StatusCode, ValueDataField> valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.STUDYID));
-        if(valueFieldPair.getLeft() == StatusCode.FIELD_FOUND && valueFieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+        if(hasValue(valueFieldPair, Language.DEFAULT)) {
             holdingsType.setURI(HOLDINGS_URI_BASE.get(language)+valueFieldPair.getRight().getActualValueFor(Language.DEFAULT));
         }
-        // Set holdings element content
-        XmlCursor xmlCursor = holdingsType.newCursor();
-        xmlCursor.setTextValue(HOLDINGS.get(language));
-        xmlCursor.dispose();
     }
 
     private static void addContainerVersion(Language language, CitationType citationType, ContainerDataField container) {
@@ -202,14 +193,11 @@ class DDIDocumentDescription {
         DataRow row = rows.get(rows.size()-1);
 
         valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.VERSION));
-        if(valueFieldPair.getLeft() == StatusCode.FIELD_FOUND && valueFieldPair.getRight().hasValueFor(language)) {
+        if(hasValue(valueFieldPair, language)) {
             VerStmtType verStmt = citationType.addNewVerStmt();
-            VersionType ver = verStmt.addNewVersion();
-            XmlCursor xmlCursor = ver.newCursor();
-            xmlCursor.setTextValue(valueFieldPair.getRight().getActualValueFor(language));
-            xmlCursor.dispose();
+            VersionType ver = fillTextType(verStmt.addNewVersion(), valueFieldPair, language);
             valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.VERSIONDATE));
-            if(valueFieldPair.getLeft() == StatusCode.FIELD_FOUND && valueFieldPair.getRight().hasValueFor(language)) {
+            if(hasValue(valueFieldPair, language)) {
                 LocalDate localDate = LocalDate.parse(valueFieldPair.getRight().getActualValueFor(language));
                 ver.setDate(DDIBuilder.DATE_TIME_FORMATTER.print(localDate));
             }
@@ -221,7 +209,7 @@ class DDIDocumentDescription {
         ProdStmtType prodStmtType = citationType.addNewProdStmt();
 
         // Add producer, repeatable
-        ProducerType producerType = prodStmtType.addNewProducer();
+        ProducerType producerType = fillTextType(prodStmtType.addNewProducer(), PRODUCER.get(language));
 
         // Set ID, repeatable
         // TODO: What is the value for this
@@ -234,17 +222,8 @@ class DDIDocumentDescription {
         // TODO: What is the value for this
         producerType.setRole("");
 
-        // Set producer content
-        XmlCursor xmlCursor = producerType.newCursor();
-        xmlCursor.setTextValue(PRODUCER.get(language));
-        xmlCursor.dispose();
-
         // Add copyright
-        SimpleTextType stt = prodStmtType.addNewCopyright();
-        // Set copyright content
-        xmlCursor = stt.newCursor();
-        xmlCursor.setTextValue(COPYRIGHT.get(language));
-        xmlCursor.dispose();
+        fillTextType(prodStmtType.addNewCopyright(), COPYRIGHT.get(language));
 
         // Add production date
         Pair<StatusCode, ContainerDataField> containerPair = revisionData.dataField(ContainerDataFieldCall.get(Fields.DESCVERSIONS));
@@ -264,14 +243,8 @@ class DDIDocumentDescription {
         }
 
         // Add production place (?)
-        stt = prodStmtType.addNewProdPlac();
-        xmlCursor = stt.newCursor();
-        xmlCursor.setTextValue(PRODPLAC.get(language));
-        xmlCursor.dispose();
-
-        xmlCursor = stt.addNewAddress().newCursor();
-        xmlCursor.setTextValue(PRODPLAC_ADDRESS.get(language));
-        xmlCursor.dispose();
+        SimpleTextType stt = fillTextType(prodStmtType.addNewProdPlac(), PRODPLAC.get(language));
+        fillTextType(stt.addNewAddress(), PRODPLAC_ADDRESS.get(language));
     }
 
     private static String addIDNo(TitlStmtType titlStmtType, ValueDataField idField, SelectionList prefixList) {
@@ -279,12 +252,8 @@ class DDIDocumentDescription {
             for(Option option : prefixList.getOptions()) {
                 if(idField.getActualValueFor(Language.DEFAULT).indexOf(option.getValue()) == 0) {
                     // Add id number
-                    IDNoType idNoType = titlStmtType.addNewIDNo();
+                    IDNoType idNoType = fillTextType(titlStmtType.addNewIDNo(), idField.getActualValueFor(Language.DEFAULT).substring(option.getValue().length()));
                     idNoType.setAgency(option.getValue());
-                    // Set study id number
-                    XmlCursor xmlCursor = idNoType.newCursor();
-                    xmlCursor.setTextValue(idField.getActualValueFor(Language.DEFAULT).substring(option.getValue().length()));
-                    xmlCursor.dispose();
                     return option.getValue();
                 }
             }
@@ -292,26 +261,19 @@ class DDIDocumentDescription {
         return null;
     }
 
-    private static void addTitleField(Language language, TitlStmtType titlStmtType, ValueDataField titleField) {
-        String title = DDI_TITLE_PREFIXES.get(language)+titleField.getActualValueFor(language);
-
-        SimpleTextType stt = titlStmtType.addNewTitl();
-        // Insert title value
-        XmlCursor xmlCursor = stt.newCursor();
-        xmlCursor.setTextValue(title);
-        xmlCursor.dispose();
+    private static void addTitleField(RevisionData revision, Language language, TitlStmtType titlStmtType) {
+        Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.TITLE));
+        if(hasValue(valueFieldPair, language)) {
+            fillTextType(titlStmtType.addNewTitl(), DDI_TITLE_PREFIXES.get(language)+valueFieldPair.getRight().getActualValueFor(language));
+        }
 
         for(Language altLang : Language.values()) {
             if(altLang == language) {
                 continue;
             }
-            stt = titlStmtType.addNewParTitl();
-
-            title = DDI_TITLE_PREFIXES.get(language)+titleField.getActualValueFor(altLang);
-            stt.setLang(DDIBuilder.getXmlLang(altLang));
-            xmlCursor = stt.newCursor();
-            xmlCursor.setTextValue(title);
-            xmlCursor.dispose();
+            if(hasValue(valueFieldPair, altLang)) {
+                fillTextType(titlStmtType.addNewParTitl(), DDI_TITLE_PREFIXES.get(language)+valueFieldPair.getRight().getActualValueFor(altLang));
+            }
         }
     }
 }

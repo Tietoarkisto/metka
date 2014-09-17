@@ -67,6 +67,9 @@ public class Reference {
 
     @JsonIgnore
     public String[] getTitlePathParts() {
+        if(titlePath == null) {
+            return null;
+        }
         String[] parts = titlePath.split("\\.");
         if(parts.length > 0) {
             return parts;

@@ -19,7 +19,28 @@
         "studytitle_col": {
             "key" : "studytitle_col",
             "title" : "Aineiston nimi"
+        },
+        "keywordvocab": {
+        	"key": "keywordvocab",
+        	"title": "Sanasto"
+        },
+        "keyword": {
+        	"key": "keyword",
+        	"title": "Asiasana"
+        },
+        "keywordnovocab": {
+        	"key": "keywordnovocab",
+        	"title": "Muu sana"
+        },
+        "topicvocab": {
+        	"key": "topicvocab",
+        	"title": "Sanasto"
+        },
+        "topic": {
+        	"key": "topic",
+        	"title": "Tieteenala"
         }
+        
     },
 	"content": [
 		{
@@ -566,7 +587,12 @@
                                         "type": "CELL",
                                         "title": "Aineiston sisältöä kuvaavat asiasanat",
                                         "field": {
-                                            "key": "keywords"
+                                            "key": "keywords",
+                                            "columnFields": [
+                                            	"keywordvocab",
+                                            	"keyword",
+                                            	"keywordnovocab"
+                                            ]
                                         }
                                     }
                                 ]
@@ -577,7 +603,11 @@
                                         "type": "CELL",
                                         "title": "Tieteenalat, jolle aineisto kuuluu",
                                         "field": {
-                                            "key": "topics"
+                                            "key": "topics",
+                                            "columnFields": [
+                                            	"topicvocab",
+                                            	"topic"
+                                            ]
                                         }
                                     }
                                 ]

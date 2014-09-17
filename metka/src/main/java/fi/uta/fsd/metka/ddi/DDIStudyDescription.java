@@ -5,22 +5,21 @@ import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
+import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
+import fi.uta.fsd.metka.model.configuration.Option;
+import fi.uta.fsd.metka.model.configuration.SelectionList;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.ContainerDataField;
-import fi.uta.fsd.metka.model.data.container.DataRow;
-import fi.uta.fsd.metka.model.data.container.ValueDataField;
+import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.names.Fields;
+import fi.uta.fsd.metka.names.Lists;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static fi.uta.fsd.metka.ddi.DDIBuilder.*;
 
@@ -32,6 +31,7 @@ class DDIStudyDescription {
     private static final Map<Language, String> DEPOS_REQ = new HashMap<>();
     private static final Map<Language, String> DISCLAIMER = new HashMap<>();
     private static final Map<Language, String> SERIES_URI_PREFIX = new HashMap<>();
+    private static final Map<Language, String> WEIGHT_NO = new HashMap<>();
 
     static {
         ACCS_PLAC.put(Language.DEFAULT, "Yhteiskuntatieteellinen tietoarkisto");
@@ -87,15 +87,19 @@ class DDIStudyDescription {
         SERIES_URI_PREFIX.put(Language.DEFAULT, "http://www.fsd.uta.fi/fi/aineistot/luettelo/sarjat.html#");
         SERIES_URI_PREFIX.put(Language.EN, "http://www.fsd.uta.fi/en/data/catalogue/series.html#");
         SERIES_URI_PREFIX.put(Language.SV, "http://www.fsd.uta.fi/sv/data/serier.html#");
+
+        WEIGHT_NO.put(Language.DEFAULT, "Aineisto ei sisällä painomuuttujia.");
+        WEIGHT_NO.put(Language.EN, "There are no weight variables in the data.");
+        WEIGHT_NO.put(Language.SV, "Datamaterialet innehåller inga viktvariabler.");
     }
 
     static void addStudyDescription(RevisionData revision, Language language, Configuration configuration, CodeBookType codeBookType, RevisionRepository revisions) {
         // Add study description to codebook
         StdyDscrType stdyDscrType = codeBookType.addNewStdyDscr();
 
-        addCitationInfo(stdyDscrType, revision, language, revisions);
-        addStudyAuthorization(revision, stdyDscrType);
+        addCitationInfo(stdyDscrType, revision, language, configuration, revisions);
 
+        addStudyAuthorization(revision, stdyDscrType);
 
         addStudyInfo(stdyDscrType, revision, language);
 
@@ -106,21 +110,90 @@ class DDIStudyDescription {
         addOtherStudyMaterial(stdyDscrType, revision, language, revisions);
     }
 
-    private static void addCitationInfo(StdyDscrType stdyDscrType, RevisionData revisionData, Language language, RevisionRepository revisions) {
+    private static void addCitationInfo(StdyDscrType stdyDscrType, RevisionData revisionData, Language language, Configuration configuration, RevisionRepository revisions) {
         // Add citation
         CitationType citationType = stdyDscrType.addNewCitation();
 
-        addTitleInfo(revisionData, language, citationType);
+        addCitationTitle(revisionData, language, citationType, configuration);
 
-        /*// Add id number, repeatable TODO: How is this repeatable ?
-        IDNoType idNoType = titlStmtType.addNewIDNo();
-        idNoType.setAgency(AGENCY);
-        // Set study id number
-        xmlCursor = idNoType.newCursor();
-        xmlCursor.setTextValue( revisionData.dataField( ValueDataFieldCall.get("studyid_number") ).getValue().getActualValue() );
+        addCitationRspStatement(revisionData, citationType);
+
+        addCitationProdStatement(revisionData, citationType);
+
+        addCitationDistStatement(citationType);
+
+        // Add SerStmt
+        addCitationSerStatement(citationType, revisionData, language, revisions);
+
+        // Add VerStmt
+        addCitationVerStatement(citationType, revisionData, language);
+
+        // Add biblcit
+        // TODO: Concatenate biblcit during saving
+        Pair<StatusCode, ValueDataField> valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.BIBLCIT));
+        if(hasValue(valueFieldPair, Language.DEFAULT)) {
+            fillTextType(citationType.addNewBiblCit(), valueFieldPair, Language.DEFAULT);
+        }
+    }
+
+    private static void addCitationProdStatement(RevisionData revisionData, CitationType citationType) {
+        /*// TODO: Add prod statement
+        // Back to citation
+        // Add producers , excel row #60
+        ProdStmtType prodStmtType = citationType.addNewProdStmt();
+
+        // Add new producer, repeatable, excel row #61 - #64
+        containerDataField = revisionData.dataField( ContainerDataFieldCall.get("producers") ).getValue();
+        for (DataRow dataRow : containerDataField.getRows()) {
+            // TODO: Excel indicates fields like produceragency, producersetction,producerorganization.
+            // TODO: Not implemented yet / missing ?
+            // TODO: Need to recheck excel and fields for correct values set into fields
+            String producer = dataRow.dataField( ValueDataFieldCall.get("producer") ).getValue().getActualValue();
+            String producerId = dataRow.dataField( ValueDataFieldCall.get("producerid") ).getValue().getActualValue();
+            String producerIdType = dataRow.dataField( ValueDataFieldCall.get("produceridtype") ).getValue().getActualValue();
+            String producerRole = dataRow.dataField( ValueDataFieldCall.get("producerrole") ).getValue().getActualValue();
+            String projectNr = dataRow.dataField( ValueDataFieldCall.get("projectnr") ).getValue().getActualValue();
+            String producerAbbr = dataRow.dataField( ValueDataFieldCall.get("producerabbr") ).getValue().getActualValue();
+
+            ProducerType producerType = prodStmtType.addNewProducer();
+            xmlCursor = producerType.newCursor();
+            xmlCursor.setTextValue(producer);
+            xmlCursor.dispose();
+            // Set role
+            producerType.setRole(producerRole);
+            // Set abbreviation
+            producerType.setAbbr(producerAbbr);
+            // Set affiliation TODO: Where to get affiliation ?
+            producerType.setAffiliation("");
+
+        }
+
+        // Add copyright, excel file row #65
+        stt = prodStmtType.addNewCopyright();
+        xmlCursor = stt.newCursor();
+        xmlCursor.setTextValue(COPYRIGHT_FSD_AND_MATERIAL_SUPPLIER);
+        xmlCursor.dispose();*/
+    }
+
+    private static void addCitationDistStatement(CitationType citationType) {
+        /*// TODO: Add dist statement
+        // Back to citation
+        // Add distribution
+        DistStmtType distStmtType = citationType.addNewDistStmt();
+
+        // Add distributor
+        DistrbtrType distrbtrType = distStmtType.addNewDistrbtr();
+        xmlCursor = distrbtrType.newCursor();
+        xmlCursor.setTextValue(FSD_NAME_FI);
         xmlCursor.dispose();
+        // Set abbreviation
+        distrbtrType.setAbbr(AGENCY);
+        // Set URI
+        distrbtrType.setURI(FSD_DISTRIBUTOR_BASE_URI);*/
+    }
 
-        // TODO: ADD rsp
+    private static void addCitationRspStatement(RevisionData revisionData, CitationType citationType) {
+        /*// TODO: ADD rsp
         // Back to citation
         // Add rsp (?)
         RspStmtType rspStmtType = citationType.addNewRspStmt();
@@ -161,74 +234,7 @@ class DDIStudyDescription {
             xmlCursor.dispose();
             // Set affiliation
             othIdType.setAffiliation(otherAuthorAffiliation);
-        }
-
-        // TODO: Add prod statement
-        // Back to citation
-        // Add producers , excel row #60
-        ProdStmtType prodStmtType = citationType.addNewProdStmt();
-
-        // Add new producer, repeatable, excel row #61 - #64
-        containerDataField = revisionData.dataField( ContainerDataFieldCall.get("producers") ).getValue();
-        for (DataRow dataRow : containerDataField.getRows()) {
-            // TODO: Excel indicates fields like produceragency, producersetction,producerorganization.
-            // TODO: Not implemented yet / missing ?
-            // TODO: Need to recheck excel and fields for correct values set into fields
-            String producer = dataRow.dataField( ValueDataFieldCall.get("producer") ).getValue().getActualValue();
-            *//*String producerId = dataRow.dataField( ValueDataFieldCall.get("producerid") ).getValue().getActualValue();*//*
-            *//*String producerIdType = dataRow.dataField( ValueDataFieldCall.get("produceridtype") ).getValue().getActualValue();*//*
-            String producerRole = dataRow.dataField( ValueDataFieldCall.get("producerrole") ).getValue().getActualValue();
-            *//*String projectNr = dataRow.dataField( ValueDataFieldCall.get("projectnr") ).getValue().getActualValue();*//*
-            String producerAbbr = dataRow.dataField( ValueDataFieldCall.get("producerabbr") ).getValue().getActualValue();
-
-            ProducerType producerType = prodStmtType.addNewProducer();
-            xmlCursor = producerType.newCursor();
-            xmlCursor.setTextValue(producer);
-            xmlCursor.dispose();
-            // Set role
-            producerType.setRole(producerRole);
-            // Set abbreviation
-            producerType.setAbbr(producerAbbr);
-            // Set affiliation TODO: Where to get affiliation ?
-            producerType.setAffiliation("");
-
-        }
-
-        // Add copyright, excel file row #65
-        stt = prodStmtType.addNewCopyright();
-        xmlCursor = stt.newCursor();
-        xmlCursor.setTextValue(COPYRIGHT_FSD_AND_MATERIAL_SUPPLIER);
-        xmlCursor.dispose();
-
-        // TODO: Add dist statement
-        // Back to citation
-        // Add distribution
-        DistStmtType distStmtType = citationType.addNewDistStmt();
-
-        // Add distributor
-        DistrbtrType distrbtrType = distStmtType.addNewDistrbtr();
-        xmlCursor = distrbtrType.newCursor();
-        xmlCursor.setTextValue(FSD_NAME_FI);
-        xmlCursor.dispose();
-        // Set abbreviation
-        distrbtrType.setAbbr(AGENCY);
-        // Set URI
-        distrbtrType.setURI(FSD_DISTRIBUTOR_BASE_URI);*/
-
-        // TODO: Example XMLs have depositr and depDate elements inside distStmt. Not mentioned in excel ?
-
-        // Add SerStmt
-        addCitationSerStatement(citationType, revisionData, language, revisions);
-
-        // Add VerStmt
-        addCitationVerStatement(citationType, revisionData, language);
-
-        // Add biblcit
-        // TODO: Concatenate biblcit during saving
-        Pair<StatusCode, ValueDataField> valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.BIBLCIT));
-        if(hasValue(valueFieldPair, Language.DEFAULT)) {
-            fillTextType(citationType.addNewBiblCit(), valueFieldPair.getRight(), Language.DEFAULT);
-        }
+        }*/
     }
 
     private static void addCitationSerStatement(CitationType citationType, RevisionData revision, Language language, RevisionRepository revisions) {
@@ -251,14 +257,14 @@ class DDIStudyDescription {
                 }
                 valueFieldPair = series.dataField(ValueDataFieldCall.get(Fields.SERIESNAME));
                 if(hasValue(valueFieldPair, language)) {
-                    SerNameType serName = fillTextType(serStmtType.addNewSerName(), valueFieldPair.getRight(), language);
+                    SerNameType serName = fillTextType(serStmtType.addNewSerName(), valueFieldPair, language);
                     if(seriesAbbr != null) {
                         serName.setAbbr(seriesAbbr);
                     }
                 }
                 valueFieldPair = series.dataField(ValueDataFieldCall.get(Fields.SERIESDESC));
                 if(hasValue(valueFieldPair, language)) {
-                    fillTextType(serStmtType.addNewSerInfo(), valueFieldPair.getRight(), language);
+                    fillTextType(serStmtType.addNewSerInfo(), valueFieldPair, language);
                 }
             }
         }
@@ -273,21 +279,48 @@ class DDIStudyDescription {
             for(DataRow row : containerPair.getRight().getRowsFor(language)) {
                 Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.VERSION));
                 if(hasValue(valueFieldPair, language)) {
-                    fillTextAndDateType(verStmtType.addNewVersion(), valueFieldPair.getRight(), language);
+                    fillTextAndDateType(verStmtType.addNewVersion(), valueFieldPair, language);
                 }
             }
         }
     }
 
-    private static void addTitleInfo(RevisionData revisionData, Language language, CitationType citationType) {
+    private static void addCitationTitle(RevisionData revisionData, Language language, CitationType citationType, Configuration configuration) {
         Pair<StatusCode, ValueDataField> valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.TITLE));
+        TitlStmtType titlStmtType = citationType.addNewTitlStmt();
         if(hasValue(valueFieldPair, language)) {
-            // Add title statement
-            TitlStmtType titlStmtType = citationType.addNewTitlStmt();
-            fillTextType(titlStmtType.addNewTitl(), valueFieldPair.getRight(), language);
-            addAltTitles(revisionData, language, titlStmtType);
+            // Add title of requested language
+            fillTextType(titlStmtType.addNewTitl(), valueFieldPair, language);
+        }
 
-            addParTitles(revisionData, language, titlStmtType);
+        addAltTitles(revisionData, language, titlStmtType);
+
+        addParTitles(revisionData, language, titlStmtType);
+
+        String agency = "";
+        valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.STUDYID));
+        if(hasValue(valueFieldPair, Language.DEFAULT)) {
+            String id = valueFieldPair.getRight().getActualValueFor(Language.DEFAULT);
+            // Get agency from study id
+            SelectionList list = configuration.getRootSelectionList(Lists.ID_PREFIX_LIST);
+            if(list != null) {
+                for(Option option : list.getOptions()) {
+                    if(id.indexOf(option.getValue()) == 0) {
+                        agency = option.getValue();
+                        break;
+                    }
+                }
+            }
+            // Add study id as id no
+            IDNoType idNoType = fillTextType(titlStmtType.addNewIDNo(), valueFieldPair, Language.DEFAULT);
+            idNoType.setAgency(agency);
+        }
+
+        // Add DDI pid for the current language as idNO
+        valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.PIDDDI+getXmlLang(language)));
+        if(hasValue(valueFieldPair, Language.DEFAULT)) {
+            IDNoType idNoType = fillTextType(titlStmtType.addNewIDNo(), valueFieldPair, Language.DEFAULT);
+            idNoType.setAgency(agency);
         }
     }
 
@@ -300,7 +333,7 @@ class DDIStudyDescription {
                 continue;
             }
             if(hasValue(valueFieldPair, l)) {
-                SimpleTextType stt = fillTextType(titlStmtType.addNewParTitl(), valueFieldPair.getRight(), l);
+                SimpleTextType stt = fillTextType(titlStmtType.addNewParTitl(), valueFieldPair, l);
                 stt.setLang(getXmlLang(l));
                 usedLanguages.add(getXmlLang(l));
             }
@@ -337,7 +370,7 @@ class DDIStudyDescription {
             for(DataRow row : containerPair.getRight().getRowsFor(Language.DEFAULT)) {
                 valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.ALTTITLE));
                 if(hasValue(valueFieldPair, language)) {
-                    fillTextType(titlStmtType.addNewAltTitl(), valueFieldPair.getRight(), language);
+                    fillTextType(titlStmtType.addNewAltTitl(), valueFieldPair, language);
                 }
             }
         }
@@ -375,7 +408,7 @@ class DDIStudyDescription {
 
         Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField( ValueDataFieldCall.get(Fields.ABSTRACT));
         if(hasValue(valueFieldPair, language)) {
-            fillTextType(stdyInfo.addNewAbstract(), valueFieldPair.getRight(), language);
+            fillTextType(stdyInfo.addNewAbstract(), valueFieldPair, language);
         }
         addStudyInfoSumDesc(stdyInfo, revision, language);
 
@@ -533,14 +566,14 @@ class DDIStudyDescription {
             // Set source, 1 archive and 2 producer TODO: What value is saved, number or text ?
             conceptType.setSource(BaseElementType.Source.Enum.forString(analysisUnitURI));
 
-            *//*
+
             // Add new text (only if anlyUnit/concept=Muu havaintoyksikkö TAI Maantieteellinen alue)
             // TODO: How to check ? What path? Special handling for cases see excel row #112
             TxtType txtType = anlyUnitType.addNewTxt();
             xmlCursor = txtType.newCursor();
             xmlCursor.setTextValue(analysisUnitOther);
             xmlCursor.dispose();
-            *//*
+
         }
 
         // Add universe, repeatable
@@ -580,7 +613,7 @@ class DDIStudyDescription {
 
         Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.DATAPROSESSING));
         if(hasValue(valueFieldPair, language)) {
-            fillTextType(methodType.addNewNotes(), valueFieldPair.getRight(), language);
+            fillTextType(methodType.addNewNotes(), valueFieldPair, language);
         }
         addMethodAnalyzeInfo(methodType, revision, language);
 
@@ -588,11 +621,27 @@ class DDIStudyDescription {
     }
 
     private static void addMethodDataColl(MethodType methodType, RevisionData revision, Language language) {
-        /*// TODO: Add data coll
+        // TODO: Add data coll
         // Add data column
         DataCollType dataCollType = methodType.addNewDataColl();
 
-        // Add time method, repeatable
+        addMethodDataCollTimeMeth(dataCollType, revision, language);
+
+        addMethodDataCollDataCollector(dataCollType);
+
+        addMethodDataCollSampProc(dataCollType);
+
+        addMethodDataCollCollMode(dataCollType);
+
+        addMethodDataCollResInstru(dataCollType);
+
+        addMethodDataCollSources(dataCollType, revision, language);
+
+        addMethodDataCollWeight(dataCollType, revision, language);
+    }
+
+    private static void addMethodDataCollTimeMeth(DataCollType dataCollType, RevisionData revision, Language language) {
+        /*// Add time method, repeatable
         // TODO: Timemethods is a container with subfields topicvocab and topic
         containerDataField = revisionData.dataField( ContainerDataFieldCall.get("timemethods") ).getValue();
         for (DataRow dataRow : containerDataField.getRows()) {
@@ -622,9 +671,11 @@ class DDIStudyDescription {
             xmlCursor = txtType.newCursor();
             xmlCursor.setTextValue("");
             xmlCursor.dispose();
-        }
+        }*/
+    }
 
-        // Add data collector, repeatable, excel row #124 - #127
+    private static void addMethodDataCollDataCollector(DataCollType dataCollType) {
+        /*// Add data collector, repeatable, excel row #124 - #127
         // TODO: Conditions apply for this see excel
         containerDataField = revisionData.dataField( ContainerDataFieldCall.get("collectors") ).getValue();
         for (DataRow dataRow : containerDataField.getRows()) {
@@ -642,9 +693,11 @@ class DDIStudyDescription {
             dataCollectorType.setAbbr("");
             // Set data collector affiliation
             dataCollectorType.setAffiliation(collectorAffiliation);
-        }
+        }*/
+    }
 
-        // Add sample procurement, repeatable, row #128 - #134
+    private static void addMethodDataCollSampProc(DataCollType dataCollType) {
+        /*// Add sample procurement, repeatable, row #128 - #134
         // TODO: Get correct values from reference and dependency
         // TODO: Is this supposed to be a vocabulary implementation similiar to analysis ?
         containerDataField = revisionData.dataField( ContainerDataFieldCall.get("sampprocs") ).getValue();
@@ -671,9 +724,11 @@ class DDIStudyDescription {
             xmlCursor = txtType.newCursor();
             xmlCursor.setTextValue("");
             xmlCursor.dispose();
-        }
+        }*/
+    }
 
-        // Add collection mode, excel row #135 - #140
+    private static void addMethodDataCollCollMode(DataCollType dataCollType) {
+        /*// Add collection mode, excel row #135 - #140
         // TODO: Collmodes is a container with subfields topicvocab and topic
         containerDataField = revisionData.dataField( ContainerDataFieldCall.get("collmodes") ).getValue();
         for (DataRow dataRow : containerDataField.getRows()) {
@@ -698,9 +753,11 @@ class DDIStudyDescription {
             xmlCursor = txtType.newCursor();
             xmlCursor.setTextValue("");
             xmlCursor.dispose();
-        }
+        }*/
+    }
 
-        // Add resource instrumentation, excel row #141 - #146
+    private static void addMethodDataCollResInstru(DataCollType dataCollType) {
+        /*// Add resource instrumentation, excel row #141 - #146
         // TODO: Instruments is a container with subfields topicvocab and topic
         containerDataField = revisionData.dataField( ContainerDataFieldCall.get("collmodes") ).getValue();
         for (DataRow dataRow : containerDataField.getRows()) {
@@ -725,36 +782,27 @@ class DDIStudyDescription {
             xmlCursor = txtType.newCursor();
             xmlCursor.setTextValue("");
             xmlCursor.dispose();
-        }
-
-        // Add sources, excel row #147 - #148
-        SourcesType sourcesType = dataCollType.addNewSources();
-        containerDataField = revisionData.dataField( ContainerDataFieldCall.get("datasources") ).getValue();
-        for (DataRow dataRow : containerDataField.getRows()) {
-            String datasource = dataRow.dataField( ValueDataFieldCall.get("datasource") ).getValue().getActualValue();
-
-            // Add new data source
-            stt = sourcesType.addNewDataSrc();
-            xmlCursor = stt.newCursor();
-            xmlCursor.setTextValue(datasource);
-            xmlCursor.dispose();
-        }
-
-        // Add weight, repeatable TODO: Repeatable for STRING and BOOLEAN type ?
-        // TODO: Excel row #149 - #150 slightly unclear about this
-        String weightYesNo = revisionData.dataField( ValueDataFieldCall.get("weightyesno") ).getValue().getActualValue();
-        stt = dataCollType.addNewWeight();
-        if (Boolean.parseBoolean(weightYesNo)) {
-            String weight = revisionData.dataField( ValueDataFieldCall.get("weight") ).getValue().getActualValue();
-            xmlCursor = stt.newCursor();
-            xmlCursor.setTextValue(weight);
-            xmlCursor.dispose();
-        } else {
-            // TODO: Excel says it should be standard text, where to get it?
-            xmlCursor = stt.newCursor();
-            xmlCursor.setTextValue("placeholder");
-            xmlCursor.dispose();
         }*/
+    }
+
+    private static void addMethodDataCollSources(DataCollType dataCollType, RevisionData revision, Language language) {
+        List<ValueDataField> fields = gatherFields(revision, Fields.DATASOURCES, Fields.DATASOURCE, language, language);
+        SourcesType sources = dataCollType.addNewSources();
+        for(ValueDataField field : fields) {
+            fillTextType(sources.addNewDataSrc(), field, language);
+        }
+    }
+
+    private static void addMethodDataCollWeight(DataCollType dataCollType, RevisionData revision, Language language) {
+        Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.WEIGHTYESNO));
+        if(hasValue(valueFieldPair, Language.DEFAULT) && valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsBoolean()) {
+            fillTextType(dataCollType.addNewWeight(), WEIGHT_NO.get(language));
+        } else {
+            valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.WEIGHT));
+            if(hasValue(valueFieldPair, language)) {
+                fillTextType(dataCollType.addNewWeight(), valueFieldPair, language);
+            }
+        }
     }
 
     private static void addMethodAnalyzeInfo(MethodType methodType, RevisionData revision, Language language) {
@@ -763,7 +811,7 @@ class DDIStudyDescription {
         // Add response rate
         Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.RESPRATE));
         if(hasValue(valueFieldPair, Language.DEFAULT)) {
-            fillTextType(anlyInfoType.addNewRespRate(), valueFieldPair.getRight(), Language.DEFAULT);
+            fillTextType(anlyInfoType.addNewRespRate(), valueFieldPair, Language.DEFAULT);
         }
 
         // Add data appraisal, repeatable
@@ -772,7 +820,7 @@ class DDIStudyDescription {
             for (DataRow row : containerPair.getRight().getRowsFor(language)) {
                 valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.APPRAISAL));
                 if(hasValue(valueFieldPair, language)) {
-                    fillTextType(anlyInfoType.addNewDataAppr(), valueFieldPair.getRight(), language);
+                    fillTextType(anlyInfoType.addNewDataAppr(), valueFieldPair, language);
                 }
             }
         }
@@ -788,7 +836,7 @@ class DDIStudyDescription {
         // Add notes
         Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.DATASETNOTES));
         if(hasValue(valueFieldPair, language)) {
-            fillTextType(dataAccs.addNewNotes(), valueFieldPair.getRight(), language);
+            fillTextType(dataAccs.addNewNotes(), valueFieldPair, language);
         }
     }
 
@@ -803,19 +851,19 @@ class DDIStudyDescription {
         // Add original archive
         Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.ORIGINALLOCATION));
         if(hasValue(valueFieldPair, Language.DEFAULT)) {
-            fillTextType(setAvail.addNewOrigArch(), valueFieldPair.getRight(), Language.DEFAULT);
+            fillTextType(setAvail.addNewOrigArch(), valueFieldPair, Language.DEFAULT);
         }
 
         // Add collection size
         valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.COLLSIZE));
         if(hasValue(valueFieldPair, language)) {
-            fillTextType(setAvail.addNewCollSize(), valueFieldPair.getRight(), language);
+            fillTextType(setAvail.addNewCollSize(), valueFieldPair, language);
         }
 
         // Add complete
         valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.COMPLETE));
         if(hasValue(valueFieldPair, language)) {
-            fillTextType(setAvail.addNewComplete(), valueFieldPair.getRight(), language);
+            fillTextType(setAvail.addNewComplete(), valueFieldPair, language);
         }
     }
 
@@ -826,7 +874,7 @@ class DDIStudyDescription {
         // Add special permissions
         Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.SPECIALTERMSOFUSE));
         if(hasValue(valueFieldPair, Language.DEFAULT)) {
-            fillTextType(useStmt.addNewSpecPerm(), valueFieldPair.getRight(), language);
+            fillTextType(useStmt.addNewSpecPerm(), valueFieldPair, language);
         }
 
         // Add restrictions, excel row #164
@@ -846,48 +894,67 @@ class DDIStudyDescription {
     }
 
     private static void addOtherStudyMaterial(StdyDscrType stdyDscrType, RevisionData revision, Language language, RevisionRepository revisions) {
-        /*OthrStdyMatType othr = stdyDscrType.addNewOthrStdyMat();
+        OthrStdyMatType othr = stdyDscrType.addNewOthrStdyMat();
 
-        // TODO: Add othr stdy mat
-
-        // Back to study description
-        // Add other study material, excel row #169 - #173
-        OthrStdyMatType othrStdyMatType = stdyDscrType.addNewOthrStdyMat();
-
-        // Add related materials, repeatable
-        containerDataField = revisionData.dataField( ContainerDataFieldCall.get("relatedmaterials") ).getValue();
-        for (DataRow dataRow : containerDataField.getRows()) {
-            String relatedMaterial = dataRow.dataField( ValueDataFieldCall.get("relatedmaterial") ).getValue().getActualValue();
-            RelMatType relMatType = othrStdyMatType.addNewRelMat();
-            xmlCursor = relMatType.newCursor();
-            xmlCursor.setTextValue(relatedMaterial);
-            xmlCursor.dispose();
+        // Add related materials
+        List<ValueDataField> fields = gatherFields(revision, Fields.RELATEDMATERIALS, Fields.RELATEDMATERIAL, language, language);
+        for(ValueDataField field : fields) {
+            fillTextType(othr.addNewRelMat(), field, language);
         }
 
-        // Add related studies, repeatable
-        // TODO: No such fields as mentioned in excel #171 path
-        // TODO: Concatenated value of relatedstudies.id and relatedstudies.title
-        MaterialReferenceType materialReferenceType = othrStdyMatType.addNewRelStdy();
-        xmlCursor = materialReferenceType.newCursor();
-        xmlCursor.setTextValue("placeholder");
-        xmlCursor.dispose();
+        Pair<StatusCode, ReferenceContainerDataField> referenceContainerPair = revision.dataField(ReferenceContainerDataFieldCall.get(Fields.STUDIES));
+        if(referenceContainerPair.getLeft() == StatusCode.FIELD_FOUND && !referenceContainerPair.getRight().getReferences().isEmpty()) {
+            for(ReferenceRow row : referenceContainerPair.getRight().getReferences()) {
+                if(row.getRemoved()) {
+                    continue;
+                }
+                Pair<ReturnResult, RevisionData> revisionPair = revisions.getLatestRevisionForIdAndType(row.getReference().asInteger(), false, ConfigurationType.STUDY);
+                if(revisionPair.getLeft() != ReturnResult.REVISION_FOUND) {
+                    Logger.error(DDIStudyDescription.class, "Could not find referenced study with ID: "+row.getReference().getValue());
+                    continue;
+                }
+                String studyID = "-";
+                String title = "-";
+                RevisionData study = revisionPair.getRight();
 
-        // Add related publications, repeatable
-        // TODO: No such fields as mentioned in excel #172
-        // TODO: Should be publications marked for this study
-        materialReferenceType = othrStdyMatType.addNewRelPubl();
-        xmlCursor = materialReferenceType.newCursor();
-        xmlCursor.setTextValue("placeholder");
-        xmlCursor.dispose();
+                Pair<StatusCode, ValueDataField> valueFieldPair = study.dataField(ValueDataFieldCall.get(Fields.STUDYID));
+                if(hasValue(valueFieldPair, Language.DEFAULT)) {
+                    studyID = valueFieldPair.getRight().getActualValueFor(Language.DEFAULT);
+                }
 
-        // Add other references, repeatable
-        containerDataField = revisionData.dataField( ContainerDataFieldCall.get("publicationcomments") ).getValue();
-        for (DataRow dataRow : containerDataField.getRows()) {
-            String publicationComment = dataRow.dataField( ValueDataFieldCall.get("publicationcomment") ).getValue().getActualValue();
-            OthRefsType othRefsType = othrStdyMatType.addNewOthRefs();
-            xmlCursor = othRefsType.newCursor();
-            xmlCursor.setTextValue(publicationComment);
-            xmlCursor.dispose();
-        }*/
+                valueFieldPair = study.dataField(ValueDataFieldCall.get(Fields.TITLE));
+                if(hasValue(valueFieldPair, language)) {
+                    title = valueFieldPair.getRight().getActualValueFor(language);
+                }
+
+                fillTextType(othr.addNewRelStdy(), studyID+" "+title);
+            }
+        }
+
+        referenceContainerPair = revision.dataField(ReferenceContainerDataFieldCall.get(Fields.PUBLICATIONS));
+        if(referenceContainerPair.getLeft() == StatusCode.FIELD_FOUND && !referenceContainerPair.getRight().getReferences().isEmpty()) {
+            for(ReferenceRow row : referenceContainerPair.getRight().getReferences()) {
+                if (row.getRemoved()) {
+                    continue;
+                }
+                Pair<ReturnResult, RevisionData> revisionPair = revisions.getLatestRevisionForIdAndType(row.getReference().asInteger(), false, ConfigurationType.PUBLICATION);
+                if (revisionPair.getLeft() != ReturnResult.REVISION_FOUND) {
+                    Logger.error(DDIStudyDescription.class, "Could not find referenced publication with ID: " + row.getReference().getValue());
+                    continue;
+                }
+                RevisionData publication = revisionPair.getRight();
+
+                Pair<StatusCode, ValueDataField> valueFieldPair = publication.dataField(ValueDataFieldCall.get(Fields.PUBLICATIONRELPUBL));
+                if(hasValue(valueFieldPair, Language.DEFAULT)) {
+                    fillTextType(othr.addNewRelPubl(), valueFieldPair, Language.DEFAULT);
+                }
+            }
+        }
+
+        // Add publication comments
+        fields = gatherFields(revision, Fields.PUBLICATIONCOMMENTS, Fields.PUBLICATIONCOMMENT, language, language);
+        for(ValueDataField field : fields) {
+            fillTextType(othr.addNewOthRefs(), field, language);
+        }
     }
 }

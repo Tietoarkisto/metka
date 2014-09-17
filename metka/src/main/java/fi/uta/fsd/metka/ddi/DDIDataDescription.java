@@ -16,15 +16,11 @@ import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.xmlbeans.XmlCursor;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static fi.uta.fsd.metka.ddi.DDIBuilder.fillTextType;
-import static fi.uta.fsd.metka.ddi.DDIBuilder.fillTextAndDateType;
-import static fi.uta.fsd.metka.ddi.DDIBuilder.hasValue;
+import static fi.uta.fsd.metka.ddi.DDIBuilder.*;
 
 class DDIDataDescription {
     static void addDataDescription(RevisionData revisionData, Language language, Configuration configuration, CodeBookType codeBookType, RevisionRepository revisions) {
@@ -92,7 +88,6 @@ class DDIDataDescription {
     }
 
     private static void setVariableGroups(Language language, RevisionRepository revisions, RevisionData variables, DataDscrType dataDscrType) {
-        Pair<StatusCode, ValueDataField> valueFieldPair;
         Pair<ReturnResult, RevisionData> revisionDataPair;Pair<StatusCode, ContainerDataField> containerPair = variables.dataField(ContainerDataFieldCall.get(Fields.VARGROUPS));
         ContainerDataField vargroups = containerPair.getRight();
         if(containerPair.getLeft() == StatusCode.FIELD_FOUND && vargroups.hasRowsFor(Language.DEFAULT)) {
@@ -100,13 +95,10 @@ class DDIDataDescription {
                 if(row.getRemoved()) {
                     continue;
                 }
-                valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.VARGROUPTITLE));
+                Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.VARGROUPTITLE));
                 // TODO: Should variable group title be translatable?
                 if(hasValue(valueFieldPair, Language.DEFAULT)) {
-                    VarGrpType varGrpType = dataDscrType.addNewVarGrp();
-                    XmlCursor xmlCursor = varGrpType.newCursor();
-                    xmlCursor.setTextValue(valueFieldPair.getRight().getActualValueFor(Language.DEFAULT));
-                    xmlCursor.dispose();
+                    VarGrpType varGrpType = fillTextType(dataDscrType.addNewVarGrp(), valueFieldPair, Language.DEFAULT);
 
                     // TODO: do we want variable names or variable id:s?
                     Pair<StatusCode, ReferenceContainerDataField> referenceContainerPair = row.dataField(ReferenceContainerDataFieldCall.get(Fields.VARGROUPVARS));
@@ -125,12 +117,13 @@ class DDIDataDescription {
                                 vars += " ";
                             }
                             valueFieldPair = revisionDataPair.getRight().dataField(ValueDataFieldCall.get(Fields.VARNAME));
-                            if(valueFieldPair.getLeft() != StatusCode.FIELD_FOUND || valueFieldPair.getRight().hasValueFor(language)) {
+                            if(!hasValue(valueFieldPair, language)) {
                                 vars += "-";
                             } else {
                                 vars += valueFieldPair.getRight().getActualValueFor(language);
                             }
                         }
+                        varGrpType.setVar(Lists.asList(vars, new String[0]));
                     }
 
                     containerPair = row.dataField(ContainerDataFieldCall.get(Fields.VARGROUPTEXTS));
@@ -141,10 +134,7 @@ class DDIDataDescription {
                             }
                             valueFieldPair = vartextrow.dataField(ValueDataFieldCall.get(Fields.VARGROUPTEXT));
                             if(hasValue(valueFieldPair, language)) {
-                                TxtType tt = varGrpType.addNewTxt();
-                                xmlCursor = tt.newCursor();
-                                xmlCursor.setTextValue(valueFieldPair.getRight().getActualValueFor(language));
-                                xmlCursor.dispose();
+                                fillTextType(varGrpType.addNewTxt(), valueFieldPair, language);
                             }
 
                         }
@@ -179,10 +169,7 @@ class DDIDataDescription {
 
         valueFieldPair = variable.dataField(ValueDataFieldCall.get(Fields.VARLABEL));
         if(hasValue(valueFieldPair, language)) {
-            LablType lablType = var.addNewLabl();
-            XmlCursor xmlCursor = lablType.newCursor();
-            xmlCursor.setTextValue(valueFieldPair.getRight().getActualValueFor(language));
-            xmlCursor.dispose();
+            fillTextType(var.addNewLabl(), valueFieldPair, language);
         }
 
         setVarSecurities(variable, language, var);
@@ -208,17 +195,17 @@ class DDIDataDescription {
                 Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.VALUE));
                 if(hasValue(valueFieldPair, Language.DEFAULT)) {
                     CatgryType catgry = var.addNewCatgry();
-                    fillTextType(catgry.addNewCatValu(), valueFieldPair.getRight(), Language.DEFAULT);
+                    fillTextType(catgry.addNewCatValu(), valueFieldPair, Language.DEFAULT);
 
-                    // TODO: Are cat labels actually translatable?
+                    // TODO: Should cat labels be translatable?
                     valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.LABEL));
                     if(hasValue(valueFieldPair, Language.DEFAULT)) {
-                        fillTextType(catgry.addNewLabl(), valueFieldPair.getRight(), Language.DEFAULT);
+                        fillTextType(catgry.addNewLabl(), valueFieldPair, Language.DEFAULT);
                     }
 
                     valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.CATEGORYSTAT));
                     if(hasValue(valueFieldPair, Language.DEFAULT)) {
-                        fillTextType(catgry.addNewCatStat(), valueFieldPair.getRight(), Language.DEFAULT);
+                        fillTextType(catgry.addNewCatStat(), valueFieldPair, Language.DEFAULT);
                     }
 
                     valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.MISSING));
@@ -239,10 +226,7 @@ class DDIDataDescription {
                 }
                 Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.STATISTICSVALUE));
                 if(hasValue(valueFieldPair, Language.DEFAULT)) {
-                    SumStatType sumStat = var.addNewSumStat();
-                    XmlCursor xmlCursor = sumStat.newCursor();
-                    xmlCursor.setTextValue(valueFieldPair.getRight().getActualValueFor(Language.DEFAULT));
-                    xmlCursor.dispose();
+                    SumStatType sumStat = fillTextType(var.addNewSumStat(), valueFieldPair, Language.DEFAULT);
 
                     valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.STATISTICSTYPE));
                     if(hasValue(valueFieldPair, Language.DEFAULT)) {
@@ -271,7 +255,7 @@ class DDIDataDescription {
     }
 
     private static void setVarSecurities(RevisionData variable, Language language, VarType var) {
-        List<ValueDataField> fields = gatherFields(variable, Fields.VARSECURITIES, Fields.VARSECURITY, language);
+        List<ValueDataField> fields = gatherFields(variable, Fields.VARSECURITIES, Fields.VARSECURITY, language, language);
         for(ValueDataField field : fields) {
             fillTextAndDateType(var.addNewSecurity(), field, language);
         }
@@ -281,29 +265,29 @@ class DDIDataDescription {
         // TODO: Do we want to use single qstn type with multiple texts for each container or do we want to have one qstn type per set of texts so that each qstn contains only one preq etc.?
         QstnType qstn = var.addNewQstn();
 
-        List<ValueDataField> fields = gatherFields(variable, Fields.PREQTXTS, Fields.PREQTXT, language);
+        List<ValueDataField> fields = gatherFields(variable, Fields.PREQTXTS, Fields.PREQTXT, language, language);
         for(ValueDataField field : fields) {
             fillTextType(qstn.addNewPreQTxt(), field, language);
         }
 
-        fields = gatherFields(variable, Fields.QSTNLITS, Fields.QSTNLIT, language);
+        fields = gatherFields(variable, Fields.QSTNLITS, Fields.QSTNLIT, language, language);
         for(ValueDataField field : fields) {
             fillTextType(qstn.addNewQstnLit(), field, language);
         }
 
-        fields = gatherFields(variable, Fields.POSTQTXTS, Fields.POSTQTXT, language);
+        fields = gatherFields(variable, Fields.POSTQTXTS, Fields.POSTQTXT, language, language);
         for(ValueDataField field : fields) {
             fillTextType(qstn.addNewPostQTxt(), field, language);
         }
 
-        fields = gatherFields(variable, Fields.IVUINSTRS, Fields.IVUINSTR, language);
+        fields = gatherFields(variable, Fields.IVUINSTRS, Fields.IVUINSTR, language, language);
         for(ValueDataField field : fields) {
             fillTextType(qstn.addNewIvuInstr(), field, language);
         }
     }
 
     private static void setVarTexts(RevisionData variable, Language language, VarType var) {
-        List<ValueDataField> fields = gatherFields(variable, Fields.VARTEXTS, Fields.VARTEXT, language);
+        List<ValueDataField> fields = gatherFields(variable, Fields.VARTEXTS, Fields.VARTEXT, language, language);
         for(ValueDataField field : fields) {
             fillTextType(var.addNewTxt(), field, language);
         }
@@ -314,22 +298,5 @@ class DDIDataDescription {
         // TODO: Notes is not a repeatable field in DDI
         // TODO: How is this supposed to be used?
 
-    }
-
-    private static List<ValueDataField> gatherFields(RevisionData variable, String container, String field, Language language) {
-        List<ValueDataField> fields = new ArrayList<>();
-        Pair<StatusCode, ValueDataField> valueFieldPair;Pair<StatusCode, ContainerDataField> containerPair = variable.dataField(ContainerDataFieldCall.get(container));
-        if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(language)) {
-            for(DataRow row : containerPair.getRight().getRowsFor(language)) {
-                if(row.getRemoved()) {
-                    continue;
-                }
-                valueFieldPair = row.dataField(ValueDataFieldCall.get(field));
-                if(hasValue(valueFieldPair, language)) {
-                    fields.add(valueFieldPair.getRight());
-                }
-            }
-        }
-        return fields;
     }
 }
