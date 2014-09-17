@@ -8,6 +8,11 @@ define(function (require) {
     return function (options, onLoad) {
         $.extend(options, {
             header: MetkaJS.L10N.get('type.STUDY_VARIABLES.search'),
+            "fieldTitles": {
+                "title": {
+                    "title": "Aineisto"
+                }
+            },
             content: [
                 {
                     "type": "COLUMN",

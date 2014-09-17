@@ -22,6 +22,23 @@ define(function (require) {
     return function (options, onLoad) {
         $.extend(options, {
             header: MetkaJS.L10N.get('type.BINDERS.title'),
+            fieldTitles: {
+                "studyId": {
+                    "title": "Aineistonro"
+                },
+                "studyTitle": {
+                    "title": "Aineiston nimi"
+                },
+                "savedBy": {
+                    "title": "Käsittelijä"
+                },
+                "binderId": {
+                    "title": "Mappinro"
+                },
+                "description": {
+                    "title": "Mapitettu aineisto"
+                }
+            },
             dataConf: dataConf,
             content: [
                 {

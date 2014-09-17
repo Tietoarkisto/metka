@@ -4,6 +4,154 @@
 		"version": 1
 	},
     "fieldTitles": {
+        "affiliation": {
+            "key" : "affiliation",
+            "title" : "Taustaorganisaatio"
+        },
+        "alttitle": {
+            "key" : "alttitle",
+            "title" : "Rinnakkainen nimi"
+        },
+        "appraisal": {
+            "key" : "appraisal",
+            "title" : "Arviointi"
+        },
+        "author": {
+            "key" : "author",
+            "title" : "Tekijä"
+        },
+        "authortype": {
+            "key" : "authortype",
+            "title" : "Tyyppi"
+        },
+        "binderDescription": {
+            "key" : "binderDescription",
+            "title" : "Mapitetun aineiston kuvaus"
+        },
+        "binderId": {
+            "key" : "binderId",
+            "title" : "Mappinumero"
+        },
+        "cbattachmentlocation": {
+            "key": "cbattachmentlocation",
+            "title": "Tiedosto"
+        },
+        "cbattachmenttitle": {
+            "key": "cbattachmenttitle",
+            "title": "Kuvaus"
+        },
+        "colldate": {
+            "key": "colldate",
+            "title": "Päivämäärä"
+        },
+        "colldateevent": {
+            "key": "colldateevent",
+            "title": "Aikajakso"
+        },
+        "colldatetext": {
+            "key": "colldatetext",
+            "title": "Ajankohta"
+        },
+        "collector": {
+            "key": "collector",
+            "title": "Kerääjä"
+        },
+        "collectoraffiliation": {
+            "key": "collectoraffiliation",
+            "title": "Taustaorganisaatio"
+        },
+        "country": {
+            "key": "country",
+            "title": "Maa"
+        },
+        "countryabbr": {
+            "key": "countryabbr",
+            "title": "Lyhenne"
+        },
+        "fileslang": {
+            "key": "fileslang",
+            "title": "Tiedoston kieli"
+        },
+        "filespath": {
+            "key": "filespath",
+            "title": "Tiedostopolku"
+        },
+        "geogcover": {
+            "key": "geogcover",
+            "title": "Kohdealue"
+        },
+        "keyword": {
+            "key": "keyword",
+            "title": "Asiasana"
+        },
+        "keywordnovocab": {
+            "key": "keywordnovocab",
+            "title": "Muu sana"
+        },
+        "keywordvocab": {
+            "key": "keywordvocab",
+            "title": "Sanasto"
+        },
+        "note": {
+            "key" : "note",
+            "title" : "Huomautus"
+        },
+        "otherauthor": {
+            "key" : "otherauthor",
+            "title" : "Muu tekijä"
+        },
+        "otherauthoraffiliation": {
+            "key" : "otherauthoraffiliation",
+            "title" : "Taustaorganisaatio"
+        },
+        "othermaterialuri": {
+            "key" : "othermaterialuri",
+            "title" : "Uri"
+        },
+        "othermateriallabel": {
+            "key" : "othermateriallabel",
+            "title" : "Lyhyt kuvaus"
+        },
+        "othermaterialtext": {
+            "key" : "othermaterialtext",
+            "title" : "Tarkka kuvaus"
+        },
+        "partitle": {
+            "key" : "partitle",
+            "title" : "Nimi"
+        },
+        "partitlelang": {
+            "key" : "partitlelang",
+            "title" : "Kieli"
+        },
+        "producer": {
+            "key" : "producer",
+            "title" : "Tuottaja"
+        },
+        "producerid": {
+            "key" : "producerid",
+            "title" : "Tunniste"
+        },
+        "produceridtype": {
+            "key" : "produceridtype",
+            "title" : "Tunnistetyyppi"
+        },
+        "producerrole": {
+            "key" : "producerrole",
+            "title" : "Rooli"
+        },
+        "producerabbr": {
+            "key" : "producerabbr",
+            "title" : "Lyhenne"
+        },
+        "projectnr": {
+            "key" : "projectnr",
+            "title" : "Projektinumero"
+        },
+        "publicationcomment": {
+            "key" : "publicationcomment",
+            "title" : "Julkaisuihin liittyvä huomio"
+        },
         "publicationid": {
             "key" : "publicationid",
             "title" : "Julkaisun id"
@@ -11,6 +159,10 @@
         "publicationtitle": {
             "key" : "publicationtitle",
             "title" : "Julkaisun nimi"
+        },
+        "relatedmaterial": {
+            "key" : "relatedmaterial",
+            "title" : "Oheismateriaalit"
         },
         "studyid_col": {
             "key" : "studyid_col",
@@ -20,27 +172,91 @@
             "key" : "studytitle_col",
             "title" : "Aineiston nimi"
         },
-        "keywordvocab": {
-        	"key": "keywordvocab",
-        	"title": "Sanasto"
+        "timeperiod": {
+            "key" : "timeperiod",
+            "title" : "Päivämäärä"
         },
-        "keyword": {
-        	"key": "keyword",
-        	"title": "Asiasana"
+        "timeperiodevent": {
+            "key" : "timeperiodevent",
+            "title" : "Aikajakso"
         },
-        "keywordnovocab": {
-        	"key": "keywordnovocab",
-        	"title": "Muu sana"
+        "timeperiodtext": {
+            "key" : "timeperiodtext",
+            "title" : "Ajallinen kattavuus"
         },
+        "universe": {
+            "key" : "universe",
+            "title" : "Perusjoukko"
+        },
+        "universeclusion": {
+            "key" : "universeclusion",
+            "title" : "Rajaus"
+        },
+        "version": {
+            "key" : "version",
+            "title" : "Versio"
+        },
+        "versiondate": {
+            "key" : "versiondate",
+            "title" : "Päivämäärä"
+        },
+        "versionpro": {
+            "key" : "versionpro",
+            "title" : "Käsittelijä"
+        },
+        "versionlabel": {
+            "key" : "versionlabel",
+            "title" : "Lyhyt selite"
+        },
+        "versiontext": {
+            "key" : "versiontext",
+            "title" : "Julkinen selite"
+        },
+        "versionnotes": {
+            "key" : "versionnotes",
+            "title" : "Ei-julkinen selite"
+        },
+
         "topicvocab": {
         	"key": "topicvocab",
         	"title": "Sanasto"
         },
         "topic": {
-        	"key": "topic",
-        	"title": "Tieteenala"
+            "key": "topic",
+            "title": "Tieteenala"
+        },
+        "score": {
+            "key": "score",
+            "title": "Pisteet"
+        },
+        "section": {
+            "key": "section",
+            "title": "Aineiston osa"
+        },
+        "subsection": {
+            "key": "subsection",
+            "title": "Osio"
+        },
+        "language": {
+            "key": "language",
+            "title": "Kieli"
+        },
+        "summary": {
+            "key": "summary",
+            "title": "Selite"
+        },
+        "description": {
+            "key": "description",
+            "title": "Pitkä selite"
+        },
+        "triggerDate": {
+            "key": "triggerDate",
+            "title": "Herätepäivämäärä"
+        },
+        "triggerTarget": {
+            "key": "triggerTarget",
+            "title": "Herätteen saaja"
         }
-        
     },
 	"content": [
 		{

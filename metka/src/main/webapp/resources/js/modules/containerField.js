@@ -12,16 +12,21 @@ define(function (require) {
         var $tbody = $('<tbody>');
         var EMPTY = '-';
 
-        function field2TableHead(prefix) {
-            return function (field) {
-                columns.push(field);
-                return th(prefix, field);
-            };
+        function fieldTitle(field) {
+            return 'fieldTitles.{field}.title'.supplant({
+                field: field
+            });
         }
 
-        function th(prefix, field) {
+        function field2TableHead(field) {
+            columns.push(field);
+            return th(fieldTitle(field));
+        }
+
+        function th(key) {
             return $('<th>')
-                .text(MetkaJS.L10N.get(prefix + '.' + field));
+                .text(MetkaJS.L10N.get(key));
+                //.text(MetkaJS.L10N.get(prefix + '.' + field));
         }
 
         function tableError(errors) {
@@ -218,7 +223,7 @@ define(function (require) {
                                     type: 'ROW',
                                     cells: [$.extend({}, dataConfig, {
                                         type: 'CELL',
-                                        title: MetkaJS.L10N.get(PAGE + '.field.' + field),
+                                        title: MetkaJS.L10N.get(fieldTitle(field)),
                                         field: dataConfig
                                     })]
                                 };
@@ -289,7 +294,6 @@ define(function (require) {
                              })*/
                             .append(function () {
                                 var response = [];
-                                var th = field2TableHead(PAGE + '.field');
                                 (getPropertyNS(options, 'dataConf.fields', key, 'subfields') || [])
                                     .filter(function (field) {
                                         // ui only shows summary fields
@@ -299,19 +303,19 @@ define(function (require) {
                                         // if container is not translatable && subfield is translatable, add columns
                                         if (!fieldOptions.translatable && options.dataConf.fields[field].translatable) {
                                             ['DEFAULT', 'EN', 'SV'].forEach(function (lang) {
-                                                response.push(require('./langLabel')(th(field).data('lang', lang), lang));
+                                                response.push(require('./langLabel')(field2TableHead(field).data('lang', lang), lang));
                                             });
                                         } else {
-                                            response.push(th(field));
+                                            response.push(field2TableHead(field));
                                         }
                                     });
                                 return response;
                             })
                             .append((options.field.columnFields || [])
-                                .map(field2TableHead(PAGE + '.field')))
+                                .map(field2TableHead))
                             .append(function () {
                                 if (options.field.showSaveInfo) {
-                                    return [th('general.saveInfo', 'savedAt'), th('general.saveInfo', 'savedBy')];
+                                    return [th('general.saveInfo.savedAt'), th('general.saveInfo.savedBy')];
                                 }
                             })
                             .append(function () {

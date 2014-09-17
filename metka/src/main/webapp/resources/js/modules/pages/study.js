@@ -5,6 +5,36 @@ define(function (require) {
         return function (options, onLoad) {
             $.extend(options, {
                 header: MetkaJS.L10N.get('type.STUDY.search'),
+                "fieldTitles": {
+                    "studyid": {
+                        "key": "studyid",
+                        "title": "Aineiston numero"
+                    },
+                    "studyname": {
+                        "key": "studyname",
+                        "title": "Aineiston nimi"
+                    },
+                    "authors": {
+                        "key": "authors",
+                        "title": "Tekijät"
+                    },
+                    "seriesname": {
+                        "key": "seriesname",
+                        "title": "Sarja"
+                    },
+                    "datakind": {
+                        "key": "datakind",
+                        "title": "Laatu"
+                    },
+                    "termsofuse": {
+                        "key": "termsofuse",
+                        "title": "Käyttöoikeus"
+                    },
+                    "state": {
+                        "key": "state",
+                        "title": "Tila"
+                    }
+                },
                 content: [
                     {
                         "type": "TAB",
@@ -128,7 +158,7 @@ define(function (require) {
                                                 "horizontal": true,
                                                 "colspan": 2,
                                                 "field": {
-                                                    "key": "studyname"
+                                                    "key": "seriesname"
                                                 }
                                             }
                                         ]
@@ -498,15 +528,22 @@ define(function (require) {
                         return {
                             id: result.id,
                             no: result.no,
-                            seriesabbr: result.values.seriesabbr,
+                            studyid: result.values.studyid,
+                            studyname: result.values.studyname,
+                            authors: result.values.authors.join(', '),
                             seriesname: result.values.seriesname,
+                            datakind: result.values.datakind,
+                            termsofuse: result.values.termsofuse,
                             state: MetkaJS.L10N.get('search.result.state.{state}'.supplant(result))
                         };
                     }, {
                     }, [
-                        "id",
-                        "seriesabbr",
+                        "studyid",
+                        "studyname",
+                        "authors",
                         "seriesname",
+                        "datakind",
+                        "termsofuse",
                         "state"
                     ], function (transferRow) {
                         require('./../assignUrl')('view', {
@@ -514,7 +551,7 @@ define(function (require) {
                             no: transferRow.fields.no.value.current
                         });
                     }),
-                    {
+                    /*{
                         "&title": {
                             "default": "Tyhjennä"
                         },
@@ -523,7 +560,7 @@ define(function (require) {
                                 log('TODO: tyhjennä lomake')
                             });
                         }
-                    },
+                    },*/
                     {
                         "&title": {
                             "default": "Lisää uusi"
