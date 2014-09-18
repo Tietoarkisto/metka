@@ -7,6 +7,7 @@ import fi.uta.fsd.metka.enums.ReferenceTitleType;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.configuration.Reference;
+import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOptionTitle;
@@ -370,7 +371,50 @@ class DataFieldPathParser {
     }
 
     /**
-     * Returns ReferenceOption from given JsonObject
+     * Returns ReferenceOption from given revision data
+     * @param revision Revision data from which to return reference option
+     * @param reference Reference that is used to extract value and title from given JsonNode
+     * @return Single ReferenceOption containing value and title as per specification
+     */
+    ReferenceOption getOption(RevisionData revision, Reference reference) {
+
+        if(revision == null) {
+            // Needs a non empty data field map as field map
+            return null;
+        }
+        // This path should be relative to the given field map
+        String[] path = reference.getTitlePathParts();
+
+        String valueStr = revision.getKey().getId().toString();
+        if(!StringUtils.hasText(valueStr)) {
+            return null;
+        }
+        String titleStr = null;
+
+        if(path != null) {
+            // Let's try to find first terminating data field matching the title path
+            DataFieldPathParser titleParser = new DataFieldPathParser(revision.getFields(), path, configuration, language);
+            DataField titleField = titleParser.findFirstTerminatingValue();
+            if(titleField != null && titleField instanceof ValueDataField) {
+                ValueDataField titleValueField = (ValueDataField)titleField;
+                Field field = configuration.getField(titleField.getKey());
+                Language optionLang = field.getTranslatable() ? language : Language.DEFAULT;
+                if(titleValueField.hasValueFor(optionLang)) {
+                    // Field does not have a value for the needed language
+                    titleStr = titleValueField.getActualValueFor(optionLang);
+                }
+            }
+        }
+        if(titleStr == null) {
+            titleStr = valueStr;
+        }
+
+        ReferenceOption option = new ReferenceOption(valueStr, new ReferenceOptionTitle(ReferenceTitleType.LITERAL, titleStr));
+        return option;
+    }
+
+    /**
+     * Returns ReferenceOption from given data field map
      * @param fieldMap Map containing value field. Title fields are relative to this map
      * @param reference Reference that is used to extract value and title from given JsonNode
      * @return Single ReferenceOption containing value and title as per specification
@@ -421,7 +465,7 @@ class DataFieldPathParser {
             DataField titleField = titleParser.findFirstTerminatingValue();
             if(titleField != null && titleField instanceof ValueDataField) {
                 ValueDataField titleValueField = (ValueDataField)titleField;
-                field = configuration.getField(dataField.getKey());
+                field = configuration.getField(titleField.getKey());
                 optionLang = field.getTranslatable() ? language : Language.DEFAULT;
                 if(titleValueField.hasValueFor(optionLang)) {
                     // Field does not have a value for the needed language
