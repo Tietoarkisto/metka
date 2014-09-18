@@ -1,21 +1,12 @@
 package fi.uta.fsd.metka.mvc.services.impl;
 
-import fi.uta.fsd.metka.enums.FieldType;
 import fi.uta.fsd.metka.enums.Language;
-import fi.uta.fsd.metka.enums.SelectionListType;
-import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
-import fi.uta.fsd.metka.model.access.enums.StatusCode;
-import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.configuration.Field;
-import fi.uta.fsd.metka.model.configuration.Reference;
-import fi.uta.fsd.metka.model.configuration.SelectionList;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.ReferenceRow;
-import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.model.transfer.TransferRow;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
-import fi.uta.fsd.metka.storage.collecting.ReferenceCollecting;
+import fi.uta.fsd.metka.storage.collecting.ReferenceCollector;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
@@ -37,7 +28,7 @@ public class ReferenceServiceImpl implements ReferenceService {
     private static Logger logger = LoggerFactory.getLogger(ReferenceService.class);
 
     @Autowired
-    private ReferenceCollecting references;
+    private ReferenceCollector references;
 
     @Autowired
     private ConfigurationRepository configurations;
@@ -55,7 +46,10 @@ public class ReferenceServiceImpl implements ReferenceService {
      * @return
      */
     @Override public ReferenceOption getCurrentFieldOption(Language language, RevisionData data, String path) {
-        Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(data.getConfiguration());
+        // TODO: Gather dependencies, form request and return single result
+
+        return null;
+        /*Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(data.getConfiguration());
         if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
             logger.error("Couldn't find configuration for "+data.toString());
             return null;
@@ -134,12 +128,13 @@ public class ReferenceServiceImpl implements ReferenceService {
             }
         }
         // Didn't find value, so much for that
-        return null;
+        return null;*/
     }
 
     @Override public List<ReferenceOption> collectReferenceOptions(ReferenceOptionsRequest request) {
-
-        Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(request.getConfType(), request.getConfVersion());
+        Pair<ReturnResult, List<ReferenceOption>> optionsPair = references.handleReferenceRequest(request);
+        return optionsPair.getRight();
+        /*Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(request.getConfType(), request.getConfVersion());
         if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
             logger.error("Couldn't find configuration with type: "+request.getConfType()+" and version: "+request.getConfVersion());
             return null;
@@ -164,7 +159,7 @@ public class ReferenceServiceImpl implements ReferenceService {
                 break;
         }
 
-        return references.referenceOptionCollecting(reference, field, config, request);
+        return references.referenceOptionCollecting(reference, field, config, request);*/
 
     }
 

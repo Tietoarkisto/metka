@@ -1,16 +1,15 @@
 package fi.uta.fsd.metka.transfer.reference;
 
 import fi.uta.fsd.metka.enums.ReferenceTitleType;
-import fi.uta.fsd.metka.model.general.TranslationObject;
 
 /**
  * Provides typed title for reference option
  */
 public class ReferenceOptionTitle {
     private final ReferenceTitleType type;
-    private final TranslationObject value;
+    private final String value;
 
-    public ReferenceOptionTitle(ReferenceTitleType type, TranslationObject value) {
+    public ReferenceOptionTitle(ReferenceTitleType type, String value) {
         this.type = type;
         this.value = value;
     }
@@ -19,7 +18,7 @@ public class ReferenceOptionTitle {
         return type;
     }
 
-    public TranslationObject getValue() {
+    public String getValue() {
         return value;
     }
 }

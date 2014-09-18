@@ -1,6 +1,9 @@
 package fi.uta.fsd.metka.model.general;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import fi.uta.fsd.metka.enums.Language;
+import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,5 +18,14 @@ public class TranslationObject {
 
     public Map<String, String> getTexts() {
         return texts;
+    }
+
+    @JsonIgnore
+    public String getTitleFor(Language language) {
+        if(!StringUtils.hasText(texts.get(language))) {
+            return texts.get(language);
+        } else {
+            return texts.get("default");
+        }
     }
 }

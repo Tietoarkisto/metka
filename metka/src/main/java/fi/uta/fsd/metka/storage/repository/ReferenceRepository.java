@@ -1,8 +1,11 @@
 package fi.uta.fsd.metka.storage.repository;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import fi.uta.fsd.metka.model.configuration.Reference;
 import fi.uta.fsd.metka.storage.entity.MiscJSONEntity;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -27,6 +30,7 @@ import java.util.List;
 public interface ReferenceRepository {
     public List<RevisionableEntity> getRevisionablesForReference(Reference reference);
     public MiscJSONEntity getMiscJsonForReference(Reference reference);
+    public Pair<ReturnResult, JsonNode> getMiscJson(String key);
     /*public RevisionEntity getRevisionForReference(RevisionableEntity revisionable, Reference reference);
     public RevisionEntity getRevisionForReferencedRevisionable(Reference reference, String value);*/
 }

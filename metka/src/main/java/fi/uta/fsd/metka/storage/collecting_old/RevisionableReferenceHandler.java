@@ -1,30 +1,18 @@
-package fi.uta.fsd.metka.storage.collecting;
+package fi.uta.fsd.metka.storage.collecting_old;
 
-import fi.uta.fsd.metka.enums.FieldType;
-import fi.uta.fsd.metka.enums.Language;
-import fi.uta.fsd.metka.enums.ReferenceTitleType;
-import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
-import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Reference;
-import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.ValueDataField;
-import fi.uta.fsd.metka.model.general.TranslationObject;
-import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
-import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
-import fi.uta.fsd.metka.transfer.reference.ReferenceOptionTitle;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 
 // TODO: Actual language handling, for now only collects for DEFAULT language
 @Service
+@Deprecated
 class RevisionableReferenceHandler extends ReferenceHandler {
     private static Logger logger = LoggerFactory.getLogger(RevisionableReferenceHandler.class);
 
@@ -40,7 +28,7 @@ class RevisionableReferenceHandler extends ReferenceHandler {
      */
     void collectOptions(Reference reference, List<ReferenceOption> options) {
 
-        List<RevisionableEntity> entities = repository.getRevisionablesForReference(reference);
+        /*List<RevisionableEntity> entities = repository.getRevisionablesForReference(reference);
         if(entities == null) {
             return;
         }
@@ -84,6 +72,6 @@ class RevisionableReferenceHandler extends ReferenceHandler {
                 title = new ReferenceOptionTitle(ReferenceTitleType.LITERAL, to);
             }
             options.add(new ReferenceOption(entity.getId().toString(), title));
-        }
+        }*/
     }
 }

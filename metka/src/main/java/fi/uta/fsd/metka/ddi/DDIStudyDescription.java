@@ -19,6 +19,7 @@ import fi.uta.fsd.metka.names.Lists;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 
@@ -33,6 +34,11 @@ class DDIStudyDescription {
     private static final Map<Language, String> DISCLAIMER = new HashMap<>();
     private static final Map<Language, String> SERIES_URI_PREFIX = new HashMap<>();
     private static final Map<Language, String> WEIGHT_NO = new HashMap<>();
+    private static final Map<Language, String> COPYRIGHT = new HashMap<>();
+    private static final Map<Language, String> DISTRIBUTR = new HashMap<>();
+    private static final Map<Language, String> DISTRIBUTR_ABB = new HashMap<>();
+    private static final Map<Language, String> DISTRIBUTR_URI = new HashMap<>();
+    private static final Map<Language, String> NATION = new HashMap<>();
 
     static {
         ACCS_PLAC.put(Language.DEFAULT, "Yhteiskuntatieteellinen tietoarkisto");
@@ -92,6 +98,26 @@ class DDIStudyDescription {
         WEIGHT_NO.put(Language.DEFAULT, "Aineisto ei sisällä painomuuttujia.");
         WEIGHT_NO.put(Language.EN, "There are no weight variables in the data.");
         WEIGHT_NO.put(Language.SV, "Datamaterialet innehåller inga viktvariabler.");
+
+        COPYRIGHT.put(Language.DEFAULT, "FSD:n ja aineiston luovuttajan tekemän sopimuksen mukaisesti.");
+        COPYRIGHT.put(Language.EN, "According to the agreement between FSD and the depositor.");
+        COPYRIGHT.put(Language.SV, "I enlighet med avtalet mellan FSD och överlåtaren av datamaterialet.");
+
+        DISTRIBUTR.put(Language.DEFAULT, "");
+        DISTRIBUTR.put(Language.EN, "");
+        DISTRIBUTR.put(Language.SV, "");
+
+        DISTRIBUTR_ABB.put(Language.DEFAULT, "FSD");
+        DISTRIBUTR_ABB.put(Language.EN, "FSD");
+        DISTRIBUTR_ABB.put(Language.SV, "FSD");
+
+        DISTRIBUTR_URI.put(Language.DEFAULT, "http://www.fsd.uta.fi");
+        DISTRIBUTR_URI.put(Language.EN, "http://www.fsd.uta.fi");
+        DISTRIBUTR_URI.put(Language.SV, "http://www.fsd.uta.fi");
+
+        NATION.put(Language.DEFAULT, "Suomi");
+        NATION.put(Language.EN, "Finland");
+        NATION.put(Language.SV, "Finland");
     }
 
     static void addStudyDescription(RevisionData revision, Language language, Configuration configuration, CodeBookType codeBookType, RevisionRepository revisions, ReferenceService references) {
@@ -412,15 +438,13 @@ class DDIStudyDescription {
             fillTextType(stdyInfo.addNewAbstract(), valueFieldPair, language);
         }
         addStudyInfoSumDesc(stdyInfo, revision, language);
-
-
     }
 
     private static void addStudyInfoSubject(StdyInfoType stdyInfo, RevisionData revision, Language language, Configuration configuration, ReferenceService references) {
         SubjectType subject= stdyInfo.addNewSubject();
         Pair<StatusCode, ContainerDataField> containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.KEYWORDS));
         if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
-            addStudyInfoSubjectKeywords(subject, containerPair.getRight(), configuration, references);
+            addStudyInfoSubjectKeywords(subject, containerPair.getRight(), configuration, revision, language, references);
         }
 
         /*// Add subject, excel row #84
@@ -471,15 +495,60 @@ class DDIStudyDescription {
         }*/
     }
 
-    private static void addStudyInfoSubjectKeywords(SubjectType subject, ContainerDataField container, Configuration configuration, ReferenceService references) {
+    private static void addStudyInfoSubjectKeywords(SubjectType subject, ContainerDataField container, Configuration configuration, RevisionData revision, Language language, ReferenceService references) {
         for(DataRow row : container.getRowsFor(Language.DEFAULT)) {
             if(row.getRemoved()) {
                 continue;
             }
             String keywordvocab = null;
             String keyword = null;
+            String keywordnovocab = null;
+            String keywordvocaburi = null;
+            String keyworduri = null;
 
             Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.KEYWORDVOCAB));
+            if(hasValue(valueFieldPair, Language.DEFAULT)) {
+                keywordvocab = valueFieldPair.getRight().getActualValueFor(Language.DEFAULT);
+            }
+            // If user has selected no keyword vocabulary then there's no point in continuing
+            if(!StringUtils.hasText(keywordvocab)) {
+                continue;
+            }
+
+
+
+            valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.KEYWORD));
+            if(hasValue(valueFieldPair, Language.DEFAULT)) {
+                keyword = valueFieldPair.getRight().getActualValueFor(Language.DEFAULT);
+            }
+            valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.KEYWORDNOVOCAB));
+            if(hasValue(valueFieldPair, language)) {
+                keywordnovocab = valueFieldPair.getRight().getActualValueFor(Language.DEFAULT);
+            }
+            // If user has not selected a keyword and has not filled in a 'other' word for requested language then there's nothing to add
+            if(!StringUtils.hasText(keyword) && !StringUtils.hasText(keywordnovocab)) {
+                continue;
+            }
+
+            // Let's get the keyword vocab list configuration so we can check for 'other' value
+            SelectionList list = configuration.getRootSelectionList(Lists.KEYWORDVOCAB_LIST);
+            boolean other = false;
+            for(String value : list.getFreeText()) {
+                if(keywordvocab.equals(value)) {
+                    other = true;
+                    break;
+                }
+            }
+
+            if(other) {
+                // User has selected the 'other' vocabulary. Use correct keywordnovocab
+                keyword = keywordnovocab;
+
+            } else {
+                // User has used
+            }
+
+            // TODO: Continue
 
         }
     }

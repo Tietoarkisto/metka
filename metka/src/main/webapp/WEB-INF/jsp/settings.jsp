@@ -15,13 +15,13 @@
         <%-- TODO: Get localizations from l10n.js --%>
         <div class="page-header">Asetukset</div>
         <%-- Data configuration import --%>
-        <form:form method="post" action="/settings/uploadDataConfiguration" enctype="multipart/form-data" modelAttribute="uploadConfig">
+        <form:form method="post" action="settings/uploadDataConfiguration" enctype="multipart/form-data" modelAttribute="uploadConfig">
             Data konfiguraatio
             <input type="file" name="file" class="file" data-show-preview="false" data-show-remove="false" data-upload-label="Lataa" data-browse-label="Valitse ..." />
         </form:form>
         <br />
         <%-- GUI configuration import --%>
-        <form:form method="post" action="/settings/uploadGUIConfiguration" enctype="multipart/form-data" modelAttribute="uploadConfig">
+        <form:form method="post" action="settings/uploadGUIConfiguration" enctype="multipart/form-data" modelAttribute="uploadConfig">
             GUI konfiguraatio
             <input id="input-id" type="file" class="file" data-show-preview="false" data-show-remove="false" data-upload-label="Lataa" data-browse-label="Valitse ..." />
         </form:form>

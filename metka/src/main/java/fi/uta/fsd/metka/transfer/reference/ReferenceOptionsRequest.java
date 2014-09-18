@@ -1,14 +1,19 @@
 package fi.uta.fsd.metka.transfer.reference;
 
+import fi.uta.fsd.metka.enums.Language;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * Request object for collecting reference options for certain field
+ * Request object for collecting reference options for certain field.
  */
-// TODO: Add language support, for now references are collected only for DEFAULT language
 public class ReferenceOptionsRequest {
     private String key;
     private String confType;
     private Integer confVersion;
-    private String dependencyValue;
+    private Language language;
+    private final Map<String, String> fieldValues = new HashMap<>();
     private String container;
 
     public String getKey() {
@@ -35,20 +40,24 @@ public class ReferenceOptionsRequest {
         this.confVersion = confVersion;
     }
 
-    public String getDependencyValue() {
-        return dependencyValue;
-    }
-
-    public void setDependencyValue(String dependencyValue) {
-        this.dependencyValue = dependencyValue;
-    }
-
     public String getContainer() {
         return container;
     }
 
     public void setContainer(String container) {
         this.container = container;
+    }
+
+    public Map<String, String> getFieldValues() {
+        return fieldValues;
+    }
+
+    public Language getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(Language language) {
+        this.language = language;
     }
 
     @Override

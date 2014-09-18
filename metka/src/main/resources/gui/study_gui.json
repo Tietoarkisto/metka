@@ -1203,7 +1203,11 @@
                                 "title": "Koodikirjan liitteet",
                                 "field": {
                                     "key": "cbattachments",
-                                    "showSaveInfo": true
+                                    "showSaveInfo": true,
+                                    "columnFields": [
+                                    	"cbattachmentlocation",
+                                    	"cbattachmenttitle"
+                                    ]
                                 }
                             }
                         ]

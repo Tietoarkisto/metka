@@ -11,15 +11,11 @@ import fi.uta.fsd.metkaSearch.analyzer.FinnishVoikkoAnalyzer;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
 import fi.uta.fsd.metkaSearch.commands.searcher.SearchCommand;
 import fi.uta.fsd.metkaSearch.commands.searcher.expert.ExpertRevisionSearchCommand;
-import fi.uta.fsd.metkaSearch.commands.searcher.series.SeriesAbbreviationUniquenessSearchCommand;
-import fi.uta.fsd.metkaSearch.commands.searcher.series.SeriesBasicSearchCommand;
 import fi.uta.fsd.metkaSearch.directory.DirectoryInformation;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
-import fi.uta.fsd.metkaSearch.results.BooleanResult;
 import fi.uta.fsd.metkaSearch.results.ResultList;
 import fi.uta.fsd.metkaSearch.results.RevisionResult;
-import fi.uta.fsd.metkaSearch.results.SearchResult;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.KeywordAnalyzer;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
@@ -87,32 +83,6 @@ public class SpringLuceneTests {
             }
         } catch(InterruptedException iex) {
             iex.printStackTrace();
-        }
-    }
-
-    @Test
-    public void seriesUniquenessTest() throws IOException {
-        SearchCommand<BooleanResult> command = SeriesAbbreviationUniquenessSearchCommand.build(4L, "TS3");
-        ResultList<BooleanResult> results = searcher.executeSearch(command);
-        assertTrue(results.getResults().size() == 1);
-        assertTrue(results.getResults().get(0).getType() == ResultList.ResultType.BOOLEAN);
-        assertTrue((results.getResults().get(0)).getResult());
-        for(SearchResult result : results.getResults()) {
-            System.err.println(result.toString());
-        }
-    }
-
-    @Test
-    public void seriesBasicTest() throws IOException, QueryNodeException {
-        SearchCommand<RevisionResult> command = SeriesBasicSearchCommand.build(true, true, true, 1L, null, null);
-        ResultList<RevisionResult> results = searcher.executeSearch(command);
-        ResultList.ResultType type = results.getType();
-        assertTrue(type == ResultList.ResultType.REVISION);
-        for(SearchResult result : results.getResults()) {
-            System.err.println(result.toString());
-        }
-        if(results.getResults().size() == 0) {
-            System.err.println("No results");
         }
     }
 

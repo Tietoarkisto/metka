@@ -75,7 +75,7 @@ public class IndexerDocument {
     }
 
     public void indexText(Language language, Field field, String root, ReferenceOption option) {
-        indexText(language, root+field.getKey(), option.getTitleFor(language), field.getExact(), Store.NO);
+        indexText(language, root+field.getKey(), option.getTitle().getValue(), field.getExact(), Store.NO);
     }
 
     public void indexText(Language language, Field field, String root, String value) {

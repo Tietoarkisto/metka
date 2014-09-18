@@ -1,6 +1,7 @@
-package fi.uta.fsd.metka.storage.collecting;
+package fi.uta.fsd.metka.storage.collecting_old;
 
 
+import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.FieldType;
 import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
@@ -18,8 +19,6 @@ import fi.uta.fsd.metka.transfer.reference.ReferenceOptionsRequest;
 import fi.uta.fsd.metka.transfer.reference.ReferenceRowRequest;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -28,9 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Deprecated
 public class ReferenceCollecting {
-    private static final Logger logger = LoggerFactory.getLogger(ReferenceCollecting.class);
-
     @Autowired
     private RevisionRepository revisions;
 
@@ -56,7 +54,7 @@ public class ReferenceCollecting {
     public List<ReferenceOption> referenceOptionCollecting(Reference reference, Field field, Configuration config, ReferenceOptionsRequest request) {
         List<ReferenceOption> options = new ArrayList<>();
         if(reference == null) {
-            // TODO: Possibly needs to log an event since something has lead to a request that should not have been made
+            Logger.warning(ReferenceCollecting.class, "Reference option collecting_old request made with null reference");
             // Return the empty list since we can not find values for a non existing reference
             return options;
         }
@@ -72,7 +70,7 @@ public class ReferenceCollecting {
                 jsonHandler.collectOptions(reference, options);
                 break;
             case DEPENDENCY:
-                dependencyHandler.collectOptions(field, reference, config, request.getDependencyValue(), options);
+                dependencyHandler.collectOptions(field, reference, config, request.getFieldValues().get(reference.getTarget()), options);
                 break;
         }
 
@@ -91,7 +89,7 @@ public class ReferenceCollecting {
 
         Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(dataPair.getRight().getConfiguration());
         if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
-            logger.error("Configuration was not found for revision "+dataPair.getRight().toString()+" with result "+configPair.getLeft());
+            Logger.error(ReferenceCollecting.class, "Configuration was not found for revision " + dataPair.getRight().toString() + " with result " + configPair.getLeft());
             return new ImmutablePair<>(configPair.getLeft(), null);
         }
 

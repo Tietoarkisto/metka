@@ -1,10 +1,9 @@
-package fi.uta.fsd.metka.storage.collecting;
+package fi.uta.fsd.metka.storage.collecting_old;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
 import fi.uta.fsd.metka.model.configuration.Reference;
 import fi.uta.fsd.metka.storage.entity.MiscJSONEntity;
-import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import org.apache.commons.lang3.tuple.Pair;
@@ -14,15 +13,15 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 
 @Service
+@Deprecated
 class JsonReferenceHandler extends ReferenceHandler {
     /**
      * Analyses a json reference and collects the values defined by that reference.
      *
-     * TODO: Currently handles titlePath as a single level path (it's returned straight from the object returned by value path).
      * @param reference Reference to be processed
      * @param options List where found values are placed as ReferenceOption objects
      */
-    void collectOptions(Reference reference, List<ReferenceOption> options) {
+    void collectOptions(Reference reference,  List<ReferenceOption> options) {
         if(!StringUtils.hasText(reference.getValuePath())) {
             // We have no value path, can't continue
             return;

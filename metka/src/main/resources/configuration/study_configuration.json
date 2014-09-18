@@ -999,9 +999,9 @@
 			"subfield": true
 		},
 		"keywordnovocab": {
-			"_comment": "This is the 'other' value for keywordvocab",
+			"_comment": "This is the 'other' value for keywordvocab, it is also translatable since we have no other way of getting translations for it",
 			"key": "keywordnovocab",
-			"translatable": false,
+			"translatable": true,
 			"type": "STRING",
 			"writable": false,
 			"subfield": true

@@ -1,11 +1,19 @@
 package fi.uta.fsd.metka.storage.repository.impl;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.model.configuration.Reference;
 import fi.uta.fsd.metka.storage.entity.MiscJSONEntity;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.repository.ReferenceRepository;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
+import fi.uta.fsd.metka.storage.util.JSONUtil;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -15,6 +23,9 @@ import java.util.List;
 public class ReferenceRepositoryImpl implements ReferenceRepository {
     @PersistenceContext(name = "entityManager")
     private EntityManager em;
+
+    @Autowired
+    private JSONUtil json;
 
     @Override
     public List<RevisionableEntity> getRevisionablesForReference(Reference reference) {
@@ -41,10 +52,29 @@ public class ReferenceRepositoryImpl implements ReferenceRepository {
     }*/
 
     @Override
+    public Pair<ReturnResult, JsonNode> getMiscJson(String key) {
+        MiscJSONEntity entity = em.find(MiscJSONEntity.class, key);
+        if(entity == null || !StringUtils.hasText(entity.getData())) {
+            // No json or no data, can't continue
+            return new ImmutablePair<>(ReturnResult.MISC_JSON_NOT_FOUND, null);
+        }
+
+        Pair<SerializationResults, JsonNode> pair = json.deserializeToJsonTree(entity.getData());
+        if(pair.getLeft() != SerializationResults.DESERIALIZATION_SUCCESS) {
+            // No root node, can't continue
+            return new ImmutablePair<>(ReturnResult.MISC_JSON_NOT_FOUND, null);
+        }
+
+        return new ImmutablePair<>(ReturnResult.MISC_JSON_FOUND, pair.getRight());
+    }
+
+    @Override
     public MiscJSONEntity getMiscJsonForReference(Reference reference) {
         MiscJSONEntity entity = em.find(MiscJSONEntity.class, reference.getTarget());
         return entity;
     }/*
+
+
 
     @Override
     public RevisionEntity getRevisionForReferencedRevisionable(Reference reference, String value) {

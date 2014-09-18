@@ -1,24 +1,17 @@
-package fi.uta.fsd.metka.storage.collecting;
+package fi.uta.fsd.metka.storage.collecting_old;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
-import fi.uta.fsd.metka.enums.FieldType;
-import fi.uta.fsd.metka.enums.Language;
-import fi.uta.fsd.metka.enums.ReferenceTitleType;
 import fi.uta.fsd.metka.enums.SelectionListType;
-import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
-import fi.uta.fsd.metka.model.access.enums.StatusCode;
-import fi.uta.fsd.metka.model.configuration.*;
-import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.ValueDataField;
-import fi.uta.fsd.metka.model.general.TranslationObject;
+import fi.uta.fsd.metka.model.configuration.Configuration;
+import fi.uta.fsd.metka.model.configuration.Field;
+import fi.uta.fsd.metka.model.configuration.Reference;
+import fi.uta.fsd.metka.model.configuration.SelectionList;
 import fi.uta.fsd.metka.storage.entity.MiscJSONEntity;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
-import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
-import fi.uta.fsd.metka.transfer.reference.ReferenceOptionTitle;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +20,7 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 
 // TODO: Actual handling of language, for now always fetches values from default
+@Deprecated
 @Service
 class DependencyReferenceHandler extends ReferenceHandler {
     @Autowired
@@ -123,7 +117,7 @@ class DependencyReferenceHandler extends ReferenceHandler {
      */
     private void collectRevisionableDependencyValues(Field field, Reference reference,
                                                      String dependencyValue, List<ReferenceOption> options) {
-        Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(Long.parseLong(dependencyValue), false, null);
+        /*Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(Long.parseLong(dependencyValue), false, null);
         if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
             return;
         }
@@ -184,7 +178,7 @@ class DependencyReferenceHandler extends ReferenceHandler {
         // Add option to options list.
         // TODO: Other possibilities
         ReferenceOption option = new ReferenceOption(value, title);
-        options.add(option);
+        options.add(option);*/
     }
 
     private void collectJsonDependencyValues(Field field, Reference reference, Configuration config,

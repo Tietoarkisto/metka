@@ -1,7 +1,6 @@
 package fi.uta.fsd.metka.mvc.controller;
 
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
-import fi.uta.fsd.metka.mvc.services.simple.ErrorMessage;
 import fi.uta.fsd.metka.transfer.reference.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -24,18 +23,11 @@ public class ReferenceController {
     public @ResponseBody ReferenceOptionsGroupResponse collectReferenceOptionsGroup(@RequestBody ReferenceOptionsGroupRequest requests) {
         ReferenceOptionsGroupResponse responses = new ReferenceOptionsGroupResponse(requests.getKey());
         for(ReferenceOptionsRequest request : requests.getRequests()) {
-            ReferenceOptionsResponse response = new ReferenceOptionsResponse(request.getKey(), request.getContainer());
-            response.setDependencyValue(request.getDependencyValue());
+            ReferenceOptionsResponse response = new ReferenceOptionsResponse(request.getKey(), request.getContainer(), request.getLanguage(), request.getFieldValues());
 
             List<ReferenceOption> options = service.collectReferenceOptions(request);
 
-            if(options == null) {
-                ErrorMessage message = new ErrorMessage();
-                message.setMsg("general.errors.reference.exceptionBeforeCollecting");
-                response.getMessages().add(message);
-            } else {
-                response.setOptions(options);
-            }
+            response.setOptions(options);
             responses.getResponses().add(response);
         }
 

@@ -1,4 +1,4 @@
-package fi.uta.fsd.metka.storage.collecting;
+package fi.uta.fsd.metka.storage.collecting_old;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
@@ -14,6 +14,7 @@ import fi.uta.fsd.metka.transfer.reference.ReferenceOptionTitle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
+@Deprecated
 public abstract class ReferenceHandler {
     @Autowired
     protected ReferenceRepository repository;
@@ -76,7 +77,7 @@ public abstract class ReferenceHandler {
             // Don't return option since we don't have a value
             return null;
         }
-        ReferenceOption option = new ReferenceOption(valueStr, new ReferenceOptionTitle(ReferenceTitleType.LITERAL, to));
+        ReferenceOption option = new ReferenceOption(valueStr, new ReferenceOptionTitle(ReferenceTitleType.LITERAL, to.getTitleFor(Language.DEFAULT)));
         return option;
     }
 }

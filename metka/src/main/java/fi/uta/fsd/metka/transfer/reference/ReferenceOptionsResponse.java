@@ -1,9 +1,10 @@
 package fi.uta.fsd.metka.transfer.reference;
 
-import fi.uta.fsd.metka.mvc.services.simple.ErrorMessage;
+import fi.uta.fsd.metka.enums.Language;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Response to request of ReferenceOptions
@@ -11,14 +12,17 @@ import java.util.List;
 public class ReferenceOptionsResponse {
     private final String key;
     private final String container;
-    private String dependencyValue;
+    private final Language language;
+    private final Map<String, String> fieldValues;
 
     private List<ReferenceOption> options;
-    private final List<ErrorMessage> messages = new ArrayList<>();
 
-    public ReferenceOptionsResponse(String key, String container) {
+    public ReferenceOptionsResponse(String key, String container, Language language, Map<String, String> fieldValues) {
         this.key = key;
         this.container = container;
+        this.language = language;
+        this.fieldValues = new HashMap<>();
+        this.fieldValues.putAll(fieldValues);
     }
 
     public String getKey() {
@@ -29,12 +33,12 @@ public class ReferenceOptionsResponse {
         return container;
     }
 
-    public String getDependencyValue() {
-        return dependencyValue;
+    public Language getLanguage() {
+        return language;
     }
 
-    public void setDependencyValue(String dependencyValue) {
-        this.dependencyValue = dependencyValue;
+    public Map<String, String> getFieldValues() {
+        return fieldValues;
     }
 
     public List<ReferenceOption> getOptions() {
@@ -43,10 +47,6 @@ public class ReferenceOptionsResponse {
 
     public void setOptions(List<ReferenceOption> options) {
         this.options = options;
-    }
-
-    public List<ErrorMessage> getMessages() {
-        return messages;
     }
 
     @Override

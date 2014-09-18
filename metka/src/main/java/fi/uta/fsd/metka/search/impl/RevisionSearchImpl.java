@@ -20,8 +20,6 @@ import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.transfer.revision.*;
 import fi.uta.fsd.metkaSearch.SearcherComponent;
 import fi.uta.fsd.metkaSearch.commands.searcher.expert.ExpertRevisionSearchCommand;
-import fi.uta.fsd.metkaSearch.commands.searcher.publication.PublicationBasicSearchCommand;
-import fi.uta.fsd.metkaSearch.commands.searcher.study.StudyBasicSearchCommand;
 import fi.uta.fsd.metkaSearch.commands.searcher.study.StudyIdSearchCommand;
 import fi.uta.fsd.metkaSearch.results.ResultList;
 import fi.uta.fsd.metkaSearch.results.RevisionResult;
@@ -262,48 +260,6 @@ public class RevisionSearchImpl implements RevisionSearch {
             logger.error("Exception while performing basic series search:", qne);
             return new ImmutablePair<>(ReturnResult.SEARCH_FAILED, null);
         }
-    }
-
-    /*private Pair<ReturnResult, List<RevisionSearchResult>> findSeries(RevisionSearchRequest request) {
-        SeriesBasicSearchCommand command;
-        try {
-            command = SeriesBasicSearchCommand.build(request.isSearchApproved(), request.isSearchDraft(), request.isSearchRemoved(),
-                    stringToLong(request.getByKey("id")), request.getByKey("seriesabbr"), request.getByKey("seriesname"));
-            ResultList<RevisionResult> results = searcher.executeSearch(command);
-            return new ImmutablePair<>(ReturnResult.SEARCH_SUCCESS, collectResults(results));
-        } catch(QueryNodeException qne) {
-            // Couldn't form query command
-            logger.error("Exception while performing basic series search:", qne);
-            return new ImmutablePair<>(ReturnResult.SEARCH_FAILED, null);
-        }
-    }*/
-
-    private Pair<ReturnResult, List<RevisionSearchResult>> findStudies(RevisionSearchRequest request) {
-        StudyBasicSearchCommand command;
-        /*try {
-            command = StudyBasicSearchCommand.build(request.isSearchApproved(), request.isSearchDraft(), request.isSearchRemoved(),);
-            ResultList<RevisionResult> results = searcher.executeSearch(command);
-            return new ImmutablePair<>(ReturnResult.SEARCH_SUCCESS, collectResults(results));
-        } catch(QueryNodeException qne) {
-            // Couldn't form query command
-            logger.error("Exception while performing basic study search:", qne);
-            return new ImmutablePair<>(ReturnResult.SEARCH_FAILED, null);
-        }*/
-        return null;
-    }
-
-    private Pair<ReturnResult, List<RevisionSearchResult>> findPublications(RevisionSearchRequest request) {
-        PublicationBasicSearchCommand command;
-        /*try {
-            command = PublicationBasicSearchCommand.build(request.isSearchApproved(), request.isSearchDraft(), request.isSearchRemoved(), );
-            ResultList<RevisionResult> results = searcher.executeSearch(command);
-            return new ImmutablePair<>(ReturnResult.SEARCH_SUCCESS, collectResults(results));
-        } catch(QueryNodeException qne) {
-            // Couldn't form query command
-            logger.error("Exception while performing basic publication search:", qne);
-            return new ImmutablePair<>(ReturnResult.SEARCH_FAILED, null);
-        }*/
-        return null;
     }
 
     private List<RevisionSearchResult> collectResults(ResultList<RevisionResult> resultList) {
