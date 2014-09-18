@@ -57,6 +57,9 @@ public class Reference {
 
     @JsonIgnore
     public String[] getValuePathParts() {
+        if(valuePath == null) {
+            return null;
+        }
         String[] parts = valuePath.split("\\.");
         if(parts.length == 0) {
             parts = new String[1];

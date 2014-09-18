@@ -187,7 +187,7 @@ public class ReferencePathHandler {
                     .getResultList();
             // Collect options
             for(RevisionableEntity revisionable : revisionables) {
-                Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(Long.parseLong(step.getValue()),
+                Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(revisionable.getId(),
                     false, ConfigurationType.fromValue(step.getReference().getTarget()));
                 if(pair.getLeft() == ReturnResult.REVISION_FOUND) {
                     // Terminating step, gather option from revision data
