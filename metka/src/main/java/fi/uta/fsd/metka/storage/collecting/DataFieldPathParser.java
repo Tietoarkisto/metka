@@ -4,9 +4,8 @@ package fi.uta.fsd.metka.storage.collecting;
 import fi.uta.fsd.metka.enums.FieldType;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.enums.ReferenceTitleType;
-import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.configuration.Field;
-import fi.uta.fsd.metka.model.configuration.Reference;
+import fi.uta.fsd.metka.enums.SelectionListType;
+import fi.uta.fsd.metka.model.configuration.*;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
@@ -389,22 +388,7 @@ class DataFieldPathParser {
         if(!StringUtils.hasText(valueStr)) {
             return null;
         }
-        String titleStr = null;
-
-        if(path != null) {
-            // Let's try to find first terminating data field matching the title path
-            DataFieldPathParser titleParser = new DataFieldPathParser(revision.getFields(), path, configuration, language);
-            DataField titleField = titleParser.findFirstTerminatingValue();
-            if(titleField != null && titleField instanceof ValueDataField) {
-                ValueDataField titleValueField = (ValueDataField)titleField;
-                Field field = configuration.getField(titleField.getKey());
-                Language optionLang = field.getTranslatable() ? language : Language.DEFAULT;
-                if(titleValueField.hasValueFor(optionLang)) {
-                    // Field does not have a value for the needed language
-                    titleStr = titleValueField.getActualValueFor(optionLang);
-                }
-            }
-        }
+        String titleStr = getTitleString(revision.getFields(), path);
         if(titleStr == null) {
             titleStr = valueStr;
         }
@@ -457,6 +441,19 @@ class DataFieldPathParser {
         if(!StringUtils.hasText(valueStr)) {
             return null;
         }
+        String titleStr = getTitleString(fieldMap, path);
+        if(titleStr != null && field.getType() == FieldType.SELECTION) {
+            titleStr = getSelectionTitle(field, titleStr);
+        }
+        if(titleStr == null) {
+            titleStr = valueStr;
+        }
+
+        ReferenceOption option = new ReferenceOption(valueStr, new ReferenceOptionTitle(ReferenceTitleType.LITERAL, titleStr));
+        return option;
+    }
+
+    private String getTitleString(Map<String, DataField> fieldMap, String[] path) {
         String titleStr = null;
 
         if(path != null) {
@@ -465,19 +462,35 @@ class DataFieldPathParser {
             DataField titleField = titleParser.findFirstTerminatingValue();
             if(titleField != null && titleField instanceof ValueDataField) {
                 ValueDataField titleValueField = (ValueDataField)titleField;
-                field = configuration.getField(titleField.getKey());
-                optionLang = field.getTranslatable() ? language : Language.DEFAULT;
+                Field field = configuration.getField(titleField.getKey());
+                Language optionLang = field.getTranslatable() ? language : Language.DEFAULT;
                 if(titleValueField.hasValueFor(optionLang)) {
                     // Field does not have a value for the needed language
                     titleStr = titleValueField.getActualValueFor(optionLang);
                 }
+                if(titleStr != null && field.getType() == FieldType.SELECTION) {
+                    titleStr = getSelectionTitle(field, titleStr);
+                }
             }
         }
-        if(titleStr == null) {
-            titleStr = valueStr;
+
+        return titleStr;
+    }
+
+    private String getSelectionTitle(Field field, String value) {
+        String titleStr = null;
+
+        Language optionLang = field.getTranslatable() ? language : Language.DEFAULT;
+        SelectionList list = configuration.getRootSelectionList(field.getSelectionList());
+        if(list.getType() == SelectionListType.LITERAL || list.getType() == SelectionListType.VALUE) {
+            Option option = list.getOptionWithValue(value);
+            if(option != null) {
+                titleStr = option.getTitleFor(optionLang);
+            }
+        } else {
+            // TODO: Possibly follow reference
         }
 
-        ReferenceOption option = new ReferenceOption(valueStr, new ReferenceOptionTitle(ReferenceTitleType.LITERAL, titleStr));
-        return option;
+        return titleStr;
     }
 }
