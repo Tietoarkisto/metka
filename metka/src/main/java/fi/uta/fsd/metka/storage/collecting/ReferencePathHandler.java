@@ -172,8 +172,8 @@ public class ReferencePathHandler {
                     // Terminating step, gather option from revision data
                     DataFieldPathParser parser = new DataFieldPathParser(pair.getRight().getFields(),
                             step.getReference().getValuePathParts(), configPair.getRight(), language);
-                    Map<String, DataField> fieldMap = parser.findRootObjectWithTerminatingValue(step.getValue());
-                    ReferenceOption option = parser.getOption(fieldMap, step.getReference());
+                    //Map<String, DataField> fieldMap = parser.findRootObjectWithTerminatingValue(step.getValue());
+                    ReferenceOption option = parser.getOption(pair.getRight(), step.getReference());
                     if(option != null) {
                         options.add(option);
                     }
@@ -198,12 +198,10 @@ public class ReferencePathHandler {
                     }
                     DataFieldPathParser parser = new DataFieldPathParser(pair.getRight().getFields(),
                             step.getReference().getValuePathParts(), configPair.getRight(), language);
-                    List<Map<String, DataField>> fieldMaps = parser.findTermini();
-                    for(Map<String, DataField> fieldMap : fieldMaps) {
-                        ReferenceOption option = parser.getOption(fieldMap, step.getReference());
-                        if(option != null) {
-                            options.add(option);
-                        }
+
+                    ReferenceOption option = parser.getOption(pair.getRight(), step.getReference());
+                    if(option != null) {
+                        options.add(option);
                     }
                 }
             }
