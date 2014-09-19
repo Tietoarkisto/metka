@@ -19,6 +19,12 @@
             "target": "STUDY_ATTACHMENT",
             "titlePath": "file"
         },
+        "filepath_ref": {
+            "key": "filepath_ref",
+            "type": "DEPENDENCY",
+            "target": "file",
+            "titlePath": "file"
+        },
         "variable_ref": {
             "key": "variable_ref",
             "type": "REVISIONABLE",
@@ -48,6 +54,13 @@
             "editable": false,
             "type": "REFERENCE",
             "reference": "file_ref"
+        },
+        "filepath": {
+            "key": "filepath",
+            "translatable": false,
+            "editable": false,
+            "type": "REFERENCE",
+            "reference": "filepath_ref"
         },
         "software": {
             "key": "software",

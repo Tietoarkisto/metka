@@ -73,7 +73,7 @@
             						"type": "CELL",
             						"title": "Tiedosto",
             						"field": {
-            							"key": "file"
+            							"key": "filepath"
             						}
             					},
             					{

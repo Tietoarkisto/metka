@@ -70,7 +70,8 @@ define(function (require) {
 
                 require('./data')(options).onChange(function () {
                     var dataConf = options.dataConf.fields[key];
-                    if (dataConf.type === 'REFERENCE') {
+                    if (dataConf && dataConf.type === 'REFERENCE') {
+
 
 
                         var reference = require('./utils/getPropertyNS')(options, 'dataConf.references', dataConf.reference);
