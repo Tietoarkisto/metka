@@ -149,7 +149,7 @@ define(function (require) {
                                             "type": "CELL",
                                             "title": "Tietosuoja-asiat",
                                             "field": {
-                                                "key": "varsecuritys",
+                                                "key": "varsecurities",
                                                 "displayHeader": false,
                                                 "columnFields": [
                                                     "varsecurity"
@@ -172,7 +172,7 @@ define(function (require) {
                                                 "columnFields": [
                                                     "value",
                                                     "label",
-                                                    "categorystat",
+                                                    "stat",
                                                     "missing"
                                                 ]
                                             }

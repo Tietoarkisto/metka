@@ -59,6 +59,12 @@ public class FieldDescriptionDeserializer extends ObjectDeserializer<FieldDescri
             dialogTitle = node.get("&dialogTitle");
         }
 
+        // Set displayHeader
+        JsonNode displayHeader = node.get("displayHeader");
+        if(showRef != null && showRef.getNodeType() == JsonNodeType.BOOLEAN) {
+            fd.setDisplayHeader(displayHeader.booleanValue());
+        }
+
         TranslationObject loc = null;
         if(dialogTitle != null) {
             loc = oc.treeToValue(dialogTitle, TranslationObject.class);

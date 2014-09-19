@@ -139,6 +139,14 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
                     logger.error("Creation of STUDY_VARIABLES requires that study attachment id is provided in parameter 'fileid'");
                     return ReturnResult.PARAMETERS_MISSING;
                 }
+                if(!request.getParameters().containsKey("varfileid")) {
+                    logger.error("Creation of STUDY_VARIABLES requires that study attachment file name is provided in parameter 'varfileid'");
+                    return ReturnResult.PARAMETERS_MISSING;
+                }
+                if(!request.getParameters().containsKey("varfiletype")) {
+                    logger.error("Creation of STUDY_VARIABLES requires that study attachments file type is provided in parameter 'varfiletype'");
+                    return ReturnResult.PARAMETERS_MISSING;
+                }
                 break;
             case STUDY_VARIABLE:
                 if(!request.getParameters().containsKey("study")) {
@@ -236,7 +244,8 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
             case STUDY_VARIABLES: {
                 VariablesFactory factory = new VariablesFactory();
                 data = factory.newStudyVariables(revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo(), configuration,
-                        request.getParameters().get("study"), request.getParameters().get("fileid"));
+                        request.getParameters().get("study"), request.getParameters().get("fileid"),
+                        request.getParameters().get("varfileid"), request.getParameters().get("varfiletype"));
                 break;
             }
             case STUDY_VARIABLE: {

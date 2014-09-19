@@ -203,7 +203,7 @@ class DDIDataDescription {
                         fillTextType(catgry.addNewLabl(), valueFieldPair, Language.DEFAULT);
                     }
 
-                    valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.CATEGORYSTAT));
+                    valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.STAT));
                     if(hasValue(valueFieldPair, Language.DEFAULT)) {
                         fillTextType(catgry.addNewCatStat(), valueFieldPair, Language.DEFAULT);
                     }

@@ -30,6 +30,82 @@
             "type": "TAB",
             "title": "Perusnäkymä",
             "content": [
+            	{
+            		"type": "COLUMN",
+            		"columns": 3,
+            		"rows": [
+            			{
+            				"type": "ROW",
+            				"cells": [
+            					{
+            						"type": "CELL",
+            						"title": "Nimi",
+            						"field": {
+            							"key": "varfileid"
+            						}
+            					},
+            					{
+            						"type": "CELL",
+            						"title": "Tyyppi",
+            						"field": {
+            							"key": "varfiletype"
+            						}
+            					},
+            					{
+            						"type": "CELL",
+            						"title": "Numero",
+            						"field": {
+            							"key": "varfileno"
+            						}
+            					}
+            				]
+            			}
+            		]
+            	},
+            	{
+            		"type": "COLUMN",
+            		"columns": 2,
+            		"rows": [
+            			{
+            				"type": "ROW",
+            				"cells": [
+            					{
+            						"type": "CELL",
+            						"title": "Tiedosto",
+            						"field": {
+            							"key": "file"
+            						}
+            					},
+            					{
+            						"type": "CELL",
+            						"title": "Ohjelmisto",
+            						"field": {
+            							"key": "software"
+            						}
+            					}
+            				]
+            			},
+            			{
+            				"type": "ROW",
+            				"cells": [
+            					{
+            						"type": "CELL",
+            						"title": "Muuttujien lkm.",
+            						"field": {
+            							"key": "varquantity"
+            						}
+            					},
+            					{
+            						"type": "CELL",
+            						"title": "Havaintojen lkm.",
+            						"field": {
+            							"key": "casequantity"
+            						}
+            					}
+            				]
+            			}
+            		]
+            	},
                 {
                     "type": "COLUMN",
                     "columns": 1,

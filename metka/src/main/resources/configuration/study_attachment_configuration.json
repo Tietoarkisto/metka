@@ -11,16 +11,13 @@
 				{
 					"value": "1",
 					"title": "ei tietoa"
-				},
-				{
+				},{
 					"value": "2",
 					"title": "ei"
-				},
-				{
+				},{
 					"value": "3",
 					"title": "kyllä"
-				},
-				{
+				},{
 					"value": "4",
 					"title": "ei relevantti"
 				}
@@ -33,72 +30,55 @@
 				{
 					"value": "1",
 					"title": "kyselylomake (quf/arguF tai orig)"
-				},
-				{
+				},{
 					"value": "2",
 					"title": "data (daF/arF tai orig)"
-				},
-				{
+				},{
 					"value": "3",
 					"title": "syntaksi (syF)"
-				},
-				{
+				},{
 					"value": "4",
 					"title": "anonymisointiprosessi (anF/aranF)"
-				},
-				{
+				},{
 					"value": "5",
 					"title": "haastattelukysymykset (iqF/ariqf tai orig)"
-				},
-				{
+				},{
 					"value": "6",
 					"title": "litteraatioesimerkki(teF/arteF tai orig)"
-				},
-				{
+				},{
 					"value": "7",
 					"title": "kirjoitusohjeet (wiF/arwiF tai orig)"
-				},
-				{
+				},{
 					"value": "8",
 					"title": "erillinen avovastaustiedosto (avoF/aravoF tai orig)"
-				},
-				{
+				},{
 					"value": "9",
 					"title": "haastatteluohjeet (iiF/ariiF tai orig)"
-				},
-				{
+				},{
 					"value": "10",
 					"title": "kirjoitusohjeet (wiF/arwiF tai orig)"
-				},
-				{
+				},{
 					"value": "11",
 					"title": "litterointiohjeet (tiF/artiF tai orig)"
-				},
-				{
+				},{
 					"value": "12",
 					"title": "havainnoinnin ohjeistus (oiF/aroiF tai orig)"
-				},
-				{
+				},{
 					"value": "13",
 					"title": "esite tutkittaville (isF/arisF tai orig)"
-				},
-				{
+				},{
 					"value": "14",
 					"title": "virikemateriaali (stF/arstF tai orig)"
-				},
-				{
+				},{
 					"value": "15",
 					"title": "tutkimuskutsu (riF/arriF tai orig)"
-				},
-				{
+				},{
 					"value": "16",
 					"title": "taustatiedot (biF/arbiF tai orig)"
-				},
-				{
+				},{
 					"value": "17",
 					"title": "keruupyyntö (crF/arcrF tai orig)"
-				},
-				{
+				},{
 					"value": "18",
 					"title": "muut tiedostot"
 				}
@@ -115,44 +95,34 @@
 				{
 					"value": "1",
 					"title": "de"
-				},
-				{
+				},{
 					"value": "2",
 					"title": "en"
-				},
-				{
+				},{
 					"value": "3",
 					"title": "es"
-				},
-				{
+				},{
 					"value": "4",
 					"title": "st"
-				},
-				{
+				},{
 					"value": "5",
 					"title": "fi"
-				},
-				{
+				},{
 					"value": "6",
 					"title": "fr"
-				},
-				{
+				},{
 					"value": "7",
 					"title": "it"
-				},
-				{
+				},{
 					"value": "8",
 					"title": "lit"
-				},
-				{
+				},{
 					"value": "9",
 					"title": "ru"
-				},
-				{
+				},{
 					"value": "10",
 					"title": "sv"
-				},
-				{
+				},{
 					"value": "11",
 					"title": "xx"
 				}
@@ -169,28 +139,22 @@
 				{
 					"value": "1",
 					"title": "ei julk."
-				},
-				{
+				},{
 					"value": "2",
 					"title": "eng"
-				},
-				{
+				},{
 					"value": "3",
 					"title": "fin"
-				},
-				{
+				},{
 					"value": "4",
 					"title": "fin/eng"
-				},
-				{
+				},{
 					"value": "5",
 					"title": "fin/sve"
-				},
-				{
+				},{
 					"value": "6",
 					"title": "fin/eng/sve"
-				},
-				{
+				},{
 					"value": "7",
 					"title": "sve"
 				}
@@ -240,14 +204,10 @@
 			"_comment": "This is filled automatically for each study attachment when initial revision is created.",
 			"key": "study",
 			"type": "REFERENCE",
-			"reference": "target_study_ref"
-		},
-		"studyid": {
-			"key": "studyid",
-			"type": "REFERENCE",
-			"reference": "studyid_ref",
-			"editable": false,
-			"writable": false
+			"reference": "target_study_ref",
+			"immutable": false,
+			"translatable": false,
+			"editable": false
 		},
 		"file": {
 			"key": "file",
@@ -277,7 +237,7 @@
 		},
 		"filedescription": {
 			"key": "filedescription",
-			"translatable": false,
+			"translatable": true,
 			"type": "STRING"
 		},
 		"filedip": {

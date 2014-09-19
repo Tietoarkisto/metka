@@ -3,7 +3,7 @@ package fi.uta.fsd.metka.model.guiconfiguration;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import fi.uta.fsd.metka.enums.FieldType;
+import fi.uta.fsd.metka.enums.DisplayType;
 import fi.uta.fsd.metka.model.general.TranslationObject;
 
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import java.util.List;
 @JsonIgnoreProperties("_comment")
 public class FieldDescription {
     private final String key;
-    private FieldType displayType; // Can be ignored for now, only defined here for completeness
+    private DisplayType displayType; // Can be ignored for now, only defined here for completeness
     private Boolean multiline;
     private Boolean multichoice; // Can be ignored for now, only defined here for completeness
     private final List<String> columnFields = new ArrayList<>();
@@ -20,6 +20,7 @@ public class FieldDescription {
     private Boolean showReferenceValue;
     private String handlerName;
     private TranslationObject dialogTitle;
+    private Boolean displayHeader = true;
 
     @JsonCreator
     public FieldDescription(@JsonProperty("key")String key) {
@@ -30,11 +31,11 @@ public class FieldDescription {
         return key;
     }
 
-    public FieldType getDisplayType() {
+    public DisplayType getDisplayType() {
         return displayType;
     }
 
-    public void setDisplayType(FieldType displayType) {
+    public void setDisplayType(DisplayType displayType) {
         this.displayType = displayType;
     }
 
@@ -88,6 +89,14 @@ public class FieldDescription {
 
     public void setDialogTitle(TranslationObject dialogTitle) {
         this.dialogTitle = dialogTitle;
+    }
+
+    public Boolean getDisplayHeader() {
+        return displayHeader == null ? true : displayHeader;
+    }
+
+    public void setDisplayHeader(Boolean displayHeader) {
+        this.displayHeader = displayHeader == null ? true : displayHeader;
     }
 
     @Override

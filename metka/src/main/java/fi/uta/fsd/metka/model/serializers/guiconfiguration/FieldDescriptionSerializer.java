@@ -27,5 +27,6 @@ public class FieldDescriptionSerializer extends ObjectSerializer<FieldDescriptio
         jgen.writeBooleanField("showReferenceValue", value.getShowReferenceValue());
         jgen.writeStringField("handlerName", value.getHandlerName());
         jgen.writeObjectField("dialogTitle", value.getDialogTitle());
+        jgen.writeBooleanField("displayHeader", value.getDisplayHeader());
     }
 }

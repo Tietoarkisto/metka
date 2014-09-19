@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 public class VariablesFactory extends DataFactory {
     private static Logger logger = LoggerFactory.getLogger(VariablesFactory.class);
 
-    public Pair<ReturnResult, RevisionData> newStudyVariables(Long id, Integer no, Configuration configuration, String studyId, String fileId) {
+    public Pair<ReturnResult, RevisionData> newStudyVariables(Long id, Integer no, Configuration configuration, String studyId, String fileId, String varfileid, String varfiletype) {
         if(configuration.getKey().getType() != ConfigurationType.STUDY_VARIABLES) {
             logger.error("Called StudyVariablesFactory with type "+configuration.getKey().getType()+" configuration");
             return new ImmutablePair<>(ReturnResult.INCORRECT_TYPE_FOR_OPERATION, null);
@@ -32,7 +32,9 @@ public class VariablesFactory extends DataFactory {
         RevisionData data = createDraftRevision(id, no, configuration.getKey());
         data.dataField(ValueDataFieldCall.set("study", new Value(studyId), Language.DEFAULT).setInfo(info));
         data.dataField(ValueDataFieldCall.set("file", new Value(fileId), Language.DEFAULT).setInfo(info));
-        data.dataField(ValueDataFieldCall.set("varfileid", new Value("F1"), Language.DEFAULT).setInfo(info));
+        data.dataField(ValueDataFieldCall.set("varfileid", new Value(varfileid), Language.DEFAULT).setInfo(info));
+        data.dataField(ValueDataFieldCall.set("varfiletype", new Value(varfiletype), Language.DEFAULT).setInfo(info));
+        data.dataField(ValueDataFieldCall.set("varfileno", new Value("F1"), Language.DEFAULT).setInfo(info));
 
         return new ImmutablePair<>(ReturnResult.REVISION_CREATED, data);
     }

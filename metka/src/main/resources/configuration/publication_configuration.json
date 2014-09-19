@@ -8,17 +8,23 @@
             "key": "yes_no",
             "type": "VALUE",
             "options": [
-                {
+            	{
                     "&title": {
-                        "default": "Kyllä"
+                        "default": "Ei tietoa"
                     },
                     "value": "1"
                 },
                 {
                     "&title": {
+                        "default": "Kyllä"
+                    },
+                    "value": "2"
+                },
+                {
+                    "&title": {
                         "default": "Ei"
                     },
-                    "value": "0"
+                    "value": "3"
                 }
             ]
         },
@@ -81,6 +87,24 @@
                     "value": "3"
                 }
             ]
+        },
+        "pidtype_list": {
+            "key": "pidtype_list",
+            "type": "LITERAL",
+            "options": [
+                {
+                    "value": "DOI"
+                },
+                {
+                    "value": "URN"
+                },
+                {
+                    "value": "PURL"
+                },
+                {
+                    "value": "LSID"
+                }
+            ]
         }
     },
     "references": {
@@ -105,6 +129,13 @@
 			"key": "series_ref",
 			"type": "REVISIONABLE",
 			"target": "SERIES"
+		},
+		"seriesabbr_ref": {
+			"key": "seriesabbr_ref",
+			"type": "DEPENDENCY",
+			"target": "series",
+			"titlePath": "seriesabbr"
+			
 		},
 		"seriesname_ref": {
 			"key": "seriesname_ref",
@@ -137,9 +168,12 @@
             "type": "INTEGER"
         },
         "publicationfirstsaved": {
-            "_comment": "This can be computed from the revision history and might not be required as part of the datamodel.",
+            "_comment": "TODO: This should be set during saving process",
             "key": "publicationfirstsaved",
+            "translatable": false,
             "required": true,
+            "immutable": true,
+            "editable": false,
             "type": "DATE"
         },
         "publicationannouncement": {
@@ -158,6 +192,7 @@
         },
         "publicationtitle": {
             "key": "publicationtitle",
+            "translatable": false,
             "required": true,
             "type": "STRING"
         },
@@ -169,6 +204,7 @@
         },
         "publicationnotes": {
             "key": "publicationnotes",
+            "translatable": false,
             "type": "STRING"
         },
         "publicationauthors": {
@@ -182,16 +218,19 @@
         },
         "firstname": {
             "key": "firstname",
+            "translatable": false,
             "type": "STRING",
             "subfield": true
         },
         "lastname": {
             "key": "lastname",
+            "translatable": false,
             "type": "STRING",
             "subfield": true
         },
         "publicationpids": {
             "key": "publicationpids",
+            "translatable": false,
             "type": "CONTAINER",
             "subfields": [
                 "pid",
@@ -201,11 +240,14 @@
         "pid": {
             "key": "pid",
             "type": "STRING",
+            "translatable": false,
             "subfield": true
         },
         "pidtype": {
             "key": "pidtype",
-            "type": "STRING",
+            "type": "SELECTION",
+            "selectionList": "pidtype_list",
+            "translatable": false,
             "subfield": true
         },
         "studies": {
@@ -214,21 +256,21 @@
 			"type": "REFERENCECONTAINER",
 			"reference": "study_ref",
 			"subfields": [
-				"studyid_col",
-				"studytitle_col"
+				"studyid",
+				"studytitle"
 			],
 			"bidirectional": "publications"
 		},
-		"studyid_col": {
-			"key": "studyid_col",
+		"studyid": {
+			"key": "studyid",
 			"translatable": false,
 			"type": "REFERENCE",
 			"reference": "studyid_ref",
 			"subfield": true,
 			"writable": false
 		},
-		"studytitle_col": {
-			"key": "studytitle_col",
+		"studytitle": {
+			"key": "studytitle",
 			"translatable": false,
 			"type": "REFERENCE",
 			"reference": "studytitle_ref",
@@ -241,8 +283,17 @@
             "translatable": false,
             "reference": "series_ref",
             "subfields": [
+            	"seriesabbr",
             	"seriesname"
             ]
+        },
+        "seriesabbr": {
+        	"key": "seriesabbr",
+        	"type": "REFERENCE",
+        	"translatable": false,
+        	"subfield": true,
+        	"writable": false,
+        	"reference": "seriesabbr_ref"
         },
         "seriesname": {
         	"key": "seriesname",
@@ -251,36 +302,6 @@
         	"subfield": true,
         	"writable": false,
         	"reference": "seriesname_ref"
-        },
-        "pidddifi": {
-        	"key": "pidddifi",
-        	"type": "STRING",
-        	"translatable": false,
-        	"editable": false
-        },
-        "pidddien": {
-        	"key": "pidddien",
-        	"type": "STRING",
-        	"translatable": false,
-        	"editable": false
-        },
-        "pidddisv": {
-        	"key": "pidddisv",
-        	"type": "STRING",
-        	"translatable": false,
-        	"editable": false
-        },
-        "pidaip": {
-        	"key": "pidaip",
-        	"type": "STRING",
-        	"translatable": false,
-        	"editable": false
-        },
-        "piddip": {
-        	"key": "piddip",
-        	"type": "STRING",
-        	"translatable": false,
-        	"editable": false
         }
     }
 }

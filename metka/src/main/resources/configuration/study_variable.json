@@ -88,9 +88,15 @@
             "editable": false,
             "immutable": true
         },
+        "varinterval": {
+            "key": "varinterval",
+            "translatable": false,
+            "required": true,
+            "type": "STRING"
+        },
         "qstnlits": {
             "key": "qstnlits",
-            "translatable": false,
+            "translatable": true,
             "required": true,
             "type": "CONTAINER",
             "subfields": [
@@ -106,7 +112,7 @@
         },
         "preqtxts": {
             "key": "preqtxts",
-            "translatable": false,
+            "translatable": true,
             "required": true,
             "type": "CONTAINER",
             "subfields": [
@@ -122,7 +128,7 @@
         },
         "postqtxts": {
             "key": "postqtxts",
-            "translatable": false,
+            "translatable": true,
             "required": true,
             "type": "CONTAINER",
             "subfields": [
@@ -138,7 +144,7 @@
         },
         "ivuinstrs": {
             "key": "ivuinstrs",
-            "translatable": false,
+            "translatable": true,
             "required": true,
             "type": "CONTAINER",
             "subfields": [
@@ -154,7 +160,7 @@
         },
         "varnotes": {
             "key": "varnotes",
-            "translatable": false,
+            "translatable": true,
             "required": true,
             "type": "CONTAINER",
             "subfields": [
@@ -170,7 +176,7 @@
         },
         "vartexts": {
             "key": "vartexts",
-            "translatable": false,
+            "translatable": true,
             "required": true,
             "type": "CONTAINER",
             "subfields": [
@@ -184,9 +190,9 @@
             "type": "STRING",
             "subfield": true
         },
-        "varsecuritys": {
-            "key": "varsecuritys",
-            "translatable": false,
+        "varsecurities": {
+            "key": "varsecurities",
+            "translatable": true,
             "required": true,
             "type": "CONTAINER",
             "subfields": [
@@ -217,7 +223,7 @@
             "subfields": [
                 "value",
                 "label",
-                "categorystat",
+                "stat",
                 "missing"
             ]
         },
@@ -242,14 +248,13 @@
             "subfield": true,
             "exact": true
         },
-        "categorystat": {
-            "_comment": "Should be an INTEGER instead",
-            "key": "categorystat",
+        "stat": {
+            "key": "stat",
             "translatable": false,
             "required": true,
             "editable": false,
             "immutable": true,
-            "type": "STRING",
+            "type": "INTEGER",
             "subfield": true,
             "exact": true
         },
@@ -306,6 +311,7 @@
             "type": "STRING",
             "required": true,
             "immutable": true,
+            "editable": false,
             "subfield": true
 
         }
