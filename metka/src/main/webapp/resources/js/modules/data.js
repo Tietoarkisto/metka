@@ -23,7 +23,7 @@ define(function (require) {
 
             var getPropertyNS = require('./utils/getPropertyNS');
 
-            byFieldKey.get = function () {
+            /*byFieldKey.get = function () {
                 var transferField = getTransferField();
 
                 if (transferField) {
@@ -37,7 +37,7 @@ define(function (require) {
                         return getPropertyNS(transferField, 'rows');
                     }
                 }
-            };
+            };*/
             byFieldKey.getByLang = function (lang) {
                 var transferField = getTransferField();
 
@@ -69,13 +69,13 @@ define(function (require) {
                 }
                 return [];
             };
-            byFieldKey.set = function (value) {
+            /*byFieldKey.set = function (value) {
                 var transferField = getTransferField(true);
 
                 transferField.value = transferField.value || {};
                 transferField.type = transferField.type || 'VALUE';
                 transferField.value.current = value;
-            };
+            };*/
             byFieldKey.setByLang = function (lang, value) {
                 var transferField = getTransferField(true);
 
@@ -83,8 +83,13 @@ define(function (require) {
                 transferField.values[lang] = transferField.values[lang] || {};
                 transferField.type = transferField.type || 'VALUE';
                 transferField.values[lang].current = value;
+
+                options.$events.trigger('data-change-{key}-{lang}'.supplant({
+                    key: key,
+                    lang: lang
+                }), [value]);
             };
-            byFieldKey.append = function (trasferRow) {
+            /*byFieldKey.append = function (trasferRow) {
                 var transferField = getTransferField(true);
 
                 transferField.rows = transferField.rows || [];
@@ -92,7 +97,7 @@ define(function (require) {
                 trasferRow.key = trasferRow.key || key;
 
                 transferField.rows.push(trasferRow);
-            };
+            };*/
             byFieldKey.appendByLang = function (lang, trasferRow) {
                 var transferField = getTransferField(true);
 

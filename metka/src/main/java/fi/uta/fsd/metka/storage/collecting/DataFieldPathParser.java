@@ -443,7 +443,7 @@ class DataFieldPathParser {
         }
         String titleStr = getTitleString(fieldMap, path);
         if(titleStr == null && field.getType() == FieldType.SELECTION) {
-            titleStr = getSelectionTitle(field, titleStr);
+            titleStr = getSelectionTitle(field, valueStr);
         }
         if(titleStr == null) {
             titleStr = valueStr;

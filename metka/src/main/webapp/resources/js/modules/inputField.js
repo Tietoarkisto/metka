@@ -69,13 +69,63 @@ define(function (require) {
                 // textarea or input elements
 
                 require('./data')(options).onChange(function () {
-                    $input.val(type === 'CONCAT'
-                        ?
-                        options.dataConf.fields[key].concatenate.map(function (key) {
-                            return require('./data')(options)(key).getByLang(lang);
-                        }).join('')
-                        :
-                        require('./data')(options).getByLang(lang) || '');
+                    var dataConf = options.dataConf.fields[key];
+                    if (dataConf.type === 'REFERENCE') {
+
+
+                        var reference = require('./utils/getPropertyNS')(options, 'dataConf.references', dataConf.reference);
+                        options.$events.on('data-change-{key}-{lang}'.supplant({
+                            key: reference.target,
+                            lang: lang
+                        }), function (e, value) {
+                            var fieldValues = {};
+                            fieldValues[reference.target] = value;
+                            log(reference, dataConf)
+                            fieldValues['keywordvocab'] = 'Test 1';
+                            log('va',value)
+                            require('./server')('options', {
+                                data: JSON.stringify({
+                                    requests : [{
+                                        key: key,
+                                        confType: options.dataConf.key.type,
+                                        confVersion: options.dataConf.key.version,
+                                        language: lang,
+                                        fieldValues: fieldValues
+                                    }]
+                                }),
+                                success: function (data) {
+                                    function optionText(option) {
+                                        if (MetkaJS.L10N.hasTranslation(option, 'title')) {
+                                            return MetkaJS.L10N.localize(option, 'title');
+                                        }
+
+                                        if (option.title) {
+                                            if (option.title.type === 'LITERAL') {
+                                                return option.title.value;
+                                            }
+                                        }
+
+                                        return option.value;
+                                    }
+                                    if (data.responses && data.responses.length && data.responses[0].options && data.responses[0].options[0]) {
+                                        $input.val(optionText(data.responses[0].options[0]));
+                                    }
+                                }
+                            });
+                        });
+
+
+
+                    } else {
+                        $input.val(type === 'CONCAT'
+                            ?
+                            dataConf.concatenate.map(function (key) {
+                                return require('./data')(options)(key).getByLang(lang);
+                            }).join('')
+                            :
+                            require('./data')(options).getByLang(lang) || '');
+
+                    }
                 });
             }
 

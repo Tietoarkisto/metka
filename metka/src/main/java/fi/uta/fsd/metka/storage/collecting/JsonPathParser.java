@@ -257,10 +257,10 @@ class JsonPathParser {
      * @return
      */
     JsonNode findRootObjectWithTerminatingValue(String terminatingValue) {
-        return findRootObjectWithTerminatingValueStep(getInitialLevel(), initialNode, path.clone(), terminatingValue);
+        return findRootObjectWithTerminatingValueStep(getInitialLevel(), initialNode, null, path.clone(), terminatingValue);
     }
 
-    private JsonNode findRootObjectWithTerminatingValueStep(int level, JsonNode node, String[] path, String terminatingValue) {
+    private JsonNode findRootObjectWithTerminatingValueStep(int level, JsonNode node, JsonNode container, String[] path, String terminatingValue) {
         if(level >= path.length) {
             // No more path, terminate
             return null;
@@ -276,7 +276,7 @@ class JsonPathParser {
                 ArrayNode array = (ArrayNode)node;
                 // Assume array contains objects. If non null result is found then return that result which terminates the iteration.
                 for(JsonNode nextNode : array) {
-                    JsonNode result = findRootObjectWithTerminatingValueStep(level+1, nextNode, path, terminatingValue);
+                    JsonNode result = findRootObjectWithTerminatingValueStep(level+1, nextNode, container, path, terminatingValue);
                     if(result != null) {
                         return result;
                     }
@@ -284,9 +284,9 @@ class JsonPathParser {
                 break;
             case OBJECT: // Recursively call this method for the next path step. Only return this node if non null value is returned from the next recursion.
                 String step = path[level];
-                JsonNode result = findRootObjectWithTerminatingValueStep(level, node.get(step), path, terminatingValue);
+                JsonNode result = findRootObjectWithTerminatingValueStep(level, node.get(step), node, path, terminatingValue);
                 if(result != null) {
-                    return node;
+                    return result;
                 }
                 break;
             case STRING:
@@ -294,7 +294,7 @@ class JsonPathParser {
             case NUMBER: // Checks that path should terminate at this value and return true if OK. This should cause previous iteration to return its node.
                 if(level == path.length-1 && node.asText().equals(terminatingValue)) {
                     // Value is the terminating value of path, add
-                    return node;
+                    return container;
                 }
                 break;
             default:
