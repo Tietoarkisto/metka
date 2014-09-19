@@ -63,6 +63,20 @@
             "immutable": true,
             "editable": false
         },
+        "varfileno": {
+            "key": "varfileno",
+            "translatable": false,
+            "type": "STRING",
+            "immutable": true,
+            "editable": false
+        },
+        "varfiletype": {
+            "key": "varfiletype",
+            "translatable": false,
+            "type": "STRING",
+            "immutable": true,
+            "editable": false
+        },
         "casequantity": {
             "key": "casequantity",
             "translatable": false,

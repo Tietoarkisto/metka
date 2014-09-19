@@ -131,7 +131,11 @@
                             "type": "CELL",
                             "title": "Liittyvät henkilöt",
                             "field": {
-                                "key": "publicationauthors"
+                                "key": "publicationauthors",
+                                "columnFields": [
+                                	"firstname",
+                                	"lastname"
+                                ]
                             }
                         }
                     ]
@@ -143,7 +147,11 @@
                             "type": "CELL",
                             "title": "Pysyvät tunnisteet",
                             "field": {
-                                "key": "publicationpids"
+                                "key": "publicationpids",
+                                "columnFields": [
+                                	"pid",
+                                	"pidtype"
+                                ]
                             }
                         }
                     ]
@@ -155,7 +163,11 @@
                             "type": "CELL",
                             "title": "Liittyvät aineistot",
                             "field": {
-                                "key": "studies"
+                                "key": "studies",
+                                "columnFields": [
+                                	"studyid",
+                                	"studytitle"
+                            	]
                             }
                         }
                     ]
@@ -167,7 +179,11 @@
                             "type": "CELL",
                             "title": "Liittyvät sarjat",
                             "field": {
-                                "key": "series"
+                                "key": "series",
+                                "columnFields": [
+                                	"seriesabbr",
+                                	"seriesname"
+                                ]
                             }
                         }
                     ]

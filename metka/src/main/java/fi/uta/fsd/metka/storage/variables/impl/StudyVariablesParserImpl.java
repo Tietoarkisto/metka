@@ -14,6 +14,7 @@ import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.model.transfer.TransferData;
+import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.entity.impl.StudyVariableEntity;
 import fi.uta.fsd.metka.storage.repository.*;
 import fi.uta.fsd.metka.storage.repository.enums.RemoveResult;
@@ -22,6 +23,7 @@ import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.storage.variables.StudyVariablesParser;
 import fi.uta.fsd.metka.storage.variables.enums.ParseResult;
 import fi.uta.fsd.metka.transfer.revision.RevisionCreateRequest;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -130,6 +132,8 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             request.setType(ConfigurationType.STUDY_VARIABLES);
             request.getParameters().put("study", study.getKey().getId().toString());
             request.getParameters().put("fileid", attachment.getKey().getId().toString());
+            request.getParameters().put("varfileid", FilenameUtils.getBaseName(attachment.dataField(ValueDataFieldCall.get(Fields.FILE)).getRight().getActualValueFor(DEFAULT)));
+            request.getParameters().put("varfiletype", FilenameUtils.getExtension(attachment.dataField(ValueDataFieldCall.get(Fields.FILE)).getRight().getActualValueFor(DEFAULT).toUpperCase()));
             dataPair = create.create(request);
             if(dataPair.getLeft() != ReturnResult.REVISION_CREATED) {
                 logger.error("Couldn't create new variables revisionable for study "+study.toString()+" and file "+attachment.toString());
@@ -793,7 +797,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             fieldPair = row.dataField(ValueDataFieldCall.set("label", new Value(label), DEFAULT).setInfo(info).setChangeMap(changeMap));
             checkResultForUpdate(fieldPair, result);
 
-            fieldPair = row.dataField(ValueDataFieldCall.set("categorystat", new Value(stat.toString()), DEFAULT).setInfo(info).setChangeMap(changeMap));
+            fieldPair = row.dataField(ValueDataFieldCall.set("stat", new Value(stat.toString()), DEFAULT).setInfo(info).setChangeMap(changeMap));
             checkResultForUpdate(fieldPair, result);
 
             fieldPair = row.dataField(ValueDataFieldCall.set("missing", new Value(missing ? "Y" : null), DEFAULT).setInfo(info).setChangeMap(changeMap));
@@ -827,7 +831,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
 
             return checkResultForUpdate(
                     variableRevision.dataField(ValueDataFieldCall
-                            .set("varinterval", new Value(continuous ? "contin" : "discrete"), DEFAULT)
+                            .set(Fields.VARINTERVAL, new Value(continuous ? "contin" : "discrete"), DEFAULT)
                             .setInfo(info)),
                     ParseResult.NO_CHANGES);
         }

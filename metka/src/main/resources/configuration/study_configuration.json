@@ -10,48 +10,31 @@
 			"default": "1",
 			"options": [
 				{
-                    "title": "Ei tietoa",
+                    "title": "Kvantitatiivinen",
 					"value": "1"
-				},
-				{
-                    "title": "Kvanti",
+				},{
+                    "title": "Kvalitatiivinen",
 					"value": "2"
-				},
-				{
-                    "title": "Kvali",
-					"value": "3"
-				},
-				{
-                    "title": "Kvanti&Kvali",
-					"value": "4"
 				}
 			]
 		},
 		"anonymization_list": {
 			"key": "anonymization_list",
 			"type": "VALUE",
-			"freeText": [
-				"5"
-			],
-			"freeTextKey": "anonymizationother",
 			"options": [
 				{
                     "title": "Anonymisoidaan FSD:ssä",
                     "value": "1"
-				},
-				{
+				},{
                     "title": "Anonymisoitu FSD:ssä",
 					"value": "2"
-				},
-				{
+				},{
                     "title": "Luovuttajan anonymisoima",
 					"value": "3"
-				},
-				{
+				},{
                     "title": "Ei vaadi anonymisointia",
 					"value": "4"
-				},
-				{
+				},{
                     "title": "Ei tietoa",
 					"value": "5"
 				}
@@ -84,12 +67,10 @@
 				{
                     "title": "Kyllä",
 					"value": "1"
-				},
-				{
+				},{
                     "title": "Ei",
 					"value": "2"
-				},
-				{
+				},{
                     "title": "Ei tietoa",
 					"value": "3"
 				}
@@ -101,17 +82,13 @@
 			"options": [
 				{
 					"value": "1"
-				},
-				{
+				},{
 					"value": "2"
-				},
-				{
+				},{
 					"value": "3"
-				},
-				{
+				},{
 					"value": "4"
-				},
-				{
+				},{
 					"value": "5"
 				}
 			]
@@ -132,19 +109,141 @@
 				}
 			]
 		},
-		"dataversionlabel_list": {
-			"key": "dataversionlabel_list",
+		"partitlelang_list": {
+			"key": "partitlelang_list",
 			"type": "VALUE",
 			"options": [
 				{
-                    "title": "Lyhyt selite",
-					"value": "1"
-				},
-				{
-                    "title": "Toinen lyhyt selite",
-					"value": "2"
+					"value": "fi",
+					"title": "Suomi"
+				},{
+					"value": "en",
+					"title": "Englanti"
+				},{
+					"value": "sv",
+					"title": "Ruotsi"
 				}
 			]
+		},
+		"versionlabeldata_list": {
+			"key": "versionlabeldata_list",
+			"type": "VALUE",
+			"options": [
+				{
+                    "title": "Ensimmäinen versio",
+					"value": "1"
+				},{
+                    "title": "Muuttujien poisto",
+					"value": "2"
+				},{
+                    "title": "Muuttujien lisäys",
+					"value": "3"
+				},{
+                    "title": "Muuttujien tulkintaan vaikuttavan metatiedon muutos",
+					"value": "4"
+				},{
+                    "title": "Muuttujien arvojen korjaus",
+					"value": "5"
+				},{
+                    "title": "Aineistoyksikön lisäys",
+					"value": "6"
+				},{
+                    "title": "Aineistoyksikön poisto",
+					"value": "7"
+				},{
+                    "title": "Aineiston täydentäminen esim. kuvilla",
+					"value": "8"
+				},{
+                    "title": "Lisäanonymisointi",
+					"value": "9"
+				},{
+                    "title": "Muu",
+					"value": "10"
+				}
+			],
+			"freeText": ["10"],
+			"freeTextKey": "versiontext"
+		},
+		"versionlabeldesc_list": {
+			"key": "versionlabeldata_list",
+			"type": "VALUE",
+			"options": [
+				{
+                    "title": "Ensimmäinen versio",
+					"value": "1"
+				},{
+                    "title": "Datan muutos",
+					"value": "2"
+				},{
+                    "title": "Kirjoitusvirheiden korjaus",
+					"value": "3"
+				},{
+                    "title": "Aineiston nimen muutos",
+					"value": "4"
+				},{
+                    "title": "Tekijätiedon muutos",
+					"value": "5"
+				},{
+                    "title": "Viittaustiedon muutos",
+					"value": "6"
+				},{
+                    "title": "Asiasanan muutos",
+					"value": "7"
+				},{
+                    "title": "Tieteenalan muutos",
+					"value": "8"
+				},{
+                    "title": "Abstraktin muutos",
+					"value": "9"
+				},{
+                    "title": "Ajallisen kattavuuden muutos",
+					"value": "10"
+				},{
+                    "title": "Keruuajan muutos",
+					"value": "11"
+				},{
+                    "title": "Kohdemaan muutos",
+					"value": "12"
+				},{
+                    "title": "Kohdealueen muutos",
+					"value": "13"
+				},{
+                    "title": "Havaintoyksikön muutos",
+					"value": "14"
+				},{
+                    "title": "Perusjoukon muutos",
+					"value": "15"
+				},{
+                    "title": "Aikaulottuvuuden muutos",
+					"value": "16"
+				},{
+                    "title": "Kerääjän muutos",
+					"value": "17"
+				},{
+                    "title": "Otantamenetelmän muutos",
+					"value": "18"
+				},{
+                    "title": "Keruumenetelmän muutos",
+					"value": "19"
+				},{
+                    "title": "Keruuvälineen muutos",
+					"value": "20"
+				},{
+                    "title": "Painokertoimen muutos",
+					"value": "21"
+				},{
+                    "title": "Sarjatietojen muutos",
+					"value": "22"
+				},{
+                    "title": "Julkaisutietojen muutos",
+					"value": "23"
+				},{
+                    "title": "Muu",
+					"value": "24"
+				}
+			],
+			"freeText": ["24"],
+			"freeTextKey": "versiontext"
 		},
 		"termsofuse_list": {
 			"key": "termsofuse_list",
@@ -154,20 +253,16 @@
 				{
                     "title": "Kaikkien käytettävissä",
 					"value": "1"
-				},
-				{
+				},{
                     "title": "Tutkimus, opetus, opiskelu",
 					"value": "2"
-				},
-				{
+				},{
                     "title": "Vain tutkimus",
 					"value": "3"
-				},
-				{
+				},{
                     "title": "Lupa",
 					"value": "4"
-				},
-				{
+				},{
                     "title": "Embargo",
                     "value": "5"
 				}
@@ -181,12 +276,10 @@
 				{
                     "title": "Ei tietoa",
 					"value": "1"
-				},
-				{
+				},{
                     "title": "Yrit./yht.",
 					"value": "2"
-				},
-				{
+				},{
                     "title": "Tutkija(t)",
 					"value": "3"
 				}
@@ -200,16 +293,13 @@
 				{
                     "title": "Kaikkien käytettävissä",
 					"value": "1"
-				},
-				{
+				},{
                     "title": "Tutkimus, opetus, opiskelu",
 					"value": "2"
-				},
-				{
+				},{
                     "title": "Vain tutkimus",
 					"value": "3"
-				},
-				{
+				},{
                     "title": "Lupa",
 					"value": "4"
 				}
@@ -223,20 +313,16 @@
 				{
                     "title": "Ei tietoa",
 					"value": "1"
-				},
-				{
+				},{
                     "title": "Ei tarvita sopimusta",
 					"value": "2"
-				},
-				{
+				},{
                     "title": "Könttäsopimus",
 					"value": "3"
-				},
-				{
+				},{
                     "title": "Norm+puite",
 					"value": "4"
-				},
-				{
+				},{
                     "title": "On sopimus",
 					"value": "5"
 				}
@@ -275,12 +361,10 @@
 				{
                     "title": "Start",
 					"value": "1"
-				},
-				{
+				},{
                     "title": "End",
 					"value": "2"
-				},
-				{
+				},{
                     "title": "Single",
 					"value": "3"
 				}
@@ -288,15 +372,12 @@
 		},
 		"universeclusion_list": {
 			"key": "universeclusion_list",
-			"type": "VALUE",
+			"type": "LITERAL",
 			"options": [
 				{
-                    "title": "E",
-					"value": "1"
-				},
-				{
-                    "title": "I",
-					"value": "2"
+					"value": "E"
+				},{
+                    "value": "I"
 				}
 			]
 		},
@@ -305,27 +386,6 @@
 			"sublistKey": "start_end_single",
 			"type": "SUBLIST"
 		},
-		"analysisunitvocab_list": {
-			"key": "analysisunitvocab_list",
-			"type": "LITERAL",
-			"default": "DDI CV",
-			"options": [
-				{
-					"value": "DDI CV"
-				}
-			]
-		},
-		"analysisunit_list": {
-			"key": "analysisunit_list",
-			"type": "REFERENCE",
-			"reference": "",
-			"includeEmpty": true
-		},
-		"authortype_list": {
-			"key": "analysisunit_list",
-			"type": "REFERENCE",
-			"reference": ""
-		},
 		"statisticstype_list": {
 			"key": "statisticstype_list",
 			"type": "VALUE",
@@ -333,20 +393,16 @@
 				{
                     "title": "Lukumäärä",
 					"value": "vald"
-				},
-				{
+				},{
                     "title": "Minimi",
 					"value": "min"
-				},
-				{
+				},{
                     "title": "Maksimi",
 					"value": "max"
-				},
-				{
+				},{
                     "title": "Keskiarvo",
 					"value": "mean"
-				},
-				{
+				},{
                     "title": "Keskihajonta",
 					"value": "stdev"
 				}
@@ -366,6 +422,76 @@
 			"reference": "keyword_ref",
 			"includeEmpty": true
 		},
+		"analysisunitvocab_list": {
+			"key": "analysisunitvocab_list",
+			"type": "REFERENCE",
+			"reference": "anaylsisunitvocab_ref",
+			"includeEmpty": false
+		},
+		"analysisunit_list": {
+			"key": "analysisunit_list",
+			"type": "REFERENCE",
+			"reference": "analysisunit_ref",
+			"includeEmpty": true,
+			"freeText": ["Other", "Geographical"],
+			"freeTextKey": "analysisunitother"
+		},
+		"collmodevocab_list": {
+			"key": "collmodevocab_list",
+			"type": "REFERENCE",
+			"reference": "collmodevocab_ref",
+			"includeEmpty": false
+		},
+		"collmode_list": {
+			"key": "collmode_list",
+			"type": "REFERENCE",
+			"reference": "collmode_ref",
+			"includeEmpty": true,
+			"freeText": ["Other"],
+			"freeTextKey": "collmodeother"
+		},
+		"instrumentvocab_list": {
+			"key": "instrumentvocab_list",
+			"type": "REFERENCE",
+			"reference": "instrumentvocab_ref",
+			"includeEmpty": false
+		},
+		"instrument_list": {
+			"key": "instrument_list",
+			"type": "REFERENCE",
+			"reference": "instrument_ref",
+			"includeEmpty": true,
+			"freeText": ["Other"],
+			"freeTextKey": "instrumentother"
+		},
+		"sampprocvocab_list": {
+			"key": "sampprocvocab_list",
+			"type": "REFERENCE",
+			"reference": "sampprocvocab_ref",
+			"includeEmpty": false
+		},
+		"sampproc_list": {
+			"key": "sampproc_list",
+			"type": "REFERENCE",
+			"reference": "sampproc_ref",
+			"includeEmpty": true,
+			"freeText": ["Other"],
+			"freeTextKey": "sampprocother"
+		},
+		"timemethodvocab_list": {
+			"key": "timemethodvocab_list",
+			"type": "REFERENCE",
+			"reference": "timemethodvocab_ref",
+			"includeEmpty": false
+		},
+		"timemethod_list": {
+			"key": "timemethod_list",
+			"type": "REFERENCE",
+			"reference": "timemethod_ref",
+			"includeEmpty": true,
+			"freeText": ["Other"],
+			"freeTextKey": "timemthodother"
+		},
 		"topicvocab_list": {
 			"key": "topicvocab_list",
 			"type": "REFERENCE",
@@ -377,6 +503,91 @@
 			"type": "REFERENCE",
 			"reference": "topic_ref",
 			"includeEmpty": true
+		},
+		"packagetype_list": {
+			"key": "packagetype_list",
+			"type": "LITERAL",
+			"options": [
+				{
+					"value": "DDI-xml-fi"
+				},{
+					"value": "DDI-xml-en"
+				},{
+					"value": "DDI-xml-sv"
+				},{
+					"value": "AIP"
+				},{
+					"value": "DIP"
+				},
+			]
+		},
+		"dissemination_list": {
+			"key": "dissemination_list",
+			"type": "REFERENCE",
+			"target": "dissemination_ref"
+		},
+		"country_list": {
+			"key": "country_list",
+			"type": "REFERENCE",
+			"reference": "country_ref"
+		},
+		
+		"organisation_list": {
+			"key": "organisation_list",
+			"type": "REFERENCE",
+			"reference": "organisation_ref"
+		},
+		"agency_list": {
+			"key": "agency_list",
+			"type": "REFERENCE",
+			"reference": "agency_ref"
+		},
+		"section_list": {
+			"key": "section_list",
+			"type": "REFERENCE",
+			"reference": "section_ref"
+		},
+		"producerrole_list": {
+			"key": "producerrole_list",
+			"type": "VALUE",
+			"options": [
+				{
+					"value": "1",
+					"title": "Rahoittaja"
+				},{
+					"value": "2",
+					"title": "Projekti"
+				}
+			]
+		},
+		"authortype_list": {
+			"key": "authortype_list",
+			"type": "VALUE",
+			"options": [
+				{
+					"value": "1",
+					"title": "Henkilö"
+				},{
+					"value": "2",
+					"title": "Organisaatio"
+				}
+			]
+		},
+		"otherauthortype_list": {
+			"key": "authortype_list",
+			"type": "VALUE",
+			"options": [
+				{
+					"value": "1",
+					"title": "Henkilö"
+				},{
+					"value": "2",
+					"title": "Organisaatio"
+				},{
+					"value": "3",
+					"title": "Ryhmä"
+				}
+			]
 		}
 	},
 	"references": {
@@ -403,21 +614,21 @@
 			"target": "publications",
 			"titlePath": "publicationtitle"
 		},
-		"study_ref": {
-			"key": "study_ref",
+		"relatedstudy_ref": {
+			"key": "relatedstudy_ref",
 			"type": "REVISIONABLE",
 			"target": "STUDY"
 		},
-		"studyid_ref": {
-			"key": "studyid_ref",
+		"relatedstudyid_ref": {
+			"key": "relatedstudyid_ref",
 			"type": "DEPENDENCY",
-			"target": "studies",
+			"target": "relatedstudies",
 			"titlePath": "studyid"
 		},
-		"studytitle_ref": {
-			"key": "studytitle_ref",
+		"relatedstudytitle_ref": {
+			"key": "relatedstudytitle_ref",
 			"type": "DEPENDENCY",
-			"target": "studies",
+			"target": "relatedstudies",
 			"titlePath": "title"
 		},
 		"variables_ref": {
@@ -449,21 +660,6 @@
 			"target": "files",
 			"valuePath": "filelanguage"
 		},
-		"sampproc_ref": {
-			"key": "sampproc_ref",
-			"type": "JSON",
-			"target": "jsonReferenceTest",
-			"valuePath": "values.key",
-			"titlePath": "name"
-		},
-		"sampprocdesc_ref": {
-			"_comment": "Temporary placeholder for vocaburl reference",
-			"key": "sampprocdesc_ref",
-			"type": "DEPENDENCY",
-			"target": "sampproc",
-			"valuePath": "key",
-			"titlePath": "description"
-		},
 		"keywordvocab_ref": {
 			"key": "keywordvocab_ref",
 			"type": "JSON",
@@ -488,6 +684,103 @@
 			"target": "keyword",
 			"valuePath": "keyworduri"
 		},
+		"analysisunitvocab_ref": {
+			"key": "analysisunitvocab_ref",
+			"type": "JSON",
+			"target": "analysisunit_vocabularies",
+			"valuePath": "vocab"
+		},
+		"analysisunitvocaburi_ref": {
+			"key": "analysisunitvocaburi_ref",
+			"type": "DEPENDENCY",
+			"target": "analysisunitvocab",
+			"valuePath": "vocaburi"
+		},
+		"analysisunit_ref": {
+			"key": "analysisunit_ref",
+			"type": "DEPENDENCY",
+			"target": "analysisunitvocab",
+			"valuePath": "analysisunits.analysisunit"
+		},
+		"analysisunituri_ref": {
+			"key": "analysisunituri_ref",
+			"type": "DEPENDENCY",
+			"target": "analysisunit",
+			"valuePath": "analysisunituri"
+		},
+		
+		"collmodevocab_ref": {
+			"key": "collmodevocab_ref",
+			"type": "JSON",
+			"target": "collmode_vocabularies",
+			"valuePath": "vocab"
+		},
+		"collmodevocaburi_ref": {
+			"key": "collmodevocaburi_ref",
+			"type": "DEPENDENCY",
+			"target": "collmodevocab",
+			"valuePath": "vocaburi"
+		},
+		"collmode_ref": {
+			"key": "collmode_ref",
+			"type": "DEPENDENCY",
+			"target": "collmodevocab",
+			"valuePath": "collmodes.collmode"
+		},
+		"collmodeuri_ref": {
+			"key": "collmodeuri_ref",
+			"type": "DEPENDENCY",
+			"target": "collmode",
+			"valuePath": "collmodeuri"
+		},
+		"instrumentvocab_ref": {
+			"key": "instrumentvocab_ref",
+			"type": "JSON",
+			"target": "instrument_vocabularies",
+			"valuePath": "vocab"
+		},
+		"instrumentvocaburi_ref": {
+			"key": "instrumentvocaburi_ref",
+			"type": "DEPENDENCY",
+			"target": "instrumentvocab",
+			"valuePath": "vocaburi"
+		},
+		"instrument_ref": {
+			"key": "instrument_ref",
+			"type": "DEPENDENCY",
+			"target": "instrumentvocab",
+			"valuePath": "instruments.instrument"
+		},
+		"instrumenturi_ref": {
+			"key": "instrumenturi_ref",
+			"type": "DEPENDENCY",
+			"target": "instrument",
+			"valuePath": "instrumenturi"
+		},
+		"sampprocvocab_ref": {
+			"key": "sampprocvocab_ref",
+			"type": "JSON",
+			"target": "sampproc_vocabularies",
+			"valuePath": "vocab"
+		},
+		"sampprocvocaburi_ref": {
+			"key": "sampprocvocaburi_ref",
+			"type": "DEPENDENCY",
+			"target": "sampprocvocab",
+			"valuePath": "vocaburi"
+		},
+		"sampproc_ref": {
+			"key": "sampproc_ref",
+			"type": "DEPENDENCY",
+			"target": "sampprocvocab",
+			"valuePath": "sampprocs.sampproc"
+		},
+		"sampprocuri_ref": {
+			"key": "sampprocuri_ref",
+			"type": "DEPENDENCY",
+			"target": "sampproc",
+			"valuePath": "sampprocuri"
+		},
 		"topicvocab_ref": {
 			"key": "topicvocab_ref",
 			"type": "JSON",
@@ -511,6 +804,93 @@
 			"type": "DEPENDENCY",
 			"target": "topic",
 			"valuePath": "topicuri"
+		},
+		"timemethodvocab_ref": {
+			"key": "timemethodvocab_ref",
+			"type": "JSON",
+			"target": "timemethod_vocabularies",
+			"valuePath": "vocab"
+		},
+		"timemethodvocaburi_ref": {
+			"key": "timemethodvocaburi_ref",
+			"type": "DEPENDENCY",
+			"target": "timemethodvocab",
+			"valuePath": "vocaburi"
+		},
+		"timemethod_ref": {
+			"key": "timemethod_ref",
+			"type": "DEPENDENCY",
+			"target": "timemethodvocab",
+			"valuePath": "timemethods.timemethod"
+		},
+		"timemethoduri_ref": {
+			"key": "timemethoduri_ref",
+			"type": "DEPENDENCY",
+			"target": "timemethod",
+			"valuePath": "timemethoduri"
+		},
+		"dissemination_ref": {
+			"key": "dissemination_ref",
+			"type": "JSON",
+			"target": "dissemination_codes",
+			"valuePath": "code",
+			"titlePath": "title"
+		},
+		"country_ref": {
+			"key": "country_ref",
+			"type": "JSON",
+			"target": "ISO_3166-1",
+			"valuePath": "alpha-2",
+			"titlePath": "name"
+		},
+		"countryabbr_ref": {
+			"key": "countryabbr_ref",
+			"type": "DEPENDENCY",
+			"target": "country",
+			"valuePath": "alpha-2"
+		},
+		
+		"organisation_ref": {
+			"key": "organisation_ref",
+			"type": "JSON",
+			"target": "Organizations",
+			"valuePath": "id",
+			"titlePath": "organizationname"
+		},
+		"organisationabbr_ref": {
+			"key": "organisationabbr_ref",
+			"type": "DEPENDENCY",
+			"target": "organisation",
+			"valuePath": "id",
+			"titlePath": "organizationabbr"
+		},
+		"agency_ref": {
+			"key": "agency_ref",
+			"type": "DEPENDENCY",
+			"target": "organisation",
+			"valuePath": "agencies.id",
+			"titlePath": "agencyname"
+		},
+		"agencyabbr_ref": {
+			"key": "agencyabbr_ref",
+			"type": "DEPENDENCY",
+			"target": "agency",
+			"valuePath": "id",
+			"titlePath": "agencyabbr"
+		},
+		"section_ref": {
+			"key": "section_ref",
+			"type": "DEPENDENCY",
+			"target": "agency",
+			"valuePath": "sections.id",
+			"titlePath": "sectionname"
+		},
+		"sectionabbr_ref": {
+			"key": "sectionabbr_ref",
+			"type": "DEPENDENCY",
+			"target": "section",
+			"valuePath": "id",
+			"titlePath": "sectionabbr"
 		}
 	},
 	"displayId": "studyid",
@@ -543,13 +923,13 @@
 		},
 		"dataversions": {
 			"key": "dataversions",
-			"translatable": true,
+			"translatable": false,
 			"type": "CONTAINER",
 			"subfields": [
 				"version",
 				"versiondate",
 				"versionpro",
-				"versionlabel",
+				"versionlabeldata",
 				"versiontext",
 				"versionnotes"
 			]
@@ -559,7 +939,6 @@
 			"translatable": false,
 			"required": true,
 			"type": "STRING",
-			"_comment": "Toistaiseksi STRING kunnes reaalilukujen käsittely tehty.",
 			"subfield": true
 		},
 		"versiondate": {
@@ -569,17 +948,17 @@
 			"type": "DATE",
 			"subfield": true
 		},
-		"versionlabel": {
-			"key": "versionlabel",
+		"versionlabeldata": {
+			"key": "versionlabeldata",
 			"translatable": false,
 			"required": true,
 			"type": "SELECTION",
-			"selectionList": "dataversionlabel_list",
+			"selectionList": "versionlabeldata_list",
 			"subfield": true
 		},
 		"versionnotes": {
 			"key": "versionnotes",
-			"translatable": false,
+			"translatable": true,
 			"type": "STRING",
 			"subfield": true
 		},
@@ -610,10 +989,18 @@
 				"version",
 				"versiondate",
 				"versionpro",
-				"versionlabel",
+				"versionlabeldesc",
 				"versiontext",
 				"versionnotes"
 			]
+		},
+		"versionlabeldesc": {
+			"key": "versionlabel",
+			"translatable": false,
+			"required": true,
+			"type": "SELECTION",
+			"selectionList": "versionlabeldesc_list",
+			"subfield": true
 		},
 		"publications": {
 			"key": "publications",
@@ -642,30 +1029,30 @@
 			"subfield": true,
 			"writable": false
 		},
-		"studies": {
+		"relatedstudies": {
 			"key": "studies",
 			"translatable": false,
 			"type": "REFERENCECONTAINER",
-			"reference": "study_ref",
+			"reference": "relatedstudy_ref",
 			"subfields": [
-				"studyid_col",
-				"studytitle_col"
+				"relatedstudyid",
+				"relatedstudytitle"
 			],
-			"bidirectional": "studies"
+			"bidirectional": "relatedstudies"
 		},
-		"studyid_col": {
-			"key": "studyid_col",
+		"relatedstudyid": {
+			"key": "relatedstudyid",
 			"translatable": false,
 			"type": "REFERENCE",
-			"reference": "studyid_ref",
+			"reference": "relatedstudyid_ref",
 			"subfield": true,
 			"writable": false
 		},
-		"studytitle_col": {
-			"key": "studytitle_col",
+		"relatedstudytitle": {
+			"key": "relatedstudytitle",
 			"translatable": false,
 			"type": "REFERENCE",
-			"reference": "studytitle_ref",
+			"reference": "relatedstudytitle_ref",
 			"subfield": true,
 			"writable": false
 		},
@@ -674,7 +1061,6 @@
 			"key": "studyid",
 			"translatable": false,
 			"immutable": true,
-			"unique": true,
 			"required": true,
 			"editable": false,
 			"type": "STRING",
@@ -727,7 +1113,7 @@
 			"key": "submissionid",
 			"translatable": false,
 			"immutable": true,
-			"unique": true,
+			"editable": false,
 			"required": true,
 			"type": "INTEGER"
 		},
@@ -744,7 +1130,7 @@
 		},
 		"termsofuse": {
 			"key": "termsofuse",
-			"translatable": true,
+			"translatable": false,
 			"required": true,
 			"type": "SELECTION",
 			"selectionList": "termsofuse_list"
@@ -796,7 +1182,6 @@
 		},
 		"agreement": {
 			"key": "agreement",
-			"_comment": "TODO: Tässä pitäisi olla linkki sopimukseen.",
 			"translatable": false,
 			"type": "STRING"
 		},
@@ -830,7 +1215,7 @@
 		},
 		"alttitle": {
 			"key": "alttitle",
-			"translatable": false,
+			"translatable": true,
 			"type": "STRING",
 			"subfield": true
 		},
@@ -852,108 +1237,8 @@
 		"partitlelang": {
 			"key": "partitlelang",
 			"translatable": false,
-			"type": "STRING",
-			"subfield": true
-		},
-		"authors": {
-			"key": "authors",
-			"translatable": false,
-			"type": "CONTAINER",
-			"subfields": [
-				"authortype",
-				"author",
-				"affiliation"
-			]
-		},
-		"authortype": {
-			"key": "authortype",
-			"translatable": false,
-			"required": true,
 			"type": "SELECTION",
-			"selectionList": "authortype_list",
-			"subfield": true
-		},
-		"author": {
-			"key": "author",
-			"translatable": false,
-			"type": "STRING",
-			"subfield": true
-		},
-		"affiliation": {
-			"key": "affiliation",
-			"translatable": false,
-			"type": "STRING",
-			"subfield": true
-		},
-		"otherauthors": {
-			"key": "otherauthors",
-			"translatable": false,
-			"type": "CONTAINER",
-			"subfields": [
-				"authortype",
-				"otherauthor",
-				"otherauthoraffiliation"
-			]
-		},
-		"otherauthor": {
-			"key": "otherauthor",
-			"translatable": false,
-			"type": "STRING",
-			"subfield": true
-		},
-		"otherauthoraffiliation": {
-			"key": "otherauthoraffiliation",
-			"translatable": false,
-			"type": "STRING",
-			"subfield": true
-		},
-		"producers": {
-			"key": "producers",
-			"translatable": false,
-			"type": "CONTAINER",
-			"subfields": [
-				"producer",
-				"producerid",
-				"produceridtype",
-				"producerrole",
-				"projectnr",
-				"producerabbr"
-			]
-		},
-		"producer": {
-			"key": "producer",
-			"translatable": false,
-			"type": "STRING",
-			"subfield": true
-		},
-		"producerid": {
-			"key": "producerid",
-			"translatable": false,
-			"type": "STRING",
-			"subfield": true
-		},
-		"produceridtype": {
-			"key": "produceridtype",
-			"translatable": false,
-			"type": "STRING",
-			"subfield": true
-		},
-		"producerrole": {
-			"key": "producerrole",
-			"translatable": false,
-			"type": "STRING",
-			"subfield": true
-		},
-		"projectnr": {
-			"key": "projectnr",
-			"translatable": false,
-			"type": "STRING",
-			"subfield": true
-		},
-		"producerabbr": {
-			"key": "producerabbr",
-			"translatable": false,
-			"type": "STRING",
+			"selectionList": "partitle_lang",
 			"subfield": true
 		},
 		"biblcit": {
@@ -1061,7 +1346,7 @@
 		},
 		"abstract": {
             "key": "abstract",
-            "translatable": false,
+            "translatable": true,
             "type": "STRING"
 		},
 		"timeperiods": {
@@ -1094,8 +1379,8 @@
 			"subfield": true
 		},
 		"countries": {
+			"_comment": "TODO: Dialog should have an additional button that adds Finland as container row automatically",
 			"key": "countries",
-			"_comment": "TODO: Checkbox to define if country is Finland is missing?",
 			"translatable": false,
 			"type": "CONTAINER",
 			"subfields": [
@@ -1108,14 +1393,18 @@
 			"_comment": "TODO: link to reference missing?",
 			"translatable": false,
 			"required": true,
-			"type": "STRING",
+			"type": "SELECTION",
+			"selectionList": "country_list",
 			"subfield": true
 		},
 		"countryabbr": {
 			"key": "countryabbr",
 			"translatable": false,
-			"required": true,
-			"type": "STRING",
+			"required": false,
+			"type": "REFERENCE",
+			"reference": "countryabbr_ref",
+			"writable": false,
+			"editable": false,
 			"subfield": true
 		},
 		"universes": {
@@ -1129,7 +1418,7 @@
 		},
 		"universe": {
 			"key": "universe",
-			"translatable": false,
+			"translatable": true,
 			"required": true,
 			"type": "STRING",
 			"subfield": true
@@ -1143,7 +1432,7 @@
 		},
 		"geogcovers": {
 			"key": "geogcovers",
-			"translatable": false,
+			"translatable": true,
 			"type": "CONTAINER",
 			"subfields": [
 				"geogcover"
@@ -1151,7 +1440,7 @@
 		},
 		"geogcover": {
 			"key": "geogcover",
-			"translatable": false,
+			"translatable": true,
 			"required": true,
 			"type": "STRING",
 			"subfield": true
@@ -1168,15 +1457,13 @@
 		},
 		"colldate": {
 			"key": "colldate",
-			"_comment": "TODO: conditionally required.",
 			"translatable": false,
 			"type": "DATE",
 			"subfield": true
 		},
 		"colldatetext": {
 			"key": "colldatetext",
-			"_comment": "TODO: conditionally required.",
-			"translatable": false,
+			"translatable": true,
 			"type": "STRING",
 			"subfield": true
 		},
@@ -1187,99 +1474,275 @@
 			"selectionList": "colldateevent_list",
 			"subfield": true
 		},
-		"collectors": {
-			"key": "collectors",
-			"translatable": false,
-			"type": "CONTAINER",
-			"subfields": [
-				"authortype",
-				"collector",
-				"collectoraffiliation"
-			]
-		},
-		"collector": {
-			"key": "collector",
-			"translatable": false,
-			"type": "STRING",
-			"subfield": true
-		},
-		"collectoraffiliation": {
-			"key": "collectoraffiliation",
-			"translatable": false,
-			"type": "STRING",
-			"subfield": true
-		},
 		"analysis": {
 			"key": "analysis",
 			"translatable": false,
 			"type": "CONTAINER",
 			"subfields": [
-				"topicvocab",
-				"topic"
+				"analysisunitvocab",
+				"analysisunitvocaburi",
+				"analysisunit",
+				"analysisunitother",
+				"analysisunituri",
 			]
 		},
-		"timemethods": {
-			"key": "timemethods",
+		"analysisunitvocab": {
+			"key": "analysisunitvocab",
 			"translatable": false,
-			"type": "CONTAINER",
-			"subfields": [
-				"topicvocab",
-				"topic"
-			]
+			"type": "SELECTION",
+			"selectionList": "analysisunitvocab_list",
+			"subfield": true
 		},
-		"collmodes": {
-			"key": "collmodes",
+		"analysisunitvocaburi": {
+			"key": "analysisunitvocaburi",
 			"translatable": false,
-			"type": "CONTAINER",
-			"subfields": [
-				"topicvocab",
-				"topic"
-			]
+			"type": "REFERENCE",
+			"reference": "analysisunitvocaburi_ref",
+			"editable": false,
+			"writable": false,
+			"subfield": true
+		},
+		"analysisunit": {
+			"key": "analysisunit",
+			"translatable": false,
+			"required": true,
+			"type": "SELECTION",
+			"selectionList": "analysisunit_list",
+			"subfield": true
+		},
+		"analysisunitother": {
+			"key": "analysisunitother",
+			"translatable": true,
+			"type": "STRING",
+			"writable": false,
+			"subfield": true
+		},
+		"analysisunituri": {
+			"key": "analysisunituri",
+			"translatable": false,
+			"type": "REFERENCE",
+			"reference": "analysisunituri_ref",
+			"writable": false,
+			"editable": false,
+			"subfield": true
 		},
 		"instruments": {
 			"key": "instruments",
 			"translatable": false,
 			"type": "CONTAINER",
 			"subfields": [
-				"topicvocab",
-				"topic"
+				"instrumentvocab",
+				"instrumentvocaburi",
+				"instrument",
+				"instrumentother",
+				"instrumenturi"
 			]
+		},
+		"instrumentvocab": {
+			"key": "instrumentvocab",
+			"translatable": false,
+			"type": "SELECTION",
+			"selectionList": "instrumentvocab_list",
+			"subfield": true
+		},
+		"instrumentvocaburi": {
+			"key": "instrumentvocaburi",
+			"translatable": false,
+			"type": "REFERENCE",
+			"reference": "instrumentvocaburi_ref",
+			"editable": false,
+			"writable": false,
+			"subfield": true
+		},
+		"instrument": {
+			"key": "instrument",
+			"translatable": false,
+			"required": true,
+			"type": "SELECTION",
+			"selectionList": "instrument_list",
+			"subfield": true
+		},
+		"instrumentother": {
+			"key": "instrumentother",
+			"translatable": true,
+			"required": true,
+			"type": "STRING",
+			"subfield": true
+		},
+		"instrumenturi": {
+			"key": "instrumenturi",
+			"translatable": false,
+			"type": "REFERENCE",
+			"reference": "instrumenturi_ref",
+			"writable": false,
+			"editable": false,
+			"subfield": true
 		},
 		"sampprocs": {
 			"key": "sampprocs",
 			"translatable": false,
 			"type": "CONTAINER",
 			"subfields": [
+				"sampprocvocab",
+				"sampprocvocaburi",
 				"sampproc",
-				"sampprocdesc"
+				"sampprocother",
+				"sampproctext",
+				"sampprocuri"
 			]
+		},
+		"sampprocvocab": {
+			"key": "sampprocvocab",
+			"translatable": false,
+			"type": "SELECTION",
+			"selectionList": "sampprocvocab_list",
+			"subfield": true
+		},
+		"sampprocvocaburi": {
+			"key": "sampprocvocaburi",
+			"translatable": false,
+			"type": "REFERENCE",
+			"reference": "sampprocvocaburi_ref",
+			"editable": false,
+			"writable": false,
+			"subfield": true
 		},
 		"sampproc": {
 			"key": "sampproc",
 			"translatable": false,
-			"required": false,
+			"required": true,
 			"type": "SELECTION",
 			"selectionList": "sampproc_list",
 			"subfield": true
 		},
-		"sampprocdesc": {
-			"_comment": "Temporary placeholder for vocaburl while working things out",
-			"key": "sampprocdesc",
-			"translatable": false,
-			"required": false,
-			"type": "REFERENCE",
-			"reference": "sampprocdesc_ref",
-			"writable": false,
-			"subfield": true
-		},
 		"sampprocother": {
 			"key": "sampprocother",
-			"translatable": false,
-			"required": false,
+			"translatable": true,
+			"required": true,
 			"type": "STRING",
+			"subfield": true
+		},
+		"sampproctext": {
+			"key": "sampproctext",
+			"translatable": true,
+			"required": true,
+			"type": "STRING",
+			"subfield": true
+		},
+		"sampprocuri": {
+			"key": "sampprocuri",
+			"translatable": false,
+			"type": "REFERENCE",
+			"reference": "sampprocuri_ref",
+			"writable": false,
+			"editable": false,
+			"subfield": true
+		},
+		"timemethods": {
+			"key": "timemethods",
+			"translatable": false,
+			"type": "CONTAINER",
+			"subfields": [
+				"timemethodvocab",
+				"timemethodvocaburi",
+				"timemethod",
+				"timemethodother",
+				"timemethoduri"
+			]
+		},
+		"timemethodvocab": {
+			"key": "timemethodvocab",
+			"translatable": false,
+			"type": "SELECTION",
+			"selectionList": "timemethodvocab_list",
+			"subfield": true
+		},
+		"timemethodvocaburi": {
+			"key": "timemethodvocaburi",
+			"translatable": false,
+			"type": "REFERENCE",
+			"reference": "timemethodvocaburi_ref",
+			"editable": false,
 			"writable": false,
 			"subfield": true
 		},
+		"timemethod": {
+			"key": "timemethod",
+			"translatable": false,
+			"required": true,
+			"type": "SELECTION",
+			"selectionList": "timemethod_list",
+			"subfield": true
+		},
+		"timemethodother": {
+			"key": "timemethodother",
+			"translatable": true,
+			"required": true,
+			"type": "STRING",
+			"subfield": true
+		},
+		"timemethoduri": {
+			"key": "timemethoduri",
+			"translatable": false,
+			"type": "REFERENCE",
+			"reference": "timemethoduri_ref",
+			"writable": false,
+			"editable": false,
+			"subfield": true
+		},
+		"collmodes": {
+			"key": "collmodes",
+			"translatable": false,
+			"type": "CONTAINER",
+			"subfields": [
+				"collmodevocab",
+				"collmodevocaburi",
+				"collmode",
+				"collmodeother",
+				"collmodeuri"
+			]
+		},
+		"collmodevocab": {
+			"key": "collmodevocab",
+			"translatable": false,
+			"type": "SELECTION",
+			"selectionList": "collmodevocab_list",
+			"subfield": true
+		},
+		"collmodevocaburi": {
+			"key": "collmodevocaburi",
+			"translatable": false,
+			"type": "REFERENCE",
+			"reference": "collmodevocaburi_ref",
+			"editable": false,
+			"writable": false,
+			"subfield": true
+		},
+		"collmode": {
+			"key": "collmode",
+			"translatable": false,
+			"required": true,
+			"type": "SELECTION",
+			"selectionList": "collmode_list",
+			"subfield": true
+		},
+		"collmodeother": {
+			"key": "collmodeother",
+			"translatable": true,
+			"required": true,
+			"type": "STRING",
+			"subfield": true
+		},
+		"collmodeuri": {
+			"key": "collmodeuri",
+			"translatable": false,
+			"type": "REFERENCE",
+			"reference": "collmodeuri_ref",
+			"writable": false,
+			"editable": false,
+			"subfield": true
+		},
+		
 		"resprate": {
 			"key": "resprate",
 			"translatable": false,
@@ -1326,7 +1789,7 @@
 		},
 		"datasetnotes": {
 			"key": "datasetnotes",
-			"translatable": false,
+			"translatable": true,
 			"type": "STRING"
 		},
 		"appraisals": {
@@ -1339,7 +1802,7 @@
 		},
 		"appraisal": {
 			"key": "appraisal",
-			"translatable": false,
+			"translatable": true,
 			"type": "STRING",
 			"subfield": true
 		},
@@ -1369,19 +1832,19 @@
 		},
 		"othermaterialuri": {
 			"key": "othermaterialuri",
-			"translatable": false,
+			"translatable": true,
 			"type": "STRING",
 			"subfield": true
 		},
 		"othermateriallabel": {
 			"key": "othermateriallabel",
-			"translatable": false,
+			"translatable": true,
 			"type": "STRING",
 			"subfield": true
 		},
 		"othermaterialtext": {
 			"key": "othermaterialtext",
-			"translatable": false,
+			"translatable": true,
 			"type": "STRING",
 			"subfield": true
 		},
@@ -1447,7 +1910,7 @@
 		},
 		"cbattachments": {
 			"key": "cbattachments",
-			"translatable": false,
+			"translatable": true,
 			"type": "CONTAINER",
 			"subfields": [
 				"cbattachmentlocation",
@@ -1456,7 +1919,7 @@
 		},
 		"cbattachmentlocation": {
 			"key": "cbattachmentlocation",
-			"translatable": false,
+			"translatable": true,
 			"required": true,
 			"immutable": true,
 			"type": "STRING",
@@ -1464,10 +1927,189 @@
 		},
 		"cbattachmenttitle": {
 			"key": "cbattachmenttitle",
-			"translatable": false,
+			"translatable": true,
 			"required": true,
 			"type": "STRING",
 			"subfield": true
-		}
+		},
+		"packages": {
+			"_comment": "These should be generated and updated automatically",
+			"key": "packages",
+			"type": "CONTAINER",
+			"translatable": false,
+			"editable": false,
+			"subfields": [
+				"package",
+				"packageurn",
+				"packageversion"
+			]
+		},
+        "package": {
+        	"key": "package",
+        	"type": "SELECTION",
+        	"selectionList": "packagetype_list",
+        	"translatable": false,
+        	"editable": false
+        },
+        "packageurn": {
+        	"key": "packageurn",
+        	"type": "STRING",
+        	"translatable": false,
+        	"editable": false
+        },
+        "packageversion": {
+        	"key": "packageversion",
+        	"type": "STRING",
+        	"translatable": false,
+        	"editable": false
+        },
+        "dissemination": {
+        	"key": "dissemination",
+        	"type": "SELECTION",
+        	"selectionList": "dissemination_list",
+        	"translatable": false
+        },
+        "producers": {
+        	"key": "producers",
+        	"type": "CONTAINER",
+        	"translatable": false,
+        	"subfields": [
+        		"organisation",
+        		"organisationabbr",
+        		"agency",
+        		"agencyabbr",
+        		"section",
+        		"sectionabbr",
+        		"producerrole",
+        		"projectnr"
+        	]
+        },
+        "organisation": {
+        	"key": "organisation",
+        	"type": "SELECTION",
+        	"translatable": false,
+        	"subfield": true,
+        	"selectionList": "organisation_list"
+        },
+        "organisationabbr": {
+        	"key": "organisationabbr",
+        	"type": "REFERENCE",
+        	"translatable": false,
+        	"reference": "organisationabbr_ref",
+        	"subfield": true
+        },
+        "agency": {
+        	"key": "agency",
+        	"type": "SELECTION",
+        	"translatable": false,
+        	"subfield": true,
+        	"selectionList": "agency_list"
+        },
+        "agencyabbr": {
+        	"key": "agencyabbr",
+        	"type": "REFERENCE",
+        	"translatable": false,
+        	"reference": "agencyabbr_ref",
+        	"subfield": true
+        },
+        "section": {
+        	"key": "section",
+        	"type": "SELECTION",
+        	"translatable": false,
+        	"subfield": true,
+        	"selectionList": "section_list"
+        },
+        "sectionabbr": {
+        	"key": "sectionabbr",
+        	"type": "REFERENCE",
+        	"translatable": false,
+        	"reference": "sectionabbr_ref",
+        	"subfield": true
+        },
+        "producerrole": {
+        	"key": "producerrole",
+        	"type": "SELECTION",
+        	"translatable": false,
+        	"selectionList": "producerrole_list",
+        	"subfield": true,
+        },
+        "projectnr": {
+        	"key": "projectnr",
+        	"type": "STRING",
+        	"translatable": false,
+        	"subfield": true
+        },
+        "authors": {
+        	"key": "authors",
+        	"type": "CONTAINER",
+        	"translatable": false,
+        	"subfields": [
+        		"authortype",
+        		"author",
+        		"organisation",
+        		"organisationabbr",
+        		"agency",
+        		"agencyabbr",
+        		"section",
+        		"sectionabbr"
+        	]
+        },
+        "otherauthors": {
+        	"key": "otherauthors",
+        	"type": "CONTAINER",
+        	"translatable": false,
+        	"subfields": [
+        		"otherauthortype",
+        		"author",
+        		"otherauthorgroup",
+        		"organisation",
+        		"organisationabbr",
+        		"agency",
+        		"agencyabbr",
+        		"section",
+        		"sectionabbr"
+        	]
+        },
+        "collectors": {
+        	"key": "collectors",
+        	"type": "CONTAINER",
+        	"translatable": false,
+        	"subfields": [
+        		"authortype",
+        		"author",
+        		"organisation",
+        		"organisationabbr",
+        		"agency",
+        		"agencyabbr",
+        		"section",
+        		"sectionabbr"
+        	]
+        },
+        "authortype": {
+        	"key": "authortype",
+        	"type": "SELECTION",
+        	"selectionList": "authortype_list",
+        	"translatable": false,
+        	"subfield": true
+        },
+        "otherauthortype": {
+        	"key": "authortype",
+        	"type": "SELECTION",
+        	"selectionList": "otherauthortype_list",
+        	"translatable": false,
+        	"subfield": true
+        },
+        "author": {
+        	"key": "author",
+        	"type": "STRING",
+        	"translatable": false,
+        	"subfield": true
+        },
+        "authorgroup": {
+        	"key": "authorgroup",
+        	"type": "STRING",
+        	"subfield": true,
+        	"translatable": true
+        }
 	}
 }

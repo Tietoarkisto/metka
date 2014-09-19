@@ -164,11 +164,11 @@
             "key" : "relatedmaterial",
             "title" : "Oheismateriaalit"
         },
-        "studyid_col": {
+        "relatedstudyid": {
             "key" : "studyid_col",
             "title" : "Aineiston numero"
         },
-        "studytitle_col": {
+        "relatedstudytitle": {
             "key" : "studytitle_col",
             "title" : "Aineiston nimi"
         },
@@ -364,6 +364,28 @@
                                     }
                                 }
                             ]
+                        },
+                        {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Valmis pvm",
+                                    "field": {
+                                        "key": "aipcomplete"
+                                    }
+                                },
+                                {
+                                    "type": "EMPTYCELL"
+                                },
+                                {
+                                    "type": "CELL",
+                                    "title": "Aineiston luovutus",
+                                    "field": {
+                                        "key": "dissemination"
+                                    }
+                                }
+                            ]
                         }
                     ]
                 },
@@ -382,11 +404,7 @@
                                     }
                                 },
                                 {
-                                    "type": "CELL",
-                                    "title": "Valmis pvm",
-                                    "field": {
-                                        "key": "aipcomplete"
-                                    }
+                                	"type": "EMPTYCELL"
                                 }
                             ]
                         },
@@ -445,7 +463,7 @@
                                             "version",
                                             "versiondate",
                                             "versionpro",
-                                            "versionlabel",
+                                            "versionlabeldata",
                                             "versiontext"
                                         ]
                                     }
@@ -464,7 +482,7 @@
                                             "version",
                                             "versiondate",
                                             "versionpro",
-                                            "versionlabel",
+                                            "versionlabeldesc",
                                             "versiontext"
                                         ]
                                     }
@@ -494,10 +512,10 @@
                                     "type": "CELL",
                                     "title": "Liittyvät aineistot",
                                     "field": {
-                                        "key": "studies",
+                                        "key": "relatedstudies",
                                         "columnFields": [
-                                            "studyid_col",
-                                            "studytitle_col"
+                                            "relatedstudyid",
+                                            "relatedstudytitle"
                                         ]
                                     }
                                 }
@@ -709,7 +727,11 @@
                                         "type": "CELL",
                                         "title": "Aineiston muunkieliset nimet",
                                         "field": {
-                                            "key": "partitles"
+                                            "key": "partitles",
+                                            "columnFields": [
+                                            	"partitle",
+                                            	"partitlelang"
+                                            ]
                                         }
                                     }
                                 ]
@@ -732,7 +754,14 @@
                                             "type": "CELL",
                                             "title": "Aineiston tekijät",
                                             "field": {
-                                                "key": "authors"
+                                                "key": "authors",
+                                                "columnFields": [
+                                                	"authortype",
+                                                	"author",
+                                                	"organisation",
+                                                	"agency",
+                                                	"section"
+                                                ]
                                             }
                                         }
                                     ]
@@ -744,7 +773,15 @@
                                             "type": "CELL",
                                             "title": "Aineiston muut tekijät",
                                             "field": {
-                                                "key": "otherauthors"
+                                                "key": "otherauthors",
+                                                "columnFields": [
+                                                	"otherauthortype",
+                                                	"author",
+                                                	"otherauthorgroup",
+                                                	"organisation",
+                                                	"agency",
+                                                	"section"
+                                                ]
                                             }
                                         }
                                     ]
@@ -756,7 +793,14 @@
                                             "type": "CELL",
                                             "title": "Aineiston tuottaneet tahot",
                                             "field": {
-                                                "key": "producers"
+                                                "key": "producers",
+                                                "columnFields": [
+                                                	"organisation",
+									        		"agency",
+									        		"section",
+									        		"producerrole",
+									        		"projectnr"
+                                                ]
                                             }
                                         }
                                     ]
@@ -805,9 +849,9 @@
                                         "field": {
                                             "key": "keywords",
                                             "columnFields": [
-                                            	"keywordvocab",
+                                            	"keywordvocaburi",
                                             	"keyword",
-                                            	"keywordnovocab"
+                                            	"keyworduri"
                                             ]
                                         }
                                     }
@@ -821,8 +865,9 @@
                                         "field": {
                                             "key": "topics",
                                             "columnFields": [
-                                            	"topicvocab",
-                                            	"topic"
+                                            	"topicvocaburi",
+                                            	"topic",
+                                            	"topicuri"
                                             ]
                                         }
                                     }
@@ -868,7 +913,12 @@
                                         "type": "CELL",
                                         "title": "Aineiston ajallinen kattavuus",
                                         "field": {
-                                            "key": "timeperiods"
+                                            "key": "timeperiods",
+                                            "columnFields": [
+                                            	"timeperiod",
+                                            	"timeperiodtext",
+                                            	"timeperiodevent"
+                                            ]
                                         }
                                     }
                                 ]
@@ -879,7 +929,11 @@
                                         "type": "CELL",
                                         "title": "Maat, jota koskevaa tietoa aineisto sisältää",
                                         "field": {
-                                            "key": "countries"
+                                            "key": "countries",
+                                            "columnFields": [
+                                            	"countryabbr",
+                                            	"country"
+                                            ]
                                         }
                                     }
                                 ]
@@ -890,7 +944,11 @@
                                         "type": "CELL",
                                         "title": "Aineiston perusjoukot/otos (kvanti) tai aineiston kohdejoukot (kvali)",
                                         "field": {
-                                            "key": "universes"
+                                            "key": "universes",
+                                            "columnFields": [
+                                            	"universe",
+                                            	"universeclusion"
+                                            ]
                                         }
                                     }
                                 ]
@@ -901,7 +959,11 @@
                                         "type": "CELL",
                                         "title": "Maantieteelliset alueet, jotka aineisto kattaa",
                                         "field": {
-                                            "key": "geogcovers"
+                                            "key": "geogcovers",
+                                            "displayHeader": false,
+                                            "columnFields": [
+                                            	"geogcover"
+                                            ]
                                         }
                                     }
                                 ]
@@ -923,7 +985,12 @@
                                         "type": "CELL",
                                         "title": "Keräyksen ajankohdat",
                                         "field": {
-                                            "key": "colltime"
+                                            "key": "colltime",
+                                            "columnFields": [
+                                            	"colldate",
+                                            	"colldatetext",
+                                            	"colldateevent"
+                                            ]
                                         }
                                     }
                                 ]
@@ -934,7 +1001,14 @@
                                         "type": "CELL",
                                         "title": "Aineiston kerääjät",
                                         "field": {
-                                            "key": "collectors"
+                                            "key": "collectors",
+                                            "columnFields": [
+                                            	"collectortype",
+                                            	"collector",
+                                            	"organisation",
+                                            	"agency",
+                                            	"section"
+                                            ]
                                         }
                                     }
                                 ]
@@ -945,7 +1019,12 @@
                                         "type": "CELL",
                                         "title": "Havaintoyksiköt (kvanti) tai aineistoyksikkötyypit (kvali)",
                                         "field": {
-                                            "key": "analysis"
+                                            "key": "analysis",
+                                            "columnFields": [
+                                            	"analysisunitvocaburi",
+                                            	"analysisunit",
+                                            	"analysisunituri"
+                                            ]
                                         }
                                     }
                                 ]
@@ -956,7 +1035,12 @@
                                         "type": "CELL",
                                         "title": "Tutkimuksen aikaulottuvuudet",
                                         "field": {
-                                            "key": "timemethods"
+                                            "key": "timemethods",
+                                            "columnFields": [
+                                            	"timemethodvocaburi",
+                                            	"timemethod",
+                                            	"timemethoduri"
+                                            ]
                                         }
                                     }
                                 ]
@@ -967,7 +1051,12 @@
                                         "type": "CELL",
                                         "title": "Aineiston keruumenetelmät (kvanti) tai aineistonkeruun tekniikat (kvali)",
                                         "field": {
-                                            "key": "collmodes"
+                                            "key": "collmodes",
+                                            "columnFields": [
+                                            	"collmodevocaburi",
+                                            	"collmode",
+                                            	"collmodeuri"
+                                            ]
                                         }
                                     }
                                 ]
@@ -978,7 +1067,12 @@
                                         "type": "CELL",
                                         "title": "Keruuvälineet (kvanti) tai aineistonkeruun ohjeistukset (kvali)",
                                         "field": {
-                                            "key": "instruments"
+                                            "key": "instruments",
+                                            "columnFields": [
+                                            	"instrumentvocaburi",
+                                            	"instrument",
+                                            	"instrumenturi"
+                                            ]
                                         }
                                     }
                                 ]
@@ -989,7 +1083,12 @@
                                         "type": "CELL",
                                         "title": "Otantamenetelmät tai aineiston valintatavat",
                                         "field": {
-                                            "key": "sampprocs"
+                                            "key": "sampprocs",
+                                            "columnFields": [
+                                            	"sampprocvocaburi",
+                                            	"sampproc",
+                                            	"sampprocuri"
+                                            ]
                                         }
                                     }
                                 ]
@@ -1012,7 +1111,10 @@
                                         "title": "Lähdeaineistot",
                                         "field": {
                                             "key": "datasources",
-                                            "showSaveInfo": true
+                                            "displayHeader": false,
+                                            "columnFields": [
+                                            	"datasource"
+                                            ]
                                         }
                                     }
                                 ]
@@ -1032,11 +1134,13 @@
                                 "cells": [
                                     {
                                         "type": "CELL",
-                                        "colspan": 2,
-                                        "title": "TÄSTÄ PUUTTUU weightyesno check box",
+                                        "title": "ei painokertoimia",
                                         "field": {
                                             "key": "weightyesno"
                                         }
+                                    },
+                                    {
+                                    	"type": "EMPTYCELL"
                                     }
                                 ]
                             }, {
@@ -1093,8 +1197,12 @@
                                         "type": "CELL",
                                         "colspan": 2,
                                         "title": "Arvioinnit",
+                                        "displayHeader": false,
                                         "field": {
-                                            "key": "appraisals"
+                                            "key": "appraisals",
+                                            "columnFields": [
+                                            	"appraisal"
+                                            ]
                                         }
                                     }
                                 ]
@@ -1116,7 +1224,11 @@
                                         "type": "CELL",
                                         "title": "Käytön ja kuvailun oheismateriaalit",
                                         "field": {
-                                            "key": "relatedmaterials"
+                                            "key": "relatedmaterials",
+                                            "displayHeader": false,
+                                            "columnFields": [
+                                            	"relatedmaterial"
+                                            ]
                                         }
                                     }
                                 ]
@@ -1127,7 +1239,12 @@
                                         "type": "CELL",
                                         "title": "Linkit tietoarkiston ulkopuoliseen materiaaliin",
                                         "field": {
-                                            "key": "othermaterials"
+                                            "key": "othermaterials",
+                                            "columnFields": [
+                                            	"othermateriallabel",
+                                            	"othermaterialtext",
+                                            	"othermaterialuri"
+                                            ]
                                         }
                                     }
                                 ]
@@ -1138,7 +1255,11 @@
                                         "type": "CELL",
                                         "title": "Julkaisuihin liittyviä huomioita",
                                         "field": {
-                                            "key": "publicationcomments"
+                                            "key": "publicationcomments",
+                                            "displayHeader": false,
+                                            "columnFields": [
+                                         		"publicationcomment"   
+                                            ]
                                         }
                                     }
                                 ]
@@ -1184,6 +1305,19 @@
                                 }
                             }
                         ]
+                    },
+                    {
+                    	"type": "ROW",
+                    	"cells": [
+                    		{
+                    			"type": "CELL",
+                    			"title": "Tiedostoihin liittyvät huomautukset",
+                    			"field": {
+                    				"key": "allfilesnotes",
+                    				"multiline": true
+                    			}
+                    		}
+                    	]
                     }
                 ]
             }]
@@ -1240,12 +1374,25 @@
         {
             "type": "TAB",
             "title": "Tunnisteet",
-            "content": []
-        },
-        {
-            "type": "TAB",
-            "title": "Import/Export",
-            "content": []
+            "content": [{
+            	"type": "COLUMN",
+            	"columns": 1,
+            	"rows": [{
+            		"type": "ROW",
+            		"cells": [{
+            			"type": "CELL",
+            			"field": {
+            				"key": "packages",
+            				"showSaveInfo": true,
+            				"columnFields": [
+            					"package",
+            					"packageversion",
+            					"packageurn"
+            				]
+            			}
+            		}]
+            	}]
+        	}]
         }
 	],
     "buttons": [

@@ -102,11 +102,13 @@
 		},
 		"seriesname": {
 			"key": "seriesname",
+			"translatable": true,
 			"required": true,
 			"type": "STRING"
 		},
 		"seriesdesc": {
 			"key": "seriesdesc",
+			"translatable": true,
 			"type": "STRING",
 			"required": true
 		},

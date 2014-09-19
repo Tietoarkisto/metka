@@ -53,7 +53,7 @@ public final class Fields {
     public static final String CATEGORIES = "categories";
     public static final String VALUE = "value";
     public static final String LABEL = "label";
-    public static final String CATEGORYSTAT = "categorystat";
+    public static final String STAT = "stat";
     public static final String MISSING = "missing";
     public static final String PARTITLES = "partitles";
     public static final String PARTITLE = "partitle";
