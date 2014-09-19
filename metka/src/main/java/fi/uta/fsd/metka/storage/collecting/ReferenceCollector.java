@@ -49,7 +49,7 @@ public class ReferenceCollector {
 
         Configuration configuration = configPair.getRight();
         ReferencePath root = formReferencePath(request.getKey(), request, configuration, null);
-        if(root.getReference() == null) {
+        if(root != null && root.getReference() == null) {
             // Top value has no reference but has a provided value. This means that the whole stack will collapse to
             ReferenceOption option = new ReferenceOption(root.getValue(), new ReferenceOptionTitle(ReferenceTitleType.LITERAL, root.getValue()));
             options.add(option);

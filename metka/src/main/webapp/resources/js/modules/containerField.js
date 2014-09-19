@@ -53,6 +53,8 @@ define(function (require) {
                         .toggleClass('hiddenByTranslationState', $thead.children('tr').children().eq(i).hasClass('hiddenByTranslationState'));
 
                     if (fieldOptions.type === 'REFERENCECONTAINER') {
+                        var fieldValues = {};
+                        fieldValues[key] = transferRow.value;
                         require('./server')('options', {
                             data: JSON.stringify({
                                 key: key,
@@ -61,11 +63,12 @@ define(function (require) {
                                     container: key,
                                     confType: options.dataConf.key.type,
                                     confVersion: options.dataConf.key.version,
-                                    dependencyValue: transferRow.value
+                                    language: lang,
+                                    fieldValues: fieldValues
                                 }]
                             }),
                             success: function (data) {
-                                $td.text(data.responses.length && data.responses[0].options.length ? data.responses[0].options[0].title.value.default : EMPTY);
+                                $td.text(data.responses.length && data.responses[0].options.length ? data.responses[0].options[0].title.value : EMPTY);
                             }
                         });
                         return $td;
@@ -122,21 +125,14 @@ define(function (require) {
                             return EMPTY;
                         }
                         if (type === 'SELECTION') {
-                            if (typeof value !== 'undefined') {
-                                var text;
-                                if (getPropertyNS(options, 'dataConf.selectionLists', options.dataConf.fields[column].selectionList, 'options').some(function (option) {
-                                    if (option.value === value) {
-                                        text = require('./selectInput').optionText(option);
-                                        return true;
-                                    }
-                                })) {
-                                    return text;
-                                }
-
-                                log('missing translation', key, value);
+                            if (typeof value === 'undefined') {
                                 return EMPTY;
                             }
-                            return EMPTY;
+
+                            require('./selectInput').optionText(options, lang, column, transferRow, value, function (text) {
+                                $td.append(typeof text === 'undefined' ? EMPTY : text);
+                            });
+                            return;
                         }
                         log('not implemented', column, type);
                         return EMPTY;
