@@ -1232,11 +1232,11 @@
 			"translatable": false,
 			"type": "CONTAINER",
 			"subfields": [
-				"keywordvocab",
-				"keyword",
-				"keywordnovocab",
-				"keywordvocaburi",
-				"keyworduri"
+                "keywordvocab",
+                "keyword",
+                "keywordnovocab",
+                "keywordvocaburi",
+                "keyworduri"
 			]
 		},
 		"keywordvocab": {
@@ -2085,8 +2085,8 @@
         	"translatable": false,
         	"subfield": true
         },
-        "authorgroup": {
-        	"key": "authorgroup",
+        "otherauthorgroup": {
+        	"key": "otherauthorgroup",
         	"type": "STRING",
         	"subfield": true,
         	"translatable": true

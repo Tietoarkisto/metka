@@ -84,6 +84,10 @@
             "key": "keyword",
             "title": "Asiasana"
         },
+        "keyworduri": {
+            "key": "keyworduri",
+            "title": "Asiasana URI"
+        },
         "keywordnovocab": {
             "key": "keywordnovocab",
             "title": "Muu sana"
@@ -91,6 +95,10 @@
         "keywordvocab": {
             "key": "keywordvocab",
             "title": "Sanasto"
+        },
+        "keywordvocaburi": {
+            "key": "keywordvocaburi",
+            "title": "Sanasto URI"
         },
         "note": {
             "key" : "note",

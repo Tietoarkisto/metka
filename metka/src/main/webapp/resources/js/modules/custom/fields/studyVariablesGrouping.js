@@ -28,20 +28,22 @@ define(function (require) {
                         data: JSON.stringify({
                             key: key,
                             requests: rows.map(function (transferRow) {
+                                var fieldValues = {};
+                                fieldValues[key] = transferRow.value;
                                 return {
                                     key: column,
                                     container: key,
                                     confType: options.dataConf.key.type,
                                     confVersion: options.dataConf.key.version,
-                                    dependencyValue: transferRow.value
+                                    fieldValues: fieldValues
                                 }
                             })
                         }),
                         success: function (data) {
                             var variables = data.responses.map(function (response) {
                                 return {
-                                    text: response.options[0].title.value.default,
-                                    value: response.dependencyValue
+                                    text: response.options[0].title.value,
+                                    value: response.fieldValues.variables
                                 };
                             });
 
