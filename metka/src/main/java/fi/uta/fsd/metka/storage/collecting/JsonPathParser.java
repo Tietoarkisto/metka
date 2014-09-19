@@ -231,8 +231,15 @@ class JsonPathParser {
                 break;
             case OBJECT: // Recursively call this method for the next path step. Return result.
                 String step = path[level];
-                JsonNode result = findFirstTerminatingValuePathStep(level, node.get(step), path);
-                return result;
+                JsonNode next = node.get(step);
+                if(next != null) {
+                    JsonNode result = findFirstTerminatingValuePathStep(level, next, path);
+                    return result;
+                } else {
+                    JsonNode to = node.get("&"+step);
+                    return to;
+                }
+
             case STRING:
             case BOOLEAN:
             case NUMBER: // Checks that path should terminate at this value and return true if OK. This should cause previous iteration to return its node.

@@ -13,14 +13,12 @@
                         "default": "Ei tietoa"
                     },
                     "value": "1"
-                },
-                {
+                },{
                     "&title": {
                         "default": "Kyllä"
                     },
                     "value": "2"
-                },
-                {
+                },{
                     "&title": {
                         "default": "Ei"
                     },
@@ -37,20 +35,17 @@
                         "default": "Suomi"
                     },
                     "value": "fi"
-                },
-                {
+                },{
                     "&title": {
                         "default": "Englanti"
                     },
                     "value": "en"
-                },
-                {
+                },{
                     "&title": {
                         "default": "Ruotsi"
                     },
                     "value": "sv"
-                },
-                {
+                },{
                     "&title": {
                         "default": "Muu"
                     },
@@ -67,20 +62,17 @@
                         "default": "Ei tietoa"
                     },
                     "value": "0"
-                },
-                {
+                },{
                     "&title": {
                         "default": "Alkup. tutkija ilmoit."
                     },
                     "value": "1"
-                },
-                {
+                },{
                     "&title": {
                         "default": "Oma paikannus"
                     },
                     "value": "2"
-                },
-                {
+                },{
                     "&title": {
                         "default": "käyttäjä ilmoit."
                     },
@@ -94,14 +86,11 @@
             "options": [
                 {
                     "value": "DOI"
-                },
-                {
+                },{
                     "value": "URN"
-                },
-                {
+                },{
                     "value": "PURL"
-                },
-                {
+                },{
                     "value": "LSID"
                 }
             ]

@@ -200,6 +200,9 @@ define(function (require) {
                     },
                     savedAt: {
                         type: "DATE"
+                    },
+                    search: {
+                        type: "STRING"
                     }
                 }
             }

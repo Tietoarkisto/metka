@@ -328,31 +328,10 @@
 				}
 			]
 		},
-		"topicvocab_list": {
-			"key": "topicvocab_list",
-			"type": "REFERENCE",
-			"reference": ""
-		},
-		"topic_list": {
-			"key": "topic_list",
-			"type": "REFERENCE",
-			"reference": ""
-		},
 		"timeperiodevent_list": {
 			"key": "timeperiodevent_list",
 			"sublistKey": "start_end_single",
 			"type": "SUBLIST"
-		},
-		"sampproc_list": {
-			"key": "sampproc_list",
-			"type": "REFERENCE",
-			"reference": "sampproc_ref",
-			"freeText": [
-				"value4",
-				"value8"
-			],
-			"freeTextKey": "sampprocother",
-			"includeEmpty": true
 		},
 		"start_end_single": {
 			"key": "start_end_single",
@@ -518,20 +497,20 @@
 					"value": "AIP"
 				},{
 					"value": "DIP"
-				},
+				}
 			]
 		},
 		"dissemination_list": {
 			"key": "dissemination_list",
 			"type": "REFERENCE",
-			"target": "dissemination_ref"
+			"reference": "dissemination_ref"
 		},
 		"country_list": {
 			"key": "country_list",
 			"type": "REFERENCE",
 			"reference": "country_ref"
 		},
-		
+
 		"organisation_list": {
 			"key": "organisation_list",
 			"type": "REFERENCE",
@@ -660,181 +639,182 @@
 			"target": "files",
 			"valuePath": "filelanguage"
 		},
+
 		"keywordvocab_ref": {
 			"key": "keywordvocab_ref",
 			"type": "JSON",
-			"target": "keyword_vocabularies",
-			"valuePath": "vocab"
+			"target": "Controlled Vocabulary for testing",
+			"valuePath": "codeListID"
 		},
 		"keywordvocaburi_ref": {
 			"key": "keywordvocaburi_ref",
 			"type": "DEPENDENCY",
 			"target": "keywordvocab",
-			"valuePath": "vocaburi"
+			"valuePath": "codeListURN"
 		},
 		"keyword_ref": {
 			"key": "keyword_ref",
 			"type": "DEPENDENCY",
 			"target": "keywordvocab",
-			"valuePath": "keywords.keyword"
+			"valuePath": "terms.id"
 		},
 		"keyworduri_ref": {
 			"key": "keyworduri_ref",
 			"type": "DEPENDENCY",
 			"target": "keyword",
-			"valuePath": "keyworduri"
+			"valuePath": "key"
 		},
 		"analysisunitvocab_ref": {
 			"key": "analysisunitvocab_ref",
 			"type": "JSON",
-			"target": "analysisunit_vocabularies",
-			"valuePath": "vocab"
+			"target": "Controlled Vocabulary for testing",
+			"valuePath": "codeListID"
 		},
 		"analysisunitvocaburi_ref": {
 			"key": "analysisunitvocaburi_ref",
 			"type": "DEPENDENCY",
 			"target": "analysisunitvocab",
-			"valuePath": "vocaburi"
+			"valuePath": "codeListURN"
 		},
 		"analysisunit_ref": {
 			"key": "analysisunit_ref",
 			"type": "DEPENDENCY",
 			"target": "analysisunitvocab",
-			"valuePath": "analysisunits.analysisunit"
+			"valuePath": "tems.id"
 		},
 		"analysisunituri_ref": {
 			"key": "analysisunituri_ref",
 			"type": "DEPENDENCY",
 			"target": "analysisunit",
-			"valuePath": "analysisunituri"
+			"valuePath": "key"
 		},
-		
+
 		"collmodevocab_ref": {
 			"key": "collmodevocab_ref",
 			"type": "JSON",
-			"target": "collmode_vocabularies",
-			"valuePath": "vocab"
+			"target": "Controlled Vocabulary for testing",
+			"valuePath": "codeListID"
 		},
 		"collmodevocaburi_ref": {
 			"key": "collmodevocaburi_ref",
 			"type": "DEPENDENCY",
 			"target": "collmodevocab",
-			"valuePath": "vocaburi"
+			"valuePath": "codeListURN"
 		},
 		"collmode_ref": {
 			"key": "collmode_ref",
 			"type": "DEPENDENCY",
 			"target": "collmodevocab",
-			"valuePath": "collmodes.collmode"
+			"valuePath": "terms.id"
 		},
 		"collmodeuri_ref": {
 			"key": "collmodeuri_ref",
 			"type": "DEPENDENCY",
 			"target": "collmode",
-			"valuePath": "collmodeuri"
+			"valuePath": "key"
 		},
 		"instrumentvocab_ref": {
 			"key": "instrumentvocab_ref",
 			"type": "JSON",
-			"target": "instrument_vocabularies",
-			"valuePath": "vocab"
+			"target": "Controlled Vocabulary for testing",
+			"valuePath": "codeListID"
 		},
 		"instrumentvocaburi_ref": {
 			"key": "instrumentvocaburi_ref",
 			"type": "DEPENDENCY",
 			"target": "instrumentvocab",
-			"valuePath": "vocaburi"
+			"valuePath": "codeListURN"
 		},
 		"instrument_ref": {
 			"key": "instrument_ref",
 			"type": "DEPENDENCY",
 			"target": "instrumentvocab",
-			"valuePath": "instruments.instrument"
+			"valuePath": "terms.id"
 		},
 		"instrumenturi_ref": {
 			"key": "instrumenturi_ref",
 			"type": "DEPENDENCY",
 			"target": "instrument",
-			"valuePath": "instrumenturi"
+			"valuePath": "key"
 		},
 		"sampprocvocab_ref": {
 			"key": "sampprocvocab_ref",
 			"type": "JSON",
-			"target": "sampproc_vocabularies",
-			"valuePath": "vocab"
+			"target": "Controlled Vocabulary for testing",
+			"valuePath": "codeListID"
 		},
 		"sampprocvocaburi_ref": {
 			"key": "sampprocvocaburi_ref",
 			"type": "DEPENDENCY",
 			"target": "sampprocvocab",
-			"valuePath": "vocaburi"
+			"valuePath": "codeListURN"
 		},
 		"sampproc_ref": {
 			"key": "sampproc_ref",
 			"type": "DEPENDENCY",
 			"target": "sampprocvocab",
-			"valuePath": "sampprocs.sampproc"
+			"valuePath": "terms.id"
 		},
 		"sampprocuri_ref": {
 			"key": "sampprocuri_ref",
 			"type": "DEPENDENCY",
 			"target": "sampproc",
-			"valuePath": "sampprocuri"
+			"valuePath": "key"
 		},
 		"topicvocab_ref": {
 			"key": "topicvocab_ref",
 			"type": "JSON",
-			"target": "topic_vocabularies",
-			"valuePath": "vocab"
+			"target": "Controlled Vocabulary for testing",
+			"valuePath": "codeListID"
 		},
 		"topicvocaburi_ref": {
 			"key": "topicvocaburi_ref",
 			"type": "DEPENDENCY",
 			"target": "topicvocab",
-			"valuePath": "vocaburi"
+			"valuePath": "codeListURN"
 		},
 		"topic_ref": {
 			"key": "topic_ref",
 			"type": "DEPENDENCY",
 			"target": "topicvocab",
-			"valuePath": "topics.topic"
+			"valuePath": "terms.id"
 		},
 		"topicuri_ref": {
 			"key": "topicuri_ref",
 			"type": "DEPENDENCY",
 			"target": "topic",
-			"valuePath": "topicuri"
+			"valuePath": "key"
 		},
 		"timemethodvocab_ref": {
 			"key": "timemethodvocab_ref",
 			"type": "JSON",
-			"target": "timemethod_vocabularies",
-			"valuePath": "vocab"
+			"target": "Controlled Vocabulary for testing",
+			"valuePath": "codeListID"
 		},
 		"timemethodvocaburi_ref": {
 			"key": "timemethodvocaburi_ref",
 			"type": "DEPENDENCY",
 			"target": "timemethodvocab",
-			"valuePath": "vocaburi"
+			"valuePath": "codeListURN"
 		},
 		"timemethod_ref": {
 			"key": "timemethod_ref",
 			"type": "DEPENDENCY",
 			"target": "timemethodvocab",
-			"valuePath": "timemethods.timemethod"
+			"valuePath": "terms.id"
 		},
 		"timemethoduri_ref": {
 			"key": "timemethoduri_ref",
 			"type": "DEPENDENCY",
 			"target": "timemethod",
-			"valuePath": "timemethoduri"
+			"valuePath": "key"
 		},
 		"dissemination_ref": {
 			"key": "dissemination_ref",
 			"type": "JSON",
-			"target": "dissemination_codes",
-			"valuePath": "code",
-			"titlePath": "title"
+			"target": "Controlled Vocabulary for testing",
+			"valuePath": "codeListID",
+			"titlePath": "codeListName"
 		},
 		"country_ref": {
 			"key": "country_ref",
@@ -849,7 +829,7 @@
 			"target": "country",
 			"valuePath": "alpha-2"
 		},
-		
+
 		"organisation_ref": {
 			"key": "organisation_ref",
 			"type": "JSON",
@@ -1483,7 +1463,7 @@
 				"analysisunitvocaburi",
 				"analysisunit",
 				"analysisunitother",
-				"analysisunituri",
+				"analysisunituri"
 			]
 		},
 		"analysisunitvocab": {
@@ -1742,7 +1722,7 @@
 			"editable": false,
 			"subfield": true
 		},
-		
+
 		"resprate": {
 			"key": "resprate",
 			"translatable": false,
@@ -2031,7 +2011,7 @@
         	"type": "SELECTION",
         	"translatable": false,
         	"selectionList": "producerrole_list",
-        	"subfield": true,
+        	"subfield": true
         },
         "projectnr": {
         	"key": "projectnr",

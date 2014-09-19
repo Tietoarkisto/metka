@@ -82,6 +82,10 @@ define(function (require) {
             onTranslationLangChange(undefined, $('input[name="translation-lang"]:checked').val() || options.defaultLang);
         }
 
+        if(options.type === 'EMPTYCELL') {
+            return this;
+        }
+
         var $elem = this;
 
         //this.options.field.multichoice
