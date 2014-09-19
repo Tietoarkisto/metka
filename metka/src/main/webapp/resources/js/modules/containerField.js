@@ -292,25 +292,6 @@ define(function (require) {
                              var target = options.dataConf.references[options.dataConf.fields[key].reference].target;
                              }
                              })*/
-                            .append(function () {
-                                var response = [];
-                                (getPropertyNS(options, 'dataConf.fields', key, 'subfields') || [])
-                                    .filter(function (field) {
-                                        // ui only shows summary fields
-                                        return !!options.dataConf.fields[field].summaryField;
-                                    })
-                                    .forEach(function (field) {
-                                        // if container is not translatable && subfield is translatable, add columns
-                                        if (!fieldOptions.translatable && options.dataConf.fields[field].translatable) {
-                                            ['DEFAULT', 'EN', 'SV'].forEach(function (lang) {
-                                                response.push(require('./langLabel')(field2TableHead(field).data('lang', lang), lang));
-                                            });
-                                        } else {
-                                            response.push(field2TableHead(field));
-                                        }
-                                    });
-                                return response;
-                            })
                             .append((options.field.columnFields || [])
                                 .map(field2TableHead))
                             .append(function () {
