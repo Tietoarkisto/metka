@@ -71,8 +71,6 @@ define(function (require) {
                 require('./data')(options).onChange(function () {
                     var dataConf = options.dataConf.fields[key];
                     if (dataConf.type === 'REFERENCE') {
-
-
                         var reference = require('./utils/getPropertyNS')(options, 'dataConf.references', dataConf.reference);
                         options.$events.on('data-change-{key}-{lang}'.supplant({
                             key: reference.target,
@@ -80,9 +78,13 @@ define(function (require) {
                         }), function (e, value) {
                             var fieldValues = {};
                             fieldValues[reference.target] = value;
-                            log(reference, dataConf)
-                            fieldValues['keywordvocab'] = 'Test 1';
-                            log('va',value)
+
+                            var ref2 = require('./utils/getPropertyNS')(options, 'dataConf.fields', reference.target);
+                            var refSelectionList = require('./utils/getPropertyNS')(options, 'dataConf.selectionLists', ref2.selectionList);
+                            var ref3 = require('./utils/getPropertyNS')(options, 'dataConf.references', refSelectionList.reference, 'target');
+
+                            fieldValues[ref3] = require('./data')(options)(ref3).getByLang(lang);
+
                             require('./server')('options', {
                                 data: JSON.stringify({
                                     requests : [{
