@@ -4,6 +4,7 @@ import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.FieldType;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
+import fi.uta.fsd.metka.model.configuration.SelectionList;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.general.ConfigurationKey;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
@@ -17,8 +18,6 @@ import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -27,9 +26,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
+import static fi.uta.fsd.Logger.error;
+
 @Repository("configurationRepository")
 public class ConfigurationRepositoryImpl implements ConfigurationRepository {
-    private static Logger logger = LoggerFactory.getLogger(ConfigurationRepositoryImpl.class);
 
     @PersistenceContext(name = "entityManager")
     private EntityManager em;
@@ -58,7 +58,7 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
             entity.setVersion(configuration.getKey().getVersion());
             entity.setType(configuration.getKey().getType());
         } else if(list.size() > 1) {
-            logger.error("There are multiple instances of " + configuration.toString() + " in the database.");
+            error(ConfigurationRepositoryImpl.class, "There are multiple instances of " + configuration.toString() + " in the database.");
             return ReturnResult.DATABASE_DISCREPANCY;
         } else {
             entity = list.get(0);
@@ -70,7 +70,7 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
             em.merge(entity);
             return ReturnResult.DATABASE_INSERT_SUCCESS;
         } else {
-            logger.error("Serialization of configuration failed, no merge performed for "+configuration.toString());
+            error(ConfigurationRepositoryImpl.class, "Serialization of configuration failed, no merge performed for "+configuration.toString());
             return ReturnResult.DATABASE_INSERT_FAILED;
         }
     }
@@ -80,6 +80,22 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
         for(Field field : configuration.getFields().values()) {
             if(field.getType() == FieldType.CONTAINER && field.getTranslatable()) {
                 setSubfieldsToTranslatable(field, configuration);
+            }
+        }
+
+        // Set all freeText fields to writable false if they are STRING fields
+        for(SelectionList list : configuration.getSelectionLists().values()) {
+            if(StringUtils.hasText(list.getFreeTextKey())) {
+                Field field = configuration.getField(list.getFreeTextKey());
+                if(field != null) {
+                    if(field.getType().isCanBeFreeText()) {
+                        field.setWritable(false);
+                    } else {
+                        error(ConfigurationRepositoryImpl.class, "Field "+field.getKey()+" has type "+field.getType()+" which can not be used as free text");
+                    }
+                } else {
+                    error(ConfigurationRepositoryImpl.class, "List "+list.getKey()+" uses freeTextKey "+list.getFreeTextKey()+" but field is not in the configuration.");
+                }
             }
         }
     }
@@ -113,7 +129,7 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
             entity.setVersion(configuration.getKey().getVersion());
             entity.setType(configuration.getKey().getType());
         } else if(list.size() > 1) {
-            logger.error("There are multiple instances of "+configuration.toString()+" in the database.");
+            error(ConfigurationRepositoryImpl.class, "There are multiple instances of "+configuration.toString()+" in the database.");
             return ReturnResult.DATABASE_DISCREPANCY;
         } else {
             entity = list.get(0);
@@ -125,7 +141,7 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
             em.merge(entity);
             return ReturnResult.DATABASE_INSERT_SUCCESS;
         } else {
-            logger.error("Serialization of guiconfiguration failed, no merge performed for "+configuration.toString());
+            error(ConfigurationRepositoryImpl.class, "Serialization of guiconfiguration failed, no merge performed for "+configuration.toString());
             return ReturnResult.DATABASE_INSERT_FAILED;
         }
     }
@@ -136,7 +152,7 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
         if(pair.getLeft() == SerializationResults.DESERIALIZATION_SUCCESS) {
             return insert(pair.getRight());
         } else {
-            logger.error("Failed to deserialize configuration for insertion.");
+            error(ConfigurationRepositoryImpl.class, "Failed to deserialize configuration for insertion.");
             return ReturnResult.DATABASE_INSERT_FAILED;
         }
     }
@@ -147,7 +163,7 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
         if(pair.getLeft() == SerializationResults.DESERIALIZATION_SUCCESS) {
             return insert(pair.getRight());
         } else {
-            logger.error("Failed to deserialize guiconfiguration for insertion.");
+            error(ConfigurationRepositoryImpl.class, "Failed to deserialize guiconfiguration for insertion.");
             return ReturnResult.DATABASE_INSERT_FAILED;
         }
     }
@@ -173,7 +189,7 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
                 .getResultList();
 
         if(list.size() > 1) {
-            logger.error("There are multiple instances of " + key.toString() + " in the database.");
+            error(ConfigurationRepositoryImpl.class, "There are multiple instances of " + key.toString() + " in the database.");
             return new ImmutablePair<>(ReturnResult.DATABASE_DISCREPANCY, null);
         }
 
@@ -233,13 +249,13 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
 
         ConfigurationEntity entity = list.get(0);
         if(!StringUtils.hasText(entity.getData())) {
-            logger.error("Configuration entity "+entity.toString()+" contained no data.");
+            error(ConfigurationRepositoryImpl.class, "Configuration entity "+entity.toString()+" contained no data.");
             return new ImmutablePair<>(ReturnResult.CONFIGURATION_CONTAINED_NO_DATA, null);
         }
 
         Pair<SerializationResults, Configuration> pair = json.deserializeDataConfiguration(entity.getData());
         if(pair.getLeft() != SerializationResults.DESERIALIZATION_SUCCESS) {
-            logger.error("Deserialization failed for configuration "+entity.toString());
+            error(ConfigurationRepositoryImpl.class, "Deserialization failed for configuration "+entity.toString());
             return new ImmutablePair<>(ReturnResult.CONFIGURATION_NOT_VALID, null);
         } else {
             return new ImmutablePair<>(ReturnResult.CONFIGURATION_FOUND, pair.getRight());
@@ -267,7 +283,7 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
                         .getResultList();
 
         if(list.size() > 1) {
-            logger.error("There are multiple instances of " + key.toString() + " in the database.");
+            error(ConfigurationRepositoryImpl.class, "There are multiple instances of " + key.toString() + " in the database.");
             return new ImmutablePair<>(ReturnResult.DATABASE_DISCREPANCY, null);
         }
 
@@ -294,13 +310,13 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
 
         GUIConfigurationEntity entity = list.get(0);
         if(!StringUtils.hasText(entity.getData())) {
-            logger.error("Configuration entity "+entity.toString()+" contained no data.");
+            error(ConfigurationRepositoryImpl.class, "Configuration entity "+entity.toString()+" contained no data.");
             return new ImmutablePair<>(ReturnResult.CONFIGURATION_CONTAINED_NO_DATA, null);
         }
 
         Pair<SerializationResults, GUIConfiguration> pair = json.deserializeGUIConfiguration(entity.getData());
         if(pair.getLeft() != SerializationResults.DESERIALIZATION_SUCCESS) {
-            logger.error("Deserialization failed for configuration "+entity.toString());
+            error(ConfigurationRepositoryImpl.class, "Deserialization failed for configuration "+entity.toString());
             return new ImmutablePair<>(ReturnResult.CONFIGURATION_NOT_VALID, null);
         } else {
             return new ImmutablePair<>(ReturnResult.CONFIGURATION_FOUND, pair.getRight());

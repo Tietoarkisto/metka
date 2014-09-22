@@ -9,6 +9,7 @@ import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.configuration.Reference;
+import fi.uta.fsd.metka.model.configuration.SelectionList;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.change.ContainerChange;
@@ -757,10 +758,10 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                         returnPair.setRight(true);
                     }
                 }
-                saveValueFor(Language.DEFAULT, returnPair, field, configuration, tf, dataFields, changeMap);
+                saveValueFor(Language.DEFAULT, returnPair, field, configuration, tf, dataFields, changeMap, transferFields);
             } else {
                 for (Language language : Language.values()) {
-                    saveValueFor(language, returnPair, field, configuration, tf, dataFields, changeMap);
+                    saveValueFor(language, returnPair, field, configuration, tf, dataFields, changeMap, transferFields);
                 }
             }
 
@@ -769,7 +770,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
 
         private void saveValueFor(Language language, MutablePair<StatusCode, Boolean> returnPair, Field field,
                                   Configuration configuration, TransferField transferField, DataFieldContainer dataFields,
-                                  Map<String, Change> changeMap) {
+                                  Map<String, Change> changeMap, TransferFieldContainer transferFields) {
             Value value = transferField.asValue(language);
             Pair<StatusCode, ValueDataField> codePair = dataFields.dataField(
                     ValueDataFieldCall
@@ -800,6 +801,44 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
 
                 if (statusCode == StatusCode.FIELD_INSERT || statusCode == StatusCode.FIELD_UPDATE) {
                     returnPair.setLeft(StatusCode.FIELD_CHANGED);
+                }
+
+                // If this field is a SELECTION field then check for free text value.
+                // If the current value is a free text value then save the free text field, otherwise clear the free text field
+                if(field.getType() == FieldType.SELECTION) {
+                    SelectionList list = configuration.getRootSelectionList(field.getSelectionList());
+                    // If we don't have any free text values, don't have a defined free text field or don't have a current value then there's no point in continuing
+                    if(list.getFreeText().isEmpty() || !value.hasValue() || !StringUtils.hasText(list.getFreeTextKey())) {
+                        return;
+                    }
+
+                    boolean saveFreeText = false;
+                    for(String free : list.getFreeText()) {
+                        if(free.equals(value.getValue())) {
+                            saveFreeText = true;
+                            break;
+                        }
+                    }
+                    if(saveFreeText) {
+                        // Let's get the free text value from the
+
+                        TransferField tf = transferFields.getField(list.getFreeTextKey());
+                        if(tf == null || tf.getValueFor(language) == null) {
+                            // New value is empty so let's try and clear the value just in case
+                            dataFields.dataField(ValueDataFieldCall.set(list.getFreeTextKey(), new Value(""), language)
+                                .setChangeMap(changeMap).setConfiguration(configuration).setInfo(info));
+                        } else {
+                            // We have at least some kind of value for free text, if current value is null then nothing should happen
+                            // if there's an original value so we should be ok with trying to set the value to current value in transfer value
+                            dataFields.dataField(ValueDataFieldCall.set(list.getFreeTextKey(), new Value(tf.getValueFor(language).getCurrent()), language)
+                                .setChangeMap(changeMap).setConfiguration(configuration).setInfo(info));
+                        }
+
+                    } else {
+                        // Let's make sure the free text field is clear
+                        dataFields.dataField(ValueDataFieldCall.set(list.getFreeTextKey(), new Value(""), language)
+                                .setChangeMap(changeMap).setConfiguration(configuration).setInfo(info));
+                    }
                 }
             }
         }

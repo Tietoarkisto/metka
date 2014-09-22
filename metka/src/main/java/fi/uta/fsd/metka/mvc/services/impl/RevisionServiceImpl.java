@@ -268,8 +268,44 @@ public class RevisionServiceImpl implements RevisionService {
     }
 
     private void addRemoveCommand(TransferData data) {
+        switch(data.getConfiguration().getType()) {
+            case STUDY_ATTACHMENT:
+            case STUDY_VARIABLE:
+            case STUDY_VARIABLES: {
+                // In these cases we need to reindex study/studies instead of removing something
+                Long id = Long.parseLong(data.getField("study").getValueFor(Language.DEFAULT).getCurrent());
+                indexer.addStudyIndexerCommand(id, true);
+                break;
+            }
+            default:
+                for(Language language : Language.values()) {
+                    indexer.addCommand(
+                    RevisionIndexerCommand
+                    .remove(data.getConfiguration().getType(), language, data.getKey().getId(), data.getKey().getNo()));
+                }
+                break;
+        }
     }
 
+
     private void addIndexCommand(TransferData data) {
+        // Separates calls to index sub components of study, should really be collected as a queue so that multiple study indexing requests are not made in a short period
+        switch(data.getConfiguration().getType()) {
+            case STUDY_ATTACHMENT:
+            case STUDY_VARIABLE:
+            case STUDY_VARIABLES: {
+                Long id = Long.parseLong(data.getField("study").getValueFor(Language.DEFAULT).getCurrent());
+                indexer.addStudyIndexerCommand(id, true);
+                break;
+            }
+            default:
+                // TODO: Make some way of indexing only changed languages instead of every one. For now add all languages. Indexing should also check to see that there is actual language specific data before adding to index
+                for(Language language : Language.values()) {
+                    indexer.addCommand(
+                    RevisionIndexerCommand
+                        .index(data.getConfiguration().getType(), language, data.getKey().getId(), data.getKey().getNo()));
+                }
+                break;
+        }
     }
 }

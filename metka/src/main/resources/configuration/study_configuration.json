@@ -1218,7 +1218,7 @@
 			"key": "partitlelang",
 			"translatable": false,
 			"type": "SELECTION",
-			"selectionList": "partitle_lang",
+			"selectionList": "partitlelang_list",
 			"subfield": true
 		},
 		"biblcit": {

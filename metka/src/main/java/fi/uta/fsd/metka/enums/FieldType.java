@@ -8,22 +8,23 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Used to validate that type given in configuration file is a valid type.
  */
 public enum FieldType {
-    STRING(Values.STRING),
-    INTEGER(Values.INTEGER),
-    REAL(Values.REAL),
+    STRING(Values.STRING, true),
+    INTEGER(Values.INTEGER, true),
+    REAL(Values.REAL, true),
     BOOLEAN(Values.BOOLEAN),
     REFERENCE(Values.REFERENCE),
-    CONTAINER(Values.CONTAINER, true),
-    REFERENCECONTAINER(Values.REFERENCECONTAINER, true),
+    CONTAINER(Values.CONTAINER, false, true),
+    REFERENCECONTAINER(Values.REFERENCECONTAINER, false, true),
     SELECTION(Values.SELECTION),
     CONCAT(Values.CONCAT),
-    DATE(Values.DATE),
-    DATETIME(Values.DATETIME),
-    TIME(Values.TIME);
+    DATE(Values.DATE, true),
+    DATETIME(Values.DATETIME, true),
+    TIME(Values.TIME, true);
     // Add more as needed
 
     private final String value;
     private final boolean container;
+    private final boolean canBeFreeText;
 
     public String getValue() {
         return value;
@@ -33,13 +34,25 @@ public enum FieldType {
         return container;
     }
 
+    public boolean isCanBeFreeText() {
+        return canBeFreeText;
+    }
+
     FieldType(String value) {
         this.value = value;
+        this.canBeFreeText = false;
         this.container = false;
     }
 
-    FieldType(String value, boolean container) {
+    FieldType(String value, boolean canBeFreeText) {
         this.value = value;
+        this.canBeFreeText = canBeFreeText;
+        this.container = false;
+    }
+
+    FieldType(String value, boolean canBeFreeText, boolean container) {
+        this.value = value;
+        this.canBeFreeText = canBeFreeText;
         this.container = container;
     }
 
