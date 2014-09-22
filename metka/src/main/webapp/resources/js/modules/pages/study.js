@@ -517,7 +517,40 @@ define(function (require) {
                         };
                         [
                             'studyid',
-                            'title'
+                            'submissionid',
+                            'title',
+                            'author.lastname',
+                            'author.firstname',
+                            'authororganization',
+                            'producername',
+                            'producerrole',
+                            'seriesname',
+                            'datakind',
+                            'anonymization',
+                            'securityissues',
+                            'publication',
+                            'publicationfirstsaved',
+                            'savedAt',
+                            'termsofuse',
+                            'newtermsofuse',
+                            'termsofusechangedate',
+                            'termsofusechangedate.until',
+                            'agreementtype',
+                            'depositortype',
+                            'publication.savedBy',
+                            'packageurn',
+                            'abstract',
+                            'topic',
+                            'timeperiod',
+                            'timeperiod.until',
+                            'colltime',
+                            'colltime.until',
+                            'country',
+                            'collector',
+                            'analysisunit',
+                            'timemethod',
+                            'sampproc',
+                            'collmode'
                         ].forEach(function (field) {
                             response.values[field] = data(field).getByLang(options.defaultLang);
                         });

@@ -82,73 +82,12 @@ define(function (require) {
                             return EMPTY;
                         }
 
-                        // TODO: yhdistä inputfield type=reference
                         if (type === 'REFERENCE') {
-
-                            var fieldValues = {};
-
                             var refKey = getPropertyNS(options, 'dataConf.fields', column, 'reference');
                             var reference = getPropertyNS(options, 'dataConf.references', refKey);
-                            var value = transferRow.fields[reference.target].values.DEFAULT.current;
 
-                            (function addFieldValue(reference, value) {
-                                var target = reference.target;
-                                if (!fieldValues.hasOwnProperty(target)) {
-                                    fieldValues[target] = value;
-                                    var ref2 = require('./utils/getPropertyNS')(options, 'dataConf.fields', target);
-                                    if (ref2 && ref2.type === 'SELECTION') {
-                                        var refSelectionList = require('./utils/getPropertyNS')(options, 'dataConf.selectionLists', ref2.selectionList);
-                                        var ref3 = require('./utils/getPropertyNS')(options, 'dataConf.references', refSelectionList.reference);
-                                        addFieldValue(ref3, require('./data')(options)(ref3.target).getByLang(lang));
-                                    }
-                                }
-                            })(reference, value);
-
-                            require('./server')('options', {
-                                data: JSON.stringify({
-                                    requests : [{
-                                        key: key,
-                                        confType: options.dataConf.key.type,
-                                        confVersion: options.dataConf.key.version,
-                                        language: lang,
-                                        fieldValues: fieldValues
-                                    }]
-                                }),
-                                success: function (data) {
-                                    function optionText(option) {
-                                        if (MetkaJS.L10N.hasTranslation(option, 'title')) {
-                                            return MetkaJS.L10N.localize(option, 'title');
-                                        }
-
-                                        if (option.title) {
-                                            if (option.title.type === 'LITERAL') {
-                                                return option.title.value;
-                                            }
-                                        }
-
-                                        return option.value;
-                                    }
-                                    if (data.responses && data.responses.length && data.responses[0].options && data.responses[0].options.length) {
-                                        $td.append(optionText(data.responses[0].options[0]));
-                                    }
-                                }
-                            });
-                            return;
-
-
-
-                            var refKey = getPropertyNS(options, 'dataConf.fields', column, 'reference');
-                            var ref = getPropertyNS(options, 'dataConf.references', refKey);
-                            if (ref.type === 'DEPENDENCY') {
-                                log(column, refKey, ref.target);
-                            }
-                            return;
-                            if (typeof value === 'undefined') {
-                                return EMPTY;
-                            }
-
-                            require('./selectInput').optionText(options, lang, column, transferRow, value, function (text) {
-                                $td.append(typeof text === 'undefined' ? EMPTY : text);
+                            require('./reference')(column, reference, options, lang, transferRow.fields, function (value) {
+                                $td.append(value);
                             });
                             return;
                         }
@@ -198,9 +137,12 @@ define(function (require) {
                                 return EMPTY;
                             }
 
-                            require('./selectInput').optionText(options, lang, column, transferRow, value, function (text) {
+                            require('./reference')(column, {
+                                target: column
+                            }, options, lang, transferRow.fields, function (text) {
                                 $td.append(typeof text === 'undefined' ? EMPTY : text);
                             });
+
                             return;
                         }
                         log('not implemented', column, type);
