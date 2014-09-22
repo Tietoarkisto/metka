@@ -14,7 +14,10 @@ define(function (require) {
         }
         ns = Array.prototype.concat.apply([], ns.map(function (v) {
             return typeof v === 'string' ? v.split('.') : v;
-        }));
+        })).map(function (prop) {
+            var numProp = parseInt(prop);
+            return isNaN(numProp) ? prop : numProp;
+        });
         return (function r(o) {
             if (typeof o !== 'object') {
                 return;
