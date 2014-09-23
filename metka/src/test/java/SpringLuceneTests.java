@@ -136,7 +136,7 @@ public class SpringLuceneTests {
     @Test
     public void randomTest() {
         String s = "jotain";
-        assertTrue(s.split(".").length == 0);
+        assertTrue(s.split("\\.").length == 0);
     }
 
     @Test

@@ -96,7 +96,7 @@ public class ReferenceCollecting {
         RevisionData data = dataPair.getRight();
         Configuration config = configPair.getRight();
 
-        String[] path = request.getPath().split(".");
+        String[] path = request.getPath().split("\\.");
         if(path.length == 0) {
             path = new String[]{request.getPath()};
         }

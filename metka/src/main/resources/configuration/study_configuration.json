@@ -339,13 +339,13 @@
 			"options": [
 				{
                     "title": "Start",
-					"value": "1"
+					"value": "start"
 				},{
                     "title": "End",
-					"value": "2"
+					"value": "end"
 				},{
                     "title": "Single",
-					"value": "3"
+					"value": "single"
 				}
 			]
 		},
@@ -1375,7 +1375,8 @@
 			"required": true,
 			"type": "SELECTION",
 			"selectionList": "country_list",
-			"subfield": true
+			"subfield": true,
+			"exact": true
 		},
 		"countryabbr": {
 			"key": "countryabbr",
@@ -1385,7 +1386,8 @@
 			"reference": "countryabbr_ref",
 			"writable": false,
 			"editable": false,
-			"subfield": true
+			"subfield": true,
+			"exact": true
 		},
 		"universes": {
 			"key": "universes",
