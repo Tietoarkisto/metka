@@ -176,6 +176,7 @@ define(function (require) {
             }
 
             if (fieldOptions.type === 'REFERENCECONTAINER' && key === 'files') {
+                // TODO: to maintain row order and separate removed rows, add API to server and request all rows in one request
                 require('./server')('/references/referenceStatus/{value}', transferRow, {
                     method: 'GET',
                     success: function (response) {
@@ -192,11 +193,7 @@ define(function (require) {
         }
 
         function addRow(transferRow) {
-            if (lang) {
-                require('./data')(options).appendByLang(lang, transferRow);
-            } else {
-                require('./data')(options).append(transferRow);
-            }
+            require('./data')(options).appendByLang(lang, transferRow);
             return appendRow(transferRow);
         }
 
@@ -266,6 +263,7 @@ define(function (require) {
         }
 
         this.data('addRowFromDataObject', addRowFromDataObject);
+        this.data('addRow', addRow);
 
         var $panelHeading = $('<div class="panel-heading">')
             .text(MetkaJS.L10N.localize(options, 'title'));

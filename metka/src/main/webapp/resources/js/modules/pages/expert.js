@@ -6,6 +6,12 @@ define(function (require) {
     return function (options, onLoad) {
         $.extend(options, {
             header: MetkaJS.L10N.get('topmenu.expert'),
+            fieldTitles: {
+                "name": {
+                    "key" : "name",
+                    "title" : "Nimi"
+                }
+            },
             content: [
                 {
                     "type": "COLUMN",
@@ -34,10 +40,9 @@ define(function (require) {
                                     "field": {
                                         "readOnly": true,
                                         "displayType": "CONTAINER",
+                                        "showSaveInfo": true,
                                         "columnFields": [
-                                            "name",
-                                            "savedBy",
-                                            "savedAt"
+                                            "name"
                                         ],
                                         onRemove: function ($row, remove) {
                                             require('./../server')('/expert/remove/{id}', require('./../map/transferRow/object')($row.data('transferRow'), options.defaultLang), {
@@ -54,10 +59,8 @@ define(function (require) {
                                     },
                                     create: function (options) {
                                         var $containerField = $(this).children();
-                                        addRow = function (data) {
-                                            data.name = data.title;
-                                            delete data.title;
-                                            $containerField.data('addRowFromDataObject')(data);
+                                        addRow = function (query) {
+                                            $containerField.data('addRow')(require('./../map/savedExpertSearchQuery/transferRow')(query, options.defaultLang));
                                         };
                                         require('./../server')('/expert/list', {
                                             success: function (data) {
@@ -194,12 +197,6 @@ define(function (require) {
                 fields: {
                     name: {
                         type: "STRING"
-                    },
-                    savedBy: {
-                        type: "STRING"
-                    },
-                    savedAt: {
-                        type: "DATE"
                     },
                     search: {
                         type: "STRING"
