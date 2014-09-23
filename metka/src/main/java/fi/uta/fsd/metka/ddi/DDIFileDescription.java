@@ -95,10 +95,6 @@ class DDIFileDescription {
     private static void setFileNameAndID(RevisionData variables, RevisionData attachment, FileTxtType fileTxtType) {
         Pair<StatusCode, ValueDataField> valueFieldPair = attachment.dataField(ValueDataFieldCall.get(Fields.FILE));
         if(hasValue(valueFieldPair, Language.DEFAULT)) {
-            // TODO: What does file type actually mean? For now use upper case file extension
-            // Add file type
-            fillTextType(fileTxtType.addNewFileType(), FilenameUtils.getExtension(valueFieldPair.getRight().getActualValueFor(Language.DEFAULT)).toUpperCase());
-
             // Set file name
             SimpleTextType stt = fillTextType(fileTxtType.addNewFileName(), FilenameUtils.getName(valueFieldPair.getRight().getActualValueFor(Language.DEFAULT)));
 
@@ -106,6 +102,12 @@ class DDIFileDescription {
             valueFieldPair = variables.dataField(ValueDataFieldCall.get(Fields.VARFILEID));
             if(hasValue(valueFieldPair, Language.DEFAULT)) {
                 stt.setID(valueFieldPair.getRight().getActualValueFor(Language.DEFAULT));
+            }
+
+            // Add file type
+            valueFieldPair = variables.dataField(ValueDataFieldCall.get(Fields.VARFILETYPE));
+            if(hasValue(valueFieldPair, Language.DEFAULT)) {
+                fillTextType(fileTxtType.addNewFileType(), valueFieldPair, Language.DEFAULT);
             }
         }
     }

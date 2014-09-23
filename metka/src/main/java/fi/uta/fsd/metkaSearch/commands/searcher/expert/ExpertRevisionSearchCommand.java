@@ -167,7 +167,7 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
                 nums.put(key, new NumericConfig(LuceneConfig.PRECISION_STEP, new DecimalFormat(), FieldType.NumericType.LONG));
                 return;
         }
-        String[] splits = key.split(".");
+        String[] splits = key.split("\\.");
         if(splits.length == 0) {
             splits = new String[1];
             splits[0] = key;
@@ -182,7 +182,7 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
             addKeywordAnalyzer(key);
             return;
         }
-        if(field.getType() == STRING || field.getType() == CONCAT) {
+        if(field.getType() == STRING || field.getType() == CONCAT || field.getType() == REFERENCE) {
             if(!field.getExact()) {
                 addTextAnalyzer(key);
             } else {

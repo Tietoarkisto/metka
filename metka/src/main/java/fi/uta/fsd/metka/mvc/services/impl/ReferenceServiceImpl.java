@@ -1,8 +1,15 @@
 package fi.uta.fsd.metka.mvc.services.impl;
 
+import fi.uta.fsd.metka.enums.FieldType;
 import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.enums.ReferenceType;
+import fi.uta.fsd.metka.enums.SelectionListType;
+import fi.uta.fsd.metka.model.configuration.Configuration;
+import fi.uta.fsd.metka.model.configuration.Field;
+import fi.uta.fsd.metka.model.configuration.Reference;
+import fi.uta.fsd.metka.model.configuration.SelectionList;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.ReferenceRow;
+import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.model.transfer.TransferRow;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
@@ -18,7 +25,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Contains communication pertaining to Reference objects
@@ -48,18 +58,17 @@ public class ReferenceServiceImpl implements ReferenceService {
     @Override public ReferenceOption getCurrentFieldOption(Language language, RevisionData data, String path) {
         // TODO: Gather dependencies, form request and return single result
 
-        return null;
-        /*Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(data.getConfiguration());
+        Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(data.getConfiguration());
         if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
             logger.error("Couldn't find configuration for "+data.toString());
             return null;
         }
-        String[] splits = path.split(".");
+        Configuration config = configPair.getRight();
+        String[] splits = path.split("\\.");
         if(splits.length == 0) {
             splits = new String[1];
             splits[0] = path;
         }
-        Configuration config = configPair.getRight();
         // Check that the final path element points to a field that can be a reference with a value, deal with reference containers separately with a different call
         Field field = config.getField(splits[splits.length-1]);
         if(field == null) {
@@ -75,60 +84,18 @@ public class ReferenceServiceImpl implements ReferenceService {
             }
         }
 
-        // TODO: If the RevisionData is already approved then the text should be contained in the data itself once approval lock down is completed. Check for that value
+        ReferenceOptionsRequest request = null;
 
-        // We are certain that the field is a field with a reference and can contain a value, next check that if the field currently has a value
-        // If the field doesn't have a value then it's unnecessary to check for option since there's no selected option in any case
-        Pair<StatusCode, ValueDataField> pair = null;
-        if(splits.length == 1) {
-            // We already have the correct field, it's a top level field and it's either a reference of a selection
-            // Perform the saved data field call
-            if(field.getSubfield()) {
-                return null;
-            }
-            pair = data.dataField(ValueDataFieldCall.get(field.getKey()).setConfiguration(config));
-        } else {
-            // Field should be in a container (since we're not dealing with reference containers here)
-            if(!field.getSubfield()) {
-                return null;
-            }
-            for(int i = 0; i < splits.length; i++) {
-                String key = splits[i];
-                // TODO: This is obviously not finished
-            }
-        }
-        if(pair == null) {
-            return null;
-        }
-        if(pair.getLeft() != StatusCode.FIELD_FOUND) {
-            // Since no value was found we have nothing to index
-            return null;
-        }
-        ValueDataField saved = pair.getRight();
-        if(!saved.hasValueFor(language)) {
-            // No value, don't care
-            return null;
-        }
-        // Get the value from the saved data field, this is used to identify the correct option from returned options
-        String value = saved.getActualValueFor(language);
-        // Check if the reference is a dependency and if so then collect the dependency value for request
-        String dependency = null;
-        // TODO: get dependency value
+        List<String> dependencyStack = formDependencyStack(field, config);
 
-        // We have value, we can search for options and select one.
-        ReferenceOptionsRequest request = new ReferenceOptionsRequest();
-        request.setKey(saved.getKey());
-        request.setConfType(config.getKey().getType().toValue());
-        request.setConfVersion(config.getKey().getVersion());
-        request.setDependencyValue(dependency);
-        List<ReferenceOption> options = collectReferenceOptions(request);
-        for(ReferenceOption option : options) {
-            if(option.getValue().equals(value)) {
-                return option;
-            }
-        }
-        // Didn't find value, so much for that
-        return null;*/
+        // Let's form a request that we can use to fetch a reference option
+        request = formReferenceOptionsRequest(language, splits, dependencyStack, data);
+
+        // Perform the request
+        List<ReferenceOption> options = references.handleReferenceRequest(request).getRight();
+
+        // Return first option or null if no options were found
+        return options.isEmpty() ? null : options.get(0);
     }
 
     @Override public List<ReferenceOption> collectReferenceOptions(ReferenceOptionsRequest request) {
@@ -185,6 +152,111 @@ public class ReferenceServiceImpl implements ReferenceService {
                 return new ReferenceStatusResponse(true, new DateTimeUserPair(info.getRight().getRemovedAt(), info.getRight().getRemovedBy()));
             } else {
                 return new ReferenceStatusResponse(true, null);
+            }
+        }
+    }
+
+    private List<String> formDependencyStack(Field field, Configuration config) {
+        List<String> stack = new ArrayList<>();
+        Reference reference;
+
+        do {
+            if(field == null) {
+                break;
+            }
+
+            // If the field is not writable then there's no point in adding it to the stack. It will either be an end point or function as a forwarder
+            if(field.getWritable()) {
+                stack.add(field.getKey());
+            }
+            reference = getFieldReference(field, config);
+            if(reference != null) {
+                if(reference.getType() == ReferenceType.DEPENDENCY) {
+                    field = config.getField(reference.getTarget());
+                } else {
+                    reference = null;
+                }
+            }
+        } while(reference != null);
+
+        return stack;
+    }
+
+    private Reference getFieldReference(Field field, Configuration config) {
+        if(field == null) {
+            return null;
+        }
+        Reference reference = null;
+        if(field.getType() == FieldType.REFERENCE || field.getType() == FieldType.REFERENCECONTAINER) {
+            reference = config.getReference(field.getReference());
+        } else if(field.getType() == FieldType.SELECTION) {
+            SelectionList list = config.getRootSelectionList(field.getSelectionList());
+            if(list.getType() == SelectionListType.REFERENCE) {
+                reference = config.getReference(list.getReference());
+            }
+        }
+        return reference;
+    }
+
+    private ReferenceOptionsRequest formReferenceOptionsRequest(Language language, String[] path, List<String> stack, RevisionData data) {
+        ReferenceOptionsRequest request = new ReferenceOptionsRequest();
+        request.setLanguage(language);
+        request.setConfType(data.getConfiguration().getType().toValue());
+        request.setConfVersion(data.getConfiguration().getVersion());
+        request.setKey(path[path.length-1]);
+        List<String> pathList = new ArrayList<>();
+        Collections.addAll(pathList, path);
+        parsePath(request, pathList, stack, data.getFields());
+
+        return request;
+    }
+
+    private void parsePath(ReferenceOptionsRequest request, List<String> path, List<String> stack, Map<String, DataField> fieldMap) {
+        if(path.isEmpty() || stack.isEmpty()) {
+            return;
+        }
+        DataField field = fieldMap.get(path.get(0));
+        if(field != null && field instanceof ContainerDataField) {
+            path.remove(0);
+            if(!path.isEmpty()) {
+                Integer rowId = Integer.parseInt(path.get(0));
+                path.remove(0);
+                if(!path.isEmpty()) {
+                    // Path doesn't terminate so let's try to continue
+                    ContainerDataField container = (ContainerDataField) field;
+                    DataRow row = container.getRowWithId(rowId).getRight();
+                    if (row != null && !row.getFields().isEmpty()) {
+                        parsePath(request, path, stack, row.getFields());
+                    }
+                }
+            }
+        } else if(field != null && field instanceof ReferenceContainerDataField) {
+            path.remove(0);
+            if(!path.isEmpty()) {
+                Integer rowId = Integer.parseInt(path.get(0));
+                path.remove(0);
+                ReferenceContainerDataField ref = (ReferenceContainerDataField)field;
+                ReferenceRow row = ref.getReferenceWithId(rowId).getRight();
+                if(row != null && stack.get(0).equals(ref.getKey())) {
+                    request.getFieldValues().put(ref.getKey(), row.getReference().getValue());
+                    stack.remove(0);
+                }
+            }
+        }
+        while(!stack.isEmpty()) {
+            String key = stack.get(0);
+            field = fieldMap.get(key);
+            if(field != null) {
+                if(field instanceof ValueDataField) {
+                    stack.remove(0);
+                    request.getFieldValues().put(key, ((ValueDataField)field).getActualValueFor(request.getLanguage()));
+                } else {
+                    // In this case we will naturally fail since the same key can't be found on earlier steps in the hierarchy
+                    // This is however what should happen since if we found a nonsensical situation and there's no point in continuing.
+                    return;
+                }
+            } else {
+                return;
             }
         }
     }
