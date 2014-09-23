@@ -76,9 +76,9 @@ define(function (require) {
                             key: reference.target,
                             lang: lang
                         }), function (e) {
-                            require('./reference')(key, reference, options, lang, options.data.fields, function (value) {
+                            require('./reference').option(key, options, lang, function (value) {
                                 $input.val(value);
-                            });
+                            })(options.data.fields, reference);
                         });
                     } else {
                         $input.val(type === 'CONCAT'

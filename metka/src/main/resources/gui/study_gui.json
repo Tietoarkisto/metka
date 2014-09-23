@@ -8,6 +8,10 @@
             "key" : "affiliation",
             "title" : "Taustaorganisaatio"
         },
+        "agency": {
+            "key" : "agency",
+            "title" : "Yksikkö"
+        },
         "alttitle": {
             "key" : "alttitle",
             "title" : "Rinnakkainen nimi"
@@ -103,6 +107,10 @@
         "note": {
             "key" : "note",
             "title" : "Huomautus"
+        },
+        "organisation": {
+            "key" : "organisation",
+            "title" : "Organisaatio"
         },
         "otherauthor": {
             "key" : "otherauthor",

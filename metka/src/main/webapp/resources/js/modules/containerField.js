@@ -86,9 +86,9 @@ define(function (require) {
                             var refKey = getPropertyNS(options, 'dataConf.fields', column, 'reference');
                             var reference = getPropertyNS(options, 'dataConf.references', refKey);
 
-                            require('./reference')(column, reference, options, lang, transferRow.fields, function (value) {
+                            require('./reference').option(column, options, lang, function (value) {
                                 $td.append(value);
-                            });
+                            })(transferRow.fields, reference);
                             return;
                         }
 
@@ -136,11 +136,10 @@ define(function (require) {
                             if (typeof value === 'undefined') {
                                 return EMPTY;
                             }
-
-                            require('./reference')(column, {
-                                target: column
-                            }, options, lang, transferRow.fields, function (text) {
+                            require('./reference').option(column, options, lang, function (text) {
                                 $td.append(typeof text === 'undefined' ? EMPTY : text);
+                            })(transferRow.fields, {
+                                target: column
                             });
 
                             return;
