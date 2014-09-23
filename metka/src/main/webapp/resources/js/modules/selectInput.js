@@ -34,7 +34,7 @@ define(function (require) {
             return;
         }
 
-        // TODO: prevent recursion
+        // TODO: prevent infinite recursion
         (function selectInput(listKey) {
             function request(fieldValues) {
                 require('./server')('options', {
@@ -58,6 +58,7 @@ define(function (require) {
             }
 
             var list = require('./utils/getPropertyNS')(options, 'dataConf.selectionLists', listKey);
+
             if (!list) {
                 log('list not found', listKey, options);
             }
