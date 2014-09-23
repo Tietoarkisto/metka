@@ -2,7 +2,7 @@
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
 
 <%-- Include jQuery and plugins --%>
-<script src="${contextPath}/lib/jquery/jquery-1.10.2.js"></script>
+<script src="${contextPath}/lib/jquery/jquery-2.1.1.min.js"></script>
 <script src="${contextPath}/lib/jquery/jquery-ui.js"></script>
 <script src="${contextPath}/lib/jquery/jquery.fileupload.js"></script>
 

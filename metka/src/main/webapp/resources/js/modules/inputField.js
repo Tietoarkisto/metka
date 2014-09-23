@@ -88,7 +88,6 @@ define(function (require) {
                             }).join('')
                             :
                             require('./data')(options).getByLang(lang) || '');
-
                     }
                 });
             }
