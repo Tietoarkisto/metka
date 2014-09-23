@@ -104,9 +104,9 @@ class DDIStudyDescription {
         COPYRIGHT.put(Language.EN, "According to the agreement between FSD and the depositor.");
         COPYRIGHT.put(Language.SV, "I enlighet med avtalet mellan FSD och överlåtaren av datamaterialet.");
 
-        DISTRIBUTR.put(Language.DEFAULT, "");
-        DISTRIBUTR.put(Language.EN, "");
-        DISTRIBUTR.put(Language.SV, "");
+        DISTRIBUTR.put(Language.DEFAULT, "Yhteiskuntatieteellinen tietoarkisto");
+        DISTRIBUTR.put(Language.EN, "Finnish Social Science Data Archive");
+        DISTRIBUTR.put(Language.SV, "Finlands samhällsvetenskapliga dataarkiv");
 
         DISTRIBUTR_ABB.put(Language.DEFAULT, "FSD");
         DISTRIBUTR_ABB.put(Language.EN, "FSD");
@@ -125,9 +125,9 @@ class DDIStudyDescription {
         // Add study description to codebook
         StdyDscrType stdyDscrType = codeBookType.addNewStdyDscr();
 
-        addCitationInfo(stdyDscrType, revision, language, configuration, revisions);
+        addCitationInfo(stdyDscrType, revision, language, configuration, revisions, references);
 
-        addStudyAuthorization(revision, stdyDscrType);
+        addStudyAuthorization(revision, stdyDscrType, references, language);
 
         addStudyInfo(stdyDscrType, revision, language, configuration, references);
 
@@ -138,17 +138,17 @@ class DDIStudyDescription {
         addOtherStudyMaterial(stdyDscrType, revision, language, revisions);
     }
 
-    private static void addCitationInfo(StdyDscrType stdyDscrType, RevisionData revisionData, Language language, Configuration configuration, RevisionRepository revisions) {
+    private static void addCitationInfo(StdyDscrType stdyDscrType, RevisionData revisionData, Language language, Configuration configuration, RevisionRepository revisions, ReferenceService references) {
         // Add citation
         CitationType citationType = stdyDscrType.addNewCitation();
 
         addCitationTitle(revisionData, language, citationType, configuration);
 
-        addCitationRspStatement(revisionData, citationType);
+        addCitationRspStatement(revisionData, citationType, references, language);
 
-        addCitationProdStatement(revisionData, citationType);
+        addCitationProdStatement(revisionData, citationType, language, references, configuration);
 
-        addCitationDistStatement(citationType);
+        addCitationDistStatement(citationType, language);
 
         // Add SerStmt
         addCitationSerStatement(citationType, revisionData, language, revisions);
@@ -164,105 +164,186 @@ class DDIStudyDescription {
         }
     }
 
-    private static void addCitationProdStatement(RevisionData revisionData, CitationType citationType) {
-        /*// TODO: Add prod statement
-        // Back to citation
-        // Add producers , excel row #60
+    private static void addCitationProdStatement(RevisionData revision, CitationType citationType, Language language, ReferenceService references, Configuration configuration) {
         ProdStmtType prodStmtType = citationType.addNewProdStmt();
 
-        // Add new producer, repeatable, excel row #61 - #64
-        containerDataField = revisionData.dataField( ContainerDataFieldCall.get("producers") ).getValue();
-        for (DataRow dataRow : containerDataField.getRows()) {
-            // TODO: Excel indicates fields like produceragency, producersetction,producerorganization.
-            // TODO: Not implemented yet / missing ?
-            // TODO: Need to recheck excel and fields for correct values set into fields
-            String producer = dataRow.dataField( ValueDataFieldCall.get("producer") ).getValue().getActualValue();
-            String producerId = dataRow.dataField( ValueDataFieldCall.get("producerid") ).getValue().getActualValue();
-            String producerIdType = dataRow.dataField( ValueDataFieldCall.get("produceridtype") ).getValue().getActualValue();
-            String producerRole = dataRow.dataField( ValueDataFieldCall.get("producerrole") ).getValue().getActualValue();
-            String projectNr = dataRow.dataField( ValueDataFieldCall.get("projectnr") ).getValue().getActualValue();
-            String producerAbbr = dataRow.dataField( ValueDataFieldCall.get("producerabbr") ).getValue().getActualValue();
+        Pair<StatusCode, ContainerDataField> containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.PRODUCERS));
+        String path = "producers.";
+        if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
+            for(DataRow row : containerPair.getRight().getRowsFor(Language.DEFAULT)) {
+                if(row.getRemoved()) {
+                    continue;
+                }
+                String rowRoot = path+row.getRowId()+".";
 
-            ProducerType producerType = prodStmtType.addNewProducer();
-            xmlCursor = producerType.newCursor();
-            xmlCursor.setTextValue(producer);
-            xmlCursor.dispose();
-            // Set role
-            producerType.setRole(producerRole);
-            // Set abbreviation
-            producerType.setAbbr(producerAbbr);
-            // Set affiliation TODO: Where to get affiliation ?
-            producerType.setAffiliation("");
+                String organisation = getReferenceTitle(references, language, revision, rowRoot + Fields.PRODUCERORGANISATION);
+                String agency = getReferenceTitle(references, language, revision, rowRoot + Fields.PRODUCERAGENCY);
+                String section = getReferenceTitle(references, language, revision, rowRoot + Fields.PRODUCERSECTION);
+                ProducerType d;
+                if(!StringUtils.hasText(agency) && !StringUtils.hasText(section)) {
+                    if(!StringUtils.hasText(organisation)) {
+                        continue;
+                    }
+                    d = fillTextType(prodStmtType.addNewProducer(), organisation);
+                } else {
+                    String producer = (StringUtils.hasText(agency)) ? agency : "";
+                    producer += (StringUtils.hasText(producer) && StringUtils.hasText(section)) ? " " : "";
+                    producer += (StringUtils.hasText(section)) ? section : "";
+                    if(!StringUtils.hasText(producer)) {
+                        continue;
+                    }
+                    d = fillTextType(prodStmtType.addNewProducer(), producer);
+                }
 
+                String abbr = getReferenceTitle(references, language, revision, rowRoot + Fields.PRODUCERSECTIONABBR);
+                abbr = (StringUtils.hasText(abbr)) ? abbr : getReferenceTitle(references, language, revision, rowRoot + Fields.PRODUCERAGENCYABBR);
+                abbr = (StringUtils.hasText(abbr)) ? abbr : getReferenceTitle(references, language, revision, rowRoot + Fields.PRODUCERORGANISATIONABBR);
+
+                d.setAbbr(abbr);
+                if(StringUtils.hasText(agency) || StringUtils.hasText(section)) {
+                    if(StringUtils.hasText(organisation)) {
+                        d.setAffiliation(organisation);
+                    }
+                }
+
+                Pair<StatusCode, ValueDataField> fieldPair = row.dataField(ValueDataFieldCall.get(Fields.PRODUCERROLE));
+                if(hasValue(fieldPair, Language.DEFAULT)) {
+                    String role = fieldPair.getRight().getActualValueFor(Language.DEFAULT);
+                    SelectionList list = configuration.getRootSelectionList(configuration.getField(Fields.PRODUCERROLE).getSelectionList());
+                    Option option = list.getOptionWithValue(role);
+                    if(option != null) {
+                        d.setRole(option.getTitleFor(language));
+                    }
+                }
+            }
         }
 
-        // Add copyright, excel file row #65
-        stt = prodStmtType.addNewCopyright();
-        xmlCursor = stt.newCursor();
-        xmlCursor.setTextValue(COPYRIGHT_FSD_AND_MATERIAL_SUPPLIER);
-        xmlCursor.dispose();*/
+        // Add copyright
+        fillTextType(prodStmtType.addNewCopyright(), COPYRIGHT.get(language));
     }
 
-    private static void addCitationDistStatement(CitationType citationType) {
-        /*// TODO: Add dist statement
-        // Back to citation
-        // Add distribution
+    private static void addCitationDistStatement(CitationType citationType, Language language) {
         DistStmtType distStmtType = citationType.addNewDistStmt();
-
-        // Add distributor
-        DistrbtrType distrbtrType = distStmtType.addNewDistrbtr();
-        xmlCursor = distrbtrType.newCursor();
-        xmlCursor.setTextValue(FSD_NAME_FI);
-        xmlCursor.dispose();
-        // Set abbreviation
-        distrbtrType.setAbbr(AGENCY);
-        // Set URI
-        distrbtrType.setURI(FSD_DISTRIBUTOR_BASE_URI);*/
+        DistrbtrType d = fillTextType(distStmtType.addNewDistrbtr(), DISTRIBUTR.get(language));
+        d.setAbbr(DISTRIBUTR_ABB.get(language));
+        d.setURI(DISTRIBUTR_URI.get(language));
     }
 
-    private static void addCitationRspStatement(RevisionData revisionData, CitationType citationType) {
-        /*// TODO: ADD rsp
-        // Back to citation
-        // Add rsp (?)
-        RspStmtType rspStmtType = citationType.addNewRspStmt();
+    private static void addCitationRspStatement(RevisionData revision, CitationType citationType, ReferenceService references, Language language) {
+        RspStmtType rsp = citationType.addNewRspStmt();
+        Pair<StatusCode, ContainerDataField> containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.AUTHORS));
+        if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
+            String pathRoot = "authors.";
+            for(DataRow row : containerPair.getRight().getRowsFor(Language.DEFAULT)) {
+                if (row.getRemoved()) {
+                    continue;
+                }
+                String rowRoot = pathRoot + row.getRowId() + ".";
 
-        // Add author entity, repeatable
-        containerDataField = revisionData.dataField( ContainerDataFieldCall.get("authors") ).getValue();
-        for (DataRow dataRow : containerDataField.getRows()) {
-            // TODO: authortype is SELECTION type with value of the selection as it's value.
-            // TODO: authortype_list is REFERENCE type. Need to get the reference from it
-            // TODO: Depending on the authortype excel would indicate that the affiliation is concatenated differently
-            // String authorType = dataRow.dataField( ValueDataFieldCall.get("authortype") ).getValue().getActualValue();
-            String author = dataRow.dataField( ValueDataFieldCall.get("author") ).getValue().getActualValue();
-            String affiliation = dataRow.dataField( ValueDataFieldCall.get("affiliation") ).getValue().getActualValue();
+                Pair<StatusCode, ValueDataField> pair = row.dataField(ValueDataFieldCall.get(Fields.AUTHORTYPE));
+                if (!hasValue(pair, Language.DEFAULT)) {
+                    // We require a type for collector before we can move forward
+                    continue;
+                }
+                if(!pair.getRight().getActualValueFor(Language.DEFAULT).equals("1")) {
+                    continue;
+                }
+                // We have a person author
+                pair = row.dataField(ValueDataFieldCall.get(Fields.AUTHOR));
+                if (!hasValue(pair, Language.DEFAULT)) {
+                    // We must have a collector
+                    continue;
+                }
+                AuthEntyType d = fillTextType(rsp.addNewAuthEnty(), pair, Language.DEFAULT);
 
-            AuthEntyType authEntyType = rspStmtType.addNewAuthEnty();
-            // Set author content
-            xmlCursor = authEntyType.newCursor();
-            xmlCursor.setTextValue(author);
-            xmlCursor.dispose();
-            // Set affiliation
-            authEntyType.setAffiliation(affiliation);
+                String organisation = getReferenceTitle(references, language, revision, rowRoot + Fields.AUTHORORGANISATION);
+                String agency = getReferenceTitle(references, language, revision, rowRoot + Fields.AUTHORAGENCY);
+                String section = getReferenceTitle(references, language, revision, rowRoot + Fields.AUTHORSECTION);
+
+                String affiliation = (StringUtils.hasText(organisation)) ? organisation : "";
+                affiliation += (StringUtils.hasText(affiliation) && StringUtils.hasText(agency)) ? " " : "";
+                affiliation += (StringUtils.hasText(agency)) ? agency : "";
+                affiliation += (StringUtils.hasText(affiliation) && StringUtils.hasText(section)) ? " " : "";
+                affiliation += (StringUtils.hasText(section)) ? section : "";
+
+                if (StringUtils.hasText(affiliation)) {
+                    d.setAffiliation(affiliation);
+                }
+            }
         }
+        containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.OTHERAUTHORS));
+        if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
+            String pathRoot = "authors.";
+            for(DataRow row : containerPair.getRight().getRowsFor(Language.DEFAULT)) {
+                if (row.getRemoved()) {
+                    continue;
+                }
+                String rowRoot = pathRoot + row.getRowId() + ".";
 
-        // Add other author, repeatable, excel row #56 - #59
-        containerDataField = revisionData.dataField( ContainerDataFieldCall.get("otherauthors") ).getValue();
-        for (DataRow dataRow : containerDataField.getRows()) {
-            // TODO: authortype is SELECTION type with value of the selection as it's value.
-            // TODO: authortype_list is REFERENCE type. Need to get the reference from it
-            // TODO: Depending on the authortype excel would indicate that the affiliation is concatenated differently
-            // String authorType = dataRow.dataField( ValueDataFieldCall.get("authortype") ).getValue().getActualValue();
-            String otherAuthor = dataRow.dataField( ValueDataFieldCall.get("otherauthor") ).getValue().getActualValue();
-            String otherAuthorAffiliation = dataRow.dataField( ValueDataFieldCall.get("otherauthoraffiliation") ).getValue().getActualValue();
+                Pair<StatusCode, ValueDataField> pair = row.dataField(ValueDataFieldCall.get(Fields.OTHERAUTHORTYPE));
+                if(!hasValue(pair, Language.DEFAULT)) {
+                    // We require a type for collector before we can move forward
+                    continue;
+                }
+                String colltype = pair.getRight().getActualValueFor(Language.DEFAULT);
+                // It's easier to dublicate some functionality and make a clean split from the top than to evaluate each value separately
+                if(colltype.equals("1")) {
+                    // We have a person collector
+                    pair = row.dataField(ValueDataFieldCall.get(Fields.AUTHOR));
+                    if(!hasValue(pair, Language.DEFAULT)) {
+                        // We must have a collector
+                        continue;
+                    }
+                    OthIdType d = fillTextType(rsp.addNewOthId(), pair, Language.DEFAULT);
 
-            OthIdType othIdType = rspStmtType.addNewOthId();
-            // Set other author content
-            xmlCursor = othIdType.newCursor();
-            xmlCursor.setTextValue(otherAuthor);
-            xmlCursor.dispose();
-            // Set affiliation
-            othIdType.setAffiliation(otherAuthorAffiliation);
-        }*/
+                    String organisation = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORORGANISATION);
+                    String agency = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORAGENCY);
+                    String section = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORSECTION);
+
+                    String affiliation = (StringUtils.hasText(organisation)) ? organisation : "";
+                    affiliation += (StringUtils.hasText(affiliation) && StringUtils.hasText(agency)) ? " " : "";
+                    affiliation += (StringUtils.hasText(agency)) ? agency : "";
+                    affiliation += (StringUtils.hasText(affiliation) && StringUtils.hasText(section)) ? " " : "";
+                    affiliation += (StringUtils.hasText(section)) ? section : "";
+
+                    if(StringUtils.hasText(affiliation)) {
+                        d.setAffiliation(affiliation);
+                    }
+                } else if(colltype.equals("2")) {
+                    // We have an organisation collector
+                    String organisation = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORORGANISATION);
+                    String agency = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORAGENCY);
+                    String section = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORSECTION);
+                    OthIdType d;
+                    if(!StringUtils.hasText(agency) && !StringUtils.hasText(section)) {
+                        if(!StringUtils.hasText(organisation)) {
+                            continue;
+                        }
+                        d = fillTextType(rsp.addNewOthId(), organisation);
+                    } else {
+                        String collector = (StringUtils.hasText(agency)) ? agency : "";
+                        if(StringUtils.hasText(collector) && StringUtils.hasText(section)) {
+                            collector += " "+section;
+                        } else if(StringUtils.hasText(section)) {
+                            collector = section;
+                        } else {
+                            continue;
+                        }
+                        d = fillTextType(rsp.addNewOthId(), collector);
+                    }
+                    if(StringUtils.hasText(agency) || StringUtils.hasText(section)) {
+                        if(StringUtils.hasText(organisation)) {
+                            d.setAffiliation(organisation);
+                        }
+                    }
+                } else if(colltype.equals("3")) {
+                    pair = row.dataField(ValueDataFieldCall.get(Fields.OTHERAUTHORGROUP));
+                    if(hasValue(pair, language)) {
+                        fillTextType(rsp.addNewOthId(), pair, language);
+                    }
+                }
+            }
+        }
     }
 
     private static void addCitationSerStatement(CitationType citationType, RevisionData revision, Language language, RevisionRepository revisions) {
@@ -404,29 +485,58 @@ class DDIStudyDescription {
         }
     }
 
-    private static void addStudyAuthorization(RevisionData revisionData, StdyDscrType stdyDscrType) {
-        /*// TODO: Add study authorization
-        // TODO: Example XMLs neither had studyAuthorization element or children. Check if excel is correct ?
-        // Back to study description
-        // Add study authorization
-        StudyAuthorizationType studyAuthorizationType = stdyDscrType.addNewStudyAuthorization();
+    private static void addStudyAuthorization(RevisionData revision, StdyDscrType stdyDscrType, ReferenceService references, Language language) {
+        Pair<StatusCode, ContainerDataField> containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.AUTHORS));
+        String path = "authors.";
+        if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
+            StudyAuthorizationType sa = stdyDscrType.addNewStudyAuthorization();
+            for(DataRow row : containerPair.getRight().getRowsFor(Language.DEFAULT)) {
+                if(row.getRemoved()) {
+                    continue;
+                }
 
-        // Add authorizing agency TODO: Certain cases depending on authortype, see excel row #80 - #82
-        containerDataField = revisionData.dataField( ContainerDataFieldCall.get("authors") ).getValue();
-        for (DataRow dataRow : containerDataField.getRows()) {
-            // authortype is SELECTION type for authortype_list which is a REFERENCE type
-            // String authorType = dataRow.dataField( ValueDataFieldCall.get("authortype") ).getValue().getActualValue();
-            String author = dataRow.dataField( ValueDataFieldCall.get("author") ).getValue().getActualValue();
-            String affiliation = dataRow.dataField( ValueDataFieldCall.get("affiliation") ).getValue().getActualValue();
-            AuthorizingAgencyType authorizingAgencyType = studyAuthorizationType.addNewAuthorizingAgency();
-            xmlCursor = authorizingAgencyType.newCursor();
-            xmlCursor.setTextValue(author);
-            xmlCursor.dispose();
-            // Set affiliation
-            authorizingAgencyType.setAffiliation(affiliation);
-            // Set abbreviation TODO: Where to get this ?
-            authorizingAgencyType.setAbbr("placeholder");
-        }*/
+                Pair<StatusCode, ValueDataField> pair = row.dataField(ValueDataFieldCall.get(Fields.AUTHORTYPE));
+                if(!hasValue(pair, Language.DEFAULT)) {
+                    continue;
+                }
+                // If author type is person then it's not correct for this entity
+                if(pair.getRight().getActualValueFor(Language.DEFAULT).equals("1")) {
+                    continue;
+                }
+
+                String rowRoot = path+row.getRowId()+".";
+
+                String organisation = getReferenceTitle(references, language, revision, rowRoot + Fields.AUTHORORGANISATION);
+                String agency = getReferenceTitle(references, language, revision, rowRoot + Fields.AUTHORAGENCY);
+                String section = getReferenceTitle(references, language, revision, rowRoot + Fields.AUTHORSECTION);
+                AuthorizingAgencyType d;
+                if(!StringUtils.hasText(agency) && !StringUtils.hasText(section)) {
+                    if(!StringUtils.hasText(organisation)) {
+                        continue;
+                    }
+                    d = fillTextType(sa.addNewAuthorizingAgency(), organisation);
+                } else {
+                    String authorizer = (StringUtils.hasText(agency)) ? agency : "";
+                    authorizer += (StringUtils.hasText(authorizer) && StringUtils.hasText(section)) ? " " : "";
+                    authorizer += (StringUtils.hasText(section)) ? section : "";
+                    if(!StringUtils.hasText(authorizer)) {
+                        continue;
+                    }
+                    d = fillTextType(sa.addNewAuthorizingAgency(), authorizer);
+                }
+
+                String abbr = getReferenceTitle(references, language, revision, rowRoot + Fields.PRODUCERSECTIONABBR);
+                abbr = (StringUtils.hasText(abbr)) ? abbr : getReferenceTitle(references, language, revision, rowRoot + Fields.PRODUCERAGENCYABBR);
+                abbr = (StringUtils.hasText(abbr)) ? abbr : getReferenceTitle(references, language, revision, rowRoot + Fields.PRODUCERORGANISATIONABBR);
+
+                d.setAbbr(abbr);
+                if(StringUtils.hasText(agency) || StringUtils.hasText(section)) {
+                    if(StringUtils.hasText(organisation)) {
+                        d.setAffiliation(organisation);
+                    }
+                }
+            }
+        }
     }
 
     private static void addStudyInfo(StdyDscrType stdyDscrType, RevisionData revision, Language language, Configuration configuration, ReferenceService references) {
@@ -836,7 +946,10 @@ class DDIStudyDescription {
             addMethodDataCollResInstru(dataCollType, containerPair.getRight(), revision, language, references);
         }
 
-        addMethodDataCollDataCollector(dataCollType);
+        containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.INSTRUMENTS));
+        if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
+            addMethodDataCollDataCollector(dataCollType, containerPair.getRight(), revision, language, references);
+        }
 
         addMethodDataCollSources(dataCollType, revision, language);
 
@@ -906,26 +1019,79 @@ class DDIStudyDescription {
         }
     }
 
-    private static void addMethodDataCollDataCollector(DataCollType dataCollType) {
-        /*// Add data collector, repeatable, excel row #124 - #127
-        // TODO: Conditions apply for this see excel
-        containerDataField = revisionData.dataField( ContainerDataFieldCall.get("collectors") ).getValue();
-        for (DataRow dataRow : containerDataField.getRows()) {
-            // TODO: authortype is SELECTION type for authortype_list which is REFERENCE type
-            String authorType = dataRow.dataField( ValueDataFieldCall.get("authortype") ).getValue().getActualValue();
-            String collector = dataRow.dataField( ValueDataFieldCall.get("collector") ).getValue().getActualValue();
-            String collectorAffiliation = dataRow.dataField( ValueDataFieldCall.get("collectoraffiliation") ).getValue().getActualValue();
+    private static void addMethodDataCollDataCollector(DataCollType dataColl, ContainerDataField container, RevisionData revision, Language language, ReferenceService references) {
+        // Let's hardcode the path since we know exactly what we are looking for.
+        String pathRoot = "collectors.";
+        for(DataRow row : container.getRowsFor(Language.DEFAULT)) {
+            if(row.getRemoved()) {
+                continue;
+            }
+            String rowRoot = pathRoot + row.getRowId() + ".";
 
-            // TODO: Conditional values depending on collectortype (authortype ?)
-            DataCollectorType dataCollectorType = dataCollType.addNewDataCollector();
-            xmlCursor = dataCollectorType.newCursor();
-            xmlCursor.setTextValue(collector);
-            xmlCursor.dispose();
-            // Set data collector abbreviation
-            dataCollectorType.setAbbr("");
-            // Set data collector affiliation
-            dataCollectorType.setAffiliation(collectorAffiliation);
-        }*/
+            Pair<StatusCode, ValueDataField> pair = row.dataField(ValueDataFieldCall.get(Fields.COLLECTORTYPE));
+            if(!hasValue(pair, Language.DEFAULT)) {
+                // We require a type for collector before we can move forward
+                continue;
+            }
+            String colltype = pair.getRight().getActualValueFor(Language.DEFAULT);
+            // It's easier to dublicate some functionality and make a clean split from the top than to evaluate each value separately
+            if(colltype.equals("1")) {
+                // We have a person collector
+                pair = row.dataField(ValueDataFieldCall.get(Fields.COLLECTOR));
+                if(!hasValue(pair, Language.DEFAULT)) {
+                    // We must have a collector
+                    continue;
+                }
+                DataCollectorType d = fillTextType(dataColl.addNewDataCollector(), pair, Language.DEFAULT);
+
+                String organisation = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORORGANISATION);
+                String agency = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORAGENCY);
+                String section = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORSECTION);
+
+                String affiliation = (StringUtils.hasText(organisation)) ? organisation : "";
+                affiliation += (StringUtils.hasText(affiliation) && StringUtils.hasText(agency)) ? " " : "";
+                affiliation += (StringUtils.hasText(agency)) ? agency : "";
+                affiliation += (StringUtils.hasText(affiliation) && StringUtils.hasText(section)) ? " " : "";
+                affiliation += (StringUtils.hasText(section)) ? section : "";
+
+                if(StringUtils.hasText(affiliation)) {
+                    d.setAffiliation(affiliation);
+                }
+            } else if(colltype.equals("2")) {
+                // We have an organisation collector
+                String organisation = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORORGANISATION);
+                String agency = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORAGENCY);
+                String section = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORSECTION);
+                DataCollectorType d;
+                if(!StringUtils.hasText(agency) && !StringUtils.hasText(section)) {
+                    if(!StringUtils.hasText(organisation)) {
+                        continue;
+                    }
+                    d = fillTextType(dataColl.addNewDataCollector(), organisation);
+                } else {
+                    String collector = (StringUtils.hasText(agency)) ? agency : "";
+                    if(StringUtils.hasText(collector) && StringUtils.hasText(section)) {
+                        collector += " "+section;
+                    } else if(StringUtils.hasText(section)) {
+                        collector = section;
+                    } else {
+                        continue;
+                    }
+                    d = fillTextType(dataColl.addNewDataCollector(), collector);
+                }
+
+                String abbr = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORSECTIONABBR);
+                abbr = (StringUtils.hasText(abbr)) ? abbr : getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORAGENCYABBR);
+                abbr = (StringUtils.hasText(abbr)) ? abbr : getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORORGANISATIONABBR);
+
+                d.setAbbr(abbr);
+                if(StringUtils.hasText(agency) || StringUtils.hasText(section)) {
+                    if(StringUtils.hasText(organisation)) {
+                        d.setAffiliation(organisation);
+                    }
+                }
+            }
+        }
     }
 
     private static void addMethodDataCollSampProc(DataCollType dataColl, ContainerDataField container, RevisionData revision, Language language, ReferenceService references) {

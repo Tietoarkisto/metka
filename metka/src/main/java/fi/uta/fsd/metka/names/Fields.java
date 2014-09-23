@@ -147,6 +147,35 @@ public final class Fields {
     public static final String ANALYSISUNITOTHER = "analysisunitother";
     public static final String ANALYSISUNITVOCAB = "analysisunitvocab";
     public static final String ANALYSISUNITVOCABURI = "analysisunitvocaburi";
+    public static final String COLLECTORS = "collectors";
+    public static final String COLLECTORTYPE = "authortype";
+    public static final String COLLECTOR = "author";
+    public static final String COLLECTORORGANISATION = "organisation";
+    public static final String COLLECTORORGANISATIONABBR = "organisationabbr";
+    public static final String COLLECTORAGENCY = "agency";
+    public static final String COLLECTORAGENCYABBR = "agencyabbr";
+    public static final String COLLECTORSECTION = "section";
+    public static final String COLLECTORSECTIONABBR = "sectionabbr";
+    public static final String PRODUCERS = "producers";
+    public static final String PRODUCERROLE = "producerrole";
+    public static final String PRODUCERORGANISATION = "organisation";
+    public static final String PRODUCERORGANISATIONABBR = "organisationabbr";
+    public static final String PRODUCERAGENCY = "agency";
+    public static final String PRODUCERAGENCYABBR = "agencyabbr";
+    public static final String PRODUCERSECTION = "section";
+    public static final String PRODUCERSECTIONABBR = "sectionabbr";
+    public static final String AUTHORS = "authors";
+    public static final String AUTHORTYPE = "authortype";
+    public static final String AUTHORORGANISATION = "organisation";
+    public static final String AUTHORORGANISATIONABBR = "organisationabbr";
+    public static final String AUTHORAGENCY = "agency";
+    public static final String AUTHORAGENCYABBR = "agencyabbr";
+    public static final String AUTHORSECTION = "section";
+    public static final String AUTHORSECTIONABBR = "sectionabbr";
+    public static final String AUTHOR = "author";
+    public static final String OTHERAUTHORS = "otherauthors";
+    public static final String OTHERAUTHORTYPE = "otherauthortype";
+    public static final String OTHERAUTHORGROUP = "otherauthorgroup";
 
 
     private Fields() {}
