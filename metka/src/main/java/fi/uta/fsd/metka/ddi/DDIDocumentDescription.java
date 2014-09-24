@@ -150,7 +150,6 @@ class DDIDocumentDescription {
 
             // Add content of title field
         addTitleField(revisionData, language, titlStmtType);
-        // TODO: Do we need to get actual partitles here also
 
         // Add ID no
         Pair<StatusCode, ValueDataField> valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.STUDYID));

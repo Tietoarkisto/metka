@@ -85,6 +85,11 @@ public class RevisionController {
         return AuthenticationUtil.getModelName("revision", model);
     }
 
+    @RequestMapping(value = "ajax/configuration/{type}", method = RequestMethod.GET)
+    public @ResponseBody ConfigurationResponse getConfiguration(@PathVariable ConfigurationType type) {
+        return revisions.getConfiguration(type);
+    }
+
     /**
      * Returns latest revision data and related configurations.
      * This operation checks that data is of requested type.

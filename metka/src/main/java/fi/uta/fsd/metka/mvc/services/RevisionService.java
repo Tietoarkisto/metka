@@ -1,5 +1,6 @@
 package fi.uta.fsd.metka.mvc.services;
 
+import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.transfer.revision.*;
@@ -53,4 +54,6 @@ public interface RevisionService {
     @Transactional(readOnly = true) RevisionSearchResponse collectRevisionHistory(RevisionHistoryRequest request);
 
     @Transactional(readOnly = true) RevisionCompareResponse revisionCompare(RevisionCompareRequest request);
+
+    @Transactional(readOnly = true) ConfigurationResponse getConfiguration(ConfigurationType type);
 }

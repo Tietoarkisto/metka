@@ -267,6 +267,12 @@ public class RevisionServiceImpl implements RevisionService {
         return response;
     }
 
+    @Override
+    public ConfigurationResponse getConfiguration(ConfigurationType type) {
+        Pair<ReturnResult, Configuration> pair = configurations.findLatestConfiguration(type);
+        return new ConfigurationResponse(pair.getLeft(), pair.getRight());
+    }
+
     private void addRemoveCommand(TransferData data) {
         switch(data.getConfiguration().getType()) {
             case STUDY_ATTACHMENT:
