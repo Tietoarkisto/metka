@@ -3,7 +3,7 @@ define(function (require) {
 
     var getPropertyNS = require('./utils/getPropertyNS');
 
-    return function ($input, options, lang, key, $field) {
+    function selectInput($input, options, lang, key, $field) {
         var selectionListKey = getPropertyNS(options, 'dataConf.fields', key, 'selectionList');
         if (!selectionListKey) {
             return;
@@ -79,5 +79,39 @@ define(function (require) {
             showFreeText();
             $input.change(showFreeText);*/
         })(selectionListKey);
+    }
+
+    selectInput.asText = function (options, lang, key, value, callback, column, transferRowFields) {
+        var selectionListKey = getPropertyNS(options, 'dataConf.fields', key, 'selectionList');
+        if (!selectionListKey) {
+            return;
+        }
+
+        (function selectInput(listKey) {
+            function setOptions(selectOptions) {
+                callback(require('./selectInputOptionText')(selectOptions.find(function (option) {
+                    return option.value === value;
+                })));
+            }
+
+            var list = getPropertyNS(options, 'dataConf.selectionLists', listKey);
+
+            if (!list) {
+                log('list not found', listKey, options);
+            }
+            if (list.type === 'SUBLIST') {
+                return selectInput(list.sublistKey || list.key);
+            }
+
+            if (list.type === 'REFERENCE') {
+                require('./reference').option(column, options, lang, callback)(transferRowFields, {
+                    target: column
+                });
+            } else {
+                setOptions(list.options);
+            }
+        })(selectionListKey);
     };
+
+    return selectInput;
 });

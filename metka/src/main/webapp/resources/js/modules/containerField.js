@@ -133,15 +133,9 @@ define(function (require) {
                             return EMPTY;
                         }
                         if (type === 'SELECTION') {
-                            if (typeof value === 'undefined') {
-                                return EMPTY;
-                            }
-                            require('./reference').option(column, options, lang, function (text) {
+                            require('./selectInput').asText(options, lang, column, value, function (text) {
                                 $td.append(typeof text === 'undefined' ? EMPTY : text);
-                            })(transferRow.fields, {
-                                target: column
-                            });
-
+                            }, column, transferRow.fields);
                             return;
                         }
                         log('not implemented', column, type);
