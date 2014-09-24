@@ -3,7 +3,7 @@ define(function (require) {
 
     var getPropertyNS = require('./utils/getPropertyNS');
 
-    return function ($input, options, lang, key) {
+    return function ($input, options, lang, key, $field) {
         var selectionListKey = getPropertyNS(options, 'dataConf.fields', key, 'selectionList');
         if (!selectionListKey) {
             return;
@@ -61,6 +61,23 @@ define(function (require) {
             } else {
                 setOptions(list.options);
             }
+/*
+            var $freeText = require('./inherit')(function (options) {
+                return require('./inputField').call($('<div>'), options, 'STRING', lang);
+            })(options)({
+                horizontal: true,
+                title: 'Muu arvo',
+                field: {
+                    key: list.freeTextKey
+                }
+            });
+
+            $field.append($freeText);
+            function showFreeText() {
+                $freeText.toggle(list.freeText.indexOf(require('./data')(options).getByLang(lang)) !== -1);
+            }
+            showFreeText();
+            $input.change(showFreeText);*/
         })(selectionListKey);
     };
 });

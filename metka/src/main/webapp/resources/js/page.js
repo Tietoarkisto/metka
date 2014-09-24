@@ -29,7 +29,7 @@ define(function (require) {
     };
 
     require('./modules/uiLocalization');
-    document.title = MetkaJS.L10N.get("page.title");
+    document.title = MetkaJS.L10N.get('page.title');
 
     require('./modules/pageConfig')(options, function () {
         if (options.fieldTitles) {

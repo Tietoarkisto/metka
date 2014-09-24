@@ -11,6 +11,7 @@ define(function (require) {
                 return '/' + {
                     approve: 'revision/ajax/approve',
                     compareRevisions: 'history/revisions/compare',
+                    conf: '/revision/ajax/configuration/{PAGE}',
                     create: 'revision/ajax/create',
                     download: 'download/{id}/{no}',
                     edit: 'revision/ajax/edit',

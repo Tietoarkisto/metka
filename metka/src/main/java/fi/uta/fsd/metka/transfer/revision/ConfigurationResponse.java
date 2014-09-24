@@ -11,4 +11,12 @@ public class ConfigurationResponse {
         this.result = result;
         this.configuration = configuration;
     }
+
+    public ReturnResult getResult() {
+        return result;
+    }
+
+    public Configuration getConfiguration() {
+        return configuration;
+    }
 }

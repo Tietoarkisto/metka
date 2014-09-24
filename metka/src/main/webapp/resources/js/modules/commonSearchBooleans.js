@@ -50,7 +50,7 @@ define(function (require) {
             });
         },
         initialData: function (data) {
-            return $.extend(data, {
+            return $.extend(true, data, {
                 fields: {
                     searchApproved: {
                         type: 'VALUE',

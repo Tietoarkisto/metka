@@ -2,6 +2,7 @@ define(function (require) {
     'use strict';
 
     return function (options, type, lang) {
+        var getPropertyNS = require('./utils/getPropertyNS');
         var id = require('./autoId')();
         var key = options.field.key;
         var $label = require('./label')(options, lang)
@@ -11,7 +12,7 @@ define(function (require) {
             if (options.horizontal) {
 
                 // horizontal label should be 2 boostrap main columns wide, even when it's inside column
-                var labelWidth = 2 * (options.parent.parent.columns || 1) / (options.colspan || 1);
+                var labelWidth = 2 * (getPropertyNS(options, 'parent.parent.columns') || 1) / (options.colspan || 1);
 
                 $label.addClass('col-xs-' + labelWidth);
 
@@ -63,15 +64,17 @@ define(function (require) {
                     require('./data')(options).setByLang(lang, $(this).val());
                 });
 
+            $field.append($input);
+
             if (isSelection) {
-                require('./selectInput')($input, options, lang, key);
+                require('./selectInput')($input, options, lang, key, $field);
             } else {
                 // textarea or input elements
 
                 require('./data')(options).onChange(function () {
-                    var dataConf = require('./utils/getPropertyNS')(options, 'dataConf.fields', key);
+                    var dataConf = getPropertyNS(options, 'dataConf.fields', key);
                     if (dataConf && dataConf.type === 'REFERENCE') {
-                        var reference = require('./utils/getPropertyNS')(options, 'dataConf.references', dataConf.reference);
+                        var reference = getPropertyNS(options, 'dataConf.references', dataConf.reference);
                         options.$events.on('data-change-{key}-{lang}'.supplant({
                             key: reference.target,
                             lang: lang
@@ -91,8 +94,7 @@ define(function (require) {
                     }
                 });
             }
-
-            $field.append($input);
         }
+        return this;
     };
 });
