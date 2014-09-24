@@ -2,6 +2,7 @@ define(function (require) {
     'use strict';
 
     if (location.pathname.split('/').indexOf('search') !== -1) {
+        var commonSearchBooleans = require('./../commonSearchBooleans');
         return function (options, onLoad) {
             $.extend(options, {
                 header: MetkaJS.L10N.get('type.SERIES.search'),
@@ -22,16 +23,7 @@ define(function (require) {
                                             "key": "key.id"
                                         }
                                     },
-                                    {
-                                        "type": "CELL",
-                                        "title": "Hyväksyttyjä",
-                                        "colspan": 1,
-                                        "field": {
-                                            // TODO: BOOLEAN
-                                            "displayType": "CHECKBOX",
-                                            "key": "searchApproved"
-                                        }
-                                    }
+                                    commonSearchBooleans.cells.approved
                                 ]
                             },
                             {
@@ -61,16 +53,7 @@ define(function (require) {
                                             });
                                         }
                                     },
-                                    {
-                                        "type": "CELL",
-                                        "title": "Luonnoksia",
-                                        "colspan": 1,
-                                        "field": {
-                                            // TODO: BOOLEAN
-                                            "displayType": "CHECKBOX",
-                                            "key": "searchDraft"
-                                        }
-                                    }
+                                    commonSearchBooleans.cells.draft
                                 ]
                             },
                             {
@@ -85,16 +68,7 @@ define(function (require) {
                                             "key": "seriesname"
                                         }
                                     },
-                                    {
-                                        "type": "CELL",
-                                        "title": "Poistettuja",
-                                        "colspan": 1,
-                                        "field": {
-                                            // TODO: BOOLEAN
-                                            "displayType": "CHECKBOX",
-                                            "key": "searchRemoved"
-                                        }
-                                    }
+                                    commonSearchBooleans.cells.removed
                                 ]
                             }
                         ]
@@ -102,18 +76,14 @@ define(function (require) {
                 ],
                 buttons: [
                     require('./../searchButton')('searchAjax', function () {
-                        log(options.defaultLang, data('searchApproved').getByLang(options.defaultLang))
-                        return {
+                        return commonSearchBooleans.requestData(options, {
                             type: require('./../../metka').PAGE,
-                            searchApproved: data('searchApproved').getByLang(options.defaultLang),
-                            searchDraft: data('searchDraft').getByLang(options.defaultLang),
-                            searchRemoved: data('searchRemoved').getByLang(options.defaultLang),
                             values: {
                                 'key.id': data('key.id').getByLang(options.defaultLang),
                                 seriesabbr: data('seriesabbr').getByLang(options.defaultLang),
                                 seriesname: data('seriesname').getByLang(options.defaultLang)
                             }
-                        };
+                        });
                     }, function (data) {
                         return data.rows;
                     }, function (result) {
@@ -183,26 +153,7 @@ define(function (require) {
                         }
                     }
                 ],
-                data: {
-                    fields: {
-                        searchApproved: {
-                            type: 'VALUE',
-                            values: {
-                                DEFAULT: {
-                                    current: true
-                                }
-                            }
-                        },
-                        searchDraft: {
-                            type: 'VALUE',
-                            values: {
-                                DEFAULT: {
-                                    current: true
-                                }
-                            }
-                        }
-                    }
-                }
+                data: commonSearchBooleans.initialData({})
             });
             var data = require('./../data')(options);
             onLoad();

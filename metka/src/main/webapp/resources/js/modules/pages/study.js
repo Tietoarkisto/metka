@@ -2,10 +2,11 @@ define(function (require) {
     'use strict';
 
     if (location.pathname.split('/').indexOf('search') !== -1) {
+        var commonSearchBooleans = require('./../commonSearchBooleans');
         return function (options, onLoad) {
             $.extend(options, {
                 header: MetkaJS.L10N.get('type.STUDY.search'),
-                "fieldTitles": {
+                fieldTitles: {
                     "studyid": {
                         "key": "studyid",
                         "title": "Aineiston numero"
@@ -40,6 +41,7 @@ define(function (require) {
                         "type": "TAB",
                         "title": "Aineistohaku",
                         "content": [
+                            commonSearchBooleans.column,
                             {
                                 "type": "COLUMN",
                                 "columns": 2,
@@ -510,11 +512,11 @@ define(function (require) {
                     }
                 ],
                 buttons: [
-                    require('./../searchButton')('/revision/ajax/search', function () {
-                        var response = {
+                    require('./../searchButton')('searchAjax', function () {
+                        var requestData = commonSearchBooleans.requestData(options, {
                             type: require('./../../metka').PAGE,
                             values: {}
-                        };
+                        });
                         [
                             'studyid',
                             'submissionid',
@@ -552,9 +554,9 @@ define(function (require) {
                             'sampproc',
                             'collmode'
                         ].forEach(function (field) {
-                            response.values[field] = data(field).getByLang(options.defaultLang);
+                            requestData.values[field] = data(field).getByLang(options.defaultLang);
                         });
-                        return response;
+                        return requestData;
                     }, function (data) {
                         return data.rows;
                     }, function (result) {
@@ -623,24 +625,23 @@ define(function (require) {
                         }
                     }
                 ],
-                data: {},
+                data: commonSearchBooleans.initialData({}),
                 dataConf: {
                     "selectionLists": {
-                        "roles": {
-                            "key": "roles",
+                        "producerrole_list": {
+                            "key": "producerrole_list",
                             "type": "VALUE",
                             "options": [
                                 {
+                                    "value": "1",
                                     "&title": {
-                                        "default": "a"
-                                    },
-                                    "value": 'a'
-                                },
-                                {
+                                        "default":"Rahoittaja"
+                                    }
+                                }, {
+                                    "value": "2",
                                     "&title": {
-                                        "default": "b"
-                                    },
-                                    "value": 'b'
+                                        "default":"Projekti"
+                                    }
                                 }
                             ]
                         },
@@ -689,7 +690,7 @@ define(function (require) {
                         },
                         producerrole: {
                             "type": "SELECTION",
-                            "selectionList": "roles"
+                            "selectionList": "producerrole_list"
                         },
                         studyname: {
                             "type": "SELECTION",

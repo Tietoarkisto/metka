@@ -57,7 +57,6 @@ define(function (require) {
             }
 
             var type = options.field.displayType || require('./utils/getPropertyNS')(options, 'dataConf.fields', key, 'type');
-
             var $langField = $('<div>');
             if (!type) {
                 log('field type is not set', key, options);
@@ -65,7 +64,7 @@ define(function (require) {
                 if (type === 'CONTAINER' || type === 'REFERENCECONTAINER') {
                     require('./containerField').call($langField, options, lang);
                 } else {
-                    if (type === 'CHECKBOX') {
+                    if (type === 'BOOLEAN') {
                         require('./checkboxField').call($langField, options, lang);
                     } else {
                         require('./inputField').call($langField, options, type, lang);

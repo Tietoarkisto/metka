@@ -2,10 +2,12 @@ define(function (require) {
     'use strict';
 
     if (location.pathname.split('/').indexOf('search') !== -1) {
+        var commonSearchBooleans = require('./../commonSearchBooleans');
         return function (options, onLoad) {
             $.extend(options, {
                 header: MetkaJS.L10N.get('type.PUBLICATION.search'),
                 content: [
+                    commonSearchBooleans.column,
                     {
                         "type": "COLUMN",
                         "columns": 2,
@@ -189,10 +191,10 @@ define(function (require) {
                 ],
                 buttons: [
                     require('./../searchButton')('/revision/ajax/search', function () {
-                        var response = {
+                        var requestData = commonSearchBooleans.requestData(options, {
                             type: require('./../../metka').PAGE,
                             values: {}
-                        };
+                        });
                         [
                             'publicationfirstsaved',
                             'savedAt',
@@ -207,9 +209,9 @@ define(function (require) {
                             'publicationpublic',
                             'savedBy'
                         ].forEach(function (field) {
-                                response.values[field] = data(field).getByLang(options.defaultLang);
-                            });
-                        return response;
+                            requestData.values[field] = data(field).getByLang(options.defaultLang);
+                        });
+                        return requestData;
                     }, function (data) {
                         return data.rows;
                     }, function (result) {
@@ -267,7 +269,7 @@ define(function (require) {
                         }
                     }
                 ],
-                data: {},
+                data: commonSearchBooleans.initialData({}),
                 dataConf: {
                     "selectionLists": {
                         "yes_no": {
