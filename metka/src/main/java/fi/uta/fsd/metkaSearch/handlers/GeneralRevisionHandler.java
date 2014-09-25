@@ -135,10 +135,28 @@ class GeneralRevisionHandler implements RevisionHandler {
         document.indexIntegerField("key.no", data.getKey().getNo().longValue(), true);
         document.indexKeywordField("key.configuration.type", data.getConfiguration().getType().toValue(), YES);
         document.indexIntegerField("key.configuration.version", data.getConfiguration().getVersion().longValue(), true);
-        document.indexKeywordField("state.removed", info.getRemoved().toString(), YES);
         if(info.getRemoved()) {
+            document.indexKeywordField("state.removed", "true", YES);
             document.indexKeywordField("state.removed.time", info.getRemovedAt().toString(), YES);
             document.indexKeywordField("state.removed.user", info.getRemovedBy(), YES);
+
+            document.indexKeywordField("state.approved", "false", YES);
+            document.indexKeywordField("state.draft", "false", YES);
+        } else if(data.getState() == RevisionState.APPROVED) {
+            // Set state.approved field to true since this is an approved data, also set approval date and approved by values
+            document.indexKeywordField("state.approved", "true", YES);
+
+            // Set state.draft field to false since this is an approved data
+            document.indexKeywordField("state.removed", "false", YES);
+            document.indexKeywordField("state.draft", "false", YES);
+        } else if(data.getState() == RevisionState.DRAFT) {
+            // Set state.draft field to true since this is a draft data, also set current handler
+            document.indexKeywordField("state.draft", "true", YES);
+            document.indexKeywordField("state.draft.handler", data.getHandler(), YES);
+
+            // Set state.approved field to false since this is a draft data
+            document.indexKeywordField("state.removed", "false", YES);
+            document.indexKeywordField("state.approved", "false", YES);
         }
 
         // There's approval date for the command language
@@ -147,20 +165,7 @@ class GeneralRevisionHandler implements RevisionHandler {
             document.indexKeywordField("state.approved.user", data.getApproved().get(language).getTime().toString(), YES);
         }
 
-        if(data.getState() == RevisionState.APPROVED) {
-            // Set state.approved field to true since this is an approved data, also set approval date and approved by values
-            document.indexKeywordField("state.approved", "true", YES);
 
-            // Set state.draft field to false since this is an approved data
-            document.indexKeywordField("state.draft", "false", YES);
-        } else if(data.getState() == RevisionState.DRAFT) {
-            // Set state.draft field to true since this is a draft data, also set current handler
-            document.indexKeywordField("state.draft", "true", YES);
-            document.indexKeywordField("state.draft.handler", data.getHandler(), YES);
-
-            // Set state.approved field to false since this is a draft data
-            document.indexKeywordField("state.approved", "false", YES);
-        }
 
         if(data.getSaved() != null) {
             document.indexKeywordField("state.saved", "true", YES); // Specialized field that tells if the RevisionData has been saved by an user at least once

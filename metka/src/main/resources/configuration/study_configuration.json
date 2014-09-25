@@ -469,7 +469,7 @@
 			"reference": "timemethod_ref",
 			"includeEmpty": true,
 			"freeText": ["Other"],
-			"freeTextKey": "timemthodother"
+			"freeTextKey": "timemethodother"
 		},
 		"topicvocab_list": {
 			"key": "topicvocab_list",

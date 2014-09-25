@@ -2,6 +2,10 @@ define(function (require) {
     'use strict';
 
     return function (option) {
+        if (!option) {
+            return;
+        }
+
         if (MetkaJS.L10N.hasTranslation(option, 'title')) {
             return MetkaJS.L10N.localize(option, 'title');
         }

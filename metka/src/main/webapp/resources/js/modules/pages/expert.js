@@ -115,8 +115,8 @@ define(function (require) {
                 ], function (transferRow) {
                     log(transferRow);
                     require('./../assignUrl')('view', {
-                        id: transferRow.fields.id.values.DEFAULT.current,
-                        no: transferRow.fields.no.values.DEFAULT.current,
+                        id: transferRow.fields.id.values[options.defaultLang].current,
+                        no: transferRow.fields.no.values[options.defaultLang].current,
                         page: transferRow.fields.TYPE.values.DEFAULT.current.toLowerCase()
                     });
                 }),

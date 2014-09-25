@@ -534,13 +534,34 @@ define(function (require) {
                                         no: result.no,
                                         studyid: result.values.studyid,
                                         studyname: result.values.studyname,
-                                        authors: result.values.authors.join(', '),
+                                        authors: result.values.authors ? result.values.authors.join(', ') : '',
                                         seriesname: result.values.seriesname,
                                         datakind: result.values.datakind,
                                         termsofuse: result.values.termsofuse,
                                         state: MetkaJS.L10N.get('search.result.state.{state}'.supplant(result))
                                     };
                                 }, {
+                                    studyid: {
+                                        type: 'STRING'
+                                    },
+                                    studyname: {
+                                        type: 'STRING'
+                                    },
+                                    authors: {
+                                        type: 'STRING'
+                                    },
+                                    seriesname : {
+                                        type: 'INTEGER'
+                                    },
+                                    datakind : {
+                                        type: 'INTEGER'
+                                    },
+                                    termsofuse : {
+                                        type: 'INTEGER'
+                                    },
+                                    state: {
+                                        type: 'STRING'
+                                    }
                                 }, [
                                     "studyid",
                                     "studyname",
@@ -551,8 +572,8 @@ define(function (require) {
                                     "state"
                                 ], function (transferRow) {
                                     require('./../assignUrl')('view', {
-                                        id: transferRow.fields.id.value.current,
-                                        no: transferRow.fields.no.value.current
+                                        id: transferRow.fields.id.values[options.defaultLang].current,
+                                        no: transferRow.fields.no.values[options.defaultLang].current
                                     });
                                 }),
                                 /*{
@@ -601,6 +622,7 @@ define(function (require) {
                                     seriesname_list: {
                                         "key": "seriesname_list",
                                         "type": "VALUE",
+                                        "includeEmpty": true,
                                         "options": [
                                             {
                                                 "value": "1",
@@ -618,6 +640,7 @@ define(function (require) {
                                     publication_list: {
                                         "key": "publication_list",
                                         "type": "VALUE",
+                                        "includeEmpty": true,
                                         "options": [
                                             {
                                                 "value": "1",

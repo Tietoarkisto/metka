@@ -1,8 +1,6 @@
 define(function (require) {
     'use strict';
 
-
-
     var getPropertyNS = require('./utils/getPropertyNS');
 
     return {
@@ -22,7 +20,7 @@ define(function (require) {
                                         log('fieldValues should not have property "' + target + '"');
                                         return;
                                     }
-                                    response[target] = dataFields[target].values[lang].current;
+                                    response[target] = getPropertyNS(dataFields, target, 'values', lang, 'current');
                                     var ref2 = getPropertyNS(options, 'dataConf.fields', target);
                                     if (ref2 && ref2.type === 'SELECTION') {
                                         var refSelectionList = getPropertyNS(options, 'dataConf.selectionLists', ref2.selectionList);
@@ -44,11 +42,7 @@ define(function (require) {
         },
         option: function request(key, options, lang, callback) {
             return this.options(key, options, lang, function (options) {
-                if (options.length) {
-                    callback(require('./selectInputOptionText')(options[0]));
-                } else {
-                    callback();
-                }
+                callback(require('./selectInputOptionText')(options[0]));
             });
         }
     };

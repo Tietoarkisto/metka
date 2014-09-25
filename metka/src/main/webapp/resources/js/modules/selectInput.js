@@ -3,115 +3,26 @@ define(function (require) {
 
     var getPropertyNS = require('./utils/getPropertyNS');
 
-    function selectInput($input, options, lang, key, $field) {
-        var selectionListKey = getPropertyNS(options, 'dataConf.fields', key, 'selectionList');
-        if (!selectionListKey) {
+    return function (options, key, callback) {
+        var listKey = getPropertyNS(options, 'dataConf.fields', key, 'selectionList');
+        if (!listKey) {
+            callback();
             return;
         }
-
-        // TODO: prevent infinite recursion
-        (function selectInput(listKey) {
-            function setOptions(selectOptions) {
-                $input.empty();
-                if (list.includeEmpty === null || list.includeEmpty) {
-                    $input
-                        .append($('<option>')
-                            //.prop('disabled', true)
-                            .val('')
-                            .text(MetkaJS.L10N.get('general.selection.empty')));
-                }
-                $input.append(selectOptions.map(function (option, i) {
-                    return $('<option>')
-                        .val(option.value)
-                        .text(require('./selectInputOptionText')(option));
-                }));
-                require('./data')(options).onChange(function () {
-                    var value = require('./data')(options).getByLang(lang);
-                    if (typeof value !== 'undefined' && $input.children('option[value="' + value + '"]').length) {
-                        $input.val(value);
-                    } else {
-                        $input.children().first().prop('selected', true);
-                    }
-                    $input.change();
-                });
-            }
-
+        (function rec(listKey) {
             var list = getPropertyNS(options, 'dataConf.selectionLists', listKey);
 
             if (!list) {
                 log('list not found', listKey, options);
+                callback();
+                return;
             }
             if (list.type === 'SUBLIST') {
-                return selectInput(list.sublistKey || list.key);
+                return rec(list.sublistKey || list.key);
             }
 
-            if (list.type === 'REFERENCE') {
-                var reference = getPropertyNS(options, 'dataConf.references', list.reference);
-                var getOptions = require('./reference').options(key, options, lang, setOptions);
-                if (reference && reference.type === 'DEPENDENCY') {
-                    options.$events.on('data-change-{key}-{lang}'.supplant({
-                        key: reference.target,
-                        lang: lang
-                    }), function (e) {
-                        getOptions(options.data.fields, reference);
-                    });
-                } else {
-                    getOptions();
-                }
-            } else {
-                setOptions(list.options);
-            }
-/*
-            var $freeText = require('./inherit')(function (options) {
-                return require('./inputField').call($('<div>'), options, 'STRING', lang);
-            })(options)({
-                horizontal: true,
-                title: 'Muu arvo',
-                field: {
-                    key: list.freeTextKey
-                }
-            });
-
-            $field.append($freeText);
-            function showFreeText() {
-                $freeText.toggle(list.freeText.indexOf(require('./data')(options).getByLang(lang)) !== -1);
-            }
-            showFreeText();
-            $input.change(showFreeText);*/
-        })(selectionListKey);
-    }
-
-    selectInput.asText = function (options, lang, key, value, callback, column, transferRowFields) {
-        var selectionListKey = getPropertyNS(options, 'dataConf.fields', key, 'selectionList');
-        if (!selectionListKey) {
-            return;
-        }
-
-        (function selectInput(listKey) {
-            function setOptions(selectOptions) {
-                callback(require('./selectInputOptionText')(selectOptions.find(function (option) {
-                    return option.value === value;
-                })));
-            }
-
-            var list = getPropertyNS(options, 'dataConf.selectionLists', listKey);
-
-            if (!list) {
-                log('list not found', listKey, options);
-            }
-            if (list.type === 'SUBLIST') {
-                return selectInput(list.sublistKey || list.key);
-            }
-
-            if (list.type === 'REFERENCE') {
-                require('./reference').option(column, options, lang, callback)(transferRowFields, {
-                    target: column
-                });
-            } else {
-                setOptions(list.options);
-            }
-        })(selectionListKey);
+            callback(list);
+            return true;
+        })(listKey);
     };
-
-    return selectInput;
 });

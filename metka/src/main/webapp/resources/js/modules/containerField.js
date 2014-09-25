@@ -116,11 +116,12 @@ define(function (require) {
                             }
 
                             var columnLang = $thead.children('tr').children().eq(i).data('lang') || lang;
-                            if (columnLang) {
-                                return getPropertyNS(transferField, 'values', columnLang, 'current');
-                            } else {
-                                return getPropertyNS(transferField, 'value.current');
+                            // TODO: merge with data operations
+                            var current = getPropertyNS(transferField, 'values', columnLang, 'current');
+                            if (MetkaJS.exists(current)) {
+                                return current;
                             }
+                            return getPropertyNS(transferField, 'values', columnLang, 'original');
                         })();
 
                         if (type === 'STRING' || type === 'INTEGER' || type === 'REAL') {
@@ -133,9 +134,25 @@ define(function (require) {
                             return EMPTY;
                         }
                         if (type === 'SELECTION') {
-                            require('./selectInput').asText(options, lang, column, value, function (text) {
-                                $td.append(typeof text === 'undefined' ? EMPTY : text);
-                            }, column, transferRow.fields);
+                            require('./selectInput')(options, column, function (list) {
+                                function setText(text) {
+                                    $td.append(typeof text === 'undefined' ? EMPTY : text);
+                                }
+
+                                if (!list) {
+                                    $td.append(EMPTY);
+                                    return;
+                                }
+                                if (list.type === 'REFERENCE') {
+                                    require('./reference').option(column, options, lang, setText)(transferRow.fields, {
+                                        target: column
+                                    });
+                                } else {
+                                    setText(require('./selectInputOptionText')(list.options.find(function (option) {
+                                        return option.value === value;
+                                    })));
+                                }
+                            });
                             return;
                         }
                         log('not implemented', column, type);
