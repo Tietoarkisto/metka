@@ -600,8 +600,7 @@ define(function (require) {
                                                         if (response.result === 'REVISION_CREATED') {
                                                             require('./../assignUrl')('view', {
                                                                 id: response.data.key.id,
-                                                                no: response.data.key.no,
-                                                                page: response.data.configuration.type.toLowerCase()
+                                                                no: response.data.key.no
                                                             });
                                                         }
                                                     }

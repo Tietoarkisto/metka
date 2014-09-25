@@ -85,7 +85,8 @@
 			]
 		},
 		"filedip_list": {
-			"key": "yes_no_na",
+			"key": "filedip_list",
+			"sublistKey": "yes_no_na",
 			"type": "SUBLIST"
 		},
 		"filelanguage_list": {
@@ -129,7 +130,8 @@
 			]
 		},
 		"fileoriginal_list": {
-			"key": "yes_no_na",
+			"key": "fileoriginal_list",
+			"sublistKey": "yes_no_na",
 			"type": "SUBLIST"
 		},
 		"filepublication_list": {

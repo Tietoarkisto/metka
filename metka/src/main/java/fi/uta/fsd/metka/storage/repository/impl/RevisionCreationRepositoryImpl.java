@@ -157,6 +157,10 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
                     logger.error("Creation of STUDY_VARIABLE requires that study variables id is provided in parameter 'variablesid'");
                     return ReturnResult.PARAMETERS_MISSING;
                 }
+                if(!request.getParameters().containsKey("varname")) {
+                    logger.error("Creation of STUDY_VARIABLE requires that variables varname is provided in parameter 'varname'");
+                    return ReturnResult.PARAMETERS_MISSING;
+                }
                 if(!request.getParameters().containsKey("varid")) {
                     logger.error("Creation of STUDY_VARIABLE requires that variables varid is provided in parameter 'varid'");
                     return ReturnResult.PARAMETERS_MISSING;
@@ -251,7 +255,7 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
             case STUDY_VARIABLE: {
                 VariablesFactory factory = new VariablesFactory();
                 data = factory.newVariable(revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo(), configuration,
-                        request.getParameters().get("variablesid"), request.getParameters().get("study"), request.getParameters().get("varid"));
+                        request.getParameters().get("variablesid"), request.getParameters().get("study"), request.getParameters().get("varname"), request.getParameters().get("varid"));
                 break;
             }
             case PUBLICATION: {

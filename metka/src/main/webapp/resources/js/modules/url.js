@@ -9,26 +9,32 @@ define(function (require) {
                 return key;
             } else {
                 return '/' + {
-                    approve: 'revision/ajax/approve',
-                    compareRevisions: 'history/revisions/compare',
-                    conf: '/revision/ajax/configuration/{PAGE}',
-                    create: 'revision/ajax/create',
-                    download: 'download/{id}/{no}',
-                    edit: 'revision/ajax/edit',
-                    expert: 'expert/',
-                    fileEdit: 'file/save/{value}',
-                    fileSave: 'file/save',
-                    fileUpload: 'file/upload',
-                    listRevisions: 'history/revisions/{id}',
-                    next: 'next/{page}/{id}',
-                    options: 'references/collectOptionsGroup',
-                    prev: 'prev/{page}/{id}',
-                    remove: 'remove/{page}/{type}/{id}',
-                    save: 'revision/ajax/save',
-                    searchPage: 'revision/search/{page}',
+                    // Search
+                    searchPage: 'revision/search/{PAGE}',
                     searchAjax: 'revision/ajax/search',
-                    view: 'revision/view/{page}/{id}/{no}',
-                    viewAjax: 'revision/ajax/view/{page}/{id}/{no}',
+                    expert: 'expert/',
+
+                    // Revision viewing
+                    view: 'revision/view/{PAGE}/{id}/{no}',
+                    viewAjax: 'revision/ajax/view/{PAGE}/{id}/{no}',
+                    conf: '/revision/ajax/configuration/{PAGE}',
+                    next: 'next/{PAGE}/{id}',
+                    prev: 'prev/{PAGE}/{id}',
+
+                    // Revision operations
+                    create: 'revision/ajax/create',
+                    edit: 'revision/ajax/edit',
+                    approve: 'revision/ajax/approve',
+                    save: 'revision/ajax/save',
+                    remove: 'revision/ajax/remove',
+
+                    // Revision history
+                    compareRevisions: 'history/revisions/compare',
+                    listRevisions: 'history/revisions/{id}',
+
+                    // Misc calls
+                    download: 'download/{id}/{no}',
+                    options: 'references/collectOptionsGroup',
                     ddiexport: 'revision/ddi/export/{id}/{no}'
                 }[key];
             }

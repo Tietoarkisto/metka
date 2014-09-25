@@ -95,8 +95,7 @@ public class ReferenceContainerDataField extends RowContainerDataField {
             if(info == null) {
                 info = DateTimeUserPair.build();
             }
-            ReferenceRow reference = ReferenceRow.build(this, new Value(value));
-            reference.setSaved(info);
+            ReferenceRow reference = ReferenceRow.build(this, new Value(value), info);
             references.add(reference);
 
             ContainerChange change = (ContainerChange)changeMap.get(reference.getKey());

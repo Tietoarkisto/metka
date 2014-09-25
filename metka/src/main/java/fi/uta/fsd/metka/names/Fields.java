@@ -176,6 +176,7 @@ public final class Fields {
     public static final String OTHERAUTHORS = "otherauthors";
     public static final String OTHERAUTHORTYPE = "otherauthortype";
     public static final String OTHERAUTHORGROUP = "otherauthorgroup";
+    public static final String VALUELABELS = "valuelabels";
 
 
     private Fields() {}

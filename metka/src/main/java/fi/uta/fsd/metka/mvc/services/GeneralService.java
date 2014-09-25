@@ -1,6 +1,7 @@
 package fi.uta.fsd.metka.mvc.services;
 
 import codebook25.CodeBookDocument;
+import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metkaAuthentication.Permission;
@@ -11,7 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 @PreAuthorize("hasPermission('"+ Permission.Values.CAN_VIEW_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "')")
 // TODO: Move to RevisionService
 public interface GeneralService {
-    Pair<ReturnResult, Long> getAdjancedRevisionableId(Long currentId, String type, boolean forward);
+    Pair<ReturnResult, Long> getAdjancedRevisionableId(Long currentId, ConfigurationType type, boolean forward);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_EXPORT_REVISION+"', '" + PermissionCheck.Values.PERMISSION + "')")
     Pair<ReturnResult, RevisionData> getRevisionData(Long id, Integer revision);

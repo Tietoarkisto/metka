@@ -24,28 +24,28 @@ define(function (require) {
     if (MetkaJS.User.role.permissions.hasMinimumPermission) {
         items.push({
             ct: 'STUDY',
-            href: 'revision/search/study',
+            href: 'revision/search/STUDY',
             text: 'study'
         });
     }
     if (MetkaJS.User.role.permissions.hasMinimumPermission) {
         items.push({
             ct: 'STUDY_VARIABLES',
-            href: 'revision/search/study_variables',
+            href: 'revision/search/STUDY_VARIABLES',
             text: 'variables'
         });
     }
     if (MetkaJS.User.role.permissions.hasMinimumPermission) {
         items.push({
             ct: 'PUBLICATION',
-            href: 'revision/search/publication',
+            href: 'revision/search/PUBLICATION',
             text: 'publication'
         });
     }
     if (MetkaJS.User.role.permissions.hasMinimumPermission) {
         items.push({
             ct: 'SERIES',
-            href: 'revision/search/series',
+            href: 'revision/search/SERIES',
             text: 'series'
         });
     }
@@ -123,7 +123,7 @@ define(function (require) {
                 }
 
                 require('./assignUrl')('view', {
-                    page: 'study',
+                    PAGE: 'STUDY',
                     id: data.rows[0].id,
                     no: data.rows[0].revision
                 });

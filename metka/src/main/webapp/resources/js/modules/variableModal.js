@@ -4,7 +4,7 @@ define(function (require) {
     return function (key, requestOptions, onSaveSuccess) {
         var metka = require('./../metka');
         require('./server')('viewAjax', $.extend({
-            page: 'study_variable'
+            PAGE: 'STUDY_VARIABLE'
         }, requestOptions), {
             method: 'GET',
             success: function (data) {

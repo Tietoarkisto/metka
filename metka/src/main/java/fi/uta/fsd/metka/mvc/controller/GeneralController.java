@@ -2,6 +2,7 @@ package fi.uta.fsd.metka.mvc.controller;
 
 import codebook25.CodeBookDocument;
 import fi.uta.fsd.metka.ddi.DDIBuilder;
+import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.mvc.services.GeneralService;
 import fi.uta.fsd.metka.mvc.services.simple.ErrorMessage;
@@ -59,7 +60,7 @@ public class GeneralController {
 
     // TODO: Move to revision controller and unify as one call
     @RequestMapping(value = "prev/{type}/{id}", method = RequestMethod.GET)
-    public String prev(@PathVariable String type, @PathVariable Long id, RedirectAttributes redirectAttributes) {
+    public String prev(@PathVariable ConfigurationType type, @PathVariable Long id, RedirectAttributes redirectAttributes) {
         Pair<ReturnResult, Long> pair = service.getAdjancedRevisionableId(id, type, false);
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             List<ErrorMessage> errors = new ArrayList<>();
@@ -76,7 +77,7 @@ public class GeneralController {
 
     // TODO: Move to revision controller and unify as one call
     @RequestMapping(value = "next/{type}/{id}", method = RequestMethod.GET)
-    public String next(@PathVariable String type, @PathVariable Long id, RedirectAttributes redirectAttributes) {
+    public String next(@PathVariable ConfigurationType type, @PathVariable Long id, RedirectAttributes redirectAttributes) {
         Pair<ReturnResult, Long> pair = service.getAdjancedRevisionableId(id, type, true);
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             List<ErrorMessage> errors = new ArrayList<>();

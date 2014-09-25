@@ -91,8 +91,6 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         SaveHandler handler = new SaveHandler(info, revision.getKey());
         Pair<Boolean, Boolean> changesAndErrors = handler.saveFields(configuration, transferData, revision);
 
-        // TODO: Do CONCAT checking
-
         finalizeSave(revision, transferData, configuration);
 
         if(changesAndErrors.getLeft()) {
@@ -122,6 +120,9 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         switch(revision.getConfiguration().getType()) {
             case STUDY_ATTACHMENT:
                 finalizeStudyAttachment(revision, transferData, configuration);
+                break;
+            case STUDY:
+                // TODO: Compile biblCit
                 break;
             default:
                 break;

@@ -16,8 +16,10 @@ import java.util.Map;
  * Single reference in a reference container is saved through this
  */
 public class ReferenceRow extends ContainerRow {
-    public static ReferenceRow build(ReferenceContainerDataField container, Value reference) {
-        return new ReferenceRow(container.getKey(), container.getNewRowId(), reference);
+    public static ReferenceRow build(ReferenceContainerDataField container, Value reference, DateTimeUserPair info) {
+        ReferenceRow row = new ReferenceRow(container.getKey(), container.getNewRowId(), reference);
+        row.setSaved(info);
+        return row;
     }
 
     private final Value reference;
@@ -77,7 +79,9 @@ public class ReferenceRow extends ContainerRow {
 
     @JsonIgnore
     public ReferenceRow copy() {
-        return new ReferenceRow(getKey(), getRowId(), getReference());
+        ReferenceRow row = new ReferenceRow(getKey(), getRowId(), getReference());
+        row.setSaved(this.getSaved());
+        return row;
     }
 
     public StatusCode restore(Map<String, Change> changeMap, DateTimeUserPair info) {

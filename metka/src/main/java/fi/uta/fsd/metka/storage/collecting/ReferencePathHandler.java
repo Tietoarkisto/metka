@@ -40,9 +40,8 @@ public class ReferencePathHandler {
     @Autowired
     private ConfigurationRepository configurations;
 
-    public Pair<ReturnResult, List<ReferenceOption>> handleReferencePath(ReferencePath path, Configuration configuration,
-                                                                         List<ReferenceOption> options, Language language) {
-        if(path == null || configuration == null) {
+    public Pair<ReturnResult, List<ReferenceOption>> handleReferencePath(ReferencePath path, List<ReferenceOption> options, Language language) {
+        if(path == null) {
             return new ImmutablePair<>(ReturnResult.PARAMETERS_MISSING, options);
         }
         // We want to start from the root
@@ -50,13 +49,13 @@ public class ReferencePathHandler {
             path = path.getPrev();
         }
 
-        referencePathStep(path, configuration, options, language);
+        referencePathStep(path, options, language);
 
         return new ImmutablePair<>(ReturnResult.OPERATION_SUCCESSFUL, options);
     }
 
     // This is basically the first step which might lead to other steps or might cause options collecting depending on parameters
-    private void referencePathStep(ReferencePath step, Configuration configuration, List<ReferenceOption> options, Language language) {
+    private void referencePathStep(ReferencePath step, List<ReferenceOption> options, Language language) {
         if(!StringUtils.hasText(step.getValue()) && step.getNext() != null) {
             Logger.error(ReferencePathHandler.class, "Malformed path. Since current step does not have a selected value there should be no following steps.");
             return;
@@ -70,10 +69,10 @@ public class ReferencePathHandler {
                 Logger.error(ReferencePathHandler.class, "First step reference was a DEPENDENCY. Can not proceed");
                 return;
             case REVISIONABLE:
-                handleRevisionableStep(step, configuration, options, language);
+                handleRevisionableStep(step, options, language);
                 break;
             case JSON:
-                handleJsonStep(step, configuration, options, language);
+                handleJsonStep(step, options, language);
                 break;
         }
     }
@@ -117,7 +116,7 @@ public class ReferencePathHandler {
         }
     }
 
-    private void referencePathStep(JsonNode node, ReferencePath step, Configuration configuration, List<ReferenceOption> options, Language language) {
+    private void referencePathStep(JsonNode node, ReferencePath step, List<ReferenceOption> options, Language language) {
         // We should not arrive here if this is not a dependency step
         if(step.getReference().getType() != ReferenceType.DEPENDENCY) {
             Logger.error(ReferencePathHandler.class, "Tried to parse DEPENDENCY step with a reference that is not a DEPENDENCY");
@@ -137,7 +136,7 @@ public class ReferencePathHandler {
             // There's a value, we either add a single option or then we continue on with the next step
             node = parser.findRootObjectWithTerminatingValue(step.getValue());
             if(step.getNext() != null) {
-                referencePathStep(node, step.getNext(), configuration, options, language);
+                referencePathStep(node, step.getNext(), options, language);
             } else {
                 ReferenceOption option = parser.getOption(node, step.getReference(), language);
                 if(option != null) {
@@ -158,7 +157,7 @@ public class ReferencePathHandler {
 
     }
 
-    private void handleRevisionableStep(ReferencePath step, Configuration configuration, List<ReferenceOption> options, Language language) {
+    private void handleRevisionableStep(ReferencePath step, List<ReferenceOption> options, Language language) {
         if(StringUtils.hasText(step.getValue())) {
             Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(Long.parseLong(step.getValue()),
                     false, ConfigurationType.fromValue(step.getReference().getTarget()));
@@ -208,7 +207,7 @@ public class ReferencePathHandler {
         }
     }
 
-    private void handleJsonStep(ReferencePath step, Configuration configuration, List<ReferenceOption> options, Language language) {
+    private void handleJsonStep(ReferencePath step, List<ReferenceOption> options, Language language) {
         Pair<ReturnResult, JsonNode> nodePair = references.getMiscJson(step.getReference().getTarget());
         if(nodePair.getLeft() != ReturnResult.MISC_JSON_FOUND) {
             // No misc json, can't continue
@@ -228,7 +227,7 @@ public class ReferencePathHandler {
                     options.add(option);
                 } else {
                     // Path has not terminated, continue option collecting
-                    referencePathStep(node, step.getNext(), configuration, options, language);
+                    referencePathStep(node, step.getNext(), options, language);
                 }
             }
         } else {

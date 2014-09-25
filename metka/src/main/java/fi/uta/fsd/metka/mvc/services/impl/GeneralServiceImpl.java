@@ -37,7 +37,7 @@ public class GeneralServiceImpl implements GeneralService {
      * @param forward do we want next or previous revisionable
      * @return Id of the adjanced revisionable object. If not found then error is thrown instead.
      */
-    @Override public Pair<ReturnResult, Long> getAdjancedRevisionableId(Long currentId, String type, boolean forward) {
+    @Override public Pair<ReturnResult, Long> getAdjancedRevisionableId(Long currentId, ConfigurationType type, boolean forward) {
         return revisions.getAdjacentRevisionableId(currentId, type, forward);
     }
 

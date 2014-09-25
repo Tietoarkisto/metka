@@ -72,7 +72,7 @@ define(function (require) {
                                         .on('click', 'tr', function (event) {
                                             var $tr = $(this);
                                             require('./../assignUrl')('view', {
-                                                page: 'study',
+                                                PAGE: 'STUDY',
                                                 id: $tr.data('transferRow').fields.study.values.DEFAULT.current
                                             });
                                         })

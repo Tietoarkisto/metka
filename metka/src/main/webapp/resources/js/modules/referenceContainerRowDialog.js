@@ -5,6 +5,7 @@ define(function (require) {
         return function (requestOptions, onSaveSuccess) {
             var metka = require('./../metka');
             require('./server')('viewAjax', $.extend({
+                PAGE: page.toUpperCase(),
                 page: page
             }, requestOptions), {
                 method: 'GET',

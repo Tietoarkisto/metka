@@ -12,9 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 @PreAuthorize("hasPermission('"+ Permission.Values.CAN_VIEW_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "')")
 @Transactional
 public interface RevisionService {
-    @Transactional(readOnly = true) RevisionDataResponse view(Long id, String type);
+    @Transactional(readOnly = true) RevisionDataResponse view(Long id, ConfigurationType type);
 
-    @Transactional(readOnly = true) RevisionDataResponse view(Long id, Integer no, String type);
+    @Transactional(readOnly = true) RevisionDataResponse view(Long id, Integer no, ConfigurationType type);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_CREATE_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "')")
     RevisionOperationResponse create(RevisionCreateRequest request);

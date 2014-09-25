@@ -66,23 +66,15 @@ public class RevisionServiceImpl implements RevisionService {
     @Autowired
     private RevisionHandlerRepository handler;
 
-    @Override public RevisionDataResponse view(Long id, String type) {
+    @Override public RevisionDataResponse view(Long id, ConfigurationType type) {
         RevisionDataResponse response = new RevisionDataResponse();
-        if(!ConfigurationType.isValue(type)) {
-            response.setResult(ReturnResult.TYPE_NOT_VALID_CONFIGURATION_TYPE);
-            return response;
-        }
-        Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(id, false, ConfigurationType.fromValue(type));
+        Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(id, false, type);
         return fillResponse(response, dataPair);
     }
 
-    @Override public RevisionDataResponse view(Long id, Integer no, String type) {
+    @Override public RevisionDataResponse view(Long id, Integer no, ConfigurationType type) {
         RevisionDataResponse response = new RevisionDataResponse();
-        if(!ConfigurationType.isValue(type)) {
-            response.setResult(ReturnResult.TYPE_NOT_VALID_CONFIGURATION_TYPE);
-            return response;
-        }
-        Pair<ReturnResult, RevisionData> dataPair = revisions.getRevisionDataOfType(id, no, ConfigurationType.fromValue(type));
+        Pair<ReturnResult, RevisionData> dataPair = revisions.getRevisionDataOfType(id, no, type);
         return fillResponse(response, dataPair);
     }
 

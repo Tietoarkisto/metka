@@ -5,7 +5,7 @@ define(function (require) {
         function view(requestOptions, onSaveSuccess) {
             var metka = require('./../../../metka');
             require('./../../server')('viewAjax', $.extend({
-                page: 'study_attachment'
+                PAGE: 'STUDY_ATTACHMENT'
             }, requestOptions), {
                 method: 'GET',
                 success: function (data) {
@@ -229,12 +229,12 @@ define(function (require) {
                     },
                     onRemove: function ($tr) {
                         require('./../../server')('viewAjax', $.extend({
-                            page: 'study_attachment',
+                            PAGE: 'STUDY_ATTACHMENT',
                             id: $tr.data('transferRow').value
                         }), {
                             method: 'GET',
                             success: function (data) {
-                                require('./../../server')('/revision/ajax/remove', {
+                                require('./../../server')('remove', {
                                     data: JSON.stringify(data.transferData),
                                     success: function (response) {
                                         $tr.remove();

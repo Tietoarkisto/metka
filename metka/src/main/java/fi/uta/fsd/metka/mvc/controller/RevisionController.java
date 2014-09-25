@@ -23,64 +23,46 @@ public class RevisionController {
     private RevisionService revisions;
 
     @RequestMapping("search/{type}")
-    public String search(@PathVariable String type, Model model) {
-        if(!ConfigurationType.isValue(type.toUpperCase())) {
-            // TODO: Return error
-            return null;
-        }
-
-        ConfigurationType ct = ConfigurationType.fromValue(type.toUpperCase());
+    public String search(@PathVariable ConfigurationType type, Model model) {
         // Take away types that shouldn't navigate through here
-        switch(ct) {
+        switch(type) {
             case STUDY_VARIABLE:
             case STUDY_ATTACHMENT:
                 // TODO: Return error
                 return null;
         }
 
-        ModelUtil.initRevisionModel(model, ct);
+        ModelUtil.initRevisionModel(model, type);
 
         return AuthenticationUtil.getModelName("revision", model);
     }
 
     @RequestMapping("view/{type}/{id}")
-    public String viewLatestRevision(@PathVariable String type, @PathVariable Long id, Model model) {
-        if(!ConfigurationType.isValue(type.toUpperCase())) {
-            // TODO: Return error
-            return null;
-        }
-
-        ConfigurationType ct = ConfigurationType.fromValue(type.toUpperCase());
+    public String viewLatestRevision(@PathVariable ConfigurationType type, @PathVariable Long id, Model model) {
         // Take away types that shouldn't navigate through here
-        switch(ct) {
+        switch(type) {
             case STUDY_VARIABLE:
             case STUDY_ATTACHMENT:
                 // TODO: Return error
                 return null;
         }
 
-        ModelUtil.initRevisionModel(model, ct, id);
+        ModelUtil.initRevisionModel(model, type, id);
 
         return AuthenticationUtil.getModelName("revision", model);
     }
 
     @RequestMapping("view/{type}/{id}/{no}")
-    public String viewRevision(@PathVariable String type, @PathVariable Long id, @PathVariable Integer no, Model model) {
-        if(!ConfigurationType.isValue(type.toUpperCase())) {
-            // TODO: Return error
-            return null;
-        }
-
-        ConfigurationType ct = ConfigurationType.fromValue(type.toUpperCase());
+    public String viewRevision(@PathVariable ConfigurationType type, @PathVariable Long id, @PathVariable Integer no, Model model) {
         // Take away types that shouldn't navigate through here
-        switch(ct) {
+        switch(type) {
             case STUDY_VARIABLE:
             case STUDY_ATTACHMENT:
                 // TODO: Return error
                 return null;
         }
 
-        ModelUtil.initRevisionModel(model, ct, id, no);
+        ModelUtil.initRevisionModel(model, type, id, no);
 
         return AuthenticationUtil.getModelName("revision", model);
     }
@@ -99,8 +81,8 @@ public class RevisionController {
      * @return RevisionDataResponse object containing the revision data as TransferData, Configuration with specific version and the newest GUIConfiguration for the revision type
      */
     @RequestMapping(value = "ajax/view/{type}/{id}", method = RequestMethod.GET)
-    public @ResponseBody RevisionDataResponse ajaxViewLatestRevisionWithType(@PathVariable String type, @PathVariable Long id) {
-        return revisions.view(id, type.toUpperCase());
+    public @ResponseBody RevisionDataResponse ajaxViewLatestRevisionWithType(@PathVariable ConfigurationType type, @PathVariable Long id) {
+        return revisions.view(id, type);
     }
 
     /**
@@ -113,8 +95,8 @@ public class RevisionController {
      * @return RevisionDataResponse object containing the revision data as TransferData, Configuration with specific version and the newest GUIConfiguration for the revision type
      */
     @RequestMapping(value = "ajax/view/{type}/{id}/{no}", method = RequestMethod.GET)
-    public @ResponseBody RevisionDataResponse ajaxViewRevisionWithType(@PathVariable String type, @PathVariable Long id, @PathVariable Integer no) {
-        return revisions.view(id, no, type.toUpperCase());
+    public @ResponseBody RevisionDataResponse ajaxViewRevisionWithType(@PathVariable ConfigurationType type, @PathVariable Long id, @PathVariable Integer no) {
+        return revisions.view(id, no, type);
     }
 
     @RequestMapping(value="ajax/create", method = RequestMethod.POST)

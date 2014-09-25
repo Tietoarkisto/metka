@@ -82,11 +82,10 @@
         },
         "varlabel": {
             "key": "varlabel",
-            "translatable": false,
+            "translatable": true,
             "required": true,
             "type": "STRING",
-            "editable": false,
-            "immutable": true
+            "editable": false
         },
         "varinterval": {
             "key": "varinterval",
@@ -240,7 +239,7 @@
         },
         "label": {
             "key": "label",
-            "translatable": false,
+            "translatable": true,
             "required": true,
             "editable": false,
             "immutable": true,

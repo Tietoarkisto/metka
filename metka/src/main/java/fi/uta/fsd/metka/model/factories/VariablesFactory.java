@@ -39,7 +39,7 @@ public class VariablesFactory extends DataFactory {
         return new ImmutablePair<>(ReturnResult.REVISION_CREATED, data);
     }
 
-    public Pair<ReturnResult, RevisionData> newVariable(Long id, Integer no, Configuration configuration, String variablesId, String studyId, String varId) {
+    public Pair<ReturnResult, RevisionData> newVariable(Long id, Integer no, Configuration configuration, String variablesId, String studyId, String varName, String varId) {
         if(configuration.getKey().getType() != ConfigurationType.STUDY_VARIABLE) {
             logger.error("Called StudyVariablesFactory with type "+configuration.getKey().getType()+" configuration");
             return new ImmutablePair<>(ReturnResult.INCORRECT_TYPE_FOR_OPERATION, null);
@@ -51,6 +51,7 @@ public class VariablesFactory extends DataFactory {
         data.dataField(ValueDataFieldCall.set("variables", new Value(variablesId), Language.DEFAULT).setInfo(info));
         data.dataField(ValueDataFieldCall.set("study", new Value(studyId), Language.DEFAULT).setInfo(info));
         // Set varid field
+        data.dataField(ValueDataFieldCall.set("varname", new Value(varName), Language.DEFAULT).setInfo(info));
         data.dataField(ValueDataFieldCall.set("varid", new Value(varId), Language.DEFAULT).setInfo(info));
 
         return new ImmutablePair<>(ReturnResult.REVISION_CREATED, data);

@@ -34,7 +34,7 @@ public interface RevisionRepository {
      * @param forward Boolean telling if the search should be made forward (higher id) or backwards (lower id)
      * @return Revisionable id of the adjacent object with given type and direction from current object or null if no such revisionable can be found.
      */
-    public Pair<ReturnResult, Long> getAdjacentRevisionableId(Long currentId, String type, boolean forward);
+    public Pair<ReturnResult, Long> getAdjacentRevisionableId(Long currentId, ConfigurationType type, boolean forward);
 
     /**
      * Returns the revision data with given id and number.
@@ -104,4 +104,8 @@ public interface RevisionRepository {
      * @return ReturnResult, String pair pointing to root directory of study files if entity was found
      */
     public Pair<ReturnResult, String> getStudyFileDirectory(long study);
+
+    public Pair<ReturnResult, String> getStudyId(Long id);
+
+    public List<RevisionData> getVariableRevisionsOfVariables(Long id);
 }

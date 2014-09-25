@@ -11,7 +11,6 @@ import fi.uta.fsd.metka.model.configuration.SelectionList;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.ReferenceContainerDataField;
 import fi.uta.fsd.metka.model.data.container.ReferenceRow;
-import fi.uta.fsd.metka.storage.collecting_old.ReferenceCollecting;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
@@ -56,7 +55,7 @@ public class ReferenceCollector {
             return new ImmutablePair<>(ReturnResult.OPERATION_SUCCESSFUL, options);
         }
 
-        return pathHandler.handleReferencePath(root, configuration, options, request.getLanguage());
+        return pathHandler.handleReferencePath(root, options, request.getLanguage());
     }
 
     public Pair<ReturnResult, ReferenceRow> getReferenceRow(ReferenceRowRequest request) {
@@ -71,7 +70,7 @@ public class ReferenceCollector {
 
         Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(dataPair.getRight().getConfiguration());
         if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
-            Logger.error(ReferenceCollecting.class, "Configuration was not found for revision " + dataPair.getRight().toString() + " with result " + configPair.getLeft());
+            Logger.error(ReferenceCollector.class, "Configuration was not found for revision " + dataPair.getRight().toString() + " with result " + configPair.getLeft());
             return new ImmutablePair<>(configPair.getLeft(), null);
         }
 

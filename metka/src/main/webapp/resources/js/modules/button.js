@@ -238,7 +238,7 @@ define(function (require) {
                             create: function () {
                                 $(this)
                                     .click(function () {
-                                        require('./server')('/revision/ajax/remove', {
+                                        require('./server')('remove', {
                                             data: JSON.stringify(options.data),
                                             success: function (response) {
                                                 switch(response.result) {

@@ -18,16 +18,18 @@ class PORUtil {
         return result;
     }
 
-    static void groupVariables(List<PORVariableHolder> list, Vector<PORVariable> variables, Vector<PORValueLabels> labels) {
-        for(PORVariable variable : variables) {
+    static List<PORVariableHolder> groupVariables(PORFile porFile) {
+        List<PORVariableHolder> list = new ArrayList<>();
+        for(PORVariable variable : porFile.variables) {
             list.add(new PORVariableHolder(variable));
         }
 
-        for(PORValueLabels vl : labels) {
+        for(PORValueLabels vl : porFile.labels) {
             for(PORVariable variable : vl.vars) {
                 list.get(list.indexOf(new PORVariableHolder(variable))).addLabels(vl);
             }
         }
+        return list;
     }
 
     static class PORVariableHolder {
