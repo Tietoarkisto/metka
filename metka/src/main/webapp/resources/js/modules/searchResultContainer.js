@@ -1,7 +1,17 @@
 define(function (require) {
     'use strict';
 
-    return function (url, requestData, getResults, mapResult, fields, columnFields, trOnClick) {
+    return function (url, requestData, getResults, mapResult, fields, columnFields, getViewRequestOptions) {
+        function trOnClick(transferRow) {
+            var viewRequestOptions = {
+                id: transferRow.fields.id.values.DEFAULT.current,
+                no: transferRow.fields.no.values.DEFAULT.current
+            };
+            if (getViewRequestOptions) {
+                $.extend(viewRequestOptions, getViewRequestOptions(transferRow));
+            }
+            require('./assignUrl')('view', viewRequestOptions);
+        }
         require('./server')(url, {
             data: JSON.stringify(requestData()),
             success: function (data) {

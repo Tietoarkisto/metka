@@ -113,12 +113,9 @@ define(function (require) {
                     "no",
                     "state"
                 ], function (transferRow) {
-                    log(transferRow);
-                    require('./../assignUrl')('view', {
-                        id: transferRow.fields.id.values[options.defaultLang].current,
-                        no: transferRow.fields.no.values[options.defaultLang].current,
+                    return {
                         page: transferRow.fields.TYPE.values.DEFAULT.current.toLowerCase()
-                    });
+                    };
                 }),
                 {
                     "&title": {

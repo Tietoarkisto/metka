@@ -228,12 +228,7 @@ define(function (require) {
                         "seriesabbr",
                         "seriesname",
                         "state"
-                    ], function (transferRow) {
-                        require('./../assignUrl')('view', {
-                            id: transferRow.fields.id.values[options.defaultLang].current,
-                            no: transferRow.fields.no.values[options.defaultLang].current
-                        });
-                    }),
+                    ]),
                     {
                         "&title": {
                             "default": "Tyhjennä"
