@@ -13,5 +13,5 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface StudyVariablesParser {
 
-    public ParseResult parse(RevisionData attachment, VariableDataType type);
+    public ParseResult parse(RevisionData attachment, VariableDataType type, RevisionData study);
 }

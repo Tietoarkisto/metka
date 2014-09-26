@@ -74,23 +74,17 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
     }
 
     @Override
-    public ParseResult parse(RevisionData attachment, VariableDataType type) {
+    public ParseResult parse(RevisionData attachment, VariableDataType type, RevisionData study) {
         // Sanity check
         if(type == null) {
             return ParseResult.NO_TYPE_GIVEN;
         }
+        if(study == null) {
+            return ParseResult.DID_NOT_FIND_STUDY;
+        }
 
         DateTimeUserPair info = DateTimeUserPair.build();
 
-        // Let's get the target study. We can make some assumptions when making this call since we shouldn't be here if this can fail.
-        Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(
-                Long.parseLong(attachment.dataField(ValueDataFieldCall.get("study")).getRight().getActualValueFor(DEFAULT)),
-                false,
-                ConfigurationType.STUDY);
-        if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
-            return ParseResult.DID_NOT_FIND_STUDY;
-        }
-        RevisionData study = dataPair.getRight();
         // **********************
         // StudyAttachment checks
         // **********************
@@ -118,6 +112,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
 
         // Get or create study variables
         fieldPair = study.dataField(ValueDataFieldCall.get("variables"));
+        Pair<ReturnResult, RevisionData> dataPair;
         if(fieldPair.getLeft() == StatusCode.FIELD_MISSING || !fieldPair.getRight().hasValueFor(DEFAULT)) {
             RevisionCreateRequest request = new RevisionCreateRequest();
             request.setType(ConfigurationType.STUDY_VARIABLES);

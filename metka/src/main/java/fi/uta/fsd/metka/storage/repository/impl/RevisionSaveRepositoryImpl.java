@@ -119,7 +119,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
     private void finalizeSave(RevisionData revision, TransferData transferData, Configuration configuration) {
         switch(revision.getConfiguration().getType()) {
             case STUDY_ATTACHMENT:
-                finalizeStudyAttachment(revision, transferData, configuration);
+                finalizeStudyAttachment(revision, transferData);
                 break;
             case STUDY:
                 // TODO: Compile biblCit
@@ -132,13 +132,12 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
     /**
      * If this study attachment is not marked parsed and has a path then check if that path could be a por file that needs parsing.
      * If so then parse that por file and mark this study attachment as parsed.
-     * TODO: translation parses should be handled as part of this by checking the last letter before file-extension
      * @param revision         RevisionData
      * @param transferData     TransferData
-     * @param configuration    Configuration
      */
-    private void finalizeStudyAttachment(RevisionData revision, TransferData transferData, Configuration configuration) {
-        Pair<StatusCode, ValueDataField> fieldPair = revision.dataField(ValueDataFieldCall.get("parsed").setConfiguration(configuration));
+    private void finalizeStudyAttachment(RevisionData revision, TransferData transferData) {
+        // TODO: modify parse rules to allow for translating
+        Pair<StatusCode, ValueDataField> fieldPair = revision.dataField(ValueDataFieldCall.get("parsed"));
         if(!(fieldPair.getLeft() == StatusCode.FIELD_MISSING
                 || (fieldPair.getLeft() == StatusCode.FIELD_FOUND
                     && (!fieldPair.getRight().hasValueFor(Language.DEFAULT)
@@ -192,20 +191,26 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             }
         }
         if(parse) {
-            // File is a variable file, initiate variable parsing
-            ParseResult result = parser.parse(revision, VariableDataType.POR);
-            fieldPair = revision.dataField(ValueDataFieldCall.set("parsed", new Value("true"), Language.DEFAULT).setConfiguration(configuration));
-            TransferField parsed = transferData.getField("parsed");
-            if(parsed == null) {
-                parsed = new TransferField("parsed", TransferFieldType.VALUE);
-                transferData.addField(parsed);
-            }
-            parsed.addValueFor(Language.DEFAULT, TransferValue.buildFromValueDataFieldFor(Language.DEFAULT, fieldPair.getRight()));
-            if(result == ParseResult.REVISION_CHANGES) {
-                revisions.updateRevisionData(dataPair.getRight());
-            }
+            parseVariableFile(revision, transferData, dataPair.getRight());
+
         }
     }
+
+    private void parseVariableFile(RevisionData attachment, TransferData transferData, RevisionData study) {
+        ParseResult result = parser.parse(attachment, VariableDataType.POR, study);
+
+        Pair<StatusCode, ValueDataField> fieldPair = attachment.dataField(ValueDataFieldCall.set("parsed", new Value("true"), Language.DEFAULT));
+        TransferField parsed = transferData.getField("parsed");
+        if(parsed == null) {
+            parsed = new TransferField("parsed", TransferFieldType.VALUE);
+            transferData.addField(parsed);
+        }
+        parsed.addValueFor(Language.DEFAULT, TransferValue.buildFromValueDataFieldFor(Language.DEFAULT, fieldPair.getRight()));
+        if(result == ParseResult.REVISION_CHANGES) {
+            revisions.updateRevisionData(study);
+        }
+    }
+
 
     private class SaveHandler {
         private final DateTimeUserPair info;

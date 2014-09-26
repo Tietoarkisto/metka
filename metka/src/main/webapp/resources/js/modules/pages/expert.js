@@ -114,7 +114,7 @@ define(function (require) {
                     "state"
                 ], function (transferRow) {
                     return {
-                        page: transferRow.fields.TYPE.values.DEFAULT.current.toLowerCase()
+                        PAGE: transferRow.fields.TYPE.values.DEFAULT.current
                     };
                 }),
                 {
