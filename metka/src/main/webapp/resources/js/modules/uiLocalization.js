@@ -627,20 +627,6 @@ define(function (require) {
             }
         },
 
-        "EXPERT": {
-            "field": {
-                id: 'ID',
-                name: "Nimi",
-                remove: "Poista",
-                revision: 'Revisio',
-                savedAt: "Pvm.",
-                savedBy: "Käyttäjä",
-                state: 'Tila',
-                title: "Otsikko",
-                type: "Tyyppi"
-            }
-        },
-
         "SERIES": {
             "field": {
                 "id": "ID",

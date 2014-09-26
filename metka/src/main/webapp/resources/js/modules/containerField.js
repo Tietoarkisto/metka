@@ -26,7 +26,6 @@ define(function (require) {
         function th(key) {
             return $('<th>')
                 .text(MetkaJS.L10N.get(key));
-                //.text(MetkaJS.L10N.get(prefix + '.' + field));
         }
 
         function tableError(errors) {

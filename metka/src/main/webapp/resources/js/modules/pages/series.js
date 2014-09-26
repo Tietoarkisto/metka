@@ -6,6 +6,20 @@ define(function (require) {
         return function (options, onLoad) {
             $.extend(options, {
                 header: MetkaJS.L10N.get('type.SERIES.search'),
+                fieldTitles: {
+                    "id": {
+                        "title" : "ID"
+                    },
+                    "seriesabbr": {
+                        "title" : "Lyhenne"
+                    },
+                    "seriesname": {
+                        "title" : "Nimi"
+                    },
+                    "state": {
+                        "title" : "Tila"
+                    }
+                },
                 content: [
                     {
                         "type": "COLUMN",

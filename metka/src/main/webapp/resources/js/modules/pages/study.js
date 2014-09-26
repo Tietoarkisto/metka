@@ -34,31 +34,24 @@ define(function (require) {
                             header: MetkaJS.L10N.get('type.STUDY.search'),
                             fieldTitles: {
                                 "studyid": {
-                                    "key": "studyid",
                                     "title": "Aineiston numero"
                                 },
                                 "studyname": {
-                                    "key": "studyname",
                                     "title": "Aineiston nimi"
                                 },
                                 "authors": {
-                                    "key": "authors",
                                     "title": "Tekijät"
                                 },
                                 "seriesname": {
-                                    "key": "seriesname",
                                     "title": "Sarja"
                                 },
                                 "datakind": {
-                                    "key": "datakind",
                                     "title": "Laatu"
                                 },
                                 "termsofuse": {
-                                    "key": "termsofuse",
                                     "title": "Käyttöoikeus"
                                 },
                                 "state": {
-                                    "key": "state",
                                     "title": "Tila"
                                 }
                             },
@@ -533,8 +526,8 @@ define(function (require) {
                                         id: result.id,
                                         no: result.no,
                                         studyid: result.values.studyid,
-                                        studyname: result.values.studyname,
-                                        authors: result.values.authors ? result.values.authors.join(', ') : '',
+                                        studyname: result.values.title,
+                                        authors: result.values.authors,
                                         seriesname: result.values.seriesname,
                                         datakind: result.values.datakind,
                                         termsofuse: result.values.termsofuse,
