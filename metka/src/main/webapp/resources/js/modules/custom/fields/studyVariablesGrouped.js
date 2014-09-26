@@ -100,6 +100,7 @@ define(function (require) {
                                         container: key,
                                         confType: options.dataConf.key.type,
                                         confVersion: options.dataConf.key.version,
+                                        language: options.defaultLang,
                                         fieldValues: fieldValues
                                     }
                                 })
@@ -111,7 +112,6 @@ define(function (require) {
                                         value: response.fieldValues.variables
                                     };
                                 });
-
                                 $elem.empty().append(require('./../../treeView')((require('./../../data')(options)('vargroups').getByLang(options.defaultLang) || []).filter(function (row) {
                                     return row.fields && row.fields.vargrouptitle;
                                 }).map(function (transferRow) {

@@ -35,6 +35,7 @@ define(function (require) {
                                     container: key,
                                     confType: options.dataConf.key.type,
                                     confVersion: options.dataConf.key.version,
+                                    language: options.defaultLang,
                                     fieldValues: fieldValues
                                 }
                             })
