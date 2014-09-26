@@ -23,7 +23,7 @@
             "key": "filepath_ref",
             "type": "DEPENDENCY",
             "target": "file",
-            "titlePath": "file"
+            "valuePath": "file"
         },
         "variable_ref": {
             "key": "variable_ref",
