@@ -1286,6 +1286,30 @@
             ]
         },
         {
+
+            "type": "TAB",
+            "title": "Muuttujat",
+            "content": [
+                {
+                    "type": "COLUMN",
+                    "columns": 1,
+                    "rows": [
+                        {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "field": {
+                                        "key": "variables"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "type": "TAB",
             "title": "Tiedostojen hallinta",
             "content": [{
