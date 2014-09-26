@@ -627,15 +627,6 @@ define(function (require) {
             }
         },
 
-        "SERIES": {
-            "field": {
-                "id": "ID",
-                "seriesabbr": "Lyhenne",
-                "seriesname": "Nimi",
-                "state": "Tila"
-            }
-        },
-
         "STUDY": {
             "field": {
                 "notes": "Huomautukset",
