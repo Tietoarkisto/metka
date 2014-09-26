@@ -132,68 +132,136 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
     /**
      * If this study attachment is not marked parsed and has a path then check if that path could be a por file that needs parsing.
      * If so then parse that por file and mark this study attachment as parsed.
-     * @param revision         RevisionData
+     * @param attachment         RevisionData
      * @param transferData     TransferData
      */
-    private void finalizeStudyAttachment(RevisionData revision, TransferData transferData) {
-        // TODO: modify parse rules to allow for translating
-        Pair<StatusCode, ValueDataField> fieldPair = revision.dataField(ValueDataFieldCall.get("parsed"));
-        if(!(fieldPair.getLeft() == StatusCode.FIELD_MISSING
-                || (fieldPair.getLeft() == StatusCode.FIELD_FOUND
-                    && (!fieldPair.getRight().hasValueFor(Language.DEFAULT)
-                       || !fieldPair.getRight().getValueFor(Language.DEFAULT).valueAsBoolean())))) {
-            // Either the attachment is parsed or there's some other problem
-            return;
-        }
+    private void finalizeStudyAttachment(RevisionData attachment, TransferData transferData) {
+        // Is attachment already parsed
+        if (attachmentAlreadyParsed(attachment)) return;
 
-        fieldPair = revision.dataField(ValueDataFieldCall.get("file"));
-        if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || !fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
-            // We have no file path, no need to continue
-            return;
-        }
+
+        if (hasAndIsOriginal(attachment)) return;
+
+        Pair<StatusCode, ValueDataField> fieldPair = attachment.dataField(ValueDataFieldCall.get("file"));
+        if (!hasFile(fieldPair)) return;
 
         String path = fieldPair.getRight().getActualValueFor(Language.DEFAULT);
-        // Check if file is variable file name
-        File file = new File(path);
-        if(!file.exists() || !file.isFile()) {
+        if (!fileIsVarFile(path)) {
+            // We can mark attachment as parsed since if it's not a var file we don't need to regard it again in the future
+            attachment.dataField(ValueDataFieldCall.set("parsed", new Value("true"), Language.DEFAULT));
             return;
         }
-        boolean parse = FilenameUtils.getName(path).substring(0, 3).toUpperCase().equals("DAF");
-        // Check if file is variable file based on file extension
-        if(parse) {
-            if(!FilenameUtils.getExtension(path).toUpperCase().equals("POR")) {
-                // For now the only option. If more variable file types are added then this needs to be changed to a switch case
-                parse = false;
-            }
-        }
-        if(parse) {
-            Pair<StatusCode, ValueDataField> orig = revision.dataField(ValueDataFieldCall.get("fileoriginal"));
-            if(orig.getLeft() != StatusCode.FIELD_FOUND || !orig.getRight().hasValueFor(Language.DEFAULT)) {
-                parse = false;
-            } else if(orig.getRight().getActualValueFor(Language.DEFAULT).equals("1")) {
-                parse = false;
-            }
-        }
+
+        // Get study linked to this attachment
         Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(
-                revision.dataField(ValueDataFieldCall.get("study")).getRight().getValueFor(Language.DEFAULT).valueAsInteger(),
+                attachment.dataField(ValueDataFieldCall.get("study")).getRight().getValueFor(Language.DEFAULT).valueAsInteger(),
                 false,
                 ConfigurationType.STUDY);
         if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
-            parse = false;
+            return;
         }
-        if(parse) {
-            // Check if study has a different variable file already using variablefile reference and fileId
-            // Get latest revision, doesn't matter if it's a draft or not since file reference should be non editable so only changes come through this process
-            // We can assume that we get a revision since other points before this depend on the existence of the revision
-            fieldPair = dataPair.getRight().dataField(ValueDataFieldCall.get("variablefile"));
-            if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().valueForEquals(Language.DEFAULT, revision.getKey().getId().toString())) {
-                parse = false;
+        RevisionData study = dataPair.getRight();
+
+        String fileName = FilenameUtils.getBaseName(path).toUpperCase();
+        String lastChar = fileName.substring(fileName.length()-1);
+        if(lastChar.equals("E") || lastChar.equals("S")) {
+            Language varLang = lastChar.equals("E") ? Language.EN : Language.SV;
+            // We have a translation file. Require that default language is already attached
+            if(!hasVariablesFileFor(Language.DEFAULT, study)) {
+                return;
+            }
+            if(hasVariablesFileFor(varLang, study)) {
+                // If there already are variables attached for the language in the study check that it's the same attachment
+                if(!variablesFileForEqual(varLang, attachment.getKey().getId(), study)) {
+                    // TODO: Should we mark this as parsed since it shouldn't be used anymore?
+                    return;
+                }
+            }
+        } else {
+            // We're parsing the default var file. If there already is a default file then check that it matches this
+            if(hasVariablesFileFor(Language.DEFAULT, study)) {
+                if(!variablesFileForEqual(Language.DEFAULT, attachment.getKey().getId(), study)) {
+                    // TODO: Should we mark this as parsed since it shouldn't be used anymore?
+                    return;
+                }
             }
         }
-        if(parse) {
-            parseVariableFile(revision, transferData, dataPair.getRight());
 
+        parseVariableFile(attachment, transferData, study);
+    }
+
+    private boolean hasVariablesFileFor(Language language, RevisionData study) {
+        Pair<StatusCode, ValueDataField> fieldPair = study.dataField(ValueDataFieldCall.get("variablefile"));
+        if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || fieldPair.getRight().hasValueFor(language)) {
+            return false;
         }
+
+        return true;
+    }
+
+    private boolean variablesFileForEqual(Language language, Long value, RevisionData study) {
+        Pair<StatusCode, ValueDataField> fieldPair = study.dataField(ValueDataFieldCall.get("variablefile"));
+        if(fieldPair.getLeft() != StatusCode.FIELD_FOUND) {
+            return false;
+        }
+
+        return fieldPair.getRight().valueForEquals(language, value.toString());
+    }
+
+    private boolean fileIsVarFile(String path) {
+        // Does the file name start with DAF
+        String fileName = FilenameUtils.getBaseName(path).toUpperCase();
+        if(!fileName.substring(0, 3).equals("DAF")) {
+            return false;
+        }
+
+        // Does the file extension define a variable file (i.e. POR)
+        String extension = FilenameUtils.getExtension(path).toUpperCase();
+        if(!extension.equals("POR")) {
+            // For now the only option. If more variable file types are added then this needs to be changed to a switch case
+            return false;
+        }
+        return true;
+    }
+
+    private boolean hasFile(Pair<StatusCode, ValueDataField> fieldPair) {
+        // Does attachment have defined file path
+        if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || !fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+            // We have no file path, no need to continue
+            return false;
+        }
+
+        // Does the defined file path exist and does it point to a file
+        File file = new File(fieldPair.getRight().getActualValueFor(Language.DEFAULT));
+        if(!file.exists() || !file.isFile()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean hasAndIsOriginal(RevisionData revision) {
+        // Does the attachment have value in "original" selection
+        Pair<StatusCode, ValueDataField> orig = revision.dataField(ValueDataFieldCall.get("fileoriginal"));
+        if(orig.getLeft() != StatusCode.FIELD_FOUND || !orig.getRight().hasValueFor(Language.DEFAULT)) {
+            return true;
+        }
+        // Is the attachment marked as "original" file
+        if(orig.getRight().getActualValueFor(Language.DEFAULT).equals("1")) {
+            // TODO: If this value has changed from some other value to "1" and this attachment has been the variable file then remove all variables.
+            return true;
+        }
+        return false;
+    }
+
+    private boolean attachmentAlreadyParsed(RevisionData revision) {
+        Pair<StatusCode, ValueDataField> fieldPair = revision.dataField(ValueDataFieldCall.get("parsed"));
+        if(fieldPair.getLeft() != StatusCode.FIELD_FOUND) {
+            // What to do if we failed to find the field for some other reason than it was missing?
+            return false;
+        }
+
+        return fieldPair.getRight().hasValueFor(Language.DEFAULT) && fieldPair.getRight().getValueFor(Language.DEFAULT).valueAsBoolean();
     }
 
     private void parseVariableFile(RevisionData attachment, TransferData transferData, RevisionData study) {

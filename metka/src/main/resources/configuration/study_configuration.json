@@ -1852,9 +1852,10 @@
 			"reference": "variables_ref"
 		},
 		"variablefile": {
+			"_comment": "This is translated since user can provide translations to variables in variable files.",
 			"key": "variablefile",
 			"type": "REFERENCE",
-			"translatable": false,
+			"translatable": true,
 			"editable": false,
 			"reference": "variable_file_ref"
 		},

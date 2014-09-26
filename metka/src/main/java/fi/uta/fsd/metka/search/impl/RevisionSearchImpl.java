@@ -254,7 +254,7 @@ public class RevisionSearchImpl implements RevisionSearch {
         try {
             ExpertRevisionSearchCommand command = ExpertRevisionSearchCommand.build(request, configPair.getRight());
             ResultList<RevisionResult> results = searcher.executeSearch(command);
-            return new ImmutablePair<>(ReturnResult.SEARCH_SUCCESS, collectResults(results));
+            return new ImmutablePair<>(ReturnResult.SEARCH_SUCCESS, collectResults(results, request));
         } catch(QueryNodeException qne) {
             // Couldn't form query command
             logger.error("Exception while performing basic series search:", qne);
@@ -263,6 +263,10 @@ public class RevisionSearchImpl implements RevisionSearch {
     }
 
     private List<RevisionSearchResult> collectResults(ResultList<RevisionResult> resultList) {
+        return collectResults(resultList, null);
+    }
+
+    private List<RevisionSearchResult> collectResults(ResultList<RevisionResult> resultList, RevisionSearchRequest request) {
         List<RevisionSearchResult> results = new ArrayList<>();
         if(resultList == null) {
             return results;
@@ -306,8 +310,11 @@ public class RevisionSearchImpl implements RevisionSearch {
             }
             RevisionData data = pair.getRight();
             RevisionSearchResult searchResult = RevisionSearchResult.build(data, info);
+            if(request == null) {
+                continue;
+            }
             // Add type specific search result values
-            switch(data.getConfiguration().getType()) {
+            switch(request.getType()) {
                 case SERIES:
                     addSeriesSearchResults(searchResult, data);
                     break;
@@ -324,48 +331,78 @@ public class RevisionSearchImpl implements RevisionSearch {
         return results;
     }
 
+    private boolean hasValue(Pair<StatusCode, ValueDataField> pair, Language language) {
+        return pair.getLeft() == StatusCode.FIELD_FOUND && pair.getRight().hasValueFor(Language.DEFAULT);
+    }
+
     private void addSeriesSearchResults(RevisionSearchResult searchResult, RevisionData data) {
         Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get("seriesname"));
-        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+        if(hasValue(fieldPair, Language.DEFAULT)) {
             searchResult.getValues().put("seriesname", fieldPair.getRight().getActualValueFor(Language.DEFAULT));
-        } else {
-            searchResult.getValues().put("seriesname", "");
         }
         fieldPair = data.dataField(ValueDataFieldCall.get("seriesabbr"));
-        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+        if(hasValue(fieldPair, Language.DEFAULT)) {
             searchResult.getValues().put("seriesabbr", fieldPair.getRight().getActualValueFor(Language.DEFAULT));
-        } else {
-            searchResult.getValues().put("seriesabbr", "");
         }
     }
 
     private void addStudySearchResults(RevisionSearchResult searchResult, RevisionData data) {
-        /*Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get("seriesname"));
-        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().containsValueFor(Language.DEFAULT)) {
-            searchResult.getValues().put("seriesname", fieldPair.getRight().getActualValueFor(Language.DEFAULT));
-        } else {
-            searchResult.getValues().put("seriesname", "");
+        // aineistonumero
+        Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get("studyid"));
+        if(hasValue(fieldPair, Language.DEFAULT)) {
+            searchResult.getValues().put("studyid", fieldPair.getRight().getActualValueFor(Language.DEFAULT));
         }
-        fieldPair = data.dataField(ValueDataFieldCall.get("seriesabbr"));
-        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().containsValueFor(Language.DEFAULT)) {
-            searchResult.getValues().put("seriesabbr", fieldPair.getRight().getActualValueFor(Language.DEFAULT));
-        } else {
-            searchResult.getValues().put("seriesabbr", "");
-        }*/
+
+        // nimi
+        fieldPair = data.dataField(ValueDataFieldCall.get("title"));
+        if(hasValue(fieldPair, Language.DEFAULT)) {
+            searchResult.getValues().put("title", fieldPair.getRight().getActualValueFor(Language.DEFAULT));
+        }
+
+        // tekijät
+        Pair<StatusCode, ContainerDataField> containerPair = data.dataField(ContainerDataFieldCall.get("authors"));
+        if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
+            List<String> authors = new ArrayList<>();
+            for(DataRow row : containerPair.getRight().getRowsFor(Language.DEFAULT)) {
+                fieldPair = row.dataField(ValueDataFieldCall.get("author"));
+                if(hasValue(fieldPair, Language.DEFAULT)) {
+                    authors.add(fieldPair.getRight().getActualValueFor(Language.DEFAULT));
+                }
+            }
+            if(!authors.isEmpty()) {
+                searchResult.getValues().put("authors", StringUtils.collectionToDelimitedString(authors, ", "));
+            }
+        }
+
+        // sarja
+        fieldPair = data.dataField(ValueDataFieldCall.get("seriesid"));
+        if(hasValue(fieldPair, Language.DEFAULT)) {
+            searchResult.getValues().put("seriesid", fieldPair.getRight().getActualValueFor(Language.DEFAULT));
+        }
+
+        // laatu
+        fieldPair = data.dataField(ValueDataFieldCall.get("datakind"));
+        if(hasValue(fieldPair, Language.DEFAULT)) {
+            searchResult.getValues().put("datakind", fieldPair.getRight().getActualValueFor(Language.DEFAULT));
+        }
+
+        // käyttöoikeus
+        fieldPair = data.dataField(ValueDataFieldCall.get("termsofuse"));
+        if(hasValue(fieldPair, Language.DEFAULT)) {
+            searchResult.getValues().put("termsofuse", fieldPair.getRight().getActualValueFor(Language.DEFAULT));
+        }
     }
 
     private void addPublicationSearchResults(RevisionSearchResult searchResult, RevisionData data) {
-        /*Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get("seriesname"));
-        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().containsValueFor(Language.DEFAULT)) {
-            searchResult.getValues().put("seriesname", fieldPair.getRight().getActualValueFor(Language.DEFAULT));
-        } else {
-            searchResult.getValues().put("seriesname", "");
+        Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get("publicationid"));
+        if(hasValue(fieldPair, Language.DEFAULT)) {
+            searchResult.getValues().put("publicationid", fieldPair.getRight().getActualValueFor(Language.DEFAULT));
         }
-        fieldPair = data.dataField(ValueDataFieldCall.get("seriesabbr"));
-        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().containsValueFor(Language.DEFAULT)) {
-            searchResult.getValues().put("seriesabbr", fieldPair.getRight().getActualValueFor(Language.DEFAULT));
-        } else {
-            searchResult.getValues().put("seriesabbr", "");
-        }*/
+
+        // nimi
+        fieldPair = data.dataField(ValueDataFieldCall.get("publicationtitle"));
+        if(hasValue(fieldPair, Language.DEFAULT)) {
+            searchResult.getValues().put("publicationtitle", fieldPair.getRight().getActualValueFor(Language.DEFAULT));
+        }
     }
 }
