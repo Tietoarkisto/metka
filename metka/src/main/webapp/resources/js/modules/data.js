@@ -1,14 +1,16 @@
 define(function (require) {
     'use strict';
 
-    return function (options) {
+    var getPropertyNS = require('./utils/getPropertyNS');
+
+    function data(options) {
         function io(key) {
             function byFieldKey(key) {
                 return io(key);
             }
 
             function getTransferField(createIfUndefined) {
-                var transferField = require('./utils/getPropertyNS')(options, 'data.fields', key);
+                var transferField = getPropertyNS(options, 'data.fields', key);
 
                 if (transferField) {
                     return transferField;
@@ -21,33 +23,12 @@ define(function (require) {
                 }
             }
 
-            var getPropertyNS = require('./utils/getPropertyNS');
-
-            /*byFieldKey.get = function () {
-                var transferField = getTransferField();
-
-                if (transferField) {
-                    if (transferField.type === 'VALUE') {
-                        var current = getPropertyNS(transferField, 'value.current');
-                        if (MetkaJS.exists(current)) {
-                            return current;
-                        }
-                        return getPropertyNS(transferField, 'value.original');
-                    } else {
-                        return getPropertyNS(transferField, 'rows');
-                    }
-                }
-            };*/
             byFieldKey.getByLang = function (lang) {
                 var transferField = getTransferField();
 
                 if (transferField) {
                     if (transferField.type === 'VALUE') {
-                        var current = getPropertyNS(transferField, 'values', lang, 'current');
-                        if (MetkaJS.exists(current)) {
-                            return current;
-                        }
-                        return getPropertyNS(transferField, 'values', lang, 'original');
+                        return data.latestValue(transferField, lang);
                     } else {
                         return getPropertyNS(transferField, 'rows', lang);
                     }
@@ -70,12 +51,12 @@ define(function (require) {
                 return [];
             };
             /*byFieldKey.set = function (value) {
-                var transferField = getTransferField(true);
+             var transferField = getTransferField(true);
 
-                transferField.value = transferField.value || {};
-                transferField.type = transferField.type || 'VALUE';
-                transferField.value.current = value;
-            };*/
+             transferField.value = transferField.value || {};
+             transferField.type = transferField.type || 'VALUE';
+             transferField.value.current = value;
+             };*/
             byFieldKey.setByLang = function (lang, value) {
                 var transferField = getTransferField(true);
 
@@ -90,14 +71,14 @@ define(function (require) {
                 }), [value]);
             };
             /*byFieldKey.append = function (trasferRow) {
-                var transferField = getTransferField(true);
+             var transferField = getTransferField(true);
 
-                transferField.rows = transferField.rows || [];
-                transferField.type = transferField.type || 'CONTAINER';
-                trasferRow.key = trasferRow.key || key;
+             transferField.rows = transferField.rows || [];
+             transferField.type = transferField.type || 'CONTAINER';
+             trasferRow.key = trasferRow.key || key;
 
-                transferField.rows.push(trasferRow);
-            };*/
+             transferField.rows.push(trasferRow);
+             };*/
             byFieldKey.appendByLang = function (lang, trasferRow) {
                 var transferField = getTransferField(true);
 
@@ -120,5 +101,15 @@ define(function (require) {
         }
 
         return io(options.field ? options.field.key : undefined);
+    }
+
+    data.latestValue = function (transferField, lang) {
+        var current = getPropertyNS(transferField, 'values', lang, 'current');
+        if (MetkaJS.exists(current)) {
+            return current;
+        }
+        return getPropertyNS(transferField, 'values', lang, 'original');
     };
+
+    return data;
 });

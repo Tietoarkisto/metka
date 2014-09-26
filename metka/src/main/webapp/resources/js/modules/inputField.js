@@ -135,17 +135,20 @@ define(function (require) {
                 // textarea or input elements
 
                 require('./data')(options).onChange(function () {
+                    function setValue() {
+                        require('./reference').option(key, options, lang, function (value) {
+                            $input.val(value);
+                        })(options.data.fields, reference);
+                    }
                     var dataConf = getPropertyNS(options, 'dataConf.fields', key);
                     if (dataConf && dataConf.type === 'REFERENCE') {
                         var reference = getPropertyNS(options, 'dataConf.references', dataConf.reference);
                         options.$events.on('data-change-{key}-{lang}'.supplant({
                             key: reference.target,
                             lang: lang
-                        }), function (e) {
-                            require('./reference').option(key, options, lang, function (value) {
-                                $input.val(value);
-                            })(options.data.fields, reference);
-                        });
+                        }), setValue);
+                        // TODO: setValue call is not necessary, if target is select input. select input triggers change event
+                        setValue();
                     } else {
                         $input.val(type === 'CONCAT'
                             ?

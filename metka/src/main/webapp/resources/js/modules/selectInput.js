@@ -18,11 +18,12 @@ define(function (require) {
                 return;
             }
             if (list.type === 'SUBLIST') {
-                return rec(list.sublistKey || list.key);
+                rec(list.sublistKey || list.key);
+                return;
             }
 
             callback(list);
-            return true;
+            return;
         })(listKey);
     };
 });

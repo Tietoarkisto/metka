@@ -15,20 +15,37 @@ define(function (require) {
                             language: lang,
                             fieldValues: dataFields && reference ? (function () {
                                 var response = {};
+
                                 (function addFieldValue(target) {
                                     if (response.hasOwnProperty(target)) {
                                         log('fieldValues should not have property "' + target + '"');
                                         return;
                                     }
-                                    response[target] = getPropertyNS(dataFields, target, 'values', lang, 'current');
+
                                     var ref2 = getPropertyNS(options, 'dataConf.fields', target);
-                                    if (ref2 && ref2.type === 'SELECTION') {
-                                        var refSelectionList = getPropertyNS(options, 'dataConf.selectionLists', ref2.selectionList);
-                                        var ref3 = getPropertyNS(options, 'dataConf.references', refSelectionList.reference);
-                                        if (ref3 && ref3.type === 'DEPENDENCY') {
-                                            addFieldValue(ref3.target);
-                                        }
+
+                                    if (!ref2) {
+                                        return;
                                     }
+
+                                    response[target] = getPropertyNS(dataFields, target, 'values', lang, 'current');
+                                    var ref3 = (function () {
+                                        if (ref2.type === 'SELECTION') {
+                                            var refSelectionList = getPropertyNS(options, 'dataConf.selectionLists', ref2.selectionList);
+                                            return getPropertyNS(options, 'dataConf.references', refSelectionList.reference);
+                                        }
+                                        if (ref2.type === 'REFERENCE') {
+                                            return getPropertyNS(options, 'dataConf.references', ref2.reference);
+                                        }
+                                    })();
+
+                                    if (ref3 && ref3.type === 'DEPENDENCY') {
+                                        addFieldValue(ref3.target);
+                                    }
+                                    return;
+
+                                    // if value
+                                    response[target] = getPropertyNS(dataFields, target, 'values', lang, 'current');
                                 })(reference.target);
                                 return response;
                             })() : undefined

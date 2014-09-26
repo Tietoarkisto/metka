@@ -115,13 +115,7 @@ define(function (require) {
                                 return;
                             }
 
-                            var columnLang = $thead.children('tr').children().eq(i).data('lang') || lang;
-                            // TODO: merge with data operations
-                            var current = getPropertyNS(transferField, 'values', columnLang, 'current');
-                            if (MetkaJS.exists(current)) {
-                                return current;
-                            }
-                            return getPropertyNS(transferField, 'values', columnLang, 'original');
+                            return require('./data').latestValue(transferField, $thead.children('tr').children().eq(i).data('lang') || lang);
                         })();
 
                         if (type === 'STRING' || type === 'INTEGER' || type === 'REAL') {
