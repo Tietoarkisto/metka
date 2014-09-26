@@ -42,7 +42,7 @@ define(function (require) {
                                 "authors": {
                                     "title": "Tekijät"
                                 },
-                                "seriesname": {
+                                "seriesid": {
                                     "title": "Sarja"
                                 },
                                 "datakind": {
@@ -528,7 +528,7 @@ define(function (require) {
                                         studyid: result.values.studyid,
                                         studyname: result.values.title,
                                         authors: result.values.authors,
-                                        seriesname: result.values.seriesname,
+                                        seriesid: result.values.seriesid,
                                         datakind: result.values.datakind,
                                         termsofuse: result.values.termsofuse,
                                         state: MetkaJS.L10N.get('search.result.state.{state}'.supplant(result))
@@ -543,15 +543,9 @@ define(function (require) {
                                     authors: {
                                         type: 'STRING'
                                     },
-                                    seriesname : {
-                                        type: 'INTEGER'
-                                    },
-                                    datakind : {
-                                        type: 'INTEGER'
-                                    },
-                                    termsofuse : {
-                                        type: 'INTEGER'
-                                    },
+                                    seriesid : {type:'STRING'},//response.configuration.fields.seriesid,
+                                    datakind : response.configuration.fields.datakind,
+                                    termsofuse : response.configuration.fields.termsofuse,
                                     state: {
                                         type: 'STRING'
                                     }
@@ -559,11 +553,11 @@ define(function (require) {
                                     "studyid",
                                     "studyname",
                                     "authors",
-                                    "seriesname",
+                                    "seriesid",
                                     "datakind",
                                     "termsofuse",
                                     "state"
-                                ]),
+                                ], function () {}, options),
                                 /*{
                                  "&title": {
                                  "default": "Tyhjennä"

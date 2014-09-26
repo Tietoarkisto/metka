@@ -28,7 +28,7 @@ define(function (require) {
                                         return;
                                     }
 
-                                    response[target] = getPropertyNS(dataFields, target, 'values', lang, 'current');
+                                    response[target] = require('./data').latestValue(dataFields[target], lang);
                                     var ref3 = (function () {
                                         if (ref2.type === 'SELECTION') {
                                             var refSelectionList = getPropertyNS(options, 'dataConf.selectionLists', ref2.selectionList);
@@ -42,10 +42,6 @@ define(function (require) {
                                     if (ref3 && ref3.type === 'DEPENDENCY') {
                                         addFieldValue(ref3.target);
                                     }
-                                    return;
-
-                                    // if value
-                                    response[target] = getPropertyNS(dataFields, target, 'values', lang, 'current');
                                 })(reference.target);
                                 return response;
                             })() : undefined

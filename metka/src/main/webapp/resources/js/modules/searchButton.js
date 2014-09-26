@@ -1,7 +1,7 @@
 define(function (require) {
     'use strict';
 
-    return function (url, requestData, getResults, mapResult, fields, columnFields, getViewRequestOptions) {
+    return function (url, requestData, getResults, mapResult, fields, columnFields, getViewRequestOptions, options) {
         var args = arguments;
         return {
             "&title": {
