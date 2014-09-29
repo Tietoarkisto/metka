@@ -76,6 +76,11 @@ define(function (require) {
                         function setText(text) {
                             $td.append(typeof text === 'undefined' ? EMPTY : text);
                         }
+                        function setOptionText(listOptions) {
+                            setText(require('./selectInputOptionText')(listOptions.find(function (option) {
+                                return option.value === value;
+                            })));
+                        }
                         var dataConf = getPropertyNS(options, 'dataConf.fields', column);
                         var type = getPropertyNS(options, 'dataConf.fields', column, 'type');
 
@@ -128,21 +133,18 @@ define(function (require) {
                             return EMPTY;
                         }
                         if (type === 'SELECTION') {
-                            require('./selectInput')(options, column, function (list) {
-                                if (!list) {
-                                    $td.append(EMPTY);
-                                    return;
-                                }
-                                if (list.type === 'REFERENCE') {
-                                    require('./reference').option(column, options, lang, setText)(transferRow.fields, {
-                                        target: column
-                                    });
-                                } else {
-                                    setText(require('./selectInputOptionText')(list.options.find(function (option) {
-                                        return option.value === value;
-                                    })));
-                                }
-                            });
+                            var list = require('./selectionList')(options, column);
+                            if (!list) {
+                                $td.append(EMPTY);
+                                return;
+                            }
+                            if (list.type === 'REFERENCE') {
+                                require('./reference').options(column, options, lang, setOptionText)(transferRow.fields, {
+                                    target: column
+                                });
+                            } else {
+                                setOptionText(list.options);
+                            }
                             return;
                         }
                         log('not implemented', column, type);
