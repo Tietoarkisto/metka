@@ -543,7 +543,7 @@ define(function (require) {
                                     authors: {
                                         type: 'STRING'
                                     },
-                                    seriesid : {type:'STRING'},//response.configuration.fields.seriesid,
+                                    seriesid : response.configuration.fields.seriesid,
                                     datakind : response.configuration.fields.datakind,
                                     termsofuse : response.configuration.fields.termsofuse,
                                     state: {
