@@ -2,6 +2,7 @@ package fi.uta.fsd.metka.mvc.services;
 
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.transfer.reference.ReferencePathRequest;
 import fi.uta.fsd.metka.transfer.reference.*;
 import fi.uta.fsd.metkaAuthentication.Permission;
 import fi.uta.fsd.metkaAuthentication.PermissionCheck;
@@ -16,6 +17,9 @@ public interface ReferenceService {
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_VIEW_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "')")
     List<ReferenceOption> collectReferenceOptions(ReferenceOptionsRequest request);
+
+    @PreAuthorize("hasPermission('"+ Permission.Values.CAN_VIEW_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "')")
+    List<ReferenceOption> collectReferenceOptions(ReferencePathRequest request);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_VIEW_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "')")
     ReferenceRowResponse getReferenceRow(ReferenceRowRequest request);

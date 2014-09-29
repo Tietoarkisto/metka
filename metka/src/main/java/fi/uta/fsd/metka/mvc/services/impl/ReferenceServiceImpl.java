@@ -18,6 +18,7 @@ import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
+import fi.uta.fsd.metka.transfer.reference.ReferencePathRequest;
 import fi.uta.fsd.metka.transfer.reference.*;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -101,33 +102,12 @@ public class ReferenceServiceImpl implements ReferenceService {
     @Override public List<ReferenceOption> collectReferenceOptions(ReferenceOptionsRequest request) {
         Pair<ReturnResult, List<ReferenceOption>> optionsPair = references.handleReferenceRequest(request);
         return optionsPair.getRight();
-        /*Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(request.getConfType(), request.getConfVersion());
-        if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
-            logger.error("Couldn't find configuration with type: "+request.getConfType()+" and version: "+request.getConfVersion());
-            return null;
-        }
-        Configuration config = configPair.getRight();
-        Field field = config.getField(request.getKey());
-        // Add types as needed, default is to return null if type can not contain a reference
-        Reference reference = null;
-        switch(field.getType()) {
-            case REFERENCE:
-            case REFERENCECONTAINER:
-                reference = config.getReference(field.getReference());
-                break;
-            case SELECTION:
-                SelectionList list = config.getRootSelectionList(field.getSelectionList());
-                if(list == null || list.getType() != SelectionListType.REFERENCE) {
-                    return null;
-                }
-                reference = config.getReference(list.getReference());
-                break;
-            default:
-                break;
-        }
+    }
 
-        return references.referenceOptionCollecting(reference, field, config, request);*/
-
+    @Override
+    public List<ReferenceOption> collectReferenceOptions(ReferencePathRequest request) {
+        Pair<ReturnResult, List<ReferenceOption>> optionsPair = references.handleReferenceRequest(request);
+        return optionsPair.getRight();
     }
 
     @Override public ReferenceRowResponse getReferenceRow(ReferenceRowRequest request) {

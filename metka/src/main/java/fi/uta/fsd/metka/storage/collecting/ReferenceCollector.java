@@ -14,6 +14,8 @@ import fi.uta.fsd.metka.model.data.container.ReferenceRow;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.transfer.reference.ReferencePath;
+import fi.uta.fsd.metka.transfer.reference.ReferencePathRequest;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOptionTitle;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOptionsRequest;
@@ -56,6 +58,11 @@ public class ReferenceCollector {
         }
 
         return pathHandler.handleReferencePath(root, options, request.getLanguage());
+    }
+
+    public Pair<ReturnResult, List<ReferenceOption>> handleReferenceRequest(ReferencePathRequest request) {
+        List<ReferenceOption> options = new ArrayList<>();
+        return pathHandler.handleReferencePath(request.getRoot(), options, request.getLanguage());
     }
 
     public Pair<ReturnResult, ReferenceRow> getReferenceRow(ReferenceRowRequest request) {

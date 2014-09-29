@@ -5,6 +5,7 @@ import fi.uta.fsd.metka.mvc.services.StudyService;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.study.StudyError;
 import fi.uta.fsd.metka.transfer.study.StudyErrorListResponse;
+import fi.uta.fsd.metka.transfer.study.StudyErrorsResponse;
 import fi.uta.fsd.metka.transfer.study.StudyVariablesStudiesResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -42,6 +43,11 @@ public class StudyController {
     @RequestMapping("studiesWithVariables")
     public @ResponseBody StudyVariablesStudiesResponse listStudiesWithVariables() {
         return service.collectStudiesWithVariables();
+    }
+
+    @RequestMapping("studiesWithErrors")
+    public @ResponseBody StudyErrorsResponse getStudiesWithErrors() {
+        return service.getStudiesWithErrors();
     }
 
     /*@RequestMapping("attachmentHistory")
