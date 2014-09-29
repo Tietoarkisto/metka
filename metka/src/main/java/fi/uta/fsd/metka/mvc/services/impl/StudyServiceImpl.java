@@ -7,6 +7,7 @@ import fi.uta.fsd.metka.search.StudySearch;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.revision.RevisionSearchResponse;
 import fi.uta.fsd.metka.transfer.revision.RevisionSearchResult;
+import fi.uta.fsd.metka.transfer.study.StudyErrorsResponse;
 import fi.uta.fsd.metka.transfer.study.StudyVariablesStudiesResponse;
 import fi.uta.fsd.metka.transfer.study.StudyVariablesStudyPair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -56,6 +57,14 @@ public class StudyServiceImpl implements StudyService {
         if(results.getLeft() == ReturnResult.SEARCH_SUCCESS) {
             response.getRows().addAll(results.getRight());
         }
+        return response;
+    }
+
+    @Override
+    public StudyErrorsResponse getStudiesWithErrors() {
+        Pair<ReturnResult, List<RevisionSearchResult>> results = search.getStudiesWithErrors();
+        StudyErrorsResponse response = new StudyErrorsResponse(results.getLeft());
+        response.getRows().addAll(results.getRight());
         return response;
     }
 }

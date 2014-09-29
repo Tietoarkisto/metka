@@ -85,7 +85,6 @@ class PORVariablesParser implements VariablesParser {
                 break;
         }
 
-        // TODO: Gather this straight from revisions repository
         this.variableRevisions = revisions.getVariableRevisionsOfVariables(variablesData.getKey().getId());
 
         // Group variables to list

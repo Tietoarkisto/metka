@@ -164,8 +164,9 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
 
         String fileName = FilenameUtils.getBaseName(path).toUpperCase();
         String lastChar = fileName.substring(fileName.length()-1);
+        Language varLang;
         if(lastChar.equals("E") || lastChar.equals("S")) {
-            Language varLang = lastChar.equals("E") ? Language.EN : Language.SV;
+            varLang = lastChar.equals("E") ? Language.EN : Language.SV;
             // We have a translation file. Require that default language is already attached
             if(!hasVariablesFileFor(Language.DEFAULT, study)) {
                 return;
@@ -178,6 +179,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 }
             }
         } else {
+            varLang = Language.DEFAULT;
             // We're parsing the default var file. If there already is a default file then check that it matches this
             if(hasVariablesFileFor(Language.DEFAULT, study)) {
                 if(!variablesFileForEqual(Language.DEFAULT, attachment.getKey().getId(), study)) {
@@ -187,12 +189,12 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             }
         }
 
-        parseVariableFile(attachment, transferData, study);
+        parseVariableFile(attachment, transferData, study, varLang);
     }
 
     private boolean hasVariablesFileFor(Language language, RevisionData study) {
         Pair<StatusCode, ValueDataField> fieldPair = study.dataField(ValueDataFieldCall.get("variablefile"));
-        if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || fieldPair.getRight().hasValueFor(language)) {
+        if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || !fieldPair.getRight().hasValueFor(language)) {
             return false;
         }
 
@@ -264,8 +266,8 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         return fieldPair.getRight().hasValueFor(Language.DEFAULT) && fieldPair.getRight().getValueFor(Language.DEFAULT).valueAsBoolean();
     }
 
-    private void parseVariableFile(RevisionData attachment, TransferData transferData, RevisionData study) {
-        ParseResult result = parser.parse(attachment, VariableDataType.POR, study);
+    private void parseVariableFile(RevisionData attachment, TransferData transferData, RevisionData study, Language language) {
+        ParseResult result = parser.parse(attachment, VariableDataType.POR, study, language);
 
         Pair<StatusCode, ValueDataField> fieldPair = attachment.dataField(ValueDataFieldCall.set("parsed", new Value("true"), Language.DEFAULT));
         TransferField parsed = transferData.getField("parsed");

@@ -8,6 +8,7 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.search.StudySearch;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
+import fi.uta.fsd.metka.storage.entity.StudyErrorEntity;
 import fi.uta.fsd.metka.storage.entity.impl.StudyEntity;
 import fi.uta.fsd.metka.storage.entity.impl.StudyVariablesEntity;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
@@ -24,7 +25,9 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class StudySearchImpl implements StudySearch {
@@ -100,6 +103,35 @@ public class StudySearchImpl implements StudySearch {
             if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
                 result.getValues().put("filecomment", fieldPair.getRight().getActualValueFor(Language.DEFAULT));
             }
+        }
+
+        return new ImmutablePair<>(results.isEmpty() ? ReturnResult.NO_RESULTS : ReturnResult.SEARCH_SUCCESS, results);
+    }
+
+    @Override
+    public Pair<ReturnResult, List<RevisionSearchResult>> getStudiesWithErrors() {
+        List<StudyErrorEntity> errors = em.createQuery("SELECT e FROM StudyErrorEntity e ORDER BY e.studyErrorStudy", StudyErrorEntity.class)
+                .getResultList();
+
+        List<RevisionSearchResult> results = new ArrayList<>();
+
+        Map<Long, List<StudyErrorEntity>> groups = new HashMap<>();
+        for(StudyErrorEntity error : errors) {
+            if(!groups.containsKey(error.getStudyErrorStudy())) {
+                groups.put(error.getStudyErrorStudy(), new ArrayList<StudyErrorEntity>());
+            }
+            groups.get(error.getStudyErrorStudy()).add(error);
+        }
+
+        for(Long id : groups.keySet()) {
+            Long score = 0L;
+            for(StudyErrorEntity error : groups.get(id)) {
+                score += error.getScore();
+            }
+            RevisionSearchResult result = new RevisionSearchResult();
+            result.setId(id);
+            result.setType(ConfigurationType.STUDY);
+            result.getValues().put("score", score.toString());
         }
 
         return new ImmutablePair<>(results.isEmpty() ? ReturnResult.NO_RESULTS : ReturnResult.SEARCH_SUCCESS, results);
