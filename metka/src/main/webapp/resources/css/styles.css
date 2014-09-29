@@ -203,44 +203,6 @@ nav .mainNavUl li a:hover {
     -moz-transition: all 0.25s ease-in-out;
 }
 
-.pointerClass:hover {
-    cursor: pointer;
-}
-
-.quickSearchContainer {
-    float: right;
-    margin-top: 20px;
-}
-.quickSearchContainer .searchInput {
-    width: 150px;
-    border-right: 0px;
-    margin-right: 0px;
-    border-top-right-radius: 0px;
-    border-bottom-right-radius: 0px;
-}
-
-.quickSearchContainer .searchButton {
-    background-color: #009ee0;
-    border: 1px solid #009ee0;
-    border-radius: 0 7px 7px 0;
-    color: white;
-    height: 29px;
-    margin-left: 0px;
-}
-
-.quickSearchContainer form {
-    position: relative;
-}
-
-.logoutLink {
-    text-decoration: none;
-    color: #000;
-    margin-bottom: 10px !important;
-    display: inline-block;
-    text-align: right;
-    width: 160px;
-}
-
 .wrapper {
     width: 100%;
     min-height: 600px;
@@ -255,15 +217,6 @@ nav .mainNavUl li a:hover {
     min-height: 600px;
     background-color: white;
     box-shadow: 10px 10px 5px #888;
-}
-
-.searchInput {
-    padding: 5px;
-    outline: none;
-    border: 1px solid #4a4647;
-    border-radius: 5px;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
 }
 
 .tabNavi a {

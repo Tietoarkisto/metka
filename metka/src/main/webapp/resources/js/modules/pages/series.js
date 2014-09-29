@@ -4,8 +4,51 @@ define(function (require) {
     if (location.pathname.split('/').indexOf('search') !== -1) {
         var commonSearchBooleans = require('./../commonSearchBooleans');
         return function (options, onLoad) {
-            $.extend(options, {
+            $.extend(/*true, */options, {
                 header: MetkaJS.L10N.get('type.SERIES.search'),
+                // TODO: try to add reference options request and remove custom "getAbbreviations" request
+                /*dataConf: {
+                    key: {
+                        version: 1,
+                        type: 'SERIES'
+                    },
+                    selectionLists: {
+                        seriesabbr_list: {
+                            key: 'seriesabbr_list',
+                            type: 'REFERENCE',
+                            refenence: 'seriesabbr_ref'
+                        }
+                    },
+                    references: {
+                        seriesabbr_ref: {
+                             key: 'seriesabbr_ref',
+                             type: 'REVISIONABLE',
+                             target: 'SERIES',
+                             valuePath: 'seriesabbr'
+                         }
+                    },
+                    fields: {
+                        seriesabbr: {
+                            key: 'seriesabbr',
+                            type: 'SELECTION',
+                            selectionList: 'seriesabbr_list'
+                        }
+                    }
+                },*/
+                fieldTitles: {
+                    "id": {
+                        "title" : "ID"
+                    },
+                    "seriesabbr": {
+                        "title" : "Lyhenne"
+                    },
+                    "seriesname": {
+                        "title" : "Nimi"
+                    },
+                    "state": {
+                        "title" : "Tila"
+                    }
+                },
                 content: [
                     {
                         "type": "COLUMN",
@@ -33,6 +76,9 @@ define(function (require) {
                                         "type": "CELL",
                                         "title": "Lyhenne",
                                         "colspan": 2,
+                                        /*"field": {
+                                            "key": "seriesabbr"
+                                        },*/
                                         "field": {
                                             "displayType": "SELECTION",
                                             "key": "seriesabbr"

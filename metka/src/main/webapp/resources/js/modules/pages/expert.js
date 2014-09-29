@@ -7,9 +7,23 @@ define(function (require) {
         $.extend(options, {
             header: MetkaJS.L10N.get('topmenu.expert'),
             fieldTitles: {
+                "id": {
+                    "title" : "ID"
+                },
                 "name": {
-                    "key" : "name",
                     "title" : "Nimi"
+                },
+                "no": {
+                    "title" : "Revisio"
+                },
+                "state": {
+                    "title" : "Tila"
+                },
+                "title": {
+                    "title" : "Otsikko"
+                },
+                "type": {
+                    "title" : "Tyyppi"
                 }
             },
             content: [

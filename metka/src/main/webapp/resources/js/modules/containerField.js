@@ -26,7 +26,6 @@ define(function (require) {
         function th(key) {
             return $('<th>')
                 .text(MetkaJS.L10N.get(key));
-                //.text(MetkaJS.L10N.get(prefix + '.' + field));
         }
 
         function tableError(errors) {
@@ -74,6 +73,9 @@ define(function (require) {
                         return $td;
                     }
                     return $td.append((function () {
+                        function setText(text) {
+                            $td.append(typeof text === 'undefined' ? EMPTY : text);
+                        }
                         var dataConf = getPropertyNS(options, 'dataConf.fields', column);
                         var type = getPropertyNS(options, 'dataConf.fields', column, 'type');
 
@@ -86,9 +88,7 @@ define(function (require) {
                             var refKey = getPropertyNS(options, 'dataConf.fields', column, 'reference');
                             var reference = getPropertyNS(options, 'dataConf.references', refKey);
 
-                            require('./reference').option(column, options, lang, function (value) {
-                                $td.append(value);
-                            })(transferRow.fields, reference);
+                            require('./reference').option(column, options, lang, setText)(transferRow.fields, reference);
                             return;
                         }
 
@@ -129,10 +129,6 @@ define(function (require) {
                         }
                         if (type === 'SELECTION') {
                             require('./selectInput')(options, column, function (list) {
-                                function setText(text) {
-                                    $td.append(typeof text === 'undefined' ? EMPTY : text);
-                                }
-
                                 if (!list) {
                                     $td.append(EMPTY);
                                     return;

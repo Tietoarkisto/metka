@@ -34,31 +34,24 @@ define(function (require) {
                             header: MetkaJS.L10N.get('type.STUDY.search'),
                             fieldTitles: {
                                 "studyid": {
-                                    "key": "studyid",
                                     "title": "Aineiston numero"
                                 },
                                 "studyname": {
-                                    "key": "studyname",
                                     "title": "Aineiston nimi"
                                 },
                                 "authors": {
-                                    "key": "authors",
                                     "title": "Tekijät"
                                 },
-                                "seriesname": {
-                                    "key": "seriesname",
+                                "seriesid": {
                                     "title": "Sarja"
                                 },
                                 "datakind": {
-                                    "key": "datakind",
                                     "title": "Laatu"
                                 },
                                 "termsofuse": {
-                                    "key": "termsofuse",
                                     "title": "Käyttöoikeus"
                                 },
                                 "state": {
-                                    "key": "state",
                                     "title": "Tila"
                                 }
                             },
@@ -533,9 +526,9 @@ define(function (require) {
                                         id: result.id,
                                         no: result.no,
                                         studyid: result.values.studyid,
-                                        studyname: result.values.studyname,
-                                        authors: result.values.authors ? result.values.authors.join(', ') : '',
-                                        seriesname: result.values.seriesname,
+                                        studyname: result.values.title,
+                                        authors: result.values.authors,
+                                        seriesid: result.values.seriesid,
                                         datakind: result.values.datakind,
                                         termsofuse: result.values.termsofuse,
                                         state: MetkaJS.L10N.get('search.result.state.{state}'.supplant(result))
@@ -550,15 +543,9 @@ define(function (require) {
                                     authors: {
                                         type: 'STRING'
                                     },
-                                    seriesname : {
-                                        type: 'INTEGER'
-                                    },
-                                    datakind : {
-                                        type: 'INTEGER'
-                                    },
-                                    termsofuse : {
-                                        type: 'INTEGER'
-                                    },
+                                    seriesid : {type:'STRING'},//response.configuration.fields.seriesid,
+                                    datakind : response.configuration.fields.datakind,
+                                    termsofuse : response.configuration.fields.termsofuse,
                                     state: {
                                         type: 'STRING'
                                     }
@@ -566,11 +553,11 @@ define(function (require) {
                                     "studyid",
                                     "studyname",
                                     "authors",
-                                    "seriesname",
+                                    "seriesid",
                                     "datakind",
                                     "termsofuse",
                                     "state"
-                                ]),
+                                ], function () {}, options),
                                 /*{
                                  "&title": {
                                  "default": "Tyhjennä"

@@ -27,6 +27,7 @@ define(function (require) {
                                     "field": {
                                         "readOnly": true,
                                         "displayType": "CONTAINER",
+                                        "displayHeader": false,
                                         "columnFields": [
                                             "title"
                                         ],

@@ -1,7 +1,7 @@
 define(function (require) {
     'use strict';
 
-    return function (url, requestData, getResults, mapResult, fields, columnFields, getViewRequestOptions) {
+    return function (url, requestData, getResults, mapResult, fields, columnFields, getViewRequestOptions, options) {
         function trOnClick(transferRow) {
             var viewRequestOptions = {
                 id: transferRow.fields.id.values.DEFAULT.current,
@@ -18,7 +18,9 @@ define(function (require) {
                 var fieldOptions = {
                     $events: $({}),
                     defaultLang: 'DEFAULT',
-                    dataConf: {
+                    dataConf: options ? $.extend({}, options.dataConf, {
+                            fields: fields
+                        }) : {
                         fields: fields
                     },
                     data: {

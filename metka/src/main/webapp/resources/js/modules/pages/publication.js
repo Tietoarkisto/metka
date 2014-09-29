@@ -6,6 +6,17 @@ define(function (require) {
         return function (options, onLoad) {
             $.extend(options, {
                 header: MetkaJS.L10N.get('type.PUBLICATION.search'),
+                fieldTitles: {
+                    "publicationid": {
+                        "title" : "Numero"
+                    },
+                    "publicationtitle": {
+                        "title" : "Otsikko"
+                    },
+                    "state": {
+                        "title" : "Tila"
+                    }
+                },
                 content: [
                     commonSearchBooleans.column,
                     {
@@ -218,15 +229,23 @@ define(function (require) {
                         return {
                             id: result.id,
                             no: result.no,
-                            seriesabbr: result.values.seriesabbr,
-                            seriesname: result.values.seriesname,
+                            publicationid: result.values.publicationid,
+                            publicationtitle: result.values.publicationtitle,
                             state: MetkaJS.L10N.get('search.result.state.{state}'.supplant(result))
                         };
                     }, {
+                        publicationid: {
+                            type: 'STRING'
+                        },
+                        publicationtitle: {
+                            type: 'STRING'
+                        },
+                        state: {
+                            type: 'STRING'
+                        }
                     }, [
-                        "id",
-                        "seriesabbr",
-                        "seriesname",
+                        "publicationid",
+                        "publicationtitle",
                         "state"
                     ]),
                     {
