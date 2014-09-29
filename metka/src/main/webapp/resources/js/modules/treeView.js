@@ -71,8 +71,8 @@ define(function (require) {
             });
         }
 
-        var open = 'glyphicon-folder-open';
-        var closed = 'glyphicon-folder-close';
+        var open = 'glyphicon-minus-sign';
+        var closed = 'glyphicon-plus-sign';
 
         function activeNodes() {
             var response = [];

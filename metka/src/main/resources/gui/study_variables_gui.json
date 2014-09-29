@@ -147,7 +147,7 @@
                                 {
                                     "type": "CELL",
                                     "field": {
-                                        "key": "custom_studyVariablesGrouped"
+                                        "key": "vargroups"
                                     }
                                 }
                             ]

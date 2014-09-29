@@ -2,77 +2,33 @@ define(function (require) {
     'use strict';
 
     return function (options) {
-        // TODO: share code with containerField rowDialog
-        function rowDialog(title, button) {
-            return function (transferRow, onClose) {
-                // copy data, so if dialog is dismissed, original data won't change
-                var transferRowCopy = $.extend(true, {}, transferRow);
-
-                var containerOptions = {
-                    title: MetkaJS.L10N.get(['dialog', PAGE, key, title].join('.')),
-                    data: transferRowCopy,
-                    dataConf: options.dataConf,
-                    $events: $({}),
-                    defaultLang: fieldOptions.translatable ? lang : options.defaultLang,
-                    content: [
-                        {
-                            type: 'COLUMN',
-                            columns: 1,
-                            rows: [{
-                                type: 'ROW',
-                                cells: [{
-                                    "type": "CELL",
-                                    "title": "Ryhmän nimi",
-                                    "field": {
-                                        "key": "vargrouptitle"
-                                    }
-                                }]
-                            }, {
-                                type: 'ROW',
-                                cells: [{
-                                    "type": "CELL",
-                                    "title": "Ryhmän tekstit",
-                                    "field": {
-                                        "key": "vargrouptexts",
-                                        "displayHeader": false,
-                                        "columnFields": [
-                                            "vargrouptext"
-                                        ]
-                                    }
-                                }]
-                            }]
-                        }
-                    ],
-                    buttons: [
-                        {
-                            create: function () {
-                                this
-                                    .text(MetkaJS.L10N.get('general.buttons.' + button))
-                                    .click(function () {
-                                        $.extend(transferRow, transferRowCopy);
-                                        onClose();
-                                    });
-                            }
-                        },
-                        {
-                            type: 'CANCEL'
-                        }
-                    ]
-                };
-
-                var $modal = require('./../../modal')(containerOptions);
-
-                // if not translatable container and has translatable subfields, show language selector
-                if (!fieldOptions.translatable && require('./../../containerHasTranslatableSubfields')(options)) {
-                    $modal.find('.modal-header').append(require('./../../languageRadioInputGroup')(containerOptions, 'dialog-translation-lang', $('input[name="translation-lang"]:checked').val()));
-                }
-            };
-        }
-
-        var PAGE = require('./../../../metka').PAGE;
-        var getPropertyNS = require('./../../utils/getPropertyNS');
         var key = 'vargroups';
-        var fieldOptions = getPropertyNS(options, 'dataConf.fields', key) || {};
+
+        var rowDialog = require('./../../containerRowDialog')(options, options.defaultLang, key, function () {
+            return [{
+                type: 'ROW',
+                cells: [{
+                    "type": "CELL",
+                    "title": "Ryhmän nimi",
+                    "field": {
+                        "key": "vargrouptitle"
+                    }
+                }]
+            }, {
+                type: 'ROW',
+                cells: [{
+                    "type": "CELL",
+                    "title": "Ryhmän tekstit",
+                    "field": {
+                        "key": "vargrouptexts",
+                        "displayHeader": false,
+                        "columnFields": [
+                            "vargrouptext"
+                        ]
+                    }
+                }]
+            }];
+        });
 
         return {
             create: function create(options) {

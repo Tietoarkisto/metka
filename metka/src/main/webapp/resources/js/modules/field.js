@@ -4,9 +4,9 @@ define(function (require) {
     var customFields = {
         custom_studyRelatedBinders: require('./custom/fields/studyRelatedBinders'),
         custom_studyErrors: require('./custom/fields/studyErrors'),
-        custom_studyVariablesGrouped: require('./custom/fields/studyVariablesGrouped'),
         custom_studyVariablesGrouping: require('./custom/fields/studyVariablesGrouping'),
         files: require('./custom/fields/files'),
+        vargroups: require('./custom/fields/vargroups'),
         variables: require('./custom/fields/variables')
     };
 
@@ -44,10 +44,12 @@ define(function (require) {
                         var $table = $langField.find('table');
                         $table.find('> thead > tr > th').each(function (i) {
                             var lang = $(this).data('lang');
-                            var isVisible = (!lang && currentLang === options.defaultLang) || lang === options.defaultLang || lang === currentLang;
-                            $table.find('tr').children(':nth-child({i})'.supplant({
-                                i: i + 1
-                            })).toggleClass('hiddenByTranslationState', !isVisible);
+                            if (lang) {
+                                var isVisible = (!lang && currentLang === options.defaultLang) || lang === options.defaultLang || lang === currentLang;
+                                $table.find('tr').children(':nth-child({i})'.supplant({
+                                    i: i + 1
+                                })).toggleClass('hiddenByTranslationState', !isVisible);
+                            }
                         });
                     } else {
                         // toggle visibility

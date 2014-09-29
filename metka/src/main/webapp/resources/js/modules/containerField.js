@@ -4,7 +4,6 @@ define(function (require) {
     return function (options, lang) {
         var columns = [];
 
-        var PAGE = require('./../metka').PAGE;
         var getPropertyNS = require('./utils/getPropertyNS');
         var key = options.field.key;
         var fieldOptions = getPropertyNS(options, 'dataConf.fields', key) || {};
@@ -16,11 +15,6 @@ define(function (require) {
             return 'fieldTitles.{field}.title'.supplant({
                 field: field
             });
-        }
-
-        function field2TableHead(field) {
-            columns.push(field);
-            return th(fieldTitle(field));
         }
 
         function th(key) {
@@ -73,6 +67,8 @@ define(function (require) {
                         return $td;
                     }
                     return $td.append((function () {
+                        var columnLang = $thead.children('tr').children().eq(i).data('lang') || lang;
+
                         function setText(text) {
                             $td.append(typeof text === 'undefined' ? EMPTY : text);
                         }
@@ -93,7 +89,7 @@ define(function (require) {
                             var refKey = getPropertyNS(options, 'dataConf.fields', column, 'reference');
                             var reference = getPropertyNS(options, 'dataConf.references', refKey);
 
-                            require('./reference').option(column, options, lang, setText)(transferRow.fields, reference);
+                            require('./reference').option(column, options, columnLang, setText)(transferRow.fields, reference);
                             return;
                         }
 
@@ -103,7 +99,7 @@ define(function (require) {
                                 return;
                             }
 
-                            tableError.call($td, (transferField.errors || []).concat(transferField[lang] ? transferField[lang].errors : []));
+                            tableError.call($td, (transferField.errors || []).concat(transferField[columnLang] ? transferField[columnLang].errors : []));
 
                             if (!transferField.type) {
                                 log('transferField type not set (column: {column})'.supplant({
@@ -120,7 +116,7 @@ define(function (require) {
                                 return;
                             }
 
-                            return require('./data').latestValue(transferField, $thead.children('tr').children().eq(i).data('lang') || lang);
+                            return require('./data').latestValue(transferField, columnLang);
                         })();
 
                         if (type === 'STRING' || type === 'INTEGER' || type === 'REAL') {
@@ -190,7 +186,7 @@ define(function (require) {
                 });
             } else {
                 if (!transferRow.removed) {
-                    append();
+                    return append();
                 }
             }
         }
@@ -204,66 +200,23 @@ define(function (require) {
             addRow(require('./map/object/transferRow')(data, lang));
         }
 
-        function rowDialog(title, button) {
-            return function (transferRow, onClose) {
-                // copy data, so if dialog is dismissed, original data won't change
-                var transferRowCopy = $.extend(true, {}, transferRow);
-
-                var containerOptions = {
-                    title: MetkaJS.L10N.get(['dialog', PAGE, key, title].join('.')),
-                    data: transferRowCopy,
-                    dataConf: options.dataConf,
-                    $events: $({}),
-                    defaultLang: fieldOptions.translatable ? lang : options.defaultLang,
-                    content: [
-                        {
-                            type: 'COLUMN',
-                            columns: 1,
-                            rows: options.dataConf.fields[key].subfields.map(function (field) {
-                                var dataConfig = $.extend(true, {}, options.dataConf.fields[field]);
-                                if (fieldOptions.translatable) {
-                                    dataConfig.translatable = false;
-                                }
-
-                                return {
-                                    type: 'ROW',
-                                    cells: [$.extend({}, dataConfig, {
-                                        type: 'CELL',
-                                        title: MetkaJS.L10N.get(fieldTitle(field)),
-                                        field: dataConfig
-                                    })]
-                                };
-                            })
-                        }
-                    ],
-                    buttons: [
-                        {
-                            create: function () {
-                                this
-                                    .text(MetkaJS.L10N.get('general.buttons.' + button))
-                                    .click(function () {
-                                        $.extend(transferRow, transferRowCopy);
-                                        var $tr = onClose(transferRow);
-                                        if (options.field.onRowChange) {
-                                            options.field.onRowChange($tr, transferRow);
-                                        }
-                                    });
-                            }
-                        },
-                        {
-                            type: 'CANCEL'
-                        }
-                    ]
-                };
-
-                var $modal = require('./modal')(containerOptions);
-
-                // if not translatable container and has translatable subfields, show language selector
-                if (!fieldOptions.translatable && require('./containerHasTranslatableSubfields')(options)) {
-                    $modal.find('.modal-header').append(require('./languageRadioInputGroup')(containerOptions, 'dialog-translation-lang', $('input[name="translation-lang"]:checked').val()));
+        var rowDialog = require('./containerRowDialog')(options, lang, key, function () {
+            return (fieldOptions.subfields || []).map(function (field) {
+                var dataConfig = $.extend(true, {}, options.dataConf.fields[field]);
+                if (fieldOptions.translatable) {
+                    dataConfig.translatable = false;
                 }
-            };
-        }
+
+                return {
+                    type: 'ROW',
+                    cells: [$.extend({}, dataConfig, {
+                        type: 'CELL',
+                        title: MetkaJS.L10N.get(fieldTitle(field)),
+                        field: dataConfig
+                    })]
+                };
+            });
+        });
 
         this.data('addRowFromDataObject', addRowFromDataObject);
         this.data('addRow', addRow);
@@ -288,7 +241,11 @@ define(function (require) {
                             var $tr = $(this);
                             (options.field.onClick || rowDialog('modify', 'ok'))
                                 .call(this, $tr.data('transferRow'), function (transferRow) {
-                                    return $tr.replaceWith(tr(transferRow));
+                                    //return $tr.replaceWith(tr(transferRow));
+                                    var $tr2 = $tr.replaceWith(tr(transferRow));
+                                    if (options.field.onRowChange) {
+                                        options.field.onRowChange($tr2, transferRow);
+                                    }
                                 });
                         });
                 })
@@ -300,8 +257,23 @@ define(function (require) {
                              var target = options.dataConf.references[options.dataConf.fields[key].reference].target;
                              }
                              })*/
-                            .append((options.field.columnFields || [])
-                                .map(field2TableHead))
+                            .append(function () {
+                                var response = [];
+                                (options.field.columnFields || [])
+                                    .forEach(function (field) {
+                                        // if container is not translatable && subfield is translatable, add columns
+                                        if (!fieldOptions.translatable && options.dataConf.fields[field].translatable) {
+                                            ['DEFAULT', 'EN', 'SV'].forEach(function (lang) {
+                                                columns.push(field);
+                                                response.push((require('./langLabel')(th(fieldTitle(field)).data('lang', lang), lang)));
+                                            });
+                                        } else {
+                                            columns.push(field);
+                                            response.push(th(fieldTitle(field)));
+                                        }
+                                    });
+                                return response;
+                            })
                             .append(function () {
                                 if (options.field.showSaveInfo) {
                                     return [th('general.saveInfo.savedAt'), th('general.saveInfo.savedBy')];
@@ -353,7 +325,12 @@ define(function (require) {
                                 .text(MetkaJS.L10N.get('general.table.add'))
                                 .click(function () {
                                     (options.field.onAdd || rowDialog('add', 'add'))
-                                        .call(this, {}, addRow);
+                                        .call(this, {}, function (transferRow) {
+                                            var $tr = addRow(transferRow);
+                                            if (options.field.onRowChange) {
+                                                options.field.onRowChange($tr, transferRow);
+                                            }
+                                        });
                                 });
                         }
                     });

@@ -224,6 +224,11 @@
             "key" : "versionlabel",
             "title" : "Lyhyt selite"
         },
+        "versionlabeldata": {
+            "key" : "versionlabeldata",
+            "title" : "Lyhyt selite"
+        },
+
         "versiontext": {
             "key" : "versiontext",
             "title" : "Julkinen selite"

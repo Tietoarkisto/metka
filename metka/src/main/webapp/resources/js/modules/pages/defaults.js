@@ -49,7 +49,6 @@ define(function (require) {
                                     .click(function () {
                                         require('./../assignUrl')('download');
                                     })))
-
                     };
                     var labelAndValue = String.prototype.supplant.bind('{label}&nbsp;{value}');
                     supplant.id = labelAndValue({

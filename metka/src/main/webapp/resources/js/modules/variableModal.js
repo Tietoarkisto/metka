@@ -228,7 +228,8 @@ define(function (require) {
                         type: 'CANCEL'
                     }]
                 });
-                require('./modal')(modalOptions);
+                var $modal = require('./modal')(modalOptions);
+                $modal.find('.modal-header').append(require('./languageRadioInputGroup')(modalOptions, 'dialog-translation-lang', $('input[name="translation-lang"]:checked').val()));
             }
         });
     };
