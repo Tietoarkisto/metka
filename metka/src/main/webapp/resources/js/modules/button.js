@@ -344,14 +344,7 @@ define(function (require) {
 
         var $button = $('<button type="button" class="btn">');
 
-        if (options.type) {
-            if (!buttons[options.type]) {
-                var message = MetkaJS.MessageManager.Message(null, 'alert.gui.missingButtonHandler.text');
-                message.data.push(options.type);
-                message.data.push(MetkaJS.L10N.localize(options, 'title'));
-                MetkaJS.MessageManager.show(message);
-                return;
-            }
+        if (options.type && buttons[options.type]) {
             buttons[options.type].call($button, options);
         }
 

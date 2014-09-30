@@ -5,7 +5,7 @@ define(function (require) {
     require('./modules/utils/init');
 
     return {
-        contextPath: MetkaJS.Globals.contextPath,
+        contextPath: MetkaJS.contextPath,
         id: MetkaJS.revisionId,
         page: MetkaJS.configurationType.toLowerCase(),
         PAGE: MetkaJS.configurationType.toUpperCase(),

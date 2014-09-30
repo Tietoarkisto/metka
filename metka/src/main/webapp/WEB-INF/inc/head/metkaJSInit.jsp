@@ -4,12 +4,7 @@
 
 <%-- Include MetkaJS namespace javascript. --%>
 <script src="${contextPath}/js/metkaJS/metkaJS.js"></script>
-<script src="${contextPath}/js/metkaJS/enums.js"></script>
 <script src="${contextPath}/js/metkaJS/l10n.js"></script>
-<script src="${contextPath}/js/metkaJS/messageManager.js"></script>
-<script src="${contextPath}/js/metkaJS/tableHandler.js"></script>
-<script src="${contextPath}/js/metkaJS/jsConfigUtil.js"></script>
-<script src="${contextPath}/js/metkaJS/eventManager.js"></script>
 
 
 <script>
@@ -23,7 +18,7 @@
         MetkaJS.revisionNo = ${revisionNo};
     </c:if>
 
-    MetkaJS.Globals.contextPath = "${contextPath}";
+    MetkaJS.contextPath = "${contextPath}";
 
     <c:if test="${not empty uUserName}">
     MetkaJS.User.userName = "${uUserName}";

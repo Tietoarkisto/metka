@@ -9,79 +9,8 @@
             displayName: null,
             role: null
         },
-        DialogHandlers: {}, // This is used to collect and reference custom dialog handlers used throughout the application
-        TableBuilders: {}, // This is used to collect and reference custom table builders used throughout the application
-        // Placeholders for functionality added in other files
-        E: null,
-        JSConfig: null,
-        JSConfigUtil: null,
-        MessageManager: null,
-        EventManager: null,
         L10N: null,
-        RevisionHistory: null,
         // Globals-object contains global variables and sequences
-        Globals: {
-            page: '',
-            strings: [],
-            globalId: (function () {
-                var globalId = 0;
-                return function () {
-                    return globalId++;
-                };
-            }())
-        },
-
-        /**
-         * General close function for dialogs.
-         * Closes the dialog with provided id.
-         * @param id - Id of the dialog
-         */
-        dialogClose: function (id) {
-            $('#' + id).dialog('close');
-        },
-
-        // Returns a jQuery wrapped page element for a given field key. Key is assumed to be for a top level input build by JSP and SpingForms but this is not checked.
-        getValuesInput: function (key) {
-            if (key !== null) {
-                return $("#values\\'" + key + "\\'");
-            }
-            return null;
-        },
-        // Returns an id for top level field input build by JSP and SpringForms
-        getValuesInputId: function (key) {
-            if (key !== null) {
-                return "values'" + key + "'";
-            }
-            return null;
-        },
-        // Returns a name for top level field input build by JSP and SpringForms
-        getValuesInputName: function (key) {
-            if (key !== null) {
-                return "values['" + key + "']";
-            }
-            return null;
-        },
-
-        /**
-         * Returns jQuery element with given value in given key found from given root element with provided selector.
-         * Returns first element with given value so it multiple values match returns only one.
-         *
-         * @param root Element used for root in search
-         * @param selector Selector string for descendant elements
-         * @param key Data value key
-         * @param value Value that should be matched.
-         * @returns {null}
-         */
-        getElementWithDataValue: function (root, selector, key, value) {
-            var elem = null;
-            $(root).find(selector).each(function () {
-                if ($(this).data(key) === value) {
-                    elem = $(this);
-                }
-                return elem === null;
-            });
-            return elem;
-        },
 
         /**
          * Checks the existence of given variable.
