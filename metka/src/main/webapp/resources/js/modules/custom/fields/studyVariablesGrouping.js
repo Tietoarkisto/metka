@@ -16,6 +16,7 @@ define(function (require) {
 
             var key = 'variables';
             var column = 'varlabel';
+            var isFieldDisabled = require('./../../isFieldDisabled')(options, options.defaultLang);
 
             require('./../../data')(options).onChange(function () {
                 require('./../../preloader')($variables);
@@ -68,7 +69,7 @@ define(function (require) {
                                     }) : [],
                                     transferRow
                                 );
-                            }), {
+                            }), isFieldDisabled ? {} : {
                                 onClick: function (node) {
                                     return node.children ? 'activateOne' : 'deactivateDirectoriesAndToggle';
                                 },
@@ -105,7 +106,7 @@ define(function (require) {
                                 .append($groupView
                                     .addClass('grouping-container'));
 
-                            $variableView = require('./../../treeView')(variables, {
+                            $variableView = require('./../../treeView')(variables, isFieldDisabled ? {} : {
                                 onClick: function () {
                                     return 'toggle';
                                 },
@@ -163,10 +164,12 @@ define(function (require) {
                         .append($('<div class="btn-group-vertical">')
                             .append($moveToGroup)
                             .append($moveToVariables)))
-                    .append($groups))
-                .append($('<div class="row">')
-                    .append($('<div class="col-xs-offset-7">')
-                        .append(require('./../../button')()({
+                    .append($groups));
+            if (!isFieldDisabled) {
+                this
+                    .append($('<div class="row">')
+                        .append($('<div class="col-xs-offset-7">')
+                            .append(require('./../../button')()({
                             style: 'default',
                             "&title": {
                                 "default": "Lisää ryhmä"
@@ -245,7 +248,7 @@ define(function (require) {
                                     });
                             }
                         }))));
-
+            }
         }
     };
 });

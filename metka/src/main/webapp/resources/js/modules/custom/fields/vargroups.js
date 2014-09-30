@@ -68,6 +68,18 @@ define(function (require) {
                                         value: response.fieldValues.variables
                                     };
                                 });
+                                var treeViewEvents = {};
+                                if (!require('./../../isFieldDisabled')(options, options.defaultLang)) {
+                                    treeViewEvents.onClick = function (node) {
+                                        if (!node.children) {
+                                            require('./../../variableModal')(options.field.key, {
+                                                id: node.transferRow.value
+                                            }, onChange);
+                                        } else {
+                                            rowDialog('modify', 'ok')(node.transferRow, onChange);
+                                        }
+                                    };
+                                }
                                 $elem.empty().append(require('./../../treeView')((require('./../../data')(options)('vargroups').getByLang(options.defaultLang) || []).filter(function (row) {
                                     return row.fields && row.fields.vargrouptitle;
                                 }).map(function (transferRow) {
@@ -83,17 +95,7 @@ define(function (require) {
                                         }) : [],
                                         transferRow
                                     );
-                                }), {
-                                    onClick: function (node) {
-                                        if (!node.children) {
-                                            require('./../../variableModal')(options.field.key, {
-                                                id: node.transferRow.value
-                                            }, onChange);
-                                        } else {
-                                            rowDialog('modify', 'ok')(node.transferRow, onChange);
-                                        }
-                                    }
-                                }));
+                                }), treeViewEvents));
                             }
                         });
                     }
