@@ -262,7 +262,7 @@ define(function (require) {
                                 (options.field.columnFields || [])
                                     .forEach(function (field) {
                                         // if container is not translatable && subfield is translatable, add columns
-                                        if (!fieldOptions.translatable && options.dataConf.fields[field].translatable) {
+                                        if (!fieldOptions.translatable && getPropertyNS(options, 'dataConf.fields', field, 'translatable')) {
                                             ['DEFAULT', 'EN', 'SV'].forEach(function (lang) {
                                                 columns.push(field);
                                                 response.push((require('./langLabel')(th(fieldTitle(field)).data('lang', lang), lang)));

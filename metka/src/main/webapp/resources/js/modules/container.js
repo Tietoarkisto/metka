@@ -18,11 +18,7 @@ define(function (require) {
             }, {});
 
             // list of container types, highest priority first
-            var priority = [
-                MetkaJS.E.Container.TAB,
-                MetkaJS.E.Container.SECTION,
-                MetkaJS.E.Container.COLUMN
-            ];
+            var priority = ['TAB', 'SECTION', 'COLUMN'];
 
             priority.forEach(function (type) {
                 // add content, if exists
