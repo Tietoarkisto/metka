@@ -41,12 +41,13 @@ define(function (require) {
                     ]
                 };
 
-                var $modal = require('./modal')(containerOptions);
-
                 // if not translatable container and has translatable subfields, show language selector
                 if (!fieldOptions.translatable && require('./containerHasTranslatableSubfields')(options)) {
-                    $modal.find('.modal-header').append(require('./languageRadioInputGroup')(containerOptions, 'dialog-translation-lang', $('input[name="translation-lang"]:checked').val()));
+                    containerOptions.translatableCurrentLang = $('input[name="translation-lang"]:checked').val() || options.defaultLang;
                 }
+
+                var $modal = require('./modal')(containerOptions);
+
             };
         }
     };

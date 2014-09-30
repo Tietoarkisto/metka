@@ -14,6 +14,7 @@ define(function (require) {
                     dataConf: data.configuration,
                     $events: $({}),
                     defaultLang: 'DEFAULT',
+                    translatableCurrentLang: 'DEFAULT',
                     large: true,
                     content: [
                         {
@@ -229,7 +230,6 @@ define(function (require) {
                     }]
                 });
                 var $modal = require('./modal')(modalOptions);
-                $modal.find('.modal-header').append(require('./languageRadioInputGroup')(modalOptions, 'dialog-translation-lang', $('input[name="translation-lang"]:checked').val()));
             }
         });
     };
