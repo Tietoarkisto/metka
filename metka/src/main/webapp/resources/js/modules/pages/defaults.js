@@ -21,11 +21,36 @@ define(function (require) {
                         page: metka.PAGE
                     };
 
+                    var $buttons = $('<div class="pull-right btn-toolbar">');
+
+                    // visit content fields, until some has translatable: true
+                    if ((function r(content) {
+                        return content.some(function (item) {
+                            var containerContent = {
+                                TAB: item.content,
+                                SECTION: item.content,
+                                COLUMN: item.rows,
+                                ROW: item.cells
+                            }[item.type];
+                            if (containerContent) {
+                                return r(containerContent);
+                            } else {
+                                if (item.field) {
+                                    return require('./../utils/getPropertyNS')(options, 'dataConf.fields', item.field.key, 'translatable');
+                                } else {
+                                    return false;
+                                }
+                            }
+                        });
+                    })(options.content)) {
+                        $buttons
+                            .append(require('./../languageRadioInputGroup')(options, 'translation-lang', options.defaultLang));
+                    }
+
                     var header = {
                         localized: 'type.{page}.title',
                         pattern: '{localized} - {id} - {no}{state}',
-                        buttons: $('<div class="pull-right btn-toolbar">')
-                            .append(require('./../languageRadioInputGroup')(options, 'translation-lang', options.defaultLang))
+                        buttons: $buttons
                             .append($('<div class="btn-group btn-group-xs">')
                                 .append([{
                                     icon: 'glyphicon-chevron-left',
