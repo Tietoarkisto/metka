@@ -1,26 +1,16 @@
-package fi.uta.fsd.metka.ddi;
+package fi.uta.fsd.metka.ddi.reader;
 
-import codebook25.*;
-import fi.uta.fsd.Logger;
-import fi.uta.fsd.metka.enums.ConfigurationType;
+import codebook25.CodeBookType;
+import codebook25.FileDscrType;
+import codebook25.FileTxtType;
 import fi.uta.fsd.metka.enums.Language;
-import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
-import fi.uta.fsd.metka.model.access.enums.StatusCode;
-import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.ValueDataField;
-import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
-import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.tuple.Pair;
-
-import static fi.uta.fsd.metka.ddi.DDIBuilder.fillTextType;
-import static fi.uta.fsd.metka.ddi.DDIBuilder.hasValue;
 
 class DDIFileDescription {
-    static void addfileDescription(RevisionData revisionData, Language language, Configuration configuration, CodeBookType codeBookType, RevisionRepository revisions) {
-        Pair<StatusCode, ValueDataField> valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
+    static void readFileDescription(RevisionData revision, Language language, CodeBookType codeBook, RevisionRepository revisions) {
+        // TODO: Reverse process
+        /*Pair<StatusCode, ValueDataField> valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
         // This operation is so large that it's cleaner just to return than to wrap everything inside this one IF
         if(!hasValue(valueFieldPair, Language.DEFAULT)) {
             return;
@@ -50,50 +40,30 @@ class DDIFileDescription {
         RevisionData attachment = revisionDataPair.getRight();
 
         // Get FileDscrType
-        FileDscrType fileDscrType = codeBookType.addNewFileDscr();
-        setFileDescription(language, attachment, fileDscrType);
+        FileDscrType fileDscr = codeBookType.addNewFileDscr();
+        readFileDescription(language, attachment, fileDscr);
 
         // Get FileTxtType
-        FileTxtType fileTxtType = fileDscrType.addNewFileTxt();
+        FileTxtType fileTxtType = fileDscr.addNewFileTxt();
 
         // Sets file name and file id
-        setFileNameAndID(variables, attachment, fileTxtType);
-
-        // Set software information
-        setSoftware(variables, fileTxtType);
-
-        // Set dimension information
-        setDimensions(variables, fileTxtType);
+        readFileNameAndID(variables, attachment, fileTxtType);*/
     }
 
-    private static void setDimensions(RevisionData variables, FileTxtType fileTxtType) {
-        ;// Add dimensions
-        DimensnsType dimensnsType = fileTxtType.addNewDimensns();
-        Pair<StatusCode, ValueDataField> valueFieldPair = variables.dataField(ValueDataFieldCall.get(Fields.CASEQUANTITY));
-        if(hasValue(valueFieldPair, Language.DEFAULT)) {
-            // Add case quantity
-            fillTextType(dimensnsType.addNewCaseQnty(), valueFieldPair, Language.DEFAULT);
-        }
-
-        valueFieldPair = variables.dataField(ValueDataFieldCall.get(Fields.VARQUANTITY));
-        if(hasValue(valueFieldPair, Language.DEFAULT)) {
-            // Add case quantity
-            fillTextType(dimensnsType.addNewVarQnty(), valueFieldPair, Language.DEFAULT);
-        }
-    }
-
-    private static void setSoftware(RevisionData variables, FileTxtType fileTxtType) {
-        Pair<StatusCode, ValueDataField> valueFieldPair = variables.dataField(ValueDataFieldCall.get(Fields.SOFTWARE));
+    private static void readSoftware(RevisionData variables, FileTxtType fileTxt) {
+        // TODO: Reverse process
+        /*Pair<StatusCode, ValueDataField> valueFieldPair = variables.dataField(ValueDataFieldCall.get(Fields.SOFTWARE));
         if(hasValue(valueFieldPair, Language.DEFAULT)) {
             SoftwareType softwareType = fillTextType(fileTxtType.addNewSoftware(), valueFieldPair, Language.DEFAULT);
 
             // We can't separate version in any easy way from software information since it doesn't come in two distinct fields in POR-file
             softwareType.setVersion(valueFieldPair.getRight().getActualValueFor(Language.DEFAULT));
-        }
+        }*/
     }
 
-    private static void setFileNameAndID(RevisionData variables, RevisionData attachment, FileTxtType fileTxtType) {
-        Pair<StatusCode, ValueDataField> valueFieldPair = attachment.dataField(ValueDataFieldCall.get(Fields.FILE));
+    private static void readFileNameAndID(RevisionData variables, RevisionData attachment, FileTxtType fileTxt) {
+        // TODO: Reverse process
+        /*Pair<StatusCode, ValueDataField> valueFieldPair = attachment.dataField(ValueDataFieldCall.get(Fields.FILE));
         if(hasValue(valueFieldPair, Language.DEFAULT)) {
             // Set file name
             SimpleTextType stt = fillTextType(fileTxtType.addNewFileName(), FilenameUtils.getName(valueFieldPair.getRight().getActualValueFor(Language.DEFAULT)));
@@ -109,14 +79,15 @@ class DDIFileDescription {
             if(hasValue(valueFieldPair, Language.DEFAULT)) {
                 fillTextType(fileTxtType.addNewFileType(), valueFieldPair, Language.DEFAULT);
             }
-        }
+        }*/
     }
 
-    private static void setFileDescription(Language language, RevisionData attachment, FileDscrType fileDscrType) {
-        Pair<StatusCode, ValueDataField> valueFieldPair = attachment.dataField(ValueDataFieldCall.get(Fields.FILEDESCRIPTION));
+    private static void readFileDescription(Language language, RevisionData attachment, FileDscrType fileDscr) {
+        // TODO: Reverse process
+        /*Pair<StatusCode, ValueDataField> valueFieldPair = attachment.dataField(ValueDataFieldCall.get(Fields.FILEDESCRIPTION));
         // TODO: Is this actually a translatable field
         if(hasValue(valueFieldPair, language)) {
             fillTextType(fileDscrType, valueFieldPair, language);
-        }
+        }*/
     }
 }

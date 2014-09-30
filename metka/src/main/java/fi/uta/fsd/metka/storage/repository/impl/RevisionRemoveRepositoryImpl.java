@@ -1,5 +1,6 @@
 package fi.uta.fsd.metka.storage.repository.impl;
 
+import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.OperationType;
 import fi.uta.fsd.metka.enums.RevisionState;
 import fi.uta.fsd.metka.model.configuration.Configuration;
@@ -18,8 +19,6 @@ import fi.uta.fsd.metka.storage.restrictions.RestrictionValidator;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -38,7 +37,6 @@ import java.util.List;
  */
 @Repository
 public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
-    private static final Logger logger = LoggerFactory.getLogger(RevisionRemoveRepositoryImpl.class);
 
     @PersistenceContext(name = "entityManager")
     private EntityManager em;
@@ -68,30 +66,15 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
 
     private RemoveResult removeDraft(RevisionData data) {
         if(!data.getHandler().equals(AuthenticationUtil.getUserName())) {
-            logger.error("User "+AuthenticationUtil.getUserName()+" tried to remove draft belonging to "+data.getHandler());
+            Logger.error(RevisionRemoveRepositoryImpl.class, "User " + AuthenticationUtil.getUserName() + " tried to remove draft belonging to " + data.getHandler());
             return RemoveResult.WRONG_USER;
         }
-        /*Pair<ReturnResult, Configuration> pair = configurations.findConfiguration(data.getConfiguration());
-        if(pair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
-            logger.error("Could not find configuration for data "+data.toString());
-            return RemoveResult.CONFIGURATION_NOT_FOUND;
-        }
-
-        boolean result = true;
-        for(Operation operation : pair.getRight().getRestrictions()) {
-            if(operation.getType() != OperationType.DELETE) {
-                continue;
-            }
-            if(!validator.validate(data, operation.getTargets())) {
-                result = false;
-                break;
-            }
-        }
-        if(result) {
-            em.remove(em.find(RevisionEntity.class, RevisionKey.fromModelKey(data.getKey())));
+        RevisionEntity revision = em.find(RevisionEntity.class, RevisionKey.fromModelKey(data.getKey()));
+        if(revision == null) {
+            Logger.error(RevisionRemoveRepositoryImpl.class, "Draft revision with key "+data.getKey()+" was slated for removal but was not found from database.");
         } else {
-            return RemoveResult.RESTRICTION_VALIDATION_FAILURE;
-        }*/
+            em.remove(revision);
+        }
 
         List<RevisionEntity> entities = em.createQuery("SELECT r FROM RevisionEntity r WHERE r.key.revisionableId=:id", RevisionEntity.class)
                 .setParameter("id", data.getKey().getId())
@@ -121,7 +104,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
 
         Pair<ReturnResult, Configuration> confPair = configurations.findConfiguration(pair.getRight().getConfiguration());
         if(confPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
-            logger.error("Could not find configuration for data "+data.toString());
+            Logger.error(RevisionRemoveRepositoryImpl.class, "Could not find configuration for data "+data.toString());
             return RemoveResult.CONFIGURATION_NOT_FOUND;
         }
 

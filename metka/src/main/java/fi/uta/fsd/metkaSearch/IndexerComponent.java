@@ -129,6 +129,8 @@ public class IndexerComponent {
                 if(handlers.get(command.getPath()).isDone()) {
                     startIndexer(command.getPath());
                 }
+            } else {
+                startIndexer(command.getPath());
             }
         }
     }

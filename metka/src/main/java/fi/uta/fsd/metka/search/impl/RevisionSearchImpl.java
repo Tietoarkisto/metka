@@ -287,19 +287,15 @@ public class RevisionSearchImpl implements RevisionSearch {
             return results;
         }
 
-        Pair<ReturnResult, RevisionableInfo> infoPair = null;
         for(RevisionResult result : resultList.getResults()) {
-            RevisionableInfo info = null;
-            if(infoPair == null || !infoPair.getRight().getId().equals(result.getId())) {
-                infoPair = revisions.getRevisionableInfo(result.getId());
-                if(infoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
-                    logger.error("Couldn't find info for revisionable "+result.getId());
-                    continue;
-                }
-                info = infoPair.getRight();
+            Pair<ReturnResult, RevisionableInfo> infoPair = revisions.getRevisionableInfo(result.getId());
+            if(infoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
+                logger.error("Couldn't find info for revisionable "+result.getId());
+                continue;
             }
+            RevisionableInfo info = infoPair.getRight();
             // NOTICE: Try to remove the need to do this, although granted this isn't exactly heavy
-            if(info == null || (info.getApproved() != null && result.getNo() < info.getApproved())) {
+            if(info.getApproved() != null && result.getNo() < info.getApproved()) {
                 continue;
             }
 

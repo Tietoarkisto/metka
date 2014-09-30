@@ -2,6 +2,7 @@ package fi.uta.fsd.metka.mvc.services.impl;
 
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.general.RevisionKey;
@@ -158,17 +159,19 @@ public class RevisionServiceImpl implements RevisionService {
                 // TODO: In case of study we should most likely remove all sub objects too since they won't point to anything.
                 // TODO: We should also check that references will get removed from revisions (from which point is the question).
                 //       For example if only revision of study attachment is removed then the row should be removed from study too.
-
-                // For now remove the extra document
-                indexer.addCommand(RevisionIndexerCommand.remove(transferData.getConfiguration().getType(), transferData.getKey()));
-                break;
             case SUCCESS_DRAFT:
                 // One remove operation should be enough for both of these since there should only be one affected document
                 addRemoveCommand(transferData);
                 break;
             case SUCCESS_LOGICAL:
                 // In this case we need to reindex all affected documents instead
-                // TODO: Add indexing commands for all revisions of revisionable
+                List<Integer> nos = revisions.getAllRevisionNumbers(transferData.getKey().getId());
+                for(Integer no : nos) {
+                    Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(transferData.getKey().getId(), no);
+                    if(pair.getLeft() == ReturnResult.REVISION_FOUND) {
+                        addIndexCommand(pair.getRight());
+                    }
+                }
                 break;
             default:
                 // Errors don't need special handling
@@ -184,7 +187,13 @@ public class RevisionServiceImpl implements RevisionService {
         response.setResult(result.name());
 
         if(result == RemoveResult.SUCCESS_RESTORE) {
-            // TODO: Reindex all revisions
+            List<Integer> nos = revisions.getAllRevisionNumbers(transferData.getKey().getId());
+            for(Integer no : nos) {
+                Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(transferData.getKey().getId(), no);
+                if(pair.getLeft() == ReturnResult.REVISION_FOUND) {
+                    addIndexCommand(pair.getRight());
+                }
+            }
         }
 
         return response;
@@ -266,6 +275,9 @@ public class RevisionServiceImpl implements RevisionService {
     }
 
     private void addRemoveCommand(TransferData data) {
+        for(Language language : Language.values()) {
+            indexer.addCommand(RevisionIndexerCommand.remove(data.getConfiguration().getType(), language, data.getKey().getId(), data.getKey().getNo()));
+        }
         switch(data.getConfiguration().getType()) {
             case STUDY_ATTACHMENT:
             case STUDY_VARIABLE:
@@ -276,11 +288,7 @@ public class RevisionServiceImpl implements RevisionService {
                 break;
             }
             default:
-                for(Language language : Language.values()) {
-                    indexer.addCommand(
-                    RevisionIndexerCommand
-                    .remove(data.getConfiguration().getType(), language, data.getKey().getId(), data.getKey().getNo()));
-                }
+
                 break;
         }
     }
@@ -288,6 +296,10 @@ public class RevisionServiceImpl implements RevisionService {
 
     private void addIndexCommand(TransferData data) {
         // Separates calls to index sub components of study, should really be collected as a queue so that multiple study indexing requests are not made in a short period
+        // TODO: Make some way of indexing only changed languages instead of every one. For now add all languages. Indexing should also check to see that there is actual language specific data before adding to index
+        for(Language language : Language.values()) {
+            indexer.addCommand(RevisionIndexerCommand.index(data.getConfiguration().getType(), language, data.getKey().getId(), data.getKey().getNo()));
+        }
         switch(data.getConfiguration().getType()) {
             case STUDY_ATTACHMENT:
             case STUDY_VARIABLE:
@@ -297,12 +309,27 @@ public class RevisionServiceImpl implements RevisionService {
                 break;
             }
             default:
-                // TODO: Make some way of indexing only changed languages instead of every one. For now add all languages. Indexing should also check to see that there is actual language specific data before adding to index
-                for(Language language : Language.values()) {
-                    indexer.addCommand(
-                    RevisionIndexerCommand
-                        .index(data.getConfiguration().getType(), language, data.getKey().getId(), data.getKey().getNo()));
-                }
+
+                break;
+        }
+    }
+
+    private void addIndexCommand(RevisionData data) {
+        // Separates calls to index sub components of study, should really be collected as a queue so that multiple study indexing requests are not made in a short period
+        // TODO: Make some way of indexing only changed languages instead of every one. For now add all languages. Indexing should also check to see that there is actual language specific data before adding to index
+        for(Language language : Language.values()) {
+            indexer.addCommand(RevisionIndexerCommand.index(data.getConfiguration().getType(), language, data.getKey().getId(), data.getKey().getNo()));
+        }
+        switch(data.getConfiguration().getType()) {
+            case STUDY_ATTACHMENT:
+            case STUDY_VARIABLE:
+            case STUDY_VARIABLES: {
+                Long id = data.dataField(ValueDataFieldCall.get("study")).getRight().getValueFor(Language.DEFAULT).valueAsInteger();
+                indexer.addStudyIndexerCommand(id, true);
+                break;
+            }
+            default:
+
                 break;
         }
     }

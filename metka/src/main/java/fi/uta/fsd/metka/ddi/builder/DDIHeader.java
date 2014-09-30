@@ -1,4 +1,4 @@
-package fi.uta.fsd.metka.ddi;
+package fi.uta.fsd.metka.ddi.builder;
 
 import codebook25.CodeBookType;
 import fi.uta.fsd.metka.enums.Language;

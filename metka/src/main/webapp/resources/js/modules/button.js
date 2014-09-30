@@ -251,6 +251,17 @@ define(function (require) {
                                                     case "FINAL_REVISION":
                                                         require('./assignUrl')('searchPage');
                                                         break;
+                                                    default:
+                                                        require('./modal')({
+                                                            title: MetkaJS.L10N.get('alert.error.title'),
+                                                            body: response.result /*data.errors.map(function (error) {
+                                                             return MetkaJS.L10N.get(error.msg);
+                                                             })*/,
+                                                            buttons: [{
+                                                                type: 'DISMISS'
+                                                            }]
+                                                        });
+                                                        break;
                                                 }
 
                                             }

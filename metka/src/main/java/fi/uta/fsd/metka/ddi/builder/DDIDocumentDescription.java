@@ -1,4 +1,4 @@
-package fi.uta.fsd.metka.ddi;
+package fi.uta.fsd.metka.ddi.builder;
 
 import codebook25.*;
 import fi.uta.fsd.metka.enums.Language;
@@ -21,8 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static fi.uta.fsd.metka.ddi.DDIBuilder.fillTextType;
-import static fi.uta.fsd.metka.ddi.DDIBuilder.hasValue;
+import static fi.uta.fsd.metka.ddi.builder.DDIBuilder.fillTextType;
+import static fi.uta.fsd.metka.ddi.builder.DDIBuilder.hasValue;
 
 class DDIDocumentDescription {
     private static final String BIBL_CIT_FORMAT = "MRDF";

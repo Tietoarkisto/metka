@@ -1,4 +1,4 @@
-package fi.uta.fsd.metka.ddi;
+package fi.uta.fsd.metka.ddi.builder;
 
 import codebook25.CodeBookType;
 import codebook25.OtherMatType;
@@ -14,8 +14,8 @@ import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.names.Fields;
 import org.apache.commons.lang3.tuple.Pair;
 
-import static fi.uta.fsd.metka.ddi.DDIBuilder.fillTextType;
-import static fi.uta.fsd.metka.ddi.DDIBuilder.hasValue;
+import static fi.uta.fsd.metka.ddi.builder.DDIBuilder.fillTextType;
+import static fi.uta.fsd.metka.ddi.builder.DDIBuilder.hasValue;
 
 class DDIOtherMaterialDescription {
     static void addOtherMaterialDescription(RevisionData revisionData, Language language, Configuration configuration, CodeBookType codeBookType) {

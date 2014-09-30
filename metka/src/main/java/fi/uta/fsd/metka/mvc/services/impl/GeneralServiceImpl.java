@@ -1,7 +1,7 @@
 package fi.uta.fsd.metka.mvc.services.impl;
 
 import codebook25.CodeBookDocument;
-import fi.uta.fsd.metka.ddi.DDIBuilder;
+import fi.uta.fsd.metka.ddi.builder.DDIBuilder;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.configuration.Configuration;

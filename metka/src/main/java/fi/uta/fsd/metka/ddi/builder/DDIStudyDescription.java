@@ -1,4 +1,4 @@
-package fi.uta.fsd.metka.ddi;
+package fi.uta.fsd.metka.ddi.builder;
 
 import codebook25.*;
 import fi.uta.fsd.Logger;
@@ -24,7 +24,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.*;
 
-import static fi.uta.fsd.metka.ddi.DDIBuilder.*;
+import static fi.uta.fsd.metka.ddi.builder.DDIBuilder.*;
 
 class DDIStudyDescription {
     private static final Map<Language, String> ACCS_PLAC = new HashMap<>();
