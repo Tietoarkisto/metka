@@ -5,7 +5,7 @@
 
 <jsp:include page="head/cssInit.jsp" />
 
-<jsp:include page="head/jqueryInit.jsp" />
+<script src="${contextPath}/lib/jquery/jquery-2.1.1.min.js"></script>
 
 <jsp:include page="head/metkaJSInit.jsp" />
 
