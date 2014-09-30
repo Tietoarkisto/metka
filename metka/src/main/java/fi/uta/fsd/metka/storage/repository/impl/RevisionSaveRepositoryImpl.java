@@ -777,7 +777,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 tf.getRowsFor(language).clear();
                 return;
             }
-            for(Iterator<TransferRow> i = tf.getRowsFor(Language.DEFAULT).iterator(); i.hasNext(); ) {
+            for(Iterator<TransferRow> i = tf.getRowsFor(language).iterator(); i.hasNext(); ) {
                 TransferRow tr = i.next();
                 if(!ids.contains(tr.getRowId())) {
                     i.remove();
