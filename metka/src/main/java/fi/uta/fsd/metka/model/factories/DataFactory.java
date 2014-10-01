@@ -5,7 +5,6 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.DataField;
 import fi.uta.fsd.metka.model.general.ConfigurationKey;
 import fi.uta.fsd.metka.model.general.RevisionKey;
-import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 
 
 /**
@@ -22,7 +21,6 @@ public abstract class DataFactory {
      */
     public static RevisionData createDraftRevision(Long id, Integer no, ConfigurationKey config) {
         RevisionData data = new RevisionData(new RevisionKey(id, no), config);
-        data.setHandler(AuthenticationUtil.getUserName());
         data.setState(RevisionState.DRAFT);
         return data;
     }

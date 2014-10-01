@@ -94,6 +94,6 @@
     </filter>
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/web/*</url-pattern>
     </filter-mapping>
 </web-app>

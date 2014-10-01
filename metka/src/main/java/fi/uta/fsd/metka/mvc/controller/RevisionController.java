@@ -101,7 +101,16 @@ public class RevisionController {
 
     @RequestMapping(value="ajax/create", method = RequestMethod.POST)
     public @ResponseBody RevisionOperationResponse create(@RequestBody RevisionCreateRequest request) {
-        return revisions.create(request);
+        RevisionOperationResponse response = revisions.create(request);
+        if(response.getResult().equals(ReturnResult.REVISION_CREATED.name())) {
+            RevisionOperationResponse claimResponse = revisions.claimRevision(response.getData().getKey());
+            if(claimResponse.getResult().equals(ReturnResult.REVISION_UPDATE_SUCCESSFUL.name())) {
+                claimResponse.setResult(response.getResult());
+                return claimResponse;
+            } else {
+                return response;
+            }
+        } else return response;
     }
 
     @RequestMapping(value="ajax/edit", method = RequestMethod.POST)

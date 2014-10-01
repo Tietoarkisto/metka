@@ -84,7 +84,7 @@ public class IndexerDocument {
 
     public void indexText(Language language, String key, String value, boolean exact, Store store) {
         if(exact) {
-            indexWhitespaceField(key, value, store);
+            indexKeywordField(key, value, store);
         } else {
             general.append(" ");
             general.append(value);

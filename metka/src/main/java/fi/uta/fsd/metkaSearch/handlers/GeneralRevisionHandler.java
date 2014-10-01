@@ -177,7 +177,7 @@ class GeneralRevisionHandler implements RevisionHandler {
 
         indexFields(data, document, "", new Step("", null), config);
 
-        if(contentForLanguage) {
+        if(contentForLanguage || language == Language.DEFAULT) {
             logger.info("Adding document to index.");
             document.indexText(language, "revisions", document.getGeneral(), false, YES);
             PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(CaseInsensitiveWhitespaceAnalyzer.ANALYZER, document.getAnalyzers());
