@@ -101,8 +101,12 @@ Colors:
     border-color: inherit;
 }
 
+.panel {
+    margin: 10px 0;
+}
+
 .panel-group .panel .panel {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .panel-footer {
