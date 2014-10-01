@@ -189,12 +189,14 @@
             "key": "publicationrelpubl",
             "translatable": false,
             "required": true,
-            "type": "STRING"
+            "type": "STRING",
+			"exact": false
         },
         "publicationnotes": {
             "key": "publicationnotes",
             "translatable": false,
-            "type": "STRING"
+            "type": "STRING",
+			"exact": false
         },
         "publicationauthors": {
             "key": "publicationauthors",

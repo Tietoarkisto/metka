@@ -10,7 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
 @PreAuthorize("hasPermission('"+ Permission.Values.CAN_VIEW_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "')")
-@Transactional
+@Transactional(noRollbackFor = {NumberFormatException.class})
 public interface RevisionService {
     @Transactional(readOnly = true) RevisionDataResponse view(Long id, ConfigurationType type);
 

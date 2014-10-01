@@ -235,12 +235,14 @@
 		"filecomment": {
 			"key": "filecomment",
 			"translatable": false,
-			"type": "STRING"
+			"type": "STRING",
+			"exact": false
 		},
 		"filedescription": {
 			"key": "filedescription",
 			"translatable": true,
-			"type": "STRING"
+			"type": "STRING",
+			"exact": false
 		},
 		"filedip": {
 			"key": "filedip",
@@ -259,7 +261,8 @@
 		"filenotes": {
 			"key": "filenotes",
 			"translatable": false,
-			"type": "STRING"
+			"type": "STRING",
+			"exact": false
 		},
 		"fileoriginal": {
 			"key": "fileoriginal",

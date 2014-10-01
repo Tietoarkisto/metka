@@ -581,6 +581,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                         Pair<StatusCode, DataRow> rowPair = container.insertNewDataRow(language, containerChange);
                         if (rowPair.getLeft() == StatusCode.NEW_ROW) {
                             row = rowPair.getRight();
+                            row.setSaved(info);
                             changes = true;
                             tr.setRowId(row.getRowId());
                         }
@@ -608,7 +609,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                             }
 
                             // Call save field for the subfield, this can cause recursion
-                            Pair<StatusCode, Boolean> fieldSaveResult = saveField(subfield, configuration, tr, row, rowChange.getChanges());
+                            Pair<StatusCode, Boolean> fieldSaveResult = saveField(subfield, configuration, tr, row, changeMap);
 
                             if (fieldSaveResult.getRight()) {
                                 returnPair.setRight(true);
@@ -616,6 +617,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                             if (fieldSaveResult.getLeft() == StatusCode.FIELD_CHANGED) {
                                 // Make sure that row change is in the container change since there has been an actual change.
                                 containerChange.put(rowChange);
+                                row.setSaved(info);
                                 changes = true;
                             }
                         }
@@ -792,7 +794,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
          * @param configuration  Configuration of the RevisionData being handled. This is needed for SELECTION fields, REFERENCEs etc.
          * @param transferFields TransferFieldContainer that should contain the TransferField described by Field configuration
          * @param dataFields     DataFieldContainer that should contain the ValueDataField described by Field configuration
-         * @param changeMap      Map of changes that should contain changes for field being checked
+         * @param changeMap      Map of changes for data field set operation
          * @return Boolean|Boolean changesAndErrors pair. Left value indicates that changes have taken place, right value indicates that errors were marked somewhere within the TransferFields
          */
         private Pair<StatusCode, Boolean> saveValue(Field field, Configuration configuration, TransferFieldContainer transferFields, DataFieldContainer dataFields, Map<String, Change> changeMap) {
@@ -848,6 +850,15 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                                   Configuration configuration, TransferField transferField, DataFieldContainer dataFields,
                                   Map<String, Change> changeMap, TransferFieldContainer transferFields) {
             Value value = transferField.asValue(language);
+            FieldError typeError = value.typeCheck(field.getType());
+            if(typeError != null) {
+                // This should mean that there is actually a value but let's just check just in case
+                TransferValue tv = transferField.getValueFor(language);
+                if(tv != null) {
+                    tv.addError(typeError);
+                    returnPair.setRight(true);
+                }
+            }
             Pair<StatusCode, ValueDataField> codePair = dataFields.dataField(
                     ValueDataFieldCall
                             .check(field.getKey(), value, language)

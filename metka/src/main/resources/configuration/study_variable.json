@@ -107,7 +107,8 @@
             "translatable": false,
             "required": true,
             "type": "STRING",
-            "subfield": true
+            "subfield": true,
+			"exact": false
         },
         "preqtxts": {
             "key": "preqtxts",
@@ -123,7 +124,8 @@
             "translatable": false,
             "required": true,
             "type": "STRING",
-            "subfield": true
+            "subfield": true,
+			"exact": false
         },
         "postqtxts": {
             "key": "postqtxts",
@@ -139,7 +141,8 @@
             "translatable": false,
             "required": true,
             "type": "STRING",
-            "subfield": true
+            "subfield": true,
+			"exact": false
         },
         "ivuinstrs": {
             "key": "ivuinstrs",
@@ -155,7 +158,8 @@
             "translatable": false,
             "required": true,
             "type": "STRING",
-            "subfield": true
+            "subfield": true,
+			"exact": false
         },
         "varnotes": {
             "key": "varnotes",
@@ -171,7 +175,8 @@
             "translatable": false,
             "required": true,
             "type": "STRING",
-            "subfield": true
+            "subfield": true,
+			"exact": false
         },
         "vartexts": {
             "key": "vartexts",
@@ -187,7 +192,8 @@
             "translatable": false,
             "required": true,
             "type": "STRING",
-            "subfield": true
+            "subfield": true,
+			"exact": false
         },
         "varsecurities": {
             "key": "varsecurities",
@@ -203,7 +209,8 @@
             "translatable": false,
             "required": true,
             "type": "STRING",
-            "subfield": true
+            "subfield": true,
+			"exact": false
         },
         "valuelabels": {
             "key": "valuelabels",
@@ -234,8 +241,7 @@
             "editable": false,
             "immutable": true,
             "type": "STRING",
-            "subfield": true,
-            "exact": true
+            "subfield": true
         },
         "label": {
             "key": "label",
@@ -245,7 +251,7 @@
             "immutable": true,
             "type": "STRING",
             "subfield": true,
-            "exact": true
+			"exact": false
         },
         "stat": {
             "key": "stat",
@@ -254,8 +260,7 @@
             "editable": false,
             "immutable": true,
             "type": "INTEGER",
-            "subfield": true,
-            "exact": true
+            "subfield": true
         },
         "missing": {
             "_comment": "Only valid value is Y, might be good to move the value to a selection list",
@@ -263,8 +268,7 @@
             "translatable": false,
             "editable": false,
             "type": "STRING",
-            "subfield": true,
-            "exact": true
+            "subfield": true
         },
         "statistics": {
             "key": "statistics",

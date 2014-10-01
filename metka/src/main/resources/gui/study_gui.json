@@ -220,8 +220,8 @@
             "key" : "versionpro",
             "title" : "Käsittelijä"
         },
-        "versionlabel": {
-            "key" : "versionlabel",
+        "versionlabeldesc": {
+            "key" : "versionlabeldesc",
             "title" : "Lyhyt selite"
         },
         "versionlabeldata": {

@@ -182,21 +182,26 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
             return;
         }
 
+        if(splits[splits.length-1].equals("value")) {
+            addKeywordAnalyzer(key);
+            return;
+        }
+
         Field field = config.getField(splits[splits.length-1]);
         if(field == null) {
             addKeywordAnalyzer(key);
             return;
         }
-        if(field.getType() == STRING || field.getType() == CONCAT || field.getType() == REFERENCE) {
-            if(!field.getExact()) {
-                addTextAnalyzer(key);
-            } else {
-                addWhitespaceAnalyzer(key);
-            }
-        } else if(field.getType() == INTEGER) {
+        if(field.getType() == INTEGER) {
             nums.put(key, new NumericConfig(LuceneConfig.PRECISION_STEP, new DecimalFormat(), FieldType.NumericType.LONG));
         } else if(field.getType() == REAL) {
             nums.put(key, new NumericConfig(LuceneConfig.PRECISION_STEP, new DecimalFormat(), FieldType.NumericType.DOUBLE));
+        } else {
+            if (!field.getExact()) {
+                addTextAnalyzer(key);
+            } else {
+                addKeywordAnalyzer(key);
+            }
         }
     }
 }

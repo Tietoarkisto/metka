@@ -54,7 +54,7 @@
       <data key="d4"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="217.41586391437303" width="162.0" x="749.0782110091741" y="545.4208333333333"/>
+          <y:Geometry height="230.41586391437303" width="162.0" x="749.0782110091741" y="545.4208333333333"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="34.265625" modelName="custom" textColor="#000000" visible="true" width="141.2998046875" x="10.35009765625" y="3.0">&lt;&lt;enumeration&gt;&gt;
@@ -77,6 +77,7 @@ CONCAT
 DATE
 DATETIME
 TIME
+RICHTEXT
 ...</y:AttributeLabel>
             <y:MethodLabel/>
           </y:UML>
@@ -153,10 +154,10 @@ bidirectional: Property on a REFERENCECONTAINER that informs
       <data key="d4"/>
       <data key="d6">
         <y:UMLNoteNode>
-          <y:Geometry height="346.493845565749" width="375.25963302752325" x="1021.8901376146787" y="906.1447859327211"/>
+          <y:Geometry height="371.493845565749" width="375.25963302752325" x="1021.8901376146787" y="906.1447859327211"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="339.25" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="372.8125" x="4.0" y="4.0">type: what kind of field is this field.
+          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="367.1875" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="372.8125" x="4.0" y="4.0">type: what kind of field is this field.
     STRING: contains text values.
     INTEGER: contains whole number values.
     REAL: contains real number values.
@@ -179,7 +180,9 @@ bidirectional: Property on a REFERENCECONTAINER that informs
     DATE: Local calendar date using ISO_8601 extended.
     DATETIME: Local calendar date + time using
         ISO_8601 extended.
-    TIME: Local ISO_8601 time in extended format.</y:NodeLabel>
+    TIME: Local ISO_8601 time in extended format.
+    RICHTEXT: Type that can contain html-formatting
+        elements like &lt;p&gt; and &lt;b&gt; tags.</y:NodeLabel>
         </y:UMLNoteNode>
       </data>
     </node>
@@ -187,7 +190,7 @@ bidirectional: Property on a REFERENCECONTAINER that informs
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="2.448394495412458" sy="-80.36778208000328" tx="6.775000000000091" ty="-78.86688617379058">
+          <y:Path sx="2.448394495412458" sy="-80.36778208000328" tx="6.775000000000091" ty="-83.58259321466717">
             <y:Point x="1171.5623853211005" y="497.5798165137612"/>
             <y:Point x="836.8532110091742" y="497.5798165137612"/>
           </y:Path>
@@ -225,7 +228,7 @@ bidirectional: Property on a REFERENCECONTAINER that informs
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="-95.113990825688" sy="15.835403628850395" tx="-135.5199541284403" ty="-130.39516736890477"/>
+          <y:Path sx="-95.113990825688" sy="15.835403628850395" tx="-135.5199541284403" ty="-139.80335520814324"/>
           <y:LineStyle color="#000000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="none"/>
           <y:BendStyle smoothed="false"/>
@@ -236,7 +239,7 @@ bidirectional: Property on a REFERENCECONTAINER that informs
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="98.386009174312" sy="-104.93096712538215" tx="95.55022935779789" ty="112.67749831751196"/>
+          <y:Path sx="98.386009174312" sy="-104.93096712538215" tx="-58.44977064220211" ty="-370.0297324159018"/>
           <y:LineStyle color="#000000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="none"/>
           <y:BendStyle smoothed="false"/>

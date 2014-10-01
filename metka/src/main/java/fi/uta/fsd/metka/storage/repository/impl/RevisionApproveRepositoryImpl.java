@@ -1,7 +1,6 @@
 package fi.uta.fsd.metka.storage.repository.impl;
 
 import fi.uta.fsd.metka.enums.*;
-import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
@@ -9,13 +8,9 @@ import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.configuration.Operation;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.change.Change;
-import fi.uta.fsd.metka.model.data.change.ContainerChange;
-import fi.uta.fsd.metka.model.data.change.RowChange;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
-import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.model.transfer.TransferField;
 import fi.uta.fsd.metka.model.transfer.TransferValue;
@@ -492,126 +487,106 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
      * Changes are detected only from terminating DataFields i.e. ValueDataFields and ReferenceContainerDataFields.
      * ContainerDataFields can't terminate sensibly and so we don't care about changes in those alone, there has
      * to always be a change in a terminating field within the Container.
-     * Languages require that there is at least one change for that language in a field that is marked
-     * translatable (in theory there should not be translation data in fields that are not translatable but in practice it
-     * is always a possibility that illegal translation data gets to the system one way or another and that changes are not
-     * always up to date on the translatability of fields).
-     * NOTICE: This method assumes that ChangeMap data in RevisionData is correct and reliable so it is used to
-     *         find possible changes. Terminating ValueDataFields are checked for actual value change and ReferenceRows
-     *         are checked for saved information that is newer than previous approve info (if any) in RevisionData.
-     *         If approval is missed when it should have been set then there's fault in updating Change values somewhere.
+     *
+     * This process checks the actual fields for changes and does not rely on change map since definite data is needed.
+     * ValueDataFields are checked for current value and reference containers are checked for unapproved rows.
+     *
      * @param data             RevisionData to check for changes in languages
      * @param configuration    Configuration for RevisionData
      * @return Set containing all Languages that have changes from previous revision
      */
     private Set<Language> hasChanges(RevisionData data, Configuration configuration) {
         Set<Language> changesIn = new HashSet<>();
-        for(Change change : data.getChanges().values()) {
-            if(change instanceof ContainerChange) {
-                checkContainerChange(changesIn, (ContainerChange)change, data, data, configuration);
+        for(DataField dataField : data.getFields().values()) {
+            boolean missing = false;
+            for(Language l : Language.values()) {
+                if(!changesIn.contains(l)) {
+                    missing = true;
+                    break;
+                }
+            }
+            if(!missing) {
+                // We have a change in all languages, no point in continuing
+                break;
+            }
+
+            if(dataField instanceof ContainerDataField) {
+                checkContainerForChanges(changesIn, (ContainerDataField)dataField, configuration);
             } else {
-                checkValueChange(changesIn, change, data, configuration);
+                checkTerminatingFieldForChanges(changesIn, dataField, configuration);
             }
         }
         return changesIn;
     }
 
-    private void checkContainerRowChange(Set<Language> changesIn, RowChange rowChange, DataRow row, RevisionData data, Configuration configuration) {
-        for(Change change : rowChange.getChanges().values()) {
-            if(change instanceof ContainerChange) {
-                checkContainerChange(changesIn, (ContainerChange)change, row, data, configuration);
-            } else {
-                checkValueChange(changesIn, change, row, configuration);
-            }
-        }
-    }
+    private void checkContainerForChanges(Set<Language> changesIn, ContainerDataField container, Configuration configuration) {
+        Field fieldConf = configuration.getField(container.getKey());
 
-    private void checkContainerChange(Set<Language> changesIn, ContainerChange change, DataFieldContainer dataFields,
-                                      RevisionData data, Configuration configuration) {
-        Field fieldConf = configuration.getField(change.getKey());
-        if(fieldConf.getType() == FieldType.REFERENCECONTAINER) {
-            // Field is a reference container, utilise specialized checking and return since rest of this method
-            // deal with checking ContainerDataField instead
-            checkReferenceContainerChange(changesIn, change, dataFields, data);
-            return;
-        }
-
-        Pair<StatusCode, ContainerDataField> fieldPair = dataFields.dataField(ContainerDataFieldCall.get(change.getKey()).setConfiguration(configuration));
-        if(fieldPair.getLeft() != StatusCode.FIELD_FOUND) {
-            // No field, no changes
-            return;
-        }
-
-        ContainerDataField field = fieldPair.getRight();
         if(!fieldConf.getTranslatable()) {
             // Container is not translatable, check only DEFAULT rows
-            checkContainerChangeFor(changesIn, change, data, configuration, field, Language.DEFAULT);
+            checkContainerForChangesIn(changesIn, container, configuration, Language.DEFAULT);
 
         } else {
             // Container is translatable, check all rows we don't need to forward the language since configuration
             // has forced translatable true for all fields inside this container tree and so all languages will be checked anyway
             for(Language language : Language.values()) {
-                checkContainerChangeFor(changesIn, change, data, configuration, field, language);
+                if(changesIn.contains(language)) {
+                    // We can skip the language since we know that all values inside the row will be of the given language
+                    continue;
+                }
+                checkContainerForChangesIn(changesIn, container, configuration, language);
             }
         }
 
     }
 
-    private void checkContainerChangeFor(Set<Language> changesIn, ContainerChange change, RevisionData data,
-                                         Configuration configuration, ContainerDataField field, Language language) {
-        if(!change.hasRows()) {
+    private void checkContainerForChangesIn(Set<Language> changesIn, ContainerDataField container, Configuration configuration, Language language) {
+        if(!container.hasRowsFor(language)) {
             // No rows for given language, continue loop
             return;
         }
-        for(RowChange rowChange : change.getRows().values()) {
-            // Check only changed rows.
-            Pair<StatusCode, DataRow> rowPair = field.getRowWithIdFrom(language, rowChange.getRowId());
-            if(rowPair.getLeft() != StatusCode.FOUND_ROW) {
-                continue;
+        for(DataRow row : container.getRowsFor(language)) {
+            // We can shortcut some checks.
+            // Unapproved rows and deleted rows are automatically changes in provided language.
+            // We can set the change and then terminate the search later
+            if(row.getUnapproved() || row.getRemoved()) {
+                changesIn.add(language);
             }
-            checkContainerRowChange(changesIn, rowChange, rowPair.getRight(), data, configuration);
+
+            // Check only changed rows.
+            for(DataField dataField : row.getFields().values()) {
+                if(dataField instanceof ContainerDataField) {
+                    checkContainerForChanges(changesIn, (ContainerDataField)dataField, configuration);
+                } else {
+                    checkTerminatingFieldForChanges(changesIn, dataField, configuration);
+                }
+            }
         }
     }
 
-    private void checkReferenceContainerChange(Set<Language> changesIn, ContainerChange change, DataFieldContainer dataFields,
-                                               RevisionData data) {
+    private void checkTerminatingFieldForChanges(Set<Language> changesIn, DataField dataField, Configuration configuration) {
+        if(dataField instanceof ReferenceContainerDataField) {
+            checkReferenceContainerForChanges(changesIn, (ReferenceContainerDataField)dataField);
+        } else {
+            checkValueForChanges(changesIn, (ValueDataField)dataField, configuration);
+        }
+    }
+
+    private void checkReferenceContainerForChanges(Set<Language> changesIn, ReferenceContainerDataField container) {
         // We're checking ReferenceContainerDataField
-        // Reference containers are not translated and as such we need to only check saved info in rows to see if they are newer than
-        // than the previous approved date
+        // Reference containers are not translated and so we are only checking for changes in DEFAULT language.
+        // Furthermore reference rows are not updatable and so the only change we are interested in is added or removed rows.
+        // Rows that are added have property 'unapproved' set to true so we can check additions with this.
+        // Rows that are removed are not copied to new revisions so removed rows also constitute a change
 
         if(changesIn.contains(Language.DEFAULT)) {
             // If there is already a marked change for default then we don't need to check further
             return;
         }
 
-        Pair<StatusCode, ReferenceContainerDataField> fieldPair = dataFields.dataField(ReferenceContainerDataFieldCall.get(change.getKey()));
-        if(fieldPair.getLeft() != StatusCode.FIELD_FOUND) {
-            // If we have no field then there can be no changes
-            return;
-        }
-        ReferenceContainerDataField field = fieldPair.getRight();
-        if(data.approveInfoFor(Language.DEFAULT) == null) {
-            // If there's no previous approval date then the check is simple. If we have references
-            // we have changes, otherwise we don't have changes.
-            if(!field.getReferences().isEmpty()) {
+        for(ReferenceRow row : container.getReferences()) {
+            if(row.getUnapproved() || row.getRemoved()) {
                 changesIn.add(Language.DEFAULT);
-            }
-            return;
-        }
-
-        // This is somewhat too complicated but keeps the general theme of checking only the references marked as changed
-        // If something is missed with this then that just means there's an error somewhere else.
-        for(RowChange rowChange : change.getRows().values()) {
-            Pair<StatusCode, ReferenceRow> rowPair = field.getReferenceWithId(rowChange.getRowId());
-            if(rowPair.getLeft() != StatusCode.FOUND_ROW) {
-                // No row, no change
-                continue;
-            }
-            ReferenceRow row = rowPair.getRight();
-            if(row.getSaved().getTime().compareTo(data.approveInfoFor(Language.DEFAULT).getTime()) > 0) {
-                // There is a change in reference container, mark change and break since no further checking is needed
-                changesIn.add(Language.DEFAULT);
-                break;
             }
         }
     }
@@ -621,28 +596,22 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
      * Uses change as a guide but checks all possible values for equality with original value before
      * deciding if change has taken place or not.
      * @param changesIn        Set for all languages that have changes
-     * @param change           Change object to check
-     * @param dataFields       DataFieldContainer containing field to check
+     * @param valueField       Value field object to check
      * @param configuration    Configuration
      */
-    private void checkValueChange(Set<Language> changesIn, Change change, DataFieldContainer dataFields, Configuration configuration) {
-        Field fieldConf = configuration.getField(change.getKey());
-        Pair<StatusCode, ValueDataField> fieldPair = dataFields.dataField(ValueDataFieldCall.get(change.getKey()).setConfiguration(configuration));
-        if(fieldPair.getLeft() != StatusCode.FIELD_FOUND) {
-            // Since fields, once set, should never be removed we can assume that no change has happened.
-            return;
-        }
-        ValueDataField field = fieldPair.getRight();
-        // Check default
+    private void checkValueForChanges(Set<Language> changesIn, ValueDataField valueField, Configuration configuration) {
+        Field fieldConf = configuration.getField(valueField.getKey());
 
-        // Check rest
-        if(!fieldConf.getTranslatable()) {
+        if(!fieldConf.getTranslatable() && !changesIn.contains(Language.DEFAULT)) {
             // field is not translatable, no need to check other than DEFAULT
-            checkValueChangeFor(changesIn, change, field, Language.DEFAULT);
+            checkValueForChangesIn(changesIn, valueField, Language.DEFAULT);
         } else {
             // Field is translatable, check all languages
             for(Language language : Language.values()) {
-                checkValueChangeFor(changesIn, change, field, language);
+                if(changesIn.contains(language)) {
+                    continue;
+                }
+                checkValueForChangesIn(changesIn, valueField, language);
             }
         }
     }
@@ -651,15 +620,11 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
      * Checks given change and field for changes in given language and if change found marks it to given set.
      * If there's already a change for given language then no further checking is done in this method.
      * @param changesIn        Set for all languages that have changes
-     * @param change           Change object to check
-     * @param field            ValueDataField to check for changes
+     * @param valueField            ValueDataField to check for changes
      * @param language         Language to check changes for
      */
-    private void checkValueChangeFor(Set<Language> changesIn, Change change, ValueDataField field, Language language) {
-        if(!changesIn.contains(language)
-                && change.getChangeIn().contains(language)
-                && !field.currentForEqualsOriginal(language)) {
-            // We have a change in default
+    private void checkValueForChangesIn(Set<Language> changesIn, ValueDataField valueField, Language language) {
+        if(valueField.hasCurrentFor(language) && !valueField.currentForEqualsOriginal(language)) {
             changesIn.add(language);
         }
     }

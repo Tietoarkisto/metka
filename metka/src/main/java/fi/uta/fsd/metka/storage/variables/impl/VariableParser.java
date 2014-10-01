@@ -6,7 +6,6 @@ import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.change.Change;
-import fi.uta.fsd.metka.model.data.change.ContainerChange;
 import fi.uta.fsd.metka.model.data.container.ContainerDataField;
 import fi.uta.fsd.metka.model.data.container.DataRow;
 import fi.uta.fsd.metka.model.data.container.ValueDataField;
@@ -102,14 +101,7 @@ class VariableParser {
             // We can do this as a set operation since container field set returns the existing container if one is present and doesn't do anything else in that case
             Pair<StatusCode, ContainerDataField> containerPair = variableRevision.dataField(ContainerDataFieldCall.set(Fields.TRANSLATIONS, variableRevision));
             ContainerDataField container = containerPair.getRight();
-            ContainerChange change = (ContainerChange)variableRevision.getChange(container.getKey());
-            if(change == null) {
-                change = new ContainerChange(container.getKey());
-            }
-            Pair<StatusCode, DataRow> pair = container.getOrCreateRowWithFieldValue(Language.DEFAULT, Fields.TRANSLATION, new Value(language.toValue()), change, info);
-            if(pair.getLeft() == StatusCode.NEW_ROW) {
-                variableRevision.putChange(change);
-            }
+            Pair<StatusCode, DataRow> pair = container.getOrCreateRowWithFieldValue(Language.DEFAULT, Fields.TRANSLATION, new Value(language.toValue()), variableRevision.getChanges(), info);
         }
 
         return result;
