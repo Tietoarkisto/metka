@@ -13,3 +13,7 @@
 <script src="${contextPath}/lib/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 <script src="${contextPath}/lib/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
 <script src="${contextPath}/lib/bootstrap-fileinput/js/fileinput.min.js"></script>
+
+<%-- Summernote rich text editor --%>
+<link href="${contextPath}/lib/summernote/summernote.css" rel="stylesheet">
+<script src="${contextPath}/lib/summernote/summernote.js"></script>

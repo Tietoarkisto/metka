@@ -9,6 +9,9 @@
 <link rel="stylesheet" type="text/css" href="${contextPath}/lib/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css">
 <link rel="stylesheet" type="text/css" href="${contextPath}/lib/bootstrap-fileinput/css/fileinput.min.css">
 
+<%-- Font Awesome --%>
+<link rel="stylesheet" type="text/css" href="${contextPath}/lib/font-awesome-4.2.0/css/font-awesome.min.css">
+
 <%-- Metka --%>
 <link rel="stylesheet" type="text/css" href="${contextPath}/css/styles.css">
 <link rel="stylesheet" type="text/css" href="${contextPath}/css/form.css">
