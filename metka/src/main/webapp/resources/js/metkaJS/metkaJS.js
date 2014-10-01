@@ -52,36 +52,6 @@
             }
 
             return true;
-        },
-
-        /**
-         * Checks if given variable exists and is a number
-         * @param variable Variable to be checked
-         * @returns {boolean} True if given variable exists and is a number, false otherwise
-         */
-        isNumber: function(variable) {
-            if(!MetkaJS.exists(variable)) {
-                return false;
-            }
-
-            if(typeof variable !== 'number') {
-                return false;
-            }
-
-            return true;
-        },
-
-        // Checks to see if given variable is an array and has any content
-        hasContent: function(variable) {
-            if(!$.isArray(variable)) {
-                return false;
-            }
-
-            if(variable.length <= 0) {
-                return false;
-            }
-
-            return true;
         }
     };
 })();

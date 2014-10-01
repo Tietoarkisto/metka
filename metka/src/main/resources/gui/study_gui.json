@@ -1305,6 +1305,7 @@
                                 {
                                     "type": "CELL",
                                     "field": {
+                                        "displayType": "LINK",
                                         "key": "variables"
                                     }
                                 }

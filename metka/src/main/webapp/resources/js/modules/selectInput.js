@@ -39,8 +39,11 @@ define(function (require) {
 
         if (list.type === 'REFERENCE') {
             var reference = getPropertyNS(options, 'dataConf.references', list.reference);
+            if (!reference) {
+                return;
+            }
             var getOptions = require('./reference').options(key, options, lang, setOptions);
-            if (reference && reference.type === 'DEPENDENCY') {
+            if (reference.type === 'DEPENDENCY') {
                 options.$events.on('data-change-{key}-{lang}'.supplant({
                     key: reference.target,
                     lang: lang
