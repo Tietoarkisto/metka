@@ -67,7 +67,7 @@ define(function (require) {
             $field.append($input);
 
             if (isSelection) {
-                require('./selectInput')($input, options, lang);
+                require('./selectInput')($input, options, lang, $field);
             } else {
                 // textarea or input elements
 

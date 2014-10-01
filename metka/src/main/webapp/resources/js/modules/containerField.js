@@ -200,8 +200,22 @@ define(function (require) {
             addRow(require('./map/object/transferRow')(data, lang));
         }
 
+        // list field keys, which are configured as freeTextKeys
+        var subfields = fieldOptions.subfields || [];
+        var freeTextKeys = [];
+        if (options.dataConf.selectionLists) {
+            $.each(options.dataConf.selectionLists, function (key, list) {
+                if (list.freeTextKey) {
+                    freeTextKeys.push(list.freeTextKey);
+                }
+            });
+        }
+
         var rowDialog = require('./containerRowDialog')(options, lang, key, function () {
-            return (fieldOptions.subfields || []).map(function (field) {
+            return subfields.filter(function (field) {
+                // filter free text fields
+                return freeTextKeys.indexOf(field) === -1;
+            }).map(function (field) {
                 var dataConfig = $.extend(true, {}, options.dataConf.fields[field]);
                 if (fieldOptions.translatable) {
                     dataConfig.translatable = false;

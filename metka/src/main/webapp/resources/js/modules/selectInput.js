@@ -3,7 +3,7 @@ define(function (require) {
 
     var getPropertyNS = require('./utils/getPropertyNS');
 
-    return function ($input, options, lang) {
+    return function ($input, options, lang, $field) {
         function setOptions(selectOptions) {
             $input.empty();
             if (list.includeEmpty === null || list.includeEmpty) {
@@ -53,22 +53,26 @@ define(function (require) {
         } else {
             setOptions(list.options);
         }
-        /*
-         var $freeText = require('./inherit')(function (options) {
-         return require('./inputField').call($('<div>'), options, 'STRING', lang);
-         })(options)({
-         horizontal: true,
-         title: 'Muu arvo',
-         field: {
-         key: list.freeTextKey
-         }
-         });
 
-         $field.append($freeText);
-         function showFreeText() {
-         $freeText.toggle(list.freeText.indexOf(require('./data')(options).getByLang(lang)) !== -1);
-         }
-         showFreeText();
-         $input.change(showFreeText);*/
+        if (list.freeTextKey) {
+            var $freeText = require('./inherit')(function (options) {
+                return require('./inputField').call($('<div>'), options, 'STRING', lang);
+            })(options)({
+                horizontal: true,
+                title: MetkaJS.L10N.get('fieldTitles.{field}.title'.supplant({
+                    field: list.freeTextKey
+                })),
+                field: {
+                    key: list.freeTextKey
+                }
+            });
+
+            $field.append($freeText);
+            var showFreeText = function () {
+                $freeText.toggle(list.freeText.indexOf(require('./data')(options).getByLang(lang)) !== -1);
+            };
+            showFreeText();
+            $input.change(showFreeText);
+        }
     }
 });

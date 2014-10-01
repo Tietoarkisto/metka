@@ -17,12 +17,13 @@ define(function (require) {
             $body.append(options.body);
         }
 
+        var $header = $('<div class="modal-header">')
+            .append('<button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>')
+            .append($('<h4 class="modal-title">')
+                .text(MetkaJS.L10N.localize(options, 'title')));
         var $modal = $('<div class="modal-dialog">')
             .append($('<div class="modal-content">')
-                .append($('<div class="modal-header">')
-                    .append('<button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>')
-                    .append($('<h4 class="modal-title">')
-                        .text(MetkaJS.L10N.localize(options, 'title'))))
+                .append($header)
                 .append($body)
                 .append($('<div class="modal-footer">')
                     .append((options.buttons || []).map(function (buttonOptions) {
@@ -38,6 +39,10 @@ define(function (require) {
 
         if (options.large) {
             $modal.addClass('modal-lg');
+        }
+
+        if (options.translatableCurrentLang) {
+            $header.append(require('./languageRadioInputGroup')(options, 'dialog-translation-lang', options.translatableCurrentLang));
         }
 
         return $('<div class="modal fade" tabindex="-1" role="dialog">')
