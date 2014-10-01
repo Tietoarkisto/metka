@@ -1,4 +1,4 @@
-// same as .url method, except also navigates to the url
+// same as ´url´ module, except also navigates to the url
 
 define(function (require) {
     'use strict';
