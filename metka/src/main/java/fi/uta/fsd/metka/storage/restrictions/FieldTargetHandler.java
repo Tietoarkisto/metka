@@ -253,7 +253,7 @@ class FieldTargetHandler {
                     try {
                         ExpertRevisionSearchCommand command =
                                 ExpertRevisionSearchCommand.build(
-                                        configuration.getKey().getType().toValue()+" lang:"+l.toValue()+" -key.id:" + revision.getKey().getId() + " +" + d.getKey() + ":" + d.getActualValueFor(l)
+                                        configuration.getKey().getType().toValue()+" lang:"+l.toValue()+" -key.id:" + revision.getKey().getId() + " +" + d.getKey() + ":\"" + d.getActualValueFor(l) + "\""
                                         , configuration);
                         ResultList<RevisionResult> result = searcher.executeSearch(command);
                         if (!result.getResults().isEmpty()) {

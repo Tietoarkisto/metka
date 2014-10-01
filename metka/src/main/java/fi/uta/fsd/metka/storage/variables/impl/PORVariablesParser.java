@@ -23,6 +23,7 @@ import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.storage.variables.enums.ParseResult;
 import fi.uta.fsd.metka.transfer.revision.RevisionCreateRequest;
+import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -242,6 +243,11 @@ class PORVariablesParser implements VariablesParser {
                     return resultCheck(result, ParseResult.COULD_NOT_CREATE_VARIABLE_DRAFT);
                 }
                 variableData = dataPair.getRight();
+            }
+
+            if(!variableData.getHandler().equals(AuthenticationUtil.getUserName())) {
+                variableData.setHandler(AuthenticationUtil.getUserName());
+                revisions.updateRevisionData(variableData);
             }
 
             // Merge variable to variable revision

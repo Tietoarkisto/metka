@@ -19,6 +19,7 @@ import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.storage.variables.StudyVariablesParser;
 import fi.uta.fsd.metka.storage.variables.enums.ParseResult;
 import fi.uta.fsd.metka.transfer.revision.RevisionCreateRequest;
+import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -46,9 +47,6 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
 
     @Autowired
     private RevisionRepository revisions;
-
-    @Autowired
-    private ConfigurationRepository configurations;
 
     @Autowired
     private RevisionRemoveRepository remove;
@@ -152,6 +150,11 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                 return resultCheck(result, ParseResult.COULD_NOT_CREATE_VARIABLES_DRAFT);
             }
             variablesData = dataPair.getRight();
+        }
+
+        if(!variablesData.getHandler().equals(AuthenticationUtil.getUserName())) {
+            variablesData.setHandler(AuthenticationUtil.getUserName());
+            revisions.updateRevisionData(variablesData);
         }
 
         // ************************
