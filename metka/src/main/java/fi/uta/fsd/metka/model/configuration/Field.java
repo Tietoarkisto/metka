@@ -26,7 +26,7 @@ public class Field {
     private Boolean editable = true;
     private Boolean writable = true;
     private Boolean indexed = true;
-    private Boolean exact = false;
+    private Boolean exact = true;
     private String bidirectional = "";
 
     @JsonCreator

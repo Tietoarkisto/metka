@@ -97,8 +97,7 @@
 			"key": "seriesabbr",
 			"immutable": true,
 			"translatable": false,
-			"type": "STRING",
-			"exact": true
+			"type": "STRING"
 		},
 		"seriesname": {
 			"key": "seriesname",
@@ -110,12 +109,14 @@
 			"key": "seriesdesc",
 			"translatable": true,
 			"type": "STRING",
-			"required": true
+			"required": true,
+			"exact": false
 		},
 		"seriesnotes": {
 			"key": "seriesnotes",
 			"type": "STRING",
-			"translatable": false
+			"translatable": false,
+			"exact": false
 		}
 	}
 }

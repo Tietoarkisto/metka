@@ -3,6 +3,10 @@ package fi.uta.fsd.metka.model.data.value;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import fi.uta.fsd.metka.enums.FieldError;
+import fi.uta.fsd.metka.enums.FieldType;
+import org.joda.time.LocalDateTime;
+import org.joda.time.LocalTime;
 import org.springframework.util.StringUtils;
 
 import static fi.uta.fsd.metka.storage.util.ConversionUtil.stringToLong;
@@ -51,5 +55,54 @@ public class Value {
     @Override
     public String toString() {
         return "Json[name="+this.getClass().getSimpleName()+", value="+value+"]";
+    }
+
+    public FieldError typeCheck(FieldType type) {
+        if(!StringUtils.hasText(value)) {
+            return null;
+        }
+        switch(type) {
+            case BOOLEAN:
+                if(!value.equals("true") && !value.equals("false")) {
+                    return FieldError.NOT_BOOLEAN;
+                }
+                break;
+            case DATE:
+                /*try {
+                    new LocalDate(value);
+                } catch (IllegalArgumentException iae) {
+                    return FieldError.NOT_DATE;
+                }
+                break;*/
+            case DATETIME:
+                try {
+                    new LocalDateTime(value);
+                } catch (IllegalArgumentException iae) {
+                    return FieldError.NOT_DATETIME;
+                }
+                break;
+            case TIME:
+                try {
+                    new LocalTime(value);
+                } catch (IllegalArgumentException iae) {
+                    return FieldError.NOT_TIME;
+                }
+                break;
+            case INTEGER:
+                    try {
+                        Long.parseLong(value);
+                    } catch(NumberFormatException nfe) {
+                        return FieldError.NOT_INTEGER;
+                    }
+                break;
+            case REAL:
+                    try {
+                        Double.parseDouble(value);
+                    } catch(NumberFormatException nfe) {
+                        return FieldError.NOT_REAL;
+                    }
+                break;
+        }
+        return null;
     }
 }

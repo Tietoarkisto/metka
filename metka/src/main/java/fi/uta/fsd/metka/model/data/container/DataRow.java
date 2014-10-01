@@ -15,7 +15,6 @@ import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.joda.time.LocalDateTime;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,28 +28,10 @@ public class DataRow extends ContainerRow implements DataFieldContainer {
     }
 
     private final Map<String, DataField> fields = new HashMap<>();
-    private LocalDateTime savedAt;
-    private String savedBy;
 
     @JsonCreator
     public DataRow(@JsonProperty("key") String key, @JsonProperty("rowId") Integer rowId) {
         super(key, rowId);
-    }
-
-    public LocalDateTime getSavedAt() {
-        return savedAt;
-    }
-
-    public void setSavedAt(LocalDateTime savedAt) {
-        this.savedAt = savedAt;
-    }
-
-    public String getSavedBy() {
-        return savedBy;
-    }
-
-    public void setSavedBy(String savedBy) {
-        this.savedBy = savedBy;
     }
 
     public Map<String, DataField> getFields() {
@@ -71,8 +52,7 @@ public class DataRow extends ContainerRow implements DataFieldContainer {
 
     public DataRow copy() {
         DataRow row = new DataRow(getKey(), getRowId());
-        row.setSavedAt(new LocalDateTime(savedAt));
-        row.setSavedBy(savedBy);
+        row.setSaved(getSaved());
         for(DataField field : fields.values()) {
             row.fields.put(field.getKey(), field.copy());
         }
@@ -101,16 +81,13 @@ public class DataRow extends ContainerRow implements DataFieldContainer {
             case CHECK:
                 return DataFieldOperator.checkDataFieldOperation(getFields(), call, new ConfigCheck[]{ConfigCheck.IS_SUBFIELD});
             case SET:
-                if(call.getContainerChange() == null && call.getChangeMap() == null) {
+                if(call.getChangeMap() == null) {
                     // We don't need to continue since this is the result anyway
                     return new ImmutablePair<>(StatusCode.INCORRECT_PARAMETERS, null);
                 }
                 // Get original change map from the call object and get ContainerChange and RowChange or create them if not present
-                // TODO: Fix change dublication
                 Map<String, Change> changeMap = call.getChangeMap();
-                ContainerChange container = call.getContainerChange() == null
-                        ? (ContainerChange)call.getChangeMap().get(getKey())
-                        : call.getContainerChange();
+                ContainerChange container = (ContainerChange)call.getChangeMap().get(getKey());
 
                 if(container == null) {
                     container = new ContainerChange(getKey());
@@ -127,9 +104,7 @@ public class DataRow extends ContainerRow implements DataFieldContainer {
                 // If field was either inserted or updated then add change to original container
                 if(pair.getLeft() == StatusCode.FIELD_INSERT || pair.getLeft() == StatusCode.FIELD_UPDATE ) {
                     container.put(row);
-                    if(call.getContainerChange() == null) {
-                        changeMap.put(container.getKey(), container);
-                    }
+                    changeMap.put(container.getKey(), container);
                 }
                 return pair;
             default:

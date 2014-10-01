@@ -580,7 +580,7 @@ define(function (require) {
                                                         type: 'STUDY',
                                                         parameters: {
                                                             submissionid: Date.now() % 1000,
-                                                            dataarrivaldate: moment(Date.now()).format('YYYY-MM-DDThh:mm:ss.s')
+                                                            dataarrivaldate: moment(Date.now()).format('YYYY-MM-DD')
                                                         }
                                                     }),
                                                     success: function (response) {

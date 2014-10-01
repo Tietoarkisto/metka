@@ -13,7 +13,6 @@ class DDIDocumentDescription {
 
         DocDscrType docDscr = codeBook.getDocDscrArray(0);
 
-        // TODO: Read citation
         readCitation(revision, language, docDscr);
 
         // TODO: Read Vocabs ?

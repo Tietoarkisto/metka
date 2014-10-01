@@ -1,7 +1,6 @@
 package fi.uta.fsd.metka.ddi.builder;
 
 import codebook25.*;
-import com.google.common.collect.Lists;
 import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
@@ -18,6 +17,7 @@ import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.util.StringUtils;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static fi.uta.fsd.metka.ddi.builder.DDIBuilder.*;
@@ -123,7 +123,7 @@ class DDIDataDescription {
                                 vars += valueFieldPair.getRight().getActualValueFor(language);
                             }
                         }
-                        varGrpType.setVar(Lists.asList(vars, new String[0]));
+                        varGrpType.setVar(Arrays.asList(vars, new String[0]));
                     }
 
                     containerPair = row.dataField(ContainerDataFieldCall.get(Fields.VARGROUPTEXTS));
@@ -153,7 +153,7 @@ class DDIDataDescription {
         if(hasValue(valueFieldPair, language)) {
             var.setName(valueFieldPair.getRight().getActualValueFor(language));
         }
-        var.setFiles(Lists.asList(fileID, new String[0]));
+        var.setFiles(Arrays.asList(fileID, new String[0]));
 
         valueFieldPair = variable.dataField(ValueDataFieldCall.get(Fields.VARINTERVAL));
         if(hasValue(valueFieldPair, Language.DEFAULT)) {

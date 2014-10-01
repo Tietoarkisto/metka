@@ -1,5 +1,6 @@
 package fi.uta.fsd.metkaSearch.handlers;
 
+import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.FieldType;
 import fi.uta.fsd.metka.enums.Language;
@@ -31,8 +32,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.NumericRangeQuery;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
@@ -42,7 +41,6 @@ import static org.apache.lucene.document.Field.Store.YES;
 import static org.apache.lucene.search.BooleanClause.Occur.MUST;
 
 class GeneralRevisionHandler implements RevisionHandler {
-    private final static Logger logger = LoggerFactory.getLogger(GeneralRevisionHandler.class);
     private final Indexer indexer;
     private final RevisionRepository revisions;
     private final ConfigurationRepository configurations;
@@ -92,18 +90,18 @@ class GeneralRevisionHandler implements RevisionHandler {
         if(command == null) {
             return false;
         }
-        logger.info("Trying to get revision ID: "+command.getRevisionable()+" NO: "+command.getRevision());
+        Logger.info(GeneralRevisionHandler.class, "Trying to get revision ID: " + command.getRevisionable() + " NO: " + command.getRevision());
         Pair<ReturnResult, RevisionData> pair = revisions.getRevisionDataOfType(command.getRevisionable(), command.getRevision(), command.getType());
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
-            logger.info("Revision not found with result "+pair.getLeft());
+            Logger.info(GeneralRevisionHandler.class, "Revision not found with result "+pair.getLeft());
             return false;
         }
         RevisionData data = pair.getRight();
-        logger.info("Trying to get configuration for "+data.getConfiguration().toString());
+        Logger.info(GeneralRevisionHandler.class, "Trying to get configuration for "+data.getConfiguration().toString());
         Pair<ReturnResult, Configuration> confPair = getConfiguration(data.getConfiguration());
         if(confPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
             // We can't really do the indexing without an actual config
-            logger.info("Configuration not found with result "+confPair.getLeft());
+            Logger.info(GeneralRevisionHandler.class, "Configuration not found with result "+confPair.getLeft());
             return false;
         }
         Configuration config = confPair.getRight();
@@ -114,11 +112,11 @@ class GeneralRevisionHandler implements RevisionHandler {
         bQuery.add(NumericRangeQuery.newLongRange("key.no", 4, data.getKey().getNo().longValue(), data.getKey().getNo().longValue(), true, true), MUST);
         indexer.removeDocument(bQuery);
 
-        logger.info("Trying to find revision info.");
+        Logger.info(GeneralRevisionHandler.class, "Trying to find revision info.");
         Pair<ReturnResult, RevisionableInfo> removedInfoPair = revisions.getRevisionableInfo(data.getKey().getId());
         if(removedInfoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
             // For some reason removed info check failed to find the entity. stop indexing
-            logger.info("Revision info not found with reason "+removedInfoPair.getLeft());
+            Logger.info(GeneralRevisionHandler.class, "Revision info not found with reason "+removedInfoPair.getLeft());
             return false;
         }
         RevisionableInfo info = removedInfoPair.getRight();
@@ -130,7 +128,7 @@ class GeneralRevisionHandler implements RevisionHandler {
         IndexerDocument document = new IndexerDocument();
 
         // Do some default stuff
-        logger.info("Forming document for revision.");
+        Logger.info(GeneralRevisionHandler.class, "Forming document for revision.");
         document.indexIntegerField("key.id", data.getKey().getId(), true);
         document.indexIntegerField("key.no", data.getKey().getNo().longValue(), true);
         document.indexKeywordField("key.configuration.type", data.getConfiguration().getType().toValue(), YES);
@@ -178,13 +176,13 @@ class GeneralRevisionHandler implements RevisionHandler {
         indexFields(data, document, "", new Step("", null), config);
 
         if(contentForLanguage || language == Language.DEFAULT) {
-            logger.info("Adding document to index.");
+            Logger.info(GeneralRevisionHandler.class, "Adding document to index.");
             document.indexText(language, "revisions", document.getGeneral(), false, YES);
             PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(CaseInsensitiveWhitespaceAnalyzer.ANALYZER, document.getAnalyzers());
             indexer.addDocument(document.getDocument(), analyzer);
             return true;
         } else {
-            logger.info("Document was not added to index because content was not found for requested language ("+command.getPath().getLanguage()+").");
+            Logger.info(GeneralRevisionHandler.class, "Document was not added to index because content was not found for requested language ("+command.getPath().getLanguage()+").");
             return false;
         }
     }
@@ -328,13 +326,19 @@ class GeneralRevisionHandler implements RevisionHandler {
                 break;
             case INTEGER:
                 // Convert value to correct number format (integer or long, or just stick with long for everything) and index as correct number field
-                // TODO: Correct number conversion
-                document.indexIntegerField(root + field.getKey(), Long.parseLong(saved.getActualValueFor(inputLang)));
+                try {
+                    document.indexIntegerField(root + field.getKey(), Long.parseLong(saved.getActualValueFor(inputLang)));
+                } catch(NumberFormatException nfe) {
+                    Logger.info(GeneralRevisionHandler.class, "Skipping field "+field.getKey()+" since value is not INTEGER and search would not find it");
+                }
                 break;
             case REAL:
                 // Convert value to correct number format (float or double, or just stick with double for everything) and index as correct number field
-                // TODO: Correct number conversion
-                document.indexRealField(root + field.getKey(), Double.parseDouble(saved.getActualValueFor(inputLang)));
+                try {
+                    document.indexRealField(root + field.getKey(), Double.parseDouble(saved.getActualValueFor(inputLang)));
+                } catch(NumberFormatException nfe) {
+                    Logger.info(GeneralRevisionHandler.class, "Skipping field "+field.getKey()+" since value is not REAL and search would not find it");
+                }
                 break;
             case SELECTION:
                 indexSelectionField(field, saved, document, root, path, config, data);
@@ -439,12 +443,12 @@ class GeneralRevisionHandler implements RevisionHandler {
                 Long.parseLong(saved.getActualValueFor(Language.DEFAULT)),
                 data.getState() == RevisionState.APPROVED, ConfigurationType.STUDY_VARIABLES);
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
-            logger.error("Didn't find revision for study variables "+saved.getActualValueFor(Language.DEFAULT));
+            Logger.error(GeneralRevisionHandler.class, "Didn't find revision for study variables "+saved.getActualValueFor(Language.DEFAULT));
             return;
         }
         Pair<ReturnResult, Configuration> confPair = getConfiguration(pair.getRight().getConfiguration());
         if(confPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
-            logger.error("Didn't find configuration for "+pair.getRight().getConfiguration());
+            Logger.error(GeneralRevisionHandler.class, "Didn't find configuration for "+pair.getRight().getConfiguration());
             return;
         }
         indexFields(pair.getRight(), document, root, new Step("", null), confPair.getRight());
@@ -455,12 +459,12 @@ class GeneralRevisionHandler implements RevisionHandler {
         for(ReferenceRow reference : field.getReferences()) {
             Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(Long.parseLong(reference.getActualValue()), data.getState() == RevisionState.APPROVED, ConfigurationType.STUDY_VARIABLE);
             if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
-                logger.error("Didn't find revision for referenced study variable "+reference.getActualValue());
+                Logger.error(GeneralRevisionHandler.class, "Didn't find revision for referenced study variable "+reference.getActualValue());
                 continue;
             }
             Pair<ReturnResult, Configuration> confPair = getConfiguration(pair.getRight().getConfiguration());
             if(confPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
-                logger.error("Didn't find configuration for "+pair.getRight().getConfiguration());
+                Logger.error(GeneralRevisionHandler.class, "Didn't find configuration for "+pair.getRight().getConfiguration());
                 continue;
             }
             indexFields(pair.getRight(), document, root, new Step("", null), confPair.getRight());

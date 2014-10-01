@@ -158,7 +158,8 @@
         "vargrouptext": {
             "key": "vargrouptext",
             "type": "STRING",
-            "subfield": true
+            "subfield": true,
+			"exact": false
         }
     }
 }

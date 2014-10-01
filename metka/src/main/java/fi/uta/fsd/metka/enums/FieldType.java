@@ -19,7 +19,8 @@ public enum FieldType {
     CONCAT(Values.CONCAT),
     DATE(Values.DATE, true),
     DATETIME(Values.DATETIME, true),
-    TIME(Values.TIME, true);
+    TIME(Values.TIME, true),
+    RICHTEXT(Values.RICHTEXT, true);
     // Add more as needed
 
     private final String value;
@@ -98,5 +99,6 @@ public enum FieldType {
         public static final String DATE = "DATE";
         public static final String DATETIME = "DATETIME";
         public static final String TIME = "TIME";
+        public static final java.lang.String RICHTEXT = "RICHTEXT";
     }
 }

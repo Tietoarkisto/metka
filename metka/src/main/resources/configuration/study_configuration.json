@@ -940,7 +940,8 @@
 			"key": "versionnotes",
 			"translatable": true,
 			"type": "STRING",
-			"subfield": true
+			"subfield": true,
+			"exact": false
 		},
 		"versionpro": {
 			"key": "versionpro",
@@ -953,7 +954,8 @@
 			"key": "versiontext",
 			"required": true,
 			"type": "STRING",
-			"subfield": true
+			"subfield": true,
+			"exact": false
 		},
 		"descpublic": {
 			"key": "descpublic",
@@ -1043,8 +1045,7 @@
 			"immutable": true,
 			"required": true,
 			"editable": false,
-			"type": "STRING",
-			"exact": true
+			"type": "STRING"
 		},
 		"notes": {
 			"key": "notes",
@@ -1059,17 +1060,20 @@
 			"translatable": false,
 			"required": true,
 			"type": "STRING",
-			"subfield": true
+			"subfield": true,
+			"exact": false
 		},
 		"originallocation": {
 			"key": "originallocation",
 			"translatable": false,
-			"type": "STRING"
+			"type": "STRING",
+			"exact": false
 		},
 		"processingnotes": {
 			"key": "processingnotes",
 			"translatable": false,
-			"type": "STRING"
+			"type": "STRING",
+			"exact": false
 		},
 		"public": {
 			"key": "public",
@@ -1158,7 +1162,8 @@
 		"triggerlabel": {
 			"key": "triggerlabel",
 			"translatable": false,
-			"type": "STRING"
+			"type": "STRING",
+			"exact": false
 		},
 		"agreement": {
 			"key": "agreement",
@@ -1168,22 +1173,26 @@
 		"agreementnotes": {
 			"key": "agreementnotes",
 			"translatable": false,
-			"type": "STRING"
+			"type": "STRING",
+			"exact": false
 		},
 		"permission": {
 			"key": "permission",
 			"translatable": false,
-			"type": "STRING"
+			"type": "STRING",
+			"exact": false
 		},
 		"specialtermsofuse": {
 			"key": "specialtermsofuse",
 			"translatable": true,
-			"type": "STRING"
+			"type": "STRING",
+			"exact": false
 		},
 		"agreementfsdnotes": {
 			"key": "agreementfsdnotes",
 			"translatable": false,
-			"type": "STRING"
+			"type": "STRING",
+			"exact": false
 		},
 		"alttitles": {
 			"key": "alttitles",
@@ -1233,9 +1242,9 @@
 			"type": "CONTAINER",
 			"subfields": [
                 "keywordvocab",
-                "keyword",
                 "keywordnovocab",
                 "keywordvocaburi",
+                "keyword",
                 "keyworduri"
 			]
 		},
@@ -1259,7 +1268,7 @@
 			"key": "keyword",
 			"translatable": false,
 			"required": true,
-			"type": "SELECTION",
+			"type": "STRING",
 			"selectionList": "keyword_list",
 			"subfield": true
 		},
@@ -1274,10 +1283,8 @@
 		"keyworduri": {
 			"key": "keyworduri",
 			"translatable": false,
-			"type": "REFERENCE",
+			"type": "STRING",
 			"reference": "keyworduri_ref",
-			"writable": false,
-			"editable": false,
 			"subfield": true
 		},
 		"topics": {
@@ -1327,7 +1334,8 @@
 		"abstract": {
             "key": "abstract",
             "translatable": true,
-            "type": "STRING"
+            "type": "STRING",
+			"exact": false
 		},
 		"timeperiods": {
 			"key": "timeperiods",
@@ -1349,7 +1357,8 @@
 			"key": "timeperiodtext",
 			"translatable": false,
 			"type": "STRING",
-			"subfield": true
+			"subfield": true,
+			"exact": false
 		},
 		"timeperiodevent": {
 			"key": "timeperiodevent",
@@ -1370,13 +1379,11 @@
 		},
 		"country": {
 			"key": "country",
-			"_comment": "TODO: link to reference missing?",
 			"translatable": false,
 			"required": true,
 			"type": "SELECTION",
 			"selectionList": "country_list",
-			"subfield": true,
-			"exact": true
+			"subfield": true
 		},
 		"countryabbr": {
 			"key": "countryabbr",
@@ -1386,8 +1393,7 @@
 			"reference": "countryabbr_ref",
 			"writable": false,
 			"editable": false,
-			"subfield": true,
-			"exact": true
+			"subfield": true
 		},
 		"universes": {
 			"key": "universes",
@@ -1403,7 +1409,8 @@
 			"translatable": true,
 			"required": true,
 			"type": "STRING",
-			"subfield": true
+			"subfield": true,
+			"exact": false
 		},
 		"universeclusion": {
 			"key": "universeclusion",
@@ -1447,7 +1454,8 @@
 			"key": "colldatetext",
 			"translatable": true,
 			"type": "STRING",
-			"subfield": true
+			"subfield": true,
+			"exact": false
 		},
 		"colldateevent": {
 			"key": "colldateevent",
@@ -1497,7 +1505,8 @@
 			"translatable": true,
 			"type": "STRING",
 			"writable": false,
-			"subfield": true
+			"subfield": true,
+			"exact": false
 		},
 		"analysisunituri": {
 			"key": "analysisunituri",
@@ -1549,7 +1558,8 @@
 			"translatable": true,
 			"required": true,
 			"type": "STRING",
-			"subfield": true
+			"subfield": true,
+			"exact": false
 		},
 		"instrumenturi": {
 			"key": "instrumenturi",
@@ -1602,14 +1612,16 @@
 			"translatable": true,
 			"required": true,
 			"type": "STRING",
-			"subfield": true
+			"subfield": true,
+			"exact": false
 		},
 		"sampproctext": {
 			"key": "sampproctext",
 			"translatable": true,
 			"required": true,
 			"type": "STRING",
-			"subfield": true
+			"subfield": true,
+			"exact": false
 		},
 		"sampprocuri": {
 			"key": "sampprocuri",
@@ -1661,7 +1673,8 @@
 			"translatable": true,
 			"required": true,
 			"type": "STRING",
-			"subfield": true
+			"subfield": true,
+			"exact": false
 		},
 		"timemethoduri": {
 			"key": "timemethoduri",
@@ -1713,7 +1726,8 @@
 			"translatable": true,
 			"required": true,
 			"type": "STRING",
-			"subfield": true
+			"subfield": true,
+			"exact": false
 		},
 		"collmodeuri": {
 			"key": "collmodeuri",
@@ -1728,7 +1742,8 @@
 		"resprate": {
 			"key": "resprate",
 			"translatable": false,
-			"type": "STRING"
+			"type": "STRING",
+			"exact": false
 		},
 		"datasources": {
 			"key": "datasources",
@@ -1747,7 +1762,8 @@
 		"weight": {
 			"key": "weight",
 			"translatable": true,
-			"type": "STRING"
+			"type": "STRING",
+			"exact": false
 		},
 		"weightyesno": {
 			"key": "weightyesno",
@@ -1757,22 +1773,26 @@
 		"dataprosessing": {
 			"key": "dataprosessing",
 			"translatable": true,
-			"type": "STRING"
+			"type": "STRING",
+			"exact": false
 		},
 		"collsize": {
 			"key": "collsize",
 			"translatable": true,
-			"type": "STRING"
+			"type": "STRING",
+			"exact": false
 		},
 		"complete": {
 			"key": "complete",
 			"translatable": true,
-			"type": "STRING"
+			"type": "STRING",
+			"exact": false
 		},
 		"datasetnotes": {
 			"key": "datasetnotes",
 			"translatable": true,
-			"type": "STRING"
+			"type": "STRING",
+			"exact": false
 		},
 		"appraisals": {
 			"key": "appraisals",
@@ -1786,7 +1806,8 @@
 			"key": "appraisal",
 			"translatable": true,
 			"type": "STRING",
-			"subfield": true
+			"subfield": true,
+			"exact": false
 		},
 		"relatedmaterials": {
 			"key": "relatedmaterials",
@@ -1800,7 +1821,8 @@
 			"key": "relatedmaterial",
 			"translatable": true,
 			"type": "STRING",
-			"subfield": true
+			"subfield": true,
+			"exact": false
 		},
 		"othermaterials": {
 			"key": "othermaterials",
@@ -1822,13 +1844,15 @@
 			"key": "othermateriallabel",
 			"translatable": true,
 			"type": "STRING",
-			"subfield": true
+			"subfield": true,
+			"exact": false
 		},
 		"othermaterialtext": {
 			"key": "othermaterialtext",
 			"translatable": true,
 			"type": "STRING",
-			"subfield": true
+			"subfield": true,
+			"exact": false
 		},
 		"publicationcomments": {
 			"key": "publicationcomments",
@@ -1842,7 +1866,8 @@
 			"key": "publicationcomment",
 			"translatable": true,
 			"type": "STRING",
-			"subfield": true
+			"subfield": true,
+			"exact": false
 		},
 		"variables": {
 			"key": "variables",
@@ -1889,7 +1914,8 @@
 			"key": "allfilesnotes",
 			"translatable": false,
 			"required": false,
-			"type": "STRING"
+			"type": "STRING",
+			"exact": false
 		},
 		"cbattachments": {
 			"key": "cbattachments",
