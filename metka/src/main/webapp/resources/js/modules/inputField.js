@@ -36,68 +36,110 @@ define(function (require) {
             id: id
         };
         var isSelection = type === 'SELECTION';
-        var nodeType = (function () {
-            if (isSelection) {
-                return 'select';
-            }
 
-            if (options.field.multiline) {
-                elemOptions.rows = '4';
-                return 'textarea';
-            }
 
-            // STRING, INTEGER, CONCAT
-
-            elemOptions.type = 'text';
-
-            return 'input';
-        })();
-
-        var $input = require('./input').call($('<' + nodeType + '>', elemOptions), options);
-
-        if (['DATE', 'TIME', 'DATETIME'].indexOf(type) !== -1) {
-            require('./datetime').call($field, options, type, $input, lang);
-        } else {
-            $input
-                .prop('disabled', require('./isFieldDisabled')(options, lang))
-                .change(function () {
-                    require('./data')(options).setByLang(lang, $(this).val());
-                });
-
+        if (type === 'RICHTEXT') {
+            var $input = require('./input').call($('<div>'), options);
             $field.append($input);
 
-            if (isSelection) {
-                require('./selectInput')($input, options, lang, $field);
-            } else {
-                // textarea or input elements
+            var $content = (function () {
+                if (require('./isFieldDisabled')(options, lang)) {
+                    return $('<div>')
+                        .addClass('panel-body richtext')
+                        .appendTo($input
+                            .addClass('panel panel-default'));
+                    return $content;
+                } else {
+                    setTimeout(function() {
+                        $input.summernote({
+                            height: 200,
+                            toolbar: [
+                                ['style', ['bold', 'italic', 'underline', 'clear']],
+                                ['font', ['strikethrough']],
+                                ['fontsize', ['fontsize']],
+                                ['color', ['color']],
+                                ['para', ['ul', 'ol', 'paragraph']],
+                                ['height', ['height']],
+                                ['misc', ['fullscreen', 'codeview']]
+                            ],
+                            onblur: function(contents, $editable) {
+                                require('./data')(options).setByLang(lang, $(this).html());
+                            }
+                        });
+                    }, 0);
+                    return $input;
+                }
+            })();
+            require('./data')(options).onChange(function () {
+                $content
+                    .html(require('./data')(options).getByLang(lang) || '');
+            });
+        } else {
+            var nodeType = (function () {
+                if (isSelection) {
+                    return 'select';
+                }
 
-                require('./data')(options).onChange(function () {
-                    function setValue() {
-                        require('./reference').option(key, options, lang, function (value) {
-                            $input.val(value);
-                        })(options.data.fields, reference);
-                    }
-                    var dataConf = getPropertyNS(options, 'dataConf.fields', key);
-                    if (dataConf && dataConf.type === 'REFERENCE') {
-                        var reference = getPropertyNS(options, 'dataConf.references', dataConf.reference);
-                        options.$events.on('data-change-{key}-{lang}'.supplant({
-                            key: reference.target,
-                            lang: lang
-                        }), setValue);
-                        // TODO: setValue call is not necessary, if target is select input. select input triggers change event
-                        setValue();
-                    } else {
-                        $input.val(type === 'CONCAT'
-                            ?
-                            dataConf.concatenate.map(function (key) {
-                                return require('./data')(options)(key).getByLang(lang);
-                            }).join('')
-                            :
-                            require('./data')(options).getByLang(lang) || '');
-                    }
-                });
+                if (options.field.multiline) {
+                    elemOptions.rows = '4';
+                    return 'textarea';
+                }
+
+                // STRING, INTEGER, CONCAT
+
+                elemOptions.type = 'text';
+
+                return 'input';
+            })();
+
+            var $input = require('./input').call($('<' + nodeType + '>', elemOptions), options);
+
+            if (['DATE', 'TIME', 'DATETIME'].indexOf(type) !== -1) {
+                require('./datetime').call($field, options, type, $input, lang);
+            } else {
+                $input
+                    .prop('disabled', require('./isFieldDisabled')(options, lang))
+                    .change(function () {
+                        require('./data')(options).setByLang(lang, $(this).val());
+                    });
+
+                $field.append($input);
+
+                if (isSelection) {
+                    require('./selectInput')($input, options, lang, $field);
+                } else {
+                    // textarea or input elements
+
+                    require('./data')(options).onChange(function () {
+                        function setValue() {
+                            require('./reference').option(key, options, lang, function (value) {
+                                $input.val(value);
+                            })(options.data.fields, reference);
+                        }
+                        var dataConf = getPropertyNS(options, 'dataConf.fields', key);
+                        if (dataConf && dataConf.type === 'REFERENCE') {
+                            var reference = getPropertyNS(options, 'dataConf.references', dataConf.reference);
+                            options.$events.on('data-change-{key}-{lang}'.supplant({
+                                key: reference.target,
+                                lang: lang
+                            }), setValue);
+                            // TODO: setValue call is not necessary, if target is select input. select input triggers change event
+                            setValue();
+                        } else {
+                            $input.val(type === 'CONCAT'
+                                ?
+                                dataConf.concatenate.map(function (key) {
+                                    return require('./data')(options)(key).getByLang(lang);
+                                }).join('')
+                                :
+                                require('./data')(options).getByLang(lang) || '');
+                        }
+                    });
+                }
             }
         }
+
+
         return this;
     };
 });

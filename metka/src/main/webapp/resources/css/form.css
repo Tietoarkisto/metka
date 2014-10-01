@@ -1,10 +1,6 @@
 label {
-    padding: 5px 0px;
     font-family: "PT Sans Regular","Trebuchet MS",Helvetica,"Helvetica Neue",sans-serif;
     font-size: 12px;
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
 }
 
 .hiddenFile {
