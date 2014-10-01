@@ -10,6 +10,8 @@ define(function (require) {
         variables: require('./custom/fields/variables')
     };
 
+    var getPropertyNS = require('./utils/getPropertyNS');
+
     return function (options) {
 
         function addValidationErrorListener($container, getErrors) {
@@ -58,20 +60,23 @@ define(function (require) {
                 }
             }
 
-            var type = options.field.displayType || require('./utils/getPropertyNS')(options, 'dataConf.fields', key, 'type');
+            var type = options.field.displayType || getPropertyNS(options, 'dataConf.fields', key, 'type');
             var $langField = $('<div>');
             if (!type) {
                 log('field type is not set', key, options);
             } else {
-                if (type === 'CONTAINER' || type === 'REFERENCECONTAINER') {
-                    require('./containerField').call($langField, options, lang);
-                } else {
-                    if (type === 'BOOLEAN') {
-                        require('./checkboxField').call($langField, options, lang);
-                    } else {
-                        require('./inputField').call($langField, options, type, lang);
+                (function () {
+                    if (type === 'CONTAINER' || type === 'REFERENCECONTAINER') {
+                        return require('./containerField').call($langField, options, lang);
                     }
-                }
+                    if (type === 'BOOLEAN') {
+                        return require('./checkboxField').call($langField, options, lang);
+                    }
+                    if (type === 'LINK') {
+                        return require('./linkField')($langField, options, lang);
+                    }
+                    require('./inputField').call($langField, options, type, lang);
+                })();
 
                 addValidationErrorListener($langField, function () {
                     return require('./data')(options).errorsByLang(lang);
@@ -83,19 +88,11 @@ define(function (require) {
             onTranslationLangChange(undefined, $('input[name="translation-lang"]:checked').val() || options.defaultLang);
         }
 
-        if(options.type === 'EMPTYCELL') {
+        if (options.type === 'EMPTYCELL') {
             return this;
         }
 
         var $elem = this;
-
-        //this.options.field.multichoice
-        //this.options.field.showReferenceKey
-        //this.options.field.showReferenceValue
-        //this.options.field.handlerName
-
-        //log(this.options.dataConf === x.dataConf)
-        //log(this.options.dataConf.mo === x.dataConf.mo)
 
         var key = options.field.key;
 
@@ -109,7 +106,7 @@ define(function (require) {
                 break;
         }
 
-        var fieldDataOptions = require('./utils/getPropertyNS')(options, 'dataConf.fields', key) || {};
+        var fieldDataOptions = getPropertyNS(options, 'dataConf.fields', key) || {};
 
         createInput(options.defaultLang);
 

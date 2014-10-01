@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
+import fi.uta.fsd.metka.enums.DisplayType;
 import fi.uta.fsd.metka.model.deserializers.ObjectDeserializer;
 import fi.uta.fsd.metka.model.general.TranslationObject;
 import fi.uta.fsd.metka.model.guiconfiguration.FieldDescription;
@@ -51,6 +52,12 @@ public class FieldDescriptionDeserializer extends ObjectDeserializer<FieldDescri
         JsonNode handlerName = node.get("handlerName");
         if(handlerName != null && handlerName.getNodeType() == JsonNodeType.STRING) {
             fd.setHandlerName(handlerName.textValue());
+        }
+
+        // Set displayType
+        JsonNode displayType = node.get("displayType");
+        if(displayType != null && displayType.getNodeType() == JsonNodeType.STRING) {
+            fd.setDisplayType(DisplayType.fromValue(displayType.textValue()));
         }
 
         // Set dialogTitle
