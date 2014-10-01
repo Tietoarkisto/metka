@@ -104,15 +104,23 @@ public class RevisionSearchImpl implements RevisionSearch {
     @Override
     public List<RevisionCompareResponseRow> compareRevisions(RevisionCompareRequest request) {
         List<Integer> nos = revisions.getAllRevisionNumbers(request.getId());
+        RevisionData original = null;
         for(Iterator<Integer> i = nos.iterator(); i.hasNext(); ) {
             Integer no = i.next();
-            if(no.compareTo(request.getBegin()) < 1) {
+            if(no.compareTo(request.getBegin()) < 0) {
                 i.remove();
-                break;
+                continue;
+            }
+            if(no.compareTo(request.getBegin()) == 0) {
+                Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(request.getId(), no);
+                if(pair.getLeft() == ReturnResult.REVISION_FOUND) {
+                    original = pair.getRight();
+                }
+                continue;
             }
             if(no.compareTo(request.getEnd()) > 0) {
                 i.remove();
-                break;
+                continue;
             }
         }
 
@@ -123,11 +131,11 @@ public class RevisionSearchImpl implements RevisionSearch {
         Map<String, MutablePair<String, String>> changes = new HashMap<>();
 
         for(Integer no : nos) {
-            Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(request.getId(), nos.get(no));
+            Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(request.getId(), no);
             if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
                 continue;
             }
-            gatherChanges("", pair.getRight().getChanges(), pair.getRight(), changes);
+            gatherChanges("", pair.getRight().getChanges(), pair.getRight(), changes, original);
         }
 
         List<RevisionCompareResponseRow> responses = new ArrayList<>();
@@ -146,20 +154,21 @@ public class RevisionSearchImpl implements RevisionSearch {
         return responses;
     }
 
-    private void gatherChanges(String root, Map<String, Change> changeMap, DataFieldContainer container, Map<String, MutablePair<String, String>> changes) {
+    private void gatherChanges(String root, Map<String, Change> changeMap, DataFieldContainer container, Map<String, MutablePair<String, String>> changes, DataFieldContainer originalFields) {
         for(String key : changeMap.keySet()) {
             Change change = changeMap.get(key);
             if(change instanceof ContainerChange) {
-                gatherContainerChanges(root, (ContainerChange)change, container, changes);
+                gatherContainerChanges(root, (ContainerChange)change, container, changes, originalFields);
             } else {
-                gatherValueChanges(root, change, container, changes);
+                gatherValueChanges(root, change, container, changes, originalFields);
             }
         }
     }
 
-    private void gatherContainerChanges(String root, ContainerChange change, DataFieldContainer container, Map<String, MutablePair<String, String>> changes) {
+    private void gatherContainerChanges(String root, ContainerChange change, DataFieldContainer container, Map<String, MutablePair<String, String>> changes, DataFieldContainer originalFields) {
         Pair<StatusCode, ContainerDataField> containerPair = container.dataField(ContainerDataFieldCall.get(change.getKey()));
         if(containerPair.getLeft() == StatusCode.FIELD_FOUND) {
+            ContainerDataField originalContainer = originalFields.dataField(ContainerDataFieldCall.get(change.getKey())).getRight();
             if(StringUtils.hasText(root)) {
                 root = root + ".";
             }
@@ -183,8 +192,8 @@ public class RevisionSearchImpl implements RevisionSearch {
                             changes.put(rowKey, new MutablePair<String, String>(" ", row.getRowId().toString()));
                         }
                     }
-
-                    gatherChanges(rowKey, rowChange.getChanges(), row, changes);
+                    DataRow origRow = (originalContainer != null) ? originalContainer.getRowWithId(row.getRowId()).getRight() : null;
+                    gatherChanges(rowKey, rowChange.getChanges(), row, changes, origRow);
                 }
             }
         } else {
@@ -210,8 +219,8 @@ public class RevisionSearchImpl implements RevisionSearch {
                         changes.get(rowKey).setRight(refRow.getActualValue());
                     }
                 } else {
-                    if(!refRow.getRemoved()) {
-                        changes.put(rowKey, new MutablePair<String, String>(" ", refRow.getActualValue()));
+                    if(!refRow.getRemoved() && refRow.getUnapproved()) {
+                        changes.put(rowKey, new MutablePair<>(" ", refRow.getActualValue()));
                     }
                 }
             }
@@ -219,7 +228,7 @@ public class RevisionSearchImpl implements RevisionSearch {
     }
 
     // Should terminate
-    private void gatherValueChanges(String root, Change change, DataFieldContainer container, Map<String, MutablePair<String, String>> changes) {
+    private void gatherValueChanges(String root, Change change, DataFieldContainer container, Map<String, MutablePair<String, String>> changes, DataFieldContainer originalFields) {
         Pair<StatusCode, ValueDataField> pair = container.dataField(ValueDataFieldCall.get(change.getKey()));
         if(pair.getLeft() != StatusCode.FIELD_FOUND) {
             return;
@@ -233,13 +242,15 @@ public class RevisionSearchImpl implements RevisionSearch {
 
         ValueDataField field = pair.getRight();
 
+        ValueDataField original = originalFields != null ? originalFields.dataField(ValueDataFieldCall.get(change.getKey())).getRight() : null;
+
         for(Language l : Language.values()) {
             String langKey = root + "["+l.toValue()+"]";
             if(changes.containsKey(root)) {
                 changes.get(langKey).setRight(field.hasCurrentFor(l) ? field.getCurrentFor(l).getActualValue() : " ");
             } else {
                 if(field.hasValueFor(l)) {
-                    changes.put(langKey, new MutablePair<String, String>(field.hasOriginalFor(l) ? field.getOriginalFor(l).getActualValue() : " "
+                    changes.put(langKey, new MutablePair<>(original != null && original.hasCurrentFor(l) ? original.getCurrentFor(l).getActualValue() : " "
                             , field.hasCurrentFor(l) ? field.getCurrentFor(l).getActualValue() : " "));
                 }
             }
