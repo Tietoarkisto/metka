@@ -80,10 +80,12 @@ define(function (require) {
                                 }
                             });
                         }
-                        if (beginVal >= endVal) {
-                            $('#compareRevisions').prop('disabled', true);
-                        } else {
-                            $('#compareRevisions').prop('disabled', false);
+                        if (typeof beginVal !== 'undefined' && typeof endVal !== 'undefined') {
+                            if (beginVal >= endVal) {
+                                $('#compareRevisions').prop('disabled', true);
+                            } else {
+                                $('#compareRevisions').prop('disabled', false);
+                            }
                         }
                     }
 
@@ -122,7 +124,8 @@ define(function (require) {
                                             .append($('<thead>')
                                                 .append($('<tr>')
                                                     .append([
-                                                            'Kenttä[kieli]',
+                                                            'Kenttä',
+                                                            'Kieli',
                                                             'Alkuperäinen arvo',
                                                             'Nykyinen arvo'
                                                         ].map(function (entry) {
@@ -148,8 +151,16 @@ define(function (require) {
                                                     $table
                                                         .append($('<tbody>')
                                                             .append(response.rows.map(function (row) {
+                                                                var parts = row.key.split('[');
                                                                 return $('<tr>')
-                                                                    .append([row.key, row.original, row.current].map(function (entry) {
+                                                                    .append([
+                                                                        // TODO: get field title (titles are all over GUI conf, which is a problem)
+                                                                        parts[0],
+                                                                        // TODO: get language from
+                                                                        parts[1].substr(0, parts[1].length - 1),
+                                                                        row.original,
+                                                                        row.current
+                                                                    ].map(function (entry) {
                                                                         return $('<td>')
                                                                             .text(entry);
                                                                     }));
@@ -194,12 +205,12 @@ define(function (require) {
                                                     })
                                                 ];
 
-                                                if (metka.state === 'DRAFT') {
+                                                /*if (metka.state === 'DRAFT') {
                                                     items.push(require('./button')()()
                                                         .addClass('btn-xs')
                                                         .prop('disabled', true)
                                                         .text(MetkaJS.L10N.get('general.revision.replace')));
-                                                }
+                                                }*/
 
                                                 return items.map(function (entry) {
                                                     return $('<td>')
