@@ -32,8 +32,8 @@ Valitse ikkunan oikeassa ylälaidassa oleva linkki <strong>Kirjaudu ulos</strong
 <h3>Hakulauseen muodostaminen</h3>
 
 <var>
-&lt;Objektin tyyppi&gt;&lt;Kieli&gt;&lt;Hakukriteerit
-revisioitaville objekteille&gt;</var><br>
+    &lt;Objektin tyyppi&gt;&lt;Kieli&gt;&lt;Hakukriteerit
+    revisioitaville objekteille&gt;</var><br>
 
 <code><br>
 </code>Esimerkiksi hakulause <code>SERIES lang:en seriesname:Something</code>
@@ -46,43 +46,43 @@ englanninkieliset sarjat joiden englanninkielisessä nimessä on sana
 <span style="font-weight: bold;"></span>
 <table style="text-align: left; width: 882px; height: 268px;" border="1" cellpadding="2" cellspacing="2">
 
-  <tbody>
+    <tbody>
     <tr>
-      <td style="vertical-align: top;"><var>Objektin
-tyyppi</var><br>
-      </td>
-      <td style="vertical-align: top;">Eksperttihaussa ensimmäiseksi
-hakutermiksi voi laittaa haettavat
-objektin tyypin. Sen arvo voi olla sarja (<code>SERIES</code>),
-julkaisu (<code>PUBLICATION</code>) tai aineisto (<code>STUDY</code>).
-Tämän hakutermin
-oletusarvo on <code>STUDY</code> eli ensimmäinen hakutermi voidaan
-jättää antamatta silloin kuntehdään hakua aineistojen joukosta.<br>
-      </td>
+        <td style="vertical-align: top;"><var>Objektin
+            tyyppi</var><br>
+        </td>
+        <td style="vertical-align: top;">Eksperttihaussa ensimmäiseksi
+            hakutermiksi voi laittaa haettavat
+            objektin tyypin. Sen arvo voi olla sarja (<code>SERIES</code>),
+            julkaisu (<code>PUBLICATION</code>) tai aineisto (<code>STUDY</code>).
+            Tämän hakutermin
+            oletusarvo on <code>STUDY</code> eli ensimmäinen hakutermi voidaan
+            jättää antamatta silloin kuntehdään hakua aineistojen joukosta.<br>
+        </td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><var>Kieli</var><br>
-      </td>
-      <td style="vertical-align: top;">Toiseksi hakutermiksi voi
-laittaa haettavan kielen, esim. <code>lang:en</code> ja
-tämä on oletusarvona on suomi eli suomea ei tarvitse erikseen
-määritellä.</td>
+        <td style="vertical-align: top;"><var>Kieli</var><br>
+        </td>
+        <td style="vertical-align: top;">Toiseksi hakutermiksi voi
+            laittaa haettavan kielen, esim. <code>lang:en</code> ja
+            tämä on oletusarvona on suomi eli suomea ei tarvitse erikseen
+            määritellä.</td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><var>Hakukriteerit
-revisioitaville objekteille</var><br>
-      </td>
-      <td style="vertical-align: top;">Kolmas
-hakutermi on
-hakukriteerit.&nbsp; Hakukriteereinä voidaan käyttää revisioitavien
-objektien kenttiä, kuten yllä olevassa esimerkissä käytettiin sarjan
-nimikenttää, tai järjestelmän omia kenttiä, jotka on kuvattu alla
-olevassa taulukossa. Näitä hakukriteereitä voi olla useita ja ne ovat
-oletusarvona vaihtoehtoisia toisilleen (OR). Järjestelmä tarjoaa alla
-olevan taulukon mukaiset hakukriteerit revisioitaville objekteille.
-Lisätietoja hakukriteerien muotoilusta löydät luvusta: <a href="#Syntaksi">Hakujehtojen syntaksi</a>.<code></code> </td>
+        <td style="vertical-align: top;"><var>Hakukriteerit
+            revisioitaville objekteille</var><br>
+        </td>
+        <td style="vertical-align: top;">Kolmas
+            hakutermi on
+            hakukriteerit.&nbsp; Hakukriteereinä voidaan käyttää revisioitavien
+            objektien kenttiä, kuten yllä olevassa esimerkissä käytettiin sarjan
+            nimikenttää, tai järjestelmän omia kenttiä, jotka on kuvattu alla
+            olevassa taulukossa. Näitä hakukriteereitä voi olla useita ja ne ovat
+            oletusarvona vaihtoehtoisia toisilleen (OR). Järjestelmä tarjoaa alla
+            olevan taulukon mukaiset hakukriteerit revisioitaville objekteille.
+            Lisätietoja hakukriteerien muotoilusta löydät luvusta: <a href="#Syntaksi">Hakujehtojen syntaksi</a>.<code></code> </td>
     </tr>
-  </tbody>
+    </tbody>
 </table>
 
 <br>
@@ -91,200 +91,193 @@ Lisätietoja hakukriteerien muotoilusta löydät luvusta: <a href="#Syntaksi">Ha
 
 <table style="text-align: left; width: 887px; height: 60px;" border="1" cellpadding="2" cellspacing="2">
 
-  <tbody>
+    <tbody>
     <tr>
-      <td style="vertical-align: top;"><code>general</code></td>
-      <td style="vertical-align: top;">Yleinen hakukenttä johon
-koostetaan kaikki sopivat tekstit. Hakuehto ajetaan suomenkielisen
-juurisana-analyysin läpi, jolloin hakuehdon täytyy olla analyysin
-suomenkieliseksi sanaksi hyväksymä.<br>
-      </td>
+        <td style="vertical-align: top;"><code>general</code></td>
+        <td style="vertical-align: top;">Yleinen hakukenttä johon
+            koostetaan kaikki sopivat tekstit. Hakuehto ajetaan suomenkielisen
+            juurisana-analyysin läpi, jolloin hakuehdon täytyy olla analyysin
+            suomenkieliseksi sanaksi hyväksymä.<br>
+        </td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><code>key.id:</code><var>&lt;ID&gt;</var></td>
-      <td style="vertical-align: top;">Revisioitavan objektin ID
-(RevisionableId), johon sen revisiot liitetään. Esimerkki: hakulause <code>SERIES
-key.id:1 </code>palauttaisi sarjan, jonka ID on 1.<span style="font-weight: bold;"><br>
+        <td style="vertical-align: top;"><code>key.id:</code><var>&lt;ID&gt;</var></td>
+        <td style="vertical-align: top;">Revisioitavan objektin ID
+            (RevisionableId), johon sen revisiot liitetään. Esimerkki: hakulause <code>SERIES
+                key.id:1 </code>palauttaisi sarjan, jonka ID on 1.<span style="font-weight: bold;"><br>
       </span> </td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><code>key.no:</code><var>&lt;Revisionumero&gt;
-      </var><br>
-      </td>
-      <td style="vertical-align: top;">Haetaan kaikki objektit, joiden <var>Revisionumero</var>
-on annettu. Esimerkiksi <code>key.no:1</code> palauttaa
-revisiot 1 kaikista objekteista. <span style="font-weight: bold;"></span><br>
-      </td>
+        <td style="vertical-align: top;"><code>key.no:</code><var>&lt;Revisionumero&gt;
+        </var><br>
+        </td>
+        <td style="vertical-align: top;">Haetaan kaikki objektit, joiden <var>Revisionumero</var>
+            on annettu. Esimerkiksi <code>key.no:1</code> palauttaa
+            revisiot 1 kaikista objekteista. <span style="font-weight: bold;"></span><br>
+        </td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><code>state.draft:true <br>
-      </code></td>
-      <td style="vertical-align: top;">Heataan kaikki revisiot, jotka
-ovat luonnostilassa. <br>
-      </td>
+        <td style="vertical-align: top;"><code>state.draft:true <br>
+        </code></td>
+        <td style="vertical-align: top;">Heataan kaikki revisiot, jotka
+            ovat tilassa <var>Luonnos</var>. <br>
+        </td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><code>state.draft:false</code></td>
-      <td style="vertical-align: top;">Heataan kaikki revisiot, jotka
-eivät ole luonnostilassa. <br>
-      </td>
+        <td style="vertical-align: top;"><code>state.draft:false</code></td>
+        <td style="vertical-align: top;">Heataan kaikki revisiot, jotka ovat tilassa <var>Hyväksytty</var> tai <var>Poistettu</var>. <br>
+        </td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><code>state.draft.handler:</code><var>&lt;Käyttäjätunnus&gt;</var><code></code></td>
-      <td style="vertical-align: top;">Haetaan kaikki luonnostilassa
-olevat revisiot, joiden käsittelijän käyttäjätunnus on annettu.
-Käyttäjät identifioidaan käyttäjätunnuksen (<var>Käyttäjätunnus</var>)
-perusteella. Esimerkki: <code>state.draft.handler:metka.user@fsd.uta.fi</code>.<span style="font-weight: bold;"></span><br>
-      </td>
+        <td style="vertical-align: top;"><code>state.draft.handler:</code><var>&lt;Käyttäjätunnus&gt;</var><code></code></td>
+        <td style="vertical-align: top;">Haetaan kaikki luonnostilassa
+            olevat revisiot, joiden käsittelijän käyttäjätunnus on annettu.
+            Käyttäjät identifioidaan käyttäjätunnuksen (<var>Käyttäjätunnus</var>)
+            perusteella. Esimerkki: <code>state.draft.handler:metka.user@fsd.uta.fi</code>.<span style="font-weight: bold;"></span><br>
+        </td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><code>state.saved:true <br>
-      </code></td>
-      <td style="vertical-align: top;">Haetaan kaikki revisiot, jotka
-käyttäjä on tallentanut niiden luomisen jälkeen.</td>
+        <td style="vertical-align: top;"><code>state.saved:true <br>
+        </code></td>
+        <td style="vertical-align: top;">Haetaan kaikki revisiot, jotka
+            käyttäjä on tallentanut niiden luomisen jälkeen.</td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><code>state.saved:false</code><br>
-      </td>
-      <td style="vertical-align: top;">Haetaan kaikki revisiot, joita
-käyttäjä
-ei ole tallentanut niiden luomisen jälkeen.</td>
+        <td style="vertical-align: top;"><code>state.saved:false</code><br>
+        </td>
+        <td style="vertical-align: top;">Haetaan kaikki revisiot, joita
+            käyttäjä
+            ei ole tallentanut niiden luomisen jälkeen.</td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><code>state.saved.user</code><code>:</code><var>&lt;Käyttäjätunnus</var><var>&gt;</var><code>
-      <br>
-      </code></td>
-      <td style="vertical-align: top;">Haetaan kaikki revisiot, jotka
-annettu käyttäjä on tallentanut revision luonnin jälkeen. Käyttäjät
-identifioidaan käyttäjätunnuksen (<var>Käyttäjätunnus</var>)
-perusteella.
-Esimerkki: <code></code> <code>state.</code><code>saved.user</code><code></code><code>:metka.user@fsd.uta.fi</code></td>
+        <td style="vertical-align: top;"><code>state.saved.user</code><code>:</code><var>&lt;Käyttäjätunnus</var><var>&gt;</var><code>
+            <br>
+        </code></td>
+        <td style="vertical-align: top;">Haetaan kaikki revisiot, jotka
+            annettu käyttäjä on tallentanut revision luonnin jälkeen. Käyttäjät
+            identifioidaan käyttäjätunnuksen (<var>Käyttäjätunnus</var>)
+            perusteella.
+            Esimerkki: <code></code> <code>state.</code><code>saved.user</code><code></code><code>:metka.user@fsd.uta.fi</code></td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><code>state.saved.time:</code><var>&lt;Aika&gt;</var><code>
-      </code></td>
-      <td style="vertical-align: top;">Jos käyttäjä on tallentanut
-revision luonnin jälkeen, kertoo koska revisio tallennettiin. Kts.
-lisätietoja <a target="_blank" href="#Aika">ajan käyttämisestä
-hakukriteerinä</a>.<br>
-      </td>
+        <td style="vertical-align: top;"><code>state.saved.time:</code><var>&lt;Aika&gt;</var><code>
+        </code></td>
+        <td style="vertical-align: top;">Jos käyttäjä on tallentanut
+            revision luonnin jälkeen, kertoo koska revisio tallennettiin. Kts.
+            lisätietoja <a target="_blank" href="#Aika">ajan käyttämisestä
+                hakukriteerinä</a>.<br>
+        </td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><code>state.approved:true</code></td>
-      <td style="vertical-align: top;">Haetaan kaikki revisiot, jotka
-ovat hyväksytyssä tilassa. <br>
-      </td>
+        <td style="vertical-align: top;"><code>state.approved:true</code></td>
+        <td style="vertical-align: top;">Haetaan kaikki revisiot, jotka
+            ovat tilassa <var>Hyväksytty</var>. <br>
+        </td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><code>state.approved:false</code></td>
-      <td style="vertical-align: top;">Haetaan kaikki luonnostilassa
-olevat revisiot.&nbsp; </td>
+        <td style="vertical-align: top;"><code>state.approved:false</code></td>
+        <td style="vertical-align: top;">Haetaan kaikki tilassa <var>Luonnos</var> tai <var>Poistettu</var> olevat revisiot.&nbsp; </td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><code>state.approved.user:</code><var>&lt;Käyttäjätunnus</var><var>&gt;</var><code></code><code></code></td>
-      <td style="vertical-align: top;">Haetaan kaikki objektit, joista
-tietyn kielisen revision on hyväksynyt annettu henkilö. Henkilö
-määritellään tietoarkiston käyttäjätunnuksen (<var>Käyttäjätunnus</var>)
-perusteella. Kieli valitaan hakulauseen toisella hakutermillä (kts.
-edellinen taulukko <var>Kieli</var>). Esimerkiksi jos halutaan etsiä
-kaikki sarjat, joille käyttäjä jonka käyttäjätunnus on
-metka.user@fsd.uta.fi on hyväksynyt suomenkielisen revision, se voidaan
-tehdä kirjoittamalla <strong>Hakulause</strong> <span style="font-family: monospace;">SERIES</span><code> state.approved.</code><code>user:</code><code>metka.user@fsd.uta.fi</code>.
-      <code></code></td>
+        <td style="vertical-align: top;"><code>state.approved.user:</code><var>&lt;Käyttäjätunnus</var><var>&gt;</var><code></code><code></code></td>
+        <td style="vertical-align: top;">Haetaan kaikki tietyn kieliset revisiot, jotka on hyväksynyt annettu henkilö. Henkilö
+            määritellään tietoarkiston käyttäjätunnuksen (<var>Käyttäjätunnus</var>)
+            perusteella. Kieli valitaan hakulauseen toisella hakutermillä (kts.
+            edellinen taulukko <var>Kieli</var>). Esimerkiksi jos halutaan etsiä
+            kaikki sarjat, joille käyttäjä jonka käyttäjätunnus on
+            metka.user@fsd.uta.fi on hyväksynyt suomenkielisen revision, se voidaan
+            tehdä kirjoittamalla <strong>Hakulause</strong> <span style="font-family: monospace;">SERIES</span><code> state.approved.</code><code>user:</code><code>metka.user@fsd.uta.fi</code>.
+            <code></code></td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><code>state.approved.time:</code><var>&lt;Aika&gt;</var></td>
-      <td style="vertical-align: top;">Haetaan kaikki objektit, joista
-on tietyn kielinen revisio hyväksytty annettuun aikaan (<var>Aika</var>).
-Kieli valitaan hakulauseen toisella hakutermillä (kts. edellinen
-taulukko <var>Kieli</var>). Esimerkiksi jos halutaan etsiä kaikki
-aineistot, jotka on hyväksytty englannin kielelle 8.9.2014, se
-voidaan tehdä kirjoittamalla <strong>Hakulause</strong> <code>lang:en
-state.approved.</code><code>time:2014-09-08*</code>. Kts.
-lisätietoja <a target="_blank" href="Käyttöohjeiden sisällysluettelo.html#Aika">ajan
-käyttämisestä hakukriteerinä</a>.&nbsp;</td>
+        <td style="vertical-align: top;"><code>state.approved.time:</code><var>&lt;Aika&gt;</var></td>
+        <td style="vertical-align: top;">Haetaan kaikki tietyn kieliset revisiot, jotka on hyväksytty annettuun aikaan (<var>Aika</var>).
+            Kieli valitaan hakulauseen toisella hakutermillä (kts. edellinen
+            taulukko <var>Kieli</var>). Esimerkiksi jos halutaan etsiä kaikki
+            aineistot, jotka on hyväksytty englannin kielelle 8.9.2014, se
+            voidaan tehdä kirjoittamalla <strong>Hakulause</strong> <code>lang:en
+                state.approved.</code><code>time:2014-09-08*</code>. Kts.
+            lisätietoja <a target="_blank" href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Aika">ajan
+                käyttämisestä hakukriteerinä</a>.&nbsp;</td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><code>state.removed:true</code></td>
-      <td style="vertical-align: top;">Haetaan kaikki objektit, jotka
-on poistettu (looginen poisto).</td>
+        <td style="vertical-align: top;"><code>state.removed:true</code></td>
+        <td style="vertical-align: top;">Haetaan kaikki objektit, jotka ovat tilassa <var>Poistettu</var> (looginen poisto).</td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><code>state.removed:false</code></td>
-      <td style="vertical-align: top;">Haetaan kaikki objektit, joita
-ei ole poistettu (looginen poisto).</td>
+        <td style="vertical-align: top;"><code>state.removed:false</code></td>
+        <td style="vertical-align: top;">Haetaan kaikki objektit, jotka ovat tilassa <var>Luonnos</var> tai <var>Hyväksytty</var>.</td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><code>state.removed.user:</code><var>&lt;Käyttäjätunnus</var><var>&gt;</var><code></code><code></code></td>
-      <td style="vertical-align: top;">Haetaan kaikki loogisesti
-poistetut objektit, joiden käsittelijä on annettu henkilö. Käyttäjät
-identifioidaan käyttäjätunnuksen (<var>Käyttäjätunnus</var><var></var>)
-perusteella.
-Esimerkki: <code></code> <code>state.removed.user:</code><code>metka.user@fsd.uta.fi</code></td>
+        <td style="vertical-align: top;"><code>state.removed.user:</code><var>&lt;Käyttäjätunnus</var><var>&gt;</var><code></code><code></code></td>
+        <td style="vertical-align: top;">Haetaan kaikki <var>Poistettu</var> tilassa olevat (loogisesti
+            poistetut) revisiot, joiden käsittelijä on annettu henkilö. Käyttäjät
+            identifioidaan käyttäjätunnuksen (<var>Käyttäjätunnus</var><var></var>)
+            perusteella.
+            Esimerkki: <code></code> <code>state.removed.user:</code><code>metka.user@fsd.uta.fi</code></td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><code>state.removed.time</code><code>:</code><var>&lt;Aika&gt;</var></td>
-      <td style="vertical-align: top;">Jos objekti on poistettu, kertoo
-koska poisto on suoritettu. Esimerkiksi jos halutaan etsiä kaikki
-aineistot,
-jotka on poistettu 8.9.2014, se
-voidaan tehdä kirjoittamalla <strong>Hakulause</strong>&nbsp; <code>state.removed.</code><code>time:2014-09-08*</code>.
-Kts.
-lisätietoja <a target="_blank" href="Käyttöohjeiden sisällysluettelo.html#Aika">ajan
-käyttämisestä hakukriteerinä</a>.</td>
+        <td style="vertical-align: top;"><code>state.removed.time</code><code>:</code><var>&lt;Aika&gt;</var></td>
+        <td style="vertical-align: top;">Haetaan kaikki revisiot, jotka on siirretty tilaan <var>Poistettu</var> annettuna aikana. Esimerkiksi jos halutaan etsiä kaikki
+            aineistot,
+            jotka on poistettu 8.9.2014, se
+            voidaan tehdä kirjoittamalla <strong>Hakulause</strong>&nbsp; <code>state.removed.</code><code>time:2014-09-08*</code>.
+            Kts.
+            lisätietoja <a target="_blank" href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Aika">ajan
+                käyttämisestä hakukriteerinä</a>.</td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><var>&lt;Kentän nimi&gt;</var>:<var>&lt;Hakusanat&gt;</var><br>
-      </td>
-      <td style="vertical-align: top;">Haetaan objekteja jonkin sen
-kentän<code> (</code><span style="font-family: monospace;"></span><var>Kentän
-nimi</var>) arvon <var></var>perusteella. Haku palauttaa kaikki ne
-objektit, joissa annetussa kentässä on jokin annetuista hakusanoista <var>(Hakusanat</var>),
-haku on siis looginen OR annetuista hakusanoista. Esimerkiksi jos
-halutaan hakea kaikki sarjat, joiden <strong>Kuvaus</strong>
-(seriesdesc) kentästä löytyy sana "Kuvaus", se voidaan tehdä
-kirjoittamalla <strong>Hakulause</strong> <code>SERIES
-seriesdesc:Kuvaus.</code></td>
+        <td style="vertical-align: top;"><var>&lt;Kentän nimi&gt;</var>:<var>&lt;Hakusanat&gt;</var><br>
+        </td>
+        <td style="vertical-align: top;">Haetaan objekteja jonkin sen
+            kentän<code> (</code><span style="font-family: monospace;"></span><var>Kentän
+                nimi</var>) arvon <var></var>perusteella. Haku palauttaa kaikki ne
+            objektit, joissa annetussa kentässä on jokin annetuista hakusanoista <var>(Hakusanat</var>),
+            haku on siis looginen OR annetuista hakusanoista. Esimerkiksi jos
+            halutaan hakea kaikki sarjat, joiden <strong>Kuvaus</strong>
+            (seriesdesc) kentästä löytyy sana "Kuvaus", se voidaan tehdä
+            kirjoittamalla <strong>Hakulause</strong> <code>SERIES
+                seriesdesc:Kuvaus.</code></td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><var>&lt;Kentän nimi&gt;</var><code>.value:</code><var>&lt;ID&gt;</var></td>
-      <td style="vertical-align: top;">Järjestelmä tallentaa kentille,
-jotka sisältävät jonkinlaisen ID -arvon ja sen perusteella
-löydettävän tekstiarvon (kuten esim. aineistojen
-anonymisointi-kenttä) ensisijaisesti tekstiarvon ja valittu
-tai muuten saatu ID-arvo löytyy lisäliittellä <code>value</code>, eli
-esim. <code>anonymization.value</code> palauttaa <br>
-anonymisointi-pudotusvalikon arvon valitun numeerisen arvon
-perusteella. Jos
-halutaan hakea vaikkapa aineistot joiden anonymisoinnista ei ole tietoa
-voidaan hakea kirjoittamalla <strong>Hakulause</strong> <code>anonymization.value:5.</code></td>
+        <td style="vertical-align: top;"><var>&lt;Kentän nimi&gt;</var><code>.value:</code><var>&lt;ID&gt;</var></td>
+        <td style="vertical-align: top;">Järjestelmä tallentaa kentille,
+            jotka sisältävät jonkinlaisen ID -arvon ja sen perusteella
+            löydettävän tekstiarvon (kuten esim. aineistojen
+            anonymisointi-kenttä) ensisijaisesti tekstiarvon ja valittu
+            tai muuten saatu ID-arvo löytyy lisäliittellä <code>value</code>, eli
+            esim. <code>anonymization.value</code> palauttaa <br>
+            anonymisointi-pudotusvalikon arvon valitun numeerisen arvon
+            perusteella. Jos
+            halutaan hakea vaikkapa aineistot joiden anonymisoinnista ei ole tietoa
+            voidaan hakea kirjoittamalla <strong>Hakulause</strong> <code>anonymization.value:5.</code></td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><var>&lt;Kentän nimi&gt;</var><code>.saved.time</code><code>:</code><var>&lt;Aika&gt;</var></td>
-      <td style="vertical-align: top;">Järjestelmä tallentaa jokaiselle
-objektin kentälle (<var>Kentän nimi</var>) tiedon koska sitä on
-viimeksi muutettu. Tällä haulla haetaan kaikki objektit, joiden
-annettua kenttää (<var>Kentän nimi</var>) on viimeksi muutettu
-annettuna ajankohtana. Esimerkiksi
-jos halutaan etsiä kaikki aineistot, joiden anonymization
-pudotusvalikon arvoa on muutettu 8.9.2014, se voidaan tehdä
-kirjoittamalla <strong>Hakulause</strong>&nbsp; <code>anonymization.saved.time:2014-09-08*</code>.
-Kts.
-lisätietoja <a target="_blank" href="Käyttöohjeiden sisällysluettelo.html#Aika">ajan
-käyttämisestä hakukriteerinä</a>. </td>
+        <td style="vertical-align: top;"><var>&lt;Kentän nimi&gt;</var><code>.saved.time</code><code>:</code><var>&lt;Aika&gt;</var></td>
+        <td style="vertical-align: top;">Järjestelmä tallentaa jokaiselle
+            objektin kentälle (<var>Kentän nimi</var>) tiedon koska sitä on
+            viimeksi muutettu. Tällä haulla haetaan kaikki objektit, joiden
+            annettua kenttää (<var>Kentän nimi</var>) on viimeksi muutettu
+            annettuna ajankohtana. Esimerkiksi
+            jos halutaan etsiä kaikki aineistot, joiden anonymization
+            pudotusvalikon arvoa on muutettu 8.9.2014, se voidaan tehdä
+            kirjoittamalla <strong>Hakulause</strong>&nbsp; <code>anonymization.saved.time:2014-09-08*</code>.
+            Kts.
+            lisätietoja <a target="_blank" href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Aika">ajan
+                käyttämisestä hakukriteerinä</a>. </td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><var>&lt;Kentän nimi&gt;</var><code>.saved.user</code><code>:</code><var>&lt;Käyttäjätunnus</var><var>&gt;</var><code></code></td>
-      <td style="vertical-align: top;">Jokaiselle objektin kentälle (<var>Kentän
-nimi</var>) tallenetaan tieto siitä kuka on viimeksi muuttanut sitä.
-Käyttäjät identifioidaan käyttäjätunnuksen (<var>Käyttäjätunnus</var><var></var>)
-perusteella. Esimerkiksi jos halutaan etsiä kaikki aineistot, joiden
-anonymization
-pudotusvalikolle on tallentanut arvon henkilö, jonka käyttäjätunnus
-on <code></code>metka.user@fsd.uta.fi, se voidaan tehdä
-kirjoittamalla <strong>Hakulause</strong>&nbsp; <code>anonymization.saved.user:</code><code></code><code>metka.user@fsd.uta.fi</code>.</td>
+        <td style="vertical-align: top;"><var>&lt;Kentän nimi&gt;</var><code>.saved.user</code><code>:</code><var>&lt;Käyttäjätunnus</var><var>&gt;</var><code></code></td>
+        <td style="vertical-align: top;">Jokaiselle objektin kentälle (<var>Kentän
+            nimi</var>) tallenetaan tieto siitä kuka on viimeksi muuttanut sitä.
+            Käyttäjät identifioidaan käyttäjätunnuksen (<var>Käyttäjätunnus</var><var></var>)
+            perusteella. Esimerkiksi jos halutaan etsiä kaikki aineistot, joiden
+            anonymization
+            pudotusvalikolle on tallentanut arvon henkilö, jonka käyttäjätunnus
+            on <code></code>metka.user@fsd.uta.fi, se voidaan tehdä
+            kirjoittamalla <strong>Hakulause</strong>&nbsp; <code>anonymization.saved.user:</code><code></code><code>metka.user@fsd.uta.fi</code>.</td>
     </tr>
-  </tbody>
+    </tbody>
 </table>
 
 <br>
@@ -295,90 +288,90 @@ kirjoittamalla <strong>Hakulause</strong>&nbsp; <code>anonymization.saved.user:<
 </h3>
 
 Kun määritellään <var>Hakukriteerit
-revisioitaville objekteille</var>, hakusyntaksissa voidaan käyttää
+    revisioitaville objekteille</var>, hakusyntaksissa voidaan käyttää
 Apache Lucene:ssa määriteltyjä tekstihakuja, esimerkiksi:<br>
 
 <table style="text-align: left; width: 890px; height: 332px;" border="1" cellpadding="2" cellspacing="2">
 
-  <tbody>
+    <tbody>
     <tr>
-      <td style="vertical-align: top;"><code>?</code><br>
-      </td>
-      <td style="vertical-align: top;">Kysymysmerkillä voidan korvata
-haussa merkkijonosta yksi merkki siten, että korvausmerkin paikalla voi
-olla mikä tahansa yksi merkki. Kysymysmerkkiä ei voi käyttää
-ensimmäisenä merkkinä hakutermissä.<br>
-      </td>
+        <td style="vertical-align: top;"><code>?</code><br>
+        </td>
+        <td style="vertical-align: top;">Kysymysmerkillä voidan korvata
+            haussa merkkijonosta yksi merkki siten, että korvausmerkin paikalla voi
+            olla mikä tahansa yksi merkki. Kysymysmerkkiä ei voi käyttää
+            ensimmäisenä merkkinä hakutermissä.<br>
+        </td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><code>*</code><br>
-      </td>
-      <td style="vertical-align: top;">Tähdellä voidan korvata haussa
-merkkijonosta nolla tai useampia merkkejä siten, että korvausmerkin
-paikalla voi olla mikä tahansa merkkijono. Tähteä ei voi käyttää
-ensimmäisenä merkkinä hakutermissä.</td>
+        <td style="vertical-align: top;"><code>*</code><br>
+        </td>
+        <td style="vertical-align: top;">Tähdellä voidan korvata haussa
+            merkkijonosta nolla tai useampia merkkejä siten, että korvausmerkin
+            paikalla voi olla mikä tahansa merkkijono. Tähteä ei voi käyttää
+            ensimmäisenä merkkinä hakutermissä.</td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><code>OR</code></td>
-      <td style="vertical-align: top;"><code>OR</code> on
-oletusoperaattori,
-jolla hakutermejä yhdistetään. <code>OR</code> yhdistää kaksi
-hakutermiä ja sisällyttää tulosjoukkoon objektit, jos jompi kumpi
-termeistä pätee objektille. <code><br>
-      </code></td>
+        <td style="vertical-align: top;"><code>OR</code></td>
+        <td style="vertical-align: top;"><code>OR</code> on
+            oletusoperaattori,
+            jolla hakutermejä yhdistetään. <code>OR</code> yhdistää kaksi
+            hakutermiä ja sisällyttää tulosjoukkoon objektit, jos jompi kumpi
+            termeistä pätee objektille. <code><br>
+            </code></td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><code>AND</code><br>
-      </td>
-      <td style="vertical-align: top;"><code>AND</code> operaattori
-yhdistää kaksi hakutermiä ja sisällyttää tulosjoukkoon vain ne
-objektit, joille molemmat hakutermit pätevät.</td>
+        <td style="vertical-align: top;"><code>AND</code><br>
+        </td>
+        <td style="vertical-align: top;"><code>AND</code> operaattori
+            yhdistää kaksi hakutermiä ja sisällyttää tulosjoukkoon vain ne
+            objektit, joille molemmat hakutermit pätevät.</td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><code>+</code><br>
-      </td>
-      <td style="vertical-align: top;">Tulosjoukkoon sisällytetään vain
-hakutermiä vastaavat objektit, vain jos hakutermin edessä on '+'</td>
+        <td style="vertical-align: top;"><code>+</code><br>
+        </td>
+        <td style="vertical-align: top;">Tulosjoukkoon sisällytetään vain
+            hakutermiä vastaavat objektit, vain jos hakutermin edessä on '+'</td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><code>NOT</code><br>
-      </td>
-      <td style="vertical-align: top;">Tulosjoukkoon ei sisällytetä
-objekteja, joille pätee <code>NOT</code> operaattorista seuraava
-hakutermi. <code>NOT</code> operaattoria ei voi käyttää yksinään vaan
-sitä pitää edeltää jokin muu hakutermi.<br>
-      </td>
+        <td style="vertical-align: top;"><code>NOT</code><br>
+        </td>
+        <td style="vertical-align: top;">Tulosjoukkoon ei sisällytetä
+            objekteja, joille pätee <code>NOT</code> operaattorista seuraava
+            hakutermi. <code>NOT</code> operaattoria ei voi käyttää yksinään vaan
+            sitä pitää edeltää jokin muu hakutermi.<br>
+        </td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><code>!</code><br>
-      </td>
-      <td style="vertical-align: top;">Toimii kuten <code>NOT</code>.<br>
-      </td>
+        <td style="vertical-align: top;"><code>!</code><br>
+        </td>
+        <td style="vertical-align: top;">Toimii kuten <code>NOT</code>.<br>
+        </td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><code>-</code><br>
-      </td>
-      <td style="vertical-align: top;">Tulosjoukkoon ei sisällytetä
-hakutermiin sopivia dokumentteja, jos hakutermin edessä on '-'</td>
+        <td style="vertical-align: top;"><code>-</code><br>
+        </td>
+        <td style="vertical-align: top;">Tulosjoukkoon ei sisällytetä
+            hakutermiin sopivia dokumentteja, jos hakutermin edessä on '-'</td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><code>( )</code><br>
-      </td>
-      <td style="vertical-align: top;">Hakutermejä ja hakukenttiä
-termien sisällä voi ryhmitellä sulkumerkeillä. Esimerkiksi: (<code>state.approved:true
-OR </code><code>key.id:(2 3)) AND</code> <code>state.approved.</code><code>user:</code><code>metka.user@fsd.uta.fi.</code></td>
+        <td style="vertical-align: top;"><code>( )</code><br>
+        </td>
+        <td style="vertical-align: top;">Hakutermejä ja hakukenttiä
+            termien sisällä voi ryhmitellä sulkumerkeillä. Esimerkiksi: (<code>state.approved:true
+                OR </code><code>key.id:(2 3)) AND</code> <code>state.approved.</code><code>user:</code><code>metka.user@fsd.uta.fi.</code></td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><code>\</code><br>
-      </td>
-      <td style="vertical-align: top;">Lucene hauissa käytetyt
-erikoismerkit täytyy häivyttää koodinvaihtomerkkiä '\' käyttäen. Lucene
-hakujen erikoismerkkejä ovat: <code>+ - &amp;&amp; || ! ( ) { } [ ] ^
-" ~ * ? : \ /</code>. Jos esimerkiksi halutaan tehdä haku, jonka termi
-sisältää merkkijonon (1+1):2, kirjoitetaan hakutermiin <code>\(1\+1\)\:2.</code><br>
-      </td>
+        <td style="vertical-align: top;"><code>\</code><br>
+        </td>
+        <td style="vertical-align: top;">Lucene hauissa käytetyt
+            erikoismerkit täytyy häivyttää koodinvaihtomerkkiä '\' käyttäen. Lucene
+            hakujen erikoismerkkejä ovat: <code>+ - &amp;&amp; || ! ( ) { } [ ] ^
+                " ~ * ? : \ /</code>. Jos esimerkiksi halutaan tehdä haku, jonka termi
+            sisältää merkkijonon (1+1):2, kirjoitetaan hakutermiin <code>\(1\+1\)\:2.</code><br>
+        </td>
     </tr>
-  </tbody>
+    </tbody>
 </table>
 
 <br>
@@ -391,9 +384,9 @@ Esimerkkejä:<br>
 
 <ul>
 
-  <li>Haku päivämäärän perusteella: 8.9.2014 on <code>2014-09-08*</code></li>
-  <li>Haku päivämäärän ja kellonajan perusteella: 8.9.2014 tasan kello
-kaksi iltapäivällä on <code>2014-09-08T14:00*</code></li>
+    <li>Haku päivämäärän perusteella: 8.9.2014 on <code>2014-09-08*</code></li>
+    <li>Haku päivämäärän ja kellonajan perusteella: 8.9.2014 tasan kello
+        kaksi iltapäivällä on <code>2014-09-08T14:00*</code></li>
 </ul>
 
 Aika annetaan&nbsp; muodossa (ISO 8601):<br>
@@ -413,79 +406,79 @@ Ajan muodostaminen:<br>
 
 <table style="text-align: left; width: 888px; height: 252px;" border="1" cellpadding="2" cellspacing="2">
 
-  <tbody>
+    <tbody>
     <tr>
-      <td style="vertical-align: top;"><var>YYYY</var></td>
-      <td style="vertical-align: top;">Vuosiluku neljällä numerolla
-kuvattuna<br>
-      </td>
+        <td style="vertical-align: top;"><var>YYYY</var></td>
+        <td style="vertical-align: top;">Vuosiluku neljällä numerolla
+            kuvattuna<br>
+        </td>
     </tr>
     <tr>
-      <td style="vertical-align: top; font-weight: bold;">-<br>
-      </td>
-      <td style="vertical-align: top;">Välimerkki vuosien ja kuukausien
-välissä<br>
-      </td>
+        <td style="vertical-align: top; font-weight: bold;">-<br>
+        </td>
+        <td style="vertical-align: top;">Välimerkki vuosien ja kuukausien
+            välissä<br>
+        </td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><var>MM</var></td>
-      <td style="vertical-align: top;">Kuukausi</td>
+        <td style="vertical-align: top;"><var>MM</var></td>
+        <td style="vertical-align: top;">Kuukausi</td>
     </tr>
     <tr>
-      <td style="vertical-align: top; font-weight: bold;">-</td>
-      <td style="vertical-align: top;">Välimerkki kuukausien ja päivien
-välissä</td>
+        <td style="vertical-align: top; font-weight: bold;">-</td>
+        <td style="vertical-align: top;">Välimerkki kuukausien ja päivien
+            välissä</td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><var>DD</var></td>
-      <td style="vertical-align: top;">Päivä</td>
+        <td style="vertical-align: top;"><var>DD</var></td>
+        <td style="vertical-align: top;">Päivä</td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><code>T</code></td>
-      <td style="vertical-align: top;">Välimerkki päivämäärän ja
-kellonajan välissä</td>
+        <td style="vertical-align: top;"><code>T</code></td>
+        <td style="vertical-align: top;">Välimerkki päivämäärän ja
+            kellonajan välissä</td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><var>HH</var></td>
-      <td style="vertical-align: top;">Tunnit annetaan 24 tunnin
-notaatiolla merkittynä ja kahdella numerolla merkittynä, eli esim.
-kello kaksi aamupäivällä on 02 ja iltapäivällä 14<br>
-      </td>
+        <td style="vertical-align: top;"><var>HH</var></td>
+        <td style="vertical-align: top;">Tunnit annetaan 24 tunnin
+            notaatiolla merkittynä ja kahdella numerolla merkittynä, eli esim.
+            kello kaksi aamupäivällä on 02 ja iltapäivällä 14<br>
+        </td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><span style="font-weight: bold;">:</span><br>
-      </td>
-      <td style="vertical-align: top;">Välimerkki tuntien ja minuuttien
-välissä<br>
-      </td>
+        <td style="vertical-align: top;"><span style="font-weight: bold;">:</span><br>
+        </td>
+        <td style="vertical-align: top;">Välimerkki tuntien ja minuuttien
+            välissä<br>
+        </td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><var>MM</var></td>
-      <td style="vertical-align: top;">Minuutit kahdella numerolla
-merkittynä, esim yhdeksän minuuttia yli on 09<br>
-      </td>
+        <td style="vertical-align: top;"><var>MM</var></td>
+        <td style="vertical-align: top;">Minuutit kahdella numerolla
+            merkittynä, esim yhdeksän minuuttia yli on 09<br>
+        </td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><span style="font-weight: bold;">-</span><br>
-      </td>
-      <td style="vertical-align: top;">Välimerkki minuuttien ja
-sekuntien välissä</td>
+        <td style="vertical-align: top;"><span style="font-weight: bold;">-</span><br>
+        </td>
+        <td style="vertical-align: top;">Välimerkki minuuttien ja
+            sekuntien välissä</td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><var>SS</var></td>
-      <td style="vertical-align: top;">Sekunnit kahdella numerolla
-merkittynä, esim yhdeksän sekuntia yli on 09</td>
+        <td style="vertical-align: top;"><var>SS</var></td>
+        <td style="vertical-align: top;">Sekunnit kahdella numerolla
+            merkittynä, esim yhdeksän sekuntia yli on 09</td>
     </tr>
     <tr>
-      <td style="vertical-align: top; font-weight: bold;">.</td>
-      <td style="vertical-align: top;">Välimerkki sekuntien ja sekunnin
-osien välillä</td>
+        <td style="vertical-align: top; font-weight: bold;">.</td>
+        <td style="vertical-align: top;">Välimerkki sekuntien ja sekunnin
+            osien välillä</td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><var>FFF</var></td>
-      <td style="vertical-align: top;">Sekunnin murto-osat.</td>
+        <td style="vertical-align: top;"><var>FFF</var></td>
+        <td style="vertical-align: top;">Sekunnin murto-osat.</td>
     </tr>
-  </tbody>
+    </tbody>
 </table>
 
 <br>
@@ -496,49 +489,49 @@ osien välillä</td>
 
 <table style="text-align: left; width: 887px; height: 60px;" border="1" cellpadding="2" cellspacing="2">
 
-  <tbody>
+    <tbody>
     <tr>
-      <td style="vertical-align: top;"><code>key.configuration.type:SERIES</code></td>
-      <td style="vertical-align: top;">Tätä ei yleensä tarvita vaan
-käytetään <var>Objektin tyyppiä</var>. Käytännössä esim. jos <var>Objektin
-tyyppi</var> on<var> </var>SERIES sen konfiguraatiotyyppi pitäisi myös
-olla SERIES.<br>
-      </td>
+        <td style="vertical-align: top;"><code>key.configuration.type:SERIES</code></td>
+        <td style="vertical-align: top;">Tätä ei yleensä tarvita vaan
+            käytetään <var>Objektin tyyppiä</var>. Käytännössä esim. jos <var>Objektin
+                tyyppi</var> on<var> </var>SERIES sen konfiguraatiotyyppi pitäisi myös
+            olla SERIES.<br>
+        </td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><code>key.configuration.type:PUBLICATION</code></td>
-      <td style="vertical-align: top;"><br>
-      </td>
+        <td style="vertical-align: top;"><code>key.configuration.type:PUBLICATION</code></td>
+        <td style="vertical-align: top;"><br>
+        </td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><code>key.configuration.type:STUDY</code></td>
-      <td style="vertical-align: top;"><br>
-      </td>
+        <td style="vertical-align: top;"><code>key.configuration.type:STUDY</code></td>
+        <td style="vertical-align: top;"><br>
+        </td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><code>key.configuration.type:STUDY_ATTACHMENT</code></td>
-      <td style="vertical-align: top;"><br>
-      </td>
+        <td style="vertical-align: top;"><code>key.configuration.type:STUDY_ATTACHMENT</code></td>
+        <td style="vertical-align: top;"><br>
+        </td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><code>key.configuration.type:STUDY_VARIABLES</code></td>
-      <td style="vertical-align: top;"><br>
-      </td>
+        <td style="vertical-align: top;"><code>key.configuration.type:STUDY_VARIABLES</code></td>
+        <td style="vertical-align: top;"><br>
+        </td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><code>key.configuration.type:STUDY_VARIABLE</code></td>
-      <td style="vertical-align: top;"><br>
-      </td>
+        <td style="vertical-align: top;"><code>key.configuration.type:STUDY_VARIABLE</code></td>
+        <td style="vertical-align: top;"><br>
+        </td>
     </tr>
     <tr>
-      <td style="vertical-align: top;"><code>key.configuration.version</code></td>
-      <td style="vertical-align: top;">Haetaan kaikki tiettyä
-konfiguraatioversiota käyttävät sarjat. Objektien konfiguraatiot on
-mahdollista versioida ja esim. sarjasta voi olla monta eri
-konfiguraatioversiota ja oletettavasti tässä tapauksessa vanhemmat
-sarjat käyttävät konfiguraatioita joissa on pienempi versionumero. </td>
+        <td style="vertical-align: top;"><code>key.configuration.version</code></td>
+        <td style="vertical-align: top;">Haetaan kaikki tiettyä
+            konfiguraatioversiota käyttävät sarjat. Objektien konfiguraatiot on
+            mahdollista versioida ja esim. sarjasta voi olla monta eri
+            konfiguraatioversiota ja oletettavasti tässä tapauksessa vanhemmat
+            sarjat käyttävät konfiguraatioita joissa on pienempi versionumero. </td>
     </tr>
-  </tbody>
+    </tbody>
 </table>
 
 <h2>Tallenna hakulause<br>
@@ -582,7 +575,7 @@ hakuja.<br>
 <br>
 
 Järjestelmä käsittelee revisioitavina objekteina <strong>Aineistot,
-Julkaisut</strong> ja
+    Julkaisut</strong> ja
 <strong>Sarjat. </strong>Objektin voi tallentaa, hyväksyä, muokata ja
 poistaa
 eli objektille voi tehdä tilasiirtymiä ainoastaan henkilö, joka on
@@ -623,36 +616,6 @@ edelleen mahdollista hakea järjestelmästä. Jos <var>Hyväksytty</var>
 tilassa olevasta revisiosta on lähdetty muokkaamaan uutta revisiota,
 joka on tilassa <var>Luonnos</var>, täytyy luonnos poistaa ennen kuin
 hyväksytyn revision ja koko objektin poistaminen on mahdollista.<br>
-
-<h2>Katsele revisioitavien objektien revisiohistoriaa<br>
-</h2>
-
-<p>Valitse revisioitavan objektin tyyppi (<strong>Aineistot, Julkaisut </strong>tai<strong>
-Sarjat)&nbsp;</strong> &gt; <strong>Tee haku</strong> ja avaa
-revisioitavan objektin tiedot &gt; <strong>Revisiohistoria</strong>.</p>
-
-<p><strong>Revisiot</strong> dialogin sarakeessa <strong>Revisio</strong>
-on järjestelmän automaattisesti objektille generoimat revisionumerot.
-Klikkaamalla sarakkeessa <strong>Revisio </strong>olevaa
-revisionumeroa saat sen tiedot auki.<br>
-</p>
-
-<h2>Vertaile revisioiden välisiä eroja</h2>
-
-Tarkastele objektien kenttiin eri revisioiden välillä tehtyjä muutoksia
-avamalla objektin tiedot.
-<br>
-
-<ol>
-
-  <li>Avaa revisioitavan objektin <strong>Revisionhistoria</strong>.</li>
-  <li>Valitse <strong>Alku</strong>, joka on ensimmäinen revisio, jota
-käytetään alkuperäisenä revisiona, jota verrataan.</li>
-  <li>Valitse<strong> Loppu</strong>: Valitse tällä revisio, johon asti
-tehdyt muutokset näytetään.</li>
-  <li>Valitse <strong>Vertaa</strong>.</li>
-</ol>
-
 <h1>Käsittele aineistoja</h1>
 
 <h2>Hae ja avaa aineistoja</h2>
@@ -663,23 +626,23 @@ Hakemiseen liittyviä sääntöjä:<br>
 
 
 <ul>
-<li>Jos useampaan kuin yhteen kenttään on kirjoitettu hakukriteeri,
-aineisto liitetään hakutuloksiin, jos se sopii kaikkiin annettuihin
-hakuehtoihin (AND).</li><li><strong>ID </strong>kenttään kirjoitettu hakusana palauttaa
-juuri sen aineiston, jonka ID on kenttään kirjoitettu. </li><li><strong style="font-weight: normal;">Teksti</strong>kenttiin
-kirjoitetulla hakusanalla löytää
-kaikki aineistot, joiden nimi sisältää täsmälleen hakukenttään annetun
-sanan. Jos tekstikenttään on annettu useampi hakusana, haku löytää
-kaikki aineistot, joiden
-nimessä on jokin annetuista hakusanoista (OR). Jos halutaan etsiä
-esimerkiksi aineiston koko nimellä, se voidaan antaa lainausmerkkien
-sisään, jolloin haetaan&nbsp; koko lainausmerkkien sisällä olevaa
-merkkijonoa.<br>
- </li><li>Jos aineistosta on olemassa sekä viimeisin <em>HYVÄKSYTTY</em>
-revisio että
-uusi <em>LUONNOS</em>, ne molemmat näkyvät erillisinä riveinä
-hakutuloksissa.</li>
-  <li>Yksittäisten tekstikenttien hakujen sisältöä voi muotoilla Apache Lucene syntaksin mukaan, kts. <a href="Käyttöohjeiden sisällysluettelo.html#Syntaksi">Hakujehtojen syntaksi</a>.</li>
+    <li>Jos useampaan kuin yhteen kenttään on kirjoitettu hakukriteeri,
+        aineisto liitetään hakutuloksiin, jos se sopii kaikkiin annettuihin
+        hakuehtoihin (AND).</li><li><strong>ID </strong>kenttään kirjoitettu hakusana palauttaa
+    juuri sen aineiston, jonka ID on kenttään kirjoitettu. </li><li><strong style="font-weight: normal;">Teksti</strong>kenttiin
+    kirjoitetulla hakusanalla löytää
+    kaikki aineistot, joiden nimi sisältää täsmälleen hakukenttään annetun
+    sanan. Jos tekstikenttään on annettu useampi hakusana, haku löytää
+    kaikki aineistot, joiden
+    nimessä on jokin annetuista hakusanoista (OR). Jos halutaan etsiä
+    esimerkiksi aineiston koko nimellä, se voidaan antaa lainausmerkkien
+    sisään, jolloin haetaan&nbsp; koko lainausmerkkien sisällä olevaa
+    merkkijonoa.<br>
+</li><li>Jos aineistosta on olemassa sekä viimeisin <em>HYVÄKSYTTY</em>
+    revisio että
+    uusi <em>LUONNOS</em>, ne molemmat näkyvät erillisinä riveinä
+    hakutuloksissa.</li>
+    <li>Yksittäisten tekstikenttien hakujen sisältöä voi muotoilla Apache Lucene syntaksin mukaan, kts. <a href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Syntaksi">Hakujehtojen syntaksi</a>.</li>
 </ul>
 
 
@@ -696,7 +659,7 @@ tiedot valitsemalla <strong>Hakutulos</strong> listasta haluttu aineisto. <br>
 Tyhjennä antamasi hakukriteerit valitsemalla <strong>Tyhjennä</strong>.<br>
 
 <br>
-Aineistoja voit hakea myös eksperttihaun avulla, kts. luku <a target="_blank" href="Käyttöohjeiden sisällysluettelo.html#Tee%20eksperttihaku">Tee eksperttihaku</a>.
+Aineistoja voit hakea myös eksperttihaun avulla, kts. luku <a target="_blank" href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Tee%20eksperttihaku">Tee eksperttihaku</a>.
 
 <h2>Hae ja avaa aineistoja, joissa on virheitä</h2>
 Hae aineistoja, joissa on virheitä valitsemalla <strong>Aineistot</strong> &gt; <strong>Virheelliset</strong>. Voit avata virheitä sisältävän aineiston valitsemalla sen <strong>Hakutulos</strong> listalta.<br>
@@ -708,17 +671,17 @@ TIIPII tuottaa uudet aineistot järjestelmään. <br>
 <br>
 
 Lisätäksesi uuden aineiston käyttöliittymästä valitse <strong>Aineistot
-&gt; Lisää uusi</strong>.
+    &gt; Lisää uusi</strong>.
 <br>
 
 <ul>
 
-  <li><strong>ID</strong> on järjestelmän automaattisesti
-aineistolle generoima ID, jota käyttäjä ei voi muuttaa,<span style="">&nbsp;
+    <li><strong>ID</strong> on järjestelmän automaattisesti
+        aineistolle generoima ID, jota käyttäjä ei voi muuttaa,<span style="">&nbsp;
     </span>esim. 157<br>
-    <strong></strong></li>
-  <li><strong>Aineistonumero</strong> on järjestelmän automaattisesti
-aineistolle generoima ID, jota käyttäjä ei voi muuttaa,<span style="">&nbsp;
+        <strong></strong></li>
+    <li><strong>Aineistonumero</strong> on järjestelmän automaattisesti
+        aineistolle generoima ID, jota käyttäjä ei voi muuttaa,<span style="">&nbsp;
     </span>esim. &#8221;FSD010015&#8221;.</li>
 </ul>
 
@@ -735,9 +698,9 @@ Tallenna ja siirrä aineisto tilaan <var>HYVÄKSYTTY</var> valitsemalla
 <h2>Tee aineistosta uusi luonnos</h2>
 
 Avaa <var>HYVÄKSYTTY</var> tilassa oleva aineisto. Valitse <strong>Tee
-luonnos</strong>. Voit poistua aineiston muokkaustilasta valitsemalla <strong>Lopeta
-muokkaus</strong>. Muokkaustilaan voi palata takaisin valitsemalla <strong>Aloita
-muokkaus</strong>.
+    luonnos</strong>. Voit poistua aineiston muokkaustilasta valitsemalla <strong>Lopeta
+    muokkaus</strong>. Muokkaustilaan voi palata takaisin valitsemalla <strong>Aloita
+    muokkaus</strong>.
 <span style="font-weight: bold;"></span><br>
 
 <h2>Muokkaa aineistoa</h2>
@@ -763,8 +726,40 @@ olevalle revisiolle <strong>Poista</strong>, jolloin aineisto siirtyy <var>POIST
 </var>tilaan<var>.</var> Näin poistettu aineisto on myöhemmin
 mahdollista tarvittaessa palauttaa.<br>
 
+<h2>Avaa aineiston vanha revisio</h2>
+
+Avaa aineiston vanha revisio:<br>
+<ol>
+    <li>Hae ja avaa aineisto. </li>
+    <li>Valitse <strong>Revisionhistoria</strong>. </li>
+    <li><strong>Revisiot</strong> dialogin sarakeessa <strong>Revisio</strong>
+        on järjestelmän automaattisesti objektille generoimat revisionumerot.
+        Klikkaamalla sarakkeessa <strong>Revisio </strong>olevaa
+        revisionumeroa saat sen tiedot auki.</li>
+</ol>
+
+<h2>Vertaa aineiston revisioita</h2>
+
+Vertaa aineiston revisioita:<br>
+<ol>
+    <li>Hae ja avaa aineisto. </li>
+    <li>Valitse <strong>Revisionhistoria</strong>. </li>
+    <li>Merkitse <strong>Alku</strong> valintapainikkeella se revisio, johon verrataan. </li>
+    <li>Valitse <strong>Loppu</strong>
+        valintapainikkeella se revisio, jota verrataan. Sen revision, johon
+        verrataan täytyy olla vanhempi kuin se versio, jota verrataan. </li>
+    <li>Valitse <strong>Vertaa</strong>.</li>
+</ol>
 <h2>Lataa aineiston tiedot JSON-formaatissa</h2>
-Avaa aineisto ja valitse <strong>Lataa</strong> sivun oikeasta yläkulmasta. Voit nyt avata tai tallentaa aineiston viimeisimmät muutokset JSON-formaatissa.<br>
+
+
+Lataa aineiston tiedot JSON-formaatissa:<br>
+<ol>
+    <li>Hae ja avaa aineisto. </li>
+    <li>Valitse <strong>Lataa</strong> sivun oikeasta yläkulmasta. </li>
+    <li>Voit nyt avata tai tallentaa aineiston viimeisimmät muutokset JSON-formaatissa.</li>
+</ol>
+
 <h2>Aineistojen virheet</h2>
 Aineistojen virheet ovat koko aineistolle yhteisiä eli ne eivät ole
 revisiokohtaisia. Jos aineistolla on virhepisteitä enemmän kuin
@@ -776,13 +771,13 @@ Avaa aineisto ja valitse <strong>Virheet</strong> välilehti.&nbsp;
 <br>
 Lisää aineistoon liittyvät virheet:<br>
 <ol>
-  <li>Lisää virhe valitsemalla <strong>Lisää</strong>.</li>
-  <li>Kuvaile virhe.</li>
-  <li>Valitse <strong>Lisää</strong>. Virhe ei ole vielä tallentunut. <br>
-  </li>
-  <li>Tallenna virhe valiten <strong>Tallenna</strong>.<br>
+    <li>Lisää virhe valitsemalla <strong>Lisää</strong>.</li>
+    <li>Kuvaile virhe.</li>
+    <li>Valitse <strong>Lisää</strong>. Virhe ei ole vielä tallentunut. <br>
+    </li>
+    <li>Tallenna virhe valiten <strong>Tallenna</strong>.<br>
 
-  </li>
+    </li>
 </ol>
 <h2>Aineiston liityvän virheen poistaminen</h2>
 Avaa aineisto ja valitse <strong>Virheet</strong> välilehti. Valitse <strong>Poista</strong> siltä riviltä, jolla poistettava virhe on.<br>
@@ -790,15 +785,15 @@ Avaa aineisto ja valitse <strong>Virheet</strong> välilehti. Valitse <strong>Po
 
 <ul>
 
-  <li>Tiedostoja ei voi siirtää palvelimelle METKA käyttöliittymän
-kautta vaan tiedostot siirretään METKA palvelimelle tilapäiseen
-hakemistoon esim. FTP:llä.</li>
-  <li>Tiedostoja ei voi hyväksyä erikseen vaan aineiston hyväksyminen
-tarkoittaa myös sen tiedostojen siirtämistä <var>HYVÄKSYTTY</var>
-tilaan.</li>
-  <li>Kun aineistosta tehdään uusi luonnos, myös sen tiedostoja on
-mahdollista muokata.</li>
-  <li>Tiedostot revisioituvat samalla tavalla kuin aineistot.</li>
+    <li>Tiedostoja ei voi siirtää palvelimelle METKA käyttöliittymän
+        kautta vaan tiedostot siirretään METKA palvelimelle tilapäiseen
+        hakemistoon esim. FTP:llä.</li>
+    <li>Tiedostoja ei voi hyväksyä erikseen vaan aineiston hyväksyminen
+        tarkoittaa myös sen tiedostojen siirtämistä <var>HYVÄKSYTTY</var>
+        tilaan.</li>
+    <li>Kun aineistosta tehdään uusi luonnos, myös sen tiedostoja on
+        mahdollista muokata.</li>
+    <li>Tiedostot revisioituvat samalla tavalla kuin aineistot.</li>
 </ul>
 
 <h3>Tiedostojen lisääminen aineistolle</h3>
@@ -808,54 +803,54 @@ Muuttujatiedosto voidaan ladata aineistolle kun:
 
 <ul>
 
-  <li>Se on ensin siirretty METKA palvelimelle.</li>
-  <li>Tiedoston nimen täytyy alkaa merkkijonolla "DAF".</li>
-  <li>Tiedoston nimen täytyy olla .por -päätteinen.</li>
-  <li>Tiedoston kenttä <strong>Alkuperäinen</strong> asetetaan arvoon <var>Ei</var>.
-Jos
-tiedostosta on ladattu aineistolle muuttujat ja kentän <strong>Alkuperäinen</strong>
-arvoa muutetaan, järjestelmä poistaa aineistolta muuttujat.&nbsp; </li>
-  <li>Voidaan ladata uusi vain jos aineistolla ei ole jo ennestään
-muuttujatiedostoa.</li>
+    <li>Se on ensin siirretty METKA palvelimelle.</li>
+    <li>Tiedoston nimen täytyy alkaa merkkijonolla "DAF".</li>
+    <li>Tiedoston nimen täytyy olla .por -päätteinen.</li>
+    <li>Tiedoston kenttä <strong>Alkuperäinen</strong> asetetaan arvoon <var>Ei</var>.
+        Jos
+        tiedostosta on ladattu aineistolle muuttujat ja kentän <strong>Alkuperäinen</strong>
+        arvoa muutetaan, järjestelmä poistaa aineistolta muuttujat.&nbsp; </li>
+    <li>Voidaan ladata uusi vain jos aineistolla ei ole jo ennestään
+        muuttujatiedostoa.</li>
 </ul>
 
 Käännöstiedosto voidaan ladata aineistolle kun:<br>
 
 <ul>
 
-  <li>Se on ensin siirretty METKA palvelimelle.</li>
-  <li>Tiedoston nimen täytyy alkaa merkkijonolla "DAF".</li>
-  <li>Tiedoston nimen täytyy olla .por -päätteinen.</li>
-  <li>Tiedoston tekstin viimeinen kirjain on e, E, s tai S.</li>
-  <li>Tiedoston kenttä <strong>Alkuperäinen</strong> asetetaan arvoon <var>Ei</var>.
-    <br>
-  </li>
+    <li>Se on ensin siirretty METKA palvelimelle.</li>
+    <li>Tiedoston nimen täytyy alkaa merkkijonolla "DAF".</li>
+    <li>Tiedoston nimen täytyy olla .por -päätteinen.</li>
+    <li>Tiedoston tekstin viimeinen kirjain on e, E, s tai S.</li>
+    <li>Tiedoston kenttä <strong>Alkuperäinen</strong> asetetaan arvoon <var>Ei</var>.
+        <br>
+    </li>
 </ul>
 
 Datatiedosto voidaan ladata aineistolle kun:<br>
 
 <ul>
 
-  <li>Se on ensin siirretty METKA palvelimelle.</li>
-  <li>Tiedoston kenttä <strong>Alkuperäinen</strong> asetetaan arvoon <var>Ei</var>.</li>
+    <li>Se on ensin siirretty METKA palvelimelle.</li>
+    <li>Tiedoston kenttä <strong>Alkuperäinen</strong> asetetaan arvoon <var>Ei</var>.</li>
 </ul>
 
 Tiedostojen lisääminen:<br>
 
 <ol>
 
-  <li>Siirrä tiedostot esimerkiksi FTP:llä METKA palvelimelle
-tilapäiseen hakemistoon.</li>
-  <li>Kopioi tiedostojen tallennusosoite.</li>
-  <li>Hae ja avaa aineisto.</li>
-  <li><strong>Tiedostojen hallinta</strong> &gt; <strong>Lisää<br>
+    <li>Siirrä tiedostot esimerkiksi FTP:llä METKA palvelimelle
+        tilapäiseen hakemistoon.</li>
+    <li>Kopioi tiedostojen tallennusosoite.</li>
+    <li>Hae ja avaa aineisto.</li>
+    <li><strong>Tiedostojen hallinta</strong> &gt; <strong>Lisää<br>
     </strong></li>
-  <li>Anna tiedoston tiedot ja paina <strong>Tallenna</strong>.<br>
-  </li>
+    <li>Anna tiedoston tiedot ja paina <strong>Tallenna</strong>.<br>
+    </li>
 </ol>
 
 <h2>Aineistojen import ja
-export
+    export
 </h2>
 <h2>Export</h2>
 Avaa aineiston <strong>Import/Export</strong> välilehti &gt; <strong>Export</strong>. Voit nyt avata tai tallentaa aineiston viimeisimmät muutokset DDI 2.5-formaatissa.
@@ -873,76 +868,76 @@ ellet ole aineiston käsittelijä. <br>
 <h2>Hae ja avaa aineiston muuttujat</h2>
 Avaa aineiston muuttujatiedot: <br>
 <ol>
-  <li>Valitse <strong>Muuttujat</strong>. <strong>Aineistot</strong> listalla näytetään kaikki aineistot, joilla on muuttujia.</li>
-  <li>Valitse rivi, jolla on aineisto, jonka muuttujia halutaan tarkastella.</li>
+    <li>Valitse <strong>Muuttujat</strong>. <strong>Aineistot</strong> listalla näytetään kaikki aineistot, joilla on muuttujia.</li>
+    <li>Valitse rivi, jolla on aineisto, jonka muuttujia halutaan tarkastella.</li>
 </ol>
 <h2>Muuta muuttujan tietoja</h2>
 Muuta muuttujan tietoja:<br>
 <ol>
-  <li>Avaa aineiston muuttujatiedot.</li>
-  <li>Valitse <strong>Muuttujat</strong> listasta muokattava muuttuja.&nbsp;</li>
-  <li>Tee muutokset.</li>
-  <li><strong>Tallenna</strong>.<br>
-  </li>
+    <li>Avaa aineiston muuttujatiedot.</li>
+    <li>Valitse <strong>Muuttujat</strong> listasta muokattava muuttuja.&nbsp;</li>
+    <li>Tee muutokset.</li>
+    <li><strong>Tallenna</strong>.<br>
+    </li>
 </ol>
- <strong></strong>
+<strong></strong>
 <h2>Ryhmitelty näkymä välilehti</h2>
 <ul>
-  <li>Listalla näkyy kaikki ryhmät. Voit katsella kuhunkin ryhmään kuuluvia muuttujia valitsemalla kansioikonin ryhmän nimen vierestä.<br>
-  </li>
-  <li>Jos muuttujia ei ole määritelty ryhmiin, tämä välilehti on tyhjä.<br>
-  </li>
+    <li>Listalla näkyy kaikki ryhmät. Voit katsella kuhunkin ryhmään kuuluvia muuttujia valitsemalla kansioikonin ryhmän nimen vierestä.<br>
+    </li>
+    <li>Jos muuttujia ei ole määritelty ryhmiin, tämä välilehti on tyhjä.<br>
+    </li>
 </ul>
 <h2>Muuta ryhmän tietoja</h2>
 Muuta ryhmän tietoja:<br>
 
 <ol>
-<li>Avaa aineiston muuttujatiedot.</li>
-  <li>Avaa <strong>Ryhmitelty näkymä</strong> välilehti.</li>
-  <li>Valitse ryhmän nimi listasta.</li>
-  <li>Tee muutokset.</li>
-  <li><strong>OK</strong>.</li>
-  <li><strong>Tallenna</strong>.<br>
-  </li>
+    <li>Avaa aineiston muuttujatiedot.</li>
+    <li>Avaa <strong>Ryhmitelty näkymä</strong> välilehti.</li>
+    <li>Valitse ryhmän nimi listasta.</li>
+    <li>Tee muutokset.</li>
+    <li><strong>OK</strong>.</li>
+    <li><strong>Tallenna</strong>.<br>
+    </li>
 </ol>
 <h2>Muuttujien ryhmittely välilehti</h2>
 
 <ul>
-<li>Vasemmalla puolella on listattuna kaikki muuttujat, jotka eivät kuulu mihinkään ryhmään.</li><li>Oikealla puolella on listattuna kaikki ryhmät ja niiden alla kaikki ryhmään kuuluvat muuttujat.<br>
-  </li>
+    <li>Vasemmalla puolella on listattuna kaikki muuttujat, jotka eivät kuulu mihinkään ryhmään.</li><li>Oikealla puolella on listattuna kaikki ryhmät ja niiden alla kaikki ryhmään kuuluvat muuttujat.<br>
+</li>
 </ul>
 
 <h2>Lisää ryhmä</h2>
 Lisää ryhmä:<br>
 <ol>
-  <li>Avaa muuttujatiedot.<br>
-  </li>
-  <li>Avaa <strong>Muuttujien ryhmittely</strong> välilehti.</li>
-  <li><strong>Lisää ryhmä</strong></li>
-  <li><strong>Tallenna</strong><br>
-  </li>
+    <li>Avaa muuttujatiedot.<br>
+    </li>
+    <li>Avaa <strong>Muuttujien ryhmittely</strong> välilehti.</li>
+    <li><strong>Lisää ryhmä</strong></li>
+    <li><strong>Tallenna</strong><br>
+    </li>
 </ol>
 <h2>Lisää muuttuja ryhmään</h2>
 Lisää muuttuja ryhmään:<br>
 
 <ol>
-<li>Avaa muuttujatiedot.<br>
-  </li><li>Avaa <strong>Muuttujien ryhmittely</strong> välilehti.</li><li>Valitse lisättävä muuttuja.</li>
-  <li>Valitse ryhmä, johon muuttuja siirretään.</li>
-  <li><strong>&gt;</strong>&nbsp;  <strong><br>
+    <li>Avaa muuttujatiedot.<br>
+    </li><li>Avaa <strong>Muuttujien ryhmittely</strong> välilehti.</li><li>Valitse lisättävä muuttuja.</li>
+    <li>Valitse ryhmä, johon muuttuja siirretään.</li>
+    <li><strong>&gt;</strong>&nbsp;  <strong><br>
     </strong></li>
-<li><strong>Tallenna</strong><br>
-  </li>
+    <li><strong>Tallenna</strong><br>
+    </li>
 </ol>
 
 <h2>Poista muuttuja ryhmästä</h2>
 Poista muuttuja ryhmästä:<br>
 <ol>
-  <li>Avaa muuttujatiedot.</li>
-  <li>Avaa <strong>Muuttujien ryhmittely</strong> välilehti.</li>
-  <li>Valitse ryhmästä poistettava muuttuja.</li>
-  <li><strong>&lt;</strong></li>
-  <li><strong>Tallenna</strong></li>
+    <li>Avaa muuttujatiedot.</li>
+    <li>Avaa <strong>Muuttujien ryhmittely</strong> välilehti.</li>
+    <li>Valitse ryhmästä poistettava muuttuja.</li>
+    <li><strong>&lt;</strong></li>
+    <li><strong>Tallenna</strong></li>
 </ol>
 
 <h1>Käsittele julkaisuja</h1>
@@ -953,24 +948,24 @@ Hakemiseen liittyviä sääntöjä:<br>
 
 <ul>
 
-  <li>Jos useampaan kuin yhteen kenttään on kirjoitettu hakukriteeri,
-julkaisu liitetään hakutuloksiin, jos se sopii kaikkiin annettuihin
-hakuehtoihin (AND).</li>
-  <li><strong>Julkaisun id-nro </strong>kenttään kirjoitettu hakusana palauttaa
-juuri sen julkaisun, jonka Julkaisun id-nro on kenttään kirjoitettu. </li>
-  <li><strong style="font-weight: normal;">Teksti</strong>kenttiin kirjoitetulla hakusanalla löytää
-kaikki julkaisut, joiden nimi sisältää täsmälleen hakukenttään annetun
-sanan. Jos tekstikenttään on annettu useampi hakusana, haku löytää kaikki julkaisut, joiden
-nimessä on jokin annetuista hakusanoista (OR). Jos halutaan etsiä esimerkiksi julkaisun koko nimellä, se voidaan antaa
-lainausmerkkien sisään, jolloin haetaan&nbsp; koko lainausmerkkien sisällä
-olevaa merkkijonoa. </li>
-  <li>Jos julkaisusta on olemassa sekä viimeisin <em>HYVÄKSYTTY</em>
-revisio että
-uusi <em>LUONNOS</em>, ne molemmat näkyvät erillisinä riveinä
-hakutuloksissa.</li>
-  <li>Yksittäisten tekstikenttien hakujen sisältöä voi muotoilla Apache Lucene syntaksin mukaan, kts. <a href="Käyttöohjeiden sisällysluettelo.html#Syntaksi">Hakujehtojen syntaksi</a>.</li>
+    <li>Jos useampaan kuin yhteen kenttään on kirjoitettu hakukriteeri,
+        julkaisu liitetään hakutuloksiin, jos se sopii kaikkiin annettuihin
+        hakuehtoihin (AND).</li>
+    <li><strong>Julkaisun id-nro </strong>kenttään kirjoitettu hakusana palauttaa
+        juuri sen julkaisun, jonka Julkaisun id-nro on kenttään kirjoitettu. </li>
+    <li><strong style="font-weight: normal;">Teksti</strong>kenttiin kirjoitetulla hakusanalla löytää
+        kaikki julkaisut, joiden nimi sisältää täsmälleen hakukenttään annetun
+        sanan. Jos tekstikenttään on annettu useampi hakusana, haku löytää kaikki julkaisut, joiden
+        nimessä on jokin annetuista hakusanoista (OR). Jos halutaan etsiä esimerkiksi julkaisun koko nimellä, se voidaan antaa
+        lainausmerkkien sisään, jolloin haetaan&nbsp; koko lainausmerkkien sisällä
+        olevaa merkkijonoa. </li>
+    <li>Jos julkaisusta on olemassa sekä viimeisin <em>HYVÄKSYTTY</em>
+        revisio että
+        uusi <em>LUONNOS</em>, ne molemmat näkyvät erillisinä riveinä
+        hakutuloksissa.</li>
+    <li>Yksittäisten tekstikenttien hakujen sisältöä voi muotoilla Apache Lucene syntaksin mukaan, kts. <a href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Syntaksi">Hakujehtojen syntaksi</a>.</li>
 
-  
+
 </ul>
 
 Hae julkaisuja valitsemalla <strong>Julkaisut</strong> &gt; <strong>Tee haku</strong>.
@@ -981,22 +976,22 @@ tiedot valitsemalla <strong>Hakutulos</strong> listasta haluttu julkaisu. <br>
 <br>
 Tyhjennä antamasi hakukriteerit&nbsp; valitsemalla <strong>Tyhjennä</strong>.<br>
 <br>
-Julkaisuja voit hakea myös eksperttihaun avulla, kts. luku <a target="_blank" href="Käyttöohjeiden sisällysluettelo.html#Tee%20eksperttihaku">Tee eksperttihaku</a>.
+Julkaisuja voit hakea myös eksperttihaun avulla, kts. luku <a target="_blank" href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Tee%20eksperttihaku">Tee eksperttihaku</a>.
 <br>
 
 <h2>Lisää julkaisu</h2>
 
 Lisätäksesi uuden julkaisun valitse <span style="font-weight: bold;">Julkaisut</span><strong>&nbsp; &gt;&nbsp; Lisää
-uusi</strong>.<br>
+    uusi</strong>.<br>
 
 <ul>
 
-  <li><strong>ID</strong>: Dialogin otsikossa näytetään järjestelmän
-automaattisesti julkaisulle generoima ID,
-jota käyttäjä ei voi muuttaa. ID:tä voidaan käyttää hakukriteerinä.</li>
-  <li><strong>Julkaisun id-nro</strong>: Järjestelmän
-automaattisesti julkaisulle generoima ID,
-jota käyttäjä ei voi muuttaa. Julkaisun id-nro kenttää voidaan käyttää hakukriteerinä.</li>
+    <li><strong>ID</strong>: Dialogin otsikossa näytetään järjestelmän
+        automaattisesti julkaisulle generoima ID,
+        jota käyttäjä ei voi muuttaa. ID:tä voidaan käyttää hakukriteerinä.</li>
+    <li><strong>Julkaisun id-nro</strong>: Järjestelmän
+        automaattisesti julkaisulle generoima ID,
+        jota käyttäjä ei voi muuttaa. Julkaisun id-nro kenttää voidaan käyttää hakukriteerinä.</li>
 
 </ul>
 
@@ -1005,12 +1000,12 @@ Tallenna julkaisu tilaan <em>LUONNOS</em> valitsemalla <strong>Tallenna</strong>
 <h2>Tee julkaisusta uusi luonnos</h2>
 
 Hae ja avaa <var>HYVÄKSYTTY</var> tilassa oleva julkaisu. Valitse <strong>Tee
-luonnos</strong>,
+    luonnos</strong>,
 jolloin julkaisusta syntyy uusi revisio, jonka revisionumero on yhtä
 suurempi kuin edellisen revision. Voit poistua julkaisun muokkaustilasta
 valitsemalla <strong>Lopeta
-muokkaus</strong>. Muokkaustilaan voi palata takaisin valitsemalla <strong>Aloita
-muokkaus</strong>.
+    muokkaus</strong>. Muokkaustilaan voi palata takaisin valitsemalla <strong>Aloita
+    muokkaus</strong>.
 <span style="font-weight: bold;"></span>
 <h2>Hyväksy julkaisu</h2>
 
@@ -1038,33 +1033,63 @@ Tee looginen poisto koko julkaisulle valitsemalla <span style="font-style: itali
 olevalle revisiolle <strong>Poista</strong>, jolloin julkaisu siirtyy <var>POISTETTU
 </var>tilaan<var>.<br>
 </var>
-<h2>Lataa julkaisun tiedot JSON-formaatissa</h2>
+<h2>Avaa julkaisun vanha revisio</h2>
+Avaa julkaisun vanha revisio:<br>
+<ol>
+    <li>Hae ja avaa julkaisu. </li>
+    <li>Valitse <strong>Revisionhistoria</strong>. </li>
+    <li><strong>Revisiot</strong> dialogin sarakeessa <strong>Revisio</strong>
+        on järjestelmän automaattisesti objektille generoimat revisionumerot.
+        Klikkaamalla sarakkeessa <strong>Revisio </strong>olevaa
+        revisionumeroa saat sen tiedot auki.</li>
+</ol>
 
-Avaa julkaisu ja valitse <strong>Lataa</strong> sivun oikeasta yläkulmasta. Voit nyt avata tai tallentaa julkaisun viimeisimmät muutokset JSON-formaatissa.<span style="font-weight: bold;"></span>
+<h2>Vertaa julkaisun revisioita</h2>
+Vertaa julkaisun revisioita:<br>
+<ol>
+    <li>Hae ja avaa julkaisu. </li>
+    <li>Valitse <strong>Revisionhistoria</strong>. </li>
+    <li>Merkitse <strong>Alku</strong> valintapainikkeella se revisio, johon verrataan. </li>
+    <li>Valitse <strong>Loppu</strong>
+        valintapainikkeella se revisio, jota verrataan. Sen revision, johon
+        verrataan täytyy olla vanhempi kuin se versio, jota verrataan. </li>
+    <li>Valitse <strong>Vertaa</strong>.</li>
+</ol>
+
+<h2>Lataa julkaisun tiedot JSON-formaatissa</h2>Lataa julkaisun tiedot JSON-formaatissa:<br>
+<ol>
+    <li>Hae ja avaa julkaisu. </li>
+    <li>Valitse <strong>Lataa</strong> sivun oikeasta yläkulmasta. </li>
+    <li>Voit nyt avata tai tallentaa julkaisun viimeisimmät muutokset JSON-formaatissa.</li>
+</ol>
+
 <h1>Käsittele sarjoja</h1>
 
 <h2>Hae ja avaa sarjoja</h2>
 
 Hakemiseen liittyviä sääntöjä:
 <br>
-
 <ul>
 
-  <li>Jos useampaan kuin yhteen kenttään on kirjoitettu hakukriteeri, sarja liitetään hakutuloksiin 
-	jos se sopii kaikkiin annettuihin hakuehtoihin (AND).</li>
-  <li><strong>ID </strong>kenttään kirjoitettu hakusana palauttaa juuri sen sarjan, jonka ID on kenttään kirjoitettu. </li>
-  <li><strong>Nimi</strong> kenttään kirjoitetulla hakusanalla löytää kaikki sarjat, joiden nimi 
-	sisältää täsmälleen hakukenttään annetun sanan. Jos <strong>Nimi</strong> 
-	kenttään on annettu useampi hakusana, haku löytää kaikki sarjat, joiden
-	nimessä on jokin annetuista hakusanoista (OR). Jos halutaan etsiä esimerkiksi aineiston koko nimellä, se voidaan antaa
-lainausmerkkien sisään, jolloin haetaan&nbsp; koko lainausmerkkien sisällä
-olevaa merkkijonoa. </li>
-  <li>Jos sarjasta on olemassa sekä viimeisin <em>HYVÄKSYTTY</em> revisio että uusi <em>LUONNOS</em>, 
-	ne molemmat näkyvät erillisinä riveinä hakutuloksissa, jos sekä on haettu sekä hyväksyttyjä 
-	sarjoja että sarjojen luonnoksia.</li>
-  <li>Käyttäjä voi valita haluaako hakutuloksiin <strong>Hyväksyttyjä</strong>, <strong>Luonnoksia</strong> 
-	tai <strong>Poistettuja</strong> sarjoja.</li>
-  <li>Yksittäisten tekstikenttien hakujen sisältöä voi muotoilla Apache Lucene syntaksin mukaan, kts. <a href="Käyttöohjeiden sisällysluettelo.html#Syntaksi">Hakujehtojen syntaksi</a>.</li>
+
+    <li><strong>ID </strong>kenttään kirjoitettu hakusana palauttaa juuri sen sarjan, jonka ID on kenttään kirjoitettu.</li>
+    <li><strong>Lyhenne</strong> <strong></strong>alasvetovalikosta valittu hakusana palauttaa juuri sen sarjan, jonka lyhenne on valittu.</li>
+
+    <li><strong>Nimi</strong> kenttään kirjoitetulla hakusanalla löytää kaikki sarjat, joiden nimi
+        sisältää täsmälleen hakukenttään annetun sanan. Jos <strong>Nimi</strong>
+        kenttään on annettu useampi hakusana, haku löytää kaikki sarjat, joiden
+        nimessä on jokin annetuista hakusanoista (OR). Jos halutaan etsiä esimerkiksi sarjan koko nimellä, se voidaan antaa
+        lainausmerkkien sisään, jolloin haetaan&nbsp; koko lainausmerkkien sisällä
+        olevaa merkkijonoa. </li>
+    <li>Jos useampaan kuin yhteen kenttään on kirjoitettu hakukriteeri, sarja liitetään hakutuloksiin
+        jos se sopii kaikkiin annettuihin hakuehtoihin (AND).</li>
+    <li>Jos sarjasta on olemassa sekä viimeisin <em>HYVÄKSYTTY</em> revisio että uusi <em>LUONNOS</em>,
+        ne molemmat näkyvät erillisinä riveinä hakutuloksissa, jos sekä on haettu sekä hyväksyttyjä
+        sarjoja että sarjojen luonnoksia.</li>
+
+    <li>Käyttäjä voi valita haluaako hakutuloksiin <strong>Hyväksyttyjä</strong>, <strong>Luonnoksia</strong>
+        tai <strong>Poistettuja</strong> sarjoja.</li>
+    <li>Yksittäisten tekstikenttien hakujen sisältöä voi muotoilla Apache Lucene syntaksin mukaan, kts. <a href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Syntaksi">Hakujehtojen syntaksi</a>.</li>
 </ul>
 
 
@@ -1078,19 +1103,19 @@ Jos hakutuloksia on useita, ne näytetään <strong>Sarjahaku</strong>
 sivulla <strong>Hakutulos</strong> listalla. Avaa yksittäisen sarjan
 tiedot valitsemalla <strong>Hakutulos</strong> listasta haluttu sarja.<br>
 <br>
-Sarjoja voit hakea myös eksperttihaun avulla, kts. luku <a target="_blank" href="Käyttöohjeiden sisällysluettelo.html#Tee%20eksperttihaku">Tee eksperttihaku</a>.
+Sarjoja voit hakea myös eksperttihaun avulla, kts. luku <a target="_blank" href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Tee%20eksperttihaku">Tee eksperttihaku</a>.
 <br>
 
 <h2>Lisää sarja</h2>
 
 Lisätäksesi uuden sarjan valitse <strong>Sarjat&nbsp; &gt;&nbsp; Lisää
-uusi</strong>.
+    uusi</strong>.
 <br>
 
 <ul>
 
-  <li><strong>ID</strong>: Dialogin otsikossa näytetään järjestelmän automaattisesti sarjalle 
-	generoima ID, jota käyttäjä ei voi muuttaa. ID:tä voidaan käyttää hakukriteerinä.</li>
+    <li><strong>ID</strong>: Dialogin otsikossa näytetään järjestelmän automaattisesti sarjalle
+        generoima ID, jota käyttäjä ei voi muuttaa. ID:tä voidaan käyttää hakukriteerinä.</li>
 </ul>
 
 Tallenna sarja tilaan <em>LUONNOS</em> valitsemalla <strong>Tallenna</strong>.
@@ -1099,16 +1124,17 @@ Tallenna sarja tilaan <em>LUONNOS</em> valitsemalla <strong>Tallenna</strong>.
 <h2>Tee sarjasta uusi luonnos</h2>
 
 Hae ja avaa <var>HYVÄKSYTTY</var> tilassa oleva sarja. Valitse <strong>Tee
-luonnos</strong>, jolloin sarjasta syntyy uusi revisio, jonka
+    luonnos</strong>, jolloin sarjasta syntyy uusi revisio, jonka
 revisionumero on yhtä suurempi kuin edellisen revision. Voit poistua
 sarjan muokkaustilasta valitsemalla <strong>Lopeta
-muokkaus</strong>. Muokkaustilaan voi palata takaisin valitsemalla <strong>Aloita
-muokkaus</strong>.
+    muokkaus</strong>. Muokkaustilaan voi palata takaisin valitsemalla <strong>Aloita
+    muokkaus</strong>.
 <h2>Hyväksy sarja</h2>
 
 Avaa hyväksyttävä <var>LUONNOS</var> tilassa oleva sarja.
 Tallenna ja siirrä sarja tilaan <var>HYVÄKSYTTY</var> valitsemalla
-<strong>Hyväksy</strong>.
+<strong>Hyväksy</strong>. Sarjan revisionnumero ei muutu hyväksymisen yhteydessä. <br>
+
 <h2>Muokkaa sarjaa</h2>
 
 Avaa yksittäisen sarjan tiedot. Sarjaa voi muokata
@@ -1128,10 +1154,38 @@ tilassa olevan revision, kaikki sarjan tiedot poistuvat järjestelmästä.
 
 Tee looginen poisto koko sarjalle valitsemalla <span style="font-style: italic;">HYVÄKSYTTY</span><var></var> tilassa
 olevalle revisiolle <strong>Poista</strong>, jolloin sarja siirtyy <var>POISTETTU
-</var>tilaan<var>.</var><br>
-<h2>Lataa sarjan tiedot JSON-formaatissa</h2>
+</var>tilaan<var>. </var>Sarjaa ei voi poistaa, jos siihen viitataan esim. jossakin aineistossa.<br>
+<h2>Avaa sarjan vanha revisio</h2>
+Avaa sarjan vanha revisio:<br>
+<ol>
+    <li>Hae ja avaa sarja. <br>
+    </li>
+    <li>Valitse <strong>Revisionhistoria</strong>. <br>
+    </li>
+    <li><strong>Revisiot</strong> dialogin sarakeessa <strong>Revisio</strong>
+        on järjestelmän automaattisesti objektille generoimat revisionumerot.
+        Klikkaamalla sarakkeessa <strong>Revisio </strong>olevaa
+        revisionumeroa saat sen tiedot auki.</li>
+</ol>
+<h2>Vertaa sarjan revisioita</h2>
+Vertaa sarjan revisioita:<br>
+<ol>
+    <li>Hae ja avaa sarja. Valitse</li>
+    <li>&nbsp;<strong>Revisionhistoria</strong>. </li>
+    <li>Merkitse <strong>Alku</strong> valintapainikkeella se revisio, johon verrataan. </li>
+    <li>Valitse <strong>Loppu</strong> valintapainikkeella se revisio,
+        jota verrataan. Sen revision, johon verrataan täytyy olla vanhempi kuin
+        se versio, jota verrataan. </li>
+    <li>Valitse <strong>Vertaa</strong>. </li>
+</ol>
 
-Avaa sarja ja valitse <strong>Lataa</strong> sivun oikeasta yläkulmasta. Voit nyt avata tai tallentaa sarjan viimeisimmät muutokset JSON-formaatissa.<br>
+<h2>Lataa sarjan tiedot JSON-formaatissa</h2>Lataa sarjan tiedot JSON-formaatissa:<br>
+<ol>
+    <li>Hae ja avaa sarja. </li>
+    <li>Valitse <strong>Lataa</strong> sivun oikeasta yläkulmasta. </li>
+    <li>Voit nyt avata tai tallentaa sarjan viimeisimmät muutokset JSON-formaatissa.</li>
+</ol>
+
 
 <h1>Käsittele mappeja</h1>
 
@@ -1147,9 +1201,9 @@ Avaa mapin sisältö:
 
 <ol>
 
-  <li>Valitse <strong>Mapit</strong>.</li>
-  <li>Avaa mapin sisältö valitsemalla <strong>Mapitukset</strong> listasta 
-	halutun mapin mappinumero (<strong>Mappinro</strong>).</li>
+    <li>Valitse <strong>Mapit</strong>.</li>
+    <li>Avaa mapin sisältö valitsemalla <strong>Mapitukset</strong> listasta
+        halutun mapin mappinumero (<strong>Mappinro</strong>).</li>
 </ol>
 
 <h2>Lisää ainesto mappiin</h2>
@@ -1157,13 +1211,13 @@ Avaa mapin sisältö:
 Lisää aineisto mappiin:
 <ol>
 
-  <li>Valitse <strong>Mapit</strong> &gt; <strong>Lisää aineisto mappiin</strong>.</li>
-  <li><strong>Mappinumero</strong> on vapaasti käyttäjän määriteltävissä.</li>
-  <li>Mapitettava aineisto valitaan <strong>Aineistonumero</strong>
-	kentän perusteella, kenttään syötetään aineiston aineistonumero, ei
-	esim. aineiston ID:tä. Vain olemassa olevia aineistoja voi mapittaa.
-	Sama aineisto voidaan lisätä moneen mappiin.</li>
-  <li><strong>OK</strong></li>
+    <li>Valitse <strong>Mapit</strong> &gt; <strong>Lisää aineisto mappiin</strong>.</li>
+    <li><strong>Mappinumero</strong> on vapaasti käyttäjän määriteltävissä.</li>
+    <li>Mapitettava aineisto valitaan <strong>Aineistonumero</strong>
+        kentän perusteella, kenttään syötetään aineiston aineistonumero, ei
+        esim. aineiston ID:tä. Vain olemassa olevia aineistoja voi mapittaa.
+        Sama aineisto voidaan lisätä moneen mappiin.</li>
+    <li><strong>OK</strong></li>
 </ol>
 
 <h2>Poista aineisto mapista</h2>
@@ -1173,8 +1227,8 @@ Poista aineisto mapista:
 
 <ol>
 
-  <li>Avaa mapin sisältö.</li>
-  <li>Valitse poistettavan aineiston riviltä <strong>Poista</strong>.</li>
+    <li>Avaa mapin sisältö.</li>
+    <li>Valitse poistettavan aineiston riviltä <strong>Poista</strong>.</li>
 </ol>
 
 <h1>Käyttäjäryhmät</h1>
@@ -1187,9 +1241,9 @@ seuraavat oikeudet:
 
 <ul>
 
-  <li>saa lukea kaikkia tietokannan tietoja </li>
-  <li>saa tehdä hakuja ja eksperttihakuja</li>
-  <li>saa tallentaa eksperttihaun ja poistaa itse tekemänsä haun&nbsp;</li>
+    <li>saa lukea kaikkia tietokannan tietoja </li>
+    <li>saa tehdä hakuja ja eksperttihakuja</li>
+    <li>saa tallentaa eksperttihaun ja poistaa itse tekemänsä haun&nbsp;</li>
 </ul>
 
 <h2>Aineistonkäsittelijä ja kääntäjä (metka:basic-user)</h2>
@@ -1200,20 +1254,20 @@ käyttäjällä ja lisäksi: <br>
 
 <ul>
 
-  <li>saa tehdä ddi-export:n ja ddi-import:n</li>
-  <li>saa lisätä uuden aineiston</li>
-  <li>saa varata ja vapauttaa aineiston sekä "kaapata" toisen varaaman
-aineiston</li>
-  <li>saa muokata ja tallentaa kaikkia käyttöönsä varaamansa aineiston
-tietoja (perustiedot, arkistointisopimus, kuvailu, muuttujat,
-tiedostojen hallinta, koodikirja, virheet)</li>
-  <li>saa palauttaa aineiston, sarjan ja julkaisun vanhan revision ja
-tallentaa sen uudeksi revisioksi (ei koske poistettuja objekteja)&nbsp;</li>
-  <li>saa lisätä sanoja sanalistoihin</li>
-  <li>saa poistaa eksperttihakuja</li>
-  <li>saa lisätä julkaisun, sarjan ja mapin</li>
-  <li>saa muokata ja tallentaa olemassaolevan julkaisun, sarjan ja
-mapin tietoja</li>
+    <li>saa tehdä ddi-export:n ja ddi-import:n</li>
+    <li>saa lisätä uuden aineiston</li>
+    <li>saa varata ja vapauttaa aineiston sekä "kaapata" toisen varaaman
+        aineiston</li>
+    <li>saa muokata ja tallentaa kaikkia käyttöönsä varaamansa aineiston
+        tietoja (perustiedot, arkistointisopimus, kuvailu, muuttujat,
+        tiedostojen hallinta, koodikirja, virheet)</li>
+    <li>saa palauttaa aineiston, sarjan ja julkaisun vanhan revision ja
+        tallentaa sen uudeksi revisioksi (ei koske poistettuja objekteja)&nbsp;</li>
+    <li>saa lisätä sanoja sanalistoihin</li>
+    <li>saa poistaa eksperttihakuja</li>
+    <li>saa lisätä julkaisun, sarjan ja mapin</li>
+    <li>saa muokata ja tallentaa olemassa olevan aineiston, julkaisun, sarjan ja
+        mapin tietoja</li>
 </ul>
 
 <h2>Kääntäjä (metka:translator)</h2>
@@ -1229,19 +1283,16 @@ käyttäjäryhmän käyttäjällä ja lisäksi:
 
 <ul>
 
-  <li>saa lisätä ja poistaa sanastoja, sanalistoja ja vakiotekstejä</li>
-  <li>saa muuttaa sanastoja, sanalistoja ja vakiotekstejä eli lisätä
-termejä, poistaa ja muokata termejä sekä tekstejä</li>
-  <li>saa poistaa julkaisun, sarjan tai mapin</li>
-  <li>saa palauttaa poistettu julkaisu, sarja ja mappi</li>
-  <li>saa tehdä aineistolle loogisen poiston sekä oikeudet palauttaa
-loogisesti poistettu aineisto</li>
-  <li>saa poistaa datan ja kuvailun versiotietoja</li>
-  <li>saa tehdä massapäivityksiä</li>
-  <li>saa lisätä ja poistaa käyttäjiä</li>
-  <li>saa muuttaa järjestelmän asetuksia (data konfiguraatio, GUI
-konfiguraatio, MISC Json)<br>
-  </li>
+    <li>saa lisätä ja poistaa sanastoja, sanalistoja ja vakiotekstejä</li>
+    <li>saa muuttaa sanastoja, sanalistoja ja vakiotekstejä eli lisätä
+        termejä, poistaa ja muokata termejä sekä tekstejä</li>
+    <li>saa poistaa aineiston, julkaisun, sarjan tai mapin</li>
+    <li>saa palauttaa poistetun aineiston, julkaisun, sarjan ja mapin</li><li>saa poistaa datan ja kuvailun versiotietoja</li>
+    <li>saa tehdä massapäivityksiä</li>
+    <li>saa lisätä ja poistaa käyttäjiä</li>
+    <li>saa muuttaa järjestelmän asetuksia (data konfiguraatio, GUI
+        konfiguraatio, MISC Json)<br>
+    </li>
 </ul>
 
 <h2>metka:administrator</h2>
@@ -1274,8 +1325,8 @@ konfiguraation tiedostoissa.<br>
 </h2>
 
 Mikäli haut eivät näytä onnistuvan, valitse <strong>Asetukset &gt;
-Indeksoi
-kaikki</strong>.<br>
+    Indeksoi
+    kaikki</strong>.<br>
 
 <br>
 </div>
