@@ -84,7 +84,8 @@ define(function (require) {
                         label: MetkaJS.L10N.get('general.revision'),
                         value: metka.revision
                     });
-                    supplant.state = metka.state === 'DRAFT' ? ' - ' + MetkaJS.L10N.get('general.DRAFT') : '';
+
+                    supplant.state = data.transferData.state.uiState ? ' - ' + MetkaJS.L10N.get('state.' + data.transferData.state.uiState) : '';
 
                     supplant.localized = MetkaJS.L10N.get(header.localized.supplant(supplant));
                     $header.html(header.pattern.supplant(supplant));
