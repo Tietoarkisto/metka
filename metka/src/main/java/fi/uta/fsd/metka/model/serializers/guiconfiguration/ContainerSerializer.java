@@ -76,6 +76,11 @@ public class ContainerSerializer extends ObjectSerializer<Container> {
 
             if(value.getType() == ContainerType.CELL) {
                 jgen.writeObjectField("field", value.getField());
+                jgen.writeObjectFieldStart("extraDialogConfiguration");
+                for(String key : value.getExtraDialogConfiguration().keySet()) {
+                    jgen.writeObjectField(key, value.getExtraDialogConfiguration().get(key));
+                }
+                jgen.writeEndObject();
             }
         }
 

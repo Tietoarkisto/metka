@@ -6,7 +6,9 @@ import fi.uta.fsd.metka.enums.SectionState;
 import fi.uta.fsd.metka.model.general.TranslationObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @JsonIgnoreProperties("_comment")
 public class Container {
@@ -20,6 +22,7 @@ public class Container {
     private Integer columns = 1;
     private Boolean required = false;
     private Integer colspan = 1;
+    private final Map<String, Container> extraDialogConfiguration = new HashMap<>();
 
     private FieldDescription field = null;
 
@@ -121,5 +124,9 @@ public class Container {
 
     public List<Container> getCells() {
         return cells;
+    }
+
+    public Map<String, Container> getExtraDialogConfiguration() {
+        return extraDialogConfiguration;
     }
 }

@@ -47,7 +47,7 @@ define(function (require) {
                         }
                     ]
                 };
-
+                log(containerOptions);
                 // if not translatable container and has translatable subfields, show language selector
                 if (!fieldOptions.translatable && require('./containerHasTranslatableSubfields')(options)) {
                     containerOptions.translatableCurrentLang = $('input[name="translation-lang"]:checked').val() || options.defaultLang;

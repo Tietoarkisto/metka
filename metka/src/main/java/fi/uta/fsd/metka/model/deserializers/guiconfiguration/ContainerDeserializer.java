@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import fi.uta.fsd.metka.enums.ContainerType;
 import fi.uta.fsd.metka.enums.SectionState;
 import fi.uta.fsd.metka.model.deserializers.ObjectDeserializer;
@@ -12,6 +14,7 @@ import fi.uta.fsd.metka.model.guiconfiguration.Container;
 import fi.uta.fsd.metka.model.guiconfiguration.FieldDescription;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 public class ContainerDeserializer extends ObjectDeserializer<Container> {
 
@@ -131,6 +134,24 @@ public class ContainerDeserializer extends ObjectDeserializer<Container> {
                 con.setField(oc.treeToValue(field, FieldDescription.class));
             }
         }
+        // Set extra dialog config
+        if(con.getType() == ContainerType.CELL) {
+            JsonNode dialog = node.get("extraDialogConfiguration");
+            if(dialog != null && dialog.getNodeType() == JsonNodeType.OBJECT) {
+                for(Iterator<String> i = dialog.fieldNames(); i.hasNext(); ){
+                    String key = i.next();
+                    JsonNode field = dialog.get(key);
+                    if(field != null && field.getNodeType() == JsonNodeType.OBJECT) {
+                        ObjectNode o = (ObjectNode)field;
+                        o.set("type", new TextNode("CELL"));
+                        Container c = oc.treeToValue(o, Container.class);
+                        con.getExtraDialogConfiguration().put(key, c);
+                    }
+                }
+            }
+        }
+
+
 
         return con;
     }
