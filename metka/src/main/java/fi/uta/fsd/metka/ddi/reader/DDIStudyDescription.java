@@ -2,61 +2,126 @@ package fi.uta.fsd.metka.ddi.reader;
 
 import codebook25.*;
 import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.configuration.Configuration;
+import fi.uta.fsd.metka.model.configuration.Option;
+import fi.uta.fsd.metka.model.configuration.SelectionList;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
+import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 
-class DDIStudyDescription {
-    private static String getReferenceTitle(ReferenceService references, Language language, RevisionData revision, String path) {
+import java.util.HashMap;
+import java.util.Map;
+
+class DDIStudyDescription extends DDISectionBase {
+    private static final Map<Language, String> WEIGHT_NO = new HashMap<>();
+    private static final Map<String, Map<Language, String>> RESTRICTION = new HashMap<>();
+
+    static {
+        WEIGHT_NO.put(Language.DEFAULT, "Aineisto ei sisällä painomuuttujia.");
+        WEIGHT_NO.put(Language.EN, "There are no weight variables in the data.");
+        WEIGHT_NO.put(Language.SV, "Datamaterialet innehåller inga viktvariabler.");
+
+        Map<Language, String> tempMap = new HashMap<>();
+        RESTRICTION.put("1", tempMap);
+        tempMap.put(Language.DEFAULT, "Aineisto on kaikkien käytettävissä.");
+        tempMap.put(Language.EN, "The dataset is available for all users.");
+        tempMap.put(Language.SV, "??");
+
+        tempMap = new HashMap<>();
+        RESTRICTION.put("2", tempMap);
+        tempMap.put(Language.DEFAULT, "Aineisto on käytettävissä tutkimukseen, opetukseen ja opiskeluun.");
+        tempMap.put(Language.EN, "The dataset is available for research, teaching and study.");
+        tempMap.put(Language.SV, "??");
+
+        tempMap = new HashMap<>();
+        RESTRICTION.put("3", tempMap);
+        tempMap.put(Language.DEFAULT, "Aineisto on käytettävissä vain tutkimukseen ja ylempiin opinnäytteisiin (pro gradu, lisensiaattitutkimus ja väitöstutkimus).");
+        tempMap.put(Language.EN, "The dataset is available for research and for Master's, licentiate and doctoral theses.");
+        tempMap.put(Language.SV, "??");
+
+        tempMap = new HashMap<>();
+        RESTRICTION.put("4", tempMap);
+        tempMap.put(Language.DEFAULT, "Aineisto on käytettävissä vain luovuttajan luvalla.");
+        tempMap.put(Language.EN, "The dataset is available by the permission of the depositor only.");
+        tempMap.put(Language.SV, "??");
+
+        tempMap = new HashMap<>();
+        RESTRICTION.put("5", tempMap);
+        tempMap.put(Language.DEFAULT, "Aineisto on jatkokäytettävissä vasta määräajan jälkeen tietystä päivämäärästä alkaen.");
+        tempMap.put(Language.EN, "The dataset is available only after a specified time.");
+        tempMap.put(Language.SV, "??");
+    }
+
+    private final RevisionRepository revisions;
+    private final ReferenceService references;
+
+    DDIStudyDescription(RevisionData revision, Language language, CodeBookType codeBook, DateTimeUserPair info, Configuration configuration, RevisionRepository revisions, ReferenceService references) {
+        super(revision, language, codeBook, info, configuration);
+        this.revisions = revisions;
+        this.references = references;
+    }
+
+    private String getReferenceTitle(Language language, RevisionData revision, String path) {
         ReferenceOption option = references.getCurrentFieldOption(language, revision, path);
         if(option != null) {
             return option.getTitle().getValue();
         } else return null;
     }
 
-    static void readStudyDescription(RevisionData revision, Language language, CodeBookType codeBook, RevisionRepository revisions, ReferenceService references) {
+    void read() {
         if(codeBook.getStdyDscrArray().length == 0) {
             return;
         }
 
         StdyDscrType stdyDscr = codeBook.getStdyDscrArray(0);
 
-        readCitation(stdyDscr, revision, language, revisions, references);
+        readCitation(stdyDscr);
 
-        readStudyAuthorization(revision, stdyDscr, references, language);
+        readStudyAuthorization(stdyDscr);
 
-        readStudyInfo(stdyDscr, revision, language, references);
+        readStudyInfo(stdyDscr);
 
-        readMethod(stdyDscr, revision, language, references);
+        readMethod(stdyDscr);
 
-        readDataAccess(stdyDscr, revision, language);
+        readDataAccess(stdyDscr);
 
-        readOtherStudyMaterial(stdyDscr, revision, language, revisions);
+        readOtherStudyMaterial(stdyDscr);
     }
 
-    private static void readCitation(StdyDscrType stdyDscr, RevisionData revisionData, Language language, RevisionRepository revisions, ReferenceService references) {
+    private void readCitation(StdyDscrType stdyDscr) {
         if(stdyDscr.getCitationArray().length == 0) {
             return;
         }
 
         CitationType citation = stdyDscr.getCitationArray(0);
 
-        readCitationTitle(revisionData, language, citation);
+        readCitationTitle(citation);
 
-        readCitationRspStatement(revisionData, citation, references, language);
+        readCitationRspStatement(citation);
 
-        readCitationProdStatement(revisionData, citation, language, references);
+        readCitationProdStatement(citation);
 
-        // Add SerStmt
-        readCitationSerStatement(citation, revisionData, language, revisions);
-
-        // Add VerStmt
-        readCitationVerStatement(citation, revisionData, language);
+        // TODO: Questions about versions still open
+        readCitationVerStatement(citation);
     }
 
-    private static void readCitationTitle(RevisionData revisionData, Language language, CitationType citation) {
-        // TODO: Reverse process
+    private void readCitationTitle(CitationType citation) {
+        TitlStmtType titlStmt = citation.getTitlStmt();
+        if(titlStmt == null) {
+            return;
+        }
+
+        valueSet(Fields.TITLE, titlStmt.xmlText());
+
+        // TODO: Alt titles when tables are sorted out
+
+        // TODO: Par titles when tables are sorted out
+
+        // TODO: Skip ID?
+
         /*Pair<StatusCode, ValueDataField> valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.TITLE));
         TitlStmtType titlStmtType = citationType.addNewTitlStmt();
         if(hasValue(valueFieldPair, language)) {
@@ -95,7 +160,7 @@ class DDIStudyDescription {
         }*/
     }
 
-    private static void readAltTitles(RevisionData revisionData, Language language, TitlStmtType titlStmt) {
+    private void readAltTitles(TitlStmtType titlStmt) {
         // TODO: Reverse process
         /*Pair<StatusCode, ValueDataField> valueFieldPair;// Add alternative titles
         Pair<StatusCode, ContainerDataField> containerPair = revisionData.dataField(ContainerDataFieldCall.get(Fields.ALTTITLES));
@@ -110,7 +175,7 @@ class DDIStudyDescription {
         }*/
     }
 
-    private static void readParTitles(RevisionData revisionData, Language language, TitlStmtType titlStmt) {
+    private void readParTitles(TitlStmtType titlStmt) {
         // TODO: Reverse process
         /*Pair<StatusCode, ValueDataField> valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.TITLE));
         Set<String> usedLanguages = new HashSet<>();
@@ -149,8 +214,13 @@ class DDIStudyDescription {
         }*/
     }
 
-    private static void readCitationRspStatement(RevisionData revision, CitationType citation, ReferenceService references, Language language) {
+    private void readCitationRspStatement(CitationType citation) {
         // TODO: Reverse process
+
+        // TODO: Questions about tables and authors still open
+        // Authors, other authors and producers need resolved answers before continuing
+
+
         /*RspStmtType rsp = citationType.addNewRspStmt();
         Pair<StatusCode, ContainerDataField> containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.AUTHORS));
         if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
@@ -267,7 +337,10 @@ class DDIStudyDescription {
         }*/
     }
 
-    private static void readCitationProdStatement(RevisionData revision, CitationType citation, Language language, ReferenceService references) {
+    private static void readCitationProdStatement(CitationType citation) {
+        // TODO: Questions about tables and authors still open
+        // Authors, other authors and producers need resolved answers before continuing
+
         // TODO: Reverse process
         /*ProdStmtType prodStmtType = citationType.addNewProdStmt();
 
@@ -323,40 +396,7 @@ class DDIStudyDescription {
         }*/
     }
 
-    private static void readCitationSerStatement(CitationType citation, RevisionData revision, Language language, RevisionRepository revisions) {
-        // Add series statement, excel row #70
-        /*Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.SERIESID));
-        if(hasValue(valueFieldPair, Language.DEFAULT)) {
-            Pair<ReturnResult, RevisionData> revisionPair = revisions.getLatestRevisionForIdAndType(
-                    valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), true, ConfigurationType.SERIES);
-            if(revisionPair.getLeft() == ReturnResult.REVISION_FOUND) {
-                Logger.error(DDIStudyDescription.class, "Did not find referenced SERIES with id: "+valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger());
-                SerStmtType serStmtType = citationType.addNewSerStmt();
-                RevisionData series = revisionPair.getRight();
-                valueFieldPair = series.dataField(ValueDataFieldCall.get(Fields.SERIESABBR));
-                String seriesAbbr = null;
-                if(hasValue(valueFieldPair, Language.DEFAULT)) {
-                    seriesAbbr = valueFieldPair.getRight().getActualValueFor(Language.DEFAULT);
-                }
-                if(seriesAbbr != null) {
-                    serStmtType.setURI(SERIES_URI_PREFIX.get(language)+seriesAbbr);
-                }
-                valueFieldPair = series.dataField(ValueDataFieldCall.get(Fields.SERIESNAME));
-                if(hasValue(valueFieldPair, language)) {
-                    SerNameType serName = fillTextType(serStmtType.addNewSerName(), valueFieldPair, language);
-                    if(seriesAbbr != null) {
-                        serName.setAbbr(seriesAbbr);
-                    }
-                }
-                valueFieldPair = series.dataField(ValueDataFieldCall.get(Fields.SERIESDESC));
-                if(hasValue(valueFieldPair, language)) {
-                    fillTextType(serStmtType.addNewSerInfo(), valueFieldPair, language);
-                }
-            }
-        }*/
-    }
-
-    private static void readCitationVerStatement(CitationType citation, RevisionData revisionData, Language language) {
+    private static void readCitationVerStatement(CitationType citation) {
         // TODO: Reverse process
         /*VerStmtType verStmtType = citationType.addNewVerStmt();
 
@@ -372,7 +412,10 @@ class DDIStudyDescription {
         }*/
     }
 
-    private static void readStudyAuthorization(RevisionData revision, StdyDscrType stdyDscr, ReferenceService references, Language language) {
+    private void readStudyAuthorization(StdyDscrType stdyDscr) {
+        // TODO: Questions about tables and authors still open
+        // Authors, other authors and producers need resolved answers before continuing
+
         // TODO: Reverse process
         /*Pair<StatusCode, ContainerDataField> containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.AUTHORS));
         String path = "authors.";
@@ -427,21 +470,25 @@ class DDIStudyDescription {
         }*/
     }
 
-    private static void readStudyInfo(StdyDscrType stdyDscrType, RevisionData revision, Language language, ReferenceService references) {
-        // TODO: Reverse process
-        /*StdyInfoType stdyInfo = stdyDscrType.addNewStdyInfo();
+    private void readStudyInfo(StdyDscrType stdyDscr) {
+        if(stdyDscr.getStdyInfoArray().length == 0) {
+            return;
+        }
+        StdyInfoType stdyInfo = stdyDscr.getStdyInfoArray(0);
 
-        readStudyInfoSubject(stdyInfo, revision, language, references);
+        readStudyInfoSubject(stdyInfo);
 
-        Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField( ValueDataFieldCall.get(Fields.ABSTRACT));
-        if(hasValue(valueFieldPair, language)) {
-            fillTextType(stdyInfo.addNewAbstract(), valueFieldPair, language);
+        if(stdyInfo.getAbstractArray().length > 0) {
+            AbstractType abstractType = stdyInfo.getAbstractArray(0);
+            valueSet(Fields.ABSTRACT, abstractType.xmlText());
         }
 
-        readStudyInfoSumDesc(stdyInfo, revision, language, references);*/
+        readStudyInfoSumDesc(stdyInfo);
     }
 
-    private static void readStudyInfoSubject(StdyInfoType stdyInfo, RevisionData revision, Language language, ReferenceService references) {
+    private void readStudyInfoSubject(StdyInfoType stdyInfo) {
+        // TODO: Questions about tables still open
+
         // TODO: Reverse process
         /*SubjectType subject= stdyInfo.addNewSubject();
 
@@ -450,7 +497,7 @@ class DDIStudyDescription {
         readStudyInfoSubjectTopics(subject, revision, language, references);*/
     }
 
-    private static void readStudyInfoSubjectKeywords(SubjectType subject, RevisionData revision, Language language, ReferenceService references) {
+    private void readStudyInfoSubjectKeywords(SubjectType subject) {
         // TODO: Reverse process
         // Let's hardcode the path since we know exactly what we are looking for.
         /*String pathRoot = "keywords.";
@@ -508,7 +555,7 @@ class DDIStudyDescription {
         }*/
     }
 
-    private static void readStudyInfoSubjectTopics(SubjectType subject, RevisionData revision, Language language, ReferenceService references) {
+    private void readStudyInfoSubjectTopics(SubjectType subject) {
         // TODO: Reverse process
         // Let's hardcode the path since we know exactly what we are looking for.
         /*String pathRoot = "topics.";
@@ -559,9 +606,15 @@ class DDIStudyDescription {
         }*/
     }
 
-    private static void readStudyInfoSumDesc(StdyInfoType stdyInfo, RevisionData revision, Language language, ReferenceService references) {
+    private void readStudyInfoSumDesc(StdyInfoType stdyInfo) {
+        // TODO: Questions about tables are still open
         // TODO: Reverse process
-        /*SumDscrType sumDscrType = stdyInfo.addNewSumDscr();
+
+        if(stdyInfo.getSumDscrArray().length == 0) {
+            return;
+        }
+        SumDscrType sumDscr = stdyInfo.getSumDscrArray(0);
+        /*
 
         readStudyInfoSumDescTimePrd(sumDscrType, revision, language);
 
@@ -585,18 +638,21 @@ class DDIStudyDescription {
         readStudyInfoSumDescAnlyUnit(sumDscrType, revision, language, references);
 
         readStudyInfoSumDescUniverse(language, sumDscrType, revision);
+        */
 
-        Pair<StatusCode, ValueDataField> fieldPair = revision.dataField(ValueDataFieldCall.get(Fields.DATAKIND));
-        if(hasValue(fieldPair, Language.DEFAULT)) {
+        if(sumDscr.getDataKindArray().length > 0) {
             SelectionList list = configuration.getRootSelectionList(configuration.getField(Fields.DATAKIND).getSelectionList());
-            Option option = list.getOptionWithValue(fieldPair.getRight().getActualValueFor(Language.DEFAULT));
-            if(option != null) {
-                fillTextType(sumDscrType.addNewDataKind(), option.getTitleFor(Language.DEFAULT));
+            String dataKind = sumDscr.getDataKindArray(0).xmlText();
+            for(Option option : list.getOptions()) {
+                if(option.getTitleFor(language).equals(dataKind)) {
+                    valueSet(Fields.DATAKIND, option.getValue());
+                    break;
+                }
             }
-        }*/
+        }
     }
 
-    private static void readStudyInfoSumDescTimePrd(SumDscrType sumDscr, RevisionData revision, Language language) {
+    private void readStudyInfoSumDescTimePrd(SumDscrType sumDscr) {
         // TODO: Reverse process
         /*for(DataRow row : container.getRowsFor(Language.DEFAULT)) {
             if(row.getRemoved()) {
@@ -632,7 +688,7 @@ class DDIStudyDescription {
         }*/
     }
 
-    private static void readStudyInfoSumDescCollDate(SumDscrType sumDscr, RevisionData revision, Language language) {
+    private void readStudyInfoSumDescCollDate(SumDscrType sumDscr) {
         // TODO: Reverse process
         /*for(DataRow row : container.getRowsFor(Language.DEFAULT)) {
             if(row.getRemoved()) {
@@ -668,7 +724,7 @@ class DDIStudyDescription {
         }*/
     }
 
-    private static void readStudyInfoSumDescNation(SumDscrType sumDscr, RevisionData revision, Language language, ReferenceService references) {
+    private void readStudyInfoSumDescNation(SumDscrType sumDscr) {
         // TODO: Reverse process
         /*String path = "countries.";
         for (DataRow row : container.getRowsFor(Language.DEFAULT)) {
@@ -688,7 +744,7 @@ class DDIStudyDescription {
         }*/
     }
 
-    private static void readStudyInfoSumDescAnlyUnit(SumDscrType sumDscr, RevisionData revision, Language language, ReferenceService references) {
+    private void readStudyInfoSumDescAnlyUnit(SumDscrType sumDscr) {
         // TODO: Reverse process
         // Let's hardcode the path since we know exactly what we are looking for.
         /*String pathRoot = "analysis.";
@@ -752,7 +808,7 @@ class DDIStudyDescription {
         }*/
     }
 
-    private static void readStudyInfoSumDescUniverse(Language language, SumDscrType sumDscrType, RevisionData revision) {
+    private void readStudyInfoSumDescUniverse(SumDscrType sumDscr) {
         /*for(DataRow row : containerPair.getRight().getRowsFor(Language.DEFAULT)) {
             if (row.getRemoved()) {
                 continue;
@@ -775,26 +831,31 @@ class DDIStudyDescription {
         }*/
     }
 
-    private static void readMethod(StdyDscrType stdyDscr, RevisionData revision, Language language, ReferenceService references) {
-        // TODO: Reverse process
-        /*MethodType method = stdyDscr.addNewMethod();
+    private void readMethod(StdyDscrType stdyDscr) {
+        if(stdyDscr.getMethodArray().length == 0) {
+            return;
+        }
+        MethodType method = stdyDscr.getMethodArray(0);
 
-        readMethodDataColl(method, revision, language, references);
+        readMethodDataColl(method);
 
-        Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.DATAPROSESSING));
-        if(hasValue(valueFieldPair, language)) {
-            fillTextType(method.addNewNotes(), valueFieldPair, language);
+        if(method.getNotesArray().length > 0) {
+            valueSet(Fields.DATAPROSESSING, method.getNotesArray(0).xmlText());
         }
 
-        readMethodAnalyze(method, revision, language);*/
+        readMethodAnalyze(method);
     }
 
-    private static void readMethodDataColl(MethodType method, RevisionData revision, Language language, ReferenceService references) {
-        // TODO: Reverse process
-        // Add data column
-        /*DataCollType dataCollType = methodType.addNewDataColl();
+    private void readMethodDataColl(MethodType method) {
+        if(method.getDataCollArray().length == 0) {
+            return;
+        }
+        DataCollType dataColl = method.getDataCollArray(0);
 
-        readMethodDataCollTimeMeth(dataCollType, revision, language, references);
+        // TODO: Reverse process
+
+        // TODO: Questions regarding tables still unanswered
+        /*readMethodDataCollTimeMeth(dataCollType, revision, language, references);
 
         readMethodDataCollSampProc(dataCollType, revision, language, references);
 
@@ -804,9 +865,9 @@ class DDIStudyDescription {
 
         readMethodDataCollDataCollector(dataCollType, revision, language, references);
 
-        readMethodDataCollSources(dataCollType, revision, language);
+        readMethodDataCollSources(dataColl);*/
 
-        readMethodDataCollWeight(dataCollType, revision, language);*/
+        readMethodDataCollWeight(dataColl);
     }
 
     private static void readMethodDataCollTimeMeth(DataCollType dataColl, RevisionData revision, Language language, ReferenceService references) {
@@ -1149,8 +1210,8 @@ class DDIStudyDescription {
         }*/
     }
 
-    private static void readMethodDataCollSources(DataCollType dataColl, RevisionData revision, Language language) {
-        // TODO: Reverse process
+    private void readMethodDataCollSources(DataCollType dataColl) {
+        // TODO: Questions about tables ...
         /*List<ValueDataField> fields = gatherFields(revision, Fields.DATASOURCES, Fields.DATASOURCE, language, language);
         SourcesType sources = dataCollType.addNewSources();
         for(ValueDataField field : fields) {
@@ -1158,28 +1219,32 @@ class DDIStudyDescription {
         }*/
     }
 
-    private static void readMethodDataCollWeight(DataCollType dataCollType, RevisionData revision, Language language) {
-        // TODO: Reverse process
-        /*Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.WEIGHTYESNO));
-        if(hasValue(valueFieldPair, Language.DEFAULT) && valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsBoolean()) {
-            fillTextType(dataCollType.addNewWeight(), WEIGHT_NO.get(language));
+    private void readMethodDataCollWeight(DataCollType dataColl) {
+        if(dataColl.getWeightArray().length == 0) {
+            return;
+        }
+        SimpleTextType stt = dataColl.getWeightArray(0);
+        if(stt.xmlText().equals(WEIGHT_NO.get(language))) {
+            valueSet(Fields.WEIGHTYESNO, "true");
+            valueSet(Fields.WEIGHT, "");
         } else {
-            valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.WEIGHT));
-            if(hasValue(valueFieldPair, language)) {
-                fillTextType(dataCollType.addNewWeight(), valueFieldPair, language);
-            }
-        }*/
+            valueSet(Fields.WEIGHTYESNO, "false");
+            valueSet(Fields.WEIGHT, stt.xmlText());
+        }
     }
 
-    private static void readMethodAnalyze(MethodType methodType, RevisionData revision, Language language) {
-        // TODO: Reverse process
-        /*AnlyInfoType anlyInfoType = methodType.addNewAnlyInfo();
-
-        // Add response rate
-        Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.RESPRATE));
-        if(hasValue(valueFieldPair, Language.DEFAULT)) {
-            fillTextType(anlyInfoType.addNewRespRate(), valueFieldPair, Language.DEFAULT);
+    private void readMethodAnalyze(MethodType method) {
+        if(method.getAnlyInfo() == null) {
+            return;
         }
+        AnlyInfoType anlyInfo = method.getAnlyInfo();
+
+        if(anlyInfo.getRespRateArray().length > 0) {
+            valueSet(Fields.RESPRATE, anlyInfo.getRespRateArray(0).xmlText(), Language.DEFAULT);
+        }
+
+        // TODO: Questions about tables still open
+        /*
 
         // Add data appraisal, repeatable
         Pair<StatusCode, ContainerDataField> containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.APPRAISALS));
@@ -1193,70 +1258,69 @@ class DDIStudyDescription {
         }*/
     }
 
-    private static void readDataAccess(StdyDscrType stdyDscrType, RevisionData revision, Language language) {
-        // TODO: Reverse process
-        /*DataAccsType dataAccs = stdyDscrType.addNewDataAccs();
+    private void readDataAccess(StdyDscrType stdyDscr) {
+        if(stdyDscr.getDataAccsArray().length == 0) {
+            return;
+        }
+        DataAccsType dataAccs = stdyDscr.getDataAccsArray(0);
 
-        readDataAccessSetAvail(dataAccs, revision, language);
+        readDataAccessSetAvail(dataAccs);
 
-        readDataAccessUseStatement(dataAccs, revision, language);
+        readDataAccessUseStatement(dataAccs);
 
-        // Add notes
-        Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.DATASETNOTES));
-        if(hasValue(valueFieldPair, language)) {
-            fillTextType(dataAccs.addNewNotes(), valueFieldPair, language);
-        }*/
+        if(dataAccs.getNotesArray().length > 0) {
+            valueSet(Fields.DATASETNOTES, dataAccs.getNotesArray(0).xmlText());
+        }
     }
 
-    private static void readDataAccessSetAvail(DataAccsType dataAccs, RevisionData revision, Language language) {
-        // TODO: Reverse process
-        // Add set availability
-        /*SetAvailType setAvail = dataAccs.addNewSetAvail();
-
-        // Add access place
-        AccsPlacType acc = fillTextType(setAvail.addNewAccsPlac(), ACCS_PLAC.get(language));
-        acc.setURI(ACCS_PLAC_URI.get(language));
-
-        // Add original archive
-        Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.ORIGINALLOCATION));
-        if(hasValue(valueFieldPair, Language.DEFAULT)) {
-            fillTextType(setAvail.addNewOrigArch(), valueFieldPair, Language.DEFAULT);
+    private void readDataAccessSetAvail(DataAccsType dataAccs) {
+        if(dataAccs.getSetAvailArray().length == 0) {
+            return;
+        }
+        SetAvailType setAvail = dataAccs.getSetAvailArray(0);
+        if(setAvail.getOrigArchArray().length > 0) {
+            valueSet(Fields.ORIGINALLOCATION, setAvail.getOrigArchArray(0).xmlText(), Language.DEFAULT);
         }
 
-        // Add collection size
-        valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.COLLSIZE));
-        if(hasValue(valueFieldPair, language)) {
-            fillTextType(setAvail.addNewCollSize(), valueFieldPair, language);
+        if(setAvail.getCollSizeArray().length > 0) {
+            valueSet(Fields.COLLSIZE, setAvail.getCollSizeArray(0).xmlText());
         }
 
-        // Add complete
-        valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.COMPLETE));
-        if(hasValue(valueFieldPair, language)) {
-            fillTextType(setAvail.addNewComplete(), valueFieldPair, language);
-        }*/
+        if(setAvail.getCompleteArray().length > 0) {
+            valueSet(Fields.COMPLETE, setAvail.getCompleteArray(0).xmlText());
+        }
     }
 
-    private static void readDataAccessUseStatement(DataAccsType dataAccs, RevisionData revision, Language language) {
-        // TODO: Reverse process
-        // Add use statement
-        /*UseStmtType useStmt = dataAccs.addNewUseStmt();
+    private void readDataAccessUseStatement(DataAccsType dataAccs) {
+        if(dataAccs.getUseStmtArray().length == 0) {
+            return;
+        }
+        UseStmtType useStmt = dataAccs.getUseStmtArray(0);
 
-        // Add special permissions
-        Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.SPECIALTERMSOFUSE));
-        if(hasValue(valueFieldPair, Language.DEFAULT)) {
-            fillTextType(useStmt.addNewSpecPerm(), valueFieldPair, language);
+        if(useStmt.getSpecPermArray().length > 0) {
+            valueSet(Fields.SPECIALTERMSOFUSE, useStmt.getSpecPermArray(0).xmlText());
         }
 
-        // Add restrictions, excel row #164
-        valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.TERMSOFUSE));
-        if(hasValue(valueFieldPair, Language.DEFAULT)) {
-            fillTextType(useStmt.addNewRestrctn(), RESTRICTION.get(valueFieldPair.getRight().getActualValueFor(Language.DEFAULT)).get(language));
-        }*/
+        if(useStmt.getRestrctnArray().length > 0) {
+            String restr = useStmt.getRestrctnArray(0).xmlText();
+
+            for(String i : RESTRICTION.keySet()) {
+                if(RESTRICTION.get(i).get(language).equals(restr)) {
+                    valueSet(Fields.TERMSOFUSE, restr, Language.DEFAULT);
+                    break;
+                }
+            }
+        }
     }
 
-    private static void readOtherStudyMaterial(StdyDscrType stdyDscr, RevisionData revision, Language language, RevisionRepository revisions) {
-        // TODO: Reverse process
-        /*OthrStdyMatType othr = stdyDscrType.addNewOthrStdyMat();
+    private void readOtherStudyMaterial(StdyDscrType stdyDscr) {
+        if(stdyDscr.getOthrStdyMatArray().length == 0) {
+            return;
+        }
+        OthrStdyMatType othr = stdyDscr.getOthrStdyMatArray(0);
+
+        // TODO: Questions about tables still unanswered
+        /*
 
         // Add related materials
         List<ValueDataField> fields = gatherFields(revision, Fields.RELATEDMATERIALS, Fields.RELATEDMATERIAL, language, language);

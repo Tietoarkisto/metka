@@ -149,11 +149,12 @@ define(function (require) {
                 }));
 
             if (options.field.showSaveInfo) {
+                log(transferRow.saved);
                 $tr.append(
                     $('<td>')
-                        .text(transferRow.saved ? moment(transferRow.saved.time).format(require('./dateFormats')['DATE']) : " "),
+                        .text(transferRow.saved ? moment(transferRow.saved.time).format(require('./dateFormats')['DATE']) : EMPTY),
                     $('<td>')
-                        .text(transferRow.saved ? transferRow.saved.user : " "));
+                        .text(transferRow.saved ? transferRow.saved.user : EMPTY));
             }
 
             if (options.field.hasRowCommands) {

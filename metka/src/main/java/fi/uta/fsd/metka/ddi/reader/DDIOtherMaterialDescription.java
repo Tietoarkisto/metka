@@ -3,11 +3,21 @@ package fi.uta.fsd.metka.ddi.reader;
 import codebook25.CodeBookType;
 import codebook25.OtherMatType;
 import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.DataRow;
+import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 
-class DDIOtherMaterialDescription {
-    static void readOtherMaterialDescription(RevisionData revision, Language language, CodeBookType codeBook) {
+class DDIOtherMaterialDescription extends DDISectionBase {
+    DDIOtherMaterialDescription(RevisionData revision, Language language, CodeBookType codeBook, DateTimeUserPair info, Configuration configuration) {
+        super(revision, language, codeBook, info, configuration);
+    }
+
+    @Override
+    void read() {
+        for(OtherMatType other : codeBook.getOtherMatArray()) {
+            // TODO: What do we do with tables?
+        }
         // TODO: Reverse process
         /*Pair<StatusCode, ContainerDataField> containerPair = revisionData.dataField(ContainerDataFieldCall.get(Fields.OTHERMATERIALS));
         // TODO: Check that other materials container should actually be translated container

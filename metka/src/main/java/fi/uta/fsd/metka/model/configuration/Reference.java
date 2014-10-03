@@ -13,7 +13,8 @@ public class Reference {
     private final String target;
     private final String valuePath;
     private String titlePath = null;
-    private Boolean approvedOnly = true;
+    private Boolean approvedOnly = false;
+    private Boolean ignoreRemoved = false;
 
     @JsonCreator
     public Reference(@JsonProperty("key")String key, @JsonProperty("type")ReferenceType type, @JsonProperty("target")String target, @JsonProperty("valuePath")String valuePath) {
@@ -48,11 +49,19 @@ public class Reference {
     }
 
     public Boolean getApprovedOnly() {
-        return approvedOnly;
+        return approvedOnly == null ? false : approvedOnly;
     }
 
     public void setApprovedOnly(Boolean approvedOnly) {
-        this.approvedOnly = approvedOnly;
+        this.approvedOnly = approvedOnly == null ? false : approvedOnly;
+    }
+
+    public Boolean getIgnoreRemoved() {
+        return ignoreRemoved == null ? false : ignoreRemoved;
+    }
+
+    public void setIgnoreRemoved(Boolean ignoreRemoved) {
+        this.ignoreRemoved = ignoreRemoved == null ? false : ignoreRemoved;
     }
 
     @JsonIgnore

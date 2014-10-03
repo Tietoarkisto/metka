@@ -1,15 +1,6 @@
 define(function (require) {
     'use strict';
 
-    var customFields = {
-        custom_studyRelatedBinders: require('./custom/fields/studyRelatedBinders'),
-        custom_studyErrors: require('./custom/fields/studyErrors'),
-        custom_studyVariablesGrouping: require('./custom/fields/studyVariablesGrouping'),
-        files: require('./custom/fields/files'),
-        vargroups: require('./custom/fields/vargroups'),
-        variables: require('./custom/fields/variables')
-    };
-
     var getPropertyNS = require('./utils/getPropertyNS');
 
     return function (options) {
@@ -25,6 +16,23 @@ define(function (require) {
                         .append(require('./dataValidationErrorText')(errors)));
                 }
             });
+        }
+
+        function createInputWrapper() {
+            fieldDataOptions = getPropertyNS(options, 'dataConf.fields', key) || {};
+            createInput(options.defaultLang);
+            if (fieldDataOptions.translatable && (options.translatable !== false)) {
+                ['DEFAULT', 'EN', 'SV'].filter(function (lang) {
+                    return lang !== options.defaultLang;
+                }).forEach(createInput);
+            }
+            // add TransferField error listener
+            addValidationErrorListener($elem, function () {
+                return require('./data')(options).errors();
+            });
+            if (options.create) {
+                options.create.call($elem, options);
+            }
         }
 
         function createInput(lang) {
@@ -60,8 +68,8 @@ define(function (require) {
                 }
             }
 
-            var type = options.field.displayType || getPropertyNS(options, 'dataConf.fields', key, 'type');
             var $langField = $('<div>');
+            var type = options.field.displayType || getPropertyNS(options, 'dataConf.fields', key, 'type');
             if (!type) {
                 log('field type is not set', key, options);
             } else {
@@ -74,6 +82,9 @@ define(function (require) {
                     }
                     if (type === 'LINK') {
                         return require('./linkField')($langField, options, lang);
+                    }
+                    if(type === 'CUSTOM_JS') {
+                        return;
                     }
                     require('./inputField').call($langField, options, type, lang);
                 })();
@@ -91,38 +102,26 @@ define(function (require) {
         if (options.type === 'EMPTYCELL') {
             return this;
         }
+        var key = options.field.key;
 
         var $elem = this;
 
-        var key = options.field.key;
+        var fieldDataOptions;
 
-        var customField = customFields[key];
-        switch (typeof customField) {
-            case 'object':
-                $.extend(true, options, customField);
-                break;
-            case 'function':
-                $.extend(true, options, customField(options));
-                break;
-        }
-
-        var fieldDataOptions = getPropertyNS(options, 'dataConf.fields', key) || {};
-
-        createInput(options.defaultLang);
-
-        if (fieldDataOptions.translatable && (options.translatable !== false)) {
-            ['DEFAULT', 'EN', 'SV'].filter(function (lang) {
-                return lang !== options.defaultLang;
-            }).forEach(createInput);
-        }
-
-        // add TransferField error listener
-        addValidationErrorListener(this, function () {
-            return require('./data')(options).errors();
-        });
-
-        if (options.create) {
-            options.create.call(this, options);
+        if(options.field.displayType === 'CUSTOM_JS') {
+            require(['./custom/fields/'+key], function(customField) {
+                switch (typeof customField) {
+                    case 'object':
+                        $.extend(true, options, customField);
+                        break;
+                    case 'function':
+                        $.extend(true, options, customField(options));
+                        break;
+                }
+                createInputWrapper();
+            });
+        } else {
+            createInputWrapper();
         }
 
         return this;

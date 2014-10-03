@@ -119,6 +119,7 @@
                                     "readOnly": true,
                                     "field": {
                                         "key": "variables",
+                                        "displayType": "CUSTOM_JS",
                                         "showSaveInfo": false,
                                         "showReferenceKey": false,
                                         "displayHeader": false,
@@ -147,6 +148,7 @@
                                 {
                                     "type": "CELL",
                                     "field": {
+                                        "displayType": "CUSTOM_JS",
                                         "key": "vargroups"
                                     }
                                 }
@@ -170,7 +172,8 @@
                                 {
                                     "type": "CELL",
                                     "field": {
-                                        "key": "custom_studyVariablesGrouping"
+                                        "displayType": "CUSTOM_JS",
+                                        "key": "studyVariablesGrouping"
                                     }
                                 }
                             ]

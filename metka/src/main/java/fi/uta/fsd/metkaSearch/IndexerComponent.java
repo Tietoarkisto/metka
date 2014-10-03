@@ -66,7 +66,7 @@ public class IndexerComponent {
     // Pool for indexer threads.
     private ExecutorService indexerPool = Executors.newCachedThreadPool();
 
-    private final Map<RevisionKey, IndexerCommand> studyCommandBatch = new ConcurrentHashMap<>();
+    private final Map<RevisionKey, Boolean> studyCommandBatch = new ConcurrentHashMap<>();
 
     private volatile boolean runningBatch = false;
 
@@ -267,16 +267,7 @@ public class IndexerComponent {
             while(runningBatch) {
                 Thread.sleep(500);
             }
-            if(studyCommandBatch.containsKey(pair.getRight().getKey())) {
-                return;
-            }
-            for(Language lang : Language.values()) {
-                if (index) {
-                    studyCommandBatch.put(pair.getRight().getKey(), RevisionIndexerCommand.index(ConfigurationType.STUDY, lang, pair.getRight().getKey()));
-                } else {
-                    studyCommandBatch.put(pair.getRight().getKey(), RevisionIndexerCommand.remove(ConfigurationType.STUDY, lang, pair.getRight().getKey()));
-                }
-            }
+            studyCommandBatch.put(pair.getRight().getKey(), index);
         } catch(InterruptedException ie) {
             // Well damn, let's not add the index command then
         }
@@ -285,8 +276,14 @@ public class IndexerComponent {
     @Scheduled(fixedDelay = 1 * 60 *1000)
     private void executeStudyBatch() {
         runningBatch = true;
-        for(IndexerCommand command : studyCommandBatch.values()) {
-            addCommand(command);
+        for(RevisionKey key : studyCommandBatch.keySet()) {
+            for(Language lang : Language.values()) {
+                if (studyCommandBatch.get(key)) {
+                    addCommand(RevisionIndexerCommand.index(ConfigurationType.STUDY, lang, key));
+                } else {
+                    addCommand(RevisionIndexerCommand.remove(ConfigurationType.STUDY, lang, key));
+                }
+            }
         }
         studyCommandBatch.clear();
         runningBatch = false;

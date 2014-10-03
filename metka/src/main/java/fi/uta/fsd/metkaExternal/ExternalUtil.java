@@ -1,11 +1,14 @@
 package fi.uta.fsd.metkaExternal;
 
 import fi.uta.fsd.metka.storage.repository.APIRepository;
+import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
+import fi.uta.fsd.metkaAuthentication.MetkaAuthenticationDetails;
 import org.springframework.security.crypto.codec.Base64;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Random;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -57,6 +60,9 @@ public class ExternalUtil {
         }
 
         repository.updateAPIAccess(signature.getKey());
+
+        MetkaAuthenticationDetails details = new MetkaAuthenticationDetails((new Random()).nextLong()+"", "api:"+user.getName(), user.getName(), "metka:basic-user");
+        AuthenticationUtil.authenticate(details);
         return true;
     }
 }

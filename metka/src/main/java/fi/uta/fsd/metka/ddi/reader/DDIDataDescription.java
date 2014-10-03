@@ -4,11 +4,21 @@ import codebook25.CodeBookType;
 import codebook25.DataDscrType;
 import codebook25.VarType;
 import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 
-class DDIDataDescription {
-    static void readDataDescription(RevisionData revisionData, Language language, CodeBookType codeBookType, RevisionRepository revisions) {
+class DDIDataDescription extends DDISectionBase {
+    private final RevisionRepository revisions;
+    DDIDataDescription(RevisionData revision, Language language, CodeBookType codeBook, DateTimeUserPair info, Configuration configuration, RevisionRepository revisions) {
+        super(revision, language, codeBook, info, configuration);
+        this.revisions = revisions;
+    }
+
+    void read() {
+        // TODO: Implement when questions about tables and variables are answered
+
         // TODO: Reverse process
         /*Pair<StatusCode, ValueDataField> valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
         // This operation is so large that it's cleaner just to return than to wrap everything inside this one IF

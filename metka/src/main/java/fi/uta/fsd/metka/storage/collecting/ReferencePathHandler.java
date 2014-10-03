@@ -13,8 +13,9 @@ import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.ReferenceRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
-import fi.uta.fsd.metka.transfer.reference.ReferencePath;
+import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
+import fi.uta.fsd.metka.transfer.reference.ReferencePath;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -160,8 +161,12 @@ public class ReferencePathHandler {
 
     private void handleRevisionableStep(ReferencePath step, List<ReferenceOption> options, Language language) {
         if(StringUtils.hasText(step.getValue())) {
+            Pair<ReturnResult, RevisionableInfo> infoPair = revisions.getRevisionableInfo(Long.parseLong(step.getValue()));
+            if(infoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND || (infoPair.getRight().getRemoved() && step.getReference().getIgnoreRemoved())) {
+                return;
+            }
             Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(Long.parseLong(step.getValue()),
-                    false, ConfigurationType.fromValue(step.getReference().getTarget()));
+                    step.getReference().getApprovedOnly(), ConfigurationType.fromValue(step.getReference().getTarget()));
             if(pair.getLeft() == ReturnResult.REVISION_FOUND) {
                 Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(pair.getRight().getConfiguration());
                 if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
@@ -187,8 +192,11 @@ public class ReferencePathHandler {
                     .getResultList();
             // Collect options
             for(RevisionableEntity revisionable : revisionables) {
+                if(revisionable.getRemoved() && step.getReference().getIgnoreRemoved()) {
+                    continue;
+                }
                 Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(revisionable.getId(),
-                    false, ConfigurationType.fromValue(step.getReference().getTarget()));
+                    step.getReference().getApprovedOnly(), ConfigurationType.fromValue(step.getReference().getTarget()));
                 if(pair.getLeft() == ReturnResult.REVISION_FOUND) {
                     // Terminating step, gather option from revision data
                     Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(pair.getRight().getConfiguration());

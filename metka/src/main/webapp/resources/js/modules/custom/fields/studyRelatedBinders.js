@@ -1,6 +1,7 @@
 define(function (require) {
     'use strict';
 
+
     return {
         create: function create(options) {
             var fieldOptions = {

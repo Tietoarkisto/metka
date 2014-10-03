@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import static fi.uta.fsd.metka.ddi.builder.DDIBuilder.fillTextType;
+import static fi.uta.fsd.metka.ddi.builder.DDIBuilder.getXmlLang;
 import static fi.uta.fsd.metka.ddi.builder.DDIBuilder.hasValue;
 
 class DDIDocumentDescription {
@@ -136,7 +137,7 @@ class DDIDocumentDescription {
         // Add notes, repeatable, excel row #40 - #41
         for(Language l : Language.values()) {
             NotesType notesType = fillTextType(docDscrType.addNewNotes(), NOTES.get(l));
-            notesType.setLang(DDIBuilder.getXmlLang(l));
+            notesType.setXmlLang(DDIBuilder.getXmlLang(l));
         }
     }
 
@@ -271,7 +272,8 @@ class DDIDocumentDescription {
                 continue;
             }
             if(hasValue(valueFieldPair, altLang)) {
-                fillTextType(titlStmtType.addNewParTitl(), DDI_TITLE_PREFIXES.get(language)+valueFieldPair.getRight().getActualValueFor(altLang));
+                SimpleTextType stt = fillTextType(titlStmtType.addNewParTitl(), DDI_TITLE_PREFIXES.get(language)+valueFieldPair.getRight().getActualValueFor(altLang));
+                stt.setXmlLang(getXmlLang(altLang));
             }
         }
     }

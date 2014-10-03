@@ -6,16 +6,16 @@ import org.joda.time.LocalDateTime;
 public class StudyError {
     private Long id;
     private Long studyId;
-    private String addedBy;
-    private LocalDateTime addedAt;
-    private Integer score;
-    private String section;
-    private String subsection;
-    private String language;
-    private String summary;
-    private String description;
-    private LocalDate triggerDate;
-    private String triggerTarget;
+    private String savedBy;
+    private LocalDateTime savedAt;
+    private Integer errorscore;
+    private LocalDate errortriggerdate;
+    private String errortriggerpro;
+    private String errorlanguage;
+    private String errorlabel;
+    private String errornotes;
+    private String errordatasetpart;
+    private String errorpartsection;
 
     public Long getId() {
         return id;
@@ -33,83 +33,83 @@ public class StudyError {
         this.studyId = studyId;
     }
 
-    public String getAddedBy() {
-        return addedBy;
+    public String getSavedBy() {
+        return savedBy;
     }
 
-    public void setAddedBy(String addedBy) {
-        this.addedBy = addedBy;
+    public void setSavedBy(String savedBy) {
+        this.savedBy = savedBy;
     }
 
-    public LocalDateTime getAddedAt() {
-        return addedAt;
+    public LocalDateTime getSavedAt() {
+        return savedAt;
     }
 
-    public void setAddedAt(LocalDateTime addedAt) {
-        this.addedAt = addedAt;
+    public void setSavedAt(LocalDateTime savedAt) {
+        this.savedAt = savedAt;
     }
 
-    public Integer getScore() {
-        return score;
+    public Integer getErrorscore() {
+        return errorscore;
     }
 
-    public void setScore(Integer score) {
-        this.score = score;
+    public void setErrorscore(Integer errorscore) {
+        this.errorscore = errorscore;
     }
 
-    public String getSection() {
-        return section;
+    public LocalDate getErrortriggerdate() {
+        return errortriggerdate;
     }
 
-    public void setSection(String section) {
-        this.section = section;
+    public void setErrortriggerdate(LocalDate errortriggerdate) {
+        this.errortriggerdate = errortriggerdate;
     }
 
-    public String getSubsection() {
-        return subsection;
+    public String getErrortriggerpro() {
+        return errortriggerpro;
     }
 
-    public void setSubsection(String subsection) {
-        this.subsection = subsection;
+    public void setErrortriggerpro(String errortriggerpro) {
+        this.errortriggerpro = errortriggerpro;
     }
 
-    public String getLanguage() {
-        return language;
+    public String getErrorlanguage() {
+        return errorlanguage;
     }
 
-    public void setLanguage(String language) {
-        this.language = language;
+    public void setErrorlanguage(String errorlanguage) {
+        this.errorlanguage = errorlanguage;
     }
 
-    public String getSummary() {
-        return summary;
+    public String getErrorlabel() {
+        return errorlabel;
     }
 
-    public void setSummary(String summary) {
-        this.summary = summary;
+    public void setErrorlabel(String errorlabel) {
+        this.errorlabel = errorlabel;
     }
 
-    public String getDescription() {
-        return description;
+    public String getErrornotes() {
+        return errornotes;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setErrornotes(String errornotes) {
+        this.errornotes = errornotes;
     }
 
-    public LocalDate getTriggerDate() {
-        return triggerDate;
+    public String getErrordatasetpart() {
+        return errordatasetpart;
     }
 
-    public void setTriggerDate(LocalDate triggerDate) {
-        this.triggerDate = triggerDate;
+    public void setErrordatasetpart(String errordatasetpart) {
+        this.errordatasetpart = errordatasetpart;
     }
 
-    public String getTriggerTarget() {
-        return triggerTarget;
+    public String getErrorpartsection() {
+        return errorpartsection;
     }
 
-    public void setTriggerTarget(String triggerTarget) {
-        this.triggerTarget = triggerTarget;
+    public void setErrorpartsection(String errorpartsection) {
+        this.errorpartsection = errorpartsection;
     }
 }

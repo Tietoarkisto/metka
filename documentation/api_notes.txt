@@ -1,0 +1,19 @@
+=API huomioita=
+
+API käyttäjän autentikoinnin jälkeen Spring Securityn contextille annetaan käyttäjä jonka käyttäjänimi on "api:[api-käyttäjän nimi]"
+ja rooli on "metka:basic-user". API-käyttäjän tekemät muutokset jotka vaativat käyttäjätietoja (lähinnä uuden aineiston luonti) tehdään
+käyttäen näidä käyttäjätietoja. Toiminto löytyy ExternalUtil.java luokasta jos arvoja haluaa muuttaa.
+
+Tietokantataulujen ja revisiodatan välinen yhteys on rajoitettu käytännössä datasta löytyviin "key.id" ja "key.no" tietoihin.
+Näitä tietoja ei pidä muuttaa koska kaikki revisioitten väliset yhteydet ja tietokannassa tapahtuvat toiminnot perustuvat "key.id" ja
+vähemmässä määrin "key.no" kenttiin joiden arvo on automaattisesti annettu revision luonnin yhteydessä.
+
+Kaikki revisiosta toiseen revisioon menevät referenssit käyttävät "key.id" tietoa, joten tämän tiedon muuttaminen rikkoisi myös
+referenssien eheyden.
+
+Aineiston aineistonumero kenttä löytyy myös tietokannasta Revisionable-taulun STUDY_ID kentästä. Tätä kenttää käytetään nopeuttamaan
+muutamaa toimintoa mutta ei varsinaisesti datan eheyteen. Jos aineistonumeroa muutetaan revisioon niin tietokannan kentän tulisi vastata
+uusimman revision studyid-tietoa. Tämän tiedon mukaan määräytyy mm. tallennettujen tiedostojen lopullinen sijaintipaikka.
+
+Myöskään revision "configuration" tiedon sisältöä ei tulisi vaihtaa, tai ainakaan tyyppiä ei tulisi vaihtaa. Jos revision
+konfiguraatiotyyppi vaihdetaan vaihtuu myös sisällön merkitys.

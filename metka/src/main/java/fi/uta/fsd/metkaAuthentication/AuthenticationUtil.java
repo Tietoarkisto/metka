@@ -6,6 +6,7 @@ import org.springframework.security.authentication.AuthenticationCredentialsNotF
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.ui.Model;
 
 /**
@@ -16,6 +17,23 @@ public final class AuthenticationUtil {
 
     // Disable instantiation
     private AuthenticationUtil() {}
+
+    public static boolean authenticate(MetkaAuthenticationDetails details) {
+        SecurityContext context = SecurityContextHolder.getContext();
+        if(context == null) {
+            logger.error("Authentication was requested but no SecurityContext was found");
+            throw new AuthenticationCredentialsNotFoundException("Couldn't find security context");
+        }
+        /*Authentication authentication = context.getAuthentication();
+        if(authentication != null && authentication.getDetails() != null) {
+            logger.error("Authentication details already set");
+            throw new AuthenticationCredentialsNotFoundException("Authentication details already set");
+        }*/
+        PreAuthenticatedAuthenticationToken auth = new PreAuthenticatedAuthenticationToken(details.getUserName(), "credentials", details.getGrantedAuthorities());
+        auth.setDetails(details);
+        context.setAuthentication(auth);
+        return true;
+    }
 
     public static String getModelName(String destination, Model model) {
         MetkaAuthenticationDetails details = getDetails();

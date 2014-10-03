@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Hello World</title>
+		<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+		<script>
+			var accesstime = "2014-10-03";
+			var reqUrl = "/metka/api/search";
+			var qry = "state.draft:true";
+			var sig = {
+				key: 1,
+				accessTime: accesstime,
+				signature: window.btoa("10"+accesstime+"1"+reqUrl)
+			};
+			var searchRequest = {
+				query: "state.draft:true",
+				authentication: sig
+			};
+			var createRequest = {
+				parameters: {
+					submissionid: "1002",
+					dataarrivaldate: "2014-10-03"
+				},
+				authentication: sig
+			};
+			
+			$.ajax({
+				type: "POST",
+				url: "http://localhost:8080"+reqUrl,
+				data: JSON.stringify(searchRequest),
+				headers: {
+	                'Accept': 'application/json',
+	                'Content-Type': 'application/json'
+	            },
+	            dataType: 'json'
+			})
+			.done(function(result) {
+				alert(result);
+			});
+			
+		</script>
+	</head>
+	<body>
+		<h1>Hello World</h1>
+		
+	</body>
+</html>

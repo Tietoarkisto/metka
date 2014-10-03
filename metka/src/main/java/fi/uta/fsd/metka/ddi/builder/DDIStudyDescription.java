@@ -443,7 +443,7 @@ class DDIStudyDescription {
             }
             if(hasValue(valueFieldPair, l)) {
                 SimpleTextType stt = fillTextType(titlStmtType.addNewParTitl(), valueFieldPair, l);
-                stt.setLang(getXmlLang(l));
+                stt.setXmlLang(getXmlLang(l));
                 usedLanguages.add(getXmlLang(l));
             }
         }
@@ -463,7 +463,7 @@ class DDIStudyDescription {
                 if(partitle != null && partitlelang != null) {
                     if(!usedLanguages.contains(partitlelang)) {
                         SimpleTextType stt = fillTextType(titlStmtType.addNewParTitl(), partitle);
-                        stt.setLang(partitlelang);
+                        stt.setXmlLang(partitlelang);
                         usedLanguages.add(partitlelang);
                     }
                 }
@@ -729,7 +729,7 @@ class DDIStudyDescription {
             SelectionList list = configuration.getRootSelectionList(configuration.getField(Fields.DATAKIND).getSelectionList());
             Option option = list.getOptionWithValue(fieldPair.getRight().getActualValueFor(Language.DEFAULT));
             if(option != null) {
-                fillTextType(sumDscrType.addNewDataKind(), option.getTitleFor(Language.DEFAULT));
+                fillTextType(sumDscrType.addNewDataKind(), option.getTitleFor(language));
             }
         }
     }

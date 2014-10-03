@@ -78,6 +78,7 @@ public final class FinnishTokenFilter extends TokenFilter {
             Set<String> wordset = new LinkedHashSet<String>();
             wordset.add(termAttr.toString());
             for(String wordbase : wordbasesList) {
+                /*System.err.println(wordbase);*/
                 for(WordBasesIterator i = new WordBasesIterator(wordbase); i.hasNext(); ) {
                     String iWord = i.next().toString();
                     if(wordset.add(iWord)) {

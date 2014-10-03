@@ -4,10 +4,14 @@ import codebook25.CodeBookDocument;
 import codebook25.CodeBookType;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
+import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +26,9 @@ public class DDIReader {
 
     @Autowired
     private ReferenceService references;
+
+    @Autowired
+    private ConfigurationRepository configurations;
 
     /**
      * Tries to read CodeBook from provided path and merge it into given RevisionData (checked to be of type STUDY).
@@ -42,23 +49,58 @@ public class DDIReader {
             return ReturnResult.INCORRECT_TYPE_FOR_OPERATION;
         }
 
-        CodeBookDocument document = CodeBookDocument.Factory.parse(file);
-        CodeBookType codeBook = document.getCodeBook();
+        Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(revision.getConfiguration());
+        if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
+            return configPair.getLeft();
+        }
 
-        return readCodeBook(codeBook, revision);
+        CodeBookDocument document = CodeBookDocument.Factory.parse(file);
+        CodebookReader reader = new CodebookReader(revisions, references, document, revision, configPair.getRight());
+
+        return reader.read();
     }
 
-    private ReturnResult readCodeBook(CodeBookType codeBook, RevisionData revision) {
-        Language docLang = Language.fromValue(codeBook.getLang().toLowerCase());
+    private static class CodebookReader {
+        private final RevisionRepository revisions;
+        private final ReferenceService references;
+        private final CodeBookDocument document;
+        private final RevisionData revision;
+        private final Configuration configuration;
 
-        DDIDocumentDescription.readDocumentDescription(revision, docLang, codeBook);
-        DDIStudyDescription.readStudyDescription(revision, docLang, codeBook, revisions, references);
-        DDIFileDescription.readFileDescription(revision, docLang, codeBook, revisions);
-        DDIDataDescription.readDataDescription(revision, docLang, codeBook, revisions);
-        DDIOtherMaterialDescription.readOtherMaterialDescription(revision, docLang, codeBook);
+        private CodebookReader(RevisionRepository revisions, ReferenceService references, CodeBookDocument document, RevisionData revision, Configuration configuration) {
+            this.revisions = revisions;
+            this.references = references;
+            this.document = document;
+            this.revision = revision;
+            this.configuration = configuration;
+        }
 
-        // TODO: Form biblCit at the end of the process
+        private ReturnResult read() {
+            CodeBookType codeBook = document.getCodeBook();
+            Language docLang = Language.fromValue(codeBook.getXmlLang().toLowerCase());
 
-        return ReturnResult.OPERATION_SUCCESSFUL;
+            DateTimeUserPair info = DateTimeUserPair.build();
+
+            DDISectionBase section = new DDIDocumentDescription(revision, docLang, codeBook, info, configuration);
+            section.read();
+
+            // TODO: implement when table question is resolved
+            section = new DDIOtherMaterialDescription(revision, docLang, codeBook, info, configuration);
+            section.read();
+
+            // TODO: Implement when questions about tables and variables are answered
+            section = new DDIDataDescription(revision, docLang, codeBook, info, configuration, revisions);
+            section.read();
+
+            section = new DDIStudyDescription(revision, docLang, codeBook, info, configuration, revisions, references);
+            section.read();
+
+            // TODO: If needed
+            DDIFileDescription.readFileDescription(revision, docLang, codeBook, revisions);
+
+            // TODO: Form biblCit at the end of the process
+
+            return ReturnResult.OPERATION_SUCCESSFUL;
+        }
     }
 }

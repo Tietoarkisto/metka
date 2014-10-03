@@ -270,12 +270,12 @@
             "key": "description",
             "title": "Pitkä selite"
         },
-        "triggerDate": {
-            "key": "triggerDate",
+        "triggerdate": {
+            "key": "triggerdate",
             "title": "Herätepäivämäärä"
         },
-        "triggerTarget": {
-            "key": "triggerTarget",
+        "triggerpro": {
+            "key": "triggerpro",
             "title": "Herätteen saaja"
         }
     },
@@ -549,7 +549,8 @@
                                     "type": "CELL",
                                     "title": "Liittyvät mapit",
                                     "field": {
-                                        "key": "custom_studyRelatedBinders"
+                                        "displayType": "CUSTOM_JS",
+                                        "key": "studyRelatedBinders"
                                     }
                                 }
                             ]
@@ -1024,7 +1025,7 @@
                                         "field": {
                                             "key": "collectors",
                                             "columnFields": [
-                                            	"collectortype",
+                                            	"authortype",
                                             	"collector",
                                             	"organisation",
                                             	"agency",
@@ -1279,7 +1280,7 @@
                                             "key": "publicationcomments",
                                             "displayHeader": false,
                                             "columnFields": [
-                                         		"publicationcomment"   
+                                         		"publicationcomment"
                                             ]
                                         }
                                     }
@@ -1330,6 +1331,7 @@
                                 "title": "Liitetyt tiedostot",
                                 "field": {
                                     "key": "files",
+                                    "displayType": "CUSTOM_JS",
                                     "showSaveInfo": true,
                                     "showReferenceKey": true,
                                     "columnFields": [
@@ -1409,7 +1411,8 @@
                                 "type": "CELL",
                                 "title": "Virheet",
                                 "field": {
-                                    "key": "custom_studyErrors"
+                                    "displayType": "CUSTOM_JS",
+                                    "key": "studyErrors"
                                 }
                             }
                         ]

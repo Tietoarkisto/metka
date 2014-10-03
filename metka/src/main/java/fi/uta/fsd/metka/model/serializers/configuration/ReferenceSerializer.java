@@ -27,6 +27,7 @@ public class ReferenceSerializer extends ObjectSerializer<Reference> {
                 ConfigurationType confType = ConfigurationType.fromValue(value.getTarget());
                 jgen.writeStringField("target", confType.toValue());
                 jgen.writeBooleanField("approvedOnly", value.getApprovedOnly());
+                jgen.writeBooleanField("ignoreRemoved", value.getIgnoreRemoved());
                 break;
             case JSON:
             case DEPENDENCY:

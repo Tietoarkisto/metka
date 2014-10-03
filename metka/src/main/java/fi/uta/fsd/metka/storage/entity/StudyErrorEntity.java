@@ -18,37 +18,37 @@ public class StudyErrorEntity {
     @Column(name = "STUDY_ERROR_STUDY", updatable = false)
     private Long studyErrorStudy;
 
-    @Column(name = "ADDED_BY")
-    private String addedBy;
+    @Column(name = "SAVED_BY")
+    private String savedBy;
 
-    @Column(name = "ADDED_AT")
+    @Column(name = "SAVED_AT")
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
-    private LocalDateTime addedAt;
+    private LocalDateTime savedAt;
 
-    @Column(name = "SCORE")
-    private Integer score;
+    @Column(name = "ERROR_SCORE")
+    private Integer errorscore;
 
-    @Column(name = "SECTION")
-    private String section;
-
-    @Column(name = "SUBSECTION")
-    private String subsection;
-
-    @Column(name = "LANGUAGE")
-    private String language;
-
-    @Column(name = "SUMMARY")
-    private String summary;
-
-    @Column(name = "DESCRIPTION")
-    private String description;
-
-    @Column(name = "TRIGGER_DATE")
+    @Column(name = "ERROR_TRIGGER_DATE")
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate triggerDate;
+    private LocalDate errortriggerdate;
 
-    @Column(name = "TRIGGER_TARGET")
-    private String triggerTarget;
+    @Column(name = "ERROR_TRIGGER_TARGET")
+    private String errortriggerpro;
+
+    @Column(name = "ERROR_LANGUAGE")
+    private String errorlanguage;
+
+    @Column(name = "ERROR_LABEL")
+    private String errorlabel;
+
+    @Column(name = "ERROR_NOTES")
+    private String errornotes;
+
+    @Column(name = "ERROR_DATASET_PART")
+    private String errordatasetpart;
+
+    @Column(name = "ERROR_PART_SECTION")
+    private String errorpartsection;
 
     public Long getId() {
         return id;
@@ -66,83 +66,83 @@ public class StudyErrorEntity {
         this.studyErrorStudy = studyErrorStudy;
     }
 
-    public String getAddedBy() {
-        return addedBy;
+    public String getSavedBy() {
+        return savedBy;
     }
 
-    public void setAddedBy(String addedBy) {
-        this.addedBy = addedBy;
+    public void setSavedBy(String savedBy) {
+        this.savedBy = savedBy;
     }
 
-    public LocalDateTime getAddedAt() {
-        return addedAt;
+    public LocalDateTime getSavedAt() {
+        return savedAt;
     }
 
-    public void setAddedAt(LocalDateTime addedAt) {
-        this.addedAt = addedAt;
+    public void setSavedAt(LocalDateTime savedAt) {
+        this.savedAt = savedAt;
     }
 
-    public Integer getScore() {
-        return score;
+    public Integer getErrorscore() {
+        return errorscore;
     }
 
-    public void setScore(Integer score) {
-        this.score = score;
+    public void setErrorscore(Integer errorscore) {
+        this.errorscore = errorscore;
     }
 
-    public String getSection() {
-        return section;
+    public LocalDate getErrortriggerdate() {
+        return errortriggerdate;
     }
 
-    public void setSection(String section) {
-        this.section = section;
+    public void setErrortriggerdate(LocalDate errortriggerdate) {
+        this.errortriggerdate = errortriggerdate;
     }
 
-    public String getSubsection() {
-        return subsection;
+    public String getErrortriggerpro() {
+        return errortriggerpro;
     }
 
-    public void setSubsection(String subsection) {
-        this.subsection = subsection;
+    public void setErrortriggerpro(String errortriggerpro) {
+        this.errortriggerpro = errortriggerpro;
     }
 
-    public String getLanguage() {
-        return language;
+    public String getErrorlanguage() {
+        return errorlanguage;
     }
 
-    public void setLanguage(String language) {
-        this.language = language;
+    public void setErrorlanguage(String errorlanguage) {
+        this.errorlanguage = errorlanguage;
     }
 
-    public String getSummary() {
-        return summary;
+    public String getErrorlabel() {
+        return errorlabel;
     }
 
-    public void setSummary(String summary) {
-        this.summary = summary;
+    public void setErrorlabel(String errorlabel) {
+        this.errorlabel = errorlabel;
     }
 
-    public String getDescription() {
-        return description;
+    public String getErrornotes() {
+        return errornotes;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setErrornotes(String errornotes) {
+        this.errornotes = errornotes;
     }
 
-    public LocalDate getTriggerDate() {
-        return triggerDate;
+    public String getErrordatasetpart() {
+        return errordatasetpart;
     }
 
-    public void setTriggerDate(LocalDate triggerDate) {
-        this.triggerDate = triggerDate;
+    public void setErrordatasetpart(String errordatasetpart) {
+        this.errordatasetpart = errordatasetpart;
     }
 
-    public String getTriggerTarget() {
-        return triggerTarget;
+    public String getErrorpartsection() {
+        return errorpartsection;
     }
 
-    public void setTriggerTarget(String triggerTarget) {
-        this.triggerTarget = triggerTarget;
+    public void setErrorpartsection(String errorpartsection) {
+        this.errorpartsection = errorpartsection;
     }
 }

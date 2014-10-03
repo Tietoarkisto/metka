@@ -126,7 +126,7 @@ public class StudySearchImpl implements StudySearch {
         for(Long id : groups.keySet()) {
             Long score = 0L;
             for(StudyErrorEntity error : groups.get(id)) {
-                score += error.getScore();
+                score += error.getErrorscore();
             }
             RevisionSearchResult result = new RevisionSearchResult();
             result.setId(id);

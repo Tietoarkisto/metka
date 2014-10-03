@@ -34,6 +34,6 @@ class DDIHeader {
 
         // Sets xml:lang attribute
         String languageCode = DDIBuilder.getXmlLang(language);
-        codeBookType.setLang(languageCode);
+        codeBookType.setXmlLang(languageCode);
     }
 }

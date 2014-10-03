@@ -2,6 +2,7 @@ define(function (require) {
     'use strict';
 
     return function (options) {
+        delete options.field.displayType;
         return {
             field: {
                 onClick: function (transferRow, replaceTr) {

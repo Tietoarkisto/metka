@@ -202,6 +202,8 @@ define(function (require) {
             });
         }
 
+        delete options.field.displayType;
+
         if (require('./../../isFieldDisabled')(options, options.defaultLang)) {
             return {};
         } else {

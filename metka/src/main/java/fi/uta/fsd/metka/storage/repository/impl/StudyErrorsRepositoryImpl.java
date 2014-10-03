@@ -30,7 +30,7 @@ public class StudyErrorsRepositoryImpl implements StudyErrorsRepository {
     @Override
     public List<StudyError> listErrorsForStudy(Long studyId) {
         List<StudyErrorEntity> errors = em.createQuery(
-                "SELECT e FROM StudyErrorEntity e WHERE e.studyErrorStudy=:studyId ORDER BY e.addedAt ASC",
+                "SELECT e FROM StudyErrorEntity e WHERE e.studyErrorStudy=:studyId ORDER BY e.savedAt ASC",
                 StudyErrorEntity.class)
                 .setParameter("studyId", studyId)
                 .getResultList();
@@ -59,8 +59,8 @@ public class StudyErrorsRepositoryImpl implements StudyErrorsRepository {
         if(error.getId() == null) {
             entity = new StudyErrorEntity();
             entity.setStudyErrorStudy(error.getStudyId());
-            entity.setAddedAt(new LocalDateTime());
-            entity.setAddedBy(AuthenticationUtil.getUserName());
+            entity.setSavedAt(new LocalDateTime());
+            entity.setSavedBy(AuthenticationUtil.getUserName());
             em.persist(entity);
         } else {
             entity = em.find(StudyErrorEntity.class, error.getId());
@@ -77,7 +77,7 @@ public class StudyErrorsRepositoryImpl implements StudyErrorsRepository {
 
         Integer points = 0;
         for(StudyErrorEntity e : entities) {
-            points += e.getScore();
+            points += e.getErrorscore();
         }
         if(points >= THRESHOLD) {
             // TODO: Check how to decide the trigger recipient and where to send it.
@@ -101,27 +101,28 @@ public class StudyErrorsRepositoryImpl implements StudyErrorsRepository {
     private StudyError studyErrorFromEntity(StudyErrorEntity entity) {
         StudyError error = new StudyError();
         error.setId(entity.getId());
-        error.setAddedAt(entity.getAddedAt());
-        error.setAddedBy(entity.getAddedBy());
-        error.setScore(entity.getScore());
-        error.setSection(entity.getSection());
-        error.setSubsection(entity.getSubsection());
-        error.setLanguage(entity.getLanguage());
-        error.setSummary(entity.getSummary());
-        error.setDescription(entity.getDescription());
-        error.setTriggerDate(entity.getTriggerDate());
-        error.setTriggerTarget(entity.getTriggerTarget());
+        error.setStudyId(entity.getStudyErrorStudy());
+        error.setSavedAt(entity.getSavedAt());
+        error.setSavedBy(entity.getSavedBy());
+        error.setErrorscore(entity.getErrorscore());
+        error.setErrordatasetpart(entity.getErrordatasetpart());
+        error.setErrorpartsection(entity.getErrorpartsection());
+        error.setErrorlanguage(entity.getErrorlanguage());
+        error.setErrorlabel(entity.getErrorlabel());
+        error.setErrornotes(entity.getErrornotes());
+        error.setErrortriggerdate(entity.getErrortriggerdate());
+        error.setErrortriggerpro(entity.getErrortriggerpro());
         return error;
     }
 
     private void updateStudyErrorEntity(StudyErrorEntity entity, StudyError error) {
-        entity.setScore(error.getScore());
-        entity.setSection(error.getSection());
-        entity.setSubsection(error.getSubsection());
-        entity.setLanguage(error.getLanguage());
-        entity.setSummary(error.getSummary());
-        entity.setDescription(error.getDescription());
-        entity.setTriggerDate(error.getTriggerDate());
-        entity.setTriggerTarget(error.getTriggerTarget());
+        entity.setErrorscore(error.getErrorscore());
+        entity.setErrordatasetpart(error.getErrordatasetpart());
+        entity.setErrorpartsection(error.getErrorpartsection());
+        entity.setErrorlanguage(error.getErrorlanguage());
+        entity.setErrorlabel(error.getErrorlabel());
+        entity.setErrornotes(error.getErrornotes());
+        entity.setErrortriggerdate(error.getErrortriggerdate());
+        entity.setErrortriggerpro(error.getErrortriggerpro());
     }
 }

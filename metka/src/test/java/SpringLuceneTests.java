@@ -4,6 +4,7 @@ import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.impl.SeriesEntity;
 import fi.uta.fsd.metka.storage.entity.impl.StudyEntity;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
+import fi.uta.fsd.metkaSearch.IndexWriterFactory;
 import fi.uta.fsd.metkaSearch.IndexerComponent;
 import fi.uta.fsd.metkaSearch.LuceneConfig;
 import fi.uta.fsd.metkaSearch.SearcherComponent;
@@ -22,6 +23,7 @@ import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
 import org.apache.lucene.document.*;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.apache.lucene.queryparser.flexible.standard.StandardQueryParser;
 import org.apache.lucene.queryparser.flexible.standard.config.NumericConfig;
@@ -29,6 +31,7 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.store.RAMDirectory;
 import org.joda.time.LocalDateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -63,6 +66,16 @@ public class SpringLuceneTests {
 
     @PersistenceContext(name = "entityManager")
     private EntityManager em;
+
+    @Test
+    public void temp() throws Exception {
+        Analyzer analyzer = FinnishVoikkoAnalyzer.ANALYZER;
+        Document doc = new Document();
+        RAMDirectory directory = new RAMDirectory();
+        IndexWriter writer = IndexWriterFactory.createIndexWriter(directory);
+        doc.add(new TextField("test", "<b>Jotain tekstiä</b> <span>tagien</span> sisällä", Field.Store.NO));
+        writer.addDocument(doc, analyzer);
+    }
 
     @Test
     public void seriesIndexTest() throws IOException {

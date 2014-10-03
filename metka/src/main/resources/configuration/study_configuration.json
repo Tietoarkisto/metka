@@ -404,7 +404,7 @@
 		"analysisunitvocab_list": {
 			"key": "analysisunitvocab_list",
 			"type": "REFERENCE",
-			"reference": "anaylsisunitvocab_ref",
+			"reference": "analysisunitvocab_ref",
 			"includeEmpty": false
 		},
 		"analysisunit_list": {
@@ -977,7 +977,7 @@
 			]
 		},
 		"versionlabeldesc": {
-			"key": "versionlabel",
+			"key": "versionlabeldesc",
 			"translatable": false,
 			"required": true,
 			"type": "SELECTION",
@@ -1379,20 +1379,16 @@
 		},
 		"country": {
 			"key": "country",
-			"translatable": false,
+			"translatable": true,
 			"required": true,
-			"type": "SELECTION",
-			"selectionList": "country_list",
+			"type": "STRING",
 			"subfield": true
 		},
 		"countryabbr": {
 			"key": "countryabbr",
 			"translatable": false,
 			"required": false,
-			"type": "REFERENCE",
-			"reference": "countryabbr_ref",
-			"writable": false,
-			"editable": false,
+			"type": "STRING",
 			"subfield": true
 		},
 		"universes": {
@@ -2102,7 +2098,7 @@
         	"subfield": true
         },
         "otherauthortype": {
-        	"key": "authortype",
+        	"key": "otherauthortype",
         	"type": "SELECTION",
         	"selectionList": "otherauthortype_list",
         	"translatable": false,

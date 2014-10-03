@@ -3,6 +3,26 @@ define(function (require) {
 
     return {
         create: function create(options) {
+            log(options);
+            require('./../../addTranslation')('fieldTitles', {
+                errorscore: {
+                    title: "Pisteet"
+                },
+                errordatasetpart: {
+                    title: "Aineoston osa"
+                },
+                errorpartsection: {
+                    title: "Osio"
+                },
+                errorlanguage: {
+                    title: "Kieli"
+                },
+                errorlabel: {
+                    title: "Selite"
+                }
+            });
+
+
             function refreshData(callback) {
 
                 require('./../../server')('/study/listErrors/{id}', {
@@ -10,12 +30,13 @@ define(function (require) {
                     success: function (response) {
                         var objectToTransferRow = require('./../../map/object/transferRow');
                         fieldOptions.data.fields.errors.rows.DEFAULT = response.errors.map(function (result) {
-                            result.savedAt = result.addedAt;
-                            result.savedBy = result.addedBy;
-                            result.score = result.score + '';
-                            delete result.addedAt;
-                            delete result.addedBy;
-                            return objectToTransferRow(result, fieldOptions.defaultLang);
+                            result.errorscore = result.errorscore + '';
+                            var transferRow = objectToTransferRow(result, fieldOptions.defaultLang);
+                            transferRow.saved = {
+                                time : result.savedAt,
+                                user : result.savedBy
+                            };
+                            return transferRow;
                         });
                         fieldOptions.$events.trigger('dataChanged');
                     }
@@ -30,69 +51,61 @@ define(function (require) {
                         errors: {
                             subfields: [
                                 'id',
-                                'score',
-                                'section',
-                                'subsection',
-                                'language',
-                                'summary',
-                                'description',
-                                'triggerDate',
-                                'triggerTarget'
+                                'errorscore',
+                                'errordatasetpart',
+                                'errorpartsection',
+                                'errorlanguage',
+                                'errorlabel',
+                                'errornotes',
+                                'errortriggerdate',
+                                'errortriggerpro'
                             ]
                         },
                         id: {
-                            summaryField: false
+                            type: "INTEGER"
                         },
-                        score: {
-                            key: 'score',
+                        errorscore: {
+                            key: 'errorscore',
                             type: 'SELECTION',
-                            summaryField: true,
-                            selectionList: 'score_list'
+                            selectionList: 'errorscore_list'
                         },
-                        section: {
-                            key: 'section',
+                        errordatasetpart: {
+                            key: 'errordatasetpart',
                             type: 'SELECTION',
-                            summaryField: true,
-                            selectionList: 'section_list'
+                            selectionList: 'errordatasetpart_list'
                         },
-                        subsection: {
-                            key: 'subsection',
+                        errorpartsection: {
+                            key: 'errorpartsection',
                             type: 'SELECTION',
-                            summaryField: false,
-                            selectionList: 'subsection_list'
+                            selectionList: 'errorpartsection_list'
 
                         },
-                        language: {
-                            key: 'language',
+                        errorlanguage: {
+                            key: 'errorlanguage',
                             type: 'SELECTION',
-                            summaryField: false,
-                            selectionList: 'language_list'
+                            selectionList: 'errorlanguage_list'
                         },
-                        summary: {
-                            key: 'summary',
-                            type: 'STRING',
-                            summaryField: true
+                        errorlabel: {
+                            key: 'errorlabel',
+                            type: 'STRING'
                         },
-                        description: {
-                            key: 'description',
+                        errornotes: {
+                            key: 'errornotes',
                             type: 'STRING',
-                            summaryField: false,
                             "multiline": true
                         },
-                        triggerDate: {
-                            key: 'triggerDate',
-                            type: 'DATE',
-                            summaryField: false
+                        errortriggerdate: {
+                            key: 'errortriggerdate',
+                            type: 'DATE'
                         },
-                        triggerTarget: {
-                            key: 'triggerTarget',
-                            type: 'SELECTION',
-                            summaryField: false
+                        errortriggerpro: {
+                            key: 'errortriggerpro',
+                            type: 'SELECTION'
                         }
                     },
                     "selectionLists": {
-                        "score_list": {
-                            "key": "score_list",
+                        "errorscore_list": {
+                            "key": "errorscore_list",
                             "type": "LITERAL",
                             "options": [
                                 {
@@ -112,8 +125,8 @@ define(function (require) {
                                 }
                             ]
                         },
-                        "section_list": {
-                            "key": "section_list",
+                        "errordatasetpart_list": {
+                            "key": "errordatasetpart_list",
                             "type": "VALUE",
                             "options": [
                                 {
@@ -160,8 +173,8 @@ define(function (require) {
                                 }
                             ]
                         },
-                        "subsection_list": {
-                            "key": "subsection_list",
+                        "errorpartsection_list": {
+                            "key": "errorpartsection_list",
                             "type": "VALUE",
                             "options": [
                                 {
@@ -226,8 +239,8 @@ define(function (require) {
                                 }
                             ]
                         },
-                        "language_list": {
-                            "key": "language_list",
+                        "errorlanguage_list": {
+                            "key": "errorlanguage_list",
                             "type": "VALUE",
                             "options": [
                                 {
@@ -264,12 +277,18 @@ define(function (require) {
                 field: {
                     displayType: 'CONTAINER',
                     key: "errors",
-                    columnFields: [],
+                    columnFields: [
+                        'errorscore',
+                        'errordatasetpart',
+                        'errorpartsection',
+                        'errorlanguage',
+                        'errorlabel'
+                    ],
                     showSaveInfo: true,
                     onRowChange: function ($tr, transferRow) {
                         var data = require('./../../map/transferRow/object')(transferRow, fieldOptions.defaultLang);
                         data.studyId = MetkaJS.revisionId;
-                        data.triggerDate = moment(data.triggerDate).format('YYYY-MM-DD');
+                        data.errortriggerdate = moment(data.errortriggerdate).format('YYYY-MM-DD');
                         delete data.savedAt;
                         delete data.savedBy;
                         require('./../../server')('/study/updateError/', {
