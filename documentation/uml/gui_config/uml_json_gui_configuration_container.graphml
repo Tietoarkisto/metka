@@ -18,7 +18,7 @@
       <data key="d4"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="186.0" width="237.91319444444457" x="609.6388888888889" y="317.0"/>
+          <y:Geometry height="214.59743119266062" width="237.91319444444457" x="609.6388888888889" y="317.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="75.65234375" x="81.13042534722229" y="3.0">Container<y:LabelModel>
@@ -39,7 +39,9 @@
 +rows : Container [0..*] {ordered}
 +cells : Container [0..*] {ordered}
 +required : Boolean
-+colspan : Integer</y:AttributeLabel>
++colspan : Integer
++extraDialogConfiguration : Container
+................................... [0..*]{ordered}</y:AttributeLabel>
             <y:MethodLabel/>
           </y:UML>
         </y:UMLClassNode>
@@ -97,10 +99,10 @@ EMPTYCELL</y:AttributeLabel>
       <data key="d4"/>
       <data key="d6">
         <y:UMLNoteNode>
-          <y:Geometry height="1124.8628472222222" width="436.4166666666665" x="852.3125" y="317.0"/>
+          <y:Geometry height="1238.411471075433" width="436.4166666666665" x="852.3125" y="317.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="1121.5" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="433.298828125" x="4.0" y="4.0">type : One of enum values in ContainerType enumerator. Defines
+          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="1233.25" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="433.298828125" x="4.0" y="4.0">type : One of enum values in ContainerType enumerator. Defines
     the type of this container and how it is handled. Type is a hierarchic
     definition where type of a certain level can not contain containers
     that have the type of the same level or a higher level (for example
@@ -179,7 +181,15 @@ rows : Is present only on COLUMN container. Contains all rows within
     given COLUMN container, never contains anything else than ROWs.
 
 cells : Is present only on ROW container. Contains all cells within given
-    ROW container, never contains anything else than CELL containers.</y:NodeLabel>
+    ROW container, never contains anything else than CELL containers.
+
+extraDialogConfiguration : Map of Containers that contain overrides for
+    container dialog content. All containers in this map are forced to
+    type CELL before parsing so all non CELL specific data is lost.
+    Extra configurations are found based on field name when dialog
+    is constructed and so should be used for container subfields only.
+    FieldDescription can be included but in that case field key must be
+    included in that FieldDescription.</y:NodeLabel>
         </y:UMLNoteNode>
       </data>
     </node>
@@ -187,10 +197,10 @@ cells : Is present only on ROW container. Contains all cells within given
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="-68.6009906982672" sy="43.141284403669715" tx="51.03038194444383" ty="-48.24462861597254"/>
+          <y:Path sx="-76.51644941386394" sy="78.69094036697254" tx="51.03038194444383" ty="-48.24462861597254"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="diamond" target="none"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="40.861328125" x="-26.83831628666701" y="29.7838134765625">+type<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="40.861328125" x="-7.753927382264237" y="6.505380986529872">+type<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
           </y:EdgeLabel>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
@@ -203,7 +213,7 @@ cells : Is present only on ROW container. Contains all cells within given
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="diamond" target="none"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="39.947265625" x="2.0000271267361995" y="29.807891845703125">+field<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="39.947265625" x="2.0000271267361995" y="5.666269307267839">+field<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
           </y:EdgeLabel>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
@@ -213,7 +223,7 @@ cells : Is present only on ROW container. Contains all cells within given
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="-34.42324108447495" sy="-67.81944444444434" tx="20.51996527777783" ty="-534.0474217459079"/>
+          <y:Path sx="-34.42324108447495" sy="-78.24665893919955" tx="20.51996527777783" ty="-587.9565271638268"/>
           <y:LineStyle color="#000000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="none"/>
           <y:BendStyle smoothed="false"/>

@@ -476,6 +476,14 @@
                                         "columnFields": [
                                             "note"
                                         ]
+                                    },
+                                    "extraDialogConfiguration": {
+                                    	"note": {
+                                    		"field": {
+                                    			"key": "note",
+                                    			"multiline": true
+                                    		}
+                                    	}
                                     }
                                 }
                             ]
@@ -1145,6 +1153,14 @@
                                             "columnFields": [
                                             	"datasource"
                                             ]
+                                        },
+                                        "extraDialogConfiguration": {
+                                        	"datasource": {
+                                        		"field": {
+                                        			"key": "datasource",
+                                        			"multiline": true
+                                        		}
+                                        	}
                                         }
                                     }
                                 ]
@@ -1180,14 +1196,16 @@
                                         "type": "CELL",
                                         "title": "Painokertoimet",
                                         "field": {
-                                            "key": "weight"
+                                            "key": "weight",
+                                        	"multiline": true
                                         }
                                     },
                                     {
                                         "type": "CELL",
                                         "title": "Sisällöllinen muokkaus",
                                         "field": {
-                                            "key": "dataprosessing"
+                                            "key": "dataprosessing",
+                                        	"multiline": true
                                         }
                                     }
                                 ]
@@ -1198,14 +1216,16 @@
                                         "type": "CELL",
                                         "title": "Tiedostot",
                                         "field": {
-                                            "key": "collsize"
+                                            "key": "collsize",
+                                        	"multiline": true
                                         }
                                     },
                                     {
                                         "type": "CELL",
                                         "title": "Täydellisyys",
                                         "field": {
-                                            "key": "complete"
+                                            "key": "complete",
+                                        	"multiline": true
                                         }
                                     }
                                 ]
@@ -1216,7 +1236,8 @@
                                         "type": "CELL",
                                         "title": "Huomioitavaa",
                                         "field": {
-                                            "key": "datasetnotes"
+                                            "key": "datasetnotes",
+                                        	"multiline": true
                                         }
                                     }
                                 ]
@@ -1233,6 +1254,14 @@
                                             "columnFields": [
                                             	"appraisal"
                                             ]
+                                        },
+                                        "extraDialogConfiguration": {
+                                        	"appraisal": {
+                                        		"field": {
+                                        			"key": "appraisal",
+                                        			"multiline": true
+                                        		}
+                                        	}
                                         }
                                     }
                                 ]
@@ -1259,6 +1288,14 @@
                                             "columnFields": [
                                             	"relatedmaterial"
                                             ]
+                                        },
+                                        "extraDialogConfiguration": {
+                                        	"relatedmaterial": {
+                                        		"field": {
+                                        			"key": "relatedmaterial",
+                                        			"multiline": true
+                                        		}
+                                        	}
                                         }
                                     }
                                 ]
@@ -1290,7 +1327,15 @@
                                             "columnFields": [
                                          		"publicationcomment"
                                             ]
-                                        }
+                                        },
+	                                    "extraDialogConfiguration": {
+	                                    	"publicationcomment": {
+	                                    		"field": {
+	                                    			"key": "publicationcomment",
+	                                    			"multiline": true
+	                                    		}
+	                                    	}
+	                                    }
                                     }
                                 ]
                             }]

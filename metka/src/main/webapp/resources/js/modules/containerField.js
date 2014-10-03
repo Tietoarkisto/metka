@@ -310,17 +310,21 @@ define(function (require) {
                     return freeTextKeys.indexOf(field) === -1;
                 }).map(function (field) {
                     var dataConfig = $.extend(true, {}, options.dataConf.fields[field]);
-                    if (fieldOptions.translatable) {
-                        dataConfig.translatable = false;
-                    }
 
                     return {
                         type: 'ROW',
-                        cells: [$.extend({}, dataConfig, {
-                            type: 'CELL',
-                            title: MetkaJS.L10N.get(fieldTitle(field)),
-                            field: dataConfig
-                        })]
+                        cells: [$.extend(true
+                            , {}
+                            , options.extraDialogConfiguration ? options.extraDialogConfiguration[field] : {}
+                            , {
+                                type: 'CELL',
+                                translatable: fieldOptions.translatable ? false : dataConfig.translatable,
+                                title: MetkaJS.L10N.get(fieldTitle(field)),
+                                field: {
+                                    key: field
+                                }
+                            }
+                        )]
                     };
                 });
             });

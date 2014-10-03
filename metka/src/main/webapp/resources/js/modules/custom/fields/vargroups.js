@@ -25,6 +25,14 @@ define(function (require) {
                         "columnFields": [
                             "vargrouptext"
                         ]
+                    },
+                    "extraDialogConfiguration" : {
+                        "vargrouptext": {
+                            "field": {
+                                "key": "vargrouptext",
+                                "multiline": true
+                            }
+                        }
                     }
                 }]
             }];

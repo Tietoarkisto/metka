@@ -17,3 +17,6 @@ uusimman revision studyid-tietoa. Tämän tiedon mukaan määräytyy mm. tallenn
 
 Myöskään revision "configuration" tiedon sisältöä ei tulisi vaihtaa, tai ainakaan tyyppiä ei tulisi vaihtaa. Jos revision
 konfiguraatiotyyppi vaihdetaan vaihtuu myös sisällön merkitys.
+
+Jos revision vaihtaa tilasta 'DRAFT' tilaan 'APPROVED' niin Revisionable-taulussa oleva 'curApprovedNo' tieto pitäisi päivittyä
+automaattisesti revision tallennuksen yhteydessä.
