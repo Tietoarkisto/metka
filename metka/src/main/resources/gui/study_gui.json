@@ -172,6 +172,10 @@
             "key" : "publicationid",
             "title" : "Julkaisun id"
         },
+        "publications": {
+            "key" : "publications",
+            "title" : "Julkaisu"
+        },
         "publicationtitle": {
             "key" : "publicationtitle",
             "title" : "Julkaisun nimi"
@@ -179,6 +183,10 @@
         "relatedmaterial": {
             "key" : "relatedmaterial",
             "title" : "Oheismateriaalit"
+        },
+        "relatedstudies": {
+            "key" : "relatedstudies",
+            "title" : "Aineisto"
         },
         "relatedstudyid": {
             "key" : "studyid_col",

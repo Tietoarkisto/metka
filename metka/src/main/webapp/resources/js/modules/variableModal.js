@@ -200,7 +200,7 @@ define(function (require) {
                                 }
                             ]
                         }
-                    ],
+                    ]/*,
                     buttons: [{
                         create: function () {
                             this
@@ -227,7 +227,7 @@ define(function (require) {
                         }
                     }, {
                         type: 'CANCEL'
-                    }]
+                    }]*/
                 });
                 var $modal = require('./modal')(modalOptions);
             }

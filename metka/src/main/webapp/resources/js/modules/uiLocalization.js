@@ -326,6 +326,22 @@ define(function (require) {
                         "default": "Muokkaa kuvailun versiotietoa"
                     }
                 },
+                "publications": {
+                    "&add": {
+                        "default": "Lisää liittyvä julkaisu"
+                    },
+                    "&modify": {
+                        "default": "Muokkaa liittyvää julkaisua"
+                    }
+                },
+                "relatedstudies": {
+                    "&add": {
+                        "default": "Lisää liittyvä aineisto"
+                    },
+                    "&modify": {
+                        "default": "Muokkaa liittyvää aineistoa"
+                    }
+                },
                 "alttitles": {
                     "&add": {
                         "default": "Lisää rinnakkainen nimi"

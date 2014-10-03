@@ -152,6 +152,10 @@ define(function (require) {
                                                         .append($('<tbody>')
                                                             .append(response.rows.map(function (row) {
                                                                 var parts = row.key.split('[');
+                                                                if (parts.length < 2) {
+                                                                    log('problem with revision row', row);
+                                                                    return;
+                                                                };
                                                                 return $('<tr>')
                                                                     .append([
                                                                         // TODO: get field title (titles are all over GUI conf, which is a problem)
