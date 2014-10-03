@@ -22,7 +22,7 @@ define(function (require) {
         setup.options.format = require('./dateFormats')[type];
         setup.options.language = 'fi';
 
-        this.append($('<div class="input-group date">')
+        var $datePicker = $('<div class="input-group date">')
             .append($input)
             .append('<span class="input-group-addon"><span class="glyphicon glyphicon-{icon}"></span>'.supplant(setup))
             .datetimepicker(setup.options)
@@ -36,10 +36,19 @@ define(function (require) {
                         this.data('DateTimePicker').setDate(date);
                     }
                 }.bind(this));
-            }))
-            // FIXME: kun kenttä on tyhjä ja ikonia klikataan, arvo tulee heti näkyviin mutta dp.change event ei triggeroidu. mahdollisesti korjattu datetimepickerin päivityksissä?
-            .on('dp.change', function (e) {
-                require('./data')(options).setByLang(lang, moment(e.date).format('YYYY-MM-DDThh:mm:ss.s'));
             });
+        function setValue(e) {
+            require('./data')(options).setByLang(lang, moment(e.date).format('YYYY-MM-DDThh:mm:ss.s'));
+        }
+        this.append($datePicker)
+            // FIXME: kun kenttä on tyhjä ja ikonia klikataan, arvo tulee heti näkyviin mutta dp.change event ei triggeroidu. mahdollisesti korjattu datetimepickerin päivityksissä?
+            .on('dp.change', setValue)
+            .on('dp.hide', setValue)
+            .on('dp.error', function (e) {
+                require('./data')(options).setByLang(lang, $input.val());
+            });
+        $input.change(function () {
+            require('./data')(options).setByLang(lang, $input.val());
+        });
     }
 });

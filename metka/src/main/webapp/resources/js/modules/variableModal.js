@@ -200,34 +200,175 @@ define(function (require) {
                                 }
                             ]
                         }
-                    ]/*,
-                    buttons: [{
-                        create: function () {
-                            this
-                                .text(MetkaJS.L10N.get('general.buttons.save'))
-                                .click(require('./formAction')('save')(modalOptions, function (response) {
-                                        require('./server')('/references/referenceRowRequest', {
-                                            data: JSON.stringify({
-                                                type: metka.PAGE,
-                                                id: metka.id,
-                                                no: metka.no,
-                                                path: key,
-                                                reference: response.data.key.id
-                                            }),
-                                            success: function (data) {
-                                                onSaveSuccess(data.row);
-                                            }
-                                        });
-                                    },
-                                    [
-                                        'SAVE_SUCCESSFUL',
-                                        'SAVE_SUCCESSFUL_WITH_ERRORS',
-                                        'NO_CHANGES_TO_SAVE'
-                                    ]));
+                    ],
+                    buttons: [
+                        // vanha tallennuspainike. poistetaan, jos alla oleva toimii
+                        /*{
+                            create: function () {
+                                this
+                                    .text(MetkaJS.L10N.get('general.buttons.save'))
+                                    .click(require('./formAction')('save')(modalOptions, function (response) {
+                                            require('./server')('/references/referenceRowRequest', {
+                                                data: JSON.stringify({
+                                                    type: metka.PAGE,
+                                                    id: metka.id,
+                                                    no: metka.no,
+                                                    path: key,
+                                                    reference: response.data.key.id
+                                                }),
+                                                success: function (data) {
+                                                    onSaveSuccess(data.row);
+                                                }
+                                            });
+                                        },
+                                        [
+                                            'SAVE_SUCCESSFUL',
+                                            'SAVE_SUCCESSFUL_WITH_ERRORS',
+                                            'NO_CHANGES_TO_SAVE'
+                                        ]));
+                            }
+                        },*/
+                        {
+                            "&title": {
+                                "default": "Tallenna"
+                            },
+                            "type": "SAVE",
+                            "isHandler": true,
+                            "states": [
+                                "DRAFT"
+                            ],
+                            "permissions": [
+                                "canEditRevision"
+                            ]
+                        },
+                        /*{
+                            "&title": {
+                                "default": "Hyväksy"
+                            },
+                            "type": "APPROVE",
+                            "isHandler": true,
+                            "states": [
+                                "DRAFT"
+                            ],
+                            "permissions": [
+                                "canApproveRevision"
+                            ]
+                        },*/
+                        /*{
+                            "&title": {
+                                "default": "Tee luonnos"
+                            },
+                            "type": "EDIT",
+                            "states": [
+                                "APPROVED"
+                            ],
+                            "permissions": [
+                                "canEditRevision"
+                            ]
+                        },
+                        {
+                            "&title": {
+                                "default": "Poista"
+                            },
+                            "type": "REMOVE",
+                            "states": [
+                                "DRAFT",
+                                "APPROVED"
+                            ],
+                            "isHandler": true,
+                            "permissions": [
+                                "canRemoveRevision"
+                            ]
+                        },
+                        {
+                            "&title": {
+                                "default": "Palauta"
+                            },
+                            "type": "RESTORE",
+                            "states": [
+                                "REMOVED"
+                            ],
+                            "permissions": [
+                                "canRestoreRevision"
+                            ]
+                        },*/
+                        {
+                            "&title": {
+                                "default": "Aloita muokkaus"
+                            },
+                            "type": "CLAIM",
+                            "hasHandler": false,
+                            "states": [
+                                "DRAFT"
+                            ],
+                            "permissions": [
+                                "canEditRevision"
+                            ]
+                        },
+                        {
+                            "&title": {
+                                "default": "Ota haltuun"
+                            },
+                            "type": "CLAIM",
+                            "hasHandler": true,
+                            "isHandler": false,
+                            "states": [
+                                "DRAFT"
+                            ],
+                            "permissions": [
+                                "canEditRevision",
+                                "canForceClaimRevision"
+                            ]
+                        },
+                        {
+                            "&title": {
+                                "default": "Lopeta muokkaus"
+                            },
+                            "type": "RELEASE",
+                            "isHandler": true,
+                            "states": [
+                                "DRAFT"
+                            ],
+                            "permissions": [
+                                "canEditRevision"
+                            ]
+                        },
+                        {
+                            "&title": {
+                                "default": "Vapauta luonnos"
+                            },
+                            "type": "RELEASE",
+                            "isHandler": false,
+                            "hasHandler": true,
+                            "states": [
+                                "DRAFT"
+                            ],
+                            "permissions": [
+                                "canForceReleaseRevision"
+                            ]
+                        },
+                        /*{
+                            "&title": {
+                                "default": "Revisiohistoria"
+                            },
+                            "type": "HISTORY",
+                            "permissions": [
+                                "canViewRevision"
+                            ]
+                        },
+                        {
+                            "&title": {
+                                "default": "Export DDI"
+                            },
+                            "type": "EXPORT_DDI",
+                            "permissions": [
+                                "canViewRevision"
+                            ]
+                        },*/
+                        {
+                            type: 'CANCEL'
                         }
-                    }, {
-                        type: 'CANCEL'
-                    }]*/
+                    ]
                 });
                 var $modal = require('./modal')(modalOptions);
             }

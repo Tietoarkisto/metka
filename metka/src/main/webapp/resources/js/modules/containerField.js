@@ -211,7 +211,7 @@ define(function (require) {
             });
         }
 
-        if (fieldOptions.type === 'REFERENCECONTAINER') {
+        if (fieldOptions.type === 'REFERENCECONTAINER' && key !== 'files') {
             // FIXME: Merge shared code with containerRowDialog.
             var refDialog = function (options, lang, key) {
                 var PAGE = require('./../metka').PAGE;
