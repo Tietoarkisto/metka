@@ -149,7 +149,6 @@ define(function (require) {
                 }));
 
             if (options.field.showSaveInfo) {
-                log(transferRow.saved);
                 $tr.append(
                     $('<td>')
                         .text(transferRow.saved ? moment(transferRow.saved.time).format(require('./dateFormats')['DATE']) : EMPTY),
@@ -213,6 +212,7 @@ define(function (require) {
         }
 
         if (fieldOptions.type === 'REFERENCECONTAINER') {
+            // FIXME: Merge shared code with containerRowDialog.
             var refDialog = function (options, lang, key) {
                 var PAGE = require('./../metka').PAGE;
                 var fieldOptions = getPropertyNS(options, 'dataConf.fields', key) || {};
@@ -256,8 +256,7 @@ define(function (require) {
                                         this
                                             .text(MetkaJS.L10N.get('general.buttons.' + button))
                                             .click(function () {
-                                                transferRow.value = transferRowCopy.fields[key].values.DEFAULT.current;
-                                                $.extend(transferRow, transferRowCopy);
+                                                transferRow.value = transferRowCopy.fields[key].values[lang].current;
                                                 onClose(transferRow);
                                             });
                                     }

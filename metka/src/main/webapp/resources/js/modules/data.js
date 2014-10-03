@@ -84,7 +84,7 @@ define(function (require) {
 
                 transferField.rows = transferField.rows || {};
                 transferField.rows[lang] = transferField.rows[lang] || [];
-                transferField.type = transferField.type || 'CONTAINER';
+                transferField.type = transferField.type || options.dataConf.fields[key].type;
                 trasferRow.key = trasferRow.key || key;
 
                 transferField.rows[lang].push(trasferRow);

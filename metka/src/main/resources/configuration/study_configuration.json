@@ -586,13 +586,13 @@
 			"key": "publicationid_ref",
 			"type": "DEPENDENCY",
 			"target": "publications",
-			"titlePath": "publicationid"
+			"valuePath": "publicationid"
 		},
 		"publicationtitle_ref": {
 			"key": "publicationtitle_ref",
 			"type": "DEPENDENCY",
 			"target": "publications",
-			"titlePath": "publicationtitle"
+			"valuePath": "publicationtitle"
 		},
 		"relatedstudy_ref": {
 			"key": "relatedstudy_ref",
@@ -604,13 +604,13 @@
 			"key": "relatedstudyid_ref",
 			"type": "DEPENDENCY",
 			"target": "relatedstudies",
-			"titlePath": "studyid"
+            "valuePath": "studyid"
 		},
 		"relatedstudytitle_ref": {
 			"key": "relatedstudytitle_ref",
 			"type": "DEPENDENCY",
 			"target": "relatedstudies",
-			"titlePath": "title"
+			"valuePath": "title"
 		},
 		"variables_ref": {
 			"key": "variables_ref",
