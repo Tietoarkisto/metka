@@ -579,7 +579,8 @@
 		"publication_ref": {
 			"key": "publication_ref",
 			"type": "REVISIONABLE",
-			"target": "PUBLICATION"
+			"target": "PUBLICATION",
+            "titlePath": "publicationtitle"
 		},
 		"publicationid_ref": {
 			"key": "publicationid_ref",
@@ -596,7 +597,8 @@
 		"relatedstudy_ref": {
 			"key": "relatedstudy_ref",
 			"type": "REVISIONABLE",
-			"target": "STUDY"
+			"target": "STUDY",
+            "titlePath": "title"
 		},
 		"relatedstudyid_ref": {
 			"key": "relatedstudyid_ref",
@@ -1012,7 +1014,7 @@
 			"writable": false
 		},
 		"relatedstudies": {
-			"key": "studies",
+			"key": "relatedstudies",
 			"translatable": false,
 			"type": "REFERENCECONTAINER",
 			"reference": "relatedstudy_ref",

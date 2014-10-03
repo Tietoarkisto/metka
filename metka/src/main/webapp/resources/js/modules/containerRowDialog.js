@@ -30,8 +30,15 @@ define(function (require) {
                                 this
                                     .text(MetkaJS.L10N.get('general.buttons.' + button))
                                     .click(function () {
-                                        $.extend(transferRow, transferRowCopy);
-                                        onClose(transferRow);
+                                        if (fieldOptions.type === 'REFERENCECONTAINER') {
+                                            log(transferRowCopy)
+                                            //transferRow.value = transferRowCopy.
+                                            //$.extend(transferRow, transferRowCopy);
+                                            onClose(transferRow);
+                                        } else {
+                                            $.extend(transferRow, transferRowCopy);
+                                            onClose(transferRow);
+                                        }
                                     });
                             }
                         },
