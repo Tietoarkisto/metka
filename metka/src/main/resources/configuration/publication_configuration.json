@@ -100,37 +100,39 @@
     	"study_ref": {
 			"key": "study_ref",
 			"type": "REVISIONABLE",
-			"target": "STUDY"
+			"target": "STUDY",
+            "titlePath": "title"
 		},
 		"studyid_ref": {
 			"key": "studyid_ref",
 			"type": "DEPENDENCY",
 			"target": "studies",
-			"titlePath": "studyid"
+			"valuePath": "studyid"
 		},
 		"studytitle_ref": {
 			"key": "studytitle_ref",
 			"type": "DEPENDENCY",
 			"target": "studies",
-			"titlePath": "title"
+			"valuePath": "title"
 		},
 		"series_ref": {
 			"key": "series_ref",
 			"type": "REVISIONABLE",
-			"target": "SERIES"
+			"target": "SERIES",
+            "titlePath": "seriesname"
 		},
 		"seriesabbr_ref": {
 			"key": "seriesabbr_ref",
 			"type": "DEPENDENCY",
 			"target": "series",
-			"titlePath": "seriesabbr"
+			"valuePath": "seriesabbr"
 			
 		},
 		"seriesname_ref": {
 			"key": "seriesname_ref",
 			"type": "DEPENDENCY",
 			"target": "series",
-			"titlePath": "seriesname"
+			"valuePath": "seriesname"
 			
 		}
     },
