@@ -212,26 +212,120 @@ define(function (require) {
             });
         }
 
-        var rowDialog = require('./containerRowDialog')(options, lang, key, function () {
-            return subfields.filter(function (field) {
-                // filter free text fields
-                return freeTextKeys.indexOf(field) === -1;
-            }).map(function (field) {
-                var dataConfig = $.extend(true, {}, options.dataConf.fields[field]);
-                if (fieldOptions.translatable) {
-                    dataConfig.translatable = false;
-                }
+        if (fieldOptions.type === 'REFERENCECONTAINER') {
+            var refDialog = function (options, lang, key) {
+                var PAGE = require('./../metka').PAGE;
+                var fieldOptions = getPropertyNS(options, 'dataConf.fields', key) || {};
+                return function (title, button) {
+                    return function (transferRow, onClose) {
+                        // copy data, so if dialog is dismissed, original data won't change
+                        var transferRowCopy = $.extend(true, {}, transferRow);
 
-                return {
-                    type: 'ROW',
-                    cells: [$.extend({}, dataConfig, {
-                        type: 'CELL',
-                        title: MetkaJS.L10N.get(fieldTitle(field)),
-                        field: dataConfig
-                    })]
-                };
+                        var containerOptions = {
+                            title: MetkaJS.L10N.get(['dialog', PAGE, key, title].join('.')),
+                            data: transferRowCopy,
+                            dataConf: options.dataConf,
+                            $events: $({}),
+                            defaultLang: fieldOptions.translatable ? lang : options.defaultLang,
+                            content: [
+                                {
+                                    type: 'COLUMN',
+                                    columns: 1,
+                                    rows: (function () {
+                                        var field = key;
+                                        var dataConfig = {
+                                            "key": key,
+                                            "translatable": false,
+                                            "type": "SELECTION",
+                                            "selectionList": 'referenceContainerRowDialog_list'
+                                        };
+                                        return [{
+                                            type: 'ROW',
+                                            cells: [$.extend({}, dataConfig, {
+                                                type: 'CELL',
+                                                title: MetkaJS.L10N.get(fieldTitle(field)),
+                                                field: dataConfig
+                                            })]
+                                        }];
+                                    })()
+                                }
+                            ],
+                            buttons: [
+                                {
+                                    create: function () {
+                                        this
+                                            .text(MetkaJS.L10N.get('general.buttons.' + button))
+                                            .click(function () {
+                                                transferRow.value = transferRowCopy.fields[key].values.DEFAULT.current;
+                                                $.extend(transferRow, transferRowCopy);
+                                                onClose(transferRow);
+                                            });
+                                    }
+                                },
+                                {
+                                    type: 'CANCEL'
+                                }
+                            ]
+                        };
+
+                        // if not translatable container and has translatable subfields, show language selector
+                        if (!fieldOptions.translatable && require('./containerHasTranslatableSubfields')(options)) {
+                            containerOptions.translatableCurrentLang = $('input[name="translation-lang"]:checked').val() || options.defaultLang;
+                        }
+
+                        var $modal = require('./modal')(containerOptions);
+
+                    };
+                }
+            };
+            var fields = {};
+            fields[key] = {
+                "key": key,
+                "translatable": false,
+                "type": "SELECTION",
+                "selectionList": "referenceContainerRowDialog_list"
+            };
+            var references = {};
+            references[fieldOptions.reference] = options.dataConf.references[fieldOptions.reference];
+            var rowDialog = refDialog({
+                defaultLang: options.defaultLang,
+                dataConf: {
+                    key: options.dataConf.key,
+                    selectionLists: {
+                        referenceContainerRowDialog_list: {
+                            "type": "REFERENCE",
+                            "reference": fieldOptions.reference
+                        }
+                    },
+                    references: references,
+                    fields: fields
+                },
+                field: {
+                    key: key
+                }
+            }, lang, key);
+        } else {
+            var rowDialog = require('./containerRowDialog')(options, lang, key, function () {
+                return subfields.filter(function (field) {
+                    // filter free text fields
+                    return freeTextKeys.indexOf(field) === -1;
+                }).map(function (field) {
+                    var dataConfig = $.extend(true, {}, options.dataConf.fields[field]);
+                    if (fieldOptions.translatable) {
+                        dataConfig.translatable = false;
+                    }
+
+                    return {
+                        type: 'ROW',
+                        cells: [$.extend({}, dataConfig, {
+                            type: 'CELL',
+                            title: MetkaJS.L10N.get(fieldTitle(field)),
+                            field: dataConfig
+                        })]
+                    };
+                });
             });
-        });
+        }
 
         this.data('addRowFromDataObject', addRowFromDataObject);
         this.data('addRow', addRow);
