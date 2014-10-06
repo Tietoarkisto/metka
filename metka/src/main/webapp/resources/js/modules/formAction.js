@@ -10,9 +10,9 @@ define(function (require) {
                             field.errors.length = 0
                         }
                         if (field.values) {
-                            $.each(field.values, function (lang) {
-                                if (lang.errors) {
-                                    lang.errors.length = 0
+                            $.each(field.values, function (lang, value) {
+                                if (value && value.errors) {
+                                    value.errors.length = 0
                                 }
                             });
                         }

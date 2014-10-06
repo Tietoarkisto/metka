@@ -849,7 +849,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         private void saveValueFor(Language language, MutablePair<StatusCode, Boolean> returnPair, Field field,
                                   Configuration configuration, TransferField transferField, DataFieldContainer dataFields,
                                   Map<String, Change> changeMap, TransferFieldContainer transferFields) {
-            Value value = transferField.asValue(language);
+            Value value = transferField.currentAsValueFor(language);
             FieldError typeError = value.typeCheck(field.getType());
             if(typeError != null) {
                 // This should mean that there is actually a value but let's just check just in case
