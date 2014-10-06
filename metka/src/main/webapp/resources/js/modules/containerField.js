@@ -174,20 +174,8 @@ define(function (require) {
                 return $tr;
             }
 
-            if (fieldOptions.type === 'REFERENCECONTAINER' && key === 'files') {
-                // TODO: to maintain row order and separate removed rows, add API to server and request all rows in one request
-                require('./server')('/references/referenceStatus/{value}', transferRow, {
-                    method: 'GET',
-                    success: function (response) {
-                        if (response.exists && !response.removed) {
-                            append();
-                        }
-                    }
-                });
-            } else {
-                if (!transferRow.removed) {
-                    return append();
-                }
+            if (!transferRow.removed) {
+                return append();
             }
         }
 
@@ -203,7 +191,7 @@ define(function (require) {
         // list field keys, which are configured as freeTextKeys
         var subfields = fieldOptions.subfields || [];
         var freeTextKeys = [];
-        if (options.dataConf.selectionLists) {
+        if (options.dataConf && options.dataConf.selectionLists) {
             $.each(options.dataConf.selectionLists, function (key, list) {
                 if (list.freeTextKey) {
                     freeTextKeys.push(list.freeTextKey);
@@ -313,10 +301,11 @@ define(function (require) {
 
                     return {
                         type: 'ROW',
-                        cells: [$.extend(true
-                            , {}
-                            , options.extraDialogConfiguration ? options.extraDialogConfiguration[field] : {}
-                            , {
+                        cells: [$.extend(
+                            true,
+                            {},
+                            options.extraDialogConfiguration ? options.extraDialogConfiguration[field] : {},
+                            {
                                 type: 'CELL',
                                 translatable: fieldOptions.translatable ? false : dataConfig.translatable,
                                 title: MetkaJS.L10N.get(fieldTitle(field)),

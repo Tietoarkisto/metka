@@ -1530,28 +1530,9 @@
                         "cells": [
                             {
                                 "type": "CELL",
-                                "title": "Liitetyt tiedostot",
                                 "field": {
                                     "key": "files",
-                                    "displayType": "CUSTOM_JS",
-                                    "showSaveInfo": true,
-                                    "showReferenceKey": true,
-                                    "columnFields": [
-                                        "filespath",
-                                        "fileslang"
-                                    ]
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "type": "ROW",
-                        "cells": [
-                            {
-                                "type": "CELL",
-                                "title": "Poistetut tiedostot",
-                                "field": {
-                                    "key": "removedFiles"
+                                    "displayType": "CUSTOM_JS"
                                 }
                             }
                         ]

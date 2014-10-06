@@ -615,27 +615,33 @@ define(function (require) {
                     },
                     "draft": {
                         "&text": {
-                            "default": "Haluatko varmasti poistaa luonnoksen {0} id:llä {1}?"
+                            "default": "Haluatko varmasti poistaa {target} id:llä {id} luonnoksen {no}?"
                         },
                         "data": {
-                            "&series": {
+                            "&SERIES": {
                                 "default": "sarjalta"
                             },
-                            "&study": {
+                            "&STUDY": {
                                 "default": "aineistolta"
+                            },
+                            "&STUDY_ATTACHMENT": {
+                                "default": "aineistoliitteistä"
                             }
                         }
                     },
                     "logical": {
                         "&text": {
-                            "default": "Haluatko varmasti poistaa {0} id:llä {1}?"
+                            "default": "Haluatko varmasti poistaa {target} id:llä {id}?"
                         },
                         "data": {
-                            "&series": {
+                            "&SERIES": {
                                 "default": "sarjan"
                             },
-                            "&study": {
+                            "&STUDY": {
                                 "default": "aineiston"
+                            },
+                            "&STUDY_ATTACHMENT": {
+                                "default": "aineistoliitteen"
                             }
                         }
                     }

@@ -202,32 +202,6 @@ define(function (require) {
                         }
                     ],
                     buttons: [
-                        // vanha tallennuspainike. poistetaan, jos alla oleva toimii
-                        /*{
-                            create: function () {
-                                this
-                                    .text(MetkaJS.L10N.get('general.buttons.save'))
-                                    .click(require('./formAction')('save')(modalOptions, function (response) {
-                                            require('./server')('/references/referenceRowRequest', {
-                                                data: JSON.stringify({
-                                                    type: metka.PAGE,
-                                                    id: metka.id,
-                                                    no: metka.no,
-                                                    path: key,
-                                                    reference: response.data.key.id
-                                                }),
-                                                success: function (data) {
-                                                    onSaveSuccess(data.row);
-                                                }
-                                            });
-                                        },
-                                        [
-                                            'SAVE_SUCCESSFUL',
-                                            'SAVE_SUCCESSFUL_WITH_ERRORS',
-                                            'NO_CHANGES_TO_SAVE'
-                                        ]));
-                            }
-                        },*/
                         {
                             "&title": {
                                 "default": "Tallenna"

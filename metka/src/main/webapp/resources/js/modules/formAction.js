@@ -53,7 +53,7 @@ define(function (require) {
                                 type: 'DISMISS'
                             }]
                         });
-
+                        // FIXME: kutsu vasta kun dialog suljetaan
                         onSuccess(response);
                     }
                 });

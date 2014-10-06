@@ -1,9 +1,9 @@
 define(function (require) {
     'use strict';
 
+    var filesContainerCreated = false;
     return function (options) {
         function view(requestOptions, onSaveSuccess) {
-            var metka = require('./../../../metka');
             require('./../../server')('viewAjax', $.extend({
                 PAGE: 'STUDY_ATTACHMENT'
             }, requestOptions), {
@@ -13,7 +13,7 @@ define(function (require) {
                         title: 'Muokkaa tiedostoa',
                         data: data.transferData,
                         dataConf: data.configuration,
-                        $events: $({}),
+                        $events: options.$events,
                         defaultLang: 'DEFAULT',
                         large: true,
                         content: [
@@ -170,29 +170,30 @@ define(function (require) {
                             }
                         ],
                         buttons: [{
-                            create: function () {
-                                this
-                                    .text(MetkaJS.L10N.get('general.buttons.save'))
-                                    .click(require('./../../formAction')('save')(modalOptions, function (response) {
-                                        require('./../../server')('/references/referenceRowRequest', {
-                                            data: JSON.stringify({
-                                                type: metka.PAGE,
-                                                id: metka.id,
-                                                no: metka.no,
-                                                path: options.field.key,
-                                                reference: response.data.key.id
-                                            }),
-                                            success: function (data) {
-                                                onSaveSuccess(data.row);
-                                            }
-                                        });
-                                    },
-                                    [
-                                        'SAVE_SUCCESSFUL',
-                                        'SAVE_SUCCESSFUL_WITH_ERRORS',
-                                        'NO_CHANGES_TO_SAVE'
-                                    ]));
-                            }
+                            "&title": {
+                                "default": "Tallenna"
+                            },
+                            "type": "SAVE",
+                            "isHandler": true,
+                            "states": [
+                                "DRAFT"
+                            ],
+                            "permissions": [
+                                "canEditRevision"
+                            ]
+                        }, {
+                            "&title": {
+                                "default": "Poista"
+                            },
+                            "type": "REMOVE",
+                            "states": [
+                                "DRAFT",
+                                "APPROVED"
+                            ],
+                            "isHandler": true,
+                            "permissions": [
+                                "canRemoveRevision"
+                            ]
                         }, {
                             type: 'CANCEL'
                         }]
@@ -202,51 +203,139 @@ define(function (require) {
             });
         }
 
-        delete options.field.displayType;
+        if (filesContainerCreated) {
+            return;
+        }
+        filesContainerCreated = true;
 
-        if (require('./../../isFieldDisabled')(options, options.defaultLang)) {
-            return {};
-        } else {
-            return {
-                field: {
-                    onClick: function (transferRow, replaceTr) {
-                        view({
-                            id: transferRow.value
-                        }, replaceTr);
-                    },
-                    onAdd: function (originalEmptyData, addRow) {
-                        require('./../../server')('create', {
-                            data: JSON.stringify({
-                                type: 'STUDY_ATTACHMENT',
-                                parameters: {
-                                    study: require('./../../../metka').id
+        return {
+            create: function (options) {
+                var $elem = this;
+
+                require('./../../data')(options).onChange(function () {
+                    function addFileContainers() {
+                        require('./../../inherit')(function (options) {
+                            require('./../../container').call($elem, options);
+                        })(options)({
+                            data: {
+                                fields: fields
+                            },
+                            dataConf: $.extend(true, {
+                                fields: {
+                                    removedFiles: {
+                                        "key": "removedFiles",
+                                        "translatable": false,
+                                        "type": "REFERENCECONTAINER",
+                                        "reference": "attachment_ref",
+                                        "subfields": [
+                                            "filespath",
+                                            "fileslang"
+                                        ]}
                                 }
-                            }),
-                            success: function (response) {
-                                if (response.result === 'REVISION_CREATED') {
-                                    view(response.data.key, addRow);
-                                }
-                            }
-                        });
-                    },
-                    onRemove: function ($tr) {
-                        require('./../../server')('viewAjax', $.extend({
-                            PAGE: 'STUDY_ATTACHMENT',
-                            id: $tr.data('transferRow').value
-                        }), {
-                            method: 'GET',
-                            success: function (data) {
-                                require('./../../server')('remove', {
-                                    data: JSON.stringify(data.transferData),
-                                    success: function (response) {
-                                        $tr.remove();
-                                    }
-                                });
-                            }
+                            }, options.dataConf),
+                            content: [{
+                                "type": "COLUMN",
+                                "columns": 1,
+                                "rows": [{
+                                    "type": "ROW",
+                                    "cells": [
+                                        {
+                                            "type": "CELL",
+                                            "title": "Liitetyt tiedostot",
+                                            "field": {
+                                                "key": "files",
+                                                "showSaveInfo": true,
+                                                "showReferenceKey": true,
+                                                "columnFields": [
+                                                    "filespath",
+                                                    "fileslang"
+                                                ],
+                                                onClick: function (transferRow, replaceTr) {
+                                                    view({
+                                                        id: transferRow.value,
+                                                        no: ''
+                                                    }, replaceTr);
+                                                },
+                                                onAdd: function (originalEmptyData, addRow) {
+                                                    require('./../../server')('create', {
+                                                        data: JSON.stringify({
+                                                            type: 'STUDY_ATTACHMENT',
+                                                            parameters: {
+                                                                study: require('./../../../metka').id
+                                                            }
+                                                        }),
+                                                        success: function (response) {
+                                                            if (response.result === 'REVISION_CREATED') {
+                                                                // FIXME: row was immediately created, but if dialog is dismissed, row won't be shown until page refresh
+                                                                view(response.data.key, addRow);
+                                                            }
+                                                        }
+                                                    });
+                                                },
+                                                onRemove: function ($tr) {
+                                                    // TODO: don't show remove button
+                                                    log($tr, $tr.data('transferRow'));
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }, {
+                                    "type": "ROW",
+                                    "cells": [
+                                        {
+                                            "type": "CELL",
+                                            "title": "Poistetut tiedostot",
+                                            readOnly: true,
+                                            "field": {
+                                                "key": "removedFiles",
+                                                "showReferenceKey": true,
+                                                "columnFields": [
+                                                    "filespath",
+                                                    "filedescription",
+                                                    "filecomment"
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }]
+                            }]
                         });
                     }
-                }
-            };
-        }
+                    function langRow() {
+                        var o = {};
+                        o[options.defaultLang] = [];
+                        return o;
+                    }
+                    $elem.empty();
+                    var fields = {
+                        files: {
+                            key: 'files',
+                            rows: langRow()
+                        },
+                        removedFiles: {
+                            key: 'removedFiles',
+                            rows: langRow()
+                        }
+                    };
+                    var rows = require('./../../data')(options).getByLang(options.defaultLang);
+                    if (rows) {
+                        var pendingResponseCount = rows.length;
+                        rows.forEach(function (transferRow) {
+                            require('./../../server')('/references/referenceStatus/{value}', transferRow, {
+                                method: 'GET',
+                                success: function (response) {
+                                    fields[response.exists ? 'files' : 'removedFiles'].rows[options.defaultLang].push(transferRow);
+                                    if (!--pendingResponseCount) {
+                                        addFileContainers();
+                                    }
+                                }
+                            });
+                        });
+                    } else {
+                        addFileContainers();
+                    }
+                });
+            }
+        };
     };
 });
