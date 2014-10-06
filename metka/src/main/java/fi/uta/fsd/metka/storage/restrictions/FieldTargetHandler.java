@@ -1,9 +1,6 @@
 package fi.uta.fsd.metka.storage.restrictions;
 
-import fi.uta.fsd.metka.enums.ConfigurationType;
-import fi.uta.fsd.metka.enums.Language;
-import fi.uta.fsd.metka.enums.ReferenceType;
-import fi.uta.fsd.metka.enums.SelectionListType;
+import fi.uta.fsd.metka.enums.*;
 import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
@@ -185,9 +182,9 @@ class FieldTargetHandler {
     private static boolean checkConditionForContainerField(ContainerDataField d, Condition condition) {
         switch(condition.getType()) {
             case IS_EMPTY:
-                return IsEmptyCheck.isEmpty(d);
+                return IsEmptyCheck.isEmpty(d, condition.getTarget());
             case NOT_EMPTY:
-                return NotEmptyCheck.notEmpty(d);
+                return NotEmptyCheck.notEmpty(d, condition.getTarget());
             default:
                 return true;
         }
@@ -214,9 +211,9 @@ class FieldTargetHandler {
                                                        RevisionData revision, SearcherComponent searcher) {
         switch(condition.getType()) {
             case IS_EMPTY:
-                return IsEmptyCheck.isEmpty(d);
+                return IsEmptyCheck.isEmpty(d, condition.getTarget());
             case NOT_EMPTY:
-                return NotEmptyCheck.notEmpty(d);
+                return NotEmptyCheck.notEmpty(d, condition.getTarget());
             case UNIQUE:
                 return UniqueCheck.unique(d, condition.getParent().getParent(), revision, searcher, configuration);
             case INCREASING:
@@ -314,6 +311,9 @@ class FieldTargetHandler {
                     }
                     // Value did not equal
                     return false;
+                case LANGUAGE:
+                    // Language equality is not defined for field at this time but could be
+                    return true;
                 default:
                     // Should not happen so let's return false in this case
                     return false;
@@ -322,56 +322,72 @@ class FieldTargetHandler {
     }
 
     private static class NotEmptyCheck {
-        // TODO: Currently returns true if there are rows for some language, should be possible to require specific language at some point.
-        private static boolean notEmpty(ContainerDataField field) {
-            return field != null && field.hasRows();
+        private static boolean notEmpty(ContainerDataField field, Target t) {
+            if(t == null || t.getType() != TargetType.LANGUAGE) {
+                // Only language condition target is defined at the moment, any other type target is treated as null
+                return field != null && field.hasRows();
+            } else {
+                return field != null && field.hasRowsFor(Language.fromValue(t.getContent()));
+            }
         }
 
         private static boolean notEmpty(ReferenceContainerDataField field) {
             return field != null && !field.getReferences().isEmpty();
         }
 
-        // TODO: Currently checks all languages, should be possible at some point to restrict to specific language
-        private static boolean notEmpty(ValueDataField field) {
+        private static boolean notEmpty(ValueDataField field, Target t) {
             if(field == null) {
                 return false;
             }
-            boolean hasValue = false;
-            // Value in some language is enough
-            for(Language l : Language.values()) {
-                if(field.hasValueFor(l)) {
-                    hasValue = true;
-                    break;
+            if(t == null || t.getType() != TargetType.LANGUAGE) {
+                // Only language condition target is defined at the moment, any other type target is treated as null
+                boolean hasValue = false;
+                // Value in some language is enough
+                for(Language l : Language.values()) {
+                    if(field.hasValueFor(l)) {
+                        hasValue = true;
+                        break;
+                    }
                 }
+                return hasValue;
+            } else {
+                return field.hasValueFor(Language.fromValue(t.getContent()));
             }
-            return hasValue;
         }
     }
 
     private static class IsEmptyCheck {
-        // TODO: Currently returns true if there are rows for some language, should be possible to require specific language at some point.
-        private static boolean isEmpty(ContainerDataField field) {
-            return field == null || !field.hasRows();
+        private static boolean isEmpty(ContainerDataField field, Target t) {
+            if(t == null || t.getType() != TargetType.LANGUAGE) {
+                // Only language condition target is defined at the moment, any other type target is treated as null
+                return field == null || !field.hasRows();
+            } else {
+                return field == null || !field.hasRowsFor(Language.fromValue(t.getContent()));
+            }
         }
 
         private static boolean isEmpty(ReferenceContainerDataField field) {
             return field == null || field.getReferences().isEmpty();
         }
 
-        // TODO: Currently checks all languages, should be possible at some point to restrict to specific language
-        private static boolean isEmpty(ValueDataField field) {
+        private static boolean isEmpty(ValueDataField field, Target t) {
             if(field == null) {
                 return true;
             }
-            boolean hasValue = false;
-            // Can not have value in any language
-            for(Language l : Language.values()) {
-                if(field.hasValueFor(l)) {
-                    hasValue = true;
-                    break;
+            if(t == null || t.getType() != TargetType.LANGUAGE) {
+                // Only language condition target is defined at the moment, any other type target is treated as null
+                boolean hasValue = false;
+                // Can not have value in any language
+                for (Language l : Language.values()) {
+                    if (field.hasValueFor(l)) {
+                        hasValue = true;
+                        break;
+                    }
                 }
+                return !hasValue;
+            } else {
+                return !field.hasValueFor(Language.fromValue(t.getContent()));
             }
-            return !hasValue;
         }
     }
 

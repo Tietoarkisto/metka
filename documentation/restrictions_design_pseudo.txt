@@ -31,7 +31,7 @@ targets : [0..* Target] {ordered}
 --
 
 Target (pseudo)
-type : [FIELD|NAMED|QUERY]
+type : [FIELD|NAMED|QUERY|VALUE|LANGUAGE]
 content : String
 targets : [0..* Target]
 checks: [0..* Check]
@@ -46,7 +46,8 @@ Target
 	- VALUE is a simple value, it is used as an expression in some specific conditions. Terminates recursion and should not have checks or targets.
 	- QUERY is a lucene query the results of which are used for some specific conditions. Terminates recursion and should not have targets but can have checks (for example NOT_EMPTY)
 	  This needs some predefined variables, like {id} might be replaced with the current key.id of the revision.
-* Content is a String, meaning of which is dependent on the type. For FIELDs it's the field key, for VALUEs it's the value, for QUERYs it's the lucene query to be executed and for NAMED it's the name of the named Target
+	- LANGUAGE is a language code [default|fi|en|sv] that restricts a condition. Like VALUE it terminates recursion and should not have checks or targets.
+* Content is a String, meaning of which is dependent on the type. For FIELDs it's the field key, for VALUEs it's the value, for QUERYs it's the lucene query to be executed, for NAMED it's the name of the named Target and for LANGUAGE it's the language code
 * Targets is an array of Target objects that need their conditions checked too. This is only processed if current Target is of type FIELD and can contain other FIELDS (like a container or REVISIONABLE reference).
 * Checks is an array of Checks that should be performed on the current Target. These range from field UNIQUENESS checks to making sure that value increases between container rows.
 
@@ -73,10 +74,12 @@ Condition type
 	- For non container fields this means that the field has to exist and there has to be non empty value
 	- For container fields this means the container must exist and there has to be rows (rows can still be basically empty in case of CONTAINER and need to be checked separately)
 	- For query this means that query needs to return results
+	- For fields additional LANGUAGE type target can be provided. This restricts the check to certain language. Without this the check targets any language (meaning if there's value on any language the check returns true).
 * Is empty (Target FIELD|QUERY)
 	- For non container fields this means that the field must not exist or there has to be empty value
 	- For container fields this means that the field must not exist or there has to be no rows
 	- For query this means that query needs to return 0 results
+	- For fields additional LANGUAGE type target can be provided. This restricts the check to certain language. Without this the check targets any language (meaning if there's value on any language the check returns false).
 * Equals (Target FIELD)
 	- Top level fields can only target other top level fields or values
 	- Fields in containers can target top level fields, fields in their own container row or values

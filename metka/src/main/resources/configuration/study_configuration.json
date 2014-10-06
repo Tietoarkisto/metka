@@ -957,6 +957,7 @@
 			"required": true,
 			"type": "STRING",
 			"subfield": true,
+			"writable": false,
 			"exact": false
 		},
 		"descpublic": {
@@ -2118,5 +2119,35 @@
         	"subfield": true,
         	"translatable": true
         }
-	}
+	},
+	"restrictions": [
+		{
+			"type": "APPROVE",
+			"targets": [
+				{
+					"type": "FIELD",
+					"content": "title",
+					"checks": [
+						{
+							"condition": {
+								"type": "NOT_EMPTY",
+								"target": {
+									"type": "LANGUAGE",
+									"content": "fi"
+								}
+							}
+						}, {
+							"condition": {
+								"type": "NOT_EMPTY",
+								"target": {
+									"type": "LANGUAGE",
+									"content": "en"
+								}
+							}
+						}
+					]
+				}
+			]
+		}
+	]
 }
