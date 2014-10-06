@@ -16,9 +16,14 @@ define(function (require) {
                     return transferField;
                 }
 
+                var type = getPropertyNS(options, 'dataConf.fields', key, 'type');
+                if (type !== 'CONTAINER' && type !== 'REFERENCECONTAINER') {
+                    type = 'VALUE';
+                }
                 if (createIfUndefined) {
                     return require('./utils/setPropertyNS')(options, 'data.fields', key, {
-                        key: key
+                        key: key,
+                        type: type
                     })
                 }
             }
@@ -84,7 +89,6 @@ define(function (require) {
 
                 transferField.rows = transferField.rows || {};
                 transferField.rows[lang] = transferField.rows[lang] || [];
-                transferField.type = transferField.type || getPropertyNS(options, 'data.fields', key, 'type');
                 trasferRow.key = trasferRow.key || key;
 
                 transferField.rows[lang].push(trasferRow);
