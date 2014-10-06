@@ -35,7 +35,7 @@ public interface RevisionService {
     RevisionOperationResponse remove(TransferData transferData);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_RESTORE_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "')")
-    RevisionOperationResponse restore(TransferData transferData);
+    RevisionOperationResponse restore(RevisionKey key);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_PERFORM_SEARCH +"', '" + PermissionCheck.Values.PERMISSION + "')")
     @Transactional(readOnly = true) RevisionSearchResponse search(RevisionSearchRequest request);

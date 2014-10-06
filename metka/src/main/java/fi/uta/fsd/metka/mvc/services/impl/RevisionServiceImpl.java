@@ -181,20 +181,22 @@ public class RevisionServiceImpl implements RevisionService {
         return response;
     }
 
-    @Override public RevisionOperationResponse restore(TransferData transferData) {
+    @Override public RevisionOperationResponse restore(RevisionKey key) {
         RevisionOperationResponse response = new RevisionOperationResponse();
-        RemoveResult result = restore.restore(transferData);
+        RemoveResult result = restore.restore(key);
         response.setResult(result.name());
 
         if(result == RemoveResult.SUCCESS_RESTORE) {
-            List<Integer> nos = revisions.getAllRevisionNumbers(transferData.getKey().getId());
+            List<Integer> nos = revisions.getAllRevisionNumbers(key.getId());
             for(Integer no : nos) {
-                Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(transferData.getKey().getId(), no);
+                Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(key));
                 if(pair.getLeft() == ReturnResult.REVISION_FOUND) {
                     addIndexCommand(pair.getRight());
                 }
             }
         }
+
+        response.setData(TransferData.buildFromRevisionData(revisions.getLatestRevisionForIdAndType(key.getId(), false, null).getRight(), RevisionableInfo.FALSE));
 
         return response;
     }

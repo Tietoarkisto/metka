@@ -300,6 +300,17 @@ define(function (require) {
                     });
                 });
         },
+        RESTORE: function (options) {
+            this
+                .click(function () {
+                    require('./server')('/revision/ajax/restore', {
+                        data: JSON.stringify(options.data.key),
+                        success: function (response) {
+                            require('./assignUrl')('view');
+                        }
+                    });
+                });
+        },
         SAVE: function (options) {
             this
                 .click(require('./formAction')('save')(options, function (response) {
@@ -333,6 +344,7 @@ define(function (require) {
             if (options.states && options.states.length) {
                 // if every state mismatch
                 if (options.states.every(function (state) {
+                    log(state);
                     return options.data.state.uiState !== state;
                 })) {
                     //log('state', options)
@@ -343,6 +355,7 @@ define(function (require) {
             if (options.permissions && options.permissions.length) {
                 // if some permission is not given
                 if (options.permissions.some(function (permission) {
+                    log(MetkaJS.User.role);
                     return !MetkaJS.User.role.permissions[permission];
                 })) {
                     //log('permissions', options)

@@ -168,6 +168,18 @@ public class IndexerComponent {
     }
 
     public void addCommand(IndexerCommand command) {
+        // TODO: make a better rule
+        if(command.getPath().getAdditionalParameters().length > 0) {
+            switch(command.getPath().getAdditionalParameters()[0]) {
+                case "STUDY":
+                case "SERIES":
+                case "PUBLICATION":
+                    // We allow these types
+                    break;
+                default:
+                    return;
+            }
+        }
         commandRepository.addIndexerCommand(command);
         if(handlers.containsKey(command.getPath())) {
             if(handlers.get(command.getPath()).isDone()) {

@@ -124,8 +124,8 @@ public class RevisionController {
     }
 
     @RequestMapping(value="ajax/restore", method = RequestMethod.POST)
-    public @ResponseBody RevisionOperationResponse restore(@RequestBody TransferData transferData) {
-        return revisions.restore(transferData);
+    public @ResponseBody RevisionOperationResponse restore(@RequestBody RevisionKey key) {
+        return revisions.restore(key);
     }
 
     @RequestMapping(value="ajax/save", method = RequestMethod.POST)
@@ -169,7 +169,7 @@ public class RevisionController {
     }
 
     @RequestMapping(value = "revisionHistory", method = RequestMethod.POST)
-    public @ResponseBody RevisionSearchResponse collectAttachmentHistory(@RequestBody RevisionHistoryRequest request) {
+    public @ResponseBody RevisionSearchResponse revisionHistory(@RequestBody RevisionHistoryRequest request) {
         return revisions.collectRevisionHistory(request);
     }
 

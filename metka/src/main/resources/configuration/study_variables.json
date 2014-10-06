@@ -59,6 +59,7 @@
             "key": "filepath",
             "translatable": false,
             "editable": false,
+            "writable": false,
             "type": "REFERENCE",
             "reference": "filepath_ref"
         },

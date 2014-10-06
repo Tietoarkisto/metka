@@ -98,7 +98,8 @@ class DDIDataDescription {
                 Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.VARGROUPTITLE));
                 // TODO: Should variable group title be translatable?
                 if(hasValue(valueFieldPair, Language.DEFAULT)) {
-                    VarGrpType varGrpType = fillTextType(dataDscrType.addNewVarGrp(), valueFieldPair, Language.DEFAULT);
+                    //VarGrpType varGrpType = fillTextType(dataDscrType.addNewVarGrp(), valueFieldPair, Language.DEFAULT);
+                    VarGrpType varGrpType = dataDscrType.addNewVarGrp();
 
                     // TODO: do we want variable names or variable id:s?
                     Pair<StatusCode, ReferenceContainerDataField> referenceContainerPair = row.dataField(ReferenceContainerDataFieldCall.get(Fields.VARGROUPVARS));

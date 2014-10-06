@@ -86,7 +86,7 @@ public  enum Permission {
         public static final String CAN_FORCE_CLAIM_REVISION = "canForceClaimRevision";
         public static final String CAN_FORCE_RELEASE_REVISION = "canForceReleaseRevision";
         public static final String CAN_REMOVE_REVISION = "canRemoveRevision";
-        public static final String CAN_RESTORE_REVISION = "canRestoreRevisions";
+        public static final String CAN_RESTORE_REVISION = "canRestoreRevision";
 
         // Binder
         public static final String CAN_VIEW_BINDER_PAGES = "canViewBinderPages";
