@@ -41,6 +41,7 @@ define(function (require) {
 
         $.ajax($.extend({
             type: 'POST',
+            cache: false,
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
