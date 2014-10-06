@@ -9,7 +9,8 @@ define(function (require) {
             });
 
         require('./data')(options).onChange(function () {
-            $input.prop('checked', !!require('./data')(options).getByLang(lang));
+            var value = require('./data')(options).getByLang(lang);
+            $input.prop('checked', typeof value === 'string' ? value.bool() : !!value);
         });
 
         this
