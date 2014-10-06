@@ -1,7 +1,6 @@
 package fi.uta.fsd.metka.storage.repository.impl;
 
 import fi.uta.fsd.metka.model.general.RevisionKey;
-import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRestoreRepository;
@@ -31,7 +30,7 @@ public class RevisionRestoreRepositoryImpl implements RevisionRestoreRepository 
     @Override
     public RemoveResult restore(RevisionKey key) {
         Pair<ReturnResult, RevisionableInfo> pair = revisions.getRevisionableInfo(key.getId());
-        if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
+        if(pair.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
             return RemoveResult.NOT_FOUND;
         }
         if(!pair.getRight().getRemoved()) {
