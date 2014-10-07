@@ -1667,9 +1667,9 @@
             		"type": "ROW",
             		"cells": [{
             			"type": "CELL",
+                        "title": "Tunnisteet",
             			"field": {
             				"key": "packages",
-            				"showSaveInfo": true,
             				"columnFields": [
             					"package",
             					"packageversion",
