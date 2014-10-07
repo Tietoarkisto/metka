@@ -7,7 +7,8 @@ define(function (require) {
             field: {
                 onClick: function (transferRow, replaceTr) {
                     require('./../../variableModal')(options.field.key, {
-                        id: transferRow.value
+                        id: transferRow.value,
+                        no: ''
                     }, replaceTr);
                 }
             }

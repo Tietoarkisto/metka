@@ -13,7 +13,5 @@ define(function (require) {
                     '</div>',
                 '</div>'
             ].join(''));
-
-
     };
 });
