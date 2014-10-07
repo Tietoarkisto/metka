@@ -13,5 +13,7 @@ public enum ButtonType {
     ADD,
     RESET,
     CLEAR,
-    EXPORT_DDI
+    EXPORT_DDI,     // TODO: Move to custom button
+    IMPORT_DDI,     // TODO: Move to custom button
+    CUSTOM
 }

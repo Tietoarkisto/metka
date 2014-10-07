@@ -16,6 +16,7 @@ public class Button {
     private Boolean hasHandler;
     private final Set<VisibilityState> states = new HashSet<>();
     private ButtonType type;
+    private String customHandler;
 
     public TranslationObject getTitle() {
         return title;
@@ -55,5 +56,13 @@ public class Button {
 
     public void setType(ButtonType type) {
         this.type = type;
+    }
+
+    public String getCustomHandler() {
+        return customHandler;
+    }
+
+    public void setCustomHandler(String customHandler) {
+        this.customHandler = customHandler;
     }
 }

@@ -107,7 +107,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             }
 
             // Do final operations before saving data to
-            finalizeApproval(data);
+            finalizeApproval(data, info);
 
             data.setState(RevisionState.APPROVED);
             data.setHandler("");
@@ -345,13 +345,13 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
      * These operations should be such that they can not fail and that they can not affect any other data.
      * @param revision    RevisionData to be finalized
      */
-    private void finalizeApproval(RevisionData revision) {
+    private void finalizeApproval(RevisionData revision, DateTimeUserPair info) {
         switch(revision.getConfiguration().getType()) {
             case STUDY:
                 finalizeStudyApproval(revision);
                 break;
             case STUDY_ATTACHMENT:
-                finalizeStudyAttachmentApproval(revision);
+                finalizeStudyAttachmentApproval(revision, info);
                 break;
             default:
                 break;
@@ -387,7 +387,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
      *
      * @param revision
      */
-    private void finalizeStudyAttachmentApproval(RevisionData revision) {
+    private void finalizeStudyAttachmentApproval(RevisionData revision, DateTimeUserPair info) {
         // From this point onwards we can assume that all relevant fields have values since we can't be here without approved values
         String pathFromRoot = "/";
 
@@ -442,7 +442,10 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
         }
         try {
             // If we need to move the file then try to move the file
-            if(requiresMove) FileUtils.moveFileToDirectory(new File(pathField.getActualValueFor(Language.DEFAULT)), new File(destLoc), true);
+            if(requiresMove) {
+                FileUtils.moveFileToDirectory(new File(pathField.getActualValueFor(Language.DEFAULT)), new File(destLoc), true);
+                revision.dataField(ValueDataFieldCall.set("file", new Value(destLoc+fileName), Language.DEFAULT).setInfo(info));
+            }
         } catch(IOException ioe) {
             logger.error("IOException when trying to move file from "+pathField.getActualValueFor(Language.DEFAULT)+" to "+destLoc, ioe);
         }
@@ -477,7 +480,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             if(fixdip) {
                 // TODO: We need to inform the user that this value was changed automatically
                 // We need to fix filedip to 2 (i.e. 'No'), let's just assume that this succeeds
-                revision.dataField(ValueDataFieldCall.set("filedip", new Value("2"), Language.DEFAULT));
+                revision.dataField(ValueDataFieldCall.set("filedip", new Value("2"), Language.DEFAULT).setInfo(info));
             }
         }
     }

@@ -15,9 +15,8 @@ define(function (require) {
                     'APPROVE_SUCCESSFUL'
                 ]));
         },
-        CANCEL: function () {
-            this
-                .text(MetkaJS.L10N.get('general.buttons.cancel'));
+        CANCEL: function (options) {
+            options.title = MetkaJS.L10N.get('general.buttons.cancel');
         },
         CLAIM: function (options) {
             this
@@ -30,14 +29,24 @@ define(function (require) {
                     });
                 });
         },
-        COMPARE: function () {
-            this
-                .text(MetkaJS.L10N.get('general.revision.compare'))
-                .prop('disabled', true);
+        COMPARE: function (options) {
+            options.title = MetkaJS.L10N.get('general.revision.compare');
+            this.prop('disabled', true);
         },
-        DISMISS: function () {
-            this
-                .text(MetkaJS.L10N.get('general.buttons.close'));
+        CUSTOM: function(options) {
+            require(['./custom/buttons/'+options.customHandler], function(customHandler) {
+                switch (typeof customHandler) {
+                    case 'object':
+                        $.extend(true, options, customHandler);
+                        break;
+                    case 'function':
+                        customHandler.call(this, options);
+                        break;
+                }
+            }.bind(this));
+        },
+        DISMISS: function (options) {
+            options.title = MetkaJS.L10N.get('general.buttons.close');
         },
         EDIT: function (options) {
             this.click(require('./formAction')('edit')(options, function (response) {
@@ -124,8 +133,8 @@ define(function (require) {
                                             .append($('<thead>')
                                                 .append($('<tr>')
                                                     .append([
-                                                            'Kenttä',
-                                                            'Kieli',
+                                                            'Polku',
+                                                            //'Kieli',
                                                             'Alkuperäinen arvo',
                                                             'Nykyinen arvo'
                                                         ].map(function (entry) {
@@ -153,15 +162,15 @@ define(function (require) {
                                                             .append(response.rows.map(function (row) {
                                                                 var parts = row.key.split('[');
                                                                 if (parts.length < 2) {
-                                                                    log('problem with revision row', row);
                                                                     return;
                                                                 };
                                                                 return $('<tr>')
                                                                     .append([
                                                                         // TODO: get field title (titles are all over GUI conf, which is a problem)
-                                                                        parts[0],
+                                                                        //parts[0],
                                                                         // TODO: get language from
-                                                                        parts[1].substr(0, parts[1].length - 1),
+                                                                        //parts[1].substr(0, parts[1].length - 1),
+                                                                        row.key,
                                                                         row.original,
                                                                         row.current
                                                                     ].map(function (entry) {
@@ -228,9 +237,8 @@ define(function (require) {
                     });
                 });
         },
-        NO: function () {
-            this
-                .text(MetkaJS.L10N.get('general.buttons.no'));
+        NO: function (options) {
+            options.title = MetkaJS.L10N.get('general.buttons.no');
         },
         REMOVE: function (options) {
             var metka = require('./../metka');
@@ -323,13 +331,16 @@ define(function (require) {
                     'NO_CHANGES_TO_SAVE'
                 ]));
         },
-        YES: function () {
-            this.text(MetkaJS.L10N.get('general.buttons.yes'));
+        YES: function (options) {
+            options.title = MetkaJS.L10N.get('general.buttons.yes');
         }
     };
 
     return require('./inherit')(function (options) {
         function isVisible() {
+            if(options.hide) {
+                return false;
+            }
             if (options.data && options.data.state && options.data.state.uiState === 'DRAFT' && options.hasOwnProperty('hasHandler') && options.hasHandler !== null) {
                 if (!!options.hasHandler !== !!options.data.state.handler) {
                     return false;
@@ -344,7 +355,6 @@ define(function (require) {
             if (options.states && options.states.length) {
                 // if every state mismatch
                 if (options.states.every(function (state) {
-                    log(state);
                     return options.data.state.uiState !== state;
                 })) {
                     //log('state', options)
@@ -355,7 +365,6 @@ define(function (require) {
             if (options.permissions && options.permissions.length) {
                 // if some permission is not given
                 if (options.permissions.some(function (permission) {
-                    log(MetkaJS.User.role);
                     return !MetkaJS.User.role.permissions[permission];
                 })) {
                     //log('permissions', options)
@@ -380,10 +389,8 @@ define(function (require) {
             .addClass('btn-' + (options.style || 'primary'))
             .toggle(isVisible());
 
-        if (MetkaJS.L10N.hasTranslation(options, 'title')) {
-            $button
-                .text(MetkaJS.L10N.localize(options, 'title'));
-        }
+        $button
+            .text(MetkaJS.L10N.localize(options, 'title'));
 
         if (options.create) {
             options.create.call($button, options);

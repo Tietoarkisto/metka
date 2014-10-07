@@ -16,6 +16,36 @@ define(function (require) {
                     defaultLang: 'DEFAULT',
                     translatableCurrentLang: 'DEFAULT',
                     large: true,
+                    "fieldTitles": {
+                        "ivuinstr": {
+                            "key" : "ivuinstr",
+                            "title" : "Haastattelijan ohje"
+                        },
+                        "postqtxt": {
+                            "key" : "postqtxt",
+                            "title" : "Jälkiteksti"
+                        },
+                        "preqtxt": {
+                            "key" : "preqtxt",
+                            "title" : "Esiteksti"
+                        },
+                        "qstnlit": {
+                            "key" : "qstnlit",
+                            "title" : "Kysymysteksti"
+                        },
+                        "varnote": {
+                            "key" : "varnote",
+                            "title" : "Huomiot"
+                        },
+                        "varsecurity": {
+                            "key" : "varsecurity",
+                            "title" : "Tietosuoja-asiat"
+                        },
+                        "vartext": {
+                            "key" : "vartext",
+                            "title" : "Lisätiedot"
+                        }
+                    },
                     content: [
                         {
                             "type": "COLUMN",

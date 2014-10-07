@@ -67,6 +67,11 @@ public class ButtonDeserializer extends ObjectDeserializer<Button> {
             }
         }
 
+        JsonNode customHandler = node.get("customHandler");
+        if(customHandler != null && customHandler.getNodeType() == JsonNodeType.STRING) {
+            btn.setCustomHandler(customHandler.textValue());
+        }
+
         return btn;
     }
 }

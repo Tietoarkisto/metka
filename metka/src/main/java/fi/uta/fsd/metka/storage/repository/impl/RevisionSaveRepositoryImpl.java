@@ -139,7 +139,6 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         // Is attachment already parsed
         if (attachmentAlreadyParsed(attachment)) return;
 
-
         if (hasAndIsOriginal(attachment)) return;
 
         Pair<StatusCode, ValueDataField> fieldPair = attachment.dataField(ValueDataFieldCall.get("file"));

@@ -46,6 +46,14 @@ public class TransferValue {
         return hasCurrent() || hasOriginal();
     }
 
+    @JsonIgnore public String getValue() {
+        if(hasCurrent()) {
+            return current;
+        } else {
+            return original;
+        }
+    }
+
     public void addError(FieldError error) {
         boolean found = false;
         for(FieldError e : errors) {

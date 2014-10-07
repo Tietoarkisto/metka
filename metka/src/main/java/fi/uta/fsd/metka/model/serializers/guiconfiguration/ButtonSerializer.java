@@ -19,6 +19,12 @@ public class ButtonSerializer extends ObjectSerializer<Button> {
             jgen.writeNullField("type");
         }
 
+        if(value.getCustomHandler() != null) {
+            jgen.writeStringField("customHandler", value.getCustomHandler());
+        } else {
+            jgen.writeNullField("customHandler");
+        }
+
         // Write &title
         if(value.getTitle() != null) {
             jgen.writeObjectField("&title", value.getTitle());
