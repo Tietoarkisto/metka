@@ -226,6 +226,16 @@ define(function (require) {
                                 "canEditRevision"
                             ]
                         }, {
+                            "type": "CUSTOM",
+                            "title": "Tee luonnos",
+                            "customHandler": "studyAttachmentEdit",
+                            "permissions": [
+                                "canEditRevision"
+                            ],
+                            "states": [
+                                "APPROVED"
+                            ]
+                        }, {
                             "&title": {
                                 "default": "Poista"
                             },

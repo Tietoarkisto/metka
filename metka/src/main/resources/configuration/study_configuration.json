@@ -1235,9 +1235,10 @@
 		},
 		"biblcit": {
 			"key": "biblcit",
-			"translatable": false,
+			"translatable": true,
 			"required": true,
-			"type": "STRING"
+			"type": "STRING",
+			"editable": false
 		},
 		"keywords": {
 			"key": "keywords",

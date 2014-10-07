@@ -3,6 +3,44 @@
         "type": "PUBLICATION",
         "version": 1
     },
+    "fieldTitles": {
+        "firstname": {
+            "key" : "firstname",
+            "title" : "Etunimi"
+        },
+        "lastname": {
+            "key" : "lastname",
+            "title" : "Sukunimi"
+        },   
+        "pid": {
+            "key" : "pid",
+            "title" : "Pysyvä tunniste"
+        },   
+        "pidtype": {
+            "key" : "pidtype",
+            "title" : "Tunnistetyyppi"
+        },
+        "series": {
+            "key" : "series",
+            "title" : "Sarja"
+        },
+        "seriesabbr": {
+            "key" : "seriesabbr",
+            "title" : "Sarjan lyhenne"
+        },
+        "seriesname": {
+            "key" : "seriesname",
+            "title" : "Sarjan nimi"
+        },
+        "studyid": {
+            "key" : "studyid",
+            "title" : "Aineiston numero"
+        },
+        "studytitle": {
+            "key" : "studytitle",
+            "title" : "Aineiston nimi"
+        }
+    },
     "content": [
         {
             "type": "COLUMN",

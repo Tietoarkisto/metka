@@ -50,9 +50,11 @@ public class ContainerDataField extends RowContainerDataField {
     @Override
     public void initParents() {
         for(Language l : Language.values()) {
-            for(DataRow row : getRowsFor(l)) {
-                row.setParent(this);
-                row.initParents();
+            if(getRowsFor(l) != null) {
+                for(DataRow row : getRowsFor(l)) {
+                    row.setParent(this);
+                    row.initParents();
+                }
             }
         }
     }

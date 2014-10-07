@@ -306,8 +306,10 @@ public class RevisionServiceImpl implements RevisionService {
             case STUDY_ATTACHMENT:
             case STUDY_VARIABLE:
             case STUDY_VARIABLES: {
-                Long id = Long.parseLong(data.getField("study").getValueFor(Language.DEFAULT).getCurrent());
-                indexer.addStudyIndexerCommand(id, true);
+                if(data.getField("study") != null && data.getField("study").hasValueFor(Language.DEFAULT)) {
+                    Long id = Long.parseLong(data.getField("study").getValueFor(Language.DEFAULT).getValue());
+                    indexer.addStudyIndexerCommand(id, true);
+                }
                 break;
             }
             default:
