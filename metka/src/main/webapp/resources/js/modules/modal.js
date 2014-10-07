@@ -63,6 +63,8 @@ define(function (require) {
             .on('hidden.bs.modal', function () {
                 $(this).remove();
             })
-            .modal();
+            .modal({
+                backdrop: 'static'
+            });
     };
 });
