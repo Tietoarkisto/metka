@@ -98,13 +98,15 @@ define(function (require) {
     }*/
 
     // other stuff
-    $(document).ajaxError(function () {
+    $(document).ajaxError(function (e, request) {
+        var $body = $('<div>').append(request.responseText);
+        $body.find('style').remove();
         require('./../modal')({
             title: MetkaJS.L10N.get('alert.error.title'),
+            body: $body,
             buttons: [{
                 type: 'DISMISS'
             }]
         });
-        log('ajax error', arguments);
     });
 });
