@@ -3,26 +3,6 @@ define(function (require) {
 
     return {
         create: function create(options) {
-            log(options);
-            require('./../../addTranslation')('fieldTitles', {
-                errorscore: {
-                    title: "Pisteet"
-                },
-                errordatasetpart: {
-                    title: "Aineoston osa"
-                },
-                errorpartsection: {
-                    title: "Osio"
-                },
-                errorlanguage: {
-                    title: "Kieli"
-                },
-                errorlabel: {
-                    title: "Selite"
-                }
-            });
-
-
             function refreshData(callback) {
 
                 require('./../../server')('/study/listErrors/{id}', {

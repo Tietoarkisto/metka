@@ -112,6 +112,10 @@
 		 "key": "datasource",
 		 "title": "Lähdeaineisto"
 		},
+        "filecomment": {
+            "key": "filecomment",
+            "title": "Selite"
+        },
 		"fileslang": {
 		 "key": "fileslang",
 		 "title": "Tiedoston kieli"
@@ -435,7 +439,27 @@
 		"triggerpro": {
 		 "key": "triggerpro",
 		 "title": "Herätteen saaja"
-		}
+		},
+        "errorscore": {
+            "key": "errorscore",
+            "title": "Pisteet"
+        },
+        "errordatasetpart": {
+            "key": "errordatasetpart",
+            "title": "Aineoston osa"
+        },
+        "errorpartsection": {
+            "key": "errorpartsection",
+            "title": "Osio"
+        },
+        "errorlanguage": {
+            "key": "errorlanguage",
+            "title": "Kieli"
+        },
+        "errorlabel": {
+            "key": "errorlabel",
+            "title": "Selite"
+        }
     },
 	"content": [
 		{

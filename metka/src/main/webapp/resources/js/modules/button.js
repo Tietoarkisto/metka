@@ -330,32 +330,31 @@ define(function (require) {
 
     return require('./inherit')(function (options) {
         function isVisible() {
-            if (options.data && options.data.state && options.data.state.uiState === 'DRAFT' && options.hasOwnProperty('hasHandler') && options.hasHandler !== null) {
-                if (!!options.hasHandler !== !!options.data.state.handler) {
-                    return false;
+            if (options.data && options.data.state) {
+                if (options.data.state.uiState === 'DRAFT' && options.hasOwnProperty('hasHandler') && options.hasHandler !== null) {
+                    if (!!options.hasHandler !== !!options.data.state.handler) {
+                        return false;
+                    }
                 }
-            }
-            if (options.data && options.data.state && options.data.state.uiState === 'DRAFT' && options.hasOwnProperty('isHandler') && options.isHandler !== null) {
-                if (options.isHandler !== (options.data.state.handler === MetkaJS.User.userName)) {
-                    return false;
+                if (options.data.state.uiState === 'DRAFT' && options.hasOwnProperty('isHandler') && options.isHandler !== null) {
+                    if (options.isHandler !== (options.data.state.handler === MetkaJS.User.userName)) {
+                        return false;
+                    }
                 }
-            }
-
-            if (options.states && options.states.length) {
-                // if every state mismatch
-                if (options.states.every(function (state) {
-                    log(state);
-                    return options.data.state.uiState !== state;
-                })) {
-                    //log('state', options)
-                    return false;
+                if (options.states && options.states.length) {
+                    // if every state mismatch
+                    if (options.states.every(function (state) {
+                        return options.data.state.uiState !== state;
+                    })) {
+                        //log('state', options)
+                        return false;
+                    }
                 }
             }
 
             if (options.permissions && options.permissions.length) {
                 // if some permission is not given
                 if (options.permissions.some(function (permission) {
-                    log(MetkaJS.User.role);
                     return !MetkaJS.User.role.permissions[permission];
                 })) {
                     //log('permissions', options)
