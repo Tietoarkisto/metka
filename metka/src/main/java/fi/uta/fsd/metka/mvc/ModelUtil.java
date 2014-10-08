@@ -19,6 +19,7 @@ public final class ModelUtil {
         model.asMap().put("uDisplayName", details.getDisplayName());
         model.asMap().put("uUserName", details.getUserName());
         model.asMap().put("uRole", details.getRole().toJsonString());
+        model.asMap().put("uDefLang", details.getRole().getDefaultLanguage().toValue());
     }
 
     public static void initRevisionModel(Model model, ConfigurationType type) {

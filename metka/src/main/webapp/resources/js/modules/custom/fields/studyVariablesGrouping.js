@@ -86,15 +86,19 @@ define(function (require) {
                                 },
                                 onDropped: function (parent, nodes) {
                                     nodes.forEach(function (node) {
-                                        var transferRow = {
+                                        log(node);
+                                        var transferRow = $.extend(true, {}, node.transferRow, {
                                             key: 'vargroupvars',
-                                            value: node.value
-                                        };
+                                            value: node.value,
+                                            removed: false,
+                                            rowId: null
+                                        });
                                         node.transferRow = transferRow;
                                         parent.appendVar(transferRow);
                                     });
                                 },
                                 onDragged: function (nodes) {
+                                    log(nodes);
                                     nodes.forEach(function (node) {
                                         node.transferRow.removed = true;
                                     });

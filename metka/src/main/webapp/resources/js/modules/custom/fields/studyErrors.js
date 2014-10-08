@@ -42,7 +42,8 @@ define(function (require) {
                             ]
                         },
                         id: {
-                            type: "INTEGER"
+                            type: "INTEGER",
+                            editable: false
                         },
                         errorscore: {
                             key: 'errorscore',
@@ -290,7 +291,12 @@ define(function (require) {
                         });
                     }
                 },
-                '&title': options['&title']
+                '&title': options['&title'],
+                extraDialogConfiguration: {
+                    "id": {
+                        "hidden": true
+                    }
+                }
             };
 
             require('./../../field').call(this.children().first(), fieldOptions);

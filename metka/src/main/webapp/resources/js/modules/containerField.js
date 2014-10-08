@@ -298,7 +298,6 @@ define(function (require) {
                     return freeTextKeys.indexOf(field) === -1;
                 }).map(function (field) {
                     var dataConfig = $.extend(true, {}, options.dataConf.fields[field]);
-
                     return {
                         type: 'ROW',
                         cells: [$.extend(

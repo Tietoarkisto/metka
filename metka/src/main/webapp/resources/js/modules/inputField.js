@@ -119,7 +119,7 @@ define(function (require) {
                         var dataConf = getPropertyNS(options, 'dataConf.fields', key);
                         if (dataConf && dataConf.type === 'REFERENCE') {
                             var reference = getPropertyNS(options, 'dataConf.references', dataConf.reference);
-                            options.$events.on('data-change-{key}-{lang}'.supplant({
+                            options.$events.on('data-set-{key}-{lang}'.supplant({
                                 key: reference.target,
                                 lang: lang
                             }), setValue);

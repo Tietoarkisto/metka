@@ -68,12 +68,27 @@ define(function (require) {
                 transferField.values = transferField.values || {};
                 transferField.values[lang] = transferField.values[lang] || {};
                 transferField.type = transferField.type || 'VALUE';
-                transferField.values[lang].current = value;
+
+                var allowChange = true;
 
                 options.$events.trigger('data-change-{key}-{lang}'.supplant({
                     key: key,
                     lang: lang
-                }), [value]);
+                }), [{
+                    current: byFieldKey.getByLang(lang),
+                    change: value,
+                    prevent: function() {
+                        allowChange = false;
+                    }
+                }]);
+
+                if(allowChange) {
+                    transferField.values[lang].current = value;
+                    options.$events.trigger('data-set-{key}-{lang}'.supplant({
+                        key: key,
+                        lang: lang
+                    }), [value]);
+                }
             };
             /*byFieldKey.append = function (trasferRow) {
              var transferField = getTransferField(true);
