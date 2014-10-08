@@ -108,7 +108,7 @@
 		"seriesdesc": {
 			"key": "seriesdesc",
 			"translatable": true,
-			"type": "STRING",
+			"type": "RICHTEXT",
 			"required": true,
 			"exact": false
 		},

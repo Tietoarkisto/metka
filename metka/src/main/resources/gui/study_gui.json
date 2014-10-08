@@ -228,6 +228,10 @@
             "key" : "otherauthoraffiliation",
             "title" : "Taustaorganisaatio"
         },
+        "otherauthorgroup": {
+        	"key": "otherauthorgroup",
+        	"title": "Ryhmä"
+        },
         "otherauthortype": {
             "key" : "otherauthortype",
             "title" : "Muu tekijän tyyppi"
@@ -1461,14 +1465,6 @@
                                             "columnFields": [
                                             	"appraisal"
                                             ]
-                                        },
-                                        "extraDialogConfiguration": {
-                                        	"appraisal": {
-                                        		"field": {
-                                        			"key": "appraisal",
-                                        			"multiline": true
-                                        		}
-                                        	}
                                         }
                                     }
                                 ]

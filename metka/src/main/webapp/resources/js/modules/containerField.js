@@ -119,7 +119,7 @@ define(function (require) {
                             return require('./data').latestValue(transferField, columnLang);
                         })();
 
-                        if (type === 'STRING' || type === 'INTEGER' || type === 'REAL') {
+                        if (type === 'STRING' || type === 'INTEGER' || type === 'REAL' || type === 'RICHTEXT') {
                             return value || EMPTY;
                         }
                         if (['DATE', 'TIME', 'DATETIME'].indexOf(type) !== -1) {

@@ -324,6 +324,10 @@ class GeneralRevisionHandler implements RevisionHandler {
                 // Index string field as a text field which should be analyzed and tokenized unless marked as exact field in config
                 document.indexText(inputLang, field, root, saved);
                 break;
+            case RICHTEXT:
+                // Index RICHTEXT fields as text. They should have their 'exact' value forced to false so they should be parsed through an analyzer that will automatically strip all the html-elements from the text.
+                document.indexText(inputLang, field, root, saved);
+                break;
             case INTEGER:
                 // Convert value to correct number format (integer or long, or just stick with long for everything) and index as correct number field
                 try {

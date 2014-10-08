@@ -658,6 +658,9 @@ define(function (require) {
                                             }
                                         },
                                         // METKA_aineistohaut.docx "Organisaatiohakuun alkukatkaisu. Ei valita listasta."
+                                        abstract: {
+                                            "type": "STRING"
+                                        },
                                         authororganization: {
                                             "type": "STRING"
                                         },

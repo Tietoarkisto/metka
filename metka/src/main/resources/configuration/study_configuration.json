@@ -1347,7 +1347,7 @@
 		"abstract": {
             "key": "abstract",
             "translatable": true,
-            "type": "STRING",
+            "type": "RICHTEXT",
 			"exact": false
 		},
 		"timeperiods": {
@@ -1628,7 +1628,7 @@
 			"key": "sampproctext",
 			"translatable": true,
 			"required": true,
-			"type": "STRING",
+			"type": "RICHTEXT",
 			"subfield": true,
 			"exact": false
 		},
@@ -1814,7 +1814,7 @@
 		"appraisal": {
 			"key": "appraisal",
 			"translatable": true,
-			"type": "STRING",
+			"type": "RICHTEXT",
 			"subfield": true,
 			"exact": false
 		},
