@@ -114,7 +114,11 @@ Colors:
 }
 
 .table {
-    table-layout: fixed;
+/*    table-layout: fixed;*/
+}
+
+textarea {
+    resize: vertical;
 }
 
 .list-group-condensed > li,

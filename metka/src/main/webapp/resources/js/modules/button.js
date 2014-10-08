@@ -9,9 +9,9 @@ define(function (require) {
         APPROVE: function (options) {
             this
                 .click(require('./formAction')('approve')(options, function (response) {
-                    require('./assignUrl')('view');
-                },
-                [
+                    $.extend(options.data, response.data);
+                    $(this).trigger('refresh.metka');
+                }, [
                     'APPROVE_SUCCESSFUL'
                 ]));
         },
@@ -50,11 +50,10 @@ define(function (require) {
         },
         EDIT: function (options) {
             this.click(require('./formAction')('edit')(options, function (response) {
-                require('./assignUrl')('view', {
-                    no: ''
-                });
-            },
-            [
+                $.extend(options.data, response.data);
+                $(this).trigger('refresh.metka');
+                history.replaceState(undefined, '', require('./url')('view'));
+            }, [
                 'REVISION_FOUND',
                 'REVISION_CREATED'
             ]));
@@ -323,12 +322,11 @@ define(function (require) {
             this
                 .click(require('./formAction')('save')(options, function (response) {
                     $.extend(options.data, response.data);
-                    options.$events.trigger('dataChanged');
+                    $(this).trigger('refresh.metka');
                 },
                 [
                     'SAVE_SUCCESSFUL',
-                    'SAVE_SUCCESSFUL_WITH_ERRORS',
-                    'NO_CHANGES_TO_SAVE'
+                    'SAVE_SUCCESSFUL_WITH_ERRORS'
                 ]));
         },
         YES: function (options) {
@@ -375,8 +373,6 @@ define(function (require) {
 
             return true;
         }
-
-        var metka = require('./../metka');
 
         options = options || {};
 

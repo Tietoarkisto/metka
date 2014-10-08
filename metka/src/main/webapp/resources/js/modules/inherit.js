@@ -8,9 +8,6 @@ define(function (require) {
                 options = options || {};
                 options.parent = parentOptions;
 
-                // inherit readOnly option
-                options.readOnly = parentOptions.readOnly || options.readOnly;
-
                 // use parent's values, if nothing else is available
                 options.$events = options.$events || parentOptions.$events;
                 options.data = options.data || parentOptions.data;

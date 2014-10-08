@@ -124,6 +124,9 @@ public class RevisionServiceImpl implements RevisionService {
             TransferData data = TransferData.buildFromRevisionData(operationResult.getRight(), RevisionableInfo.FALSE);
             addIndexCommand(data);
             return getResponse(new ImmutablePair<>(operationResult.getLeft(), data));
+        } else if (operationResult.getLeft() == ReturnResult.REVISION_FOUND) {
+            TransferData data = TransferData.buildFromRevisionData(operationResult.getRight(), RevisionableInfo.FALSE);
+            return getResponse(new ImmutablePair<>(operationResult.getLeft(), data));
         } else {
             return getResponse(new ImmutablePair<ReturnResult, TransferData>(operationResult.getLeft(), null));
         }

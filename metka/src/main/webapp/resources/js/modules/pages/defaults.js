@@ -9,14 +9,12 @@ define(function (require) {
                 if (!data || !data.transferData) {
                     require('./../assignUrl')('searchPage');
                 }
-                metka.revision = metka.no = data.transferData.key.no;
                 history.replaceState(undefined, '', require('./../url')('view'));
                 $.extend(options, data.gui);
-                options.readOnly = !data.transferData.state.uiState === 'DRAFT' || !(data.transferData.state.handler === MetkaJS.User.userName);
                 options.dataConf = data.configuration;
                 options.data = data.transferData;
 
-                options.header = function header($header) {
+                options.header = function ($header) {
                     var supplant = {
                         page: metka.PAGE
                     };
@@ -78,11 +76,11 @@ define(function (require) {
                     var labelAndValue = String.prototype.supplant.bind('{label}&nbsp;{value}');
                     supplant.id = labelAndValue({
                         label: MetkaJS.L10N.get('general.id'),
-                        value: metka.id
+                        value: options.data.key.id
                     });
                     supplant.no = labelAndValue({
                         label: MetkaJS.L10N.get('general.revision'),
-                        value: metka.revision
+                        value: options.data.key.no
                     });
 
                     supplant.state = data.transferData.state.uiState ? ' - ' + MetkaJS.L10N.get('state.' + data.transferData.state.uiState) : '';

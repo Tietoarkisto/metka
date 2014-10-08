@@ -14,10 +14,8 @@
 define(function (require) {
     'use strict';
 
-    require('./metka');
+    var metka = require('./metka');
     require('./modules/topMenu');
-
-    var $container = $('<div class="content container">');
 
     var options = {
         header: 'Metka',
@@ -35,12 +33,21 @@ define(function (require) {
         if (options.fieldTitles) {
             require('./modules/addTranslation')('fieldTitles', options.fieldTitles);
         }
-        $container.append(require('./modules/header')(options.header));
-        require('./modules/container').call($container, options);
-        require('./modules/buttonContainer').call($container, options);
 
         $('body')
             .append($('<div class="wrapper">')
-                .append($container));
+                .append($('<div class="content container">')
+                    .on('refresh.metka', function () {
+                        metka.id = options.data.key.id;
+                        metka.no = options.data.key.no;
+                        options.readOnly = !options.data.state.uiState === 'DRAFT' || !(options.data.state.handler === MetkaJS.User.userName);
+                        var $this = $(this)
+                            .empty()
+                            .append(require('./modules/header')(options.header));
+                        require('./modules/container').call($this, options);
+                        require('./modules/buttonContainer').call($this, options);
+                        return false;
+                    })
+                    .trigger('refresh.metka')));
     });
 });

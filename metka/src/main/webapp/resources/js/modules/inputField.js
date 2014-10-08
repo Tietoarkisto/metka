@@ -48,7 +48,6 @@ define(function (require) {
                         .addClass('panel-body richtext')
                         .appendTo($input
                             .addClass('panel panel-default'));
-                    return $content;
                 } else {
                     setTimeout(function() {
                         $input.summernote({

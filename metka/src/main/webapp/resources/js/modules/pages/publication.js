@@ -248,7 +248,7 @@ define(function (require) {
                         "publicationtitle",
                         "state"
                     ]),
-                    {
+                    /*{
                         "&title": {
                             "default": "Tyhjennä"
                         },
@@ -257,7 +257,7 @@ define(function (require) {
                                 log('TODO: tyhjennä lomake')
                             });
                         }
-                    },
+                    },*/
                     {
                         "&title": {
                             "default": "Lisää uusi"

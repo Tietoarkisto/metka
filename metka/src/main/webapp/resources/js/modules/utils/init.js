@@ -2,20 +2,6 @@ define(function (require) {
     'use strict';
 
     /**
-     * Like $.each, except 'this' refers to the jQuery object
-     */
-    $.fn.eachTo = function (c, f) {
-        if (!c) {
-            return this;
-        }
-        var that = this;
-        $.each(c, function () {
-            return f.apply(that, arguments);
-        });
-        return this;
-    };
-
-    /**
      * Calls 'f' in the context of jQuery object.
      * Useful when jQuery object needs to be: instantiated, manipulated using custom logic and then chained/returned
      */

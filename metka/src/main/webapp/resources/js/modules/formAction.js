@@ -31,30 +31,31 @@ define(function (require) {
                     });
                 })(options.data.fields);
 
+                var that = this;
+
                 require('./server')(url, {
                     data: JSON.stringify(options.data),
                     success: function (response) {
+                        var isExpectedResult = successConditions ? successConditions.some(function (condition) {
+                            return condition === response.result;
+                        }) : true;
+                        var dismiss = {
+                            type: 'DISMISS'
+                        };
+                        if (isExpectedResult) {
+                            dismiss.create = function () {
+                                this.click(function () {
+                                    onSuccess.call(that, response);
+                                });
+                            };
+                        }
                         require('./modal')({
-                            title: function() {
-                                if(!successConditions) {
-                                    return MetkaJS.L10N.get('alert.error.title');
-                                }
-                                for(var i = 0; i<successConditions.length; i++) {
-                                    if(successConditions[i] === response.result) {
-                                        return MetkaJS.L10N.get('alert.notice.title');
-                                    }
-                                }
-                                return MetkaJS.L10N.get('alert.error.title');
-                            }(),
+                            title: MetkaJS.L10N.get(isExpectedResult ? 'alert.notice.title' : 'alert.error.title'),
                             body: response.result /*data.errors.map(function (error) {
                              return MetkaJS.L10N.get(error.msg);
                              })*/,
-                            buttons: [{
-                                type: 'DISMISS'
-                            }]
+                            buttons: [dismiss]
                         });
-                        // FIXME: kutsu vasta kun dialog suljetaan
-                        onSuccess(response);
                     }
                 });
             };

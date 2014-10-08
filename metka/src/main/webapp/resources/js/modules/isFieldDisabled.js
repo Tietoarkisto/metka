@@ -14,6 +14,11 @@ define(function (require) {
         }
 
         var editable = require('./utils/getPropertyNS')(options, 'dataConf.fields', key, 'editable');
-        return options.readOnly || options.field.readOnly || (typeof editable !== 'undefined' ? !editable : false);
+        return options.readOnly || (typeof editable !== 'undefined' ? !editable : false) || (function r(parent) {
+            if (parent) {
+                return parent.readOnly || r(parent.parent);
+            }
+            return false;
+        })(options.parent);
     };
 });
