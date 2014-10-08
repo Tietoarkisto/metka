@@ -192,7 +192,7 @@ class DDIDocumentDescription {
         Pair<StatusCode, ValueDataField> valueFieldPair;List<DataRow> rows = container.getRowsFor(language);
         DataRow row = rows.get(rows.size()-1);
 
-        valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.VERSION));
+        valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.DESCVERSION));
         if(hasValue(valueFieldPair, language)) {
             VerStmtType verStmt = citationType.addNewVerStmt();
             VersionType ver = fillTextType(verStmt.addNewVersion(), valueFieldPair, language);

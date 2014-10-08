@@ -1,9 +1,11 @@
 package fi.uta.fsd.metka.model.configuration;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.enums.FieldType;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +30,7 @@ public class Field {
     private Boolean indexed = true;
     private Boolean exact = true;
     private String bidirectional = "";
+    private String indexName = null;
 
     @JsonCreator
     public Field(@JsonProperty("key")String key) {
@@ -164,6 +167,18 @@ public class Field {
 
     public void setBidirectional(String bidirectional) {
         this.bidirectional = bidirectional;
+    }
+
+    public String getIndexName() {
+        return indexName;
+    }
+
+    public void setIndexName(String indexName) {
+        this.indexName = indexName;
+    }
+
+    @JsonIgnore public String getIndexAs() {
+        return StringUtils.hasText(indexName) ? indexName : key;
     }
 
     @Override

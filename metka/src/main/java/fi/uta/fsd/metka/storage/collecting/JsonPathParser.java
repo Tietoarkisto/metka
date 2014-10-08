@@ -349,6 +349,8 @@ class JsonPathParser {
                     JsonNode langField = title.get(language.toValue());
                     if(langField != null && langField.getNodeType() != JsonNodeType.NULL) {
                         titleStr = langField.textValue();
+                    } else {
+                        titleStr = def.textValue();
                     }
                 }
             } else {

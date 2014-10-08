@@ -18,7 +18,6 @@ import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
-import fi.uta.fsd.metka.transfer.reference.ReferencePathRequest;
 import fi.uta.fsd.metka.transfer.reference.*;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -90,7 +89,7 @@ public class ReferenceServiceImpl implements ReferenceService {
         List<String> dependencyStack = formDependencyStack(field, config);
 
         // Let's form a request that we can use to fetch a reference option
-        request = formReferenceOptionsRequest(language, splits, dependencyStack, data);
+        request = formReferenceOptionsRequest(language, splits, dependencyStack, data, config);
 
         // Perform the request
         List<ReferenceOption> options = references.handleReferenceRequest(request).getRight();
@@ -178,7 +177,7 @@ public class ReferenceServiceImpl implements ReferenceService {
         return reference;
     }
 
-    private ReferenceOptionsRequest formReferenceOptionsRequest(Language language, String[] path, List<String> stack, RevisionData data) {
+    private ReferenceOptionsRequest formReferenceOptionsRequest(Language language, String[] path, List<String> stack, RevisionData data, Configuration config) {
         ReferenceOptionsRequest request = new ReferenceOptionsRequest();
         request.setLanguage(language);
         request.setConfType(data.getConfiguration().getType().toValue());
@@ -186,12 +185,12 @@ public class ReferenceServiceImpl implements ReferenceService {
         request.setKey(path[path.length-1]);
         List<String> pathList = new ArrayList<>();
         Collections.addAll(pathList, path);
-        parsePath(request, pathList, stack, data.getFields());
+        parsePath(request, pathList, stack, data.getFields(), config);
 
         return request;
     }
 
-    private void parsePath(ReferenceOptionsRequest request, List<String> path, List<String> stack, Map<String, DataField> fieldMap) {
+    private void parsePath(ReferenceOptionsRequest request, List<String> path, List<String> stack, Map<String, DataField> fieldMap, Configuration config) {
         if(path.isEmpty() || stack.isEmpty()) {
             return;
         }
@@ -206,7 +205,7 @@ public class ReferenceServiceImpl implements ReferenceService {
                     ContainerDataField container = (ContainerDataField) field;
                     DataRow row = container.getRowWithId(rowId).getRight();
                     if (row != null && !row.getFields().isEmpty()) {
-                        parsePath(request, path, stack, row.getFields());
+                        parsePath(request, path, stack, row.getFields(), config);
                     }
                 }
             }
@@ -229,7 +228,9 @@ public class ReferenceServiceImpl implements ReferenceService {
             if(field != null) {
                 if(field instanceof ValueDataField) {
                     stack.remove(0);
-                    request.getFieldValues().put(key, ((ValueDataField)field).getActualValueFor(request.getLanguage()));
+                    Field fieldConf = config.getField(field.getKey());
+                    Language l = fieldConf.getTranslatable() ? request.getLanguage() : Language.DEFAULT;
+                    request.getFieldValues().put(key, ((ValueDataField)field).getActualValueFor(l));
                 } else {
                     // In this case we will naturally fail since the same key can't be found on earlier steps in the hierarchy
                     // This is however what should happen since if we found a nonsensical situation and there's no point in continuing.

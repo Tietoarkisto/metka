@@ -6,6 +6,7 @@ import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.factories.StudyFactory;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
@@ -98,9 +99,12 @@ public class DDIReader {
             // TODO: If needed
             DDIFileDescription.readFileDescription(revision, docLang, codeBook, revisions);
 
-            // TODO: Form biblCit at the end of the process
+            // Form biblcit
+            // TODO: Or should we just read biblcit from DDI even though it will be overwritten in the next save?
+            StudyFactory fac = new StudyFactory();
+            fac.formBiblCit(revision, info, references);
 
-            return ReturnResult.OPERATION_SUCCESSFUL;
+            return revisions.updateRevisionData(revision);
         }
     }
 }

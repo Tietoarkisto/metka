@@ -8,7 +8,8 @@ public final class Fields {
     public static final String STUDYID = "studyid";
     public static final String DESCVERSIONS = "descversions";
     public static final String VERSIONDATE = "versiondate";
-    public static final String VERSION = "version";
+    public static final String DESCVERSION = "descversion";
+    public static final String DATAVERSION = "dataversion";
     public static final String TITLE = "title";
     public static final String ALTTITLES = "alttitles";
     public static final String ALTTITLE = "alttitle";
@@ -177,6 +178,9 @@ public final class Fields {
     public static final String OTHERAUTHORTYPE = "otherauthortype";
     public static final String OTHERAUTHORGROUP = "otherauthorgroup";
     public static final String VALUELABELS = "valuelabels";
+    public static final String PACKAGES = "packages";
+    public static final String PACKAGE = "package";
+    public static final String PACKAGEURN = "packageurn";
 
 
     private Fields() {}

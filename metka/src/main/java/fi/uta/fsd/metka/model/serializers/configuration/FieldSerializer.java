@@ -2,6 +2,7 @@ package fi.uta.fsd.metka.model.serializers.configuration;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import fi.uta.fsd.metka.enums.FieldType;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.serializers.ObjectSerializer;
 
@@ -27,11 +28,14 @@ public class FieldSerializer extends ObjectSerializer<Field> {
         jgen.writeBooleanField("writable", value.getWritable());
         jgen.writeBooleanField("indexed", value.getIndexed());
 
-        if(!value.getType().isContainer()) {
+        if(!value.getType().isContainer() && value.getType() != FieldType.RICHTEXT) {
             jgen.writeBooleanField("exact", value.getExact());
         }
 
         switch(value.getType()) {
+            case RICHTEXT:
+                jgen.writeBooleanField("exact", false);
+                break;
             case REFERENCECONTAINER:
                 jgen.writeStringField("reference", value.getReference());
                 jgen.writeStringField("bidirectional", value.getBidirectional());

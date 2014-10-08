@@ -420,8 +420,12 @@
             "key" : "universeclusion",
             "title" : "Rajaus"
         },
-        "version": {
-            "key" : "version",
+        "dataversion": {
+            "key" : "dataversion",
+            "title" : "Versio"
+        },
+        "descversion": {
+            "key" : "descversion",
             "title" : "Versio"
         },
         "versiondate": {
@@ -701,7 +705,7 @@
                                     "field": {
                                         "key": "dataversions",
                                         "columnFields": [
-                                            "version",
+                                            "dataversion",
                                             "versiondate",
                                             "versionpro",
                                             "versionlabeldata",
@@ -720,7 +724,7 @@
                                     "field": {
                                         "key": "descversions",
                                         "columnFields": [
-                                            "version",
+                                            "descversion",
                                             "versiondate",
                                             "versionpro",
                                             "versionlabeldesc",

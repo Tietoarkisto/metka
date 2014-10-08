@@ -16,6 +16,7 @@ import fi.uta.fsd.metka.model.data.change.ContainerChange;
 import fi.uta.fsd.metka.model.data.change.RowChange;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.data.value.Value;
+import fi.uta.fsd.metka.model.factories.StudyFactory;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
@@ -24,6 +25,8 @@ import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.model.transfer.TransferField;
 import fi.uta.fsd.metka.model.transfer.TransferRow;
 import fi.uta.fsd.metka.model.transfer.TransferValue;
+import fi.uta.fsd.metka.mvc.services.ReferenceService;
+import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionSaveRepository;
@@ -56,6 +59,9 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
 
     @Autowired
     private StudyVariablesParser parser;
+
+    @Autowired
+    private ReferenceService references;
 
     @Override
     public Pair<ReturnResult, TransferData> saveRevision(TransferData transferData) {
@@ -91,7 +97,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         SaveHandler handler = new SaveHandler(info, revision.getKey());
         Pair<Boolean, Boolean> changesAndErrors = handler.saveFields(configuration, transferData, revision);
 
-        finalizeSave(revision, transferData, configuration);
+        finalizeSave(revision, transferData, configuration, info);
 
         if(changesAndErrors.getLeft()) {
             // Set revision save info
@@ -116,13 +122,44 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
      * @param transferData TransferData sent to request and that will be returned to UI
      * @param configuration Configuration of revision data
      */
-    private void finalizeSave(RevisionData revision, TransferData transferData, Configuration configuration) {
+    private void finalizeSave(RevisionData revision, TransferData transferData, Configuration configuration, DateTimeUserPair info) {
         switch(revision.getConfiguration().getType()) {
             case STUDY_ATTACHMENT:
                 finalizeStudyAttachment(revision, transferData);
                 break;
             case STUDY:
-                // TODO: Compile biblCit
+                StudyFactory fac = new StudyFactory();
+                // Form Packages
+
+
+                // Form biblcit
+                fac.formBiblCit(revision, info, references);
+                Pair<StatusCode, ValueDataField> pair = revision.dataField(ValueDataFieldCall.get(Fields.BIBLCIT));
+                if(pair.getLeft() != StatusCode.FIELD_FOUND) {
+                    break;
+                }
+                ValueDataField field = pair.getRight();
+
+                TransferField f = transferData.getField(Fields.BIBLCIT);
+                if(f == null) {
+                    f = new TransferField(Fields.BIBLCIT, TransferFieldType.VALUE);
+                    transferData.addField(f);
+                }
+                for(Language l : Language.values()) {
+                    TransferValue v = f.getValueFor(l);
+                    if(!field.hasValueFor(l)) {
+                        if(v != null && v.hasCurrent()) {
+                            v.setCurrent(null);
+                        }
+                        continue;
+                    }
+                    if(v == null) {
+                        v = TransferValue.buildFromValueDataFieldFor(l, field);
+                        f.getValues().put(l, v);
+                    } else {
+                        v.setCurrent(field.getCurrentFor(l).getActualValue());
+                    }
+                }
                 break;
             default:
                 break;

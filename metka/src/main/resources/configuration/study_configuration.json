@@ -908,7 +908,7 @@
 			"translatable": false,
 			"type": "CONTAINER",
 			"subfields": [
-				"version",
+				"dataversion",
 				"versiondate",
 				"versionpro",
 				"versionlabeldata",
@@ -916,12 +916,13 @@
 				"versionnotes"
 			]
 		},
-		"version": {
-			"key": "version",
+		"dataversion": {
+			"key": "dataversion",
 			"translatable": false,
 			"required": true,
 			"type": "STRING",
-			"subfield": true
+			"subfield": true,
+			"indexName": "version"
 		},
 		"versiondate": {
 			"key": "versiondate",
@@ -971,13 +972,21 @@
 			"translatable": true,
 			"type": "CONTAINER",
 			"subfields": [
-				"version",
+				"descversion",
 				"versiondate",
 				"versionpro",
 				"versionlabeldesc",
 				"versiontext",
 				"versionnotes"
 			]
+		},
+		"descversion": {
+			"key": "descversion",
+			"translatable": false,
+			"required": true,
+			"type": "STRING",
+			"subfield": true,
+			"indexName": "version"
 		},
 		"versionlabeldesc": {
 			"key": "versionlabeldesc",

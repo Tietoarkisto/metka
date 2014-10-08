@@ -386,7 +386,7 @@ class DDIStudyDescription {
         Pair<StatusCode, ContainerDataField> containerPair = revisionData.dataField(ContainerDataFieldCall.get(Fields.DATAVERSIONS));
         if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(language)) {
             for(DataRow row : containerPair.getRight().getRowsFor(language)) {
-                Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.VERSION));
+                Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.DATAVERSION));
                 if(hasValue(valueFieldPair, language)) {
                     fillTextAndDateType(verStmtType.addNewVersion(), valueFieldPair, language);
                 }
