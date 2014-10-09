@@ -40,7 +40,7 @@ define(function (require) {
                     .on('refresh.metka', function () {
                         metka.id = options.data.key.id;
                         metka.no = options.data.key.no;
-                        options.readOnly = !options.data.state.uiState === 'DRAFT' || !(options.data.state.handler === MetkaJS.User.userName);
+                        options.readOnly = require('./modules/isDataReadOnly')(options.data);
                         var $this = $(this)
                             .empty()
                             .append(require('./modules/header')(options.header));

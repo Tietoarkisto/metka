@@ -8,11 +8,16 @@ define(function (require) {
                 PAGE: 'STUDY_ATTACHMENT'
             }, requestOptions), {
                 method: 'GET',
-                success: function (data) {
-                    var modalOptions = $.extend(data.gui, {
+                success: function (response) {
+                    // TODO: check status
+                    if (response.result === 'VIEW_SUCCESSFUL') {
+                    }
+
+                    var modalOptions = $.extend(response.gui, {
                         title: 'Muokkaa tiedostoa',
-                        data: data.transferData,
-                        dataConf: data.configuration,
+                        data: response.transferData,
+                        dataConf: response.configuration,
+                        readOnly: require('./../../isDataReadOnly')(response.transferData),
                         $events: options.$events,
                         defaultLang: 'DEFAULT',
                         large: true,
