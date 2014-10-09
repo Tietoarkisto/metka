@@ -20,6 +20,8 @@ define(function (require) {
     };
 
     return function (options, onLoad) {
+        var commonSearchBooleans = require('./../commonSearchBooleans');
+
         $.extend(options, {
             header: MetkaJS.L10N.get('type.BINDERS.title'),
             fieldTitles: {
@@ -39,6 +41,7 @@ define(function (require) {
                     "title": "Mapitettu aineisto"
                 }
             },
+            data: commonSearchBooleans.initialData({}),
             dataConf: dataConf,
             content: [
                 {
@@ -57,7 +60,6 @@ define(function (require) {
                                     "columnFields": [
                                         "studyId",
                                         "studyTitle",
-                                        "savedBy",
                                         "binderId",
                                         "description"
                                     ]

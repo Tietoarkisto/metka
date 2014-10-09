@@ -6,6 +6,8 @@ define(function (require) {
     }
 
     return function (options, onLoad) {
+        var commonSearchBooleans = require('./../commonSearchBooleans');
+
         $.extend(options, {
             header: MetkaJS.L10N.get('type.STUDY_VARIABLES.search'),
             "fieldTitles": {
@@ -56,7 +58,7 @@ define(function (require) {
                 }
             ],
             buttons: [],
-            data: {},
+            data: commonSearchBooleans.initialData({}),
             dataConf: {
                 fields: {
                     title: {

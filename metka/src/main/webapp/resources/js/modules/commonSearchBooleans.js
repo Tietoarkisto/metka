@@ -51,6 +51,14 @@ define(function (require) {
         },
         initialData: function (data) {
             return $.extend(true, data, {
+                key: {
+                    id: "",
+                    no: ""
+                },
+                state: {
+                    uiState: "DRAFT",
+                    handler: MetkaJS.User.userName
+                },
                 fields: {
                     searchApproved: {
                         type: 'VALUE',

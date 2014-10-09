@@ -1,0 +1,60 @@
+=Release notes 2014-10-09=
++Resolved issues+
+
+#58 Samaa Metka-instanssia ei voi käyttää sekä GUIn että API:n kautta
+https://github.com/Tietoarkisto/metka/issues/58
+
+#59 Rajapintakutsu /api/createStudy edellyttää Shibboleth-autentikointia
+https://github.com/Tietoarkisto/metka/issues/59
+
+#60 Aineistonäytöltä puuttuu tieto onko revisio luonnos, hyväksytty vai poistettu
+https://github.com/Tietoarkisto/metka/issues/60
+
+#62 Julkaisua ei pysty liittämään aineistoon
+https://github.com/Tietoarkisto/metka/issues/62
+
+#64 Julkaisua ei pysty liittämään sarjaan
+https://github.com/Tietoarkisto/metka/issues/64
+
+#65 Aineistoa ei voi liittää toiseen aineistoon
+https://github.com/Tietoarkisto/metka/issues/65
+
+#72 Kaikki GUIn kautta saatavat virheilmoitukset ovat samannäköisiä
+https://github.com/Tietoarkisto/metka/issues/72
+
+#75 Muuttujien ryhmittelyssä tulee ilmoitus SAVE_SUCCESFUL_WITH_ERRORS GUIssa
+https://github.com/Tietoarkisto/metka/issues/75
+
+#76 Kuluvaa päivää ei saa tallennettua päivämääräkenttiin GUIn kautta
+https://github.com/Tietoarkisto/metka/issues/76
+
+#77 Metkalla ongelmia GUIssa, kun käytetään IE:tä (versio 11)
+https://github.com/Tietoarkisto/metka/issues/77
+
+#79 Rinnakkaiset nimet -taulukossa ei kuuluisi olla pvm ja tallentaja -tietoja
+https://github.com/Tietoarkisto/metka/issues/79
+
+#81 Väärät kenttätyypit kuvailuvälilehdellä
+https://github.com/Tietoarkisto/metka/issues/81
+
+#82 Päivämääräkenttien tietoja ei saa poistettua
+https://github.com/Tietoarkisto/metka/issues/82
+
+#84 Jos ruksaa "Ei painokertoimia" -checkboxin, valintaa ei saa enää pois
+https://github.com/Tietoarkisto/metka/issues/84
+
+#85 Aineistojen virheet taulukossa rivit eivät näy
+https://github.com/Tietoarkisto/metka/issues/85
+
+#87 Editori-tekstikenttien toiminnan ja indeksoinnin testaus ja korjaukset
+https://github.com/Tietoarkisto/metka/issues/87
+
+#91 Poistetun revisioitavan objektin palautus
+https://github.com/Tietoarkisto/metka/issues/91
+
+#93 biblCit kentän sisällön tuottaminen
+https://github.com/Tietoarkisto/metka/issues/93
+BiblCit säännöt löytyvät Alfrescosta: https://ecm.proactum.fi/share/page/site/metka/document-details?nodeRef=workspace://SpacesStore/85493947-9ebf-431c-862c-6961e49cb35b
+
+#95 Pop-up-ikkuna syötettyine tietoineen katoaa, jos sen ohi klikkaa vahingossa
+https://github.com/Tietoarkisto/metka/issues/95
