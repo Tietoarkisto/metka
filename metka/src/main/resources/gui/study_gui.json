@@ -260,6 +260,10 @@
             "key" : "packageversion",
             "title" : "Versio"
         },
+        "partitle": {
+            "key" : "partitle",
+            "title" : "Nimi"
+        },
         "partitlelang": {
             "key" : "partitlelang",
             "title" : "Kieli"
