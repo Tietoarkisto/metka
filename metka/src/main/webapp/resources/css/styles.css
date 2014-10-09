@@ -359,7 +359,7 @@ td {
     display: none;
 }
 
-.panel-body.richtext {
+.well.richtext {
     overflow: auto;
     max-height: 200px;
 }

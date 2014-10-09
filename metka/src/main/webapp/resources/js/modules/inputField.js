@@ -44,10 +44,8 @@ define(function (require) {
 
             var $content = (function () {
                 if (require('./isFieldDisabled')(options, lang)) {
-                    return $('<div>')
-                        .addClass('panel-body richtext')
-                        .appendTo($input
-                            .addClass('panel panel-default'));
+                    return $input
+                        .addClass('well well-sm richtext');
                 } else {
                     setTimeout(function() {
                         $input.summernote({
