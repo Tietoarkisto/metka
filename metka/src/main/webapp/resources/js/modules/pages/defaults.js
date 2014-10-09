@@ -42,7 +42,7 @@ define(function (require) {
                         });
                     })(options.content)) {
                         $buttons
-                            .append(require('./../languageRadioInputGroup')(options, 'translation-lang', options.defaultLang));
+                            .append(require('./../languageRadioInputGroup')(options, 'translation-lang', MetkaJS.User.role.defaultLanguage.toUpperCase()));
                     }
 
                     var header = {
