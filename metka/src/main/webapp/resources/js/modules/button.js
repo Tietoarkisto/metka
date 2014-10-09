@@ -287,7 +287,6 @@ define(function (require) {
                                                         });
                                                         break;
                                                 }
-
                                             }
                                         });
                                     });
