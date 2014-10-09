@@ -314,6 +314,8 @@ nav .mainNavUl li a:hover {
     border: 1px solid white;
 }
 
+.hiddenByButtonConfiguration,
+.hiddenByTab,
 .containerHidden,
 .nav>li.containerHidden {
     display: none;

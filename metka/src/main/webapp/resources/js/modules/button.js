@@ -394,7 +394,7 @@ define(function (require) {
 
         $button
             .addClass('btn-' + (options.style || 'primary'))
-            .toggle(isVisible());
+            .toggleClass('hiddenByButtonConfiguration', !isVisible());
 
         $button
             .text(MetkaJS.L10N.localize(options, 'title'));

@@ -7,7 +7,8 @@ define(function (require) {
             var id = require('./autoId')();
 
             return {
-                title: togglable.call($('<li>'), options)
+                title: togglable.call($('<li>')
+                    .data('hidePageButtons', !!options.hidePageButtons), options)
                     .append($('<a data-target="#' + id + '" href="javascript:void 0;" data-toggle="tab">')
                         .text(MetkaJS.L10N.localize(options, 'title'))
 
@@ -51,7 +52,9 @@ define(function (require) {
             var $navTabs = $('<ul class="nav nav-tabs">')
                 .append(tabs.title)
                 .on('shown.bs.tab', 'a', function (e) {
-                    sessionStorage.setItem('currentTab', $(this).parent().index());
+                    var $li = $(this).parent();
+                    $('body > .wrapper > .content > .modal-footer').children().toggleClass('hiddenByTab', $li.data('hidePageButtons'));
+                    sessionStorage.setItem('currentTab', $li.index());
                 });
 
             $tabContent.append(tabs.content);

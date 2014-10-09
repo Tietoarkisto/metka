@@ -492,6 +492,7 @@ define(function (require) {
                                 {
                                     "type": "TAB",
                                     "title": "Virheelliset",
+                                    "hidePageButtons": true,
                                     "content": []
                                 }
                             ],

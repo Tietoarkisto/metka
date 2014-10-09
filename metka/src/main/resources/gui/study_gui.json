@@ -1647,6 +1647,7 @@
         {
             "type": "TAB",
             "title": "Virheet",
+            "hidePageButtons": true,
             "content": [{
                 "type": "COLUMN",
                 "columns": 1,
