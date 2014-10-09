@@ -75,6 +75,14 @@ public class ContainerDeserializer extends ObjectDeserializer<Container> {
             }
         }
 
+        // Set hidePageButtons
+        if(con.getType() == ContainerType.TAB) {
+            JsonNode hideButtons = node.get("hidePageButtons");
+            if(hideButtons != null && hideButtons.getNodeType() == JsonNodeType.BOOLEAN) {
+                con.setHidePageButtons(hideButtons.booleanValue());
+            }
+        }
+
         // set content
         if(con.getType() == ContainerType.TAB || con.getType() == ContainerType.SECTION) {
             JsonNode content = node.get("content");
@@ -86,11 +94,9 @@ public class ContainerDeserializer extends ObjectDeserializer<Container> {
                     }
                 }
             }
-            JsonNode hideButtons = node.get("hidePageButtons");
-            if(hideButtons != null && hideButtons.getNodeType() == JsonNodeType.BOOLEAN) {
-                con.setHidePageButtons(hideButtons.booleanValue());
-            }
+
         }
+
         // set rows
         if(con.getType() == ContainerType.COLUMN) {
             JsonNode rows = node.get("rows");
