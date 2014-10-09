@@ -359,7 +359,10 @@ td {
     display: none;
 }
 
-.well.richtext {
+.richtext.form-control {
+    /*clear Boostrap height: 34px;*/
+    height:auto !important;
+
     overflow: auto;
     max-height: 200px;
 }

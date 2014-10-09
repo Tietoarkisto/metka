@@ -45,7 +45,8 @@ define(function (require) {
             var $content = (function () {
                 if (require('./isFieldDisabled')(options, lang)) {
                     return $input
-                        .addClass('well well-sm richtext');
+                        .addClass('form-control richtext')
+                        .attr('disabled', true);
                 } else {
                     setTimeout(function() {
                         $input.summernote({
