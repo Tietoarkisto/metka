@@ -21,10 +21,12 @@ define(function (require) {
         CLAIM: function (options) {
             this
                 .click(function () {
+                    var $this = $(this);
                     require('./server')('/revision/ajax/claim', {
                         data: JSON.stringify(options.data.key),
                         success: function (response) {
-                            require('./assignUrl')('view');
+                            $.extend(options.data, response.data);
+                            $this.trigger('refresh.metka');
                         }
                     });
                 });
@@ -299,10 +301,12 @@ define(function (require) {
         RELEASE: function (options) {
             this
                 .click(function () {
+                    var $this = $(this);
                     require('./server')('/revision/ajax/release', {
                         data: JSON.stringify(options.data.key),
                         success: function (response) {
-                            require('./assignUrl')('view');
+                            $.extend(options.data, response.data);
+                            $this.trigger('refresh.metka');
                         }
                     });
                 });
@@ -310,10 +314,12 @@ define(function (require) {
         RESTORE: function (options) {
             this
                 .click(function () {
+                    var $this = $(this);
                     require('./server')('/revision/ajax/restore', {
                         data: JSON.stringify(options.data.key),
                         success: function (response) {
-                            require('./assignUrl')('view');
+                            $.extend(options.data, response.data);
+                            $this.trigger('refresh.metka');
                         }
                     });
                 });
@@ -321,12 +327,16 @@ define(function (require) {
         SAVE: function (options) {
             this
                 .click(require('./formAction')('save')(options, function (response) {
+                    if (response.result === 'NO_CHANGES_TO_SAVE') {
+                        return;
+                    }
                     $.extend(options.data, response.data);
                     $(this).trigger('refresh.metka');
                 },
                 [
                     'SAVE_SUCCESSFUL',
-                    'SAVE_SUCCESSFUL_WITH_ERRORS'
+                    'SAVE_SUCCESSFUL_WITH_ERRORS',
+                    'NO_CHANGES_TO_SAVE'
                 ]));
         },
         YES: function (options) {
@@ -384,7 +394,7 @@ define(function (require) {
 
         $button
             .addClass('btn-' + (options.style || 'primary'))
-            .toggle(isVisible());
+            .toggleClass('hiddenByButtonConfiguration', !isVisible());
 
         $button
             .text(MetkaJS.L10N.localize(options, 'title'));

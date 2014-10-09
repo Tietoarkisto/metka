@@ -44,10 +44,9 @@ define(function (require) {
 
             var $content = (function () {
                 if (require('./isFieldDisabled')(options, lang)) {
-                    return $('<div>')
-                        .addClass('panel-body richtext')
-                        .appendTo($input
-                            .addClass('panel panel-default'));
+                    return $input
+                        .addClass('form-control richtext')
+                        .attr('disabled', true);
                 } else {
                     setTimeout(function() {
                         $input.summernote({

@@ -314,6 +314,8 @@ nav .mainNavUl li a:hover {
     border: 1px solid white;
 }
 
+.hiddenByButtonConfiguration,
+.hiddenByTab,
 .containerHidden,
 .nav>li.containerHidden {
     display: none;
@@ -359,7 +361,10 @@ td {
     display: none;
 }
 
-.panel-body.richtext {
+.richtext.form-control {
+    /*clear Boostrap height: 34px;*/
+    height:auto !important;
+
     overflow: auto;
     max-height: 200px;
 }

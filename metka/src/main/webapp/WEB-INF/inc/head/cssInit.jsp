@@ -13,6 +13,7 @@
 <link rel="stylesheet" type="text/css" href="${contextPath}/lib/font-awesome-4.2.0/css/font-awesome.min.css">
 
 <%-- Metka --%>
-<link rel="stylesheet" type="text/css" href="${contextPath}/css/styles.css">
+<%-- Parameter ?v=x is just to bypass cache, when there's major css changes that must be pushed to clients --%>
+<link rel="stylesheet" type="text/css" href="${contextPath}/css/styles.css?v=2">
 <link rel="stylesheet" type="text/css" href="${contextPath}/css/form.css">
 <link rel="stylesheet" type="text/css" href="${contextPath}/css/table.css">

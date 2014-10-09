@@ -1,44 +1,40 @@
 define(function (require) {
     'use strict';
 
-    var togglable = require('./togglable');
-    var $tabContent = $('<div class="tab-content">');
-
     return {
         create: require('./inherit')(function (options) {
+            var togglable = require('./togglable');
             var id = require('./autoId')();
 
             return {
-                title: togglable.call($('<li>'), options)
+                title: togglable.call($('<li>')
+                    .data('hidePageButtons', !!options.hidePageButtons), options)
                     .append($('<a data-target="#' + id + '" href="javascript:void 0;" data-toggle="tab">')
                         .text(MetkaJS.L10N.localize(options, 'title'))
 
                         // set tab content on first open
-                        .one('shown.bs.tab', function (event) {
-                            var $tab = $tabContent.children('.active');
+                        .one('shown.bs.tab', function (e) {
 
-                            // allow bootstrap to activate and display tab, before starting to set content
+                            // allow browser to activate and display tab, before starting to set content
                             setTimeout(function () {
 
                                 // set content
-                                require('./container').call($tab, options)
-                            }, 0);
+                                require('./container').call($($(this).data('target')), options);
+                            }.bind(this), 0);
                         })),
                 content: togglable.call($('<div class="tab-pane">'), options)
                     .attr('id', id)
             };
         }),
         add: function (tabs) {
-            function activate($a, id) {
-                var $li = $a.parent();
+            function activate($li) {
                 if (!$li.hasClass('containerHidden')) {
-                    $a.tab('show');
-                    //$li.addClass('active');
-                    $tabContent.find(id).addClass('active');
+                    $li.children('a').tab('show');
                     return true;
                 }
                 return false;
             }
+            var $tabContent = $('<div class="tab-content">');
 
             // TODO: add Array.prototype.transform or something
             // Tabs is an array [{title: <title>, content: <content>},...].
@@ -56,7 +52,9 @@ define(function (require) {
             var $navTabs = $('<ul class="nav nav-tabs">')
                 .append(tabs.title)
                 .on('shown.bs.tab', 'a', function (e) {
-                    sessionStorage.setItem('currentTab', $(this).data('target').substring(1));
+                    var $li = $(this).parent();
+                    $('body > .wrapper > .content > .modal-footer').children().toggleClass('hiddenByTab', $li.data('hidePageButtons'));
+                    sessionStorage.setItem('currentTab', $li.index());
                 });
 
             $tabContent.append(tabs.content);
@@ -69,9 +67,9 @@ define(function (require) {
                 // try to activate last tab from session
                 var currentTab = sessionStorage.getItem('currentTab');
                 if (currentTab) {
-                    var $a = $navTabs.find('a[data-target="#' + currentTab + '"]');
-                    if ($a.length) {
-                        if (activate($a, '#' + currentTab)) {
+                    var $li = $navTabs.children().eq(currentTab);
+                    if ($li.length) {
+                        if (activate($li)) {
                             // tab found, break
                             return;
                         }
@@ -79,9 +77,9 @@ define(function (require) {
                 }
 
                 // activate first visible tab
-                $navTabs.find('a').each(function () {
-                    var $a = $(this);
-                    if (activate($a, $a.data('target'))) {
+                $navTabs.find('li').each(function () {
+                    var $li = $(this);
+                    if (activate($li)) {
                         return false; // break (note: jQuery each loop)
                     }
                 });

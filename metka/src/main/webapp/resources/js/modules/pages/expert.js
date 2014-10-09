@@ -53,8 +53,8 @@ define(function (require) {
                                     "type": "CELL",
                                     "title": "Tallennetut haut",
                                     "colspan": 1,
+                                    "readOnly": true,
                                     "field": {
-                                        "readOnly": true,
                                         "displayType": "CONTAINER",
                                         "showSaveInfo": true,
                                         "columnFields": [

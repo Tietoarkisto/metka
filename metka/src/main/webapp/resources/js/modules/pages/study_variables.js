@@ -26,8 +26,8 @@ define(function (require) {
                                 {
                                     "type": "CELL",
                                     "title": "Aineistot",
+                                    "readOnly": true,
                                     "field": {
-                                        "readOnly": true,
                                         "displayType": "CONTAINER",
                                         "displayHeader": false,
                                         "columnFields": [

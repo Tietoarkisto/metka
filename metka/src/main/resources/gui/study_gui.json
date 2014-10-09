@@ -260,6 +260,10 @@
             "key" : "packageversion",
             "title" : "Versio"
         },
+        "partitle": {
+            "key" : "partitle",
+            "title" : "Nimi"
+        },
         "partitlelang": {
             "key" : "partitlelang",
             "title" : "Kieli"
@@ -1643,6 +1647,7 @@
         {
             "type": "TAB",
             "title": "Virheet",
+            "hidePageButtons": true,
             "content": [{
                 "type": "COLUMN",
                 "columns": 1,

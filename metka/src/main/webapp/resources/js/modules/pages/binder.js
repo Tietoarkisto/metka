@@ -54,8 +54,8 @@ define(function (require) {
                                 "type": "CELL",
                                 "title": "Mapitukset",
                                 "colspan": 1,
+                                "readOnly": true,
                                 "field": {
-                                    "readOnly": true,
                                     "displayType": "CONTAINER",
                                     "columnFields": [
                                         "studyId",
@@ -100,8 +100,8 @@ define(function (require) {
                                                                     "type": "CELL",
                                                                     "title": "Sisältö",
                                                                     "colspan": 1,
+                                                                    "readOnly": true,
                                                                     "field": {
-                                                                        "readOnly": true,
                                                                         "displayType": "CONTAINER",
                                                                         "columnFields": [
                                                                             "studyId",

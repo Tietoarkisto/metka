@@ -31,9 +31,9 @@ define(function (require) {
                     columnFields: [
                         'binderId',
                         'binderDescription'
-                    ],
-                    readOnly: true
+                    ]
                 },
+                readOnly: true,
                 '&title': options['&title']
             };
 
