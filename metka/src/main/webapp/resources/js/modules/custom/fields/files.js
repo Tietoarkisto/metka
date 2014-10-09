@@ -267,110 +267,92 @@ define(function (require) {
                 var $elem = this;
 
                 require('./../../data')(options).onChange(function () {
-                    function addFileContainers() {
-                        require('./../../inherit')(function (options) {
-                            require('./../../container').call($elem, options);
-                        })(options)({
-                            data: {
-                                fields: fields
-                            },
-                            dataConf: $.extend(true, {
-                                fields: {
-                                    removedFiles: {
-                                        "key": "removedFiles",
-                                        "translatable": false,
-                                        "type": "REFERENCECONTAINER",
-                                        "reference": "attachment_ref",
-                                        "subfields": [
-                                            "filespath",
-                                            "fileslang"
-                                        ]}
-                                }
-                            }, options.dataConf),
-                            content: [{
-                                "type": "COLUMN",
-                                "columns": 1,
-                                "rows": [{
-                                    "type": "ROW",
-                                    "cells": [
-                                        {
-                                            "type": "CELL",
-                                            "title": "Liitetyt tiedostot",
-                                            "field": {
-                                                "key": "files",
-                                                "showSaveInfo": true,
-                                                "showReferenceKey": true,
-                                                "columnFields": [
-                                                    "filespath",
-                                                    "fileslang"
-                                                ],
-                                                onClick: function (transferRow, replaceTr) {
-                                                    view({
-                                                        id: transferRow.value,
-                                                        no: ''
-                                                    }, replaceTr);
-                                                },
-                                                onAdd: function (originalEmptyData, addRow) {
-                                                    require('./../../server')('create', {
-                                                        data: JSON.stringify({
-                                                            type: 'STUDY_ATTACHMENT',
-                                                            parameters: {
-                                                                study: require('./../../../metka').id
-                                                            }
-                                                        }),
-                                                        success: function (response) {
-                                                            if (response.result === 'REVISION_CREATED') {
-                                                                // FIXME: row was immediately created, but if dialog is dismissed, row won't be shown until page refresh
-                                                                view(response.data.key, addRow);
-                                                            }
-                                                        }
-                                                    });
-                                                },
-                                                onRemove: function ($tr) {
-                                                    // TODO: don't show remove button
-                                                    log($tr, $tr.data('transferRow'));
-                                                }
-                                            }
-                                        }
-                                    ]
-                                }, {
-                                    "type": "ROW",
-                                    "cells": [
-                                        {
-                                            "type": "CELL",
-                                            "title": "Poistetut tiedostot",
-                                            readOnly: true,
-                                            "field": {
-                                                "key": "removedFiles",
-                                                "showReferenceKey": true,
-                                                "columnFields": [
-                                                    "filespath",
-                                                    "filedescription",
-                                                    "filecomment"
-                                                ]
-                                            }
-                                        }
-                                    ]
+                    function addFileConteiners() {
+                        function addFileContainer(files, cell) {
+                            require('./../../inherit')(function (options) {
+                                require('./../../container').call($elem, options);
+                            })(options)({
+                                data: {
+                                    fields: {
+                                        files: files
+                                    }
+                                },
+                                content: [{
+                                    "type": "COLUMN",
+                                    "columns": 1,
+                                    "rows": [{
+                                        "type": "ROW",
+                                        "cells": [cell]
+                                    }]
                                 }]
-                            }]
+                            });
+                        }
+                        addFileContainer(files, {
+                            "type": "CELL",
+                            "title": "Liitetyt tiedostot",
+                            "field": {
+                                "key": "files",
+                                "showSaveInfo": true,
+                                "showReferenceKey": true,
+                                "columnFields": [
+                                    "filespath",
+                                    "fileslang"
+                                ],
+                                onClick: function (transferRow, replaceTr) {
+                                    view({
+                                        id: transferRow.value,
+                                        no: ''
+                                    }, replaceTr);
+                                },
+                                onAdd: function (originalEmptyData, addRow) {
+                                    require('./../../server')('create', {
+                                        data: JSON.stringify({
+                                            type: 'STUDY_ATTACHMENT',
+                                            parameters: {
+                                                study: require('./../../../metka').id
+                                            }
+                                        }),
+                                        success: function (response) {
+                                            if (response.result === 'REVISION_CREATED') {
+                                                // FIXME: row was immediately created, but if dialog is dismissed, row won't be shown until page refresh
+                                                view(response.data.key, addRow);
+                                            }
+                                        }
+                                    });
+                                },
+                                onRemove: function ($tr) {
+                                    // TODO: don't show remove button
+                                    log($tr, $tr.data('transferRow'));
+                                }
+                            }
+                        });
+                        addFileContainer(removedFiles, {
+                            "type": "CELL",
+                            "title": "Poistetut tiedostot",
+                            readOnly: true,
+                            "field": {
+                                "key": "files",
+                                "showReferenceKey": true,
+                                "columnFields": [
+                                    "filespath",
+                                    "filedescription",
+                                    "filecomment"
+                                ]
+                            }
                         });
                     }
-                    function langRow() {
-                        var o = {};
-                        o[options.defaultLang] = [];
-                        return o;
+                    function dataField(key) {
+                        var rows = {};
+                        rows[options.defaultLang] = [];
+                        return {
+                            key: key,
+                            rows: rows
+                        };
                     }
                     $elem.empty();
-                    var fields = {
-                        files: {
-                            key: 'files',
-                            rows: langRow()
-                        },
-                        removedFiles: {
-                            key: 'removedFiles',
-                            rows: langRow()
-                        }
-                    };
+                    var files = dataField('files');
+                    var removedFiles = dataField('removedFiles');
+
                     var rows = require('./../../data')(options).getByLang(options.defaultLang);
                     if (rows) {
                         var pendingResponseCount = rows.length;
@@ -379,16 +361,18 @@ define(function (require) {
                                 method: 'GET',
                                 success: function (response) {
                                     if (response.exists) {
-                                        fields[!response.removed ? 'files' : 'removedFiles'].rows[options.defaultLang].push(transferRow);
+                                        (!response.removed ? files : removedFiles).rows[options.defaultLang].push(transferRow);
                                     }
+
+                                    // TODO: to maintain row order, trigger new ajax request here
                                     if (!--pendingResponseCount) {
-                                        addFileContainers();
+                                        addFileConteiners();
                                     }
                                 }
                             });
                         });
                     } else {
-                        addFileContainers();
+                        addFileConteiners();
                     }
                 });
             }
