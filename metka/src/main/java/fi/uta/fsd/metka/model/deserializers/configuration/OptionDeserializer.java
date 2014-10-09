@@ -1,6 +1,7 @@
 package fi.uta.fsd.metka.model.deserializers.configuration;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
@@ -13,7 +14,7 @@ import java.io.IOException;
 public class OptionDeserializer extends ObjectDeserializer<Option> {
 
     @Override
-    protected Option doDeserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
+    protected Option doDeserialize(ObjectCodec oc, JsonNode node, JsonParser jp, DeserializationContext ctxt) throws IOException {
         JsonNode value = node.get("value");
         if(value == null || value.getNodeType() == JsonNodeType.NULL) {
             return null;

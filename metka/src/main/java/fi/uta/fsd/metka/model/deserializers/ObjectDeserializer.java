@@ -10,20 +10,17 @@ import com.fasterxml.jackson.databind.node.JsonNodeType;
 import java.io.IOException;
 
 public abstract class ObjectDeserializer<T> extends JsonDeserializer<T> {
-    protected ObjectCodec oc;
-    protected JsonNode node;
-
     @Override
     public final T deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
-        oc = jp.getCodec();
-        node = oc.readTree(jp);
+        ObjectCodec oc = jp.getCodec();
+        JsonNode node = oc.readTree(jp);
 
         if(node == null || node.getNodeType() == JsonNodeType.NULL) {
             return null;
         }
 
-        return doDeserialize(jp, ctxt);
+        return doDeserialize(oc, node, jp, ctxt);
     }
 
-    protected abstract T doDeserialize(JsonParser jp, DeserializationContext ctxt) throws IOException;
+    protected abstract T doDeserialize(ObjectCodec oc, JsonNode node, JsonParser jp, DeserializationContext ctxt) throws IOException;
 }
