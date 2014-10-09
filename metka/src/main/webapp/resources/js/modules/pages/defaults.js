@@ -9,10 +9,10 @@ define(function (require) {
                 if (!data || !data.transferData) {
                     require('./../assignUrl')('searchPage');
                 }
-                history.replaceState(undefined, '', require('./../url')('view'));
                 $.extend(options, data.gui);
                 options.dataConf = data.configuration;
                 options.data = data.transferData;
+                history.replaceState(undefined, '', require('./../url')('view', options.data.key));
 
                 options.header = function ($header) {
                     var supplant = {
