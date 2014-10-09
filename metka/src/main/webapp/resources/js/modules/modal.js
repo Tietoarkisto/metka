@@ -35,7 +35,7 @@ define(function (require) {
                                     return require('./button')(options)(buttonOptions)
                                         .if(!buttonOptions.preventDismiss, function () {
                                             // although some bootstrap features are accessible via .data method, this wont work
-                                            // this.element.data('dismiss', 'modal');
+                                            // this.data('dismiss', 'modal');
 
                                             // default behaviour dismisses modal
                                             this.attr('data-dismiss', 'modal');
