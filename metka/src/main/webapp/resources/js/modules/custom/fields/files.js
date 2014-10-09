@@ -295,6 +295,7 @@ define(function (require) {
                         addFileContainer(files, {
                             "type": "CELL",
                             "title": "Liitetyt tiedostot",
+                            "readOnly": true,
                             "field": {
                                 "key": "files",
                                 "showSaveInfo": true,
@@ -324,10 +325,6 @@ define(function (require) {
                                             }
                                         }
                                     });
-                                },
-                                onRemove: function ($tr) {
-                                    // TODO: don't show remove button
-                                    log($tr, $tr.data('transferRow'));
                                 }
                             }
                         });
@@ -360,22 +357,23 @@ define(function (require) {
 
                     var rows = require('./../../data')(options).getByLang(options.defaultLang);
                     if (rows) {
-                        var pendingResponseCount = rows.length;
-                        rows.forEach(function (transferRow) {
-                            require('./../../server')('/references/referenceStatus/{value}', transferRow, {
-                                method: 'GET',
-                                success: function (response) {
-                                    if (response.exists) {
-                                        (!response.removed ? files : removedFiles).rows[options.defaultLang].push(transferRow);
+                        var i = 0;
+                        (function processNextRow() {
+                            if (i < rows.length) {
+                                var transferRow = rows[i++];
+                                require('./../../server')('/references/referenceStatus/{value}', transferRow, {
+                                    method: 'GET',
+                                    success: function (response) {
+                                        if (response.exists) {
+                                            (!response.removed ? files : removedFiles).rows[options.defaultLang].push(transferRow);
+                                        }
+                                        processNextRow();
                                     }
-
-                                    // TODO: to maintain row order, trigger new ajax request here
-                                    if (!--pendingResponseCount) {
-                                        addFileConteiners();
-                                    }
-                                }
-                            });
-                        });
+                                });
+                            } else {
+                                addFileConteiners();
+                            }
+                        })(0);
                     } else {
                         addFileConteiners();
                     }
