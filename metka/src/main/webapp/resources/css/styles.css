@@ -365,6 +365,8 @@ td {
     /*clear Boostrap height: 34px;*/
     height:auto !important;
 
+
+    min-height: 100px;
     overflow: auto;
-    max-height: 200px;
+    height: 200px;
 }
