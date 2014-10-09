@@ -348,7 +348,7 @@ class DDIStudyDescription {
 
     private static void addCitationSerStatement(CitationType citationType, RevisionData revision, Language language, RevisionRepository revisions) {
         // Add series statement, excel row #70
-        Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.SERIESID));
+        Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.SERIES));
         if(hasValue(valueFieldPair, Language.DEFAULT)) {
             Pair<ReturnResult, RevisionData> revisionPair = revisions.getLatestRevisionForIdAndType(
                     valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), true, ConfigurationType.SERIES);

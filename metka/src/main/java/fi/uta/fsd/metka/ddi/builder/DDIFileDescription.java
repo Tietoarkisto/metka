@@ -88,7 +88,10 @@ class DDIFileDescription {
             SoftwareType softwareType = fillTextType(fileTxtType.addNewSoftware(), valueFieldPair, Language.DEFAULT);
 
             // We can't separate version in any easy way from software information since it doesn't come in two distinct fields in POR-file
-            softwareType.setVersion(valueFieldPair.getRight().getActualValueFor(Language.DEFAULT));
+            valueFieldPair = variables.dataField(ValueDataFieldCall.get(Fields.SOFTWAREVERSION));
+            if(hasValue(valueFieldPair, Language.DEFAULT)) {
+                softwareType.setVersion(valueFieldPair.getRight().getActualValueFor(Language.DEFAULT));
+            }
         }
     }
 
@@ -114,7 +117,6 @@ class DDIFileDescription {
 
     private static void setFileDescription(Language language, RevisionData attachment, FileDscrType fileDscrType) {
         Pair<StatusCode, ValueDataField> valueFieldPair = attachment.dataField(ValueDataFieldCall.get(Fields.FILEDESCRIPTION));
-        // TODO: Is this actually a translatable field
         if(hasValue(valueFieldPair, language)) {
             fillTextType(fileDscrType, valueFieldPair, language);
         }

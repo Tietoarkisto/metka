@@ -641,7 +641,7 @@
                                     "type": "CELL",
                                     "title": "Sarja",
                                     "field": {
-                                        "key": "seriesid"
+                                        "key": "series"
                                     }
                                 },
                                 {

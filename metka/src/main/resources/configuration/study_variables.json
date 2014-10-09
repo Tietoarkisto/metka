@@ -70,6 +70,13 @@
             "immutable": true,
             "editable": false
         },
+        "softwareversion": {
+            "key": "softwareversion",
+            "translatable": false,
+            "type": "STRING",
+            "immutable": true,
+            "editable": false
+        },
         "varfileid": {
             "key": "varfileid",
             "translatable": false,

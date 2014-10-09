@@ -85,6 +85,10 @@ public class ContainerDeserializer extends ObjectDeserializer<Container> {
                     }
                 }
             }
+            JsonNode hideButtons = node.get("hidePageButtons");
+            if(hideButtons != null && hideButtons.getNodeType() == JsonNodeType.BOOLEAN) {
+                con.setHidePageButtons(hideButtons.booleanValue());
+            }
         }
         // set rows
         if(con.getType() == ContainerType.COLUMN) {

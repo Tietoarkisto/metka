@@ -30,7 +30,7 @@
 			"targets": [
 				{
 					"type": "QUERY",
-					"content": "STUDY seriesid.value:{id}",
+					"content": "STUDY series.value:{id}",
 					"checks": [
 						{
 							"condition": {
@@ -40,7 +40,7 @@
 					]
 				}, {
 					"type": "QUERY",
-					"content": "STUDY lang:en seriesid.value:{id}",
+					"content": "STUDY lang:en series.value:{id}",
 					"checks": [
 						{
 							"condition": {
@@ -50,7 +50,7 @@
 					]
 				}, {
 					"type": "QUERY",
-					"content": "STUDY lang:sv seriesid.value:{id}",
+					"content": "STUDY lang:sv series.value:{id}",
 					"checks": [
 						{
 							"condition": {

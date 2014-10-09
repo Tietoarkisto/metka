@@ -189,6 +189,15 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
 
         Field field = config.getField(splits[splits.length-1]);
         if(field == null) {
+            // Search with indexName
+            for(Field f : config.getFields().values()) {
+                if(f.getIndexName() != null && f.getIndexName().equals(splits[splits.length-1])) {
+                    field = f;
+                    break;
+                }
+            }
+        }
+        if(field == null) {
             addKeywordAnalyzer(key);
             return;
         }

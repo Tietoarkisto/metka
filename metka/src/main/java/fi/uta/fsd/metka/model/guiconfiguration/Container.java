@@ -23,6 +23,7 @@ public class Container {
     private Boolean required = false;
     private Integer colspan = 1;
     private final Map<String, Container> extraDialogConfiguration = new HashMap<>();
+    private Boolean hidePageButtons = false;
 
     private FieldDescription field = null;
 
@@ -128,5 +129,13 @@ public class Container {
 
     public Map<String, Container> getExtraDialogConfiguration() {
         return extraDialogConfiguration;
+    }
+
+    public Boolean getHidePageButtons() {
+        return hidePageButtons == null ? false : hidePageButtons;
+    }
+
+    public void setHidePageButtons(Boolean hidePageButtons) {
+        this.hidePageButtons = hidePageButtons == null ? false : hidePageButtons;
     }
 }

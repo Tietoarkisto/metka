@@ -157,7 +157,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                         v = TransferValue.buildFromValueDataFieldFor(l, field);
                         f.getValues().put(l, v);
                     } else {
-                        v.setCurrent(field.getCurrentFor(l).getActualValue());
+                        v.setCurrent(field.getActualValueFor(l));
                     }
                 }
                 break;

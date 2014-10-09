@@ -175,6 +175,12 @@ class GeneralRevisionHandler implements RevisionHandler {
 
         indexFields(data, document, "", new Step("", null), config);
 
+        if(data.getConfiguration().getType() == ConfigurationType.STUDY) {
+            // TODO: Index study errors for this study
+
+            // TODO: Index binder pages for this study
+        }
+
         if(contentForLanguage || language == Language.DEFAULT) {
             Logger.info(GeneralRevisionHandler.class, "Adding document to index.");
             document.indexText(language, "revisions", document.getGeneral(), false, YES);
@@ -222,6 +228,16 @@ class GeneralRevisionHandler implements RevisionHandler {
                     return;
                 }
                 indexStudyVariablesContainer(df, document, root+field.getIndexAs(), data);
+            } else if(field.getKey().equals("files") && field.getType() == FieldType.REFERENCECONTAINER && data.getConfiguration().getType() == ConfigurationType.STUDY) {
+                Pair<StatusCode, ReferenceContainerDataField> pair = fieldContainer.dataField(ReferenceContainerDataFieldCall.get(field.getKey()));
+                if(pair.getLeft() != StatusCode.FIELD_FOUND) {
+                    return;
+                }
+                ReferenceContainerDataField df = pair.getRight();
+                if(df.getReferences().size() == 0) {
+                    return;
+                }
+                indexStudyAttachmentContainer(df, document, root+field.getIndexAs(), data);
             } else {
                 // For now index table into the same document as the top content.
                 // This will create multiple values in similar field names. Search treats these automatically
@@ -462,6 +478,23 @@ class GeneralRevisionHandler implements RevisionHandler {
                                                  String root, RevisionData data) {
         for(ReferenceRow reference : field.getReferences()) {
             Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(Long.parseLong(reference.getActualValue()), data.getState() == RevisionState.APPROVED, ConfigurationType.STUDY_VARIABLE);
+            if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
+                Logger.error(GeneralRevisionHandler.class, "Didn't find revision for referenced study variable "+reference.getActualValue());
+                continue;
+            }
+            Pair<ReturnResult, Configuration> confPair = getConfiguration(pair.getRight().getConfiguration());
+            if(confPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
+                Logger.error(GeneralRevisionHandler.class, "Didn't find configuration for "+pair.getRight().getConfiguration());
+                continue;
+            }
+            indexFields(pair.getRight(), document, root, new Step("", null), confPair.getRight());
+        }
+    }
+
+    private void indexStudyAttachmentContainer(ReferenceContainerDataField field, IndexerDocument document,
+                                                 String root, RevisionData data) {
+        for(ReferenceRow reference : field.getReferences()) {
+            Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(Long.parseLong(reference.getActualValue()), data.getState() == RevisionState.APPROVED, ConfigurationType.STUDY_ATTACHMENT);
             if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
                 Logger.error(GeneralRevisionHandler.class, "Didn't find revision for referenced study variable "+reference.getActualValue());
                 continue;

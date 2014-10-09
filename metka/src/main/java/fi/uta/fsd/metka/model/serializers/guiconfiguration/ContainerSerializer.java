@@ -48,6 +48,8 @@ public class ContainerSerializer extends ObjectSerializer<Container> {
                 }
 
                 jgen.writeEndArray();
+
+                jgen.writeBooleanField("hidePageButtons", value.getHidePageButtons());
             }
 
             if(value.getType() == ContainerType.COLUMN) {

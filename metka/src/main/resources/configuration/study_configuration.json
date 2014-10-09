@@ -937,7 +937,8 @@
 			"required": true,
 			"type": "SELECTION",
 			"selectionList": "versionlabeldata_list",
-			"subfield": true
+			"subfield": true,
+			"indexName": "versionlabel"
 		},
 		"versionnotes": {
 			"key": "versionnotes",
@@ -994,7 +995,8 @@
 			"required": true,
 			"type": "SELECTION",
 			"selectionList": "versionlabeldesc_list",
-			"subfield": true
+			"subfield": true,
+			"indexName": "versionlabel"
 		},
 		"publications": {
 			"key": "publications",
@@ -1099,8 +1101,8 @@
 			"type": "SELECTION",
 			"selectionList": "securityissues_list"
 		},
-		"seriesid": {
-			"key": "seriesid",
+		"series": {
+			"key": "series",
 			"translatable": false,
 			"type": "SELECTION",
 			"selectionList": "series_list"
@@ -2108,14 +2110,16 @@
         	"type": "SELECTION",
         	"selectionList": "authortype_list",
         	"translatable": false,
-        	"subfield": true
+        	"subfield": true,
+        	"indexName": "type"
         },
         "otherauthortype": {
         	"key": "otherauthortype",
         	"type": "SELECTION",
         	"selectionList": "otherauthortype_list",
         	"translatable": false,
-        	"subfield": true
+        	"subfield": true,
+        	"indexName": "type"
         },
         "author": {
         	"key": "author",

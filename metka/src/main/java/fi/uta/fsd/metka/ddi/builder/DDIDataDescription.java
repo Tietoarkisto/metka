@@ -295,9 +295,9 @@ class DDIDataDescription {
     }
 
     private static void setNotes(RevisionData variable, Language language, VarType var) {
-        NotesType notes = var.addNewNotes();
-        // TODO: Notes is not a repeatable field in DDI
-        // TODO: How is this supposed to be used?
-
+        List<ValueDataField> fields = gatherFields(variable, Fields.VARNOTES, Fields.VARNOTE, language, language);
+        for(ValueDataField field : fields) {
+            fillTextType(var.addNewNotes(), field, language);
+        }
     }
 }

@@ -73,7 +73,7 @@ public final class Fields {
     public static final String TERMSOFUSE = "termsofuse";
     public static final String BIBLCIT = "biblcit";
     public static final String DATAVERSIONS = "dataversions";
-    public static final String SERIESID = "seriesid";
+    public static final String SERIES = "series";
     public static final String SERIESABBR = "seriesabbr";
     public static final String SERIESNAME = "seriesname";
     public static final String SERIESDESC = "seriesdesc";
@@ -181,6 +181,7 @@ public final class Fields {
     public static final String PACKAGES = "packages";
     public static final String PACKAGE = "package";
     public static final String PACKAGEURN = "packageurn";
+    public static final String SOFTWAREVERSION = "softwareversion";
 
 
     private Fields() {}

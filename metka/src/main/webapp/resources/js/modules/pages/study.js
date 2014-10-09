@@ -42,7 +42,7 @@ define(function (require) {
                                 "authors": {
                                     "title": "Tekijät"
                                 },
-                                "seriesid": {
+                                "series": {
                                     "title": "Sarja"
                                 },
                                 "datakind": {
@@ -528,7 +528,7 @@ define(function (require) {
                                         studyid: result.values.studyid,
                                         studyname: result.values.title,
                                         authors: result.values.authors,
-                                        seriesid: result.values.seriesid,
+                                        series: result.values.series,
                                         datakind: result.values.datakind,
                                         termsofuse: result.values.termsofuse,
                                         state: MetkaJS.L10N.get('search.result.state.{state}'.supplant(result))
@@ -543,7 +543,7 @@ define(function (require) {
                                     authors: {
                                         type: 'STRING'
                                     },
-                                    seriesid : response.configuration.fields.seriesid,
+                                    series : response.configuration.fields.series,
                                     datakind : response.configuration.fields.datakind,
                                     termsofuse : response.configuration.fields.termsofuse,
                                     state: {
@@ -553,7 +553,7 @@ define(function (require) {
                                     "studyid",
                                     "studyname",
                                     "authors",
-                                    "seriesid",
+                                    "series",
                                     "datakind",
                                     "termsofuse",
                                     "state"

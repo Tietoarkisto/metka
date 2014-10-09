@@ -64,7 +64,7 @@
             	},
             	{
             		"type": "COLUMN",
-            		"columns": 2,
+            		"columns": 3,
             		"rows": [
             			{
             				"type": "ROW",
@@ -81,6 +81,13 @@
             						"title": "Ohjelmisto",
             						"field": {
             							"key": "software"
+            						}
+            					},
+            					{
+            						"type": "CELL",
+            						"title": "Ohjelmistoversio",
+            						"field": {
+            							"key": "softwareversion"
             						}
             					}
             				]

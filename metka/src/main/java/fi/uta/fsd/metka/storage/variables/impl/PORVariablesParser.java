@@ -47,7 +47,8 @@ class PORVariablesParser implements VariablesParser {
     private final RevisionCreationRepository create;
     private final RevisionEditRepository edit;
 
-    private final String software;
+    private final String softwareName;
+    private final String softwareVersion;
     private final int sizeX;
     private final int sizeY;
     private final List<PORUtil.PORVariableHolder> variables;
@@ -95,7 +96,23 @@ class PORVariablesParser implements VariablesParser {
         PORUtil.PORAnswerMapper visitor = new PORUtil.PORAnswerMapper(variables);
         por.data.accept(visitor);
 
-        software = por.getSoftware();
+        String[] software = por.getSoftware().split(" ");
+        softwareVersion = software.length > 1 ? software[software.length-1] : "";
+        if(software.length == 1) {
+            softwareName = software[0];
+        } else if(software.length > 1) {
+            String temp = "";
+            for(int i = 0; i < software.length - 1; i++) {
+                if(i > 0) {
+                    temp += " ";
+                }
+                temp += software[i];
+            }
+            softwareName = temp;
+        } else {
+            softwareName = "";
+        }
+
         sizeX = por.data.sizeX();
         sizeY = por.data.sizeY();
         this.variablesData = variablesData;
@@ -110,7 +127,12 @@ class PORVariablesParser implements VariablesParser {
         if(language == Language.DEFAULT) {
             // Set software field
             Pair<StatusCode, ValueDataField> fieldPair = variablesData.dataField(
-                    ValueDataFieldCall.set(Fields.SOFTWARE, new Value(software), Language.DEFAULT).setInfo(info));
+                    ValueDataFieldCall.set(Fields.SOFTWARE, new Value(softwareName), Language.DEFAULT).setInfo(info));
+            result = checkResultForUpdate(fieldPair, result);
+
+            // Set softwareversion
+            fieldPair = variablesData.dataField(
+                    ValueDataFieldCall.set(Fields.SOFTWAREVERSION, new Value(softwareVersion), Language.DEFAULT).setInfo(info));
             result = checkResultForUpdate(fieldPair, result);
 
 

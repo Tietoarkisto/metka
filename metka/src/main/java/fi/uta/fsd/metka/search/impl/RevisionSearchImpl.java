@@ -12,6 +12,7 @@ import fi.uta.fsd.metka.model.data.change.ContainerChange;
 import fi.uta.fsd.metka.model.data.change.RowChange;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
+import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.search.RevisionSearch;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
@@ -382,9 +383,9 @@ public class RevisionSearchImpl implements RevisionSearch {
         }
 
         // sarja
-        fieldPair = data.dataField(ValueDataFieldCall.get("seriesid"));
+        fieldPair = data.dataField(ValueDataFieldCall.get(Fields.SERIES));
         if(hasValue(fieldPair, Language.DEFAULT)) {
-            searchResult.getValues().put("seriesid", fieldPair.getRight().getActualValueFor(Language.DEFAULT));
+            searchResult.getValues().put(Fields.SERIES, fieldPair.getRight().getActualValueFor(Language.DEFAULT));
         }
 
         // laatu

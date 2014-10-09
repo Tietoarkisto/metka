@@ -115,13 +115,13 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         Pair<ReturnResult, RevisionData> dataPair;
         if(fieldPair.getLeft() == StatusCode.FIELD_MISSING || !fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
             // TODO: If we're coming here with something other than default language do we just want to return at this point since no other language should create the variables file?
-
+            String ext = FilenameUtils.getExtension(attachment.dataField(ValueDataFieldCall.get(Fields.FILE)).getRight().getActualValueFor(Language.DEFAULT)).toUpperCase();
             RevisionCreateRequest request = new RevisionCreateRequest();
             request.setType(ConfigurationType.STUDY_VARIABLES);
             request.getParameters().put("study", study.getKey().getId().toString());
             request.getParameters().put("fileid", attachment.getKey().getId().toString());
             request.getParameters().put("varfileid", FilenameUtils.getBaseName(attachment.dataField(ValueDataFieldCall.get(Fields.FILE)).getRight().getActualValueFor(Language.DEFAULT)));
-            request.getParameters().put("varfiletype", FilenameUtils.getExtension(attachment.dataField(ValueDataFieldCall.get(Fields.FILE)).getRight().getActualValueFor(Language.DEFAULT).toUpperCase()));
+            request.getParameters().put("varfiletype", ext.equals("POR") ? "SPSS Portable" : ext);
             dataPair = create.create(request);
             if(dataPair.getLeft() != ReturnResult.REVISION_CREATED) {
                 logger.error("Couldn't create new variables revisionable for study "+study.toString()+" and file "+attachment.toString());
