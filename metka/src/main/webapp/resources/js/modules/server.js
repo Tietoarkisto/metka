@@ -2,24 +2,6 @@ define(function (require) {
     'use strict';
 
     return function (url/*[, urlOpts]*/, options) {
-        var mockData = {
-            /*'/study/studiesWithVariables': {
-                studies: [{
-                    id: 1,
-                    title: 'mooasdfasdf'
-                }, {
-                    id: 2,
-                    title: 'mooaasdf'
-                }, {
-                    id: 3,
-                    title: 'mooaadfsdfasdf'
-                }]
-            },*/
-            '/studyAttachments': {
-
-            }
-        }[url];
-
         switch (arguments.length) {
             case 3:
                 url = require('./url')(url, options);
@@ -30,13 +12,6 @@ define(function (require) {
                 break;
             default:
                 throw 'illegal number of arguments';
-        }
-
-        if (mockData) {
-            setTimeout(function () {
-                options.success(mockData);
-            }, 0);
-            return;
         }
 
         $.ajax($.extend({

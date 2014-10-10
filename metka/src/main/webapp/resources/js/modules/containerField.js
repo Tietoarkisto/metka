@@ -418,7 +418,7 @@ define(function (require) {
                 }))
             .append(function () {
                 var buttons = (options.buttons || []);
-                if (!require('./isFieldDisabled')(options, lang)) {
+                if (options.field.onAdd || !require('./isFieldDisabled')(options, lang)) {
                     buttons.push({
                         create: function () {
                             this
