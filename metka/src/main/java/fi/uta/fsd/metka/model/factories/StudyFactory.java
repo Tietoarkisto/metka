@@ -21,7 +21,9 @@ import fi.uta.fsd.metka.names.Lists;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.joda.time.LocalDateTime;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
@@ -31,6 +33,8 @@ import java.util.Map;
  * Contains functionality related to RevisionData model and specifically to revision data related to Study.
  */
 public class StudyFactory extends DataFactory {
+    private static final String URN_BASE = "urn:nbn:fi:fsd:M-";
+
     private static Map<Language, String> version = new HashMap<>();
     private static Map<Language, String> compFile = new HashMap<>();
     private static Map<Language, String> collector = new HashMap<>();
@@ -38,6 +42,7 @@ public class StudyFactory extends DataFactory {
     private static Map<Language, String> distributor = new HashMap<>();
 
     static {
+
         version.put(Language.DEFAULT, "Versio");
         version.put(Language.EN, "Version");
         version.put(Language.SV, "Version");
@@ -101,7 +106,9 @@ public class StudyFactory extends DataFactory {
         return new ImmutablePair<>(ReturnResult.REVISION_CREATED, data);
     }
 
-    public ReturnResult formBiblCit(RevisionData data, DateTimeUserPair info, ReferenceService references) {
+    public ReturnResult formUrnAndBiblCit(RevisionData data, DateTimeUserPair info, ReferenceService references, MutablePair<Boolean, Boolean> changesAndErrors) {
+        // Form urns here so that they are correct when needed for biblcit
+        formUrns(data, info, changesAndErrors);
 
         // Form biblCit for all languages if there is a title for that language.
         Pair<StatusCode, ValueDataField> titlePair = data.dataField(ValueDataFieldCall.get(Fields.TITLE));
@@ -289,10 +296,158 @@ public class StudyFactory extends DataFactory {
             }
 
             if(StringUtils.hasText(biblcit)) {
-                data.dataField(ValueDataFieldCall.set(Fields.BIBLCIT, new Value(biblcit), l).setInfo(info));
+                checkSave(data.dataField(ValueDataFieldCall.set(Fields.BIBLCIT, new Value(biblcit), l).setInfo(info)), changesAndErrors);
             }
         }
 
         return ReturnResult.OPERATION_SUCCESSFUL;
+    }
+
+    private void formUrns(RevisionData revision, DateTimeUserPair info, MutablePair<Boolean, Boolean> changesAndErrors) {
+        Pair<StatusCode, ValueDataField> pair = revision.dataField(ValueDataFieldCall.get(Fields.STUDYID));
+        if(pair.getLeft() != StatusCode.FIELD_FOUND || !pair.getRight().hasValueFor(Language.DEFAULT)) {
+            return;
+        }
+
+        Pair<StatusCode, ContainerDataField> descVersionsPair = revision.dataField(ContainerDataFieldCall.get(Fields.DESCVERSIONS));
+        Pair<StatusCode, ContainerDataField> dataVersionsPair = revision.dataField(ContainerDataFieldCall.get(Fields.DATAVERSIONS));
+
+        String base = URN_BASE+pair.getRight().getActualValueFor(Language.DEFAULT)+"-";
+
+        Pair<StatusCode, ContainerDataField> packagesPair = revision.dataField(ContainerDataFieldCall.set(Fields.PACKAGES));
+        if(packagesPair.getRight() == null) {
+            // Something bad happened
+            Logger.error(StudyFactory.class, "Failed to create packages container during URN creation with message "+packagesPair.getLeft());
+            return;
+        }
+        ContainerDataField packages = packagesPair.getRight();
+        Pair<StatusCode, DataRow> rowPair = packages.getOrCreateRowWithFieldValue(Language.DEFAULT, Fields.PACKAGE, new Value("DDI-xml-fi"), revision.getChanges(), info);
+        if(rowPair.getRight() != null) {
+            // Finnish package
+            String descVersion = null;
+            LocalDateTime modifyMoment = null;
+            if(descVersionsPair.getLeft() == StatusCode.FIELD_FOUND && descVersionsPair.getRight().hasRowsFor(Language.DEFAULT)) {
+                DataRow row = descVersionsPair.getRight().getRows().get(Language.DEFAULT).get(descVersionsPair.getRight().getRows().get(Language.DEFAULT).size()-1);
+                Pair<StatusCode, ValueDataField> versionPair = row.dataField(ValueDataFieldCall.get(Fields.DESCVERSION));
+                if(versionPair.getLeft() == StatusCode.FIELD_FOUND && versionPair.getRight().hasValueFor(Language.DEFAULT)) {
+                    descVersion = versionPair.getRight().getActualValueFor(Language.DEFAULT);
+                    modifyMoment = versionPair.getRight().getValueFor(Language.DEFAULT).getSaved().getTime();
+                }
+            }
+            if(descVersion == null) {
+                descVersion = "0.0";
+            }
+            if(modifyMoment == null) {
+                modifyMoment = new LocalDateTime();
+            }
+            String ddi = base+"DDIC.fi-"+descVersion+"-"+modifyMoment.toString("yyyyMMdd");
+            checkSave(rowPair.getRight().dataField(ValueDataFieldCall.set(Fields.PACKAGEURN, new Value(ddi), Language.DEFAULT).setInfo(info).setChangeMap(revision.getChanges())), changesAndErrors);
+            checkSave(rowPair.getRight().dataField(ValueDataFieldCall.set(Fields.PACKAGEVERSION, new Value(descVersion), Language.DEFAULT).setInfo(info).setChangeMap(revision.getChanges())), changesAndErrors);
+        }
+
+        rowPair = packages.getOrCreateRowWithFieldValue(Language.DEFAULT, Fields.PACKAGE, new Value("DDI-xml-en"), revision.getChanges(), info);
+        if(rowPair.getRight() != null) {
+            // English package
+            String descVersion = null;
+            LocalDateTime modifyMoment = null;
+            if(descVersionsPair.getLeft() == StatusCode.FIELD_FOUND && descVersionsPair.getRight().hasRowsFor(Language.EN)) {
+                DataRow row = descVersionsPair.getRight().getRows().get(Language.EN).get(descVersionsPair.getRight().getRows().get(Language.EN).size()-1);
+                Pair<StatusCode, ValueDataField> versionPair = row.dataField(ValueDataFieldCall.get(Fields.DESCVERSION));
+                if(versionPair.getLeft() == StatusCode.FIELD_FOUND && versionPair.getRight().hasValueFor(Language.EN)) {
+                    descVersion = versionPair.getRight().getActualValueFor(Language.EN);
+                    modifyMoment = versionPair.getRight().getValueFor(Language.EN).getSaved().getTime();
+                }
+            }
+            if(descVersion == null) {
+                descVersion = "0.0";
+            }
+            if(modifyMoment == null) {
+                modifyMoment = new LocalDateTime();
+            }
+            String ddi = base+"DDIC.en-"+descVersion+"-"+modifyMoment.toString("yyyyMMdd");
+            checkSave(rowPair.getRight().dataField(ValueDataFieldCall.set(Fields.PACKAGEURN, new Value(ddi), Language.DEFAULT).setInfo(info).setChangeMap(revision.getChanges())), changesAndErrors);
+            checkSave(rowPair.getRight().dataField(ValueDataFieldCall.set(Fields.PACKAGEVERSION, new Value(descVersion), Language.DEFAULT).setInfo(info).setChangeMap(revision.getChanges())), changesAndErrors);
+        }
+
+        rowPair = packages.getOrCreateRowWithFieldValue(Language.DEFAULT, Fields.PACKAGE, new Value("DDI-xml-sv"), revision.getChanges(), info);
+        if(rowPair.getRight() != null) {
+            // Swedish package
+            String descVersion = null;
+            LocalDateTime modifyMoment = null;
+            if(descVersionsPair.getLeft() == StatusCode.FIELD_FOUND && descVersionsPair.getRight().hasRowsFor(Language.SV)) {
+                DataRow row = descVersionsPair.getRight().getRows().get(Language.SV).get(descVersionsPair.getRight().getRows().get(Language.SV).size()-1);
+                Pair<StatusCode, ValueDataField> versionPair = row.dataField(ValueDataFieldCall.get(Fields.DESCVERSION));
+                if(versionPair.getLeft() == StatusCode.FIELD_FOUND && versionPair.getRight().hasValueFor(Language.SV)) {
+                    descVersion = versionPair.getRight().getActualValueFor(Language.SV);
+                    modifyMoment = versionPair.getRight().getValueFor(Language.SV).getSaved().getTime();
+                }
+            }
+            if(descVersion == null) {
+                descVersion = "0.0";
+            }
+            if(modifyMoment == null) {
+                modifyMoment = new LocalDateTime();
+            }
+            String ddi = base+"DDIC.sv-"+descVersion+"-"+modifyMoment.toString("yyyyMMdd");
+            checkSave(rowPair.getRight().dataField(ValueDataFieldCall.set(Fields.PACKAGEURN, new Value(ddi), Language.DEFAULT).setInfo(info).setChangeMap(revision.getChanges())), changesAndErrors);
+            checkSave(rowPair.getRight().dataField(ValueDataFieldCall.set(Fields.PACKAGEVERSION, new Value(descVersion), Language.DEFAULT).setInfo(info).setChangeMap(revision.getChanges())), changesAndErrors);
+        }
+
+        String dataVersion = null;
+        LocalDateTime modifyMoment = null;
+        if(dataVersionsPair.getLeft() == StatusCode.FIELD_FOUND && dataVersionsPair.getRight().hasRowsFor(Language.DEFAULT)) {
+            DataRow row = dataVersionsPair.getRight().getRows().get(Language.DEFAULT).get(dataVersionsPair.getRight().getRows().get(Language.DEFAULT).size()-1);
+            Pair<StatusCode, ValueDataField> versionPair = row.dataField(ValueDataFieldCall.get(Fields.DATAVERSION));
+            if(versionPair.getLeft() == StatusCode.FIELD_FOUND && versionPair.getRight().hasValueFor(Language.DEFAULT)) {
+                dataVersion = versionPair.getRight().getActualValueFor(Language.DEFAULT);
+                modifyMoment = versionPair.getRight().getValueFor(Language.DEFAULT).getSaved().getTime();
+            }
+        }
+        if(dataVersion == null) {
+            dataVersion = "0.0";
+        }
+        String descVersion = null;
+        if(descVersionsPair.getLeft() == StatusCode.FIELD_FOUND && descVersionsPair.getRight().hasRowsFor(Language.DEFAULT)) {
+            DataRow row = descVersionsPair.getRight().getRows().get(Language.DEFAULT).get(descVersionsPair.getRight().getRows().get(Language.DEFAULT).size()-1);
+            Pair<StatusCode, ValueDataField> versionPair = row.dataField(ValueDataFieldCall.get(Fields.DESCVERSION));
+            if(versionPair.getLeft() == StatusCode.FIELD_FOUND && versionPair.getRight().hasValueFor(Language.DEFAULT)) {
+                descVersion = versionPair.getRight().getActualValueFor(Language.DEFAULT);
+                if(modifyMoment == null) {
+                    modifyMoment = versionPair.getRight().getValueFor(Language.DEFAULT).getSaved().getTime();
+                } else {
+                    if(versionPair.getRight().getValueFor(Language.DEFAULT).getSaved().getTime().compareTo(modifyMoment) > 0) {
+                        modifyMoment = versionPair.getRight().getValueFor(Language.DEFAULT).getSaved().getTime();
+                    }
+                }
+            }
+        }
+        if(descVersion == null) {
+            descVersion = "0.0";
+        }
+        if(modifyMoment == null) {
+            modifyMoment = new LocalDateTime();
+        }
+
+        rowPair = packages.getOrCreateRowWithFieldValue(Language.DEFAULT, Fields.PACKAGE, new Value("AIP"), revision.getChanges(), info);
+        if(rowPair.getRight() != null) {
+            // AIP package
+            String aip = base+"AIP-"+dataVersion+"."+descVersion+"-"+modifyMoment.toString("yyyyMMdd");
+            checkSave(rowPair.getRight().dataField(ValueDataFieldCall.set(Fields.PACKAGEURN, new Value(aip), Language.DEFAULT).setInfo(info).setChangeMap(revision.getChanges())), changesAndErrors);
+            checkSave(rowPair.getRight().dataField(ValueDataFieldCall.set(Fields.PACKAGEVERSION, new Value(dataVersion+"."+descVersion), Language.DEFAULT).setInfo(info).setChangeMap(revision.getChanges())), changesAndErrors);
+        }
+
+        rowPair = packages.getOrCreateRowWithFieldValue(Language.DEFAULT, Fields.PACKAGE, new Value("DIP"), revision.getChanges(), info);
+        if(rowPair.getRight() != null) {
+            // DIP package
+            String dip = base+"DIP-"+dataVersion+"."+descVersion+"-"+modifyMoment.toString("yyyyMMdd");
+            checkSave(rowPair.getRight().dataField(ValueDataFieldCall.set(Fields.PACKAGEURN, new Value(dip), Language.DEFAULT).setInfo(info).setChangeMap(revision.getChanges())), changesAndErrors);
+            checkSave(rowPair.getRight().dataField(ValueDataFieldCall.set(Fields.PACKAGEVERSION, new Value(dataVersion+"."+descVersion), Language.DEFAULT).setInfo(info).setChangeMap(revision.getChanges())), changesAndErrors);
+        }
+    }
+
+    private void checkSave(Pair<StatusCode, ValueDataField> pair, MutablePair<Boolean, Boolean> changesAndErrors) {
+        if(pair.getLeft() == StatusCode.FIELD_INSERT || pair.getLeft() == StatusCode.FIELD_UPDATE) {
+            changesAndErrors.setLeft(true);
+        }
     }
 }

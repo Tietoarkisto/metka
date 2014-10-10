@@ -95,9 +95,9 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
 
         // Do actual change checking for field values
         SaveHandler handler = new SaveHandler(info, revision.getKey());
-        Pair<Boolean, Boolean> changesAndErrors = handler.saveFields(configuration, transferData, revision);
+        MutablePair<Boolean, Boolean> changesAndErrors = handler.saveFields(configuration, transferData, revision);
 
-        finalizeSave(revision, transferData, configuration, info);
+        finalizeSave(revision, transferData, configuration, info, changesAndErrors);
 
         if(changesAndErrors.getLeft()) {
             // Set revision save info
@@ -122,7 +122,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
      * @param transferData TransferData sent to request and that will be returned to UI
      * @param configuration Configuration of revision data
      */
-    private void finalizeSave(RevisionData revision, TransferData transferData, Configuration configuration, DateTimeUserPair info) {
+    private void finalizeSave(RevisionData revision, TransferData transferData, Configuration configuration, DateTimeUserPair info, MutablePair<Boolean, Boolean> changesAndErrors) {
         switch(revision.getConfiguration().getType()) {
             case STUDY_ATTACHMENT:
                 finalizeStudyAttachment(revision, transferData);
@@ -133,33 +133,31 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
 
 
                 // Form biblcit
-                fac.formBiblCit(revision, info, references);
-                Pair<StatusCode, ValueDataField> pair = revision.dataField(ValueDataFieldCall.get(Fields.BIBLCIT));
-                if(pair.getLeft() != StatusCode.FIELD_FOUND) {
-                    break;
-                }
-                ValueDataField field = pair.getRight();
+                ReturnResult result = fac.formUrnAndBiblCit(revision, info, references, changesAndErrors);
 
                 TransferField f = transferData.getField(Fields.BIBLCIT);
-                if(f == null) {
-                    f = new TransferField(Fields.BIBLCIT, TransferFieldType.VALUE);
-                    transferData.addField(f);
-                }
-                for(Language l : Language.values()) {
-                    TransferValue v = f.getValueFor(l);
-                    if(!field.hasValueFor(l)) {
-                        if(v != null && v.hasCurrent()) {
-                            v.setCurrent(null);
-                        }
-                        continue;
+                Pair<StatusCode, ValueDataField> pair = revision.dataField(ValueDataFieldCall.get(Fields.BIBLCIT));
+                if(pair.getLeft() != StatusCode.FIELD_FOUND) {
+                    if(f != null) {
+                        f.getValues().clear();
                     }
-                    if(v == null) {
-                        v = TransferValue.buildFromValueDataFieldFor(l, field);
-                        f.getValues().put(l, v);
-                    } else {
-                        v.setCurrent(field.getActualValueFor(l));
-                    }
+                } else {
+                    ValueDataField field = pair.getRight();
+                    f = TransferField.buildFromDataField(field);
+                    transferData.getFields().put(f.getKey(), f);
                 }
+
+                f = transferData.getField(Fields.PACKAGES);
+                Pair<StatusCode, ContainerDataField> packages = revision.dataField(ContainerDataFieldCall.get(Fields.PACKAGES));
+                if(packages.getLeft() != StatusCode.FIELD_FOUND || !packages.getRight().hasRowsFor(Language.DEFAULT)) {
+                    if(f != null) {
+                        f.getRowsFor(Language.DEFAULT).clear();
+                    }
+                } else {
+                    f = TransferField.buildFromDataField(packages.getRight());
+                    transferData.getFields().put(f.getKey(), f);
+                }
+
                 break;
             default:
                 break;
@@ -335,7 +333,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             this.key = key;
         }
 
-        private Pair<Boolean, Boolean> saveFields(Configuration configuration, TransferData transferData, RevisionData revisionData) {
+        private MutablePair<Boolean, Boolean> saveFields(Configuration configuration, TransferData transferData, RevisionData revisionData) {
             MutablePair<Boolean, Boolean> result = new MutablePair<>(false, false);
             // Loop through all fields, skip fields that are irrelevant or checked later and call correct methods to save DataFields
 

@@ -12,6 +12,7 @@ import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -102,7 +103,7 @@ public class DDIReader {
             // Form biblcit
             // TODO: Or should we just read biblcit from DDI even though it will be overwritten in the next save?
             StudyFactory fac = new StudyFactory();
-            fac.formBiblCit(revision, info, references);
+            fac.formUrnAndBiblCit(revision, info, references, new MutablePair<Boolean, Boolean>());
 
             return revisions.updateRevisionData(revision);
         }

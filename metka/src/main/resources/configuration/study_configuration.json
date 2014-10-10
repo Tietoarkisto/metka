@@ -1837,7 +1837,7 @@
 		},
 		"othermaterials": {
 			"key": "othermaterials",
-			"translatable": true,
+			"translatable": false,
 			"type": "CONTAINER",
 			"subfields": [
 				"othermaterialuri",
