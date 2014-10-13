@@ -21,6 +21,9 @@ define(function (require) {
                                 // set content
                                 require('./container').call($($(this).data('target')), options);
                             }.bind(this), 0);
+
+
+                            //$($(this).data('target')).trigger('refresh.metka');
                         })),
                 content: togglable.call($('<div class="tab-pane">'), options)
                     .attr('id', id)

@@ -242,60 +242,31 @@ define(function (require) {
             options.title = MetkaJS.L10N.get('general.buttons.no');
         },
         REMOVE: function (options) {
-            var metka = require('./../metka');
             this
-                .click(function () {
-                    var operationType = options.data.state.uiState === 'DRAFT' ? 'draft' : 'logical';
-                    require('./modal')({
-                        title: MetkaJS.L10N.get('confirmation.remove.revision.title'),
-                        // TODO: simpler/unified way to supplement localization keys/texts
-                        body: MetkaJS.L10N.get('confirmation.remove.revision.{operationType}.text'.supplant({
-                            operationType: operationType
-                        })).supplant(options.data.key).supplant({
-                            target: MetkaJS.L10N.get('confirmation.remove.revision.{operationType}.data.{type}'.supplant({
-                                operationType: operationType,
-                                type: options.data.configuration.type
-                            }))
-                        }),
-                        buttons: [{
-                            type: 'YES',
-                            create: function () {
-                                $(this)
-                                    .click(function () {
-                                        require('./server')('remove', {
-                                            data: JSON.stringify(options.data),
-                                            success: function (response) {
-                                                switch(response.result) {
-                                                    case "SUCCESS_LOGICAL":
-                                                        require('./assignUrl')('view');
-                                                        break;
-                                                    case "SUCCESS_DRAFT":
-                                                        require('./assignUrl')('view', {no: ''});
-                                                        break;
-                                                    case "FINAL_REVISION":
-                                                        require('./assignUrl')('searchPage');
-                                                        break;
-                                                    default:
-                                                        require('./modal')({
-                                                            title: MetkaJS.L10N.get('alert.error.title'),
-                                                            body: response.result /*data.errors.map(function (error) {
-                                                             return MetkaJS.L10N.get(error.msg);
-                                                             })*/,
-                                                            buttons: [{
-                                                                type: 'DISMISS'
-                                                            }]
-                                                        });
-                                                        break;
-                                                }
-                                            }
-                                        });
-                                    });
-                            }
-                        }, {
-                            type: 'NO'
-                        }]
-                    });
-                });
+                .click(require('./remove')(options, function (response) {
+                    switch(response.result) {
+                        case "SUCCESS_LOGICAL":
+                            require('./assignUrl')('view');
+                            break;
+                        case "SUCCESS_DRAFT":
+                            require('./assignUrl')('view', {no: ''});
+                            break;
+                        case "FINAL_REVISION":
+                            require('./assignUrl')('searchPage');
+                            break;
+                        default:
+                            require('./modal')({
+                                title: MetkaJS.L10N.get('alert.error.title'),
+                                body: response.result /*data.errors.map(function (error) {
+                                 return MetkaJS.L10N.get(error.msg);
+                                 })*/,
+                                buttons: [{
+                                    type: 'DISMISS'
+                                }]
+                            });
+                            break;
+                    }
+                }));
         },
         RELEASE: function (options) {
             this
@@ -325,18 +296,10 @@ define(function (require) {
         },
         SAVE: function (options) {
             this
-                .click(require('./formAction')('save')(options, function (response) {
-                    if (response.result === 'NO_CHANGES_TO_SAVE') {
-                        return;
-                    }
+                .click(require('./save')(options, function (response) {
                     $.extend(options.data, response.data);
                     $(this).trigger('refresh.metka');
-                },
-                [
-                    'SAVE_SUCCESSFUL',
-                    'SAVE_SUCCESSFUL_WITH_ERRORS',
-                    'NO_CHANGES_TO_SAVE'
-                ]));
+                }));
         },
         YES: function (options) {
             options.title = MetkaJS.L10N.get('general.buttons.yes');
