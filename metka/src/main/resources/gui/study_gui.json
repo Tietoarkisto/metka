@@ -1679,6 +1679,7 @@
             		"cells": [{
             			"type": "CELL",
                         "title": "Tunnisteet",
+                        "readOnly": true,
             			"field": {
             				"key": "packages",
             				"columnFields": [

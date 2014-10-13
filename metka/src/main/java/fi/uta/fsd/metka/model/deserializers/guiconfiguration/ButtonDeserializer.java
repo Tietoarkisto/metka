@@ -1,7 +1,9 @@
 package fi.uta.fsd.metka.model.deserializers.guiconfiguration;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.core.ObjectCodec;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import fi.uta.fsd.metka.enums.ButtonType;
 import fi.uta.fsd.metka.enums.VisibilityState;
@@ -14,7 +16,7 @@ import java.io.IOException;
 public class ButtonDeserializer extends ObjectDeserializer<Button> {
 
     @Override
-    public Button doDeserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
+    public Button doDeserialize(ObjectCodec oc, JsonNode node, JsonParser jp, DeserializationContext ctxt) throws IOException {
         Button btn = new Button();
 
         // Set title

@@ -1,6 +1,7 @@
 package fi.uta.fsd.metka.model.deserializers.guiconfiguration;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import fi.uta.fsd.metka.model.deserializers.ObjectDeserializer;
@@ -12,7 +13,7 @@ import java.io.IOException;
 public class FieldTitleDeserializer extends ObjectDeserializer<FieldTitle> {
 
     @Override
-    public FieldTitle doDeserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
+    public FieldTitle doDeserialize(ObjectCodec oc, JsonNode node, JsonParser jp, DeserializationContext ctxt) throws IOException {
         FieldTitle ft = new FieldTitle();
 
         JsonNode key = node.get("key");
