@@ -900,6 +900,7 @@
 		"datakind": {
 			"key": "datakind",
 			"translatable": false,
+			"immutable": true,
 			"type": "SELECTION",
 			"selectionList": "datakind_list"
 		},

@@ -13,6 +13,14 @@ define(function (require) {
                         }
                     }
 
+                    options.buttons.forEach(function(button, i, buttons) {
+                        if(typeof button === 'string') {
+                            buttons[i] = {
+                                type: button
+                            }
+                        }
+                    });
+
                     var $body = $('<div class="modal-body">');
                     if (options.content) {
                         require('./container').call($body, options);

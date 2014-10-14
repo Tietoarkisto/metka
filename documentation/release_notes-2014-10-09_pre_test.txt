@@ -1,26 +1,30 @@
 =Release notes 2014-10-09=
-+Resolved issues+
-
++Closed issues+
 #58 Samaa Metka-instanssia ei voi käyttää sekä GUIn että API:n kautta
 https://github.com/Tietoarkisto/metka/issues/58
 
 #59 Rajapintakutsu /api/createStudy edellyttää Shibboleth-autentikointia
 https://github.com/Tietoarkisto/metka/issues/59
 
++Tested issues+
 #60 Aineistonäytöltä puuttuu tieto onko revisio luonnos, hyväksytty vai poistettu
 https://github.com/Tietoarkisto/metka/issues/60
 
 #62 Julkaisua ei pysty liittämään aineistoon
 https://github.com/Tietoarkisto/metka/issues/62
+- Some usability problems
 
 #64 Julkaisua ei pysty liittämään sarjaan
 https://github.com/Tietoarkisto/metka/issues/64
+- Some usability problems
 
 #65 Aineistoa ei voi liittää toiseen aineistoon
 https://github.com/Tietoarkisto/metka/issues/65
+- Some usability problems
 
 #72 Kaikki GUIn kautta saatavat virheilmoitukset ovat samannäköisiä
 https://github.com/Tietoarkisto/metka/issues/72
+- Additionally issue #97 relates to this. Since it's a problem that manifests on FSD environment and not on ours we can't test this
 
 #75 Muuttujien ryhmittelyssä tulee ilmoitus SAVE_SUCCESFUL_WITH_ERRORS GUIssa
 https://github.com/Tietoarkisto/metka/issues/75
@@ -40,9 +44,6 @@ https://github.com/Tietoarkisto/metka/issues/81
 #82 Päivämääräkenttien tietoja ei saa poistettua
 https://github.com/Tietoarkisto/metka/issues/82
 
-#84 Jos ruksaa "Ei painokertoimia" -checkboxin, valintaa ei saa enää pois
-https://github.com/Tietoarkisto/metka/issues/84
-
 #85 Aineistojen virheet taulukossa rivit eivät näy
 https://github.com/Tietoarkisto/metka/issues/85
 
@@ -52,9 +53,28 @@ https://github.com/Tietoarkisto/metka/issues/87
 #91 Poistetun revisioitavan objektin palautus
 https://github.com/Tietoarkisto/metka/issues/91
 
+#95 Pop-up-ikkuna syötettyine tietoineen katoaa, jos sen ohi klikkaa vahingossa
+https://github.com/Tietoarkisto/metka/issues/95
+
+
++Resolved issues+
+
+#78 Kääntäjä käyttäjäryhmän perusnäkymänä ei ole käännösnäkymä englannin kielelle 
+https://github.com/Tietoarkisto/metka/issues/78
+
 #93 biblCit kentän sisällön tuottaminen
 https://github.com/Tietoarkisto/metka/issues/93
 BiblCit säännöt löytyvät Alfrescosta: https://ecm.proactum.fi/share/page/site/metka/document-details?nodeRef=workspace://SpacesStore/85493947-9ebf-431c-862c-6961e49cb35b
+- URN still untested
 
-#95 Pop-up-ikkuna syötettyine tietoineen katoaa, jos sen ohi klikkaa vahingossa
-https://github.com/Tietoarkisto/metka/issues/95
+#101 Sarjan Kuvaus kenttä on valkoinen tilassa "Hyväksytty"
+https://github.com/Tietoarkisto/metka/issues/101
+
+#102 Hyväksytylle aineistolle taulukkojen Lisää ja Poista painikkeet näkyvillä sekä mapeille Lisää
+https://github.com/Tietoarkisto/metka/issues/102
+
++-Resolved after testing+
+#84 Jos ruksaa "Ei painokertoimia" -checkboxin, valintaa ei saa enää pois
+https://github.com/Tietoarkisto/metka/issues/84
+- The problem manifested in biblcit formation and not in the checkbox
+

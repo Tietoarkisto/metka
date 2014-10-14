@@ -98,10 +98,14 @@ public class StudySearchImpl implements StudySearch {
             RevisionData data = dataPair.getRight();
             RevisionSearchResult result = RevisionSearchResult.build(data, infoPair.getRight());
             results.add(result);
-            // TODO: Is this the correct field?
+            // TODO: If the file is removed then fetch the removal comment instead for the last revision.
             Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get("filecomment"));
             if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
                 result.getValues().put("filecomment", fieldPair.getRight().getActualValueFor(Language.DEFAULT));
+            }
+            if(data.getSaved() != null) {
+                result.getValues().put("date", data.getSaved().getTime().toString("yyyy-MM-dd"));
+                result.getValues().put("user", data.getSaved().getUser());
             }
         }
 

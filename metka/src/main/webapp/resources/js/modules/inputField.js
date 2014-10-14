@@ -98,7 +98,21 @@ define(function (require) {
                 $input
                     .prop('disabled', require('./isFieldDisabled')(options, lang))
                     .change(function () {
-                        require('./data')(options).setByLang(lang, $(this).val());
+                        if(!!options.allowChange) {
+                            options.allowChange({
+                                current: require('./data')(options).getByLang(lang),
+                                change: $(this).val(),
+                                reverseChange: function() {
+                                    $input.val(require('./data')(options).getByLang(lang));
+                                },
+                                performChange: function(newVal) {
+                                    $input.val(newVal);
+                                    require('./data')(options).setByLang(lang, newVal);
+                                }
+                            });
+                        } else {
+                            require('./data')(options).setByLang(lang, $(this).val());
+                        }
                     });
 
                 $field.append($input);
@@ -117,7 +131,7 @@ define(function (require) {
                         var dataConf = getPropertyNS(options, 'dataConf.fields', key);
                         if (dataConf && dataConf.type === 'REFERENCE') {
                             var reference = getPropertyNS(options, 'dataConf.references', dataConf.reference);
-                            options.$events.on('data-set-{key}-{lang}'.supplant({
+                            options.$events.on('data-changed-{key}-{lang}'.supplant({
                                 key: reference.target,
                                 lang: lang
                             }), setValue);

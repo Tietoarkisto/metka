@@ -12,14 +12,21 @@ define(function (require) {
         var EMPTY = '-';
 
         function fieldTitle(field) {
-            return 'fieldTitles.{field}.title'.supplant({
+            return field;
+            /*return 'fieldTitles.{field}.title'.supplant({
                 field: field
-            });
+            });*/
+        }
+
+        function getTitle(key) {
+            return (options.fieldTitles && options.fieldTitles[key])
+                ? MetkaJS.L10N.localize(options.fieldTitles[key], "title")
+                : MetkaJS.L10N.get(key);
         }
 
         function th(key) {
             return $('<th>')
-                .text(MetkaJS.L10N.get(key));
+                .text(getTitle(key));
         }
 
         function tableError(errors) {
@@ -215,6 +222,7 @@ define(function (require) {
                             dataConf: options.dataConf,
                             $events: $({}),
                             defaultLang: fieldOptions.translatable ? lang : options.defaultLang,
+                            fieldTitles: options.fieldTitles,
                             content: [
                                 {
                                     type: 'COLUMN',
@@ -231,7 +239,8 @@ define(function (require) {
                                             type: 'ROW',
                                             cells: [$.extend({}, dataConfig, {
                                                 type: 'CELL',
-                                                title: MetkaJS.L10N.get(fieldTitle(field)),
+                                                //title: MetkaJS.L10N.get(fieldTitle(field)),
+                                                title: getTitle(field),
                                                 field: dataConfig
                                             })]
                                         }];
@@ -307,7 +316,8 @@ define(function (require) {
                             {
                                 type: 'CELL',
                                 translatable: fieldOptions.translatable ? false : dataConfig.translatable,
-                                title: MetkaJS.L10N.get(fieldTitle(field)),
+                                //title: MetkaJS.L10N.get(fieldTitle(field)),
+                                title: getTitle(field),
                                 field: {
                                     key: field
                                 }

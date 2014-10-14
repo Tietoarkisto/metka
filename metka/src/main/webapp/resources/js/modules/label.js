@@ -8,7 +8,6 @@ define(function (require) {
         if (options.required || require('./utils/getPropertyNS')(options, 'dataConf.fields' , options.field.key, 'required')) {
             $label.append('<span class="glyphicon glyphicon-asterisk"></span>');
         }
-
         require('./langLabel')($label, lang);
 
         return $label;

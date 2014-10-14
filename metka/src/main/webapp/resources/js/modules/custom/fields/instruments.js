@@ -11,7 +11,7 @@ define(function (require) {
                 var curVal = require('./../../data')(options)("datakind").getByLang("DEFAULT");
                 $elem.toggle(curVal && curVal === '1');
 
-                options.$events.on('data-set-{key}-{lang}'.supplant({
+                options.$events.on('data-changed-{key}-{lang}'.supplant({
                                 key: "datakind",
                                 lang: "DEFAULT"
                             }), function(e, value) {

@@ -647,7 +647,7 @@ define(function (require) {
                     }
                 }
             }
-        },
+        }/*,
 
         "STUDY": {
             "field": {
@@ -740,6 +740,6 @@ define(function (require) {
                 "pid": "Pysyvä tunniste",
                 "pidtype": "Tunnisteen tyyppi"
             }
-        }
+        }*/
     });
 });

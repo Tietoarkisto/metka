@@ -1,0 +1,101 @@
+=Release notes 2014-10-10=
+
+++Started issues++
+#56 Dokumentaatiosta puuttuu kuvaus rajapinnan kautta tallennettavan datan integriteetin säilymisen takaavista säännöistä
+https://github.com/Tietoarkisto/metka/issues/56
+
+#83 Erottelu kvali- ja kvantiaineistojen välillä ei toimi kuvailu-välilehdellä 
+https://github.com/Tietoarkisto/metka/issues/83
+
+#89 Liitetiedoston revisiohistorian listaus
+https://github.com/Tietoarkisto/metka/issues/89
+
+#90 Poistettujen liitetiedostojen filtteröinti omaan listaansa
+https://github.com/Tietoarkisto/metka/issues/90
+
+#92 DDI-import toiminnallisuus
+https://github.com/Tietoarkisto/metka/issues/92
+
+++Resolved removed after testing++
+
+
+++Resolved issues++
+#66 Mappitiedot eivät näy aineston näytöllä
+https://github.com/Tietoarkisto/metka/issues/66
+
+#78 Kääntäjä käyttäjäryhmän perusnäkymänä ei ole käännösnäkymä englannin kielelle 
+https://github.com/Tietoarkisto/metka/issues/78
+
+#84 Jos ruksaa "Ei painokertoimia" -checkboxin, valintaa ei saa enää pois
+https://github.com/Tietoarkisto/metka/issues/84
+
+#93 biblCit kentän sisällön tuottaminen
+https://github.com/Tietoarkisto/metka/issues/93
+BiblCit säännöt löytyvät Alfrescosta: https://ecm.proactum.fi/share/page/site/metka/document-details?nodeRef=workspace://SpacesStore/85493947-9ebf-431c-862c-6961e49cb35b
+- URNin (ja yleensäkkin pakettien) muodostusta ei ole tarkastettu
+
+#101 Sarjan Kuvaus kenttä on valkoinen tilassa "Hyväksytty"
+https://github.com/Tietoarkisto/metka/issues/101
+
+#102 Hyväksytylle aineistolle taulukkojen Lisää ja Poista painikkeet näkyvillä sekä mapeille Lisää
+https://github.com/Tietoarkisto/metka/issues/102
+
+++Proactum tested issues++
+#60 Aineistonäytöltä puuttuu tieto onko revisio luonnos, hyväksytty vai poistettu
+https://github.com/Tietoarkisto/metka/issues/60
+
+#62 Julkaisua ei pysty liittämään aineistoon
+https://github.com/Tietoarkisto/metka/issues/62
+- Vielä pieni käytettävyysongelma
+
+#64 Julkaisua ei pysty liittämään sarjaan
+https://github.com/Tietoarkisto/metka/issues/64
+- Vielä pieni käytettävyysongelma
+
+#65 Aineistoa ei voi liittää toiseen aineistoon
+https://github.com/Tietoarkisto/metka/issues/65
+- Vielä pieni käytettävyysongelma
+
+#72 Kaikki GUIn kautta saatavat virheilmoitukset ovat samannäköisiä
+https://github.com/Tietoarkisto/metka/issues/72
+- Issue #97 liittyy tähän. Koska ongelmakohdat tuossa issuessa esiintyvät vain Tietoarkiston testeissä niin emme pysty testaamaan niitä tarkemmin täällä.
+
+#75 Muuttujien ryhmittelyssä tulee ilmoitus SAVE_SUCCESFUL_WITH_ERRORS GUIssa
+https://github.com/Tietoarkisto/metka/issues/75
+
+#76 Kuluvaa päivää ei saa tallennettua päivämääräkenttiin GUIn kautta
+https://github.com/Tietoarkisto/metka/issues/76
+
+#77 Metkalla ongelmia GUIssa, kun käytetään IE:tä (versio 11)
+https://github.com/Tietoarkisto/metka/issues/77
+
+#79 Rinnakkaiset nimet -taulukossa ei kuuluisi olla pvm ja tallentaja -tietoja
+https://github.com/Tietoarkisto/metka/issues/79
+
+#81 Väärät kenttätyypit kuvailuvälilehdellä
+https://github.com/Tietoarkisto/metka/issues/81
+
+#82 Päivämääräkenttien tietoja ei saa poistettua
+https://github.com/Tietoarkisto/metka/issues/82
+
+#85 Aineistojen virheet taulukossa rivit eivät näy
+https://github.com/Tietoarkisto/metka/issues/85
+
+#87 Editori-tekstikenttien toiminnan ja indeksoinnin testaus ja korjaukset
+https://github.com/Tietoarkisto/metka/issues/87
+
+#91 Poistetun revisioitavan objektin palautus
+https://github.com/Tietoarkisto/metka/issues/91
+
+#94 Datan versiot ja kuvailun versiot - molemmista puuttuu tekstikenttä "Julkinen selite"
+https://github.com/Tietoarkisto/metka/issues/94
+
+#95 Pop-up-ikkuna syötettyine tietoineen katoaa, jos sen ohi klikkaa vahingossa
+https://github.com/Tietoarkisto/metka/issues/95
+
+++Closed issues++
+#58 Samaa Metka-instanssia ei voi käyttää sekä GUIn että API:n kautta
+https://github.com/Tietoarkisto/metka/issues/58
+
+#59 Rajapintakutsu /api/createStudy edellyttää Shibboleth-autentikointia
+https://github.com/Tietoarkisto/metka/issues/59

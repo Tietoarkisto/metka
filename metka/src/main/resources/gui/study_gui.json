@@ -545,6 +545,7 @@
                                     "type": "CELL",
                                     "title": "Aineiston laatu",
                                     "field": {
+                                    	"displayType": "CUSTOM_JS",
                                         "key": "datakind"
                                     }
                                 },

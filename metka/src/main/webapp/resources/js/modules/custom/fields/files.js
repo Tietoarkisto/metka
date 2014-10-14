@@ -16,11 +16,64 @@ define(function (require) {
                     var modalOptions = $.extend(response.gui, {
                         title: 'Muokkaa tiedostoa',
                         data: response.transferData,
-                        dataConf: response.configuration,
+                        dataConf: $.extend(true, response.configuration, {
+                            "fields": {
+                                "no": {
+                                    "key": "no",
+                                    "type": "STRING",
+                                    "subfield": true,
+                                    "editable": false,
+                                    "writable": false
+                                },
+                                "date": {
+                                    "key": "date",
+                                    "type": "STRING",
+                                    "subfield": true,
+                                    "editable": false,
+                                    "writable": false
+                                },
+                                "user": {
+                                    "key": "user",
+                                    "type": "STRING",
+                                    "subfield": true,
+                                    "editable": false,
+                                    "writable": false
+                                },
+                                "state": {
+                                    "key": "state",
+                                    "type": "STRING",
+                                    "subfield": true,
+                                    "editable": false,
+                                    "writable": false
+                                }
+                            }
+                        }),
                         readOnly: require('./../../isDataReadOnly')(response.transferData),
                         $events: options.$events,
                         defaultLang: 'DEFAULT',
                         large: true,
+                        fieldTitles: {
+                            "date": {
+                                "key": "date",
+                                "title": "Tallennettu"
+                            },
+                            "user": {
+                                "key": "user",
+                                "title": "Tallentaja"
+                            },
+                            "no": {
+                                "key": "no",
+                                "title": "Revisio"
+                            },
+                            "state": {
+                                "key": "user",
+                                "title": "Tila"
+                            },
+                            "filecomment": {
+                                "key": "filecomment",
+                                "title": "Kommentti"
+                            }
+                        },
                         content: [
                             {
                                 "type": "COLUMN",
@@ -194,11 +247,12 @@ define(function (require) {
                                                 "field": {
                                                     "displayType": "CONTAINER",
                                                     "key": "custom_fileHistory",
-                                                    "showSaveInfo": true,
                                                     "columnFields": [
-                                                        //"date",
-                                                        //"user",
-                                                        "filecomment"
+                                                        "no",
+                                                        "state",
+                                                        "filecomment",
+                                                        "date",
+                                                        "user"
                                                     ]
                                                 },
                                                 create: function () {
@@ -206,8 +260,22 @@ define(function (require) {
                                                     require('./../../server')('/study/attachmentHistory/', {
                                                         data: JSON.stringify(modalOptions.data),
                                                         success: function (data) {
-                                                            data.rows && data.rows.forEach(function (row) {
-                                                                $containerField.data('addRowFromDataObject')(row.values);
+                                                            var objectToTransferRow = require('./../../map/object/transferRow');
+                                                            var revisions = data.rows.map(function (result) {
+
+                                                                return {
+                                                                    no: result.no,
+                                                                    state: MetkaJS.L10N.get('search.result.state.{state}'.supplant(result)),
+                                                                    filecomment: result.values["filecomment"],
+                                                                    date: result.values["date"],
+                                                                    user: result.values["user"]
+                                                                };
+                                                            }).map(function (result) {
+                                                                return objectToTransferRow(result, "DEFAULT");
+                                                            });
+
+                                                            revisions && revisions.forEach(function (row) {
+                                                                $containerField.data('addRow')(row);
                                                             });
                                                         }
                                                     });
@@ -257,6 +325,7 @@ define(function (require) {
                             type: 'CANCEL'
                         }]
                     });
+                    //require('./../../addTranslation')('fieldTitles', modalOptions.fieldTitles);
                     require('./../../modal')(modalOptions);
                 }
             });
@@ -272,7 +341,7 @@ define(function (require) {
                 var $elem = this;
 
                 require('./../../data')(options).onChange(function () {
-                    function addFileConteiners() {
+                    function addFileContainers() {
                         function addFileContainer(files, cell) {
                             require('./../../inherit')(function (options) {
                                 require('./../../container').call($elem, options);
@@ -371,11 +440,11 @@ define(function (require) {
                                     }
                                 });
                             } else {
-                                addFileConteiners();
+                                addFileContainers();
                             }
                         })(0);
                     } else {
-                        addFileConteiners();
+                        addFileContainers();
                     }
                 });
             }

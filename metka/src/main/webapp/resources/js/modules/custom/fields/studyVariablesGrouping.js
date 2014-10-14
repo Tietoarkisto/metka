@@ -86,7 +86,7 @@ define(function (require) {
                                 },
                                 onDropped: function (parent, nodes) {
                                     nodes.forEach(function (node) {
-                                        log(node);
+
                                         var transferRow = $.extend(true, {}, node.transferRow, {
                                             key: 'vargroupvars',
                                             value: node.value,
@@ -98,7 +98,7 @@ define(function (require) {
                                     });
                                 },
                                 onDragged: function (nodes) {
-                                    log(nodes);
+
                                     nodes.forEach(function (node) {
                                         node.transferRow.removed = true;
                                     });

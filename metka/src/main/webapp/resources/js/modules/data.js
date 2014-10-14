@@ -69,26 +69,12 @@ define(function (require) {
                 transferField.values[lang] = transferField.values[lang] || {};
                 transferField.type = transferField.type || 'VALUE';
 
-                var allowChange = true;
 
-                options.$events.trigger('data-change-{key}-{lang}'.supplant({
+                transferField.values[lang].current = value;
+                options.$events.trigger('data-changed-{key}-{lang}'.supplant({
                     key: key,
                     lang: lang
-                }), [{
-                    current: byFieldKey.getByLang(lang),
-                    change: value,
-                    prevent: function() {
-                        allowChange = false;
-                    }
-                }]);
-
-                if(allowChange) {
-                    transferField.values[lang].current = value;
-                    options.$events.trigger('data-set-{key}-{lang}'.supplant({
-                        key: key,
-                        lang: lang
-                    }), [value]);
-                }
+                }), [value]);
             };
             /*byFieldKey.append = function (trasferRow) {
              var transferField = getTransferField(true);

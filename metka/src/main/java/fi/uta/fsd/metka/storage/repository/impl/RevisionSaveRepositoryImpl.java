@@ -128,39 +128,41 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 finalizeStudyAttachment(revision, transferData);
                 break;
             case STUDY:
-                StudyFactory fac = new StudyFactory();
-                // Form Packages
-
-
-                // Form biblcit
-                ReturnResult result = fac.formUrnAndBiblCit(revision, info, references, changesAndErrors);
-
-                TransferField f = transferData.getField(Fields.BIBLCIT);
-                Pair<StatusCode, ValueDataField> pair = revision.dataField(ValueDataFieldCall.get(Fields.BIBLCIT));
-                if(pair.getLeft() != StatusCode.FIELD_FOUND) {
-                    if(f != null) {
-                        f.getValues().clear();
-                    }
-                } else {
-                    ValueDataField field = pair.getRight();
-                    f = TransferField.buildFromDataField(field);
-                    transferData.getFields().put(f.getKey(), f);
-                }
-
-                f = transferData.getField(Fields.PACKAGES);
-                Pair<StatusCode, ContainerDataField> packages = revision.dataField(ContainerDataFieldCall.get(Fields.PACKAGES));
-                if(packages.getLeft() != StatusCode.FIELD_FOUND || !packages.getRight().hasRowsFor(Language.DEFAULT)) {
-                    if(f != null) {
-                        f.getRowsFor(Language.DEFAULT).clear();
-                    }
-                } else {
-                    f = TransferField.buildFromDataField(packages.getRight());
-                    transferData.getFields().put(f.getKey(), f);
-                }
+                finalizeStudy(revision, transferData, info, changesAndErrors);
 
                 break;
             default:
                 break;
+        }
+    }
+
+    private void finalizeStudy(RevisionData revision, TransferData transferData, DateTimeUserPair info, MutablePair<Boolean, Boolean> changesAndErrors) {
+        StudyFactory fac = new StudyFactory();
+
+        // Form packages and biblcit
+        ReturnResult result = fac.formUrnAndBiblCit(revision, info, references, changesAndErrors);
+
+        TransferField f = transferData.getField(Fields.BIBLCIT);
+        Pair<StatusCode, ValueDataField> pair = revision.dataField(ValueDataFieldCall.get(Fields.BIBLCIT));
+        if(pair.getLeft() != StatusCode.FIELD_FOUND) {
+            if(f != null) {
+                f.getValues().clear();
+            }
+        } else {
+            ValueDataField field = pair.getRight();
+            f = TransferField.buildFromDataField(field);
+            transferData.getFields().put(f.getKey(), f);
+        }
+
+        f = transferData.getField(Fields.PACKAGES);
+        Pair<StatusCode, ContainerDataField> packages = revision.dataField(ContainerDataFieldCall.get(Fields.PACKAGES));
+        if(packages.getLeft() != StatusCode.FIELD_FOUND || !packages.getRight().hasRowsFor(Language.DEFAULT)) {
+            if(f != null) {
+                f.getRowsFor(Language.DEFAULT).clear();
+            }
+        } else {
+            f = TransferField.buildFromDataField(packages.getRight());
+            transferData.getFields().put(f.getKey(), f);
         }
     }
 
