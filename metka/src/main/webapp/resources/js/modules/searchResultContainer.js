@@ -60,7 +60,18 @@ define(function (require) {
                 $field.find('.panel-heading')
                     .text(MetkaJS.L10N.get('search.result.title'))
                     .append($('<div class="pull-right">')
-                        .text(MetkaJS.L10N.get('search.result.amount').supplant(results)));
+                        .text(MetkaJS.L10N.get('search.result.amount').supplant(results))
+                        .append('&nbsp;')
+                        .append($('<div class="btn-group btn-group-xs pull-right">')
+                            .append(require('./button')()({
+                                title: 'Lataa',
+                                style: 'default',
+                                create: function () {
+                                    this.click(function () {
+                                        saveAs(new Blob([JSON.stringify(results)], {type: "text/json;charset=utf-8"}), "hakutulos.json");
+                                    });
+                                }
+                            }))));
                 $('.content').append($field);
             }
         });

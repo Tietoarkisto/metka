@@ -206,7 +206,7 @@ define(function (require) {
             });
         }
 
-        if (fieldOptions.type === 'REFERENCECONTAINER' && key !== 'files') {
+        if (fieldOptions.type === 'REFERENCECONTAINER') {
             // FIXME: Merge shared code with containerRowDialog.
             var refDialog = function (options, lang, key) {
                 var PAGE = require('./../metka').PAGE;
@@ -349,6 +349,23 @@ define(function (require) {
                     $tbody
                         .on('click', 'tr', function () {
                             var $tr = $(this);
+
+                            // if reference container without custom onClick
+                            if (fieldOptions.type === 'REFERENCECONTAINER' && !options.field.onClick) {
+                                // TODO: visualize new window behaviour. place this in row commands: <span class="glyphicon glyphicon-new-window"></span>
+
+                                // open reference target in new window
+                                var ref = options.dataConf.references[fieldOptions.reference];
+                                if (ref.type === 'REVISIONABLE') {
+                                    window.open(require('./url')('view', {
+                                        PAGE: ref.target,
+                                        id: $tr.data('transferRow').value,
+                                        no: ''
+                                    }));
+                                }
+                                return;
+                            }
+
                             (options.field.onClick || rowDialog('modify', 'ok'))
                                 .call(this, $tr.data('transferRow'), function (transferRow) {
                                     //return $tr.replaceWith(tr(transferRow));

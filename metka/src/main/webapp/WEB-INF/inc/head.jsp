@@ -14,6 +14,9 @@
 <script src="${contextPath}/lib/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
 <script src="${contextPath}/lib/bootstrap-fileinput/js/fileinput.min.js"></script>
 
-<%-- Summernote rich text editor --%>
+<%-- Summernote - Rich Text Editor --%>
 <link href="${contextPath}/lib/summernote/summernote.css" rel="stylesheet">
 <script src="${contextPath}/lib/summernote/summernote.js"></script>
+
+<%-- FileSaver - Client Side File Creation --%>
+<script src="${contextPath}/lib/js/FileSaver.min.js"></script>
