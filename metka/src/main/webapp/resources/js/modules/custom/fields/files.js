@@ -66,7 +66,7 @@ define(function (require) {
                                         }
                                     }
                                 }),
-                                readOnly: require('./../../isDataReadOnly')(response.transferData),
+                                //readOnly: require('./../../isDataReadOnly')(response.transferData),
                                 $events: options.$events,
                                 defaultLang: 'DEFAULT',
                                 large: true,

@@ -8,7 +8,35 @@ define(function (require) {
         var key = options.field.key;
         var fieldOptions = getPropertyNS(options, 'dataConf.fields', key) || {};
         var $thead = $('<thead>');
-        var $tbody = $('<tbody>');
+        var $tbody = $('<tbody>')
+            .on('click', 'tr', function () {
+                var $tr = $(this);
+
+                // if reference container without custom onClick
+                if (fieldOptions.type === 'REFERENCECONTAINER' && !options.field.onClick) {
+                    // TODO: visualize new window behaviour. place this in row commands: <span class="glyphicon glyphicon-new-window"></span>
+
+                    // open reference target in new window
+                    var ref = options.dataConf.references[fieldOptions.reference];
+                    if (ref.type === 'REVISIONABLE') {
+                        window.open(require('./url')('view', {
+                            PAGE: ref.target,
+                            id: $tr.data('transferRow').value,
+                            no: ''
+                        }));
+                    }
+                    return;
+                }
+
+                (options.field.onClick || rowDialog('modify', 'ok'))
+                    .call(this, $tr.data('transferRow'), function (transferRow) {
+                        //return $tr.replaceWith(tr(transferRow));
+                        var $tr2 = $tr.replaceWith(tr(transferRow));
+                        if (options.field.onRowChange) {
+                            options.field.onRowChange($tr2, transferRow);
+                        }
+                    });
+            });
         var EMPTY = '-';
         var rowCommands = [];
 
@@ -355,41 +383,7 @@ define(function (require) {
         this.append($('<div class="panel">')
             .addClass('panel-' + (options.style || 'default'))
             .append($panelHeading)
-            .append($('<table class="table table-condensed">')
-                .if(options.field.onClick || !require('./isFieldDisabled')(options, lang), function () {
-                    this
-                        .addClass('table-hover');
-
-                    $tbody
-                        .on('click', 'tr', function () {
-                            var $tr = $(this);
-
-                            // if reference container without custom onClick
-                            if (fieldOptions.type === 'REFERENCECONTAINER' && !options.field.onClick) {
-                                // TODO: visualize new window behaviour. place this in row commands: <span class="glyphicon glyphicon-new-window"></span>
-
-                                // open reference target in new window
-                                var ref = options.dataConf.references[fieldOptions.reference];
-                                if (ref.type === 'REVISIONABLE') {
-                                    window.open(require('./url')('view', {
-                                        PAGE: ref.target,
-                                        id: $tr.data('transferRow').value,
-                                        no: ''
-                                    }));
-                                }
-                                return;
-                            }
-
-                            (options.field.onClick || rowDialog('modify', 'ok'))
-                                .call(this, $tr.data('transferRow'), function (transferRow) {
-                                    //return $tr.replaceWith(tr(transferRow));
-                                    var $tr2 = $tr.replaceWith(tr(transferRow));
-                                    if (options.field.onRowChange) {
-                                        options.field.onRowChange($tr2, transferRow);
-                                    }
-                                });
-                        });
-                })
+            .append($('<table class="table table-condensed table-hover">')
                 .me(function () {
                     $thead
                         .append($('<tr>')

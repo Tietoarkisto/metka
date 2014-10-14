@@ -11,19 +11,16 @@ define(function (require) {
                 // copy data, so if dialog is dismissed, original data won't change
                 var transferRowCopy = $.extend(true, {}, transferRow);
 
-                var containerOptions = {
+
+                var containerOptions = $.extend(require('./isFieldDisabled')(options, lang) ? {
+                    title: 'Tiedot',
+                    readOnly: true,
+                    buttons: [{
+                        type: 'DISMISS'
+                    }]
+                } : {
                     title: MetkaJS.L10N.get(['dialog', PAGE, key, title].join('.')),
-                    data: transferRowCopy,
-                    dataConf: options.dataConf,
-                    $events: $({}),
-                    defaultLang: fieldOptions.translatable ? lang : options.defaultLang,
-                    content: [
-                        {
-                            type: 'COLUMN',
-                            columns: 1,
-                            rows: rows()
-                        }
-                    ],
+                    readOnly: false,
                     buttons: [
                         {
                             create: function () {
@@ -39,7 +36,19 @@ define(function (require) {
                             type: 'CANCEL'
                         }
                     ]
-                };
+                }, {
+                    data: transferRowCopy,
+                    dataConf: options.dataConf,
+                    $events: $({}),
+                    defaultLang: fieldOptions.translatable ? lang : options.defaultLang,
+                    content: [
+                        {
+                            type: 'COLUMN',
+                            columns: 1,
+                            rows: rows()
+                        }
+                    ]
+                });
 
                 // if not translatable container and has translatable subfields, show language selector
                 if (!fieldOptions.translatable && require('./containerHasTranslatableSubfields')(options)) {

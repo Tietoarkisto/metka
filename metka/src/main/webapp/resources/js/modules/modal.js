@@ -2,10 +2,11 @@ define(function (require) {
     'use strict';
 
     return function (options) {
+        var readOnly = options.readOnly;
         return $('<div class="modal fade" tabindex="-1" role="dialog">')
             .append($('<div class="modal-dialog">')
                 .on('refresh.metka', function () {
-                    options.readOnly = require('./isDataReadOnly')(options.data);
+                    options.readOnly = readOnly || require('./isDataReadOnly')(options.data);
                     if (!options.buttons) {
                         options.buttons = [];
                     } else {
