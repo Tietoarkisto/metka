@@ -238,6 +238,7 @@ define(function (require) {
                 if (eventName) {
                     $this.trigger(eventName);
                 }
+                return false;
             });
         }
 
