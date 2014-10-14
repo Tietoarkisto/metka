@@ -5,6 +5,7 @@ define(function (require) {
         return $('<div class="modal fade" tabindex="-1" role="dialog">')
             .append($('<div class="modal-dialog">')
                 .on('refresh.metka', function () {
+                    options.readOnly = require('./isDataReadOnly')(options.data);
                     if (!options.buttons) {
                         options.buttons = [];
                     } else {

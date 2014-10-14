@@ -242,31 +242,7 @@ define(function (require) {
             options.title = MetkaJS.L10N.get('general.buttons.no');
         },
         REMOVE: function (options) {
-            this
-                .click(require('./remove')(options, function (response) {
-                    switch(response.result) {
-                        case "SUCCESS_LOGICAL":
-                            require('./assignUrl')('view');
-                            break;
-                        case "SUCCESS_DRAFT":
-                            require('./assignUrl')('view', {no: ''});
-                            break;
-                        case "FINAL_REVISION":
-                            require('./assignUrl')('searchPage');
-                            break;
-                        default:
-                            require('./modal')({
-                                title: MetkaJS.L10N.get('alert.error.title'),
-                                body: response.result /*data.errors.map(function (error) {
-                                 return MetkaJS.L10N.get(error.msg);
-                                 })*/,
-                                buttons: [{
-                                    type: 'DISMISS'
-                                }]
-                            });
-                            break;
-                    }
-                }));
+            this.click(require('./remove')(options));
         },
         RELEASE: function (options) {
             this
@@ -285,13 +261,14 @@ define(function (require) {
             this
                 .click(function () {
                     var $this = $(this);
-                    require('./server')('/revision/ajax/restore', {
+                    var request = $.extend({
                         data: JSON.stringify(options.data.key),
                         success: function (response) {
                             $.extend(options.data, response.data);
                             $this.trigger('refresh.metka');
                         }
-                    });
+                    }, options.request);
+                    require('./server')('/revision/ajax/restore', request);
                 });
         },
         SAVE: function (options) {

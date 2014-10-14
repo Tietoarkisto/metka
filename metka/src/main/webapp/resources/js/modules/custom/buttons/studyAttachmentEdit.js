@@ -5,7 +5,7 @@ define(function (require) {
         this
             .removeAttr('data-dismiss')
             .click(require('./../../formAction')('edit')(options, function (response) {
-                $.extend(options.data, response.data.data);
+                $.extend(options.data, response.data);
                 $(this).trigger('refresh.metka');
             }, [
                 'REVISION_FOUND',
