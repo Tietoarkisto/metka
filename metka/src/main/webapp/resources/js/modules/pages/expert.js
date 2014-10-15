@@ -86,7 +86,7 @@ define(function (require) {
                                     }
                                 }
                             ]
-                        },
+                        }/*,
                         {
                             "type": "ROW",
                             "cells": [
@@ -162,7 +162,7 @@ define(function (require) {
                                     "colspan": 1
                                 }
                             ]
-                        }
+                        }*/
                     ]
                 }
             ],
