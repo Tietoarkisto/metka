@@ -309,16 +309,7 @@ define(function (require) {
                 }
             }
 
-            if (options.permissions && options.permissions.length) {
-                // if some permission is not given
-                if (!options.permissions.every(function (permission) {
-                    return MetkaJS.User.role.permissions[permission];
-                })) {
-                    return false;
-                }
-            }
-
-            return true;
+            return require('./hasEveryPermission')(options.permissions);
         }
 
         options = options || {};
