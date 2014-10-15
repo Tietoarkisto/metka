@@ -7,9 +7,6 @@ https://github.com/Tietoarkisto/metka/issues/88
 #92 DDI-import toiminnallisuus
 https://github.com/Tietoarkisto/metka/issues/92
 
-#108 Metka availi selaimeen tyhjiä välilehtiä
-https://github.com/Tietoarkisto/metka/issues/108
-
 #109 Dokumentaatioparannusten toteutus
 https://github.com/Tietoarkisto/metka/issues/109
 
@@ -72,7 +69,11 @@ https://github.com/Tietoarkisto/metka/issues/106
 #107 Aineiston tekijät tallentuivat lukuisia kertoja, vaikka käyttäjä syötti 2 eri tekijää vain kerran
 https://github.com/Tietoarkisto/metka/issues/107
 
+#108 Metka availi selaimeen tyhjiä välilehtiä
+https://github.com/Tietoarkisto/metka/issues/108
 
+- Hakutulokset voi ladata nyt json-tiedostona. Voidaan muuntaa csv-tiedostoksi tarvittaessa.
+- Taulukoiden rivit voi nyt järjestää uudelleen mutta uusi järjestys ei vielä tallennu. Kts. issue #111
 
 
 ++Proactum tested issues++
@@ -124,8 +125,6 @@ https://github.com/Tietoarkisto/metka/issues/91
 
 #95 Pop-up-ikkuna syötettyine tietoineen katoaa, jos sen ohi klikkaa vahingossa
 https://github.com/Tietoarkisto/metka/issues/95
-
-- Hakutulokset voi ladata nyt json-tiedostona. Voidaan muuntaa csv-tiedostoksi tarvittaessa.
 
 
 ++Closed issues++
