@@ -10,6 +10,7 @@ define(function (require) {
 
         return {
             create: function (options) {
+
                 function view(requestOptions) {
                     require('./../../server')('viewAjax', $.extend({
                         PAGE: 'STUDY_ATTACHMENT'
@@ -30,6 +31,9 @@ define(function (require) {
                             // TODO: check status
                             if (response.result === 'VIEW_SUCCESSFUL') {
                             }
+
+
+                            var studyIsReadOnly = require('./../../isDataReadOnly')(options.data);
 
                             var modalOptions = $.extend(response.gui, {
                                 title: 'Muokkaa tiedostoa',
@@ -66,7 +70,7 @@ define(function (require) {
                                         }
                                     }
                                 }),
-                                //readOnly: require('./../../isDataReadOnly')(response.transferData),
+                                readOnly: studyIsReadOnly,
                                 $events: options.$events,
                                 defaultLang: 'DEFAULT',
                                 large: true,
@@ -260,6 +264,7 @@ define(function (require) {
                                                 "cells": [
                                                     {
                                                         "type": "CELL",
+                                                        // Hide this field, if there's no value. Variables will be parsed on next save
                                                         hidden: typeof require('./../../utils/getPropertyNS')(response.transferData, 'fields.parsed.values.DEFAULT.current') === 'undefined',
                                                         "title": "Parsi muuttujat uudelleen tallennuksen yhteydessä",
                                                         "field": {
@@ -338,6 +343,7 @@ define(function (require) {
                                 buttons: [{
                                     "title": "Tallenna",
                                     "isHandler": true,
+                                    hide: studyIsReadOnly,
                                     "states": [
                                         "DRAFT"
                                     ],
@@ -350,6 +356,7 @@ define(function (require) {
                                 }, {
                                     "type": "CUSTOM",
                                     "title": "Tee luonnos",
+                                    hide: studyIsReadOnly,
                                     "customHandler": "studyAttachmentEdit",
                                     "permissions": [
                                         "canEditRevision"
@@ -359,6 +366,7 @@ define(function (require) {
                                     ]
                                 }, {
                                     "title": "Poista",
+                                    hide: studyIsReadOnly,
                                     "states": [
                                         "DRAFT",
                                         "APPROVED"
@@ -378,6 +386,7 @@ define(function (require) {
                                     }
                                 }, {
                                     "title": "Palauta",
+                                    hide: studyIsReadOnly,
                                     "type": "RESTORE",
                                     "states": [
                                         "REMOVED"

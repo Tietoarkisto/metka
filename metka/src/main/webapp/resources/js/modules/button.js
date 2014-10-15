@@ -304,7 +304,6 @@ define(function (require) {
                     if (options.states.every(function (state) {
                         return options.data.state.uiState !== state;
                     })) {
-                        //log('state', options)
                         return false;
                     }
                 }
@@ -315,7 +314,6 @@ define(function (require) {
                 if (!options.permissions.every(function (permission) {
                     return MetkaJS.User.role.permissions[permission];
                 })) {
-                    //log('permissions', options)
                     return false;
                 }
             }
