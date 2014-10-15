@@ -34,7 +34,7 @@ public class RevisionController {
 
         ModelUtil.initRevisionModel(model, type);
 
-        return AuthenticationUtil.getModelName("revision", model);
+        return AuthenticationUtil.getModelName("page", model);
     }
 
     @RequestMapping("view/{type}/{id}")
@@ -49,7 +49,7 @@ public class RevisionController {
 
         ModelUtil.initRevisionModel(model, type, id);
 
-        return AuthenticationUtil.getModelName("revision", model);
+        return AuthenticationUtil.getModelName("page", model);
     }
 
     @RequestMapping("view/{type}/{id}/{no}")
@@ -64,7 +64,7 @@ public class RevisionController {
 
         ModelUtil.initRevisionModel(model, type, id, no);
 
-        return AuthenticationUtil.getModelName("revision", model);
+        return AuthenticationUtil.getModelName("page", model);
     }
 
     @RequestMapping(value = "ajax/configuration/{type}", method = RequestMethod.GET)

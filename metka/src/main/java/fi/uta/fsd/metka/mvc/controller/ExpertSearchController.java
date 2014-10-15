@@ -22,7 +22,7 @@ public class ExpertSearchController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String expert(Model model) {
         ModelUtil.initExpertSearch(model);
-        return AuthenticationUtil.getModelName("revision", model);
+        return AuthenticationUtil.getModelName("page", model);
     }
 
     @RequestMapping(value = "query", method = {RequestMethod.POST},

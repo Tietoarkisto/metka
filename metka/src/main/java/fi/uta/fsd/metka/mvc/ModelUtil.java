@@ -49,7 +49,6 @@ public final class ModelUtil {
     public static void initSettings(Model model, List<Pair<String, Boolean>> pairs) {
         addUserInfo(model);
         model.asMap().put("configurationType", "SETTINGS");
-        model.asMap().put("indexers", pairs);
     }
 
     public static void initBinder(Model model) {

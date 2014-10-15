@@ -25,20 +25,20 @@ public class MiscJSONRepositoryImpl implements MiscJSONRepository {
     private JSONUtil json;
 
     @Override
-    public void insert(JsonNode misc) {
+    public ReturnResult insert(JsonNode misc) {
         JsonNode key = misc.get("key");
         if(key == null || key.getNodeType() != JsonNodeType.STRING) {
             // Not key or key is not text, ignore
-            return;
+            return ReturnResult.PARAMETERS_MISSING;
         }
         if(misc.get("data") == null || misc.get("data").getNodeType() != JsonNodeType.ARRAY) {
             // No data or data not an array, ignore
-            return;
+            return ReturnResult.PARAMETERS_MISSING;
         }
         ArrayNode data = (ArrayNode)misc.get("data");
         if(data.size() <= 0) {
             // No actual data, ignore.
-            return;
+            return ReturnResult.PARAMETERS_MISSING;
         }
 
         MiscJSONEntity entity = em.find(MiscJSONEntity.class, key.asText());
@@ -48,13 +48,16 @@ public class MiscJSONRepositoryImpl implements MiscJSONRepository {
             em.persist(entity);
         }
         entity.setData(misc.toString());
+        return ReturnResult.DATABASE_INSERT_SUCCESS;
     }
 
     @Override
-    public void insert(String text) {
+    public ReturnResult insert(String text) {
         Pair<SerializationResults, JsonNode> node = json.deserializeToJsonTree(text);
         if(node.getLeft() == SerializationResults.DESERIALIZATION_SUCCESS) {
-            insert(node.getRight());
+            return insert(node.getRight());
+        } else {
+            return ReturnResult.OPERATION_FAIL;
         }
     }
 

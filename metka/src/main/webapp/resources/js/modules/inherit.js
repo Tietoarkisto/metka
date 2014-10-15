@@ -14,6 +14,7 @@ define(function (require) {
                 options.dataConf = options.dataConf || parentOptions.dataConf;
                 options.defaultLang = options.defaultLang || parentOptions.defaultLang;
                 options.fieldTitles = parentOptions.fieldTitles;
+                options.dialogTitles = parentOptions.dialogTitles;
 
                 return childConstructor.call(this, options);
             };

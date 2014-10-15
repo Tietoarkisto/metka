@@ -30,9 +30,9 @@ define(function (require) {
     document.title = MetkaJS.L10N.get('page.title');
 
     require('./modules/pageConfig')(options, function () {
-        if (options.fieldTitles) {
+        /*if (options.fieldTitles) {
             require('./modules/addTranslation')('fieldTitles', options.fieldTitles);
-        }
+        }*/
 
         $('body')
             .append($('<div class="wrapper">')

@@ -13,7 +13,7 @@
 <div class="wrapper">
     <div class="content container">
         <%-- TODO: Get localizations from l10n.js --%>
-        <div class="page-header">Asetukset</div>
+        <%--<div class="page-header">Asetukset</div>--%>
             <%-- TODO: Change to Ajax calls --%>
         <%-- Data configuration import --%>
         <%--<form:form method="post" action="settings/uploadDataConfiguration" enctype="multipart/form-data" modelAttribute="uploadConfig">
@@ -33,7 +33,7 @@
             <input type="file" name="file" class="file" data-show-preview="false" data-show-remove="false" data-upload-label="Lataa" data-browse-label="Valitse ..." />
         </form:form>
         <br />--%>
-        Indekserit
+        <%--Indekserit
         <table class="formTable">
             <thead>
             <tr>
@@ -49,13 +49,9 @@
             </c:forEach>
         </table>
 
-        <button type="button" class="btn btn-default" onclick="require(['./modules/assignUrl'], function (assignUrl) {assignUrl('/settings/downloadReport');})">
-            Lataa raportti
-        </button>
-
         <button type="button" class="btn btn-default" onclick="require(['./modules/assignUrl'], function (assignUrl) {assignUrl('/settings/indexEverything');})">
             Indeksoi kaikki
-        </button>
+        </button>--%>
 
     </div>
 </div>

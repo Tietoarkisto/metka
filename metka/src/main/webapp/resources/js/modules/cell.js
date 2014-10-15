@@ -5,7 +5,12 @@ define(function (require) {
         var $div = $('<div>')
                     // In conf, columns is set for section. Parent of cell is row and grand-parent is section.
                     .addClass('col-xs-' + (12 * (options.colspan || 1) / (options.parent.parent.columns || 1)));
-        require('./field').call($div, options);
+        if(options.contentType === "BUTTON") {
+            $div.append(require('./button')(options)(options.button))
+        } else {
+            require('./field').call($div, options);
+        }
+
         return require('./togglable')
                 .call($div, options, true);
     });

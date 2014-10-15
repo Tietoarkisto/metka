@@ -114,6 +114,11 @@ define(function (require) {
                 "&title": {
                     "default": "Mapit"
                 }
+            },
+            "SETTINGS": {
+                "&title": {
+                    "default": "Hallinta"
+                }
             }
         },
 
