@@ -4,6 +4,7 @@ define(function (require) {
     var getPropertyNS = require('./utils/getPropertyNS');
 
     return function (options) {
+        var $elem = this;
 
         function addValidationErrorListener($container, getErrors) {
             require('./data')(options).onChange(function () {
@@ -18,7 +19,73 @@ define(function (require) {
             });
         }
 
-        function createInputWrapper() {
+        function createInputWrapper(key) {
+            var fieldDataOptions;
+
+            function createInput(lang) {
+                function onTranslationLangChange(e, currentLang) {
+                    if (fieldDataOptions.translatable) {
+                        var isVisible = lang === options.defaultLang || lang === currentLang;
+                        $langField.toggleClass('hiddenByTranslationState', !isVisible);
+                        if (isVisible) {
+                            if (lang === currentLang) {
+                                // TODO: enable field',lang, key)
+                            } else {
+                                // TODO: disable field',lang, key)
+                            }
+                        }
+                    } else {
+                        // non-translatable field
+
+                        if ((type === 'CONTAINER' || type === 'REFERENCECONTAINER') && require('./containerHasTranslatableSubfields')(options)) {
+                            var $table = $langField.find('table');
+                            $table.find('> thead > tr > th').each(function (i) {
+                                var lang = $(this).data('lang');
+                                if (lang) {
+                                    var isVisible = (!lang && currentLang === options.defaultLang) || lang === options.defaultLang || lang === currentLang;
+                                    $table.find('tr').children(':nth-child({i})'.supplant({
+                                        i: i + 1
+                                    })).toggleClass('hiddenByTranslationState', !isVisible);
+                                }
+                            });
+                        } else {
+                            // toggle visibility
+                            $langField.toggleClass('hiddenByTranslationState', currentLang !== options.defaultLang);
+                        }
+                    }
+                }
+
+                var $langField = $('<div>');
+                var type = options.field.displayType || getPropertyNS(options, 'dataConf.fields', key, 'type');
+                if (!type) {
+                    log('field type is not set', key, options);
+                } else {
+                    (function () {
+                        if (type === 'CONTAINER' || type === 'REFERENCECONTAINER') {
+                            return require('./containerField').call($langField, options, lang);
+                        }
+                        if (type === 'BOOLEAN') {
+                            return require('./checkboxField').call($langField, options, lang);
+                        }
+                        if (type === 'LINK') {
+                            return require('./linkField')($langField, options, lang);
+                        }
+                        if(type === 'CUSTOM_JS') {
+                            return;
+                        }
+                        require('./inputField').call($langField, options, type, lang);
+                    })();
+
+                    addValidationErrorListener($langField, function () {
+                        return require('./data')(options).errorsByLang(lang);
+                    });
+                }
+                $elem.append($langField);
+
+                options.$events.on('translationLangChanged', onTranslationLangChange);
+                onTranslationLangChange(undefined, $('input[name="translation-lang"]:checked').val() || options.defaultLang);
+            }
+
             fieldDataOptions = getPropertyNS(options, 'dataConf.fields', key) || {};
             createInput(options.defaultLang);
             if (fieldDataOptions.translatable && (options.translatable !== false)) {
@@ -35,81 +102,12 @@ define(function (require) {
             }
         }
 
-        function createInput(lang) {
-            function onTranslationLangChange(e, currentLang) {
-                if (fieldDataOptions.translatable) {
-                    var isVisible = lang === options.defaultLang || lang === currentLang;
-                    $langField.toggleClass('hiddenByTranslationState', !isVisible);
-                    if (isVisible) {
-                        if (lang === currentLang) {
-                            // TODO: enable field',lang, key)
-                        } else {
-                            // TODO: disable field',lang, key)
-                        }
-                    }
-                } else {
-                    // non-translatable field
-
-                    if ((type === 'CONTAINER' || type === 'REFERENCECONTAINER') && require('./containerHasTranslatableSubfields')(options)) {
-                        var $table = $langField.find('table');
-                        $table.find('> thead > tr > th').each(function (i) {
-                            var lang = $(this).data('lang');
-                            if (lang) {
-                                var isVisible = (!lang && currentLang === options.defaultLang) || lang === options.defaultLang || lang === currentLang;
-                                $table.find('tr').children(':nth-child({i})'.supplant({
-                                    i: i + 1
-                                })).toggleClass('hiddenByTranslationState', !isVisible);
-                            }
-                        });
-                    } else {
-                        // toggle visibility
-                        $langField.toggleClass('hiddenByTranslationState', currentLang !== options.defaultLang);
-                    }
-                }
-            }
-
-            var $langField = $('<div>');
-            var type = options.field.displayType || getPropertyNS(options, 'dataConf.fields', key, 'type');
-            if (!type) {
-                log('field type is not set', key, options);
-            } else {
-                (function () {
-                    if (type === 'CONTAINER' || type === 'REFERENCECONTAINER') {
-                        return require('./containerField').call($langField, options, lang);
-                    }
-                    if (type === 'BOOLEAN') {
-                        return require('./checkboxField').call($langField, options, lang);
-                    }
-                    if (type === 'LINK') {
-                        return require('./linkField')($langField, options, lang);
-                    }
-                    if(type === 'CUSTOM_JS') {
-                        return;
-                    }
-                    require('./inputField').call($langField, options, type, lang);
-                })();
-
-                addValidationErrorListener($langField, function () {
-                    return require('./data')(options).errorsByLang(lang);
-                });
-            }
-            $elem.append($langField);
-
-            options.$events.on('translationLangChanged', onTranslationLangChange);
-            onTranslationLangChange(undefined, $('input[name="translation-lang"]:checked').val() || options.defaultLang);
-        }
-
         if (options.type === 'EMPTYCELL') {
             return this;
         }
-        var key = options.field.key;
-
-        var $elem = this;
-
-        var fieldDataOptions;
 
         if(options.field.displayType === 'CUSTOM_JS') {
-            require(['./custom/fields/'+key], function(customField) {
+            require(['./custom/fields/'+options.field.key], function(customField) {
                 switch (typeof customField) {
                     case 'object':
                         $.extend(true, options, customField);
@@ -118,10 +116,10 @@ define(function (require) {
                         $.extend(true, options, customField(options));
                         break;
                 }
-                createInputWrapper();
+                createInputWrapper(options.field.key);
             });
         } else {
-            createInputWrapper();
+            createInputWrapper(options.field.key);
         }
 
         return this;

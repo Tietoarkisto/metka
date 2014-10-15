@@ -1,56 +1,59 @@
 define(function (require) {
     'use strict';
 
+    return function (options) {
+        delete options.field.displayType;
 
-    return {
-        create: function create(options) {
-            var fieldOptions = {
-                $events: $({}),
-                defaultLang: options.defaultLang,
-                dataConf: {
-                    fields: {
-                        binderId: {
-                            type: 'INTEGER'
-                        },
-                        binderDescription: {
-                            type: 'STRING'
-                        }
+        $.extend(true, options, {
+            field: {
+                key: "relatedBinders",
+                columnFields: [
+                    'binderId',
+                    'binderDescription'
+                ]
+            },
+            dataConf: {
+                fields: {
+                    relatedBinders: {
+                        type: "CONTAINER",
+                        fixedOrder: true,
+                        subfields: [
+                            "binderId",
+                            "binderDescription"
+                        ]
+                    },
+                    binderId: {
+                        type: 'INTEGER',
+                        subfield: true
+                    },
+                    binderDescription: {
+                        type: 'STRING',
+                        subfield: true
                     }
-                },
-                data: {
-                    fields: {
-                        relatedBinders: {
-                            type: 'CONTAINER',
-                            rows: {}
-                        }
-                    }
-                },
-                field: {
-                    key: 'relatedBinders',
-                    displayType: 'CONTAINER',
-                    columnFields: [
-                        'binderId',
-                        'binderDescription'
-                    ]
-                },
-                readOnly: true,
-                '&title': options['&title']
-            };
-
-            var $field = this.children().first();
-            require('./../../server')('/binder/listStudyBinderPages/{id}', {
-                method: 'GET',
-                success: function (data) {
-                    if (data.pages) {
-                        var objectToTransferRow = require('./../../map/object/transferRow');
-                        fieldOptions.data.fields.relatedBinders.rows.DEFAULT = data.pages.map(function (result) {
-                            result.binderDescription = result.description;
-                            return objectToTransferRow(result, fieldOptions.defaultLang);
-                        });
-                    }
-                    require('./../../field').call($field, fieldOptions);
                 }
-            });
-        }
-    };
+            },
+            readOnly: true,
+            '&title': options['&title']
+        });
+
+        return {
+            create: function create(options) {
+                var $field = this.children().first();
+                require('./../../server')('/binder/listStudyBinderPages/{id}', {
+                    method: 'GET',
+                    success: function (data) {
+                        if (data.pages) {
+                            var objectToTransferRow = require('./../../map/object/transferRow');
+                            $field.find("tbody").empty();
+                            data.pages.map(function (result) {
+                                result.binderDescription = result.description;
+                                delete result.description;
+                                $field.data("addRow")(objectToTransferRow(result, options.defaultLang));
+                            });
+                        }
+                    }
+                });
+            }
+        };
+    }
 });

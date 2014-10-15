@@ -237,6 +237,8 @@ define(function (require) {
             addRow(require('./map/object/transferRow')(data, lang));
         }
 
+        // TODO: Add clear container function
+
         // list field keys, which are configured as freeTextKeys
         var subfields = fieldOptions.subfields || [];
         var freeTextKeys = [];
@@ -431,7 +433,7 @@ define(function (require) {
                                         return false;
                                     });
                                 }
-                                if (!require('./isFieldDisabled')(options, lang)) {
+                                if (!fieldOptions.fixedOrder && !require('./isFieldDisabled')(options, lang)) {
                                     addMoveButton('up', 'prev', 'before');
                                     addMoveButton('down', 'next', 'after');
                                 }

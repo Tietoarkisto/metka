@@ -49,6 +49,7 @@ https://github.com/Tietoarkisto/metka/issues/90
 #93 biblCit kentän sisällön tuottaminen
 https://github.com/Tietoarkisto/metka/issues/93
 BiblCit säännöt löytyvät Alfrescosta: https://ecm.proactum.fi/share/page/site/metka/document-details?nodeRef=workspace://SpacesStore/85493947-9ebf-431c-862c-6961e49cb35b
+URN muodostuksen säännöt (niiltä osin kuin ne on määritelty) löytyvät Alfrescosta: https://ecm.proactum.fi/share/page/site/metka/document-details?nodeRef=workspace://SpacesStore/0d348fe2-b11c-4a13-bc04-10cc2ba524cc
 - URNin (ja yleensäkkin pakettien) muodostusta ei ole tarkastettu
 
 #94 Datan versiot ja kuvailun versiot - molemmista puuttuu tekstikenttä "Julkinen selite"
@@ -74,7 +75,7 @@ https://github.com/Tietoarkisto/metka/issues/108
 
 - Hakutulokset voi ladata nyt json-tiedostona. Voidaan muuntaa csv-tiedostoksi tarvittaessa.
 - Taulukoiden rivit voi nyt järjestää uudelleen mutta uusi järjestys ei vielä tallennu. Kts. issue #111
-
+- Referenssitaulukot (kuten liittyvät julkaisut) avaavat riviin valitun referenssin uuteen välilehteen riviä klikkaamalla.
 
 ++Proactum tested issues++
 #60 Aineistonäytöltä puuttuu tieto onko revisio luonnos, hyväksytty vai poistettu
