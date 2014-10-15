@@ -14,13 +14,13 @@ import org.springframework.transaction.annotation.Transactional;
 @PreAuthorize("hasPermission('"+ Permission.Values.CAN_VIEW_SETTINGS_PAGE +"', 'PERMISSION')")
 @Transactional
 public interface SettingsService {
-    @PreAuthorize("hasPermission('"+ Permission.Values.CAN_UPLOAD_CONFIGURATIONS +"', 'PERMISSION'")
+    @PreAuthorize("hasPermission('"+ Permission.Values.CAN_UPLOAD_CONFIGURATIONS +"', 'PERMISSION')")
     ReturnResult uploadConfiguration(Configuration configuration);
 
-    @PreAuthorize("hasPermission('"+ Permission.Values.CAN_UPLOAD_CONFIGURATIONS +"', 'PERMISSION'")
+    @PreAuthorize("hasPermission('"+ Permission.Values.CAN_UPLOAD_CONFIGURATIONS +"', 'PERMISSION')")
     ReturnResult uploadConfiguration(GUIConfiguration configuration);
 
-    @PreAuthorize("hasPermission('"+ Permission.Values.CAN_UPLOAD_JSON +"', 'PERMISSION'")
+    @PreAuthorize("hasPermission('"+ Permission.Values.CAN_UPLOAD_JSON +"', 'PERMISSION')")
     ReturnResult uploadJson(JsonNode misc);
 
     // Uses report repository to generate example report
