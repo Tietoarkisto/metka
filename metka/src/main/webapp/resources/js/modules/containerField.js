@@ -8,8 +8,46 @@ define(function (require) {
         var key = options.field.key;
         var fieldOptions = getPropertyNS(options, 'dataConf.fields', key) || {};
         var $thead = $('<thead>');
-        var $tbody = $('<tbody>');
+        var $tbody = $('<tbody>')
+            .on('click', 'tr', function () {
+                var $tr = $(this);
+
+                // if reference container without custom onClick
+                if (fieldOptions.type === 'REFERENCECONTAINER' && !options.field.onClick) {
+                    // TODO: visualize new window behaviour. place this in row commands: <span class="glyphicon glyphicon-new-window"></span>
+
+                    // open reference target in new window
+                    var ref = options.dataConf.references[fieldOptions.reference];
+                    if (ref.type === 'REVISIONABLE') {
+                        window.open(require('./url')('view', {
+                            PAGE: ref.target,
+                            id: $tr.data('transferRow').value,
+                            no: ''
+                        }));
+                    }
+                    return;
+                }
+
+                (options.field.onClick || rowDialog('modify', 'ok'))
+                    .call(this, $tr.data('transferRow'), function (transferRow) {
+                        //return $tr.replaceWith(tr(transferRow));
+                        var $tr2 = $tr.replaceWith(tr(transferRow));
+                        if (options.field.onRowChange) {
+                            options.field.onRowChange($tr2, transferRow);
+                        }
+                    });
+            });
         var EMPTY = '-';
+        var rowCommands = [];
+
+        function addRowCommand(className, html, click) {
+            rowCommands.push({
+                className: className,
+                html: html
+            });
+            $tbody
+                .on('click', 'tr button.' + className, click);
+        }
 
         function fieldTitle(field) {
             return field;
@@ -163,11 +201,15 @@ define(function (require) {
                         .text(transferRow.saved ? transferRow.saved.user : EMPTY));
             }
 
-            if (options.field.hasRowCommands) {
+            if (rowCommands.length) {
                 $tr.append($('<td>')
                     .css('text-align', 'right')
-                    .html($('<button type="button" class="btn btn-default btn-xs">')
-                        .append('<span class="glyphicon glyphicon-remove"></span> ' + MetkaJS.L10N.get('general.buttons.remove'))));
+                    .append($('<div class="btn-group btn-group-xs">')
+                    .append(rowCommands.map(function (button) {
+                        return $('<button type="button" class="btn btn-default">')
+                            .addClass(button.className)
+                            .html(button.html);
+                    }))));
             }
 
             return $tr;
@@ -341,41 +383,7 @@ define(function (require) {
         this.append($('<div class="panel">')
             .addClass('panel-' + (options.style || 'default'))
             .append($panelHeading)
-            .append($('<table class="table table-condensed">')
-                .if(options.field.onClick || !require('./isFieldDisabled')(options, lang), function () {
-                    this
-                        .addClass('table-hover');
-
-                    $tbody
-                        .on('click', 'tr', function () {
-                            var $tr = $(this);
-
-                            // if reference container without custom onClick
-                            if (fieldOptions.type === 'REFERENCECONTAINER' && !options.field.onClick) {
-                                // TODO: visualize new window behaviour. place this in row commands: <span class="glyphicon glyphicon-new-window"></span>
-
-                                // open reference target in new window
-                                var ref = options.dataConf.references[fieldOptions.reference];
-                                if (ref.type === 'REVISIONABLE') {
-                                    window.open(require('./url')('view', {
-                                        PAGE: ref.target,
-                                        id: $tr.data('transferRow').value,
-                                        no: ''
-                                    }));
-                                }
-                                return;
-                            }
-
-                            (options.field.onClick || rowDialog('modify', 'ok'))
-                                .call(this, $tr.data('transferRow'), function (transferRow) {
-                                    //return $tr.replaceWith(tr(transferRow));
-                                    var $tr2 = $tr.replaceWith(tr(transferRow));
-                                    if (options.field.onRowChange) {
-                                        options.field.onRowChange($tr2, transferRow);
-                                    }
-                                });
-                        });
-                })
+            .append($('<table class="table table-condensed table-hover">')
                 .me(function () {
                     $thead
                         .append($('<tr>')
@@ -407,19 +415,39 @@ define(function (require) {
                                 }
                             })
                             .append(function () {
+                                function addMoveButton(direction, sibling, insert) {
+                                    addRowCommand(direction, '<i class="glyphicon glyphicon-arrow-' + direction + '"></i>', function () {
+                                        var $tr = $(this).closest('tr');
+                                        var $toggleWithTr = $tr[sibling]();
+                                        var toggleWithTransferRow = $toggleWithTr.data('transferRow');
+                                        var rows = require('./data')(options).getByLang(lang);
+                                        if (toggleWithTransferRow) {
+                                            var transferRow = $tr.data('transferRow');
+                                            var row = rows.indexOf(toggleWithTransferRow);
+                                            rows[rows.indexOf(transferRow)] = toggleWithTransferRow;
+                                            rows[row] = transferRow;
+                                            $toggleWithTr[insert]($tr.detach());
+                                        }
+                                        return false;
+                                    });
+                                }
+                                if (!require('./isFieldDisabled')(options, lang)) {
+                                    addMoveButton('up', 'prev', 'before');
+                                    addMoveButton('down', 'next', 'after');
+                                }
                                 if (!require('./isFieldDisabled')(options, lang) || options.field.onRemove) {
-                                    options.field.hasRowCommands = true;
-                                    $tbody
-                                        .on('click', 'tr button', function () {
-                                            var $tr = $(this).closest('tr');
-                                            if (options.field.onRemove) {
-                                                options.field.onRemove($tr);
-                                            } else {
-                                                $tr.data('transferRow').removed = true;
-                                                $tr.remove();
-                                            }
-                                            return false;
-                                        });
+                                    addRowCommand('remove', '<i class="glyphicon glyphicon-remove"></i> ' + MetkaJS.L10N.get('general.buttons.remove'), function () {
+                                        var $tr = $(this).closest('tr');
+                                        if (options.field.onRemove) {
+                                            options.field.onRemove($tr);
+                                        } else {
+                                            $tr.data('transferRow').removed = true;
+                                            $tr.remove();
+                                        }
+                                        return false;
+                                    });
+                                }
+                                if (rowCommands.length) {
                                     return $('<th>');
                                 }
                             }));
@@ -430,13 +458,7 @@ define(function (require) {
                 .append(function () {
                     require('./data')(options).onChange(function () {
                         $tbody.empty();
-                        var rows = (function () {
-                            if (lang) {
-                                return require('./data')(options).getByLang(lang);
-                            } else {
-                                return require('./data')(options).get();
-                            }
-                        })();
+                        var rows = require('./data')(options).getByLang(lang);
                         if (rows) {
                             rows.forEach(appendRow);
                         }

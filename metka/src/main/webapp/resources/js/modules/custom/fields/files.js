@@ -66,7 +66,7 @@ define(function (require) {
                                         }
                                     }
                                 }),
-                                readOnly: require('./../../isDataReadOnly')(response.transferData),
+                                //readOnly: require('./../../isDataReadOnly')(response.transferData),
                                 $events: options.$events,
                                 defaultLang: 'DEFAULT',
                                 large: true,
@@ -271,7 +271,24 @@ define(function (require) {
                                                                 "filecomment",
                                                                 "date",
                                                                 "user"
-                                                            ]
+                                                            ],
+
+                                                            onClick: function (transferRow) {
+                                                                var $row = $(this);
+                                                                require('./../../server')('viewAjax', {
+                                                                    PAGE: 'STUDY_ATTACHMENT',
+                                                                    no: transferRow.fields.no.values.DEFAULT.current,
+                                                                    id: requestOptions.id
+                                                                }, {
+                                                                    method: 'GET',
+                                                                    success: function (response) {
+                                                                        if (response.result === 'VIEW_SUCCESSFUL') {
+                                                                            $.extend(modalOptions.data, response.transferData);
+                                                                            $row.trigger('refresh.metka');
+                                                                        }
+                                                                    }
+                                                                })
+                                                            }
                                                         },
                                                         create: function () {
                                                             var $containerField = $(this).children();
@@ -337,7 +354,13 @@ define(function (require) {
                                         "canRemoveRevision"
                                     ],
                                     create: function () {
-                                        this.click(require('./../../remove')(modalOptions, refreshPage));
+                                        this.click(require('./../../remove')($.extend({
+                                            success: {
+                                                SUCCESS_LOGICAL: refreshPage,
+                                                SUCCESS_DRAFT: refreshPage,
+                                                FINAL_REVISION: refreshPage
+                                            }
+                                        }, modalOptions)));
                                     }
                                 }, {
                                     "title": "Palauta",
@@ -348,8 +371,8 @@ define(function (require) {
                                     "permissions": [
                                         "canRestoreRevision"
                                     ],
-                                    create: function () {
-                                        this.click(refreshPage);
+                                    request: {
+                                        success: refreshPage
                                     }
                                 }, {
                                     type: 'CANCEL'

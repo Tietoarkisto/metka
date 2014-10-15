@@ -1,7 +1,7 @@
 define(function (require) {
     'use strict';
 
-    return function (options, success) {
+    return function (options) {
         return function () {
             var operationType = options.data.state.uiState === 'DRAFT' ? 'draft' : 'logical';
             require('./modal')({
@@ -18,11 +18,37 @@ define(function (require) {
                 buttons: [{
                     type: 'YES',
                     create: function () {
-                        $(this)
+                        this
                             .click(function () {
                                 require('./server')('remove', {
                                     data: JSON.stringify(options.data),
-                                    success: success
+                                    success: function (response) {
+                                        var success = $.extend({
+                                            SUCCESS_LOGICAL: function () {
+                                                require('./assignUrl')('view');
+                                            },
+                                            SUCCESS_DRAFT: function () {
+                                                require('./assignUrl')('view', {no: ''});
+                                            },
+                                            FINAL_REVISION: function () {
+                                                require('./assignUrl')('searchPage');
+                                            }
+                                        }, options.success);
+
+                                        success = success[response.result] || function (response) {
+                                            require('./modal')({
+                                                title: MetkaJS.L10N.get('alert.error.title'),
+                                                body: response.result /*data.errors.map(function (error) {
+                                                 return MetkaJS.L10N.get(error.msg);
+                                                 })*/,
+                                                buttons: [{
+                                                    type: 'DISMISS'
+                                                }]
+                                            });
+                                        };
+
+                                        success(response);
+                                    }
                                 });
                             });
                     }
