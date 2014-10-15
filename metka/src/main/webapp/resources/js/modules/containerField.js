@@ -260,7 +260,7 @@ define(function (require) {
                         // copy data, so if dialog is dismissed, original data won't change
                         var transferRowCopy = $.extend(true, {}, transferRow);
 
-                        var containerOptions = {
+                        var modalOptions = {
                             title: MetkaJS.L10N.get(['dialog', PAGE, key, title].join('.')),
                             data: transferRowCopy,
                             dataConf: options.dataConf,
@@ -310,10 +310,10 @@ define(function (require) {
 
                         // if not translatable container and has translatable subfields, show language selector
                         if (!fieldOptions.translatable && require('./containerHasTranslatableSubfields')(options)) {
-                            containerOptions.translatableCurrentLang = $('input[name="translation-lang"]:checked').val() || options.defaultLang;
+                            modalOptions.translatableCurrentLang = $('input[name="translation-lang"]:checked').val() || MetkaJS.User.role.defaultLanguage.toUpperCase();
                         }
 
-                        var $modal = require('./modal')(containerOptions);
+                        var $modal = require('./modal')(modalOptions);
 
                     };
                 }

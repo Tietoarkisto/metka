@@ -83,7 +83,11 @@ define(function (require) {
                 $elem.append($langField);
 
                 options.$events.on('translationLangChanged', onTranslationLangChange);
-                onTranslationLangChange(undefined, $('input[name="translation-lang"]:checked').val() || options.defaultLang);
+
+
+                onTranslationLangChange(undefined, $('input[name="translation-lang"]:checked').val() || (function r(options) {
+                    return options && options.translatableCurrentLang || r(options.parent);
+                })(options) || options.defaultLang);
             }
 
             fieldDataOptions = getPropertyNS(options, 'dataConf.fields', key) || {};
