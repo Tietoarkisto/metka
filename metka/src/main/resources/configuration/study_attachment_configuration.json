@@ -200,7 +200,7 @@
 			"key": "parsed",
 			"translatable": false,
 			"type": "BOOLEAN",
-			"editable": false
+			"editable": true
 		},
 		"study": {
 			"_comment": "This is filled automatically for each study attachment when initial revision is created.",

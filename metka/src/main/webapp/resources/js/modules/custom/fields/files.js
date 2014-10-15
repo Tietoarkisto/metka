@@ -260,6 +260,20 @@ define(function (require) {
                                                 "cells": [
                                                     {
                                                         "type": "CELL",
+                                                        hidden: typeof require('./../../utils/getPropertyNS')(response.transferData, 'fields.parsed.values.DEFAULT.current') === 'undefined',
+                                                        "title": "Parsi muuttujat uudelleen tallennuksen yhteydessä",
+                                                        "field": {
+                                                            "reverseBoolean": true,
+                                                            "key": "parsed"
+                                                        }
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "type": "ROW",
+                                                "cells": [
+                                                    {
+                                                        "type": "CELL",
                                                         "title": "Tiedostohistoria",
                                                         "readOnly": true,
                                                         "field": {
@@ -378,6 +392,7 @@ define(function (require) {
                                     type: 'CANCEL'
                                 }]
                             });
+
                             require('./../../modal')(modalOptions);
                         }
                     });

@@ -86,7 +86,7 @@ define(function (require) {
 
 
                 onTranslationLangChange(undefined, $('input[name="translation-lang"]:checked').val() || (function r(options) {
-                    return options && options.translatableCurrentLang || r(options.parent);
+                    return options && (options.translatableCurrentLang || r(options.parent));
                 })(options) || options.defaultLang);
             }
 
