@@ -2,7 +2,6 @@ define(function (require) {
     'use strict';
 
     return function (key, requestOptions, onSaveSuccess) {
-        var metka = require('./../metka');
         require('./server')('viewAjax', $.extend({
             PAGE: 'STUDY_VARIABLE'
         }, requestOptions), {
@@ -14,7 +13,7 @@ define(function (require) {
                     dataConf: data.configuration,
                     $events: $({}),
                     defaultLang: 'DEFAULT',
-                    translatableCurrentLang: 'DEFAULT',
+                    translatableCurrentLang: MetkaJS.User.role.defaultLanguage.toUpperCase(),
                     large: true,
                     "fieldTitles": {
                         "ivuinstr": {

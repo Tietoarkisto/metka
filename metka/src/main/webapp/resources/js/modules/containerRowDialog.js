@@ -52,7 +52,7 @@ define(function (require) {
 
                 // if not translatable container and has translatable subfields, show language selector
                 if (!fieldOptions.translatable && require('./containerHasTranslatableSubfields')(options)) {
-                    containerOptions.translatableCurrentLang = $('input[name="translation-lang"]:checked').val() || options.defaultLang;
+                    containerOptions.translatableCurrentLang = $('input[name="translation-lang"]:checked').val() || MetkaJS.User.role.defaultLanguage.toUpperCase();
                 }
 
                 var $modal = require('./modal')(containerOptions);
