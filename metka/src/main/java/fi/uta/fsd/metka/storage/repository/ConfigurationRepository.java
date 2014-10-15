@@ -8,6 +8,8 @@ import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 @Transactional(readOnly = true)
 public interface ConfigurationRepository {
@@ -25,4 +27,9 @@ public interface ConfigurationRepository {
     public Pair<ReturnResult, GUIConfiguration> findGUIConfiguration(ConfigurationType type, Integer version);
     public Pair<ReturnResult, GUIConfiguration> findGUIConfiguration(ConfigurationKey key);
     public Pair<ReturnResult, GUIConfiguration> findLatestGUIConfiguration(ConfigurationType type);
+
+    public List<ConfigurationKey> getDataKeys();
+    public List<ConfigurationKey> getGUIKeys();
+    public Pair<ReturnResult, String> getDataConfiguration(ConfigurationKey key);
+    public Pair<ReturnResult, String> getGUIConfiguration(ConfigurationKey key);
 }

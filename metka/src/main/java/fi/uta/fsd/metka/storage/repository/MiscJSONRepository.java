@@ -5,6 +5,8 @@ import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Transactional(readOnly = true)
 public interface MiscJSONRepository {
     /**
@@ -30,4 +32,7 @@ public interface MiscJSONRepository {
      * @return
      */
     public Pair<ReturnResult, JsonNode> findByKey(String key);
+
+    public List<String> getJsonKeys();
+    public Pair<ReturnResult, String> findStringByKey(String key);
 }

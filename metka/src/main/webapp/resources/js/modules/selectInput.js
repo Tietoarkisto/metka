@@ -13,11 +13,13 @@ define(function (require) {
                         .val('')
                         .text(MetkaJS.L10N.get('general.selection.empty')));
             }
-            $input.append(selectOptions.map(function (option) {
-                return $('<option>')
-                    .val(option.value)
-                    .text(require('./selectInputOptionText')(option));
-            }));
+            if(selectOptions) {
+                $input.append(selectOptions.map(function (option) {
+                    return $('<option>')
+                        .val(option.value)
+                        .text(require('./selectInputOptionText')(option));
+                }));
+            }
             require('./data')(options).onChange(function () {
                 var value = require('./data')(options).getByLang(lang);
                 if (typeof value !== 'undefined' && $input.children('option[value="' + value + '"]').length) {
@@ -62,9 +64,7 @@ define(function (require) {
                 return require('./inputField').call($('<div>'), options, 'STRING', lang);
             })(options)({
                 horizontal: true,
-                title: MetkaJS.L10N.get('fieldTitles.{field}.title'.supplant({
-                    field: list.freeTextKey
-                })),
+                title: MetkaJS.L10N.localize(options.fieldTitles[list.freeTextKey], 'title'),
                 field: {
                     key: list.freeTextKey
                 }

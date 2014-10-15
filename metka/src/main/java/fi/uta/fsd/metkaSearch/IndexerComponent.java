@@ -36,10 +36,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 @Service
 public class IndexerComponent {
@@ -64,7 +61,7 @@ public class IndexerComponent {
     private DirectoryManager manager;
 
     // Pool for indexer threads.
-    private ExecutorService indexerPool = Executors.newCachedThreadPool();
+    private ExecutorService threadPool = Executors.newCachedThreadPool();
 
     private final Map<RevisionKey, Boolean> studyCommandBatch = new ConcurrentHashMap<>();
 
@@ -139,35 +136,41 @@ public class IndexerComponent {
      * Creates indexing commands for every revision in every language in database
      */
     public void indexEverything() {
-        List<RevisionableEntity> entities = em.createQuery("SELECT e FROM RevisionableEntity e", RevisionableEntity.class).getResultList();
-        List<IndexerCommand> commands = new ArrayList<>();
-        for(RevisionableEntity entity : entities) {
-            List<Integer> nos = revisions.getAllRevisionNumbers(entity.getId());
-            for(Integer no : nos) {
-                for(Language language : Language.values()) {
-                    commands.add(RevisionIndexerCommand.index(ConfigurationType.fromValue(entity.getType()), language, entity.getId(), no));
+        threadPool.submit(new Callable<Boolean>() {
+            @Override
+            public Boolean call() throws Exception {
+                List<RevisionableEntity> entities = em.createQuery("SELECT e FROM RevisionableEntity e", RevisionableEntity.class).getResultList();
+                List<IndexerCommand> commands = new ArrayList<>();
+                for(RevisionableEntity entity : entities) {
+                    List<Integer> nos = revisions.getAllRevisionNumbers(entity.getId());
+                    for(Integer no : nos) {
+                        for(Language language : Language.values()) {
+                            commands.add(RevisionIndexerCommand.index(ConfigurationType.fromValue(entity.getType()), language, entity.getId(), no));
+                        }
+                    }
                 }
+                for(ConfigurationType type : ConfigurationType.values()) {
+                    switch(type) {
+                        case STUDY_ATTACHMENT:
+                        case STUDY_VARIABLES:
+                        case STUDY_VARIABLE:
+                            continue;
+                    }
+                    for(Language language : Language.values()) {
+                        IndexerCommand command = RevisionIndexerCommand.stop(type, language);
+                        manager.getIndexDirectory(command.getPath(), true).clearIndex();
+                        addCommand(command);
+                    }
+                }
+                for(IndexerCommand command : commands) {
+                    addCommand(command);
+                }
+                return true;
             }
-        }
-        for(ConfigurationType type : ConfigurationType.values()) {
-            switch(type) {
-                case STUDY_ATTACHMENT:
-                case STUDY_VARIABLES:
-                case STUDY_VARIABLE:
-                    continue;
-            }
-            for(Language language : Language.values()) {
-                IndexerCommand command = RevisionIndexerCommand.stop(type, language);
-                manager.getIndexDirectory(command.getPath(), true).clearIndex();
-                addCommand(command);
-            }
-        }
-        for(IndexerCommand command : commands) {
-            addCommand(command);
-        }
+        });
     }
 
-    public void addCommand(IndexerCommand command) {
+    public synchronized void addCommand(IndexerCommand command) {
         // TODO: make a better rule
         if(command.getPath().getAdditionalParameters().length > 0) {
             switch(command.getPath().getAdditionalParameters()[0]) {
@@ -197,7 +200,7 @@ public class IndexerComponent {
 
             Indexer indexer = createIndexer(path);
             //indexers.put(path, indexer);
-            handlers.put(path, indexerPool.submit(indexer));
+            handlers.put(path, threadPool.submit(indexer));
         }
     }
 

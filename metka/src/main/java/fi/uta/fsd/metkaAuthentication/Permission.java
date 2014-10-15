@@ -39,6 +39,7 @@ public  enum Permission {
     CAN_UPLOAD_CONFIGURATIONS(Values.CAN_UPLOAD_CONFIGURATIONS),
     CAN_UPLOAD_JSON(Values.CAN_UPLOAD_JSON),
     CAN_VIEW_INDEX_INFO(Values.CAN_VIEW_INDEX_INFO),
+    CAN_MANUALLY_INDEX_CONTENT(Values.CAN_MANUALLY_INDEX_CONTENT),
     CAN_VIEW_API_USERS(Values.CAN_VIEW_API_USERS),
     CAN_EDIT_API_USERS(Values.CAN_EDIT_API_USERS);
 
@@ -109,6 +110,7 @@ public  enum Permission {
         public static final String CAN_UPLOAD_CONFIGURATIONS = "canUploadConfigurations";
         public static final String CAN_UPLOAD_JSON = "canUploadJson";
         public static final String CAN_VIEW_INDEX_INFO = "canViewIndexInfo";
+        public static final String CAN_MANUALLY_INDEX_CONTENT = "canManuallyIndexContent";
         public static final String CAN_VIEW_API_USERS = "canViewAPIUsers";
         public static final String CAN_EDIT_API_USERS = "canEditAPIUsers";
     }

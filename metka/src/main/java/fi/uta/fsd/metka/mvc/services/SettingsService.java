@@ -5,10 +5,14 @@ import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.settings.APIUserListResponse;
+import fi.uta.fsd.metka.transfer.settings.JSONListEntry;
 import fi.uta.fsd.metka.transfer.settings.NewAPIUserRequest;
+import fi.uta.fsd.metka.transfer.settings.UploadJsonRequest;
 import fi.uta.fsd.metkaAuthentication.Permission;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 //@PreAuthorize("hasPermission('canViewSettingsPage', 'PERMISSION')")
 @PreAuthorize("hasPermission('"+ Permission.Values.CAN_VIEW_SETTINGS_PAGE +"', 'PERMISSION')")
@@ -35,6 +39,14 @@ public interface SettingsService {
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_EDIT_API_USERS +"', 'PERMISSION')")
     ReturnResult removeAPIUser(String publicKey);
+
+    @PreAuthorize("hasPermission('"+ Permission.Values.CAN_UPLOAD_CONFIGURATIONS +"', 'PERMISSION') OR " +
+            "hasPermission('"+ Permission.Values.CAN_UPLOAD_JSON +"', 'PERMISSION')")
+    List<JSONListEntry> getJsonList(UploadJsonRequest.JsonType type);
+
+    @PreAuthorize("hasPermission('"+ Permission.Values.CAN_UPLOAD_CONFIGURATIONS +"', 'PERMISSION') OR " +
+            "hasPermission('"+ Permission.Values.CAN_UPLOAD_JSON +"', 'PERMISSION')")
+    String getJsonContent(JSONListEntry entry);
 
     /*@PreAuthorize("hasPermission('"+ Permission.Values.CAN_UPLOAD_CONFIGURATIONS +"', 'PERMISSION')")
     void uploadDataConfig(MultipartFile file) throws IOException;

@@ -2,6 +2,7 @@ package fi.uta.fsd.metka.mvc.services.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
+import fi.uta.fsd.metka.model.general.ConfigurationKey;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import fi.uta.fsd.metka.mvc.services.SettingsService;
 import fi.uta.fsd.metka.storage.repository.APIUserRepository;
@@ -9,15 +10,14 @@ import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.MiscJSONRepository;
 import fi.uta.fsd.metka.storage.repository.ReportRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
-import fi.uta.fsd.metka.transfer.settings.APIUserEntry;
-import fi.uta.fsd.metka.transfer.settings.APIUserListResponse;
-import fi.uta.fsd.metka.transfer.settings.NewAPIUserRequest;
+import fi.uta.fsd.metka.transfer.settings.*;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -64,6 +64,64 @@ public class SettingsServiceImpl implements SettingsService {
 
     @Override public ReturnResult removeAPIUser(String publicKey) {
         return api.removeAPIUser(publicKey);
+    }
+
+    @Override
+    public List<JSONListEntry> getJsonList(UploadJsonRequest.JsonType type) {
+        List<JSONListEntry> entries = new ArrayList<>();
+        switch(type) {
+            case DATA_CONF: {
+                List<ConfigurationKey> keys = configurations.getDataKeys();
+                for (ConfigurationKey key : keys) {
+                    JSONListEntry entry = new JSONListEntry();
+                    entry.setConfigKey(key);
+                    entry.setType(type);
+                    entry.setTitle(key.getType().toValue() + "." + key.getVersion());
+                    entries.add(entry);
+                }
+                break;
+            }
+            case GUI_CONF: {
+                List<ConfigurationKey> keys = configurations.getGUIKeys();
+                for (ConfigurationKey key : keys) {
+                    JSONListEntry entry = new JSONListEntry();
+                    entry.setConfigKey(key);
+                    entry.setType(type);
+                    entry.setTitle(key.getType().toValue() + "." + key.getVersion());
+                    entries.add(entry);
+                }
+                break;
+            }
+            case MISC: {
+                List<String> keys = miscJSONRepository.getJsonKeys();
+                for (String key : keys) {
+                    JSONListEntry entry = new JSONListEntry();
+                    entry.setJsonKey(key);
+                    entry.setType(type);
+                    entry.setTitle(key);
+                    entries.add(entry);
+                }
+                break;
+            }
+        }
+        return entries;
+    }
+
+    @Override
+    public String getJsonContent(JSONListEntry entry) {
+        Pair<ReturnResult, String> result = null;
+        switch(entry.getType()) {
+            case DATA_CONF:
+                result = configurations.getDataConfiguration(entry.getConfigKey());
+                break;
+            case GUI_CONF:
+                result = configurations.getGUIConfiguration(entry.getConfigKey());
+                break;
+            case MISC:
+                result = miscJSONRepository.findStringByKey(entry.getJsonKey());
+                break;
+        }
+        return result == null || result.getRight() == null ? "" : result.getRight();
     }
 
     @Override

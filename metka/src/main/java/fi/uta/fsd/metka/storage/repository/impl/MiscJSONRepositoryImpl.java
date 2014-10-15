@@ -16,6 +16,8 @@ import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository("miscJSONRepository")
 public class MiscJSONRepositoryImpl implements MiscJSONRepository {
@@ -78,6 +80,26 @@ public class MiscJSONRepositoryImpl implements MiscJSONRepository {
             return new ImmutablePair<>(ReturnResult.MISC_JSON_NOT_FOUND, null);
         } else {
             return new ImmutablePair<>(ReturnResult.MISC_JSON_FOUND, pair.getRight());
+        }
+    }
+
+    @Override
+    public List<String> getJsonKeys() {
+        List<MiscJSONEntity> entities = em.createQuery("SELECT e FROM MiscJSONEntity e", MiscJSONEntity.class).getResultList();
+        List<String> keys = new ArrayList<>();
+        for(MiscJSONEntity entity : entities) {
+            keys.add(entity.getKey());
+        }
+        return keys;
+    }
+
+    @Override
+    public Pair<ReturnResult, String> findStringByKey(String key) {
+        MiscJSONEntity entity = em.find(MiscJSONEntity.class, key);
+        if(entity == null || !StringUtils.hasText(entity.getData())) {
+            return new ImmutablePair<>(ReturnResult.MISC_JSON_NOT_FOUND, null);
+        } else {
+            return new ImmutablePair<>(ReturnResult.MISC_JSON_FOUND, entity.getData());
         }
     }
 }

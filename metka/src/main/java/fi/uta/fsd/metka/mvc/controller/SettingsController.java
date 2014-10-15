@@ -11,6 +11,7 @@ import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.transfer.settings.APIUserListResponse;
+import fi.uta.fsd.metka.transfer.settings.JSONListEntry;
 import fi.uta.fsd.metka.transfer.settings.NewAPIUserRequest;
 import fi.uta.fsd.metka.transfer.settings.UploadJsonRequest;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
@@ -24,6 +25,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "settings")
@@ -45,6 +48,16 @@ public class SettingsController {
     public String settings(Model model) {
         ModelUtil.initSettings(model, indexer.indexerStatusList());
         return AuthenticationUtil.getModelName("page", model);
+    }
+
+    @RequestMapping(value = "getJsonList/{type}", method = RequestMethod.GET)
+    public @ResponseBody List<JSONListEntry> getJsonList(@PathVariable UploadJsonRequest.JsonType type) {
+        return service.getJsonList(type);
+    }
+
+    @RequestMapping(value = "getJsonContent", method = RequestMethod.POST)
+    public @ResponseBody String getJsonList(@RequestBody JSONListEntry entry) {
+        return service.getJsonContent(entry);
     }
 
     /**
@@ -106,57 +119,6 @@ public class SettingsController {
 
         return ReturnResult.OPERATION_SUCCESSFUL;
     }
-
-    /**
-     * Handles data configuration upload from the settings page.
-     * @throws Exception
-     */
-    /*@RequestMapping(value = "uploadDataConfiguration", method = {RequestMethod.POST})
-    public String uploadDataConfiguration(@ModelAttribute("uploadConfig")UploadRequest uploadConfig, BindingResult result, Model model)
-            throws Exception {
-        ModelUtil.initSettings(model, indexer.indexerStatusList());
-        uploadValidator.validate(uploadConfig, result);
-        if(result.hasErrors()) {
-            return AuthenticationUtil.getModelName("settings", model);
-        }
-
-        service.uploadDataConfig(uploadConfig.getFile());
-        return AuthenticationUtil.getModelName("settings", model);
-    }*/
-
-    /**
-     * Handles gui configuration upload from the settings page.
-     * @throws Exception
-     */
-    /*@RequestMapping(value = "uploadGUIConfiguration", method = {RequestMethod.POST})
-    public String uploadGUIConfiguration(@ModelAttribute("uploadConfig")UploadRequest uploadConfig, BindingResult result, Model model)
-            throws Exception {
-        ModelUtil.initSettings(model, indexer.indexerStatusList());
-        uploadValidator.validate(uploadConfig, result);
-        if(result.hasErrors()) {
-            return AuthenticationUtil.getModelName("settings", model);
-        }
-
-        service.uploadGuiConfig(uploadConfig.getFile());
-        return AuthenticationUtil.getModelName("settings", model);
-    }*/
-
-    /**
-     * Handles configuration upload from the settings page.
-     * @throws Exception
-     */
-    /*@RequestMapping(value = "uploadMiscJson", method = {RequestMethod.POST})
-    public String uploadMiscJson(@ModelAttribute("uploadMisc")UploadRequest uploadMisc, BindingResult result, Model model)
-            throws Exception {
-        ModelUtil.initSettings(model, indexer.indexerStatusList());
-        uploadValidator.validate(uploadMisc, result);
-        if(result.hasErrors()) {
-            return AuthenticationUtil.getModelName("settings", model);
-        }
-
-        service.uploadJson(uploadMisc.getFile());
-        return AuthenticationUtil.getModelName("settings", model);
-    }*/
 
     @RequestMapping(value="downloadReport", method = RequestMethod.GET)
     public HttpEntity<byte[]> downloadReport() {

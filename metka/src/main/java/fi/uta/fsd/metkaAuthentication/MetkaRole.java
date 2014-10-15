@@ -271,7 +271,8 @@ public final class MetkaRole implements Comparable<MetkaRole> {
                     .grant(Permission.CAN_REMOVE_STUDY_VERSIONS)
                     .grant(Permission.CAN_UPLOAD_CONFIGURATIONS)
                     .grant(Permission.CAN_UPLOAD_JSON)
-                    .grant(Permission.CAN_VIEW_INDEX_INFO);
+                    .grant(Permission.CAN_VIEW_INDEX_INFO)
+                    .grant(Permission.CAN_MANUALLY_INDEX_CONTENT);
         }
 
         public static MetkaRoleBuilder getAdmin() {

@@ -1,4 +1,4 @@
-=Release notes 2014-10-13=
+=Release notes 2014-10-15 Pre Testing=
 
 ++Started issues++
 #88 Data- ja GUI-konfiguraatioiden, sekä misc-Json tiedostojen tallentaminen AJAX-pohjaisella operaatiolla

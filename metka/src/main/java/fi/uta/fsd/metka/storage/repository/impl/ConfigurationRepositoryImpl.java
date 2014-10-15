@@ -24,6 +24,7 @@ import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.List;
 
 import static fi.uta.fsd.Logger.error;
@@ -301,6 +302,64 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
                         .getResultList();
 
         return deserializeGUIConfiguration(list);
+    }
+
+    @Override
+    public List<ConfigurationKey> getDataKeys() {
+        List<ConfigurationEntity> entities = em.createQuery("SELECT e FROM ConfigurationEntity e", ConfigurationEntity.class).getResultList();
+        List<ConfigurationKey> keys = new ArrayList<>();
+        for (ConfigurationEntity entity : entities) {
+            keys.add(new ConfigurationKey(entity.getType(), entity.getVersion()));
+        }
+        return keys;
+    }
+
+    @Override
+    public List<ConfigurationKey> getGUIKeys() {
+        List<GUIConfigurationEntity> entities = em.createQuery("SELECT e FROM GUIConfigurationEntity e", GUIConfigurationEntity.class).getResultList();
+        List<ConfigurationKey> keys = new ArrayList<>();
+        for (GUIConfigurationEntity entity : entities) {
+            keys.add(new ConfigurationKey(entity.getType(), entity.getVersion()));
+        }
+        return keys;
+    }
+
+    @Override
+    public Pair<ReturnResult, String> getDataConfiguration(ConfigurationKey key) {
+        List<ConfigurationEntity> list =
+                em.createQuery(
+                        "SELECT c FROM ConfigurationEntity c WHERE c.type = :type AND c.version = :version",
+                        ConfigurationEntity.class)
+                        .setParameter("type", key.getType())
+                        .setParameter("version", key.getVersion())
+                        .getResultList();
+        if(list.isEmpty()) {
+            return new ImmutablePair<>(ReturnResult.CONFIGURATION_NOT_FOUND, null);
+        }
+        if(list.size() > 1) {
+            error(ConfigurationRepositoryImpl.class, "There are multiple instances of " + key.toString() + " in the database.");
+            return new ImmutablePair<>(ReturnResult.DATABASE_DISCREPANCY, null);
+        }
+        return new ImmutablePair<>(ReturnResult.CONFIGURATION_FOUND, list.get(0).getData());
+    }
+
+    @Override
+    public Pair<ReturnResult, String> getGUIConfiguration(ConfigurationKey key) {
+        List<GUIConfigurationEntity> list =
+                em.createQuery(
+                        "SELECT c FROM GUIConfigurationEntity c WHERE c.type = :type AND c.version = :version",
+                        GUIConfigurationEntity.class)
+                        .setParameter("type", key.getType())
+                        .setParameter("version", key.getVersion())
+                        .getResultList();
+        if(list.isEmpty()) {
+            return new ImmutablePair<>(ReturnResult.CONFIGURATION_NOT_FOUND, null);
+        }
+        if(list.size() > 1) {
+            error(ConfigurationRepositoryImpl.class, "There are multiple instances of " + key.toString() + " in the database.");
+            return new ImmutablePair<>(ReturnResult.DATABASE_DISCREPANCY, null);
+        }
+        return new ImmutablePair<>(ReturnResult.CONFIGURATION_FOUND, list.get(0).getData());
     }
 
     private Pair<ReturnResult, GUIConfiguration> deserializeGUIConfiguration(List<GUIConfigurationEntity> list) {
