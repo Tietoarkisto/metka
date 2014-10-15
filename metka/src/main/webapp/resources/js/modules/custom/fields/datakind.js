@@ -34,6 +34,8 @@ define(function (require) {
                                         }
                                     ]
                                 })
+                            } else {
+                                params.performChange(params.change);
                             }
                         }
                     }
