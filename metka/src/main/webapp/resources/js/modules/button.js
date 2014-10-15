@@ -312,8 +312,8 @@ define(function (require) {
 
             if (options.permissions && options.permissions.length) {
                 // if some permission is not given
-                if (options.permissions.some(function (permission) {
-                    return !MetkaJS.User.role.permissions[permission];
+                if (!options.permissions.every(function (permission) {
+                    return MetkaJS.User.role.permissions[permission];
                 })) {
                     //log('permissions', options)
                     return false;

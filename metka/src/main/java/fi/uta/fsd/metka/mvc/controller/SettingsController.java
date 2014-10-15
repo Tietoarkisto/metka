@@ -1,6 +1,7 @@
 package fi.uta.fsd.metka.mvc.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import fi.uta.fsd.metka.mvc.ModelUtil;
@@ -43,7 +44,7 @@ public class SettingsController {
     @RequestMapping("")
     public String settings(Model model) {
         ModelUtil.initSettings(model, indexer.indexerStatusList());
-        return AuthenticationUtil.getModelName("settings", model);
+        return AuthenticationUtil.getModelName("page", model);
     }
 
     /**
@@ -63,12 +64,20 @@ public class SettingsController {
                 if(result.getLeft() != SerializationResults.DESERIALIZATION_SUCCESS) {
                     return ReturnResult.OPERATION_FAIL;
                 }
+                ReturnResult r = service.uploadConfiguration(result.getRight());
+                if(r != ReturnResult.OPERATION_SUCCESSFUL) {
+                    return r;
+                }
                 break;
             }
             case GUI_CONF: {
                 Pair<SerializationResults, GUIConfiguration> result = json.deserializeGUIConfiguration(request.getJson());
                 if(result.getLeft() != SerializationResults.DESERIALIZATION_SUCCESS) {
                     return ReturnResult.OPERATION_FAIL;
+                }
+                ReturnResult r = service.uploadConfiguration(result.getRight());
+                if(r != ReturnResult.OPERATION_SUCCESSFUL) {
+                    return r;
                 }
                 break;
             }
@@ -77,7 +86,18 @@ public class SettingsController {
                 if(result.getLeft() != SerializationResults.DESERIALIZATION_SUCCESS) {
                     return ReturnResult.OPERATION_FAIL;
                 }
-                // TODO: Check for existence of key-value and data-array
+                JsonNode node = result.getRight().get("key");
+                if(node == null || node.getNodeType() != JsonNodeType.STRING || !StringUtils.hasText(node.textValue())) {
+                    return ReturnResult.OPERATION_FAIL;
+                }
+                node = result.getRight().get("data");
+                if(node == null || node.getNodeType() != JsonNodeType.ARRAY || node.size() == 0) {
+                    return ReturnResult.OPERATION_FAIL;
+                }
+                ReturnResult r = service.uploadJson(result.getRight());
+                if(r != ReturnResult.OPERATION_SUCCESSFUL) {
+                    return r;
+                }
                 break;
             }
             default:
@@ -161,7 +181,7 @@ public class SettingsController {
     public String indexEverything(Model model) {
         ModelUtil.initSettings(model, indexer.indexerStatusList());
         indexer.indexEverything();
-        return AuthenticationUtil.getModelName("settings", model);
+        return AuthenticationUtil.getModelName("page", model);
     }
 
     @RequestMapping(value="listAPIUsers", method = RequestMethod.GET)

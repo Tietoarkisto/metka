@@ -86,6 +86,82 @@ define(function (require) {
                                     }
                                 }
                             ]
+                        },
+                        {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "colspan": 1,
+                                    "contentType": "BUTTON",
+                                    "button": {
+                                        "title": "Tallenna haku",
+                                        create: function () {
+                                            this
+                                                .click(function () {
+                                                    var containerOptions = {
+                                                        data: {},
+                                                        dataConf: {},
+                                                        $events: $({}),
+                                                        defaultLang: options.defaultLang,
+                                                        content: [
+                                                            {
+                                                                type: 'COLUMN',
+                                                                columns: 1,
+                                                                rows: [
+                                                                    {
+                                                                        "type": "ROW",
+                                                                        "cells": [
+                                                                            {
+                                                                                "type": "CELL",
+                                                                                "title": "Nimi",
+                                                                                "colspan": 1,
+                                                                                "field": {
+                                                                                    "displayType": "STRING",
+                                                                                    "key": "title"
+                                                                                }
+                                                                            }
+                                                                        ]
+                                                                    }
+                                                                ]
+                                                            }
+                                                        ]
+                                                    };
+                                                    require('./../modal')({
+                                                        title: 'Tallenna haku',
+                                                        body: require('./../container').call($('<div>'), containerOptions),
+                                                        buttons: [
+                                                            {
+                                                                "&title": {
+                                                                    "default": 'Tallenna'
+                                                                },
+                                                                create: function () {
+                                                                    this
+                                                                        .click(function () {
+                                                                            require('./../server')('/expert/save', {
+                                                                                data: JSON.stringify({
+                                                                                    query: require('./../data')(options)('search').getByLang(options.defaultLang),
+                                                                                    title: require('./../data')(containerOptions)('title').getByLang(options.defaultLang)
+                                                                                }),
+                                                                                success: addRow
+                                                                            });
+                                                                        });
+                                                                }
+                                                            },
+                                                            {
+                                                                type: 'CANCEL'
+                                                            }
+                                                        ]
+                                                    });
+                                                });
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "EMPTYCELL",
+                                    "colspan": 1
+                                }
+                            ]
                         }
                     ]
                 }

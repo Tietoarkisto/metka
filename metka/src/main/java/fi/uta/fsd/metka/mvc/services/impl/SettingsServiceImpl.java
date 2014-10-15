@@ -1,5 +1,8 @@
 package fi.uta.fsd.metka.mvc.services.impl;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import fi.uta.fsd.metka.model.configuration.Configuration;
+import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import fi.uta.fsd.metka.mvc.services.SettingsService;
 import fi.uta.fsd.metka.storage.repository.APIUserRepository;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
@@ -9,23 +12,17 @@ import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.settings.APIUserEntry;
 import fi.uta.fsd.metka.transfer.settings.APIUserListResponse;
 import fi.uta.fsd.metka.transfer.settings.NewAPIUserRequest;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 @Service
 public class SettingsServiceImpl implements SettingsService {
-    private static Logger logger = LoggerFactory.getLogger(SettingsService.class);
+
     @Autowired
     private ConfigurationRepository configurations;
 
@@ -70,27 +67,27 @@ public class SettingsServiceImpl implements SettingsService {
     }
 
     @Override
-    public void uploadDataConfig(MultipartFile file) throws IOException {
-        backupAndCopy(file, "configuration");
+    public ReturnResult uploadConfiguration(Configuration configuration) {
+        //backupAndCopy(file, "configuration");
 
-        String text = new String(file.getBytes());
-        configurations.insertDataConfig(text);
+        ReturnResult result = configurations.insert(configuration);
+        return result == ReturnResult.DATABASE_INSERT_SUCCESS ? ReturnResult.OPERATION_SUCCESSFUL : result;
     }
 
     @Override
-    public void uploadGuiConfig(MultipartFile file) throws IOException {
-        backupAndCopy(file, "gui");
+    public ReturnResult uploadConfiguration(GUIConfiguration configuration) {
+        //backupAndCopy(file, "gui");
 
-        String text = new String(file.getBytes());
-        configurations.insertGUIConfig(text);
+        ReturnResult result = configurations.insert(configuration);
+        return result == ReturnResult.DATABASE_INSERT_SUCCESS ? ReturnResult.OPERATION_SUCCESSFUL : result;
     }
 
     @Override
-    public void uploadJson(MultipartFile file) throws IOException {
-        backupAndCopy(file, "misc");
+    public ReturnResult uploadJson(JsonNode misc) {
+        //backupAndCopy(file, "misc");
 
-        String text = new String(file.getBytes());
-        miscJSONRepository.insert(text);
+        ReturnResult result = miscJSONRepository.insert(misc);
+        return result == ReturnResult.DATABASE_INSERT_SUCCESS ? ReturnResult.OPERATION_SUCCESSFUL : result;
     }
 
     /**
@@ -103,7 +100,8 @@ public class SettingsServiceImpl implements SettingsService {
      * @param folder What folder under autoload folder should the file be in
      */
     private void backupAndCopy(MultipartFile file, String folder) {
-        String confFolder = rootFolder+folder+"/";
+        // TODO: How to back up autoload data that is updated through ajax-call containing json and not a file...
+        /*String confFolder = rootFolder+folder+"/";
         File dir = new File(confFolder);
         if(!dir.exists()) {
             dir.mkdirs();
@@ -134,7 +132,7 @@ public class SettingsServiceImpl implements SettingsService {
             file.transferTo(location);
         } catch(IOException ioe) {
             ioe.printStackTrace();
-            logger.error("IOException while trying to save new configuration to file "+location.getName());
-        }
+            Logger.error(SettingsServiceImpl.class, "IOException while trying to save new configuration to file " + location.getName());
+        }*/
     }
 }

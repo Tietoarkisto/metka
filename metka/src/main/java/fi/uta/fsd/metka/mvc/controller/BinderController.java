@@ -20,7 +20,7 @@ public class BinderController {
     @RequestMapping("")
     public String settings(Model model) {
         ModelUtil.initBinder(model);
-        return AuthenticationUtil.getModelName("revision", model);
+        return AuthenticationUtil.getModelName("page", model);
     }
 
     @RequestMapping(value="saveBinderPage", method = RequestMethod.POST)

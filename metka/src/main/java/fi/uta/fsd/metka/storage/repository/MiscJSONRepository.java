@@ -12,9 +12,9 @@ public interface MiscJSONRepository {
      *
      * @param misc Misc JSON data to be inserted.
      */
-    @Transactional(readOnly = false) public void insert(JsonNode misc);
+    @Transactional(readOnly = false) public ReturnResult insert(JsonNode misc);
 
-    @Transactional(readOnly = false) public void insert(String text);
+    @Transactional(readOnly = false) public ReturnResult insert(String text);
 
     /**
      * If previous data exists for given Misc JSON tree the new content is merged to the old content

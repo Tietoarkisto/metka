@@ -1,23 +1,14 @@
 =Release notes 2014-10-10=
 
 ++Started issues++
-#56 Dokumentaatiosta puuttuu kuvaus rajapinnan kautta tallennettavan datan integriteetin säilymisen takaavista säännöistä
-https://github.com/Tietoarkisto/metka/issues/56
-
-#83 Erottelu kvali- ja kvantiaineistojen välillä ei toimi kuvailu-välilehdellä 
-https://github.com/Tietoarkisto/metka/issues/83
-
-#89 Liitetiedoston revisiohistorian listaus
-https://github.com/Tietoarkisto/metka/issues/89
-
-#90 Poistettujen liitetiedostojen filtteröinti omaan listaansa
-https://github.com/Tietoarkisto/metka/issues/90
+#88 Data- ja GUI-konfiguraatioiden, sekä misc-Json tiedostojen tallentaminen AJAX-pohjaisella operaatiolla
+https://github.com/Tietoarkisto/metka/issues/88
 
 #92 DDI-import toiminnallisuus
 https://github.com/Tietoarkisto/metka/issues/92
 
-
-
+#109 Dokumentaatioparannusten toteutus
+https://github.com/Tietoarkisto/metka/issues/109
 
 ++Resolved removed after testing++
 
@@ -25,8 +16,17 @@ https://github.com/Tietoarkisto/metka/issues/92
 
 
 ++Resolved issues++
+#63 Yksi aineisto ei indeksoidu
+https://github.com/Tietoarkisto/metka/issues/63
+
 #66 Mappitiedot eivät näy aineston näytöllä
 https://github.com/Tietoarkisto/metka/issues/66
+
+#69 Asiasanat - väärät kenttätyypit
+https://github.com/Tietoarkisto/metka/issues/69
+
+#70 Huomautuksiin ei tule tallentaja- ja pvmtietoja
+https://github.com/Tietoarkisto/metka/issues/70
 
 #74 Tiedoston hallinnasta ei voi poistaa tiedoston riviä.
 https://github.com/Tietoarkisto/metka/issues/74
@@ -40,10 +40,22 @@ https://github.com/Tietoarkisto/metka/issues/83
 #84 Jos ruksaa "Ei painokertoimia" -checkboxin, valintaa ei saa enää pois
 https://github.com/Tietoarkisto/metka/issues/84
 
+#89 Liitetiedoston revisiohistorian listaus
+https://github.com/Tietoarkisto/metka/issues/89
+
+#90 Poistettujen liitetiedostojen filtteröinti omaan listaansa
+https://github.com/Tietoarkisto/metka/issues/90
+
 #93 biblCit kentän sisällön tuottaminen
 https://github.com/Tietoarkisto/metka/issues/93
 BiblCit säännöt löytyvät Alfrescosta: https://ecm.proactum.fi/share/page/site/metka/document-details?nodeRef=workspace://SpacesStore/85493947-9ebf-431c-862c-6961e49cb35b
 - URNin (ja yleensäkkin pakettien) muodostusta ei ole tarkastettu
+
+#94 Datan versiot ja kuvailun versiot - molemmista puuttuu tekstikenttä "Julkinen selite"
+https://github.com/Tietoarkisto/metka/issues/94
+
+#97 Lista tilanteista, joissa on tullut virheilmoituksia
+https://github.com/Tietoarkisto/metka/issues/97
 
 #101 Sarjan Kuvaus kenttä on valkoinen tilassa "Hyväksytty"
 https://github.com/Tietoarkisto/metka/issues/101
@@ -59,6 +71,9 @@ https://github.com/Tietoarkisto/metka/issues/107
 
 #108 Metka availi selaimeen tyhjiä välilehtiä
 https://github.com/Tietoarkisto/metka/issues/108
+
+- Hakutulokset voi ladata nyt json-tiedostona. Voidaan muuntaa csv-tiedostoksi tarvittaessa.
+- Taulukoiden rivit voi nyt järjestää uudelleen mutta uusi järjestys ei vielä tallennu. Kts. issue #111
 
 
 ++Proactum tested issues++
@@ -108,18 +123,28 @@ https://github.com/Tietoarkisto/metka/issues/87
 #91 Poistetun revisioitavan objektin palautus
 https://github.com/Tietoarkisto/metka/issues/91
 
-#94 Datan versiot ja kuvailun versiot - molemmista puuttuu tekstikenttä "Julkinen selite"
-https://github.com/Tietoarkisto/metka/issues/94
-
 #95 Pop-up-ikkuna syötettyine tietoineen katoaa, jos sen ohi klikkaa vahingossa
 https://github.com/Tietoarkisto/metka/issues/95
 
 
-
-
 ++Closed issues++
+#56 Dokumentaatiosta puuttuu kuvaus rajapinnan kautta tallennettavan datan integriteetin säilymisen takaavista säännöistä
+https://github.com/Tietoarkisto/metka/issues/56
+- Yhdistetty issuen #71 kanssa uudeksi dokumentointi-issueksi #109
+
+#57 Eksperttihaku ohjaa väärään osoitteeseen
+https://github.com/Tietoarkisto/metka/issues/57
+
 #58 Samaa Metka-instanssia ei voi käyttää sekä GUIn että API:n kautta
 https://github.com/Tietoarkisto/metka/issues/58
 
 #59 Rajapintakutsu /api/createStudy edellyttää Shibboleth-autentikointia
 https://github.com/Tietoarkisto/metka/issues/59
+
+#68 Kaiken indeksointi jumittaa Metkan muut toiminnallisuudet
+https://github.com/Tietoarkisto/metka/issues/68
+- Yhdistetty issueen #67
+
+#71 Sanastojen ja organisaatiolistauksen lisääminen
+https://github.com/Tietoarkisto/metka/issues/71
+- Yhdistetty issuen #56 kanssa uudeksi dokumentointi-issueksi #109

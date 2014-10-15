@@ -13,7 +13,8 @@ define(function (require) {
         publication: require('./pages/publication'),
         series: require('./pages/series'),
         study: require('./pages/study'),
-        study_variables: require('./pages/study_variables')
+        study_variables: require('./pages/study_variables'),
+        settings: require('./pages/settings')
     };
 
     if (!pages[page]) {
