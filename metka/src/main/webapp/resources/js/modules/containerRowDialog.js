@@ -11,7 +11,6 @@ define(function (require) {
                 // copy data, so if dialog is dismissed, original data won't change
                 var transferRowCopy = $.extend(true, {}, transferRow);
 
-
                 var containerOptions = $.extend(require('./isFieldDisabled')(options, lang) ? {
                     title: 'Tiedot',
                     readOnly: true,
@@ -41,6 +40,8 @@ define(function (require) {
                     dataConf: options.dataConf,
                     $events: $({}),
                     defaultLang: fieldOptions.translatable ? lang : options.defaultLang,
+                    fieldTitles: options.fieldTitles,
+                    dialogTitles: options.dialogTitles,
                     content: [
                         {
                             type: 'COLUMN',
@@ -54,7 +55,6 @@ define(function (require) {
                 if (!fieldOptions.translatable && require('./containerHasTranslatableSubfields')(options)) {
                     containerOptions.translatableCurrentLang = $('input[name="translation-lang"]:checked').val() || MetkaJS.User.role.defaultLanguage.toUpperCase();
                 }
-
                 var $modal = require('./modal')(containerOptions);
 
             };

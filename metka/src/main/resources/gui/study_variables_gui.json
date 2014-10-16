@@ -39,6 +39,20 @@
             				"cells": [
             					{
             						"type": "CELL",
+            						"title": "Aineisto:",
+            						"collspan": 3,
+            						"field": {
+            							"key": "study",
+            							"displayType": "LINK"
+            						}
+            					}
+            				]
+            			},
+            			{
+            				"type": "ROW",
+            				"cells": [
+            					{
+            						"type": "CELL",
             						"title": "Nimi",
             						"field": {
             							"key": "varfileid"

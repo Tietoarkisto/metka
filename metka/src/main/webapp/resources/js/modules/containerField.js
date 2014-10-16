@@ -361,7 +361,7 @@ define(function (require) {
                                 type: 'CELL',
                                 translatable: fieldOptions.translatable ? false : dataConfig.translatable,
                                 //title: MetkaJS.L10N.get(fieldTitle(field)),
-                                title: getTitle(field),
+                                //title: getTitle(field),
                                 field: {
                                     key: field
                                 }
