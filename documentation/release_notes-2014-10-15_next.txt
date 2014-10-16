@@ -1,8 +1,6 @@
 =Release notes 2014-10-15=
 
 ++Started issues++
-#88 Data- ja GUI-konfiguraatioiden, sekä misc-Json tiedostojen tallentaminen AJAX-pohjaisella operaatiolla
-https://github.com/Tietoarkisto/metka/issues/88
 
 #92 DDI-import toiminnallisuus
 https://github.com/Tietoarkisto/metka/issues/92
@@ -19,6 +17,9 @@ https://github.com/Tietoarkisto/metka/issues/109
 
 #61 Indeksoinnista ei saa vastaussivua
 https://github.com/Tietoarkisto/metka/issues/61
+
+#88 Data- ja GUI-konfiguraatioiden, sekä misc-Json tiedostojen tallentaminen AJAX-pohjaisella operaatiolla
+https://github.com/Tietoarkisto/metka/issues/88
 
 
 ++Proactum tested issues++

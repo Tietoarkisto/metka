@@ -589,6 +589,8 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 containerChange = new ContainerChange(field.getKey());
             }
 
+            // TODO: Reorder the rows to the UI provided order assuming the container can be reordered
+
             // Regardless of if there are missing rows we are going to save the changes in existing and new rows
             // but no rows are going to be deleted because of them missing from TransferField
             if (transferField.hasRowsFor(language)) {
@@ -654,6 +656,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                                 // Make sure that row change is in the container change since there has been an actual change.
                                 containerChange.put(rowChange);
                                 row.setSaved(info);
+                                tr.setSaved(info);
                                 changes = true;
                             }
                         }
