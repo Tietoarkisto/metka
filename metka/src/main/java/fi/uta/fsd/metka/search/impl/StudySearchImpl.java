@@ -24,10 +24,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class StudySearchImpl implements StudySearch {
@@ -136,7 +133,15 @@ public class StudySearchImpl implements StudySearch {
             result.setId(id);
             result.setType(ConfigurationType.STUDY);
             result.getValues().put("score", score.toString());
+            results.add(result);
         }
+
+        Collections.sort(results, new Comparator<RevisionSearchResult>() {
+            @Override
+            public int compare(RevisionSearchResult o1, RevisionSearchResult o2) {
+                return Long.compare(Long.parseLong(o2.getValues().get("score")), Long.parseLong(o1.getValues().get("score")));
+            }
+        });
 
         return new ImmutablePair<>(results.isEmpty() ? ReturnResult.NO_RESULTS : ReturnResult.SEARCH_SUCCESS, results);
     }

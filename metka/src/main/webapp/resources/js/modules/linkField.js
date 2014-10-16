@@ -8,7 +8,7 @@ define(function (require) {
         if (dataConf.type === 'REFERENCE') {
 
             var reference = require('./utils/getPropertyNS')(options, 'dataConf.references', dataConf.reference);
-            var getOptions = require('./reference').options(key, options, lang, function (listOptions) {
+            var getOptions = require('./reference').optionsByPath(key, options, lang, function (listOptions) {
                 var value = require('./data')(options).getByLang(lang);
                 var option = listOptions.find(function (option) {
                     return option.value === value;

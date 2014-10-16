@@ -1807,7 +1807,8 @@
             "title": "Export DDI",
             "type": "EXPORT_DDI",
             "permissions": [
-                "canViewRevision"
+                "canViewRevision",
+                "canExportRevision"
             ]
         }
     ]

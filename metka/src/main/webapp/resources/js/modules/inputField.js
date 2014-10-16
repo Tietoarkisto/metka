@@ -124,7 +124,7 @@ define(function (require) {
 
                     require('./data')(options).onChange(function () {
                         function setValue() {
-                            require('./reference').option(key, options, lang, function (value) {
+                            require('./reference').optionByPath(key, options, lang, function (value) {
                                 $input.val(value);
                             })(options.data.fields, reference);
                         }

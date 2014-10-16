@@ -4,7 +4,7 @@ define(function (require) {
     return function (options) {
         delete options.field.displayType;
 
-        $.extend(true, options, {
+        return {
             field: {
                 key: "relatedBinders",
                 columnFields: [
@@ -33,10 +33,6 @@ define(function (require) {
                 }
             },
             readOnly: true,
-            '&title': options['&title']
-        });
-
-        return {
             create: function create(options) {
                 var $field = this.children().first();
                 require('./../../server')('/binder/listStudyBinderPages/{id}', {

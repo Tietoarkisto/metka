@@ -160,7 +160,7 @@ class GeneralRevisionHandler implements RevisionHandler {
         // There's approval date for the command language
         if(data.getApproved().get(language) != null) {
             document.indexKeywordField("state.approved.time", data.getApproved().get(language).getTime().toString(), YES);
-            document.indexKeywordField("state.approved.user", data.getApproved().get(language).getTime().toString(), YES);
+            document.indexKeywordField("state.approved.user", data.getApproved().get(language).getUser(), YES);
         }
 
 

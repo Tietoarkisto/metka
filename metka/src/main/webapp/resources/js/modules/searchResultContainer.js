@@ -15,12 +15,9 @@ define(function (require) {
         require('./server')(url, {
             data: JSON.stringify(requestData()),
             success: function (data) {
-                var fieldOptions = {
-                    $events: $({}),
-                    defaultLang: 'DEFAULT',
-                    dataConf: options ? $.extend({}, options.dataConf, {
-                            fields: fields
-                        }) : {
+                var fieldOptions = $.extend(true, options, {
+                    buttons: null,
+                    dataConf: {
                         fields: fields
                     },
                     data: {
@@ -39,7 +36,7 @@ define(function (require) {
                         columnFields: columnFields,
                         onClick: trOnClick
                     }
-                };
+                });
                 var results = getResults(data);
                 var objectToTransferRow = require('./map/object/transferRow');
                 fieldOptions.data.fields.searchResults.rows.DEFAULT = results.map(mapResult).map(function (result) {

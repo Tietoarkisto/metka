@@ -33,7 +33,7 @@ define(function (require) {
                         //return $tr.replaceWith(tr(transferRow));
                         var $tr2 = $tr.replaceWith(tr(transferRow));
                         if (options.field.onRowChange) {
-                            options.field.onRowChange($tr2, transferRow);
+                            options.field.onRowChange(options, $tr2, transferRow);
                         }
                     });
             });
@@ -134,7 +134,7 @@ define(function (require) {
                             var refKey = getPropertyNS(options, 'dataConf.fields', column, 'reference');
                             var reference = getPropertyNS(options, 'dataConf.references', refKey);
 
-                            require('./reference').option(column, options, columnLang, setText)(transferRow.fields, reference);
+                            require('./reference').optionByPath(column, options, columnLang, setText)(transferRow.fields, reference);
                             return;
                         }
 
@@ -180,7 +180,7 @@ define(function (require) {
                                 return;
                             }
                             if (list.type === 'REFERENCE') {
-                                require('./reference').options(column, options, lang, setOptionText)(transferRow.fields, {
+                                require('./reference').optionsByPath(column, options, lang, setOptionText)(transferRow.fields, {
                                     target: column
                                 });
                             } else {
@@ -371,7 +371,7 @@ define(function (require) {
                 });
             });
         }
-
+        // TODO: Should probably be on container options instead
         this.data('addRowFromDataObject', addRowFromDataObject);
         this.data('addRow', addRow);
 
@@ -479,7 +479,7 @@ define(function (require) {
                                         .call(this, {}, function (transferRow) {
                                             var $tr = addRow(transferRow);
                                             if (options.field.onRowChange) {
-                                                options.field.onRowChange($tr, transferRow);
+                                                options.field.onRowChange(options, $tr, transferRow);
                                             }
                                         });
                                 });

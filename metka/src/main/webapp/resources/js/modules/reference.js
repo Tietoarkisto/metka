@@ -53,8 +53,72 @@ define(function (require) {
                 });
             };
         },
+        optionsByPath: function (key, options, lang, callback) {
+            return function (dataFields, reference) {
+                // TODO: This should always be called with reference, also reference fetching should be generalized somewhere
+                if(!reference) {
+                    var target = getPropertyNS(options, 'dataConf.fields', key);
+                    if(target.type === "REFERENCE") {
+                        reference = getPropertyNS(options, 'dataConf.references', target.reference);
+                    } else if(target.type === "SELECTION") {
+                        var list = getPropertyNS(options, 'dataConf.selectionLists', target.selectionList);
+                        if(list.type === "REFERENCE") {
+                            reference = getPropertyNS(options, 'dataConf.references', list.reference);
+                        }
+                    }
+                }
+                var root = function r(key, dataFields, lang, reference) {
+
+                    var path = {
+                        reference: reference,
+                        value: dataFields && dataFields[key] ? require('./data').latestValue(dataFields[key], lang) : undefined
+                    };
+
+                    if(reference && reference.type === "DEPENDENCY") {
+                        var target = getPropertyNS(options, 'dataConf.fields', reference.target);
+                        var targetRef = null;
+                        if(target.type === "REFERENCE") {
+                            targetRef = getPropertyNS(options, 'dataConf.references', target.reference);
+                        } else if(target.type === "SELECTION") {
+                            var list = getPropertyNS(options, 'dataConf.selectionLists', target.selectionList);
+                            if(list.type === "REFERENCE") {
+                                targetRef = getPropertyNS(options, 'dataConf.references', list.reference);
+                            }
+                        }
+                        var prev = r(reference.target, dataFields, lang, targetRef);
+                        if(prev) {
+                            prev.next = path;
+                            return prev;
+                        } else {
+                            return path;
+                        }
+                    } else {
+                        return path;
+                    }
+                }(key, dataFields, lang, reference);
+
+                require('./server')('optionsByPath', {
+                    data: JSON.stringify({
+                        requests : [{
+                            key: key,
+                            container: "",
+                            language: lang,
+                            root: root
+                        }]
+                    }),
+                    success: function (data) {
+                        callback(getPropertyNS(data, 'responses.0.options') || []);
+                    }
+                });
+            };
+        },
         option: function request(key, options, lang, callback) {
             return this.options(key, options, lang, function (options) {
+                callback(require('./selectInputOptionText')(options[0]));
+            });
+        },
+        optionByPath: function request(key, options, lang, callback) {
+            return this.optionsByPath(key, options, lang, function (options) {
                 callback(require('./selectInputOptionText')(options[0]));
             });
         }

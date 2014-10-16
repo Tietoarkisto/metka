@@ -44,7 +44,7 @@ define(function (require) {
             if (!reference) {
                 return;
             }
-            var getOptions = require('./reference').options(key, options, lang, setOptions);
+            var getOptions = require('./reference').optionsByPath(key, options, lang, setOptions);
             if (reference.type === 'DEPENDENCY') {
                 options.$events.on('data-changed-{key}-{lang}'.supplant({
                     key: reference.target,
