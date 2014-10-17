@@ -435,7 +435,8 @@ define(function (require) {
                                     addMoveButton('up', 'prev', 'before');
                                     addMoveButton('down', 'next', 'after');
                                 }
-                                if (!require('./isFieldDisabled')(options, lang) || options.field.onRemove) {
+
+                                if (require('./hasEveryPermission')(fieldOptions.removePermissions) && (!require('./isFieldDisabled')(options, lang) || options.field.onRemove)) {
                                     addRowCommand('remove', '<i class="glyphicon glyphicon-remove"></i> ' + MetkaJS.L10N.get('general.buttons.remove'), function () {
                                         var $tr = $(this).closest('tr');
                                         if (options.field.onRemove) {

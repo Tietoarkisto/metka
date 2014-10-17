@@ -908,6 +908,9 @@
 			"key": "dataversions",
 			"translatable": false,
 			"type": "CONTAINER",
+			"removePermissions": [
+				"canRemoveStudyVersions"
+			],
 			"subfields": [
 				"dataversion",
 				"versiondate",
@@ -973,6 +976,9 @@
 			"key": "descversions",
 			"translatable": true,
 			"type": "CONTAINER",
+			"removePermissions": [
+				"canRemoveStudyVersions"
+			],
 			"subfields": [
 				"descversion",
 				"versiondate",

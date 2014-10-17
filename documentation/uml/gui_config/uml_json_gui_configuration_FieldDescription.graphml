@@ -18,7 +18,7 @@
       <data key="d4"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="172.66788990825683" width="237.91319444444457" x="609.6388888888889" y="560.875"/>
+          <y:Geometry height="145.7561252023745" width="237.91319444444457" x="609.6388888888889" y="560.875"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="123.99609375" x="56.958550347222285" y="3.0">FieldDescription<y:LabelModel>
@@ -36,8 +36,6 @@
 +columnFields : Field [0..*] {ordered}
 +showSaveInfo : Boolean
 +showReferenceValue : Boolean
-+handlerName : String
-+dialogTitle : TranslationText
 +displayHeader : Boolean = true</y:AttributeLabel>
             <y:MethodLabel/>
           </y:UML>
@@ -48,10 +46,10 @@
       <data key="d4"/>
       <data key="d6">
         <y:UMLNoteNode>
-          <y:Geometry height="789.3889016309886" width="436.4166666666665" x="411.13541666666697" y="751.75"/>
+          <y:Geometry height="596.7006663368707" width="436.4166666666665" x="411.13541666666697" y="751.75"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="786.25" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="432.671875" x="4.0" y="4.0">key : Field key of the field being inserted into a cell.
+          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="590.6875" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="430.4921875" x="4.0" y="4.0">key : Field key of the field being inserted into a cell.
 
 displayType : Override for the rendering of this field. Can display
     for example a textfield instead of a dropdown selection.
@@ -90,20 +88,6 @@ showReferenceKey : At present applies only to REFERENCECONTAINER
     field.
     Default is false.
 
-handlerName : Specifies a special handler for fields that are rendered
-    as a table. This information is needed when the table is rendered
-    to allow for correct handling for example when the user clicks a
-    row on the table. Values for this attribute are just something the
-    user that writes the configuration must know. If ever a GUI is written
-    to generate these configurations then it's relatively easy to provide
-    the user with a list of selections for different handlers.
-
-dialogTitle : Applies only to fields that open a dialog (at present only
-    CONTAINERs and REFERENCECONTAINERS). Specifies the title for
-    that dialog to be displayed at the top of that dialog. Independent
-    of specialiced handlers. Doesn't matter if there's a special handler
-    for building the dialog, the title should still come from here.
-
 displayHeader : Applies only to containers. If false then header row
     is not drawn for container. Most useful on one column containers
     where container title is basically the same thing as column header.</y:NodeLabel>
@@ -113,39 +97,8 @@ displayHeader : Applies only to containers. If false then header row
     <node id="n2">
       <data key="d4"/>
       <data key="d6">
-        <y:UMLNoteNode>
-          <y:Geometry height="303.3833970438325" width="436.4166666666665" x="-30.04166666666609" y="751.75"/>
-          <y:Fill color="#FFCC00" transparent="false"/>
-          <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="297.34375" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="433.41015625" x="4.0" y="4.0">    Example of displayType and multichoice:
-These two attributes will most likely not be implemented during this
-project. However they have one clear use case that is interesting when
-used together. If we have a CONTAINER-field with one subfield of type
-SELECTION then it is trivial to see how that CONTAINER could be
-shown as displayType SELECTION with multichoice=true instead. This
-would change the gui-representation of the field from table to a
-dropdown or selection list instead and allow the user to select each
-value only once.
-This is maybe the most obvious use case for these two attributes
-although there are others, like changing a selection from a dropdown
-menu to a radiobutton group or changing the CONTAINER with select
-field into a checkbox selection instead with radiobutton plus
-multichoice.
-The important thing to note is that displayType values don't have to be
-one to one the same as field type values since there are different
-ways of displaying the same type of data to the user but the actual
-data definition doesn't need to know about these. For example it might
-be smart to implement a new field type MULTISELECT to define those
-containers that can only have one subfield that is of type SELECT
-but this in itself doesn't yet tell how the data is displayed to the user.</y:NodeLabel>
-        </y:UMLNoteNode>
-      </data>
-    </node>
-    <node id="n3">
-      <data key="d4"/>
-      <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="172.66788990825683" width="149.0" x="944.5499999999997" y="560.875"/>
+          <y:Geometry height="90.85612520237441" width="149.0" x="944.5499999999997" y="560.875"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="34.265625" modelName="custom" textColor="#000000" visible="true" width="141.2998046875" x="3.85009765625" y="3.0">&lt;&lt;enumeration&gt;&gt;
@@ -165,7 +118,7 @@ LINK
         </y:UMLClassNode>
       </data>
     </node>
-    <node id="n4">
+    <node id="n3">
       <data key="d4"/>
       <data key="d6">
         <y:UMLNoteNode>
@@ -186,36 +139,25 @@ LINK: Displays applicaple fields as links. Works mainly with Revisionable
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="99.25173611111097" ty="-70.66840801867522"/>
+          <y:Path sx="0.0" sy="0.0" tx="99.25173611111097" ty="-53.41839246356845"/>
           <y:LineStyle color="#000000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="none"/>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e1" source="n2" target="n1">
+    <edge id="e1" source="n0" target="n2">
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="11.725974770641983" ty="-210.8661065146738"/>
-          <y:LineStyle color="#000000" type="dashed" width="1.0"/>
-          <y:Arrows source="none" target="none"/>
-          <y:BendStyle smoothed="false"/>
-        </y:PolyLineEdge>
-      </data>
-    </edge>
-    <edge id="e2" source="n0" target="n3">
-      <data key="d8"/>
-      <data key="d10">
-        <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
+          <y:Path sx="34.52804330065351" sy="-46.71188613059894" tx="3.502941176470813" ty="-19.261886130598896"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="none"/>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e3" source="n3" target="n4">
+    <edge id="e2" source="n2" target="n3">
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>

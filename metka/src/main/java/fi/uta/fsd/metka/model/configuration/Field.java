@@ -8,7 +8,9 @@ import fi.uta.fsd.metka.enums.FieldType;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @JsonIgnoreProperties("_comment")
 public class Field {
@@ -18,7 +20,6 @@ public class Field {
     private Boolean immutable = false;
     private Boolean display = true;
     private Boolean unique = false;
-    private Boolean required = false;
     private Integer maxValues = null;
     private String selectionList = null;
     private final List<String> concatenate = new ArrayList<>();
@@ -32,6 +33,8 @@ public class Field {
     private String bidirectional = "";
     private String indexName = null;
     private Boolean fixedOrder = true;
+
+    private final Set<String> removePermissions = new HashSet<>();
 
     @JsonCreator
     public Field(@JsonProperty("key")String key) {
@@ -110,14 +113,6 @@ public class Field {
         this.unique = unique;
     }
 
-    public Boolean getRequired() {
-        return required;
-    }
-
-    public void setRequired(Boolean required) {
-        this.required = required;
-    }
-
     public List<String> getConcatenate() {
         return concatenate;
     }
@@ -184,6 +179,10 @@ public class Field {
 
     public void setFixedOrder(Boolean fixedOrder) {
         this.fixedOrder = fixedOrder == null ? true : fixedOrder;
+    }
+
+    public Set<String> getRemovePermissions() {
+        return removePermissions;
     }
 
     @JsonIgnore public String getIndexAs() {

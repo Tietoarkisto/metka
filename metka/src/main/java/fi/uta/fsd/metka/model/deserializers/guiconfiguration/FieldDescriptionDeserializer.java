@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import fi.uta.fsd.metka.enums.DisplayType;
 import fi.uta.fsd.metka.model.deserializers.ObjectDeserializer;
-import fi.uta.fsd.metka.model.general.TranslationObject;
 import fi.uta.fsd.metka.model.guiconfiguration.FieldDescription;
 
 import java.io.IOException;
@@ -49,12 +48,6 @@ public class FieldDescriptionDeserializer extends ObjectDeserializer<FieldDescri
             fd.setShowReferenceValue(showRef.booleanValue());
         }
 
-        // Set handlerName
-        JsonNode handlerName = node.get("handlerName");
-        if(handlerName != null && handlerName.getNodeType() == JsonNodeType.STRING) {
-            fd.setHandlerName(handlerName.textValue());
-        }
-
         // Set displayType
         JsonNode displayType = node.get("displayType");
         if(displayType != null && displayType.getNodeType() == JsonNodeType.STRING) {
@@ -72,12 +65,6 @@ public class FieldDescriptionDeserializer extends ObjectDeserializer<FieldDescri
         if(showRef != null && showRef.getNodeType() == JsonNodeType.BOOLEAN) {
             fd.setDisplayHeader(displayHeader.booleanValue());
         }
-
-        TranslationObject loc = null;
-        if(dialogTitle != null) {
-            loc = oc.treeToValue(dialogTitle, TranslationObject.class);
-        }
-        fd.setDialogTitle(loc);
 
         return fd;
     }

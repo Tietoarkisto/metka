@@ -8,9 +8,11 @@ import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import fi.uta.fsd.metka.enums.ContainerType;
+import fi.uta.fsd.metka.enums.ContentType;
 import fi.uta.fsd.metka.enums.SectionState;
 import fi.uta.fsd.metka.model.deserializers.ObjectDeserializer;
 import fi.uta.fsd.metka.model.general.TranslationObject;
+import fi.uta.fsd.metka.model.guiconfiguration.Button;
 import fi.uta.fsd.metka.model.guiconfiguration.Container;
 import fi.uta.fsd.metka.model.guiconfiguration.FieldDescription;
 
@@ -122,31 +124,40 @@ public class ContainerDeserializer extends ObjectDeserializer<Container> {
             }
         }
 
-        // set required
         if(con.getType() == ContainerType.CELL) {
+            // set required
             JsonNode required = node.get("required");
             if(required != null && required.getNodeType() == JsonNodeType.BOOLEAN) {
                 con.setRequired(required.booleanValue());
             }
-        }
 
-        // set colspan
-        if(con.getType() == ContainerType.CELL) {
+            // set colspan
             JsonNode colspan = node.get("colspan");
             if(colspan != null && colspan.getNodeType() == JsonNodeType.NUMBER) {
                 con.setColspan(colspan.intValue());
             }
-        }
 
-        // set field
-        if(con.getType() == ContainerType.CELL) {
-            JsonNode field = node.get("field");
-            if(field != null && field.getNodeType() == JsonNodeType.OBJECT) {
-                con.setField(oc.treeToValue(field, FieldDescription.class));
+            JsonNode contentType = node.get("contentType");
+            if(contentType != null && contentType.getNodeType() == JsonNodeType.STRING) {
+                con.setContentType(ContentType.valueOf(contentType.textValue()));
             }
-        }
-        // Set extra dialog config
-        if(con.getType() == ContainerType.CELL) {
+
+            if(con.getContentType() == ContentType.FIELD) {
+                // set field
+                JsonNode field = node.get("field");
+                if(field != null && field.getNodeType() == JsonNodeType.OBJECT) {
+                    con.setField(oc.treeToValue(field, FieldDescription.class));
+                }
+            } else if(con.getContentType() == ContentType.BUTTON) {
+                JsonNode button = node.get("button");
+                if(button != null && button.getNodeType() == JsonNodeType.OBJECT) {
+                    con.setButton(oc.treeToValue(button, Button.class));
+                }
+            }
+
+
+
+            // Set extra dialog config
             JsonNode dialog = node.get("extraDialogConfiguration");
             if(dialog != null && dialog.getNodeType() == JsonNodeType.OBJECT) {
                 for(Iterator<String> i = dialog.fieldNames(); i.hasNext(); ){

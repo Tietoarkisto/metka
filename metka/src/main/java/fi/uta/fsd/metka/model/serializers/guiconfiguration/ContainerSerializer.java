@@ -3,6 +3,7 @@ package fi.uta.fsd.metka.model.serializers.guiconfiguration;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import fi.uta.fsd.metka.enums.ContainerType;
+import fi.uta.fsd.metka.enums.ContentType;
 import fi.uta.fsd.metka.model.guiconfiguration.Container;
 import fi.uta.fsd.metka.model.serializers.ObjectSerializer;
 
@@ -12,6 +13,12 @@ public class ContainerSerializer extends ObjectSerializer<Container> {
     @Override
     public void doSerialize(Container value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
         jgen.writeStringField("type", value.getType().name());
+
+        jgen.writeArrayFieldStart("permissions");
+        for(String group : value.getPermissions()) {
+            jgen.writeString(group);
+        }
+        jgen.writeEndArray();
 
         if(value.getType() != ContainerType.EMPTYCELL) {
             jgen.writeObjectField("&title", value.getTitle());
@@ -24,6 +31,7 @@ public class ContainerSerializer extends ObjectSerializer<Container> {
 
             if(value.getType() == ContainerType.CELL) {
                 jgen.writeBooleanField("required", value.getRequired());
+                jgen.writeStringField("contentType", value.getContentType().name());
             }
 
             if(value.getType() == ContainerType.CELL || value.getType() == ContainerType.SECTION) {
@@ -77,7 +85,11 @@ public class ContainerSerializer extends ObjectSerializer<Container> {
             }
 
             if(value.getType() == ContainerType.CELL) {
-                jgen.writeObjectField("field", value.getField());
+                if(value.getContentType() == ContentType.FIELD) {
+                    jgen.writeObjectField("field", value.getField());
+                } else if(value.getContentType() == ContentType.BUTTON) {
+                    jgen.writeObjectField("button", value.getButton());
+                }
                 jgen.writeObjectFieldStart("extraDialogConfiguration");
                 for(String key : value.getExtraDialogConfiguration().keySet()) {
                     jgen.writeObjectField(key, value.getExtraDialogConfiguration().get(key));

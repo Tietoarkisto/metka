@@ -2,13 +2,11 @@ package fi.uta.fsd.metka.model.guiconfiguration;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import fi.uta.fsd.metka.enums.ContainerType;
+import fi.uta.fsd.metka.enums.ContentType;
 import fi.uta.fsd.metka.enums.SectionState;
 import fi.uta.fsd.metka.model.general.TranslationObject;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @JsonIgnoreProperties("_comment")
 public class Container {
@@ -25,7 +23,11 @@ public class Container {
     private final Map<String, Container> extraDialogConfiguration = new HashMap<>();
     private Boolean hidePageButtons = false;
 
+    private final Set<String> permissions = new HashSet<>();
+
+    private ContentType contentType = ContentType.FIELD;
     private FieldDescription field = null;
+    private Button button = null;
 
     private final List<Container> content = new ArrayList<>();
     private final List<Container> rows = new ArrayList<>();
@@ -137,5 +139,25 @@ public class Container {
 
     public void setHidePageButtons(Boolean hidePageButtons) {
         this.hidePageButtons = hidePageButtons == null ? false : hidePageButtons;
+    }
+
+    public Set<String> getPermissions() {
+        return permissions;
+    }
+
+    public ContentType getContentType() {
+        return contentType == null ? ContentType.FIELD : contentType;
+    }
+
+    public void setContentType(ContentType contentType) {
+        this.contentType = contentType == null ? ContentType.FIELD : contentType;
+    }
+
+    public Button getButton() {
+        return button;
+    }
+
+    public void setButton(Button button) {
+        this.button = button;
     }
 }

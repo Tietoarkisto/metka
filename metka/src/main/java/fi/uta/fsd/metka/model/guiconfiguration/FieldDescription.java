@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.enums.DisplayType;
-import fi.uta.fsd.metka.model.general.TranslationObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +17,6 @@ public class FieldDescription {
     private final List<String> columnFields = new ArrayList<>();
     private Boolean showSaveInfo;
     private Boolean showReferenceValue;
-    private String handlerName;
-    private TranslationObject dialogTitle;
     private Boolean displayHeader = true;
 
     @JsonCreator
@@ -73,22 +70,6 @@ public class FieldDescription {
 
     public void setShowReferenceValue(Boolean showReferenceValue) {
         this.showReferenceValue = (showReferenceValue == null) ? false : showReferenceValue;
-    }
-
-    public String getHandlerName() {
-        return handlerName;
-    }
-
-    public void setHandlerName(String handlerName) {
-        this.handlerName = handlerName;
-    }
-
-    public TranslationObject getDialogTitle() {
-        return dialogTitle;
-    }
-
-    public void setDialogTitle(TranslationObject dialogTitle) {
-        this.dialogTitle = dialogTitle;
     }
 
     public Boolean getDisplayHeader() {
