@@ -31,6 +31,7 @@ public class Field {
     private Boolean exact = true;
     private String bidirectional = "";
     private String indexName = null;
+    private Boolean fixedOrder = true;
 
     @JsonCreator
     public Field(@JsonProperty("key")String key) {
@@ -175,6 +176,14 @@ public class Field {
 
     public void setIndexName(String indexName) {
         this.indexName = indexName;
+    }
+
+    public Boolean getFixedOrder() {
+        return fixedOrder == null ? true : fixedOrder;
+    }
+
+    public void setFixedOrder(Boolean fixedOrder) {
+        this.fixedOrder = fixedOrder == null ? true : fixedOrder;
     }
 
     @JsonIgnore public String getIndexAs() {

@@ -180,9 +180,8 @@ define(function (require) {
                                 return;
                             }
                             if (list.type === 'REFERENCE') {
-                                require('./reference').optionsByPath(column, options, lang, setOptionText)(transferRow.fields, {
-                                    target: column
-                                });
+                                log("options", options, "list", list);
+                                require('./reference').optionsByPath(column, options, lang, setOptionText)(transferRow.fields, getPropertyNS(options, 'dataConf.references', list.reference));
                             } else {
                                 setOptionText(list.options);
                             }

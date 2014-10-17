@@ -664,6 +664,28 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 }
 
                 cleanExtraRowsFromTransferField(language, transferField, container);
+
+                if(!field.getFixedOrder()) {
+                    List<TransferRow> trs = transferField.getRowsFor(language);
+                    List<DataRow> rows = container.getRowsFor(language);
+                    if(trs.size() == rows.size()) {
+                        // Order rows in transferfield order
+                        for(int i = 0; i < trs.size(); i++) {
+                            if(!trs.get(i).getRowId().equals(rows.get(i).getRowId())) {
+                                for(int j = i+1; j < trs.size(); j++) {
+                                    if(rows.get(j).getRowId().equals(trs.get(i).getRowId())) {
+                                        swap(rows, i, j);
+                                        changes = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        logger.error("TransferField and Container with key "+field.getKey()+" have different number of rows for language "+language);
+                    }
+
+                }
             }
 
 
@@ -671,6 +693,12 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 changeMap.put(containerChange.getKey(), containerChange);
                 returnPair.setLeft(StatusCode.FIELD_CHANGED);
             }
+        }
+
+        private <T> void swap(List<T> list, int a, int b) {
+            T o = list.get(a);
+            list.set(a, list.get(b));
+            list.set(b, o);
         }
 
         /**

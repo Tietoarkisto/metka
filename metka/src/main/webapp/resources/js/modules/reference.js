@@ -55,6 +55,7 @@ define(function (require) {
         },
         optionsByPath: function (key, options, lang, callback) {
             return function (dataFields, reference) {
+                log(reference);
                 // TODO: This should always be called with reference, also reference fetching should be generalized somewhere
                 if(!reference) {
                     var target = getPropertyNS(options, 'dataConf.fields', key);

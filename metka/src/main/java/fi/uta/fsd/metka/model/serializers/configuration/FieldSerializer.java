@@ -51,6 +51,7 @@ public class FieldSerializer extends ObjectSerializer<Field> {
                     jgen.writeString(str);
                 }
                 jgen.writeEndArray();
+                jgen.writeBooleanField("fixedOrder", value.getFixedOrder());
                 break;
             case SELECTION:
                 jgen.writeStringField("selectionList", value.getSelectionList());

@@ -30,7 +30,7 @@ define(function (require) {
                     ];
 
                     if (response.result === 'CONFIGURATION_FOUND') {
-                        $.extend(options, {
+                        $.extend(true, options, {
                             header: MetkaJS.L10N.get('type.STUDY.search'),
                             fieldTitles: {
                                 "studyid": {
