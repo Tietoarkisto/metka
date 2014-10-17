@@ -215,20 +215,17 @@
 			"key": "file",
 			"immutable": true,
 			"translatable": false,
-			"required": true,
 			"type": "STRING"
 		},
 		"fileaip": {
 			"key": "fileaip",
 			"translatable": false,
-			"required": true,
 			"type": "SELECTION",
 			"selectionList": "fileaip_list"
 		},
 		"filecategory": {
 			"key": "filecategory",
 			"translatable": false,
-			"required": true,
 			"type": "SELECTION",
 			"selectionList": "filecategory_list"
 		},
@@ -247,14 +244,12 @@
 		"filedip": {
 			"key": "filedip",
 			"translatable": false,
-			"required": true,
 			"type": "SELECTION",
 			"selectionList": "filedip_list"
 		},
 		"filelanguage": {
 			"key": "filelanguage",
 			"translatable": false,
-			"required": true,
 			"type": "SELECTION",
 			"selectionList": "filelanguage_list"
 		},
@@ -267,14 +262,12 @@
 		"fileoriginal": {
 			"key": "fileoriginal",
 			"translatable": false,
-			"required": true,
 			"type": "SELECTION",
 			"selectionList": "fileoriginal_list"
 		},
 		"filepublication": {
 			"key": "filepublication",
 			"translatable": false,
-			"required": true,
 			"type": "SELECTION",
 			"selectionList": "filepublication_list"
 		}

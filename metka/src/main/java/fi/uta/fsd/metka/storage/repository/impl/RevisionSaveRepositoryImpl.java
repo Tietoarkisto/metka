@@ -809,7 +809,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                         }
                         if(ref.getType() == ReferenceType.REVISIONABLE && StringUtils.hasText(field.getBidirectional())) {
                                 bidirectional.add(new ImmutablePair<>(referencePair.getRight().getReference().asInteger(),
-                                        new ImmutablePair<>(field.getBidirectional(), false)));
+                                        new ImmutablePair<>(field.getBidirectional(), true)));
                             }
                     } else {
                         // Old row, the only thing that can change is "removed". The actual reference value on SavedReference is immutable

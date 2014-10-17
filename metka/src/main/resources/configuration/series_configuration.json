@@ -102,14 +102,12 @@
 		"seriesname": {
 			"key": "seriesname",
 			"translatable": true,
-			"required": true,
 			"type": "STRING"
 		},
 		"seriesdesc": {
 			"key": "seriesdesc",
 			"translatable": true,
 			"type": "RICHTEXT",
-			"required": true,
 			"exact": false
 		},
 		"seriesnotes": {

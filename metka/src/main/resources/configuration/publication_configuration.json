@@ -140,20 +140,17 @@
         "publicationyear": {
             "key": "publicationyear",
             "translatable": false,
-            "required": true,
             "type": "INTEGER"
         },
         "publicationpublic": {
             "key": "publicationpublic",
             "translatable": false,
             "type": "SELECTION",
-            "required": true,
             "selectionList": "yes_no"
         },
         "publicationid": {
             "key": "publicationid",
             "translatable": false,
-            "required": true,
             "immutable": true,
             "editable": false,
             "type": "INTEGER"
@@ -162,7 +159,6 @@
             "_comment": "TODO: This should be set during saving process",
             "key": "publicationfirstsaved",
             "translatable": false,
-            "required": true,
             "immutable": true,
             "editable": false,
             "type": "DATE"
@@ -170,27 +166,23 @@
         "publicationannouncement": {
             "key": "publicationannouncement",
             "translatable": false,
-            "required": true,
             "type": "SELECTION",
             "selectionList": "publicationannouncement_list"
         },
         "publicationlanguage": {
             "key": "publicationlanguage",
             "translatable": false,
-            "required": true,
             "type": "SELECTION",
             "selectionList": "langs"
         },
         "publicationtitle": {
             "key": "publicationtitle",
             "translatable": false,
-            "required": true,
             "type": "STRING"
         },
         "publicationrelpubl": {
             "key": "publicationrelpubl",
             "translatable": false,
-            "required": true,
             "type": "STRING",
 			"exact": false
         },
