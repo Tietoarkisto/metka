@@ -63,7 +63,7 @@ public class ReferencePathHandler {
             return;
         }
         if(StringUtils.hasText(step.getValue()) && step.getNext() != null && step.getNext().getReference().getType() != ReferenceType.DEPENDENCY) {
-            Logger.error(ReferencePathHandler.class, "Malformed path. Cuurrent step has a value and there's a next step but next step is not DEPENDENCY");
+            Logger.error(ReferencePathHandler.class, "Malformed path. Current step has a value and there's a next step but next step is not DEPENDENCY");
             return;
         }
         switch(step.getReference().getType()) {

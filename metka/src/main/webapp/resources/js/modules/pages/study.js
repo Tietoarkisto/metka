@@ -654,7 +654,7 @@ define(function (require) {
                             data: commonSearchBooleans.initialData({}),
                             dataConf: {
                                 key: response.configuration.key,
-                                references: {
+                                references: $.extend(response.configuration.references, {
                                     studyerrorsid_ref: {
                                         type: "REVISIONABLE",
                                         target: "STUDY"
@@ -669,7 +669,7 @@ define(function (require) {
                                         target: "studyerrorsid",
                                         valuePath: "title"
                                     }
-                                },
+                                }),
                                 selectionLists: $.extend(response.configuration.selectionLists, {
                                     seriesname_list: {
                                         "key": "seriesname_list",

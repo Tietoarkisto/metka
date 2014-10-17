@@ -2064,6 +2064,7 @@
         	"key": "authors",
         	"type": "CONTAINER",
         	"translatable": false,
+        	"fixedOrder": false,
         	"subfields": [
         		"authortype",
         		"author",

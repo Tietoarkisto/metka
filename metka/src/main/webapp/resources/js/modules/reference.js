@@ -55,7 +55,7 @@ define(function (require) {
         },
         optionsByPath: function (key, options, lang, callback) {
             return function (dataFields, reference) {
-                log(reference);
+
                 // TODO: This should always be called with reference, also reference fetching should be generalized somewhere
                 if(!reference) {
                     var target = getPropertyNS(options, 'dataConf.fields', key);
@@ -68,11 +68,11 @@ define(function (require) {
                         }
                     }
                 }
-                var root = function r(key, dataFields, lang, reference) {
-
+                var root = function r(key, dataFields, lang, reference, next) {
                     var path = {
                         reference: reference,
-                        value: dataFields && dataFields[key] ? require('./data').latestValue(dataFields[key], lang) : undefined
+                        value: dataFields && dataFields[key] ? require('./data').latestValue(dataFields[key], lang) : undefined,
+                        next: next
                     };
 
                     if(reference && reference.type === "DEPENDENCY") {
@@ -86,17 +86,26 @@ define(function (require) {
                                 targetRef = getPropertyNS(options, 'dataConf.references', list.reference);
                             }
                         }
-                        var prev = r(reference.target, dataFields, lang, targetRef);
+                        var prev = r(reference.target, dataFields, lang, targetRef, path);
                         if(prev) {
-                            prev.next = path;
                             return prev;
                         } else {
                             return path;
                         }
-                    } else {
-                        return path;
                     }
+
+                    return path;
                 }(key, dataFields, lang, reference);
+
+                var cur = root;
+                while(cur.next) {
+                    if(!cur.value) {
+                        callback([]);
+                        return;
+                    } else {
+                        cur = cur.next;
+                    }
+                }
 
                 require('./server')('optionsByPath', {
                     data: JSON.stringify({

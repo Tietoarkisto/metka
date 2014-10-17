@@ -319,7 +319,7 @@ class JsonPathParser {
      * @return Single ReferenceOption containing value and title as per specification
      */
     ReferenceOption getOption(JsonNode root, Reference reference, Language language) {
-        if(root.getNodeType() != JsonNodeType.OBJECT) {
+        if(root == null || root.getNodeType() != JsonNodeType.OBJECT) {
             // Needs an Object as its root
             return null;
         }
@@ -342,21 +342,23 @@ class JsonPathParser {
             // This should return either a string node or an object that represents a translation object
             // We try to detect translation object by checking if the object contains parameter 'default' that has content
             JsonNode title = titleParser.findFirstTerminatingValue();
-            if(title.getNodeType() == JsonNodeType.OBJECT) {
-                JsonNode def = title.get("default");
-                // If this node is a translation object then it has to contain non null default parameter.
-                if(def != null && def.getNodeType() != JsonNodeType.NULL) {
-                    JsonNode langField = title.get(language.toValue());
-                    if(langField != null && langField.getNodeType() != JsonNodeType.NULL) {
-                        titleStr = langField.textValue();
-                    } else {
-                        titleStr = def.textValue();
+            if(title != null) {
+                if (title.getNodeType() == JsonNodeType.OBJECT) {
+                    JsonNode def = title.get("default");
+                    // If this node is a translation object then it has to contain non null default parameter.
+                    if (def != null && def.getNodeType() != JsonNodeType.NULL) {
+                        JsonNode langField = title.get(language.toValue());
+                        if (langField != null && langField.getNodeType() != JsonNodeType.NULL) {
+                            titleStr = langField.textValue();
+                        } else {
+                            titleStr = def.textValue();
+                        }
                     }
-                }
-            } else {
-                // If we have some text in title parameter then put it inside the default in translation object
-                if(StringUtils.hasText(title.textValue())) {
-                    titleStr = title.textValue();
+                } else {
+                    // If we have some text in title parameter then put it inside the default in translation object
+                    if (StringUtils.hasText(title.textValue())) {
+                        titleStr = title.textValue();
+                    }
                 }
             }
         }

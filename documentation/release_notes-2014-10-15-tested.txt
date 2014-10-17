@@ -114,10 +114,10 @@ https://github.com/Tietoarkisto/metka/issues/105
 #80 Muuttujia ei pysty valitsemaan ryhmittelyssä valitsemalla 1. muuttuja ja sitten shift-nappula alhaalla valitsemalla viimeinen mukaan tuleva muuttuja 
 https://github.com/Tietoarkisto/metka/issues/80
 
-Pop-up-ikkunoita ei voi siirrellä 
+#99 Pop-up-ikkunoita ei voi siirrellä 
 https://github.com/Tietoarkisto/metka/issues/99
 
-Arkistointisopimustiedoston avaus -nappi puuttuu
+#100 Arkistointisopimustiedoston avaus -nappi puuttuu
 https://github.com/Tietoarkisto/metka/issues/100
 
 ++Closed issues++
