@@ -354,37 +354,16 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
 
             // Check bidirectional fields. This requires some custom code in certain cases.
 
-            // First lets sort the List so that we're going to handle one revisionable at a time
-            Collections.sort(bidirectional, new Comparator<ImmutablePair<Long, ImmutablePair<String, Boolean>>>() {
-                @Override
-                public int compare(ImmutablePair<Long, ImmutablePair<String, Boolean>> o1, ImmutablePair<Long, ImmutablePair<String, Boolean>> o2) {
-                    int result = o1.getLeft().compareTo(o2.getLeft());
-                    if(result == 0) {
-                        result = o1.getRight().getLeft().compareTo(o2.getRight().getLeft());
-                    }
-                    return result;
-                }
-            });
-
             // Next let's iterate through one revisionable at a time
-            List<Pair<String, Boolean>> revisionablePairs = new ArrayList<>();
-            Long revisionableId = null;
+            Map<Long, List<Pair<String, Boolean>>> revisionablePairs = new HashMap<>();
             for(Pair<Long, ? extends Pair<String, Boolean>> pair : bidirectional) {
-                if(pair.getLeft().equals(revisionableId)) {
-                    revisionablePairs.add(pair.getRight());
-                    continue;
+                if(revisionablePairs.get(pair.getLeft()) == null) {
+                    revisionablePairs.put(pair.getLeft(), new ArrayList<Pair<String, Boolean>>());
                 }
-                if(revisionableId != null) {
-                    // Do check
-                    checkBidirectionality(revisionableId, revisionablePairs, info);
-
-                    // Reset loop
-                    revisionableId = pair.getLeft();
-                    revisionablePairs.clear();
-                } else {
-                    revisionableId = pair.getLeft();
-                    revisionablePairs.add(pair.getRight());
-                }
+                revisionablePairs.get(pair.getLeft()).add(pair.getRight());
+            }
+            for(Long id : revisionablePairs.keySet()) {
+                checkBidirectionality(id, revisionablePairs.get(id), info);
             }
 
             return result;
@@ -424,9 +403,9 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                     // Remove the reference if it exists
                     Pair<StatusCode, ReferenceRow> rowPair = field.getReferenceWithValue(key.getId().toString());
                     if(rowPair.getLeft() == StatusCode.FOUND_ROW) {
-                        field.removeReference(rowPair.getRight().getRowId(), data.getChanges(), info);
+                        rowPair = field.removeReference(rowPair.getRight().getRowId(), data.getChanges(), info);
                     }
-                    if(rowPair.getLeft() == StatusCode.NEW_ROW) {
+                    if(rowPair.getLeft() == StatusCode.ROW_CHANGE || rowPair.getLeft() == StatusCode.ROW_REMOVED) {
                         changes = true;
                     }
                 }
@@ -780,17 +759,14 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                         // Removed value of a row was changed
                         Pair<StatusCode, ReferenceRow> removePair = container.removeReference(tr.getRowId(), changeMap, info);
                         if(removePair.getLeft() == StatusCode.ROW_CHANGE || removePair.getLeft() == StatusCode.ROW_REMOVED) {
-                            if(removePair.getLeft() == StatusCode.ROW_CHANGE) {
-                                // Row was changed but not removed completely, continue on but mark as changed
-                                changes = true;
-                            } else {
-                                // Row was removed completely, no need to continue on with saving
-                                changes = true;
-                                continue;
-                            }
+                            changes = true;
                             if(ref.getType() == ReferenceType.REVISIONABLE && StringUtils.hasText(field.getBidirectional())) {
                                 bidirectional.add(new ImmutablePair<>(removePair.getRight().getReference().asInteger(),
                                         new ImmutablePair<>(field.getBidirectional(), false)));
+                            }
+                            if(removePair.getLeft() == StatusCode.ROW_REMOVED) {
+                                // Row was removed completely, no need to continue on with saving
+                                continue;
                             }
                         }
                     }
