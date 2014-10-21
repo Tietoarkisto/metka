@@ -353,8 +353,6 @@ define(function (require) {
                         type: 'ROW',
                         cells: [$.extend(
                             true,
-                            {},
-                            options.extraDialogConfiguration ? options.extraDialogConfiguration[field] : {},
                             {
                                 type: 'CELL',
                                 translatable: fieldOptions.translatable ? false : dataConfig.translatable,
@@ -363,7 +361,8 @@ define(function (require) {
                                 field: {
                                     key: field
                                 }
-                            }
+                            },
+                            options.extraDialogConfiguration && options.extraDialogConfiguration[field]
                         )]
                     };
                 });

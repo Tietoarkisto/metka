@@ -29,7 +29,6 @@ define(function (require) {
                     "extraDialogConfiguration" : {
                         "vargrouptext": {
                             "field": {
-                                "key": "vargrouptext",
                                 "multiline": true
                             }
                         }
