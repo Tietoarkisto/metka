@@ -158,7 +158,7 @@ define(function (require) {
                         "seriesabbr",
                         "seriesname",
                         "state"
-                    ]),
+                    ], null, options),
                     /*{
                         "&title": {
                             "default": "Tyhjennä"

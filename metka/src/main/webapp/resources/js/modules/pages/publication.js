@@ -247,7 +247,9 @@ define(function (require) {
                         "publicationid",
                         "publicationtitle",
                         "state"
-                    ]),
+                    ],
+                    null,
+                    options),
                     /*{
                         "&title": {
                             "default": "Tyhjennä"

@@ -78,7 +78,6 @@ define(function (require) {
                             require('./../../server')('/revision/ddi/export', {
                                 data: JSON.stringify(request),
                                 success: function(response) {
-                                    log(response);
                                     if(response.result === "OPERATION_SUCCESSFUL") {
                                         saveAs(new Blob([response.content], {type: "text/xml;charset=utf-8"}), "id_"+response.id+"_revision_"+response.no+"_ddi_"+response.language+".xml");
                                     }
