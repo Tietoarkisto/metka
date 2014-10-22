@@ -6,7 +6,7 @@ define(function (require) {
                 if (response.result === 'NO_CHANGES_TO_SAVE') {
                     return;
                 }
-                success(response);
+                success.call(this, response);
             },
             [
                 'SAVE_SUCCESSFUL',

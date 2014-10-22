@@ -12,7 +12,8 @@ define(function (require) {
                     $.extend(options.data, response.data);
                     $(this).trigger('refresh.metka');
                 }, [
-                    'APPROVE_SUCCESSFUL'
+                    'APPROVE_SUCCESSFUL',
+                    'APPROVE_FAILED_DURING_VALIDATION'
                 ]));
         },
         CANCEL: function (options) {
