@@ -1,0 +1,32 @@
+=Release notes 2014-10-22 Pre Testing=
+
+++Started issues++
+
+++Resolved removed after testing++
+
+++Resolved issues++
+#132 Reader käyttäjä saa tehdä DDI exportin
+https://github.com/Tietoarkisto/metka/issues/132
+
+#124 Aineistot | Virheet | Virheet taulukon otsikkotekstejä konfiguroimatta
+https://github.com/Tietoarkisto/metka/issues/124
+
+#116 Kaksisuuntaiset referenssit eivät toimi oikein
+https://github.com/Tietoarkisto/metka/issues/116
+
+#111 Taulukoiden sisällön uudelleenjärjestyksen tallennus, sisällön järjestämisen ja poistamisen rajoittaminen 
+https://github.com/Tietoarkisto/metka/issues/111
+
+#88 Data- ja GUI-konfiguraatioiden, sekä misc-Json tiedostojen tallentaminen AJAX-pohjaisella operaatiolla 
+https://github.com/Tietoarkisto/metka/issues/88
+
+#86 Organisaatioiden lisääminen dialogin kautta
+https://github.com/Tietoarkisto/metka/issues/86
+
+#61 Indeksoinnista ei saa vastaussivua
+https://github.com/Tietoarkisto/metka/issues/61
+
+++Proactum tested issues++
+
+++Closed issues++
+

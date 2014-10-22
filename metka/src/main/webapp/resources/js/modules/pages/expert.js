@@ -208,7 +208,7 @@ define(function (require) {
                     return {
                         PAGE: transferRow.fields.TYPE.values.DEFAULT.current
                     };
-                }),
+                }, options),
                 {
                     "&title": {
                         "default": "Tyhjennä"
