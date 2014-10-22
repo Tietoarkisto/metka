@@ -58,6 +58,6 @@
 <script>
     MetkaJS.configurationType = 'SETTINGS';
 </script>
-<script data-main="${pageContext.request.contextPath}/js/page.js" src="${pageContext.request.contextPath}/lib/js/require.js"></script>
+<script data-main="${pageContext.request.contextPath}/js/main.js" src="${pageContext.request.contextPath}/lib/js/require.js"></script>
 </body>
 </html>

@@ -257,7 +257,7 @@ define(function (require) {
                                 "canApproveRevision"
                             ]
                         },*/
-                        /*{
+                        {
                             "&title": {
                                 "default": "Tee luonnos"
                             },
@@ -268,7 +268,7 @@ define(function (require) {
                             "permissions": [
                                 "canEditRevision"
                             ]
-                        },
+                        },/*
                         {
                             "&title": {
                                 "default": "Poista"
