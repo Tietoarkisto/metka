@@ -95,4 +95,8 @@ define(function (require) {
             }]
         });
     });
+
+    // JSON Editor default options
+    JSONEditor.defaults.options.theme = 'bootstrap3';
+    JSONEditor.defaults.options.iconlib = 'bootstrap3';
 });

@@ -46,7 +46,6 @@ define(function (require) {
                             type: 'CANCEL'
                         }]
                     });
-                    log(modalOptions);
                     require('./modal')(modalOptions);
                 }
             });
