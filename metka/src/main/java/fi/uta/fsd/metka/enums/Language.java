@@ -28,7 +28,7 @@ public enum Language {
         }
     }
 
-    private static Language[] nonDefault = {
+    private static final Language[] nonDefault = {
             EN,
             SV
     };

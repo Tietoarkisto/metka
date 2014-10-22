@@ -8,6 +8,7 @@ import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 
 class DDIDataDescription extends DDISectionBase {
     private final RevisionRepository revisions;
@@ -16,7 +17,8 @@ class DDIDataDescription extends DDISectionBase {
         this.revisions = revisions;
     }
 
-    void read() {
+    // TODO: Still unfinished
+    ReturnResult read() {
         // TODO: Implement when questions about tables and variables are answered
 
         // TODO: Reverse process
@@ -81,8 +83,9 @@ class DDIDataDescription extends DDISectionBase {
                 readVar(variable, language, var, fileID);
             }
         }*/
+        return ReturnResult.OPERATION_SUCCESSFUL;
     }
-
+    // TODO: Still unfinished
     private static void readVariableGroups(Language language, RevisionRepository revisions, RevisionData variables, DataDscrType dataDscr) {
         /*Pair<ReturnResult, RevisionData> revisionDataPair;Pair<StatusCode, ContainerDataField> containerPair = variables.dataField(ContainerDataFieldCall.get(Fields.VARGROUPS));
         ContainerDataField vargroups = containerPair.getRight();
@@ -139,7 +142,7 @@ class DDIDataDescription extends DDISectionBase {
             }
         }*/
     }
-
+    // TODO: Still unfinished
     private static void readVar(RevisionData variable, Language language, VarType var, String fileID) {
         // TODO: Reverse process
         /*Pair<StatusCode, ValueDataField> valueFieldPair = variable.dataField(ValueDataFieldCall.get(Fields.VARID));
@@ -181,7 +184,7 @@ class DDIDataDescription extends DDISectionBase {
 
         readCategories(variable, var);*/
     }
-
+    // TODO: Still unfinished
     private static void readCategories(RevisionData variable, VarType var) {
         // TODO: Reverse process
         /*Pair<StatusCode, ContainerDataField> categories = variable.dataField(ContainerDataFieldCall.get(Fields.CATEGORIES));
@@ -214,7 +217,7 @@ class DDIDataDescription extends DDISectionBase {
             }
         }*/
     }
-
+    // TODO: Still unfinished
     private static void readStatistics(RevisionData variable, VarType var) {
         // TODO: Reverse process
         /*Pair<StatusCode, ContainerDataField> statistics = variable.dataField(ContainerDataFieldCall.get(Fields.STATISTICS));
@@ -252,7 +255,7 @@ class DDIDataDescription extends DDISectionBase {
             }
         }*/
     }
-
+    // TODO: Still unfinished
     private static void readVarSecurities(RevisionData variable, Language language, VarType var) {
         // TODO: Reverse process
         /*List<ValueDataField> fields = gatherFields(variable, Fields.VARSECURITIES, Fields.VARSECURITY, language, language);
@@ -260,7 +263,7 @@ class DDIDataDescription extends DDISectionBase {
             fillTextAndDateType(var.addNewSecurity(), field, language);
         }*/
     }
-
+    // TODO: Still unfinished
     private static void readVarQstn(RevisionData variable, Language language, VarType var) {
         // TODO: Reverse process
         /*// TODO: Do we want to use single qstn type with multiple texts for each container or do we want to have one qstn type per set of texts so that each qstn contains only one preq etc.?
@@ -286,7 +289,7 @@ class DDIDataDescription extends DDISectionBase {
             fillTextType(qstn.addNewIvuInstr(), field, language);
         }*/
     }
-
+    // TODO: Still unfinished
     private static void readVarTexts(RevisionData variable, Language language, VarType var) {
         // TODO: Reverse process
         /*List<ValueDataField> fields = gatherFields(variable, Fields.VARTEXTS, Fields.VARTEXT, language, language);
@@ -294,7 +297,7 @@ class DDIDataDescription extends DDISectionBase {
             fillTextType(var.addNewTxt(), field, language);
         }*/
     }
-
+    // TODO: Still unfinished
     private static void readNotes(RevisionData variable, Language language, VarType var) {
         // TODO: Reverse process
         /*NotesType notes = var.addNewNotes();

@@ -426,11 +426,12 @@ class DDIStudyDescription {
         }
 
         // Add DDI pid for the current language as idNO
-        valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.PIDDDI+getXmlLang(language)));
+        // TODO: Should this be the DDI package urn
+        /*valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.PIDDDI+getXmlLang(language)));
         if(hasValue(valueFieldPair, Language.DEFAULT)) {
             IDNoType idNoType = fillTextType(titlStmtType.addNewIDNo(), valueFieldPair, Language.DEFAULT);
             idNoType.setAgency(agency);
-        }
+        }*/
     }
 
     private static void addParTitles(RevisionData revisionData, Language language, TitlStmtType titlStmtType) {

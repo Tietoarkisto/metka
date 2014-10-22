@@ -1805,10 +1805,25 @@
         },
         {
             "title": "Export DDI",
-            "type": "EXPORT_DDI",
+            "type": "CUSTOM",
+            "customHandler": "exportDDI",
             "permissions": [
                 "canViewRevision",
                 "canExportRevision"
+            ]
+        },
+        {
+            "title": "Import DDI",
+            "type": "CUSTOM",
+            "customHandler": "importDDI",
+            "hasHandler": true,
+            "isHandler": true,
+            "permissions": [
+                "canViewRevision",
+                "canImportRevision"
+            ],
+            "states": [
+            	"DRAFT"
             ]
         }
     ]

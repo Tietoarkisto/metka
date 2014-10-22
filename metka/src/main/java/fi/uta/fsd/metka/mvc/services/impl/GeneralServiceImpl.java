@@ -2,11 +2,14 @@ package fi.uta.fsd.metka.mvc.services.impl;
 
 import codebook25.CodeBookDocument;
 import fi.uta.fsd.metka.ddi.builder.DDIBuilder;
+import fi.uta.fsd.metka.ddi.reader.DDIReader;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.mvc.services.GeneralService;
+import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
@@ -26,6 +29,9 @@ public class GeneralServiceImpl implements GeneralService {
 
     @Autowired
     private DDIBuilder ddiBuilder;
+
+    @Autowired
+    private DDIReader ddiReader;
 
     // TODO: Move to revision service
     /**
@@ -53,7 +59,7 @@ public class GeneralServiceImpl implements GeneralService {
     }
 
     @Override
-    public Pair<ReturnResult, CodeBookDocument> exportDDI(Long id, Integer no) {
+    public Pair<ReturnResult, CodeBookDocument> exportDDI(Long id, Integer no, Language language) {
         Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(id, no);
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             // TODO: Return error to user
@@ -67,8 +73,17 @@ public class GeneralServiceImpl implements GeneralService {
             if(configurationPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
                 return new ImmutablePair<>(configurationPair.getLeft(), null);
             }
-            Pair<ReturnResult, CodeBookDocument> cb = ddiBuilder.buildDDIDocument(Language.DEFAULT, revision, configurationPair.getRight());
+            Pair<ReturnResult, CodeBookDocument> cb = ddiBuilder.buildDDIDocument(language, revision, configurationPair.getRight());
             return cb;
         }
+    }
+
+    @Override
+    public ReturnResult importDDI(TransferData transferData, String path) {
+        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(RevisionKey.fromModelKey(transferData.getKey()));
+        if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
+            return pair.getLeft();
+        }
+        return ddiReader.readDDIDocument(path, pair.getRight());
     }
 }

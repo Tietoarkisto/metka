@@ -35,8 +35,7 @@ define(function (require) {
                     // Misc calls
                     download: 'download/{id}/{no}',
                     options: 'references/collectOptionsGroup',
-                    optionsByPath: 'references/referencePathGroup',
-                    ddiexport: 'revision/ddi/export/{id}/{no}'
+                    optionsByPath: 'references/referencePathGroup'
                 }[key];
             }
         })().supplant($.extend({

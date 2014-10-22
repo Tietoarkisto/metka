@@ -36,16 +36,18 @@ define(function (require) {
             this.prop('disabled', true);
         },
         CUSTOM: function(options) {
-            require(['./custom/buttons/'+options.customHandler], function(customHandler) {
-                switch (typeof customHandler) {
-                    case 'object':
-                        $.extend(true, options, customHandler);
-                        break;
-                    case 'function':
-                        customHandler.call(this, options);
-                        break;
-                }
-            }.bind(this));
+            if(options.customHandler) {
+                require(['./custom/buttons/'+options.customHandler], function(customHandler) {
+                    switch (typeof customHandler) {
+                        case 'object':
+                            $.extend(true, options, customHandler);
+                            break;
+                        case 'function':
+                            customHandler.call(this, options);
+                            break;
+                    }
+                }.bind(this));
+            }
         },
         DISMISS: function (options) {
             options.title = MetkaJS.L10N.get('general.buttons.close');
@@ -59,11 +61,6 @@ define(function (require) {
                 'REVISION_FOUND',
                 'REVISION_CREATED'
             ]));
-        },
-        EXPORT_DDI: function(options) {
-            this.click( function() {
-                require('./assignUrl')('ddiexport')
-            });
         },
         HISTORY: function () {
             var metka = require('./../metka');

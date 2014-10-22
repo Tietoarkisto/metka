@@ -16,7 +16,7 @@ public class TestCredentialsFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         //setUserAttributes(request);
-        setDataAdminAttributes(request);
+        setReaderAttributes(request);
 
         filterChain.doFilter(request, response);
     }
