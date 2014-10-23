@@ -125,7 +125,7 @@ class GeneralRevisionHandler implements RevisionHandler {
         Language language = command.getPath().getLanguage();
 
         // Create document. This handler only indexes one document per request so the document can be inside the handle method.
-        IndexerDocument document = new IndexerDocument();
+        IndexerDocument document = new IndexerDocument(language);
 
         // Do some default stuff
         Logger.info(GeneralRevisionHandler.class, "Forming document for revision.");
@@ -163,8 +163,6 @@ class GeneralRevisionHandler implements RevisionHandler {
             document.indexKeywordField("state.approved.user", data.getApproved().get(language).getUser(), YES);
         }
 
-
-
         if(data.getSaved() != null) {
             document.indexKeywordField("state.saved", "true", YES); // Specialized field that tells if the RevisionData has been saved by an user at least once
             document.indexKeywordField("state.saved.time", data.getSaved().getTime().toString(), YES);
@@ -183,7 +181,6 @@ class GeneralRevisionHandler implements RevisionHandler {
 
         if(contentForLanguage || language == Language.DEFAULT) {
             Logger.info(GeneralRevisionHandler.class, "Adding document to index.");
-            document.indexText(language, "revisions", document.getGeneral(), false, YES);
             PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(CaseInsensitiveWhitespaceAnalyzer.ANALYZER, document.getAnalyzers());
             indexer.addDocument(document.getDocument(), analyzer);
             return true;
@@ -326,28 +323,28 @@ class GeneralRevisionHandler implements RevisionHandler {
             case DATETIME:
             case TIME:
                 // Index all Date and time fields as StringFields since they should not be analyzed or tokenized in any way.
-                document.indexKeywordField(root + field.getIndexAs(), saved.getActualValueFor(inputLang));
+                document.indexKeywordField(root + field.getIndexAs(), saved.getActualValueFor(inputLang), field.getGeneralSearch());
                 break;
             case BOOLEAN:
                 // Index boolean field as a string with 'true' or 'false' as value. Boolean field should not be analyzer or tokenized
-                document.indexKeywordField(root + field.getIndexAs(), saved.getActualValueFor(inputLang));
+                document.indexKeywordField(root + field.getIndexAs(), saved.getActualValueFor(inputLang), field.getGeneralSearch());
                 break;
             case CONCAT:
                 // Index concat field as a text field which should be analyzed and tokenized unless marked as exact field in config
-                document.indexText(inputLang, field, root, saved);
+                document.indexText(inputLang, field, root, saved, field.getGeneralSearch());
                 break;
             case STRING:
                 // Index string field as a text field which should be analyzed and tokenized unless marked as exact field in config
-                document.indexText(inputLang, field, root, saved);
+                document.indexText(inputLang, field, root, saved, field.getGeneralSearch());
                 break;
             case RICHTEXT:
                 // Index RICHTEXT fields as text. They should have their 'exact' value forced to false so they should be parsed through an analyzer that will automatically strip all the html-elements from the text.
-                document.indexText(inputLang, field, root, saved);
+                document.indexText(inputLang, field, root, saved, field.getGeneralSearch());
                 break;
             case INTEGER:
                 // Convert value to correct number format (integer or long, or just stick with long for everything) and index as correct number field
                 try {
-                    document.indexIntegerField(root + field.getIndexAs(), Long.parseLong(saved.getActualValueFor(inputLang)));
+                    document.indexIntegerField(root + field.getIndexAs(), Long.parseLong(saved.getActualValueFor(inputLang)), false, field.getGeneralSearch());
                 } catch(NumberFormatException nfe) {
                     Logger.info(GeneralRevisionHandler.class, "Skipping field "+field.getKey()+" since value is not INTEGER and search would not find it");
                 }
@@ -355,7 +352,7 @@ class GeneralRevisionHandler implements RevisionHandler {
             case REAL:
                 // Convert value to correct number format (float or double, or just stick with double for everything) and index as correct number field
                 try {
-                    document.indexRealField(root + field.getIndexAs(), Double.parseDouble(saved.getActualValueFor(inputLang)));
+                    document.indexRealField(root + field.getIndexAs(), Double.parseDouble(saved.getActualValueFor(inputLang)), false, field.getGeneralSearch());
                 } catch(NumberFormatException nfe) {
                     Logger.info(GeneralRevisionHandler.class, "Skipping field "+field.getKey()+" since value is not REAL and search would not find it");
                 }
@@ -399,20 +396,20 @@ class GeneralRevisionHandler implements RevisionHandler {
         switch(list.getType()) {
             case SUBLIST:
                 // We've hit a loop in the list configuration, can index only the value and nothing else
-                document.indexKeywordField(root + field.getIndexAs(), saved.getActualValueFor(inputLang));
+                document.indexKeywordField(root + field.getIndexAs(), saved.getActualValueFor(inputLang), field.getGeneralSearch());
                 document.indexKeywordField(root + field.getIndexAs() + ".value", saved.getActualValueFor(inputLang));
                 break;
             case LITERAL:
                 // Index value both as value and title (they should be equal in any case)
-                document.indexKeywordField(root + field.getIndexAs(), saved.getActualValueFor(inputLang));
+                document.indexKeywordField(root + field.getIndexAs(), saved.getActualValueFor(inputLang), field.getGeneralSearch());
                 document.indexKeywordField(root + field.getIndexAs() + ".value", saved.getActualValueFor(inputLang));
                 break;
             case VALUE:
                 // Index the title to the actual field and the value to field.value field. Index only the default language from title
                 Option option = list.getOptionWithValue(saved.getActualValueFor(inputLang));
                 if(option != null) {
+                    document.indexText(inputLang, field, root, option.getTitleFor(inputLang), field.getGeneralSearch());
                     document.indexKeywordField(root + field.getIndexAs() + ".value", option.getValue());
-                    document.indexText(inputLang, field, root, option.getDefaultTitle());
                 } else {
                     // Some problem so possibly log error, but do nothing for now
                     break;
@@ -449,7 +446,7 @@ class GeneralRevisionHandler implements RevisionHandler {
             ReferenceOption option = references.getCurrentFieldOption(inputLang, data, path.printPath());
             if(option != null) {
                 document.indexKeywordField(root + field.getIndexAs() + ".value", option.getValue());
-                document.indexText(inputLang, field, root, option);
+                document.indexText(inputLang, field, root, option, field.getGeneralSearch());
             }
             // If requested language equals the actual input language then we've found content for requested language.
             if(inputLang == language) contentForLanguage = true;

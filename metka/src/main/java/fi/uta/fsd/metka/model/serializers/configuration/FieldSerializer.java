@@ -26,6 +26,7 @@ public class FieldSerializer extends ObjectSerializer<Field> {
         jgen.writeBooleanField("editable", value.getEditable());
         jgen.writeBooleanField("writable", value.getWritable());
         jgen.writeBooleanField("indexed", value.getIndexed());
+        jgen.writeBooleanField("generalSearch", value.getGeneralSearch());
 
         if(!value.getType().isContainer() && value.getType() != FieldType.RICHTEXT) {
             jgen.writeBooleanField("exact", value.getExact());

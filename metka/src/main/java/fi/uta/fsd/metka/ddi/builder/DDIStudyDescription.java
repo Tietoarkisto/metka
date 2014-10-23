@@ -613,8 +613,7 @@ class DDIStudyDescription {
 
             // Keyword should always be non null at this point
             KeywordType kwt = fillTextType(subject.addNewKeyword(), keyword);
-            if(keyworduri != null) {
-                // TODO: This is compiled as an ENUM, is this correct?
+            /*if(keyworduri != null) {
                 switch(keyworduri) {
                     case "archive":
                         kwt.setSource(BaseElementType.Source.ARCHIVE);
@@ -623,7 +622,7 @@ class DDIStudyDescription {
                         kwt.setSource(BaseElementType.Source.PRODUCER);
                         break;
                 }
-            }
+            }*/
             if(keywordvocab != null) {
                 kwt.setVocab(keywordvocab);
             }
@@ -664,8 +663,7 @@ class DDIStudyDescription {
 
             // Keyword should always be non null at this point
             TopcClasType tt = fillTextType(subject.addNewTopcClas(), topic);
-            if(topicuri != null) {
-                // TODO: This is compiled as an ENUM, is this correct?
+            /*if(topicuri != null) {
                 switch(topicuri) {
                     case "archive":
                         tt.setSource(BaseElementType.Source.ARCHIVE);
@@ -674,7 +672,7 @@ class DDIStudyDescription {
                         tt.setSource(BaseElementType.Source.PRODUCER);
                         break;
                 }
-            }
+            }*/
             if(topicvocab != null) {
                 tt.setVocab(topicvocab);
             }
@@ -772,8 +770,7 @@ class DDIStudyDescription {
             // Keyword should always be non null at this point
             AnlyUnitType t = sumDscr.addNewAnlyUnit();
             ConceptType c = fillTextType(t.addNewConcept(), analysisunit);
-            if(analysisunituri != null) {
-                // TODO: This is compiled as an ENUM, is this correct?
+            /*if(analysisunituri != null) {
                 switch(analysisunituri) {
                     case "archive":
                         c.setSource(BaseElementType.Source.ARCHIVE);
@@ -782,7 +779,7 @@ class DDIStudyDescription {
                         c.setSource(BaseElementType.Source.PRODUCER);
                         break;
                 }
-            }
+            }*/
 
             if(analysisunitvocab != null) {
                 c.setVocab(analysisunitvocab);
@@ -994,8 +991,7 @@ class DDIStudyDescription {
             // Keyword should always be non null at this point
             TimeMethType t = dataColl.addNewTimeMeth();
             ConceptType c = fillTextType(t.addNewConcept(), timemethod);
-            if(timemethoduri != null) {
-                // TODO: This is compiled as an ENUM, is this correct?
+            /*if(timemethoduri != null) {
                 switch(timemethoduri) {
                     case "archive":
                         c.setSource(BaseElementType.Source.ARCHIVE);
@@ -1004,7 +1000,7 @@ class DDIStudyDescription {
                         c.setSource(BaseElementType.Source.PRODUCER);
                         break;
                 }
-            }
+            }*/
 
             if(timemethodvocab != null) {
                 c.setVocab(timemethodvocab);
@@ -1139,8 +1135,7 @@ class DDIStudyDescription {
             }
 
             ConceptType c = fillTextType(t.addNewConcept(), sampproc);
-            if(sampprocuri != null) {
-                // TODO: This is compiled as an ENUM, is this correct?
+            /*if(sampprocuri != null) {
                 switch(sampprocuri) {
                     case "archive":
                         c.setSource(BaseElementType.Source.ARCHIVE);
@@ -1149,7 +1144,7 @@ class DDIStudyDescription {
                         c.setSource(BaseElementType.Source.PRODUCER);
                         break;
                 }
-            }
+            }*/
 
             if(sampprocvocab != null) {
                 c.setVocab(sampprocvocab);
@@ -1203,8 +1198,7 @@ class DDIStudyDescription {
             ConceptualTextType t = dataColl.addNewCollMode();
 
             ConceptType c = fillTextType(t.addNewConcept(), collmode);
-            if(collmodeuri != null) {
-                // TODO: This is compiled as an ENUM, is this correct?
+            /*if(collmodeuri != null) {
                 switch(collmodeuri) {
                     case "archive":
                         c.setSource(BaseElementType.Source.ARCHIVE);
@@ -1213,7 +1207,7 @@ class DDIStudyDescription {
                         c.setSource(BaseElementType.Source.PRODUCER);
                         break;
                 }
-            }
+            }*/
 
             if(collmodevocab != null) {
                 c.setVocab(collmodevocab);
@@ -1267,8 +1261,7 @@ class DDIStudyDescription {
             ResInstruType t = dataColl.addNewResInstru();
 
             ConceptType c = fillTextType(t.addNewConcept(), instrument);
-            if(instrumenturi != null) {
-                // TODO: This is compiled as an ENUM, is this correct?
+            /*if(instrumenturi != null) {
                 switch(instrumenturi) {
                     case "archive":
                         c.setSource(BaseElementType.Source.ARCHIVE);
@@ -1277,7 +1270,7 @@ class DDIStudyDescription {
                         c.setSource(BaseElementType.Source.PRODUCER);
                         break;
                 }
-            }
+            }*/
 
             if(instrumentvocab != null) {
                 c.setVocab(instrumentvocab);

@@ -14,6 +14,7 @@ import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
+import fi.uta.fsd.metka.transfer.reference.ReferencePath;
 import fi.uta.fsd.metka.transfer.reference.ReferencePathRequest;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -307,7 +308,6 @@ class DDIStudyDescription extends DDISectionBase {
     // TODO: Still unfinished
     private static ReturnResult readCitationProdStatement(CitationType citation) {
         return ReturnResult.OPERATION_SUCCESSFUL;
-        // TODO: Questions about tables and authors still open
         // Authors, other authors and producers need resolved answers before continuing
 
         // TODO: Reverse process
@@ -1125,6 +1125,8 @@ class DDIStudyDescription extends DDISectionBase {
         ReferencePathRequest request = new ReferencePathRequest();
         request.setContainer(Fields.INSTRUMENTS);
         request.setLanguage(language);
+
+        ReferencePath instrumentvocabPath = new ReferencePath(configuration.getReference(configuration.getField(Fields.INSTRUMENTVOCAB).getReference()), null);
 
         return ReturnResult.OPERATION_SUCCESSFUL;
 

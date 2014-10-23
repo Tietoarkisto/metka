@@ -1,5 +1,6 @@
 package fi.uta.fsd.metka.ddi.reader;
 
+import codebook25.AbstractTextType;
 import codebook25.CodeBookType;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
@@ -16,6 +17,7 @@ import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.util.StringUtils;
 
 import java.util.Map;
 
@@ -57,11 +59,15 @@ abstract class DDISectionBase {
     }
 
     protected Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> getContainer(String key) {
-        return getContainer(key, revision.getChanges());
+        return getContainer(key, revision, revision.getChanges());
     }
 
-    protected Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> getContainer(String key, Map<String, Change> changeMap) {
-        Pair<StatusCode, ContainerDataField> container = revision.dataField(ContainerDataFieldCall.set(key));
+    protected Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> getContainer(String key, RevisionData data) {
+        return getContainer(key, data, data.getChanges());
+    }
+
+    protected Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> getContainer(String key, DataFieldContainer fieldContainer, Map<String, Change> changeMap) {
+        Pair<StatusCode, ContainerDataField> container = fieldContainer.dataField(ContainerDataFieldCall.set(key));
         if(!(container.getLeft() == StatusCode.FIELD_FOUND || container.getLeft() == StatusCode.FIELD_INSERT)) {
             // No need to continue insert, we have a problem
             return new ImmutablePair<>(ReturnResult.OPERATION_FAIL, null);
@@ -73,5 +79,23 @@ abstract class DDISectionBase {
         }
         Pair<ContainerDataField, ContainerChange> pair = new ImmutablePair<>(container.getRight(), change);
         return new ImmutablePair<>(ReturnResult.OPERATION_SUCCESSFUL, pair);
+    }
+
+    protected ReturnResult fillSingleValueContainer(DataFieldContainer data, Map<String, Change> changeMap, String containerKey, String fieldKey, AbstractTextType[] tts) {
+        if(!hasContent(tts)) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
+        }
+        Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerPair = getContainer(containerKey, data, changeMap);
+        if(containerPair.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
+            return containerPair.getLeft();
+        }
+        ContainerDataField container = containerPair.getRight().getLeft();
+        for(AbstractTextType tt : tts) {
+            if(!StringUtils.hasText(tt.xmlText())) {
+                continue;
+            }
+            container.getOrCreateRowWithFieldValue(language, fieldKey, new Value(tt.xmlText()), changeMap, info);
+        }
+        return ReturnResult.OPERATION_SUCCESSFUL;
     }
 }

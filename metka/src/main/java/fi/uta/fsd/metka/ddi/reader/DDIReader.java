@@ -10,6 +10,7 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.factories.StudyFactory;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
+import fi.uta.fsd.metka.search.StudyVariableSearch;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
@@ -34,6 +35,9 @@ public class DDIReader {
 
     @Autowired
     private ConfigurationRepository configurations;
+
+    @Autowired
+    private StudyVariableSearch variableSearch;
 
     /**
      * Tries to read CodeBook from provided path and merge it into given RevisionData (checked to be of type STUDY).
@@ -61,7 +65,7 @@ public class DDIReader {
 
         try {
             CodeBookDocument document = CodeBookDocument.Factory.parse(file);
-            CodebookReader reader = new CodebookReader(revisions, references, document, revision, configPair.getRight());
+            CodebookReader reader = new CodebookReader(revisions, references, document, revision, configPair.getRight(), variableSearch);
             return reader.read();
         } catch(IOException ioe) {
             Logger.error(DDIReader.class, "IOException during DDI-xml parsing.", ioe);
@@ -78,13 +82,15 @@ public class DDIReader {
         private final CodeBookDocument document;
         private final RevisionData revision;
         private final Configuration configuration;
+        private final StudyVariableSearch variableSearch;
 
-        private CodebookReader(RevisionRepository revisions, ReferenceService references, CodeBookDocument document, RevisionData revision, Configuration configuration) {
+        private CodebookReader(RevisionRepository revisions, ReferenceService references, CodeBookDocument document, RevisionData revision, Configuration configuration, StudyVariableSearch variableSearch) {
             this.revisions = revisions;
             this.references = references;
             this.document = document;
             this.revision = revision;
             this.configuration = configuration;
+            this.variableSearch = variableSearch;
         }
 
         private ReturnResult read() {
@@ -99,7 +105,7 @@ public class DDIReader {
             // TODO: Clear description tab, after this we can assume that all relevant info has been cleared out and we can just insert new stuff
 
             // TODO: Still unfinished
-            section = new DDIDataDescription(revision, docLang, codeBook, info, configuration, revisions);
+            section = new DDIDataDescription(revision, docLang, codeBook, info, configuration, revisions, variableSearch);
             result = section.read();
 
             if(result != ReturnResult.OPERATION_SUCCESSFUL) {
@@ -114,7 +120,6 @@ public class DDIReader {
                 return result;
             }
 
-            // TODO: Still unfinished
             section = new DDIOtherMaterialDescription(revision, docLang, codeBook, info, configuration);
             result = section.read();
 
@@ -129,9 +134,7 @@ public class DDIReader {
             if(result != ReturnResult.OPERATION_SUCCESSFUL) {
                 return result;
             }
-            return ReturnResult.OPERATION_SUCCESSFUL;
-            // TODO: Save data after successful operation
-            //return revisions.updateRevisionData(revision);
+            return revisions.updateRevisionData(revision);
         }
     }
 }

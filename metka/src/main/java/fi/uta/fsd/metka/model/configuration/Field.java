@@ -29,6 +29,7 @@ public class Field {
     private Boolean editable = true;
     private Boolean writable = true;
     private Boolean indexed = true;
+    private Boolean generalSearch = false;
     private Boolean exact = true;
     private String bidirectional = "";
     private String indexName = null;
@@ -147,6 +148,14 @@ public class Field {
 
     public void setIndexed(Boolean indexed) {
         this.indexed = (indexed == null) ? true : indexed;
+    }
+
+    public Boolean getGeneralSearch() {
+        return generalSearch == null ? false : generalSearch;
+    }
+
+    public void setGeneralSearch(Boolean generalSearch) {
+        this.generalSearch = generalSearch == null ? false : generalSearch;
     }
 
     public Boolean getExact() {

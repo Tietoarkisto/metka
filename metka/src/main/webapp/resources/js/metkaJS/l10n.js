@@ -9,6 +9,7 @@
         var locale = "default";
 
         return {
+            locale: locale,
             strings: strings,
             /**
              * Insert a localisation to the pool.

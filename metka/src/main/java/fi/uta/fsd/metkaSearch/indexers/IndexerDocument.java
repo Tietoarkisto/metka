@@ -12,88 +12,109 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.*;
 import org.apache.lucene.document.Field.Store;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class IndexerDocument {
-    private static final Logger logger = LoggerFactory.getLogger(IndexerDocument.class);
-
     private final Document document = new Document();
     private final Map<String, Analyzer> analyzers = new HashMap<>();
-    private final StringBuilder general = new StringBuilder();
+
+    // Language of the index being used. This determines how general search field is handled
+    private final Language baseLanguage;
+
+    public IndexerDocument(Language baseLanguage) {
+        this.baseLanguage = baseLanguage;
+    }
 
     public Map<String, Analyzer> getAnalyzers() {return analyzers;}
-    public String getGeneral() {return general.toString();}
     public Document getDocument() {return document;}
 
-    public void indexIntegerField(String key, Long value) {
-        indexIntegerField(key, value, false);
+    public void indexIntegerField(String key, Long value, boolean generalSearch) {
+        indexIntegerField(key, value, false, generalSearch);
     }
 
-    public void indexIntegerField(String key, Long value, boolean store) {
+    public void indexIntegerField(String key, Long value, boolean store, boolean generalSearch) {
         LongField lf = new LongField(key, value, (store) ? LuceneConfig.LONG_TYPE_STORE : LuceneConfig.LONG_TYPE);
         document.add(lf);
+        if(generalSearch) {indexGeneral(value.toString());}
     }
 
-    public void indexRealField(String key, Double value) {
-        indexRealField(key, value, false);
+    public void indexRealField(String key, Double value, boolean generalSearch) {
+        indexRealField(key, value, false, generalSearch);
     }
 
-    public void indexRealField(String key, Double value, boolean store) {
+    public void indexRealField(String key, Double value, boolean store, boolean generalSearch) {
         DoubleField df = new DoubleField(key, value, (store) ? LuceneConfig.DOUBLE_TYPE_STORE : LuceneConfig.DOUBLE_TYPE);
         document.add(df);
+        if(generalSearch) {indexGeneral(value.toString());}
     }
 
-    public void indexStringField(String key, String value, Store store) {
+    public void indexStringField(String key, String value, Store store, boolean generalSearch) {
         document.add(new StringField(key, value, store));
         analyzers.put(key, CaseInsensitiveKeywordAnalyzer.ANALYZER);
+        if(generalSearch) {indexGeneral(value);}
     }
 
     public void indexKeywordField(String key, String value) {
-        indexKeywordField(key, value, Store.NO);
+        indexKeywordField(key, value, Store.NO, false);
     }
 
     public void indexKeywordField(String key, String value, Store store) {
+        indexKeywordField(key, value, store, false);
+    }
+
+    public void indexKeywordField(String key, String value, boolean generalSearch) {
+        indexKeywordField(key, value, Store.NO, generalSearch);
+    }
+
+    public void indexKeywordField(String key, String value, Store store, boolean generalSearch) {
         document.add(new TextField(key, value, store));
         analyzers.put(key, CaseInsensitiveKeywordAnalyzer.ANALYZER);
+        if(generalSearch) {indexGeneral(value);}
     }
 
-    public void indexWhitespaceField(String key, String value) {
-        indexWhitespaceField(key, value, Store.NO);
+    public void indexWhitespaceField(String key, String value, boolean generalSearch) {
+        indexWhitespaceField(key, value, Store.NO, generalSearch);
     }
 
-    public void indexWhitespaceField(String key, String value, Store store) {
+    public void indexWhitespaceField(String key, String value, Store store, boolean generalSearch) {
         document.add(new TextField(key, value, store));
         analyzers.put(key, CaseInsensitiveWhitespaceAnalyzer.ANALYZER);
+        if(generalSearch) {indexGeneral(value);}
     }
 
-    public void indexText(Language language, Field field, String root, ValueDataField saved) {
-        indexText(language, root+field.getKey(), saved.getActualValueFor(language), field.getExact(), Store.NO);
+    public void indexText(Language language, Field field, String root, ValueDataField saved, boolean generalSearch) {
+        indexText(language, root+field.getKey(), saved.getActualValueFor(language), field.getExact(), Store.NO, generalSearch);
     }
 
-    public void indexText(Language language, Field field, String root, ReferenceOption option) {
-        indexText(language, root+field.getKey(), option.getTitle().getValue(), field.getExact(), Store.NO);
+    public void indexText(Language language, Field field, String root, ReferenceOption option, boolean generalSearch) {
+        indexText(language, root+field.getKey(), option.getTitle().getValue(), field.getExact(), Store.NO, generalSearch);
     }
 
-    public void indexText(Language language, Field field, String root, String value) {
-        indexText(language, root+field.getKey(), value, field.getExact(), Store.NO);
+    public void indexText(Language language, Field field, String root, String value, boolean generalSearch) {
+        indexText(language, root+field.getKey(), value, field.getExact(), Store.NO, generalSearch);
     }
 
-    public void indexText(Language language, String key, String value, boolean exact, Store store) {
+    public void indexText(Language language, String key, String value, boolean exact, Store store, boolean generalSearch) {
         if(exact) {
-            indexKeywordField(key, value, store);
+            indexKeywordField(key, value, store, generalSearch);
         } else {
-            general.append(" ");
-            general.append(value);
             document.add(new TextField(key, value, store));
             addTextAnalyzer(language, key);
+            if(generalSearch) {indexGeneral(value);}
         }
     }
 
+    public void indexGeneral(String value) {
+        document.add(new TextField("general", value, Store.NO));
+        addTextAnalyzer(baseLanguage, "general");
+    }
+
     private void addTextAnalyzer(Language language, String key) {
+        if(analyzers.containsKey(key)) {
+            return;
+        }
         if(language == Language.DEFAULT) {
             analyzers.put(key, FinnishVoikkoAnalyzer.ANALYZER);
         } else {

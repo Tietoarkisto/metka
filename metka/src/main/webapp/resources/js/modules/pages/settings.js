@@ -136,7 +136,7 @@ define(function (require) {
                                 {
                                     type: "ROW",
                                     cells: [
-                                        {
+                                        /*{
                                             type: "CELL",
                                             title: "Indekserit",
                                             readOnly: true,
@@ -149,6 +149,24 @@ define(function (require) {
                                                 ]
                                             }
 
+                                        }*/
+                                        {
+                                            type: "CELL",
+                                            field: {
+                                                displayType: "CUSTOM_JS"
+                                            },
+                                            create: function(options) {
+                                                var $elem = $(this).children().first();
+                                                $elem.text("Indeksikomentoja jonossa: 0");
+                                                setInterval(function() {
+                                                    require("./../server")("/settings/openIndexCommands", {
+                                                        method: "GET",
+                                                        success: function(response) {
+                                                            $elem.text("Indeksikomentoja jonossa: "+response.openCommands);
+                                                        }
+                                                    })
+                                                }, 1000);
+                                            }
                                         }
                                     ]
                                 },
@@ -163,9 +181,14 @@ define(function (require) {
                                                 permissions: [
                                                     "canManuallyIndexContent"
                                                 ],
-                                                create: function() {
+                                                create: function(options) {
                                                     this.click(function() {
-                                                        require('./../assignUrl')('/settings/indexEverything');
+                                                        require('./../server')('/settings/indexEverything', {
+                                                            method: "GET",
+                                                            success: function() {
+                                                            }
+                                                        });
+
                                                     });
                                                 }
                                             }

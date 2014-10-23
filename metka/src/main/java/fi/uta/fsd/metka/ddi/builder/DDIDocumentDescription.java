@@ -16,14 +16,13 @@ import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.names.Lists;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static fi.uta.fsd.metka.ddi.builder.DDIBuilder.fillTextType;
-import static fi.uta.fsd.metka.ddi.builder.DDIBuilder.getXmlLang;
-import static fi.uta.fsd.metka.ddi.builder.DDIBuilder.hasValue;
+import static fi.uta.fsd.metka.ddi.builder.DDIBuilder.*;
 
 class DDIDocumentDescription {
     private static final String BIBL_CIT_FORMAT = "MRDF";
@@ -198,7 +197,8 @@ class DDIDocumentDescription {
             VersionType ver = fillTextType(verStmt.addNewVersion(), valueFieldPair, language);
             valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.VERSIONDATE));
             if(hasValue(valueFieldPair, language)) {
-                LocalDate localDate = LocalDate.parse(valueFieldPair.getRight().getActualValueFor(language));
+                LocalDateTime versiondate = new LocalDateTime(valueFieldPair.getRight().getActualValueFor(language));
+                LocalDate localDate = versiondate.toLocalDate();
                 ver.setDate(DDIBuilder.DATE_TIME_FORMATTER.print(localDate));
             }
         }

@@ -1,92 +1,103 @@
 package fi.uta.fsd.metka.ddi.reader;
 
-import codebook25.CodeBookType;
-import codebook25.DataDscrType;
-import codebook25.VarType;
+import codebook25.*;
+import fi.uta.fsd.Logger;
+import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
+import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.data.change.ContainerChange;
+import fi.uta.fsd.metka.model.data.container.ContainerDataField;
+import fi.uta.fsd.metka.model.data.container.DataRow;
+import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
+import fi.uta.fsd.metka.names.Fields;
+import fi.uta.fsd.metka.search.StudyVariableSearch;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.util.StringUtils;
 
 class DDIDataDescription extends DDISectionBase {
     private final RevisionRepository revisions;
-    DDIDataDescription(RevisionData revision, Language language, CodeBookType codeBook, DateTimeUserPair info, Configuration configuration, RevisionRepository revisions) {
+    private final StudyVariableSearch variableSearch;
+
+    DDIDataDescription(RevisionData revision, Language language, CodeBookType codeBook, DateTimeUserPair info, Configuration configuration, RevisionRepository revisions, StudyVariableSearch variableSearch) {
         super(revision, language, codeBook, info, configuration);
         this.revisions = revisions;
+        this.variableSearch = variableSearch;
     }
 
-    // TODO: Still unfinished
     ReturnResult read() {
-        // TODO: Implement when questions about tables and variables are answered
+        if(!hasContent(codeBook.getDataDscrArray())) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
+        }
 
-        // TODO: Reverse process
-        /*Pair<StatusCode, ValueDataField> valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
+        Pair<StatusCode, ValueDataField> valuePair = revision.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
         // This operation is so large that it's cleaner just to return than to wrap everything inside this one IF
-        if(valueFieldPair.getLeft() != StatusCode.FIELD_FOUND || !valueFieldPair.getRight().hasValueFor(Language.DEFAULT)) {
-            return;
+        if(valuePair.getLeft() != StatusCode.FIELD_FOUND || !valuePair.getRight().hasValueFor(Language.DEFAULT)) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
         }
 
         // Get variables data since it contains most of the information needed for this. Some additional data is also needed from the actual file but very little.
-        Pair<ReturnResult, RevisionData> revisionDataPair = revisions.getLatestRevisionForIdAndType(
-                valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY_VARIABLES);
-        if(revisionDataPair.getLeft() != ReturnResult.REVISION_FOUND) {
+        Pair<ReturnResult, RevisionData> revisionPair = revisions.getLatestRevisionForIdAndType(
+                valuePair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY_VARIABLES);
+        if(revisionPair.getLeft() != ReturnResult.REVISION_FOUND) {
             Logger.error(DDIDataDescription.class,
-                    "Couldn't find expected variables revision with id: " + valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger());
-            return;
+                    "Couldn't find expected variables revision with id: " + valuePair.getRight().getValueFor(Language.DEFAULT).valueAsInteger());
+            return revisionPair.getLeft();
         }
-        RevisionData variables = revisionDataPair.getRight();
+        RevisionData variables = revisionPair.getRight();
 
-        // Add data description
-        DataDscrType dataDscrType = codeBookType.addNewDataDscr();
+        ReturnResult result;
+        DataDscrType dataDscr = codeBook.getDataDscrArray(0);
+        // TODO: Still unclear on how to handle languages
+        /*result = readVariableGroups(dataDscr, variables);
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}*/
 
-        readVariableGroups(language, revisions, variables, dataDscrType);
-
-        valueFieldPair = variables.dataField(ValueDataFieldCall.get(Fields.VARFILEID));
-        String fileID = (valueFieldPair.getLeft() == StatusCode.FIELD_FOUND) ? valueFieldPair.getRight().getActualValueFor(Language.DEFAULT) : "";
-
-        Pair<StatusCode, ReferenceContainerDataField> referenceContainerPair = variables.dataField(ReferenceContainerDataFieldCall.get(Fields.VARIABLES));
-        if(referenceContainerPair.getLeft() == StatusCode.FIELD_FOUND && !referenceContainerPair.getRight().getReferences().isEmpty()) {
-            for(ReferenceRow reference : referenceContainerPair.getRight().getReferences()) {
-                if(reference.getRemoved()) {
-                     continue;
-                }
-                revisionDataPair = revisions.getLatestRevisionForIdAndType(reference.getReference().asInteger(), false, ConfigurationType.STUDY_VARIABLE);
-                if(revisionDataPair.getLeft() != ReturnResult.REVISION_FOUND) {
-                    Logger.error(DDIDataDescription.class, "Referenced study variable with id: " + reference.getReference().asInteger() + " could not be found with result " + revisionDataPair.getLeft());
-                    continue;
-                }
-                RevisionData variable = revisionDataPair.getRight();
-                Pair<StatusCode, ContainerDataField> containerPair = variable.dataField(ContainerDataFieldCall.get(Fields.TRANSLATIONS));
-                if(containerPair.getLeft() != StatusCode.FIELD_FOUND || !containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
-                    continue;
-                }
-                boolean translated = false;
-                for(DataRow row : containerPair.getRight().getRowsFor(Language.DEFAULT)) {
-                    if(row.getRemoved()) {
-                        continue;
-                    }
-                    valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.TRANSLATION));
-                    if(valueFieldPair.getLeft() != StatusCode.FIELD_FOUND || !valueFieldPair.getRight().hasValueFor(Language.DEFAULT)) {
-                        continue;
-                    }
-                    if(valueFieldPair.getRight().getActualValueFor(Language.DEFAULT).equals(language.toValue())) {
-                        translated = true;
-                        break;
-                    }
-                }
-                if(!translated) {
-                    continue;
-                }
-                VarType var = dataDscrType.addNewVar();
-                readVar(variable, language, var, fileID);
-            }
-        }*/
-        return ReturnResult.OPERATION_SUCCESSFUL;
+        return readVars(dataDscr);
     }
+
     // TODO: Still unfinished
-    private static void readVariableGroups(Language language, RevisionRepository revisions, RevisionData variables, DataDscrType dataDscr) {
+    private ReturnResult readVariableGroups(DataDscrType dataDscr, RevisionData variables) {
+        // TODO: Open a draft if needed
+        Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerPair = getContainer(Fields.VARGROUPS, variables);
+        if(containerPair.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
+            return containerPair.getLeft();
+        }
+
+        ContainerDataField vargroups = containerPair.getRight().getLeft();
+        ContainerChange vargroupsChange = containerPair.getRight().getRight();
+
+        // TODO: Should we clear the array only on default language?
+        /*for(DataRow row : vargroups.getRowsFor(Language.DEFAULT)) {
+            vargroups.removeRow(row.getRowId(), variables.getChanges(), info);
+        }*/
+
+        if(!hasContent(dataDscr.getVarGrpArray())) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
+        }
+
+        for(VarGrpType varGrp : dataDscr.getVarGrpArray()) {
+            Pair<StatusCode, DataRow> rowPair = vargroups.insertNewDataRow(Language.DEFAULT, vargroupsChange);
+            if(rowPair.getLeft() != StatusCode.NEW_ROW) {
+                continue;
+            }
+            DataRow row = rowPair.getRight();
+            // TODO: Should we set title only on default?
+            /*if(language == Language.DEFAULT) {
+                if(StringUtils.hasText(varGrp.xmlText())) {
+                    valueSet(row, Fields.VARGROUPTITLE, varGrp.xmlText(), )
+                }
+            }*/
+
+            // TODO: How do we find the correct row on other languages.
+        }
+
+        return ReturnResult.OPERATION_SUCCESSFUL;
+
         /*Pair<ReturnResult, RevisionData> revisionDataPair;Pair<StatusCode, ContainerDataField> containerPair = variables.dataField(ContainerDataFieldCall.get(Fields.VARGROUPS));
         ContainerDataField vargroups = containerPair.getRight();
         if(containerPair.getLeft() == StatusCode.FIELD_FOUND && vargroups.hasRowsFor(Language.DEFAULT)) {
@@ -142,52 +153,100 @@ class DDIDataDescription extends DDISectionBase {
             }
         }*/
     }
-    // TODO: Still unfinished
-    private static void readVar(RevisionData variable, Language language, VarType var, String fileID) {
-        // TODO: Reverse process
-        /*Pair<StatusCode, ValueDataField> valueFieldPair = variable.dataField(ValueDataFieldCall.get(Fields.VARID));
-        if(hasValue(valueFieldPair, Language.DEFAULT)) {
-            var.setID(valueFieldPair.getRight().getActualValueFor(Language.DEFAULT));
-        }
-        valueFieldPair = variable.dataField(ValueDataFieldCall.get(Fields.VARNAME));
-        if(hasValue(valueFieldPair, language)) {
-            var.setName(valueFieldPair.getRight().getActualValueFor(language));
-        }
-        var.setFiles(Lists.asList(fileID, new String[0]));
 
-        valueFieldPair = variable.dataField(ValueDataFieldCall.get(Fields.VARINTERVAL));
-        if(hasValue(valueFieldPair, Language.DEFAULT)) {
-            switch(valueFieldPair.getRight().getActualValueFor(Language.DEFAULT)) {
-                case "contin":
-                    var.setIntrvl(VarType.Intrvl.CONTIN);
-                    break;
-                case "discrete":
-                    var.setIntrvl(VarType.Intrvl.DISCRETE);
-                    break;
-            }
+    private ReturnResult readVars(DataDscrType dataDscr) {
+        if(!hasContent(dataDscr.getVarArray())) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
+        }
+        ReturnResult result;
+        for(VarType var : dataDscr.getVarArray()) {
+            result = readVar(var);
+            if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
         }
 
-        valueFieldPair = variable.dataField(ValueDataFieldCall.get(Fields.VARLABEL));
-        if(hasValue(valueFieldPair, language)) {
-            fillTextType(var.addNewLabl(), valueFieldPair, language);
-        }
-
-        readVarSecurities(variable, language, var);
-
-        readVarQstn(variable, language, var);
-
-        readVarTexts(variable, language, var);
-
-        readNotes(variable, language, var);
-
-        readStatistics(variable, var);
-
-        readCategories(variable, var);*/
+        return ReturnResult.OPERATION_SUCCESSFUL;
     }
+
     // TODO: Still unfinished
-    private static void readCategories(RevisionData variable, VarType var) {
+    private ReturnResult readVar(VarType var) {
+        // TODO: Open a draft if needed
+        if(!StringUtils.hasText(var.getID())) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
+        }
+        Pair<ReturnResult, RevisionData> variablePair = variableSearch.findVariableWithId(revision.getKey().getId(), var.getID());
+        if(variablePair.getLeft() != ReturnResult.REVISION_FOUND) {
+            Logger.info(DDIDataDescription.class, "Tried to import variable "+var.getID()+" not that was not found for study "+revision.getKey().getId());
+            // We don't need to stop the import process for variable that we can't find.
+            return ReturnResult.OPERATION_SUCCESSFUL;
+        }
+
+        RevisionData variable = variablePair.getRight();
+        // TODO: Clear individual variable of stuff that can be imported
+
+        // PREQTXTS
+
+        // QSTNLITS
+
+        // POSTQTXTS
+
+        // IVUINSTRS
+
+        // VARSECURITIES
+
+        // VARTEXTS
+
+        // VARNOTES
+
+        ReturnResult result;
+
+        valueSet(variable, Fields.VARLABEL, hasContent(var.getLablArray()) ? var.getLablArray(0).xmlText() : "", language, variable.getChanges());
+
+        // TODO: Skip for now
+        /*result = readCategories(var, variable);
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}*/
+
+        result = readVarQstn(var, variable);
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
+
+        result = fillSingleValueContainer(variable, variable.getChanges(), Fields.VARSECURITIES, Fields.VARSECURITY, var.getSecurityArray());
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
+
+        result = fillSingleValueContainer(variable, variable.getChanges(), Fields.VARTEXTS, Fields.VARTEXT, var.getTxtArray());
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
+
+        result = fillSingleValueContainer(variable, variable.getChanges(), Fields.VARNOTES, Fields.VARNOTE, var.getNotesArray());
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
+
+        // TODO: Check 'translated' either here or during the field fill process
+
+        return ReturnResult.OPERATION_SUCCESSFUL;
+    }
+
+    private ReturnResult readVarQstn(VarType var, RevisionData variable) {
+        if(!hasContent(var.getQstnArray())) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
+        }
+
+        QstnType qstn = var.getQstnArray(0);
+
+        ReturnResult result;
+
+        result = fillSingleValueContainer(variable, variable.getChanges(), Fields.PREQTXTS, Fields.PREQTXT, qstn.getPreQTxtArray());
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
+
+        result = fillSingleValueContainer(variable, variable.getChanges(), Fields.QSTNLITS, Fields.QSTNLIT, qstn.getQstnLitArray());
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
+
+        result = fillSingleValueContainer(variable, variable.getChanges(), Fields.POSTQTXTS, Fields.POSTQTXT, qstn.getPostQTxtArray());
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
+
+        return fillSingleValueContainer(variable, variable.getChanges(), Fields.IVUINSTRS, Fields.IVUINSTR, qstn.getIvuInstrArray());
+    }
+
+    // TODO: Skip for now
+    /*private ReturnResult readCategories(VarType var, RevisionData variable) {
         // TODO: Reverse process
-        /*Pair<StatusCode, ContainerDataField> categories = variable.dataField(ContainerDataFieldCall.get(Fields.CATEGORIES));
+        Pair<StatusCode, ContainerDataField> categories = variable.dataField(ContainerDataFieldCall.get(Fields.CATEGORIES));
         if(categories.getLeft() == StatusCode.FIELD_FOUND && categories.getRight().hasRowsFor(Language.DEFAULT)) {
             for(DataRow row : categories.getRight().getRowsFor(Language.DEFAULT)) {
                 if(row.getRemoved()) {
@@ -198,7 +257,6 @@ class DDIDataDescription extends DDISectionBase {
                     CatgryType catgry = var.addNewCatgry();
                     fillTextType(catgry.addNewCatValu(), valueFieldPair, Language.DEFAULT);
 
-                    // TODO: Should cat labels be translatable?
                     valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.LABEL));
                     if(hasValue(valueFieldPair, Language.DEFAULT)) {
                         fillTextType(catgry.addNewLabl(), valueFieldPair, Language.DEFAULT);
@@ -215,94 +273,6 @@ class DDIDataDescription extends DDISectionBase {
                     }
                 }
             }
-        }*/
-    }
-    // TODO: Still unfinished
-    private static void readStatistics(RevisionData variable, VarType var) {
-        // TODO: Reverse process
-        /*Pair<StatusCode, ContainerDataField> statistics = variable.dataField(ContainerDataFieldCall.get(Fields.STATISTICS));
-        if(statistics.getLeft() == StatusCode.FIELD_FOUND && statistics.getRight().hasRowsFor(Language.DEFAULT)) {
-            for(DataRow row : statistics.getRight().getRowsFor(Language.DEFAULT)) {
-                if(row.getRemoved()) {
-                    continue;
-                }
-                Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.STATISTICSVALUE));
-                if(hasValue(valueFieldPair, Language.DEFAULT)) {
-                    SumStatType sumStat = fillTextType(var.addNewSumStat(), valueFieldPair, Language.DEFAULT);
-
-                    valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.STATISTICSTYPE));
-                    if(hasValue(valueFieldPair, Language.DEFAULT)) {
-                        switch(valueFieldPair.getRight().getActualValueFor(Language.DEFAULT)) {
-                            case "vald":
-                                sumStat.setType(SumStatType.Type.VALD);
-                                break;
-                            case "min":
-                                sumStat.setType(SumStatType.Type.MIN);
-                                break;
-                            case "max":
-                                sumStat.setType(SumStatType.Type.MAX);
-                                break;
-                            case "mean":
-                                sumStat.setType(SumStatType.Type.MEAN);
-                                break;
-                            case "stdev":
-                                sumStat.setType(SumStatType.Type.STDEV);
-                                break;
-
-                        }
-                    }
-                }
-            }
-        }*/
-    }
-    // TODO: Still unfinished
-    private static void readVarSecurities(RevisionData variable, Language language, VarType var) {
-        // TODO: Reverse process
-        /*List<ValueDataField> fields = gatherFields(variable, Fields.VARSECURITIES, Fields.VARSECURITY, language, language);
-        for(ValueDataField field : fields) {
-            fillTextAndDateType(var.addNewSecurity(), field, language);
-        }*/
-    }
-    // TODO: Still unfinished
-    private static void readVarQstn(RevisionData variable, Language language, VarType var) {
-        // TODO: Reverse process
-        /*// TODO: Do we want to use single qstn type with multiple texts for each container or do we want to have one qstn type per set of texts so that each qstn contains only one preq etc.?
-        QstnType qstn = var.addNewQstn();
-
-        List<ValueDataField> fields = gatherFields(variable, Fields.PREQTXTS, Fields.PREQTXT, language, language);
-        for(ValueDataField field : fields) {
-            fillTextType(qstn.addNewPreQTxt(), field, language);
         }
-
-        fields = gatherFields(variable, Fields.QSTNLITS, Fields.QSTNLIT, language, language);
-        for(ValueDataField field : fields) {
-            fillTextType(qstn.addNewQstnLit(), field, language);
-        }
-
-        fields = gatherFields(variable, Fields.POSTQTXTS, Fields.POSTQTXT, language, language);
-        for(ValueDataField field : fields) {
-            fillTextType(qstn.addNewPostQTxt(), field, language);
-        }
-
-        fields = gatherFields(variable, Fields.IVUINSTRS, Fields.IVUINSTR, language, language);
-        for(ValueDataField field : fields) {
-            fillTextType(qstn.addNewIvuInstr(), field, language);
-        }*/
-    }
-    // TODO: Still unfinished
-    private static void readVarTexts(RevisionData variable, Language language, VarType var) {
-        // TODO: Reverse process
-        /*List<ValueDataField> fields = gatherFields(variable, Fields.VARTEXTS, Fields.VARTEXT, language, language);
-        for(ValueDataField field : fields) {
-            fillTextType(var.addNewTxt(), field, language);
-        }*/
-    }
-    // TODO: Still unfinished
-    private static void readNotes(RevisionData variable, Language language, VarType var) {
-        // TODO: Reverse process
-        /*NotesType notes = var.addNewNotes();
-        // TODO: Notes is not a repeatable field in DDI
-        // TODO: How is this supposed to be used?
-        */
-    }
+    }*/
 }

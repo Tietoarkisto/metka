@@ -6,16 +6,11 @@ import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import fi.uta.fsd.metka.mvc.ModelUtil;
 import fi.uta.fsd.metka.mvc.services.SettingsService;
-import fi.uta.fsd.metka.mvc.validator.UploadRequestValidator;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
-import fi.uta.fsd.metka.transfer.settings.APIUserListResponse;
-import fi.uta.fsd.metka.transfer.settings.JSONListEntry;
-import fi.uta.fsd.metka.transfer.settings.NewAPIUserRequest;
-import fi.uta.fsd.metka.transfer.settings.UploadJsonRequest;
+import fi.uta.fsd.metka.transfer.settings.*;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
-import fi.uta.fsd.metkaSearch.IndexerComponent;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -32,21 +27,18 @@ import java.util.List;
 @RequestMapping(value = "settings")
 public class SettingsController {
 
-    @Autowired
-    private UploadRequestValidator uploadValidator;
+    //@Autowired
+    //private UploadRequestValidator uploadValidator;
 
     @Autowired
     private SettingsService service;
-
-    @Autowired
-    private IndexerComponent indexer;
 
     @Autowired
     private JSONUtil json;
 
     @RequestMapping("")
     public String settings(Model model) {
-        ModelUtil.initSettings(model, indexer.indexerStatusList());
+        ModelUtil.initSettings(model);
         return AuthenticationUtil.getModelName("page", model);
     }
 
@@ -140,10 +132,11 @@ public class SettingsController {
     }
 
     @RequestMapping(value="indexEverything", method = RequestMethod.GET)
-    public String indexEverything(Model model) {
-        ModelUtil.initSettings(model, indexer.indexerStatusList());
+    public @ResponseBody ReturnResult indexEverything() {
+        return service.indexEverything();
+        /*ModelUtil.initSettings(model, indexer.indexerStatusList());
         indexer.indexEverything();
-        return AuthenticationUtil.getModelName("page", model);
+        return AuthenticationUtil.getModelName("page", model);*/
     }
 
     @RequestMapping(value="listAPIUsers", method = RequestMethod.GET)
@@ -159,5 +152,10 @@ public class SettingsController {
     @RequestMapping(value="removeAPIUser/{key}", method = RequestMethod.GET)
     public @ResponseBody ReturnResult removeAPIUser(@PathVariable String key) {
         return service.removeAPIUser(key);
+    }
+
+    @RequestMapping(value="openIndexCommands", method = RequestMethod.GET)
+    public @ResponseBody OpenIndexCommandsResponse openIndexCommands() {
+        return service.getOpenIndexCommands();
     }
 }
