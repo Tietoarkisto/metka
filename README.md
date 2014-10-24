@@ -71,3 +71,37 @@ Json-objektien ja rakenteiden (pääasiassa datan) käsittelyyn liittyviä luokk
 Erilaiset Json-tietoihin liittyvät interface-objektit joita käytetään java-luokissa.
 ##### serializers
 Erilaisten json-objektien sarjoittajia.
+#### mvc
+Käyttöliittymärajapintaan liittyvät luokat löytyvät täältä.
+##### controller
+Eri html-pyyntöjen määrittelyt
+##### services
+Palvelut jotka käsittelevät html-pyyntöjä, keskustelevat tietovarastorajapintojen kanssa ja muokkaavat dataa käyttöliittymän ymmärtämään muotoon.
+###### simple
+Sisältää vanhentuneita luokkia ja luokkia jotka pitäisi siirtää mekta.transfer paketin alle.
+##### validator
+Erilaiset validaattorit joita käytetään käyttöliittymän tekemien pyyntöje kanssa. Ei tällä hetkellä käyttöä.
+##### MetkaObjectMapper-luokka
+Määrittelee miten java-objekteja tulkitaan json-tiedostoiksi. Tämä koskee kaikkea objecti-json-objekti muunnosta, ei pelkästään käyttöliittymälle menevää muunnosta. Luokka on kuitenkin määritelty täällä koska suurin osa objekti-json-objekti muunnoksista tapahtuu käyttöliittymän ja palvelimen välisessä liikenteessä.
+##### ModelUtil-luokka
+Määrittelee html-navigointipyyntöihin liittyviä vakioarvoja kuten käyttäjänimen ja sivuston osan johon käyttäjä ohjataan. Kaikkien html-pyyntöjen jotka ohjaavat käyttäjän jsp-sivulle tulisi käyttää tätä luokkaa näiden vakioarvojen asettamiseen.
+#### names
+Määrittelee erilaisia vakiotekstikokoelmia jotka sisältävät mm. Metkan käyttämiä kenttäavaimia. Eivät sinällään liity ohjelman toimintaan vaan yrittävät helpottaa kirjoitusvirheiden välttämistä.
+#### search
+Erilaisten hakutoimintojen toteutukset. Haut voivat sisältää hakupyyntöjä lucene-indeksiin, hakuja tietokannasta ym.
+#### storage
+Tiedon säilytykseen liittyvät luokat.
+##### collecting
+Sisältää toteutuksen erilaisten referenssien käsittelylle ja avaamiselle arvojoukoiksi.
+##### entity
+Metkan käyttämät JPA-entiteetit
+##### repository
+Metkan käyttämät Repository-objektit. Repository on käytännössä rajapinta tietovarastoon ja hoitaa haut ja tallennukset tähän varastoon. Tietovarasto voi olla tietokanna taulu, lucene-indeksi ym. Sisältää myös erityisesti repositoryjen käyttöön tarkoitettuja enumeraattoreita.
+##### response
+Sisältää repositoryjen käyttämiä paluuarvo-objekteja joihin koostetaan dataa yksinkertaisempaan muotoon.
+##### restrictions
+Sisältää rajoitekonfiguraation käsittelyyn ja validointiin liittyvät luokat.
+##### util
+Sisältää yleisiä apuluokkia tallennusdatan käsittelyyn.
+##### variables
+Sisältää toteutuksen por-tiedostojen parsinnasta aineistomuuttujiksi.
