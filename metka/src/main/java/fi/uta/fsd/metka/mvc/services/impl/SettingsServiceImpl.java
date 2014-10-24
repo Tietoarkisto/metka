@@ -11,6 +11,7 @@ import fi.uta.fsd.metka.storage.repository.MiscJSONRepository;
 import fi.uta.fsd.metka.storage.repository.ReportRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.settings.*;
+import fi.uta.fsd.metkaSearch.IndexerComponent;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,6 +35,9 @@ public class SettingsServiceImpl implements SettingsService {
 
     @Autowired
     private ReportRepository reports;
+
+    @Autowired
+    private IndexerComponent indexer;
 
     @Value("${dir.autoload}")
     private String rootFolder;
@@ -122,6 +126,21 @@ public class SettingsServiceImpl implements SettingsService {
                 break;
         }
         return result == null || result.getRight() == null ? "" : result.getRight();
+    }
+
+    @Override
+    public OpenIndexCommandsResponse getOpenIndexCommands() {
+        OpenIndexCommandsResponse response = new OpenIndexCommandsResponse();
+        Pair<ReturnResult, Integer> pair = indexer.getOpenIndexCommands();
+        response.setResult(pair.getLeft());
+        response.setOpenCommands(pair.getRight());
+        return response;
+    }
+
+    @Override
+    public ReturnResult indexEverything() {
+        indexer.indexEverything();
+        return ReturnResult.OPERATION_SUCCESSFUL;
     }
 
     @Override

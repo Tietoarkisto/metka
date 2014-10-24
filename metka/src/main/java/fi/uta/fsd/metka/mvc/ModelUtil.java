@@ -3,10 +3,7 @@ package fi.uta.fsd.metka.mvc;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import fi.uta.fsd.metkaAuthentication.MetkaAuthenticationDetails;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.ui.Model;
-
-import java.util.List;
 
 /**
  * Provides methods for handling mvc model and groups different functionality together
@@ -46,7 +43,7 @@ public final class ModelUtil {
         model.asMap().put("configurationType", "EXPERT");
     }
 
-    public static void initSettings(Model model, List<Pair<String, Boolean>> pairs) {
+    public static void initSettings(Model model) {
         addUserInfo(model);
         model.asMap().put("configurationType", "SETTINGS");
     }

@@ -2,15 +2,21 @@ package fi.uta.fsd.metka.ddi.reader;
 
 import codebook25.*;
 import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.configuration.Option;
-import fi.uta.fsd.metka.model.configuration.SelectionList;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.data.change.ContainerChange;
+import fi.uta.fsd.metka.model.data.container.ContainerDataField;
+import fi.uta.fsd.metka.model.data.container.DataRow;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
+import fi.uta.fsd.metka.transfer.reference.ReferencePath;
+import fi.uta.fsd.metka.transfer.reference.ReferencePathRequest;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -71,150 +77,112 @@ class DDIStudyDescription extends DDISectionBase {
         } else return null;
     }
 
-    void read() {
+    ReturnResult read() {
         if(codeBook.getStdyDscrArray().length == 0) {
-            return;
+            return ReturnResult.OPERATION_SUCCESSFUL;
         }
 
         StdyDscrType stdyDscr = codeBook.getStdyDscrArray(0);
+        ReturnResult result;
 
-        readCitation(stdyDscr);
+        result = readCitation(stdyDscr);
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
-        readStudyAuthorization(stdyDscr);
+        result = readStudyAuthorization(stdyDscr);
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
-        readStudyInfo(stdyDscr);
+        result = readStudyInfo(stdyDscr);
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
-        readMethod(stdyDscr);
+        result = readMethod(stdyDscr);
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
-        readDataAccess(stdyDscr);
+        result = readDataAccess(stdyDscr);
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
-        readOtherStudyMaterial(stdyDscr);
+        result = readOtherStudyMaterial(stdyDscr);
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
+
+        return ReturnResult.OPERATION_SUCCESSFUL;
     }
 
-    private void readCitation(StdyDscrType stdyDscr) {
-        if(stdyDscr.getCitationArray().length == 0) {
-            return;
+    private ReturnResult readCitation(StdyDscrType stdyDscr) {
+        if(hasContent(stdyDscr.getCitationArray())) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
         }
 
         CitationType citation = stdyDscr.getCitationArray(0);
 
-        readCitationTitle(citation);
+        ReturnResult result;
 
-        readCitationRspStatement(citation);
+        result = readCitationTitle(citation);
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
-        readCitationProdStatement(citation);
+        result = readCitationRspStatement(citation);
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
-        // TODO: Questions about versions still open
-        readCitationVerStatement(citation);
+        return readCitationProdStatement(citation);
     }
 
-    private void readCitationTitle(CitationType citation) {
+    private ReturnResult readCitationTitle(CitationType citation) {
+        if(citation.getTitlStmt() == null) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
+        }
+
         TitlStmtType titlStmt = citation.getTitlStmt();
-        if(titlStmt == null) {
-            return;
-        }
+        ReturnResult result;
+        result = readAltTitles(titlStmt);
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
-        valueSet(Fields.TITLE, titlStmt.xmlText());
-
-        // TODO: Alt titles when tables are sorted out
-
-        // TODO: Par titles when tables are sorted out
-
-        // TODO: Skip ID?
-
-        /*Pair<StatusCode, ValueDataField> valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.TITLE));
-        TitlStmtType titlStmtType = citationType.addNewTitlStmt();
-        if(hasValue(valueFieldPair, language)) {
-            // Add title of requested language
-            fillTextType(titlStmtType.addNewTitl(), valueFieldPair, language);
-        }
-
-        readAltTitles(revisionData, language, titlStmt);
-
-        readParTitles(revisionData, language, titlStmt);
-
-        String agency = "";
-        valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.STUDYID));
-        if(hasValue(valueFieldPair, Language.DEFAULT)) {
-            String id = valueFieldPair.getRight().getActualValueFor(Language.DEFAULT);
-            // Get agency from study id
-            SelectionList list = configuration.getRootSelectionList(Lists.ID_PREFIX_LIST);
-            if(list != null) {
-                for(Option option : list.getOptions()) {
-                    if(id.indexOf(option.getValue()) == 0) {
-                        agency = option.getValue();
-                        break;
-                    }
-                }
-            }
-            // Add study id as id no
-            IDNoType idNoType = fillTextType(titlStmtType.addNewIDNo(), valueFieldPair, Language.DEFAULT);
-            idNoType.setAgency(agency);
-        }
-
-        // Add DDI pid for the current language as idNO
-        valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.PIDDDI+getXmlLang(language)));
-        if(hasValue(valueFieldPair, Language.DEFAULT)) {
-            IDNoType idNoType = fillTextType(titlStmtType.addNewIDNo(), valueFieldPair, Language.DEFAULT);
-            idNoType.setAgency(agency);
-        }*/
+        return readParTitles(titlStmt);
     }
 
-    private void readAltTitles(TitlStmtType titlStmt) {
-        // TODO: Reverse process
-        /*Pair<StatusCode, ValueDataField> valueFieldPair;// Add alternative titles
-        Pair<StatusCode, ContainerDataField> containerPair = revisionData.dataField(ContainerDataFieldCall.get(Fields.ALTTITLES));
-        // TODO: Do we translate alternate titles or do the alternate titles have translations?
-        if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
-            for(DataRow row : containerPair.getRight().getRowsFor(Language.DEFAULT)) {
-                valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.ALTTITLE));
-                if(hasValue(valueFieldPair, language)) {
-                    fillTextType(titlStmtType.addNewAltTitl(), valueFieldPair, language);
+    private ReturnResult readAltTitles(TitlStmtType titlStmt) {
+        if(hasContent(titlStmt.getAltTitlArray())) {
+            Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.ALTTITLES);
+            if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
+                return containerResult.getLeft();
+            }
+            Pair<ContainerDataField, ContainerChange> container = containerResult.getRight();
+            for(AbstractTextType tt : titlStmt.getAltTitlArray()) {
+                Pair<StatusCode, DataRow> row = container.getLeft().insertNewDataRow(language, container.getRight());
+                if(row.getLeft() != StatusCode.NEW_ROW) {
+                    continue;
                 }
-            }
-        }*/
-    }
-
-    private void readParTitles(TitlStmtType titlStmt) {
-        // TODO: Reverse process
-        /*Pair<StatusCode, ValueDataField> valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.TITLE));
-        Set<String> usedLanguages = new HashSet<>();
-        usedLanguages.add(getXmlLang(language));
-        for(Language l : Language.values()) {
-            if(l == language) {
-                continue;
-            }
-            if(hasValue(valueFieldPair, l)) {
-                SimpleTextType stt = fillTextType(titlStmtType.addNewParTitl(), valueFieldPair, l);
-                stt.setLang(getXmlLang(l));
-                usedLanguages.add(getXmlLang(l));
+                valueSet(row.getRight(), Fields.ALTTITLE, tt.xmlText());
             }
         }
-        Pair<StatusCode, ContainerDataField> containerPair = revisionData.dataField(ContainerDataFieldCall.get(Fields.PARTITLES));
-        if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
-            for(DataRow row : containerPair.getRight().getRowsFor(Language.DEFAULT)) {
-                valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.PARTITLE));
-                String partitle = null;
-                if(hasValue(valueFieldPair, Language.DEFAULT)) {
-                    partitle = valueFieldPair.getRight().getActualValueFor(Language.DEFAULT);
-                }
-                valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.PARTITLELANG));
-                String partitlelang = null;
-                if(hasValue(valueFieldPair, Language.DEFAULT)) {
-                    partitlelang = valueFieldPair.getRight().getActualValueFor(Language.DEFAULT);
-                }
-                if(partitle != null && partitlelang != null) {
-                    if(!usedLanguages.contains(partitlelang)) {
-                        SimpleTextType stt = fillTextType(titlStmtType.addNewParTitl(), partitle);
-                        stt.setLang(partitlelang);
-                        usedLanguages.add(partitlelang);
-                    }
-                }
-            }
-        }*/
+        return ReturnResult.OPERATION_SUCCESSFUL;
     }
 
-    private void readCitationRspStatement(CitationType citation) {
+    private ReturnResult readParTitles(TitlStmtType titlStmt) {
+        if(language != Language.DEFAULT) {
+            // Par titles are default language only
+            // TODO: Do we need these in some way from other than default language?
+            return ReturnResult.OPERATION_SUCCESSFUL;
+        }
+
+        if(hasContent(titlStmt.getParTitlArray())) {
+            Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.PARTITLES);
+            if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
+                return containerResult.getLeft();
+            }
+            Pair<ContainerDataField, ContainerChange> container = containerResult.getRight();
+            for(SimpleTextType stt : titlStmt.getParTitlArray()) {
+                Pair<StatusCode, DataRow> row = container.getLeft().insertNewDataRow(language, container.getRight());
+                if(row.getLeft() != StatusCode.NEW_ROW) {
+                    continue;
+                }
+                valueSet(row.getRight(), Fields.PARTITLE, stt.xmlText());
+                valueSet(row.getRight(), Fields.PARTITLELANG, stt.getXmlLang());
+            }
+        }
+        return ReturnResult.OPERATION_SUCCESSFUL;
+    }
+
+    // TODO: Still unfinished
+    private ReturnResult readCitationRspStatement(CitationType citation) {
+        return ReturnResult.OPERATION_SUCCESSFUL;
         // TODO: Reverse process
 
         // TODO: Questions about tables and authors still open
@@ -337,8 +305,9 @@ class DDIStudyDescription extends DDISectionBase {
         }*/
     }
 
-    private static void readCitationProdStatement(CitationType citation) {
-        // TODO: Questions about tables and authors still open
+    // TODO: Still unfinished
+    private static ReturnResult readCitationProdStatement(CitationType citation) {
+        return ReturnResult.OPERATION_SUCCESSFUL;
         // Authors, other authors and producers need resolved answers before continuing
 
         // TODO: Reverse process
@@ -396,23 +365,9 @@ class DDIStudyDescription extends DDISectionBase {
         }*/
     }
 
-    private static void readCitationVerStatement(CitationType citation) {
-        // TODO: Reverse process
-        /*VerStmtType verStmtType = citationType.addNewVerStmt();
-
-        // Add version, repeatable
-        Pair<StatusCode, ContainerDataField> containerPair = revisionData.dataField(ContainerDataFieldCall.get(Fields.DATAVERSIONS));
-        if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(language)) {
-            for(DataRow row : containerPair.getRight().getRowsFor(language)) {
-                Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.VERSION));
-                if(hasValue(valueFieldPair, language)) {
-                    fillTextAndDateType(verStmtType.addNewVersion(), valueFieldPair, language);
-                }
-            }
-        }*/
-    }
-
-    private void readStudyAuthorization(StdyDscrType stdyDscr) {
+    // TODO: Still unfinished
+    private ReturnResult readStudyAuthorization(StdyDscrType stdyDscr) {
+        return ReturnResult.OPERATION_SUCCESSFUL;
         // TODO: Questions about tables and authors still open
         // Authors, other authors and producers need resolved answers before continuing
 
@@ -470,34 +425,42 @@ class DDIStudyDescription extends DDISectionBase {
         }*/
     }
 
-    private void readStudyInfo(StdyDscrType stdyDscr) {
-        if(stdyDscr.getStdyInfoArray().length == 0) {
-            return;
+    private ReturnResult readStudyInfo(StdyDscrType stdyDscr) {
+        if(!hasContent(stdyDscr.getStdyInfoArray())) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
         }
         StdyInfoType stdyInfo = stdyDscr.getStdyInfoArray(0);
 
-        readStudyInfoSubject(stdyInfo);
+        ReturnResult result;
 
-        if(stdyInfo.getAbstractArray().length > 0) {
+        result = readStudyInfoSubject(stdyInfo);
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
+
+        if(hasContent(stdyInfo.getAbstractArray())) {
             AbstractType abstractType = stdyInfo.getAbstractArray(0);
             valueSet(Fields.ABSTRACT, abstractType.xmlText());
         }
 
-        readStudyInfoSumDesc(stdyInfo);
+        return readStudyInfoSumDesc(stdyInfo);
     }
 
-    private void readStudyInfoSubject(StdyInfoType stdyInfo) {
-        // TODO: Questions about tables still open
+    private ReturnResult readStudyInfoSubject(StdyInfoType stdyInfo) {
+        if(!hasContent(stdyInfo.getSumDscrArray())) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
+        }
 
-        // TODO: Reverse process
-        /*SubjectType subject= stdyInfo.addNewSubject();
+        SubjectType subject = stdyInfo.getSubjectArray(0);
 
-        readStudyInfoSubjectKeywords(subject, revision, language, references);
+        ReturnResult result;
+        result = readStudyInfoSubjectKeywords(subject);
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
-        readStudyInfoSubjectTopics(subject, revision, language, references);*/
+        return readStudyInfoSubjectTopics(subject);
     }
 
-    private void readStudyInfoSubjectKeywords(SubjectType subject) {
+    // TODO: Still unfinished
+    private ReturnResult readStudyInfoSubjectKeywords(SubjectType subject) {
+        return ReturnResult.OPERATION_SUCCESSFUL;
         // TODO: Reverse process
         // Let's hardcode the path since we know exactly what we are looking for.
         /*String pathRoot = "keywords.";
@@ -555,7 +518,9 @@ class DDIStudyDescription extends DDISectionBase {
         }*/
     }
 
-    private void readStudyInfoSubjectTopics(SubjectType subject) {
+    // TODO: Still unfinished
+    private ReturnResult readStudyInfoSubjectTopics(SubjectType subject) {
+        return ReturnResult.OPERATION_SUCCESSFUL;
         // TODO: Reverse process
         // Let's hardcode the path since we know exactly what we are looking for.
         /*String pathRoot = "topics.";
@@ -606,89 +571,66 @@ class DDIStudyDescription extends DDISectionBase {
         }*/
     }
 
-    private void readStudyInfoSumDesc(StdyInfoType stdyInfo) {
-        // TODO: Questions about tables are still open
-        // TODO: Reverse process
-
-        if(stdyInfo.getSumDscrArray().length == 0) {
-            return;
+    private ReturnResult readStudyInfoSumDesc(StdyInfoType stdyInfo) {
+        if(!hasContent(stdyInfo.getSumDscrArray())) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
         }
         SumDscrType sumDscr = stdyInfo.getSumDscrArray(0);
-        /*
 
-        readStudyInfoSumDescTimePrd(sumDscrType, revision, language);
+        ReturnResult result;
+        result = readStudyInfoSumDescTimePrd(sumDscr);
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
-        readStudyInfoSumDescCollDate(sumDscrType, revision, language);
+        result = readStudyInfoSumDescCollDate(sumDscr);
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
-        readStudyInfoSumDescNation(sumDscrType, revision, language, references);
+        result = readStudyInfoSumDescNation(sumDscr);
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
-        containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.GEOGCOVERS));
-        if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(language)) {
-            for(DataRow row : containerPair.getRight().getRowsFor(language)) {
-                if (row.getRemoved()) {
+        if(hasContent(sumDscr.getGeogCoverArray())) {
+            Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.GEOGCOVERS);
+            if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
+                return containerResult.getLeft();
+            }
+            Pair<ContainerDataField, ContainerChange> container = containerResult.getRight();
+            for(AbstractTextType tt : sumDscr.getGeogCoverArray()) {
+                Pair<StatusCode, DataRow> row = container.getLeft().insertNewDataRow(language, container.getRight());
+                if(row.getLeft() != StatusCode.NEW_ROW) {
                     continue;
                 }
-                Pair<StatusCode, ValueDataField> fieldPair = row.dataField(ValueDataFieldCall.get(Fields.GEOGCOVER));
-                if(hasValue(fieldPair, language)) {
-                    fillTextType(sumDscrType.addNewGeogCover(), fieldPair, language);
-                }
+                valueSet(row.getRight(), Fields.GEOGCOVER, tt.xmlText());
             }
         }
 
-        readStudyInfoSumDescAnlyUnit(sumDscrType, revision, language, references);
+        result = readStudyInfoSumDescAnlyUnit(sumDscr);
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
-        readStudyInfoSumDescUniverse(language, sumDscrType, revision);
-        */
+        return readStudyInfoSumDescUniverse(sumDscr);
+    }
 
-        if(sumDscr.getDataKindArray().length > 0) {
-            SelectionList list = configuration.getRootSelectionList(configuration.getField(Fields.DATAKIND).getSelectionList());
-            String dataKind = sumDscr.getDataKindArray(0).xmlText();
-            for(Option option : list.getOptions()) {
-                if(option.getTitleFor(language).equals(dataKind)) {
-                    valueSet(Fields.DATAKIND, option.getValue());
-                    break;
+    private ReturnResult readStudyInfoSumDescTimePrd(SumDscrType sumDscr) {
+        if(hasContent(sumDscr.getTimePrdArray())) {
+            Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.TIMEPERIODS);
+            if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
+                return containerResult.getLeft();
+            }
+            Pair<ContainerDataField, ContainerChange> container = containerResult.getRight();
+            for(TimePrdType t : sumDscr.getTimePrdArray()) {
+                Pair<StatusCode, DataRow> row = container.getLeft().insertNewDataRow(language, container.getRight());
+                if(row.getLeft() != StatusCode.NEW_ROW) {
+                    continue;
                 }
+                valueSet(row.getRight(), Fields.TIMEPERIODTEXT, t.xmlText());
+                valueSet(row.getRight(), Fields.TIMEPERIOD, t.getDate());
+                valueSet(row.getRight(), Fields.TIMEPERIODEVENT, t.getEvent().toString());
             }
         }
+        return ReturnResult.OPERATION_SUCCESSFUL;
     }
 
-    private void readStudyInfoSumDescTimePrd(SumDscrType sumDscr) {
-        // TODO: Reverse process
-        /*for(DataRow row : container.getRowsFor(Language.DEFAULT)) {
-            if(row.getRemoved()) {
-                continue;
-            }
-
-            Pair<StatusCode, ValueDataField> valuePair = row.dataField(ValueDataFieldCall.get(Fields.TIMEPERIODTEXT));
-            String timeperiodtext = hasValue(valuePair, language) ? valuePair.getRight().getActualValueFor(language) : null;
-            valuePair = row.dataField(ValueDataFieldCall.get(Fields.TIMEPERIOD));
-            if(StringUtils.hasText(timeperiodtext) || hasValue(valuePair, Language.DEFAULT)) {
-                TimePrdType t = sumDscr.addNewTimePrd();
-                if(StringUtils.hasText(timeperiodtext)) {
-                    fillTextType(t, timeperiodtext);
-                }
-                if(hasValue(valuePair, Language.DEFAULT)) {
-                    t.setDate(valuePair.getRight().getActualValueFor(Language.DEFAULT));
-                }
-                valuePair = row.dataField(ValueDataFieldCall.get(Fields.TIMEPERIODEVENT));
-                if(hasValue(valuePair, Language.DEFAULT)) {
-                    switch(valuePair.getRight().getActualValueFor(Language.DEFAULT)) {
-                        case "start":
-                            t.setEvent(TimePrdType.Event.START);
-                            break;
-                        case "end":
-                            t.setEvent(TimePrdType.Event.END);
-                            break;
-                        case "single":
-                            t.setEvent(TimePrdType.Event.SINGLE);
-                            break;
-                    }
-                }
-            }
-        }*/
-    }
-
-    private void readStudyInfoSumDescCollDate(SumDscrType sumDscr) {
+    // TODO: Still unfinished
+    private ReturnResult readStudyInfoSumDescCollDate(SumDscrType sumDscr) {
+        return ReturnResult.OPERATION_SUCCESSFUL;
         // TODO: Reverse process
         /*for(DataRow row : container.getRowsFor(Language.DEFAULT)) {
             if(row.getRemoved()) {
@@ -724,7 +666,9 @@ class DDIStudyDescription extends DDISectionBase {
         }*/
     }
 
-    private void readStudyInfoSumDescNation(SumDscrType sumDscr) {
+    // TODO: Still unfinished
+    private ReturnResult readStudyInfoSumDescNation(SumDscrType sumDscr) {
+        return ReturnResult.OPERATION_SUCCESSFUL;
         // TODO: Reverse process
         /*String path = "countries.";
         for (DataRow row : container.getRowsFor(Language.DEFAULT)) {
@@ -744,7 +688,9 @@ class DDIStudyDescription extends DDISectionBase {
         }*/
     }
 
-    private void readStudyInfoSumDescAnlyUnit(SumDscrType sumDscr) {
+    // TODO: Still unfinished
+    private ReturnResult readStudyInfoSumDescAnlyUnit(SumDscrType sumDscr) {
+        return ReturnResult.OPERATION_SUCCESSFUL;
         // TODO: Reverse process
         // Let's hardcode the path since we know exactly what we are looking for.
         /*String pathRoot = "analysis.";
@@ -808,7 +754,9 @@ class DDIStudyDescription extends DDISectionBase {
         }*/
     }
 
-    private void readStudyInfoSumDescUniverse(SumDscrType sumDscr) {
+    // TODO: Still unfinished
+    private ReturnResult readStudyInfoSumDescUniverse(SumDscrType sumDscr) {
+        return ReturnResult.OPERATION_SUCCESSFUL;
         /*for(DataRow row : containerPair.getRight().getRowsFor(Language.DEFAULT)) {
             if (row.getRemoved()) {
                 continue;
@@ -831,46 +779,54 @@ class DDIStudyDescription extends DDISectionBase {
         }*/
     }
 
-    private void readMethod(StdyDscrType stdyDscr) {
-        if(stdyDscr.getMethodArray().length == 0) {
-            return;
+    private ReturnResult readMethod(StdyDscrType stdyDscr) {
+        if(!hasContent(stdyDscr.getMethodArray())) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
         }
         MethodType method = stdyDscr.getMethodArray(0);
 
-        readMethodDataColl(method);
+        ReturnResult result;
+        result = readMethodDataColl(method);
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
-        if(method.getNotesArray().length > 0) {
+        if(hasContent(method.getNotesArray())) {
             valueSet(Fields.DATAPROSESSING, method.getNotesArray(0).xmlText());
         }
 
-        readMethodAnalyze(method);
+        return readMethodAnalyze(method);
     }
 
-    private void readMethodDataColl(MethodType method) {
-        if(method.getDataCollArray().length == 0) {
-            return;
+    private ReturnResult readMethodDataColl(MethodType method) {
+        if(!hasContent(method.getDataCollArray())) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
         }
         DataCollType dataColl = method.getDataCollArray(0);
 
-        // TODO: Reverse process
+        ReturnResult result;
+        result = readMethodDataCollTimeMeth(dataColl);
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
-        // TODO: Questions regarding tables still unanswered
-        /*readMethodDataCollTimeMeth(dataCollType, revision, language, references);
+        result = readMethodDataCollSampProc(dataColl);
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
-        readMethodDataCollSampProc(dataCollType, revision, language, references);
+        result = readMethodDataCollCollMode(dataColl);
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
-        readMethodDataCollCollMode(dataCollType, revision, language, references);
+        result = readMethodDataCollResInstru(dataColl);
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
-        readMethodDataCollResInstru(dataCollType, revision, language, references);
+        result = readMethodDataCollDataCollector(dataColl);
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
-        readMethodDataCollDataCollector(dataCollType, revision, language, references);
+        result = readMethodDataCollSources(dataColl);
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
-        readMethodDataCollSources(dataColl);*/
-
-        readMethodDataCollWeight(dataColl);
+        return readMethodDataCollWeight(dataColl);
     }
 
-    private static void readMethodDataCollTimeMeth(DataCollType dataColl, RevisionData revision, Language language, ReferenceService references) {
+    // TODO: Still unfinished
+    private ReturnResult readMethodDataCollTimeMeth(DataCollType dataColl) {
+        return ReturnResult.OPERATION_SUCCESSFUL;
         // TODO: Reverse process
         // Let's hardcode the path since we know exactly what we are looking for.
         /*String pathRoot = "timemethods.";
@@ -934,7 +890,9 @@ class DDIStudyDescription extends DDISectionBase {
         }*/
     }
 
-    private static void readMethodDataCollDataCollector(DataCollType dataColl, RevisionData revision, Language language, ReferenceService references) {
+    // TODO: Still unfinished
+    private ReturnResult readMethodDataCollDataCollector(DataCollType dataColl) {
+        return ReturnResult.OPERATION_SUCCESSFUL;
         // TODO: Reverse process
         // Let's hardcode the path since we know exactly what we are looking for.
         /*String pathRoot = "collectors.";
@@ -1010,7 +968,9 @@ class DDIStudyDescription extends DDISectionBase {
         }*/
     }
 
-    private static void readMethodDataCollSampProc(DataCollType dataColl, RevisionData revision, Language language, ReferenceService references) {
+    // TODO: Still unfinished
+    private ReturnResult readMethodDataCollSampProc(DataCollType dataColl) {
+        return ReturnResult.OPERATION_SUCCESSFUL;
         // TODO: Reverse process
         // Let's hardcode the path since we know exactly what we are looking for.
         /*String pathRoot = "sampprocs.";
@@ -1081,7 +1041,9 @@ class DDIStudyDescription extends DDISectionBase {
         }*/
     }
 
-    private static void readMethodDataCollCollMode(DataCollType dataColl, RevisionData revision, Language language, ReferenceService references) {
+    // TODO: Still unfinished
+    private ReturnResult readMethodDataCollCollMode(DataCollType dataColl) {
+        return ReturnResult.OPERATION_SUCCESSFUL;
         // TODO: Reverse process
         // Let's hardcode the path since we know exactly what we are looking for.
         /*String pathRoot = "collmodes.";
@@ -1146,7 +1108,46 @@ class DDIStudyDescription extends DDISectionBase {
         }*/
     }
 
-    private static void readMethodDataCollResInstru(DataCollType dataColl, RevisionData revision, Language language, ReferenceService references) {
+    // TODO: Still unfinished
+    private ReturnResult readMethodDataCollResInstru(DataCollType dataColl) {
+        // TODO: How to correctly handle languages other than default?
+        if(!hasContent(dataColl.getResInstruArray())) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
+        }
+
+        Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.INSTRUMENTS);
+        if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
+            return containerResult.getLeft();
+        }
+        Pair<ContainerDataField, ContainerChange> container = containerResult.getRight();
+
+        // Let's construct the request and path elements needed
+        ReferencePathRequest request = new ReferencePathRequest();
+        request.setContainer(Fields.INSTRUMENTS);
+        request.setLanguage(language);
+
+        ReferencePath instrumentvocabPath = new ReferencePath(configuration.getReference(configuration.getField(Fields.INSTRUMENTVOCAB).getReference()), null);
+
+        return ReturnResult.OPERATION_SUCCESSFUL;
+
+        /*for(DataApprType appr : anlyInfo.getDataApprArray()) {
+            Pair<StatusCode, DataRow> row = container.getLeft().insertNewDataRow(language, change);
+            if(row.getLeft() != StatusCode.NEW_ROW) {
+                continue;
+            }
+            valueSet(row.getRight(), Fields.APPRAISAL, appr.xmlText());
+        }*/
+
+        // Find out vocab selection
+
+        // Set vocab
+
+        // Find out instrument using vocab
+
+        // Set instrument
+
+        // Set instrumentother
+
         // Let's hardcode the path since we know exactly what we are looking for.
         /*String pathRoot = "instruments.";
         for(DataRow row : container.getRowsFor(Language.DEFAULT)) {
@@ -1210,18 +1211,35 @@ class DDIStudyDescription extends DDISectionBase {
         }*/
     }
 
-    private void readMethodDataCollSources(DataCollType dataColl) {
-        // TODO: Questions about tables ...
-        /*List<ValueDataField> fields = gatherFields(revision, Fields.DATASOURCES, Fields.DATASOURCE, language, language);
-        SourcesType sources = dataCollType.addNewSources();
-        for(ValueDataField field : fields) {
-            fillTextType(sources.addNewDataSrc(), field, language);
-        }*/
+    private ReturnResult readMethodDataCollSources(DataCollType dataColl) {
+        if(dataColl.getSources() == null) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
+        }
+        SourcesType sources = dataColl.getSources();
+
+        if(!hasContent(sources.getDataSrcArray())) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
+        }
+
+        Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.DATASOURCES);
+        if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
+            return containerResult.getLeft();
+        }
+        Pair<ContainerDataField, ContainerChange> container = containerResult.getRight();
+        for(SimpleTextType stt : sources.getDataSrcArray()) {
+            Pair<StatusCode, DataRow> row = container.getLeft().insertNewDataRow(language, container.getRight());
+            if(row.getLeft() != StatusCode.NEW_ROW) {
+                continue;
+            }
+            valueSet(row.getRight(), Fields.DATASOURCE, stt.xmlText());
+        }
+
+        return ReturnResult.OPERATION_SUCCESSFUL;
     }
 
-    private void readMethodDataCollWeight(DataCollType dataColl) {
-        if(dataColl.getWeightArray().length == 0) {
-            return;
+    private ReturnResult readMethodDataCollWeight(DataCollType dataColl) {
+        if(!hasContent(dataColl.getWeightArray())) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
         }
         SimpleTextType stt = dataColl.getWeightArray(0);
         if(stt.xmlText().equals(WEIGHT_NO.get(language))) {
@@ -1231,77 +1249,87 @@ class DDIStudyDescription extends DDISectionBase {
             valueSet(Fields.WEIGHTYESNO, "false");
             valueSet(Fields.WEIGHT, stt.xmlText());
         }
+        return ReturnResult.OPERATION_SUCCESSFUL;
     }
 
-    private void readMethodAnalyze(MethodType method) {
+    private ReturnResult readMethodAnalyze(MethodType method) {
         if(method.getAnlyInfo() == null) {
-            return;
+            return ReturnResult.OPERATION_SUCCESSFUL;
         }
         AnlyInfoType anlyInfo = method.getAnlyInfo();
 
-        if(anlyInfo.getRespRateArray().length > 0) {
+        if(hasContent(anlyInfo.getRespRateArray())) {
             valueSet(Fields.RESPRATE, anlyInfo.getRespRateArray(0).xmlText(), Language.DEFAULT);
         }
 
-        // TODO: Questions about tables still open
-        /*
-
-        // Add data appraisal, repeatable
-        Pair<StatusCode, ContainerDataField> containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.APPRAISALS));
-        if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(language)) {
-            for (DataRow row : containerPair.getRight().getRowsFor(language)) {
-                valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.APPRAISAL));
-                if(hasValue(valueFieldPair, language)) {
-                    fillTextType(anlyInfoType.addNewDataAppr(), valueFieldPair, language);
-                }
+        if(hasContent(anlyInfo.getDataApprArray())) {
+            Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.APPRAISALS);
+            if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
+                return containerResult.getLeft();
             }
-        }*/
+            Pair<ContainerDataField, ContainerChange> container = containerResult.getRight();
+            for(DataApprType appr : anlyInfo.getDataApprArray()) {
+                Pair<StatusCode, DataRow> row = container.getLeft().insertNewDataRow(language, container.getRight());
+                if(row.getLeft() != StatusCode.NEW_ROW) {
+                    continue;
+                }
+                valueSet(row.getRight(), Fields.APPRAISAL, appr.xmlText());
+            }
+        }
+
+        return ReturnResult.OPERATION_SUCCESSFUL;
     }
 
-    private void readDataAccess(StdyDscrType stdyDscr) {
-        if(stdyDscr.getDataAccsArray().length == 0) {
-            return;
+    private ReturnResult readDataAccess(StdyDscrType stdyDscr) {
+        if(!hasContent(stdyDscr.getDataAccsArray())) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
         }
         DataAccsType dataAccs = stdyDscr.getDataAccsArray(0);
+        ReturnResult result;
 
-        readDataAccessSetAvail(dataAccs);
+        result = readDataAccessSetAvail(dataAccs);
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
-        readDataAccessUseStatement(dataAccs);
+        result = readDataAccessUseStatement(dataAccs);
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
-        if(dataAccs.getNotesArray().length > 0) {
+        if(hasContent(dataAccs.getNotesArray())) {
             valueSet(Fields.DATASETNOTES, dataAccs.getNotesArray(0).xmlText());
         }
+
+        return ReturnResult.OPERATION_SUCCESSFUL;
     }
 
-    private void readDataAccessSetAvail(DataAccsType dataAccs) {
-        if(dataAccs.getSetAvailArray().length == 0) {
-            return;
+    private ReturnResult readDataAccessSetAvail(DataAccsType dataAccs) {
+        if(!hasContent(dataAccs.getSetAvailArray())) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
         }
         SetAvailType setAvail = dataAccs.getSetAvailArray(0);
-        if(setAvail.getOrigArchArray().length > 0) {
+        if(hasContent(setAvail.getOrigArchArray())) {
             valueSet(Fields.ORIGINALLOCATION, setAvail.getOrigArchArray(0).xmlText(), Language.DEFAULT);
         }
 
-        if(setAvail.getCollSizeArray().length > 0) {
+        if(hasContent(setAvail.getCollSizeArray())) {
             valueSet(Fields.COLLSIZE, setAvail.getCollSizeArray(0).xmlText());
         }
 
-        if(setAvail.getCompleteArray().length > 0) {
+        if(hasContent(setAvail.getCompleteArray())) {
             valueSet(Fields.COMPLETE, setAvail.getCompleteArray(0).xmlText());
         }
+        return ReturnResult.OPERATION_SUCCESSFUL;
     }
 
-    private void readDataAccessUseStatement(DataAccsType dataAccs) {
-        if(dataAccs.getUseStmtArray().length == 0) {
-            return;
+    private ReturnResult readDataAccessUseStatement(DataAccsType dataAccs) {
+        if(!hasContent(dataAccs.getUseStmtArray())) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
         }
         UseStmtType useStmt = dataAccs.getUseStmtArray(0);
 
-        if(useStmt.getSpecPermArray().length > 0) {
+        if(hasContent(useStmt.getSpecPermArray())) {
             valueSet(Fields.SPECIALTERMSOFUSE, useStmt.getSpecPermArray(0).xmlText());
         }
 
-        if(useStmt.getRestrctnArray().length > 0) {
+        if(hasContent(useStmt.getRestrctnArray())) {
             String restr = useStmt.getRestrctnArray(0).xmlText();
 
             for(String i : RESTRICTION.keySet()) {
@@ -1311,76 +1339,45 @@ class DDIStudyDescription extends DDISectionBase {
                 }
             }
         }
+        return ReturnResult.OPERATION_SUCCESSFUL;
     }
 
-    private void readOtherStudyMaterial(StdyDscrType stdyDscr) {
-        if(stdyDscr.getOthrStdyMatArray().length == 0) {
-            return;
+    private ReturnResult readOtherStudyMaterial(StdyDscrType stdyDscr) {
+        if(!hasContent(stdyDscr.getOthrStdyMatArray())) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
         }
         OthrStdyMatType othr = stdyDscr.getOthrStdyMatArray(0);
 
-        // TODO: Questions about tables still unanswered
-        /*
-
-        // Add related materials
-        List<ValueDataField> fields = gatherFields(revision, Fields.RELATEDMATERIALS, Fields.RELATEDMATERIAL, language, language);
-        for(ValueDataField field : fields) {
-            fillTextType(othr.addNewRelMat(), field, language);
-        }
-
-        Pair<StatusCode, ReferenceContainerDataField> referenceContainerPair = revision.dataField(ReferenceContainerDataFieldCall.get(Fields.STUDIES));
-        if(referenceContainerPair.getLeft() == StatusCode.FIELD_FOUND && !referenceContainerPair.getRight().getReferences().isEmpty()) {
-            for(ReferenceRow row : referenceContainerPair.getRight().getReferences()) {
-                if(row.getRemoved()) {
+        if(hasContent(othr.getRelMatArray())) {
+            Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.RELATEDMATERIALS);
+            if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
+                return containerResult.getLeft();
+            }
+            Pair<ContainerDataField, ContainerChange> container = containerResult.getRight();
+            for(RelMatType relMat : othr.getRelMatArray()) {
+                Pair<StatusCode, DataRow> row = container.getLeft().insertNewDataRow(language, container.getRight());
+                if(row.getLeft() != StatusCode.NEW_ROW) {
                     continue;
                 }
-                Pair<ReturnResult, RevisionData> revisionPair = revisions.getLatestRevisionForIdAndType(row.getReference().asInteger(), false, ConfigurationType.STUDY);
-                if(revisionPair.getLeft() != ReturnResult.REVISION_FOUND) {
-                    Logger.error(DDIStudyDescription.class, "Could not find referenced study with ID: "+row.getReference().getValue());
-                    continue;
-                }
-                String studyID = "-";
-                String title = "-";
-                RevisionData study = revisionPair.getRight();
-
-                Pair<StatusCode, ValueDataField> valueFieldPair = study.dataField(ValueDataFieldCall.get(Fields.STUDYID));
-                if(hasValue(valueFieldPair, Language.DEFAULT)) {
-                    studyID = valueFieldPair.getRight().getActualValueFor(Language.DEFAULT);
-                }
-
-                valueFieldPair = study.dataField(ValueDataFieldCall.get(Fields.TITLE));
-                if(hasValue(valueFieldPair, language)) {
-                    title = valueFieldPair.getRight().getActualValueFor(language);
-                }
-
-                fillTextType(othr.addNewRelStdy(), studyID+" "+title);
+                valueSet(row.getRight(), Fields.RELATEDMATERIAL, relMat.xmlText());
             }
         }
 
-        referenceContainerPair = revision.dataField(ReferenceContainerDataFieldCall.get(Fields.PUBLICATIONS));
-        if(referenceContainerPair.getLeft() == StatusCode.FIELD_FOUND && !referenceContainerPair.getRight().getReferences().isEmpty()) {
-            for(ReferenceRow row : referenceContainerPair.getRight().getReferences()) {
-                if (row.getRemoved()) {
+        if(hasContent(othr.getOthRefsArray())) {
+            Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.PUBLICATIONCOMMENTS);
+            if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
+                return containerResult.getLeft();
+            }
+            Pair<ContainerDataField, ContainerChange> container = containerResult.getRight();
+            for(OthRefsType othRef : othr.getOthRefsArray()) {
+                Pair<StatusCode, DataRow> row = container.getLeft().insertNewDataRow(language, container.getRight());
+                if(row.getLeft() != StatusCode.NEW_ROW) {
                     continue;
                 }
-                Pair<ReturnResult, RevisionData> revisionPair = revisions.getLatestRevisionForIdAndType(row.getReference().asInteger(), false, ConfigurationType.PUBLICATION);
-                if (revisionPair.getLeft() != ReturnResult.REVISION_FOUND) {
-                    Logger.error(DDIStudyDescription.class, "Could not find referenced publication with ID: " + row.getReference().getValue());
-                    continue;
-                }
-                RevisionData publication = revisionPair.getRight();
-
-                Pair<StatusCode, ValueDataField> valueFieldPair = publication.dataField(ValueDataFieldCall.get(Fields.PUBLICATIONRELPUBL));
-                if(hasValue(valueFieldPair, Language.DEFAULT)) {
-                    fillTextType(othr.addNewRelPubl(), valueFieldPair, Language.DEFAULT);
-                }
+                valueSet(row.getRight(), Fields.PUBLICATIONCOMMENT, othRef.xmlText());
             }
         }
 
-        // Add publication comments
-        fields = gatherFields(revision, Fields.PUBLICATIONCOMMENTS, Fields.PUBLICATIONCOMMENT, language, language);
-        for(ValueDataField field : fields) {
-            fillTextType(othr.addNewOthRefs(), field, language);
-        }*/
+        return ReturnResult.OPERATION_SUCCESSFUL;
     }
 }

@@ -6,7 +6,7 @@ define(function (require) {
             return;
         }
 
-        if (MetkaJS.L10N.hasTranslation(option, 'title')) {
+        if(typeof option.title === "string" || MetkaJS.L10N.hasTranslation(option, 'title')) {
             return MetkaJS.L10N.localize(option, 'title');
         }
 

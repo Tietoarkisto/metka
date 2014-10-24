@@ -13,6 +13,7 @@ import fi.uta.fsd.metkaSearch.commands.indexer.IndexerCommand;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
 import fi.uta.fsd.metkaSearch.directory.DirectoryInformation;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
+import fi.uta.fsd.metkaSearch.entity.IndexerCommandEntity;
 import fi.uta.fsd.metkaSearch.entity.IndexerCommandRepository;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
 import fi.uta.fsd.metkaSearch.enums.IndexerStatusMessage;
@@ -302,5 +303,13 @@ public class IndexerComponent {
         }
         studyCommandBatch.clear();
         runningBatch = false;
+    }
+
+    public Pair<ReturnResult, Integer> getOpenIndexCommands() {
+        List<IndexerCommandEntity> entities = em
+                .createQuery("SELECT e FROM IndexerCommandEntity e WHERE e.handled IS NULL AND e.requested IS NULL", IndexerCommandEntity.class)
+                .getResultList();
+
+        return new ImmutablePair<>(ReturnResult.OPERATION_SUCCESSFUL, entities.size());
     }
 }

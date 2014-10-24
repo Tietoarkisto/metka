@@ -112,7 +112,7 @@ define(function (require) {
                         requests : [{
                             key: key,
                             container: "",
-                            language: lang,
+                            language: MetkaJS.L10N.locale.toUpperCase(),
                             root: root
                         }]
                     }),

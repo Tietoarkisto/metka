@@ -3,21 +3,23 @@ package fi.uta.fsd.metka.mvc.controller;
 import codebook25.CodeBookDocument;
 import fi.uta.fsd.metka.ddi.builder.DDIBuilder;
 import fi.uta.fsd.metka.enums.ConfigurationType;
+import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.mvc.services.GeneralService;
 import fi.uta.fsd.metka.mvc.services.simple.ErrorMessage;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
+import fi.uta.fsd.metka.transfer.study.DDIExportRequest;
+import fi.uta.fsd.metka.transfer.study.DDIExportResponse;
+import fi.uta.fsd.metka.transfer.study.DDIImportRequest;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
@@ -117,21 +119,29 @@ public class GeneralController {
         }
     }
 
-    // TODO: Move to revision controller
-    @RequestMapping(value="revision/ddi/export/{id}/{no}", method = RequestMethod.GET)
-    public HttpEntity<byte[]> ddiExport(@PathVariable Long id, @PathVariable Integer no) {
-        Pair<ReturnResult, CodeBookDocument> pair = service.exportDDI(id, no);
+    // TODO: Move to study controller
+    @RequestMapping(value="revision/ddi/export", method = RequestMethod.POST)
+    public @ResponseBody DDIExportResponse ddiExport(@RequestBody DDIExportRequest request) {
+        Pair<ReturnResult, CodeBookDocument> pair = service.exportDDI(request.getId(), request.getNo(), request.getLanguage());
+        DDIExportResponse response = new DDIExportResponse();
         if(pair.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
             // Operation was not successful
-            return null;
+            response.setResult(pair.getLeft());
+            return response;
         }
-        byte[] dataBytes = pair.getRight().toString().getBytes();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Content-Disposition",
-                "attachment; filename=id_" + id + "_revision_" + no + "ddi.xml");
-        headers.setContentLength(dataBytes.length);
+        response.setResult(pair.getLeft());
+        response.setContent(pair.getRight().toString());
+        response.setId(request.getId());
+        response.setNo(request.getNo());
+        response.setLanguage(request.getLanguage() == Language.DEFAULT ? "fi" : request.getLanguage().toValue());
+        return response;
+    }
 
-        return new HttpEntity<>(dataBytes, headers);
+    // TODO: Move to study controller
+    @RequestMapping(value="revision/ddi/import", method = RequestMethod.POST)
+    public @ResponseBody ReturnResult ddiImport(@RequestBody DDIImportRequest request) {
+        ReturnResult result = service.importDDI(request.getTransferData(), request.getPath());
+
+        return result;
     }
 }

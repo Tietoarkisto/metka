@@ -110,7 +110,7 @@ define(function (require) {
             return this;
         }
 
-        if(options.field.displayType === 'CUSTOM_JS') {
+        if(options.field.displayType === 'CUSTOM_JS' && options.field.key) {
             require(['./custom/fields/'+options.field.key], function(customField) {
                 switch (typeof customField) {
                     case 'object':
