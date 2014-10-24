@@ -16,7 +16,7 @@ define(function (require) {
     require('./uiLocalization');
     document.title = MetkaJS.L10N.get('page.title');
 
-    require('./pageConfig')(options, function x() {
+    require('./pageConfig')(options, function () {
         $('body')
             .append($('<div class="wrapper">')
                 .append($('<div class="content container">')
@@ -30,7 +30,7 @@ define(function (require) {
                         require('./container').call($this, options);
                         require('./buttonContainer').call($this, options);
 
-                        $(window).off('beforeunload', require('./onBeforeUnload'));
+                        //$(window).off('beforeunload', require('./onBeforeUnload'));
                         return false;
                     })
                     .trigger('refresh.metka')));

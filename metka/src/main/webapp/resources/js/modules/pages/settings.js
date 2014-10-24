@@ -2,7 +2,10 @@ define(function (require) {
     'use strict';
 
     return function (options, onLoad) {
+
         var commonSearchBooleans = require('./../commonSearchBooleans');
+
+        var dataConfigEditor;
 
         $.extend(options, {
             data: commonSearchBooleans.initialData({}),
@@ -231,7 +234,7 @@ define(function (require) {
                                                                     require('./../server')("/settings/getJsonContent", {
                                                                         data: JSON.stringify(data),
                                                                         success: function (response) {
-                                                                            $("#dataConfigTextField").val(JSON.stringify(JSON.parse(response), null, 4));
+                                                                           dataConfigEditor.setValue(JSON.parse(response));
                                                                         }
                                                                     });
                                                                 }
@@ -247,16 +250,14 @@ define(function (require) {
                                                 {
                                                     type: "CELL",
                                                     title: "Konfiguraatio",
-                                                    horizontal: true,
                                                     colspan: 2,
                                                     field: {
-                                                        key: "dataConfigText",
-                                                        multiline: true
+                                                        key: "dataConfigEditor",
+                                                        displayType: 'CUSTOM_JS'
                                                     },
                                                     create: function() {
-                                                        this.find("textarea").first().attr("id", "dataConfigTextField").prop("rows", 20);
+                                                       dataConfigEditor = this.children().first().data('jsoneditor');
                                                     }
-
                                                 }
                                             ]
                                         },
@@ -272,8 +273,8 @@ define(function (require) {
                                                         create: function() {
                                                             this.click(function() {
                                                                 var request = {
-                                                                    type: "DATA_CONF",
-                                                                    json: $("#dataConfigTextField").val()
+                                                                  type: 'DATA_CONF',
+                                                                  json: JSON.stringify(dataConfigEditor.getValue())
                                                                 };
                                                                 require('./../server')("/settings/uploadJson", {
                                                                     data: JSON.stringify(request),

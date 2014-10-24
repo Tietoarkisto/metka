@@ -23,4 +23,4 @@
 <script src="${contextPath}/lib/js/FileSaver.min.js"></script>
 
 <%-- JSON-editor - JSON Schema Based Editor --%>
-<script src="${contextPath}/lib/js/jsoneditor.min.js"></script>
+<script src="${contextPath}/lib/js/jsoneditor.js"></script>
