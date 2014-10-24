@@ -105,3 +105,5 @@ Sisältää rajoitekonfiguraation käsittelyyn ja validointiin liittyvät luokat
 Sisältää yleisiä apuluokkia tallennusdatan käsittelyyn.
 ##### variables
 Sisältää toteutuksen por-tiedostojen parsinnasta aineistomuuttujiksi.
+#### transfer
+Sisältää erinäisiä käyttöliittymän ja palvelimen väliseen kommunikointiin liittyviä request- response- ynnä muita objekteja. Nämä vastaavat json-rakenteita joita käyttöliittymä lähettää tai ottaa vastaan.
