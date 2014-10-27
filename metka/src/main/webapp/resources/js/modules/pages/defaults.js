@@ -70,7 +70,20 @@ define(function (require) {
                                     //.prop('disabled', true)
                                     .text(MetkaJS.L10N.get('general.buttons.download'))
                                     .click(function () {
-                                        require('./../assignUrl')('download');
+                                        require('./../server')("download", {
+                                            data: JSON.stringify(options.data),
+                                            success: function (response) {
+                                                if(response.result === "REVISION_FOUND") {
+                                                    saveAs(new Blob([response.content], {type: "text/json;charset=utf-8"}), "id_"+response.id+"_revision_"+response.no+".json");
+                                                } else {
+                                                    require('./../modal')({
+                                                        title: MetkaJS.L10N.get('alert.error.title'),
+                                                        body: response.result,
+                                                        buttons: [dismiss]
+                                                    });
+                                                }
+                                            }
+                                        });
                                     })))
                     };
                     var labelAndValue = String.prototype.supplant.bind('{label}&nbsp;{value}');

@@ -177,4 +177,36 @@ public class RevisionController {
     public @ResponseBody RevisionCompareResponse revisionCompare(@RequestBody RevisionCompareRequest request) {
         return revisions.revisionCompare(request);
     }
+
+    @RequestMapping(value = "adjacent", method = RequestMethod.POST)
+    public @ResponseBody RevisionOperationResponse adjacentRevision(@RequestBody AdjacentRevisionRequest request) {
+        return revisions.adjacentRevision(request);
+    }
+
+    // TODO: Move to revision controller
+    @RequestMapping(value="download", method = RequestMethod.POST)
+    public @ResponseBody RevisionExportResponse downloadRevision(@RequestBody TransferData transferData) {
+        return revisions.exportRevision(transferData);
+        /*Pair<ReturnResult, RevisionData> pair = service.getRevisionData(id, no);
+        if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
+            // TODO: Return error to user
+            return null;
+        } else {
+            RevisionData revision = pair.getRight();
+            Pair<SerializationResults, String> string = json.serialize(revision);
+            if(string.getLeft() != SerializationResults.SERIALIZATION_SUCCESS) {
+                // TODO: Return error to user
+                return null;
+            }
+            byte[] dataBytes = string.getRight().getBytes();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("Content-Disposition",
+                    "attachment; filename=" + revision.getConfiguration().getType()
+                            + "_id_" + revision.getKey().getId() + "_revision_" + revision.getKey().getNo() + ".json");
+            headers.setContentLength(dataBytes.length);
+
+            return new HttpEntity<>(dataBytes, headers);
+        }*/
+    }
 }

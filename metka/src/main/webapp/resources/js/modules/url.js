@@ -33,7 +33,7 @@ define(function (require) {
                     listRevisions: 'history/revisions/{id}',
 
                     // Misc calls
-                    download: 'download/{id}/{no}',
+                    download: 'revision/download',
                     options: 'references/collectOptionsGroup',
                     optionsByPath: 'references/referencePathGroup'
                 }[key];

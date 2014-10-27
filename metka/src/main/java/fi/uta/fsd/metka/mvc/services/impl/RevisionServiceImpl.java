@@ -13,7 +13,9 @@ import fi.uta.fsd.metka.search.RevisionSearch;
 import fi.uta.fsd.metka.storage.repository.*;
 import fi.uta.fsd.metka.storage.repository.enums.RemoveResult;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
+import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.transfer.revision.*;
 import fi.uta.fsd.metkaSearch.IndexerComponent;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
@@ -66,6 +68,9 @@ public class RevisionServiceImpl implements RevisionService {
 
     @Autowired
     private RevisionHandlerRepository handler;
+
+    @Autowired
+    private JSONUtil json;
 
     @Override public RevisionDataResponse view(Long id, ConfigurationType type) {
         RevisionDataResponse response = new RevisionDataResponse();
@@ -277,6 +282,43 @@ public class RevisionServiceImpl implements RevisionService {
     public ConfigurationResponse getConfiguration(ConfigurationType type) {
         Pair<ReturnResult, Configuration> pair = configurations.findLatestConfiguration(type);
         return new ConfigurationResponse(pair.getLeft(), pair.getRight());
+    }
+
+    @Override
+    public RevisionOperationResponse adjacentRevision(AdjacentRevisionRequest request) {
+        Pair<ReturnResult, RevisionData> pair = revisions.getAdjacentRevision(request);
+        RevisionOperationResponse response = new RevisionOperationResponse();
+        response.setResult(pair.getLeft().name());
+        if(pair.getLeft() == ReturnResult.REVISION_FOUND) {
+            Pair<ReturnResult, RevisionableInfo> infoPair = revisions.getRevisionableInfo(pair.getRight().getKey().getId());
+            if(infoPair.getLeft() == ReturnResult.REVISIONABLE_FOUND) {
+                response.setData(TransferData.buildFromRevisionData(pair.getRight(), infoPair.getRight()));
+            } else {
+                response.setResult(infoPair.getLeft().name());
+            }
+        }
+        return response;
+    }
+
+    @Override
+    public RevisionExportResponse exportRevision(TransferData transferData) {
+
+        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(transferData.getKey()));
+        RevisionExportResponse response = new RevisionExportResponse();
+        response.setResult(pair.getLeft());
+        if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
+            // Operation was not successful
+            return response;
+        }
+        Pair<SerializationResults, String> result = json.serialize(pair.getRight());
+        if(result.getLeft() != SerializationResults.SERIALIZATION_SUCCESS) {
+            response.setResult(ReturnResult.OPERATION_FAIL);
+            return response;
+        }
+        response.setContent(result.getRight());
+        response.setId(transferData.getKey().getId());
+        response.setNo(transferData.getKey().getNo());
+        return response;
     }
 
     private void addRemoveCommand(TransferData data) {

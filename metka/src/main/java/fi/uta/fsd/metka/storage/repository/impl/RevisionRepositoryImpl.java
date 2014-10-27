@@ -14,6 +14,7 @@ import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
+import fi.uta.fsd.metka.transfer.revision.AdjacentRevisionRequest;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,24 +50,6 @@ public class RevisionRepositoryImpl implements RevisionRepository {
                 entity.getCurApprovedNo(), entity.getLatestRevisionNo(),
                 entity.getRemoved(), entity.getRemovalDate(), entity.getRemovedBy());
         return new ImmutablePair<>(ReturnResult.REVISIONABLE_FOUND, info);
-    }
-
-    @Override
-    public Pair<ReturnResult, Long> getAdjacentRevisionableId(Long currentId, ConfigurationType type, boolean forward) {
-        List<RevisionableEntity> list = em.createQuery("SELECT r FROM RevisionableEntity r " +
-                    "WHERE r.id "+(forward?">":"<")+" :id AND r.type = :type " +
-                    "AND r.removed = false " +
-                    "AND r.curApprovedNo IS NOT NULL " +
-                    "ORDER BY r.id "+(forward?"ASC":"DESC"), RevisionableEntity.class)
-                .setParameter("id", currentId)
-                .setParameter("type", type)
-                .setMaxResults(1)
-                .getResultList();
-
-        if(list.size() == 0) {
-            return new ImmutablePair<>(ReturnResult.REVISIONABLE_NOT_FOUND, null);
-        }
-        return new ImmutablePair<>(ReturnResult.REVISIONABLE_FOUND, list.get(0).getId());
     }
 
     @Override
@@ -253,5 +236,25 @@ public class RevisionRepositoryImpl implements RevisionRepository {
             }
         }
         return revisions;
+    }
+
+    @Override
+    public Pair<ReturnResult, RevisionData> getAdjacentRevision(AdjacentRevisionRequest request) {
+        List<RevisionableEntity> list = em.createQuery("SELECT r FROM RevisionableEntity r " +
+                    "WHERE r.id " + (request.getDirection() == AdjacentRevisionRequest.Direction.NEXT ? ">" : "<") + " :id " +
+                    "AND r.type = :type " +
+                    "AND r.removed = :removed " +
+                    "ORDER BY r.id "+(request.getDirection() == AdjacentRevisionRequest.Direction.NEXT ? "ASC" : "DESC" )
+                , RevisionableEntity.class)
+                .setParameter("id", request.getCurrent().getKey().getId())
+                .setParameter("type", request.getCurrent().getConfiguration().getType())
+                .setParameter("removed", !request.getIgnoreRemoved())
+                .setMaxResults(1)
+                .getResultList();
+
+        if(list.size() == 0) {
+            return new ImmutablePair<>(ReturnResult.NO_RESULTS, null);
+        }
+        return getLatestRevisionForIdAndType(list.get(0).getId(), false, request.getCurrent().getConfiguration().getType());
     }
 }

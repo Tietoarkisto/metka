@@ -75,7 +75,7 @@ define(function (require) {
                                 no: $no,
                                 language: require('./../../data')(options)("language").getByLang("DEFAULT")
                             };
-                            require('./../../server')('/revision/ddi/export', {
+                            require('./../../server')('/study/ddi/export', {
                                 data: JSON.stringify(request),
                                 success: function(response) {
                                     if(response.result === "OPERATION_SUCCESSFUL") {
