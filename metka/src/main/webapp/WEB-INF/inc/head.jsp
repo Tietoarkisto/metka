@@ -16,10 +16,11 @@
 
 <%-- Summernote - Rich Text Editor --%>
 <link href="${contextPath}/lib/summernote/summernote.css" rel="stylesheet">
-<script src="${contextPath}/lib/summernote/summernote.js"></script>
+<script src="${contextPath}/lib/summernote/summernote.min.js"></script>
+<script src="${contextPath}/lib/summernote/summernote-fi-FI.js"></script>
 
 <%-- FileSaver - Client Side File Creation --%>
 <script src="${contextPath}/lib/js/FileSaver.min.js"></script>
 
 <%-- JSON-editor - JSON Schema Based Editor --%>
-<script src="${contextPath}/lib/js/jsoneditor.min.js"></script>
+<script src="${contextPath}/lib/js/jsoneditor.js"></script>

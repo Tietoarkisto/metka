@@ -2,6 +2,17 @@ define(function (require) {
     'use strict';
 
     var getPropertyNS = require('./utils/getPropertyNS');
+/*
+    var onModified = (function () {
+        var hasDataChanged = false;
+        return function () {
+            if (!hasDataChanged) {
+                hasDataChanged = true;
+                $(window).on('beforeunload.metka', require('./onBeforeUnload'));
+            }
+        };
+    })();
+*/
 
     function data(options) {
         function io(key) {
@@ -55,6 +66,7 @@ define(function (require) {
                 }
                 return [];
             };
+
             byFieldKey.setByLang = function (lang, value) {
                 var transferField = getTransferField(true);
 
@@ -68,7 +80,10 @@ define(function (require) {
                     key: key,
                     lang: lang
                 }), [value]);
+
+                //onModified();
             };
+
             byFieldKey.appendByLang = function (lang, trasferRow) {
                 var transferField = getTransferField(true);
 
@@ -77,6 +92,8 @@ define(function (require) {
                 trasferRow.key = trasferRow.key || key;
 
                 transferField.rows[lang].push(trasferRow);
+
+                //onModified();
             };
             byFieldKey.onChange = function (callback) {
                 callback();

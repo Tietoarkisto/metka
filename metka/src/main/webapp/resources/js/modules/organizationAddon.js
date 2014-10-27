@@ -2,10 +2,8 @@ define(function (require) {
     'use strict';
 
     return function (schema, onSave, dependencyKey) {
-
         return function (options) {
             delete options.field.displayType;
-
             return {
                 create: function (options) {
                     var dependencyValue;

@@ -58,11 +58,13 @@ define(function (require) {
                                 ['color', ['color']],
                                 ['para', ['ul', 'ol', 'paragraph']],
                                 ['height', ['height']],
+                                ['insert', ['link']],
                                 ['misc', ['fullscreen', 'codeview']]
                             ],
                             onblur: function(contents, $editable) {
                                 require('./data')(options).setByLang(lang, $(this).html());
-                            }
+                            },
+                            lang: 'fi-FI'
                         });
                     }, 0);
                     return $input;
