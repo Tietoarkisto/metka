@@ -112,7 +112,7 @@ Kaikki web-osoitteet joihin Metka vastaa löytyvät luokista joiden nimi päätt
 ### api
 Kaikki polut jotka alkavat `api/` saapuvat tähän osioon. Nämä polut eivät käytä Shibboleth-autentikaatiota vaan autentikaatio joko pakotetaan tiettyyn käyttäjään tai suoritetaan jollain mulla autentikaatiotavalla (yleensä käyttäen api-avain autentikaatiota).
 
-**Sijainti: APIController**
+**Sijainti: APIController**  
 `[/createStudy],methods=[POST]`  
 *Käyttö:* Luo uuden aineiston.
 
