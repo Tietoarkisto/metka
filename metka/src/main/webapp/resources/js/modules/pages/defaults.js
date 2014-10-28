@@ -52,17 +52,36 @@ define(function (require) {
                             .append($('<div class="btn-group btn-group-xs">')
                                 .append([{
                                     icon: 'glyphicon-chevron-left',
-                                    action: 'prev'
+                                    action: 'PREVIOUS'
                                 }, {
                                     icon: 'glyphicon-chevron-right',
-                                    action: 'next'
+                                    action: 'NEXT'
                                 }].map(function (o) {
                                         return $('<button type="button" class="btn btn-default">')
-                                            .prop('disabled', true)
+                                            //.prop('disabled', true)
                                             .append($('<span class="glyphicon">')
                                                 .addClass(o.icon))
                                             .click(function () {
-                                                require('./../assignUrl')(o.action);
+                                                var $button = $(this);
+                                                require('./../server')("adjacent", {
+                                                    data: JSON.stringify({
+                                                        current: options.data,
+                                                        ignoreRemoved: true,
+                                                        direction: o.action
+                                                    }),
+                                                    success: function (response) {
+                                                        if(response.result === "REVISION_FOUND") {
+                                                            $.extend(options.data, response.data);
+                                                            $button.trigger('refresh.metka');
+                                                        } else {
+                                                            require('./../modal')({
+                                                                title: MetkaJS.L10N.get('alert.error.title'),
+                                                                body: response.result,
+                                                                buttons: ["DISMISS"]
+                                                            });
+                                                        }
+                                                    }
+                                                });
                                             });
                                     })))
                             .append($('<div class="btn-group btn-group-xs">')
@@ -79,7 +98,7 @@ define(function (require) {
                                                     require('./../modal')({
                                                         title: MetkaJS.L10N.get('alert.error.title'),
                                                         body: response.result,
-                                                        buttons: [dismiss]
+                                                        buttons: ["DISMISS"]
                                                     });
                                                 }
                                             }

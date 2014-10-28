@@ -247,7 +247,7 @@ public class RevisionRepositoryImpl implements RevisionRepository {
                     "ORDER BY r.id "+(request.getDirection() == AdjacentRevisionRequest.Direction.NEXT ? "ASC" : "DESC" )
                 , RevisionableEntity.class)
                 .setParameter("id", request.getCurrent().getKey().getId())
-                .setParameter("type", request.getCurrent().getConfiguration().getType())
+                .setParameter("type", request.getCurrent().getConfiguration().getType().toValue())
                 .setParameter("removed", !request.getIgnoreRemoved())
                 .setMaxResults(1)
                 .getResultList();
