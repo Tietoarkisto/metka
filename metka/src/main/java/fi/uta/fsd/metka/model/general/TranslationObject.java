@@ -10,7 +10,7 @@ import java.util.Map;
 
 /**
  * Contains a json translation text object.
- * Should never be serialized or deserialized as is but always through custom components
+ * Specification and documentation is found from uml/uml_general.graphml
  */
 @JsonIgnoreProperties("_comment")
 public class TranslationObject {

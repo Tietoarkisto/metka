@@ -81,6 +81,58 @@ public class APIController {
         return new APIStudyCreateResponse(ReturnResult.REVISION_CREATED, pair.getRight().getActualValueFor(Language.DEFAULT));
     }
 
+    @RequestMapping(value = "getConfiguration", method = RequestMethod.POST)
+    public @ResponseBody
+    APIConfigurationReadResponse getConfiguration(@RequestBody APIConfigurationReadRequest request) {
+        // Authenticate using API key mechanism
+        if(!ExternalUtil.authenticate(api, request.getAuthentication(), ExternalUtil.FLAG_READ)) {
+            APIConfigurationReadResponse response = new APIConfigurationReadResponse(ReturnResult.API_AUTHENTICATION_FAILED, null);
+            return response;
+        }
+        Pair<ReturnResult, Configuration> pair = configurations.findConfiguration(request.getKey());
+        return new APIConfigurationReadResponse(pair.getLeft(), pair.getRight());
+    }
+
+    @RequestMapping(value = "getRevision", method = RequestMethod.GET)
+    public @ResponseBody
+    APIRevisionReadResponse getData(@RequestBody APIRevisionReadRequest request) {
+        // Authenticate using API key mechanism
+        if(!ExternalUtil.authenticate(api, request.getAuthentication(), ExternalUtil.FLAG_READ)) {
+            APIRevisionReadResponse response = new APIRevisionReadResponse(ReturnResult.API_AUTHENTICATION_FAILED, null);
+            return response;
+        }
+        Pair<ReturnResult, RevisionData> dataPair = revisions.getRevisionData(RevisionKey.fromModelKey(request.getKey()));
+        APIRevisionReadResponse response = new APIRevisionReadResponse(dataPair.getLeft(), dataPair.getRight());
+        return response;
+    }
+
+    @RequestMapping(value = "index", method = RequestMethod.POST)
+    public @ResponseBody ReturnResult indexRevisions(@RequestBody APIMassIndexRequest request) {
+        // Authenticate using API key mechanism
+        if(!ExternalUtil.authenticate(api, request.getAuthentication(), ExternalUtil.FLAG_SEARCH)) {
+            return ReturnResult.API_AUTHENTICATION_FAILED;
+        }
+        for(Language language : request.getTargets().keySet()) {
+            if(request.getTargets().get(language) == null || request.getTargets().get(language).isEmpty()) {
+                continue;
+            }
+            for(IndexTarget target : request.getTargets().get(language)) {
+                RevisionIndexerCommand command = RevisionIndexerCommand.index(target.getType(), language, target.getKey());
+                indexer.addCommand(command);
+            }
+        }
+        return ReturnResult.OPERATION_SUCCESSFUL;
+    }
+
+    @RequestMapping(value = "save", method = RequestMethod.POST)
+    public @ResponseBody ReturnResult saveData(@RequestBody APIRevisionSaveRequest request) {
+        // Authenticate using API key mechanism
+        if(!ExternalUtil.authenticate(api, request.getAuthentication(), ExternalUtil.FLAG_EDIT)) {
+            return ReturnResult.API_AUTHENTICATION_FAILED;
+        }
+        return revisions.updateRevisionData(request.getRevision());
+    }
+
     @RequestMapping(value = "search", method = RequestMethod.POST)
     public @ResponseBody
     RevisionSearchResponse performSearch(@RequestBody APISearchRequest request) {
@@ -120,57 +172,5 @@ public class APIController {
             response.setResult(ReturnResult.MALFORMED_QUERY);
             return response;
         }
-    }
-
-    @RequestMapping(value = "getConfiguration", method = RequestMethod.POST)
-    public @ResponseBody
-    APIConfigurationReadResponse getConfiguration(@RequestBody APIConfigurationReadRequest request) {
-        // Authenticate using API key mechanism
-        if(!ExternalUtil.authenticate(api, request.getAuthentication(), ExternalUtil.FLAG_READ)) {
-            APIConfigurationReadResponse response = new APIConfigurationReadResponse(ReturnResult.API_AUTHENTICATION_FAILED, null);
-            return response;
-        }
-        Pair<ReturnResult, Configuration> pair = configurations.findConfiguration(request.getKey());
-        return new APIConfigurationReadResponse(pair.getLeft(), pair.getRight());
-    }
-
-    @RequestMapping(value = "getRevision", method = RequestMethod.GET)
-    public @ResponseBody
-    APIRevisionReadResponse getData(@RequestBody APIRevisionReadRequest request) {
-        // Authenticate using API key mechanism
-        if(!ExternalUtil.authenticate(api, request.getAuthentication(), ExternalUtil.FLAG_READ)) {
-            APIRevisionReadResponse response = new APIRevisionReadResponse(ReturnResult.API_AUTHENTICATION_FAILED, null);
-            return response;
-        }
-        Pair<ReturnResult, RevisionData> dataPair = revisions.getRevisionData(RevisionKey.fromModelKey(request.getKey()));
-        APIRevisionReadResponse response = new APIRevisionReadResponse(dataPair.getLeft(), dataPair.getRight());
-        return response;
-    }
-
-    @RequestMapping(value = "save", method = RequestMethod.POST)
-    public @ResponseBody ReturnResult saveData(@RequestBody APIRevisionSaveRequest request) {
-        // Authenticate using API key mechanism
-        if(!ExternalUtil.authenticate(api, request.getAuthentication(), ExternalUtil.FLAG_EDIT)) {
-            return ReturnResult.API_AUTHENTICATION_FAILED;
-        }
-        return revisions.updateRevisionData(request.getRevision());
-    }
-
-    @RequestMapping(value = "index", method = RequestMethod.POST)
-    public @ResponseBody ReturnResult indexRevisions(@RequestBody APIMassIndexRequest request) {
-        // Authenticate using API key mechanism
-        if(!ExternalUtil.authenticate(api, request.getAuthentication(), ExternalUtil.FLAG_SEARCH)) {
-            return ReturnResult.API_AUTHENTICATION_FAILED;
-        }
-        for(Language language : request.getTargets().keySet()) {
-            if(request.getTargets().get(language) == null || request.getTargets().get(language).isEmpty()) {
-                continue;
-            }
-            for(IndexTarget target : request.getTargets().get(language)) {
-                RevisionIndexerCommand command = RevisionIndexerCommand.index(target.getType(), language, target.getKey());
-                indexer.addCommand(command);
-            }
-        }
-        return ReturnResult.OPERATION_SUCCESSFUL;
     }
 }

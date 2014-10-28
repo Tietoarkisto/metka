@@ -7,7 +7,9 @@ import fi.uta.fsd.metka.enums.SectionState;
 import fi.uta.fsd.metka.model.general.TranslationObject;
 
 import java.util.*;
-
+/**
+ * Specification and documentation is found from uml/gui_config/uml_json_gui_configuration_container.graphml
+ */
 @JsonIgnoreProperties("_comment")
 public class Container {
     private static int MAX_COLUMNS = 4;

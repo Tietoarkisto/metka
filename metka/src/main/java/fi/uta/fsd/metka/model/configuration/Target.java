@@ -7,7 +7,9 @@ import fi.uta.fsd.metka.enums.TargetType;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * Specification and documentation is found from uml/data_config/uml_json_configuration_restrictions.graphml
+ */
 public class Target {
     private final TargetType type;
     private final String content;

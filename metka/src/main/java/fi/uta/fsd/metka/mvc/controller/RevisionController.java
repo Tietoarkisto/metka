@@ -22,54 +22,68 @@ public class RevisionController {
     @Autowired
     private RevisionService revisions;
 
-    @RequestMapping("search/{type}")
-    public String search(@PathVariable ConfigurationType type, Model model) {
-        // Take away types that shouldn't navigate through here
-        switch(type) {
-            case STUDY_VARIABLE:
-            case STUDY_ATTACHMENT:
-                // TODO: Return error
-                return null;
-        }
-
-        ModelUtil.initRevisionModel(model, type);
-
-        return AuthenticationUtil.getModelName("page", model);
+    @RequestMapping(value = "adjacent", method = RequestMethod.POST)
+    public @ResponseBody RevisionOperationResponse adjacentRevision(@RequestBody AdjacentRevisionRequest request) {
+        return revisions.adjacentRevision(request);
     }
 
-    @RequestMapping("view/{type}/{id}")
-    public String viewLatestRevision(@PathVariable ConfigurationType type, @PathVariable Long id, Model model) {
-        // Take away types that shouldn't navigate through here
-        switch(type) {
-            case STUDY_VARIABLE:
-            case STUDY_ATTACHMENT:
-                // TODO: Return error
-                return null;
-        }
-
-        ModelUtil.initRevisionModel(model, type, id);
-
-        return AuthenticationUtil.getModelName("page", model);
+    @RequestMapping(value="ajax/approve", method = RequestMethod.POST)
+    public @ResponseBody RevisionOperationResponse approve(@RequestBody TransferData transferData) {
+        return revisions.approve(transferData);
     }
 
-    @RequestMapping("view/{type}/{id}/{no}")
-    public String viewRevision(@PathVariable ConfigurationType type, @PathVariable Long id, @PathVariable Integer no, Model model) {
-        // Take away types that shouldn't navigate through here
-        switch(type) {
-            case STUDY_VARIABLE:
-            case STUDY_ATTACHMENT:
-                // TODO: Return error
-                return null;
-        }
-
-        ModelUtil.initRevisionModel(model, type, id, no);
-
-        return AuthenticationUtil.getModelName("page", model);
+    @RequestMapping(value = "ajax/claim", method = RequestMethod.POST)
+    public @ResponseBody RevisionOperationResponse claim(@RequestBody RevisionKey key) {
+        return revisions.claimRevision(key);
     }
 
     @RequestMapping(value = "ajax/configuration/{type}", method = RequestMethod.GET)
     public @ResponseBody ConfigurationResponse getConfiguration(@PathVariable ConfigurationType type) {
         return revisions.getConfiguration(type);
+    }
+
+    @RequestMapping(value="ajax/create", method = RequestMethod.POST)
+    public @ResponseBody RevisionOperationResponse create(@RequestBody RevisionCreateRequest request) {
+        RevisionOperationResponse response = revisions.create(request);
+        if(response.getResult().equals(ReturnResult.REVISION_CREATED.name())) {
+            RevisionOperationResponse claimResponse = revisions.claimRevision(response.getData().getKey());
+            if(claimResponse.getResult().equals(ReturnResult.REVISION_UPDATE_SUCCESSFUL.name())) {
+                claimResponse.setResult(response.getResult());
+                return claimResponse;
+            } else {
+                return response;
+            }
+        } else return response;
+    }
+
+    @RequestMapping(value="ajax/edit", method = RequestMethod.POST)
+    public @ResponseBody RevisionOperationResponse edit(@RequestBody TransferData transferData) {
+        return revisions.edit(transferData);
+    }
+
+    @RequestMapping(value = "ajax/release", method = RequestMethod.POST)
+    public @ResponseBody RevisionOperationResponse release(@RequestBody RevisionKey key) {
+        return revisions.releaseRevision(key);
+    }
+
+    @RequestMapping(value="ajax/remove", method = RequestMethod.POST)
+    public @ResponseBody RevisionOperationResponse remove(@RequestBody TransferData transferData) {
+        return revisions.remove(transferData);
+    }
+
+    @RequestMapping(value="ajax/restore", method = RequestMethod.POST)
+    public @ResponseBody RevisionOperationResponse restore(@RequestBody RevisionKey key) {
+        return revisions.restore(key);
+    }
+
+    @RequestMapping(value="ajax/save", method = RequestMethod.POST)
+    public @ResponseBody RevisionOperationResponse save(@RequestBody TransferData transferData) {
+        return revisions.save(transferData);
+    }
+
+    @RequestMapping(value="ajax/search", method = RequestMethod.POST)
+    public @ResponseBody RevisionSearchResponse search(@RequestBody RevisionSearchRequest searchRequest) {
+        return revisions.search(searchRequest);
     }
 
     /**
@@ -99,78 +113,9 @@ public class RevisionController {
         return revisions.view(id, no, type);
     }
 
-    @RequestMapping(value="ajax/create", method = RequestMethod.POST)
-    public @ResponseBody RevisionOperationResponse create(@RequestBody RevisionCreateRequest request) {
-        RevisionOperationResponse response = revisions.create(request);
-        if(response.getResult().equals(ReturnResult.REVISION_CREATED.name())) {
-            RevisionOperationResponse claimResponse = revisions.claimRevision(response.getData().getKey());
-            if(claimResponse.getResult().equals(ReturnResult.REVISION_UPDATE_SUCCESSFUL.name())) {
-                claimResponse.setResult(response.getResult());
-                return claimResponse;
-            } else {
-                return response;
-            }
-        } else return response;
-    }
-
-    @RequestMapping(value="ajax/edit", method = RequestMethod.POST)
-    public @ResponseBody RevisionOperationResponse edit(@RequestBody TransferData transferData) {
-        return revisions.edit(transferData);
-    }
-
-    @RequestMapping(value="ajax/remove", method = RequestMethod.POST)
-    public @ResponseBody RevisionOperationResponse remove(@RequestBody TransferData transferData) {
-        return revisions.remove(transferData);
-    }
-
-    @RequestMapping(value="ajax/restore", method = RequestMethod.POST)
-    public @ResponseBody RevisionOperationResponse restore(@RequestBody RevisionKey key) {
-        return revisions.restore(key);
-    }
-
-    @RequestMapping(value="ajax/save", method = RequestMethod.POST)
-    public @ResponseBody RevisionOperationResponse save(@RequestBody TransferData transferData) {
-        RevisionOperationResponse response = null;
-        try {
-            response = revisions.save(transferData);
-            return response;
-        } catch(Exception e) {
-            logger.error("Exception while performing SAVE command on revision:", e);
-            response = new RevisionOperationResponse();
-            response.setData(transferData);
-            response.setResult(ReturnResult.EXCEPTION.name());
-            return response;
-        }
-    }
-
-    @RequestMapping(value="ajax/approve", method = RequestMethod.POST)
-    public @ResponseBody RevisionOperationResponse approve(@RequestBody TransferData transferData) {
-        return revisions.approve(transferData);
-    }
-
-    @RequestMapping(value="ajax/search", method = RequestMethod.POST)
-    public @ResponseBody RevisionSearchResponse search(@RequestBody RevisionSearchRequest searchRequest) {
-        return revisions.search(searchRequest);
-    }
-
-    @RequestMapping(value = "ajax/claim", method = {RequestMethod.GET, RequestMethod.POST})
-    public @ResponseBody RevisionOperationResponse claim(@RequestBody RevisionKey key) {
-        return revisions.claimRevision(key);
-    }
-
-    @RequestMapping(value = "ajax/release", method = {RequestMethod.GET, RequestMethod.POST})
-    public @ResponseBody RevisionOperationResponse release(@RequestBody RevisionKey key) {
-        return revisions.releaseRevision(key);
-    }
-
-    @RequestMapping(value = "studyIdSearch/{studyId}", method = {RequestMethod.GET, RequestMethod.POST})
-    public @ResponseBody RevisionSearchResponse studyIdSearch(@PathVariable String studyId) {
-        return revisions.studyIdSearch(studyId);
-    }
-
-    @RequestMapping(value = "revisionHistory", method = RequestMethod.POST)
-    public @ResponseBody RevisionSearchResponse revisionHistory(@RequestBody RevisionHistoryRequest request) {
-        return revisions.collectRevisionHistory(request);
+    @RequestMapping(value="download", method = RequestMethod.POST)
+    public @ResponseBody RevisionExportResponse downloadRevision(@RequestBody TransferData transferData) {
+        return revisions.exportRevision(transferData);
     }
 
     @RequestMapping(value = "revisionCompare", method = RequestMethod.POST)
@@ -178,35 +123,58 @@ public class RevisionController {
         return revisions.revisionCompare(request);
     }
 
-    @RequestMapping(value = "adjacent", method = RequestMethod.POST)
-    public @ResponseBody RevisionOperationResponse adjacentRevision(@RequestBody AdjacentRevisionRequest request) {
-        return revisions.adjacentRevision(request);
+    @RequestMapping(value = "revisionHistory", method = RequestMethod.POST)
+    public @ResponseBody RevisionSearchResponse revisionHistory(@RequestBody RevisionHistoryRequest request) {
+        return revisions.collectRevisionHistory(request);
     }
 
-    // TODO: Move to revision controller
-    @RequestMapping(value="download", method = RequestMethod.POST)
-    public @ResponseBody RevisionExportResponse downloadRevision(@RequestBody TransferData transferData) {
-        return revisions.exportRevision(transferData);
-        /*Pair<ReturnResult, RevisionData> pair = service.getRevisionData(id, no);
-        if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
-            // TODO: Return error to user
-            return null;
-        } else {
-            RevisionData revision = pair.getRight();
-            Pair<SerializationResults, String> string = json.serialize(revision);
-            if(string.getLeft() != SerializationResults.SERIALIZATION_SUCCESS) {
-                // TODO: Return error to user
+    @RequestMapping(value="search/{type}", method = RequestMethod.GET)
+    public String search(@PathVariable ConfigurationType type, Model model) {
+        // Take away types that shouldn't navigate through here
+        switch(type) {
+            case STUDY_VARIABLE:
+            case STUDY_ATTACHMENT:
+                // TODO: Return error
                 return null;
-            }
-            byte[] dataBytes = string.getRight().getBytes();
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("Content-Disposition",
-                    "attachment; filename=" + revision.getConfiguration().getType()
-                            + "_id_" + revision.getKey().getId() + "_revision_" + revision.getKey().getNo() + ".json");
-            headers.setContentLength(dataBytes.length);
+        }
 
-            return new HttpEntity<>(dataBytes, headers);
-        }*/
+        ModelUtil.initRevisionModel(model, type);
+
+        return AuthenticationUtil.getModelName("page", model);
+    }
+
+    @RequestMapping(value = "studyIdSearch/{studyId}", method = RequestMethod.GET)
+    public @ResponseBody RevisionSearchResponse studyIdSearch(@PathVariable String studyId) {
+        return revisions.studyIdSearch(studyId);
+    }
+
+    @RequestMapping(value = "view/{type}/{id}", method = RequestMethod.GET)
+    public String viewLatestRevision(@PathVariable ConfigurationType type, @PathVariable Long id, Model model) {
+        // Take away types that shouldn't navigate through here
+        switch(type) {
+            case STUDY_VARIABLE:
+            case STUDY_ATTACHMENT:
+                // TODO: Return error
+                return null;
+        }
+
+        ModelUtil.initRevisionModel(model, type, id);
+
+        return AuthenticationUtil.getModelName("page", model);
+    }
+
+    @RequestMapping(value = "view/{type}/{id}/{no}", method = RequestMethod.GET)
+    public String viewRevision(@PathVariable ConfigurationType type, @PathVariable Long id, @PathVariable Integer no, Model model) {
+        // Take away types that shouldn't navigate through here
+        switch(type) {
+            case STUDY_VARIABLE:
+            case STUDY_ATTACHMENT:
+                // TODO: Return error
+                return null;
+        }
+
+        ModelUtil.initRevisionModel(model, type, id, no);
+
+        return AuthenticationUtil.getModelName("page", model);
     }
 }

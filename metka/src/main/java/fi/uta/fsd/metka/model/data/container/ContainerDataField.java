@@ -15,7 +15,9 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
-
+/**
+ * Specification and documentation is found from uml/data/uml_json_data_container_data_field.graphml
+ */
 public class ContainerDataField extends RowContainerDataField {
     /**
      * Contains rows for each language specified in Language enumerator.

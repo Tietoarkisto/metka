@@ -12,6 +12,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Specification and documentation is found from uml/data_config/uml_json_configuration_field.graphml
+ */
 @JsonIgnoreProperties("_comment")
 public class Field {
     private final String key;

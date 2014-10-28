@@ -27,32 +27,7 @@ public class StudyController {
     @Autowired
     private StudyErrorService errors;
 
-    @RequestMapping(value="listErrors/{id}", method = RequestMethod.GET)
-    public @ResponseBody StudyErrorListResponse listStudyErrors(@PathVariable Long id) {
-        return errors.getStudyErrorList(id);
-    }
-
-    @RequestMapping(value="updateError", method = RequestMethod.POST)
-    public @ResponseBody ReturnResult updateStudyError(@RequestBody StudyError error) {
-        return errors.insertOrUpdateStudyError(error);
-    }
-
-    @RequestMapping(value = "removeError/{id}", method = RequestMethod.GET)
-    public @ResponseBody ReturnResult removeStudyError(@PathVariable Long id) {
-        return errors.removeStudyError(id);
-    }
-
-    @RequestMapping("studiesWithVariables")
-    public @ResponseBody StudyVariablesStudiesResponse listStudiesWithVariables() {
-        return service.collectStudiesWithVariables();
-    }
-
-    @RequestMapping("studiesWithErrors")
-    public @ResponseBody StudyErrorsResponse getStudiesWithErrors() {
-        return service.getStudiesWithErrors();
-    }
-
-    @RequestMapping("attachmentHistory")
+    @RequestMapping(value = "attachmentHistory", method = RequestMethod.POST)
     public @ResponseBody RevisionSearchResponse collectAttachmentHistory(@RequestBody TransferData transferData) {
         return service.collectAttachmentHistory(transferData);
     }
@@ -79,5 +54,30 @@ public class StudyController {
         ReturnResult result = service.importDDI(request.getTransferData(), request.getPath());
 
         return result;
+    }
+
+    @RequestMapping(value="listErrors/{id}", method = RequestMethod.GET)
+    public @ResponseBody StudyErrorListResponse listStudyErrors(@PathVariable Long id) {
+        return errors.getStudyErrorList(id);
+    }
+
+    @RequestMapping(value = "removeError/{id}", method = RequestMethod.GET)
+    public @ResponseBody ReturnResult removeStudyError(@PathVariable Long id) {
+        return errors.removeStudyError(id);
+    }
+
+    @RequestMapping(value = "studiesWithErrors", method = RequestMethod.GET)
+    public @ResponseBody StudyErrorsResponse getStudiesWithErrors() {
+        return service.getStudiesWithErrors();
+    }
+
+    @RequestMapping(value = "studiesWithVariables", method = RequestMethod.GET)
+    public @ResponseBody StudyVariablesStudiesResponse listStudiesWithVariables() {
+        return service.collectStudiesWithVariables();
+    }
+
+    @RequestMapping(value="updateError", method = RequestMethod.POST)
+    public @ResponseBody ReturnResult updateStudyError(@RequestBody StudyError error) {
+        return errors.insertOrUpdateStudyError(error);
     }
 }

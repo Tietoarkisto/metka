@@ -8,7 +8,9 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * Specification and documentation is found from uml/uml_json_transfer.graphml
+ */
 public class TransferValue {
     private String current = null;
     private String original = null;

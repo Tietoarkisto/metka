@@ -36,10 +36,34 @@ public class SettingsController {
     @Autowired
     private JSONUtil json;
 
-    @RequestMapping("")
+    @RequestMapping(value = "", method = RequestMethod.GET)
     public String settings(Model model) {
         ModelUtil.initSettings(model);
         return AuthenticationUtil.getModelName("page", model);
+    }
+
+    @RequestMapping(value="downloadReport", method = RequestMethod.GET)
+    public HttpEntity<byte[]> downloadReport() {
+        String report = service.generateReport();
+        if(report == null) {
+            // TODO: Return error to user
+            return null;
+        } else {
+            // Assumes report.toString generates valid xml representation
+            byte[] dataBytes = report.getBytes();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_XML);
+            headers.set("Content-Disposition",
+                    "attachment; filename=report.xml");
+            headers.setContentLength(dataBytes.length);
+
+            return new HttpEntity<>(dataBytes, headers);
+        }
+    }
+
+    @RequestMapping(value = "getJsonContent", method = RequestMethod.POST)
+    public @ResponseBody String getJsonContent(@RequestBody JSONListEntry entry) {
+        return service.getJsonContent(entry);
     }
 
     @RequestMapping(value = "getJsonList/{type}", method = RequestMethod.GET)
@@ -47,9 +71,29 @@ public class SettingsController {
         return service.getJsonList(type);
     }
 
-    @RequestMapping(value = "getJsonContent", method = RequestMethod.POST)
-    public @ResponseBody String getJsonList(@RequestBody JSONListEntry entry) {
-        return service.getJsonContent(entry);
+    @RequestMapping(value="indexEverything", method = RequestMethod.GET)
+    public @ResponseBody ReturnResult indexEverything() {
+        return service.indexEverything();
+    }
+
+    @RequestMapping(value="listAPIUsers", method = RequestMethod.GET)
+    public @ResponseBody APIUserListResponse listAPIUsers() {
+        return service.listAPIUsers();
+    }
+
+    @RequestMapping(value="newAPIUsers", method = RequestMethod.POST)
+    public @ResponseBody APIUserListResponse newAPIUsers(@RequestBody NewAPIUserRequest request) {
+        return service.newAPIUser(request);
+    }
+
+    @RequestMapping(value="openIndexCommands", method = RequestMethod.GET)
+    public @ResponseBody OpenIndexCommandsResponse openIndexCommands() {
+        return service.getOpenIndexCommands();
+    }
+
+    @RequestMapping(value="removeAPIUser/{key}", method = RequestMethod.GET)
+    public @ResponseBody ReturnResult removeAPIUser(@PathVariable String key) {
+        return service.removeAPIUser(key);
     }
 
     /**
@@ -112,50 +156,13 @@ public class SettingsController {
         return ReturnResult.OPERATION_SUCCESSFUL;
     }
 
-    @RequestMapping(value="downloadReport", method = RequestMethod.GET)
-    public HttpEntity<byte[]> downloadReport() {
-        String report = service.generateReport();
-        if(report == null) {
-            // TODO: Return error to user
-            return null;
-        } else {
-            // Assumes report.toString generates valid xml representation
-            byte[] dataBytes = report.getBytes();
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_XML);
-            headers.set("Content-Disposition",
-                    "attachment; filename=report.xml");
-            headers.setContentLength(dataBytes.length);
 
-            return new HttpEntity<>(dataBytes, headers);
-        }
-    }
 
-    @RequestMapping(value="indexEverything", method = RequestMethod.GET)
-    public @ResponseBody ReturnResult indexEverything() {
-        return service.indexEverything();
-        /*ModelUtil.initSettings(model, indexer.indexerStatusList());
-        indexer.indexEverything();
-        return AuthenticationUtil.getModelName("page", model);*/
-    }
 
-    @RequestMapping(value="listAPIUsers", method = RequestMethod.GET)
-    public @ResponseBody APIUserListResponse listAPIUsers() {
-        return service.listAPIUsers();
-    }
 
-    @RequestMapping(value="newAPIUsers", method = RequestMethod.POST)
-    public @ResponseBody APIUserListResponse newAPIUsers(@RequestBody NewAPIUserRequest request) {
-        return service.newAPIUser(request);
-    }
 
-    @RequestMapping(value="removeAPIUser/{key}", method = RequestMethod.GET)
-    public @ResponseBody ReturnResult removeAPIUser(@PathVariable String key) {
-        return service.removeAPIUser(key);
-    }
 
-    @RequestMapping(value="openIndexCommands", method = RequestMethod.GET)
-    public @ResponseBody OpenIndexCommandsResponse openIndexCommands() {
-        return service.getOpenIndexCommands();
-    }
+
+
+
 }

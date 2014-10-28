@@ -7,7 +7,9 @@ import fi.uta.fsd.metka.enums.SelectionListType;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * Specification and documentation is found from uml/data_config/uml_json_configuration_selection_list.graphml
+ */
 @JsonIgnoreProperties("_comment")
 public class SelectionList {
     private final String key;

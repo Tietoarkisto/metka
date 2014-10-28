@@ -13,7 +13,7 @@ import java.util.Map;
 
 
 /**
- * Single reference in a reference container is saved through this
+ * Specification and documentation is found from uml/data/uml_json_data_reference_container_data_field.graphml
  */
 public class ReferenceRow extends ContainerRow {
     public static ReferenceRow build(ReferenceContainerDataField container, Value reference, DateTimeUserPair info) {

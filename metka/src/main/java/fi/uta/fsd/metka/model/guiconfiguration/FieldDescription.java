@@ -7,7 +7,9 @@ import fi.uta.fsd.metka.enums.DisplayType;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * Specification and documentation is found from uml/gui_config/uml_json_gui_configuration_FieldDescription.graphml
+ */
 @JsonIgnoreProperties("_comment")
 public class FieldDescription {
     private final String key;

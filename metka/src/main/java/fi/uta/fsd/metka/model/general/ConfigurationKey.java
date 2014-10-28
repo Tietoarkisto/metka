@@ -3,7 +3,9 @@ package fi.uta.fsd.metka.model.general;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.enums.ConfigurationType;
-
+/**
+ * Specification and documentation is found from uml/data_config/uml_json_configuration.graphml
+ */
 public class ConfigurationKey {
 
     private final Integer version;

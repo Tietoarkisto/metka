@@ -6,6 +6,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.enums.ReferenceType;
 
+/**
+ * Specification and documentation is found from uml/data_config/uml_json_configuration_reference.graphml
+ * Additional specification is found from Reference specification.odt
+ */
 @JsonIgnoreProperties("_comment")
 public class Reference {
     private final String key;

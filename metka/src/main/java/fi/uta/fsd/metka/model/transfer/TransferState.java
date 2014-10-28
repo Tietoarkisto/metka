@@ -6,7 +6,9 @@ import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 
 import java.util.HashMap;
 import java.util.Map;
-
+/**
+ * Specification and documentation is found from uml/uml_json_transfer.graphml
+ */
 public class TransferState {
     private DateTimeUserPair removed;
     private final Map<Language, DateTimeUserPair> approved = new HashMap<>();

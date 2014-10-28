@@ -2,7 +2,9 @@ package fi.uta.fsd.metka.model.data.container;
 
 import com.fasterxml.jackson.annotation.*;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
-
+/**
+ * Specification and documentation is found from uml/data/uml_json_data_container_row.graphml
+ */
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,

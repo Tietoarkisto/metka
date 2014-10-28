@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.enums.ConditionType;
-
+/**
+ * Specification and documentation is found from uml/data_config/uml_json_configuration_restrictions.graphml
+ */
 public class Condition {
     private final ConditionType type;
     private final Target target;

@@ -17,26 +17,16 @@ public class BinderController {
     @Autowired
     private BinderService service;
 
-    @RequestMapping("")
+    @RequestMapping(value = "", method = RequestMethod.GET)
     public String settings(Model model) {
         ModelUtil.initBinder(model);
         return AuthenticationUtil.getModelName("page", model);
     }
 
-    @RequestMapping(value="saveBinderPage", method = RequestMethod.POST)
-    public @ResponseBody BinderListResponse saveBinderPage(@RequestBody SaveBinderPageRequest request) {
-        return service.saveBinderPage(request);
-    }
-
-    @RequestMapping(value = "removePage/{pageId}", method = RequestMethod.GET)
-    public @ResponseBody ReturnResult removePage(@PathVariable Long pageId) {
-        return service.removePage(pageId);
-    }
-
-    @RequestMapping(value="listStudyBinderPages/{id}", method = RequestMethod.GET)
+    @RequestMapping(value="binderContent/{binderId}", method = RequestMethod.GET)
     public @ResponseBody
-    BinderListResponse listStudyBinderPages(@PathVariable Long id) {
-        return service.listStudyBinderPages(id);
+    BinderListResponse binderContent(@PathVariable Long binderId) {
+        return service.binderContent(binderId);
     }
 
     @RequestMapping(value="listBinderPages", method = {RequestMethod.GET})
@@ -45,9 +35,19 @@ public class BinderController {
         return service.listBinderPages();
     }
 
-    @RequestMapping(value="binderContent/{binderId}", method = RequestMethod.GET)
+    @RequestMapping(value="listStudyBinderPages/{id}", method = RequestMethod.GET)
     public @ResponseBody
-    BinderListResponse binderContent(@PathVariable Long binderId) {
-        return service.binderContent(binderId);
+    BinderListResponse listStudyBinderPages(@PathVariable Long id) {
+        return service.listStudyBinderPages(id);
+    }
+
+    @RequestMapping(value = "removePage/{pageId}", method = RequestMethod.GET)
+    public @ResponseBody ReturnResult removePage(@PathVariable Long pageId) {
+        return service.removePage(pageId);
+    }
+
+    @RequestMapping(value="saveBinderPage", method = RequestMethod.POST)
+    public @ResponseBody BinderListResponse saveBinderPage(@RequestBody SaveBinderPageRequest request) {
+        return service.saveBinderPage(request);
     }
 }

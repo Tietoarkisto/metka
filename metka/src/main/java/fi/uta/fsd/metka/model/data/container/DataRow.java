@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Single row of fields in a container is saved through this
+ * Specification and documentation is found from uml/data/uml_json_data_field.graphml
  */
 public class DataRow extends ContainerRow implements DataFieldContainer {
     public static DataRow build(ContainerDataField container) {

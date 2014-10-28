@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Specification and documentation is found from uml/data_config/uml_json_configuration.graphml
+ */
 @JsonIgnoreProperties("_comment")
 public class Configuration implements ModelBase {
     private ConfigurationKey key;

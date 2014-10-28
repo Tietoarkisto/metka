@@ -15,6 +15,7 @@ import static fi.uta.fsd.metka.storage.util.ConversionUtil.stringToLong;
  * This contains only immutable value string and functions for checking its content and equality.
  * This is somewhat unnecessary and mostly here to strongly type value.
  * With this there's still the possibility to subclass value so that we have actual json numbers and booleans in the data instead of just strings.
+ * Specification and documentation is found from uml/data/uml_json_data_value_data_field.graphml
  */
 public class Value {
     private final String value;

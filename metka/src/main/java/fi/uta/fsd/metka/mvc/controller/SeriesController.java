@@ -20,11 +20,13 @@ public class SeriesController {
     @Autowired
     private SeriesService seriesService;
 
+    // TODO: not required, can be implemented using reference fields
     @RequestMapping(value="getAbbreviations", method = RequestMethod.GET)
     public @ResponseBody SeriesAbbreviationsResponse getAbbreviations() {
         return seriesService.findAbbreviations();
     }
 
+    // TODO: not required, can be implemented using reference fields
     @RequestMapping(value="getNames", method = RequestMethod.GET)
     public @ResponseBody RevisionSearchResponse getNames() {
         return seriesService.findNames();

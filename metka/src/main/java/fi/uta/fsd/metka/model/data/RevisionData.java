@@ -23,7 +23,9 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.HashMap;
 import java.util.Map;
-
+/**
+ * Specification and documentation is found from uml/data/uml_json_data.graphml
+ */
 public class RevisionData implements Comparable<RevisionData>, ModelBase, DataFieldContainer {
 
     // Class

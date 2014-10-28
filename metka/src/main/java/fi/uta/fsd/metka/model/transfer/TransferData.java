@@ -17,7 +17,9 @@ import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 
 import java.util.HashMap;
 import java.util.Map;
-
+/**
+ * Specification and documentation is found from uml/uml_json_transfer.graphml
+ */
 public class TransferData implements ModelBase, TransferFieldContainer {
     private final RevisionKey key;
     private final ConfigurationKey configuration;

@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import fi.uta.fsd.metka.enums.Language;
 
 import java.util.Set;
-
+/**
+ * Specification and documentation is found from uml/data/uml_json_data_row_container_data_field.graphml
+ */
 public abstract class RowContainerDataField extends DataField {
 
     private Integer rowIdSeq;

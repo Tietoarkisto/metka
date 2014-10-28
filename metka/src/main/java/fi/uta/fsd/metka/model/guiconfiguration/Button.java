@@ -7,7 +7,9 @@ import fi.uta.fsd.metka.model.general.TranslationObject;
 
 import java.util.HashSet;
 import java.util.Set;
-
+/**
+ * Specification and documentation is found from uml/gui_config/uml_json_gui_configuration_button.graphml
+ */
 @JsonIgnoreProperties("_comment")
 public class Button {
     private TranslationObject title;
