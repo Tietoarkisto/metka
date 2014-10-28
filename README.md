@@ -312,3 +312,27 @@ Kaikki polut jotka alkavat `web/` saapuvat tähän osioon. Nämä polut käyttä
 
 `[/study/updateError],methods=[POST]`  
 *Käyttö:* Päivittää aineistovirheen, jos virhettä ei vielä ole olemassa niin virhe lisätään kantaan.
+# Palvelimen toiminta
+Yleisperiaatteet palvelimella tapahtuville prosesseille löytyvät dokumentaatio kansiosta `metka_server_operation.graphml` kaaviosta.  
+
+Spring huolehtii urlien reitityksetä oikeille Java-luokille. HTTP-pyyntöjä käsittelevät luokat ovat yleensä metka.mvc.controller-pakkauksen alaisia luokkia, mutta mikä tahansa `@Controller`-annotaatiolla merkatut luokat. Paketit joihin `@Controller` luokkia saa laittaa on listattu `apiServletContext.xml` ja `webServletContext.xml` tiedostoissa. Suurin osa `@Controller`-luokista löytyy `metka.mvc.controller`-paketista.
+
+Kaikki pyyntöihin liittyvät Java-objektit, sekä parametrit että paluuarvot, voidaan ymmärtää json-objekteina kun kyseisen pyynnön käsittely on palvelimen ulkopuolella. Json-Java-Json muunnokset tehdään automaattisesti Jackson-kirjaston avulla joten `@Controller`-luokat voivat vastaanottaa ja lähettää Java-objekteja. UML-spesifikaatioita noudattavat Json-objektit ja rakenteet löytyvät `metka.model`-paketista, muut http-pyyntöjen tarvitsemat Java-objektit löytyvät `metka.transfer`-paketista (jos näitä löytyy jostain muualta niin on suositeltavaa refaktoroida nämä jompaan kumpaan pakettiin).
+
+Kukin `@Controller` toimii http-rajapintana ja suorittaa hyvin vähän varsinaista toiminnallisuutta. Joissakin monimutkaisemmissa pyynnöisää `@Controller`-metodi saattaa tehdä jonkin verran pyynnön tai palautteen validointia ja päätöksiä siitä mihin pyynnöt tulee ohjata. `@Controller`-metodien pitäisi ohjata kaikki pyynnöt jonkin `@Service`-luokan läpi, mutta harvoissa erikoistapauksissa voi olla käytännöllistä ohjata pyyntö suoraan `@Repository`-luokkaan. Nämä tapaukset ovat kuitenkin harvassa.
+
+Suurin osa `@Controller`-metodeista kutsuu `metka.mvc.services.impl`-paketissa olevia `@Service`-annotaatiolla merkattuja luokkia käyttäen `metka.mvc.services.`-paketista löytyviä Interface-tyyppejä. Suurin osa `@Service`-luokista on toteutettu käyttäen Interface-Implementation rakennetta joka mahdollistaa oikeuksien hallinnan käyttäen SpringSecurity-kirjastoa. Kaikkien `@Service`-luokkien jotka johtavat lopulta tietokantaan tulisi sisältää myös `@Transactional`-annotaatiota jolloin tietokannan transaktiot aloitetaan samaan aikaan autentikaation kanssa sillä osa autentikaatioon liittyvistä oikeuksista vaatii tietokantakyselyitä oikeuksien määrittämiseen.
+
+`@Service`-luokkien metodit ottavat yleensä vastaan http-pyyntöjen parametrit sellaisinaan ja palauttavat vastausobjekteja joita http-pyynnöt voivat palauttaa suoraan. Nämä metodit voivat koostaa yhteen useita pyyntöjä `@Repository`-luokkiin mutta yleisemmin on suotavaa että `@Service`-metodit tekevät vain yhden pyynnön `@Repositoryyn` ja `@Repositoryt` voivat kutsua toisiaan kasatakseen sopivan tulosjoukon. `@Service`-metodien vastuulla on yleensä tehdä sopiva pyyntö ja kasata http-pyyntöä vastaava paluuarvo löydetyistä tuloksista. `@Service`-metodit voivat usein tehä pyyntöjä myös erilaisiin hakupalveluihin joko suoraan hakukomennoilla tai kutsumalla esimerkiksi `metka.search`-paketista löytyviä `@Repository`-luokkia.
+
+`@Repository`-annotaatiolla merkatut luokat toimivat yhteytenä erilaisiin tietovarastoihin (esimerkiksi tietokanta, hakuindeksi). Suurin osa näistä luokista löytyy `metka.storage.repository` tai `metka.search` -paketeista. Nämä käyttävät jälleen Interface-Implementation rakennetta jolloin varsinainen toteutus on helpompi vaihtaa jos esim. datavarasto vaihtuu tietokannasta levykansioon. `@Repository`-luokat koostavat halutun tiedon tekemällä pyyntöjä joko suoraan datavarastoon tai muihin `@Repository`-luokkiin. Paluuarvot näistä luokista sisältävät yleensä jonkinlaisen informaation onnistuneesta tai epäonnistuneesta operaatiosta (ja mahdollisesti jonkinlaisen selityksen mikä epäonnistui) sekä yhden tai useampia paluuarvo-objekteja jotka voivat olla esim. `metka.model`-paketin toteutuksia json-objekteista.
+
+Kun `@Repository`-luokat kommunikoivat tietokannan kanssa siihen käytetään yleensä `@Entity`-annotaatiolla merkattuja luokkia joista suurin osa löytyy `metka.storage.entity`-paketista ja jotka toimivat tietokantataulujen kuvauksina Java-koodissa. Varsinaisiin tietokantaoperaatioihin käytetään JPA-spesifikaation tarjoamia luokkia ja operaatioita (Metkan tapauksessa JPA:n toteutta Hibernate-kirjasto).
+
+# JavaScript
+
+**TODO: Tähän JavaScript kuvaus**
+
+# Konfiguraatiotutoriaali
+
+**TODO: Tähän konfiguraatiotutoriaali**
