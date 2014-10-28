@@ -18,7 +18,7 @@ define(function (require) {
                     view: 'revision/view/{PAGE}/{id}/{no}',
                     viewAjax: 'revision/ajax/view/{PAGE}/{id}/{no}',
                     conf: '/revision/ajax/configuration/{PAGE}',
-                    next: 'next/{PAGE}/{id}',
+                    adjacent: 'revision/adjacent',
                     prev: 'prev/{PAGE}/{id}',
 
                     // Revision operations
@@ -33,7 +33,7 @@ define(function (require) {
                     listRevisions: 'history/revisions/{id}',
 
                     // Misc calls
-                    download: 'download/{id}/{no}',
+                    download: 'revision/download',
                     options: 'references/collectOptionsGroup',
                     optionsByPath: 'references/referencePathGroup'
                 }[key];

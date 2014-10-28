@@ -5,6 +5,7 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
+import fi.uta.fsd.metka.transfer.revision.AdjacentRevisionRequest;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,17 +25,6 @@ public interface RevisionRepository {
      */
     //@PreAuthorize("hasRole('ROLE_XXX')")
     public Pair<ReturnResult, RevisionableInfo> getRevisionableInfo(Long id);
-
-    /**
-     * Returns the revisionable id of the object with given type adjacent to the object with given id.
-     * Returns null if no such revisionable can be found. Type of the revisionable with current id is never checked.
-     *
-     * @param currentId Id of the revisionable from where the search starts
-     * @param type ConfigurationType of the requested adjacent revisionable
-     * @param forward Boolean telling if the search should be made forward (higher id) or backwards (lower id)
-     * @return Revisionable id of the adjacent object with given type and direction from current object or null if no such revisionable can be found.
-     */
-    public Pair<ReturnResult, Long> getAdjacentRevisionableId(Long currentId, ConfigurationType type, boolean forward);
 
     /**
      * Returns the revision data with given id and number.
@@ -108,4 +98,6 @@ public interface RevisionRepository {
     public Pair<ReturnResult, String> getStudyId(Long id);
 
     public List<RevisionData> getVariableRevisionsOfVariables(Long id);
+
+    Pair<ReturnResult,RevisionData> getAdjacentRevision(AdjacentRevisionRequest request);
 }

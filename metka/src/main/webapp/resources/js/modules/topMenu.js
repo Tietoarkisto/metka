@@ -116,6 +116,7 @@ define(function (require) {
         require('./server')('/revision/studyIdSearch/{id}', {
             id: $(this).find('input[type="text"]').val()
         }, {
+            method: 'GET',
             success: function (data) {
                 if (!data.rows.length) {
                     error();

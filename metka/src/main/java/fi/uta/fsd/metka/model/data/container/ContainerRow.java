@@ -11,7 +11,9 @@ import fi.uta.fsd.metka.model.data.change.RowChange;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 
 import java.util.Map;
-
+/**
+ * Specification and documentation is found from uml/data/uml_json_data_container_row.graphml
+ */
 public abstract class ContainerRow {
 
     private final String key;

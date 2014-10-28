@@ -62,6 +62,7 @@ define(function (require) {
                                         ],
                                         onRemove: function ($row, remove) {
                                             require('./../server')('/expert/remove/{id}', require('./../map/transferRow/object')($row.data('transferRow'), options.defaultLang), {
+                                                method: 'GET',
                                                 success: function () {
                                                     $row.remove();
                                                 }
@@ -79,6 +80,7 @@ define(function (require) {
                                             $containerField.data('addRow')(require('./../map/savedExpertSearchQuery/transferRow')(query, options.defaultLang));
                                         };
                                         require('./../server')('/expert/list', {
+                                            method: 'GET',
                                             success: function (data) {
                                                 data.queries.forEach(addRow);
                                             }

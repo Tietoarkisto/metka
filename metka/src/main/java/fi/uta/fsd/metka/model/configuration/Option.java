@@ -6,6 +6,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.general.TranslationObject;
 
+/**
+ * Specification and documentation is found from uml/data_config/uml_json_configuration_selection_list.graphml
+ */
 public class Option {
     private final String value;
     private Boolean deprecated = false;

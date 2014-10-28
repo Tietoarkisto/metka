@@ -56,4 +56,8 @@ public interface RevisionService {
     @Transactional(readOnly = true) RevisionCompareResponse revisionCompare(RevisionCompareRequest request);
 
     @Transactional(readOnly = true) ConfigurationResponse getConfiguration(ConfigurationType type);
+
+    @Transactional(readOnly = true) RevisionOperationResponse adjacentRevision(AdjacentRevisionRequest request);
+
+    @Transactional(readOnly = true) RevisionExportResponse exportRevision(TransferData transferData);
 }

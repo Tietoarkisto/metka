@@ -7,6 +7,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Specification and documentation is found from uml/data_config/uml_json_configuration_restrictions.graphml
+ */
 public class Check {
     private final Condition condition;
     private final List<Target> restrictors = new ArrayList<>();

@@ -7,6 +7,9 @@ import fi.uta.fsd.metka.model.data.container.DataField;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Specification and documentation is found from uml/data/uml_json_data_changes.graphml
+ */
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,

@@ -13,7 +13,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+/**
+ * Specification and documentation is found from uml/uml_json_transfer.graphml
+ */
 public class TransferField {
     private final String key;
     private final TransferFieldType type;

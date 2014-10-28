@@ -8,7 +8,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+/**
+ * Specification and documentation is found from uml/gui_config/uml_json_gui_configuration.graphml
+ */
 @JsonIgnoreProperties("_comment")
 public class GUIConfiguration implements ModelBase {
     private ConfigurationKey key;

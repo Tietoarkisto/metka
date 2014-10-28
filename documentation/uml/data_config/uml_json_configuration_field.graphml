@@ -32,8 +32,6 @@
             <y:AttributeLabel>+key : String {id}
 +translatable : Boolean = true
 +immutable : Boolean = false
-+display : Boolean = true
-+unique : Boolean = false
 +maxValues : Integer [0..1]
 +selectionList : String [0..1]
 +concatenate : String [0..*]
@@ -95,7 +93,7 @@ RICHTEXT
           <y:Geometry height="1082.2177981651369" width="409.60000000000014" x="1427.149770642202" y="545.4208333333335"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="1079.59375" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="408.0625" x="4.0" y="4.0">key: identifies the field inside this configuration.
+          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="995.78125" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="408.0625" x="4.0" y="4.000000000000114">key: identifies the field inside this configuration.
     all versionable objects use only one configuration
     so there should be no clashes.
  
@@ -106,12 +104,6 @@ immutable: If true then value can not change once given.
     practically means that all attempts to modify a
     value realted to this field through the program
     fail automatically. Default = false.
- 
-display: is this field show to user on the ui. Default = true.
- 
-unique: does this field need to be unique across revisionables
-
-required: does this field need to be filled during approval
 
 maxValues: how many values can this field contain.
     If maxValues is not present then it's unbounded.

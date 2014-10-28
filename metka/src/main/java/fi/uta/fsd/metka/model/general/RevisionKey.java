@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Identifies a single Revision from a combination of id (id of the revisionable object) and revision (ordering
  * number for revisions within revisionable).
+ * Specification and documentation is found from uml/data/uml_json_data.graphml
  */
 public class RevisionKey implements Comparable<RevisionKey> {
     private final Long id;

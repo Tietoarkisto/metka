@@ -9,6 +9,7 @@ import org.joda.time.LocalDateTime;
 /**
  * Defines a timestamp of sorts where something is recorded by
  * when it was done and by whom.
+ * Specification and documentation is found from uml/uml_general.graphml
  */
 @JsonIgnoreProperties("_comment")
 public class DateTimeUserPair {

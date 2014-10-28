@@ -52,7 +52,7 @@ define(function (require) {
                             var $page = options.parentData.configuration.type;
                             var $id = options.parentData.key.id;
                             var $no = options.parentData.key.no;
-                            require('./../../server')('/revision/ddi/import', {
+                            require('./../../server')('/study/ddi/import', {
                                 data: JSON.stringify({
                                     path: require('./../../data')(options)("ddiPath").getByLang("DEFAULT"),
                                     transferData: options.parentData

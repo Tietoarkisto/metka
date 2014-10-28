@@ -17,7 +17,7 @@ import org.springframework.util.StringUtils;
 import java.util.*;
 
 /**
- * List of references are saved through this
+ * Specification and documentation is found from uml/data/uml_json_data_reference_container_data_field.graphml
  */
 public class ReferenceContainerDataField extends RowContainerDataField {
     private final List<ReferenceRow> references = new ArrayList<>();

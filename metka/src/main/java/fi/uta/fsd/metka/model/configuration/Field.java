@@ -12,14 +12,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Specification and documentation is found from uml/data_config/uml_json_configuration_field.graphml
+ */
 @JsonIgnoreProperties("_comment")
 public class Field {
     private final String key;
     private FieldType type;
     private Boolean translatable = true;
     private Boolean immutable = false;
-    private Boolean display = true;
-    private Boolean unique = false;
     private Integer maxValues = null;
     private String selectionList = null;
     private final List<String> concatenate = new ArrayList<>();
@@ -62,14 +63,6 @@ public class Field {
         this.immutable = immutable;
     }
 
-    public Boolean getDisplay() {
-        return display;
-    }
-
-    public void setDisplay(Boolean display) {
-        this.display = display;
-    }
-
     public Integer getMaxValues() {
         return maxValues;
     }
@@ -104,14 +97,6 @@ public class Field {
 
     public List<String> getSubfields() {
         return subfields;
-    }
-
-    public Boolean getUnique() {
-        return unique;
-    }
-
-    public void setUnique(Boolean unique) {
-        this.unique = unique;
     }
 
     public List<String> getConcatenate() {

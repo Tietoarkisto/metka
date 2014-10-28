@@ -64,6 +64,7 @@ public class ReferenceController {
         return service.getReferenceRow(request);
     }
 
+    // TODO: Refactor to RevisionController as "revisionableStatus"
     @RequestMapping(value = "referenceStatus/{id}", method = RequestMethod.GET)
     public @ResponseBody ReferenceStatusResponse referenceStatus(@PathVariable Long id) {
         return service.getReferenceStatus(id);

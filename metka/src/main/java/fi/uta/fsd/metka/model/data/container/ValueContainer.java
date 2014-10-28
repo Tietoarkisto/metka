@@ -11,6 +11,7 @@ import fi.uta.fsd.metka.model.general.DateTimeUserPair;
  * This class and all of its components are immutable so the usage has to be clear.
  * You can't just change a value without having to insert new save info as well or
  * at least without using a copy of save info from somewhere.
+ * Specification and documentation is found from uml/data/uml_json_data_value_data_field.graphml
  */
 public class ValueContainer {
     /**

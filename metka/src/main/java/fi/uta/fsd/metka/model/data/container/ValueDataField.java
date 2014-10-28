@@ -7,7 +7,9 @@ import fi.uta.fsd.metka.enums.Language;
 
 import java.util.HashMap;
 import java.util.Map;
-
+/**
+ * Specification and documentation is found from uml/data/uml_json_data_value_data_field.graphml
+ */
 public class ValueDataField extends DataField {
     /**
      * Builder method
