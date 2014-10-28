@@ -34,6 +34,120 @@ define({
             }
         }
     },
+    "field": {
+        "$ref": "#/definitions/simpleObject",
+        "properties": {
+            "translatable": {
+                "type": "boolean"
+            },
+            "immutable": {
+                "type": "boolean"
+            },
+            "subfield": {
+                "type": "boolean"
+            },
+            "editable": {
+                "type": "boolean"
+            },
+            "writable": {
+                "type": "boolean"
+            },
+            "indexed": {
+                "type": "boolean"
+            },
+            "generalSearch": {
+                "type": "boolean"
+            },
+            "exact": {
+                "type": "boolean"
+            },
+            "display": {
+                "options": {
+                    "hidden": true
+                }
+            },
+            "unique": {
+                "options": {
+                    "hidden": true
+                }
+            }
+        },
+        "additionalProperties": false
+    },
+    "fieldContainer": {
+        properties: {
+            generalSearch: {
+                options: {
+                    hidden: true
+                }
+            },
+            exact: {
+                options: {
+                    hidden: true
+                }
+            },
+            maxValues: {
+                type: "integer"
+            },
+            subfields: {
+                type: "array",
+                items: {
+                    type: "string"
+                }
+            },
+            removePermissions: {
+                type: "array",
+                items: {
+                    type: "string"
+                }
+            },
+            fixedOrder: {
+                type: "boolean"
+            }
+        }
+    },
+    "hasTarget": {
+        "title": "Has target",
+        "properties": {
+            "target": {
+                "title": "Type",
+                "$ref": "#/definitions/restrictionTarget"
+            }
+        },
+        "additionalProperties": false
+    },
+    "noTarget": {
+        "title": "No target",
+        "properties": {
+            "target": {
+                "type": "null"
+            }
+        },
+        "additionalProperties": false
+    },
+    "namedTargets": {
+        "type": "object",
+        "patternProperties": {
+            ".*": {
+                "headerTemplate": "{{key}}",
+                "$ref": "#/definitions/restrictionTarget"
+            }
+        }
+    },
+    "option": {
+        "title": "Option",
+        "type": "object",
+        "format": "grid",
+        "options": {
+            "disable_edit_json": true,
+            "disable_properties": true
+        },
+        "properties": {
+            "value": {
+                "$ref": "#/definitions/simpleValue"
+            }
+        }
+    },
     "organization": {
         "title": "Organisaatio",
         "type": "object",
@@ -116,10 +230,8 @@ define({
         }
     },
     "reference": {
-        "type": "object",
-        "format": "grid",
-        "additionalProperties": false,
-        "required": ["key", "target", "type"],
+        "$ref": "#/definitions/simpleObject",
+        "required": ["target"],
         "properties": {
             "key": {
                 "type": "string"
@@ -149,191 +261,203 @@ define({
         }
     },
     "restrictionTarget": {
-        "allOf": [{
-            "$ref": "#/definitions/type"
-        }, {
-            "title": "Target",
-            "properties": {
-                "content": {
-                    "type": "string"
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+            "type": {
+                "type": "string",
+                "options": {
+                    "hidden": true
                 }
             },
-            "required": ["content"]
-        }, {
-            "oneOf": [{
-                "title": "FIELD",
-                "properties": {
-                    "type": {
-                        "template": "FIELD"
+            "content": {
+                "type": "string"
+            }
+        },
+        "required": ["type", "content"],
+        "oneOf": [{
+            "title": "FIELD",
+            "properties": {
+                "type": {
+                    "template": "FIELD"
+                },
+                "targets": {
+                    "options": {
+                        "collapsed": true
                     },
-                    "targets": {
-                        "options": {
-                            "collapsed": true
-                        },
-                        "$ref": "#/definitions/restrictionTargets"
+                    "$ref": "#/definitions/restrictionTargets"
+                },
+                "checks": {
+                    "options": {
+                        "collapsed": true
                     },
-                    "checks": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "title": "Check",
                         "options": {
-                            "collapsed": true
+                            "disable_properties": true
                         },
-                        "type": "array",
-                        "items": {
-                            "type": "object",
-                            "title": "Check",
-                            "properties": {
-                                "condition": {
-                                    "allOf": [{
-                                        "$ref": "#/definitions/type"
-                                    }, {
-                                        "oneOf": [{
-                                            "title": "NOT_EMPTY",
-                                            "properties": {
-                                                "type": {
-                                                    "template": "NOT_EMPTY"
-                                                },
-                                                "target": {
-                                                    "$ref": "#/definitions/restrictionTarget"
-                                                }
-                                            }
-                                        }, {
-                                            "title": "IS_EMPTY",
-                                            "properties": {
-                                                "type": {
-                                                    "template": "IS_EMPTY"
-                                                },
-                                                "target": {
-                                                    "$ref": "#/definitions/restrictionTarget"
-                                                }
-                                            }
-                                        }, {
-                                            "title": "EQUALS",
-                                            "properties": {
-                                                "type": {
-                                                    "template": "EQUALS"
-                                                },
-                                                "target": {
-                                                    "$ref": "#/definitions/restrictionTarget"
-                                                }
-                                            },
-                                            "required": ["target"]
-                                        }, {
-                                            "title": "UNIQUE",
-                                            "properties": {
-                                                "type": {
-                                                    "template": "UNIQUE"
-                                                }
-                                            }
-                                        }, {
-                                            "title": "INCREASING",
-                                            "properties": {
-                                                "type": {
-                                                    "template": "INCREASING"
-                                                }
-                                            }
-                                        }, {
-                                            "title": "DECREASING",
-                                            "properties": {
-                                                "type": {
-                                                    "template": "DECREASING"
-                                                }
-                                            }
-                                        }]
-                                    }]
-                                },
-                                "restrictors": {
-                                    "$ref": "#/definitions/restrictionTargets"
-                                }
-                            }
-                        }
-                    }
-                }
-            }, {
-                "title": "QUERY",
-                "properties": {
-                    "type": {
-                        "template": "QUERY"
-                    },
-                    "checks": {
-                        "options": {
-                            "collapsed": true
-                        },
-                        "type": "array",
-                        "items": {
-                            "type": "object",
-                            "title": "Check",
-                            "properties": {
-                                "condition": {
-                                    "type": "object",
-                                    "properties": {
-                                        "type": {
-                                            "type": "string",
-                                            "enum": [
-                                                "NOT_EMPTY",
-                                                "IS_EMPTY",
-                                                "EQUALS"
-                                            ]
+                        "additionalProperties": false,
+                        "properties": {
+                            "condition": {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "string",
+                                        "options": {
+                                            "hidden": true
                                         }
                                     }
                                 },
-                                "restrictors": {
-                                    "$ref": "#/definitions/restrictionTargets"
-                                }
+                                "required": ["type"],
+                                "oneOf": [{
+                                    "title": "NOT_EMPTY",
+                                    "properties": {
+                                        "type": {
+                                            "template": "NOT_EMPTY"
+                                        }
+                                    },
+                                    "oneOf": [{
+                                        "$ref": "#/definitions/hasTarget"
+                                    }, {
+                                        "$ref": "#/definitions/noTarget"
+                                    }]
+                                }, {
+                                    "title": "IS_EMPTY",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "type": {
+                                            "template": "IS_EMPTY"
+                                        }
+                                    },
+                                    "oneOf": [{
+                                        "$ref": "#/definitions/hasTarget"
+                                    }, {
+                                        "$ref": "#/definitions/noTarget"
+                                    }]
+                                }, {
+                                    "title": "EQUALS",
+                                    "options": {
+                                        "collapsed": false,
+                                        "disable_properties": true
+                                    },
+                                    "properties": {
+                                        "type": {
+                                            "template": "EQUALS"
+                                        },
+                                        "target": {
+                                            "$ref": "#/definitions/restrictionTarget"
+                                        }
+                                    },
+                                    "required": ["target"]
+                                }, {
+                                    "title": "UNIQUE",
+                                    "options": {
+                                        "disable_collapse": true,
+                                        "disable_properties": true
+                                    },
+                                    "properties": {
+                                        "type": {
+                                            "template": "UNIQUE"
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }, {
+                                    "title": "INCREASING",
+                                    "options": {
+                                        "disable_collapse": true,
+                                        "disable_properties": true
+                                    },
+                                    "properties": {
+                                        "type": {
+                                            "template": "INCREASING"
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }, {
+                                    "title": "DECREASING",
+                                    "options": {
+                                        "disable_collapse": true,
+                                        "disable_properties": true
+                                    },
+                                    "properties": {
+                                        "type": {
+                                            "template": "DECREASING"
+                                        }
+                                    },
+                                    "additionalProperties": false
+                                }]
+                            },
+                            "restrictors": {
+                                "$ref": "#/definitions/restrictionTargets"
                             }
                         }
                     }
                 }
-            }, {
-                "title": "VALUE",
-                "properties": {
-                    "type": {
-                        "template": "VALUE"
+            }
+        }, {
+            "title": "QUERY",
+            "properties": {
+                "type": {
+                    "template": "QUERY"
+                },
+                "checks": {
+                    "options": {
+                        "collapsed": true
+                    },
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "title": "Check",
+                        "options": {
+                            "disable_properties": true
+                        },
+                        "additionalProperties": false,
+                        "properties": {
+                            "condition": {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "NOT_EMPTY",
+                                            "IS_EMPTY",
+                                            "EQUALS"
+                                        ]
+                                    }
+                                }
+                            },
+                            "restrictors": {
+                                "$ref": "#/definitions/restrictionTargets"
+                            }
+                        }
                     }
                 }
-            }, {
-                "title": "NAMED",
-                "properties": {
-                    "type": {
-                        "template": "NAMED"
-                    }
+            }
+        }, {
+            "title": "VALUE",
+            "properties": {
+                "type": {
+                    "template": "VALUE"
                 }
-            }, {
-                "title": "LANGUAGE",
-                "properties": {
-                    "type": {
-                        "template": "LANGUAGE"
-                    }
+            }
+        }, {
+            "title": "LANGUAGE",
+            "properties": {
+                "type": {
+                    "template": "LANGUAGE"
                 }
-            }]
+            }
+        }, {
+            "title": "NAMED",
+            "properties": {
+                "type": {
+                    "template": "NAMED"
+                }
+            }
         }]
     },
-    /*"restrictionCheck": {
-        "type": "object",
-        "title": "Check",
-        "properties": {
-            "condition": {
-                "type": "object",
-                "properties": {
-                    "type": {
-                        "type": "string",
-                        "enum": [
-                            "NOT_EMPTY",
-                            "IS_EMPTY",
-                            "EQUALS",
-                            "UNIQUE",
-                            "INCREASING",
-                            "DECREASING"
-                        ]
-                    },
-                    "target": {
-                        "$ref": "#/definitions/restrictionTarget"
-                    }
-                }
-            },
-            "restrictors": {
-                "$ref": "#/definitions/restrictionTargets"
-            }
-        }
-    },*/
     "section": {
         "title": "Osasto",
         "type": "object",
@@ -359,10 +483,7 @@ define({
         }
     },
     "selectionList": {
-        "type": "object",
-        "format": "grid",
-        "additionalProperties": false,
-        "required": ["key", "type"],
+        "$ref": "#/definitions/simpleObject",
         "properties": {
             "key": {
                 "type": "string"
@@ -381,17 +502,45 @@ define({
                 "default": true
             },
             "freeText": {
-                "type": "array",
-                "format": "table",
+                "$ref": "#/definitions/simpleArray",
                 "items": {
-                    "title": "Arvo",
-                    "type": "string"
+                    "$ref": "#/definitions/simpleValue"
                 }
             },
             "freeTextKey": {
                 "type": "string"
             }
         }
+    },
+    "simpleArray": {
+        "type": "array",
+        "format": "table",
+        "options": {
+            "collapsed": false,
+            "disable_collapse": true
+        }
+    },
+    "simpleObject": {
+        "type": "object",
+        "format": "grid",
+        "required": ["type", "key"],
+        "additionalProperties": false,
+        "properties": {
+            "key": {
+                "type": "string",
+                "description": "Tulee olla sama kuin annettu property-nimi (esim. \"seriesname\")."
+            },
+            "type": {
+                "type": "string",
+                "options": {
+                    "hidden": true
+                }
+            }
+        }
+    },
+    "simpleValue": {
+        "title": "Arvo",
+        "type": "string"
     },
     "translatableText": {
         "type": "object",
@@ -420,7 +569,7 @@ define({
                 }
             }
         },
-        "required": ["type"],
-        "additionalProperties": false
+        "required": ["type"]//,
+        //"additionalProperties": false
     }
 });

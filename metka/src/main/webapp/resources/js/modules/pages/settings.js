@@ -5,7 +5,7 @@ define(function (require) {
 
         var commonSearchBooleans = require('./../commonSearchBooleans');
 
-        var dataConfigEditor;
+        var $editor;
 
         $.extend(options, {
             data: commonSearchBooleans.initialData({}),
@@ -231,10 +231,7 @@ define(function (require) {
                                                         key: "dataConfigTypes"
                                                     },
                                                     create: function() {
-
                                                         var $elem = this.find("select").first().attr("id", "dataConfigTypes");
-
-
                                                         require('./../server')("/settings/getJsonList/DATA_CONF", {
                                                             type: "GET",
                                                             success: function (response) {
@@ -253,11 +250,320 @@ define(function (require) {
                                                         create: function() {
                                                             this.click(function() {
                                                                 var data = $("#dataConfigTypes").children(":selected").data();
-                                                                if(data) {
+                                                                if (data.configKey) {
+                                                                    require('./../preloader')($editor);
                                                                     require('./../server')("/settings/getJsonContent", {
                                                                         data: JSON.stringify(data),
                                                                         success: function (response) {
-                                                                           dataConfigEditor.setValue(JSON.parse(response));
+                                                                            JSONEditor.defaults.editors.object.options.collapsed = true;
+                                                                            var editor = $editor.empty().data('jsoneditor');
+                                                                            if (editor && editor.destroy) {
+                                                                                editor.destroy();
+                                                                            }
+                                                                            $editor.jsoneditor({
+                                                                                "schema": {
+                                                                                    "title": "Datan konfiguraatio",
+                                                                                    "options": {
+                                                                                        "disable_properties": true,
+                                                                                        "disable_collapse": false
+                                                                                    },
+                                                                                    "type": "object",
+                                                                                    "properties": {
+                                                                                        "key": {
+                                                                                            "type": "object",
+                                                                                            "headerTemplate": "{{key}} (type: {{self.type}}, version: {{self.version}})",
+                                                                                            "options": {
+                                                                                                "disable_properties": true,
+                                                                                                "disable_collapse": false,
+                                                                                                "disable_edit_json": true
+                                                                                            },
+                                                                                            "format": "grid",
+                                                                                            "properties": {
+                                                                                                "type": {
+                                                                                                    "type": "string",
+                                                                                                    "enum": ["STUDY", "SERIES", "PUBLICATION", "STUDY_ATTACHMENT", "STUDY_VARIABLES", "STUDY_VARIABLE"],
+                                                                                                    "readOnly": true
+                                                                                                },
+                                                                                                "version": {
+                                                                                                    "type": "integer"
+                                                                                                }
+                                                                                            },
+                                                                                            "additionalProperties": false
+                                                                                        },
+                                                                                        "references": {
+                                                                                            "type": "object",
+                                                                                            "patternProperties": {
+                                                                                                ".*": {
+                                                                                                    "$ref": "#/definitions/reference",
+                                                                                                    "oneOf": [{
+                                                                                                        "title": "DEPENDENCY",
+                                                                                                        "properties": {
+                                                                                                            "type": {
+                                                                                                                "template": "DEPENDENCY"
+                                                                                                            },
+                                                                                                            "valuePath": {
+                                                                                                                "type": "string"
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }, {
+                                                                                                        "title": "REVISIONABLE",
+                                                                                                        "properties": {
+                                                                                                            "type": {
+                                                                                                                "template": "REVISIONABLE"
+                                                                                                            },
+                                                                                                            "approvedOnly": {
+                                                                                                                "type": "boolean",
+                                                                                                                "default": false
+                                                                                                            },
+                                                                                                            "ignoreRemoved": {
+                                                                                                                "type": "boolean",
+                                                                                                                "default": false
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }, {
+                                                                                                        "title": "JSON",
+                                                                                                        "properties": {
+                                                                                                            "type": {
+                                                                                                                "template": "JSON"
+                                                                                                            },
+                                                                                                            "valuePath": {
+                                                                                                                "type": "string"
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }]
+                                                                                                }
+                                                                                            }
+                                                                                        },
+                                                                                        "selectionLists": {
+                                                                                            "type": "object",
+                                                                                            "patternProperties": {
+                                                                                                ".*": {
+                                                                                                    "$ref": "#/definitions/selectionList",
+                                                                                                    "oneOf": [{
+                                                                                                        "title": "VALUE",
+                                                                                                        "properties": {
+                                                                                                            "type": {
+                                                                                                                "template": "VALUE"
+                                                                                                            },
+                                                                                                            "options": {
+                                                                                                                "$ref": "#/definitions/simpleArray",
+                                                                                                                "items": {
+                                                                                                                    "$ref": "#/definitions/option",
+                                                                                                                    "properties": {
+                                                                                                                        "&title": {
+                                                                                                                            "title": "Teksti",
+                                                                                                                            "format": "grid",
+                                                                                                                            "options": {
+                                                                                                                                "disable_edit_json": true
+                                                                                                                            },
+                                                                                                                            "$ref": "#/definitions/translatableText"
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                }
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }, {
+                                                                                                        "title": "LITERAL",
+                                                                                                        "properties": {
+                                                                                                            "type": {
+                                                                                                                "template": "LITERAL"
+                                                                                                            },
+                                                                                                            "options": {
+                                                                                                                "$ref": "#/definitions/simpleArray",
+                                                                                                                "items": {
+                                                                                                                    "$ref": "#/definitions/option",
+                                                                                                                    "properties": {
+                                                                                                                        "&title": {
+                                                                                                                            "options": {
+                                                                                                                                "hidden": true
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                }
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }, {
+                                                                                                        "title": "REFERENCE",
+                                                                                                        "properties": {
+                                                                                                            "type": {
+                                                                                                                "template": "REFERENCE"
+                                                                                                            },
+                                                                                                            "reference": {
+                                                                                                                "type": "string"
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }, {
+                                                                                                        "title": "SUBLIST",
+                                                                                                        "properties": {
+                                                                                                            "type": {
+                                                                                                                "template": "SUBLIST"
+                                                                                                            },
+                                                                                                            "sublistKey": {
+                                                                                                                "type": "string",
+                                                                                                                "description": "Listan avain"
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }]
+                                                                                                }
+                                                                                            }
+                                                                                        },
+                                                                                        "fields": {
+                                                                                            "type": "object",
+                                                                                            "patternProperties": {
+                                                                                                ".*": {
+                                                                                                    "$ref": "#/definitions/field",
+                                                                                                    "oneOf": [{
+                                                                                                        title: "STRING",
+                                                                                                        properties: {
+                                                                                                            type: {
+                                                                                                                "enum": ["STRING"]
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }, {
+                                                                                                        title: "INTEGER",
+                                                                                                        properties: {
+                                                                                                            type: {
+                                                                                                                "enum": ["INTEGER"]
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }, {
+                                                                                                        title: "REAL",
+                                                                                                        properties: {
+                                                                                                            type: {
+                                                                                                                "enum": ["REAL"]
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }, {
+                                                                                                        title: "REFERENCE",
+                                                                                                        properties: {
+                                                                                                            type: {
+                                                                                                                "enum": ["REFERENCE"]
+                                                                                                            },
+                                                                                                            reference: {
+                                                                                                                type: "string"
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }, {
+                                                                                                        title: "CONTAINER",
+                                                                                                        properties: {
+                                                                                                            type: {
+                                                                                                                "enum": ["CONTAINER"]
+                                                                                                            }
+                                                                                                        },
+                                                                                                        $ref: "#/definitions/fieldContainer"
+                                                                                                    }, {
+                                                                                                        title: "REFERENCECONTAINER",
+                                                                                                        properties: {
+                                                                                                            type: {
+                                                                                                                "enum": ["REFERENCECONTAINER"]
+                                                                                                            },
+                                                                                                            reference: {
+                                                                                                                type: "string"
+                                                                                                            },
+                                                                                                            bidirectional: {
+                                                                                                                type: "string"
+                                                                                                            }
+                                                                                                        },
+                                                                                                        $ref: "#/definitions/fieldContainer"
+                                                                                                    }, {
+                                                                                                        title: "SELECTION",
+                                                                                                        properties: {
+                                                                                                            type: {
+                                                                                                                "enum": ["SELECTION"]
+                                                                                                            },
+                                                                                                            selectionList: {
+                                                                                                                type: "string"
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }, {
+                                                                                                        title: "CONCAT",
+                                                                                                        properties: {
+                                                                                                            type: {
+                                                                                                                "enum": ["CONCAT"]
+                                                                                                            },
+                                                                                                            concatenate: {
+                                                                                                                type: "array",
+                                                                                                                items: {
+                                                                                                                    type: "string"
+                                                                                                                }
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }, {
+                                                                                                        title: "DATE",
+                                                                                                        properties: {
+                                                                                                            type: {
+                                                                                                                "enum": ["DATE"]
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }, {
+                                                                                                        title: "DATETIME",
+                                                                                                        properties: {
+                                                                                                            type: {
+                                                                                                                "enum": ["DATETIME"]
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }, {
+                                                                                                        title: "TIME",
+                                                                                                        properties: {
+                                                                                                            type: {
+                                                                                                                "enum": ["TIME"]
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }, {
+                                                                                                        title: "RICHTEXT",
+                                                                                                        properties: {
+                                                                                                            type: {
+                                                                                                                "enum": ["RICHTEXT"]
+                                                                                                            },
+                                                                                                            exact: {
+                                                                                                                default: false,
+                                                                                                                options: {
+                                                                                                                    hidden: true
+                                                                                                                }
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }]
+                                                                                                }
+                                                                                            }
+                                                                                        },
+                                                                                        "restrictions": {
+                                                                                            "type": "array",
+                                                                                            "options": {
+                                                                                                "collapsed": true
+                                                                                            },
+                                                                                            "items": {
+                                                                                                "type": "object",
+                                                                                                "title": "Operation",
+                                                                                                "properties": {
+                                                                                                    "type": {
+                                                                                                        "type": "string",
+                                                                                                        "enum": [
+                                                                                                            "SAVE",
+                                                                                                            "APPROVE",
+                                                                                                            "DELETE"
+                                                                                                        ]
+                                                                                                    },
+                                                                                                    "targets": {
+                                                                                                        "options": {
+                                                                                                            "collapsed": true
+                                                                                                        },
+                                                                                                        "$ref": "#/definitions/restrictionTargets"
+                                                                                                    }
+                                                                                                },
+                                                                                                "additionalProperties": false
+                                                                                            }
+                                                                                        },
+                                                                                        "namedTargets": {
+                                                                                            "$ref": "#/definitions/namedTargets"
+                                                                                        },
+                                                                                        "displayId": {
+                                                                                            "type": "string"
+                                                                                        }
+                                                                                    },
+                                                                                    "additionalProperties": false,
+                                                                                    "definitions": require('./../definitions')
+                                                                                }
+                                                                            }).data('jsoneditor').setValue(JSON.parse(response));
                                                                         }
                                                                     });
                                                                 }
@@ -279,7 +585,7 @@ define(function (require) {
                                                         displayType: 'CUSTOM_JS'
                                                     },
                                                     create: function() {
-                                                       dataConfigEditor = this.children().first().data('jsoneditor');
+                                                       $editor = this.children().first();
                                                     }
                                                 }
                                             ]
@@ -297,7 +603,7 @@ define(function (require) {
                                                             this.click(function() {
                                                                 var request = {
                                                                   type: 'DATA_CONF',
-                                                                  json: JSON.stringify(dataConfigEditor.getValue())
+                                                                  json: JSON.stringify($editor.data('jsoneditor').getValue())
                                                                 };
                                                                 require('./../server')("/settings/uploadJson", {
                                                                     data: JSON.stringify(request),
@@ -452,8 +758,6 @@ define(function (require) {
                                                     },
                                                     create: function() {
                                                         var $elem = this.find("select").first().attr("id", "jsonKeys");
-
-
                                                         require('./../server')("/settings/getJsonList/MISC", {
                                                             type: "GET",
                                                             success: function (response) {
