@@ -108,15 +108,15 @@ Sisältää toteutuksen por-tiedostojen parsinnasta aineistomuuttujiksi.
 #### transfer
 Sisältää erinäisiä käyttöliittymän ja palvelimen väliseen kommunikointiin liittyviä request- response- ynnä muita objekteja. Nämä vastaavat json-rakenteita joita käyttöliittymä lähettää tai ottaa vastaan.
 # Reititys
-## api
-### Sijainti: APIController
-*`[/createStudy],methods=[POST]`*
+### api
+#### Sijainti: APIController
+**`[/createStudy],methods=[POST]`**
 *Käyttö:* Luo uuden aineiston.
 
-*`[/getConfiguration],methods=[POST]`*
+**`[/getConfiguration],methods=[POST]`**
 *Käyttö:* Palauttaa pyydetyn datakonfiguraation.
 
-*`[/getRevision],methods=[GET]`*
+**`[/getRevision],methods=[GET]`**
 *Käyttö:* Palauttaa pyydetyn revisiodatan.
 
 *`[/index],methods=[POST]`*
