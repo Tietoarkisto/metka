@@ -30,9 +30,9 @@ public class IndexerDocument {
     public Map<String, Analyzer> getAnalyzers() {return analyzers;}
     public Document getDocument() {return document;}
 
-    public void indexIntegerField(String key, Long value, boolean generalSearch) {
+    /*public void indexIntegerField(String key, Long value, boolean generalSearch) {
         indexIntegerField(key, value, false, generalSearch);
-    }
+    }*/
 
     public void indexIntegerField(String key, Long value, boolean store, boolean generalSearch) {
         LongField lf = new LongField(key, value, (store) ? LuceneConfig.LONG_TYPE_STORE : LuceneConfig.LONG_TYPE);
@@ -40,9 +40,9 @@ public class IndexerDocument {
         if(generalSearch) {indexGeneral(value.toString());}
     }
 
-    public void indexRealField(String key, Double value, boolean generalSearch) {
+    /*public void indexRealField(String key, Double value, boolean generalSearch) {
         indexRealField(key, value, false, generalSearch);
-    }
+    }*/
 
     public void indexRealField(String key, Double value, boolean store, boolean generalSearch) {
         DoubleField df = new DoubleField(key, value, (store) ? LuceneConfig.DOUBLE_TYPE_STORE : LuceneConfig.DOUBLE_TYPE);

@@ -78,6 +78,9 @@ class DDIStudyDescription extends DDISectionBase {
     }
 
     ReturnResult read() {
+        /*
+         * We know that language has to be DEFAULT and that description tab should be clear so we can just insert the new data in
+         */
         if(codeBook.getStdyDscrArray().length == 0) {
             return ReturnResult.OPERATION_SUCCESSFUL;
         }

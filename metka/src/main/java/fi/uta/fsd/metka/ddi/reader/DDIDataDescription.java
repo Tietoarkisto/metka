@@ -58,9 +58,9 @@ class DDIDataDescription extends DDISectionBase {
 
         ReturnResult result;
         DataDscrType dataDscr = codeBook.getDataDscrArray(0);
-        // TODO: Still unclear on how to handle languages
-        /*result = readVariableGroups(dataDscr, variables);
-        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}*/
+
+        result = readVariableGroups(dataDscr, variables);
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
         return readVars(dataDscr);
     }
@@ -68,6 +68,9 @@ class DDIDataDescription extends DDISectionBase {
     // TODO: Still unfinished
     private ReturnResult readVariableGroups(DataDscrType dataDscr, RevisionData variables) {
         // TODO: Open a draft if needed
+
+        // TODO: If language is DEFAULT then clear var groups and import from DDI, otherwise just collect text translations
+
         Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerPair = getContainer(Fields.VARGROUPS, variables);
         if(containerPair.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
             return containerPair.getLeft();
@@ -186,29 +189,31 @@ class DDIDataDescription extends DDISectionBase {
         }
 
         RevisionData variable = variablePair.getRight();
-        // TODO: Clear individual variable of stuff that can be imported
 
         // PREQTXTS
         clearTable(variable, variable.getChanges(), Fields.PREQTXTS);
+
         // QSTNLITS
+        clearTable(variable, variable.getChanges(), Fields.QSTNLITS);
 
         // POSTQTXTS
+        clearTable(variable, variable.getChanges(), Fields.POSTQTXTS);
 
         // IVUINSTRS
+        clearTable(variable, variable.getChanges(), Fields.IVUINSTRS);
 
         // VARSECURITIES
+        clearTable(variable, variable.getChanges(), Fields.VARSECURITIES);
 
         // VARTEXTS
+        clearTable(variable, variable.getChanges(), Fields.VARTEXTS);
 
         // VARNOTES
+        clearTable(variable, variable.getChanges(), Fields.VARNOTES);
 
         ReturnResult result;
 
         valueSet(variable, Fields.VARLABEL, hasContent(var.getLablArray()) ? var.getLablArray(0).xmlText() : "", language, variable.getChanges());
-
-        // TODO: Skip for now
-        /*result = readCategories(var, variable);
-        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}*/
 
         result = readVarQstn(var, variable);
         if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
