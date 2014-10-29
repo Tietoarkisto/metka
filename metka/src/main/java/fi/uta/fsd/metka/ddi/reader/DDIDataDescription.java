@@ -4,21 +4,26 @@ import codebook25.*;
 import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.change.ContainerChange;
 import fi.uta.fsd.metka.model.data.container.ContainerDataField;
 import fi.uta.fsd.metka.model.data.container.DataRow;
 import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
+import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.search.StudyVariableSearch;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.util.StringUtils;
+
+import java.util.Map;
 
 class DDIDataDescription extends DDISectionBase {
     private final RevisionRepository revisions;
@@ -184,7 +189,7 @@ class DDIDataDescription extends DDISectionBase {
         // TODO: Clear individual variable of stuff that can be imported
 
         // PREQTXTS
-
+        clearTable(variable, variable.getChanges(), Fields.PREQTXTS);
         // QSTNLITS
 
         // POSTQTXTS
@@ -222,6 +227,19 @@ class DDIDataDescription extends DDISectionBase {
         return ReturnResult.OPERATION_SUCCESSFUL;
     }
 
+    private void clearTable(DataFieldContainer data, Map<String, Change> changeMap, String key) {
+        Pair<StatusCode, ContainerDataField> pair = data.dataField(ContainerDataFieldCall.get(key));
+        if(pair.getLeft() != StatusCode.FIELD_FOUND) {
+            return;
+        }
+        for(DataRow row : pair.getRight().getRowsFor(language)) {
+            if(row.getRemoved()) {
+                continue;
+            }
+            pair.getRight().removeRow(row.getRowId(),changeMap, info);
+        }
+    }
+
     private ReturnResult readVarQstn(VarType var, RevisionData variable) {
         if(!hasContent(var.getQstnArray())) {
             return ReturnResult.OPERATION_SUCCESSFUL;
@@ -242,37 +260,4 @@ class DDIDataDescription extends DDISectionBase {
 
         return fillSingleValueContainer(variable, variable.getChanges(), Fields.IVUINSTRS, Fields.IVUINSTR, qstn.getIvuInstrArray());
     }
-
-    // TODO: Skip for now
-    /*private ReturnResult readCategories(VarType var, RevisionData variable) {
-        // TODO: Reverse process
-        Pair<StatusCode, ContainerDataField> categories = variable.dataField(ContainerDataFieldCall.get(Fields.CATEGORIES));
-        if(categories.getLeft() == StatusCode.FIELD_FOUND && categories.getRight().hasRowsFor(Language.DEFAULT)) {
-            for(DataRow row : categories.getRight().getRowsFor(Language.DEFAULT)) {
-                if(row.getRemoved()) {
-                    continue;
-                }
-                Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.VALUE));
-                if(hasValue(valueFieldPair, Language.DEFAULT)) {
-                    CatgryType catgry = var.addNewCatgry();
-                    fillTextType(catgry.addNewCatValu(), valueFieldPair, Language.DEFAULT);
-
-                    valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.LABEL));
-                    if(hasValue(valueFieldPair, Language.DEFAULT)) {
-                        fillTextType(catgry.addNewLabl(), valueFieldPair, Language.DEFAULT);
-                    }
-
-                    valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.STAT));
-                    if(hasValue(valueFieldPair, Language.DEFAULT)) {
-                        fillTextType(catgry.addNewCatStat(), valueFieldPair, Language.DEFAULT);
-                    }
-
-                    valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.MISSING));
-                    if(hasValue(valueFieldPair, Language.DEFAULT)) {
-                        catgry.setMissing(CatgryType.Missing.Y);
-                    }
-                }
-            }
-        }
-    }*/
 }

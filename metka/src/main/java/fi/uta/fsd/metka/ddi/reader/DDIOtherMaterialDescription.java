@@ -22,6 +22,9 @@ class DDIOtherMaterialDescription extends DDISectionBase {
 
     @Override
     ReturnResult read() {
+        /*
+         * We know that language has to be DEFAULT and that description tab should be clear so we can just insert the new data in
+         */
         if(!hasContent(codeBook.getOtherMatArray())) {
             return ReturnResult.OPERATION_SUCCESSFUL;
         }

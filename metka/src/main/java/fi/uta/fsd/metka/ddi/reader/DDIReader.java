@@ -101,8 +101,15 @@ public class DDIReader {
 
             DDISectionBase section;
             ReturnResult result;
+/*
+1) DDI-import voidaan suorittaa kuvailu-välilehden osalta vain silloin, kun kuvailu-välilehdellä ei ole mitään tallennettuja tietoja (eli se on tyhjä),
+ muilla aineiston välilehdillä saa olla toki tallennettuja tietoja.
+2) DDI-import voidaan suorittaa kuvailu-välilehden osalta vain default-kieliselle (eli meidän tapauksessa suomenkieliselle) DDI-tiedostolle.
+*/
+            boolean importDescription = docLang == Language.DEFAULT && isDescriptionTabClear();
 
-            // TODO: Clear description tab, after this we can assume that all relevant info has been cleared out and we can just insert new stuff
+            // TODO: Check if description tab is clear
+
 
             // TODO: Still unfinished
             section = new DDIDataDescription(revision, docLang, codeBook, info, configuration, revisions, variableSearch);
@@ -112,19 +119,21 @@ public class DDIReader {
                 return result;
             }
 
-            // TODO: Still unfinished
-            section = new DDIStudyDescription(revision, docLang, codeBook, info, configuration, revisions, references);
-            result = section.read();
+            if(importDescription) {
+                // TODO: Still unfinished
+                section = new DDIStudyDescription(revision, docLang, codeBook, info, configuration, revisions, references);
+                result = section.read();
 
-            if(result != ReturnResult.OPERATION_SUCCESSFUL) {
-                return result;
-            }
+                if(result != ReturnResult.OPERATION_SUCCESSFUL) {
+                    return result;
+                }
 
-            section = new DDIOtherMaterialDescription(revision, docLang, codeBook, info, configuration);
-            result = section.read();
+                section = new DDIOtherMaterialDescription(revision, docLang, codeBook, info, configuration);
+                result = section.read();
 
-            if(result != ReturnResult.OPERATION_SUCCESSFUL) {
-                return result;
+                if(result != ReturnResult.OPERATION_SUCCESSFUL) {
+                    return result;
+                }
             }
 
             // Form biblcit
@@ -135,6 +144,10 @@ public class DDIReader {
                 return result;
             }
             return revisions.updateRevisionData(revision);
+        }
+
+        private boolean isDescriptionTabClear() {
+            return false;
         }
     }
 }
