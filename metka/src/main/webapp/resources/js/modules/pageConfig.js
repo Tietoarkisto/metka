@@ -1,4 +1,6 @@
-// page configurations
+/**
+ * Get page specific configuration
+ */
 define(function (require) {
     'use strict';
 
@@ -6,6 +8,9 @@ define(function (require) {
     if (typeof page !== 'string') {
         throw 'page is not set';
     }
+
+    // TODO: would be better to use async require here, since there's no caching or minifying in use currently.
+    // Still, caching and minifying everything in one script would be better then async load.
 
     var pages = {
         expert: require('./pages/expert'),
