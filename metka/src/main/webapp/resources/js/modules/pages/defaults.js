@@ -73,6 +73,7 @@ define(function (require) {
                                                         if(response.result === "REVISION_FOUND") {
                                                             $.extend(options.data, response.data);
                                                             $button.trigger('refresh.metka');
+                                                            history.replaceState(undefined, '', require('./../url')('view'));
                                                         } else {
                                                             require('./../modal')({
                                                                 title: MetkaJS.L10N.get('alert.error.title'),
