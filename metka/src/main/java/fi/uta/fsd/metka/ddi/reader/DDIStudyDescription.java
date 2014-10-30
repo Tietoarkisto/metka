@@ -4,6 +4,8 @@ import codebook25.*;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
+import fi.uta.fsd.metka.model.configuration.Option;
+import fi.uta.fsd.metka.model.configuration.SelectionList;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.change.ContainerChange;
 import fi.uta.fsd.metka.model.data.container.ContainerDataField;
@@ -11,7 +13,6 @@ import fi.uta.fsd.metka.model.data.container.DataRow;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.names.Fields;
-import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import fi.uta.fsd.metka.transfer.reference.ReferencePath;
@@ -63,20 +64,11 @@ class DDIStudyDescription extends DDISectionBase {
         tempMap.put(Language.SV, "??");
     }
 
-    private final RevisionRepository revisions;
     private final ReferenceService references;
 
-    DDIStudyDescription(RevisionData revision, Language language, CodeBookType codeBook, DateTimeUserPair info, Configuration configuration, RevisionRepository revisions, ReferenceService references) {
+    DDIStudyDescription(RevisionData revision, Language language, CodeBookType codeBook, DateTimeUserPair info, Configuration configuration, ReferenceService references) {
         super(revision, language, codeBook, info, configuration);
-        this.revisions = revisions;
         this.references = references;
-    }
-
-    private String getReferenceTitle(Language language, RevisionData revision, String path) {
-        ReferenceOption option = references.getCurrentFieldOption(language, revision, path);
-        if(option != null) {
-            return option.getTitle().getValue();
-        } else return null;
     }
 
     ReturnResult read() {
@@ -123,7 +115,10 @@ class DDIStudyDescription extends DDISectionBase {
         result = readCitationTitle(citation);
         if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
-        result = readCitationRspStatement(citation);
+        result = readCitationRspStatementAuth(citation);
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
+
+        result = readCitationRspStatementOther(citation);
         if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
         return readCitationProdStatement(citation);
@@ -179,249 +174,320 @@ class DDIStudyDescription extends DDISectionBase {
         return ReturnResult.OPERATION_SUCCESSFUL;
     }
 
-    // TODO: Still unfinished
-    private ReturnResult readCitationRspStatement(CitationType citation) {
+    private ReturnResult readCitationRspStatementAuth(CitationType citation) {
+        if(citation.getRspStmt() == null) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
+        }
+        RspStmtType rsp = citation.getRspStmt();
+        if(!hasContent(rsp.getAuthEntyArray())) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
+        }
+
+        Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.AUTHORS);
+        if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
+            return containerResult.getLeft();
+        }
+        ContainerDataField container = containerResult.getRight().getLeft();
+        ContainerChange change = containerResult.getRight().getRight();
+
+        // Let's construct the request and path elements needed
+        ReferencePathRequest request = new ReferencePathRequest();
+        request.setContainer(Fields.AUTHORS);
+        request.setLanguage(language);
+
+        // These are all organization authors
+        for(AuthEntyType auth : rsp.getAuthEntyArray()) {
+            if(!StringUtils.hasText(auth.xmlText())) {
+                continue;
+            }
+
+            Pair<StatusCode, DataRow> row = container.insertNewDataRow(Language.DEFAULT, change);
+            if(row.getLeft() != StatusCode.NEW_ROW) {
+                continue;
+            }
+
+            // Set type to person
+            valueSet(row.getRight(), Fields.AUTHORTYPE, "1");
+            valueSet(row.getRight(), Fields.AUTHOR, auth.xmlText());
+            if(StringUtils.hasText(auth.getAffiliation())) {
+                String[] splits = auth.getAffiliation().split("\\. ");
+                String orgValue = null;
+                String agencyValue = null;
+                if(splits.length > 0) {
+                    ReferenceOption option = findOrganization(splits[0], Fields.AUTHORORGANISATION);
+                    orgValue = (option != null) ? option.getValue() : null;
+                    if(StringUtils.hasText(orgValue)) {
+                        valueSet(row.getRight(), Fields.AUTHORORGANISATION, orgValue);
+                    }
+                }
+                if(splits.length > 1 && orgValue != null) {
+                    ReferenceOption option = findAgency(splits[1], Fields.AUTHORORGANISATION, orgValue, Fields.AUTHORAGENCY);
+                    agencyValue = (option != null) ? option.getValue() : null;
+                    if(StringUtils.hasText(agencyValue)) {
+                        valueSet(row.getRight(), Fields.AUTHORAGENCY, agencyValue);
+                    }
+                }
+                if(splits.length > 2 && agencyValue != null) {
+                    ReferenceOption option = findSection(splits[2], Fields.AUTHORORGANISATION, orgValue, Fields.AUTHORAGENCY, agencyValue, Fields.AUTHORSECTION);
+                    String sectionValue = (option != null) ? option.getValue() : null;
+                    if(StringUtils.hasText(sectionValue)) {
+                        valueSet(row.getRight(), Fields.AUTHORSECTION, sectionValue);
+                    }
+                }
+            }
+
+        }
+
         return ReturnResult.OPERATION_SUCCESSFUL;
-        // TODO: Reverse process
+    }
 
-        // TODO: Questions about tables and authors still open
-        // Authors, other authors and producers need resolved answers before continuing
+    private ReturnResult readCitationRspStatementOther(CitationType citation) {
+        if(citation.getRspStmt() == null) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
+        }
+        RspStmtType rsp = citation.getRspStmt();
+        if(!hasContent(rsp.getOthIdArray())) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
+        }
 
+        // Can't be implemented while preserving data correctness. Not implementing right now
+        return ReturnResult.OPERATION_SUCCESSFUL;
+        /*
 
-        /*RspStmtType rsp = citationType.addNewRspStmt();
-        Pair<StatusCode, ContainerDataField> containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.AUTHORS));
-        if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
-            String pathRoot = "authors.";
-            for(DataRow row : containerPair.getRight().getRowsFor(Language.DEFAULT)) {
-                if (row.getRemoved()) {
-                    continue;
+        Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.OTHERAUTHORS);
+        if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
+            return containerResult.getLeft();
+        }
+        ContainerDataField container = containerResult.getRight().getLeft();
+        ContainerChange change = containerResult.getRight().getRight();
+
+        // Let's construct the request and path elements needed
+        ReferencePathRequest request = new ReferencePathRequest();
+        request.setContainer(Fields.OTHERAUTHORS);
+        request.setLanguage(language);
+
+        for(OthIdType oth : rsp.getOthIdArray()) {
+            if(!StringUtils.hasText(collector.xmlText())) {
+                continue;
+            }
+
+            Pair<StatusCode, DataRow> row = container.insertNewDataRow(Language.DEFAULT, change);
+            if(row.getLeft() != StatusCode.NEW_ROW) {
+                continue;
+            }
+        }*/
+
+        /*
+        for(DataCollectorType collector : dataColl.getDataCollectorArray()) {
+            if(!StringUtils.hasText(collector.xmlText())) {
+                continue;
+            }
+
+            Pair<StatusCode, DataRow> row = container.insertNewDataRow(Language.DEFAULT, change);
+            if(row.getLeft() != StatusCode.NEW_ROW) {
+                continue;
+            }
+
+            // If collector has an abbreviation then assume organization since persons don't have abbreviation.
+            // It is possible for organization to not have abbreviation but there's no way for us to detect this.
+            if(!StringUtils.hasText(collector.getAbbr())) {
+                valueSet(row.getRight(), Fields.COLLECTORTYPE, "1");
+                valueSet(row.getRight(), Fields.COLLECTOR, collector.xmlText());
+                if(StringUtils.hasText(collector.getAffiliation())) {
+                    String[] splits = collector.getAffiliation().split("\\. ");
+                    String orgValue = null;
+                    String agencyValue = null;
+                    if(splits.length > 0) {
+                        ReferenceOption option = findOrganization(splits[0], Fields.COLLECTORORGANISATION);
+                        orgValue = (option != null) ? option.getValue() : null;
+                        if(StringUtils.hasText(orgValue)) {
+                            valueSet(row.getRight(), Fields.COLLECTORORGANISATION, orgValue);
+                        }
+                    }
+                    if(splits.length > 1 && orgValue != null) {
+                        ReferenceOption option = findAgency(splits[1], Fields.COLLECTORORGANISATION, orgValue, Fields.COLLECTORAGENCY);
+                        agencyValue = (option != null) ? option.getValue() : null;
+                        if(StringUtils.hasText(agencyValue)) {
+                            valueSet(row.getRight(), Fields.COLLECTORAGENCY, agencyValue);
+                        }
+                    }
+                    if(splits.length > 2 && agencyValue != null) {
+                        ReferenceOption option = findSection(splits[2], Fields.COLLECTORORGANISATION, orgValue, Fields.COLLECTORAGENCY, agencyValue, Fields.COLLECTORSECTION);
+                        String sectionValue = (option != null) ? option.getValue() : null;
+                        if(StringUtils.hasText(sectionValue)) {
+                            valueSet(row.getRight(), Fields.COLLECTORSECTION, sectionValue);
+                        }
+                    }
                 }
-                String rowRoot = pathRoot + row.getRowId() + ".";
-
-                Pair<StatusCode, ValueDataField> pair = row.dataField(ValueDataFieldCall.get(Fields.AUTHORTYPE));
-                if (!hasValue(pair, Language.DEFAULT)) {
-                    // We require a type for collector before we can move forward
-                    continue;
+            } else {
+                valueSet(row.getRight(), Fields.COLLECTORTYPE, "2");
+                // If organization collector has affiliation then we know that it has at least an agency and possibly a section
+                // If not then we know that the actual collector is an organization
+                ReferenceOption option = findOrganization(StringUtils.hasText(collector.getAffiliation()) ? collector.getAffiliation() : collector.xmlText(), Fields.COLLECTORORGANISATION);
+                String orgValue = (option != null) ? option.getValue() : null;
+                if(StringUtils.hasText(orgValue)) {
+                    valueSet(row.getRight(), Fields.COLLECTORORGANISATION, orgValue);
                 }
-                if(!pair.getRight().getActualValueFor(Language.DEFAULT).equals("1")) {
-                    continue;
-                }
-                // We have a person author
-                pair = row.dataField(ValueDataFieldCall.get(Fields.AUTHOR));
-                if (!hasValue(pair, Language.DEFAULT)) {
-                    // We must have a collector
-                    continue;
-                }
-                AuthEntyType d = fillTextType(rsp.addNewAuthEnty(), pair, Language.DEFAULT);
+                if(StringUtils.hasText(collector.getAffiliation())) {
+                    String agencyValue = null;
+                    String[] splits = collector.xmlText().split("\\. ");
 
-                String organisation = getReferenceTitle(references, language, revision, rowRoot + Fields.AUTHORORGANISATION);
-                String agency = getReferenceTitle(references, language, revision, rowRoot + Fields.AUTHORAGENCY);
-                String section = getReferenceTitle(references, language, revision, rowRoot + Fields.AUTHORSECTION);
-
-                String affiliation = (StringUtils.hasText(organisation)) ? organisation : "";
-                affiliation += (StringUtils.hasText(affiliation) && StringUtils.hasText(agency)) ? " " : "";
-                affiliation += (StringUtils.hasText(agency)) ? agency : "";
-                affiliation += (StringUtils.hasText(affiliation) && StringUtils.hasText(section)) ? " " : "";
-                affiliation += (StringUtils.hasText(section)) ? section : "";
-
-                if (StringUtils.hasText(affiliation)) {
-                    d.setAffiliation(affiliation);
+                    if(splits.length > 0 && orgValue != null) {
+                        option = findAgency(splits[0], Fields.COLLECTORORGANISATION, orgValue, Fields.COLLECTORAGENCY);
+                        agencyValue = (option != null) ? option.getValue() : null;
+                        if(StringUtils.hasText(agencyValue)) {
+                            valueSet(row.getRight(), Fields.COLLECTORAGENCY, agencyValue);
+                        }
+                    }
+                    if(splits.length > 1 && agencyValue != null) {
+                        option = findSection(splits[1], Fields.COLLECTORORGANISATION, orgValue, Fields.COLLECTORAGENCY, agencyValue, Fields.COLLECTORSECTION);
+                        String sectionValue = (option != null) ? option.getValue() : null;
+                        if(StringUtils.hasText(sectionValue)) {
+                            valueSet(row.getRight(), Fields.COLLECTORSECTION, sectionValue);
+                        }
+                    }
                 }
             }
         }
-        containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.OTHERAUTHORS));
-        if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
-            String pathRoot = "authors.";
-            for(DataRow row : containerPair.getRight().getRowsFor(Language.DEFAULT)) {
-                if (row.getRemoved()) {
-                    continue;
+        */
+    }
+
+    private ReturnResult readCitationProdStatement(CitationType citation) {
+        if(citation.getProdStmt() == null) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
+        }
+
+        ProdStmtType prodStmt = citation.getProdStmt();
+
+        if(!hasContent(prodStmt.getProducerArray())) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
+        }
+
+        Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.PRODUCERS);
+        if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
+            return containerResult.getLeft();
+        }
+        ContainerDataField container = containerResult.getRight().getLeft();
+        ContainerChange change = containerResult.getRight().getRight();
+
+        // Let's construct the request and path elements needed
+        ReferencePathRequest request = new ReferencePathRequest();
+        request.setContainer(Fields.PRODUCERS);
+        request.setLanguage(language);
+
+        for(ProducerType producer : prodStmt.getProducerArray()) {
+            if(!StringUtils.hasText(producer.xmlText())) {
+                continue;
+            }
+
+            Pair<StatusCode, DataRow> row = container.insertNewDataRow(Language.DEFAULT, change);
+            if(row.getLeft() != StatusCode.NEW_ROW) {
+                continue;
+            }
+
+            // If producer has affiliation then we know that it has at least an agency and possibly a section
+            // If not then we know that the actual producer is an organization
+            ReferenceOption option = findOrganization(StringUtils.hasText(producer.getAffiliation()) ? producer.getAffiliation() : producer.xmlText(), Fields.PRODUCERORGANISATION);
+            String orgValue = (option != null) ? option.getValue() : null;
+            if(StringUtils.hasText(orgValue)) {
+                valueSet(row.getRight(), Fields.PRODUCERORGANISATION, orgValue);
+            }
+            if(StringUtils.hasText(producer.getAffiliation())) {
+                String agencyValue = null;
+                String[] splits = producer.xmlText().split("\\. ");
+
+                if(splits.length > 0 && orgValue != null) {
+                    option = findAgency(splits[0], Fields.PRODUCERORGANISATION, orgValue, Fields.PRODUCERAGENCY);
+                    agencyValue = (option != null) ? option.getValue() : null;
+                    if(StringUtils.hasText(agencyValue)) {
+                        valueSet(row.getRight(), Fields.PRODUCERAGENCY, agencyValue);
+                    }
                 }
-                String rowRoot = pathRoot + row.getRowId() + ".";
-
-                Pair<StatusCode, ValueDataField> pair = row.dataField(ValueDataFieldCall.get(Fields.OTHERAUTHORTYPE));
-                if(!hasValue(pair, Language.DEFAULT)) {
-                    // We require a type for collector before we can move forward
-                    continue;
-                }
-                String colltype = pair.getRight().getActualValueFor(Language.DEFAULT);
-                // It's easier to dublicate some functionality and make a clean split from the top than to evaluate each value separately
-                if(colltype.equals("1")) {
-                    // We have a person collector
-                    pair = row.dataField(ValueDataFieldCall.get(Fields.AUTHOR));
-                    if(!hasValue(pair, Language.DEFAULT)) {
-                        // We must have a collector
-                        continue;
-                    }
-                    OthIdType d = fillTextType(rsp.addNewOthId(), pair, Language.DEFAULT);
-
-                    String organisation = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORORGANISATION);
-                    String agency = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORAGENCY);
-                    String section = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORSECTION);
-
-                    String affiliation = (StringUtils.hasText(organisation)) ? organisation : "";
-                    affiliation += (StringUtils.hasText(affiliation) && StringUtils.hasText(agency)) ? " " : "";
-                    affiliation += (StringUtils.hasText(agency)) ? agency : "";
-                    affiliation += (StringUtils.hasText(affiliation) && StringUtils.hasText(section)) ? " " : "";
-                    affiliation += (StringUtils.hasText(section)) ? section : "";
-
-                    if(StringUtils.hasText(affiliation)) {
-                        d.setAffiliation(affiliation);
-                    }
-                } else if(colltype.equals("2")) {
-                    // We have an organisation collector
-                    String organisation = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORORGANISATION);
-                    String agency = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORAGENCY);
-                    String section = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORSECTION);
-                    OthIdType d;
-                    if(!StringUtils.hasText(agency) && !StringUtils.hasText(section)) {
-                        if(!StringUtils.hasText(organisation)) {
-                            continue;
-                        }
-                        d = fillTextType(rsp.addNewOthId(), organisation);
-                    } else {
-                        String collector = (StringUtils.hasText(agency)) ? agency : "";
-                        if(StringUtils.hasText(collector) && StringUtils.hasText(section)) {
-                            collector += " "+section;
-                        } else if(StringUtils.hasText(section)) {
-                            collector = section;
-                        } else {
-                            continue;
-                        }
-                        d = fillTextType(rsp.addNewOthId(), collector);
-                    }
-                    if(StringUtils.hasText(agency) || StringUtils.hasText(section)) {
-                        if(StringUtils.hasText(organisation)) {
-                            d.setAffiliation(organisation);
-                        }
-                    }
-                } else if(colltype.equals("3")) {
-                    pair = row.dataField(ValueDataFieldCall.get(Fields.OTHERAUTHORGROUP));
-                    if(hasValue(pair, language)) {
-                        fillTextType(rsp.addNewOthId(), pair, language);
+                if(splits.length > 1 && agencyValue != null) {
+                    option = findSection(splits[1], Fields.PRODUCERORGANISATION, orgValue, Fields.PRODUCERAGENCY, agencyValue, Fields.PRODUCERSECTION);
+                    String sectionValue = (option != null) ? option.getValue() : null;
+                    if(StringUtils.hasText(sectionValue)) {
+                        valueSet(row.getRight(), Fields.PRODUCERSECTION, sectionValue);
                     }
                 }
             }
-        }*/
-    }
+            if(StringUtils.hasText(producer.getRole())) {
+                SelectionList list = configuration.getRootSelectionList(configuration.getField(Fields.PRODUCERROLE).getSelectionList());
+                for(Option o : list.getOptions()) {
+                    if(o.getTitleFor(language).equals(producer.getRole())) {
+                        valueSet(row.getRight(), Fields.PRODUCERROLE, o.getValue());
+                        break;
+                    }
+                }
+            }
+        }
 
-    // TODO: Still unfinished
-    private static ReturnResult readCitationProdStatement(CitationType citation) {
         return ReturnResult.OPERATION_SUCCESSFUL;
-        // Authors, other authors and producers need resolved answers before continuing
-
-        // TODO: Reverse process
-        /*ProdStmtType prodStmtType = citationType.addNewProdStmt();
-
-        Pair<StatusCode, ContainerDataField> containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.PRODUCERS));
-        String path = "producers.";
-        if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
-            for(DataRow row : containerPair.getRight().getRowsFor(Language.DEFAULT)) {
-                if(row.getRemoved()) {
-                    continue;
-                }
-                String rowRoot = path+row.getRowId()+".";
-
-                String organisation = getReferenceTitle(references, language, revision, rowRoot + Fields.PRODUCERORGANISATION);
-                String agency = getReferenceTitle(references, language, revision, rowRoot + Fields.PRODUCERAGENCY);
-                String section = getReferenceTitle(references, language, revision, rowRoot + Fields.PRODUCERSECTION);
-                ProducerType d;
-                if(!StringUtils.hasText(agency) && !StringUtils.hasText(section)) {
-                    if(!StringUtils.hasText(organisation)) {
-                        continue;
-                    }
-                    d = fillTextType(prodStmtType.addNewProducer(), organisation);
-                } else {
-                    String producer = (StringUtils.hasText(agency)) ? agency : "";
-                    producer += (StringUtils.hasText(producer) && StringUtils.hasText(section)) ? " " : "";
-                    producer += (StringUtils.hasText(section)) ? section : "";
-                    if(!StringUtils.hasText(producer)) {
-                        continue;
-                    }
-                    d = fillTextType(prodStmtType.addNewProducer(), producer);
-                }
-
-                String abbr = getReferenceTitle(references, language, revision, rowRoot + Fields.PRODUCERSECTIONABBR);
-                abbr = (StringUtils.hasText(abbr)) ? abbr : getReferenceTitle(references, language, revision, rowRoot + Fields.PRODUCERAGENCYABBR);
-                abbr = (StringUtils.hasText(abbr)) ? abbr : getReferenceTitle(references, language, revision, rowRoot + Fields.PRODUCERORGANISATIONABBR);
-
-                d.setAbbr(abbr);
-                if(StringUtils.hasText(agency) || StringUtils.hasText(section)) {
-                    if(StringUtils.hasText(organisation)) {
-                        d.setAffiliation(organisation);
-                    }
-                }
-
-                Pair<StatusCode, ValueDataField> fieldPair = row.dataField(ValueDataFieldCall.get(Fields.PRODUCERROLE));
-                if(hasValue(fieldPair, Language.DEFAULT)) {
-                    String role = fieldPair.getRight().getActualValueFor(Language.DEFAULT);
-                    SelectionList list = configuration.getRootSelectionList(configuration.getField(Fields.PRODUCERROLE).getSelectionList());
-                    Option option = list.getOptionWithValue(role);
-                    if(option != null) {
-                        d.setRole(option.getTitleFor(language));
-                    }
-                }
-            }
-        }*/
     }
 
-    // TODO: Still unfinished
     private ReturnResult readStudyAuthorization(StdyDscrType stdyDscr) {
-        return ReturnResult.OPERATION_SUCCESSFUL;
-        // TODO: Questions about tables and authors still open
-        // Authors, other authors and producers need resolved answers before continuing
+        if(!hasContent(stdyDscr.getStudyAuthorizationArray())) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
+        }
+        StudyAuthorizationType stdyAuth = stdyDscr.getStudyAuthorizationArray(0);
+        if(!hasContent(stdyAuth.getAuthorizingAgencyArray())) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
+        }
 
-        // TODO: Reverse process
-        /*Pair<StatusCode, ContainerDataField> containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.AUTHORS));
-        String path = "authors.";
-        if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
-            StudyAuthorizationType sa = stdyDscrType.addNewStudyAuthorization();
-            for(DataRow row : containerPair.getRight().getRowsFor(Language.DEFAULT)) {
-                if(row.getRemoved()) {
-                    continue;
-                }
+        Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.AUTHORS);
+        if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
+            return containerResult.getLeft();
+        }
+        ContainerDataField container = containerResult.getRight().getLeft();
+        ContainerChange change = containerResult.getRight().getRight();
 
-                Pair<StatusCode, ValueDataField> pair = row.dataField(ValueDataFieldCall.get(Fields.AUTHORTYPE));
-                if(!hasValue(pair, Language.DEFAULT)) {
-                    continue;
-                }
-                // If author type is person then it's not correct for this entity
-                if(pair.getRight().getActualValueFor(Language.DEFAULT).equals("1")) {
-                    continue;
-                }
+        // Let's construct the request and path elements needed
+        ReferencePathRequest request = new ReferencePathRequest();
+        request.setContainer(Fields.AUTHORS);
+        request.setLanguage(language);
 
-                String rowRoot = path+row.getRowId()+".";
+        // These are all organization authors
+        for(AuthorizingAgencyType auth : stdyAuth.getAuthorizingAgencyArray()) {
+            if(!StringUtils.hasText(auth.xmlText())) {
+                continue;
+            }
 
-                String organisation = getReferenceTitle(references, language, revision, rowRoot + Fields.AUTHORORGANISATION);
-                String agency = getReferenceTitle(references, language, revision, rowRoot + Fields.AUTHORAGENCY);
-                String section = getReferenceTitle(references, language, revision, rowRoot + Fields.AUTHORSECTION);
-                AuthorizingAgencyType d;
-                if(!StringUtils.hasText(agency) && !StringUtils.hasText(section)) {
-                    if(!StringUtils.hasText(organisation)) {
-                        continue;
+            Pair<StatusCode, DataRow> row = container.insertNewDataRow(Language.DEFAULT, change);
+            if(row.getLeft() != StatusCode.NEW_ROW) {
+                continue;
+            }
+
+            // Set type to organization
+            valueSet(row.getRight(), Fields.AUTHORTYPE, "2");
+            // If organization author has affiliation then we know that it has at least an agency and possibly a section
+            // If not then we know that the actual author is an organization
+            ReferenceOption option = findOrganization(StringUtils.hasText(auth.getAffiliation()) ? auth.getAffiliation() : auth.xmlText(), Fields.AUTHORORGANISATION);
+            String orgValue = (option != null) ? option.getValue() : null;
+            if(StringUtils.hasText(orgValue)) {
+                valueSet(row.getRight(), Fields.AUTHORORGANISATION, orgValue);
+            }
+            if(StringUtils.hasText(auth.getAffiliation())) {
+                String agencyValue = null;
+                String[] splits = auth.xmlText().split("\\. ");
+
+                if(splits.length > 0 && orgValue != null) {
+                    option = findAgency(splits[0], Fields.AUTHORORGANISATION, orgValue, Fields.AUTHORAGENCY);
+                    agencyValue = (option != null) ? option.getValue() : null;
+                    if(StringUtils.hasText(agencyValue)) {
+                        valueSet(row.getRight(), Fields.AUTHORAGENCY, agencyValue);
                     }
-                    d = fillTextType(sa.addNewAuthorizingAgency(), organisation);
-                } else {
-                    String authorizer = (StringUtils.hasText(agency)) ? agency : "";
-                    authorizer += (StringUtils.hasText(authorizer) && StringUtils.hasText(section)) ? " " : "";
-                    authorizer += (StringUtils.hasText(section)) ? section : "";
-                    if(!StringUtils.hasText(authorizer)) {
-                        continue;
-                    }
-                    d = fillTextType(sa.addNewAuthorizingAgency(), authorizer);
                 }
-
-                String abbr = getReferenceTitle(references, language, revision, rowRoot + Fields.PRODUCERSECTIONABBR);
-                abbr = (StringUtils.hasText(abbr)) ? abbr : getReferenceTitle(references, language, revision, rowRoot + Fields.PRODUCERAGENCYABBR);
-                abbr = (StringUtils.hasText(abbr)) ? abbr : getReferenceTitle(references, language, revision, rowRoot + Fields.PRODUCERORGANISATIONABBR);
-
-                d.setAbbr(abbr);
-                if(StringUtils.hasText(agency) || StringUtils.hasText(section)) {
-                    if(StringUtils.hasText(organisation)) {
-                        d.setAffiliation(organisation);
+                if(splits.length > 1 && agencyValue != null) {
+                    option = findSection(splits[1], Fields.AUTHORORGANISATION, orgValue, Fields.AUTHORAGENCY, agencyValue, Fields.AUTHORSECTION);
+                    String sectionValue = (option != null) ? option.getValue() : null;
+                    if(StringUtils.hasText(sectionValue)) {
+                        valueSet(row.getRight(), Fields.AUTHORSECTION, sectionValue);
                     }
                 }
             }
-        }*/
+        }
+
+        return ReturnResult.OPERATION_SUCCESSFUL;
     }
 
     private ReturnResult readStudyInfo(StdyDscrType stdyDscr) {
@@ -572,7 +638,7 @@ class DDIStudyDescription extends DDISectionBase {
 
     private ReferenceOption findOption(List<ReferenceOption> options, String text) {
         for(ReferenceOption option : options) {
-            if(option.getTitle().equals(text)) {
+            if(option.getTitle().getValue().equals(text)) {
                 return option;
             }
         }
@@ -610,7 +676,7 @@ class DDIStudyDescription extends DDISectionBase {
             }
         }
 
-        result = readConceptualTextTypeArray(sumDscr.getAnlyUnitArray(), Fields.ANALYSIS, Fields.ANALYSISUNITVOCAB, Fields.ANALYSISUNIT, Fields.ANALYSISUNITOTHER);
+        result = readConceptualTextTypeArray(sumDscr.getAnlyUnitArray(), Fields.ANALYSIS, Fields.ANALYSISUNITVOCAB, Fields.ANALYSISUNIT, Fields.ANALYSISUNITOTHER, null);
         if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
         return readStudyInfoSumDescUniverse(sumDscr);
@@ -744,16 +810,16 @@ class DDIStudyDescription extends DDISectionBase {
         DataCollType dataColl = method.getDataCollArray(0);
 
         ReturnResult result;
-        result = readConceptualTextTypeArray(dataColl.getTimeMethArray(), Fields.TIMEMETHODS, Fields.TIMEMETHODVOCAB, Fields.TIMEMETHOD, Fields.TIMEMETHODOTHER);
+        result = readConceptualTextTypeArray(dataColl.getTimeMethArray(), Fields.TIMEMETHODS, Fields.TIMEMETHODVOCAB, Fields.TIMEMETHOD, Fields.TIMEMETHODOTHER, null);
         if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
-        result = readMethodDataCollSampProc(dataColl);
+        result = readConceptualTextTypeArray(dataColl.getSampProcArray(), Fields.SAMPPROCS, Fields.SAMPPROCVOCAB, Fields.SAMPPROC, Fields.SAMPPROCOTHER, Fields.SAMPPROCTEXT);
         if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
-        result = readConceptualTextTypeArray(dataColl.getCollModeArray(), Fields.COLLMODES, Fields.COLLMODEVOCAB, Fields.COLLMODE, Fields.COLLMODEOTHER);
+        result = readConceptualTextTypeArray(dataColl.getCollModeArray(), Fields.COLLMODES, Fields.COLLMODEVOCAB, Fields.COLLMODE, Fields.COLLMODEOTHER, null);
         if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
-        result = readConceptualTextTypeArray(dataColl.getResInstruArray(), Fields.INSTRUMENTS, Fields.INSTRUMENTVOCAB, Fields.INSTRUMENT, Fields.INSTRUMENTOTHER);
+        result = readConceptualTextTypeArray(dataColl.getResInstruArray(), Fields.INSTRUMENTS, Fields.INSTRUMENTVOCAB, Fields.INSTRUMENT, Fields.INSTRUMENTOTHER, null);
         if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
         result = readMethodDataCollDataCollector(dataColl);
@@ -765,7 +831,7 @@ class DDIStudyDescription extends DDISectionBase {
         return readMethodDataCollWeight(dataColl);
     }
 
-    private ReturnResult readConceptualTextTypeArray(ConceptualTextType[] ctta, String containerKey, String vocabKey, String conceptKey, String txtKey) {
+    private ReturnResult readConceptualTextTypeArray(ConceptualTextType[] ctta, String containerKey, String vocabKey, String conceptKey, String txtKey, String cttKey) {
         if(!hasContent(ctta)) {
             return ReturnResult.OPERATION_SUCCESSFUL;
         }
@@ -794,6 +860,10 @@ class DDIStudyDescription extends DDISectionBase {
             Pair<StatusCode, DataRow> row = container.insertNewDataRow(Language.DEFAULT, change);
             if(row.getLeft() != StatusCode.NEW_ROW) {
                 continue;
+            }
+
+            if(cttKey != null && StringUtils.hasText(ctt.xmlText())) {
+                valueSet(row.getRight(), cttKey, ctt.xmlText());
             }
 
             if(hasContent(ctt.getTxtArray()) && StringUtils.hasText(ctt.getTxtArray(0).xmlText())) {
@@ -831,155 +901,132 @@ class DDIStudyDescription extends DDISectionBase {
         return ReturnResult.OPERATION_SUCCESSFUL;
     }
 
-    // TODO: Still unfinished
-    private ReturnResult readMethodDataCollDataCollector(DataCollType dataColl) {
-        return ReturnResult.OPERATION_SUCCESSFUL;
-        // TODO: Reverse process
-        // Let's hardcode the path since we know exactly what we are looking for.
-        /*String pathRoot = "collectors.";
-        for(DataRow row : container.getRowsFor(Language.DEFAULT)) {
-            if(row.getRemoved()) {
-                continue;
-            }
-            String rowRoot = pathRoot + row.getRowId() + ".";
+    private ReferenceOption findOrganization(String title, String orgFieldKey) {
+        ReferencePathRequest request = new ReferencePathRequest();
+        request.setLanguage(language);
 
-            Pair<StatusCode, ValueDataField> pair = row.dataField(ValueDataFieldCall.get(Fields.COLLECTORTYPE));
-            if(!hasValue(pair, Language.DEFAULT)) {
-                // We require a type for collector before we can move forward
-                continue;
-            }
-            String colltype = pair.getRight().getActualValueFor(Language.DEFAULT);
-            // It's easier to dublicate some functionality and make a clean split from the top than to evaluate each value separately
-            if(colltype.equals("1")) {
-                // We have a person collector
-                pair = row.dataField(ValueDataFieldCall.get(Fields.COLLECTOR));
-                if(!hasValue(pair, Language.DEFAULT)) {
-                    // We must have a collector
-                    continue;
-                }
-                DataCollectorType d = fillTextType(dataColl.addNewDataCollector(), pair, Language.DEFAULT);
-
-                String organisation = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORORGANISATION);
-                String agency = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORAGENCY);
-                String section = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORSECTION);
-
-                String affiliation = (StringUtils.hasText(organisation)) ? organisation : "";
-                affiliation += (StringUtils.hasText(affiliation) && StringUtils.hasText(agency)) ? " " : "";
-                affiliation += (StringUtils.hasText(agency)) ? agency : "";
-                affiliation += (StringUtils.hasText(affiliation) && StringUtils.hasText(section)) ? " " : "";
-                affiliation += (StringUtils.hasText(section)) ? section : "";
-
-                if(StringUtils.hasText(affiliation)) {
-                    d.setAffiliation(affiliation);
-                }
-            } else if(colltype.equals("2")) {
-                // We have an organisation collector
-                String organisation = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORORGANISATION);
-                String agency = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORAGENCY);
-                String section = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORSECTION);
-                DataCollectorType d;
-                if(!StringUtils.hasText(agency) && !StringUtils.hasText(section)) {
-                    if(!StringUtils.hasText(organisation)) {
-                        continue;
-                    }
-                    d = fillTextType(dataColl.addNewDataCollector(), organisation);
-                } else {
-                    String collector = (StringUtils.hasText(agency)) ? agency : "";
-                    if(StringUtils.hasText(collector) && StringUtils.hasText(section)) {
-                        collector += " "+section;
-                    } else if(StringUtils.hasText(section)) {
-                        collector = section;
-                    } else {
-                        continue;
-                    }
-                    d = fillTextType(dataColl.addNewDataCollector(), collector);
-                }
-
-                String abbr = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORSECTIONABBR);
-                abbr = (StringUtils.hasText(abbr)) ? abbr : getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORAGENCYABBR);
-                abbr = (StringUtils.hasText(abbr)) ? abbr : getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORORGANISATIONABBR);
-
-                d.setAbbr(abbr);
-                if(StringUtils.hasText(agency) || StringUtils.hasText(section)) {
-                    if(StringUtils.hasText(organisation)) {
-                        d.setAffiliation(organisation);
-                    }
-                }
-            }
-        }*/
+        ReferencePath root = new ReferencePath(configuration.getReference(configuration.getField(orgFieldKey).getReference()), null);
+        request.setRoot(root);
+        List<ReferenceOption> options = references.collectReferenceOptions(request);
+        return findOption(options, title);
     }
 
-    // TODO: Still unfinished
-    private ReturnResult readMethodDataCollSampProc(DataCollType dataColl) {
-        return ReturnResult.OPERATION_SUCCESSFUL;
-        // TODO: Reverse process
-        // Let's hardcode the path since we know exactly what we are looking for.
-        /*String pathRoot = "sampprocs.";
-        for(DataRow row : container.getRowsFor(Language.DEFAULT)) {
-            if(row.getRemoved()) {
+    private ReferenceOption findAgency(String title, String orgFieldKey, String orgValue, String agencyFieldKey) {
+        ReferencePathRequest request = new ReferencePathRequest();
+        request.setLanguage(language);
+
+        ReferencePath root = new ReferencePath(configuration.getReference(configuration.getField(orgFieldKey).getReference()), orgValue);
+        root.setNext(new ReferencePath(configuration.getReference(configuration.getField(agencyFieldKey).getReference()), null));
+        root.getNext().setPrev(root);
+        request.setRoot(root);
+        List<ReferenceOption> options = references.collectReferenceOptions(request);
+        return findOption(options, title);
+    }
+
+    private ReferenceOption findSection(String title, String orgFieldKey, String orgValue, String agencyFieldKey, String agencyValue, String sectionFieldKey) {
+        ReferencePathRequest request = new ReferencePathRequest();
+        request.setLanguage(language);
+
+        ReferencePath root = new ReferencePath(configuration.getReference(configuration.getField(orgFieldKey).getReference()), orgValue);
+        root.setNext(new ReferencePath(configuration.getReference(configuration.getField(agencyFieldKey).getReference()), agencyValue));
+        root.getNext().setPrev(root);
+        root.getNext().setNext(new ReferencePath(configuration.getReference(configuration.getField(sectionFieldKey).getReference()), null));
+        root.getNext().getNext().setPrev(root.getNext());
+        request.setRoot(root);
+        List<ReferenceOption> options = references.collectReferenceOptions(request);
+        return findOption(options, title);
+    }
+
+    private ReturnResult readMethodDataCollDataCollector(DataCollType dataColl) {
+        if(!hasContent(dataColl.getDataCollectorArray())) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
+        }
+
+        Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.COLLECTORS);
+        if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
+            return containerResult.getLeft();
+        }
+        ContainerDataField container = containerResult.getRight().getLeft();
+        ContainerChange change = containerResult.getRight().getRight();
+
+        // Let's construct the request and path elements needed
+        ReferencePathRequest request = new ReferencePathRequest();
+        request.setContainer(Fields.COLLECTORS);
+        request.setLanguage(language);
+
+        for(DataCollectorType collector : dataColl.getDataCollectorArray()) {
+            if(!StringUtils.hasText(collector.xmlText())) {
                 continue;
             }
-            String rowRoot = pathRoot + row.getRowId() + ".";
 
-            String txt = null;
-            String sampproc = null;
-            String sampprocuri = null;
-            String sampprocvocab = null;
-            String sampprocvocaburi = null;
-
-            sampprocvocab = getReferenceTitle(references, language, revision, rowRoot + Fields.SAMPPROCVOCAB);
-            if(!StringUtils.hasText(sampprocvocab)) {
+            Pair<StatusCode, DataRow> row = container.insertNewDataRow(Language.DEFAULT, change);
+            if(row.getLeft() != StatusCode.NEW_ROW) {
                 continue;
             }
 
-            sampproc = getReferenceTitle(references, language, revision, rowRoot + Fields.SAMPPROC);
-            if(!StringUtils.hasText(sampproc)) {
-                continue;
-            }
+            // If collector has an abbreviation then assume organization since persons don't have abbreviation.
+            // It is possible for organization to not have abbreviation but there's no way for us to detect this.
+            if(!StringUtils.hasText(collector.getAbbr())) {
+                valueSet(row.getRight(), Fields.COLLECTORTYPE, "1");
+                valueSet(row.getRight(), Fields.COLLECTOR, collector.xmlText());
+                if(StringUtils.hasText(collector.getAffiliation())) {
+                    String[] splits = collector.getAffiliation().split("\\. ");
+                    String orgValue = null;
+                    String agencyValue = null;
+                    if(splits.length > 0) {
+                        ReferenceOption option = findOrganization(splits[0], Fields.COLLECTORORGANISATION);
+                        orgValue = (option != null) ? option.getValue() : null;
+                        if(StringUtils.hasText(orgValue)) {
+                            valueSet(row.getRight(), Fields.COLLECTORORGANISATION, orgValue);
+                        }
+                    }
+                    if(splits.length > 1 && orgValue != null) {
+                        ReferenceOption option = findAgency(splits[1], Fields.COLLECTORORGANISATION, orgValue, Fields.COLLECTORAGENCY);
+                        agencyValue = (option != null) ? option.getValue() : null;
+                        if(StringUtils.hasText(agencyValue)) {
+                            valueSet(row.getRight(), Fields.COLLECTORAGENCY, agencyValue);
+                        }
+                    }
+                    if(splits.length > 2 && agencyValue != null) {
+                        ReferenceOption option = findSection(splits[2], Fields.COLLECTORORGANISATION, orgValue, Fields.COLLECTORAGENCY, agencyValue, Fields.COLLECTORSECTION);
+                        String sectionValue = (option != null) ? option.getValue() : null;
+                        if(StringUtils.hasText(sectionValue)) {
+                            valueSet(row.getRight(), Fields.COLLECTORSECTION, sectionValue);
+                        }
+                    }
+                }
+            } else {
+                valueSet(row.getRight(), Fields.COLLECTORTYPE, "2");
+                // If organization collector has affiliation then we know that it has at least an agency and possibly a section
+                // If not then we know that the actual collector is an organization
+                ReferenceOption option = findOrganization(StringUtils.hasText(collector.getAffiliation()) ? collector.getAffiliation() : collector.xmlText(), Fields.COLLECTORORGANISATION);
+                String orgValue = (option != null) ? option.getValue() : null;
+                if(StringUtils.hasText(orgValue)) {
+                    valueSet(row.getRight(), Fields.COLLECTORORGANISATION, orgValue);
+                }
+                if(StringUtils.hasText(collector.getAffiliation())) {
+                    String agencyValue = null;
+                    String[] splits = collector.xmlText().split("\\. ");
 
-            sampprocvocaburi = getReferenceTitle(references, language, revision, rowRoot + Fields.SAMPPROCVOCABURI);
-
-            sampprocuri = getReferenceTitle(references, language, revision, rowRoot + Fields.SAMPPROCURI);
-
-            Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.SAMPPROCOTHER));
-            if(hasValue(valueFieldPair, language)) {
-                txt = valueFieldPair.getRight().getActualValueFor(language);
-            }
-
-            // Keyword should always be non null at this point
-            ConceptualTextType t = dataColl.addNewSampProc();
-
-            // Add sampproctext if present
-            valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.SAMPPROCTEXT));
-            if(hasValue(valueFieldPair, language)) {
-                fillTextType(t, valueFieldPair, language);
-            }
-
-            ConceptType c = fillTextType(t.addNewConcept(), sampproc);
-            if(sampprocuri != null) {
-                // TODO: This is compiled as an ENUM, is this correct?
-                switch(sampprocuri) {
-                    case "archive":
-                        c.setSource(BaseElementType.Source.ARCHIVE);
-                        break;
-                    case "producer":
-                        c.setSource(BaseElementType.Source.PRODUCER);
-                        break;
+                    if(splits.length > 0 && orgValue != null) {
+                        option = findAgency(splits[0], Fields.COLLECTORORGANISATION, orgValue, Fields.COLLECTORAGENCY);
+                        agencyValue = (option != null) ? option.getValue() : null;
+                        if(StringUtils.hasText(agencyValue)) {
+                            valueSet(row.getRight(), Fields.COLLECTORAGENCY, agencyValue);
+                        }
+                    }
+                    if(splits.length > 1 && agencyValue != null) {
+                        option = findSection(splits[1], Fields.COLLECTORORGANISATION, orgValue, Fields.COLLECTORAGENCY, agencyValue, Fields.COLLECTORSECTION);
+                        String sectionValue = (option != null) ? option.getValue() : null;
+                        if(StringUtils.hasText(sectionValue)) {
+                            valueSet(row.getRight(), Fields.COLLECTORSECTION, sectionValue);
+                        }
+                    }
                 }
             }
+        }
 
-            if(sampprocvocab != null) {
-                c.setVocab(sampprocvocab);
-            }
-
-            if(sampprocvocaburi != null) {
-                c.setVocabURI(sampprocvocaburi);
-            }
-
-            if(txt != null) {
-                fillTextType(t.addNewTxt(), txt);
-            }
-        }*/
+        return ReturnResult.OPERATION_SUCCESSFUL;
     }
 
     private ReturnResult readMethodDataCollSources(DataCollType dataColl) {

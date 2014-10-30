@@ -187,7 +187,7 @@ class DDIStudyDescription {
                     d = fillTextType(prodStmtType.addNewProducer(), organisation);
                 } else {
                     String producer = (StringUtils.hasText(agency)) ? agency : "";
-                    producer += (StringUtils.hasText(producer) && StringUtils.hasText(section)) ? " " : "";
+                    producer += (StringUtils.hasText(producer) && StringUtils.hasText(section)) ? ". " : "";
                     producer += (StringUtils.hasText(section)) ? section : "";
                     if(!StringUtils.hasText(producer)) {
                         continue;
@@ -261,9 +261,9 @@ class DDIStudyDescription {
                 String section = getReferenceTitle(references, language, revision, rowRoot + Fields.AUTHORSECTION);
 
                 String affiliation = (StringUtils.hasText(organisation)) ? organisation : "";
-                affiliation += (StringUtils.hasText(affiliation) && StringUtils.hasText(agency)) ? " " : "";
+                affiliation += (StringUtils.hasText(affiliation) && StringUtils.hasText(agency)) ? ". " : "";
                 affiliation += (StringUtils.hasText(agency)) ? agency : "";
-                affiliation += (StringUtils.hasText(affiliation) && StringUtils.hasText(section)) ? " " : "";
+                affiliation += (StringUtils.hasText(affiliation) && StringUtils.hasText(section)) ? ". " : "";
                 affiliation += (StringUtils.hasText(section)) ? section : "";
 
                 if (StringUtils.hasText(affiliation)) {
@@ -301,9 +301,9 @@ class DDIStudyDescription {
                     String section = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORSECTION);
 
                     String affiliation = (StringUtils.hasText(organisation)) ? organisation : "";
-                    affiliation += (StringUtils.hasText(affiliation) && StringUtils.hasText(agency)) ? " " : "";
+                    affiliation += (StringUtils.hasText(affiliation) && StringUtils.hasText(agency)) ? ". " : "";
                     affiliation += (StringUtils.hasText(agency)) ? agency : "";
-                    affiliation += (StringUtils.hasText(affiliation) && StringUtils.hasText(section)) ? " " : "";
+                    affiliation += (StringUtils.hasText(affiliation) && StringUtils.hasText(section)) ? ". " : "";
                     affiliation += (StringUtils.hasText(section)) ? section : "";
 
                     if(StringUtils.hasText(affiliation)) {
@@ -518,7 +518,7 @@ class DDIStudyDescription {
                     d = fillTextType(sa.addNewAuthorizingAgency(), organisation);
                 } else {
                     String authorizer = (StringUtils.hasText(agency)) ? agency : "";
-                    authorizer += (StringUtils.hasText(authorizer) && StringUtils.hasText(section)) ? " " : "";
+                    authorizer += (StringUtils.hasText(authorizer) && StringUtils.hasText(section)) ? ". " : "";
                     authorizer += (StringUtils.hasText(section)) ? section : "";
                     if(!StringUtils.hasText(authorizer)) {
                         continue;
@@ -1046,9 +1046,9 @@ class DDIStudyDescription {
                 String section = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORSECTION);
 
                 String affiliation = (StringUtils.hasText(organisation)) ? organisation : "";
-                affiliation += (StringUtils.hasText(affiliation) && StringUtils.hasText(agency)) ? " " : "";
+                affiliation += (StringUtils.hasText(affiliation) && StringUtils.hasText(agency)) ? ". " : "";
                 affiliation += (StringUtils.hasText(agency)) ? agency : "";
-                affiliation += (StringUtils.hasText(affiliation) && StringUtils.hasText(section)) ? " " : "";
+                affiliation += (StringUtils.hasText(affiliation) && StringUtils.hasText(section)) ? ". " : "";
                 affiliation += (StringUtils.hasText(section)) ? section : "";
 
                 if(StringUtils.hasText(affiliation)) {

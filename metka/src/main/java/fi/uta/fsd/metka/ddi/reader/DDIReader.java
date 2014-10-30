@@ -121,7 +121,7 @@ public class DDIReader {
 
             if(importDescription) {
                 // TODO: Still unfinished
-                section = new DDIStudyDescription(revision, docLang, codeBook, info, configuration, revisions, references);
+                section = new DDIStudyDescription(revision, docLang, codeBook, info, configuration, references);
                 result = section.read();
 
                 if(result != ReturnResult.OPERATION_SUCCESSFUL) {
