@@ -329,9 +329,133 @@ Suurin osa `@Controller`-metodeista kutsuu `metka.mvc.services.impl`-paketissa o
 
 Kun `@Repository`-luokat kommunikoivat tietokannan kanssa siihen käytetään yleensä `@Entity`-annotaatiolla merkattuja luokkia joista suurin osa löytyy `metka.storage.entity`-paketista ja jotka toimivat tietokantataulujen kuvauksina Java-koodissa. Varsinaisiin tietokantaoperaatioihin käytetään JPA-spesifikaation tarjoamia luokkia ja operaatioita (Metkan tapauksessa JPA:n toteutta Hibernate-kirjasto).
 
-# JavaScript
 
-**TODO: Tähän JavaScript kuvaus**
+# Käyttöliittymä
+
+Sovelluksen käyttöliittymä rakennetaan JavaScriptillä. Sovellus hyödyntää pääasiassa näitä kirjastoja ja ohjelmistokehyksiä:
+
+* [jQuery]
+* [Bootstrap]
+* [RequireJS]
+
+
+## Kansiorakenne
+
+Käyttöliittymän tiedostot sijaitsevat [resources]-kansiossa. Palvelin ohjaa polkuihin `/css`, `/html`, `/js` ja `/lib` tulevat pyynnöt vastaaviin kansioihin [resources]-kansiossa. Reitityksiä voi hallita tiedostossa [globalServletContext.xml].
+
+
+### [css/](tree/master/metka/src/main/webapp/resources/css)
+
+Kansio sisältä sovelluksen tyylit [styles.css]-tiedostossa, sekä käytöstä poistuneita muita CSS-tiedostoja.
+
+Sovelluksen tyylien perustana on Bootstrapin tyylit, joita ylikirjoitetaan hallitusti ja mahdollisimman vähän.
+
+
+### [html/](tree/master/metka/src/main/webapp/resources/html)
+
+Kansio sisältää [käyttöohjeen][guide]. Muita staattisia html-tiedostoja sovelluksessa ei ole.
+
+
+### [js/](tree/master/metka/src/main/webapp/resources/js)
+
+Kansio sisältää sovelluksen JavaScript-tiedostot.
+
+
+### [lib/](tree/master/metka/src/main/webapp/resources/lib)
+
+Kansio sisältää kirjastot, lisäosat ym. sovelluksen riippuvuudet. Sivulle ne otetaan käyttöön [head.jsp](blob/master/metka/src/main/webapp/WEB-INF/inc/head.jsp)-tiedostossa.
+
+
+## JavaScript
+
+Ohjelmoijan tulisi tuntea Array-objektin ES5-metodit, kuten [Array.prototype.forEach](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach) ja [Array.prototype.map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map), sillä niitä käytetään sovelluksessa runsaasti.
+
+
+### Rakenne
+
+Ohjelmakoodi on jäsennelty [RequireJS]-moduuleihin [modules]-kansioon. Poikkeuksena:
+
+- Sovelluksen RequireJS entry point: `main.js`
+- `metka.js`-moduuli (jossa muutama ominaisuus, jolle ei ole löytynyt parempaa paikkaa)
+- Globaalin `MetkaJS`-objektin alustus `metkaJS/metkaJS.js`-tiedostossa. Tähän objektiin palvelin asettaa käyttöliittymän alustuksessa tarvittavat tiedot, kuten käyttäjätiedot ja näytettävän sivun nimen.
+- Ohjelmakoodi joka ei ole RequireJS:n alaisuudessa. (vain alkuvaiheessa kehitetty `MetkaJS/l10n.js`).
+
+
+#### [modules]
+
+RequireJS:n mukaisesti jokainen tiedosto on oma moduuli. Moduulit tässä sovelluksessa ovat lähes poikkeuksetta itsenäisiä aliohjelmia (JavaScript-funktioita) ja ne sijaitsevat päätasolla [modules]-kansiossa. Alikansioihin on ryhmitelty vain:
+
+- [custom]/ Konfiguraatiossa määriteltyjen erikoistoimintoja sisältävien kenttien toiminnot
+- map/ Muunnostoimintoja {fromFrormat}/{toFormat}.js
+- pages/ Sivupohjat
+- utils/ Yleiskäyttöisiä toimintoja
+
+Lukuun ottamatta [custom]-elementtien sovelluslogiikkaa, RequireJS:stä käytetään synkronista versiota. Tämä siksi, että yksittäisen moduulin kirjoittaminen ja käyttöönotto olisi mahdollisimman vaivatonta. Sovelluksessa käytetään siis runsaasti tyyliä:
+
+```js
+// myModule.js
+
+define(function (require) {
+    'use strict';
+
+    return function (name) {
+        return 'hello ' + name;
+    };
+});
+```
+
+```js
+// otherModule.js
+
+
+define(function (require) {
+    'use strict';
+
+    return function (name) {
+        var text = require('./myModule')('world!');
+        console.log(text); // hello world!
+    };
+});
+```
+
+
+### jQuery, HTML:n rakentaminen ja DOM:in muokkaus
+
+Sovelluksen UI rakennetaan jQueryllä. Rakentaminen alkaa `page.js`-tiedostosta, josta konfiguraatiota seuraten mennään alikomponentteihin, kunnes UI on valmis.
+
+Jotta vältytään spagettimaiselta jQuery-koodilta, elementeille on vain harvoin asetettu omia `#id`:itä tai `.class`:eja (Poikkeuksena inputien generoidut ID:t `label`-elementtien `for`-attribuuteille). Tarvittaessa funktiot pitävät muistissaan rakentamansa elementit ja/tai välittävät niitä toisille funktioille. Elementtejä pyritään löytämään suhteellisilla metodeilla, kuten `.parent()` ja `.children()`. `$`-alkuiset muuttujat (esim. `$input`) tarkoittavat jQuery-objekteja. Esim:
+
+```js
+var $button = $('<button type="button" class="btn">');
+$someContainer.append($button);
+
+// toisaalla
+$button.click(function () {...});
+```
+
+
+## Sovelluskehitys
+
+(Edellytys: palvelinsovellus on asennettu ja käynnistetty onnistuneesti)
+
+Kehityssykli on melko lyhyt:
+
+1. Muokkaa tiedostoa.
+2. Suorita [reloadWeb.js](blob/master/reloadWeb.js) (NodeJS-skripti) tai [reloadWeb.sh](blob/master/reloadWeb.sh) -tiedosto ([resources]-kansio kopioidaan palvelimen hakemistoon).
+3. F5, lataa sivu uudelleen.
+
+[Bootstrap]:http://getbootstrap.com/
+[jQuery]:http://jquery.com
+[RequireJS]:http://requirejs.org/
+
+
+[resources]:                tree/master/metka/src/main/webapp/resources
+[modules]:                  tree/master/metka/src/main/webapp/resources/js/modules
+
+[globalServletContext.xml]: blob/master/metka/src/main/webapp/WEB-INF/globalServletContext.xml
+[styles.css]:               blob/master/metka/src/main/webapp/resources/css/styles.css
+[guide]:                    blob/master/metka/src/main/webapp/resources/html/guide/guide.html
+[custom]:                   blob/master/metka/src/main/webapp/resources/js/modules/custom
 
 # Konfiguraatiotutoriaali
 
