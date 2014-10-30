@@ -1,6 +1,14 @@
 define(function (require) {
     'use strict';
 
+    /**
+     * Creates table (container field or reference container) field.
+     *
+     * @this {jQuery} Language specific element.
+     * @param {object} options UI configuration of this field, with properties for accessing data, configurations etc.
+     * @param {object} lang. Language of this field.
+     * @return {undefined} No return value.
+     */
     return function (options, lang) {
         var columns = [];
 

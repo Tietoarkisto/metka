@@ -3,6 +3,14 @@ define(function (require) {
 
     var getPropertyNS = require('./utils/getPropertyNS');
 
+    /**
+     * Creates language specific field element(s) inside this element,
+     * detects field type and creates input element inside each language specific element.
+     *
+     * @this {jQuery} Cell element
+     * @param {object} options UI configuration of this field, with properties for accessing data, configurations etc.
+     * @return {jQuery} Object for chaining.
+     */
     return function (options) {
         var $elem = this;
 
