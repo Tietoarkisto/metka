@@ -344,26 +344,26 @@ Sovelluksen käyttöliittymä rakennetaan JavaScriptillä. Sovellus hyödyntää
 Käyttöliittymän tiedostot sijaitsevat [resources]-kansiossa. Palvelin ohjaa polkuihin `/css`, `/html`, `/js` ja `/lib` tulevat pyynnöt vastaaviin kansioihin [resources]-kansiossa. Reitityksiä voi hallita tiedostossa [globalServletContext.xml].
 
 
-### [css/](tree/master/metka/src/main/webapp/resources/css)
+### [css/](./../../tree/master/metka/src/main/webapp/resources/css)
 
 Kansio sisältä sovelluksen tyylit [styles.css]-tiedostossa, sekä käytöstä poistuneita muita CSS-tiedostoja.
 
 Sovelluksen tyylien perustana on Bootstrapin tyylit, joita ylikirjoitetaan hallitusti ja mahdollisimman vähän.
 
 
-### [html/](tree/master/metka/src/main/webapp/resources/html)
+### [html/](../../tree/master/metka/src/main/webapp/resources/html)
 
 Kansio sisältää [käyttöohjeen][guide]. Muita staattisia html-tiedostoja sovelluksessa ei ole.
 
 
-### [js/](tree/master/metka/src/main/webapp/resources/js)
+### [js/](../../tree/master/metka/src/main/webapp/resources/js)
 
 Kansio sisältää sovelluksen JavaScript-tiedostot.
 
 
-### [lib/](tree/master/metka/src/main/webapp/resources/lib)
+### [lib/](../../tree/master/metka/src/main/webapp/resources/lib)
 
-Kansio sisältää kirjastot, lisäosat ym. sovelluksen riippuvuudet. Sivulle ne otetaan käyttöön [head.jsp](blob/master/metka/src/main/webapp/WEB-INF/inc/head.jsp)-tiedostossa.
+Kansio sisältää kirjastot, lisäosat ym. sovelluksen riippuvuudet. Sivulle ne otetaan käyttöön [head.jsp](../../blob/master/metka/src/main/webapp/WEB-INF/inc/head.jsp)-tiedostossa.
 
 
 ## JavaScript
@@ -407,7 +407,6 @@ define(function (require) {
 ```js
 // otherModule.js
 
-
 define(function (require) {
     'use strict';
 
@@ -441,7 +440,7 @@ $button.click(function () {...});
 Kehityssykli on melko lyhyt:
 
 1. Muokkaa tiedostoa.
-2. Suorita [reloadWeb.js](blob/master/reloadWeb.js) (NodeJS-skripti) tai [reloadWeb.sh](blob/master/reloadWeb.sh) -tiedosto ([resources]-kansio kopioidaan palvelimen hakemistoon).
+2. Suorita [reloadWeb.js](../../blob/master/reloadWeb.js) (NodeJS-skripti) tai [reloadWeb.sh](../../blob/master/reloadWeb.sh) -tiedosto ([resources]-kansio kopioidaan palvelimen hakemistoon).
 3. F5, lataa sivu uudelleen.
 
 [Bootstrap]:http://getbootstrap.com/
@@ -449,13 +448,13 @@ Kehityssykli on melko lyhyt:
 [RequireJS]:http://requirejs.org/
 
 
-[resources]:                tree/master/metka/src/main/webapp/resources
-[modules]:                  tree/master/metka/src/main/webapp/resources/js/modules
+[resources]:                ../../tree/master/metka/src/main/webapp/resources
+[modules]:                  ../../tree/master/metka/src/main/webapp/resources/js/modules
 
-[globalServletContext.xml]: blob/master/metka/src/main/webapp/WEB-INF/globalServletContext.xml
-[styles.css]:               blob/master/metka/src/main/webapp/resources/css/styles.css
-[guide]:                    blob/master/metka/src/main/webapp/resources/html/guide/guide.html
-[custom]:                   blob/master/metka/src/main/webapp/resources/js/modules/custom
+[globalServletContext.xml]: ../../blob/master/metka/src/main/webapp/WEB-INF/globalServletContext.xml
+[styles.css]:               ../../blob/master/metka/src/main/webapp/resources/css/styles.css
+[guide]:                    ../../blob/master/metka/src/main/webapp/resources/html/guide/guide.html
+[custom]:                   ../../blob/master/metka/src/main/webapp/resources/js/modules/custom
 
 # Konfiguraatiotutoriaali
 
