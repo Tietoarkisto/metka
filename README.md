@@ -422,7 +422,7 @@ define(function (require) {
 
 Sovelluksen UI rakennetaan jQueryllä. Rakentaminen alkaa `page.js`-tiedostosta, josta konfiguraatiota seuraten mennään alikomponentteihin, kunnes UI on valmis.
 
-Jotta vältytään spagettimaiselta jQuery-koodilta, elementeille on vain harvoin asetettu omia `#id`:itä tai `.class`:eja (Poikkeuksena inputien generoidut ID:t `label`-elementtien `for`-attribuuteille). Tarvittaessa funktiot pitävät muistissaan rakentamansa elementit ja/tai välittävät niitä toisille funktioille. Elementtejä pyritään löytämään suhteellisilla metodeilla, kuten `.parent()` ja `.children()`. `$`-alkuiset muuttujat (esim. `$input`) tarkoittavat jQuery-objekteja. Esim:
+Jotta vältytään spagettimaiselta jQuery-koodilta, elementeille on vain harvoin asetettu omia `#id`:itä tai `.class`:eja (Poikkeuksena inputien generoidut ID:t `label`-elementtien `for`-attribuuteille). Tarvittaessa funktiot pitävät muistissaan rakentamansa elementit ja/tai välittävät niitä toisille funktioille. Elementtejä pyritään löytämään suhteellisilla metodeilla, kuten `.parent()` ja `.children()`. `$`-alkuiset muuttujat tarkoittavat jQuery-objekteja. Esim:
 
 ```js
 var $button = $('<button type="button" class="btn">');
