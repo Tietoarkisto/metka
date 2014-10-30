@@ -1,6 +1,14 @@
 define(function (require) {
     'use strict';
 
+    /**
+     * Creates page configuration based on requested JSON configurations and data from server.
+     *
+     * @this {undefined} No this value.
+     * @param {object} options Object to set additional page related properties, like header.
+     * @param {function} onLoad Callback gets called when options are set.
+     * @return {undefined} No return value.
+     */
     return function (options, onLoad) {
         var metka = require('./../../metka');
         require('./../server')('viewAjax', {
@@ -73,6 +81,7 @@ define(function (require) {
                                                         if(response.result === "REVISION_FOUND") {
                                                             $.extend(options.data, response.data);
                                                             $button.trigger('refresh.metka');
+                                                            history.replaceState(undefined, '', require('./../url')('view'));
                                                         } else {
                                                             require('./../modal')({
                                                                 title: MetkaJS.L10N.get('alert.error.title'),

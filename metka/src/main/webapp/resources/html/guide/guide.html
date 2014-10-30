@@ -25,7 +25,7 @@ kun olet kirjautuneena sisään järjestelmään. <br>
 
 Valitse ikkunan oikeassa ylälaidassa oleva linkki <strong>Kirjaudu ulos</strong>.<span style="font-weight: bold;"><br>
 </span>
-<h1 id="Tee eksperttihaku">Tee eksperttihaku</h1>
+<h1 id="Tee eksperttihaku">Käytä eksperttihakua</h1>
 
 <h2>Tee hakulause eksperttihakua varten<span style="font-weight: bold;"></span></h2>
 
@@ -125,7 +125,8 @@ englanninkieliset sarjat joiden englanninkielisessä nimessä on sana
     </tr>
     <tr>
         <td style="vertical-align: top;"><code>state.draft:false</code></td>
-        <td style="vertical-align: top;">Heataan kaikki revisiot, jotka ovat tilassa <var>Hyväksytty</var> tai <var>Poistettu</var>. <br>
+        <td style="vertical-align: top;">Heataan kaikki revisiot, jotka
+            ovat tilassa <var>Hyväksytty</var> tai <var>Poistettu</var>. <br>
         </td>
     </tr>
     <tr>
@@ -176,11 +177,13 @@ englanninkieliset sarjat joiden englanninkielisessä nimessä on sana
     </tr>
     <tr>
         <td style="vertical-align: top;"><code>state.approved:false</code></td>
-        <td style="vertical-align: top;">Haetaan kaikki tilassa <var>Luonnos</var> tai <var>Poistettu</var> olevat revisiot.&nbsp; </td>
+        <td style="vertical-align: top;">Haetaan kaikki tilassa <var>Luonnos</var>
+            tai <var>Poistettu</var> olevat revisiot.&nbsp; </td>
     </tr>
     <tr>
         <td style="vertical-align: top;"><code>state.approved.user:</code><var>&lt;Käyttäjätunnus</var><var>&gt;</var><code></code><code></code></td>
-        <td style="vertical-align: top;">Haetaan kaikki tietyn kieliset revisiot, jotka on hyväksynyt annettu henkilö. Henkilö
+        <td style="vertical-align: top;">Haetaan kaikki tietyn kieliset
+            revisiot, jotka on hyväksynyt annettu henkilö. Henkilö
             määritellään tietoarkiston käyttäjätunnuksen (<var>Käyttäjätunnus</var>)
             perusteella. Kieli valitaan hakulauseen toisella hakutermillä (kts.
             edellinen taulukko <var>Kieli</var>). Esimerkiksi jos halutaan etsiä
@@ -191,7 +194,8 @@ englanninkieliset sarjat joiden englanninkielisessä nimessä on sana
     </tr>
     <tr>
         <td style="vertical-align: top;"><code>state.approved.time:</code><var>&lt;Aika&gt;</var></td>
-        <td style="vertical-align: top;">Haetaan kaikki tietyn kieliset revisiot, jotka on hyväksytty annettuun aikaan (<var>Aika</var>).
+        <td style="vertical-align: top;">Haetaan kaikki tietyn kieliset
+            revisiot, jotka on hyväksytty annettuun aikaan (<var>Aika</var>).
             Kieli valitaan hakulauseen toisella hakutermillä (kts. edellinen
             taulukko <var>Kieli</var>). Esimerkiksi jos halutaan etsiä kaikki
             aineistot, jotka on hyväksytty englannin kielelle 8.9.2014, se
@@ -202,15 +206,18 @@ englanninkieliset sarjat joiden englanninkielisessä nimessä on sana
     </tr>
     <tr>
         <td style="vertical-align: top;"><code>state.removed:true</code></td>
-        <td style="vertical-align: top;">Haetaan kaikki objektit, jotka ovat tilassa <var>Poistettu</var> (looginen poisto).</td>
+        <td style="vertical-align: top;">Haetaan kaikki objektit, jotka
+            ovat tilassa <var>Poistettu</var> (looginen poisto).</td>
     </tr>
     <tr>
         <td style="vertical-align: top;"><code>state.removed:false</code></td>
-        <td style="vertical-align: top;">Haetaan kaikki objektit, jotka ovat tilassa <var>Luonnos</var> tai <var>Hyväksytty</var>.</td>
+        <td style="vertical-align: top;">Haetaan kaikki objektit, jotka
+            ovat tilassa <var>Luonnos</var> tai <var>Hyväksytty</var>.</td>
     </tr>
     <tr>
         <td style="vertical-align: top;"><code>state.removed.user:</code><var>&lt;Käyttäjätunnus</var><var>&gt;</var><code></code><code></code></td>
-        <td style="vertical-align: top;">Haetaan kaikki <var>Poistettu</var> tilassa olevat (loogisesti
+        <td style="vertical-align: top;">Haetaan kaikki <var>Poistettu</var>
+            tilassa olevat (loogisesti
             poistetut) revisiot, joiden käsittelijä on annettu henkilö. Käyttäjät
             identifioidaan käyttäjätunnuksen (<var>Käyttäjätunnus</var><var></var>)
             perusteella.
@@ -218,7 +225,9 @@ englanninkieliset sarjat joiden englanninkielisessä nimessä on sana
     </tr>
     <tr>
         <td style="vertical-align: top;"><code>state.removed.time</code><code>:</code><var>&lt;Aika&gt;</var></td>
-        <td style="vertical-align: top;">Haetaan kaikki revisiot, jotka on siirretty tilaan <var>Poistettu</var> annettuna aikana. Esimerkiksi jos halutaan etsiä kaikki
+        <td style="vertical-align: top;">Haetaan kaikki revisiot, jotka
+            on siirretty tilaan <var>Poistettu</var> annettuna aikana. Esimerkiksi
+            jos halutaan etsiä kaikki
             aineistot,
             jotka on poistettu 8.9.2014, se
             voidaan tehdä kirjoittamalla <strong>Hakulause</strong>&nbsp; <code>state.removed.</code><code>time:2014-09-08*</code>.
@@ -534,6 +543,11 @@ Ajan muodostaminen:<br>
     </tbody>
 </table>
 
+<h2>Tee eksperttihaku</h2>
+
+<strong>Eksperttihaku</strong> &gt; Kirjoita <strong>Hakulause</strong>
+&gt; <strong>Tee haku</strong>.<br>
+
 <h2>Tallenna hakulause<br>
 </h2>
 
@@ -564,6 +578,25 @@ listalta poistettava haku. &gt; Valitse poistettavan haun riviltä <strong>Poist
 
 Kaikki käyttäjät voivat poistaa myös toisten käyttäjien tallentamia
 hakuja.<br>
+
+<h2>Tallenna eksperttihaun hakutulokset JSON-formaatissa</h2>
+
+Eksperttihaun tulokset voi ottaa ulos järjestelmästä JSON-formaatissa.
+Hakutulosten tiedot on koodattu UTF-8 merkistöstandardin mukaisesti.<br>
+
+<br>
+
+Tallenna eksperttihaun hakutulokset JSON-formaatissa:<br>
+
+<ol>
+
+    <li>Tee eksperttihaku.</li>
+    <li>Paina <strong>Hakutulos</strong> taulukon <strong>Lataa</strong>
+        painiketta.</li>
+    <li>Avaa eksperttihaun tulokset suoraan tekstinkäsittelyohjelmaan tai
+        tallenna ne. Huomioi, että käyttämäsi tekstinkäsittelyohjelman tulee
+        tukea UTF-8 formaattia, jotta tiedot näkyvät siinä oikein.</li>
+</ol>
 
 <h1>Aineistojen, julkaisujen ja sarjojen revisiot<br>
 </h1>
@@ -616,53 +649,102 @@ edelleen mahdollista hakea järjestelmästä. Jos <var>Hyväksytty</var>
 tilassa olevasta revisiosta on lähdetty muokkaamaan uutta revisiota,
 joka on tilassa <var>Luonnos</var>, täytyy luonnos poistaa ennen kuin
 hyväksytyn revision ja koko objektin poistaminen on mahdollista.<br>
+
+<h1>Revisioitavien objektien haltuunotto ja vapauttaminen</h1>
+Revisioitavien objektien haltuunottoa ja vapauttamista koskevat seuraavat säännöt:<br>
+
+<ul>
+
+    <li>Mikäli revisioitavalla objektilla on käsittelijä, se voidaan vapauttaa muiden käyttöön painamalla <strong>Vapauta luonnos</strong>
+        painiketta. Tämän jälkeen objektilla ei ole käsittelijää ja kuka
+        tahansa voi ryhtyä muokkaamaan objektia.</li>
+    <li>Jos revisioitavalla objektilla ei ole käsittelijää, kuka tahansa
+        voi aloittaa sen muokkaamisen painamalla <strong>Aloita muokkaus</strong>
+        painiketta. Tämän jälkeen painiketta painanut käyttäjä on objektin käsittelijä.&nbsp;</li>
+    <li>Kun käyttäjä on tehnyt tarvittavat muokkaukset objektille, jonka
+        käsittelijä hän on, käyttäjä voi painaa <strong>Lopeta muokkaus</strong>
+        painiketta. Tämän jälkeen objektilla ei ole käsittelijää ja kuka
+        tahansa voi alkaa muokkaamaan objektia.</li>
+    <li>Mikäli revisioitavalla objektilla on käsittelijä, toinen käyttäjä
+        voi ottaa sen haltuunsa valitsemalla objektille <strong>Ota haltuun</strong>.</li>
+</ul>
+
+Kts. Lisätietoja toimintojen saatavuudesta käyttäjälle: <a href="#K%E4ytt%E4j%E4ryhm%E4t">Käyttäjäryhmien oikeudet</a>.<br>
+
 <h1>Käsittele aineistoja</h1>
 
-<h2>Hae ja avaa aineistoja</h2>
-
-
+<h2>Tee aineistohaku ja avaa aineiston tiedot<br>
+</h2>
 
 Hakemiseen liittyviä sääntöjä:<br>
 
-
 <ul>
+
     <li>Jos useampaan kuin yhteen kenttään on kirjoitettu hakukriteeri,
         aineisto liitetään hakutuloksiin, jos se sopii kaikkiin annettuihin
-        hakuehtoihin (AND).</li><li><strong>ID </strong>kenttään kirjoitettu hakusana palauttaa
-    juuri sen aineiston, jonka ID on kenttään kirjoitettu. </li><li><strong style="font-weight: normal;">Teksti</strong>kenttiin
-    kirjoitetulla hakusanalla löytää
-    kaikki aineistot, joiden nimi sisältää täsmälleen hakukenttään annetun
-    sanan. Jos tekstikenttään on annettu useampi hakusana, haku löytää
-    kaikki aineistot, joiden
-    nimessä on jokin annetuista hakusanoista (OR). Jos halutaan etsiä
-    esimerkiksi aineiston koko nimellä, se voidaan antaa lainausmerkkien
-    sisään, jolloin haetaan&nbsp; koko lainausmerkkien sisällä olevaa
-    merkkijonoa.<br>
-</li><li>Jos aineistosta on olemassa sekä viimeisin <em>HYVÄKSYTTY</em>
-    revisio että
-    uusi <em>LUONNOS</em>, ne molemmat näkyvät erillisinä riveinä
-    hakutuloksissa.</li>
-    <li>Yksittäisten tekstikenttien hakujen sisältöä voi muotoilla Apache Lucene syntaksin mukaan, kts. <a href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Syntaksi">Hakujehtojen syntaksi</a>.</li>
+        hakuehtoihin (AND).</li>
+    <li><strong>ID </strong>kenttään kirjoitettu hakusana palauttaa
+        juuri sen aineiston, jonka ID on kenttään kirjoitettu. </li>
+    <li><strong style="font-weight: normal;">Teksti</strong>kenttiin
+        kirjoitetulla hakusanalla löytää
+        kaikki aineistot, joiden nimi sisältää täsmälleen hakukenttään annetun
+        sanan. Jos tekstikenttään on annettu useampi hakusana, haku löytää
+        kaikki aineistot, joiden
+        nimessä on jokin annetuista hakusanoista (OR). Jos halutaan etsiä
+        esimerkiksi aineiston koko nimellä, se voidaan antaa lainausmerkkien
+        sisään, jolloin haetaan&nbsp; koko lainausmerkkien sisällä olevaa
+        merkkijonoa.<br>
+    </li>
+    <li>Jos aineistosta on olemassa sekä viimeisin <em>HYVÄKSYTTY</em>
+        revisio että
+        uusi <em>LUONNOS</em>, ne molemmat näkyvät erillisinä riveinä
+        hakutuloksissa.</li>
+    <li>Yksittäisten tekstikenttien hakujen sisältöä voi muotoilla Apache
+        Lucene syntaksin mukaan, kts. <a href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Syntaksi">Hakujehtojen
+            syntaksi</a>.</li>
 </ul>
 
-
-
-
-Hae aineistoja valitsemalla <strong>Aineistot</strong> &gt; <strong>Tee haku</strong>.
+Hae aineistoja valitsemalla <strong>Aineistot</strong> &gt; syötä
+hakukriteerit &gt; <strong>Tee haku</strong>.
 Jos hakutuloksia on vain yksi aineiston tiedot aukeavat.
 Jos hakutuloksia on useita, ne näytetään <strong>Julkaisuhaku</strong>
-sivulla <strong>Hakutulos</strong> listalla. Avaa yksittäisen aineiston
-tiedot valitsemalla <strong>Hakutulos</strong> listasta haluttu aineisto. <br>
+sivulla <strong>Hakutulos</strong> listalla. Avaa yksittäisen
+aineiston
+tiedot valitsemalla <strong>Hakutulos</strong> listasta haluttu
+aineisto. <br>
 
 <br>
 
 Tyhjennä antamasi hakukriteerit valitsemalla <strong>Tyhjennä</strong>.<br>
 
 <br>
-Aineistoja voit hakea myös eksperttihaun avulla, kts. luku <a target="_blank" href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Tee%20eksperttihaku">Tee eksperttihaku</a>.
+
+Aineistoja voit hakea myös eksperttihaun avulla, kts. luku <a target="_blank" href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Tee%20eksperttihaku">Tee
+    eksperttihaku</a>.
+<h2>Tallenna aineistohaun hakutulokset JSON-formaatissa</h2>
+
+Aiheistohaun tulokset voi ottaa ulos järjestelmästä JSON-formaatissa.
+Hakutulosten tiedot on koodattu UTF-8 merkistöstandardin mukaisesti.<br>
+
+<br>
+
+Tallenna aineistohaun hakutulokset JSON-formaatissa:<br>
+
+<ol>
+
+    <li>Tee aineistohaku.</li>
+    <li>Paina <strong>Hakutulos</strong> taulukon <strong>Lataa</strong>
+        painiketta.</li>
+    <li>Avaa aineistohaun tulokset suoraan tekstinkäsittelyohjelmaan tai
+        tallenna ne. Huomioi, että käyttämäsi tekstinkäsittelyohjelman tulee
+        tukea UTF-8 formaattia, jotta tiedot näkyvät siinä oikein.</li>
+</ol>
 
 <h2>Hae ja avaa aineistoja, joissa on virheitä</h2>
-Hae aineistoja, joissa on virheitä valitsemalla <strong>Aineistot</strong> &gt; <strong>Virheelliset</strong>. Voit avata virheitä sisältävän aineiston valitsemalla sen <strong>Hakutulos</strong> listalta.<br>
+
+Hae aineistoja, joissa on virheitä valitsemalla <strong>Aineistot</strong>
+&gt; <strong>Virheelliset</strong>. Voit avata virheitä sisältävän
+aineiston valitsemalla sen <strong>Hakutulos</strong> listalta.<br>
 
 <h2>Tallenna uusi aineisto</h2>
 
@@ -705,7 +787,8 @@ Avaa <var>HYVÄKSYTTY</var> tilassa oleva aineisto. Valitse <strong>Tee
 
 <h2>Muokkaa aineistoa</h2>
 
-Avaa aineisto ja muokkaa sen kenttiä. Aineistoa voi muokata vain jos se on
+Avaa aineisto ja muokkaa sen kenttiä. Aineistoa voi muokata vain jos se
+on
 <var>LUONNOS</var> tilassa. Tallenna luonnokseen tehdyt muutokset
 valitsemalla <strong>Tallenna</strong>, jolloin aineiston
 revisionumero pysyy samana.
@@ -729,8 +812,10 @@ mahdollista tarvittaessa palauttaa.<br>
 <h2>Avaa aineiston vanha revisio</h2>
 
 Avaa aineiston vanha revisio:<br>
+
 <ol>
-    <li>Hae ja avaa aineisto. </li>
+
+    <li>Tee aineistohaku ja avaa aineiston tiedot. </li>
     <li>Valitse <strong>Revisionhistoria</strong>. </li>
     <li><strong>Revisiot</strong> dialogin sarakeessa <strong>Revisio</strong>
         on järjestelmän automaattisesti objektille generoimat revisionumerot.
@@ -741,46 +826,94 @@ Avaa aineiston vanha revisio:<br>
 <h2>Vertaa aineiston revisioita</h2>
 
 Vertaa aineiston revisioita:<br>
+
 <ol>
-    <li>Hae ja avaa aineisto. </li>
+
+    <li>Tee aineistohaku ja avaa aineiston tiedot. </li>
     <li>Valitse <strong>Revisionhistoria</strong>. </li>
-    <li>Merkitse <strong>Alku</strong> valintapainikkeella se revisio, johon verrataan. </li>
+    <li>Merkitse <strong>Alku</strong> valintapainikkeella se revisio,
+        johon verrataan. </li>
     <li>Valitse <strong>Loppu</strong>
         valintapainikkeella se revisio, jota verrataan. Sen revision, johon
         verrataan täytyy olla vanhempi kuin se versio, jota verrataan. </li>
     <li>Valitse <strong>Vertaa</strong>.</li>
 </ol>
+
 <h2>Lataa aineiston tiedot JSON-formaatissa</h2>
 
+Aineiston tiedot voi ottaa ulos järjestelmästä JSON-formaatissa.
+Aineiston tiedot on koodattu UTF-8 merkistöstandardin mukaisesti.<br>
+
+<br>
 
 Lataa aineiston tiedot JSON-formaatissa:<br>
+
 <ol>
-    <li>Hae ja avaa aineisto. </li>
-    <li>Valitse <strong>Lataa</strong> sivun oikeasta yläkulmasta. </li>
-    <li>Voit nyt avata tai tallentaa aineiston viimeisimmät muutokset JSON-formaatissa.</li>
+
+    <li>Tee aineistohaku ja avaa aineiston tiedot. </li>
+    <li>Valitse <strong>Lataa</strong> sivun oikeasta yläkulmasta.</li>
+    <li>Avaa aineiston tiedot suoraan tekstinkäsittelyohjelmaan tai
+        tallenna ne. Huomioi, että käyttämäsi tekstinkäsittelyohjelman tulee
+        tukea UTF-8 formaattia, jotta tiedot näkyvät siinä oikein.</li>
+</ol>
+
+<ol>
+
+</ol>
+
+<h2>Tee aineistolle DDI export</h2>
+
+Aineiston tiedot voi ottaa ulos järjestelmästä DDI muodossa. Aineiston
+tiedot on koodattu UTF-8 merkistöstandardin mukaisesti.<br>
+
+<br>
+
+Tee aineistolle DDI export:<br>
+
+<ol>
+
+    <li>Tee aineistohaku ja avaa aineiston tiedot. </li>
+    <li>Valitse <strong>Export DDI</strong>.</li>
+    <li>Valitse <strong>DDI kieli</strong>.<br>
+    </li>
+    <li>Valitse <strong>Lataa</strong>.</li>
+    <li>Avaa aineiston tiedot suoraan tekstinkäsittelyohjelmaan tai
+        tallenna ne. Huomioi, että käyttämäsi tekstinkäsittelyohjelman tulee
+        tukea UTF-8 formaattia, jotta tiedot näkyvät siinä oikein.<br>
+    </li>
 </ol>
 
 <h2>Aineistojen virheet</h2>
+
 Aineistojen virheet ovat koko aineistolle yhteisiä eli ne eivät ole
 revisiokohtaisia. Jos aineistolla on virhepisteitä enemmän kuin
 kymmenen, järjestelmä lähettää viestin.<br>
+
 <h2>Aineistoon liittyvän virheen tallentaminen<br>
 </h2>
+
 Avaa aineisto ja valitse <strong>Virheet</strong> välilehti.&nbsp;
 <br>
+
 <br>
+
 Lisää aineistoon liittyvät virheet:<br>
+
 <ol>
+
     <li>Lisää virhe valitsemalla <strong>Lisää</strong>.</li>
     <li>Kuvaile virhe.</li>
     <li>Valitse <strong>Lisää</strong>. Virhe ei ole vielä tallentunut. <br>
     </li>
     <li>Tallenna virhe valiten <strong>Tallenna</strong>.<br>
-
     </li>
 </ol>
+
 <h2>Aineiston liityvän virheen poistaminen</h2>
-Avaa aineisto ja valitse <strong>Virheet</strong> välilehti. Valitse <strong>Poista</strong> siltä riviltä, jolla poistettava virhe on.<br>
+
+Avaa aineisto ja valitse <strong>Virheet</strong> välilehti. Valitse <strong>Poista</strong>
+siltä riviltä, jolla poistettava virhe on.<br>
+
 <h2>Aineiston tiedostojen hallinta</h2>
 
 <ul>
@@ -852,46 +985,69 @@ Tiedostojen lisääminen:<br>
 <h2>Aineistojen import ja
     export
 </h2>
+
 <h2>Export</h2>
-Avaa aineiston <strong>Import/Export</strong> välilehti &gt; <strong>Export</strong>. Voit nyt avata tai tallentaa aineiston viimeisimmät muutokset DDI 2.5-formaatissa.
+
+Avaa aineiston <strong>Import/Export</strong> välilehti &gt; <strong>Export</strong>.
+Voit nyt avata tai tallentaa aineiston viimeisimmät muutokset DDI
+2.5-formaatissa.
 <h2>Import</h2>
 
 Avaa <var>LUONNOS</var> tilassa oleva aineisto &gt; <strong>Import</strong>
 &gt; valitse DDI-formaatissa oleva tiedosto. Järjestelmä kopioi auki
 olevaan revisioon tiedostossa olleen datan. Import ei ole mahdollinen
 ellet ole aineiston käsittelijä. <br>
+
 <h1>Käsittele muuttujia</h1>
+
 <span style="font-weight: bold;"></span>
-<h2>
-</h2>
-<strong></strong> Muuttujiin liittyvät näkymät ovat raskaita avata, joten tietojen latautumista kannattaa odottaa kärsivällisesti.<br>
+<strong></strong> Muuttujiin liittyvät näkymät ovat raskaita avata,
+joten tietojen latautumista kannattaa odottaa kärsivällisesti.<br>
+
 <h2>Hae ja avaa aineiston muuttujat</h2>
+
 Avaa aineiston muuttujatiedot: <br>
+
 <ol>
-    <li>Valitse <strong>Muuttujat</strong>. <strong>Aineistot</strong> listalla näytetään kaikki aineistot, joilla on muuttujia.</li>
-    <li>Valitse rivi, jolla on aineisto, jonka muuttujia halutaan tarkastella.</li>
+
+    <li>Valitse <strong>Muuttujat</strong>. <strong>Aineistot</strong>
+        listalla näytetään kaikki aineistot, joilla on muuttujia.</li>
+    <li>Valitse rivi, jolla on aineisto, jonka muuttujia halutaan
+        tarkastella.</li>
 </ol>
+
 <h2>Muuta muuttujan tietoja</h2>
+
 Muuta muuttujan tietoja:<br>
+
 <ol>
+
     <li>Avaa aineiston muuttujatiedot.</li>
-    <li>Valitse <strong>Muuttujat</strong> listasta muokattava muuttuja.&nbsp;</li>
+    <li>Valitse <strong>Muuttujat</strong> listasta muokattava
+        muuttuja.&nbsp;</li>
     <li>Tee muutokset.</li>
     <li><strong>Tallenna</strong>.<br>
     </li>
 </ol>
+
 <strong></strong>
 <h2>Ryhmitelty näkymä välilehti</h2>
+
 <ul>
-    <li>Listalla näkyy kaikki ryhmät. Voit katsella kuhunkin ryhmään kuuluvia muuttujia valitsemalla kansioikonin ryhmän nimen vierestä.<br>
+
+    <li>Listalla näkyy kaikki ryhmät. Voit katsella kuhunkin ryhmään
+        kuuluvia muuttujia valitsemalla kansioikonin ryhmän nimen vierestä.<br>
     </li>
     <li>Jos muuttujia ei ole määritelty ryhmiin, tämä välilehti on tyhjä.<br>
     </li>
 </ul>
+
 <h2>Muuta ryhmän tietoja</h2>
+
 Muuta ryhmän tietoja:<br>
 
 <ol>
+
     <li>Avaa aineiston muuttujatiedot.</li>
     <li>Avaa <strong>Ryhmitelty näkymä</strong> välilehti.</li>
     <li>Valitse ryhmän nimi listasta.</li>
@@ -900,16 +1056,24 @@ Muuta ryhmän tietoja:<br>
     <li><strong>Tallenna</strong>.<br>
     </li>
 </ol>
+
 <h2>Muuttujien ryhmittely välilehti</h2>
 
 <ul>
-    <li>Vasemmalla puolella on listattuna kaikki muuttujat, jotka eivät kuulu mihinkään ryhmään.</li><li>Oikealla puolella on listattuna kaikki ryhmät ja niiden alla kaikki ryhmään kuuluvat muuttujat.<br>
-</li>
+
+    <li>Vasemmalla puolella on listattuna kaikki muuttujat, jotka eivät
+        kuulu mihinkään ryhmään.</li>
+    <li>Oikealla puolella on listattuna kaikki ryhmät ja niiden alla
+        kaikki ryhmään kuuluvat muuttujat.<br>
+    </li>
 </ul>
 
 <h2>Lisää ryhmä</h2>
+
 Lisää ryhmä:<br>
+
 <ol>
+
     <li>Avaa muuttujatiedot.<br>
     </li>
     <li>Avaa <strong>Muuttujien ryhmittely</strong> välilehti.</li>
@@ -917,22 +1081,30 @@ Lisää ryhmä:<br>
     <li><strong>Tallenna</strong><br>
     </li>
 </ol>
+
 <h2>Lisää muuttuja ryhmään</h2>
+
 Lisää muuttuja ryhmään:<br>
 
 <ol>
+
     <li>Avaa muuttujatiedot.<br>
-    </li><li>Avaa <strong>Muuttujien ryhmittely</strong> välilehti.</li><li>Valitse lisättävä muuttuja.</li>
+    </li>
+    <li>Avaa <strong>Muuttujien ryhmittely</strong> välilehti.</li>
+    <li>Valitse lisättävä muuttuja.</li>
     <li>Valitse ryhmä, johon muuttuja siirretään.</li>
-    <li><strong>&gt;</strong>&nbsp;  <strong><br>
+    <li><strong>&gt;</strong>&nbsp; <strong><br>
     </strong></li>
     <li><strong>Tallenna</strong><br>
     </li>
 </ol>
 
 <h2>Poista muuttuja ryhmästä</h2>
+
 Poista muuttuja ryhmästä:<br>
+
 <ol>
+
     <li>Avaa muuttujatiedot.</li>
     <li>Avaa <strong>Muuttujien ryhmittely</strong> välilehti.</li>
     <li>Valitse ryhmästä poistettava muuttuja.</li>
@@ -942,7 +1114,8 @@ Poista muuttuja ryhmästä:<br>
 
 <h1>Käsittele julkaisuja</h1>
 
-<h2>Hae ja avaa julkaisuja</h2>
+<h2>Tee julkaisuhaku ja avaa julkaisun tiedot<br>
+</h2>
 
 Hakemiseen liittyviä sääntöjä:<br>
 
@@ -951,37 +1124,71 @@ Hakemiseen liittyviä sääntöjä:<br>
     <li>Jos useampaan kuin yhteen kenttään on kirjoitettu hakukriteeri,
         julkaisu liitetään hakutuloksiin, jos se sopii kaikkiin annettuihin
         hakuehtoihin (AND).</li>
-    <li><strong>Julkaisun id-nro </strong>kenttään kirjoitettu hakusana palauttaa
+    <li><strong>Julkaisun id-nro </strong>kenttään kirjoitettu hakusana
+        palauttaa
         juuri sen julkaisun, jonka Julkaisun id-nro on kenttään kirjoitettu. </li>
-    <li><strong style="font-weight: normal;">Teksti</strong>kenttiin kirjoitetulla hakusanalla löytää
+    <li><strong style="font-weight: normal;">Teksti</strong>kenttiin
+        kirjoitetulla hakusanalla löytää
         kaikki julkaisut, joiden nimi sisältää täsmälleen hakukenttään annetun
-        sanan. Jos tekstikenttään on annettu useampi hakusana, haku löytää kaikki julkaisut, joiden
-        nimessä on jokin annetuista hakusanoista (OR). Jos halutaan etsiä esimerkiksi julkaisun koko nimellä, se voidaan antaa
-        lainausmerkkien sisään, jolloin haetaan&nbsp; koko lainausmerkkien sisällä
+        sanan. Jos tekstikenttään on annettu useampi hakusana, haku löytää
+        kaikki julkaisut, joiden
+        nimessä on jokin annetuista hakusanoista (OR). Jos halutaan etsiä
+        esimerkiksi julkaisun koko nimellä, se voidaan antaa
+        lainausmerkkien sisään, jolloin haetaan&nbsp; koko lainausmerkkien
+        sisällä
         olevaa merkkijonoa. </li>
     <li>Jos julkaisusta on olemassa sekä viimeisin <em>HYVÄKSYTTY</em>
         revisio että
         uusi <em>LUONNOS</em>, ne molemmat näkyvät erillisinä riveinä
         hakutuloksissa.</li>
-    <li>Yksittäisten tekstikenttien hakujen sisältöä voi muotoilla Apache Lucene syntaksin mukaan, kts. <a href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Syntaksi">Hakujehtojen syntaksi</a>.</li>
-
-
+    <li>Yksittäisten tekstikenttien hakujen sisältöä voi muotoilla Apache
+        Lucene syntaksin mukaan, kts. <a href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Syntaksi">Hakujehtojen
+            syntaksi</a>.</li>
 </ul>
 
-Hae julkaisuja valitsemalla <strong>Julkaisut</strong> &gt; <strong>Tee haku</strong>.
-Jos hakutuloksia on vain yksi, <strong>Julkaisu</strong> dialogi aukeaa.
+Hae julkaisuja valitsemalla <strong>Julkaisut</strong> &gt; <strong>Tee
+    haku</strong>.
+Jos hakutuloksia on vain yksi, <strong>Julkaisu</strong> dialogi
+aukeaa.
 Jos hakutuloksia on useita, ne näytetään <strong>Julkaisuhaku</strong>
-sivulla <strong>Hakutulos</strong> listalla. Avaa yksittäisen julkaisun
-tiedot valitsemalla <strong>Hakutulos</strong> listasta haluttu julkaisu. <br>
+sivulla <strong>Hakutulos</strong> listalla. Avaa yksittäisen
+julkaisun
+tiedot valitsemalla <strong>Hakutulos</strong> listasta haluttu
+julkaisu. <br>
+
 <br>
+
 Tyhjennä antamasi hakukriteerit&nbsp; valitsemalla <strong>Tyhjennä</strong>.<br>
+
 <br>
-Julkaisuja voit hakea myös eksperttihaun avulla, kts. luku <a target="_blank" href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Tee%20eksperttihaku">Tee eksperttihaku</a>.
+
+Julkaisuja voit hakea myös eksperttihaun avulla, kts. luku <a target="_blank" href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Tee%20eksperttihaku">Tee
+    eksperttihaku</a>.
 <br>
+
+<h2>Tallenna julkaisuhaun hakutulokset JSON-formaatissa</h2>
+
+Julkaisuhaun tulokset voi ottaa ulos järjestelmästä JSON-formaatissa.
+Hakutulosten tiedot on koodattu UTF-8 merkistöstandardin mukaisesti.<br>
+
+<br>
+
+Tallenna julkaisuhaun hakutulokset JSON-formaatissa:<br>
+
+<ol>
+
+    <li>Tee julkaisuhaku.</li>
+    <li>Paina <strong>Hakutulos</strong> taulukon <strong>Lataa</strong>
+        painiketta.</li>
+    <li>Avaa julkaisuhaun tulokset suoraan tekstinkäsittelyohjelmaan tai
+        tallenna ne. Huomioi, että käyttämäsi tekstinkäsittelyohjelman tulee
+        tukea UTF-8 formaattia, jotta tiedot näkyvät siinä oikein.</li>
+</ol>
 
 <h2>Lisää julkaisu</h2>
 
-Lisätäksesi uuden julkaisun valitse <span style="font-weight: bold;">Julkaisut</span><strong>&nbsp; &gt;&nbsp; Lisää
+Lisätäksesi uuden julkaisun valitse <span style="font-weight: bold;">Julkaisut</span><strong>&nbsp;
+    &gt;&nbsp; Lisää
     uusi</strong>.<br>
 
 <ul>
@@ -991,8 +1198,8 @@ Lisätäksesi uuden julkaisun valitse <span style="font-weight: bold;">Julkaisut
         jota käyttäjä ei voi muuttaa. ID:tä voidaan käyttää hakukriteerinä.</li>
     <li><strong>Julkaisun id-nro</strong>: Järjestelmän
         automaattisesti julkaisulle generoima ID,
-        jota käyttäjä ei voi muuttaa. Julkaisun id-nro kenttää voidaan käyttää hakukriteerinä.</li>
-
+        jota käyttäjä ei voi muuttaa. Julkaisun id-nro kenttää voidaan käyttää
+        hakukriteerinä.</li>
 </ul>
 
 Tallenna julkaisu tilaan <em>LUONNOS</em> valitsemalla <strong>Tallenna</strong>.<br>
@@ -1002,7 +1209,8 @@ Tallenna julkaisu tilaan <em>LUONNOS</em> valitsemalla <strong>Tallenna</strong>
 Hae ja avaa <var>HYVÄKSYTTY</var> tilassa oleva julkaisu. Valitse <strong>Tee
     luonnos</strong>,
 jolloin julkaisusta syntyy uusi revisio, jonka revisionumero on yhtä
-suurempi kuin edellisen revision. Voit poistua julkaisun muokkaustilasta
+suurempi kuin edellisen revision. Voit poistua julkaisun
+muokkaustilasta
 valitsemalla <strong>Lopeta
     muokkaus</strong>. Muokkaustilaan voi palata takaisin valitsemalla <strong>Aloita
     muokkaus</strong>.
@@ -1014,18 +1222,21 @@ Tallenna ja siirrä julkaisu tilaan <var>HYVÄKSYTTY</var> valitsemalla
 <strong>Hyväksy</strong>.
 <h2>Muokkaa julkaisua</h2>
 
-Avaa yksittäisen julkaisun tiedot<strong></strong>. Julkaisua voi muokata
+Avaa yksittäisen julkaisun tiedot<strong></strong>. Julkaisua voi
+muokata
 vain jos se on <var>LUONNOS</var> tilassa. Tallenna luonnokseen tehdyt
 muutokset valitsemalla <strong>Tallenna</strong>, jolloin julkaisun
 revisionumero pysyy samana.
 <h2>Poista julkaisun luonnos<br>
 </h2>
 
-Poista <var>LUONNOS</var> tilassa oleva julkaisun revisio järjestelmästä
+Poista <var>LUONNOS</var> tilassa oleva julkaisun revisio
+järjestelmästä
 kokonaan
 valitsemalla <strong>Poista</strong>. Jos julkaisusta ei ole vielä
 hyväksyttyjä revisioita ja poistat sen ensimmäisen <var>LUONNOS</var>
-tilassa olevan revision, kaikki julkaisun tiedot poistuvat järjestelmästä.<br>
+tilassa olevan revision, kaikki julkaisun tiedot poistuvat
+järjestelmästä.<br>
 
 <h2>Poista julkaisu</h2>
 
@@ -1034,9 +1245,12 @@ olevalle revisiolle <strong>Poista</strong>, jolloin julkaisu siirtyy <var>POIST
 </var>tilaan<var>.<br>
 </var>
 <h2>Avaa julkaisun vanha revisio</h2>
+
 Avaa julkaisun vanha revisio:<br>
+
 <ol>
-    <li>Hae ja avaa julkaisu. </li>
+
+    <li>Tee julkaisuhaku ja avaa julkaisun tiedot. </li>
     <li>Valitse <strong>Revisionhistoria</strong>. </li>
     <li><strong>Revisiot</strong> dialogin sarakeessa <strong>Revisio</strong>
         on järjestelmän automaattisesti objektille generoimat revisionumerot.
@@ -1045,53 +1259,70 @@ Avaa julkaisun vanha revisio:<br>
 </ol>
 
 <h2>Vertaa julkaisun revisioita</h2>
+
 Vertaa julkaisun revisioita:<br>
+
 <ol>
-    <li>Hae ja avaa julkaisu. </li>
+
+    <li>Tee julkaisuhaku ja avaa julkaisun tiedot. </li>
     <li>Valitse <strong>Revisionhistoria</strong>. </li>
-    <li>Merkitse <strong>Alku</strong> valintapainikkeella se revisio, johon verrataan. </li>
+    <li>Merkitse <strong>Alku</strong> valintapainikkeella se revisio,
+        johon verrataan. </li>
     <li>Valitse <strong>Loppu</strong>
         valintapainikkeella se revisio, jota verrataan. Sen revision, johon
         verrataan täytyy olla vanhempi kuin se versio, jota verrataan. </li>
     <li>Valitse <strong>Vertaa</strong>.</li>
 </ol>
 
-<h2>Lataa julkaisun tiedot JSON-formaatissa</h2>Lataa julkaisun tiedot JSON-formaatissa:<br>
+<h2>Lataa julkaisun tiedot JSON-formaatissa</h2>
+
+Lataa julkaisun tiedot JSON-formaatissa:<br>
+
 <ol>
-    <li>Hae ja avaa julkaisu. </li>
+
+    <li>Tee julkaisuhaku ja avaa julkaisun tiedot. </li>
     <li>Valitse <strong>Lataa</strong> sivun oikeasta yläkulmasta. </li>
-    <li>Voit nyt avata tai tallentaa julkaisun viimeisimmät muutokset JSON-formaatissa.</li>
+    <li>Voit nyt avata tai tallentaa julkaisun viimeisimmät muutokset
+        JSON-formaatissa.</li>
 </ol>
 
 <h1>Käsittele sarjoja</h1>
 
-<h2>Hae ja avaa sarjoja</h2>
+<h2>Tee sarjahaku ja avaa sarjan tiedot<br>
+</h2>
 
 Hakemiseen liittyviä sääntöjä:
 <br>
+
 <ul>
 
-
-    <li><strong>ID </strong>kenttään kirjoitettu hakusana palauttaa juuri sen sarjan, jonka ID on kenttään kirjoitettu.</li>
-    <li><strong>Lyhenne</strong> <strong></strong>alasvetovalikosta valittu hakusana palauttaa juuri sen sarjan, jonka lyhenne on valittu.</li>
-
-    <li><strong>Nimi</strong> kenttään kirjoitetulla hakusanalla löytää kaikki sarjat, joiden nimi
-        sisältää täsmälleen hakukenttään annetun sanan. Jos <strong>Nimi</strong>
-        kenttään on annettu useampi hakusana, haku löytää kaikki sarjat, joiden
-        nimessä on jokin annetuista hakusanoista (OR). Jos halutaan etsiä esimerkiksi sarjan koko nimellä, se voidaan antaa
-        lainausmerkkien sisään, jolloin haetaan&nbsp; koko lainausmerkkien sisällä
+    <li><strong>ID </strong>kenttään kirjoitettu hakusana palauttaa
+        juuri sen sarjan, jonka ID on kenttään kirjoitettu.</li>
+    <li><strong>Lyhenne</strong> <strong></strong>alasvetovalikosta
+        valittu hakusana palauttaa juuri sen sarjan, jonka lyhenne on valittu.</li>
+    <li><strong>Nimi</strong> kenttään kirjoitetulla hakusanalla löytää
+        kaikki sarjat, joiden nimi sisältää täsmälleen hakukenttään annetun
+        sanan. Jos <strong>Nimi</strong> kenttään on annettu useampi hakusana,
+        haku löytää kaikki sarjat, joiden nimessä on jokin annetuista
+        hakusanoista (OR). Jos halutaan etsiä esimerkiksi sarjan koko nimellä,
+        se voidaan antaa
+        lainausmerkkien sisään, jolloin haetaan&nbsp; koko lainausmerkkien
+        sisällä
         olevaa merkkijonoa. </li>
-    <li>Jos useampaan kuin yhteen kenttään on kirjoitettu hakukriteeri, sarja liitetään hakutuloksiin
-        jos se sopii kaikkiin annettuihin hakuehtoihin (AND).</li>
-    <li>Jos sarjasta on olemassa sekä viimeisin <em>HYVÄKSYTTY</em> revisio että uusi <em>LUONNOS</em>,
-        ne molemmat näkyvät erillisinä riveinä hakutuloksissa, jos sekä on haettu sekä hyväksyttyjä
-        sarjoja että sarjojen luonnoksia.</li>
-
-    <li>Käyttäjä voi valita haluaako hakutuloksiin <strong>Hyväksyttyjä</strong>, <strong>Luonnoksia</strong>
-        tai <strong>Poistettuja</strong> sarjoja.</li>
-    <li>Yksittäisten tekstikenttien hakujen sisältöä voi muotoilla Apache Lucene syntaksin mukaan, kts. <a href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Syntaksi">Hakujehtojen syntaksi</a>.</li>
+    <li>Jos useampaan kuin yhteen kenttään on kirjoitettu hakukriteeri,
+        sarja liitetään hakutuloksiin jos se sopii kaikkiin annettuihin
+        hakuehtoihin (AND).</li>
+    <li>Jos sarjasta on olemassa sekä viimeisin <em>HYVÄKSYTTY</em>
+        revisio että uusi <em>LUONNOS</em>, ne molemmat näkyvät erillisinä
+        riveinä hakutuloksissa, jos sekä on haettu sekä hyväksyttyjä sarjoja
+        että sarjojen luonnoksia.</li>
+    <li>Käyttäjä voi valita haluaako hakutuloksiin <strong>Hyväksyttyjä</strong>,
+        <strong>Luonnoksia</strong> tai <strong>Poistettuja</strong>
+        sarjoja.</li>
+    <li>Yksittäisten tekstikenttien hakujen sisältöä voi muotoilla Apache
+        Lucene syntaksin mukaan, kts. <a href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Syntaksi">Hakujehtojen
+            syntaksi</a>.</li>
 </ul>
-
 
 <ul>
 
@@ -1102,9 +1333,31 @@ Jos hakutuloksia on vain yksi, <strong>Sarja</strong> dialogi aukeaa.
 Jos hakutuloksia on useita, ne näytetään <strong>Sarjahaku</strong>
 sivulla <strong>Hakutulos</strong> listalla. Avaa yksittäisen sarjan
 tiedot valitsemalla <strong>Hakutulos</strong> listasta haluttu sarja.<br>
+
 <br>
-Sarjoja voit hakea myös eksperttihaun avulla, kts. luku <a target="_blank" href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Tee%20eksperttihaku">Tee eksperttihaku</a>.
+
+Sarjoja voit hakea myös eksperttihaun avulla, kts. luku <a target="_blank" href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Tee%20eksperttihaku">Tee
+    eksperttihaku</a>.
 <br>
+
+<h2>Tallenna sarjahaun hakutulokset JSON-formaatissa</h2>
+
+Sarjahaun tulokset voi ottaa ulos järjestelmästä JSON-formaatissa.
+Hakutulosten tiedot on koodattu UTF-8 merkistöstandardin mukaisesti.<br>
+
+<br>
+
+Tallenna sarjahaun hakutulokset JSON-formaatissa:<br>
+
+<ol>
+
+    <li>Tee sarjahaku.</li>
+    <li>Paina <strong>Hakutulos</strong> taulukon <strong>Lataa</strong>
+        painiketta.</li>
+    <li>Avaa sarjahaun tulokset suoraan tekstinkäsittelyohjelmaan tai
+        tallenna ne. Huomioi, että käyttämäsi tekstinkäsittelyohjelman tulee
+        tukea UTF-8 formaattia, jotta tiedot näkyvät siinä oikein.</li>
+</ol>
 
 <h2>Lisää sarja</h2>
 
@@ -1114,8 +1367,9 @@ Lisätäksesi uuden sarjan valitse <strong>Sarjat&nbsp; &gt;&nbsp; Lisää
 
 <ul>
 
-    <li><strong>ID</strong>: Dialogin otsikossa näytetään järjestelmän automaattisesti sarjalle
-        generoima ID, jota käyttäjä ei voi muuttaa. ID:tä voidaan käyttää hakukriteerinä.</li>
+    <li><strong>ID</strong>: Dialogin otsikossa näytetään järjestelmän
+        automaattisesti sarjalle generoima ID, jota käyttäjä ei voi muuttaa.
+        ID:tä voidaan käyttää hakukriteerinä.</li>
 </ul>
 
 Tallenna sarja tilaan <em>LUONNOS</em> valitsemalla <strong>Tallenna</strong>.
@@ -1133,7 +1387,8 @@ sarjan muokkaustilasta valitsemalla <strong>Lopeta
 
 Avaa hyväksyttävä <var>LUONNOS</var> tilassa oleva sarja.
 Tallenna ja siirrä sarja tilaan <var>HYVÄKSYTTY</var> valitsemalla
-<strong>Hyväksy</strong>. Sarjan revisionnumero ei muutu hyväksymisen yhteydessä. <br>
+<strong>Hyväksy</strong>. Sarjan revisionnumero ei muutu hyväksymisen
+yhteydessä. <br>
 
 <h2>Muokkaa sarjaa</h2>
 
@@ -1145,7 +1400,8 @@ revisionumero pysyy samana.
 </h2>
 
 Poista <var>LUONNOS</var> tilassa oleva sarjan revisio järjestelmästä
-kokonaan valitsemalla <strong>Poista</strong>. Jos sarjasta ei ole vielä
+kokonaan valitsemalla <strong>Poista</strong>. Jos sarjasta ei ole
+vielä
 hyväksyttyjä revisioita ja poistat sen ensimmäisen <var>LUONNOS</var>
 tilassa olevan revision, kaikki sarjan tiedot poistuvat järjestelmästä.
 <br>
@@ -1154,11 +1410,16 @@ tilassa olevan revision, kaikki sarjan tiedot poistuvat järjestelmästä.
 
 Tee looginen poisto koko sarjalle valitsemalla <span style="font-style: italic;">HYVÄKSYTTY</span><var></var> tilassa
 olevalle revisiolle <strong>Poista</strong>, jolloin sarja siirtyy <var>POISTETTU
-</var>tilaan<var>. </var>Sarjaa ei voi poistaa, jos siihen viitataan esim. jossakin aineistossa.<br>
+</var>tilaan<var>. </var>Sarjaa ei voi poistaa, jos siihen viitataan
+esim. jossakin aineistossa.<br>
+
 <h2>Avaa sarjan vanha revisio</h2>
+
 Avaa sarjan vanha revisio:<br>
+
 <ol>
-    <li>Hae ja avaa sarja. <br>
+
+    <li>Tee sarjahaku ja avaa sarjan tiedot. <br>
     </li>
     <li>Valitse <strong>Revisionhistoria</strong>. <br>
     </li>
@@ -1167,25 +1428,35 @@ Avaa sarjan vanha revisio:<br>
         Klikkaamalla sarakkeessa <strong>Revisio </strong>olevaa
         revisionumeroa saat sen tiedot auki.</li>
 </ol>
+
 <h2>Vertaa sarjan revisioita</h2>
+
 Vertaa sarjan revisioita:<br>
+
 <ol>
-    <li>Hae ja avaa sarja. Valitse</li>
-    <li>&nbsp;<strong>Revisionhistoria</strong>. </li>
-    <li>Merkitse <strong>Alku</strong> valintapainikkeella se revisio, johon verrataan. </li>
+
+    <li>Tee sarjahaku ja avaa sarjan tiedot. <br>
+    </li>
+    <li>Valitse <strong>Revisionhistoria</strong>. </li>
+    <li>Merkitse <strong>Alku</strong> valintapainikkeella se revisio,
+        johon verrataan. </li>
     <li>Valitse <strong>Loppu</strong> valintapainikkeella se revisio,
         jota verrataan. Sen revision, johon verrataan täytyy olla vanhempi kuin
         se versio, jota verrataan. </li>
     <li>Valitse <strong>Vertaa</strong>. </li>
 </ol>
 
-<h2>Lataa sarjan tiedot JSON-formaatissa</h2>Lataa sarjan tiedot JSON-formaatissa:<br>
-<ol>
-    <li>Hae ja avaa sarja. </li>
-    <li>Valitse <strong>Lataa</strong> sivun oikeasta yläkulmasta. </li>
-    <li>Voit nyt avata tai tallentaa sarjan viimeisimmät muutokset JSON-formaatissa.</li>
-</ol>
+<h2>Lataa sarjan tiedot JSON-formaatissa</h2>
 
+Lataa sarjan tiedot JSON-formaatissa:<br>
+
+<ol>
+
+    <li>Tee sarjahaku ja avaa sarjan tiedot. </li>
+    <li>Valitse <strong>Lataa</strong> sivun oikeasta yläkulmasta. </li>
+    <li>Voit nyt avata tai tallentaa sarjan viimeisimmät muutokset
+        JSON-formaatissa.</li>
+</ol>
 
 <h1>Käsittele mappeja</h1>
 
@@ -1202,8 +1473,8 @@ Avaa mapin sisältö:
 <ol>
 
     <li>Valitse <strong>Mapit</strong>.</li>
-    <li>Avaa mapin sisältö valitsemalla <strong>Mapitukset</strong> listasta
-        halutun mapin mappinumero (<strong>Mappinro</strong>).</li>
+    <li>Avaa mapin sisältö valitsemalla <strong>Mapitukset</strong>
+        listasta halutun mapin mappinumero (<strong>Mappinro</strong>).</li>
 </ol>
 
 <h2>Lisää ainesto mappiin</h2>
@@ -1211,8 +1482,10 @@ Avaa mapin sisältö:
 Lisää aineisto mappiin:
 <ol>
 
-    <li>Valitse <strong>Mapit</strong> &gt; <strong>Lisää aineisto mappiin</strong>.</li>
-    <li><strong>Mappinumero</strong> on vapaasti käyttäjän määriteltävissä.</li>
+    <li>Valitse <strong>Mapit</strong> &gt; <strong>Lisää aineisto
+        mappiin</strong>.</li>
+    <li><strong>Mappinumero</strong> on vapaasti käyttäjän
+        määriteltävissä.</li>
     <li>Mapitettava aineisto valitaan <strong>Aineistonumero</strong>
         kentän perusteella, kenttään syötetään aineiston aineistonumero, ei
         esim. aineiston ID:tä. Vain olemassa olevia aineistoja voi mapittaa.
@@ -1231,7 +1504,8 @@ Poista aineisto mapista:
     <li>Valitse poistettavan aineiston riviltä <strong>Poista</strong>.</li>
 </ol>
 
-<h1>Käyttäjäryhmät</h1>
+<h1 id="Käyttäjäryhmät">Käyttäjäryhmien oikeudet<br>
+</h1>
 
 <h2>Selailija (metka:reader)</h2>
 
@@ -1266,7 +1540,8 @@ käyttäjällä ja lisäksi: <br>
     <li>saa lisätä sanoja sanalistoihin</li>
     <li>saa poistaa eksperttihakuja</li>
     <li>saa lisätä julkaisun, sarjan ja mapin</li>
-    <li>saa muokata ja tallentaa olemassa olevan aineiston, julkaisun, sarjan ja
+    <li>saa muokata ja tallentaa olemassa olevan aineiston, julkaisun,
+        sarjan ja
         mapin tietoja</li>
 </ul>
 
@@ -1287,7 +1562,11 @@ käyttäjäryhmän käyttäjällä ja lisäksi:
     <li>saa muuttaa sanastoja, sanalistoja ja vakiotekstejä eli lisätä
         termejä, poistaa ja muokata termejä sekä tekstejä</li>
     <li>saa poistaa aineiston, julkaisun, sarjan tai mapin</li>
-    <li>saa palauttaa poistetun aineiston, julkaisun, sarjan ja mapin</li><li>saa poistaa datan ja kuvailun versiotietoja</li>
+    <li>saa palauttaa poistetun aineiston, julkaisun, sarjan ja mapin</li>
+    <li>saa poistaa datan ja kuvailun versiotietoja</li>
+    <li>saa poistaa aineiston versiotietoja <strong>Datan versiot</strong>
+        ja <strong>Kuvailun versiot</strong> taulukoista<br>
+    </li>
     <li>saa tehdä massapäivityksiä</li>
     <li>saa lisätä ja poistaa käyttäjiä</li>
     <li>saa muuttaa järjestelmän asetuksia (data konfiguraatio, GUI
@@ -1301,25 +1580,101 @@ Pääkäyttäjä (metka:administrator) käyttäjäryhmään kuuluvalla
 käyttäjällä on kaikki oikeudet järjestelmän käyttämiseen.
 <br>
 
-<h1>Asetukset</h1>
-
-<h2>Data konfiguraatio</h2>
+<h1>Data konfiguraatio<br>
+</h1>
 
 Data konfiguraatiossa kuvataan mitä dataa järjestelmän lomakkeisiin
 liittyy. Se määrittelee datan tyypit sekä validointisäännöt sekä
 pudotusvalikkojen tietosisällön.<br>
 
-<h2>GUI konfiguraatio</h2>
+<h2>Hae ja avaa data konfiguraatio</h2>
+
+Hae ja avaa data konfiguraatio:<br>
+
+<ol>
+
+    <li>Valitse <strong>Asetukset</strong> &gt; <strong>Konfiguraatiot</strong>
+        &gt; <strong>Data konfiguraatiot</strong>.</li>
+    <li>Valitse muokattava data konfiguraatio <strong>Tyypit</strong>
+        alasvetovalikosta.</li>
+    <li>Valitse <strong>Lataa</strong>.</li>
+</ol>
+
+<h2>Etsi tietoja data konfiguraatiosta</h2>
+
+Etsi tietoja data konfiguraatiosta: <br>
+
+<ol>
+
+    <li>Hae ja avaa data konfiguraatio.</li>
+    <li>Käytä selaimen etsi toimintoa.<br>
+    </li>
+</ol>
+
+<h2>Muokkaa data konfiguraatiota</h2>
+
+Muokkaa data konfiguraatiota: <br>
+
+<ol>
+
+    <li>Hae ja avaa data konfiguraatio.</li>
+    <li>Tee tarvittavat muutokset suoraan kenttään <strong>Konfiguraatio</strong>
+        tai liitä kenttään jossain muualla muokattu teksti.</li>
+    <li>Valitse <strong>Tallenna</strong>. Muutokset ovat välittömästi
+        voimassa.<br>
+    </li>
+</ol>
+
+<h1>GUI konfiguratio</h1>
 
 GUI konfiguraatio miltä dataa järjestelmän lomakkeilla näytetään
 käyttäjille. Se kuvaa missä järjestyksessä data esitetään, miten se
 muotoillaan sekä datan käännöstiedot.<br>
 
-<h2>MISC Json</h2>
+<h2>Muokkaa GUI konfiguraatiota</h2>
 
-MISC Json määrittelyt sisältävät esim. sanalistoja ja
+Muokkaa GUI konfiguraatiota: <br>
+
+<ol>
+
+    <li>Valitse <strong>Asetukset</strong> &gt; <strong>Konfiguraatiot</strong>
+        &gt; <span style="font-weight: bold;">GUI</span><strong> konfiguraatiot</strong>.</li>
+    <li>Valitse muokattava GUI konfiguraatio <strong>Tyypit</strong>
+        alasvetovalikosta.</li>
+    <li>Valitse <strong>Lataa</strong>.</li>
+    <li>Tee tarvittavat muutokset suoraan kenttään <strong>Konfiguraatio</strong>
+        tai liitä kenttään jossain muualla muokattu teksti.</li>
+    <li>Valitse <strong>Tallenna</strong>.<br>
+    </li>
+</ol>
+
+<h1>JSON määrittelyt<br>
+</h1>
+
+JSON määrittelyt sisältävät esim. sanalistoja ja
 organisaatiolistoja, joita käytetään viittaamalla niihin data
 konfiguraation tiedostoissa.<br>
+
+<h2>Muokkaa JSON määrittelyjä<br>
+</h2>
+
+Muokkaa JSON määrittelyjä:<br>
+
+<br>
+
+&nbsp;&nbsp; 1. Valitse <strong>Asetukset</strong> &gt; <strong>Konfiguraatiot</strong>
+&gt; <strong>JSON</strong>.<br>
+
+&nbsp;&nbsp; 2. Valitse muokattava GUI konfiguraatio <strong>Tyypit</strong>
+alasvetovalikosta.<br>
+
+&nbsp;&nbsp; 3. Valitse <strong>Lataa</strong>.<br>
+
+&nbsp;&nbsp; 4. Tee tarvittavat muutokset suoraan kenttään <strong>Konfiguraatio</strong>
+tai liitä kenttään jossain muualla muokattu teksti.<br>
+
+&nbsp;&nbsp; 5. Valitse <strong>Tallenna</strong>.<br>
+
 <span style="font-weight: bold;"></span>
 <h2>Ratkaise hakuongelmia indeksoimalla<br>
 </h2>
@@ -1327,6 +1682,10 @@ konfiguraation tiedostoissa.<br>
 Mikäli haut eivät näytä onnistuvan, valitse <strong>Asetukset &gt;
     Indeksoi
     kaikki</strong>.<br>
+
+<h1>Tietokanta</h1>
+
+Tietokannan tiedot on koodattu UTF-8 merkistöstandardin mukaisesti.<br>
 
 <br>
 </div>

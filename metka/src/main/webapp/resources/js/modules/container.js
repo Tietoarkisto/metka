@@ -1,6 +1,9 @@
 define(function (require) {
     'use strict';
 
+    /**
+     * Processes all container type UI elements
+     */
     return function (options) {
         var handlers = {
             TAB: require('./tab'),
@@ -28,14 +31,6 @@ define(function (require) {
                     handler.add.call(this, content.map(handler.create(options), this));
                 }
             }, this);
-
-            // debug
-            $.each(contents, function (type) {
-                if (priority.indexOf(type) === -1) {
-                    console.error('unknown content type:', type);
-                }
-            });
-
         }
         return this;
     };

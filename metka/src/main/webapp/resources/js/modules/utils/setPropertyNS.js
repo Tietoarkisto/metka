@@ -1,18 +1,17 @@
-/**
- * @param o Set property to this object
- * @param [ns] Can be string, '.' (dot) separated string, or array of strings
- * @param value any value
- * @returns value
- *
- * Example:
- * var o = {};
- * MetkaJS.objectSetPropertyNS(o, 'a.b.c', 'd', ['e', 'f'], 123);
- * JSON.stringify(o); // "{"a":{"b":{"c":{"d":{"e":{"f":123}}}}}}"
- */
-
 define(function (require) {
     'use strict';
 
+    /**
+     * @param {object} o Set property to this object
+     * @param [ns] {string/integer/array} Namespace. Can be string, '.' (dot) separated string, or array of strings
+     * @param {any} value Any value.
+     * @returns value
+     *
+     * Example:
+     * var o = {};
+     * MetkaJS.objectSetPropertyNS(o, 'a.b.c', 'd', ['e', 'f'], 123);
+     * JSON.stringify(o); // "{"a":{"b":{"c":{"d":{"e":{"f":123}}}}}}"
+     */
     return function (o, ns/*[, ns]*/,  value) {
         var ns = $.makeArray(arguments);
         ns.shift(); // remove o

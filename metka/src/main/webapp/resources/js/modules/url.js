@@ -2,6 +2,15 @@
 
 define(function (require) {
     'use strict';
+
+    /**
+     * @param {string} key Either one of predefined keys listed in this function, or string starting with '/'.
+     * @param {object} extend simple object with string keys and values, to replace `{key}` parts in path.
+     * @return {string} Path starting with '/'.
+     * @example url('/foo/{hi}', {bar: 'biz'}) --> /<metka.contextPath>/web/foo/biz
+     * @example url('view', {bar: 'biz'}) --> /<metka.contextPath>/web/revision/view/<currentPage>/<currentID>/<currentRevisionNo>
+     * @example url('view', {PAGE: 'foo'}) --> /<metka.contextPath>/web/revision/view/foo/<currentID>/<currentRevisionNo>
+     */
     return function (key, extend) {
         var metka = require('./../metka');
         return metka.contextPath + '/web' + (function () {
