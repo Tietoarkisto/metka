@@ -161,11 +161,6 @@ define(function (require) {
             buttons: [
                 {
                     "&title": {
-                        "default": "Lataa CSV"
-                    }
-                },
-                {
-                    "&title": {
                         "default": "Lisää aineisto mappiin"
                     },
                     create: function () {

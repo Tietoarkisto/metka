@@ -17,8 +17,10 @@ import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import fi.uta.fsd.metka.transfer.reference.ReferencePath;
 import fi.uta.fsd.metka.transfer.reference.ReferencePathRequest;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 class DDIStudyDescription extends DDISectionBase {
@@ -159,12 +161,6 @@ class DDIStudyDescription extends DDISectionBase {
     }
 
     private ReturnResult readParTitles(TitlStmtType titlStmt) {
-        if(language != Language.DEFAULT) {
-            // Par titles are default language only
-            // TODO: Do we need these in some way from other than default language?
-            return ReturnResult.OPERATION_SUCCESSFUL;
-        }
-
         if(hasContent(titlStmt.getParTitlArray())) {
             Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.PARTITLES);
             if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
@@ -461,117 +457,126 @@ class DDIStudyDescription extends DDISectionBase {
         return readStudyInfoSubjectTopics(subject);
     }
 
-    // TODO: Still unfinished
     private ReturnResult readStudyInfoSubjectKeywords(SubjectType subject) {
-        return ReturnResult.OPERATION_SUCCESSFUL;
-        // TODO: Reverse process
-        // Let's hardcode the path since we know exactly what we are looking for.
-        /*String pathRoot = "keywords.";
-        for(DataRow row : container.getRowsFor(Language.DEFAULT)) {
-            if(row.getRemoved()) {
+        if(!hasContent(subject.getKeywordArray())) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
+        }
+
+        Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.KEYWORDS);
+        if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
+            return containerResult.getLeft();
+        }
+        ContainerDataField container = containerResult.getRight().getLeft();
+        ContainerChange change = containerResult.getRight().getRight();
+
+        // Let's construct the request and path elements needed
+        ReferencePathRequest request = new ReferencePathRequest();
+        request.setContainer(Fields.KEYWORDS);
+        request.setLanguage(language);
+
+        ReferencePath keywordvocabPath = new ReferencePath(configuration.getReference(configuration.getField(Fields.KEYWORDVOCAB).getReference()), null);
+        request.setRoot(keywordvocabPath);
+        List<ReferenceOption> keywordvocabOptions = references.collectReferenceOptions(request);
+
+        for(KeywordType k : subject.getKeywordArray()) {
+            if(!StringUtils.hasText(k.getVocab())) {
                 continue;
             }
-            String rowRoot = pathRoot + row.getRowId() + ".";
-
-            String keyword = null;
-            String keyworduri = null;
-            String keywordvocab = null;
-            String keywordvocaburi = null;
-
-            Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.KEYWORDNOVOCAB));
-            if(hasValue(valueFieldPair, language)) {
-                // Since there's nothing in this value unless user has selected a free text option we know we can use this and don't need to bother fetching the keyword
-                keyword = valueFieldPair.getRight().getActualValueFor(Language.DEFAULT);
-                // There's no URI for other
-            } else {
-                keywordvocab = getReferenceTitle(references, language, revision, rowRoot + Fields.KEYWORDVOCAB);
-                if(!StringUtils.hasText(keywordvocab)) {
-                    continue;
-                }
-
-                keyword = getReferenceTitle(references, language, revision, rowRoot + Fields.KEYWORD);
-                if(!StringUtils.hasText(keywordvocab)) {
-                    continue;
-                }
-
-                keywordvocaburi = getReferenceTitle(references, language, revision, rowRoot + Fields.KEYWORDVOCABURI);
-
-                keyworduri = getReferenceTitle(references, language, revision, rowRoot + Fields.KEYWORDURI);
+            Pair<StatusCode, DataRow> row = container.insertNewDataRow(Language.DEFAULT, change);
+            if(row.getLeft() != StatusCode.NEW_ROW) {
+                continue;
             }
 
-            // Keyword should always be non null at this point
-            KeywordType kwt = fillTextType(subject.addNewKeyword(), keyword);
-            if(keyworduri != null) {
-                // TODO: This is compiled as an ENUM, is this correct?
-                switch(keyworduri) {
-                    case "archive":
-                        kwt.setSource(BaseElementType.Source.ARCHIVE);
-                        break;
-                    case "producer":
-                        kwt.setSource(BaseElementType.Source.PRODUCER);
-                        break;
+            ReferenceOption option = findOption(keywordvocabOptions, k.getVocab());
+            if(option == null) {
+                continue;
+            }
+            valueSet(row.getRight(), Fields.KEYWORDVOCAB, option.getValue());
+
+            if(StringUtils.hasText(k.xmlText())) {
+                keywordvocabPath = new ReferencePath(configuration.getReference(configuration.getField(Fields.KEYWORDVOCAB).getReference()), option.getValue());
+                ReferencePath keywordPath = new ReferencePath(configuration.getReference(configuration.getField(Fields.KEYWORD).getReference()), null);
+
+                keywordvocabPath.setNext(keywordPath);
+                keywordPath.setPrev(keywordvocabPath);
+                request.setRoot(keywordvocabPath);
+
+                List<ReferenceOption> options = references.collectReferenceOptions(request);
+                option = findOption(options, k.xmlText());
+                if(option != null) {
+                    valueSet(row.getRight(), Fields.KEYWORD, option.getValue());
+                } else {
+                    valueSet(row.getRight(), Fields.KEYWORDNOVOCAB, k.xmlText());
                 }
             }
-            if(keywordvocab != null) {
-                kwt.setVocab(keywordvocab);
-            }
-            if(keywordvocaburi != null) {
-                kwt.setVocabURI(keywordvocaburi);
-            }
-        }*/
+        }
+
+        return ReturnResult.OPERATION_SUCCESSFUL;
     }
 
-    // TODO: Still unfinished
     private ReturnResult readStudyInfoSubjectTopics(SubjectType subject) {
-        return ReturnResult.OPERATION_SUCCESSFUL;
-        // TODO: Reverse process
-        // Let's hardcode the path since we know exactly what we are looking for.
-        /*String pathRoot = "topics.";
-        for(DataRow row : container.getRowsFor(Language.DEFAULT)) {
-            if(row.getRemoved()) {
+        if(!hasContent(subject.getTopcClasArray())) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
+        }
+
+        Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.TOPICS);
+        if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
+            return containerResult.getLeft();
+        }
+        ContainerDataField container = containerResult.getRight().getLeft();
+        ContainerChange change = containerResult.getRight().getRight();
+
+        // Let's construct the request and path elements needed
+        ReferencePathRequest request = new ReferencePathRequest();
+        request.setContainer(Fields.TOPICS);
+        request.setLanguage(language);
+
+        ReferencePath topicvocabPath = new ReferencePath(configuration.getReference(configuration.getField(Fields.TOPICVOCAB).getReference()), null);
+        request.setRoot(topicvocabPath);
+        List<ReferenceOption> topicvocabOptions = references.collectReferenceOptions(request);
+
+        for(TopcClasType t : subject.getTopcClasArray()) {
+            if(!StringUtils.hasText(t.getVocab())) {
                 continue;
             }
-            String rowRoot = pathRoot + row.getRowId() + ".";
-
-            String topic = null;
-            String topicuri = null;
-            String topicvocab = null;
-            String topicvocaburi = null;
-
-            topicvocab = getReferenceTitle(references, language, revision, rowRoot + Fields.TOPICVOCAB);
-            if(!StringUtils.hasText(topicvocab)) {
+            Pair<StatusCode, DataRow> row = container.insertNewDataRow(Language.DEFAULT, change);
+            if(row.getLeft() != StatusCode.NEW_ROW) {
                 continue;
             }
 
-            topic = getReferenceTitle(references, language, revision, rowRoot + Fields.TOPIC);
-            if(!StringUtils.hasText(topic)) {
+            ReferenceOption option = findOption(topicvocabOptions, t.getVocab());
+            if(option == null) {
                 continue;
             }
+            valueSet(row.getRight(), Fields.TOPICVOCAB, option.getValue());
 
-            topicvocaburi = getReferenceTitle(references, language, revision, rowRoot + Fields.TOPICVOCABURI);
+            if(StringUtils.hasText(t.xmlText())) {
+                topicvocabPath = new ReferencePath(configuration.getReference(configuration.getField(Fields.TOPICVOCAB).getReference()), option.getValue());
+                ReferencePath topicPath = new ReferencePath(configuration.getReference(configuration.getField(Fields.TOPIC).getReference()), null);
 
-            topicuri = getReferenceTitle(references, language, revision, rowRoot + Fields.TOPICURI);
+                topicvocabPath.setNext(topicPath);
+                topicPath.setPrev(topicvocabPath);
+                request.setRoot(topicvocabPath);
 
-            // Keyword should always be non null at this point
-            TopcClasType tt = fillTextType(subject.addNewTopcClas(), topic);
-            if(topicuri != null) {
-                // TODO: This is compiled as an ENUM, is this correct?
-                switch(topicuri) {
-                    case "archive":
-                        tt.setSource(BaseElementType.Source.ARCHIVE);
-                        break;
-                    case "producer":
-                        tt.setSource(BaseElementType.Source.PRODUCER);
-                        break;
+                List<ReferenceOption> options = references.collectReferenceOptions(request);
+                option = findOption(options, t.xmlText());
+                if(option != null) {
+                    valueSet(row.getRight(), Fields.TOPIC, option.getValue());
                 }
             }
-            if(topicvocab != null) {
-                tt.setVocab(topicvocab);
+
+        }
+
+        return ReturnResult.OPERATION_SUCCESSFUL;
+    }
+
+    private ReferenceOption findOption(List<ReferenceOption> options, String text) {
+        for(ReferenceOption option : options) {
+            if(option.getTitle().equals(text)) {
+                return option;
             }
-            if(topicvocaburi != null) {
-                tt.setVocabURI(topicvocaburi);
-            }
-        }*/
+        }
+        return null;
     }
 
     private ReturnResult readStudyInfoSumDesc(StdyInfoType stdyInfo) {
@@ -605,7 +610,7 @@ class DDIStudyDescription extends DDISectionBase {
             }
         }
 
-        result = readStudyInfoSumDescAnlyUnit(sumDscr);
+        result = readConceptualTextTypeArray(sumDscr.getAnlyUnitArray(), Fields.ANALYSIS, Fields.ANALYSISUNITVOCAB, Fields.ANALYSISUNIT, Fields.ANALYSISUNITOTHER);
         if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
         return readStudyInfoSumDescUniverse(sumDscr);
@@ -631,155 +636,88 @@ class DDIStudyDescription extends DDISectionBase {
         return ReturnResult.OPERATION_SUCCESSFUL;
     }
 
-    // TODO: Still unfinished
     private ReturnResult readStudyInfoSumDescCollDate(SumDscrType sumDscr) {
-        return ReturnResult.OPERATION_SUCCESSFUL;
-        // TODO: Reverse process
-        /*for(DataRow row : container.getRowsFor(Language.DEFAULT)) {
-            if(row.getRemoved()) {
+        if(!hasContent(sumDscr.getCollDateArray())) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
+        }
+        Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerPair = getContainer(Fields.COLLTIME);
+        if(containerPair.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
+            return containerPair.getLeft();
+        }
+        ContainerDataField container = containerPair.getRight().getLeft();
+        ContainerChange change = containerPair.getRight().getRight();
+        for(CollDateType coll : sumDscr.getCollDateArray()) {
+            Pair<StatusCode, DataRow> row = container.insertNewDataRow(language, change);
+            if (row.getLeft() != StatusCode.NEW_ROW) {
                 continue;
             }
 
-            Pair<StatusCode, ValueDataField> valuePair = row.dataField(ValueDataFieldCall.get(Fields.COLLDATETEXT));
-            String colldatetext = hasValue(valuePair, language) ? valuePair.getRight().getActualValueFor(language) : null;
-            valuePair = row.dataField(ValueDataFieldCall.get(Fields.COLLDATE));
-            if(StringUtils.hasText(colldatetext) || hasValue(valuePair, Language.DEFAULT)) {
-                CollDateType t = sumDscr.addNewCollDate();
-                if(StringUtils.hasText(colldatetext)) {
-                    fillTextType(t, colldatetext);
-                }
-                if(hasValue(valuePair, Language.DEFAULT)) {
-                    t.setDate(valuePair.getRight().getActualValueFor(Language.DEFAULT));
-                }
-                valuePair = row.dataField(ValueDataFieldCall.get(Fields.COLLDATEEVENT));
-                if(hasValue(valuePair, Language.DEFAULT)) {
-                    switch(valuePair.getRight().getActualValueFor(Language.DEFAULT)) {
-                        case "start":
-                            t.setEvent(CollDateType.Event.START);
-                            break;
-                        case "end":
-                            t.setEvent(CollDateType.Event.END);
-                            break;
-                        case "single":
-                            t.setEvent(CollDateType.Event.SINGLE);
-                            break;
-                    }
-                }
+            if (StringUtils.hasText(coll.xmlText())) {
+                valueSet(row.getRight(), Fields.COLLDATETEXT, coll.xmlText());
             }
-        }*/
+            if(StringUtils.hasText(coll.getDate())) {
+                valueSet(row.getRight(), Fields.COLLDATE, coll.getDate());
+            }
+            if(coll.getEvent() != null) {
+                valueSet(row.getRight(), Fields.COLLDATEEVENT, coll.getEvent().toString());
+            }
+        }
+        return ReturnResult.OPERATION_SUCCESSFUL;
     }
 
-    // TODO: Still unfinished
     private ReturnResult readStudyInfoSumDescNation(SumDscrType sumDscr) {
+        if(!hasContent(sumDscr.getNationArray())) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
+        }
+        Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerPair = getContainer(Fields.COUNTRIES);
+        if(containerPair.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
+            return containerPair.getLeft();
+        }
+        ContainerDataField container = containerPair.getRight().getLeft();
+        ContainerChange change = containerPair.getRight().getRight();
+
+        for(NationType nation : sumDscr.getNationArray()) {
+            if(!StringUtils.hasText(nation.xmlText())) {
+                continue;
+            }
+            Pair<StatusCode, DataRow> row = container.insertNewDataRow(language, change);
+            if(row.getLeft() != StatusCode.NEW_ROW) {
+                continue;
+            }
+
+            valueSet(row.getRight(), Fields.COUNTRY, nation.xmlText());
+            if(StringUtils.hasText(nation.getAbbr())) {
+                valueSet(row.getRight(), Fields.COUNTRYABBR, nation.getAbbr());
+            }
+        }
         return ReturnResult.OPERATION_SUCCESSFUL;
-        // TODO: Reverse process
-        /*String path = "countries.";
-        for (DataRow row : container.getRowsFor(Language.DEFAULT)) {
-            if (row.getRemoved()) {
-                continue;
-            }
-            String rowPath = path + row.getRowId() + ".";
-            String country = getReferenceTitle(references, language, revision, rowPath+Fields.COUNTRY);
-            if(!StringUtils.hasText(country)) {
-                continue;
-            }
-            NationType n = fillTextType(sumDscr.addNewNation(), country);
-            String abbr = getReferenceTitle(references, language, revision, rowPath+Fields.COUNTRYABBR);
-            if(abbr != null) {
-                n.setAbbr(abbr);
-            }
-        }*/
     }
 
-    // TODO: Still unfinished
-    private ReturnResult readStudyInfoSumDescAnlyUnit(SumDscrType sumDscr) {
-        return ReturnResult.OPERATION_SUCCESSFUL;
-        // TODO: Reverse process
-        // Let's hardcode the path since we know exactly what we are looking for.
-        /*String pathRoot = "analysis.";
-        for(DataRow row : container.getRowsFor(Language.DEFAULT)) {
-            if(row.getRemoved()) {
-                continue;
-            }
-            String rowRoot = pathRoot + row.getRowId() + ".";
-
-            String txt = null;
-            String analysisunit = null;
-            String analysisunituri = null;
-            String analysisunitvocab = null;
-            String analysisunitvocaburi = null;
-
-            analysisunitvocab = getReferenceTitle(references, language, revision, rowRoot + Fields.ANALYSISUNITVOCAB);
-            if(!StringUtils.hasText(analysisunitvocab)) {
-                continue;
-            }
-
-            analysisunit = getReferenceTitle(references, language, revision, rowRoot + Fields.ANALYSISUNIT);
-            if(!StringUtils.hasText(analysisunit)) {
-                continue;
-            }
-
-            analysisunitvocaburi = getReferenceTitle(references, language, revision, rowRoot + Fields.ANALYSISUNITVOCABURI);
-
-            analysisunituri = getReferenceTitle(references, language, revision, rowRoot + Fields.ANALYSISUNITURI);
-
-            Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.ANALYSISUNITOTHER));
-            if(hasValue(valueFieldPair, language)) {
-                txt = valueFieldPair.getRight().getActualValueFor(language);
-            }
-
-            // Keyword should always be non null at this point
-            AnlyUnitType t = sumDscr.addNewAnlyUnit();
-            ConceptType c = fillTextType(t.addNewConcept(), analysisunit);
-            if(analysisunituri != null) {
-                // TODO: This is compiled as an ENUM, is this correct?
-                switch(analysisunituri) {
-                    case "archive":
-                        c.setSource(BaseElementType.Source.ARCHIVE);
-                        break;
-                    case "producer":
-                        c.setSource(BaseElementType.Source.PRODUCER);
-                        break;
-                }
-            }
-
-            if(analysisunitvocab != null) {
-                c.setVocab(analysisunitvocab);
-            }
-
-            if(analysisunitvocaburi != null) {
-                c.setVocabURI(analysisunitvocaburi);
-            }
-
-            if(txt != null) {
-                fillTextType(t.addNewTxt(), txt);
-            }
-        }*/
-    }
-
-    // TODO: Still unfinished
     private ReturnResult readStudyInfoSumDescUniverse(SumDscrType sumDscr) {
-        return ReturnResult.OPERATION_SUCCESSFUL;
-        /*for(DataRow row : containerPair.getRight().getRowsFor(Language.DEFAULT)) {
-            if (row.getRemoved()) {
+        if(!hasContent(sumDscr.getUniverseArray())) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
+        }
+        Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerPair = getContainer(Fields.UNIVERSE);
+        if(containerPair.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
+            return containerPair.getLeft();
+        }
+        ContainerDataField container = containerPair.getRight().getLeft();
+        ContainerChange change = containerPair.getRight().getRight();
+        for(UniverseType universe : sumDscr.getUniverseArray()) {
+            if(!StringUtils.hasText(universe.xmlText())) {
                 continue;
             }
-            Pair<StatusCode, ValueDataField> fieldPair = row.dataField(ValueDataFieldCall.get(Fields.UNIVERSE));
-            if(hasValue(fieldPair, language)) {
-                UniverseType t = fillTextType(sumDscrType.addNewUniverse(), fieldPair, language);
-                fieldPair = row.dataField(ValueDataFieldCall.get(Fields.UNIVERSECLUSION));
-                if(hasValue(fieldPair, Language.DEFAULT)) {
-                    switch(fieldPair.getRight().getActualValueFor(Language.DEFAULT)) {
-                        case "I":
-                            t.setClusion(UniverseType.Clusion.I);
-                            break;
-                        case "E":
-                            t.setClusion(UniverseType.Clusion.E);
-                            break;
-                    }
-                }
+            Pair<StatusCode, DataRow> row = container.insertNewDataRow(language, change);
+            if(row.getLeft() != StatusCode.NEW_ROW) {
+                continue;
             }
-        }*/
+
+            valueSet(row.getRight(), Fields.UNIVERSE, universe.xmlText());
+            if(universe.getClusion() != null) {
+                valueSet(row.getRight(), Fields.UNIVERSECLUSION, universe.getClusion().toString());
+            }
+        }
+        return ReturnResult.OPERATION_SUCCESSFUL;
     }
 
     private ReturnResult readMethod(StdyDscrType stdyDscr) {
@@ -806,16 +744,16 @@ class DDIStudyDescription extends DDISectionBase {
         DataCollType dataColl = method.getDataCollArray(0);
 
         ReturnResult result;
-        result = readMethodDataCollTimeMeth(dataColl);
+        result = readConceptualTextTypeArray(dataColl.getTimeMethArray(), Fields.TIMEMETHODS, Fields.TIMEMETHODVOCAB, Fields.TIMEMETHOD, Fields.TIMEMETHODOTHER);
         if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
         result = readMethodDataCollSampProc(dataColl);
         if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
-        result = readMethodDataCollCollMode(dataColl);
+        result = readConceptualTextTypeArray(dataColl.getCollModeArray(), Fields.COLLMODES, Fields.COLLMODEVOCAB, Fields.COLLMODE, Fields.COLLMODEOTHER);
         if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
-        result = readMethodDataCollResInstru(dataColl);
+        result = readConceptualTextTypeArray(dataColl.getResInstruArray(), Fields.INSTRUMENTS, Fields.INSTRUMENTVOCAB, Fields.INSTRUMENT, Fields.INSTRUMENTOTHER);
         if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
         result = readMethodDataCollDataCollector(dataColl);
@@ -827,70 +765,70 @@ class DDIStudyDescription extends DDISectionBase {
         return readMethodDataCollWeight(dataColl);
     }
 
-    // TODO: Still unfinished
-    private ReturnResult readMethodDataCollTimeMeth(DataCollType dataColl) {
-        return ReturnResult.OPERATION_SUCCESSFUL;
-        // TODO: Reverse process
-        // Let's hardcode the path since we know exactly what we are looking for.
-        /*String pathRoot = "timemethods.";
-        for(DataRow row : container.getRowsFor(Language.DEFAULT)) {
-            if(row.getRemoved()) {
+    private ReturnResult readConceptualTextTypeArray(ConceptualTextType[] ctta, String containerKey, String vocabKey, String conceptKey, String txtKey) {
+        if(!hasContent(ctta)) {
+            return ReturnResult.OPERATION_SUCCESSFUL;
+        }
+
+        Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(containerKey);
+        if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
+            return containerResult.getLeft();
+        }
+        ContainerDataField container = containerResult.getRight().getLeft();
+        ContainerChange change = containerResult.getRight().getRight();
+
+        // Let's construct the request and path elements needed
+        ReferencePathRequest request = new ReferencePathRequest();
+        request.setContainer(containerKey);
+        request.setLanguage(language);
+
+        ReferencePath vocabPath = new ReferencePath(configuration.getReference(configuration.getField(vocabKey).getReference()), null);
+        request.setRoot(vocabPath);
+        List<ReferenceOption> vocabOptions = references.collectReferenceOptions(request);
+
+        for(ConceptualTextType ctt : ctta) {
+            if(!hasContent(ctt.getConceptArray())) {
                 continue;
             }
-            String rowRoot = pathRoot + row.getRowId() + ".";
 
-            String txt = null;
-            String timemethod = null;
-            String timemethoduri = null;
-            String timemethodvocab = null;
-            String timemethodvocaburi = null;
-
-            timemethodvocab = getReferenceTitle(references, language, revision, rowRoot + Fields.TIMEMETHODVOCAB);
-            if(!StringUtils.hasText(timemethodvocab)) {
+            Pair<StatusCode, DataRow> row = container.insertNewDataRow(Language.DEFAULT, change);
+            if(row.getLeft() != StatusCode.NEW_ROW) {
                 continue;
             }
 
-            timemethod = getReferenceTitle(references, language, revision, rowRoot + Fields.TIMEMETHOD);
-            if(!StringUtils.hasText(timemethod)) {
+            if(hasContent(ctt.getTxtArray()) && StringUtils.hasText(ctt.getTxtArray(0).xmlText())) {
+                valueSet(row.getRight(), txtKey, ctt.getTxtArray(0).xmlText());
+            }
+
+            ConceptType c = ctt.getConceptArray(0);
+            if(!StringUtils.hasText(c.getVocab())) {
                 continue;
             }
 
-            timemethodvocaburi = getReferenceTitle(references, language, revision, rowRoot + Fields.TIMEMETHODVOCABURI);
 
-            timemethoduri = getReferenceTitle(references, language, revision, rowRoot + Fields.TIMEMETHODURI);
-
-            Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.TIMEMETHODOTHER));
-            if(hasValue(valueFieldPair, language)) {
-                txt = valueFieldPair.getRight().getActualValueFor(language);
+            ReferenceOption option = findOption(vocabOptions, c.getVocab());
+            if(option == null) {
+                continue;
             }
+            valueSet(row.getRight(), vocabKey, option.getValue());
 
-            // Keyword should always be non null at this point
-            TimeMethType t = dataColl.addNewTimeMeth();
-            ConceptType c = fillTextType(t.addNewConcept(), timemethod);
-            if(timemethoduri != null) {
-                // TODO: This is compiled as an ENUM, is this correct?
-                switch(timemethoduri) {
-                    case "archive":
-                        c.setSource(BaseElementType.Source.ARCHIVE);
-                        break;
-                    case "producer":
-                        c.setSource(BaseElementType.Source.PRODUCER);
-                        break;
+            if(StringUtils.hasText(c.xmlText())) {
+                vocabPath = new ReferencePath(configuration.getReference(configuration.getField(vocabKey).getReference()), option.getValue());
+                ReferencePath selectionPath = new ReferencePath(configuration.getReference(configuration.getField(conceptKey).getReference()), null);
+
+                vocabPath.setNext(selectionPath);
+                selectionPath.setPrev(vocabPath);
+                request.setRoot(vocabPath);
+
+                List<ReferenceOption> options = references.collectReferenceOptions(request);
+                option = findOption(options, c.xmlText());
+                if(option != null) {
+                    valueSet(row.getRight(), conceptKey, option.getValue());
                 }
             }
+        }
 
-            if(timemethodvocab != null) {
-                c.setVocab(timemethodvocab);
-            }
-
-            if(timemethodvocaburi != null) {
-                c.setVocabURI(timemethodvocaburi);
-            }
-
-            if(txt != null) {
-                fillTextType(t.addNewTxt(), txt);
-            }
-        }*/
+        return ReturnResult.OPERATION_SUCCESSFUL;
     }
 
     // TODO: Still unfinished
@@ -1036,176 +974,6 @@ class DDIStudyDescription extends DDISectionBase {
 
             if(sampprocvocaburi != null) {
                 c.setVocabURI(sampprocvocaburi);
-            }
-
-            if(txt != null) {
-                fillTextType(t.addNewTxt(), txt);
-            }
-        }*/
-    }
-
-    // TODO: Still unfinished
-    private ReturnResult readMethodDataCollCollMode(DataCollType dataColl) {
-        return ReturnResult.OPERATION_SUCCESSFUL;
-        // TODO: Reverse process
-        // Let's hardcode the path since we know exactly what we are looking for.
-        /*String pathRoot = "collmodes.";
-        for(DataRow row : container.getRowsFor(Language.DEFAULT)) {
-            if(row.getRemoved()) {
-                continue;
-            }
-            String rowRoot = pathRoot + row.getRowId() + ".";
-
-            String txt = null;
-            String collmode = null;
-            String collmodeuri = null;
-            String collmodevocab = null;
-            String collmodevocaburi = null;
-
-            collmodevocab = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLMODEVOCAB);
-            if(!StringUtils.hasText(collmodevocab)) {
-                continue;
-            }
-
-            collmode = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLMODE);
-            if(!StringUtils.hasText(collmode)) {
-                continue;
-            }
-
-            collmodevocaburi = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLMODEVOCABURI);
-
-            collmodeuri = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLMODEURI);
-
-            Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.COLLMODEOTHER));
-            if(hasValue(valueFieldPair, language)) {
-                txt = valueFieldPair.getRight().getActualValueFor(language);
-            }
-
-            // Keyword should always be non null at this point
-            ConceptualTextType t = dataColl.addNewCollMode();
-
-            ConceptType c = fillTextType(t.addNewConcept(), collmode);
-            if(collmodeuri != null) {
-                // TODO: This is compiled as an ENUM, is this correct?
-                switch(collmodeuri) {
-                    case "archive":
-                        c.setSource(BaseElementType.Source.ARCHIVE);
-                        break;
-                    case "producer":
-                        c.setSource(BaseElementType.Source.PRODUCER);
-                        break;
-                }
-            }
-
-            if(collmodevocab != null) {
-                c.setVocab(collmodevocab);
-            }
-
-            if(collmodevocaburi != null) {
-                c.setVocabURI(collmodevocaburi);
-            }
-
-            if(txt != null) {
-                fillTextType(t.addNewTxt(), txt);
-            }
-        }*/
-    }
-
-    // TODO: Still unfinished
-    private ReturnResult readMethodDataCollResInstru(DataCollType dataColl) {
-        // TODO: How to correctly handle languages other than default?
-        if(!hasContent(dataColl.getResInstruArray())) {
-            return ReturnResult.OPERATION_SUCCESSFUL;
-        }
-
-        Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.INSTRUMENTS);
-        if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
-            return containerResult.getLeft();
-        }
-        Pair<ContainerDataField, ContainerChange> container = containerResult.getRight();
-
-        // Let's construct the request and path elements needed
-        ReferencePathRequest request = new ReferencePathRequest();
-        request.setContainer(Fields.INSTRUMENTS);
-        request.setLanguage(language);
-
-        ReferencePath instrumentvocabPath = new ReferencePath(configuration.getReference(configuration.getField(Fields.INSTRUMENTVOCAB).getReference()), null);
-
-        return ReturnResult.OPERATION_SUCCESSFUL;
-
-        /*for(DataApprType appr : anlyInfo.getDataApprArray()) {
-            Pair<StatusCode, DataRow> row = container.getLeft().insertNewDataRow(language, change);
-            if(row.getLeft() != StatusCode.NEW_ROW) {
-                continue;
-            }
-            valueSet(row.getRight(), Fields.APPRAISAL, appr.xmlText());
-        }*/
-
-        // Find out vocab selection
-
-        // Set vocab
-
-        // Find out instrument using vocab
-
-        // Set instrument
-
-        // Set instrumentother
-
-        // Let's hardcode the path since we know exactly what we are looking for.
-        /*String pathRoot = "instruments.";
-        for(DataRow row : container.getRowsFor(Language.DEFAULT)) {
-            if(row.getRemoved()) {
-                continue;
-            }
-            String rowRoot = pathRoot + row.getRowId() + ".";
-
-            String txt = null;
-            String instrument = null;
-            String instrumenturi = null;
-            String instrumentvocab = null;
-            String instrumentvocaburi = null;
-
-            instrumentvocab = getReferenceTitle(references, language, revision, rowRoot + Fields.INSTRUMENTVOCAB);
-            if(!StringUtils.hasText(instrumentvocab)) {
-                continue;
-            }
-
-            instrument = getReferenceTitle(references, language, revision, rowRoot + Fields.INSTRUMENT);
-            if(!StringUtils.hasText(instrument)) {
-                continue;
-            }
-
-            instrumentvocaburi = getReferenceTitle(references, language, revision, rowRoot + Fields.INSTRUMENTVOCABURI);
-
-            instrumenturi = getReferenceTitle(references, language, revision, rowRoot + Fields.INSTRUMENTURI);
-
-            Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.INSTRUMENTOTHER));
-            if(hasValue(valueFieldPair, language)) {
-                txt = valueFieldPair.getRight().getActualValueFor(language);
-            }
-
-            // Keyword should always be non null at this point
-            ResInstruType t = dataColl.addNewResInstru();
-
-            ConceptType c = fillTextType(t.addNewConcept(), instrument);
-            if(instrumenturi != null) {
-                // TODO: This is compiled as an ENUM, is this correct?
-                switch(instrumenturi) {
-                    case "archive":
-                        c.setSource(BaseElementType.Source.ARCHIVE);
-                        break;
-                    case "producer":
-                        c.setSource(BaseElementType.Source.PRODUCER);
-                        break;
-                }
-            }
-
-            if(instrumentvocab != null) {
-                c.setVocab(instrumentvocab);
-            }
-
-            if(instrumentvocaburi != null) {
-                c.setVocabURI(instrumentvocaburi);
             }
 
             if(txt != null) {
