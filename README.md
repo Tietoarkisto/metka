@@ -440,7 +440,7 @@ $button.click(function () {...});
 Kehityssykli on melko lyhyt:
 
 1. Muokkaa tiedostoa.
-2. Suorita [reloadWeb.js](../../blob/master/reloadWeb.js) (NodeJS-skripti) tai [reloadWeb.sh](../../blob/master/reloadWeb.sh) -tiedosto ([resources]-kansio kopioidaan palvelimen hakemistoon).
+2. Suorita [reloadWeb.js](../../blob/master/reloadWeb.js) (Node.js-skripti) tai [reloadWeb.sh](../../blob/master/reloadWeb.sh) -tiedosto ([resources]-kansio kopioidaan palvelimen hakemistoon).
 3. F5, lataa sivu uudelleen.
 
 [Bootstrap]:http://getbootstrap.com/
