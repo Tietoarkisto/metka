@@ -29,7 +29,7 @@ define(function (require) {
                     } else {
                         $body.append(options.body);
                     }
-
+                    log(options);
                     var $header = $('<div class="modal-header">')
                         .append('<button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>')
                         .append($('<h4 class="modal-title">')
