@@ -18,20 +18,25 @@ define(function (require) {
                         method: 'GET',
                         success: function (response) {
                             function refreshPage() {
-                                require('./../../server')('viewAjax', {
-                                    method: 'GET',
-                                    success: function (response) {
-                                        if (response.result === 'VIEW_SUCCESSFUL') {
-                                            options.data = response.transferData;
-                                            $elem.trigger('refresh.metka');
+                                    require('./../../server')('viewAjax', {
+                                        method: 'GET',
+                                        success: function (response) {
+                                            if (response.result === 'VIEW_SUCCESSFUL') {
+                                                // on browser, overwrite files field only, since there might be other unsaved fields on page
+                                                if (options.data.fields.files) {
+                                                    $.extend(options.data.fields.files, response.transferData.fields.files);
+                                                } else {
+                                                    options.data.fields.files = response.transferData.fields.files;
+                                                }
+                                                //studyIsReadOnly = require('./../../isDataReadOnly')(options.data);
+                                                $elem.trigger('refresh.metka');
+                                            }
                                         }
-                                    }
-                                });
+                                    });
                             }
                             // TODO: check status
                             if (response.result === 'VIEW_SUCCESSFUL') {
                             }
-
 
                             var studyIsReadOnly = require('./../../isDataReadOnly')(options.data);
 
@@ -429,7 +434,7 @@ define(function (require) {
                                 }]
                             });
                         }
-                        addFileContainer(files, {
+                        var filesOptions = {
                             "type": "CELL",
                             "title": "Liitetyt tiedostot",
                             "readOnly": true,
@@ -446,25 +451,28 @@ define(function (require) {
                                         id: transferRow.value,
                                         no: ''
                                     }, replaceTr);
-                                },
-                                onAdd: function (originalEmptyData, addRow) {
-                                    require('./../../server')('create', {
-                                        data: JSON.stringify({
-                                            type: 'STUDY_ATTACHMENT',
-                                            parameters: {
-                                                study: require('./../../../metka').id
-                                            }
-                                        }),
-                                        success: function (response) {
-                                            if (response.result === 'REVISION_CREATED') {
-                                                // FIXME: row was immediately created, but if dialog is dismissed, row won't be shown until page refresh
-                                                view(response.data.key, addRow);
-                                            }
-                                        }
-                                    });
                                 }
                             }
-                        });
+                        };
+                        if (!require('./../../isFieldDisabled')(options, 'DEFAULT')) {
+                            filesOptions.field.onAdd = function (originalEmptyData, addRow) {
+                                require('./../../server')('create', {
+                                    data: JSON.stringify({
+                                        type: 'STUDY_ATTACHMENT',
+                                        parameters: {
+                                            study: require('./../../../metka').id
+                                        }
+                                    }),
+                                    success: function (response) {
+                                        if (response.result === 'REVISION_CREATED') {
+                                            // FIXME: row was immediately created, but if dialog is dismissed, row won't be shown until page refresh
+                                            view(response.data.key, addRow);
+                                        }
+                                    }
+                                });
+                            };
+                        }
+                        addFileContainer(files, filesOptions);
                         addFileContainer(removedFiles, {
                             "type": "CELL",
                             "title": "Poistetut tiedostot",
