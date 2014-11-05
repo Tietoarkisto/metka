@@ -37,6 +37,9 @@ define({
     "field": {
         "$ref": "#/definitions/simpleObject",
         "properties": {
+            "key": {
+                "description": "Kenttäavain. Tulee olla sama kuin `fields`-objektin ominaisuuden nimi."
+            },
             "translatable": {
                 "type": "boolean"
             },
@@ -92,12 +95,14 @@ define({
             subfields: {
                 type: "array",
                 items: {
+                    title: "Subfield key",
                     type: "string"
                 }
             },
             removePermissions: {
                 type: "array",
                 items: {
+                    title: "Permission name",
                     type: "string"
                 }
             },
@@ -234,7 +239,7 @@ define({
         "required": ["target"],
         "properties": {
             "key": {
-                "type": "string"
+                "description": "Referenssin avain. Tulee olla sama kuin `references`-objektin ominaisuuden nimi."
             },
             "titlePath": {
                 "type": "string"
@@ -269,9 +274,6 @@ define({
                 "options": {
                     "hidden": true
                 }
-            },
-            "content": {
-                "type": "string"
             }
         },
         "required": ["type", "content"],
@@ -281,6 +283,10 @@ define({
                 "type": {
                     "template": "FIELD"
                 },
+                "content": {
+                    "description": "Kenttäavain, johon rajoitteet kohdistetaan.",
+                    "type": "string"
+                },
                 "targets": {
                     "options": {
                         "collapsed": true
@@ -288,6 +294,7 @@ define({
                     "$ref": "#/definitions/restrictionTargets"
                 },
                 "checks": {
+                    "description": "Tarkistukset, jotka tehdään tämän target-objektin validoinnin yhteydessä.",
                     "options": {
                         "collapsed": true
                     },
@@ -301,6 +308,7 @@ define({
                         "additionalProperties": false,
                         "properties": {
                             "condition": {
+                                "description": "Tietokentän sisällölle määritelty vaatimus.",
                                 "type": "object",
                                 "properties": {
                                     "type": {
@@ -312,6 +320,7 @@ define({
                                 },
                                 "required": ["type"],
                                 "oneOf": [{
+                                    "description": "`Has target` / `No target` -valinta määrittää, onko vaatimuksella tarkentavia target-objekteja. Näiden target-objektien on oltava `LANGUAGE`-tyyppisiä.",
                                     "title": "NOT_EMPTY",
                                     "properties": {
                                         "type": {
@@ -324,6 +333,7 @@ define({
                                         "$ref": "#/definitions/noTarget"
                                     }]
                                 }, {
+                                    "description": "`Has target` / `No target` -valinta määrittää, onko vaatimuksella tarkentavia target-objekteja. Näiden target-objektien on oltava `LANGUAGE`-tyyppisiä.",
                                     "title": "IS_EMPTY",
                                     "additionalProperties": false,
                                     "properties": {
@@ -337,6 +347,7 @@ define({
                                         "$ref": "#/definitions/noTarget"
                                     }]
                                 }, {
+                                    "description": "`Has target` / `No target` -valinta määrittää, onko vaatimuksella tarkentavia target-objekteja.",
                                     "title": "EQUALS",
                                     "options": {
                                         "collapsed": false,
@@ -390,6 +401,7 @@ define({
                                 }]
                             },
                             "restrictors": {
+                                "description": "Target-objektit, jotka määrittelevät, suoritetaanko tämä tarkistus. Jos näitä ei validoida onnistuneesti, tarkistusta ei suoriteta.",
                                 "$ref": "#/definitions/restrictionTargets"
                             }
                         }
@@ -402,7 +414,12 @@ define({
                 "type": {
                     "template": "QUERY"
                 },
+                "content": {
+                    "description": "Lucene-haku, joka suorietaan validointivaiheessa ja johon rajoitteet kohdistetaan.",
+                    "type": "string"
+                },
                 "checks": {
+                    "description": "Tarkistukset, jotka tehdään tämän target-objektin validoinnin yhteydessä.",
                     "options": {
                         "collapsed": true
                     },
@@ -416,6 +433,7 @@ define({
                         "additionalProperties": false,
                         "properties": {
                             "condition": {
+                                "description": "Lucene-haun tulokselle määritelty vaatimus.",
                                 "type": "object",
                                 "properties": {
                                     "type": {
@@ -429,6 +447,7 @@ define({
                                 }
                             },
                             "restrictors": {
+                                "description": "Target-objektit, jotka määrittelevät, suoritetaanko tämä tarkistus. Jos näitä ei validoida onnistuneesti, tarkistusta ei suoriteta.",
                                 "$ref": "#/definitions/restrictionTargets"
                             }
                         }
@@ -440,6 +459,10 @@ define({
             "properties": {
                 "type": {
                     "template": "VALUE"
+                },
+                "content": {
+                    "description": "Tämän target-objektin arvo jota käytetään muiden rajoitteiden validoinnissa.",
+                    "type": "string"
                 }
             }
         }, {
@@ -447,6 +470,10 @@ define({
             "properties": {
                 "type": {
                     "template": "LANGUAGE"
+                },
+                "content": {
+                    "description": "Kielikoodi, johon rajoitteiden validointi kohdistetaan.",
+                    "type": "string"
                 }
             }
         }, {
@@ -454,6 +481,10 @@ define({
             "properties": {
                 "type": {
                     "template": "NAMED"
+                },
+                "content": {
+                    "description": "`namedTargets`-objektin ominaisuuden nimi.",
+                    "type": "string"
                 }
             }
         }]
@@ -486,7 +517,7 @@ define({
         "$ref": "#/definitions/simpleObject",
         "properties": {
             "key": {
-                "type": "string"
+                "description": "Valintalistan avain. Tulee olla sama kuin `selectionLists`-objektin ominaisuuden nimi."
             },
             "type": {
                 "type": "string",
@@ -527,8 +558,7 @@ define({
         "additionalProperties": false,
         "properties": {
             "key": {
-                "type": "string",
-                "description": "Tulee olla sama kuin annettu property-nimi (esim. \"seriesname\")."
+                "type": "string"
             },
             "type": {
                 "type": "string",

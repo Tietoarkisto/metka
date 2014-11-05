@@ -269,6 +269,38 @@ define(function (require) {
                                                                                     },
                                                                                     "type": "object",
                                                                                     "properties": {
+                                                                                        "_help": {
+                                                                                            "title": "Ohjeet",
+                                                                                            "readOnly": true,
+                                                                                            "type": "object",
+                                                                                            "options": {
+                                                                                                "disable_edit_json": true,
+                                                                                                "disable_properties": true
+                                                                                            },
+                                                                                            "properties": {
+                                                                                                "Kenttäavain": {
+                                                                                                    "type": "string",
+                                                                                                    "readOnly": true,
+                                                                                                    "default": "`fields`-osiosta loytyvän objektin `key`-ominaisuuden arvo."
+                                                                                                },
+                                                                                                "Rajoitteet/pakotteet": {
+                                                                                                    "type": "string",
+                                                                                                    "readOnly": true,
+                                                                                                    "default": "Tietosisällön vaatimuksia, esim. pakolliset täytettävät kentät."
+                                                                                                },
+                                                                                                "Tietokenttä": {
+                                                                                                    "type": "string",
+                                                                                                    "readOnly": true,
+                                                                                                    "default": "`fields`-osiosta löytyvän määrityksen perusteella tallennettu tieto."
+                                                                                                },
+                                                                                                "Käännösteksti": {
+                                                                                                    "type": "string",
+                                                                                                    "readOnly": true,
+                                                                                                    "default": "Objekti joka sisältää tekstit ohjelmiston tukemille kielille, joista suomenkielinen teksti on pakollinen."
+                                                                                                }
+                                                                                            },
+                                                                                            "required": ["Kenttäavain", "Rajoitteet/pakotteet", "Tietokenttä", "Käännösteksti"]
+                                                                                        },
                                                                                         "key": {
                                                                                             "type": "object",
                                                                                             "headerTemplate": "{{key}} (type: {{self.type}}, version: {{self.version}})",
@@ -291,6 +323,7 @@ define(function (require) {
                                                                                             "additionalProperties": false
                                                                                         },
                                                                                         "references": {
+                                                                                            "description": "Tietokenttien käyttämien referenssien määritykset. (Katso uml_json_configuration_reference.graphml ja Reference specification.odt -tiedostot.)",
                                                                                             "type": "object",
                                                                                             "patternProperties": {
                                                                                                 ".*": {
@@ -301,6 +334,9 @@ define(function (require) {
                                                                                                             "type": {
                                                                                                                 "template": "DEPENDENCY"
                                                                                                             },
+                                                                                                            "target": {
+                                                                                                                "description": "Tästä konfiguraatiosta löytyvä kenttäavain."
+                                                                                                            },
                                                                                                             "valuePath": {
                                                                                                                 "type": "string"
                                                                                                             }
@@ -310,6 +346,9 @@ define(function (require) {
                                                                                                         "properties": {
                                                                                                             "type": {
                                                                                                                 "template": "REVISIONABLE"
+                                                                                                            },
+                                                                                                            "target": {
+                                                                                                                "description": "Konfiguraatiotyyppi, johon referenssi kohdennetaan."
                                                                                                             },
                                                                                                             "approvedOnly": {
                                                                                                                 "type": "boolean",
@@ -326,6 +365,9 @@ define(function (require) {
                                                                                                             "type": {
                                                                                                                 "template": "JSON"
                                                                                                             },
+                                                                                                            "target": {
+                                                                                                                "description": "JSON-tiedosto, johon referenssi kohdennetaan."
+                                                                                                            },
                                                                                                             "valuePath": {
                                                                                                                 "type": "string"
                                                                                                             }
@@ -335,6 +377,7 @@ define(function (require) {
                                                                                             }
                                                                                         },
                                                                                         "selectionLists": {
+                                                                                            "description": "`SELECTION`-tyyppisten kenttien valintalistojen määritykset.",
                                                                                             "type": "object",
                                                                                             "patternProperties": {
                                                                                                 ".*": {
@@ -351,7 +394,7 @@ define(function (require) {
                                                                                                                     "$ref": "#/definitions/option",
                                                                                                                     "properties": {
                                                                                                                         "&title": {
-                                                                                                                            "title": "Teksti",
+                                                                                                                            "title": "Käännösteksti",
                                                                                                                             "format": "grid",
                                                                                                                             "options": {
                                                                                                                                 "disable_edit_json": true
@@ -389,6 +432,7 @@ define(function (require) {
                                                                                                                 "template": "REFERENCE"
                                                                                                             },
                                                                                                             "reference": {
+                                                                                                                description: "`references`-objektin ominaisuuden nimi, josta löytyy tämän kentän referenssin määritys.",
                                                                                                                 "type": "string"
                                                                                                             }
                                                                                                         }
@@ -400,7 +444,7 @@ define(function (require) {
                                                                                                             },
                                                                                                             "sublistKey": {
                                                                                                                 "type": "string",
-                                                                                                                "description": "Listan avain"
+                                                                                                                "description": "`selectionLists`-objektin ominaisuuden nimi, josta löytyy tarkentava määritys tälle valintalistalle."
                                                                                                             }
                                                                                                         }
                                                                                                     }]
@@ -408,6 +452,7 @@ define(function (require) {
                                                                                             }
                                                                                         },
                                                                                         "fields": {
+                                                                                            "description": "Tietokenttien määritykset. Yksittäisen kentän määritys löytyy uml_json_configuration_field.graphml-tiedostosta.",
                                                                                             "type": "object",
                                                                                             "patternProperties": {
                                                                                                 ".*": {
@@ -440,6 +485,7 @@ define(function (require) {
                                                                                                                 "enum": ["REFERENCE"]
                                                                                                             },
                                                                                                             reference: {
+                                                                                                                description: "`references`-objektin ominaisuuden nimi, josta löytyy tämän kentän referenssin määritys.",
                                                                                                                 type: "string"
                                                                                                             }
                                                                                                         }
@@ -448,6 +494,9 @@ define(function (require) {
                                                                                                         properties: {
                                                                                                             type: {
                                                                                                                 "enum": ["CONTAINER"]
+                                                                                                            },
+                                                                                                            subfields: {
+                                                                                                                description: "Taulukon sarakkeiden tietokenttien kenttäavaimet."
                                                                                                             }
                                                                                                         },
                                                                                                         $ref: "#/definitions/fieldContainer"
@@ -458,10 +507,14 @@ define(function (require) {
                                                                                                                 "enum": ["REFERENCECONTAINER"]
                                                                                                             },
                                                                                                             reference: {
+                                                                                                                description: "`references`-objektin ominaisuuden nimi, josta löytyy tämän kentän referenssin määritys.",
                                                                                                                 type: "string"
                                                                                                             },
                                                                                                             bidirectional: {
                                                                                                                 type: "string"
+                                                                                                            },
+                                                                                                            subfields: {
+                                                                                                                description: "Taulukon sarakkeiden tietokenttien kenttäavaimet. Näiden täytyy olla `REFERENCE`-tyyppisiä ja referenssin täytyy olla `DEPENDENCY`-tyyppinen, joka kohdistuu tähän kenttään."
                                                                                                             }
                                                                                                         },
                                                                                                         $ref: "#/definitions/fieldContainer"
@@ -472,6 +525,7 @@ define(function (require) {
                                                                                                                 "enum": ["SELECTION"]
                                                                                                             },
                                                                                                             selectionList: {
+                                                                                                                description: "`selectionLists`-objektin ominaisuuden nimi, josta löytyy tämän kentän valintalistan määritys.",
                                                                                                                 type: "string"
                                                                                                             }
                                                                                                         }
@@ -528,6 +582,7 @@ define(function (require) {
                                                                                         },
                                                                                         "restrictions": {
                                                                                             "type": "array",
+                                                                                            "description": "Tämän konfiguraation tietojoukolle tehtävien operaatioiden rajoitteet/pakotteet. (Katso restrictions_design_pseudo.txt)",
                                                                                             "options": {
                                                                                                 "collapsed": true
                                                                                             },
@@ -544,6 +599,7 @@ define(function (require) {
                                                                                                         ]
                                                                                                     },
                                                                                                     "targets": {
+                                                                                                        "description": "Operaatiolle määritellyt rajoitteet/pakotteet. Näiden on validoiduttava onnistuneesti, jotta operaatio suoritetaan.",
                                                                                                         "options": {
                                                                                                             "collapsed": true
                                                                                                         },
@@ -554,12 +610,15 @@ define(function (require) {
                                                                                             }
                                                                                         },
                                                                                         "namedTargets": {
-                                                                                            "$ref": "#/definitions/namedTargets"
+                                                                                            "$ref": "#/definitions/namedTargets",
+                                                                                            "description": "Rajoitteissa käytetyt valmiiksi määritellyt kokonaisuudet, joihin viitataan NAMED-tyyppisillä `target`-objekteilla."
                                                                                         },
                                                                                         "displayId": {
-                                                                                            "type": "string"
+                                                                                            "type": "string",
+                                                                                            "description": "Käyttäjälle näytettävän ID:n kenttäavain. Muun kuin taulukkotyyppisen kentän avain. Jos ei määritelty, käyttäjälle näytetään `key.id`."
                                                                                         }
                                                                                     },
+                                                                                    "required": ["_help", "key", "references", "selectionLists", "fields", "restrictions", "namedTargets", "displayId"],
                                                                                     "additionalProperties": false,
                                                                                     "definitions": require('./../definitions')
                                                                                 }
