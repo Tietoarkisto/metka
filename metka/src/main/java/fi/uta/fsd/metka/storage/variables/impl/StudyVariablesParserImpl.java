@@ -152,7 +152,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             variablesData = dataPair.getRight();
         }
 
-        if(!variablesData.getHandler().equals(AuthenticationUtil.getUserName())) {
+        if(!AuthenticationUtil.isHandler(variablesData)) {
             variablesData.setHandler(AuthenticationUtil.getUserName());
             revisions.updateRevisionData(variablesData);
         }

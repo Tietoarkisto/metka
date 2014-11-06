@@ -56,4 +56,11 @@ public class VariablesFactory extends DataFactory {
 
         return new ImmutablePair<>(ReturnResult.REVISION_CREATED, data);
     }
+
+    public void checkVariableTranslations(RevisionData variable) {
+        if(variable.getConfiguration().getType() != ConfigurationType.STUDY_VARIABLE) {
+            return;
+        }
+        // TODO: Check translations
+    }
 }

@@ -5,15 +5,24 @@ import codebook25.CodeBookType;
 import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.enums.RevisionState;
+import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
+import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.model.factories.StudyFactory;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
+import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
+import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.search.StudyVariableSearch;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
+import fi.uta.fsd.metka.storage.repository.RevisionEditRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.response.RevisionableInfo;
+import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.xmlbeans.XmlException;
@@ -29,6 +38,9 @@ import java.io.IOException;
 public class DDIReader {
     @Autowired
     private RevisionRepository revisions;
+
+    @Autowired
+    private RevisionEditRepository edit;
 
     @Autowired
     private ReferenceService references;
@@ -63,9 +75,23 @@ public class DDIReader {
             return configPair.getLeft();
         }
 
+        if(revision.getState() != RevisionState.DRAFT) {
+            Pair<ReturnResult, RevisionData> pair = edit.edit(TransferData.buildFromRevisionData(revision, RevisionableInfo.FALSE));
+            if(pair.getLeft() == ReturnResult.REVISION_FOUND) {
+                if(!AuthenticationUtil.isHandler(pair.getRight())) {
+                    return ReturnResult.USER_NOT_HANDLER;
+                }
+            } else if(pair.getLeft() != ReturnResult.REVISION_CREATED) {
+                return pair.getLeft();
+            }
+            revision = pair.getRight();
+        } else if(!AuthenticationUtil.isHandler(revision)) {
+            return ReturnResult.USER_NOT_HANDLER;
+        }
+
         try {
             CodeBookDocument document = CodeBookDocument.Factory.parse(file);
-            CodebookReader reader = new CodebookReader(revisions, references, document, revision, configPair.getRight(), variableSearch);
+            CodebookReader reader = new CodebookReader(revisions, edit, references, document, revision, configPair.getRight(), variableSearch);
             return reader.read();
         } catch(IOException ioe) {
             Logger.error(DDIReader.class, "IOException during DDI-xml parsing.", ioe);
@@ -78,14 +104,17 @@ public class DDIReader {
 
     private static class CodebookReader {
         private final RevisionRepository revisions;
+        private final RevisionEditRepository edit;
         private final ReferenceService references;
         private final CodeBookDocument document;
         private final RevisionData revision;
         private final Configuration configuration;
         private final StudyVariableSearch variableSearch;
 
-        private CodebookReader(RevisionRepository revisions, ReferenceService references, CodeBookDocument document, RevisionData revision, Configuration configuration, StudyVariableSearch variableSearch) {
+        private CodebookReader(RevisionRepository revisions, RevisionEditRepository edit, ReferenceService references
+                , CodeBookDocument document, RevisionData revision, Configuration configuration, StudyVariableSearch variableSearch) {
             this.revisions = revisions;
+            this.edit = edit;
             this.references = references;
             this.document = document;
             this.revision = revision;
@@ -94,6 +123,10 @@ public class DDIReader {
         }
 
         private ReturnResult read() {
+            if(revision.getState() != RevisionState.DRAFT || !AuthenticationUtil.isHandler(revision)) {
+                Logger.warning(DDIReader.class, "User "+AuthenticationUtil.getUserName()+" tried to import DDI for study "+revision.getKey().toString()+" that either was not a draft or is handled by someone else.");
+                return ReturnResult.OPERATION_FAIL;
+            }
             CodeBookType codeBook = document.getCodeBook();
             Language docLang = Language.fromValue(codeBook.getXmlLang().toLowerCase());
 
@@ -106,21 +139,22 @@ public class DDIReader {
  muilla aineiston välilehdillä saa olla toki tallennettuja tietoja.
 2) DDI-import voidaan suorittaa kuvailu-välilehden osalta vain default-kieliselle (eli meidän tapauksessa suomenkieliselle) DDI-tiedostolle.
 */
-            boolean importDescription = docLang == Language.DEFAULT && isDescriptionTabClear();
-
-            // TODO: Check if description tab is clear
-
+            Pair<StatusCode, ValueDataField> valuePair = revision.dataField(ValueDataFieldCall.get(Fields.STUDYID));
+            if(valuePair.getLeft() != StatusCode.FIELD_FOUND) {
+                return ReturnResult.OPERATION_FAIL;
+            }
 
             // TODO: Still unfinished
-            section = new DDIDataDescription(revision, docLang, codeBook, info, configuration, revisions, variableSearch);
+            section = new DDIDataDescription(revision, docLang, codeBook, info, configuration, revisions, edit, variableSearch, valuePair.getRight().getActualValueFor(Language.DEFAULT));
             result = section.read();
 
             if(result != ReturnResult.OPERATION_SUCCESSFUL) {
                 return result;
             }
 
+            boolean importDescription = docLang == Language.DEFAULT && isDescriptionTabClear();
+
             if(importDescription) {
-                // TODO: Still unfinished
                 section = new DDIStudyDescription(revision, docLang, codeBook, info, configuration, references);
                 result = section.read();
 
@@ -147,6 +181,7 @@ public class DDIReader {
         }
 
         private boolean isDescriptionTabClear() {
+            // TODO: Check if description tab is clear
             return false;
         }
     }
