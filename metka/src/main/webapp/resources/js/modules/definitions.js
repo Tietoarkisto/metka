@@ -63,16 +63,6 @@ define({
             },
             "exact": {
                 "type": "boolean"
-            },
-            "display": {
-                "options": {
-                    "hidden": true
-                }
-            },
-            "unique": {
-                "options": {
-                    "hidden": true
-                }
             }
         },
         "additionalProperties": false
