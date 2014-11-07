@@ -134,7 +134,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 break;
             case STUDY_VARIABLE:
                 VariablesFactory fac = new VariablesFactory();
-                fac.checkVariableTranslations(revision);
+                fac.checkVariableTranslations(revision, info);
                 break;
             default:
                 break;

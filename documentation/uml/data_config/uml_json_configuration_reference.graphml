@@ -64,7 +64,7 @@ see reference specification document.</y:NodeLabel>
 +target : String
 +valuePath : Path
 +titlePath : Path
-+approvedOnly : Boolean
++approvedOnly : Boolean = false
 +ignoreRemoved : Boolean = true</y:AttributeLabel>
             <y:MethodLabel/>
           </y:UML>

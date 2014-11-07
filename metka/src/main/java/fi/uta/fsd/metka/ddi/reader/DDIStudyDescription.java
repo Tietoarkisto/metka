@@ -26,42 +26,11 @@ import java.util.Map;
 
 class DDIStudyDescription extends DDISectionBase {
     private static final Map<Language, String> WEIGHT_NO = new HashMap<>();
-    private static final Map<String, Map<Language, String>> RESTRICTION = new HashMap<>();
 
     static {
         WEIGHT_NO.put(Language.DEFAULT, "Aineisto ei sisällä painomuuttujia.");
         WEIGHT_NO.put(Language.EN, "There are no weight variables in the data.");
         WEIGHT_NO.put(Language.SV, "Datamaterialet innehåller inga viktvariabler.");
-
-        Map<Language, String> tempMap = new HashMap<>();
-        RESTRICTION.put("1", tempMap);
-        tempMap.put(Language.DEFAULT, "Aineisto on kaikkien käytettävissä.");
-        tempMap.put(Language.EN, "The dataset is available for all users.");
-        tempMap.put(Language.SV, "??");
-
-        tempMap = new HashMap<>();
-        RESTRICTION.put("2", tempMap);
-        tempMap.put(Language.DEFAULT, "Aineisto on käytettävissä tutkimukseen, opetukseen ja opiskeluun.");
-        tempMap.put(Language.EN, "The dataset is available for research, teaching and study.");
-        tempMap.put(Language.SV, "??");
-
-        tempMap = new HashMap<>();
-        RESTRICTION.put("3", tempMap);
-        tempMap.put(Language.DEFAULT, "Aineisto on käytettävissä vain tutkimukseen ja ylempiin opinnäytteisiin (pro gradu, lisensiaattitutkimus ja väitöstutkimus).");
-        tempMap.put(Language.EN, "The dataset is available for research and for Master's, licentiate and doctoral theses.");
-        tempMap.put(Language.SV, "??");
-
-        tempMap = new HashMap<>();
-        RESTRICTION.put("4", tempMap);
-        tempMap.put(Language.DEFAULT, "Aineisto on käytettävissä vain luovuttajan luvalla.");
-        tempMap.put(Language.EN, "The dataset is available by the permission of the depositor only.");
-        tempMap.put(Language.SV, "??");
-
-        tempMap = new HashMap<>();
-        RESTRICTION.put("5", tempMap);
-        tempMap.put(Language.DEFAULT, "Aineisto on jatkokäytettävissä vasta määräajan jälkeen tietystä päivämäärästä alkaen.");
-        tempMap.put(Language.EN, "The dataset is available only after a specified time.");
-        tempMap.put(Language.SV, "??");
     }
 
     private final ReferenceService references;
@@ -994,9 +963,6 @@ class DDIStudyDescription extends DDISectionBase {
         result = readDataAccessSetAvail(dataAccs);
         if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
-        result = readDataAccessUseStatement(dataAccs);
-        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
-
         if(hasContent(dataAccs.getNotesArray())) {
             valueSet(Fields.DATASETNOTES, dataAccs.getNotesArray(0).xmlText());
         }
@@ -1009,9 +975,6 @@ class DDIStudyDescription extends DDISectionBase {
             return ReturnResult.OPERATION_SUCCESSFUL;
         }
         SetAvailType setAvail = dataAccs.getSetAvailArray(0);
-        if(hasContent(setAvail.getOrigArchArray())) {
-            valueSet(Fields.ORIGINALLOCATION, setAvail.getOrigArchArray(0).xmlText(), Language.DEFAULT);
-        }
 
         if(hasContent(setAvail.getCollSizeArray())) {
             valueSet(Fields.COLLSIZE, setAvail.getCollSizeArray(0).xmlText());
@@ -1019,29 +982,6 @@ class DDIStudyDescription extends DDISectionBase {
 
         if(hasContent(setAvail.getCompleteArray())) {
             valueSet(Fields.COMPLETE, setAvail.getCompleteArray(0).xmlText());
-        }
-        return ReturnResult.OPERATION_SUCCESSFUL;
-    }
-
-    private ReturnResult readDataAccessUseStatement(DataAccsType dataAccs) {
-        if(!hasContent(dataAccs.getUseStmtArray())) {
-            return ReturnResult.OPERATION_SUCCESSFUL;
-        }
-        UseStmtType useStmt = dataAccs.getUseStmtArray(0);
-
-        if(hasContent(useStmt.getSpecPermArray())) {
-            valueSet(Fields.SPECIALTERMSOFUSE, useStmt.getSpecPermArray(0).xmlText());
-        }
-
-        if(hasContent(useStmt.getRestrctnArray())) {
-            String restr = useStmt.getRestrctnArray(0).xmlText();
-
-            for(String i : RESTRICTION.keySet()) {
-                if(RESTRICTION.get(i).get(language).equals(restr)) {
-                    valueSet(Fields.TERMSOFUSE, restr, Language.DEFAULT);
-                    break;
-                }
-            }
         }
         return ReturnResult.OPERATION_SUCCESSFUL;
     }

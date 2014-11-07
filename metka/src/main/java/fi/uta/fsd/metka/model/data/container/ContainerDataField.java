@@ -161,6 +161,9 @@ public class ContainerDataField extends RowContainerDataField {
             return new ImmutablePair<>(StatusCode.NO_ROW_WITH_VALUE, null);
         }
         for(DataRow row : rows.get(language)) {
+            if(row.getRemoved()) {
+                continue;
+            }
             Pair<StatusCode, ValueDataField> pair = row.dataField(ValueDataFieldCall.get(key));
             if(pair.getLeft() != StatusCode.FIELD_FOUND) {
                 continue;

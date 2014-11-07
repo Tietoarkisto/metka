@@ -290,6 +290,7 @@
             "key": "translation",
             "type": "STRING",
             "immutable": true,
+            "translatable": false,
             "editable": false,
             "subfield": true
 

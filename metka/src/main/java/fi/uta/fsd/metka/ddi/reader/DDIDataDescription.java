@@ -337,7 +337,7 @@ class DDIDataDescription extends DDISectionBase {
         if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
         VariablesFactory fac = new VariablesFactory();
-        fac.checkVariableTranslations(variable);
+        fac.checkVariableTranslations(variable, info);
 
         revisions.updateRevisionData(variable);
         return ReturnResult.OPERATION_SUCCESSFUL;
