@@ -117,8 +117,7 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
             return ReturnResult.REVISION_NOT_A_DRAFT;
         }
 
-        String userName = AuthenticationUtil.getUserName();
-        if(!pair.getRight().getHandler().equals(userName)) {
+        if(!AuthenticationUtil.isHandler(pair.getRight())) {
             return ReturnResult.USER_NOT_HANDLER;
         }
         return ReturnResult.CAN_CREATE_DRAFT;

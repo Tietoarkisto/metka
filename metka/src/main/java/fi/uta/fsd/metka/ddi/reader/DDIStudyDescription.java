@@ -26,42 +26,11 @@ import java.util.Map;
 
 class DDIStudyDescription extends DDISectionBase {
     private static final Map<Language, String> WEIGHT_NO = new HashMap<>();
-    private static final Map<String, Map<Language, String>> RESTRICTION = new HashMap<>();
 
     static {
         WEIGHT_NO.put(Language.DEFAULT, "Aineisto ei sisällä painomuuttujia.");
         WEIGHT_NO.put(Language.EN, "There are no weight variables in the data.");
         WEIGHT_NO.put(Language.SV, "Datamaterialet innehåller inga viktvariabler.");
-
-        Map<Language, String> tempMap = new HashMap<>();
-        RESTRICTION.put("1", tempMap);
-        tempMap.put(Language.DEFAULT, "Aineisto on kaikkien käytettävissä.");
-        tempMap.put(Language.EN, "The dataset is available for all users.");
-        tempMap.put(Language.SV, "??");
-
-        tempMap = new HashMap<>();
-        RESTRICTION.put("2", tempMap);
-        tempMap.put(Language.DEFAULT, "Aineisto on käytettävissä tutkimukseen, opetukseen ja opiskeluun.");
-        tempMap.put(Language.EN, "The dataset is available for research, teaching and study.");
-        tempMap.put(Language.SV, "??");
-
-        tempMap = new HashMap<>();
-        RESTRICTION.put("3", tempMap);
-        tempMap.put(Language.DEFAULT, "Aineisto on käytettävissä vain tutkimukseen ja ylempiin opinnäytteisiin (pro gradu, lisensiaattitutkimus ja väitöstutkimus).");
-        tempMap.put(Language.EN, "The dataset is available for research and for Master's, licentiate and doctoral theses.");
-        tempMap.put(Language.SV, "??");
-
-        tempMap = new HashMap<>();
-        RESTRICTION.put("4", tempMap);
-        tempMap.put(Language.DEFAULT, "Aineisto on käytettävissä vain luovuttajan luvalla.");
-        tempMap.put(Language.EN, "The dataset is available by the permission of the depositor only.");
-        tempMap.put(Language.SV, "??");
-
-        tempMap = new HashMap<>();
-        RESTRICTION.put("5", tempMap);
-        tempMap.put(Language.DEFAULT, "Aineisto on jatkokäytettävissä vasta määräajan jälkeen tietystä päivämäärästä alkaen.");
-        tempMap.put(Language.EN, "The dataset is available only after a specified time.");
-        tempMap.put(Language.SV, "??");
     }
 
     private final ReferenceService references;
@@ -116,9 +85,6 @@ class DDIStudyDescription extends DDISectionBase {
         if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
         result = readCitationRspStatementAuth(citation);
-        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
-
-        result = readCitationRspStatementOther(citation);
         if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
         return readCitationProdStatement(citation);
@@ -239,117 +205,6 @@ class DDIStudyDescription extends DDISectionBase {
         }
 
         return ReturnResult.OPERATION_SUCCESSFUL;
-    }
-
-    private ReturnResult readCitationRspStatementOther(CitationType citation) {
-        if(citation.getRspStmt() == null) {
-            return ReturnResult.OPERATION_SUCCESSFUL;
-        }
-        RspStmtType rsp = citation.getRspStmt();
-        if(!hasContent(rsp.getOthIdArray())) {
-            return ReturnResult.OPERATION_SUCCESSFUL;
-        }
-
-        // Can't be implemented while preserving data correctness. Not implementing right now
-        return ReturnResult.OPERATION_SUCCESSFUL;
-        /*
-
-        Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.OTHERAUTHORS);
-        if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
-            return containerResult.getLeft();
-        }
-        ContainerDataField container = containerResult.getRight().getLeft();
-        ContainerChange change = containerResult.getRight().getRight();
-
-        // Let's construct the request and path elements needed
-        ReferencePathRequest request = new ReferencePathRequest();
-        request.setContainer(Fields.OTHERAUTHORS);
-        request.setLanguage(language);
-
-        for(OthIdType oth : rsp.getOthIdArray()) {
-            if(!StringUtils.hasText(collector.xmlText())) {
-                continue;
-            }
-
-            Pair<StatusCode, DataRow> row = container.insertNewDataRow(Language.DEFAULT, change);
-            if(row.getLeft() != StatusCode.NEW_ROW) {
-                continue;
-            }
-        }*/
-
-        /*
-        for(DataCollectorType collector : dataColl.getDataCollectorArray()) {
-            if(!StringUtils.hasText(collector.xmlText())) {
-                continue;
-            }
-
-            Pair<StatusCode, DataRow> row = container.insertNewDataRow(Language.DEFAULT, change);
-            if(row.getLeft() != StatusCode.NEW_ROW) {
-                continue;
-            }
-
-            // If collector has an abbreviation then assume organization since persons don't have abbreviation.
-            // It is possible for organization to not have abbreviation but there's no way for us to detect this.
-            if(!StringUtils.hasText(collector.getAbbr())) {
-                valueSet(row.getRight(), Fields.COLLECTORTYPE, "1");
-                valueSet(row.getRight(), Fields.COLLECTOR, collector.xmlText());
-                if(StringUtils.hasText(collector.getAffiliation())) {
-                    String[] splits = collector.getAffiliation().split("\\. ");
-                    String orgValue = null;
-                    String agencyValue = null;
-                    if(splits.length > 0) {
-                        ReferenceOption option = findOrganization(splits[0], Fields.COLLECTORORGANISATION);
-                        orgValue = (option != null) ? option.getValue() : null;
-                        if(StringUtils.hasText(orgValue)) {
-                            valueSet(row.getRight(), Fields.COLLECTORORGANISATION, orgValue);
-                        }
-                    }
-                    if(splits.length > 1 && orgValue != null) {
-                        ReferenceOption option = findAgency(splits[1], Fields.COLLECTORORGANISATION, orgValue, Fields.COLLECTORAGENCY);
-                        agencyValue = (option != null) ? option.getValue() : null;
-                        if(StringUtils.hasText(agencyValue)) {
-                            valueSet(row.getRight(), Fields.COLLECTORAGENCY, agencyValue);
-                        }
-                    }
-                    if(splits.length > 2 && agencyValue != null) {
-                        ReferenceOption option = findSection(splits[2], Fields.COLLECTORORGANISATION, orgValue, Fields.COLLECTORAGENCY, agencyValue, Fields.COLLECTORSECTION);
-                        String sectionValue = (option != null) ? option.getValue() : null;
-                        if(StringUtils.hasText(sectionValue)) {
-                            valueSet(row.getRight(), Fields.COLLECTORSECTION, sectionValue);
-                        }
-                    }
-                }
-            } else {
-                valueSet(row.getRight(), Fields.COLLECTORTYPE, "2");
-                // If organization collector has affiliation then we know that it has at least an agency and possibly a section
-                // If not then we know that the actual collector is an organization
-                ReferenceOption option = findOrganization(StringUtils.hasText(collector.getAffiliation()) ? collector.getAffiliation() : collector.xmlText(), Fields.COLLECTORORGANISATION);
-                String orgValue = (option != null) ? option.getValue() : null;
-                if(StringUtils.hasText(orgValue)) {
-                    valueSet(row.getRight(), Fields.COLLECTORORGANISATION, orgValue);
-                }
-                if(StringUtils.hasText(collector.getAffiliation())) {
-                    String agencyValue = null;
-                    String[] splits = collector.xmlText().split("\\. ");
-
-                    if(splits.length > 0 && orgValue != null) {
-                        option = findAgency(splits[0], Fields.COLLECTORORGANISATION, orgValue, Fields.COLLECTORAGENCY);
-                        agencyValue = (option != null) ? option.getValue() : null;
-                        if(StringUtils.hasText(agencyValue)) {
-                            valueSet(row.getRight(), Fields.COLLECTORAGENCY, agencyValue);
-                        }
-                    }
-                    if(splits.length > 1 && agencyValue != null) {
-                        option = findSection(splits[1], Fields.COLLECTORORGANISATION, orgValue, Fields.COLLECTORAGENCY, agencyValue, Fields.COLLECTORSECTION);
-                        String sectionValue = (option != null) ? option.getValue() : null;
-                        if(StringUtils.hasText(sectionValue)) {
-                            valueSet(row.getRight(), Fields.COLLECTORSECTION, sectionValue);
-                        }
-                    }
-                }
-            }
-        }
-        */
     }
 
     private ReturnResult readCitationProdStatement(CitationType citation) {
@@ -1108,9 +963,6 @@ class DDIStudyDescription extends DDISectionBase {
         result = readDataAccessSetAvail(dataAccs);
         if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
-        result = readDataAccessUseStatement(dataAccs);
-        if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
-
         if(hasContent(dataAccs.getNotesArray())) {
             valueSet(Fields.DATASETNOTES, dataAccs.getNotesArray(0).xmlText());
         }
@@ -1123,9 +975,6 @@ class DDIStudyDescription extends DDISectionBase {
             return ReturnResult.OPERATION_SUCCESSFUL;
         }
         SetAvailType setAvail = dataAccs.getSetAvailArray(0);
-        if(hasContent(setAvail.getOrigArchArray())) {
-            valueSet(Fields.ORIGINALLOCATION, setAvail.getOrigArchArray(0).xmlText(), Language.DEFAULT);
-        }
 
         if(hasContent(setAvail.getCollSizeArray())) {
             valueSet(Fields.COLLSIZE, setAvail.getCollSizeArray(0).xmlText());
@@ -1133,29 +982,6 @@ class DDIStudyDescription extends DDISectionBase {
 
         if(hasContent(setAvail.getCompleteArray())) {
             valueSet(Fields.COMPLETE, setAvail.getCompleteArray(0).xmlText());
-        }
-        return ReturnResult.OPERATION_SUCCESSFUL;
-    }
-
-    private ReturnResult readDataAccessUseStatement(DataAccsType dataAccs) {
-        if(!hasContent(dataAccs.getUseStmtArray())) {
-            return ReturnResult.OPERATION_SUCCESSFUL;
-        }
-        UseStmtType useStmt = dataAccs.getUseStmtArray(0);
-
-        if(hasContent(useStmt.getSpecPermArray())) {
-            valueSet(Fields.SPECIALTERMSOFUSE, useStmt.getSpecPermArray(0).xmlText());
-        }
-
-        if(hasContent(useStmt.getRestrctnArray())) {
-            String restr = useStmt.getRestrctnArray(0).xmlText();
-
-            for(String i : RESTRICTION.keySet()) {
-                if(RESTRICTION.get(i).get(language).equals(restr)) {
-                    valueSet(Fields.TERMSOFUSE, restr, Language.DEFAULT);
-                    break;
-                }
-            }
         }
         return ReturnResult.OPERATION_SUCCESSFUL;
     }

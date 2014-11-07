@@ -2,25 +2,29 @@ package fi.uta.fsd.metka.ddi.builder;
 
 import codebook25.*;
 import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.enums.ReferenceType;
 import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Option;
+import fi.uta.fsd.metka.model.configuration.Reference;
 import fi.uta.fsd.metka.model.configuration.SelectionList;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.ContainerDataField;
 import fi.uta.fsd.metka.model.data.container.DataRow;
 import fi.uta.fsd.metka.model.data.container.ValueDataField;
+import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.names.Lists;
+import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
+import fi.uta.fsd.metka.transfer.reference.ReferencePath;
+import fi.uta.fsd.metka.transfer.reference.ReferencePathRequest;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static fi.uta.fsd.metka.ddi.builder.DDIBuilder.*;
 
@@ -80,53 +84,85 @@ class DDIDocumentDescription {
         BIBL_CIT_POST.put(Language.SV, " [kodbok]. Finlands samhällsvetenskapliga dataarkiv [producent och distributör].");
     }
 
-    static void addDocumentDescription(RevisionData revisionData, Language language, Configuration configuration, CodeBookType codeBookType) {
+    static void addDocumentDescription(RevisionData revisionData, Language language, Configuration configuration, CodeBookType codeBookType, ReferenceService references) {
         // Add document description
         DocDscrType docDscrType = codeBookType.addNewDocDscr();
 
         // Add citation information
         addCitationType(revisionData, language, configuration, docDscrType);
 
-        /*// TODO: Controlled vocab used
-        // Back to doc description
-        // Add controlled vocabulary used, repeatable, excel row #31 - #39
-        ControlledVocabUsedType controlledVocabUsedType = docDscrType.addNewControlledVocabUsed();
-        // Add code list id ?
-        StringType st = controlledVocabUsedType.addNewCodeListID();
-        xmlCursor = st.newCursor();
-        xmlCursor.setTextValue("placeholder");
-        xmlCursor.dispose();
-        // Add code list name ?
-        st = controlledVocabUsedType.addNewCodeListName();
-        xmlCursor = st.newCursor();
-        xmlCursor.setTextValue("placeholder");
-        xmlCursor.dispose();
-        // Add code list agency name ?
-        st = controlledVocabUsedType.addNewCodeListAgencyName();
-        xmlCursor = st.newCursor();
-        xmlCursor.setTextValue("placeholder");
-        xmlCursor.dispose();
-        // Add code list version id ?
-        st = controlledVocabUsedType.addNewCodeListVersionID();
-        xmlCursor = st.newCursor();
-        xmlCursor.setTextValue("placeholder");
-        xmlCursor.dispose();
-        // Add code list urn ?
-        st = controlledVocabUsedType.addNewCodeListURN();
-        xmlCursor = st.newCursor();
-        xmlCursor.setTextValue("placeholder");
-        xmlCursor.dispose();
-        // Add code list scheme urn TODO: Is this right ?
-        CodeListSchemeURNDocument codeListSchemeURNDocument = CodeListSchemeURNDocument.Factory.newInstance();
-        xmlCursor = codeListSchemeURNDocument.newCursor();
-        xmlCursor.setTextValue("placeholder");
-        xmlCursor.dispose();
-        controlledVocabUsedType.setCodeListSchemeURN(codeListSchemeURNDocument);
+        // Collect references by hand
+	    Set<String> usedVocabs = new HashSet<>();
+        // anlyUnit
+        usedVocabs.add(configuration.getReference("analysisunitvocab_ref").getTarget());
+        // collMode
+        usedVocabs.add(configuration.getReference("collmodevocab_ref").getTarget());
+        // resInstru
+        usedVocabs.add(configuration.getReference("instrumentvocab_ref").getTarget());
+        // sampProc
+        usedVocabs.add(configuration.getReference("sampprocvocab_ref").getTarget());
+        // timeMethod
+        usedVocabs.add(configuration.getReference("timemethodvocab_ref").getTarget());
+        // topClass
+        usedVocabs.add(configuration.getReference("topicvocab_ref").getTarget());
 
-        // Add usage, repeatable
-        UsageType usageType = controlledVocabUsedType.addNewUsage();
-        // Set selector
-        usageType.setSelector("placeholder");*/
+        for(String target : usedVocabs) {
+            Reference usedVocabRef = new Reference("temp", ReferenceType.JSON, target, "codeListID");
+            ReferencePath usedVocabRoot = new ReferencePath(usedVocabRef, null);
+            ReferencePathRequest request = new ReferencePathRequest();
+            request.setRoot(usedVocabRoot);
+            request.setLanguage(Language.DEFAULT);
+            request.setKey("temp");
+            request.setContainer(null);
+            List<ReferenceOption> vocabIds = references.collectReferenceOptions(request);
+            for(ReferenceOption vocabId : vocabIds) {
+                ControlledVocabUsedType type = docDscrType.addNewControlledVocabUsed();
+                fillTextType(type.addNewCodeListID(), vocabId.getValue());
+                Reference singleValueRef = new Reference("single", ReferenceType.JSON, target, "codeListID");
+
+                ReferencePath singleValuePath = new ReferencePath(singleValueRef, vocabId.getValue());
+                request.setLanguage(language);
+                request.setRoot(singleValuePath);
+
+                singleValueRef.setTitlePath("codeListName");
+                List<ReferenceOption> singleValue = references.collectReferenceOptions(request);
+                if(singleValue.size() > 0) {
+                    fillTextType(type.addNewCodeListName(), singleValue.get(0).getTitle().getValue());
+                }
+
+                singleValueRef.setTitlePath("codeListAgencyName");
+                singleValue = references.collectReferenceOptions(request);
+                if(singleValue.size() > 0) {
+                    fillTextType(type.addNewCodeListAgencyName(), singleValue.get(0).getTitle().getValue());
+                }
+
+                singleValueRef.setTitlePath("codeListVersionID");
+                singleValue = references.collectReferenceOptions(request);
+                if(singleValue.size() > 0) {
+                    fillTextType(type.addNewCodeListVersionID(), singleValue.get(0).getTitle().getValue());
+                }
+
+                singleValueRef.setTitlePath("codeListURN");
+                singleValue = references.collectReferenceOptions(request);
+                if(singleValue.size() > 0) {
+                    fillTextType(type.addNewCodeListURN(), singleValue.get(0).getTitle().getValue());
+                }
+
+                singleValueRef.setTitlePath("codeListSchemeURN");
+                singleValue = references.collectReferenceOptions(request);
+                if(singleValue.size() > 0) {
+                    fillTextType(type.addNewCodeListSchemeURN(), singleValue.get(0).getTitle().getValue());
+                }
+
+                singleValueRef.setTitlePath("selector");
+                singleValue = references.collectReferenceOptions(request);
+                if(singleValue.size() > 0) {
+                    UsageType usage = type.addNewUsage();
+                    // TODO: How should this be handled?
+                    //fillTextType(usage.xgetSelector()., singleValue.get(0).getTitle().getValue());
+                }
+            }
+        }
 
         addNotes(docDscrType);
     }

@@ -80,7 +80,7 @@ public class ReferenceContainerDataField extends RowContainerDataField {
      * the reference is created with the given value
      *
      * @param value Value that is searched for
-     * @param changeMap Map where the container change containing this rows changes should reside
+     * @param changeMap Map where the container change containing this reference containers changes should reside
      * @param info DateTimeUserPair if new reference is needed. If this is null then new instance is used.
      * @return Tuple of StatusCode and SavedReference. StatusCode tells if the returned row is a new insert or not
      */

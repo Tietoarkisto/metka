@@ -54,7 +54,7 @@ public class DDIBuilder {
 
         DDIHeader.fillDDIHeader(codeBookType, language);
 
-        DDIDocumentDescription.addDocumentDescription(revisionData, language, configuration, codeBookType);
+        DDIDocumentDescription.addDocumentDescription(revisionData, language, configuration, codeBookType, references);
         DDIStudyDescription.addStudyDescription(revisionData, language, configuration, codeBookType, revisions, references);
         DDIFileDescription.addfileDescription(revisionData, language, configuration, codeBookType, revisions);
         DDIDataDescription.addDataDescription(revisionData, language, configuration, codeBookType, revisions);

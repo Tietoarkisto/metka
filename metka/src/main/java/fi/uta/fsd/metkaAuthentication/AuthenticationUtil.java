@@ -1,5 +1,7 @@
 package fi.uta.fsd.metkaAuthentication;
 
+import fi.uta.fsd.metka.enums.RevisionState;
+import fi.uta.fsd.metka.model.data.RevisionData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
@@ -62,6 +64,10 @@ public final class AuthenticationUtil {
 
         SecurityContext context = SecurityContextHolder.getContext();
         context.setAuthentication(null);
+    }
+
+    public static boolean isHandler(RevisionData revision) {
+        return revision.getState() == RevisionState.DRAFT && getUserName().equals(revision.getHandler());
     }
 
     private static MetkaAuthenticationDetails getDetails() throws AuthenticationCredentialsNotFoundException {

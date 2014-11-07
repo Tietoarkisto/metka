@@ -267,7 +267,7 @@ class PORVariablesParser implements VariablesParser {
                 variableData = dataPair.getRight();
             }
 
-            if(!variableData.getHandler().equals(AuthenticationUtil.getUserName())) {
+            if(!AuthenticationUtil.isHandler(variableData)) {
                 variableData.setHandler(AuthenticationUtil.getUserName());
                 revisions.updateRevisionData(variableData);
             }

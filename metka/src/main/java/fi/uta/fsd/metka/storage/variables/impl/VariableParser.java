@@ -74,7 +74,7 @@ class VariableParser {
                 ? missingLabel.get(language)
                 : variable.asVariable().label;
         Pair<StatusCode, ValueDataField> fieldPair = variableRevision.dataField(ValueDataFieldCall.set(Fields.VARLABEL, new Value(label), language).setInfo(info));
-        checkResultForUpdate(fieldPair, result);
+        result = checkResultForUpdate(fieldPair, result);
 
         // TODO: Copy varlabel content to a row in qustnlits if there's not already rows in there
         /*Pair<StatusCode, ContainerDataField> qstns = variableRevision.dataField(ContainerDataFieldCall.set("qstnlits"));

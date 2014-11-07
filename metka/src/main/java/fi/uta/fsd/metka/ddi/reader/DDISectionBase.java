@@ -4,6 +4,7 @@ import codebook25.AbstractTextType;
 import codebook25.CodeBookType;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
+import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
@@ -11,6 +12,7 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.change.ContainerChange;
 import fi.uta.fsd.metka.model.data.container.ContainerDataField;
+import fi.uta.fsd.metka.model.data.container.ReferenceContainerDataField;
 import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
@@ -58,6 +60,14 @@ abstract class DDISectionBase {
         return array != null && array.length > 0;
     }
 
+    protected Pair<ReturnResult, ReferenceContainerDataField> getReferenceContainer(DataFieldContainer dataFields, String key, Map<String, Change> changes) {
+        Pair<StatusCode, ReferenceContainerDataField> pair = dataFields.dataField(ReferenceContainerDataFieldCall.set(key).setChangeMap(changes).setInfo(info));
+        if(!(pair.getLeft() == StatusCode.FIELD_FOUND || pair.getLeft() == StatusCode.FIELD_INSERT)) {
+            return new ImmutablePair<>(ReturnResult.OPERATION_FAIL, null);
+        }
+        return new ImmutablePair<>(ReturnResult.OPERATION_SUCCESSFUL, pair.getRight());
+    }
+
     protected Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> getContainer(String key) {
         return getContainer(key, revision, revision.getChanges());
     }
@@ -67,7 +77,7 @@ abstract class DDISectionBase {
     }
 
     protected Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> getContainer(String key, DataFieldContainer fieldContainer, Map<String, Change> changeMap) {
-        Pair<StatusCode, ContainerDataField> container = fieldContainer.dataField(ContainerDataFieldCall.set(key));
+        Pair<StatusCode, ContainerDataField> container = fieldContainer.dataField(ContainerDataFieldCall.set(key).setInfo(info));
         if(!(container.getLeft() == StatusCode.FIELD_FOUND || container.getLeft() == StatusCode.FIELD_INSERT)) {
             // No need to continue insert, we have a problem
             return new ImmutablePair<>(ReturnResult.OPERATION_FAIL, null);

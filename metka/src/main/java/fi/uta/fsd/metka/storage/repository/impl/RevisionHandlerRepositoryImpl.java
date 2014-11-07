@@ -34,7 +34,7 @@ public class RevisionHandlerRepositoryImpl implements RevisionHandlerRepository 
                 update = true;
             }
         } else {
-            if(!AuthenticationUtil.getUserName().equals(data.getHandler())) {
+            if(!AuthenticationUtil.isHandler(data)) {
                 data.setHandler(AuthenticationUtil.getUserName());
                 update = true;
             }

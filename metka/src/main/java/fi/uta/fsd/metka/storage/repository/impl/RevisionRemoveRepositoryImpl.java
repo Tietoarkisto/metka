@@ -65,7 +65,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
     }
 
     private RemoveResult removeDraft(RevisionData data) {
-        if(!data.getHandler().equals(AuthenticationUtil.getUserName())) {
+        if(!AuthenticationUtil.isHandler(data)) {
             Logger.error(RevisionRemoveRepositoryImpl.class, "User " + AuthenticationUtil.getUserName() + " tried to remove draft belonging to " + data.getHandler());
             return RemoveResult.WRONG_USER;
         }

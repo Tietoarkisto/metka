@@ -17,6 +17,7 @@ import fi.uta.fsd.metka.model.data.change.RowChange;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.factories.StudyFactory;
+import fi.uta.fsd.metka.model.factories.VariablesFactory;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
@@ -77,7 +78,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             return new ImmutablePair<>(ReturnResult.REVISION_NOT_A_DRAFT, transferData);
         }
 
-        if(!revision.getHandler().equals(AuthenticationUtil.getUserName())) {
+        if(!AuthenticationUtil.isHandler(revision)) {
             logger.warn("User "+AuthenticationUtil.getUserName()+" tried to save revision belonging to "+revision.getHandler());
             return new ImmutablePair<>(ReturnResult.WRONG_USER, transferData);
         }
@@ -130,6 +131,10 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             case STUDY:
                 finalizeStudy(revision, transferData, info, changesAndErrors);
 
+                break;
+            case STUDY_VARIABLE:
+                VariablesFactory fac = new VariablesFactory();
+                fac.checkVariableTranslations(revision, info);
                 break;
             default:
                 break;

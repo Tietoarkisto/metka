@@ -100,8 +100,8 @@ public class MetkaPermissionEvaluator implements PermissionEvaluator {
         }
 
         RevisionData data = pair.getRight();
-        // Both operations can be performed if handler is null or user is the current handler, they won't do anything though
-        if(data.getHandler() == null || data.getHandler().equals(AuthenticationUtil.getUserName())) {
+        // Both operations can be performed if handler is null or user is the current handler
+        if(data.getHandler() == null || AuthenticationUtil.isHandler(data)) {
             return true;
         }
         switch(check) {
@@ -137,6 +137,6 @@ public class MetkaPermissionEvaluator implements PermissionEvaluator {
         }
 
         // When we have handler check that it matches current user name
-        return data.getHandler().equals(AuthenticationUtil.getUserName());
+        return AuthenticationUtil.isHandler(data);
     }
 }
