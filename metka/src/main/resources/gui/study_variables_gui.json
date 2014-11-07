@@ -207,7 +207,8 @@
     "buttons": [
         {
             "title": "Tallenna",
-            "type": "SAVE",
+            "type": "CUSTOM",
+            "customHandler": "studyVariablesSave",
             "isHandler": true,
             "states": [
                 "DRAFT"
@@ -217,18 +218,20 @@
             ]
         },
         {
+            "type": "CUSTOM",
             "title": "Tee luonnos",
-            "type": "EDIT",
-            "states": [
-                "APPROVED"
-            ],
+            "customHandler": "studyVariablesEdit",
             "permissions": [
                 "canEditRevision"
+            ],
+            "states": [
+                "APPROVED"
             ]
         },
         {
             "title": "Palauta",
-            "type": "RESTORE",
+            "type": "CUSTOM",
+            "customHandler": "studyVariablesRestore",
             "states": [
                 "REMOVED"
             ],
@@ -238,7 +241,8 @@
         },
         {
             "title": "Aloita muokkaus",
-            "type": "CLAIM",
+            "type": "CUSTOM",
+            "customHandler": "studyVariablesClaim",
             "hasHandler": false,
             "states": [
                 "DRAFT"
@@ -249,7 +253,8 @@
         },
         {
             "title": "Ota haltuun",
-            "type": "CLAIM",
+            "type": "CUSTOM",
+            "customHandler": "studyVariablesClaim",
             "hasHandler": true,
             "isHandler": false,
             "states": [
