@@ -22,13 +22,11 @@ define(function (require) {
                                         method: 'GET',
                                         success: function (response) {
                                             if (response.result === 'VIEW_SUCCESSFUL') {
-                                                // on browser, overwrite files field only, since there might be other unsaved fields on page
-                                                if (options.data.fields.files) {
-                                                    $.extend(options.data.fields.files, response.transferData.fields.files);
-                                                } else {
-                                                    options.data.fields.files = response.transferData.fields.files;
-                                                }
-                                                //studyIsReadOnly = require('./../../isDataReadOnly')(options.data);
+                                                // on browser, overwrite these fields only, since there might be other unsaved fields on page
+                                                ['files', 'variables'].forEach(function (field) {
+                                                    options.data.fields[field] = options.data.fields[field] || {};
+                                                    $.extend(options.data.fields[field], response.transferData.fields[field]);
+                                                });
                                                 $elem.trigger('refresh.metka');
                                             }
                                         }
@@ -38,7 +36,7 @@ define(function (require) {
                             if (response.result === 'VIEW_SUCCESSFUL') {
                             }
 
-                            var studyIsReadOnly = require('./../../isDataReadOnly')(options.data);
+                            var isStudyReadOnly = require('./../../isDataReadOnly')(options.data);
 
                             var modalOptions = $.extend(response.gui, {
                                 title: 'Muokkaa tiedostoa',
@@ -75,7 +73,7 @@ define(function (require) {
                                         }
                                     }
                                 }),
-                                readOnly: studyIsReadOnly,
+                                readOnly: isStudyReadOnly,
                                 $events: options.$events,
                                 defaultLang: 'DEFAULT',
                                 large: true,
@@ -348,7 +346,7 @@ define(function (require) {
                                 buttons: [{
                                     "title": "Tallenna",
                                     "isHandler": true,
-                                    hide: studyIsReadOnly,
+                                    hide: isStudyReadOnly,
                                     "states": [
                                         "DRAFT"
                                     ],
@@ -361,7 +359,7 @@ define(function (require) {
                                 }, {
                                     "type": "CUSTOM",
                                     "title": "Tee luonnos",
-                                    hide: studyIsReadOnly,
+                                    hide: isStudyReadOnly,
                                     "customHandler": "studyAttachmentEdit",
                                     "permissions": [
                                         "canEditRevision"
@@ -371,7 +369,7 @@ define(function (require) {
                                     ]
                                 }, {
                                     "title": "Poista",
-                                    hide: studyIsReadOnly,
+                                    hide: isStudyReadOnly,
                                     "states": [
                                         "DRAFT",
                                         "APPROVED"
@@ -391,7 +389,7 @@ define(function (require) {
                                     }
                                 }, {
                                     "title": "Palauta",
-                                    hide: studyIsReadOnly,
+                                    hide: isStudyReadOnly,
                                     "type": "RESTORE",
                                     "states": [
                                         "REMOVED"

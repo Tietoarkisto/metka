@@ -235,7 +235,8 @@ define(function (require) {
                             "&title": {
                                 "default": "Tallenna"
                             },
-                            "type": "SAVE",
+                            "type": "CUSTOM",
+                            "customHandler": "studyVariablesSave",
                             "isHandler": true,
                             "states": [
                                 "DRAFT"
@@ -244,62 +245,25 @@ define(function (require) {
                                 "canEditRevision"
                             ]
                         },
-                        /*{
-                            "&title": {
-                                "default": "Hyväksy"
-                            },
-                            "type": "APPROVE",
-                            "isHandler": true,
-                            "states": [
-                                "DRAFT"
-                            ],
-                            "permissions": [
-                                "canApproveRevision"
-                            ]
-                        },*/
                         {
                             "&title": {
                                 "default": "Tee luonnos"
                             },
-                            "type": "EDIT",
+                            "type": "CUSTOM",
+                            "customHandler": "studyVariablesEdit",
                             "states": [
                                 "APPROVED"
                             ],
-                            "permissions": [
+                                "permissions": [
                                 "canEditRevision"
-                            ]
-                        },/*
-                        {
-                            "&title": {
-                                "default": "Poista"
-                            },
-                            "type": "REMOVE",
-                            "states": [
-                                "DRAFT",
-                                "APPROVED"
-                            ],
-                            "isHandler": true,
-                            "permissions": [
-                                "canRemoveRevision"
                             ]
                         },
                         {
                             "&title": {
-                                "default": "Palauta"
-                            },
-                            "type": "RESTORE",
-                            "states": [
-                                "REMOVED"
-                            ],
-                            "permissions": [
-                                "canRestoreRevision"
-                            ]
-                        },*/
-                        {
-                            "&title": {
                                 "default": "Aloita muokkaus"
                             },
-                            "type": "CLAIM",
+                            "type": "CUSTOM",
+                            "customHandler": "studyVariablesClaim",
                             "hasHandler": false,
                             "states": [
                                 "DRAFT"
@@ -312,7 +276,8 @@ define(function (require) {
                             "&title": {
                                 "default": "Ota haltuun"
                             },
-                            "type": "CLAIM",
+                            "type": "CUSTOM",
+                            "customHandler": "studyVariablesClaim",
                             "hasHandler": true,
                             "isHandler": false,
                             "states": [
@@ -350,30 +315,15 @@ define(function (require) {
                                 "canForceReleaseRevision"
                             ]
                         },
-                        /*{
-                            "&title": {
-                                "default": "Revisiohistoria"
-                            },
-                            "type": "HISTORY",
-                            "permissions": [
-                                "canViewRevision"
-                            ]
-                        },
-                        {
-                            "&title": {
-                                "default": "Export DDI"
-                            },
-                            "type": "EXPORT_DDI",
-                            "permissions": [
-                                "canViewRevision"
-                            ]
-                        },*/
                         {
                             type: 'CANCEL'
                         }
                     ]
                 });
-                var $modal = require('./modal')(modalOptions);
+                require('./isRelatedStudyDraftForCurrentUser')(modalOptions, function (isDraft) {
+                    modalOptions.isRelatedStudyDraftForCurrentUser = isDraft;
+                    var $modal = require('./modal')(modalOptions);
+                });
             }
         });
     };

@@ -2,7 +2,14 @@ define(function (require) {
     'use strict';
 
     if (location.pathname.split('/').indexOf('search') === -1) {
-        return require('./../pages/defaults');
+        return function (options, onLoad) {
+            require('./../pages/defaults')(options, function () {
+                require('./../isRelatedStudyDraftForCurrentUser')(options, function (isDraft) {
+                    options.isRelatedStudyDraftForCurrentUser = isDraft;
+                    onLoad();
+                });
+            });
+        };
     }
 
     return function (options, onLoad) {
