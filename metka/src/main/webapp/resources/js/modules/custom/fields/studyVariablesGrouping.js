@@ -16,12 +16,12 @@ define(function (require) {
             var key = 'variables';
             var column = 'varlabel';
             var isFieldDisabled = require('./../../isFieldDisabled')(options, options.defaultLang);
-            var hasUnsavedChanges;
+            var hasChanges;
 
             require('./../../data')(options).onChange(function () {
                 require('./../../preloader')($variables);
                 require('./../../preloader')($groups);
-                hasUnsavedChanges = false;
+                hasChanges = false;
                 var rows = require('./../../data')(options)(key).getByLang(options.defaultLang);
                 if (rows) {
                     require('./../../server')('options', {
@@ -97,7 +97,7 @@ define(function (require) {
                                     setButtonStates();
                                 },
                                 onDropped: function (parent, nodes) {
-                                    hasUnsavedChanges = true;
+                                    hasChanges = true;
                                     nodes.forEach(function (node) {
                                         var transferRow = $.extend(true, {}, node.transferRow, {
                                             key: 'vargroupvars',
@@ -110,7 +110,7 @@ define(function (require) {
                                     });
                                 },
                                 onDragged: function (nodes) {
-                                    hasUnsavedChanges = true;
+                                    hasChanges = true;
                                     nodes.forEach(function (node) {
                                         node.transferRow.removed = true;
                                     });
@@ -184,7 +184,7 @@ define(function (require) {
             var $pane = this.closest('.tab-pane');
             $pane.parent().parent().prev('.nav-tabs').find('a[data-target="#' + $pane.attr('id') + '"]')
                 .on('hide.bs.tab', function () {
-                    if (hasUnsavedChanges) {
+                    if (hasChanges) {
                         options.$events.trigger('dataChanged');
                     }
                 });
@@ -261,7 +261,7 @@ define(function (require) {
                                                             group.active = true;
                                                             $groupView.data('add')([group]);
                                                             transferToGroups = true;
-                                                            hasUnsavedChanges = true;
+                                                            hasChanges = true;
                                                             setButtonStates();
                                                         });
                                                 }
