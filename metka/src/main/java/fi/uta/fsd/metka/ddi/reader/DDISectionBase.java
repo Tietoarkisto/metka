@@ -19,6 +19,8 @@ import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlObject;
 import org.springframework.util.StringUtils;
 
 import java.util.Map;
@@ -101,11 +103,19 @@ abstract class DDISectionBase {
         }
         ContainerDataField container = containerPair.getRight().getLeft();
         for(AbstractTextType tt : tts) {
-            if(!StringUtils.hasText(tt.xmlText())) {
+            if(!StringUtils.hasText(getText(tt))) {
                 continue;
             }
-            container.getOrCreateRowWithFieldValue(language, fieldKey, new Value(tt.xmlText()), changeMap, info);
+            container.getOrCreateRowWithFieldValue(language, fieldKey, new Value(getText(tt)), changeMap, info);
         }
         return ReturnResult.OPERATION_SUCCESSFUL;
+    }
+
+    protected <T extends XmlObject> String getText(T att) {
+        if(att == null) return "";
+        XmlCursor xmlCursor = att.newCursor();
+        String value = xmlCursor.getTextValue();
+        xmlCursor.dispose();
+        return value == null ? "" : value;
     }
 }

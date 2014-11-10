@@ -41,11 +41,11 @@ class DDIOtherMaterialDescription extends DDISectionBase {
             if(StringUtils.hasText(other.getURI())) {
                 valueSet(row.getRight(), Fields.OTHERMATERIALURI, other.getURI());
             }
-            if(hasContent(other.getTxtArray()) && StringUtils.hasText(other.getTxtArray(0).xmlText())) {
-                valueSet(row.getRight(), Fields.OTHERMATERIALTEXT, other.getTxtArray(0).xmlText());
+            if(hasContent(other.getTxtArray()) && StringUtils.hasText(getText(other.getTxtArray(0)))) {
+                valueSet(row.getRight(), Fields.OTHERMATERIALTEXT, getText(other.getTxtArray(0)));
             }
-            if(hasContent(other.getLablArray()) && StringUtils.hasText(other.getLablArray(0).xmlText())) {
-                valueSet(row.getRight(), Fields.OTHERMATERIALTEXT, other.getLablArray(0).xmlText());
+            if(hasContent(other.getLablArray()) && StringUtils.hasText(getText(other.getLablArray(0)))) {
+                valueSet(row.getRight(), Fields.OTHERMATERIALTEXT, getText(other.getLablArray(0)));
             }
         }
 
