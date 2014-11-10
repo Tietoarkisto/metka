@@ -5,7 +5,7 @@
 <link rel="stylesheet" type="text/css" href="${contextPath}/css/jquery-ui.css">
 
 <%-- Bootstrap --%>
-<link rel="stylesheet" type="text/css" href="${contextPath}/lib/bootstrap/3.1.1/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="${contextPath}/lib/bootstrap/3.3.0/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="${contextPath}/lib/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css">
 <link rel="stylesheet" type="text/css" href="${contextPath}/lib/bootstrap-fileinput/css/fileinput.min.css">
 
@@ -14,6 +14,6 @@
 
 <%-- Metka --%>
 <%-- Parameter ?v=x is just to bypass cache, when there's major css changes that must be pushed to clients --%>
-<link rel="stylesheet" type="text/css" href="${contextPath}/css/styles.css?v=2">
+<link rel="stylesheet" type="text/css" href="${contextPath}/css/styles.css?v=3">
 <link rel="stylesheet" type="text/css" href="${contextPath}/css/form.css">
 <link rel="stylesheet" type="text/css" href="${contextPath}/css/table.css">
