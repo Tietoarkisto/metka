@@ -100,7 +100,7 @@ class DDIDataDescription extends DDISectionBase {
         }
 
         Pair<StatusCode, ValueDataField> valuePair = variables.dataField(ValueDataFieldCall.get("study"));
-        if(valuePair.getLeft() != StatusCode.FIELD_FOUND || valuePair.getRight().hasValueFor(Language.DEFAULT)) {
+        if(valuePair.getLeft() != StatusCode.FIELD_FOUND || !valuePair.getRight().hasValueFor(Language.DEFAULT)) {
             return ReturnResult.OPERATION_FAIL;
         }
         Long variablesStudy = valuePair.getRight().getValueFor(Language.DEFAULT).valueAsInteger();
@@ -114,7 +114,7 @@ class DDIDataDescription extends DDISectionBase {
         ContainerChange vargroupsChange = containerPair.getRight().getRight();
 
         // On DEFAULT language clear the vargroups container, on other languages just perform merge operations
-        if(language == Language.DEFAULT) {
+        if(language == Language.DEFAULT && vargroups.hasRowsFor(Language.DEFAULT)) {
             for(DataRow row : vargroups.getRowsFor(Language.DEFAULT)) {
                 vargroups.removeRow(row.getRowId(), variables.getChanges(), info);
             }
@@ -125,7 +125,7 @@ class DDIDataDescription extends DDISectionBase {
         }
 
         for(VarGrpType varGrp : dataDscr.getVarGrpArray()) {
-            if(!StringUtils.hasText(varGrp.xmlText()) && varGrp.getVar().size() == 0 && varGrp.getTxtArray().length == 0) {
+            if(!StringUtils.hasText(getText(varGrp)) && varGrp.getVar().size() == 0 && varGrp.getTxtArray().length == 0) {
                 continue;
             }
             DataRow vargroup = null;
@@ -140,6 +140,9 @@ class DDIDataDescription extends DDISectionBase {
                 for(String varName : splits) {
                     Pair<ReturnResult, RevisionData> variable = variableSearch.findVariableWithId(variablesStudy, studyId+"_"+varName);
                     if(variable.getLeft() != ReturnResult.REVISION_FOUND) {
+                        continue;
+                    }
+                    if(!vargroups.hasRowsFor(Language.DEFAULT)) {
                         continue;
                     }
                     for(DataRow row : vargroups.getRowsFor(Language.DEFAULT)) {
@@ -172,8 +175,8 @@ class DDIDataDescription extends DDISectionBase {
 
                 vargroup = rowPair.getRight();
 
-                if(StringUtils.hasText(varGrp.xmlText())) {
-                    valueSet(vargroup, Fields.VARGROUPTITLE, varGrp.xmlText(), Language.DEFAULT, variables.getChanges());
+                if(StringUtils.hasText(getText(varGrp))) {
+                    valueSet(vargroup, Fields.VARGROUPTITLE, getText(varGrp), Language.DEFAULT, variables.getChanges());
                 }
 
                 vargroupChange = vargroupsChange.get(vargroup.getRowId());
@@ -253,7 +256,7 @@ class DDIDataDescription extends DDISectionBase {
                         txtRowChange = new RowChange(rowPair.getRight().getRowId());
                         vartextsChange.put(txtRowChange);
                     }
-                    valueSet(rowPair.getRight(), Fields.VARTEXT, txt.xmlText(), language, txtRowChange.getChanges());
+                    valueSet(rowPair.getRight(), Fields.VARTEXT, getText(txt), language, txtRowChange.getChanges());
                 }
             }
         }
@@ -322,7 +325,7 @@ class DDIDataDescription extends DDISectionBase {
 
         ReturnResult result;
 
-        valueSet(variable, Fields.VARLABEL, hasContent(var.getLablArray()) ? var.getLablArray(0).xmlText() : "", language, variable.getChanges());
+        valueSet(variable, Fields.VARLABEL, hasContent(var.getLablArray()) ? getText(var.getLablArray(0)) : "", language, variable.getChanges());
 
         result = readVarQstn(var, variable);
         if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
@@ -345,14 +348,19 @@ class DDIDataDescription extends DDISectionBase {
 
     private void clearTable(DataFieldContainer data, Map<String, Change> changeMap, String key) {
         Pair<StatusCode, ContainerDataField> pair = data.dataField(ContainerDataFieldCall.get(key));
-        if(pair.getLeft() != StatusCode.FIELD_FOUND) {
+        if(pair.getLeft() != StatusCode.FIELD_FOUND || !pair.getRight().hasRowsFor(language)) {
             return;
         }
-        for(DataRow row : pair.getRight().getRowsFor(language)) {
+        for(Integer rowId : pair.getRight().getRowIdsFor(language)) {
+            Pair<StatusCode, DataRow> rowPair = pair.getRight().getRowWithId(rowId);
+            if(rowPair.getLeft() != StatusCode.FOUND_ROW) {
+                continue;
+            }
+            DataRow row = rowPair.getRight();
             if(row.getRemoved()) {
                 continue;
             }
-            pair.getRight().removeRow(row.getRowId(),changeMap, info);
+            pair.getRight().removeRow(rowId, changeMap, info);
         }
     }
 

@@ -115,7 +115,7 @@ class DDIStudyDescription extends DDISectionBase {
                 if(row.getLeft() != StatusCode.NEW_ROW) {
                     continue;
                 }
-                valueSet(row.getRight(), Fields.ALTTITLE, tt.xmlText());
+                valueSet(row.getRight(), Fields.ALTTITLE, getText(tt));
             }
         }
         return ReturnResult.OPERATION_SUCCESSFUL;
@@ -133,8 +133,8 @@ class DDIStudyDescription extends DDISectionBase {
                 if(row.getLeft() != StatusCode.NEW_ROW) {
                     continue;
                 }
-                valueSet(row.getRight(), Fields.PARTITLE, stt.xmlText());
-                valueSet(row.getRight(), Fields.PARTITLELANG, stt.getXmlLang());
+                valueSet(row.getRight(), Fields.PARTITLE, getText(stt));
+                valueSet(row.getRight(), Fields.PARTITLELANG, getText(stt));
             }
         }
         return ReturnResult.OPERATION_SUCCESSFUL;
@@ -163,7 +163,7 @@ class DDIStudyDescription extends DDISectionBase {
 
         // These are all organization authors
         for(AuthEntyType auth : rsp.getAuthEntyArray()) {
-            if(!StringUtils.hasText(auth.xmlText())) {
+            if(!StringUtils.hasText(getText(auth))) {
                 continue;
             }
 
@@ -174,7 +174,7 @@ class DDIStudyDescription extends DDISectionBase {
 
             // Set type to person
             valueSet(row.getRight(), Fields.AUTHORTYPE, "1");
-            valueSet(row.getRight(), Fields.AUTHOR, auth.xmlText());
+            valueSet(row.getRight(), Fields.AUTHOR, getText(auth));
             if(StringUtils.hasText(auth.getAffiliation())) {
                 String[] splits = auth.getAffiliation().split("\\. ");
                 String orgValue = null;
@@ -231,7 +231,7 @@ class DDIStudyDescription extends DDISectionBase {
         request.setLanguage(language);
 
         for(ProducerType producer : prodStmt.getProducerArray()) {
-            if(!StringUtils.hasText(producer.xmlText())) {
+            if(!StringUtils.hasText(getText(producer))) {
                 continue;
             }
 
@@ -242,14 +242,14 @@ class DDIStudyDescription extends DDISectionBase {
 
             // If producer has affiliation then we know that it has at least an agency and possibly a section
             // If not then we know that the actual producer is an organization
-            ReferenceOption option = findOrganization(StringUtils.hasText(producer.getAffiliation()) ? producer.getAffiliation() : producer.xmlText(), Fields.PRODUCERORGANISATION);
+            ReferenceOption option = findOrganization(StringUtils.hasText(producer.getAffiliation()) ? producer.getAffiliation() : getText(producer), Fields.PRODUCERORGANISATION);
             String orgValue = (option != null) ? option.getValue() : null;
             if(StringUtils.hasText(orgValue)) {
                 valueSet(row.getRight(), Fields.PRODUCERORGANISATION, orgValue);
             }
             if(StringUtils.hasText(producer.getAffiliation())) {
                 String agencyValue = null;
-                String[] splits = producer.xmlText().split("\\. ");
+                String[] splits = getText(producer).split("\\. ");
 
                 if(splits.length > 0 && orgValue != null) {
                     option = findAgency(splits[0], Fields.PRODUCERORGANISATION, orgValue, Fields.PRODUCERAGENCY);
@@ -303,7 +303,7 @@ class DDIStudyDescription extends DDISectionBase {
 
         // These are all organization authors
         for(AuthorizingAgencyType auth : stdyAuth.getAuthorizingAgencyArray()) {
-            if(!StringUtils.hasText(auth.xmlText())) {
+            if(!StringUtils.hasText(getText(auth))) {
                 continue;
             }
 
@@ -316,14 +316,14 @@ class DDIStudyDescription extends DDISectionBase {
             valueSet(row.getRight(), Fields.AUTHORTYPE, "2");
             // If organization author has affiliation then we know that it has at least an agency and possibly a section
             // If not then we know that the actual author is an organization
-            ReferenceOption option = findOrganization(StringUtils.hasText(auth.getAffiliation()) ? auth.getAffiliation() : auth.xmlText(), Fields.AUTHORORGANISATION);
+            ReferenceOption option = findOrganization(StringUtils.hasText(auth.getAffiliation()) ? auth.getAffiliation() : getText(auth), Fields.AUTHORORGANISATION);
             String orgValue = (option != null) ? option.getValue() : null;
             if(StringUtils.hasText(orgValue)) {
                 valueSet(row.getRight(), Fields.AUTHORORGANISATION, orgValue);
             }
             if(StringUtils.hasText(auth.getAffiliation())) {
                 String agencyValue = null;
-                String[] splits = auth.xmlText().split("\\. ");
+                String[] splits = getText(auth).split("\\. ");
 
                 if(splits.length > 0 && orgValue != null) {
                     option = findAgency(splits[0], Fields.AUTHORORGANISATION, orgValue, Fields.AUTHORAGENCY);
@@ -358,7 +358,7 @@ class DDIStudyDescription extends DDISectionBase {
 
         if(hasContent(stdyInfo.getAbstractArray())) {
             AbstractType abstractType = stdyInfo.getAbstractArray(0);
-            valueSet(Fields.ABSTRACT, abstractType.xmlText());
+            valueSet(Fields.ABSTRACT, getText(abstractType));
         }
 
         return readStudyInfoSumDesc(stdyInfo);
@@ -414,7 +414,7 @@ class DDIStudyDescription extends DDISectionBase {
             }
             valueSet(row.getRight(), Fields.KEYWORDVOCAB, option.getValue());
 
-            if(StringUtils.hasText(k.xmlText())) {
+            if(StringUtils.hasText(getText(k))) {
                 keywordvocabPath = new ReferencePath(configuration.getReference(configuration.getField(Fields.KEYWORDVOCAB).getReference()), option.getValue());
                 ReferencePath keywordPath = new ReferencePath(configuration.getReference(configuration.getField(Fields.KEYWORD).getReference()), null);
 
@@ -423,11 +423,11 @@ class DDIStudyDescription extends DDISectionBase {
                 request.setRoot(keywordvocabPath);
 
                 List<ReferenceOption> options = references.collectReferenceOptions(request);
-                option = findOption(options, k.xmlText());
+                option = findOption(options, getText(k));
                 if(option != null) {
                     valueSet(row.getRight(), Fields.KEYWORD, option.getValue());
                 } else {
-                    valueSet(row.getRight(), Fields.KEYWORDNOVOCAB, k.xmlText());
+                    valueSet(row.getRight(), Fields.KEYWORDNOVOCAB, getText(k));
                 }
             }
         }
@@ -471,7 +471,7 @@ class DDIStudyDescription extends DDISectionBase {
             }
             valueSet(row.getRight(), Fields.TOPICVOCAB, option.getValue());
 
-            if(StringUtils.hasText(t.xmlText())) {
+            if(StringUtils.hasText(getText(t))) {
                 topicvocabPath = new ReferencePath(configuration.getReference(configuration.getField(Fields.TOPICVOCAB).getReference()), option.getValue());
                 ReferencePath topicPath = new ReferencePath(configuration.getReference(configuration.getField(Fields.TOPIC).getReference()), null);
 
@@ -480,7 +480,7 @@ class DDIStudyDescription extends DDISectionBase {
                 request.setRoot(topicvocabPath);
 
                 List<ReferenceOption> options = references.collectReferenceOptions(request);
-                option = findOption(options, t.xmlText());
+                option = findOption(options, getText(t));
                 if(option != null) {
                     valueSet(row.getRight(), Fields.TOPIC, option.getValue());
                 }
@@ -527,7 +527,7 @@ class DDIStudyDescription extends DDISectionBase {
                 if(row.getLeft() != StatusCode.NEW_ROW) {
                     continue;
                 }
-                valueSet(row.getRight(), Fields.GEOGCOVER, tt.xmlText());
+                valueSet(row.getRight(), Fields.GEOGCOVER, getText(tt));
             }
         }
 
@@ -549,7 +549,7 @@ class DDIStudyDescription extends DDISectionBase {
                 if(row.getLeft() != StatusCode.NEW_ROW) {
                     continue;
                 }
-                valueSet(row.getRight(), Fields.TIMEPERIODTEXT, t.xmlText());
+                valueSet(row.getRight(), Fields.TIMEPERIODTEXT, getText(t));
                 valueSet(row.getRight(), Fields.TIMEPERIOD, t.getDate());
                 valueSet(row.getRight(), Fields.TIMEPERIODEVENT, t.getEvent().toString());
             }
@@ -573,8 +573,8 @@ class DDIStudyDescription extends DDISectionBase {
                 continue;
             }
 
-            if (StringUtils.hasText(coll.xmlText())) {
-                valueSet(row.getRight(), Fields.COLLDATETEXT, coll.xmlText());
+            if (StringUtils.hasText(getText(coll))) {
+                valueSet(row.getRight(), Fields.COLLDATETEXT, getText(coll));
             }
             if(StringUtils.hasText(coll.getDate())) {
                 valueSet(row.getRight(), Fields.COLLDATE, coll.getDate());
@@ -598,7 +598,7 @@ class DDIStudyDescription extends DDISectionBase {
         ContainerChange change = containerPair.getRight().getRight();
 
         for(NationType nation : sumDscr.getNationArray()) {
-            if(!StringUtils.hasText(nation.xmlText())) {
+            if(!StringUtils.hasText(getText(nation))) {
                 continue;
             }
             Pair<StatusCode, DataRow> row = container.insertNewDataRow(language, change);
@@ -606,7 +606,7 @@ class DDIStudyDescription extends DDISectionBase {
                 continue;
             }
 
-            valueSet(row.getRight(), Fields.COUNTRY, nation.xmlText());
+            valueSet(row.getRight(), Fields.COUNTRY, getText(nation));
             if(StringUtils.hasText(nation.getAbbr())) {
                 valueSet(row.getRight(), Fields.COUNTRYABBR, nation.getAbbr());
             }
@@ -625,7 +625,7 @@ class DDIStudyDescription extends DDISectionBase {
         ContainerDataField container = containerPair.getRight().getLeft();
         ContainerChange change = containerPair.getRight().getRight();
         for(UniverseType universe : sumDscr.getUniverseArray()) {
-            if(!StringUtils.hasText(universe.xmlText())) {
+            if(!StringUtils.hasText(getText(universe))) {
                 continue;
             }
             Pair<StatusCode, DataRow> row = container.insertNewDataRow(language, change);
@@ -633,7 +633,7 @@ class DDIStudyDescription extends DDISectionBase {
                 continue;
             }
 
-            valueSet(row.getRight(), Fields.UNIVERSE, universe.xmlText());
+            valueSet(row.getRight(), Fields.UNIVERSE, getText(universe));
             if(universe.getClusion() != null) {
                 valueSet(row.getRight(), Fields.UNIVERSECLUSION, universe.getClusion().toString());
             }
@@ -652,7 +652,7 @@ class DDIStudyDescription extends DDISectionBase {
         if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
         if(hasContent(method.getNotesArray())) {
-            valueSet(Fields.DATAPROSESSING, method.getNotesArray(0).xmlText());
+            valueSet(Fields.DATAPROSESSING, getText(method.getNotesArray(0)));
         }
 
         return readMethodAnalyze(method);
@@ -717,12 +717,12 @@ class DDIStudyDescription extends DDISectionBase {
                 continue;
             }
 
-            if(cttKey != null && StringUtils.hasText(ctt.xmlText())) {
-                valueSet(row.getRight(), cttKey, ctt.xmlText());
+            if(cttKey != null && StringUtils.hasText(getText(ctt))) {
+                valueSet(row.getRight(), cttKey, getText(ctt));
             }
 
-            if(hasContent(ctt.getTxtArray()) && StringUtils.hasText(ctt.getTxtArray(0).xmlText())) {
-                valueSet(row.getRight(), txtKey, ctt.getTxtArray(0).xmlText());
+            if(hasContent(ctt.getTxtArray()) && StringUtils.hasText(getText(ctt.getTxtArray(0)))) {
+                valueSet(row.getRight(), txtKey, getText(ctt.getTxtArray(0)));
             }
 
             ConceptType c = ctt.getConceptArray(0);
@@ -737,7 +737,7 @@ class DDIStudyDescription extends DDISectionBase {
             }
             valueSet(row.getRight(), vocabKey, option.getValue());
 
-            if(StringUtils.hasText(c.xmlText())) {
+            if(StringUtils.hasText(getText(c))) {
                 vocabPath = new ReferencePath(configuration.getReference(configuration.getField(vocabKey).getReference()), option.getValue());
                 ReferencePath selectionPath = new ReferencePath(configuration.getReference(configuration.getField(conceptKey).getReference()), null);
 
@@ -746,7 +746,7 @@ class DDIStudyDescription extends DDISectionBase {
                 request.setRoot(vocabPath);
 
                 List<ReferenceOption> options = references.collectReferenceOptions(request);
-                option = findOption(options, c.xmlText());
+                option = findOption(options, getText(c));
                 if(option != null) {
                     valueSet(row.getRight(), conceptKey, option.getValue());
                 }
@@ -810,7 +810,7 @@ class DDIStudyDescription extends DDISectionBase {
         request.setLanguage(language);
 
         for(DataCollectorType collector : dataColl.getDataCollectorArray()) {
-            if(!StringUtils.hasText(collector.xmlText())) {
+            if(!StringUtils.hasText(getText(collector))) {
                 continue;
             }
 
@@ -823,7 +823,7 @@ class DDIStudyDescription extends DDISectionBase {
             // It is possible for organization to not have abbreviation but there's no way for us to detect this.
             if(!StringUtils.hasText(collector.getAbbr())) {
                 valueSet(row.getRight(), Fields.COLLECTORTYPE, "1");
-                valueSet(row.getRight(), Fields.COLLECTOR, collector.xmlText());
+                valueSet(row.getRight(), Fields.COLLECTOR, getText(collector));
                 if(StringUtils.hasText(collector.getAffiliation())) {
                     String[] splits = collector.getAffiliation().split("\\. ");
                     String orgValue = null;
@@ -854,14 +854,14 @@ class DDIStudyDescription extends DDISectionBase {
                 valueSet(row.getRight(), Fields.COLLECTORTYPE, "2");
                 // If organization collector has affiliation then we know that it has at least an agency and possibly a section
                 // If not then we know that the actual collector is an organization
-                ReferenceOption option = findOrganization(StringUtils.hasText(collector.getAffiliation()) ? collector.getAffiliation() : collector.xmlText(), Fields.COLLECTORORGANISATION);
+                ReferenceOption option = findOrganization(StringUtils.hasText(collector.getAffiliation()) ? collector.getAffiliation() : getText(collector), Fields.COLLECTORORGANISATION);
                 String orgValue = (option != null) ? option.getValue() : null;
                 if(StringUtils.hasText(orgValue)) {
                     valueSet(row.getRight(), Fields.COLLECTORORGANISATION, orgValue);
                 }
                 if(StringUtils.hasText(collector.getAffiliation())) {
                     String agencyValue = null;
-                    String[] splits = collector.xmlText().split("\\. ");
+                    String[] splits = getText(collector).split("\\. ");
 
                     if(splits.length > 0 && orgValue != null) {
                         option = findAgency(splits[0], Fields.COLLECTORORGANISATION, orgValue, Fields.COLLECTORAGENCY);
@@ -904,7 +904,7 @@ class DDIStudyDescription extends DDISectionBase {
             if(row.getLeft() != StatusCode.NEW_ROW) {
                 continue;
             }
-            valueSet(row.getRight(), Fields.DATASOURCE, stt.xmlText());
+            valueSet(row.getRight(), Fields.DATASOURCE, getText(stt));
         }
 
         return ReturnResult.OPERATION_SUCCESSFUL;
@@ -915,12 +915,12 @@ class DDIStudyDescription extends DDISectionBase {
             return ReturnResult.OPERATION_SUCCESSFUL;
         }
         SimpleTextType stt = dataColl.getWeightArray(0);
-        if(stt.xmlText().equals(WEIGHT_NO.get(language))) {
+        if(getText(stt).equals(WEIGHT_NO.get(language))) {
             valueSet(Fields.WEIGHTYESNO, "true");
             valueSet(Fields.WEIGHT, "");
         } else {
             valueSet(Fields.WEIGHTYESNO, "false");
-            valueSet(Fields.WEIGHT, stt.xmlText());
+            valueSet(Fields.WEIGHT, getText(stt));
         }
         return ReturnResult.OPERATION_SUCCESSFUL;
     }
@@ -932,7 +932,7 @@ class DDIStudyDescription extends DDISectionBase {
         AnlyInfoType anlyInfo = method.getAnlyInfo();
 
         if(hasContent(anlyInfo.getRespRateArray())) {
-            valueSet(Fields.RESPRATE, anlyInfo.getRespRateArray(0).xmlText(), Language.DEFAULT);
+            valueSet(Fields.RESPRATE, getText(anlyInfo.getRespRateArray(0)), Language.DEFAULT);
         }
 
         if(hasContent(anlyInfo.getDataApprArray())) {
@@ -946,7 +946,7 @@ class DDIStudyDescription extends DDISectionBase {
                 if(row.getLeft() != StatusCode.NEW_ROW) {
                     continue;
                 }
-                valueSet(row.getRight(), Fields.APPRAISAL, appr.xmlText());
+                valueSet(row.getRight(), Fields.APPRAISAL, getText(appr));
             }
         }
 
@@ -964,7 +964,7 @@ class DDIStudyDescription extends DDISectionBase {
         if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
         if(hasContent(dataAccs.getNotesArray())) {
-            valueSet(Fields.DATASETNOTES, dataAccs.getNotesArray(0).xmlText());
+            valueSet(Fields.DATASETNOTES, getText(dataAccs.getNotesArray(0)));
         }
 
         return ReturnResult.OPERATION_SUCCESSFUL;
@@ -977,11 +977,11 @@ class DDIStudyDescription extends DDISectionBase {
         SetAvailType setAvail = dataAccs.getSetAvailArray(0);
 
         if(hasContent(setAvail.getCollSizeArray())) {
-            valueSet(Fields.COLLSIZE, setAvail.getCollSizeArray(0).xmlText());
+            valueSet(Fields.COLLSIZE, getText(setAvail.getCollSizeArray(0)));
         }
 
         if(hasContent(setAvail.getCompleteArray())) {
-            valueSet(Fields.COMPLETE, setAvail.getCompleteArray(0).xmlText());
+            valueSet(Fields.COMPLETE, getText(setAvail.getCompleteArray(0)));
         }
         return ReturnResult.OPERATION_SUCCESSFUL;
     }
@@ -1003,7 +1003,7 @@ class DDIStudyDescription extends DDISectionBase {
                 if(row.getLeft() != StatusCode.NEW_ROW) {
                     continue;
                 }
-                valueSet(row.getRight(), Fields.RELATEDMATERIAL, relMat.xmlText());
+                valueSet(row.getRight(), Fields.RELATEDMATERIAL, getText(relMat));
             }
         }
 
@@ -1018,7 +1018,7 @@ class DDIStudyDescription extends DDISectionBase {
                 if(row.getLeft() != StatusCode.NEW_ROW) {
                     continue;
                 }
-                valueSet(row.getRight(), Fields.PUBLICATIONCOMMENT, othRef.xmlText());
+                valueSet(row.getRight(), Fields.PUBLICATIONCOMMENT, getText(othRef));
             }
         }
 
