@@ -1,7 +1,6 @@
 define(function (require) {
     'use strict';
 
-    //return {};
     return {
         create: function create(options) {
             function setButtonStates() {
@@ -17,13 +16,13 @@ define(function (require) {
             var key = 'variables';
             var column = 'varlabel';
             var isFieldDisabled = require('./../../isFieldDisabled')(options, options.defaultLang);
+            var hasUnsavedChanges;
 
             require('./../../data')(options).onChange(function () {
                 require('./../../preloader')($variables);
                 require('./../../preloader')($groups);
-                var rows = (function () {
-                    return require('./../../data')(options)(key).getByLang(options.defaultLang);
-                })();
+                hasUnsavedChanges = false;
+                var rows = require('./../../data')(options)(key).getByLang(options.defaultLang);
                 if (rows) {
                     require('./../../server')('options', {
                         data: JSON.stringify({
@@ -57,14 +56,27 @@ define(function (require) {
                                 return require('./../../treeViewVariableGroup')(
                                     transferRow.fields.vargrouptitle.values.DEFAULT.current,
                                     transferRow.fields.vargroupvars ? transferRow.fields.vargroupvars.rows.DEFAULT.map(function (transferRow) {
-                                        // TODO: Array.prototype.findIndex
                                         var groupedVariable = variables.find(function (variable) {
                                             return variable.value === transferRow.value;
                                         });
-                                        variables.splice(variables.indexOf(groupedVariable), 1);
+                                        if (!transferRow.removed) {
+                                            variables.splice(variables.indexOf(groupedVariable), 1);
+                                        }
                                         return {
-                                            text: groupedVariable.text,
-                                            transferRow: transferRow
+                                            transferRow: transferRow,
+                                            groupedVariable: groupedVariable
+                                        };
+                                    }).filter(function (o) {
+                                        if (!o.groupedVariable || o.transferRow.removed) {
+                                            o.transferRow.removed = true;
+                                            return false;
+                                        } else {
+                                            return true;
+                                        }
+                                    }).map(function (o) {
+                                        return {
+                                            text: o.groupedVariable.text,
+                                            transferRow: o.transferRow
                                         };
                                     }) : [],
                                     transferRow
@@ -85,8 +97,8 @@ define(function (require) {
                                     setButtonStates();
                                 },
                                 onDropped: function (parent, nodes) {
+                                    hasUnsavedChanges = true;
                                     nodes.forEach(function (node) {
-
                                         var transferRow = $.extend(true, {}, node.transferRow, {
                                             key: 'vargroupvars',
                                             value: node.value,
@@ -98,7 +110,7 @@ define(function (require) {
                                     });
                                 },
                                 onDragged: function (nodes) {
-
+                                    hasUnsavedChanges = true;
                                     nodes.forEach(function (node) {
                                         node.transferRow.removed = true;
                                     });
@@ -169,6 +181,13 @@ define(function (require) {
                             .append($moveToGroup)
                             .append($moveToVariables)))
                     .append($groups));
+            var $pane = this.closest('.tab-pane');
+            $pane.parent().parent().prev('.nav-tabs').find('a[data-target="#' + $pane.attr('id') + '"]')
+                .on('hide.bs.tab', function () {
+                    if (hasUnsavedChanges) {
+                        options.$events.trigger('dataChanged');
+                    }
+                });
             if (!isFieldDisabled) {
                 this
                     .append($('<div class="row">')
@@ -242,6 +261,7 @@ define(function (require) {
                                                             group.active = true;
                                                             $groupView.data('add')([group]);
                                                             transferToGroups = true;
+                                                            hasUnsavedChanges = true;
                                                             setButtonStates();
                                                         });
                                                 }
