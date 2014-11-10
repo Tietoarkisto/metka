@@ -60,6 +60,21 @@ define(function (require) {
                 .trigger('refresh.metka'))
             .on('hidden.bs.modal', function () {
                 $(this).remove();
+
+                // workaround to keep scrolling enabled for nested modals
+
+                var $body = $('body');
+                var $otherModal = $body.children('.modal');
+
+                // if there are other modals on screen
+                if ($otherModal.length) {
+                    // get instance of Bootstrap Modal object
+                    var bsModal = $otherModal.data('bs.modal');
+
+                    // do same things that Bootstrap does internally, when dialog is opened
+                    $body.addClass('modal-open');
+                    bsModal.setScrollbar();
+                }
             })
             .modal({
                 backdrop: 'static'
