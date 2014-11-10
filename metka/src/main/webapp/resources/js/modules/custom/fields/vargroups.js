@@ -101,7 +101,7 @@ define(function (require) {
                                         return row.fields && row.fields.vargrouptitle;
                                     }).map(function (transferRow) {
                                         return require('./../../treeViewVariableGroup')(
-                                            transferRow.fields.vargrouptitle.values.DEFAULT.current,
+                                            require('./../../data').latestValue(transferRow.fields.vargrouptitle, options.defaultLang),
                                             transferRow.fields.vargroupvars ? transferRow.fields.vargroupvars.rows.DEFAULT.map(function (transferRow) {
                                                 var groupedVariable = variables.find(function (variable) {
                                                     return variable.value === transferRow.value;
