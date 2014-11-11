@@ -152,7 +152,7 @@ define(function (require) {
                                 return;
                             }
 
-                            tableError.call($td, (transferField.errors || []).concat(transferField[columnLang] ? transferField[columnLang].errors : []));
+                            tableError.call($td, (transferField.errors || []).concat(getPropertyNS(transferField, 'values', columnLang, 'errors') || []));
 
                             if (!transferField.type) {
                                 log('transferField type not set (column: {column})'.supplant({
