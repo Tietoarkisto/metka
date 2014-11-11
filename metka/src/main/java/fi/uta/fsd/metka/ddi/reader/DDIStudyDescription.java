@@ -1,11 +1,10 @@
 package fi.uta.fsd.metka.ddi.reader;
 
 import codebook25.*;
+import fi.uta.fsd.metka.enums.FieldType;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
-import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.configuration.Option;
-import fi.uta.fsd.metka.model.configuration.SelectionList;
+import fi.uta.fsd.metka.model.configuration.*;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.change.ContainerChange;
 import fi.uta.fsd.metka.model.data.container.ContainerDataField;
@@ -702,8 +701,11 @@ class DDIStudyDescription extends DDISectionBase {
         ReferencePathRequest request = new ReferencePathRequest();
         request.setContainer(containerKey);
         request.setLanguage(language);
-
-        ReferencePath vocabPath = new ReferencePath(configuration.getReference(configuration.getField(vocabKey).getReference()), null);
+        ReferencePath vocabPath = getReferencePath(vocabKey, null);
+        if(vocabPath == null) {
+            // TODO: Inform if there was an actual problem
+            return ReturnResult.OPERATION_SUCCESSFUL;
+        }
         request.setRoot(vocabPath);
         List<ReferenceOption> vocabOptions = references.collectReferenceOptions(request);
 
@@ -738,8 +740,11 @@ class DDIStudyDescription extends DDISectionBase {
             valueSet(row.getRight(), vocabKey, option.getValue());
 
             if(StringUtils.hasText(getText(c))) {
-                vocabPath = new ReferencePath(configuration.getReference(configuration.getField(vocabKey).getReference()), option.getValue());
-                ReferencePath selectionPath = new ReferencePath(configuration.getReference(configuration.getField(conceptKey).getReference()), null);
+                vocabPath = getReferencePath(vocabKey, option.getValue());
+                ReferencePath selectionPath = getReferencePath(conceptKey, null);
+                if(selectionPath == null) {
+                    continue;
+                }
 
                 vocabPath.setNext(selectionPath);
                 selectionPath.setPrev(vocabPath);
@@ -756,11 +761,23 @@ class DDIStudyDescription extends DDISectionBase {
         return ReturnResult.OPERATION_SUCCESSFUL;
     }
 
+    private ReferencePath getReferencePath(String key, String value) {
+        Reference reference = null;
+        Field field = configuration.getField(key);
+        if(field.getType() == FieldType.REFERENCE) {
+            reference = configuration.getReference(field.getReference());
+        } else if(field.getType() == FieldType.SELECTION) {
+            reference = configuration.getReference(configuration.getSelectionList(field.getSelectionList()).getReference());
+        }
+
+        return reference != null ? new ReferencePath(reference, value) : null;
+    }
+
     private ReferenceOption findOrganization(String title, String orgFieldKey) {
         ReferencePathRequest request = new ReferencePathRequest();
         request.setLanguage(language);
 
-        ReferencePath root = new ReferencePath(configuration.getReference(configuration.getField(orgFieldKey).getReference()), null);
+        ReferencePath root = getReferencePath(orgFieldKey, null);
         request.setRoot(root);
         List<ReferenceOption> options = references.collectReferenceOptions(request);
         return findOption(options, title);
@@ -770,9 +787,13 @@ class DDIStudyDescription extends DDISectionBase {
         ReferencePathRequest request = new ReferencePathRequest();
         request.setLanguage(language);
 
-        ReferencePath root = new ReferencePath(configuration.getReference(configuration.getField(orgFieldKey).getReference()), orgValue);
-        root.setNext(new ReferencePath(configuration.getReference(configuration.getField(agencyFieldKey).getReference()), null));
-        root.getNext().setPrev(root);
+        ReferencePath root = getReferencePath(orgFieldKey, orgValue);
+        if(root != null) {
+            root.setNext(getReferencePath(agencyFieldKey, null));
+            if(root.getNext() != null) {
+                root.getNext().setPrev(root);
+            }
+        }
         request.setRoot(root);
         List<ReferenceOption> options = references.collectReferenceOptions(request);
         return findOption(options, title);
@@ -782,11 +803,18 @@ class DDIStudyDescription extends DDISectionBase {
         ReferencePathRequest request = new ReferencePathRequest();
         request.setLanguage(language);
 
-        ReferencePath root = new ReferencePath(configuration.getReference(configuration.getField(orgFieldKey).getReference()), orgValue);
-        root.setNext(new ReferencePath(configuration.getReference(configuration.getField(agencyFieldKey).getReference()), agencyValue));
-        root.getNext().setPrev(root);
-        root.getNext().setNext(new ReferencePath(configuration.getReference(configuration.getField(sectionFieldKey).getReference()), null));
-        root.getNext().getNext().setPrev(root.getNext());
+        ReferencePath root = getReferencePath(orgFieldKey, orgValue);
+        if(root != null) {
+            root.setNext(getReferencePath(agencyFieldKey, agencyValue));
+            if(root.getNext() != null) {
+                root.getNext().setPrev(root);
+                root.getNext().setNext(getReferencePath(sectionFieldKey, null));
+                if(root.getNext().getNext() != null) {
+                    root.getNext().getNext().setPrev(root.getNext());
+                }
+            }
+
+        }
         request.setRoot(root);
         List<ReferenceOption> options = references.collectReferenceOptions(request);
         return findOption(options, title);
