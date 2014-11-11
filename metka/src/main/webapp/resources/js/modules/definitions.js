@@ -80,7 +80,11 @@ define({
                 }
             },
             maxValues: {
-                type: "integer"
+                oneOf: [{
+                    type: "integer"
+                }, {
+                    type: "null"
+                }]
             },
             subfields: {
                 type: "array",
