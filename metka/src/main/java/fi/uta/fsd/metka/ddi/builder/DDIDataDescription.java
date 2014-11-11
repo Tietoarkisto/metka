@@ -124,7 +124,7 @@ class DDIDataDescription {
                                 vars += valueFieldPair.getRight().getActualValueFor(language);
                             }
                         }
-                        varGrpType.setVar(Arrays.asList(vars, new String[0]));
+                        varGrpType.setVar(Arrays.asList(vars));
                     }
 
                     containerPair = row.dataField(ContainerDataFieldCall.get(Fields.VARGROUPTEXTS));
