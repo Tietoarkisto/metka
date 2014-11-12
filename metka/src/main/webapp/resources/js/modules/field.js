@@ -20,9 +20,14 @@ define(function (require) {
                 var errors = getErrors();
                 // TODO: if saving, show warning/warning instead of error/danger
                 if (errors.length) {
+                    log(options);
                     $container.addClass('has-error');
-                    $container.append($('<p class="help-block">')
-                        .append(require('./dataValidationErrorText')(errors)));
+                    var $p = $('<p class="help-block">');
+                    $container.append($p);
+                    $p.append(require('./dataValidationErrorText')(errors));
+                    if(options.horizontal) {
+                        $p.addClass('col-sm-offset-'+(2 * (getPropertyNS(options, 'parent.parent.columns') || 1) / (options.colspan || 1)));
+                    }
                 }
             });
         }

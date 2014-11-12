@@ -37,7 +37,7 @@ public class SearcherComponent {
             Future<ResultList<T>> operation = indexerPool.submit(searcher);
             results = operation.get();
         } catch(Exception e) {
-            logger.error("Excetpion while executing search command.", e);
+            logger.error("Exception while executing search command.", e);
         }
         return results;
     }

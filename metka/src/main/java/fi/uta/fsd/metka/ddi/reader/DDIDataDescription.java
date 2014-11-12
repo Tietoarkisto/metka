@@ -281,7 +281,7 @@ class DDIDataDescription extends DDISectionBase {
         }
         Pair<ReturnResult, RevisionData> variablePair = variableSearch.findVariableWithId(revision.getKey().getId(), var.getID());
         if(variablePair.getLeft() != ReturnResult.REVISION_FOUND) {
-            Logger.info(DDIDataDescription.class, "Tried to import variable "+var.getID()+" not that was not found for study "+revision.getKey().getId());
+            Logger.info(DDIDataDescription.class, "Tried to import variable "+var.getID()+" that was not found for study "+revision.getKey().getId());
             // We don't need to stop the import process for variable that we can't find.
             return ReturnResult.OPERATION_SUCCESSFUL;
         }

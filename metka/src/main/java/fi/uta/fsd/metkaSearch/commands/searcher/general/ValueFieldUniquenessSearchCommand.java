@@ -53,6 +53,9 @@ public final class ValueFieldUniquenessSearchCommand extends RevisionSearchComma
         @Override
         public ResultList<BooleanResult> handle(IndexSearcher searcher, TopDocs results) {
             ResultList<BooleanResult> list = new ListBasedResultList<>(ResultList.ResultType.BOOLEAN);
+            if(searcher == null || results == null) {
+                return list;
+            }
             if(results.totalHits == 0) {
                 // Unique
                 list.addResult(new BooleanResult(true));

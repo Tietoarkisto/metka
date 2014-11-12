@@ -12,7 +12,7 @@ import org.apache.lucene.search.TopDocs;
 public interface ResultHandler<T extends SearchResult> {
     /**
      * Request handling of given results.
-     *
+     * NOTICE: If either searcher or results are null then should return empty list.
      * @param searcher Caller must provide the IndexSearcher responsible for the TopDocs so that actual documents can be retrieved.
      * @param results TopDocs produced by the executed query
      * @return ResultList containing appropriate results dependant on implementor and given TopDocs
