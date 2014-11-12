@@ -51,11 +51,14 @@ define(function (require) {
                     .css('margin-left', (level * 16) + 'px');
 
                 if (node.children) {
+                    log(node);
                     var $remove = $('<span class="glyphicon">').addClass(remove).addClass("pull-right");
                     $a.append($remove);
                     $remove.click(function() {
                         node.transferRow.removed = true;
-                        $a.remove();
+                        /*$dirItems($a).remove();
+                        $a.remove();*/
+                        $a.trigger('refresh.metka');
                         return false;
                     });
                     $icon.click(function () {

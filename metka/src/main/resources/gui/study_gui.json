@@ -1728,6 +1728,9 @@
         {
             "type": "TAB",
             "title": "Virheet",
+            "permissions": [
+            	"canViewStudyErrors"
+            ],
             "hidePageButtons": true,
             "content": [{
                 "type": "COLUMN",

@@ -49,30 +49,24 @@ define(function (require) {
                             });
 
                             $groupView = require('./../../treeView')((require('./../../data')(options)('vargroups').getByLang(options.defaultLang) || []).filter(function (row) {
-                                // TODO: set as removed
-                                //row.removed = true;
-                                return row.fields && row.fields.vargrouptitle;
+                                return !row.removed && row.fields && row.fields.vargrouptitle;
                             }).map(function (transferRow) {
                                 return require('./../../treeViewVariableGroup')(
                                     require('./../../data').latestValue(transferRow.fields.vargrouptitle, options.defaultLang),
                                     transferRow.fields.vargroupvars ? transferRow.fields.vargroupvars.rows.DEFAULT.map(function (transferRow) {
+                                        if(transferRow.removed) {
+                                            return;
+                                        }
                                         var groupedVariable = variables.find(function (variable) {
                                             return variable.value === transferRow.value;
                                         });
-                                        if (!transferRow.removed) {
-                                            variables.splice(variables.indexOf(groupedVariable), 1);
-                                        }
+                                        variables.splice(variables.indexOf(groupedVariable), 1);
                                         return {
                                             transferRow: transferRow,
                                             groupedVariable: groupedVariable
                                         };
                                     }).filter(function (o) {
-                                        if (!o.groupedVariable || o.transferRow.removed) {
-                                            o.transferRow.removed = true;
-                                            return false;
-                                        } else {
-                                            return true;
-                                        }
+                                        return o && o.groupedVariable;
                                     }).map(function (o) {
                                         return {
                                             text: o.groupedVariable.text,
