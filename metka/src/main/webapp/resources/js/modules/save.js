@@ -3,9 +3,9 @@ define(function (require) {
 
     return function (options, success) {
         return require('./formAction')('save')(options, function (response) {
-                if (response.result === 'NO_CHANGES_TO_SAVE') {
+                /*if (response.result === 'NO_CHANGES_TO_SAVE') {
                     return;
-                }
+                }*/
                 success.call(this, response);
             },
             [

@@ -9,9 +9,9 @@ define(function (require) {
 
     return require('./inherit')(function (options) {
         function isVisible() {
-            if(options.hide) {
+            /*if(options.hide) {
                 return false;
-            }
+            }*/
             if (options.data && options.data.state) {
                 if (options.data.state.uiState === 'DRAFT' && options.hasOwnProperty('hasHandler') && options.hasHandler !== null) {
                     if (!!options.hasHandler !== !!options.data.state.handler) {

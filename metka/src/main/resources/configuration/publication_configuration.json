@@ -156,7 +156,6 @@
             "type": "INTEGER"
         },
         "publicationfirstsaved": {
-            "_comment": "TODO: This should be set during saving process",
             "key": "publicationfirstsaved",
             "translatable": false,
             "immutable": true,

@@ -236,7 +236,7 @@ define(function (require) {
                                 "default": "Tallenna"
                             },
                             "type": "CUSTOM",
-                            "customHandler": "studyVariablesSave",
+                            "customHandler": "studyVariableSave",
                             "isHandler": true,
                             "states": [
                                 "DRAFT"
@@ -250,7 +250,7 @@ define(function (require) {
                                 "default": "Tee luonnos"
                             },
                             "type": "CUSTOM",
-                            "customHandler": "studyVariablesEdit",
+                            "customHandler": "studyVariableEdit",
                             "states": [
                                 "APPROVED"
                             ],
@@ -259,60 +259,14 @@ define(function (require) {
                             ]
                         },
                         {
-                            "&title": {
-                                "default": "Aloita muokkaus"
-                            },
+                            "title": "Palauta",
                             "type": "CUSTOM",
-                            "customHandler": "studyVariablesClaim",
-                            "hasHandler": false,
+                            "customHandler": "studyVariableRestore",
                             "states": [
-                                "DRAFT"
+                                "REMOVED"
                             ],
                             "permissions": [
-                                "canEditRevision"
-                            ]
-                        },
-                        {
-                            "&title": {
-                                "default": "Ota haltuun"
-                            },
-                            "type": "CUSTOM",
-                            "customHandler": "studyVariablesClaim",
-                            "hasHandler": true,
-                            "isHandler": false,
-                            "states": [
-                                "DRAFT"
-                            ],
-                            "permissions": [
-                                "canEditRevision",
-                                "canForceClaimRevision"
-                            ]
-                        },
-                        {
-                            "&title": {
-                                "default": "Lopeta muokkaus"
-                            },
-                            "type": "RELEASE",
-                            "isHandler": true,
-                            "states": [
-                                "DRAFT"
-                            ],
-                            "permissions": [
-                                "canEditRevision"
-                            ]
-                        },
-                        {
-                            "&title": {
-                                "default": "Vapauta luonnos"
-                            },
-                            "type": "RELEASE",
-                            "isHandler": false,
-                            "hasHandler": true,
-                            "states": [
-                                "DRAFT"
-                            ],
-                            "permissions": [
-                                "canForceReleaseRevision"
+                                "canRestoreRevision"
                             ]
                         },
                         {
