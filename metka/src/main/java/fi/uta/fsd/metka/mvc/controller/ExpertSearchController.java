@@ -30,7 +30,7 @@ public class ExpertSearchController {
     }
 
     @RequestMapping(value = "query", method = {RequestMethod.POST})
-    public @ResponseBody ExpertSearchQueryResponse expertSearchQuery(@RequestBody ExpertSearchQueryRequest request) {
+    public @ResponseBody ExpertSearchQueryResponse expertSearchQuery(@RequestBody ExpertSearchQueryRequest request) throws Exception {
         return service.performQuery(request);
     }
 

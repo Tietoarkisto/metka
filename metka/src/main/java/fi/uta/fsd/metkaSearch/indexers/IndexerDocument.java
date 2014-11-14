@@ -50,11 +50,7 @@ public class IndexerDocument {
         if(generalSearch) {indexGeneral(value.toString());}
     }
 
-    public void indexStringField(String key, String value, Store store, boolean generalSearch) {
-        document.add(new StringField(key, value, store));
-        analyzers.put(key, CaseInsensitiveKeywordAnalyzer.ANALYZER);
-        if(generalSearch) {indexGeneral(value);}
-    }
+
 
     public void indexKeywordField(String key, String value) {
         indexKeywordField(key, value, Store.NO, false);
@@ -70,6 +66,12 @@ public class IndexerDocument {
 
     public void indexKeywordField(String key, String value, Store store, boolean generalSearch) {
         document.add(new TextField(key, value, store));
+        analyzers.put(key, CaseInsensitiveKeywordAnalyzer.ANALYZER);
+        if(generalSearch) {indexGeneral(value);}
+    }
+
+    public void indexStringField(String key, String value, Store store, boolean generalSearch) {
+        document.add(new StringField(key, value, store));
         analyzers.put(key, CaseInsensitiveKeywordAnalyzer.ANALYZER);
         if(generalSearch) {indexGeneral(value);}
     }

@@ -98,6 +98,11 @@ public class ReferenceServiceImpl implements ReferenceService {
         return options.isEmpty() ? null : options.get(0);
     }
 
+    @Override public ReferenceOption getCurrentFieldOption(ReferencePathRequest request) {
+        List<ReferenceOption> options = references.handleReferenceRequest(request).getRight();
+        return options.isEmpty() ? null : options.get(0);
+    }
+
     @Override public List<ReferenceOption> collectReferenceOptions(ReferenceOptionsRequest request) {
         Pair<ReturnResult, List<ReferenceOption>> optionsPair = references.handleReferenceRequest(request);
         return optionsPair.getRight();

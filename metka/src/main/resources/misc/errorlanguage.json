@@ -1,0 +1,15 @@
+{
+	"key": "errorpartsection",
+	"data": [
+		{
+			"value": "default",
+			"title": "Suomi"
+		}, {
+			"value": "en",
+			"title": "Englanti"
+		}, {
+			"value": "sv",
+			"title": "Ruotsi"
+		}
+	]
+}

@@ -13,6 +13,7 @@ import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
+import fi.uta.fsd.metka.storage.repository.RevisionHandlerRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionEditRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
@@ -24,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 @Repository
 public class RevisionEditRepositoryImpl implements RevisionEditRepository {
@@ -34,6 +36,9 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
 
     @Autowired
     private RevisionRepository revisions;
+
+    @Autowired
+    private RevisionHandlerRepository handler;
 
     @Override
     public Pair<ReturnResult, RevisionData> edit(TransferData transferData) {
@@ -55,9 +60,13 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
             return new ImmutablePair<>(ReturnResult.REVISIONABLE_REMOVED, data);
         }
 
+        ReturnResult result;
+        // If data is not a draft then try to create a new draft
+        // If data is missing a handler then try to claim the data
+        // Return either a claimed draft or a draft that is handled by someone else
         if(data.getState() != RevisionState.DRAFT) {
             // Data is not draft, we need a new revision
-            ReturnResult result = checkEditPermissions(data);
+            result = checkEditPermissions(data);
             if(result != ReturnResult.CAN_CREATE_DRAFT) {
                 logger.warn("User can't create draft revision because: "+result);
                 return new ImmutablePair<>(result, data);
@@ -76,18 +85,28 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
             // TODO: If update fails then the possibly created revision should be removed
             RevisionData newData = new RevisionData(keyPair.getRight().toModelKey(), configPair.getRight().getKey());
             newData.setState(RevisionState.DRAFT);
-            newData.setHandler(AuthenticationUtil.getUserName());
             copyDataToNewRevision(data, newData);
             ReturnResult update = revisions.updateRevisionData(newData);
             if(update != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
                 return new ImmutablePair<>(update, data);
+            } else {
+                data = newData;
             }
-            return new ImmutablePair<>(ReturnResult.REVISION_CREATED, newData);
+            result = ReturnResult.REVISION_CREATED;
         } else {
-            data.setHandler(AuthenticationUtil.getUserName());
-            revisions.updateRevisionData(data);
+            result = ReturnResult.REVISION_FOUND;
         }
-        return new ImmutablePair<>(ReturnResult.REVISION_FOUND, data);
+        if(!StringUtils.hasText(data.getHandler())) {
+            // Try to claim revision since it hasn't been claimed yet
+            handler.changeHandler(RevisionKey.fromModelKey(data.getKey()), false);
+            // Get the revision again so that we have a claimed version
+            dataPair = revisions.getRevisionData(RevisionKey.fromModelKey(data.getKey()));
+            if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
+                return dataPair;
+            }
+            data = dataPair.getRight();
+        }
+        return new ImmutablePair<>(result, data);
     }
 
     private ReturnResult checkEditPermissions(RevisionData data) {

@@ -40,9 +40,6 @@ public interface RevisionService {
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_PERFORM_SEARCH +"', '" + PermissionCheck.Values.PERMISSION + "')")
     @Transactional(readOnly = true) RevisionSearchResponse search(RevisionSearchRequest request);
 
-    @PreAuthorize("hasPermission('"+ Permission.Values.CAN_PERFORM_SEARCH +"', '" + PermissionCheck.Values.PERMISSION + "')")
-    @Transactional(readOnly = true) RevisionSearchResponse studyIdSearch(String studyId);
-
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_EDIT_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "') " +
             "and hasPermission(#key, '" + PermissionCheck.Values.CLAIM_REVISION + "')")
     RevisionOperationResponse claimRevision(RevisionKey key);

@@ -107,141 +107,41 @@ define(function (require) {
                 },
                 "errordatasetpart_list": {
                     "key": "errordatasetpart_list",
-                    "type": "VALUE",
-                    "options": [
-                        {
-                            "&title": {
-                                "default": "Perustiedot"
-                            },
-                            "value": "1"
-                        },
-                        {
-                            "&title": {
-                                "default": "Mapit"
-                            },
-                            "value": "2"
-                        },
-                        {
-                            "&title": {
-                                "default": "Arkistointisopimus"
-                            },
-                            "value": "3"
-                        },
-                        {
-                            "&title": {
-                                "default": "Aineisto"
-                            },
-                            "value": "4"
-                        },
-                        {
-                            "&title": {
-                                "default": "Muuttujat"
-                            },
-                            "value": "5"
-                        },
-                        {
-                            "&title": {
-                                "default": "Tiedostot"
-                            },
-                            "value": "6"
-                        },
-                        {
-                            "&title": {
-                                "default": "Koodikirja"
-                            },
-                            "value": "7"
-                        }
-                    ]
+                    "type": "REFERENCE",
+                    "reference": "errordatasetpart_ref"
                 },
                 "errorpartsection_list": {
                     "key": "errorpartsection_list",
-                    "type": "VALUE",
-                    "options": [
-                        {
-                            "&title": {
-                                "default": "Perustiedot"
-                            },
-                            "value": "1"
-                        },
-                        {
-                            "&title": {
-                                "default": "Versiotiedot"
-                            },
-                            "value": "2"
-                        },
-                        {
-                            "&title": {
-                                "default": "Muut nimet"
-                            },
-                            "value": "3"
-                        },
-                        {
-                            "&title": {
-                                "default": "Tekijät ja tuottajat"
-                            },
-                            "value": "4"
-                        },
-                        {
-                            "&title": {
-                                "default": "Asiasanat, tieteenalat ja abstrakti"
-                            },
-                            "value": "5"
-                        },
-                        {
-                            "&title": {
-                                "default": "Kattavuus"
-                            },
-                            "value": "6"
-                        },
-                        {
-                            "&title": {
-                                "default": "Aineistonkeruu"
-                            },
-                            "value": "7"
-                        },
-                        {
-                            "&title": {
-                                "default": "Aineiston käyttö"
-                            },
-                            "value": "8"
-                        },
-                        {
-                            "&title": {
-                                "default": "Muut materiaalit"
-                            },
-                            "value": "9"
-                        },
-                        {
-                            "&title": {
-                                "default": "Tekijät"
-                            },
-                            "value": "10"
-                        }
-                    ]
+                    "type": "REFERENCE",
+                    "reference": "errorpartsection_ref"
                 },
                 "errorlanguage_list": {
                     "key": "errorlanguage_list",
-                    "type": "VALUE",
-                    "options": [
-                        {
-                            "&title": {
-                                "default": "Suomi"
-                            },
-                            "value": "default"
-                        },
-                        {
-                            "&title": {
-                                "default": "Englanti"
-                            },
-                            "value": "en"
-                        },
-                        {
-                            "&title": {
-                                "default": "Ruotsi"
-                            },
-                            "value": "sv"
-                        }
-                    ]
+                    "type": "REFERENCE",
+                    "reference": "errorlanguage_ref"
+                }
+            },
+            "references": {
+                "errorlanguage_ref": {
+                    "key": "errorlanguage_ref",
+                    "type": "JSON",
+                    "target": "errorlanguage",
+                    "valuePath": "value",
+                    "titlePath": "title"
+                },
+                "errordatasetpart_ref": {
+                    "key": "errordatasetpart_ref",
+                    "type": "JSON",
+                    "target": "errordatasetpart",
+                    "valuePath": "value",
+                    "titlePath": "title"
+                },
+                "errorpartsection_ref": {
+                    "key": "errorpartsection_ref",
+                    "type": "JSON",
+                    "target": "errorpartsection",
+                    "valuePath": "value",
+                    "titlePath": "title"
                 }
             }
         },

@@ -1,28 +1,28 @@
 package fi.uta.fsd.metkaSearch.handlers;
 
 import fi.uta.fsd.Logger;
-import fi.uta.fsd.metka.enums.ConfigurationType;
-import fi.uta.fsd.metka.enums.FieldType;
-import fi.uta.fsd.metka.enums.Language;
-import fi.uta.fsd.metka.enums.RevisionState;
+import fi.uta.fsd.metka.enums.*;
 import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
-import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.configuration.Field;
-import fi.uta.fsd.metka.model.configuration.Option;
-import fi.uta.fsd.metka.model.configuration.SelectionList;
+import fi.uta.fsd.metka.model.configuration.*;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.general.ConfigurationKey;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
+import fi.uta.fsd.metka.storage.repository.BinderRepository;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
+import fi.uta.fsd.metka.storage.repository.StudyErrorsRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
+import fi.uta.fsd.metka.transfer.binder.BinderPageListEntry;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
+import fi.uta.fsd.metka.transfer.reference.ReferencePath;
+import fi.uta.fsd.metka.transfer.reference.ReferencePathRequest;
+import fi.uta.fsd.metka.transfer.study.StudyError;
 import fi.uta.fsd.metkaSearch.analyzer.CaseInsensitiveWhitespaceAnalyzer;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
 import fi.uta.fsd.metkaSearch.indexers.Indexer;
@@ -35,8 +35,10 @@ import org.apache.lucene.search.NumericRangeQuery;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import static org.apache.lucene.document.Field.Store.NO;
 import static org.apache.lucene.document.Field.Store.YES;
 import static org.apache.lucene.search.BooleanClause.Occur.MUST;
 
@@ -45,6 +47,8 @@ class GeneralRevisionHandler implements RevisionHandler {
     private final RevisionRepository revisions;
     private final ConfigurationRepository configurations;
     private final ReferenceService references;
+    private final StudyErrorsRepository studyErrors;
+    private final BinderRepository binders;
 
     private final Map<ConfigurationKey, Configuration> configCache = new HashMap<>();
 
@@ -57,12 +61,16 @@ class GeneralRevisionHandler implements RevisionHandler {
     private boolean contentForLanguage = false;
 
     GeneralRevisionHandler(Indexer indexer, RevisionRepository revisions,
-                           ConfigurationRepository configurations, ReferenceService references) {
+                           ConfigurationRepository configurations, ReferenceService references,
+                           StudyErrorsRepository studyErrors, BinderRepository binders) {
         this.indexer = indexer;
 
         this.revisions = revisions;
         this.configurations = configurations;
         this.references = references;
+        this.studyErrors = studyErrors;
+        this.binders = binders;
+
         language = indexer.getPath().getLanguage();
     }
 
@@ -173,11 +181,7 @@ class GeneralRevisionHandler implements RevisionHandler {
 
         indexFields(data, document, "", new Step("", null), config);
 
-        if(data.getConfiguration().getType() == ConfigurationType.STUDY) {
-            // TODO: Index study errors for this study
-
-            // TODO: Index binder pages for this study
-        }
+        finalizeIndexing(data, document, config);
 
         if(contentForLanguage || language == Language.DEFAULT) {
             Logger.info(GeneralRevisionHandler.class, "Adding document to index.");
@@ -502,6 +506,146 @@ class GeneralRevisionHandler implements RevisionHandler {
                 continue;
             }
             indexFields(pair.getRight(), document, root, new Step("", null), confPair.getRight());
+        }
+    }
+
+    private void finalizeIndexing(RevisionData data, IndexerDocument document, Configuration config) {
+        switch(data.getConfiguration().getType()) {
+            case STUDY:
+                finalizeStudyIndexing(data, document, config);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void finalizeStudyIndexing(RevisionData data, IndexerDocument document, Configuration config) {
+        indexStudyErrors(data, document);
+
+        indexStudyBinderPages(data, document);
+    }
+
+    private void indexStudyErrors(RevisionData data, IndexerDocument document) {
+        List<StudyError> errors = studyErrors.listErrorsForStudy(data.getKey().getId());
+        if(errors.isEmpty()) {
+            return;
+        }
+        String root = "errors.";
+
+        ReferencePathRequest refReq = new ReferencePathRequest();
+        ReferenceOption option;
+        refReq.setLanguage(language);
+        Reference datasetpart = new Reference("errordatasetpart", ReferenceType.JSON, "errordatasetpart", "value");
+        datasetpart.setTitlePath("title");
+
+        Reference partsection = new Reference("errorpartsection", ReferenceType.JSON, "errorpartsection", "value");
+        datasetpart.setTitlePath("title");
+
+        Reference errorlanguage = new Reference("errorlanguage", ReferenceType.JSON, "errorlanguage", "value");
+        datasetpart.setTitlePath("title");
+
+        for(StudyError error : errors) {
+            // errordatasetpart
+            if(StringUtils.hasText(error.getErrordatasetpart())) {
+                ReferencePath datasetpartPath = new ReferencePath(datasetpart, error.getErrordatasetpart());
+                refReq.setRoot(datasetpartPath);
+                option = references.getCurrentFieldOption(refReq);
+                if(option != null) {
+                    document.indexStringField(root+"errordatasetpart", option.getTitle().getValue(), NO, false);
+                    document.indexKeywordField(root+"errordatasetpart.value", option.getValue());
+                }
+            }
+
+            // errorlabel
+            if(StringUtils.hasText(error.getErrorlabel())) {
+                document.indexText(language, root+"errorlabel", error.getErrorlabel(), false, NO, false);
+            }
+
+            // errorlanguage
+            if(StringUtils.hasText(error.getErrorlanguage())) {
+                ReferencePath errorlanguagePath = new ReferencePath(errorlanguage, error.getErrorlanguage());
+                refReq.setRoot(errorlanguagePath);
+                option = references.getCurrentFieldOption(refReq);
+                if(option != null) {
+                    document.indexStringField(root+"errorlanguage", option.getTitle().getValue(), NO, false);
+                    document.indexKeywordField(root+"errorlanguage.value", option.getValue());
+                }
+            }
+
+            // errornotes
+            if(StringUtils.hasText(error.getErrornotes())) {
+                document.indexText(language, root+"errornotes", error.getErrorlabel(), false, NO, false);
+            }
+
+            // errorpartsection
+            if(StringUtils.hasText(error.getErrorpartsection())) {
+                ReferencePath partsectionPath = new ReferencePath(partsection, error.getErrorpartsection());
+                refReq.setRoot(partsectionPath);
+                option = references.getCurrentFieldOption(refReq);
+                if(option != null) {
+                    document.indexStringField(root+"errorpartsection", option.getTitle().getValue(), NO, false);
+                    document.indexKeywordField(root+"errorpartsection.value", option.getValue());
+                }
+            }
+
+            // errorscore
+            if(error.getErrorscore() != null) {
+                document.indexIntegerField(root+"errorscore", error.getErrorscore().longValue(), false, false);
+            }
+
+            // errortriggerdate
+            if(StringUtils.hasText(error.getErrortriggerdate().toString())) {
+                document.indexKeywordField(root + "errortriggerdate", error.getErrortriggerdate().toString(), false);
+            }
+
+            // errortriggerpro
+            if(StringUtils.hasText(error.getErrortriggerpro())) {
+                document.indexKeywordField(root + "errortriggerpro", error.getErrortriggerpro(), false);
+            }
+
+            // savedAt
+            if(StringUtils.hasText(error.getSavedAt().toString())) {
+                document.indexKeywordField(root + "savedAt", error.getSavedAt().toString(), false);
+            }
+
+            // savedBy
+            if(StringUtils.hasText(error.getSavedBy())) {
+                document.indexKeywordField(root + "savedBy", error.getSavedBy(), false);
+            }
+        }
+    }
+
+    private void indexStudyBinderPages(RevisionData data, IndexerDocument document) {
+        Pair<ReturnResult, List<BinderPageListEntry>> pages = binders.listStudyBinderPages(data.getKey().getId());
+        if(pages.getLeft() == ReturnResult.NO_RESULTS) {
+            return;
+        }
+        String root = "binders.";
+        for(BinderPageListEntry page : pages.getRight()) {
+            // description
+            if(StringUtils.hasText(page.getDescription())) {
+                document.indexText(language, root+"description", page.getDescription(), false, NO, false);
+            }
+
+            // binderid
+            if(page.getBinderId() != null) {
+                document.indexIntegerField(root+"binderid", page.getBinderId(), false, false);
+            }
+
+            // studyid
+            if(StringUtils.hasText(page.getStudyId())) {
+                document.indexKeywordField(root + "studyid", page.getStudyId(), false);
+            }
+
+            // savedAt
+            if(page.getSaved() != null && StringUtils.hasText(page.getSaved().getTime().toString())) {
+                document.indexKeywordField(root + "savedAt", page.getSaved().getTime().toString(), false);
+            }
+
+            // savedBy
+            if(page.getSaved() != null && StringUtils.hasText(page.getSaved().getUser())) {
+                document.indexKeywordField(root + "savedBy", page.getSaved().getUser(), false);
+            }
         }
     }
 

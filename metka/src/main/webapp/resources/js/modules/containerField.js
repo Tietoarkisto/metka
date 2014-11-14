@@ -332,7 +332,11 @@ define(function (require) {
                 "selectionList": "referenceContainerRowDialog_list"
             };
             var references = {};
-            references[fieldOptions.reference] = options.dataConf.references[fieldOptions.reference];
+            references[fieldOptions.reference] = $.extend(true, {}, options.dataConf.references[fieldOptions.reference], {
+                // TODO: add some type of 'ignoreSelf' parameter so that current revision is not included in results
+                approvedOnly: true,
+                ignoreRemoved: true
+            });
             var rowDialog = refDialog({
                 defaultLang: options.defaultLang,
                 dataConf: {
@@ -340,6 +344,7 @@ define(function (require) {
                     selectionLists: {
                         referenceContainerRowDialog_list: {
                             "type": "REFERENCE",
+                            // TODO: somehow disable OK button if nothing is selected
                             "reference": fieldOptions.reference
                         }
                     },

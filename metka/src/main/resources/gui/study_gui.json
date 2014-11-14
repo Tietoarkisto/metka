@@ -1018,6 +1018,12 @@
                                                 ]
                                             },
                                             "extraDialogConfiguration": {
+                                            	"author": {
+                                            		"field": {
+                                            			"key": "author",
+                                            			"displayType": "CUSTOM_JS"
+                                            		}
+                                            	},
                                                 "organisation": {
                                                     "field": {
                                                         "key": "organisation",
@@ -1058,6 +1064,18 @@
                                                 ]
                                             },
                                             "extraDialogConfiguration": {
+                                            	"author": {
+                                            		"field": {
+                                            			"key": "author",
+                                            			"displayType": "CUSTOM_JS"
+                                            		}
+                                            	},
+                                            	"otherauthorgroup": {
+                                            		"field": {
+                                            			"key": "otherauthorgroup",
+                                            			"displayType": "CUSTOM_JS"
+                                            		}
+                                            	},
                                                 "organisation": {
                                                     "field": {
                                                         "key": "organisation",
@@ -1326,6 +1344,12 @@
                                             ]
                                         },
                                         "extraDialogConfiguration": {
+                                        	"author": {
+                                        		"field": {
+                                        			"key": "author",
+                                        			"displayType": "CUSTOM_JS"
+                                        		}
+                                        	},
                                             "organisation": {
                                                 "field": {
                                                     "key": "organisation",

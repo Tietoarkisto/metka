@@ -11,8 +11,6 @@ import java.util.List;
 public interface RevisionSearch {
     public Pair<ReturnResult, List<RevisionSearchResult>> search(RevisionSearchRequest request);
 
-    public Pair<ReturnResult, List<RevisionSearchResult>> studyIdSearch(String studyId);
-
     Pair<ReturnResult,List<RevisionSearchResult>> collectRevisionHistory(RevisionHistoryRequest request);
 
     List<RevisionCompareResponseRow> compareRevisions(RevisionCompareRequest request);

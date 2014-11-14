@@ -113,24 +113,31 @@ define(function (require) {
         function error() {
             require('./assignUrl')('/expert');
         }
-        require('./server')('/revision/studyIdSearch/{id}', {
-            id: $(this).find('input[type="text"]').val()
-        }, {
-            method: 'GET',
-            success: function (data) {
-                if (!data.rows.length) {
-                    error();
-                    return;
-                }
+        var $id = $(this).find('input[type="text"]').val();
 
-                require('./assignUrl')('view', {
-                    PAGE: 'STUDY',
-                    id: data.rows[0].id,
-                    no: data.rows[0].revision
-                });
-            },
-            error: error
+        require('./server')('searchAjax', {
+            data: JSON.stringify({
+                type: 'STUDY',
+                searchApproved: true,
+                searchDraft: true,
+                searchRemoved: true,
+                values: {
+                    studyid: $id
+                }
+            }),
+            success: function(response) {
+                if(response.result !== 'SEARCH_SUCCESS' || !response.rows.length || response.rows.length == 0) {
+                    error();
+                } else {
+                    require('./assignUrl')('view', {
+                        PAGE: 'STUDY',
+                        id: response.rows[0].id,
+                        no: ''
+                    });
+                }
+            }
         });
+
         return false;
     });
 });

@@ -5,6 +5,7 @@ import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.mvc.ModelUtil;
 import fi.uta.fsd.metka.mvc.services.RevisionService;
+import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.revision.*;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
@@ -145,7 +146,13 @@ public class RevisionController {
 
     @RequestMapping(value = "studyIdSearch/{studyId}", method = RequestMethod.GET)
     public @ResponseBody RevisionSearchResponse studyIdSearch(@PathVariable String studyId) {
-        return revisions.studyIdSearch(studyId);
+        RevisionSearchRequest searchRequest = new RevisionSearchRequest();
+        searchRequest.setSearchApproved(true);
+        searchRequest.setSearchDraft(true);
+        searchRequest.setSearchRemoved(true);
+        searchRequest.setType(ConfigurationType.STUDY);
+        searchRequest.getValues().put(Fields.STUDYID, studyId);
+        return revisions.search(searchRequest);
     }
 
     @RequestMapping(value = "view/{type}/{id}", method = RequestMethod.GET)

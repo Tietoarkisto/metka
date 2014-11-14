@@ -264,6 +264,9 @@ define(function (require) {
                         "&title": {
                             "default": "Lisää uusi"
                         },
+                        permissions: [
+                            "canCreateRevision"
+                        ],
                         create: function () {
                             this
                                 .click(function () {

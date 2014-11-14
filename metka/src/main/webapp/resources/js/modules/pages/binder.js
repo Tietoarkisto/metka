@@ -84,6 +84,7 @@ define(function (require) {
                                             };
                                             require('./../modal')({
                                                 title: 'Mapin {binderId} sisältö'.supplant(supplant),
+                                                fieldTitles: options.fieldTitles,
                                                 data: {},
                                                 dataConf: dataConf,
                                                 $events: $({}),
@@ -106,7 +107,7 @@ define(function (require) {
                                                                         "columnFields": [
                                                                             "studyId",
                                                                             "studyTitle",
-                                                                            "savedBy",
+                                                                            //"savedBy",
                                                                             "description"
                                                                         ],
                                                                         onRemove: function ($tr) {
@@ -163,6 +164,9 @@ define(function (require) {
                     "&title": {
                         "default": "Lisää aineisto mappiin"
                     },
+                    permissions: [
+                        "canEditBinderPages"
+                    ],
                     create: function () {
                         this
                             .click(function () {

@@ -230,16 +230,6 @@ public class RevisionServiceImpl implements RevisionService {
         return response;
     }
 
-    @Override public RevisionSearchResponse studyIdSearch(String studyId) {
-        RevisionSearchResponse response = new RevisionSearchResponse();
-        Pair<ReturnResult, List<RevisionSearchResult>> result = search.studyIdSearch(studyId);
-        response.setResult(result.getLeft());
-        if(result.getLeft() == ReturnResult.SEARCH_SUCCESS && !result.getRight().isEmpty()) {
-            response.getRows().add(result.getRight().get(0));
-        }
-        return response;
-    }
-
     @Override
     public RevisionOperationResponse claimRevision(RevisionKey key) {
         Pair<ReturnResult, TransferData> dataPair = handler.changeHandler(fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(key), false);

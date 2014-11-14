@@ -18,7 +18,7 @@ public class Reference {
     private final String valuePath;
     private String titlePath = null;
     private Boolean approvedOnly = false;
-    private Boolean ignoreRemoved = true;
+    private Boolean ignoreRemoved = false;
 
     @JsonCreator
     public Reference(@JsonProperty("key")String key, @JsonProperty("type")ReferenceType type, @JsonProperty("target")String target, @JsonProperty("valuePath")String valuePath) {
@@ -61,11 +61,11 @@ public class Reference {
     }
 
     public Boolean getIgnoreRemoved() {
-        return ignoreRemoved == null ? true : ignoreRemoved;
+        return ignoreRemoved == null ? false : ignoreRemoved;
     }
 
     public void setIgnoreRemoved(Boolean ignoreRemoved) {
-        this.ignoreRemoved = ignoreRemoved == null ? true : ignoreRemoved;
+        this.ignoreRemoved = ignoreRemoved == null ? false : ignoreRemoved;
     }
 
     @JsonIgnore

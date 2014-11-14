@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 @PreAuthorize("hasPermission('"+ Permission.Values.CAN_PERFORM_SEARCH +"', '" + PermissionCheck.Values.PERMISSION + "')")
 @Transactional
 public interface ExpertSearchService {
-    @Transactional(readOnly = true) ExpertSearchQueryResponse performQuery(ExpertSearchQueryRequest request);
+    @Transactional(readOnly = true) ExpertSearchQueryResponse performQuery(ExpertSearchQueryRequest request) throws Exception;
 
     @Transactional(readOnly = true) ExpertSearchListResponse listSavedSearcher();
 

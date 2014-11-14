@@ -1,0 +1,30 @@
+{
+	"key": "errorpartsection",
+	"data": [
+		{
+			"value": 1,
+			"title": "Muut nimet"
+		}, {
+			"value": 2,
+			"title": "Tekijät ja tuottajat"
+		}, {
+			"value": 3,
+			"title": "Asiasanat ja tieteenalat"
+		}, {
+			"value": 4,
+			"title": "Abstrakti"
+		}, {
+			"value": 5,
+			"title": "Kattavuus"
+		}, {
+			"value": 6,
+			"title": "Aineistonkeruu"
+		}, {
+			"value": 7,
+			"title": "Aineiston käyttö"
+		}, {
+			"value": 8,
+			"title": "Muut materiaalit"
+		}
+	]
+}

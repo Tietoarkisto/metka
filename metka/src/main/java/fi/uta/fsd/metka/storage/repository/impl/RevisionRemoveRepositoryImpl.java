@@ -1,12 +1,16 @@
 package fi.uta.fsd.metka.storage.repository.impl;
 
 import fi.uta.fsd.Logger;
+import fi.uta.fsd.metka.enums.ConfigurationType;
+import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.enums.OperationType;
 import fi.uta.fsd.metka.enums.RevisionState;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Operation;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.transfer.TransferData;
+import fi.uta.fsd.metka.model.transfer.TransferField;
+import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
@@ -55,6 +59,11 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(RevisionKey.fromModelKey(transferData.getKey()));
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             return RemoveResult.NOT_FOUND;
+        }
+
+        RemoveResult result = allowRemoval(transferData);
+        if(result != RemoveResult.ALLOW_REMOVAL) {
+            return result;
         }
 
         if(pair.getRight().getState() == RevisionState.DRAFT) {
@@ -128,5 +137,30 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         entity.setRemovalDate(new LocalDateTime());
         entity.setRemovedBy(AuthenticationUtil.getUserName());
         return RemoveResult.SUCCESS_LOGICAL;
+    }
+
+    private RemoveResult allowRemoval(TransferData transferData) {
+        switch(transferData.getConfiguration().getType()) {
+            case STUDY_ATTACHMENT:
+                return checkStudyAttachmentRemoval(transferData);
+            default:
+                return RemoveResult.ALLOW_REMOVAL;
+        }
+    }
+
+    private RemoveResult checkStudyAttachmentRemoval(TransferData transferData) {
+        TransferField field = transferData.getField(Fields.STUDY);
+        if(field == null || !field.hasValueFor(Language.DEFAULT)) {
+            return RemoveResult.ALLOW_REMOVAL;
+        }
+        Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(field.currentAsValueFor(Language.DEFAULT).asInteger(), false, ConfigurationType.STUDY);
+        if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
+            return RemoveResult.ALLOW_REMOVAL;
+        }
+        return AuthenticationUtil.isHandler(pair.getRight())
+                ? RemoveResult.ALLOW_REMOVAL
+                : (pair.getRight().getState() != RevisionState.DRAFT
+                    ? RemoveResult.STUDY_NOT_DRAFT
+                    : RemoveResult.WRONG_USER);
     }
 }

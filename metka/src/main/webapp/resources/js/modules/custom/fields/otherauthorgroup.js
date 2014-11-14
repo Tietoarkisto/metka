@@ -8,14 +8,14 @@ define(function (require) {
             create: function (options) {
                 var $elem = this;
 
-                var curVal = require('./../../data')(options)("datakind").getByLang("DEFAULT");
-                $elem.toggle(curVal && curVal === '2');
+                var curVal = require('./../../data')(options)("otherauthortype").getByLang("DEFAULT");
+                $elem.toggle(curVal && curVal === '3');
 
                 options.$events.on('data-changed-{key}-{lang}'.supplant({
-                                key: "datakind",
+                                key: "otherauthortype",
                                 lang: "DEFAULT"
                             }), function(e, value) {
-                    $elem.toggle(!!value && value === '2');
+                    $elem.toggle(value && value === '3');
                 });
             }
         }

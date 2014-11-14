@@ -184,6 +184,9 @@ public final class Fields {
     public static final String SOFTWAREVERSION = "softwareversion";
     public static final String PACKAGEVERSION = "packageversion";
     public static final String PUBLICATIONFIRSTSAVED = "publicationfirstsaved";
+    public static final String STUDY = "study";
+    public static final String FILES = "files";
+    public static final String PUBLICATIONTITLE = "publicationtitle";
 
 
     private Fields() {}

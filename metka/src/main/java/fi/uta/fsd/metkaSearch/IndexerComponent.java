@@ -6,8 +6,10 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
+import fi.uta.fsd.metka.storage.repository.BinderRepository;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
+import fi.uta.fsd.metka.storage.repository.StudyErrorsRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metkaSearch.commands.indexer.IndexerCommand;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
@@ -60,6 +62,12 @@ public class IndexerComponent {
 
     @Autowired
     private DirectoryManager manager;
+
+    @Autowired
+    private StudyErrorsRepository studyErrors;
+
+    @Autowired
+    private BinderRepository binders;
 
     // Pool for indexer threads.
     private ExecutorService threadPool = Executors.newCachedThreadPool();
@@ -263,7 +271,7 @@ public class IndexerComponent {
                 indexer = DummyIndexer.build(manager, path, commandRepository);
                 break;
             case REVISION:
-                indexer = RevisionIndexer.build(manager, path, commandRepository, revisions, configurations, references);
+                indexer = RevisionIndexer.build(manager, path, commandRepository, revisions, configurations, references, studyErrors, binders);
                 break;
             default:
                 indexer = null;

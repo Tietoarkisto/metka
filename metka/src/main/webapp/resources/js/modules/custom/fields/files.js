@@ -35,9 +35,6 @@ define(function (require) {
                             // TODO: check status
                             if (response.result === 'VIEW_SUCCESSFUL') {
                             }
-
-                            var isStudyReadOnly = require('./../../isDataReadOnly')(options.data);
-
                             var modalOptions = $.extend(response.gui, {
                                 title: 'Muokkaa tiedostoa',
                                 data: response.transferData,
@@ -73,7 +70,6 @@ define(function (require) {
                                         }
                                     }
                                 }),
-                                readOnly: isStudyReadOnly,
                                 $events: options.$events,
                                 defaultLang: 'DEFAULT',
                                 large: true,
@@ -346,7 +342,6 @@ define(function (require) {
                                 buttons: [{
                                     "title": "Tallenna",
                                     "isHandler": true,
-                                    hide: isStudyReadOnly,
                                     "states": [
                                         "DRAFT"
                                     ],
@@ -356,6 +351,7 @@ define(function (require) {
                                     create: function (options) {
                                         options.preventDismiss = true;
                                         var $this = $(this);
+                                        $this.toggleClass('hiddenByCustomCode', !require('./../../root')(options).isRelatedStudyDraftForCurrentUser);
                                         this.click(require('./../../save')(modalOptions, function(response) {
                                             // TODO: Check that if result is SAVE_SUCCESSFUL_WITH_ERRORS then don't close the dialog and instead reload data from TransferData
                                             if(response.result === 'SAVE_SUCCESSFUL_WITH_ERRORS') {
@@ -371,7 +367,6 @@ define(function (require) {
                                 }, {
                                     "type": "CUSTOM",
                                     "title": "Tee luonnos",
-                                    hide: isStudyReadOnly,
                                     "customHandler": "studyAttachmentEdit",
                                     "permissions": [
                                         "canEditRevision"
@@ -381,7 +376,6 @@ define(function (require) {
                                     ]
                                 }, {
                                     "title": "Poista",
-                                    hide: isStudyReadOnly,
                                     "states": [
                                         "DRAFT",
                                         "APPROVED"
@@ -390,7 +384,8 @@ define(function (require) {
                                     "permissions": [
                                         "canRemoveRevision"
                                     ],
-                                    create: function () {
+                                    create: function (options) {
+                                        $(this).toggleClass('hiddenByCustomCode', !require('./../../root')(options).isRelatedStudyDraftForCurrentUser);
                                         this.click(require('./../../remove')($.extend({
                                             success: {
                                                 SUCCESS_LOGICAL: refreshPage,
@@ -401,7 +396,6 @@ define(function (require) {
                                     }
                                 }, {
                                     "title": "Palauta",
-                                    hide: isStudyReadOnly,
                                     "type": "RESTORE",
                                     "states": [
                                         "REMOVED"
@@ -411,13 +405,19 @@ define(function (require) {
                                     ],
                                     request: {
                                         success: refreshPage
+                                    },
+                                    create: function(options) {
+                                        $(this).toggleClass('hiddenByCustomCode', !require('./../../root')(options).isRelatedStudyDraftForCurrentUser);
                                     }
                                 }, {
                                     type: 'CANCEL'
                                 }]
                             });
-
-                            require('./../../modal')(modalOptions);
+                            require('../../isRelatedStudyDraftForCurrentUser')(modalOptions, function (isDraft) {
+                                modalOptions.isRelatedStudyDraftForCurrentUser = isDraft;
+                                modalOptions.readOnly = isDraft && require('./../../isDataReadOnly')(response.transferData);
+                                require('./../../modal')(modalOptions);
+                            });
                         }
                     });
                 }

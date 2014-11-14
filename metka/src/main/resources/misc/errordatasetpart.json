@@ -1,0 +1,51 @@
+{
+	"key": "errordatasetpart",
+	"data": [
+		{
+			"value": 1,
+			"title": "Perustiedot"
+		}, {
+			"value": 2,
+			"title": "Arkistointisopimus"
+		}, {
+			"value": 3,
+			"title": "Kuvailu"
+		}, {
+			"value": 4,
+			"title": "Muuttujat"
+		}, {
+			"value": 5,
+			"title": "Koodikirja"
+		}, {
+			"value": 6,
+			"title": "Kyselylomake (quF/arquF)"
+		}, {
+			"value": 7,
+			"title": "Data (daF/arF)"
+		}, {
+			"value": 8,
+			"title": "Syntaksi (syF)"
+		}, {
+			"value": 9,
+			"title": "Anonymisointiprosessi (anF/aranF)"
+		}, {
+			"value": 10,
+			"title": "Haastattelukysymykset (iqF/ariqf)"
+		}, {
+			"value": 11,
+			"title": "Transkriptointiesimerkki eli litteraatioesimerkki(teF/arteF)"
+		}, {
+			"value": 12,
+			"title": "Kirjoitusohjeet (wiF/arwiF)"
+		}, {
+			"value": 13,
+			"title": "Erillinen avovastaustiedosto (avoF/aravoF)"
+		}, {
+			"value": 14,
+			"title": "Kvalikirstu-tiedostot"
+		}, {
+			"value": 15,
+			"title": "Muut tiedostot"
+		}
+	]
+}
