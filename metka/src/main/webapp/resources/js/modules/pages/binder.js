@@ -62,87 +62,90 @@ define(function (require) {
                                         "studyTitle",
                                         "binderId",
                                         "description"
-                                    ]
+                                    ],
+                                    onClick: function (transferRow) {
+                                        var supplant = {
+                                            binderId: transferRow.fields.binderId.values.DEFAULT.current
+                                        };
+                                        require('./../modal')({
+                                            title: 'Mapin {binderId} sisältö'.supplant(supplant),
+                                            data: {},
+                                            dataConf: dataConf,
+                                            $events: $({}),
+                                            defaultLang: options.defaultLang,
+                                            large: true,
+                                            content: [{
+                                                type: 'COLUMN',
+                                                columns: 1,
+                                                rows: [
+                                                    {
+                                                        "type": "ROW",
+                                                        "cells": [
+                                                            {
+                                                                "type": "CELL",
+                                                                "title": "Sisältö",
+                                                                "colspan": 1,
+                                                                "readOnly": true,
+                                                                "field": {
+                                                                    "displayType": "CONTAINER",
+                                                                    "columnFields": [
+                                                                        "studyId",
+                                                                        "studyTitle",
+                                                                        "savedBy",
+                                                                        "description"
+                                                                    ],
+                                                                    onRemove: function ($tr) {
+                                                                        require('./../server')('/binder/removePage/{pageId}', {
+                                                                            pageId: $tr.data('transferRow').fields.pageId.values.DEFAULT.current
+                                                                        }, {
+                                                                            method: 'GET'
+                                                                        });
+                                                                        $tr.remove();
+                                                                    }
+                                                                },
+                                                                create: function () {
+                                                                    var $containerField = $(this).children();
+                                                                    require('./../server')('/binder/binderContent/{binderId}', supplant, {
+                                                                        method: 'GET',
+                                                                        success: function (data) {
+                                                                            data.pages && data.pages.forEach(function (data) {
+                                                                                $containerField.data('addRowFromDataObject')(data);
+                                                                            });
+                                                                        }
+                                                                    });
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            }],
+                                            buttons: [{
+                                                type: 'DISMISS'
+                                            }]
+                                        });
+                                        /*require('./../assignUrl')('view', {
+                                            PAGE: 'STUDY',
+                                            id: transferRow.fields.study.values.DEFAULT.current
+                                        });*/
+                                    }
                                 },
                                 create: function (options) {
                                     var $containerField = $(this).children().first();
                                     var $tbody = $containerField.find('tbody').first();
                                     $tbody
                                         .on('rowAppended', function (e, $tr, columns) {
-                                            $tr.children().eq(columns.indexOf('binderId')).wrapInner('<a href="javascript:void 0;"></a>')
-                                        })
-                                        .on('click', 'tr', function (event) {
-                                            var $tr = $(this);
-                                            require('./../assignUrl')('view', {
-                                                PAGE: 'STUDY',
-                                                id: $tr.data('transferRow').fields.study.values.DEFAULT.current
-                                            });
+                                            $tr.children().eq(columns.indexOf('studyId')).wrapInner('<a href="{url}"></a>'.supplant({
+                                                url: require('./../url')('view', {
+                                                    PAGE: 'STUDY',
+                                                    id: $tr.data('transferRow').fields.study.values.DEFAULT.current,
+                                                    no: ''
+                                                })
+                                            }));
                                         })
                                         .on('click', 'tr > td > a', function (event) {
-                                            var supplant = {
-                                                binderId: $(this).parent().parent().data('transferRow').fields.binderId.values.DEFAULT.current
-                                            };
-                                            require('./../modal')({
-                                                title: 'Mapin {binderId} sisältö'.supplant(supplant),
-                                                fieldTitles: options.fieldTitles,
-                                                data: {},
-                                                dataConf: dataConf,
-                                                $events: $({}),
-                                                defaultLang: options.defaultLang,
-                                                large: true,
-                                                content: [{
-                                                    type: 'COLUMN',
-                                                    columns: 1,
-                                                    rows: [
-                                                        {
-                                                            "type": "ROW",
-                                                            "cells": [
-                                                                {
-                                                                    "type": "CELL",
-                                                                    "title": "Sisältö",
-                                                                    "colspan": 1,
-                                                                    "readOnly": true,
-                                                                    "field": {
-                                                                        "displayType": "CONTAINER",
-                                                                        "columnFields": [
-                                                                            "studyId",
-                                                                            "studyTitle",
-                                                                            //"savedBy",
-                                                                            "description"
-                                                                        ],
-                                                                        onRemove: function ($tr) {
-                                                                            require('./../server')('/binder/removePage/{pageId}', {
-                                                                                pageId: $tr.data('transferRow').fields.pageId.values.DEFAULT.current
-                                                                            }, {
-                                                                                method: 'GET'
-                                                                            });
-                                                                            $tr.remove();
-                                                                        }
-                                                                    },
-                                                                    create: function () {
-                                                                        var $containerField = $(this).children();
-                                                                        require('./../server')('/binder/binderContent/{binderId}', supplant, {
-                                                                            method: 'GET',
-                                                                            success: function (data) {
-                                                                                data.pages && data.pages.forEach(function (data) {
-                                                                                    $containerField.data('addRowFromDataObject')(data);
-                                                                                });
-                                                                            }
-                                                                        });
-                                                                    }
-                                                                }
-                                                            ]
-                                                        }
-                                                    ]
-                                                }],
-                                                buttons: [{
-                                                    type: 'DISMISS'
-                                                }]
-                                            });
-
-                                            return false;
-                                        })
-                                        .parent().addClass('table-hover');
+                                            // prevent default row click action (open map dialog) from happening
+                                            event.stopPropagation();
+                                        });
 
                                     setContent = function (data) {
                                         data.pages && data.pages.forEach(function (data) {
