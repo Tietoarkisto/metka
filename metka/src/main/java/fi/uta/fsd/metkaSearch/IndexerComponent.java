@@ -195,14 +195,14 @@ public class IndexerComponent {
     }
 
     public void startIndexer(DirectoryManager.DirectoryPath path) {
-        /*if(!isIndexerRunning(path)) {
+        if(!isIndexerRunning(path)) {
             // Remove possible stopped handlers
             clearHandlers();
 
             Indexer indexer = createIndexer(path);
             //indexers.put(path, indexer);
             handlers.put(path, threadPool.submit(indexer));
-        }*/
+        }
     }
 
     public void clearHandlers() {
