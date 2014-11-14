@@ -25,6 +25,9 @@ define(function (require) {
         dataConf: {
             fields: {
                 studyErrors: {
+                    removePermissions: [
+                        "canRemoveStudyErrors"
+                    ],
                     subfields: [
                         'id',
                         'errorscore',
@@ -282,6 +285,7 @@ define(function (require) {
                 "hidden": true
             }
         },
+        readOnly: !require("../../hasEveryPermission")(["canAddStudyErrors"]),
         create: function create(options) {
             refreshData(options, this.children().first());
         }

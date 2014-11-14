@@ -95,6 +95,9 @@ public abstract class RevisionSearchCommandBase<T extends SearchResult> extends 
         public ResultList<RevisionResult> handle(IndexSearcher searcher, TopDocs results) {
             logger.info("Handling results and transforming them to RevisionResult list");
             ResultList<RevisionResult> list = new ListBasedResultList<>(ResultList.ResultType.REVISION);
+            if(searcher == null || results == null) {
+                return list;
+            }
             for(ScoreDoc doc : results.scoreDocs) {
                 try {
                     Document document = searcher.doc(doc.doc);

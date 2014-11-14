@@ -3,7 +3,8 @@ define(function (require) {
 
     return function (options) {
         var readOnly = options.readOnly;
-        return $('<div class="modal fade" tabindex="-1" role="dialog">')
+        options.modalTarget = require('./autoId')("M");
+        return $('<div class="modal fade" tabindex="-1" role="dialog" id="'+options.modalTarget+'">')
             .append($('<div class="modal-dialog">')
                 .on('refresh.metka', function () {
                     options.readOnly = readOnly || require('./isDataReadOnly')(options.data);
@@ -42,6 +43,9 @@ define(function (require) {
                             .append($body)
                             .append($('<div class="modal-footer">')
                                 .append((options.buttons || []).map(function (buttonOptions) {
+                                    $.extend(true, buttonOptions, {
+                                        modalTarget: options.modalTarget
+                                    });
                                     return require('./button')(options)(buttonOptions)
                                         .if(!buttonOptions.preventDismiss, function () {
                                             // although some bootstrap features are accessible via .data method, this wont work

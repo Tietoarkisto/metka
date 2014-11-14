@@ -29,6 +29,8 @@ public class DirectoryInformation {
 
     private final Directory directory;
 
+    private final boolean exists;
+
     private final boolean writable;
 
     // Since all search operations are performed as once per command operation we don't need to keep record of if index is dirty or not
@@ -54,9 +56,11 @@ public class DirectoryInformation {
 
         if(path.isUseRam()) {
             directory = new RAMDirectory();
+            exists = true;
         } else {
             File fileDirectory = new File(indexBaseDirectory+path.getPath().substring(3));
             if(fileDirectory.exists() && !fileDirectory.isDirectory()) throw new IOException("Index directory is not a directory!");
+            exists = fileDirectory.exists();
             if(writable) fileDirectory.setWritable(true);
             try {
                 directory = FSDirectory.open(fileDirectory); // This should open MMapDirectory
@@ -72,6 +76,10 @@ public class DirectoryInformation {
 
     public Directory getDirectory() {
         return directory;
+    }
+
+    public boolean exists() {
+        return exists;
     }
 
     public void clearIndex() {

@@ -124,7 +124,7 @@ class DDIDataDescription {
                                 vars += valueFieldPair.getRight().getActualValueFor(language);
                             }
                         }
-                        varGrpType.setVar(Arrays.asList(vars, new String[0]));
+                        varGrpType.setVar(Arrays.asList(vars));
                     }
 
                     containerPair = row.dataField(ContainerDataFieldCall.get(Fields.VARGROUPTEXTS));
@@ -183,10 +183,10 @@ class DDIDataDescription {
 
         setStatistics(variable, var);
 
-        setCategories(variable, var);
+        setCategories(variable, var, language);
     }
 
-    private static void setCategories(RevisionData variable, VarType var) {
+    private static void setCategories(RevisionData variable, VarType var, Language language) {
         Pair<StatusCode, ContainerDataField> categories = variable.dataField(ContainerDataFieldCall.get(Fields.CATEGORIES));
         if(categories.getLeft() == StatusCode.FIELD_FOUND && categories.getRight().hasRowsFor(Language.DEFAULT)) {
             for(DataRow row : categories.getRight().getRowsFor(Language.DEFAULT)) {
@@ -198,10 +198,9 @@ class DDIDataDescription {
                     CatgryType catgry = var.addNewCatgry();
                     fillTextType(catgry.addNewCatValu(), valueFieldPair, Language.DEFAULT);
 
-                    // TODO: Should cat labels be translatable?
                     valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.LABEL));
-                    if(hasValue(valueFieldPair, Language.DEFAULT)) {
-                        fillTextType(catgry.addNewLabl(), valueFieldPair, Language.DEFAULT);
+                    if(hasValue(valueFieldPair, language)) {
+                        fillTextType(catgry.addNewLabl(), valueFieldPair, language);
                     }
 
                     valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.STAT));

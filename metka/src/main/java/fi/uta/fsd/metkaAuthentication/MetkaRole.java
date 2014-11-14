@@ -238,8 +238,8 @@ public final class MetkaRole implements Comparable<MetkaRole> {
                     .grant(Permission.CAN_VIEW_SETTINGS_PAGE)
                     .grant(Permission.CAN_GENERATE_REPORTS)
                     .grant(Permission.CAN_VIEW_BINDER_PAGES)
-                    .grant(Permission.CAN_VIEW_STUDY_ERRORS)
-                    .grant(Permission.CAN_EDIT_STUDY_ERRORS);
+                    .grant(Permission.CAN_VIEW_STUDY_ERRORS);
+
         }
 
         public static MetkaRoleBuilder getUser() {
@@ -253,7 +253,8 @@ public final class MetkaRole implements Comparable<MetkaRole> {
                     .grant(Permission.CAN_IMPORT_REVISION)
                     .grant(Permission.CAN_EXPORT_REVISION)
                     .grant(Permission.CAN_REMOVE_STUDY_ERRORS)
-                    .grant(Permission.CAN_EDIT_BINDER_PAGES);
+                    .grant(Permission.CAN_EDIT_BINDER_PAGES)
+                    .grant(Permission.CAN_EDIT_STUDY_ERRORS);
         }
 
         public static MetkaRoleBuilder getTranslator() {

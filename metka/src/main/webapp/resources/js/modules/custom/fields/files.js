@@ -306,7 +306,7 @@ define(function (require) {
                                                                     success: function (response) {
                                                                         if (response.result === 'VIEW_SUCCESSFUL') {
                                                                             $.extend(modalOptions.data, response.transferData);
-                                                                            $row.trigger('refresh.metka');
+                                                                            $row.trigger('refresh.metka')
                                                                         }
                                                                     }
                                                                 })
@@ -353,8 +353,20 @@ define(function (require) {
                                     "permissions": [
                                         "canEditRevision"
                                     ],
-                                    create: function () {
-                                        this.click(require('./../../save')(modalOptions, refreshPage));
+                                    create: function (options) {
+                                        options.preventDismiss = true;
+                                        var $this = $(this);
+                                        this.click(require('./../../save')(modalOptions, function(response) {
+                                            // TODO: Check that if result is SAVE_SUCCESSFUL_WITH_ERRORS then don't close the dialog and instead reload data from TransferData
+                                            if(response.result === 'SAVE_SUCCESSFUL_WITH_ERRORS') {
+                                                $.extend(true, options.data, response.data);
+                                                //options.$events.trigger('refresh.metka');
+                                                $this.trigger('refresh.metka');
+                                            } else {
+                                                $('#'+options.modalTarget).modal('hide');
+                                            }
+                                            refreshPage();
+                                        }));
                                     }
                                 }, {
                                     "type": "CUSTOM",

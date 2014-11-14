@@ -51,6 +51,16 @@ define(function (require) {
                     .css('margin-left', (level * 16) + 'px');
 
                 if (node.children) {
+                    log(node);
+                    var $remove = $('<span class="glyphicon">').addClass(remove).addClass("pull-right");
+                    $a.append($remove);
+                    $remove.click(function() {
+                        node.transferRow.removed = true;
+                        /*$dirItems($a).remove();
+                        $a.remove();*/
+                        $a.trigger('refresh.metka');
+                        return false;
+                    });
                     $icon.click(function () {
                         if ($icon.hasClass(closed)) {
                             // open
@@ -73,6 +83,7 @@ define(function (require) {
 
         var open = 'glyphicon-minus-sign';
         var closed = 'glyphicon-plus-sign';
+        var remove = 'glyphicon-remove-sign';
 
         function activeNodes() {
             var response = [];

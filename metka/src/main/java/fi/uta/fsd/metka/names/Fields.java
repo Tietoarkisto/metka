@@ -183,6 +183,7 @@ public final class Fields {
     public static final String PACKAGEURN = "packageurn";
     public static final String SOFTWAREVERSION = "softwareversion";
     public static final String PACKAGEVERSION = "packageversion";
+    public static final String PUBLICATIONFIRSTSAVED = "publicationfirstsaved";
 
 
     private Fields() {}

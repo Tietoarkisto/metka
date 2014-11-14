@@ -15,5 +15,8 @@ public enum FieldError {
     NOT_REAL,               // Value should be parsable as Double without exception
     NOT_DATE,               // Valid date should be parsable from value
     NOT_DATETIME,           // Valid datetime should be parsable from value
-    NOT_TIME               // Valid time should be parsable from value
+    NOT_TIME,               // Valid time should be parsable from value
+    // These are file path specific errors mainly related to study attachment file path and agreement file path
+    NO_FILE,                // File either doesn't exist or is not a file or directory based on Java IO status
+    IS_DIRECTORY           // File path points to a directory based on Java IO status. This is wrong when actual file is expected
 }

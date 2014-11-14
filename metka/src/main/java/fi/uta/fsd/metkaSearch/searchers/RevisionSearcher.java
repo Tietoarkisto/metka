@@ -44,12 +44,15 @@ public class RevisionSearcher<T extends SearchResult> extends Searcher<T> {
 
     @Override
     public ResultList<T> call() throws Exception {
+        ResultHandler<T> handler = getCommand().getResulHandler();
+        if(!getIndexer().exists()) {
+            return handler.handle(null, null);
+        }
         logger.info("RevisionSearcher is acquiring an IndexReader");
         IndexReader reader = getIndexer().getIndexReader();
         IndexSearcher searcher = new IndexSearcher(reader);
         logger.info("RevisionSearcher is performing the following query: "+getCommand().getQuery().toString());
         TopDocs results = searcher.search(getCommand().getQuery(), 100);
-        ResultHandler<T> handler = getCommand().getResulHandler();
         return handler.handle(searcher, results);
     }
 }

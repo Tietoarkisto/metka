@@ -39,6 +39,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,7 +127,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
     private void finalizeSave(RevisionData revision, TransferData transferData, Configuration configuration, DateTimeUserPair info, MutablePair<Boolean, Boolean> changesAndErrors) {
         switch(revision.getConfiguration().getType()) {
             case STUDY_ATTACHMENT:
-                finalizeStudyAttachment(revision, transferData);
+                finalizeStudyAttachment(revision, transferData, changesAndErrors);
                 break;
             case STUDY:
                 finalizeStudy(revision, transferData, info, changesAndErrors);
@@ -135,6 +136,9 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             case STUDY_VARIABLE:
                 VariablesFactory fac = new VariablesFactory();
                 fac.checkVariableTranslations(revision, info);
+                break;
+            case PUBLICATION:
+                finalizePublication(revision);
                 break;
             default:
                 break;
@@ -171,20 +175,28 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         }
     }
 
+    private void finalizePublication(RevisionData data) {
+        Pair<StatusCode, ValueDataField> pair = data.dataField(ValueDataFieldCall.get(Fields.PUBLICATIONFIRSTSAVED));
+        if(pair.getLeft() == StatusCode.FIELD_FOUND && pair.getRight().hasValueFor(Language.DEFAULT)) {
+            return;
+        }
+        data.dataField(ValueDataFieldCall.set(Fields.PUBLICATIONFIRSTSAVED, new Value((new LocalDate()).toString()), Language.DEFAULT).setChangeMap(data.getChanges()));
+    }
+
     /**
      * If this study attachment is not marked parsed and has a path then check if that path could be a por file that needs parsing.
      * If so then parse that por file and mark this study attachment as parsed.
      * @param attachment         RevisionData
      * @param transferData     TransferData
      */
-    private void finalizeStudyAttachment(RevisionData attachment, TransferData transferData) {
+    private void finalizeStudyAttachment(RevisionData attachment, TransferData transferData, MutablePair<Boolean, Boolean> changesAndErrors) {
+        Pair<StatusCode, ValueDataField> fieldPair = attachment.dataField(ValueDataFieldCall.get("file"));
+        if (!hasFile(fieldPair, transferData, changesAndErrors)) return;
+
         // Is attachment already parsed
         if (attachmentAlreadyParsed(attachment)) return;
 
         if (hasAndIsOriginal(attachment)) return;
-
-        Pair<StatusCode, ValueDataField> fieldPair = attachment.dataField(ValueDataFieldCall.get("file"));
-        if (!hasFile(fieldPair)) return;
 
         String path = fieldPair.getRight().getActualValueFor(Language.DEFAULT);
         if (!fileIsVarFile(path)) {
@@ -267,7 +279,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         return true;
     }
 
-    private boolean hasFile(Pair<StatusCode, ValueDataField> fieldPair) {
+    private boolean hasFile(Pair<StatusCode, ValueDataField> fieldPair, TransferData transferData, MutablePair<Boolean, Boolean> changesAndErrors) {
         // Does attachment have defined file path
         if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || !fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
             // We have no file path, no need to continue
@@ -276,6 +288,21 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
 
         // Does the defined file path exist and does it point to a file
         File file = new File(fieldPair.getRight().getActualValueFor(Language.DEFAULT));
+        TransferField field = transferData.getField(Fields.FILE);
+        // This should be true if we have text in RevisionData
+        if(field != null) {
+            if(!file.exists()) {
+                field.addError(FieldError.NO_FILE);
+                changesAndErrors.setRight(true);
+            } else if(file.isDirectory()) {
+                field.addError(FieldError.IS_DIRECTORY);
+                changesAndErrors.setRight(true);
+            } else if(!file.isFile()) {
+                field.addError(FieldError.NO_FILE);
+                changesAndErrors.setRight(true);
+            }
+        }
+
         if(!file.exists() || !file.isFile()) {
             return false;
         }

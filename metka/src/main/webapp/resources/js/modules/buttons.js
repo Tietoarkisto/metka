@@ -34,7 +34,21 @@ define(function (require) {
         },
         CUSTOM: function(options) {
             if(options.customHandler) {
-                var customHandler = require('./custom/buttons')[options.customHandler];
+                // If there is a custom handler then prevent dismiss. Each custom handler should decide for itself if it needs to close a dialog or not.
+                $.extend(true, options, {
+                    preventDismiss: true
+                });
+                require(['./custom/buttons/'+options.customHandler], function(customHandler) {
+                    switch (typeof customHandler) {
+                        case 'object':
+                            $.extend(true, options, customHandler);
+                            break;
+                        case 'function':
+                            customHandler.call(this, options);
+                            break;
+                    }
+                }.bind(this));
+                /*var customHandler = require('./custom/buttons')[options.customHandler];
                 switch (typeof customHandler) {
                     case 'object':
                         $.extend(true, options, customHandler);
@@ -42,7 +56,7 @@ define(function (require) {
                     case 'function':
                         customHandler.call(this, options);
                         break;
-                }
+                }*/
             }
         },
         DISMISS: function (options) {
