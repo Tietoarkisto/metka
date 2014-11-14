@@ -236,16 +236,16 @@ define({
                 "description": "Referenssin avain. Tulee olla sama kuin `references`-objektin ominaisuuden nimi."
             },
             "titlePath": {
-                "type": "string"
+                oneOf: [{
+                    title: "Has title",
+                    type: "string"
+                }, {
+                    title: "No title",
+                    type: "null"
+                }]
             },
             "target": {
                 "type": "string"
-            },
-            "type": {
-                "type": "string",
-                "options": {
-                    "hidden": true
-                }
             }
         }
     },
