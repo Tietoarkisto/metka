@@ -22,6 +22,15 @@ define(function (require) {
     return function (options, onLoad) {
         var commonSearchBooleans = require('./../commonSearchBooleans');
 
+        function addContainerRow($containerField) {
+            return function binderToTransferRow(data) {
+                var transferRow = require('./../map/object/transferRow')(data, options.defaultLang);
+                delete transferRow.fields.saved;
+                transferRow.saved = data.saved;
+                $containerField.data('addRow')(transferRow);
+            };
+        }
+
         $.extend(options, {
             header: MetkaJS.L10N.get('type.BINDERS.title'),
             fieldTitles: {
@@ -88,10 +97,10 @@ define(function (require) {
                                                                 "readOnly": true,
                                                                 "field": {
                                                                     "displayType": "CONTAINER",
+                                                                    "showSaveInfo": true,
                                                                     "columnFields": [
                                                                         "studyId",
                                                                         "studyTitle",
-                                                                        "savedBy",
                                                                         "description"
                                                                     ],
                                                                     onRemove: function ($tr) {
@@ -108,9 +117,7 @@ define(function (require) {
                                                                     require('./../server')('/binder/binderContent/{binderId}', supplant, {
                                                                         method: 'GET',
                                                                         success: function (data) {
-                                                                            data.pages && data.pages.forEach(function (data) {
-                                                                                $containerField.data('addRowFromDataObject')(data);
-                                                                            });
+                                                                            data.pages && data.pages.forEach(addContainerRow($containerField));
                                                                         }
                                                                     });
                                                                 }
@@ -148,9 +155,7 @@ define(function (require) {
                                         });
 
                                     setContent = function (data) {
-                                        data.pages && data.pages.forEach(function (data) {
-                                            $containerField.data('addRowFromDataObject')(data);
-                                        });
+                                        data.pages && data.pages.forEach(addContainerRow($containerField));
                                     };
                                     require('./../server')('/binder/listBinderPages', {
                                         method: 'GET',
