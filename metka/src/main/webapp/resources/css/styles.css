@@ -193,6 +193,10 @@ nav .mainNavUl li a:hover {
     -moz-transition: all 0.25s ease-in-out;
 }
 
+label {
+    font-size: 12px;
+}
+
 .wrapper {
     width: 100%;
     min-height: 600px;
