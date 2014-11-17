@@ -18,6 +18,23 @@ define(function (require) {
             }
         }
     };
+    var fieldTitles = {
+        "studyId": {
+            "title": "Aineistonro"
+        },
+        "studyTitle": {
+            "title": "Aineiston nimi"
+        },
+        "savedBy": {
+            "title": "Käsittelijä"
+        },
+        "binderId": {
+            "title": "Mappinro"
+        },
+        "description": {
+            "title": "Mapitettu aineisto"
+        }
+    };
 
     return function (options, onLoad) {
         var commonSearchBooleans = require('./../commonSearchBooleans');
@@ -33,23 +50,7 @@ define(function (require) {
 
         $.extend(options, {
             header: MetkaJS.L10N.get('type.BINDERS.title'),
-            fieldTitles: {
-                "studyId": {
-                    "title": "Aineistonro"
-                },
-                "studyTitle": {
-                    "title": "Aineiston nimi"
-                },
-                "savedBy": {
-                    "title": "Käsittelijä"
-                },
-                "binderId": {
-                    "title": "Mappinro"
-                },
-                "description": {
-                    "title": "Mapitettu aineisto"
-                }
-            },
+            fieldTitles: fieldTitles,
             data: commonSearchBooleans.initialData({}),
             dataConf: dataConf,
             content: [
@@ -78,6 +79,7 @@ define(function (require) {
                                         };
                                         require('./../modal')({
                                             title: 'Mapin {binderId} sisältö'.supplant(supplant),
+                                            fieldTitles: fieldTitles,
                                             data: {},
                                             dataConf: dataConf,
                                             $events: $({}),
