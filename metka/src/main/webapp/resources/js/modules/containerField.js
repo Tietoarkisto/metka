@@ -39,10 +39,12 @@ define(function (require) {
                 (options.field.onClick || rowDialog('modify', 'ok'))
                     .call(this, $tr.data('transferRow'), function (transferRow) {
                         //return $tr.replaceWith(tr(transferRow));
-                        var $tr2 = $tr.replaceWith(tr(transferRow));
+                        var $trNew = tr(transferRow);
+                        $tr.replaceWith($trNew);
                         if (options.field.onRowChange) {
-                            options.field.onRowChange(options, $tr2, transferRow);
+                            options.field.onRowChange(options, $trNew, transferRow);
                         }
+                        $tbody.trigger('rowChanged', [$trNew, columns]);
                     });
             });
         var EMPTY = '-';
