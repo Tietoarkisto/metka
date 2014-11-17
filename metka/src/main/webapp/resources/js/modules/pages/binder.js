@@ -105,17 +105,20 @@ define(function (require) {
                                                                         "studyTitle",
                                                                         "description"
                                                                     ],
-                                                                    onRemove: function ($tr) {
+                                                                    onRemove: MetkaJS.User.role.permissions.canEditBinderPages ? function ($tr) {
                                                                         require('./../server')('/binder/removePage/{pageId}', {
                                                                             pageId: $tr.data('transferRow').fields.pageId.values.DEFAULT.current
                                                                         }, {
                                                                             method: 'GET'
                                                                         });
                                                                         $tr.remove();
-                                                                    }
+                                                                    } : false
                                                                 },
                                                                 create: function () {
                                                                     var $containerField = $(this).children();
+                                                                    $containerField.find('table')
+                                                                        .removeClass('table-hover')
+                                                                        .children('tbody').off('click', 'tr');
                                                                     require('./../server')('/binder/binderContent/{binderId}', supplant, {
                                                                         method: 'GET',
                                                                         success: function (data) {
@@ -174,6 +177,9 @@ define(function (require) {
                     "&title": {
                         "default": "Lisää aineisto mappiin"
                     },
+                    permissions: [
+                        'canEditBinderPages'
+                    ],
                     create: function () {
                         this
                             .click(function () {
