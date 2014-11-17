@@ -48,6 +48,95 @@ define(function (require) {
             };
         }
 
+        function openModal(title, modify, data, success) {
+            var containerOptions = {
+                title: title,
+                data: data,
+                dataConf: {},
+                $events: $({}),
+                defaultLang: options.defaultLang,
+                content: [{
+                    type: 'COLUMN',
+                    columns: 1,
+                    rows: [
+                        {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Mappinumero",
+                                    "colspan": 1,
+                                    "readOnly": modify,
+                                    "field": {
+                                        "displayType": "STRING",
+                                        "key": "binderId"
+                                    }
+                                }
+                            ]
+                        }, {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Aineistonumero",
+                                    "colspan": 1,
+                                    "readOnly": modify,
+                                    "field": {
+                                        "displayType": "STRING",
+                                        "key": "studyId"
+                                    }
+                                }
+                            ]
+                        }, {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Mapitettu aineisto",
+                                    "colspan": 1,
+                                    "field": {
+                                        "displayType": "STRING",
+                                        "key": "description",
+                                        multiline: true
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }],
+                buttons: [{
+                    create: function () {
+                        this
+                            .text(MetkaJS.L10N.get('general.buttons.ok'))
+                            .click(function () {
+                                require('./../server')('/binder/saveBinderPage', {
+                                    data: JSON.stringify({
+                                        pageId: require('./../data')(containerOptions)('pageId').getByLang(options.defaultLang),
+                                        binderId: require('./../data')(containerOptions)('binderId').getByLang(options.defaultLang),
+                                        studyId: require('./../data')(containerOptions)('studyId').getByLang(options.defaultLang),
+                                        description: require('./../data')(containerOptions)('description').getByLang(options.defaultLang)
+                                    }),
+                                    success: success
+                                });
+                            });
+                    }
+                }, {
+                    type: 'CANCEL'
+                }]
+            };
+
+            require('./../modal')(containerOptions);
+        }
+
+        var onRemove = MetkaJS.User.role.permissions.canEditBinderPages ? function ($tr) {
+            require('./../server')('/binder/removePage/{pageId}', {
+                pageId: $tr.data('transferRow').fields.pageId.values.DEFAULT.current
+            }, {
+                method: 'GET'
+            });
+            $tr.remove();
+        } : false;
+
         $.extend(options, {
             header: MetkaJS.L10N.get('type.BINDERS.title'),
             fieldTitles: fieldTitles,
@@ -73,85 +162,85 @@ define(function (require) {
                                         "binderId",
                                         "description"
                                     ],
-                                    onClick: function (transferRow) {
-                                        var supplant = {
-                                            binderId: transferRow.fields.binderId.values.DEFAULT.current
-                                        };
-                                        require('./../modal')({
-                                            title: 'Mapin {binderId} sisältö'.supplant(supplant),
-                                            fieldTitles: fieldTitles,
-                                            data: {},
-                                            dataConf: dataConf,
-                                            $events: $({}),
-                                            defaultLang: options.defaultLang,
-                                            large: true,
-                                            content: [{
-                                                type: 'COLUMN',
-                                                columns: 1,
-                                                rows: [
-                                                    {
-                                                        "type": "ROW",
-                                                        "cells": [
-                                                            {
-                                                                "type": "CELL",
-                                                                "title": "Sisältö",
-                                                                "colspan": 1,
-                                                                "readOnly": true,
-                                                                "field": {
-                                                                    "displayType": "CONTAINER",
-                                                                    "showSaveInfo": true,
-                                                                    "columnFields": [
-                                                                        "studyId",
-                                                                        "studyTitle",
-                                                                        "description"
-                                                                    ],
-                                                                    onRemove: MetkaJS.User.role.permissions.canEditBinderPages ? function ($tr) {
-                                                                        require('./../server')('/binder/removePage/{pageId}', {
-                                                                            pageId: $tr.data('transferRow').fields.pageId.values.DEFAULT.current
-                                                                        }, {
-                                                                            method: 'GET'
-                                                                        });
-                                                                        $tr.remove();
-                                                                    } : false
-                                                                },
-                                                                create: function () {
-                                                                    var $containerField = $(this).children();
-                                                                    $containerField.find('table')
-                                                                        .removeClass('table-hover')
-                                                                        .children('tbody').off('click', 'tr');
-                                                                    require('./../server')('/binder/binderContent/{binderId}', supplant, {
-                                                                        method: 'GET',
-                                                                        success: function (data) {
-                                                                            data.pages && data.pages.forEach(addContainerRow($containerField));
-                                                                        }
-                                                                    });
-                                                                }
-                                                            }
-                                                        ]
-                                                    }
-                                                ]
-                                            }],
-                                            buttons: [{
-                                                type: 'DISMISS'
-                                            }]
+                                    onRemove: onRemove,
+                                    onClick: function (transferRow, onRowChange) {
+                                        openModal('Muokkaa aineiston mapitusta', true, transferRow, function () {
+                                            onRowChange(transferRow);
                                         });
-                                        /*require('./../assignUrl')('view', {
-                                            PAGE: 'STUDY',
-                                            id: transferRow.fields.study.values.DEFAULT.current
-                                        });*/
                                     }
                                 },
                                 create: function (options) {
                                     var $containerField = $(this).children().first();
                                     var $tbody = $containerField.find('tbody').first();
                                     $tbody
-                                        .on('rowAppended', function (e, $tr, columns) {
+                                        .on('rowAppended rowChanged', function (e, $tr, columns) {
+                                            var transferRow = $tr.data('transferRow');
                                             $tr.children().eq(columns.indexOf('studyId')).wrapInner('<a href="{url}"></a>'.supplant({
                                                 url: require('./../url')('view', {
                                                     PAGE: 'STUDY',
-                                                    id: $tr.data('transferRow').fields.study.values.DEFAULT.current,
+                                                    id: transferRow.fields.study.values.DEFAULT.current,
                                                     no: ''
                                                 })
+                                            }));
+                                            $tr.children().eq(columns.indexOf('binderId')).wrapInner($('<a href="javascript:void 0;"></a>').click(function () {
+                                                var supplant = {
+                                                    binderId: transferRow.fields.binderId.values.DEFAULT.current
+                                                };
+                                                require('./../modal')({
+                                                    title: 'Mapin {binderId} sisältö'.supplant(supplant),
+                                                    fieldTitles: fieldTitles,
+                                                    data: {},
+                                                    dataConf: dataConf,
+                                                    $events: $({}),
+                                                    defaultLang: options.defaultLang,
+                                                    large: true,
+                                                    content: [
+                                                        {
+                                                            type: 'COLUMN',
+                                                            columns: 1,
+                                                            rows: [
+                                                                {
+                                                                    "type": "ROW",
+                                                                    "cells": [
+                                                                        {
+                                                                            "type": "CELL",
+                                                                            "title": "Sisältö",
+                                                                            "colspan": 1,
+                                                                            "readOnly": true,
+                                                                            "field": {
+                                                                                "displayType": "CONTAINER",
+                                                                                "showSaveInfo": true,
+                                                                                "columnFields": [
+                                                                                    "studyId",
+                                                                                    "studyTitle",
+                                                                                    "description"
+                                                                                ],
+                                                                                onRemove: onRemove
+                                                                            },
+                                                                            create: function () {
+                                                                                var $containerField = $(this).children();
+                                                                                $containerField.find('table')
+                                                                                    .removeClass('table-hover')
+                                                                                    .children('tbody').off('click', 'tr');
+                                                                                require('./../server')('/binder/binderContent/{binderId}', supplant, {
+                                                                                    method: 'GET',
+                                                                                    success: function (data) {
+                                                                                        data.pages && data.pages.forEach(addContainerRow($containerField));
+                                                                                    }
+                                                                                });
+                                                                            }
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ],
+                                                    buttons: [
+                                                        {
+                                                            type: 'DISMISS'
+                                                        }
+                                                    ]
+                                                });
                                             }));
                                         })
                                         .on('click', 'tr > td > a', function (event) {
@@ -181,83 +270,9 @@ define(function (require) {
                         'canEditBinderPages'
                     ],
                     create: function () {
-                        this
-                            .click(function () {
-                                var containerOptions = {
-                                    title: 'Lisää aineisto mappiin',
-                                    data: {},
-                                    dataConf: {},
-                                    $events: $({}),
-                                    defaultLang: options.defaultLang,
-                                    content: [{
-                                        type: 'COLUMN',
-                                        columns: 1,
-                                        rows: [
-                                            {
-                                                "type": "ROW",
-                                                "cells": [
-                                                    {
-                                                        "type": "CELL",
-                                                        "title": "Mappinumero",
-                                                        "colspan": 1,
-                                                        "field": {
-                                                            "displayType": "STRING",
-                                                            "key": "binderId"
-                                                        }
-                                                    }
-                                                ]
-                                            }, {
-                                                "type": "ROW",
-                                                "cells": [
-                                                    {
-                                                        "type": "CELL",
-                                                        "title": "Aineistonumero",
-                                                        "colspan": 1,
-                                                        "field": {
-                                                            "displayType": "STRING",
-                                                            "key": "studyId"
-                                                        }
-                                                    }
-                                                ]
-                                            }, {
-                                                "type": "ROW",
-                                                "cells": [
-                                                    {
-                                                        "type": "CELL",
-                                                        "title": "Mapitettu aineisto",
-                                                        "colspan": 1,
-                                                        "field": {
-                                                            "displayType": "STRING",
-                                                            "key": "description",
-                                                            multiline: true
-                                                        }
-                                                    }
-                                                ]
-                                            }
-                                        ]
-                                    }],
-                                    buttons: [{
-                                        create: function () {
-                                            this
-                                                .text(MetkaJS.L10N.get('general.buttons.ok'))
-                                                .click(function () {
-                                                    require('./../server')('/binder/saveBinderPage', {
-                                                        data: JSON.stringify({
-                                                            binderId: require('./../data')(containerOptions)('binderId').getByLang(options.defaultLang),
-                                                            studyId: require('./../data')(containerOptions)('studyId').getByLang(options.defaultLang),
-                                                            description: require('./../data')(containerOptions)('description').getByLang(options.defaultLang)
-                                                        }),
-                                                        success: setContent
-                                                    });
-                                                });
-                                        }
-                                    }, {
-                                        type: 'CANCEL'
-                                    }]
-                                };
-
-                                require('./../modal')(containerOptions);
-                            });
+                        this.click(function () {
+                            openModal('Lisää aineisto mappiin', false, {}, setContent);
+                        });
                     }
                 }
             ]
