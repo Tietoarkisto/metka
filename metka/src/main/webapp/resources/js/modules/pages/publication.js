@@ -224,6 +224,8 @@ define(function (require) {
                         ].forEach(function (field) {
                             requestData.values[field] = data(field).getByLang(options.defaultLang);
                         });
+                        requestData.values['studies.studyid'] = requestData.values.studies;
+                        delete requestData.values.studies;
                         return requestData;
                     }, function (data) {
                         return data.rows;
@@ -292,6 +294,12 @@ define(function (require) {
                 data: commonSearchBooleans.initialData({}),
                 dataConf: {
                     "selectionLists": {
+                        seriesname_list: {
+                            includeEmpty: true,
+                            key: 'seriesname_list',
+                            type: 'REFERENCE',
+                            reference: 'seriesname_ref'
+                        },
                         "yes_no": {
                             "key": "yes_no",
                             "type": "VALUE",
@@ -383,6 +391,15 @@ define(function (require) {
                             ]
                         }
                     },
+                    references: {
+                        seriesname_ref: {
+                            key: 'seriesname_ref',
+                            type: 'REVISIONABLE',
+                            target: 'SERIES',
+                            valuePath: 'seriesname',
+                            titlePath: 'seriesname'
+                        }
+                    },
                     fields: {
                         publicationid: {
                             type: 'STRING'
@@ -403,7 +420,9 @@ define(function (require) {
                             type: 'STRING'
                         },
                         seriesname: {
-                            type: 'SELECTION'
+                            key: 'seriesname',
+                            type: 'SELECTION',
+                            selectionList: 'seriesname_list'
                         },
                         lastname: {
                             type: 'STRING'
