@@ -151,8 +151,8 @@ class DDIDataDescription {
             var.setID(valueFieldPair.getRight().getActualValueFor(Language.DEFAULT));
         }
         valueFieldPair = variable.dataField(ValueDataFieldCall.get(Fields.VARNAME));
-        if(hasValue(valueFieldPair, language)) {
-            var.setName(valueFieldPair.getRight().getActualValueFor(language));
+        if(hasValue(valueFieldPair, Language.DEFAULT)) {
+            var.setName(valueFieldPair.getRight().getActualValueFor(Language.DEFAULT));
         }
         var.setFiles(Arrays.asList(fileID));
 

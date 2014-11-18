@@ -276,12 +276,14 @@ class DDIDataDescription extends DDISectionBase {
     }
 
     private ReturnResult readVar(VarType var) {
-        if(!StringUtils.hasText(var.getID())) {
+        if(!StringUtils.hasText(var.getName())) {
             return ReturnResult.OPERATION_SUCCESSFUL;
         }
-        Pair<ReturnResult, RevisionData> variablePair = variableSearch.findVariableWithId(revision.getKey().getId(), var.getID());
+        //String varId =
+
+        Pair<ReturnResult, RevisionData> variablePair = variableSearch.findVariableWithId(revision.getKey().getId(), studyId+"_"+var.getName());
         if(variablePair.getLeft() != ReturnResult.REVISION_FOUND) {
-            Logger.info(DDIDataDescription.class, "Tried to import variable "+var.getID()+" that was not found for study "+revision.getKey().getId());
+            Logger.info(DDIDataDescription.class, "Tried to import variable "+studyId+"_"+var.getName()+" that was not found for study "+revision.getKey().getId());
             // We don't need to stop the import process for variable that we can't find.
             return ReturnResult.OPERATION_SUCCESSFUL;
         }
