@@ -4,7 +4,7 @@ define(function (require) {
     if (location.pathname.split('/').indexOf('search') !== -1) {
         var commonSearchBooleans = require('./../commonSearchBooleans');
         return function (options, onLoad) {
-            $.extend(/*true, */options, {
+            $.extend(options, {
                 header: MetkaJS.L10N.get('type.SERIES.search'),
                 // TODO: try to add reference options request and remove custom "getAbbreviations" request
                 dataConf: {
@@ -22,11 +22,12 @@ define(function (require) {
                     },
                     references: {
                         seriesabbr_ref: {
-                             key: 'seriesabbr_ref',
-                             type: 'REVISIONABLE',
-                             target: 'SERIES',
-                             valuePath: 'seriesabbr'
-                         }
+                            key: 'seriesabbr_ref',
+                            type: 'REVISIONABLE',
+                            target: 'SERIES',
+                            valuePath: 'seriesabbr',
+                            titlePath: 'seriesabbr'
+                        }
                     },
                     fields: {
                         seriesabbr: {
