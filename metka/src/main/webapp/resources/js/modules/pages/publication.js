@@ -207,6 +207,8 @@ define(function (require) {
                             values: {}
                         });
                         [
+                            'publicationid',
+                            'studies',
                             'publicationfirstsaved',
                             'savedAt',
                             'publicationyear',
