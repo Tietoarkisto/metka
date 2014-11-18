@@ -58,14 +58,54 @@ define(function (require) {
                                     transferData: options.parentData
                                 }),
                                 success: function (response) {
-                                    if (response.result === 'OPERATION_SUCCESSFUL') {
-                                        require('./../../url')('view', {
-                                            PAGE: $page,
-                                            id: $id,
-                                            no: $no
-                                        })
-                                    }
+                                    var dismiss = {
+                                        type: 'DISMISS'
+                                    };
+
+                                    require('./../../modal')({
+                                        title: MetkaJS.L10N.get(response === 'OPERATION_SUCCESSFUL' ? 'alert.notice.title' : 'alert.error.title'),
+                                        body: response,
+                                        buttons: [dismiss],
+                                        modalEvents: {
+                                            'hidden.bs.modal': function() {
+                                                if (response === 'OPERATION_SUCCESSFUL') {
+                                                    var $metka = require('../../../metka');
+                                                    require('../../assignUrl')('view', {
+                                                        PAGE: $metka.PAGE,
+                                                        id: $metka.id,
+                                                        no: $metka.no
+                                                    });
+                                                }
+                                            }
+                                        }
+                                    });
                                 }
+
+
+
+                                /*var isExpectedResult = successConditions ? successConditions.some(function (condition) {
+                                    return condition === response.result;
+                                }) : true;
+                                var dismiss = {
+                                    type: 'DISMISS'
+                                };
+                                if (isExpectedResult) {
+                                    dismiss.create = function () {
+                                        this.click(function () {
+                                            onSuccess.call(that, response);
+                                        });
+                                    };
+                                }
+                                require('./modal')({
+                                    title: MetkaJS.L10N.get(isExpectedResult ? 'alert.notice.title' : 'alert.error.title'),
+                                    body: response.result *//*data.errors.map(function (error) {
+                                     return MetkaJS.L10N.get(error.msg);
+                                     })*//*,
+                                    buttons: [dismiss]
+                                });*/
+
+
+
                             });
                         });
                     }

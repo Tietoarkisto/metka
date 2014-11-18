@@ -4,7 +4,7 @@ define(function (require) {
     return function (options) {
         var readOnly = options.readOnly;
         options.modalTarget = require('./autoId')("M");
-        return $('<div class="modal fade" tabindex="-1" role="dialog" id="'+options.modalTarget+'">')
+        var $modal = $('<div class="modal fade" tabindex="-1" role="dialog" id="'+options.modalTarget+'">')
             .append($('<div class="modal-dialog">')
                 .on('refresh.metka', function () {
                     options.readOnly = readOnly || require('./isDataReadOnly')(options.data);
@@ -83,5 +83,14 @@ define(function (require) {
             .modal({
                 backdrop: 'static'
             });
+
+        if(options.modalEvents) {
+            $.each(options.modalEvents, function(prop, callback) {
+                log(prop, callback, $modal);
+                $modal.on(prop, callback);
+            });
+        }
+
+        return $modal;
     };
 });

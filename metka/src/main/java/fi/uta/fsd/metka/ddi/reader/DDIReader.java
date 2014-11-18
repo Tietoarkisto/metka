@@ -179,7 +179,8 @@ public class DDIReader {
             if(result != ReturnResult.OPERATION_SUCCESSFUL) {
                 return result;
             }
-            return revisions.updateRevisionData(revision);
+            result = revisions.updateRevisionData(revision);
+            return result == ReturnResult.REVISION_UPDATE_SUCCESSFUL ? ReturnResult.OPERATION_SUCCESSFUL : result;
         }
 
         private boolean isDescriptionTabClear() {
