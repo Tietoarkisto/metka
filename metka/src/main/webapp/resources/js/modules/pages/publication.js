@@ -224,6 +224,8 @@ define(function (require) {
                         ].forEach(function (field) {
                             requestData.values[field] = data(field).getByLang(options.defaultLang);
                         });
+                        requestData.values['studies.studyid'] = requestData.values.studies;
+                        delete requestData.values.studies;
                         return requestData;
                     }, function (data) {
                         return data.rows;
