@@ -7,16 +7,17 @@ define(function (require) {
             $.extend(/*true, */options, {
                 header: MetkaJS.L10N.get('type.SERIES.search'),
                 // TODO: try to add reference options request and remove custom "getAbbreviations" request
-                /*dataConf: {
+                dataConf: {
                     key: {
                         version: 1,
                         type: 'SERIES'
                     },
                     selectionLists: {
                         seriesabbr_list: {
+                            includeEmpty: true,
                             key: 'seriesabbr_list',
                             type: 'REFERENCE',
-                            refenence: 'seriesabbr_ref'
+                            reference: 'seriesabbr_ref'
                         }
                     },
                     references: {
@@ -34,7 +35,7 @@ define(function (require) {
                             selectionList: 'seriesabbr_list'
                         }
                     }
-                },*/
+                },
                 fieldTitles: {
                     "id": {
                         "title" : "ID"
@@ -76,27 +77,8 @@ define(function (require) {
                                         "type": "CELL",
                                         "title": "Lyhenne",
                                         "colspan": 2,
-                                        /*"field": {
-                                            "key": "seriesabbr"
-                                        },*/
                                         "field": {
-                                            "displayType": "SELECTION",
                                             "key": "seriesabbr"
-                                        },
-                                        create: function () {
-                                            var $input = $(this).find('select');
-                                            require('./../server')('/series/getAbbreviations', {
-                                                method: 'GET',
-                                                success: function (data) {
-                                                    if (data.abbreviations) {
-                                                        $input.append(data.abbreviations.map(function (option) {
-                                                            return $('<option>')
-                                                                .val(option)
-                                                                .text(option);
-                                                        }));
-                                                    }
-                                                }
-                                            });
                                         }
                                     },
                                     commonSearchBooleans.cells.draft
