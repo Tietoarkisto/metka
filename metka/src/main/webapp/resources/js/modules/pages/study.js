@@ -671,44 +671,34 @@ define(function (require) {
                                         type: "DEPENDENCY",
                                         target: "studyerrorsid",
                                         valuePath: "title"
+                                    },
+                                    seriesname_ref: {
+                                        key: 'seriesname_ref',
+                                        type: 'REVISIONABLE',
+                                        target: 'SERIES',
+                                        valuePath: 'seriesname',
+                                        titlePath: 'seriesname'
+                                    },
+                                    publication_ref: {
+                                        key: 'publication_ref',
+                                        type: 'REVISIONABLE',
+                                        target: 'PUBLICATION',
+                                        valuePath: 'publicationid',
+                                        titlePath: 'publicationid'
                                     }
                                 }),
                                 selectionLists: $.extend(response.configuration.selectionLists, {
                                     seriesname_list: {
-                                        "key": "seriesname_list",
-                                        "type": "VALUE",
-                                        "includeEmpty": true,
-                                        "options": [
-                                            {
-                                                "value": "1",
-                                                "&title": {
-                                                    "default":"A"
-                                                }
-                                            }, {
-                                                "value": "2",
-                                                "&title": {
-                                                    "default":"B"
-                                                }
-                                            }
-                                        ]
+                                        includeEmpty: true,
+                                        key: 'seriesname_list',
+                                        type: 'REFERENCE',
+                                        reference: 'seriesname_ref'
                                     },
                                     publication_list: {
-                                        "key": "publication_list",
-                                        "type": "VALUE",
-                                        "includeEmpty": true,
-                                        "options": [
-                                            {
-                                                "value": "1",
-                                                "&title": {
-                                                    "default":"A"
-                                                }
-                                            }, {
-                                                "value": "2",
-                                                "&title": {
-                                                    "default":"B"
-                                                }
-                                            }
-                                        ]
+                                        includeEmpty: true,
+                                        key: 'publication_list',
+                                        type: 'REFERENCE',
+                                        reference: 'publication_ref'
                                     }
                                 }),
                                 fields: (function () {
