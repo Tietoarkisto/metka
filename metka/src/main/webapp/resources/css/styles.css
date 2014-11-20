@@ -363,3 +363,10 @@ td {
     overflow: auto;
     max-height: 200px;
 }
+
+/*Bootstrap overwrite */
+@media (min-width: 1150px) {
+  .modal-lg {
+    width: 1100px;
+  }
+}

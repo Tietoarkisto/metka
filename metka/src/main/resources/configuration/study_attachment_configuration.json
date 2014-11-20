@@ -215,6 +215,7 @@
 			"key": "file",
 			"immutable": true,
 			"translatable": false,
+            "generalSearch": true,
 			"type": "STRING"
 		},
 		"fileaip": {
@@ -227,6 +228,7 @@
 			"key": "filecategory",
 			"translatable": false,
 			"type": "SELECTION",
+            "generalSearch": true,
 			"selectionList": "filecategory_list"
 		},
 		"filecomment": {
@@ -239,6 +241,7 @@
 			"key": "filedescription",
 			"translatable": true,
 			"type": "STRING",
+            "generalSearch": true,
 			"exact": false
 		},
 		"filedip": {

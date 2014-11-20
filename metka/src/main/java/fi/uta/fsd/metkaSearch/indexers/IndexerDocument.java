@@ -6,7 +6,6 @@ import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import fi.uta.fsd.metkaSearch.LuceneConfig;
 import fi.uta.fsd.metkaSearch.analyzer.CaseInsensitiveKeywordAnalyzer;
-import fi.uta.fsd.metkaSearch.analyzer.CaseInsensitiveWhitespaceAnalyzer;
 import fi.uta.fsd.metkaSearch.analyzer.FinnishVoikkoAnalyzer;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -76,7 +75,7 @@ public class IndexerDocument {
         if(generalSearch) {indexGeneral(value);}
     }
 
-    public void indexWhitespaceField(String key, String value, boolean generalSearch) {
+    /*public void indexWhitespaceField(String key, String value, boolean generalSearch) {
         indexWhitespaceField(key, value, Store.NO, generalSearch);
     }
 
@@ -84,7 +83,7 @@ public class IndexerDocument {
         document.add(new TextField(key, value, store));
         analyzers.put(key, CaseInsensitiveWhitespaceAnalyzer.ANALYZER);
         if(generalSearch) {indexGeneral(value);}
-    }
+    }*/
 
     public void indexText(Language language, Field field, String root, ValueDataField saved, boolean generalSearch) {
         indexText(language, root+field.getKey(), saved.getActualValueFor(language), field.getExact(), Store.NO, generalSearch);
@@ -100,6 +99,7 @@ public class IndexerDocument {
 
     public void indexText(Language language, String key, String value, boolean exact, Store store, boolean generalSearch) {
         if(exact) {
+            // TODO: Can we use whitespace analyzer here or not? Using both whitespace and keyword is disorienting to user since they would have to know the type of the field even more than now
             indexKeywordField(key, value, store, generalSearch);
         } else {
             document.add(new TextField(key, value, store));

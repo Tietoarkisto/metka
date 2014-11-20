@@ -20,7 +20,6 @@ define(function (require) {
                 var errors = getErrors();
                 // TODO: if saving, show warning/warning instead of error/danger
                 if (errors.length) {
-                    log(options);
                     $container.addClass('has-error');
                     var $p = $('<p class="help-block">');
                     $container.append($p);

@@ -82,6 +82,7 @@
             "key": "varlabel",
             "translatable": true,
             "type": "STRING",
+            "generalSearch": true,
             "editable": false
         },
         "varinterval": {
@@ -102,6 +103,7 @@
             "translatable": false,
             "type": "STRING",
             "subfield": true,
+            "generalSearch": true,
 			"exact": false
         },
         "preqtxts": {
@@ -231,6 +233,7 @@
             "immutable": true,
             "type": "STRING",
             "subfield": true,
+            "generalSearch": true,
 			"exact": false
         },
         "stat": {

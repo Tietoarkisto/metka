@@ -12,8 +12,6 @@ import fi.uta.fsd.metka.model.configuration.Reference;
 import fi.uta.fsd.metka.model.configuration.SelectionList;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.change.Change;
-import fi.uta.fsd.metka.model.data.change.ContainerChange;
-import fi.uta.fsd.metka.model.data.change.RowChange;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.factories.StudyFactory;
@@ -594,12 +592,6 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
 
             boolean changes = false;
 
-            ContainerChange containerChange = (ContainerChange) changeMap.get(field.getKey());
-            // Create missing container change but do not insert it yet
-            if (containerChange == null) {
-                containerChange = new ContainerChange(field.getKey());
-            }
-
             // TODO: Reorder the rows to the UI provided order assuming the container can be reordered
 
             // Regardless of if there are missing rows we are going to save the changes in existing and new rows
@@ -627,7 +619,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                     }
                     if (tr.getRowId() == null && tr.getFields().size() > 0) {
                         // New row that has some fields in it. Create row in preparation for saving
-                        Pair<StatusCode, DataRow> rowPair = container.insertNewDataRow(language, containerChange);
+                        Pair<StatusCode, DataRow> rowPair = container.insertNewDataRow(language, changeMap);
                         if (rowPair.getLeft() == StatusCode.NEW_ROW) {
                             row = rowPair.getRight();
                             row.setSaved(info);
@@ -652,10 +644,6 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                                 logger.error("Didn't find field " + subkey + " in configuration " + configuration.getKey().toString() + " even though " + field.getKey() + " has it as subfield.");
                                 continue;
                             }
-                            RowChange rowChange = containerChange.get(row.getRowId());
-                            if (rowChange == null) {
-                                rowChange = new RowChange(row.getRowId());
-                            }
 
                             // Call save field for the subfield, this can cause recursion
                             Pair<StatusCode, Boolean> fieldSaveResult = saveField(subfield, configuration, tr, row, changeMap);
@@ -665,7 +653,6 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                             }
                             if (fieldSaveResult.getLeft() == StatusCode.FIELD_CHANGED) {
                                 // Make sure that row change is in the container change since there has been an actual change.
-                                containerChange.put(rowChange);
                                 row.setSaved(info);
                                 tr.setSaved(info);
                                 changes = true;
@@ -701,7 +688,6 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
 
 
             if (changes) {
-                changeMap.put(containerChange.getKey(), containerChange);
                 returnPair.setLeft(StatusCode.FIELD_CHANGED);
             }
         }
@@ -811,7 +797,6 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                         // New row, insert new SavedReference
                         Pair<StatusCode, ReferenceRow> referencePair = container.getOrCreateReferenceWithValue(tr.getValue(), changeMap, info);
                         if (referencePair.getLeft() == StatusCode.NEW_ROW) {
-                            referencePair.getRight().setUnapproved(true);
                             changes = true;
                             tr.setRowId(referencePair.getRight().getRowId());
                         }

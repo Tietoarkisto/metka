@@ -624,7 +624,7 @@ class GeneralRevisionHandler implements RevisionHandler {
         for(BinderPageListEntry page : pages.getRight()) {
             // description
             if(StringUtils.hasText(page.getDescription())) {
-                document.indexText(language, root+"description", page.getDescription(), false, NO, false);
+                document.indexText(language, root+"description", page.getDescription(), false, NO, true);
             }
 
             // binderid
@@ -634,7 +634,7 @@ class GeneralRevisionHandler implements RevisionHandler {
 
             // studyid
             if(StringUtils.hasText(page.getStudyId())) {
-                document.indexKeywordField(root + "studyid", page.getStudyId(), false);
+                document.indexKeywordField(root + "studyid", page.getStudyId(), true);
             }
 
             // savedAt

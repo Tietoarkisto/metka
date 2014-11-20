@@ -15,6 +15,7 @@ import fi.uta.fsd.metkaSearch.commands.searcher.expert.ExpertRevisionSearchComma
 import fi.uta.fsd.metkaSearch.results.ResultList;
 import fi.uta.fsd.metkaSearch.results.RevisionResult;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -258,6 +259,9 @@ class FieldTargetHandler {
                         }
                     } catch (QueryNodeException e) {
                         logger.error("QRE during expert search creation.", e);
+                        allValuesUnique = false;
+                    } catch(ParseException pe) {
+                        logger.error("ParseException during expert search creation.", pe);
                         allValuesUnique = false;
                     }
                 }

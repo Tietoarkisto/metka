@@ -80,18 +80,24 @@ public class ContainerDataField extends RowContainerDataField {
     /**
      * Creates a new row and inserts it to this ContainerDataField and adds a change to changeMap
      * @param language For which the row is inserted
-     * @param containerChange ContainerChange that will contain the change for the new row
+     * @param changeMap Change map that should contain the ContainerChange for this container
      * @return
      */
-    public Pair<StatusCode, DataRow> insertNewDataRow(Language language, ContainerChange containerChange) {
-        if(language == null || containerChange == null) {
+    public Pair<StatusCode, DataRow> insertNewDataRow(Language language, Map<String, Change> changeMap) {
+        if(language == null || changeMap == null) {
             return new ImmutablePair<>(StatusCode.INCORRECT_PARAMETERS, null);
+        }
+
+        ContainerChange change = (ContainerChange)changeMap.get(getKey());
+        if(change == null) {
+            change = new ContainerChange(getKey());
+            changeMap.put(change.getKey(), change);
         }
 
         DataRow row = DataRow.build(this);
         row.setUnapproved(true);
-        containerChange.put(new RowChange(row.getRowId()));
-        containerChange.setChangeIn(language);
+        change.put(new RowChange(row.getRowId()));
+        change.setChangeIn(language);
         addRow(language, row);
         return new ImmutablePair<>(StatusCode.NEW_ROW, row);
     }
