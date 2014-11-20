@@ -11,7 +11,10 @@ define(function (require) {
                     var importFromConfiguration = [
                         'submissionid',
                         'title',
-                        'producerrole',
+                        {
+                            key: 'producerrole',
+                            rename: 'producers.producerrole'
+                        },
                         'datakind',
                         'anonymization',
                         'securityissues',
@@ -19,14 +22,35 @@ define(function (require) {
                         'newtermsofuse',
                         'agreementtype',
                         'depositortype',
-                        'packageurn',
+                        {
+                            key: 'packageurn',
+                            rename: 'packages.packageurn'
+                        },
                         'abstract',
-                        'topic',
-                        'country',
-                        'analysisunit',
-                        'timemethod',
-                        'sampproc',
-                        'collmode'
+                        {
+                            key: 'topic',
+                            rename: 'topics.topic'
+                        },
+                        {
+                            key: 'country',
+                            rename: 'countries.country'
+                        },
+                        {
+                            key: 'analysisunit',
+                            rename: 'analysis.analysisunit'
+                        },
+                        {
+                            key: 'timemethod',
+                            rename: 'timemethods.timemethod'
+                        },
+                        {
+                            key: 'sampproc',
+                            rename: 'sampprocs.sampproc'
+                        },
+                        {
+                            key: 'collmode',
+                            rename: 'collmodes.collmode'
+                        }
                     ];
 
                     if (response.result === 'CONFIGURATION_FOUND') {
@@ -83,7 +107,7 @@ define(function (require) {
                                                             "horizontal": true,
                                                             "colspan": 2,
                                                             "field": {
-                                                                "key": "study.id"
+                                                                "key": "studyid"
                                                             }
                                                         }
                                                     ]
@@ -125,7 +149,7 @@ define(function (require) {
                                                             "horizontal": true,
                                                             "colspan": 2,
                                                             "field": {
-                                                                "key": "author.author"
+                                                                "key": "author"
                                                             }
                                                         }
                                                     ]
@@ -181,7 +205,7 @@ define(function (require) {
                                                             "horizontal": true,
                                                             "colspan": 2,
                                                             "field": {
-                                                                "key": "seriesname"
+                                                                "key": "series"
                                                             }
                                                         }
                                                     ]
@@ -551,30 +575,41 @@ define(function (require) {
                                 }
                             ],
                             buttons: [
-                                require('./../searchButton')('searchAjax', function () {
-                                    var requestData = commonSearchBooleans.requestData(options, {
-                                        type: require('./../../metka').PAGE,
-                                        values: {}
-                                    });
-                                    [
-                                        'study.id',
-                                        'author.author',
-                                        'authororganization',
-                                        'producername',
-                                        'seriesname',
-                                        'publication',
-                                        'publicationfirstsaved',
-                                        'savedAt',
+                                require('./../searchButton')('searchAjax', [
+                                        'studyid',
+                                        {
+                                            key: 'author',
+                                            rename: 'authors.author'
+                                        },
+                                        {
+                                            key: 'authororganization',
+                                            rename: 'authors.organisation'
+                                        },
+                                        {
+                                            key: 'producername',
+                                            rename: 'producers.organisation'
+                                        },
+                                        'series',
+                                        {
+                                            key: 'publication',
+                                            rename: 'publications.publicationtitle'
+                                        },
+                                        'aipcomplete',
                                         'termsofusechangedate',
-                                        'publication.savedBy',
-                                        'timeperiod',
-                                        'colltime',
-                                        'collector'
-                                    ].concat(importFromConfiguration).forEach(function (field) {
-                                            requestData.values[field] = data(field).getByLang(options.defaultLang);
-                                        });
-                                    return requestData;
-                                }, function (data) {
+                                        {
+                                            key: 'timeperiod',
+                                            rename: 'timeperiods.timeperiod'
+                                        },
+                                        {
+                                            key: 'colltime',
+                                            rename: 'colltime.colldate'
+                                        },
+                                        {
+                                            key: 'collector',
+                                            rename: 'collectors.collector'
+                                        }
+                                    ].concat(importFromConfiguration)
+                                , function (data) {
                                     return data.rows;
                                 }, function (result) {
                                     return {
@@ -657,7 +692,7 @@ define(function (require) {
                             data: commonSearchBooleans.initialData({}),
                             dataConf: {
                                 key: response.configuration.key,
-                                references: $.extend(response.configuration.references, {
+                                references: $.extend(true, response.configuration.references, {
                                     studyerrorsid_ref: {
                                         type: "REVISIONABLE",
                                         target: "STUDY"
@@ -676,15 +711,33 @@ define(function (require) {
                                         key: 'seriesname_ref',
                                         type: 'REVISIONABLE',
                                         target: 'SERIES',
-                                        valuePath: 'seriesname',
                                         titlePath: 'seriesname'
                                     },
                                     publication_ref: {
                                         key: 'publication_ref',
                                         type: 'REVISIONABLE',
                                         target: 'PUBLICATION',
-                                        valuePath: 'publicationid',
                                         titlePath: 'publicationid'
+                                    },
+                                    topic_ref: {
+                                        type: 'JSON',
+                                        target: response.configuration.references.topicvocab_ref.target
+                                    },
+                                    analysisunit_ref: {
+                                        type: 'JSON',
+                                        target: response.configuration.references.analysisunitvocab_ref.target
+                                    },
+                                    timemethod_ref: {
+                                        type: 'JSON',
+                                        target: response.configuration.references.timemethodvocab_ref.target
+                                    },
+                                    collmode_ref: {
+                                        type: 'JSON',
+                                        target: response.configuration.references.collmodevocab_ref.target
+                                    },
+                                    sampproc_ref: {
+                                        type: 'JSON',
+                                        target: response.configuration.references.sampprocvocab_ref.target
                                     }
                                 }),
                                 selectionLists: $.extend(response.configuration.selectionLists, {
@@ -703,7 +756,12 @@ define(function (require) {
                                 }),
                                 fields: (function () {
                                     var fields = {};
-                                    importFromConfiguration.forEach(function (key) {
+                                    importFromConfiguration.map(function toKey(field) {
+                                        if (typeof field === 'object') {
+                                            return field.key;
+                                        }
+                                        return field;
+                                    }).forEach(function (key) {
                                         fields[key] = $.extend(response.configuration.fields[key], {
                                             editable: true,
                                             immutable: false,
@@ -711,15 +769,11 @@ define(function (require) {
                                         });
                                     });
                                     return $.extend(fields, {
-                                        study: {
-                                            id: {
-                                                type: response.configuration.fields.studyid.type
-                                            }
+                                        studyid: {
+                                            type: response.configuration.fields.studyid.type
                                         },
                                         author: {
-                                            author: {
-                                                type: response.configuration.fields.author.type
-                                            }
+                                            type: response.configuration.fields.author.type
                                         },
                                         // METKA_aineistohaut.docx "Organisaatiohakuun alkukatkaisu. Ei valita listasta."
                                         abstract: {
@@ -731,7 +785,7 @@ define(function (require) {
                                         producername: {
                                             "type": "STRING"
                                         },
-                                        seriesname: {
+                                        series: {
                                             "type": "SELECTION",
                                             "selectionList": "seriesname_list"
                                         },
