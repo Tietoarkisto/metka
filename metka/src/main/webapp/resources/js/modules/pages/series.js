@@ -104,16 +104,11 @@ define(function (require) {
                     }
                 ],
                 buttons: [
-                    require('./../searchButton')('searchAjax', function () {
-                        return commonSearchBooleans.requestData(options, {
-                            type: require('./../../metka').PAGE,
-                            values: {
-                                'key.id': data('key.id').getByLang(options.defaultLang),
-                                seriesabbr: data('seriesabbr').getByLang(options.defaultLang),
-                                seriesname: data('seriesname').getByLang(options.defaultLang)
-                            }
-                        });
-                    }, function (data) {
+                    require('./../searchButton')('searchAjax', [
+                        'key.id',
+                        'seriesabbr',
+                        'seriesname'
+                    ], function (data) {
                         return data.rows;
                     }, function (result) {
                         return {

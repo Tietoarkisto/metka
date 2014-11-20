@@ -1,7 +1,7 @@
 define(function (require) {
     'use strict';
 
-    return function (url, requestData, getResults, mapResult, fields, columnFields, getViewRequestOptions, options) {
+    return function (url, requestConf, getResults, mapResult, fields, columnFields, getViewRequestOptions, options) {
         function trOnClick(transferRow) {
             var viewRequestOptions = {
                 id: transferRow.fields.id.values.DEFAULT.current,
@@ -12,8 +12,64 @@ define(function (require) {
             }
             require('./assignUrl')('view', viewRequestOptions);
         }
+
+        var data = require('./data')(options);
         require('./server')(url, {
-            data: JSON.stringify(requestData()),
+            data: JSON.stringify((function () {
+                if (typeof requestConf === 'function') {
+                    return requestConf();
+                }
+                if (Array.isArray(requestConf)) {
+                    var requestData = require('./commonSearchBooleans').requestData(options, {
+                        type: require('./../metka').PAGE,
+                        values: {}
+                    });
+                    requestConf.map(function (field) {
+                            // validate input and (in case of string) transform to object
+                            switch (typeof field) {
+                                case 'string':
+                                    return {
+                                        key: field
+                                    };
+                                case 'object':
+                                    if (field !== null) {
+                                        return field;
+                                    }
+                            }
+                            throw 'Illegal search configuration entry.';
+                        }).map(function (searchOptions) {
+                            // set defaults
+                            return $.extend({
+                                useSelectionText: true,
+                                addSelectionQuotes: true,
+                                addParens: true
+                            }, searchOptions);
+                        }).forEach(function (searchOptions) {
+                            var key = searchOptions.key;
+                            var value = data(searchOptions.key).getByLang(options.defaultLang) || '';
+                            if (require('./utils/getPropertyNS')(options, 'dataConf.fields', key, 'type') === 'SELECTION') {
+                                if (value && searchOptions.useSelectionText) {
+                                    value = $('select[data-metka-field-key="{key}"][data-metka-field-lang="{lang}"] option[value="{value}"]'.supplant({
+                                        key: key,
+                                        lang: options.defaultLang,
+                                        value: value
+                                    })).text();
+                                }
+                                if (value && searchOptions.addSelectionQuotes) {
+                                    value = '"' + value + '"';
+                                }
+                            }
+                            if (value && searchOptions.addParens) {
+                                value = '(' + value + ')';
+                            }
+                            if (value) {
+                                requestData.values[searchOptions.rename || key] = value;
+                            }
+                        });
+                    return requestData;
+                }
+                throw 'Illegal search request';
+            })()),
             success: function (data) {
                 var fieldOptions = $.extend(true, options, {
                     buttons: null,

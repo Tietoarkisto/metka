@@ -201,69 +201,79 @@ define(function (require) {
                     }
                 ],
                 buttons: [
-                    require('./../searchButton')('/revision/ajax/search', function () {
-                        var requestData = commonSearchBooleans.requestData(options, {
-                            type: require('./../../metka').PAGE,
-                            values: {}
-                        });
-                        [
+                    require('./../searchButton')('/revision/ajax/search', [
                             'publicationid',
-                            'studies',
+                            {
+                                key: 'studies',
+                                rename: 'studies.studyid'
+                            },
                             'publicationfirstsaved',
-                            'savedAt',
+                            {
+                                key:'savedAt',
+                                rename: 'state.saved.time'
+                            },
                             'publicationyear',
-                            'studyname',
-                            'seriesname',
-                            'lastname',
-                            'firstname',
+                            {
+                                key: 'studyname',
+                                rename: 'studies.studytitle'
+                            },
+                            {
+                                key: 'seriesname',
+                                rename: 'series.seriesname'
+                            },
+                            {
+                                key: 'lastname',
+                                rename: 'publicationauthors.lastname'
+                            },
+                            {
+                                key: 'firstname',
+                                rename: 'publicationauthors.firstname'
+                            },
                             'publicationtitle',
                             'publicationrelpubl',
                             'publicationlanguage',
                             'publicationpublic',
-                            'savedBy'
-                        ].forEach(function (field) {
-                            requestData.values[field] = data(field).getByLang(options.defaultLang);
-                        });
-                        requestData.values['studies.studyid'] = requestData.values.studies;
-                        delete requestData.values.studies;
-                        return requestData;
-                    }, function (data) {
-                        return data.rows;
-                    }, function (result) {
-                        return {
-                            id: result.id,
-                            no: result.no,
-                            publicationid: result.values.publicationid,
-                            publicationtitle: result.values.publicationtitle,
-                            state: MetkaJS.L10N.get('search.result.state.{state}'.supplant(result))
-                        };
-                    }, {
-                        publicationid: {
-                            type: 'STRING'
-                        },
-                        publicationtitle: {
-                            type: 'STRING'
-                        },
-                        state: {
-                            type: 'STRING'
-                        }
-                    }, [
-                        "publicationid",
-                        "publicationtitle",
-                        "state"
-                    ],
-                    null,
-                    options),
+                            {
+                                key:'savedBy',
+                                rename: 'state.saved.user'
+                            }
+                        ], function (data) {
+                            return data.rows;
+                        }, function (result) {
+                            return {
+                                id: result.id,
+                                no: result.no,
+                                publicationid: result.values.publicationid,
+                                publicationtitle: result.values.publicationtitle,
+                                state: MetkaJS.L10N.get('search.result.state.{state}'.supplant(result))
+                            };
+                        }, {
+                            publicationid: {
+                                type: 'STRING'
+                            },
+                            publicationtitle: {
+                                type: 'STRING'
+                            },
+                            state: {
+                                type: 'STRING'
+                            }
+                        }, [
+                            "publicationid",
+                            "publicationtitle",
+                            "state"
+                        ],
+                        null,
+                        options),
                     /*{
-                        "&title": {
-                            "default": "Tyhjennä"
-                        },
-                        create: function () {
-                            this.click(function () {
-                                log('TODO: tyhjennä lomake')
-                            });
-                        }
-                    },*/
+                     "&title": {
+                     "default": "Tyhjennä"
+                     },
+                     create: function () {
+                     this.click(function () {
+                     log('TODO: tyhjennä lomake')
+                     });
+                     }
+                     },*/
                     {
                         "&title": {
                             "default": "Lisää uusi"
@@ -303,13 +313,8 @@ define(function (require) {
                         "yes_no": {
                             "key": "yes_no",
                             "type": "VALUE",
+                            "includeEmpty": true,
                             "options": [
-                                {
-                                    "&title": {
-                                        "default": ""
-                                    },
-                                    "value": ''
-                                },
                                 {
                                     "&title": {
                                         "default": "Kyllä"
@@ -327,13 +332,8 @@ define(function (require) {
                         "langs": {
                             "key": "langs",
                             "type": "VALUE",
+                            "includeEmpty": true,
                             "options": [
-                                {
-                                    "&title": {
-                                        "default": ""
-                                    },
-                                    "value": ''
-                                },
                                 {
                                     "&title": {
                                         "default": "Suomi"
