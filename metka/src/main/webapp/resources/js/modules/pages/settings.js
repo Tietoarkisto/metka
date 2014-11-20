@@ -977,7 +977,8 @@ define(function (require) {
                                                 displayType: 'CUSTOM_JS'
                                             },
                                             create: function() {
-                                                $editor = this.children().first();
+                                                $editor = this.children().first()
+                                                    .addClass('metka-conf-editor');
                                             }
                                         }
                                     ]

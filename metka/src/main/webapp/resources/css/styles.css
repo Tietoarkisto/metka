@@ -357,9 +357,13 @@ td {
 .richtext.form-control {
     /*clear Boostrap height: 34px;*/
     height:auto !important;
-
-
     min-height: 100px;
     overflow: auto;
     max-height: 200px;
+}
+
+/* separate fields and other full width rows in conf editor */
+.metka-conf-editor .row:not(:last-child) > div.col-md-12 > div:last-child {
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 10px;
 }
