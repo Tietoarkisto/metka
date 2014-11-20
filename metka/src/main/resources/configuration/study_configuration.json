@@ -658,7 +658,8 @@
 			"key": "keyword_ref",
 			"type": "DEPENDENCY",
 			"target": "keywordvocab",
-			"valuePath": "terms.id"
+			"valuePath": "terms.id",
+            "titlePath": "term"
 		},
 		"keyworduri_ref": {
 			"key": "keyworduri_ref",
@@ -682,7 +683,8 @@
 			"key": "analysisunit_ref",
 			"type": "DEPENDENCY",
 			"target": "analysisunitvocab",
-			"valuePath": "tems.id"
+			"valuePath": "terms.id",
+            "titlePath": "term"
 		},
 		"analysisunituri_ref": {
 			"key": "analysisunituri_ref",
@@ -707,7 +709,8 @@
 			"key": "collmode_ref",
 			"type": "DEPENDENCY",
 			"target": "collmodevocab",
-			"valuePath": "terms.id"
+			"valuePath": "terms.id",
+            "titlePath": "term"
 		},
 		"collmodeuri_ref": {
 			"key": "collmodeuri_ref",
@@ -731,7 +734,8 @@
 			"key": "instrument_ref",
 			"type": "DEPENDENCY",
 			"target": "instrumentvocab",
-			"valuePath": "terms.id"
+			"valuePath": "terms.id",
+            "titlePath": "term"
 		},
 		"instrumenturi_ref": {
 			"key": "instrumenturi_ref",
@@ -755,7 +759,8 @@
 			"key": "sampproc_ref",
 			"type": "DEPENDENCY",
 			"target": "sampprocvocab",
-			"valuePath": "terms.id"
+			"valuePath": "terms.id",
+            "titlePath": "term"
 		},
 		"sampprocuri_ref": {
 			"key": "sampprocuri_ref",
@@ -779,7 +784,8 @@
 			"key": "topic_ref",
 			"type": "DEPENDENCY",
 			"target": "topicvocab",
-			"valuePath": "terms.id"
+			"valuePath": "terms.id",
+            "titlePath": "term"
 		},
 		"topicuri_ref": {
 			"key": "topicuri_ref",
@@ -803,7 +809,8 @@
 			"key": "timemethod_ref",
 			"type": "DEPENDENCY",
 			"target": "timemethodvocab",
-			"valuePath": "terms.id"
+			"valuePath": "terms.id",
+            "titlePath": "term"
 		},
 		"timemethoduri_ref": {
 			"key": "timemethoduri_ref",

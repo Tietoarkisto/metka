@@ -33,7 +33,9 @@ define(function (require) {
 
         var elemOptions = {
             'class': 'form-control',
-            id: id
+            id: id,
+            'data-metka-field-key': options.field.key,
+            'data-metka-field-lang': lang
         };
         var isSelection = type === 'SELECTION';
 
