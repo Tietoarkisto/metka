@@ -70,15 +70,15 @@ abstract class DDISectionBase {
         return new ImmutablePair<>(ReturnResult.OPERATION_SUCCESSFUL, pair.getRight());
     }
 
-    protected Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> getContainer(String key) {
+    protected Pair<ReturnResult, Pair<ContainerDataField, Map<String, Change>>> getContainer(String key) {
         return getContainer(key, revision, revision.getChanges());
     }
 
-    protected Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> getContainer(String key, RevisionData data) {
+    protected Pair<ReturnResult, Pair<ContainerDataField, Map<String, Change>>> getContainer(String key, RevisionData data) {
         return getContainer(key, data, data.getChanges());
     }
 
-    protected Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> getContainer(String key, DataFieldContainer fieldContainer, Map<String, Change> changeMap) {
+    protected Pair<ReturnResult, Pair<ContainerDataField, Map<String, Change>>> getContainer(String key, DataFieldContainer fieldContainer, Map<String, Change> changeMap) {
         Pair<StatusCode, ContainerDataField> container = fieldContainer.dataField(ContainerDataFieldCall.set(key).setInfo(info));
         if(!(container.getLeft() == StatusCode.FIELD_FOUND || container.getLeft() == StatusCode.FIELD_INSERT)) {
             // No need to continue insert, we have a problem
@@ -89,7 +89,7 @@ abstract class DDISectionBase {
             change = new ContainerChange(key);
             changeMap.put(key, change);
         }
-        Pair<ContainerDataField, ContainerChange> pair = new ImmutablePair<>(container.getRight(), change);
+        Pair<ContainerDataField, Map<String, Change>> pair = new ImmutablePair<>(container.getRight(), changeMap);
         return new ImmutablePair<>(ReturnResult.OPERATION_SUCCESSFUL, pair);
     }
 
@@ -97,7 +97,7 @@ abstract class DDISectionBase {
         if(!hasContent(tts)) {
             return ReturnResult.OPERATION_SUCCESSFUL;
         }
-        Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerPair = getContainer(containerKey, data, changeMap);
+        Pair<ReturnResult, Pair<ContainerDataField, Map<String, Change>>> containerPair = getContainer(containerKey, data, changeMap);
         if(containerPair.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
             return containerPair.getLeft();
         }

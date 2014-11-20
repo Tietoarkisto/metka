@@ -6,7 +6,7 @@ import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.change.ContainerChange;
+import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.container.ContainerDataField;
 import fi.uta.fsd.metka.model.data.container.DataRow;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
@@ -14,6 +14,8 @@ import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.util.StringUtils;
+
+import java.util.Map;
 
 class DDIOtherMaterialDescription extends DDISectionBase {
     DDIOtherMaterialDescription(RevisionData revision, Language language, CodeBookType codeBook, DateTimeUserPair info, Configuration configuration) {
@@ -28,11 +30,11 @@ class DDIOtherMaterialDescription extends DDISectionBase {
         if(!hasContent(codeBook.getOtherMatArray())) {
             return ReturnResult.OPERATION_SUCCESSFUL;
         }
-        Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.OTHERMATERIALS);
+        Pair<ReturnResult, Pair<ContainerDataField, Map<String, Change>>> containerResult = getContainer(Fields.OTHERMATERIALS);
         if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
             return containerResult.getLeft();
         }
-        Pair<ContainerDataField, ContainerChange> container = containerResult.getRight();
+        Pair<ContainerDataField, Map<String, Change>> container = containerResult.getRight();
         for(OtherMatType other : codeBook.getOtherMatArray()) {
             Pair<StatusCode, DataRow> row = container.getLeft().insertNewDataRow(language, container.getRight());
             if(row.getLeft() != StatusCode.NEW_ROW) {

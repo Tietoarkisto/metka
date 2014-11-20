@@ -6,7 +6,7 @@ import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.*;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.change.ContainerChange;
+import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.container.ContainerDataField;
 import fi.uta.fsd.metka.model.data.container.DataRow;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
@@ -104,11 +104,11 @@ class DDIStudyDescription extends DDISectionBase {
 
     private ReturnResult readAltTitles(TitlStmtType titlStmt) {
         if(hasContent(titlStmt.getAltTitlArray())) {
-            Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.ALTTITLES);
+            Pair<ReturnResult, Pair<ContainerDataField, Map<String, Change>>> containerResult = getContainer(Fields.ALTTITLES);
             if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
                 return containerResult.getLeft();
             }
-            Pair<ContainerDataField, ContainerChange> container = containerResult.getRight();
+            Pair<ContainerDataField, Map<String, Change>> container = containerResult.getRight();
             for(AbstractTextType tt : titlStmt.getAltTitlArray()) {
                 Pair<StatusCode, DataRow> row = container.getLeft().insertNewDataRow(language, container.getRight());
                 if(row.getLeft() != StatusCode.NEW_ROW) {
@@ -122,11 +122,11 @@ class DDIStudyDescription extends DDISectionBase {
 
     private ReturnResult readParTitles(TitlStmtType titlStmt) {
         if(hasContent(titlStmt.getParTitlArray())) {
-            Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.PARTITLES);
+            Pair<ReturnResult, Pair<ContainerDataField, Map<String, Change>>> containerResult = getContainer(Fields.PARTITLES);
             if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
                 return containerResult.getLeft();
             }
-            Pair<ContainerDataField, ContainerChange> container = containerResult.getRight();
+            Pair<ContainerDataField, Map<String, Change>> container = containerResult.getRight();
             for(SimpleTextType stt : titlStmt.getParTitlArray()) {
                 Pair<StatusCode, DataRow> row = container.getLeft().insertNewDataRow(language, container.getRight());
                 if(row.getLeft() != StatusCode.NEW_ROW) {
@@ -148,12 +148,12 @@ class DDIStudyDescription extends DDISectionBase {
             return ReturnResult.OPERATION_SUCCESSFUL;
         }
 
-        Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.AUTHORS);
+        Pair<ReturnResult, Pair<ContainerDataField, Map<String, Change>>> containerResult = getContainer(Fields.AUTHORS);
         if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
             return containerResult.getLeft();
         }
         ContainerDataField container = containerResult.getRight().getLeft();
-        ContainerChange change = containerResult.getRight().getRight();
+        Map<String, Change> change = containerResult.getRight().getRight();
 
         // Let's construct the request and path elements needed
         ReferencePathRequest request = new ReferencePathRequest();
@@ -217,12 +217,12 @@ class DDIStudyDescription extends DDISectionBase {
             return ReturnResult.OPERATION_SUCCESSFUL;
         }
 
-        Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.PRODUCERS);
+        Pair<ReturnResult, Pair<ContainerDataField, Map<String, Change>>> containerResult = getContainer(Fields.PRODUCERS);
         if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
             return containerResult.getLeft();
         }
         ContainerDataField container = containerResult.getRight().getLeft();
-        ContainerChange change = containerResult.getRight().getRight();
+        Map<String, Change> change = containerResult.getRight().getRight();
 
         // Let's construct the request and path elements needed
         ReferencePathRequest request = new ReferencePathRequest();
@@ -288,12 +288,12 @@ class DDIStudyDescription extends DDISectionBase {
             return ReturnResult.OPERATION_SUCCESSFUL;
         }
 
-        Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.AUTHORS);
+        Pair<ReturnResult, Pair<ContainerDataField, Map<String, Change>>> containerResult = getContainer(Fields.AUTHORS);
         if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
             return containerResult.getLeft();
         }
         ContainerDataField container = containerResult.getRight().getLeft();
-        ContainerChange change = containerResult.getRight().getRight();
+        Map<String, Change> change = containerResult.getRight().getRight();
 
         // Let's construct the request and path elements needed
         ReferencePathRequest request = new ReferencePathRequest();
@@ -382,12 +382,12 @@ class DDIStudyDescription extends DDISectionBase {
             return ReturnResult.OPERATION_SUCCESSFUL;
         }
 
-        Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.KEYWORDS);
+        Pair<ReturnResult, Pair<ContainerDataField, Map<String, Change>>> containerResult = getContainer(Fields.KEYWORDS);
         if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
             return containerResult.getLeft();
         }
         ContainerDataField container = containerResult.getRight().getLeft();
-        ContainerChange change = containerResult.getRight().getRight();
+        Map<String, Change> change = containerResult.getRight().getRight();
 
         // Let's construct the request and path elements needed
         ReferencePathRequest request = new ReferencePathRequest();
@@ -439,12 +439,12 @@ class DDIStudyDescription extends DDISectionBase {
             return ReturnResult.OPERATION_SUCCESSFUL;
         }
 
-        Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.TOPICS);
+        Pair<ReturnResult, Pair<ContainerDataField, Map<String, Change>>> containerResult = getContainer(Fields.TOPICS);
         if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
             return containerResult.getLeft();
         }
         ContainerDataField container = containerResult.getRight().getLeft();
-        ContainerChange change = containerResult.getRight().getRight();
+        Map<String, Change> change = containerResult.getRight().getRight();
 
         // Let's construct the request and path elements needed
         ReferencePathRequest request = new ReferencePathRequest();
@@ -516,11 +516,11 @@ class DDIStudyDescription extends DDISectionBase {
         if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
         if(hasContent(sumDscr.getGeogCoverArray())) {
-            Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.GEOGCOVERS);
+            Pair<ReturnResult, Pair<ContainerDataField, Map<String, Change>>> containerResult = getContainer(Fields.GEOGCOVERS);
             if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
                 return containerResult.getLeft();
             }
-            Pair<ContainerDataField, ContainerChange> container = containerResult.getRight();
+            Pair<ContainerDataField, Map<String, Change>> container = containerResult.getRight();
             for(AbstractTextType tt : sumDscr.getGeogCoverArray()) {
                 Pair<StatusCode, DataRow> row = container.getLeft().insertNewDataRow(language, container.getRight());
                 if(row.getLeft() != StatusCode.NEW_ROW) {
@@ -538,11 +538,11 @@ class DDIStudyDescription extends DDISectionBase {
 
     private ReturnResult readStudyInfoSumDescTimePrd(SumDscrType sumDscr) {
         if(hasContent(sumDscr.getTimePrdArray())) {
-            Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.TIMEPERIODS);
+            Pair<ReturnResult, Pair<ContainerDataField, Map<String, Change>>> containerResult = getContainer(Fields.TIMEPERIODS);
             if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
                 return containerResult.getLeft();
             }
-            Pair<ContainerDataField, ContainerChange> container = containerResult.getRight();
+            Pair<ContainerDataField, Map<String, Change>> container = containerResult.getRight();
             for(TimePrdType t : sumDscr.getTimePrdArray()) {
                 Pair<StatusCode, DataRow> row = container.getLeft().insertNewDataRow(language, container.getRight());
                 if(row.getLeft() != StatusCode.NEW_ROW) {
@@ -560,12 +560,12 @@ class DDIStudyDescription extends DDISectionBase {
         if(!hasContent(sumDscr.getCollDateArray())) {
             return ReturnResult.OPERATION_SUCCESSFUL;
         }
-        Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerPair = getContainer(Fields.COLLTIME);
+        Pair<ReturnResult, Pair<ContainerDataField, Map<String, Change>>> containerPair = getContainer(Fields.COLLTIME);
         if(containerPair.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
             return containerPair.getLeft();
         }
         ContainerDataField container = containerPair.getRight().getLeft();
-        ContainerChange change = containerPair.getRight().getRight();
+        Map<String, Change> change = containerPair.getRight().getRight();
         for(CollDateType coll : sumDscr.getCollDateArray()) {
             Pair<StatusCode, DataRow> row = container.insertNewDataRow(language, change);
             if (row.getLeft() != StatusCode.NEW_ROW) {
@@ -589,12 +589,12 @@ class DDIStudyDescription extends DDISectionBase {
         if(!hasContent(sumDscr.getNationArray())) {
             return ReturnResult.OPERATION_SUCCESSFUL;
         }
-        Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerPair = getContainer(Fields.COUNTRIES);
+        Pair<ReturnResult, Pair<ContainerDataField, Map<String, Change>>> containerPair = getContainer(Fields.COUNTRIES);
         if(containerPair.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
             return containerPair.getLeft();
         }
         ContainerDataField container = containerPair.getRight().getLeft();
-        ContainerChange change = containerPair.getRight().getRight();
+        Map<String, Change> change = containerPair.getRight().getRight();
 
         for(NationType nation : sumDscr.getNationArray()) {
             if(!StringUtils.hasText(getText(nation))) {
@@ -617,12 +617,12 @@ class DDIStudyDescription extends DDISectionBase {
         if(!hasContent(sumDscr.getUniverseArray())) {
             return ReturnResult.OPERATION_SUCCESSFUL;
         }
-        Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerPair = getContainer(Fields.UNIVERSE);
+        Pair<ReturnResult, Pair<ContainerDataField, Map<String, Change>>> containerPair = getContainer(Fields.UNIVERSE);
         if(containerPair.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
             return containerPair.getLeft();
         }
         ContainerDataField container = containerPair.getRight().getLeft();
-        ContainerChange change = containerPair.getRight().getRight();
+        Map<String, Change> change = containerPair.getRight().getRight();
         for(UniverseType universe : sumDscr.getUniverseArray()) {
             if(!StringUtils.hasText(getText(universe))) {
                 continue;
@@ -690,12 +690,12 @@ class DDIStudyDescription extends DDISectionBase {
             return ReturnResult.OPERATION_SUCCESSFUL;
         }
 
-        Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(containerKey);
+        Pair<ReturnResult, Pair<ContainerDataField, Map<String, Change>>> containerResult = getContainer(containerKey);
         if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
             return containerResult.getLeft();
         }
         ContainerDataField container = containerResult.getRight().getLeft();
-        ContainerChange change = containerResult.getRight().getRight();
+        Map<String, Change> change = containerResult.getRight().getRight();
 
         // Let's construct the request and path elements needed
         ReferencePathRequest request = new ReferencePathRequest();
@@ -825,12 +825,12 @@ class DDIStudyDescription extends DDISectionBase {
             return ReturnResult.OPERATION_SUCCESSFUL;
         }
 
-        Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.COLLECTORS);
+        Pair<ReturnResult, Pair<ContainerDataField, Map<String, Change>>> containerResult = getContainer(Fields.COLLECTORS);
         if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
             return containerResult.getLeft();
         }
         ContainerDataField container = containerResult.getRight().getLeft();
-        ContainerChange change = containerResult.getRight().getRight();
+        Map<String, Change> change = containerResult.getRight().getRight();
 
         // Let's construct the request and path elements needed
         ReferencePathRequest request = new ReferencePathRequest();
@@ -922,11 +922,11 @@ class DDIStudyDescription extends DDISectionBase {
             return ReturnResult.OPERATION_SUCCESSFUL;
         }
 
-        Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.DATASOURCES);
+        Pair<ReturnResult, Pair<ContainerDataField, Map<String, Change>>> containerResult = getContainer(Fields.DATASOURCES);
         if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
             return containerResult.getLeft();
         }
-        Pair<ContainerDataField, ContainerChange> container = containerResult.getRight();
+        Pair<ContainerDataField, Map<String, Change>> container = containerResult.getRight();
         for(SimpleTextType stt : sources.getDataSrcArray()) {
             Pair<StatusCode, DataRow> row = container.getLeft().insertNewDataRow(language, container.getRight());
             if(row.getLeft() != StatusCode.NEW_ROW) {
@@ -964,11 +964,11 @@ class DDIStudyDescription extends DDISectionBase {
         }
 
         if(hasContent(anlyInfo.getDataApprArray())) {
-            Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.APPRAISALS);
+            Pair<ReturnResult, Pair<ContainerDataField, Map<String, Change>>> containerResult = getContainer(Fields.APPRAISALS);
             if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
                 return containerResult.getLeft();
             }
-            Pair<ContainerDataField, ContainerChange> container = containerResult.getRight();
+            Pair<ContainerDataField, Map<String, Change>> container = containerResult.getRight();
             for(DataApprType appr : anlyInfo.getDataApprArray()) {
                 Pair<StatusCode, DataRow> row = container.getLeft().insertNewDataRow(language, container.getRight());
                 if(row.getLeft() != StatusCode.NEW_ROW) {
@@ -1021,11 +1021,11 @@ class DDIStudyDescription extends DDISectionBase {
         OthrStdyMatType othr = stdyDscr.getOthrStdyMatArray(0);
 
         if(hasContent(othr.getRelMatArray())) {
-            Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.RELATEDMATERIALS);
+            Pair<ReturnResult, Pair<ContainerDataField, Map<String, Change>>> containerResult = getContainer(Fields.RELATEDMATERIALS);
             if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
                 return containerResult.getLeft();
             }
-            Pair<ContainerDataField, ContainerChange> container = containerResult.getRight();
+            Pair<ContainerDataField, Map<String, Change>> container = containerResult.getRight();
             for(RelMatType relMat : othr.getRelMatArray()) {
                 Pair<StatusCode, DataRow> row = container.getLeft().insertNewDataRow(language, container.getRight());
                 if(row.getLeft() != StatusCode.NEW_ROW) {
@@ -1036,11 +1036,11 @@ class DDIStudyDescription extends DDISectionBase {
         }
 
         if(hasContent(othr.getOthRefsArray())) {
-            Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerResult = getContainer(Fields.PUBLICATIONCOMMENTS);
+            Pair<ReturnResult, Pair<ContainerDataField, Map<String, Change>>> containerResult = getContainer(Fields.PUBLICATIONCOMMENTS);
             if(containerResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
                 return containerResult.getLeft();
             }
-            Pair<ContainerDataField, ContainerChange> container = containerResult.getRight();
+            Pair<ContainerDataField, Map<String, Change>> container = containerResult.getRight();
             for(OthRefsType othRef : othr.getOthRefsArray()) {
                 Pair<StatusCode, DataRow> row = container.getLeft().insertNewDataRow(language, container.getRight());
                 if(row.getLeft() != StatusCode.NEW_ROW) {

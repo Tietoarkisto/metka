@@ -17,6 +17,7 @@ import fi.uta.fsd.metkaSearch.results.RevisionResult;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.lucene.document.FieldType;
+import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.apache.lucene.queryparser.flexible.standard.StandardQueryParser;
 import org.apache.lucene.queryparser.flexible.standard.config.NumericConfig;
@@ -30,11 +31,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static fi.uta.fsd.metka.enums.FieldType.*;
+import static fi.uta.fsd.metka.enums.FieldType.INTEGER;
+import static fi.uta.fsd.metka.enums.FieldType.REAL;
 
 public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<RevisionResult> {
     public static ExpertRevisionSearchCommand build(RevisionSearchRequest request, Configuration configuration)
-            throws UnsupportedOperationException, QueryNodeException {
+            throws UnsupportedOperationException, QueryNodeException, ParseException {
         List<String> qrys = new ArrayList<>();
 
         qrys.add(((!request.isSearchApproved())?"+":"")+"state.approved:"+request.isSearchApproved());
@@ -45,12 +47,13 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
             if(!StringUtils.hasText(request.getByKey(key))) {
                 continue;
             }
-            Field field = configuration.getField(key);
+            qrys.add("+"+key+":("+request.getByKey(key)+")");
+            /*Field field = configuration.getField(key);
             if(field != null && field.getExact()) {
                 qrys.add("+"+key+":\""+request.getByKey(key)+"\"");
             } else {
                 qrys.add("+"+key+":("+request.getByKey(key)+")");
-            }
+            }*/
         }
 
         String qryStr = StringUtils.collectionToDelimitedString(qrys, " ");
@@ -59,7 +62,8 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
         return new ExpertRevisionSearchCommand(path, qryStr, configuration);
     }
 
-    public static ExpertRevisionSearchCommand build(String qry, ConfigurationRepository configurations) throws UnsupportedOperationException, QueryNodeException {
+    public static ExpertRevisionSearchCommand build(String qry, ConfigurationRepository configurations)
+            throws UnsupportedOperationException, QueryNodeException, ParseException {
         if(!StringUtils.hasText(qry)) {
             throw new UnsupportedOperationException("Query string was empty, can't form expert query");
         }
@@ -68,7 +72,8 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
         return new ExpertRevisionSearchCommand(pathPair.getLeft(), pathPair.getRight(), pair.getRight());
     }
 
-    public static ExpertRevisionSearchCommand build(String qry, Configuration configuration) throws UnsupportedOperationException, QueryNodeException {
+    public static ExpertRevisionSearchCommand build(String qry, Configuration configuration)
+            throws UnsupportedOperationException, QueryNodeException, ParseException {
         if(!StringUtils.hasText(qry)) {
             throw new UnsupportedOperationException("Query string was empty, can't form expert query");
         }
@@ -102,7 +107,8 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
 
     private Query query;
 
-    private ExpertRevisionSearchCommand(DirectoryManager.DirectoryPath path, String qry, Configuration configuration) throws QueryNodeException {
+    private ExpertRevisionSearchCommand(DirectoryManager.DirectoryPath path, String qry, Configuration configuration)
+            throws QueryNodeException, ParseException {
         super(path, ResultList.ResultType.REVISION);
 
         //addTextAnalyzer("seriesname");
@@ -111,15 +117,18 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
         /*StandardQueryParser parser = new StandardQueryParser(getAnalyzer());*/
         StandardQueryParser parser = new StandardQueryParser();
         parser.setAllowLeadingWildcard(true);
+        query = parser.parse(qry, "general");
         if(configuration != null) {
             // If we're in config mode we need to parse the query twice, once to get all the fields in the query and second time with the actual numeric configs and analyzers
-            query = parser.parse(qry, "general");
 
             addAnalyzersAndConfigs(query, nums, configuration);
+            //ComplexPhraseQueryParser complex = new ComplexPhraseQueryParser(LuceneConfig.USED_VERSION, "general", getAnalyzer());
+            //complex.setAllowLeadingWildcard(true);
+            //query = complex.parse(qry);
             parser.setAnalyzer(getAnalyzer());
             parser.setNumericConfigMap(nums);
+            query = parser.parse(qry, "general");
         }
-        query = parser.parse(qry, "general");
     }
 
     @Override

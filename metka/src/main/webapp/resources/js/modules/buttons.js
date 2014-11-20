@@ -130,6 +130,7 @@ define(function (require) {
                     require('./modal')({
                         title: MetkaJS.L10N.get('general.revision.revisions'),
                         body: $table,
+                        large: true,
                         buttons: [{
                             type: 'COMPARE',
                             //preventDismiss: true,
@@ -152,6 +153,7 @@ define(function (require) {
                                         require('./modal')({
                                             title: MetkaJS.L10N.get('general.revision.revisions'),
                                             body: $table,
+                                            large: true,
                                             buttons: [{
                                                 type: 'DISMISS'
                                             }]
@@ -164,14 +166,16 @@ define(function (require) {
                                                 end: $('input[name="endGrp"]:checked').val()
                                             }),
                                             success: function (response) {
+                                                log(response);
                                                 if (response.result === 'OPERATION_SUCCESSFUL') {
                                                     $table
                                                         .append($('<tbody>')
                                                             .append(response.rows.map(function (row) {
+                                                                log(row);
                                                                 var parts = row.key.split('[');
-                                                                if (parts.length < 2) {
+                                                                /*if (parts.length < 2) {
                                                                     return;
-                                                                };
+                                                                }*/
                                                                 return $('<tr>')
                                                                     .append([
                                                                         // TODO: get field title (titles are all over GUI conf, which is a problem)

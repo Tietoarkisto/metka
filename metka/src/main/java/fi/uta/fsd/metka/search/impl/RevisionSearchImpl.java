@@ -26,6 +26,7 @@ import fi.uta.fsd.metkaSearch.results.RevisionResult;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -169,11 +170,12 @@ public class RevisionSearchImpl implements RevisionSearch {
             for(Language l : Language.values()) {
                 String langKey = root+"["+l.toValue()+"].";
                 for(RowChange rowChange : change.getRows().values()) {
-                    DataRow row = containerPair.getRight().getRowWithId(rowChange.getRowId()).getRight();
+                    DataRow row = containerPair.getRight().getRowWithIdFrom(l, rowChange.getRowId()).getRight();
                     if(row == null) {
                         continue;
                     }
-                    String rowKey = root + rowChange.getRowId();
+                    DataRow origRow = (originalContainer != null) ? originalContainer.getRowWithId(row.getRowId()).getRight() : null;
+                    String rowKey = langKey + rowChange.getRowId();
                     if(changes.containsKey(rowKey)) {
                         if(row.getRemoved()) {
                             changes.get(rowKey).setRight(" ");
@@ -181,11 +183,10 @@ public class RevisionSearchImpl implements RevisionSearch {
                             changes.get(rowKey).setRight(row.getRowId().toString());
                         }
                     } else {
-                        if(!row.getRemoved()) {
-                            changes.put(rowKey, new MutablePair<String, String>(" ", row.getRowId().toString()));
+                        if(!row.getRemoved() && origRow == null) {
+                            changes.put(rowKey, new MutablePair<>(" ", row.getRowId().toString()));
                         }
                     }
-                    DataRow origRow = (originalContainer != null) ? originalContainer.getRowWithId(row.getRowId()).getRight() : null;
                     gatherChanges(rowKey, rowChange.getChanges(), row, changes, origRow);
                 }
             }
@@ -262,6 +263,9 @@ public class RevisionSearchImpl implements RevisionSearch {
         } catch(QueryNodeException qne) {
             // Couldn't form query command
             logger.error("Exception while performing basic series search:", qne);
+            return new ImmutablePair<>(ReturnResult.SEARCH_FAILED, null);
+        } catch(ParseException pe) {
+            logger.error("Exception while performing basic series search:", pe);
             return new ImmutablePair<>(ReturnResult.SEARCH_FAILED, null);
         }
     }

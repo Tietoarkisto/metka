@@ -177,6 +177,7 @@
         "publicationtitle": {
             "key": "publicationtitle",
             "translatable": false,
+            "generalSearch": true,
             "type": "STRING"
         },
         "publicationrelpubl": {
@@ -204,12 +205,14 @@
             "key": "firstname",
             "translatable": false,
             "type": "STRING",
+            "generalSearch": true,
             "subfield": true
         },
         "lastname": {
             "key": "lastname",
             "translatable": false,
             "type": "STRING",
+            "generalSearch": true,
             "subfield": true
         },
         "publicationpids": {
@@ -259,6 +262,7 @@
 			"type": "REFERENCE",
 			"reference": "studytitle_ref",
 			"subfield": true,
+            "generalSearch": true,
 			"writable": false
 		},
         "series": {
@@ -277,6 +281,7 @@
         	"translatable": false,
         	"subfield": true,
         	"writable": false,
+            "generalSearch": true,
         	"reference": "seriesabbr_ref"
         },
         "seriesname": {

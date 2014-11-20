@@ -105,13 +105,13 @@ class DDIDataDescription extends DDISectionBase {
         }
         Long variablesStudy = valuePair.getRight().getValueFor(Language.DEFAULT).valueAsInteger();
 
-        Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> containerPair = getContainer(Fields.VARGROUPS, variables);
+        Pair<ReturnResult, Pair<ContainerDataField, Map<String, Change>>> containerPair = getContainer(Fields.VARGROUPS, variables);
         if(containerPair.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
             return containerPair.getLeft();
         }
 
         ContainerDataField vargroups = containerPair.getRight().getLeft();
-        ContainerChange vargroupsChange = containerPair.getRight().getRight();
+        Map<String, Change> changeMap = containerPair.getRight().getRight();
 
         // On DEFAULT language clear the vargroups container, on other languages just perform merge operations
         if(language == Language.DEFAULT && vargroups.hasRowsFor(Language.DEFAULT)) {
@@ -168,7 +168,7 @@ class DDIDataDescription extends DDISectionBase {
                 // Either we're in default language or we have a group that's not in default language,
                 // Create new group and add the variables to it
 
-                Pair<StatusCode, DataRow> rowPair = vargroups.insertNewDataRow(Language.DEFAULT, vargroupsChange);
+                Pair<StatusCode, DataRow> rowPair = vargroups.insertNewDataRow(Language.DEFAULT, changeMap);
                 if(rowPair.getLeft() != StatusCode.NEW_ROW) {
                     continue;
                 }
@@ -179,10 +179,10 @@ class DDIDataDescription extends DDISectionBase {
                     valueSet(vargroup, Fields.VARGROUPTITLE, getText(varGrp), Language.DEFAULT, variables.getChanges());
                 }
 
-                vargroupChange = vargroupsChange.get(vargroup.getRowId());
+                vargroupChange = ((ContainerChange)changeMap.get(Fields.VARGROUPS)).get(vargroup.getRowId());
                 if(vargroupChange == null) {
                     vargroupChange = new RowChange(vargroup.getRowId());
-                    vargroupsChange.put(vargroupChange);
+                    ((ContainerChange)changeMap.get(Fields.VARGROUPS)).put(vargroupChange);
                 }
 
                 String[] splits = getVarNames(varGrp);
@@ -203,9 +203,7 @@ class DDIDataDescription extends DDISectionBase {
             }
 
             // Setting vargroup texts is identical on all languages
-            if(vargroup != null) {
-                setVarGroupTexts(variables, varGrp, vargroup, vargroupsChange, varGrp.getTxtArray());
-            }
+            setVarGroupTexts(variables, varGrp, vargroup, changeMap, varGrp.getTxtArray());
         }
 
         return ReturnResult.OPERATION_SUCCESSFUL;
@@ -228,12 +226,18 @@ class DDIDataDescription extends DDISectionBase {
         return splits;
     }
 
-    private void setVarGroupTexts(RevisionData variables, VarGrpType varGrp, DataRow row, ContainerChange vargroupsChange, TxtType[] txtArray) {
+    private void setVarGroupTexts(RevisionData variables, VarGrpType varGrp, DataRow row, Map<String, Change> changeMap, TxtType[] txtArray) {
         if(txtArray != null && txtArray.length > 0) {
-            Pair<ReturnResult, Pair<ContainerDataField, ContainerChange>> varTxtPair = getContainer(Fields.VARTEXTS, row, variables.getChanges());
+            Pair<ReturnResult, Pair<ContainerDataField, Map<String, Change>>> varTxtPair = getContainer(Fields.VARTEXTS, row, variables.getChanges());
             if(varTxtPair.getLeft() == ReturnResult.OPERATION_SUCCESSFUL) {
                 ContainerDataField vartexts = varTxtPair.getRight().getLeft();
-                ContainerChange vartextsChange = varTxtPair.getRight().getRight();
+                Map<String, Change> vartextsChange = varTxtPair.getRight().getRight();
+
+                ContainerChange vargroupsChange = (ContainerChange)changeMap.get(Fields.VARGROUPS);
+                if(vargroupsChange == null) {
+                    vargroupsChange = new ContainerChange(Fields.VARGROUPS);
+                    changeMap.put(vargroupsChange.getKey(), vargroupsChange);
+                }
 
                 RowChange change = vargroupsChange.get(row.getRowId());
                 if(change == null) {
@@ -251,10 +255,10 @@ class DDIDataDescription extends DDISectionBase {
                     if(rowPair.getLeft() != StatusCode.NEW_ROW) {
                         continue;
                     }
-                    RowChange txtRowChange = vartextsChange.get(rowPair.getRight().getRowId());
+                    RowChange txtRowChange = ((ContainerChange)vartextsChange.get(Fields.VARTEXTS)).get(rowPair.getRight().getRowId());
                     if(txtRowChange == null) {
                         txtRowChange = new RowChange(rowPair.getRight().getRowId());
-                        vartextsChange.put(txtRowChange);
+                        ((ContainerChange)vartextsChange.get(Fields.VARTEXTS)).put(txtRowChange);
                     }
                     valueSet(rowPair.getRight(), Fields.VARTEXT, getText(txt), language, txtRowChange.getChanges());
                 }

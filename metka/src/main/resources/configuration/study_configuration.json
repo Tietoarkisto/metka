@@ -909,6 +909,7 @@
 			"translatable": false,
 			"immutable": true,
 			"type": "SELECTION",
+            "generalSearch": true,
 			"selectionList": "datakind_list"
 		},
 		"dataversions": {
@@ -1110,6 +1111,7 @@
 			"key": "series",
 			"translatable": false,
 			"type": "SELECTION",
+            "generalSearch": true,
 			"selectionList": "series_list"
 		},
 		"submissionid": {
@@ -1122,6 +1124,7 @@
 		"title": {
 			"key": "title",
 			"translatable": true,
+            "generalSearch": true,
 			"type": "STRING"
 		},
 		"varpublic": {
@@ -1221,6 +1224,7 @@
 			"key": "alttitle",
 			"translatable": true,
 			"type": "STRING",
+            "generalSearch": true,
 			"subfield": true
 		},
 		"partitles": {
@@ -1284,6 +1288,7 @@
 			"translatable": false,
 			"type": "STRING",
 			"selectionList": "keyword_list",
+            "generalSearch": true,
 			"subfield": true
 		},
 		"keywordnovocab": {
@@ -1292,6 +1297,7 @@
 			"translatable": true,
 			"type": "STRING",
 			"writable": false,
+            "generalSearch": true,
 			"subfield": true
 		},
 		"keyworduri": {
@@ -1333,6 +1339,7 @@
 			"translatable": false,
 			"type": "SELECTION",
 			"selectionList": "topic_list",
+            "generalSearch": true,
 			"subfield": true
 		},
 		"topicuri": {
@@ -1348,6 +1355,7 @@
             "key": "abstract",
             "translatable": true,
             "type": "RICHTEXT",
+            "generalSearch": true,
 			"exact": false
 		},
 		"timeperiods": {
@@ -1364,6 +1372,7 @@
 			"key": "timeperiod",
 			"translatable": false,
 			"type": "DATE",
+            "generalSearch": true,
 			"subfield": true
 		},
 		"timeperiodtext": {
@@ -1371,6 +1380,7 @@
 			"translatable": false,
 			"type": "STRING",
 			"subfield": true,
+            "generalSearch": true,
 			"exact": false
 		},
 		"timeperiodevent": {
@@ -1394,6 +1404,7 @@
 			"key": "country",
 			"translatable": true,
 			"type": "STRING",
+            "generalSearch": true,
 			"subfield": true
 		},
 		"countryabbr": {
@@ -1437,6 +1448,7 @@
 			"key": "geogcover",
 			"translatable": true,
 			"type": "STRING",
+            "generalSearch": true,
 			"subfield": true
 		},
 		"colltime": {
@@ -1502,6 +1514,7 @@
 			"translatable": false,
 			"type": "SELECTION",
 			"selectionList": "analysisunit_list",
+            "generalSearch": true,
 			"subfield": true
 		},
 		"analysisunitother": {
@@ -1510,6 +1523,7 @@
 			"type": "STRING",
 			"writable": false,
 			"subfield": true,
+            "generalSearch": true,
 			"exact": false
 		},
 		"analysisunituri": {
@@ -1715,6 +1729,7 @@
 			"translatable": false,
 			"type": "SELECTION",
 			"selectionList": "collmode_list",
+            "generalSearch": true,
 			"subfield": true
 		},
 		"collmodeother": {
@@ -1722,6 +1737,7 @@
 			"translatable": true,
 			"type": "STRING",
 			"subfield": true,
+            "generalSearch": true,
 			"exact": false
 		},
 		"collmodeuri": {
@@ -1990,6 +2006,7 @@
         	"type": "SELECTION",
         	"translatable": false,
         	"subfield": true,
+            "generalSearch": true,
         	"selectionList": "organisation_list"
         },
         "organisationabbr": {
@@ -2004,6 +2021,7 @@
         	"type": "SELECTION",
         	"translatable": false,
         	"subfield": true,
+            "generalSearch": true,
         	"selectionList": "agency_list"
         },
         "agencyabbr": {
@@ -2018,6 +2036,7 @@
         	"type": "SELECTION",
         	"translatable": false,
         	"subfield": true,
+            "generalSearch": true,
         	"selectionList": "section_list"
         },
         "sectionabbr": {
@@ -2107,6 +2126,7 @@
         	"key": "author",
         	"type": "STRING",
         	"translatable": false,
+            "generalSearch": true,
         	"subfield": true
         },
         "otherauthorgroup": {

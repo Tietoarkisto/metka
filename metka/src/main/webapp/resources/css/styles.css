@@ -133,6 +133,12 @@ textarea {
     animation: progress-bar-stripes 2s linear infinite;
 }
 
+@media (min-width: 1150px) {
+    .modal-lg {
+        width: 1100px;
+    }
+}
+
 /* Metka code */
 body {
     height: 100%;

@@ -24,6 +24,7 @@ import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
 import org.apache.lucene.document.*;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.apache.lucene.queryparser.flexible.standard.StandardQueryParser;
 import org.apache.lucene.queryparser.flexible.standard.config.NumericConfig;
@@ -153,7 +154,7 @@ public class SpringLuceneTests {
     }
 
     @Test
-    public void expertSearchTest() throws IOException, QueryNodeException {
+    public void expertSearchTest() throws IOException, QueryNodeException, ParseException {
         SearchCommand<RevisionResult> command = ExpertRevisionSearchCommand.build("variables.variables.valuelabels.label:nainen", configs);
         ResultList<RevisionResult> results = searcher.executeSearch(command);
         System.err.println("Results: "+results.getResults().size());
