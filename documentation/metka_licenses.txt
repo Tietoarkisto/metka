@@ -38,7 +38,7 @@ Lucene
 Apache 2
 
 Voikko
-GPL 3 or GPL 2, inconclusive
+LGPL 2.1
 
 XMLBeans
 Apache 2
