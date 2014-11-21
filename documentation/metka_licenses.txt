@@ -43,4 +43,7 @@ LGPL 2.1
 XMLBeans
 Apache 2
 
+SPSSIO
+GPL 3
+
 All basic Java functionality provided by Oracle is licensed under Oracles own license
