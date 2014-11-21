@@ -1,0 +1,46 @@
+Spring framework
+Apache 2
+
+Hibernate
+LGPL 2.1
+
+SLF4J
+MIT
+
+LOG4J
+Apache 2
+
+JUnit
+Eclipse Public License
+
+Commons
+Apache 2
+
+Postgresql jdbc
+BSD
+
+Tomcat 7
+Apache 2
+
+Jackson
+Apache 2
+
+Woodstox
+Apache 2
+
+Joda Time
+Apache 2
+
+RabbitMQ
+GPL 2
+
+Lucene
+Apache 2
+
+Voikko
+GPL 3 or GPL 2, inconclusive
+
+XMLBeans
+Apache 2
+
+All basic Java functionality provided by Oracle is licensed under Oracles own license
