@@ -47,3 +47,34 @@ SPSSIO
 GPL 3
 
 All basic Java functionality provided by Oracle is licensed under Oracles own license
+
+
+CSS/JS:
+
+Bootstrap
+MIT
+
+Bootstrap-datetimepicker
+MIT
+
+Font Awesome
+Font: SIL OFL 1.1
+CSS: MIT License
+
+jQuery
+MIT
+
+eligrey/FileSaver.js
+MIT
+
+JSON Editor
+MIT
+
+Moment.js
+MIT
+
+RequireJS
+MIT
+
+Summernote
+MIT
