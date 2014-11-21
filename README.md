@@ -455,7 +455,3 @@ Kehityssykli on melko lyhyt:
 [styles.css]:               ../../blob/master/metka/src/main/webapp/resources/css/styles.css
 [guide]:                    ../../blob/master/metka/src/main/webapp/resources/html/guide/guide.html
 [custom]:                   ../../blob/master/metka/src/main/webapp/resources/js/modules/custom
-
-# Konfiguraatiotutoriaali
-
-**TODO: Tähän konfiguraatiotutoriaali**
