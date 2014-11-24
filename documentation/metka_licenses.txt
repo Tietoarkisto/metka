@@ -78,27 +78,3 @@ MIT
 
 Summernote
 MIT
-
-
-Metka theme:
-
-jQuery, jQuery UI
-MIT
-
-jQuery datatables
-GPL v2 / BSD
-
-fancybox
-Creative Commons Attribution-NonCommercial 3.0
-
-jQuery fancytree
-MIT
-
-jQuery fastLiveFilter
-BSD
-
-jQuery jsTree
-MIT
-
-jQuery tablesorter
-MIT
