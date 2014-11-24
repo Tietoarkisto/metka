@@ -223,7 +223,11 @@ define(function (require) {
                                             }]
                                         };
                                         require('./../../modal')({
-                                            title: 'Lisää ryhmä',
+                                            //title: 'Lisää ryhmä',
+                                            type: "ADD",
+                                            dialogTitle: {
+                                                ADD: "Lisää ryhmä"
+                                            },
                                             body: require('./../../container').call($('<div>'), containerOptions),
                                             buttons: [{
                                                 "&title": {

@@ -36,7 +36,7 @@ define(function (require) {
                             if (response.result === 'VIEW_SUCCESSFUL') {
                             }
                             var modalOptions = $.extend(response.gui, {
-                                title: 'Muokkaa tiedostoa',
+                                //title: 'Muokkaa tiedostoa',
                                 data: response.transferData,
                                 dataConf: $.extend(true, response.configuration, {
                                     "fields": {
@@ -95,6 +95,8 @@ define(function (require) {
                                         "title": "Kommentti"
                                     }
                                 },
+                                dialogTitle: options.field.dialogTitle,
+                                dialogTitles: options.dialogTitles,
                                 content: [
                                     {
                                         "type": "COLUMN",
@@ -302,7 +304,9 @@ define(function (require) {
                                                                     success: function (response) {
                                                                         if (response.result === 'VIEW_SUCCESSFUL') {
                                                                             $.extend(modalOptions.data, response.transferData);
-                                                                            $row.trigger('refresh.metka')
+                                                                            modalOptions.readOnly = require('./../../isDataReadOnly')(modalOptions.data, modalOptions.isRelatedStudyDraftForCurrentUser);
+                                                                            modalOptions.type = modalOptions.readOnly ? 'VIEW' : 'MODIFY';
+                                                                            $row.trigger('refresh.metka');
                                                                         }
                                                                     }
                                                                 })
@@ -415,7 +419,8 @@ define(function (require) {
                             });
                             require('../../isRelatedStudyDraftForCurrentUser')(modalOptions, function (isDraft) {
                                 modalOptions.isRelatedStudyDraftForCurrentUser = isDraft;
-                                modalOptions.readOnly = isDraft && require('./../../isDataReadOnly')(response.transferData);
+                                modalOptions.readOnly = require('./../../isDataReadOnly')(response.transferData, isDraft);
+                                modalOptions.type = modalOptions.readOnly ? 'VIEW' : 'MODIFY';
                                 require('./../../modal')(modalOptions);
                             });
                         }

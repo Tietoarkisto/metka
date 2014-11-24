@@ -54,11 +54,11 @@ define(function (require) {
                 key: {
                     id: "",
                     no: ""
-                },
+                },/*
                 state: {
                     uiState: "DRAFT",
                     handler: MetkaJS.User.userName
-                },
+                },*/
                 fields: {
                     searchApproved: {
                         type: 'VALUE',

@@ -10,71 +10,24 @@ define(function (require) {
      * @return {undefined} No return value.
      */
     return function (options, lang) {
-        var columns = [];
-
         var getPropertyNS = require('./utils/getPropertyNS');
-        var key = options.field.key;
-        var fieldOptions = getPropertyNS(options, 'dataConf.fields', key) || {};
-        var $thead = $('<thead>');
-        var $tbody = $('<tbody>')
-            .on('click', 'tr', function () {
-                var $tr = $(this);
 
-                // if reference container without custom onClick
-                if (fieldOptions.type === 'REFERENCECONTAINER' && !options.field.onClick) {
-                    // TODO: visualize new window behaviour. place this in row commands: <span class="glyphicon glyphicon-new-window"></span>
-
-                    // open reference target in new window
-                    var ref = options.dataConf.references[fieldOptions.reference];
-                    if (ref.type === 'REVISIONABLE') {
-                        window.open(require('./url')('view', {
-                            PAGE: ref.target,
-                            id: $tr.data('transferRow').value,
-                            no: ''
-                        }));
-                    }
-                    return;
-                }
-
-                (options.field.onClick || rowDialog('modify', 'ok'))
-                    .call(this, $tr.data('transferRow'), function (transferRow) {
-                        //return $tr.replaceWith(tr(transferRow));
-                        var $trNew = tr(transferRow);
-                        $tr.replaceWith($trNew);
-                        if (options.field.onRowChange) {
-                            options.field.onRowChange(options, $trNew, transferRow);
-                        }
-                        $tbody.trigger('rowChanged', [$trNew, columns]);
-                    });
-            });
-        var EMPTY = '-';
-        var rowCommands = [];
-
-        function addRowCommand(className, html, click) {
+        function addRowCommand($container, className, html, click) {
             rowCommands.push({
                 className: className,
                 html: html
             });
-            $tbody
+            $container
                 .on('click', 'tr button.' + className, click);
         }
 
-        function fieldTitle(field) {
-            return field;
-            /*return 'fieldTitles.{field}.title'.supplant({
-                field: field
-            });*/
+        function getTitle(fieldKey) {
+            return MetkaJS.L10N.localize(options.fieldTitles[fieldKey], "title");
         }
 
-        function getTitle(key) {
-            return (options.fieldTitles && options.fieldTitles[key])
-                ? MetkaJS.L10N.localize(options.fieldTitles[key], "title")
-                : MetkaJS.L10N.get(key);
-        }
-
-        function th(key) {
+        function th(text) {
             return $('<th>')
-                .text(getTitle(key));
+                .text(text);
         }
 
         function tableError(errors) {
@@ -90,6 +43,7 @@ define(function (require) {
         }
 
         function tr(transferRow) {
+            var key = options.field.key;
             var $tr = $('<tr>');
 
             tableError.call($tr, transferRow.errors);
@@ -100,7 +54,7 @@ define(function (require) {
                     var $td = $('<td>')
                         .toggleClass('hiddenByTranslationState', $thead.children('tr').children().eq(i).hasClass('hiddenByTranslationState'));
 
-                    if (fieldOptions.type === 'REFERENCECONTAINER') {
+                    if (options.fieldOptions.type === 'REFERENCECONTAINER') {
                         var fieldValues = {};
                         fieldValues[key] = transferRow.value;
                         require('./server')('options', {
@@ -223,11 +177,11 @@ define(function (require) {
             return $tr;
         }
 
-        function appendRow(transferRow) {
+        function appendRow($container, transferRow, columnList) {
             function append() {
                 var $tr = tr(transferRow);
-                $tbody.append($tr);
-                $tbody.trigger('rowAppended', [$tr, columns]);
+                $container.append($tr);
+                $container.trigger('rowAppended', [$tr, columnList]);
                 return $tr;
             }
 
@@ -236,161 +190,69 @@ define(function (require) {
             }
         }
 
-        function addRow(transferRow) {
+        function addRow($container, transferRow, columnList) {
             require('./data')(options).appendByLang(lang, transferRow);
-            return appendRow(transferRow);
+            return appendRow($container, transferRow, columnList);
         }
 
-        function addRowFromDataObject(data) {
-            addRow(require('./map/object/transferRow')(data, lang));
+        function addRowFromDataObject($container, data, columnList) {
+            addRow($container, require('./map/object/transferRow')(data, lang), columnList);
         }
 
-        // TODO: Add clear container function
+        var columns = [];
 
-        // list field keys, which are configured as freeTextKeys
-        var subfields = fieldOptions.subfields || [];
-        var freeTextKeys = [];
-        if (options.dataConf && options.dataConf.selectionLists) {
-            $.each(options.dataConf.selectionLists, function (key, list) {
-                if (list.freeTextKey) {
-                    freeTextKeys.push(list.freeTextKey);
+        //var key = options.field.key;
+
+        var rowDialog = require('./defaultContainerRowDialog')(options, lang);
+
+        var $thead = $('<thead>');
+        var $tbody = $('<tbody>')
+            .on('click', 'tr', function () {
+                var $tr = $(this);
+
+                // if reference container without custom onClick
+                if (options.fieldOptions.type === 'REFERENCECONTAINER' && !options.field.onClick) {
+                    // TODO: visualize new window behaviour. place this in row commands: <span class="glyphicon glyphicon-new-window"></span>
+
+                    // open reference target in new window
+                    var ref = options.dataConf.references[options.fieldOptions.reference];
+                    if (ref.type === 'REVISIONABLE') {
+                        window.open(require('./url')('view', {
+                            PAGE: ref.target,
+                            id: $tr.data('transferRow').value,
+                            no: ''
+                        }));
+                    }
+                    return;
                 }
-            });
-        }
-
-        if (fieldOptions.type === 'REFERENCECONTAINER') {
-            // FIXME: Merge shared code with containerRowDialog.
-            var refDialog = function (options, lang, key) {
-                var PAGE = require('./../metka').PAGE;
-                var fieldOptions = getPropertyNS(options, 'dataConf.fields', key) || {};
-                return function (title, button) {
-                    return function (transferRow, onClose) {
-                        // copy data, so if dialog is dismissed, original data won't change
-                        var transferRowCopy = $.extend(true, {}, transferRow);
-
-                        var modalOptions = {
-                            title: MetkaJS.L10N.get(['dialog', PAGE, key, title].join('.')),
-                            data: transferRowCopy,
-                            dataConf: options.dataConf,
-                            $events: $({}),
-                            defaultLang: fieldOptions.translatable ? lang : options.defaultLang,
-                            fieldTitles: options.fieldTitles,
-                            content: [
-                                {
-                                    type: 'COLUMN',
-                                    columns: 1,
-                                    rows: (function () {
-                                        var field = key;
-                                        var dataConfig = {
-                                            "key": key,
-                                            "translatable": false,
-                                            "type": "SELECTION",
-                                            "selectionList": 'referenceContainerRowDialog_list'
-                                        };
-                                        return [{
-                                            type: 'ROW',
-                                            cells: [$.extend({}, dataConfig, {
-                                                type: 'CELL',
-                                                //title: MetkaJS.L10N.get(fieldTitle(field)),
-                                                title: getTitle(field),
-                                                field: dataConfig
-                                            })]
-                                        }];
-                                    })()
-                                }
-                            ],
-                            buttons: [
-                                {
-                                    create: function () {
-                                        this
-                                            .text(MetkaJS.L10N.get('general.buttons.' + button))
-                                            .click(function () {
-                                                transferRow.value = transferRowCopy.fields[key].values[lang].current;
-                                                onClose(transferRow);
-                                            });
-                                    }
-                                },
-                                {
-                                    type: 'CANCEL'
-                                }
-                            ]
-                        };
-
-                        // if not translatable container and has translatable subfields, show language selector
-                        if (!fieldOptions.translatable && require('./containerHasTranslatableSubfields')(options)) {
-                            modalOptions.translatableCurrentLang = $('input[name="translation-lang"]:checked').val() || MetkaJS.User.role.defaultLanguage.toUpperCase();
+                (options.field.onClick || rowDialog('MODIFY', 'ok'))
+                    .call(this, $tr.data('transferRow'), function (transferRow) {
+                        //return $tr.replaceWith(tr(transferRow));
+                        var $trNew = tr(transferRow);
+                        $tr.replaceWith($trNew);
+                        if (options.field.onRowChange) {
+                            options.field.onRowChange(options, $trNew, transferRow);
                         }
-
-                        var $modal = require('./modal')(modalOptions);
-
-                    };
-                }
-            };
-            var fields = {};
-            fields[key] = {
-                "key": key,
-                "translatable": false,
-                "type": "SELECTION",
-                "selectionList": "referenceContainerRowDialog_list"
-            };
-            var references = {};
-            references[fieldOptions.reference] = $.extend(true, {}, options.dataConf.references[fieldOptions.reference], {
-                // TODO: add some type of 'ignoreSelf' parameter so that current revision is not included in results
-                approvedOnly: true,
-                ignoreRemoved: true
+                        $tbody.trigger('rowChanged', [$trNew, columns]);
+                    });
             });
-            var rowDialog = refDialog({
-                defaultLang: options.defaultLang,
-                dataConf: {
-                    key: options.dataConf.key,
-                    selectionLists: {
-                        referenceContainerRowDialog_list: {
-                            "type": "REFERENCE",
-                            // TODO: somehow disable OK button if nothing is selected
-                            "reference": fieldOptions.reference
-                        }
-                    },
-                    references: references,
-                    fields: fields
-                },
-                field: {
-                    key: key
-                }
-            }, lang, key);
-        } else {
-            var rowDialog = require('./containerRowDialog')(options, lang, key, function () {
-                return subfields.filter(function (field) {
-                    // filter free text fields
-                    return freeTextKeys.indexOf(field) === -1;
-                }).map(function (field) {
-                    var dataConfig = $.extend(true, {}, options.dataConf.fields[field]);
-                    return {
-                        type: 'ROW',
-                        cells: [$.extend(
-                            true,
-                            {
-                                type: 'CELL',
-                                translatable: fieldOptions.translatable ? false : dataConfig.translatable,
-                                //title: MetkaJS.L10N.get(fieldTitle(field)),
-                                //title: getTitle(field),
-                                field: {
-                                    key: field
-                                }
-                            },
-                            options.extraDialogConfiguration && options.extraDialogConfiguration[field]
-                        )]
-                    };
-                });
-            });
-        }
+
         // TODO: Should probably be on container options instead
-        this.data('addRowFromDataObject', addRowFromDataObject);
-        this.data('addRow', addRow);
+        this.data('addRowFromDataObject', function(data) {
+            addRowFromDataObject($tbody, data, columns);
+        });
+        this.data('addRow', function(transferRow) {
+            return addRow($tbody, transferRow, columns);
+        });
+
+        var EMPTY = '-';
+        var rowCommands = [];
+        // TODO: Add clear container function
 
         var $panelHeading = $('<div class="panel-heading">')
             .text(MetkaJS.L10N.localize(options, 'title'));
 
-        if (fieldOptions.translatable) {
+        if (options.fieldOptions.translatable) {
             require('./langLabel')($panelHeading, lang);
         }
 
@@ -401,36 +263,31 @@ define(function (require) {
                 .me(function () {
                     $thead
                         .append($('<tr>')
-                            /*.append(function () {
-                             if (options.field.showReferenceKey ??? getPropertyNS(options, 'dataConf.fields', key, 'showReferenceKey')) {
-                             var target = options.dataConf.references[options.dataConf.fields[key].reference].target;
-                             }
-                             })*/
                             .append(function () {
                                 var response = [];
                                 (options.field.columnFields || [])
-                                    .forEach(function (field) {
+                                    .forEach(function (fieldKey) {
                                         // if container is not translatable && subfield is translatable, add columns
-                                        if (!fieldOptions.translatable && getPropertyNS(options, 'dataConf.fields', field, 'translatable')) {
+                                        if (!options.fieldOptions.translatable && getPropertyNS(options, 'dataConf.fields', fieldKey, 'translatable')) {
                                             ['DEFAULT', 'EN', 'SV'].forEach(function (lang) {
-                                                columns.push(field);
-                                                response.push((require('./langLabel')(th(fieldTitle(field)).data('lang', lang), lang)));
+                                                columns.push(fieldKey);
+                                                response.push((require('./langLabel')(th(getTitle(fieldKey)).data('lang', lang), lang)));
                                             });
                                         } else {
-                                            columns.push(field);
-                                            response.push(th(fieldTitle(field)));
+                                            columns.push(fieldKey);
+                                            response.push(th(getTitle(fieldKey)));
                                         }
                                     });
                                 return response;
                             })
                             .append(function () {
                                 if (options.field.showSaveInfo) {
-                                    return [th('general.saveInfo.savedAt'), th('general.saveInfo.savedBy')];
+                                    return [th(MetkaJS.L10N.get('general.saveInfo.savedAt')), th(MetkaJS.L10N.get('general.saveInfo.savedBy'))];
                                 }
                             })
                             .append(function () {
                                 function addMoveButton(direction, sibling, insert) {
-                                    addRowCommand(direction, '<i class="glyphicon glyphicon-arrow-' + direction + '"></i>', function () {
+                                    addRowCommand($tbody, direction, '<i class="glyphicon glyphicon-arrow-' + direction + '"></i>', function () {
                                         var $tr = $(this).closest('tr');
                                         var $toggleWithTr = $tr[sibling]();
                                         var toggleWithTransferRow = $toggleWithTr.data('transferRow');
@@ -445,13 +302,13 @@ define(function (require) {
                                         return false;
                                     });
                                 }
-                                if (!fieldOptions.fixedOrder && !require('./isFieldDisabled')(options, lang)) {
+                                if (!options.fieldOptions.fixedOrder && !require('./isFieldDisabled')(options, lang)) {
                                     addMoveButton('up', 'prev', 'before');
                                     addMoveButton('down', 'next', 'after');
                                 }
 
-                                if (require('./hasEveryPermission')(fieldOptions.removePermissions) && (!require('./isFieldDisabled')(options, lang) || options.field.onRemove)) {
-                                    addRowCommand('remove', '<i class="glyphicon glyphicon-remove"></i> ' + MetkaJS.L10N.get('general.buttons.remove'), function () {
+                                if (require('./hasEveryPermission')(options.fieldOptions.removePermissions) && (!require('./isFieldDisabled')(options, lang) || options.field.onRemove)) {
+                                    addRowCommand($tbody, 'remove', '<i class="glyphicon glyphicon-remove"></i> ' + MetkaJS.L10N.get('general.buttons.remove'), function () {
                                         var $tr = $(this).closest('tr');
                                         if (options.field.onRemove) {
                                             options.field.onRemove($tr);
@@ -463,7 +320,7 @@ define(function (require) {
                                     });
                                 }
                                 if (rowCommands.length) {
-                                    return $('<th>');
+                                    return th('');
                                 }
                             }));
                     if (!options.field.hasOwnProperty('displayHeader') || options.field.displayHeader) {
@@ -475,7 +332,9 @@ define(function (require) {
                         $tbody.empty();
                         var rows = require('./data')(options).getByLang(lang);
                         if (rows) {
-                            rows.forEach(appendRow);
+                            rows.forEach(function(transferRow) {
+                                appendRow($tbody, transferRow, columns)
+                            });
                         }
                     });
                     return $tbody;
@@ -488,9 +347,9 @@ define(function (require) {
                             this
                                 .text(MetkaJS.L10N.get('general.table.add'))
                                 .click(function () {
-                                    (options.field.onAdd || rowDialog('add', 'add'))
+                                    (options.field.onAdd || rowDialog('ADD', 'add'))
                                         .call(this, {}, function (transferRow) {
-                                            var $tr = addRow(transferRow);
+                                            var $tr = addRow($tbody, transferRow, columns);
                                             if (options.field.onRowChange) {
                                                 options.field.onRowChange(options, $tr, transferRow);
                                             }

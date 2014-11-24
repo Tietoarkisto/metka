@@ -51,7 +51,6 @@ define(function (require) {
                     .css('margin-left', (level * 16) + 'px');
 
                 if (node.children) {
-                    log(node);
                     var $remove = $('<span class="glyphicon">').addClass(remove).addClass("pull-right");
                     $a.append($remove);
                     $remove.click(function() {

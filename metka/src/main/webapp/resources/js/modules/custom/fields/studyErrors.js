@@ -154,6 +154,12 @@ define(function (require) {
                 'errorlanguage',
                 'errorlabel'
             ],
+            "dialogTitle": {
+                "key": "studyErrors",
+                "ADD": "Lisää aineistovirhe",
+                "MODIFY": "Muokkaa aineistovirhettä",
+                "VIEW": "Aineistovirhe"
+            },
             showSaveInfo: true,
             onRowChange: function (options, $tr, transferRow) {
                 var data = require('./../../map/transferRow/object')(transferRow, options.defaultLang);

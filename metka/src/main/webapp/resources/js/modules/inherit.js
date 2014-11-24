@@ -13,8 +13,8 @@ define(function (require) {
                 options.data = options.data || parentOptions.data;
                 options.dataConf = options.dataConf || parentOptions.dataConf;
                 options.defaultLang = options.defaultLang || parentOptions.defaultLang;
-                options.fieldTitles = parentOptions.fieldTitles;
-                options.dialogTitles = parentOptions.dialogTitles;
+                options.fieldTitles = (parentOptions.fieldTitles || {});
+                options.dialogTitles = (parentOptions.dialogTitles || {});
 
                 return childConstructor.call(this, options);
             };

@@ -3,23 +3,19 @@ define(function (require) {
 
     var getPropertyNS = require('./utils/getPropertyNS');
 
-    return function (options, lang, key, rows) {
+    return function (options, lang, rows) {
         var PAGE = require('./../metka').PAGE;
-        var fieldOptions = getPropertyNS(options, 'dataConf.fields', key) || {};
-        return function (title, button) {
+        return function (type, button) {
             return function (transferRow, onClose) {
                 // copy data, so if dialog is dismissed, original data won't change
                 var transferRowCopy = $.extend(true, {}, transferRow);
-
-                var containerOptions = $.extend(require('./isFieldDisabled')(options, lang) ? {
-                    title: 'Tiedot',
-                    readOnly: true,
+                var modalOptions = $.extend(require('./isFieldDisabled')(options, lang) ? {
+                    type: 'VIEW',
                     buttons: [{
                         type: 'DISMISS'
                     }]
                 } : {
-                    title: MetkaJS.L10N.get(['dialog', PAGE, key, title].join('.')),
-                    readOnly: false,
+                    type: type.toUpperCase(),
                     buttons: [
                         {
                             create: function () {
@@ -37,10 +33,12 @@ define(function (require) {
                     ]
                 }, {
                     data: transferRowCopy,
+                    containerKey: options.field.key,
                     dataConf: options.dataConf,
                     $events: $({}),
-                    defaultLang: fieldOptions.translatable ? lang : options.defaultLang,
+                    defaultLang: options.fieldOptions.translatable ? lang : options.defaultLang,
                     fieldTitles: options.fieldTitles,
+                    dialogTitle: options.field.dialogTitle,
                     dialogTitles: options.dialogTitles,
                     content: [
                         {
@@ -52,10 +50,10 @@ define(function (require) {
                 });
 
                 // if not translatable container and has translatable subfields, show language selector
-                if (!fieldOptions.translatable && require('./containerHasTranslatableSubfields')(options)) {
-                    containerOptions.translatableCurrentLang = $('input[name="translation-lang"]:checked').val() || MetkaJS.User.role.defaultLanguage.toUpperCase();
+                if (!options.fieldOptions.translatable && require('./containerHasTranslatableSubfields')(options)) {
+                    modalOptions.translatableCurrentLang = $('input[name="translation-lang"]:checked').val() || MetkaJS.User.role.defaultLanguage.toUpperCase();
                 }
-                var $modal = require('./modal')(containerOptions);
+                var $modal = require('./modal')(modalOptions);
 
             };
         }

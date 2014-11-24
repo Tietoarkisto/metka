@@ -32,11 +32,9 @@ define(function (require) {
         }
 
         function createInputWrapper(key) {
-            var fieldDataOptions;
-
             function createInput(lang) {
                 function onTranslationLangChange(e, currentLang) {
-                    if (fieldDataOptions.translatable) {
+                    if (options.fieldOptions.translatable) {
                         var isVisible = lang === options.defaultLang || lang === currentLang;
                         $langField.toggleClass('hiddenByTranslationState', !isVisible);
                         if (isVisible) {
@@ -68,7 +66,7 @@ define(function (require) {
                 }
 
                 var $langField = $('<div>');
-                var type = options.field.displayType || getPropertyNS(options, 'dataConf.fields', key, 'type');
+                var type = options.field.displayType || options.fieldOptions.type;
                 if (!type) {
                     log('field type is not set', key, options);
                 } else {
@@ -102,9 +100,8 @@ define(function (require) {
                 })(options) || options.defaultLang);
             }
 
-            fieldDataOptions = getPropertyNS(options, 'dataConf.fields', key) || {};
             createInput(options.defaultLang);
-            if (fieldDataOptions.translatable && (options.translatable !== false)) {
+            if (options.fieldOptions.translatable && (options.translatable !== false)) {
                 ['DEFAULT', 'EN', 'SV'].filter(function (lang) {
                     return lang !== options.defaultLang;
                 }).forEach(createInput);

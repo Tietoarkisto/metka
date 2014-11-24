@@ -4,7 +4,7 @@ define(function (require) {
     var getPropertyNS = require('./utils/getPropertyNS');
 
     return function (options, key) {
-        var listKey = getPropertyNS(options, 'dataConf.fields', key, 'selectionList');
+        var listKey = options.fieldOptions.selectionList;
         if (!listKey) {
             return;
         }

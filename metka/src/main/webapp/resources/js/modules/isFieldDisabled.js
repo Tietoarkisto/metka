@@ -9,11 +9,11 @@ define(function (require) {
         var key = options.field.key;
 
         // if data should be immutable and original value is set, field is disabled
-        if (require('./utils/getPropertyNS')(options, 'dataConf.fields', key, 'immutable') && typeof require('./utils/getPropertyNS')(options.data.fields, key, 'values', lang, 'original') === 'string') {
+        if (options.fieldOptions && options.fieldOptions.immutable && typeof require('./utils/getPropertyNS')(options.data.fields, key, 'values', lang, 'original') === 'string') {
             return true;
         }
 
-        var editable = require('./utils/getPropertyNS')(options, 'dataConf.fields', key, 'editable');
+        var editable = options.fieldOptions ? options.fieldOptions.editable : true;
         return options.readOnly || (typeof editable !== 'undefined' ? !editable : false) || (function r(parent) {
             if (parent) {
                 return parent.readOnly || r(parent.parent);

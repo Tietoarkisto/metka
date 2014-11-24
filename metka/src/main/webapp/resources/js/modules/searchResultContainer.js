@@ -1,6 +1,6 @@
 define(function (require) {
     'use strict';
-
+    var getPropertyNS = require('./utils/getPropertyNS');
     return function (url, requestConf, getResults, mapResult, fields, columnFields, getViewRequestOptions, options) {
         function trOnClick(transferRow) {
             var viewRequestOptions = {
@@ -74,7 +74,12 @@ define(function (require) {
                 var fieldOptions = $.extend(true, options, {
                     buttons: null,
                     dataConf: {
-                        fields: fields
+                        fields: $.extend(true, fields, {
+                            searchResults: {
+                                key: "searchResults",
+                                type: "CONTAINER"
+                            }
+                        })
                     },
                     data: {
                         fields: {
@@ -87,7 +92,6 @@ define(function (require) {
                     style: 'primary',
                     readOnly: true,
                     field: {
-                        displayType: 'CONTAINER',
                         key: "searchResults",
                         columnFields: columnFields,
                         onClick: trOnClick
@@ -107,6 +111,7 @@ define(function (require) {
 
                 $('.content').children('.searchResults').remove();
 
+                fieldOptions.fieldOptions = getPropertyNS(fieldOptions, "dataConf.fields", "searchResults");
                 var $field = require('./field').call($('<div>'), fieldOptions)
                     .addClass('searchResults');
 

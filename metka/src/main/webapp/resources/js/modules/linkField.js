@@ -2,13 +2,11 @@ define(function (require) {
     'use strict';
 
     return function ($field, options, lang) {
-        var key = options.field.key;
-        var dataConf = options.dataConf.fields[key];
 
-        if (dataConf.type === 'REFERENCE') {
+        if (options.fieldOptions.type === 'REFERENCE') {
 
-            var reference = require('./utils/getPropertyNS')(options, 'dataConf.references', dataConf.reference);
-            var getOptions = require('./reference').optionsByPath(key, options, lang, function (listOptions) {
+            var reference = require('./utils/getPropertyNS')(options, 'dataConf.references', options.fieldOptions.reference);
+            var getOptions = require('./reference').optionsByPath(options.field.key, options, lang, function (listOptions) {
                 var value = require('./data')(options).getByLang(lang);
                 var option = listOptions.find(function (option) {
                     return option.value === value;

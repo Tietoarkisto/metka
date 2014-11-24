@@ -2,9 +2,7 @@ define(function (require) {
     'use strict';
 
     return function (options) {
-        var key = 'vargroups';
-
-        var rowDialog = require('./../../containerRowDialog')(options, options.defaultLang, key, function () {
+        var rowDialog = require('./../../containerRowDialog')(options, options.defaultLang, function () {
             return [{
                 type: 'ROW',
                 cells: [{
@@ -24,7 +22,13 @@ define(function (require) {
                         "displayHeader": false,
                         "columnFields": [
                             "vargrouptext"
-                        ]
+                        ],
+                        "dialogTitle": {
+                            "key": "vargrouptexts",
+                            "ADD": "Lisää muuttujaryhmän teksti",
+                            "MODIFY": "Muokkaa muuttujaryhmän tekstiä",
+                            "VIEW": "Muuttujaryhmän teksti"
+                        }
                     },
                     "extraDialogConfiguration" : {
                         "vargrouptext": {

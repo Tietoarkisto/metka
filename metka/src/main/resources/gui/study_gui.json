@@ -503,6 +503,14 @@
             "title": "Herätteen saaja"
         }
     },
+    "dialogTitles": {
+    	"notes": {
+    		"key": "notes",
+    		"ADD": {
+				"default": "Lisää huomautus"
+			}
+    	}
+    },
 	"content": [
 		{
 			"type": "TAB",
@@ -692,7 +700,14 @@
                                         "showSaveInfo": true,
                                         "columnFields": [
                                             "note"
-                                        ]
+                                        ],
+                                        "dialogTitle": {
+                                        	"key": "notes",
+                                    		"MODIFY": {
+                                    			"default": "Muokkaa huomautusta"
+                                    		},
+                                    		"VIEW": "Huomautus"
+                                        }
                                     },
                                     "extraDialogConfiguration": {
                                     	"note": {
@@ -719,7 +734,13 @@
                                             "versionpro",
                                             "versionlabeldata",
                                             "versiontext"
-                                        ]
+                                        ],
+                                        "dialogTitle": {
+                                            "key": "dataversions",
+                                            "ADD": "Lisää datan versiotieto",
+                                            "MODIFY": "Muokkaa datan versiotietoa",
+                                            "VIEW": "Datan versiotieto"
+                                        }
                                     }
                                 }
                             ]
@@ -738,7 +759,13 @@
                                             "versionpro",
                                             "versionlabeldesc",
                                             "versiontext"
-                                        ]
+                                        ],
+                                        "dialogTitle": {
+                                            "key": "descversions",
+                                            "ADD": "Lisää kuvailun versiotieto",
+                                            "MODIFY": "Muokkaa kuvailun versiotietoa",
+                                            "VIEW": "Kuvailun versiotieto"
+                                        }
                                     }
                                 }
                             ]
@@ -754,7 +781,11 @@
                                         "columnFields": [
                                             "publicationid",
                                             "publicationtitle"
-                                        ]
+                                        ],
+			                            "dialogTitle": {
+			                            	"key": "publications",
+			                            	"ADD": "Lisää julkaisu"
+			                            }
                                     }
                                 }
                             ]
@@ -770,7 +801,11 @@
                                         "columnFields": [
                                             "relatedstudyid",
                                             "relatedstudytitle"
-                                        ]
+                                        ],
+			                            "dialogTitle": {
+			                            	"key": "relatedstudies",
+			                            	"ADD": "Lisää aineisto"
+			                            }
                                     }
                                 }
                             ]
@@ -969,7 +1004,13 @@
                                             "key": "alttitles",
                                             "columnFields": [
                                                 "alttitle"
-                                            ]
+                                            ],
+	                                        "dialogTitle": {
+	                                            "key": "alttitles",
+	                                            "ADD": "Lisää rinnakkainen nimi",
+	                                            "MODIFY": "Muokkaa rinnakkaista nimeä",
+	                                            "VIEW": "Rinnakkainen nimi"
+	                                        }
                                         }
                                     }
                                 ]
@@ -985,7 +1026,13 @@
                                             "columnFields": [
                                             	"partitle",
                                             	"partitlelang"
-                                            ]
+                                            ],
+	                                        "dialogTitle": {
+	                                            "key": "partitles",
+	                                            "ADD": "Lisää muunkielinen nimi",
+	                                            "MODIFY": "Muokkaa muunkielistä nimeä",
+	                                            "VIEW": "Aineiston muunkielinen nimi"
+	                                        }
                                         }
                                     }
                                 ]
@@ -1015,7 +1062,13 @@
                                                 	"organisation",
                                                 	"agency",
                                                 	"section"
-                                                ]
+                                                ],
+		                                        "dialogTitle": {
+		                                            "key": "authors",
+		                                            "ADD": "Lisää aineiston tekijä",
+		                                            "MODIFY": "Muokkaa aineiston tekijää",
+		                                            "VIEW": "Aineiston tekijä"
+		                                        }
                                             },
                                             "extraDialogConfiguration": {
                                             	"author": {
@@ -1061,7 +1114,13 @@
                                                 	"organisation",
                                                 	"agency",
                                                 	"section"
-                                                ]
+                                                ],
+		                                        "dialogTitle": {
+		                                            "key": "otherauthors",
+		                                            "ADD": "Lisää muu tekijä",
+		                                            "MODIFY": "Muokkaa muuta tekijää",
+		                                            "VIEW": "Aineiston muu tekijä"
+		                                        }
                                             },
                                             "extraDialogConfiguration": {
                                             	"author": {
@@ -1112,7 +1171,13 @@
 									        		"section",
 									        		"producerrole",
 									        		"projectnr"
-                                                ]
+                                                ],
+		                                        "dialogTitle": {
+		                                            "key": "producers",
+		                                            "ADD": "Lisää tuottaja",
+		                                            "MODIFY": "Muokkaa tuottajaa",
+		                                            "VIEW": "Aineiston tuottaja"
+		                                        }
                                             },
                                             "extraDialogConfiguration": {
                                                 "organisation": {
@@ -1184,7 +1249,13 @@
                                             	"keywordvocaburi",
                                             	"keyword",
                                             	"keyworduri"
-                                            ]
+                                            ],
+	                                        "dialogTitle": {
+	                                            "key": "keywords",
+	                                            "ADD": "Lisää asiasana",
+	                                            "MODIFY": "Muokkaa asiasanaa",
+	                                            "VIEW": "Aineiston sisällön asiasana"
+	                                        }
                                         }
                                     }
                                 ]
@@ -1200,7 +1271,13 @@
                                             	"topicvocaburi",
                                             	"topic",
                                             	"topicuri"
-                                            ]
+                                            ],
+	                                        "dialogTitle": {
+	                                            "key": "topics",
+	                                            "ADD": "Lisää tieteenala",
+	                                            "MODIFY": "Muokkaa tieteenalaa",
+	                                            "VIEW": "Aineiston tieteenala"
+	                                        }
                                         }
                                     }
                                 ]
@@ -1251,7 +1328,13 @@
                                             	"timeperiod",
                                             	"timeperiodtext",
                                             	"timeperiodevent"
-                                            ]
+                                            ],
+	                                        "dialogTitle": {
+	                                            "key": "timeperiods",
+	                                            "ADD": "Lisää ajallinen kattavuus",
+	                                            "MODIFY": "Muokkaa ajallista kattavuutta",
+	                                            "VIEW": "Aineiston ajallinen kattavuus"
+	                                        }
                                         }
                                     }
                                 ]
@@ -1266,7 +1349,13 @@
                                             "columnFields": [
                                             	"countryabbr",
                                             	"country"
-                                            ]
+                                            ],
+	                                        "dialogTitle": {
+	                                            "key": "countries",
+	                                            "ADD": "Lisää maa",
+	                                            "MODIFY": "Muokkaa maata",
+	                                            "VIEW": "Maa"
+	                                        }
                                         }
                                     }
                                 ]
@@ -1281,7 +1370,13 @@
                                             "columnFields": [
                                             	"universe",
                                             	"universeclusion"
-                                            ]
+                                            ],
+	                                        "dialogTitle": {
+	                                            "key": "universes",
+	                                            "ADD": "Lisää perusjoukko",
+	                                            "MODIFY": "Muokkaa perusjoukkoa",
+	                                            "VIEW": "Perusjoukko"
+	                                        }
                                         }
                                     }
                                 ]
@@ -1296,7 +1391,13 @@
                                             "displayHeader": false,
                                             "columnFields": [
                                             	"geogcover"
-                                            ]
+                                            ],
+	                                        "dialogTitle": {
+	                                            "key": "geogcovers",
+	                                            "ADD": "Lisää maantieteellinen alue",
+	                                            "MODIFY": "Muokkaa maantieteellistä aluetta",
+	                                            "VIEW": "Maantieteellinen alue"
+	                                        }
                                         }
                                     }
                                 ]
@@ -1323,7 +1424,13 @@
                                             	"colldate",
                                             	"colldatetext",
                                             	"colldateevent"
-                                            ]
+                                            ],
+	                                        "dialogTitle": {
+	                                            "key": "colltime",
+	                                            "ADD": "Lisää keräyksen ajankohta",
+	                                            "MODIFY": "Muokkaa keräyksen ajankohtaa",
+	                                            "VIEW": "Keräyksen ajankohta"
+	                                        }
                                         }
                                     }
                                 ]
@@ -1337,11 +1444,17 @@
                                             "key": "collectors",
                                             "columnFields": [
                                             	"authortype",
-                                            	"collector",
+                                            	"author",
                                             	"organisation",
                                             	"agency",
                                             	"section"
-                                            ]
+                                            ],
+	                                        "dialogTitle": {
+	                                            "key": "collectors",
+	                                            "ADD": "Lisää aineiston kerääjä",
+	                                            "MODIFY": "Muokkaa aineiston kerääjää",
+	                                            "VIEW": "Aineiston kerääjä"
+	                                        }
                                         },
                                         "extraDialogConfiguration": {
                                         	"author": {
@@ -1383,7 +1496,13 @@
                                             	"analysisunitvocaburi",
                                             	"analysisunit",
                                             	"analysisunituri"
-                                            ]
+                                            ],
+	                                        "dialogTitle": {
+	                                            "key": "analysis",
+	                                            "ADD": "Lisää havaintoyksikkö",
+	                                            "MODIFY": "Muokkaa havaintoyksikköä",
+	                                            "VIEW": "Havaintoyksikkö"
+	                                        }
                                         }
                                     }
                                 ]
@@ -1400,7 +1519,13 @@
                                             	"timemethodvocaburi",
                                             	"timemethod",
                                             	"timemethoduri"
-                                            ]
+                                            ],
+	                                        "dialogTitle": {
+	                                            "key": "timemethods",
+	                                            "ADD": "Lisää aikaulottuvuus",
+	                                            "MODIFY": "Muokkaa aikaulottuvuutta",
+	                                            "VIEW": "Tutkimuksen aikaulottuvuus"
+	                                        }
                                         }
                                     }
                                 ]
@@ -1416,7 +1541,13 @@
                                             	"collmodevocaburi",
                                             	"collmode",
                                             	"collmodeuri"
-                                            ]
+                                            ],
+	                                        "dialogTitle": {
+	                                            "key": "collmodes",
+	                                            "ADD": "Lisää keruumenetelmä",
+	                                            "MODIFY": "Muokkaa keruumenetelmää",
+	                                            "VIEW": "Aineiston keruumenetelmä"
+	                                        }
                                         }
                                     }
                                 ]
@@ -1433,7 +1564,13 @@
                                             	"instrumentvocaburi",
                                             	"instrument",
                                             	"instrumenturi"
-                                            ]
+                                            ],
+	                                        "dialogTitle": {
+	                                            "key": "instruments",
+	                                            "ADD": "Lisää keruuväline",
+	                                            "MODIFY": "Muokkaa keruuvälinettä",
+	                                            "VIEW": "Keruuväline"
+	                                        }
                                         }
                                     }
                                 ]
@@ -1449,7 +1586,13 @@
                                             	"sampprocvocaburi",
                                             	"sampproc",
                                             	"sampprocuri"
-                                            ]
+                                            ],
+	                                        "dialogTitle": {
+	                                            "key": "sampprocs",
+	                                            "ADD": "Lisää otantamenetelmä",
+	                                            "MODIFY": "Muokkaa otantamenetelmää",
+	                                            "VIEW": "Otantamenetelmä"
+	                                        }
                                         }
                                     }
                                 ]
@@ -1475,7 +1618,13 @@
                                             "displayHeader": false,
                                             "columnFields": [
                                             	"datasource"
-                                            ]
+                                            ],
+	                                        "dialogTitle": {
+	                                            "key": "datasources",
+	                                            "ADD": "Lisää lähdeaineisto",
+	                                            "MODIFY": "Muokkaa lähdeaineistoa",
+	                                            "VIEW": "Lähdeaineisto"
+	                                        }
                                         },
                                         "extraDialogConfiguration": {
                                         	"datasource": {
@@ -1579,7 +1728,13 @@
                                             "key": "appraisals",
                                             "columnFields": [
                                             	"appraisal"
-                                            ]
+                                            ],
+	                                        "dialogTitle": {
+	                                            "key": "appraisals",
+	                                            "ADD": "Lisää arviointi",
+	                                            "MODIFY": "Muokkaa arviointia",
+	                                            "VIEW": "Arviointi"
+	                                        }
                                         }
                                     }
                                 ]
@@ -1605,7 +1760,13 @@
                                             "displayHeader": false,
                                             "columnFields": [
                                             	"relatedmaterial"
-                                            ]
+                                            ],
+	                                        "dialogTitle": {
+	                                            "key": "relatedmaterials",
+	                                            "ADD": "Lisää oheismateriaali",
+	                                            "MODIFY": "Muokkaa oheismateriaalia",
+	                                            "VIEW": "Oheismateriaali"
+	                                        }
                                         },
                                         "extraDialogConfiguration": {
                                         	"relatedmaterial": {
@@ -1629,7 +1790,13 @@
                                             	"othermateriallabel",
                                             	"othermaterialtext",
                                             	"othermaterialuri"
-                                            ]
+                                            ],
+	                                        "dialogTitle": {
+	                                            "key": "othermaterials",
+	                                            "ADD": "Lisää ulkopuolinen materiaali",
+	                                            "MODIFY": "Muokkaa ulkopuolista materiaalia",
+	                                            "VIEW": "Tietoarkiston ulkopuolinen materiaali"
+	                                        }
                                         }
                                     }
                                 ]
@@ -1644,7 +1811,13 @@
                                             "displayHeader": false,
                                             "columnFields": [
                                          		"publicationcomment"
-                                            ]
+                                            ],
+	                                        "dialogTitle": {
+	                                            "key": "publicationcomments",
+	                                            "ADD": "Lisää julkaisun huomio",
+	                                            "MODIFY": "Muokkaa julkaisun huomiota",
+	                                            "VIEW": "Julkaisun huomio"
+	                                        }
                                         },
 	                                    "extraDialogConfiguration": {
 	                                    	"publicationcomment": {
@@ -1701,7 +1874,13 @@
                                 "type": "CELL",
                                 "field": {
                                     "key": "files",
-                                    "displayType": "CUSTOM_JS"
+                                    "displayType": "CUSTOM_JS",
+                                    "dialogTitle": {
+                                        "key": "files",
+                                        "ADD": "Lisää liitetiedosto",
+                                        "MODIFY": "Muokkaa liitetiedostoa",
+                                        "VIEW": "Aineiston liitetiedosto"
+                                    }
                                 }
                             }
                         ]
@@ -1741,7 +1920,13 @@
                                     "columnFields": [
                                     	"cbattachmentlocation",
                                     	"cbattachmenttitle"
-                                    ]
+                                    ],
+		                            "dialogTitle": {
+		                            	"key": "cbattachments",
+		                            	"ADD": "Lisää koodikirjan liite",
+		                            	"MODIFY": "Muokkaa koodikirjan liitettä",
+		                            	"VIEW": "Koodikirjan liitteet"
+		                            }
                                 }
                             }
                         ]

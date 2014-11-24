@@ -136,7 +136,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 fac.checkVariableTranslations(revision, info);
                 break;
             case PUBLICATION:
-                finalizePublication(revision);
+                finalizePublication(revision, transferData);
                 break;
             default:
                 break;
@@ -173,12 +173,16 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         }
     }
 
-    private void finalizePublication(RevisionData data) {
+    private void finalizePublication(RevisionData data, TransferData transferData) {
         Pair<StatusCode, ValueDataField> pair = data.dataField(ValueDataFieldCall.get(Fields.PUBLICATIONFIRSTSAVED));
         if(pair.getLeft() == StatusCode.FIELD_FOUND && pair.getRight().hasValueFor(Language.DEFAULT)) {
             return;
         }
-        data.dataField(ValueDataFieldCall.set(Fields.PUBLICATIONFIRSTSAVED, new Value((new LocalDate()).toString()), Language.DEFAULT).setChangeMap(data.getChanges()));
+        pair = data.dataField(ValueDataFieldCall.set(Fields.PUBLICATIONFIRSTSAVED, new Value((new LocalDate()).toString()), Language.DEFAULT).setChangeMap(data.getChanges()));
+        if(!(pair.getLeft() == StatusCode.FIELD_INSERT || pair.getLeft() == StatusCode.FIELD_CHANGED)) {
+            return;
+        }
+        transferData.addField(TransferField.buildFromDataField(pair.getRight()));
     }
 
     /**

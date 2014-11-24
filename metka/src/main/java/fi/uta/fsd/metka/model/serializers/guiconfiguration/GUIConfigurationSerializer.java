@@ -3,10 +3,7 @@ package fi.uta.fsd.metka.model.serializers.guiconfiguration;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import fi.uta.fsd.metka.enums.ContainerType;
-import fi.uta.fsd.metka.model.guiconfiguration.Button;
-import fi.uta.fsd.metka.model.guiconfiguration.Container;
-import fi.uta.fsd.metka.model.guiconfiguration.FieldTitle;
-import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
+import fi.uta.fsd.metka.model.guiconfiguration.*;
 import fi.uta.fsd.metka.model.serializers.ObjectSerializer;
 
 import java.io.IOException;
@@ -34,6 +31,12 @@ public class GUIConfigurationSerializer extends ObjectSerializer<GUIConfiguratio
         jgen.writeObjectFieldStart("fieldTitles");
         for(Map.Entry<String, FieldTitle> fieldTitle : value.getFieldTitles().entrySet()) {
             jgen.writeObjectField(fieldTitle.getKey(), fieldTitle.getValue());
+        }
+        jgen.writeEndObject();
+
+        jgen.writeObjectFieldStart("dialogTitles");
+        for(Map.Entry<String, DialogTitle> dialogTitle : value.getDialogTitles().entrySet()) {
+            jgen.writeObjectField(dialogTitle.getKey(), dialogTitle.getValue());
         }
         jgen.writeEndObject();
     }

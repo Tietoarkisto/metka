@@ -2,12 +2,25 @@ define(function (require) {
     'use strict';
 
     return function (options) {
-        var readOnly = options.readOnly;
+        function getTitle(options) {
+            if(options.dialogTitle && MetkaJS.L10N.containsText(options.dialogTitle, options.type)) {
+                return MetkaJS.L10N.localize(options.dialogTitle, options.type);
+            } else if(options.dialogTitles
+                    && options.dialogTitles[options.containerKey]
+                    && MetkaJS.L10N.containsText(options.dialogTitles[options.containerKey], options.type)) {
+                return MetkaJS.L10N.localize(options.dialogTitles[options.containerKey], options.type);
+            } else if(options.title) {
+                return MetkaJS.L10N.get(options.title);
+            } else {
+                return MetkaJS.L10N.localize(options, 'title');
+            }
+        }
+
         options.modalTarget = require('./autoId')("M");
         var $modal = $('<div class="modal fade" tabindex="-1" role="dialog" id="'+options.modalTarget+'">')
             .append($('<div class="modal-dialog">')
                 .on('refresh.metka', function () {
-                    options.readOnly = readOnly || require('./isDataReadOnly')(options.data);
+                    options.readOnly = require('./isDataReadOnly')(options.data, options.isRelatedStudyDraftForCurrentUser);
                     if (!options.buttons) {
                         options.buttons = [];
                     } else {
@@ -34,7 +47,7 @@ define(function (require) {
                     var $header = $('<div class="modal-header">')
                         .append('<button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>')
                         .append($('<h4 class="modal-title">')
-                            .text(MetkaJS.L10N.localize(options, 'title')));
+                            .text(getTitle(options)));
                     $(this)
                         .empty()
                         .toggleClass('modal-lg', !!options.large)

@@ -80,11 +80,22 @@
                 }
             },
             /**
+             * Checks to see if given object contains text (either as string or translation object) in property with given name.
+             * @param obj
+             * @param name
+             */
+            containsText: function(obj, name) {
+                if(!obj) {
+                    return false;
+                }
+                return obj[name] && MetkaJS.isString(obj[name]) || MetkaJS.L10N.hasTranslation(obj, name);
+            },
+            /**
              * Checks to see if given object has a translation text object for given parameter name.
              * Object has to have a property with &-version of the property name and that property has to contain
              * non-empty string property with name default.
              *
-             * @param object Object to be checked for translation property
+             * @param obj Object to be checked for translation property
              * @param name Name of the property being checked, should not contain & as the first letter
              * @returns {boolean} True if there is a translation version of given property
              */
@@ -92,11 +103,7 @@
                 if (!obj) {
                     return false;
                 }
-                if(MetkaJS.L10N.isTranslation(obj['&'+name])) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return MetkaJS.L10N.isTranslation(obj['&'+name]);
             },
 
             /**
@@ -118,11 +125,7 @@
                     return false;
                 }
 
-                if(!MetkaJS.isString(obj.default)) {
-                    return false;
-                }
-
-                return true;
+                return MetkaJS.isString(obj.default);
             }
         }
     })();

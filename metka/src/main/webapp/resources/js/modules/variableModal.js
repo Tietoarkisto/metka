@@ -87,7 +87,13 @@ define(function (require) {
                                                 "displayHeader": false,
                                                 "columnFields": [
                                                     "qstnlit"
-                                                ]
+                                                ],
+                                                "dialogTitle": {
+                                                    "key": "qstnlits",
+                                                    "ADD": "Lisää kysymysteksti",
+                                                    "MODIFY": "Muokkaa kysymystekstiä",
+                                                    "VIEW": "Kysymysteksti"
+                                                }
                                             }
                                         }
                                     ]
@@ -103,7 +109,13 @@ define(function (require) {
                                                 "displayHeader": false,
                                                 "columnFields": [
                                                     "preqtxt"
-                                                ]
+                                                ],
+                                                "dialogTitle": {
+                                                    "key": "preqtxts",
+                                                    "ADD": "Lisää esiteksti",
+                                                    "MODIFY": "Muokkaa esitekstiä",
+                                                    "VIEW": "Esiteksti"
+                                                }
                                             }
                                         }
                                     ]
@@ -119,7 +131,13 @@ define(function (require) {
                                                 "displayHeader": false,
                                                 "columnFields": [
                                                     "postqtxt"
-                                                ]
+                                                ],
+                                                "dialogTitle": {
+                                                    "key": "postqtxts",
+                                                    "ADD": "Lisää jälkiteksti",
+                                                    "MODIFY": "Muokkaa jälkitekstiä",
+                                                    "VIEW": "Jälkiteksti"
+                                                }
                                             }
                                         }
                                     ]
@@ -135,7 +153,13 @@ define(function (require) {
                                                 "displayHeader": false,
                                                 "columnFields": [
                                                     "ivuinstr"
-                                                ]
+                                                ],
+                                                "dialogTitle": {
+                                                    "key": "ivuinstr",
+                                                    "ADD": "Lisää haastattelijan ohje",
+                                                    "MODIFY": "Muokkaa haastattelijan ohjetta",
+                                                    "VIEW": "Haastattelijan ohje"
+                                                }
                                             }
                                         }
                                     ]
@@ -151,7 +175,13 @@ define(function (require) {
                                                 "displayHeader": false,
                                                 "columnFields": [
                                                     "varnote"
-                                                ]
+                                                ],
+                                                "dialogTitle": {
+                                                    "key": "varnotes",
+                                                    "ADD": "Lisää huomio",
+                                                    "MODIFY": "Muokkaa huomiota",
+                                                    "VIEW": "Huomio"
+                                                }
                                             }
                                         }
                                     ]
@@ -167,7 +197,13 @@ define(function (require) {
                                                 "displayHeader": false,
                                                 "columnFields": [
                                                     "vartext"
-                                                ]
+                                                ],
+                                                "dialogTitle": {
+                                                    "key": "vartexts",
+                                                    "ADD": "Lisää lisätieto",
+                                                    "MODIFY": "Muokkaa lisätietoa",
+                                                    "VIEW": "Lisätieto"
+                                                }
                                             }
                                         }
                                     ]
@@ -183,7 +219,13 @@ define(function (require) {
                                                 "displayHeader": false,
                                                 "columnFields": [
                                                     "varsecurity"
-                                                ]
+                                                ],
+                                                "dialogTitle": {
+                                                    "key": "varsecurities",
+                                                    "ADD": "Lisää tietosuoja-asia",
+                                                    "MODIFY": "Muokkaa tietosuoja-asiaa",
+                                                    "VIEW": "Tietosuoja-asia"
+                                                }
                                             }
                                         }
                                     ]

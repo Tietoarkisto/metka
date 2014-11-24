@@ -173,7 +173,13 @@
                                 "columnFields": [
                                 	"firstname",
                                 	"lastname"
-                                ]
+                                ],
+	                            "dialogTitle": {
+	                            	"key": "publicationauthors",
+	                            	"ADD": "Lisää henkilö",
+	                            	"MODIFY": "Muokkaa henkilöä",
+	                            	"VIEW": "Liittyvät henkilöt"
+	                            }
                             }
                         }
                     ]
@@ -189,7 +195,13 @@
                                 "columnFields": [
                                 	"pid",
                                 	"pidtype"
-                                ]
+                                ],
+	                            "dialogTitle": {
+	                            	"key": "publicationpids",
+	                            	"ADD": "Lisää tunniste",
+	                            	"MODIFY": "Muokkaa tunnistetta",
+	                            	"VIEW": "Pysyvät tunnisteet"
+	                            }
                             }
                         }
                     ]
@@ -205,7 +217,11 @@
                                 "columnFields": [
                                 	"studyid",
                                 	"studytitle"
-                            	]
+                            	],
+	                            "dialogTitle": {
+	                            	"key": "studies",
+	                            	"ADD": "Lisää aineisto"
+	                            }
                             }
                         }
                     ]
@@ -221,7 +237,11 @@
                                 "columnFields": [
                                 	"seriesabbr",
                                 	"seriesname"
-                                ]
+                                ],
+	                            "dialogTitle": {
+	                            	"key": "series",
+	                            	"ADD": "Lisää sarja"
+	                            }
                             }
                         }
                     ]

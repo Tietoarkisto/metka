@@ -663,18 +663,21 @@ define(function (require) {
                                                                                         ".*": {
                                                                                             "$ref": "#/definitions/reference",
                                                                                             "oneOf": [{
-                                                                                                "title": "DEPENDENCY",
+                                                                                                "title": "JSON",
                                                                                                 "properties": {
                                                                                                     "type": {
-                                                                                                        "template": "DEPENDENCY"
+                                                                                                        "template": "JSON"
                                                                                                     },
                                                                                                     "target": {
-                                                                                                        "description": "Tästä konfiguraatiosta löytyvä kenttäavain."
+                                                                                                        "description": "JSON-tiedosto, johon referenssi kohdennetaan."
                                                                                                     },
                                                                                                     "valuePath": {
                                                                                                         "type": "string"
                                                                                                     }
-                                                                                                }
+                                                                                                },
+                                                                                                "required": [
+                                                                                                    "valuePath"
+                                                                                                ]
                                                                                             }, {
                                                                                                 "title": "REVISIONABLE",
                                                                                                 "properties": {
@@ -694,18 +697,21 @@ define(function (require) {
                                                                                                     }
                                                                                                 }
                                                                                             }, {
-                                                                                                "title": "JSON",
+                                                                                                "title": "DEPENDENCY",
                                                                                                 "properties": {
                                                                                                     "type": {
-                                                                                                        "template": "JSON"
+                                                                                                        "template": "DEPENDENCY"
                                                                                                     },
                                                                                                     "target": {
-                                                                                                        "description": "JSON-tiedosto, johon referenssi kohdennetaan."
+                                                                                                        "description": "Tästä konfiguraatiosta löytyvä kenttäavain."
                                                                                                     },
                                                                                                     "valuePath": {
                                                                                                         "type": "string"
                                                                                                     }
-                                                                                                }
+                                                                                                },
+                                                                                                "required": [
+                                                                                                    "valuePath"
+                                                                                                ]
                                                                                             }]
                                                                                         }
                                                                                     }

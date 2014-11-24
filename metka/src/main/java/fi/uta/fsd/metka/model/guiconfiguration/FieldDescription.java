@@ -20,6 +20,7 @@ public class FieldDescription {
     private Boolean showSaveInfo;
     private Boolean showReferenceValue;
     private Boolean displayHeader = true;
+    private DialogTitle dialogTitle;
 
     @JsonCreator
     public FieldDescription(@JsonProperty("key")String key) {
@@ -80,6 +81,14 @@ public class FieldDescription {
 
     public void setDisplayHeader(Boolean displayHeader) {
         this.displayHeader = displayHeader == null ? true : displayHeader;
+    }
+
+    public DialogTitle getDialogTitle() {
+        return dialogTitle;
+    }
+
+    public void setDialogTitle(DialogTitle dialogTitle) {
+        this.dialogTitle = dialogTitle;
     }
 
     @Override

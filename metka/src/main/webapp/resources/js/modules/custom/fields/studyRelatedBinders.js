@@ -2,7 +2,7 @@ define(function (require) {
     'use strict';
 
     return function (options) {
-        delete options.field.displayType;
+        options.field.displayType = 'CONTAINER';
 
         return {
             field: {

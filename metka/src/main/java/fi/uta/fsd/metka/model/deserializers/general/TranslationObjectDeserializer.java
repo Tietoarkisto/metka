@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import fi.uta.fsd.metka.model.deserializers.ObjectDeserializer;
 import fi.uta.fsd.metka.model.general.TranslationObject;
 import org.springframework.util.StringUtils;
@@ -23,7 +22,7 @@ public class TranslationObjectDeserializer extends ObjectDeserializer<Translatio
         } else if(node.getNodeType() == JsonNodeType.OBJECT) {
             JsonNode def = node.get("default");
             if(def != null && StringUtils.hasText(def.textValue())) {
-                Iterator<String> iter = ((ObjectNode)node).fieldNames();
+                Iterator<String> iter = (node).fieldNames();
                 while(iter.hasNext()) {
                     String lang = iter.next();
                     JsonNode text = node.get(lang);

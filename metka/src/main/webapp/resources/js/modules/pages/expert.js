@@ -256,7 +256,11 @@ define(function (require) {
                                     }]
                                 };
                                 require('./../modal')({
-                                    title: 'Tallenna haku',
+                                    //title: 'Tallenna haku',
+                                    type: "ADD",
+                                    dialogTitle: {
+                                        "ADD": "Tallenna haku"
+                                    },
                                     body: require('./../container').call($('<div>'), containerOptions),
                                     buttons: [{
                                         "&title": {

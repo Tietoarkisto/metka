@@ -132,9 +132,10 @@ define(function (require) {
                                 $input.val(value);
                             })(options.data.fields, reference);
                         }
-                        var dataConf = getPropertyNS(options, 'dataConf.fields', key);
-                        if (dataConf && dataConf.type === 'REFERENCE') {
-                            var reference = getPropertyNS(options, 'dataConf.references', dataConf.reference);
+
+                        if (type === 'REFERENCE') {
+                            log(options);
+                            var reference = getPropertyNS(options, 'dataConf.references', options.fieldOptions.reference);
                             options.$events.on('data-changed-{key}-{lang}'.supplant({
                                 key: reference.target,
                                 lang: lang
@@ -144,7 +145,7 @@ define(function (require) {
                         } else {
                             $input.val(type === 'CONCAT'
                                 ?
-                                dataConf.concatenate.map(function (key) {
+                                options.fieldOptions.concatenate.map(function (key) {
                                     return require('./data')(options)(key).getByLang(lang);
                                 }).join('')
                                 :
