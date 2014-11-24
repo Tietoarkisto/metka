@@ -60,12 +60,12 @@ define(function (require) {
         }
 
         if (list.freeTextKey) {
-            var $freeText = require('./inherit')(function (options) {
-                return require('./inputField').call($('<div>'), options, 'STRING', lang);
-            })(options)({
+            var $freeText = $('<div>');
+            require('./inherit')(require('./field'))(options).call($freeText, {
                 horizontal: true,
                 title: MetkaJS.L10N.localize(options.fieldTitles[list.freeTextKey], 'title'),
                 field: {
+                    displayType: 'STRING',
                     key: list.freeTextKey
                 }
             });

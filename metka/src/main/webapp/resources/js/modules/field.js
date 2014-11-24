@@ -59,6 +59,20 @@ define(function (require) {
                                 }
                             });
                         } else {
+                            // if type is selection and free text field is translatable
+                            if (type === 'SELECTION') {
+                                var list = require('./selectionList')(options, options.field.key);
+                                if (list) {
+                                    var freeTextKey = list.freeTextKey;
+                                    if (freeTextKey) {
+                                        if (options.dataConf.fields[freeTextKey].translatable) {
+                                            // don't toggle
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
+
                             // toggle visibility
                             $langField.toggleClass('hiddenByTranslationState', currentLang !== options.defaultLang);
                         }
