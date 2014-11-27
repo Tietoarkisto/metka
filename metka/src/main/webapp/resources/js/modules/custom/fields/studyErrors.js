@@ -12,188 +12,203 @@ define(function (require) {
                     result.errorscore = result.errorscore + '';
                     var transferRow = objectToTransferRow(result, options.defaultLang);
                     transferRow.saved = {
-                        time : result.savedAt,
-                        user : result.savedBy
+                        time: result.savedAt,
+                        user: result.savedBy
                     };
                     $field.data("addRow")(transferRow);
                 });
             }
         });
     }
+    return function(options) {
+        delete options.field.displayType;
 
-    return {
-        dataConf: {
-            fields: {
-                studyErrors: {
-                    removePermissions: [
-                        "canRemoveStudyErrors"
-                    ],
-                    subfields: [
-                        'id',
-                        'errorscore',
-                        'errordatasetpart',
-                        'errorpartsection',
-                        'errorlanguage',
-                        'errorlabel',
-                        'errornotes',
-                        'errortriggerdate',
-                        'errortriggerpro'
-                    ]
-                },
-                id: {
-                    type: "INTEGER",
-                    editable: false
-                },
-                errorscore: {
-                    key: 'errorscore',
-                    type: 'SELECTION',
-                    selectionList: 'errorscore_list'
-                },
-                errordatasetpart: {
-                    key: 'errordatasetpart',
-                    type: 'SELECTION',
-                    selectionList: 'errordatasetpart_list'
-                },
-                errorpartsection: {
-                    key: 'errorpartsection',
-                    type: 'SELECTION',
-                    selectionList: 'errorpartsection_list'
+        var ret = {
+            dataConf: {
+                fields: {
+                    studyErrors: {
+                        type: "CONTAINER",
+                        removePermissions: [
+                            "canRemoveStudyErrors"
+                        ],
+                        subfields: [
+                            'id',
+                            'errorscore',
+                            'errordatasetpart',
+                            'errorpartsection',
+                            'errorlanguage',
+                            'errorlabel',
+                            'errornotes',
+                            'errortriggerdate',
+                            'errortriggerpro'
+                        ]
+                    },
+                    id: {
+                        type: "INTEGER",
+                        editable: false
+                    },
+                    errorscore: {
+                        key: 'errorscore',
+                        type: 'SELECTION',
+                        selectionList: 'errorscore_list'
+                    },
+                    errordatasetpart: {
+                        key: 'errordatasetpart',
+                        type: 'SELECTION',
+                        selectionList: 'errordatasetpart_list'
+                    },
+                    errorpartsection: {
+                        key: 'errorpartsection',
+                        type: 'SELECTION',
+                        selectionList: 'errorpartsection_list'
 
+                    },
+                    errorlanguage: {
+                        key: 'errorlanguage',
+                        type: 'SELECTION',
+                        selectionList: 'errorlanguage_list'
+                    },
+                    errorlabel: {
+                        key: 'errorlabel',
+                        type: 'STRING'
+                    },
+                    errornotes: {
+                        key: 'errornotes',
+                        type: 'STRING',
+                        "multiline": true
+                    },
+                    errortriggerdate: {
+                        key: 'errortriggerdate',
+                        type: 'DATE'
+                    },
+                    errortriggerpro: {
+                        key: 'errortriggerpro',
+                        type: 'SELECTION'
+                    }
                 },
-                errorlanguage: {
-                    key: 'errorlanguage',
-                    type: 'SELECTION',
-                    selectionList: 'errorlanguage_list'
+                "selectionLists": {
+                    "errorscore_list": {
+                        "key": "errorscore_list",
+                        "type": "LITERAL",
+                        "options": [
+                            {
+                                "value": "1"
+                            },
+                            {
+                                "value": "2"
+                            },
+                            {
+                                "value": "3"
+                            },
+                            {
+                                "value": "4"
+                            },
+                            {
+                                "value": "5"
+                            }
+                        ]
+                    },
+                    "errordatasetpart_list": {
+                        "key": "errordatasetpart_list",
+                        "type": "REFERENCE",
+                        "reference": "errordatasetpart_ref"
+                    },
+                    "errorpartsection_list": {
+                        "key": "errorpartsection_list",
+                        "type": "REFERENCE",
+                        "reference": "errorpartsection_ref"
+                    },
+                    "errorlanguage_list": {
+                        "key": "errorlanguage_list",
+                        "type": "REFERENCE",
+                        "reference": "errorlanguage_ref"
+                    }
                 },
-                errorlabel: {
-                    key: 'errorlabel',
-                    type: 'STRING'
-                },
-                errornotes: {
-                    key: 'errornotes',
-                    type: 'STRING',
-                    "multiline": true
-                },
-                errortriggerdate: {
-                    key: 'errortriggerdate',
-                    type: 'DATE'
-                },
-                errortriggerpro: {
-                    key: 'errortriggerpro',
-                    type: 'SELECTION'
+                "references": {
+                    "errorlanguage_ref": {
+                        "key": "errorlanguage_ref",
+                        "type": "JSON",
+                        "target": "errorlanguage",
+                        "valuePath": "value",
+                        "titlePath": "title"
+                    },
+                    "errordatasetpart_ref": {
+                        "key": "errordatasetpart_ref",
+                        "type": "JSON",
+                        "target": "errordatasetpart",
+                        "valuePath": "value",
+                        "titlePath": "title"
+                    },
+                    "errorpartsection_ref": {
+                        "key": "errorpartsection_ref",
+                        "type": "JSON",
+                        "target": "errorpartsection",
+                        "valuePath": "value",
+                        "titlePath": "title"
+                    }
                 }
             },
-            "selectionLists": {
-                "errorscore_list": {
-                    "key": "errorscore_list",
-                    "type": "LITERAL",
-                    "options": [
-                        {
-                            "value": "1"
-                        },
-                        {
-                            "value": "2"
-                        },
-                        {
-                            "value": "3"
-                        },
-                        {
-                            "value": "4"
-                        },
-                        {
-                            "value": "5"
+            field: {
+                displayType: 'CONTAINER',
+                columnFields: [
+                    'errorscore',
+                    'errordatasetpart',
+                    'errorpartsection',
+                    'errorlanguage',
+                    'errorlabel',
+                    'errortriggerdate',
+                    'errortriggerpro'
+                ],
+                "dialogTitle": {
+                    "key": "studyErrors",
+                    "ADD": "Lisää aineistovirhe",
+                    "MODIFY": "Muokkaa aineistovirhettä",
+                    "VIEW": "Aineistovirhe"
+                },
+                showSaveInfo: false,
+                onRowChange: function (options, $tr, transferRow) {
+                    var data = require('./../../map/transferRow/object')(transferRow, options.defaultLang);
+                    data.studyId = MetkaJS.revisionId;
+                    if(data.errortriggerdate) {
+                        var date = moment(data.errortriggerdate);
+                        data.errortriggerdate = date.isValid() ? date.format('YYYY-MM-DD') : null;
+                    } else {
+                        data.errortriggerdate = null;
+                    }
+                    delete data.savedAt;
+                    delete data.savedBy;
+                    require('./../../server')('/study/updateError/', {
+                        data: JSON.stringify(data),
+                        success: function (response) {
+                            refreshData(options, $tr.closest(".panel").parent());
                         }
-                    ]
+                    });
                 },
-                "errordatasetpart_list": {
-                    "key": "errordatasetpart_list",
-                    "type": "REFERENCE",
-                    "reference": "errordatasetpart_ref"
-                },
-                "errorpartsection_list": {
-                    "key": "errorpartsection_list",
-                    "type": "REFERENCE",
-                    "reference": "errorpartsection_ref"
-                },
-                "errorlanguage_list": {
-                    "key": "errorlanguage_list",
-                    "type": "REFERENCE",
-                    "reference": "errorlanguage_ref"
+                onRemove: function ($tr) {
+                    $tr.find('button').prop('disabled', true);
+                    require('./../../server')('/study/removeError/{id}', {
+                        id: $tr.data('transferRow').fields.id.values.DEFAULT.current
+                    }, {
+                        method: 'GET',
+                        success: function () {
+                            $tr.remove();
+                        }
+                    });
                 }
             },
-            "references": {
-                "errorlanguage_ref": {
-                    "key": "errorlanguage_ref",
-                    "type": "JSON",
-                    "target": "errorlanguage",
-                    "valuePath": "value",
-                    "titlePath": "title"
-                },
-                "errordatasetpart_ref": {
-                    "key": "errordatasetpart_ref",
-                    "type": "JSON",
-                    "target": "errordatasetpart",
-                    "valuePath": "value",
-                    "titlePath": "title"
-                },
-                "errorpartsection_ref": {
-                    "key": "errorpartsection_ref",
-                    "type": "JSON",
-                    "target": "errorpartsection",
-                    "valuePath": "value",
-                    "titlePath": "title"
+            extraDialogConfiguration: {
+                "id": {
+                    "hidden": true
                 }
-            }
-        },
-        field: {
-            displayType: 'CONTAINER',
-            columnFields: [
-                'errorscore',
-                'errordatasetpart',
-                'errorpartsection',
-                'errorlanguage',
-                'errorlabel'
-            ],
-            "dialogTitle": {
-                "key": "studyErrors",
-                "ADD": "Lisää aineistovirhe",
-                "MODIFY": "Muokkaa aineistovirhettä",
-                "VIEW": "Aineistovirhe"
             },
-            showSaveInfo: true,
-            onRowChange: function (options, $tr, transferRow) {
-                var data = require('./../../map/transferRow/object')(transferRow, options.defaultLang);
-                data.studyId = MetkaJS.revisionId;
-                data.errortriggerdate = moment(data.errortriggerdate).format('YYYY-MM-DD');
-                delete data.savedAt;
-                delete data.savedBy;
-                require('./../../server')('/study/updateError/', {
-                    data: JSON.stringify(data),
-                    success: function (response) {
-                        refreshData(options, $tr.closest(".panel").parent());
-                    }
-                });
-            },
-            onRemove: function ($tr) {
-                $tr.find('button').prop('disabled', true);
-                require('./../../server')('/study/removeError/{id}', {
-                    id: $tr.data('transferRow').fields.id.values.DEFAULT.current
-                }, {
-                    method: 'GET',
-                    success: function () {
-                        $tr.remove();
-                    }
-                });
+            readOnly: !require("../../hasEveryPermission")(["canAddStudyErrors"]),
+            create: function create(options) {
+                refreshData(options, this.children().first());
             }
-        },
-        extraDialogConfiguration: {
-            "id": {
-                "hidden": true
-            }
-        },
-        readOnly: !require("../../hasEveryPermission")(["canAddStudyErrors"]),
-        create: function create(options) {
-            refreshData(options, this.children().first());
-        }
+        };
+
+        options.fieldOptions = ret.dataConf.fields.studyErrors;
+
+        return ret;
     };
 });

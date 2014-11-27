@@ -47,7 +47,7 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
             if(!StringUtils.hasText(request.getByKey(key))) {
                 continue;
             }
-            qrys.add("+"+key+":("+request.getByKey(key)+")");
+            qrys.add("+"+key+":"+request.getByKey(key));
             /*Field field = configuration.getField(key);
             if(field != null && field.getExact()) {
                 qrys.add("+"+key+":\""+request.getByKey(key)+"\"");

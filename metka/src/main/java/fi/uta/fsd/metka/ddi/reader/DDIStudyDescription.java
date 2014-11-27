@@ -394,7 +394,7 @@ class DDIStudyDescription extends DDISectionBase {
         request.setContainer(Fields.KEYWORDS);
         request.setLanguage(language);
 
-        ReferencePath keywordvocabPath = new ReferencePath(configuration.getReference(configuration.getField(Fields.KEYWORDVOCAB).getReference()), null);
+        ReferencePath keywordvocabPath = getReferencePath(Fields.KEYWORDVOCAB, null);
         request.setRoot(keywordvocabPath);
         List<ReferenceOption> keywordvocabOptions = references.collectReferenceOptions(request);
 
@@ -414,8 +414,8 @@ class DDIStudyDescription extends DDISectionBase {
             valueSet(row.getRight(), Fields.KEYWORDVOCAB, option.getValue());
 
             if(StringUtils.hasText(getText(k))) {
-                keywordvocabPath = new ReferencePath(configuration.getReference(configuration.getField(Fields.KEYWORDVOCAB).getReference()), option.getValue());
-                ReferencePath keywordPath = new ReferencePath(configuration.getReference(configuration.getField(Fields.KEYWORD).getReference()), null);
+                keywordvocabPath = getReferencePath(Fields.KEYWORDVOCAB, option.getValue());
+                ReferencePath keywordPath = getReferencePath(Fields.KEYWORD, null);
 
                 keywordvocabPath.setNext(keywordPath);
                 keywordPath.setPrev(keywordvocabPath);
@@ -451,7 +451,7 @@ class DDIStudyDescription extends DDISectionBase {
         request.setContainer(Fields.TOPICS);
         request.setLanguage(language);
 
-        ReferencePath topicvocabPath = new ReferencePath(configuration.getReference(configuration.getField(Fields.TOPICVOCAB).getReference()), null);
+        ReferencePath topicvocabPath = getReferencePath(Fields.TOPICVOCAB, null);
         request.setRoot(topicvocabPath);
         List<ReferenceOption> topicvocabOptions = references.collectReferenceOptions(request);
 
@@ -471,8 +471,8 @@ class DDIStudyDescription extends DDISectionBase {
             valueSet(row.getRight(), Fields.TOPICVOCAB, option.getValue());
 
             if(StringUtils.hasText(getText(t))) {
-                topicvocabPath = new ReferencePath(configuration.getReference(configuration.getField(Fields.TOPICVOCAB).getReference()), option.getValue());
-                ReferencePath topicPath = new ReferencePath(configuration.getReference(configuration.getField(Fields.TOPIC).getReference()), null);
+                topicvocabPath = getReferencePath(Fields.TOPICVOCAB, option.getValue());
+                ReferencePath topicPath = getReferencePath(Fields.TOPIC, null);
 
                 topicvocabPath.setNext(topicPath);
                 topicPath.setPrev(topicvocabPath);

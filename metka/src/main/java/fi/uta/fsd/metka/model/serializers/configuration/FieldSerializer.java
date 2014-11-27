@@ -19,12 +19,19 @@ public class FieldSerializer extends ObjectSerializer<Field> {
 
         jgen.writeStringField("key", value.getKey());
         jgen.writeStringField("type", value.getType().toString());
-        jgen.writeBooleanField("translatable", value.getTranslatable());
+        if(!(value.getType() == FieldType.SELECTION || value.getType() == FieldType.REFERENCE)) {
+            jgen.writeBooleanField("translatable", value.getTranslatable());
+        }
         jgen.writeBooleanField("immutable", value.getImmutable());
         jgen.writeBooleanField("subfield", value.getSubfield());
         jgen.writeBooleanField("editable", value.getEditable());
         jgen.writeBooleanField("writable", value.getWritable());
         jgen.writeBooleanField("indexed", value.getIndexed());
+        if(StringUtils.hasText(value.getIndexName())) {
+            jgen.writeStringField("indexName", value.getIndexName());
+        } else {
+            jgen.writeNullField("indexName");
+        }
         if(!value.getType().isContainer()) {
             jgen.writeBooleanField("generalSearch", value.getGeneralSearch());
         }

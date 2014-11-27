@@ -1877,7 +1877,6 @@
                                     "displayType": "CUSTOM_JS",
                                     "dialogTitle": {
                                         "key": "files",
-                                        "ADD": "Lisää liitetiedosto",
                                         "MODIFY": "Muokkaa liitetiedostoa",
                                         "VIEW": "Aineiston liitetiedosto"
                                     }

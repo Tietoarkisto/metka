@@ -63,9 +63,10 @@ define(function (require) {
             var $freeText = $('<div>');
             require('./inherit')(require('./field'))(options).call($freeText, {
                 horizontal: true,
-                title: MetkaJS.L10N.localize(options.fieldTitles[list.freeTextKey], 'title'),
+                //title: MetkaJS.L10N.localize(options.fieldTitles[list.freeTextKey], 'title'),
+                fieldOptions: getPropertyNS(options, 'dataConf.fields', list.freeTextKey) || {},
                 field: {
-                    displayType: 'STRING',
+                    //displayType: 'STRING',
                     key: list.freeTextKey
                 }
             });
