@@ -19,6 +19,9 @@ public class Messenger {
     @Value("${rabbit.server}")
     private String RABBIT_SERVER_HOST;
 
+    @Value("${rabbit.port}")
+    private int RABBIT_SERVER_PORT;
+
     @Value("${rabbit.user}")
     private String RABBIT_USERNAME;
 
@@ -42,7 +45,7 @@ public class Messenger {
 
     private AmqpMessenger getAmqpMessenger() {
         AmqpMessenger amqpMessenger = new AmqpMessenger();
-        amqpMessenger.init(RABBIT_SERVER_HOST, RABBIT_USERNAME, RABBIT_PASSWORD);
+        amqpMessenger.init(RABBIT_SERVER_HOST, RABBIT_SERVER_PORT, RABBIT_USERNAME, RABBIT_PASSWORD);
         amqpMessenger.logState();
         return amqpMessenger;
     }
