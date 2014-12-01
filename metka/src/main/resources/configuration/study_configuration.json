@@ -1967,19 +1967,22 @@
         	"type": "SELECTION",
         	"selectionList": "packagetype_list",
         	"translatable": false,
-        	"editable": false
+        	"editable": false,
+        	"subfield": true
         },
         "packageurn": {
         	"key": "packageurn",
         	"type": "STRING",
         	"translatable": false,
-        	"editable": false
+        	"editable": false,
+        	"subfield": true
         },
         "packageversion": {
         	"key": "packageversion",
         	"type": "STRING",
         	"translatable": false,
-        	"editable": false
+        	"editable": false,
+        	"subfield": true
         },
         "dissemination": {
         	"key": "dissemination",

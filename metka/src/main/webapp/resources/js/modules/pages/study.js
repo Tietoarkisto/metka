@@ -592,7 +592,8 @@ define(function (require) {
                                         'series',
                                         {
                                             key: 'publication',
-                                            rename: 'publications.publicationtitle'
+                                            useSelectionText: false,
+                                            rename: 'publications.value'
                                         },
                                         'aipcomplete',
                                         'termsofusechangedate',
@@ -606,7 +607,7 @@ define(function (require) {
                                         },
                                         {
                                             key: 'collector',
-                                            rename: 'collectors.collector'
+                                            rename: 'collectors.author'
                                         }
                                     ].concat(importFromConfiguration)
                                 , function (data) {

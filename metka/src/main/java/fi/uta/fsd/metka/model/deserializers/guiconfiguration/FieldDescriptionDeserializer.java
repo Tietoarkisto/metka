@@ -63,7 +63,7 @@ public class FieldDescriptionDeserializer extends ObjectDeserializer<FieldDescri
 
         // Set displayHeader
         JsonNode displayHeader = node.get("displayHeader");
-        if(showRef != null && showRef.getNodeType() == JsonNodeType.BOOLEAN) {
+        if(displayHeader != null && displayHeader.getNodeType() == JsonNodeType.BOOLEAN) {
             fd.setDisplayHeader(displayHeader.booleanValue());
         }
 

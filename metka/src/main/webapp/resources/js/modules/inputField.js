@@ -134,7 +134,6 @@ define(function (require) {
                         }
 
                         if (type === 'REFERENCE') {
-                            log(options);
                             var reference = getPropertyNS(options, 'dataConf.references', options.fieldOptions.reference);
                             options.$events.on('data-changed-{key}-{lang}'.supplant({
                                 key: reference.target,

@@ -323,7 +323,7 @@ class GeneralRevisionHandler implements RevisionHandler {
         for(ReferenceRow row : container.getReferences()) {
             Step rowPath = new Step(row.getRowId().toString(), path);
             // Index the actual row value
-            document.indexKeywordField(root + containerField.getIndexAs() + ".value", row.getReference().toString());
+            document.indexKeywordField(root + containerField.getIndexAs() + ".value", row.getReference().getValue());
             for(String key : containerField.getSubfields()) {
                 // Iterate through configured subfields and index them as necessary
                 // We know that all of these have to be DEPENDENCY references so we should be able to index them as such here.

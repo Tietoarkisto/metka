@@ -1,6 +1,11 @@
 define(function (require) {
     return function (options, type, $input, lang) {
         var key = options.field.key;
+        var dataFormat = {
+            DATE: "YYYY-MM-DD",
+            DATETIME: "YYYY-MM-DDThh:mm:ss.s",
+            TIME: "hh:mm:ss.s"
+        }[type];
         var setup = {
             DATE: {
                 options: {
@@ -38,8 +43,9 @@ define(function (require) {
                 }.bind(this));
             });
         function setValue(e) {
-            require('./data')(options).setByLang(lang, moment(e.date).format('YYYY-MM-DDThh:mm:ss.s'));
+            require('./data')(options).setByLang(lang, moment(e.date).format(dataFormat));
         }
+
         this.append($datePicker)
             // FIXME: kun kenttä on tyhjä ja ikonia klikataan, arvo tulee heti näkyviin mutta dp.change event ei triggeroidu. mahdollisesti korjattu datetimepickerin päivityksissä?
             .on('dp.change', setValue)
