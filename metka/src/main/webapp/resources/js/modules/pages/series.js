@@ -106,7 +106,10 @@ define(function (require) {
                 buttons: [
                     require('./../searchButton')('searchAjax', [
                         'key.id',
-                        'seriesabbr',
+                        {
+                            key: 'seriesabbr',
+                            addQuotes: true
+                        },
                         'seriesname'
                     ], function (data) {
                         return data.rows;

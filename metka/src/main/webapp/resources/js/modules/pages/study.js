@@ -13,15 +13,34 @@ define(function (require) {
                         'title',
                         {
                             key: 'producerrole',
-                            rename: 'producers.producerrole'
+                            rename: 'producers.producerrole',
+                            addQuotes: true
                         },
-                        'datakind',
-                        'anonymization',
-                        'securityissues',
+                        {
+                            key:'datakind',
+                            addQuotes: true
+                        },
+                        {
+                            key: 'anonymization',
+                            addQuotes: true
+                        },
+                        {
+                            key: 'securityissues',
+                            addQuotes: true
+                        },
                         'termsofuse',
-                        'newtermsofuse',
-                        'agreementtype',
-                        'depositortype',
+                        {
+                            key: 'newtermsofuse',
+                            addQuotes: true
+                        },
+                        {
+                            key: 'agreementtype',
+                            addQuotes: true
+                        },
+                        {
+                            key: 'depositortype',
+                            addQuotes: true
+                        },
                         {
                             key: 'packageurn',
                             rename: 'packages.packageurn'
@@ -29,7 +48,8 @@ define(function (require) {
                         'abstract',
                         {
                             key: 'topic',
-                            rename: 'topics.topic'
+                            rename: 'topics.topic',
+                            addQuotes: true
                         },
                         {
                             key: 'country',
@@ -37,19 +57,23 @@ define(function (require) {
                         },
                         {
                             key: 'analysisunit',
-                            rename: 'analysis.analysisunit'
+                            rename: 'analysis.analysisunit',
+                            addQuotes: true
                         },
                         {
                             key: 'timemethod',
-                            rename: 'timemethods.timemethod'
+                            rename: 'timemethods.timemethod',
+                            addQuotes: true
                         },
                         {
                             key: 'sampproc',
-                            rename: 'sampprocs.sampproc'
+                            rename: 'sampprocs.sampproc',
+                            addQuotes: true
                         },
                         {
                             key: 'collmode',
-                            rename: 'collmodes.collmode'
+                            rename: 'collmodes.collmode',
+                            addQuotes: true
                         }
                     ];
 
@@ -73,7 +97,8 @@ define(function (require) {
                                     "title": "Laatu"
                                 },
                                 "termsofuse": {
-                                    "title": "Käyttöoikeus"
+                                    "title": "Käyttöoikeus",
+                                    addQuotes: true
                                 },
                                 "state": {
                                     "title": "Tila"
@@ -589,10 +614,15 @@ define(function (require) {
                                             key: 'producername',
                                             rename: 'producers.organisation'
                                         },
-                                        'series',
+                                        {
+                                            key: 'series',
+                                            addQuotes: true,
+                                            useTitleAsValue: false
+                                        },
                                         {
                                             key: 'publication',
-                                            rename: 'publications.publicationtitle'
+                                            rename: 'publications.publicationtitle',
+                                            addQuotes: true
                                         },
                                         'aipcomplete',
                                         'termsofusechangedate',
