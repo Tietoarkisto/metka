@@ -928,7 +928,8 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                             .check(field.getKey(), value, language)
                             .setConfiguration(configuration));
             StatusCode statusCode = codePair.getLeft();
-            if (!(statusCode == StatusCode.FIELD_INSERT || statusCode == StatusCode.FIELD_UPDATE)) {
+            boolean isFreeText = isFieldFreeText(field.getKey(), configuration);
+            if (!(statusCode == StatusCode.FIELD_INSERT || statusCode == StatusCode.FIELD_UPDATE || (statusCode == StatusCode.FIELD_NOT_WRITABLE && isFreeText))) {
                 switch (statusCode) {
                     case FIELD_NOT_MUTABLE:
                         transferField.addErrorFor(language, FieldError.IMMUTABLE);
@@ -953,45 +954,71 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 if (statusCode == StatusCode.FIELD_INSERT || statusCode == StatusCode.FIELD_UPDATE) {
                     returnPair.setLeft(StatusCode.FIELD_CHANGED);
                 }
+            }
 
-                // If this field is a SELECTION field then check for free text value.
-                // If the current value is a free text value then save the free text field, otherwise clear the free text field
-                if(field.getType() == FieldType.SELECTION) {
-                    SelectionList list = configuration.getRootSelectionList(field.getSelectionList());
-                    // If we don't have any free text values, don't have a defined free text field or don't have a current value then there's no point in continuing
-                    if(list.getFreeText().isEmpty() || !value.hasValue() || !StringUtils.hasText(list.getFreeTextKey())) {
-                        return;
-                    }
+            // If this field is a SELECTION field then check for free text value.
+            // If the current value is a free text value then save the free text field, otherwise clear the free text field
+            if(field.getType() == FieldType.SELECTION) {
+                SelectionList list = configuration.getRootSelectionList(field.getSelectionList());
+                // If we don't have any free text values, don't have a defined free text field or don't have a current value then there's no point in continuing
+                if(list.getFreeText().isEmpty() || !value.hasValue() || !StringUtils.hasText(list.getFreeTextKey())) {
+                    return;
+                }
 
-                    boolean saveFreeText = false;
-                    for(String free : list.getFreeText()) {
-                        if(free.equals(value.getValue())) {
-                            saveFreeText = true;
-                            break;
-                        }
-                    }
-                    if(saveFreeText) {
-                        // Let's get the free text value from the
-
-                        TransferField tf = transferFields.getField(list.getFreeTextKey());
-                        if(tf == null || tf.getValueFor(language) == null) {
-                            // New value is empty so let's try and clear the value just in case
-                            dataFields.dataField(ValueDataFieldCall.set(list.getFreeTextKey(), new Value(""), language)
-                                .setChangeMap(changeMap).setConfiguration(configuration).setInfo(info));
-                        } else {
-                            // We have at least some kind of value for free text, if current value is null then nothing should happen
-                            // if there's an original value so we should be ok with trying to set the value to current value in transfer value
-                            dataFields.dataField(ValueDataFieldCall.set(list.getFreeTextKey(), new Value(tf.getValueFor(language).getCurrent()), language)
-                                .setChangeMap(changeMap).setConfiguration(configuration).setInfo(info));
-                        }
-
-                    } else {
-                        // Let's make sure the free text field is clear
-                        dataFields.dataField(ValueDataFieldCall.set(list.getFreeTextKey(), new Value(""), language)
-                                .setChangeMap(changeMap).setConfiguration(configuration).setInfo(info));
+                boolean saveFreeText = false;
+                for(String free : list.getFreeText()) {
+                    if(free.equals(value.getValue())) {
+                        saveFreeText = true;
+                        break;
                     }
                 }
+                Field freeField = configuration.getField(list.getFreeTextKey());
+                if(freeField != null) {
+                    if(!saveFreeText) {
+                        TransferField tf = transferFields.getField(freeField.getKey());
+                        if(tf == null) {
+                            tf = new TransferField(freeField.getKey(), TransferFieldType.VALUE);
+                            transferFields.addField(tf);
+                        } else {
+                            tf.getValues().clear();
+                        }
+                    }
+                    Pair<StatusCode, Boolean> freeSave = saveValue(freeField, configuration, transferFields, dataFields, changeMap);
+                    if(freeSave.getLeft() == StatusCode.FIELD_CHANGED) {
+                        returnPair.setLeft(freeSave.getLeft());
+                    }
+                    if(freeSave.getRight()) {
+                        returnPair.setRight(freeSave.getRight());
+                    }
+                    // Let's get the free text value from the
+
+                    /*TransferField tf = transferFields.getField(list.getFreeTextKey());
+                    if(tf == null || tf.getValueFor(language) == null) {
+                        // New value is empty so let's try and clear the value just in case
+                        dataFields.dataField(ValueDataFieldCall.set(list.getFreeTextKey(), new Value(""), language)
+                            .setChangeMap(changeMap).setConfiguration(configuration).setInfo(info));
+                    } else {
+                        // We have at least some kind of value for free text, if current value is null then nothing should happen
+                        // if there's an original value so we should be ok with trying to set the value to current value in transfer value
+                        dataFields.dataField(ValueDataFieldCall.set(list.getFreeTextKey(), new Value(tf.getValueFor(language).getCurrent()), language)
+                            .setChangeMap(changeMap).setConfiguration(configuration).setInfo(info));
+                    }*/
+
+                }/* else {
+                    // Let's make sure the free text field is clear
+                    dataFields.dataField(ValueDataFieldCall.set(list.getFreeTextKey(), new Value(""), language)
+                            .setChangeMap(changeMap).setConfiguration(configuration).setInfo(info));
+                }*/
             }
+        }
+
+        private boolean isFieldFreeText(String key, Configuration configuration) {
+            for(SelectionList list : configuration.getSelectionLists().values()) {
+                if(key.equals(list.getFreeTextKey())) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

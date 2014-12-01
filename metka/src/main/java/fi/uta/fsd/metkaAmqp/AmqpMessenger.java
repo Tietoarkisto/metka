@@ -17,12 +17,14 @@ class AmqpMessenger {
         private Channel channel = null;
         private AMQPState state = AMQPState.AMQP_STOPPED;
 
-        void init(String host) {
+        void init(String host, String user, String password) {
             try {
                 if (factory == null) {
                     factory = new ConnectionFactory();
                 }
                 factory.setHost(host);
+                factory.setUsername(user);
+                factory.setPassword(password);
                 connection = factory.newConnection();
 
                 if (!connection.isOpen()) {

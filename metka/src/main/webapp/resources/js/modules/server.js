@@ -29,7 +29,8 @@ define(function (require) {
                 'Content-Type': 'application/json'
             },
             dataType: 'json',
-            url: url
+            url: url,
+            jsonp: false
         }, options));
     };
 });

@@ -965,6 +965,7 @@
 		"versiontext": {
 			"key": "versiontext",
 			"type": "STRING",
+			"translatable": true,
 			"subfield": true,
 			"writable": false,
 			"exact": false

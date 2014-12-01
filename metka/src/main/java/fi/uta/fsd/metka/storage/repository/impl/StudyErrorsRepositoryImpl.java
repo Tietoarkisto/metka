@@ -11,6 +11,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -122,7 +123,9 @@ public class StudyErrorsRepositoryImpl implements StudyErrorsRepository {
         entity.setErrorlanguage(error.getErrorlanguage());
         entity.setErrorlabel(error.getErrorlabel());
         entity.setErrornotes(error.getErrornotes());
-        entity.setErrortriggerdate(error.getErrortriggerdate());
+        if(error.getErrortriggerdate() != null && StringUtils.hasText(error.getErrortriggerdate().toString())) {
+            entity.setErrortriggerdate(error.getErrortriggerdate());
+        }
         entity.setErrortriggerpro(error.getErrortriggerpro());
     }
 }

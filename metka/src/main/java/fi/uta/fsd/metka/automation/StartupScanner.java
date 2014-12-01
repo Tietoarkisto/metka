@@ -1,10 +1,12 @@
 package fi.uta.fsd.metka.automation;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.MiscJSONRepository;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import org.apache.commons.io.FileUtils;
@@ -48,7 +50,10 @@ public class StartupScanner {
                 logger.error("Failed at deserializing "+file.getName());
                 continue;
             }
-            configRepo.insert(conf.getRight());
+            Pair<ReturnResult, Configuration> existing = configRepo.findConfiguration(conf.getRight().getKey());
+            if(existing.getLeft() != ReturnResult.CONFIGURATION_FOUND && existing.getLeft() != ReturnResult.DATABASE_DISCREPANCY) {
+                configRepo.insert(conf.getRight());
+            }
         }
     }
 
@@ -69,7 +74,15 @@ public class StartupScanner {
                 logger.error("Failed at deserializing "+file.getName());
                 continue;
             }
-            miscJsonRepo.insert(misc.getRight());
+            JsonNode key = misc.getRight().get("key");
+            if(key == null || key.getNodeType() != JsonNodeType.STRING) {
+                // Not key or key is not text, ignore
+                continue;
+            }
+            Pair<ReturnResult, JsonNode> existing = miscJsonRepo.findByKey(key.textValue());
+            if(existing.getLeft() != ReturnResult.MISC_JSON_FOUND) {
+                miscJsonRepo.insert(misc.getRight());
+            }
         }
     }
 
@@ -90,7 +103,10 @@ public class StartupScanner {
                 logger.error("Failed at deserializing "+file.getName());
                 continue;
             }
-            configRepo.insert(gui.getRight());
+            Pair<ReturnResult, GUIConfiguration> existing = configRepo.findGUIConfiguration(gui.getRight().getKey());
+            if(existing.getLeft() != ReturnResult.CONFIGURATION_FOUND && existing.getLeft() != ReturnResult.DATABASE_DISCREPANCY) {
+                configRepo.insert(gui.getRight());
+            }
         }
     }
 }

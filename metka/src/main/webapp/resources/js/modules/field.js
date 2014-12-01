@@ -65,7 +65,7 @@ define(function (require) {
                                 if (list) {
                                     var freeTextKey = list.freeTextKey;
                                     if (freeTextKey) {
-                                        if (options.dataConf.fields[freeTextKey].translatable) {
+                                        if (options.dataConf.fields[freeTextKey] && options.dataConf.fields[freeTextKey].translatable) {
                                             // don't toggle
                                             return;
                                         }

@@ -86,15 +86,15 @@ public class IndexerDocument {
     }*/
 
     public void indexText(Language language, Field field, String root, ValueDataField saved, boolean generalSearch) {
-        indexText(language, root+field.getKey(), saved.getActualValueFor(language), field.getExact(), Store.NO, generalSearch);
+        indexText(language, root+field.getIndexAs(), saved.getActualValueFor(language), field.getExact(), Store.NO, generalSearch);
     }
 
     public void indexText(Language language, Field field, String root, ReferenceOption option, boolean generalSearch) {
-        indexText(language, root+field.getKey(), option.getTitle().getValue(), field.getExact(), Store.NO, generalSearch);
+        indexText(language, root+field.getIndexAs(), option.getTitle().getValue(), field.getExact(), Store.NO, generalSearch);
     }
 
     public void indexText(Language language, Field field, String root, String value, boolean generalSearch) {
-        indexText(language, root+field.getKey(), value, field.getExact(), Store.NO, generalSearch);
+        indexText(language, root+field.getIndexAs(), value, field.getExact(), Store.NO, generalSearch);
     }
 
     public void indexText(Language language, String key, String value, boolean exact, Store store, boolean generalSearch) {

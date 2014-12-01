@@ -19,6 +19,12 @@ public class Messenger {
     @Value("${rabbit.server}")
     private String RABBIT_SERVER_HOST;
 
+    @Value("${rabbit.user}")
+    private String RABBIT_USERNAME;
+
+    @Value("${rabbit.password}")
+    private String RABBIT_PASSWORD;
+
     private final Map<AmqpMessageType, MetkaAmqpMessage> amqpMessages = new HashMap<>();
 
     @PostConstruct
@@ -36,7 +42,7 @@ public class Messenger {
 
     private AmqpMessenger getAmqpMessenger() {
         AmqpMessenger amqpMessenger = new AmqpMessenger();
-        amqpMessenger.init(RABBIT_SERVER_HOST);
+        amqpMessenger.init(RABBIT_SERVER_HOST, RABBIT_USERNAME, RABBIT_PASSWORD);
         amqpMessenger.logState();
         return amqpMessenger;
     }
