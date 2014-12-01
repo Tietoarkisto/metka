@@ -207,10 +207,14 @@ define(function (require) {
                                 key: 'studies',
                                 rename: 'studies.studyid'
                             },
-                            'publicationfirstsaved',
+                            {
+                                key: 'publicationfirstsaved',
+                                addQuotes: true
+                            },
                             {
                                 key:'savedAt',
-                                rename: 'state.saved.time'
+                                rename: 'state.saved.time',
+                                addQuotes: true
                             },
                             'publicationyear',
                             {
@@ -219,7 +223,8 @@ define(function (require) {
                             },
                             {
                                 key: 'seriesname',
-                                rename: 'series.seriesname'
+                                rename: 'series.seriesname',
+                                addQuotes: true
                             },
                             {
                                 key: 'lastname',
@@ -231,8 +236,14 @@ define(function (require) {
                             },
                             'publicationtitle',
                             'publicationrelpubl',
-                            'publicationlanguage',
-                            'publicationpublic',
+                            {
+                                key: 'publicationlanguage',
+                                addQuotes: true
+                            },
+                            {
+                                key: 'publicationpublic',
+                                addQuotes: true
+                            },
                             {
                                 key:'savedBy',
                                 rename: 'state.saved.user'

@@ -41,7 +41,7 @@ define(function (require) {
                             // set defaults
                             return $.extend({
                                 useSelectionText: true,
-                                addSelectionQuotes: true,
+                                addQuotes: false,
                                 addParens: true
                             }, searchOptions);
                         }).forEach(function (searchOptions) {
@@ -55,7 +55,7 @@ define(function (require) {
                                         value: value
                                     })).text();
                                 }
-                                if (value && searchOptions.addSelectionQuotes) {
+                                if (value && searchOptions.addQuotes) {
                                     value = '"' + value + '"';
                                 }
                             }
