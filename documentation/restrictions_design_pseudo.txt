@@ -66,7 +66,7 @@ Check
 --
 
 Condition (pseudo)
-type : [NOT_EMPTY|IS_EMPTY|EQUALS|UNIQUE|INCREASING|DECREASING]
+type : [NOT_EMPTY|IS_EMPTY|EQUALS|NOT_EQUALS|UNIQUE|INCREASING|DECREASING]
 target : Target
 
 Condition type
@@ -81,6 +81,10 @@ Condition type
 	- For query this means that query needs to return 0 results
 	- For fields additional LANGUAGE type target can be provided. This restricts the check to certain language. Without this the check targets any language (meaning if there's value on any language the check returns false).
 * Equals (Target FIELD)
+	- Top level fields can only target other top level fields or values
+	- Fields in containers can target top level fields, fields in their own container row or values
+	- Containers and queries are not valid targets
+* Not Equals (Target FIELD)
 	- Top level fields can only target other top level fields or values
 	- Fields in containers can target top level fields, fields in their own container row or values
 	- Containers and queries are not valid targets

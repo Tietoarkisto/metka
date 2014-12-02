@@ -82,6 +82,14 @@
                                     "MODIFY": "Muokkaa kysymystekstiä",
                                     "VIEW": "Kysymysteksti"
                                 }
+                            },
+                            "extraDialogConfiguration": {
+                            	"qstnlit": {
+                            		"field": {
+                            			"key": "qstnlit",
+                            			"multiline": true
+                            		}
+                            	}
                             }
                         }
                     ]
@@ -104,6 +112,14 @@
                                     "MODIFY": "Muokkaa esitekstiä",
                                     "VIEW": "Esiteksti"
                                 }
+                            },
+                            "extraDialogConfiguration": {
+                            	"preqtxt": {
+                            		"field": {
+                            			"key": "preqtxt",
+                            			"multiline": true
+                            		}
+                            	}
                             }
                         }
                     ]
@@ -126,6 +142,14 @@
                                     "MODIFY": "Muokkaa jälkitekstiä",
                                     "VIEW": "Jälkiteksti"
                                 }
+                            },
+                            "extraDialogConfiguration": {
+                            	"postqtxt": {
+                            		"field": {
+                            			"key": "postqtxt",
+                            			"multiline": true
+                            		}
+                            	}
                             }
                         }
                     ]
@@ -143,11 +167,19 @@
                                     "ivuinstr"
                                 ],
                                 "dialogTitle": {
-                                    "key": "ivuinstr",
+                                    "key": "ivuinstrs",
                                     "ADD": "Lisää haastattelijan ohje",
                                     "MODIFY": "Muokkaa haastattelijan ohjetta",
                                     "VIEW": "Haastattelijan ohje"
                                 }
+                            },
+                            "extraDialogConfiguration": {
+                            	"ivuinstr": {
+                            		"field": {
+                            			"key": "ivuinstr",
+                            			"multiline": true
+                            		}
+                            	}
                             }
                         }
                     ]
@@ -170,6 +202,14 @@
                                     "MODIFY": "Muokkaa huomiota",
                                     "VIEW": "Huomio"
                                 }
+                            },
+                            "extraDialogConfiguration": {
+                            	"varnote": {
+                            		"field": {
+                            			"key": "varnote",
+                            			"multiline": true
+                            		}
+                            	}
                             }
                         }
                     ]
@@ -192,6 +232,14 @@
                                     "MODIFY": "Muokkaa lisätietoa",
                                     "VIEW": "Lisätieto"
                                 }
+                            },
+                            "extraDialogConfiguration": {
+                            	"vartext": {
+                            		"field": {
+                            			"key": "vartext",
+                            			"multiline": true
+                            		}
+                            	}
                             }
                         }
                     ]
@@ -214,6 +262,14 @@
                                     "MODIFY": "Muokkaa tietosuoja-asiaa",
                                     "VIEW": "Tietosuoja-asia"
                                 }
+                            },
+                            "extraDialogConfiguration": {
+                            	"varsecurity": {
+                            		"field": {
+                            			"key": "varsecurity",
+                            			"multiline": true
+                            		}
+                            	}
                             }
                         }
                     ]

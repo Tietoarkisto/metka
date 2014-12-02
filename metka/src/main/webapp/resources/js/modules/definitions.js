@@ -357,6 +357,22 @@ define({
                                     },
                                     "required": ["target"]
                                 }, {
+                                    "description": "`Has target` / `No target` -valinta määrittää, onko vaatimuksella tarkentavia target-objekteja.",
+                                    "title": "NOT_EQUALS",
+                                    "options": {
+                                        "collapsed": false,
+                                        "disable_properties": true
+                                    },
+                                    "properties": {
+                                        "type": {
+                                            "template": "NOT_EQUALS"
+                                        },
+                                        "target": {
+                                            "$ref": "#/definitions/restrictionTarget"
+                                        }
+                                    },
+                                    "required": ["target"]
+                                }, {
                                     "title": "UNIQUE",
                                     "options": {
                                         "disable_collapse": true,
