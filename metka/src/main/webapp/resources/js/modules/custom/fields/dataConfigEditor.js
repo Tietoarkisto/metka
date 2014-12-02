@@ -2,6 +2,6 @@ define(function (require) {
     'use strict';
 
     return function (options) {
-        delete options.field.displayType;
+        //delete options.field.displayType;
     };
 });

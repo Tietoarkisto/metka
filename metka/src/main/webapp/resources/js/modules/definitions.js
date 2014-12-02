@@ -268,6 +268,16 @@ define({
                 "options": {
                     "hidden": true
                 }
+            },
+            "targets": {
+                "options": {
+                    "hidden": true
+                }
+            },
+            "checks": {
+                "options": {
+                    "hidden": true
+                }
             }
         },
         "required": ["type", "content"],
@@ -283,14 +293,16 @@ define({
                 },
                 "targets": {
                     "options": {
-                        "collapsed": true
+                        "collapsed": true,
+                        "hidden": false
                     },
                     "$ref": "#/definitions/restrictionTargets"
                 },
                 "checks": {
                     "description": "Tarkistukset, jotka tehdään tämän target-objektin validoinnin yhteydessä.",
                     "options": {
-                        "collapsed": true
+                        "collapsed": true,
+                        "hidden": false
                     },
                     "type": "array",
                     "items": {
@@ -431,7 +443,8 @@ define({
                 "checks": {
                     "description": "Tarkistukset, jotka tehdään tämän target-objektin validoinnin yhteydessä.",
                     "options": {
-                        "collapsed": true
+                        "collapsed": true,
+                        "hidden": false
                     },
                     "type": "array",
                     "items": {
