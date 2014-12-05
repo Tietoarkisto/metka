@@ -329,6 +329,23 @@ Suurin osa `@Controller`-metodeista kutsuu `metka.mvc.services.impl`-paketissa o
 
 Kun `@Repository`-luokat kommunikoivat tietokannan kanssa siihen käytetään yleensä `@Entity`-annotaatiolla merkattuja luokkia joista suurin osa löytyy `metka.storage.entity`-paketista ja jotka toimivat tietokantataulujen kuvauksina Java-koodissa. Varsinaisiin tietokantaoperaatioihin käytetään JPA-spesifikaation tarjoamia luokkia ja operaatioita (Metkan tapauksessa JPA:n toteutta Hibernate-kirjasto).
 
+# Rajapintakäyttäjät
+API-servletin (kaikki api/ alkavat rajapintaosoitteet) käyttäjien määrittely tapahtuu tietokannan `api_user`-taulussa. Käyttäjälle on määritelty seuraavat tiedot:  
+**api_user_id**: Rajapintakäyttäjän primääriavain, haetaan `api_user_id_seq`-sekvenssistä.  
+**created_by**: Rajapintakäyttäjän luoneen käyttäjän käyttäjätunnus.  
+**last_access**: Koska rajapintakäyttäjä on viimeksi tehnyt operaation. Palvelin ylläpitää.  
+**name**: Rajapintakäyttäjän nimi. Kaikki käyttäjän tekemät operaatiot joista seurataan muutoksia käyttävät tätä nimeä muutosten merkintään. Yleensä muodossa `api:{name}` jossa `{name}` korvataan rajapintakäyttäjän nimellä.  
+**permissions**: Rajapintakäyttäjän oikeudet. Tämä on bitflag tyyppinen tunniste, eli kentän arvo on yhteenlaskettu summa seuraavista tiedoista:  
+* `1`: Saa luoda uuden aineiston.  
+* `2`: Saa suorittaa lucene-haun ja pyytää revision uudelleenindeksointia.  
+* `4`: Saa lukea revisiodataa.  
+* `8`: Saa tallentaa revisiodataa.  
+Eli esimerkiksi arvo `6` tarkoittaa että käyttäjä saa sekä suorittaa hakuja että lukea revisiodataa.  
+
+**public_key**: Julkinen avain. Tämä on taulussa uniikki kenttä. Autentikointiin käytetään perinteistä api-key mekanismia jossa käyttäjällä on sekä julkinen, että salainen avain. Julkiselle avaimelle ei käytännössä ole mitään muita vaatiumksia kuin uniikkius. Yksi tapa muodostaa julkinen avain on konkatenoida käyttäjän tietokanta id, luojan tunnus ja luontiaika, ajaa tämä vaikkapa `SHA256` hash-funktion läpi ja tehdä tuloksesta `Base64` enkoodattu teksti. Tämä lähetetään autentikoinnin yhteydessä sellaisenaan.  
+**secret**: Salainen avain. Tämä on taulussa uniikki kenttä. Myöskään salaiselle avaimelle ei käytännössä ole muita vaatimuksia kuin uniikkius. Yksi tapa muodostaa salainen avain on konkatenoida käyttäjän luontiaika, pulkinen avain, nimi, tietokannan id ja käyttäjän oikeudet, ajaa tämä vaikkapa `SHA512` hash-funktion läpi ja tehdä tuloksesta `Base64` enkoodattu teksti. Api-key autentikaatio käyttää tätä kannassa olevaa arvoa kun se yrittää varmentaa rajapintaan tullutta pyyntöä.  
+
+Uutta käyttäjää luodessa arvot `created_by`, `name`, `permissions`, `public_key` ja `secret` tulee täyttää. Tietokannan käsittelyyn käytetystä työkalusta riippuu pitääkö `api_user_id` arvo noutaa itse sekvenssistä vai tuleeko arvo automaattisesti.
 
 # Käyttöliittymä
 

@@ -2140,34 +2140,108 @@
         	"translatable": true
         }
 	},
+	"namedTargets": {
+		"quantitative": {
+			"type": "FIELD",
+			"content": "datakind",
+			"checks": [{
+				"condition": {
+					"type": "EQUALS",
+					"target": {
+						"type": "VALUE",
+						"content": "1"
+					}
+				}
+			}]
+		},
+		"qualitative": {
+			"type": "FIELD",
+			"content": "datakind",
+			"checks": [{
+				"condition": {
+					"type": "EQUALS",
+					"target": {
+						"type": "VALUE",
+						"content": "2"
+					}
+				}
+			}]
+		}
+	},
 	"restrictions": [
 		{
 			"type": "APPROVE",
-			"targets": [
-				{
-					"type": "FIELD",
-					"content": "title",
-					"checks": [
-						{
-							"condition": {
-								"type": "NOT_EMPTY",
-								"target": {
-									"type": "LANGUAGE",
-									"content": "fi"
-								}
-							}
-						}, {
-							"condition": {
-								"type": "NOT_EMPTY",
-								"target": {
-									"type": "LANGUAGE",
-									"content": "en"
-								}
+			"targets": [{
+				"type": "FIELD",
+				"content": "title",
+				"checks": [
+					{
+						"condition": {
+							"type": "NOT_EMPTY",
+							"target": {
+								"type": "LANGUAGE",
+								"content": "fi"
 							}
 						}
-					]
-				}
-			]
+					}, {
+						"condition": {
+							"type": "NOT_EMPTY",
+							"target": {
+								"type": "LANGUAGE",
+								"content": "en"
+							}
+						}
+					}
+				]
+			}, {
+				"type": "FIELD",
+				"content": "weightyesno",
+				"checks": [{
+					"condition": {
+						"type": "EQUALS",
+						"target": {
+							"type": "VALUE",
+							"content": "true"
+						}
+					},
+					"restrictors": [{
+						"type": "NAMED",
+						"content": "quantitative"
+					}, {
+						"type": "FIELD",
+						"content": "weight",
+						"checks": [{
+							"condition": {
+								"type": "IS_EMPTY"
+							}
+						}]
+					}]
+				}]
+			}, {
+				"type": "FIELD",
+				"content": "weight",
+				"checks": [{
+					"condition": {
+						"type": "NOT_EMPTY"
+					},
+					"restrictors": [{
+						"type": "NAMED",
+						"content": "quantitative"
+					}, {
+						"type": "FIELD",
+						"content": "weightyesno",
+						"checks": [{
+							"condition": {
+								"type": "NOT_EQUALS",
+								"target": {
+									"type": "VALUE",
+									"content": "true"
+								}
+							}
+						}]
+					}]
+				}]
+			}]
 		}
 	]
 }

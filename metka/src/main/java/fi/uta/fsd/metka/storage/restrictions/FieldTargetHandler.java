@@ -228,6 +228,13 @@ class FieldTargetHandler {
                     return false;
                 }
                 return EqualsCheck.equals(d, condition.getTarget(), configuration);
+            case NOT_EQUALS:
+                if(condition.getTarget() == null) {
+                    // Condition must have a target for non equality checking
+                    logger.error("Condition "+condition.toString()+" didn't have a target ");
+                    return false;
+                }
+                return EqualsCheck.notEquals(d, condition.getTarget(), configuration);
             default:
                 return true;
         }
@@ -315,6 +322,50 @@ class FieldTargetHandler {
                     }
                     // Value did not equal
                     return false;
+                case LANGUAGE:
+                    // Language equality is not defined for field at this time but could be
+                    return true;
+                default:
+                    // Should not happen so let's return false in this case
+                    return false;
+            }
+        }
+
+        public static boolean notEquals(ValueDataField d, Target t, Configuration configuration) {
+            switch (t.getType()) {
+                case QUERY:
+                    // Query equality is not defined for field at this time but could be
+                    return true;
+                case FIELD:
+                    // TODO: Validate against field value
+                    //
+                    return true;
+                case NAMED:
+                    // Fetch named target and then recurse through
+                    Target named = configuration.getNamedTargets().get(t.getContent());
+                    if(named != null) {
+                        named = named.copy();
+                        named.setParent(t.getParent());
+                    }
+                    // Named target must not be null for valid return
+                    return named != null && notEquals(d, named, configuration);
+                case VALUE:
+                    // If target has an empty content then return false, empty values should be checked with IS_EMPTY
+                    if (!StringUtils.hasText(t.getContent())) {
+                        return false;
+                    }
+                    // If field is null then return true, null value is by definition not equal to anything
+                    if (d == null) {
+                        return true;
+                    }
+                    // TODO: When language support for restrictions is added then fix this.
+                    // Checks values in all languages for equality, if one of them equals then the whole value equals and this check fails
+                    for (Language l : Language.values()) {
+                        if (d.hasValueFor(l) && d.valueForEquals(l, t.getContent()))
+                            return false;
+                    }
+                    // Value did not equal
+                    return true;
                 case LANGUAGE:
                     // Language equality is not defined for field at this time but could be
                     return true;
