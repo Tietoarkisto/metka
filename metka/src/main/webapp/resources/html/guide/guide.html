@@ -315,10 +315,22 @@ Apache Lucene:ssa määriteltyjä tekstihakuja, esimerkiksi:<br>
     <tr>
         <td style="vertical-align: top;"><code>*</code><br>
         </td>
-        <td style="vertical-align: top;">Tähdellä voidan korvata haussa
-            merkkijonosta nolla tai useampia merkkejä siten, että korvausmerkin
-            paikalla voi olla mikä tahansa merkkijono. Tähteä ei voi käyttää
-            ensimmäisenä merkkinä hakutermissä.</td>
+        <td style="vertical-align: top;">Kun
+            haetaan mahdollisesti useammasta sanasta muodostuvaa merkkijonoa,
+            hakuehto täytyy ympäröidä kauttaviivoin ja tähtimerkin eteen tulee
+            piste, esimerkiksi ehto <code>/.*social.*/</code> löytäisi kaikki myös
+            välilyöntejä sisältävät merkkijonot, jotka sisältävät merkkijonon
+            "social" riippumatta siitä onko sanan kirjaimia kirjoitettu isoilla tai
+            pienillä alkukirjaimilla.<br>
+            <br>
+            Jos tiedetään, että ollaan hakemassa yksittäistä sanaa, kauttaviivat ja
+            pisteet voi jättää pois ja tähdellä voi korvata merkkijonosta nolla
+            tai useampia merkkejä. Tällöin korvausmerkin
+            paikalla voi olla mikä tahansa merkkijono, esimerkiksi ehto <code>*rop*</code>
+            löytäisi kaikki yhdestä sanasta koostuvat merkkijonot, jotka sisältävä
+            merkkijonon "rop" eli se löytäisi mm. merkkijonot "Europe" ja
+            "European".<br>
+        </td>
     </tr>
     <tr>
         <td style="vertical-align: top;"><code>OR</code></td>
@@ -385,7 +397,9 @@ Apache Lucene:ssa määriteltyjä tekstihakuja, esimerkiksi:<br>
 
 <br>
 
-Lisää ohjeita Apache Lucene -hakujen tekemiseen: <a href="http://lucene.apache.org/core/4_10_0/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package_description">http://lucene.apache.org/core/4_10_0/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package_description</a>.<br>
+Lisää ohjeita Apache Lucene -hakujen tekemiseen: <a href="http://lucene.apache.org/core/4_10_0/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package_description">http://lucene.apache.org/core/4_10_0/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package_description</a>. <br>
+<br>
+Hauissa voidaan käyttää myös säännöllisiä lausekkeita (engl. regular expression).<br>
 
 <h3 id="Aika">Ajan (<var>Aika</var>) antaminen hakukriteerinä</h3>
 
@@ -655,16 +669,22 @@ Revisioitavien objektien haltuunottoa ja vapauttamista koskevat seuraavat sään
 
 <ul>
 
+    <li>Kun käyttäjä luo uuden revisioitavan objektin valitsemalla <strong>Lisää uusi</strong>, hänestä tulee revisioitavan objektin käsittelijä.</li>
+    <li>Kun käyttäjä luo revisioitavasta objektista uuden luonnoksen valitsemalla <strong>Tee luonnos</strong>, hänestä tulee revisioitavan objektin käsittelijä.</li>
     <li>Mikäli revisioitavalla objektilla on käsittelijä, se voidaan vapauttaa muiden käyttöön painamalla <strong>Vapauta luonnos</strong>
         painiketta. Tämän jälkeen objektilla ei ole käsittelijää ja kuka
         tahansa voi ryhtyä muokkaamaan objektia.</li>
     <li>Jos revisioitavalla objektilla ei ole käsittelijää, kuka tahansa
         voi aloittaa sen muokkaamisen painamalla <strong>Aloita muokkaus</strong>
-        painiketta. Tämän jälkeen painiketta painanut käyttäjä on objektin käsittelijä.&nbsp;</li>
+        painiketta. Tämän jälkeen painiketta painanut käyttäjä on objektin käsittelijä. <br>
+    </li>
+    <li>Kun käyttäjä hyväksyy revision valitsemalla <strong>Hyväksy</strong>, objektilla ei ole käsittelijää ja kuka
+        tahansa voi tehdä objektista uuden revision.</li>
     <li>Kun käyttäjä on tehnyt tarvittavat muokkaukset objektille, jonka
         käsittelijä hän on, käyttäjä voi painaa <strong>Lopeta muokkaus</strong>
         painiketta. Tämän jälkeen objektilla ei ole käsittelijää ja kuka
         tahansa voi alkaa muokkaamaan objektia.</li>
+
     <li>Mikäli revisioitavalla objektilla on käsittelijä, toinen käyttäjä
         voi ottaa sen haltuunsa valitsemalla objektille <strong>Ota haltuun</strong>.</li>
 </ul>
@@ -676,34 +696,6 @@ Kts. Lisätietoja toimintojen saatavuudesta käyttäjälle: <a href="#K%E4ytt%E4
 <h2>Tee aineistohaku ja avaa aineiston tiedot<br>
 </h2>
 
-Hakemiseen liittyviä sääntöjä:<br>
-
-<ul>
-
-    <li>Jos useampaan kuin yhteen kenttään on kirjoitettu hakukriteeri,
-        aineisto liitetään hakutuloksiin, jos se sopii kaikkiin annettuihin
-        hakuehtoihin (AND).</li>
-    <li><strong>ID </strong>kenttään kirjoitettu hakusana palauttaa
-        juuri sen aineiston, jonka ID on kenttään kirjoitettu. </li>
-    <li><strong style="font-weight: normal;">Teksti</strong>kenttiin
-        kirjoitetulla hakusanalla löytää
-        kaikki aineistot, joiden nimi sisältää täsmälleen hakukenttään annetun
-        sanan. Jos tekstikenttään on annettu useampi hakusana, haku löytää
-        kaikki aineistot, joiden
-        nimessä on jokin annetuista hakusanoista (OR). Jos halutaan etsiä
-        esimerkiksi aineiston koko nimellä, se voidaan antaa lainausmerkkien
-        sisään, jolloin haetaan&nbsp; koko lainausmerkkien sisällä olevaa
-        merkkijonoa.<br>
-    </li>
-    <li>Jos aineistosta on olemassa sekä viimeisin <em>HYVÄKSYTTY</em>
-        revisio että
-        uusi <em>LUONNOS</em>, ne molemmat näkyvät erillisinä riveinä
-        hakutuloksissa.</li>
-    <li>Yksittäisten tekstikenttien hakujen sisältöä voi muotoilla Apache
-        Lucene syntaksin mukaan, kts. <a href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Syntaksi">Hakujehtojen
-            syntaksi</a>.</li>
-</ul>
-
 Hae aineistoja valitsemalla <strong>Aineistot</strong> &gt; syötä
 hakukriteerit &gt; <strong>Tee haku</strong>.
 Jos hakutuloksia on vain yksi aineiston tiedot aukeavat.
@@ -712,14 +704,30 @@ sivulla <strong>Hakutulos</strong> listalla. Avaa yksittäisen
 aineiston
 tiedot valitsemalla <strong>Hakutulos</strong> listasta haluttu
 aineisto. <br>
-
 <br>
+Hakemiseen liittyviä sääntöjä:<br>
 
-Tyhjennä antamasi hakukriteerit valitsemalla <strong>Tyhjennä</strong>.<br>
+<ul>
 
-<br>
+    <li>Jos useampaan kuin yhteen kenttään on kirjoitettu hakukriteeri,
+        aineisto liitetään hakutuloksiin, jos se sopii kaikkiin annettuihin
+        hakuehtoihin (AND).</li>
+    <li><strong>Aineiston numero </strong>kenttään kirjoitettu hakusana palauttaa
+        juuri sen aineiston, jonka aineistonumero on kenttään kirjoitettu. </li>
+    <li><strong style="font-weight: normal;">Muihin teksti</strong>kenttiin kirjoitetulla yksittäisellä sanalla löytää
+        kaikki aineistot, joiden ko kentän arvo muodostuu täsmälleen hakukenttään annetusta
+        yhdestä sanasta. Jos haettu arvo koostuu
+        useammasta sanasta (sisältää välilyöntejä), hakuehto on ympäröitävä lainausmerkein, esim. <code>"ISSP 2002: perhe ja muuttuvat sukupuoliroolit III: Suomen aineisto"</code>. Jos tekstikenttään on annettu useampi hakusana,
+        haku löytää kaikki julkaisut, joiden nimi vastaa ainakin yhtä annetuista
+        hakusanoista (OR). Lisätietoja hakuehtojen muotoilusta, kts. <a href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Syntaksi">Hakujehtojen
+            syntaksi</a>.
+    </li>
+    <li>Jos aineistosta on olemassa sekä viimeisin <em>HYVÄKSYTTY</em>
+        revisio että
+        uusi <em>LUONNOS</em>, ne molemmat näkyvät erillisinä riveinä
+        hakutuloksissa.</li>
 
-Aineistoja voit hakea myös eksperttihaun avulla, kts. luku <a target="_blank" href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Tee%20eksperttihaku">Tee
+</ul>Aineistoja voit hakea myös eksperttihaun avulla, kts. luku <a target="_blank" href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Tee%20eksperttihaku">Tee
     eksperttihaku</a>.
 <h2>Tallenna aineistohaun hakutulokset JSON-formaatissa</h2>
 
@@ -1117,6 +1125,16 @@ Poista muuttuja ryhmästä:<br>
 <h2>Tee julkaisuhaku ja avaa julkaisun tiedot<br>
 </h2>
 
+Hae julkaisuja valitsemalla <strong>Julkaisut</strong> &gt; <strong>Tee
+    haku</strong>.
+Jos hakutuloksia on vain yksi, <strong>Julkaisu</strong> dialogi
+aukeaa.
+Jos hakutuloksia on useita, ne näytetään <strong>Julkaisuhaku</strong>
+sivulla <strong>Hakutulos</strong> listalla. Avaa yksittäisen
+julkaisun
+tiedot valitsemalla <strong>Hakutulos</strong> listasta haluttu
+julkaisu. <br>
+<br>
 Hakemiseen liittyviä sääntöjä:<br>
 
 <ul>
@@ -1127,16 +1145,15 @@ Hakemiseen liittyviä sääntöjä:<br>
     <li><strong>Julkaisun id-nro </strong>kenttään kirjoitettu hakusana
         palauttaa
         juuri sen julkaisun, jonka Julkaisun id-nro on kenttään kirjoitettu. </li>
-    <li><strong style="font-weight: normal;">Teksti</strong>kenttiin
-        kirjoitetulla hakusanalla löytää
-        kaikki julkaisut, joiden nimi sisältää täsmälleen hakukenttään annetun
-        sanan. Jos tekstikenttään on annettu useampi hakusana, haku löytää
-        kaikki julkaisut, joiden
-        nimessä on jokin annetuista hakusanoista (OR). Jos halutaan etsiä
-        esimerkiksi julkaisun koko nimellä, se voidaan antaa
-        lainausmerkkien sisään, jolloin haetaan&nbsp; koko lainausmerkkien
-        sisällä
-        olevaa merkkijonoa. </li>
+
+    <li><strong style="font-weight: normal;">Muihin teksti</strong>kenttiin kirjoitetulla yksittäisellä sanalla löytää
+        kaikki julkaisut, joiden ko kentän arvo muodostuu täsmälleen hakukenttään annetusta
+        yhdestä sanasta. Jos haettu arvo koostuu
+        useammasta sanasta (sisältää välilyöntejä), hakuehto on ympäröitävä lainausmerkein, esim. <code>"Jakaantunut Suomi"</code>. Jos tekstikenttään on annettu useampi hakusana,
+        haku löytää kaikki julkaisut, joiden nimi vastaa ainakin yhtä annetuista
+        hakusanoista (OR). Lisätietoja hakuehtojen muotoilusta, kts. <a href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Syntaksi">Hakujehtojen
+            syntaksi</a>.</li>
+
     <li>Jos julkaisusta on olemassa sekä viimeisin <em>HYVÄKSYTTY</em>
         revisio että
         uusi <em>LUONNOS</em>, ne molemmat näkyvät erillisinä riveinä
@@ -1144,25 +1161,7 @@ Hakemiseen liittyviä sääntöjä:<br>
     <li>Yksittäisten tekstikenttien hakujen sisältöä voi muotoilla Apache
         Lucene syntaksin mukaan, kts. <a href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Syntaksi">Hakujehtojen
             syntaksi</a>.</li>
-</ul>
-
-Hae julkaisuja valitsemalla <strong>Julkaisut</strong> &gt; <strong>Tee
-    haku</strong>.
-Jos hakutuloksia on vain yksi, <strong>Julkaisu</strong> dialogi
-aukeaa.
-Jos hakutuloksia on useita, ne näytetään <strong>Julkaisuhaku</strong>
-sivulla <strong>Hakutulos</strong> listalla. Avaa yksittäisen
-julkaisun
-tiedot valitsemalla <strong>Hakutulos</strong> listasta haluttu
-julkaisu. <br>
-
-<br>
-
-Tyhjennä antamasi hakukriteerit&nbsp; valitsemalla <strong>Tyhjennä</strong>.<br>
-
-<br>
-
-Julkaisuja voit hakea myös eksperttihaun avulla, kts. luku <a target="_blank" href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Tee%20eksperttihaku">Tee
+</ul>Julkaisuja voit hakea myös eksperttihaun avulla, kts. luku <a target="_blank" href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Tee%20eksperttihaku">Tee
     eksperttihaku</a>.
 <br>
 
@@ -1291,6 +1290,12 @@ Lataa julkaisun tiedot JSON-formaatissa:<br>
 <h2>Tee sarjahaku ja avaa sarjan tiedot<br>
 </h2>
 
+Hae sarjoja valitsemalla <strong>Sarjat</strong> &gt; <strong>Tee haku</strong>.
+Jos hakutuloksia on vain yksi, <strong>Sarja</strong> dialogi aukeaa.
+Jos hakutuloksia on useita, ne näytetään <strong>Sarjahaku</strong>
+sivulla <strong>Hakutulos</strong> listalla. Avaa yksittäisen sarjan
+tiedot valitsemalla <strong>Hakutulos</strong> listasta haluttu sarja.<br>
+<br>
 Hakemiseen liittyviä sääntöjä:
 <br>
 
@@ -1299,44 +1304,31 @@ Hakemiseen liittyviä sääntöjä:
     <li><strong>ID </strong>kenttään kirjoitettu hakusana palauttaa
         juuri sen sarjan, jonka ID on kenttään kirjoitettu.</li>
     <li><strong>Lyhenne</strong> <strong></strong>alasvetovalikosta
-        valittu hakusana palauttaa juuri sen sarjan, jonka lyhenne on valittu.</li>
+        valittu sarjan lyhenne palauttaa juuri sen sarjan, jonka lyhenne on valittu.</li>
     <li><strong>Nimi</strong> kenttään kirjoitetulla hakusanalla löytää
-        kaikki sarjat, joiden nimi sisältää täsmälleen hakukenttään annetun
-        sanan. Jos <strong>Nimi</strong> kenttään on annettu useampi hakusana,
-        haku löytää kaikki sarjat, joiden nimessä on jokin annetuista
-        hakusanoista (OR). Jos halutaan etsiä esimerkiksi sarjan koko nimellä,
-        se voidaan antaa
-        lainausmerkkien sisään, jolloin haetaan&nbsp; koko lainausmerkkien
-        sisällä
-        olevaa merkkijonoa. </li>
-    <li>Jos useampaan kuin yhteen kenttään on kirjoitettu hakukriteeri,
+        kaikki sarjat, joiden nimi muodostuu täsmälleen hakukenttään annetusta
+        sanasta. Jos haetaan sarjan koko nimellä ja haettu nimi koostuu useammasta sanasta, nimi on ympäröitävä lainausmerkein, esim. <code>"European Social Survey"</code>. Jos <strong>Nimi</strong> kenttään on annettu useampi hakusana,
+        haku löytää kaikki sarjat, joiden nimi vastaa ainakin yhtä annetuista
+        hakusanoista (OR). Lisätietoja hakuehtojen muotoilusta, kts. <a href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Syntaksi">Hakujehtojen
+            syntaksi</a>.</li>
+
+    <li>Käyttäjä voi valita valintaruutujen avulla haluaako hakutuloksiin mukaan <strong>Hyväksyttyjä</strong>,
+        <strong>Luonnoksia</strong> ja/tai <strong>Poistettuja</strong>
+        sarjoja.</li>
+    <li>Jos useampaan kuin yhteen kenttään ja valintaruutuun on annettu hakukriteeri,
         sarja liitetään hakutuloksiin jos se sopii kaikkiin annettuihin
         hakuehtoihin (AND).</li>
     <li>Jos sarjasta on olemassa sekä viimeisin <em>HYVÄKSYTTY</em>
         revisio että uusi <em>LUONNOS</em>, ne molemmat näkyvät erillisinä
         riveinä hakutuloksissa, jos sekä on haettu sekä hyväksyttyjä sarjoja
         että sarjojen luonnoksia.</li>
-    <li>Käyttäjä voi valita haluaako hakutuloksiin <strong>Hyväksyttyjä</strong>,
-        <strong>Luonnoksia</strong> tai <strong>Poistettuja</strong>
-        sarjoja.</li>
-    <li>Yksittäisten tekstikenttien hakujen sisältöä voi muotoilla Apache
-        Lucene syntaksin mukaan, kts. <a href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Syntaksi">Hakujehtojen
-            syntaksi</a>.</li>
+
+
 </ul>
 
 <ul>
 
-</ul>
-
-Hae sarjoja valitsemalla <strong>Sarjat</strong> &gt; <strong>Tee haku</strong>.
-Jos hakutuloksia on vain yksi, <strong>Sarja</strong> dialogi aukeaa.
-Jos hakutuloksia on useita, ne näytetään <strong>Sarjahaku</strong>
-sivulla <strong>Hakutulos</strong> listalla. Avaa yksittäisen sarjan
-tiedot valitsemalla <strong>Hakutulos</strong> listasta haluttu sarja.<br>
-
-<br>
-
-Sarjoja voit hakea myös eksperttihaun avulla, kts. luku <a target="_blank" href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Tee%20eksperttihaku">Tee
+</ul>Sarjoja voit hakea myös eksperttihaun avulla, kts. luku <a target="_blank" href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Tee%20eksperttihaku">Tee
     eksperttihaku</a>.
 <br>
 
