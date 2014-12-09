@@ -427,99 +427,87 @@ define(function (require) {
                     });
                 }
                 var $elem = this;
+                var $filesContainer = $('<div>').appendTo(this);
+                var $removedFilesContainer = $('<div>').appendTo(this);
 
-                require('./../../data')(options).onChange(function () {
-                    function addFileContainers() {
-                        function addFileContainer(files, cell) {
-                            require('./../../inherit')(function (options) {
-                                require('./../../container').call($elem, options);
-                            })(options)({
-                                data: {
-                                    fields: {
-                                        files: files
-                                    }
-                                },
-                                content: [{
-                                    "type": "COLUMN",
-                                    "columns": 1,
-                                    "rows": [{
-                                        "type": "ROW",
-                                        "cells": [cell]
-                                    }]
-                                }]
-                            });
+                function addFileContainer($mount, cell) {
+                    require('./../../inherit')(function (options) {
+                        require('./../../container').call($mount, options);
+                    })(options)({
+                        data: {},
+                        content: [{
+                            "type": "COLUMN",
+                            "columns": 1,
+                            "rows": [{
+                                "type": "ROW",
+                                "cells": [cell]
+                            }]
+                        }]
+                    });
+                }
+                var filesOptions = {
+                    "type": "CELL",
+                    "title": "Liitetyt tiedostot",
+                    "readOnly": true,
+                    "field": {
+                        "key": "files",
+                        "showSaveInfo": true,
+                        "showReferenceKey": true,
+                        "columnFields": [
+                            "filespath",
+                            "fileslang"
+                        ],
+                        onClick: function (transferRow, replaceTr) {
+                            view({
+                                id: transferRow.value,
+                                no: ''
+                            }, replaceTr);
                         }
-                        var filesOptions = {
-                            "type": "CELL",
-                            "title": "Liitetyt tiedostot",
-                            "readOnly": true,
-                            "field": {
-                                "key": "files",
-                                "showSaveInfo": true,
-                                "showReferenceKey": true,
-                                "columnFields": [
-                                    "filespath",
-                                    "fileslang"
-                                ],
-                                onClick: function (transferRow, replaceTr) {
-                                    view({
-                                        id: transferRow.value,
-                                        no: ''
-                                    }, replaceTr);
+                    }
+                };
+                if (!require('./../../isFieldDisabled')(options, 'DEFAULT')) {
+                    filesOptions.field.onAdd = function (originalEmptyData, addRow) {
+                        require('./../../server')('create', {
+                            data: JSON.stringify({
+                                type: 'STUDY_ATTACHMENT',
+                                parameters: {
+                                    study: require('./../../../metka').id
                                 }
-                            }
-                        };
-                        if (!require('./../../isFieldDisabled')(options, 'DEFAULT')) {
-                            filesOptions.field.onAdd = function (originalEmptyData, addRow) {
-                                require('./../../server')('create', {
-                                    data: JSON.stringify({
-                                        type: 'STUDY_ATTACHMENT',
-                                        parameters: {
-                                            study: require('./../../../metka').id
-                                        }
-                                    }),
-                                    success: function (response) {
-                                        if (response.result === 'REVISION_CREATED') {
-                                            // FIXME: row was immediately created, but if dialog is dismissed, row won't be shown until page refresh
-                                            view(response.data.key, addRow);
-                                        }
-                                    }
-                                });
-                            };
-                        }
-                        addFileContainer(files, filesOptions);
-                        addFileContainer(removedFiles, {
-                            "type": "CELL",
-                            "title": "Poistetut tiedostot",
-                            readOnly: true,
-                            "field": {
-                                "key": "files",
-                                "showReferenceKey": true,
-                                "columnFields": [
-                                    "filespath",
-                                    "filedescription",
-                                    "filecomment"
-                                ],
-                                onClick: function (transferRow, replaceTr) {
-                                    view({
-                                        id: transferRow.value,
-                                        no: ''
-                                    }, replaceTr);
+                            }),
+                            success: function (response) {
+                                if (response.result === 'REVISION_CREATED') {
+                                    // FIXME: row was immediately created, but if dialog is dismissed, row won't be shown until page refresh
+                                    view(response.data.key, addRow);
                                 }
                             }
                         });
+                    };
+                }
+                addFileContainer($filesContainer, filesOptions);
+                addFileContainer($removedFilesContainer, {
+                    "type": "CELL",
+                    "title": "Poistetut tiedostot",
+                    readOnly: true,
+                    "field": {
+                        "key": "files",
+                        "showReferenceKey": true,
+                        "columnFields": [
+                            "filespath",
+                            "filedescription",
+                            "filecomment"
+                        ],
+                        onClick: function (transferRow, replaceTr) {
+                            view({
+                                id: transferRow.value,
+                                no: ''
+                            }, replaceTr);
+                        }
                     }
-                    function dataField(key) {
-                        var rows = {};
-                        rows[options.defaultLang] = [];
-                        return {
-                            key: key,
-                            rows: rows
-                        };
-                    }
-                    $elem.empty();
-                    var files = dataField('files');
-                    var removedFiles = dataField('removedFiles');
+                });
+
+                require('./../../data')(options).onChange(function () {
+                    $filesContainer.find('tbody').empty();
+                    $removedFilesContainer.find('tbody').empty();
 
                     var rows = require('./../../data')(options).getByLang(options.defaultLang);
                     if (rows) {
@@ -531,17 +519,13 @@ define(function (require) {
                                     method: 'GET',
                                     success: function (response) {
                                         if (response.exists) {
-                                            (!response.removed ? files : removedFiles).rows[options.defaultLang].push(transferRow);
+                                            (!response.removed ? $filesContainer : $removedFilesContainer).find('.panel').parent().data('addRow')(transferRow);
                                         }
                                         processNextRow();
                                     }
                                 });
-                            } else {
-                                addFileContainers();
                             }
                         })(0);
-                    } else {
-                        addFileContainers();
                     }
                 });
             }
