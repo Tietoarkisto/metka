@@ -139,11 +139,13 @@ define(function (require) {
                         }
                         if (type === 'SELECTION') {
                             var list = require('./selectionList')(options, column);
+                            log(list, options, column);
                             if (!list) {
                                 $td.append(EMPTY);
                                 return;
                             }
                             if (list.type === 'REFERENCE') {
+                                log(options, column);
                                 require('./reference').optionsByPath(column, options, lang, setOptionText)(transferRow.fields, getPropertyNS(options, 'dataConf.references', list.reference));
                             } else {
                                 setOptionText(list.options);
@@ -223,9 +225,8 @@ define(function (require) {
                             no: ''
                         }));
                     }
-                    return;
-                }
-                (options.field.onClick || rowDialog('MODIFY', 'ok'))
+                } else {
+                    (options.field.onClick || rowDialog('MODIFY', 'ok'))
                     .call(this, $tr.data('transferRow'), function (transferRow) {
                         //return $tr.replaceWith(tr(transferRow));
                         var $trNew = tr(transferRow);
@@ -235,6 +236,7 @@ define(function (require) {
                         }
                         $tbody.trigger('rowChanged', [$trNew, columns]);
                     });
+                }
             });
 
         // TODO: Should probably be on container options instead

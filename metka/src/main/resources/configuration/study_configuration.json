@@ -392,14 +392,8 @@
 			"type": "REFERENCE",
 			"reference": "keywordvocab_ref",
 			"includeEmpty": false,
-			"freeText": ["Other"],
+			"freeText": ["4"],
 			"freeTextKey": "keywordnovocab"
-		},
-		"keyword_list": {
-			"key": "keyword_list",
-			"type": "REFERENCE",
-			"reference": "keyword_ref",
-			"includeEmpty": true
 		},
 		"analysisunitvocab_list": {
 			"key": "analysisunitvocab_list",
@@ -645,27 +639,15 @@
 		"keywordvocab_ref": {
 			"key": "keywordvocab_ref",
 			"type": "JSON",
-			"target": "Controlled Vocabulary for testing",
-			"valuePath": "codeListID"
+			"target": "keyword_vocabularies",
+			"valuePath": "codeListID",
+			"titlePath": "codeListName"
 		},
 		"keywordvocaburi_ref": {
 			"key": "keywordvocaburi_ref",
 			"type": "DEPENDENCY",
 			"target": "keywordvocab",
 			"valuePath": "codeListURN"
-		},
-		"keyword_ref": {
-			"key": "keyword_ref",
-			"type": "DEPENDENCY",
-			"target": "keywordvocab",
-			"valuePath": "terms.id",
-            "titlePath": "term"
-		},
-		"keyworduri_ref": {
-			"key": "keyworduri_ref",
-			"type": "DEPENDENCY",
-			"target": "keyword",
-			"valuePath": "key"
 		},
 		"analysisunitvocab_ref": {
 			"key": "analysisunitvocab_ref",
@@ -1286,9 +1268,8 @@
 		},
 		"keyword": {
 			"key": "keyword",
-			"translatable": false,
+			"translatable": true,
 			"type": "STRING",
-			"selectionList": "keyword_list",
             "generalSearch": true,
 			"subfield": true
 		},
@@ -1303,9 +1284,8 @@
 		},
 		"keyworduri": {
 			"key": "keyworduri",
-			"translatable": false,
+			"translatable": true,
 			"type": "STRING",
-			"reference": "keyworduri_ref",
 			"subfield": true
 		},
 		"topics": {

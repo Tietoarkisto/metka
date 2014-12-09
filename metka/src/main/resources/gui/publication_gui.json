@@ -105,15 +105,20 @@
                             "type": "CELL",
                             "title": "Viimeisin muutospvm",
                             "field": {
-                                "key": "savedAt"
+                                "key": "savedAt",
+                                "displayType": "CUSTOM_JS"
                             }
                         },
                         {
                             "type": "CELL",
                             "title": "Käsittelijä",
                             "field": {
-                                "key": "savedBy"
+                                "key": "savedBy",
+                                "displayType": "CUSTOM_JS"
                             }
+                        },
+                        {
+                        	"type": "EMPTYCELL"
                         }
                     ]
                 }

@@ -319,94 +319,14 @@ define(function (require) {
                             ],
                             data: commonSearchBooleans.initialData({}),
                             dataConf: {
-                                "selectionLists": {
+                                "selectionLists": $.extend({}, response.configuration.selectionLists, {
                                     seriesname_list: {
                                         includeEmpty: true,
                                         key: 'seriesname_list',
                                         type: 'REFERENCE',
                                         reference: 'seriesname_ref'
-                                    },
-                                    "yes_no": {
-                                        "key": "yes_no",
-                                        "type": "VALUE",
-                                        "includeEmpty": true,
-                                        "options": [
-                                            {
-                                                "&title": {
-                                                    "default": "Kyllä"
-                                                },
-                                                "value": 1
-                                            },
-                                            {
-                                                "&title": {
-                                                    "default": "Ei"
-                                                },
-                                                "value": 0
-                                            }
-                                        ]
-                                    },
-                                    "langs": {
-                                        "key": "langs",
-                                        "type": "VALUE",
-                                        "includeEmpty": true,
-                                        "options": [
-                                            {
-                                                "&title": {
-                                                    "default": "Suomi"
-                                                },
-                                                "value": 'fi'
-                                            },
-                                            {
-                                                "&title": {
-                                                    "default": "Englanti"
-                                                },
-                                                "value": 'en'
-                                            },
-                                            {
-                                                "&title": {
-                                                    "default": "Ruotsi"
-                                                },
-                                                "value": 'sv'
-                                            },
-                                            {
-                                                "&title": {
-                                                    "default": "Muu"
-                                                },
-                                                "value": 'other'
-                                            }
-                                        ]
-                                    },
-                                    "publicationannouncement_list": {
-                                        "key": "publicationannouncement_list",
-                                        "type": "VALUE",
-                                        "options": [
-                                            {
-                                                "&title": {
-                                                    "default": "Ei tietoa"
-                                                },
-                                                "value": 0
-                                            },
-                                            {
-                                                "&title": {
-                                                    "default": "Alkup. tutkija ilmoit."
-                                                },
-                                                "value": 1
-                                            },
-                                            {
-                                                "&title": {
-                                                    "default": "Oma paikannus"
-                                                },
-                                                "value": 2
-                                            },
-                                            {
-                                                "&title": {
-                                                    "default": "käyttäjä ilmoit."
-                                                },
-                                                "value": 3
-                                            }
-                                        ]
                                     }
-                                },
+                                }),
                                 references: {
                                     seriesname_ref: {
                                         key: 'seriesname_ref',

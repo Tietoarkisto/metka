@@ -12,6 +12,7 @@ import fi.uta.fsd.metka.model.data.container.DataRow;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.names.Fields;
+import fi.uta.fsd.metka.names.Lists;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import fi.uta.fsd.metka.transfer.reference.ReferencePath;
@@ -72,7 +73,7 @@ class DDIStudyDescription extends DDISectionBase {
     }
 
     private ReturnResult readCitation(StdyDscrType stdyDscr) {
-        if(hasContent(stdyDscr.getCitationArray())) {
+        if(!hasContent(stdyDscr.getCitationArray())) {
             return ReturnResult.OPERATION_SUCCESSFUL;
         }
 
@@ -394,6 +395,8 @@ class DDIStudyDescription extends DDISectionBase {
         request.setContainer(Fields.KEYWORDS);
         request.setLanguage(language);
 
+        SelectionList keywordvocab_list = configuration.getSelectionList(Lists.KEYWORDVOCAB_LIST);
+
         ReferencePath keywordvocabPath = getReferencePath(Fields.KEYWORDVOCAB, null);
         request.setRoot(keywordvocabPath);
         List<ReferenceOption> keywordvocabOptions = references.collectReferenceOptions(request);
@@ -407,26 +410,17 @@ class DDIStudyDescription extends DDISectionBase {
                 continue;
             }
 
-            ReferenceOption option = findOption(keywordvocabOptions, k.getVocab());
-            if(option == null) {
-                continue;
+            ReferenceOption keywordvocab = findOption(keywordvocabOptions, k.getVocab());
+            if(keywordvocab != null) {
+                valueSet(row.getRight(), Fields.KEYWORDVOCAB, keywordvocab.getValue());
             }
-            valueSet(row.getRight(), Fields.KEYWORDVOCAB, option.getValue());
 
             if(StringUtils.hasText(getText(k))) {
-                keywordvocabPath = getReferencePath(Fields.KEYWORDVOCAB, option.getValue());
-                ReferencePath keywordPath = getReferencePath(Fields.KEYWORD, null);
-
-                keywordvocabPath.setNext(keywordPath);
-                keywordPath.setPrev(keywordvocabPath);
-                request.setRoot(keywordvocabPath);
-
-                List<ReferenceOption> options = references.collectReferenceOptions(request);
-                option = findOption(options, getText(k));
-                if(option != null) {
-                    valueSet(row.getRight(), Fields.KEYWORD, option.getValue());
-                } else {
+                if(keywordvocab == null || keywordvocab_list.getFreeText().contains(keywordvocab.getValue())) {
+                    // We have 'no vocab'
                     valueSet(row.getRight(), Fields.KEYWORDNOVOCAB, getText(k));
+                } else {
+                    valueSet(row.getRight(), Fields.KEYWORD, getText(k));
                 }
             }
         }

@@ -82,8 +82,9 @@ define(function (require) {
                         type: 'DATE'
                     },
                     errortriggerpro: {
+                        // TODO: This should be changed to selection, but only after USER reference type has been implemented
                         key: 'errortriggerpro',
-                        type: 'SELECTION'
+                        type: 'STRING'
                     }
                 },
                 "selectionLists": {

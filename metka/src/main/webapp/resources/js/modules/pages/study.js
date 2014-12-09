@@ -771,7 +771,23 @@ define(function (require) {
                                         target: response.configuration.references.sampprocvocab_ref.target
                                     }
                                 }),
-                                selectionLists: $.extend(response.configuration.selectionLists, {
+                                selectionLists: $.extend(true, response.configuration.selectionLists, {
+                                    analysisunit_list: {
+                                        freeText: [],
+                                        freeTextKey: null
+                                    },
+                                    timemethod_list: {
+                                        freeText: [],
+                                        freeTextKey: null
+                                    },
+                                    sampproc_list: {
+                                        freeText: [],
+                                        freeTextKey: null
+                                    },
+                                    collmode_list: {
+                                        freeText: [],
+                                        freeTextKey: null
+                                    },
                                     seriesname_list: {
                                         includeEmpty: true,
                                         key: 'seriesname_list',
@@ -878,6 +894,7 @@ define(function (require) {
                                 })()
                             }
                         });
+                        log(options);
                         var data = require('./../data')(options);
                         onLoad();
                     }

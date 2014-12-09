@@ -274,6 +274,7 @@ public class StudyFactory extends DataFactory {
 
             // Yhteiskuntatieteellinen tietoarkisto, append with distributor.get(language)
             if(StringUtils.hasText(biblcit)) {
+                biblcit += ". ";
                 biblcit += " Yhteiskuntatieteellinen tietoarkisto "+distributor.get(l);
             }
 

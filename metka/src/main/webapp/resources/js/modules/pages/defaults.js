@@ -117,7 +117,12 @@ define(function (require) {
                     var labelAndValue = String.prototype.supplant.bind('{label}&nbsp;{value}');
                     supplant.id = labelAndValue({
                         label: MetkaJS.L10N.get('general.id'),
-                        value: options.data.key.id
+                        value: function() {
+                            if(options.dataConf.displayId) {
+                                return require('../data').latestValue(options.data.fields[options.dataConf.displayId], 'DEFAULT')
+                            }
+                            return options.data.key.id;
+                        }()
                     });
                     supplant.no = labelAndValue({
                         label: MetkaJS.L10N.get('general.revision'),

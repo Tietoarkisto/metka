@@ -136,6 +136,7 @@
 			
 		}
     },
+    "displayId": "publicationid",
     "fields": {
         "publicationyear": {
             "key": "publicationyear",

@@ -50,7 +50,7 @@ public class ExternalUtil {
         //   If required we can salt this even more but this should be enough for now
         String sig = user.getSecret()+signature.getAccessTime()+signature.getKey()+url;
         // We could hash the sig here if we wanted to but atm. it's not really productive
-
+        // TODO: We should actually use SHA or some other hash since right now the users secret key can be read through just reversing the base64
         // Hash the signature using base64
         String hash = new String(Base64.encode(sig.getBytes()));
 

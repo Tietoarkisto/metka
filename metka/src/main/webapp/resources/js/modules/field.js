@@ -143,6 +143,10 @@ define(function (require) {
                         $.extend(true, options, customField(options));
                         break;
                 }
+                // Let's fetch fieldOptions again since custom code might have changed something affecting this.
+                $.extend(options, {
+                    fieldOptions: getPropertyNS(options, 'dataConf.fields', options.field.key) || {}
+                });
                 createInputWrapper(options.field.key);
             });
         } else {

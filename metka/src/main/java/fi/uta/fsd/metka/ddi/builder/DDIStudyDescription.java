@@ -157,7 +157,6 @@ class DDIStudyDescription {
         addCitationVerStatement(citationType, revisionData, language);
 
         // Add biblcit
-        // TODO: Concatenate biblcit during saving
         Pair<StatusCode, ValueDataField> valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.BIBLCIT));
         if(hasValue(valueFieldPair, Language.DEFAULT)) {
             fillTextType(citationType.addNewBiblCit(), valueFieldPair, Language.DEFAULT);
@@ -296,9 +295,9 @@ class DDIStudyDescription {
                     }
                     OthIdType d = fillTextType(rsp.addNewOthId(), pair, Language.DEFAULT);
 
-                    String organisation = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORORGANISATION);
-                    String agency = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORAGENCY);
-                    String section = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORSECTION);
+                    String organisation = getReferenceTitle(references, language, revision, rowRoot + Fields.AUTHORORGANISATION);
+                    String agency = getReferenceTitle(references, language, revision, rowRoot + Fields.AUTHORAGENCY);
+                    String section = getReferenceTitle(references, language, revision, rowRoot + Fields.AUTHORSECTION);
 
                     String affiliation = (StringUtils.hasText(organisation)) ? organisation : "";
                     affiliation += (StringUtils.hasText(affiliation) && StringUtils.hasText(agency)) ? ". " : "";
@@ -311,9 +310,9 @@ class DDIStudyDescription {
                     }
                 } else if(colltype.equals("2")) {
                     // We have an organisation collector
-                    String organisation = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORORGANISATION);
-                    String agency = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORAGENCY);
-                    String section = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORSECTION);
+                    String organisation = getReferenceTitle(references, language, revision, rowRoot + Fields.AUTHORORGANISATION);
+                    String agency = getReferenceTitle(references, language, revision, rowRoot + Fields.AUTHORAGENCY);
+                    String section = getReferenceTitle(references, language, revision, rowRoot + Fields.AUTHORSECTION);
                     OthIdType d;
                     if(!StringUtils.hasText(agency) && !StringUtils.hasText(section)) {
                         if(!StringUtils.hasText(organisation)) {
@@ -323,7 +322,7 @@ class DDIStudyDescription {
                     } else {
                         String collector = (StringUtils.hasText(agency)) ? agency : "";
                         if(StringUtils.hasText(collector) && StringUtils.hasText(section)) {
-                            collector += " "+section;
+                            collector += ". "+section;
                         } else if(StringUtils.hasText(section)) {
                             collector = section;
                         } else {
@@ -559,7 +558,7 @@ class DDIStudyDescription {
         // Add subject
         Pair<StatusCode, ContainerDataField> containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.KEYWORDS));
         if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
-            addStudyInfoSubjectKeywords(subject, containerPair.getRight(), revision, language, references);
+            addStudyInfoSubjectKeywords(subject, containerPair.getRight(), revision, language, references, configuration);
         }
 
         // Add topic
@@ -576,7 +575,7 @@ class DDIStudyDescription {
         } else return null;
     }
 
-    private static void addStudyInfoSubjectKeywords(SubjectType subject, ContainerDataField container, RevisionData revision, Language language, ReferenceService references) {
+    private static void addStudyInfoSubjectKeywords(SubjectType subject, ContainerDataField container, RevisionData revision, Language language, ReferenceService references, Configuration configuration) {
         // Let's hardcode the path since we know exactly what we are looking for.
         String pathRoot = "keywords.";
         for(DataRow row : container.getRowsFor(Language.DEFAULT)) {
@@ -586,47 +585,32 @@ class DDIStudyDescription {
             String rowRoot = pathRoot + row.getRowId() + ".";
 
             String keyword = null;
-            String keyworduri = null;
-            String keywordvocab = null;
             String keywordvocaburi = null;
 
-            Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.KEYWORDNOVOCAB));
-            if(hasValue(valueFieldPair, language)) {
-                // Since there's nothing in this value unless user has selected a free text option we know we can use this and don't need to bother fetching the keyword
-                keyword = valueFieldPair.getRight().getActualValueFor(Language.DEFAULT);
-                // There's no URI for other
+            ReferenceOption keywordvocab = references.getCurrentFieldOption(language, revision, rowRoot + Fields.KEYWORDVOCAB);
+            keywordvocaburi = getReferenceTitle(references, language, revision, rowRoot + Fields.KEYWORDVOCABURI);
+            SelectionList keywordvocab_list = configuration.getSelectionList(Lists.KEYWORDVOCAB_LIST);
+
+            if(keywordvocab == null || keywordvocab_list.getFreeText().contains(keywordvocab.getValue())) {
+                Pair<StatusCode, ValueDataField> keywordnovocabPair = row.dataField(ValueDataFieldCall.get(Fields.KEYWORDNOVOCAB));
+                if(hasValue(keywordnovocabPair, language)) {
+                    keyword = keywordnovocabPair.getRight().getActualValueFor(language);
+                }
             } else {
-                keywordvocab = getReferenceTitle(references, language, revision, rowRoot + Fields.KEYWORDVOCAB);
-                if(!StringUtils.hasText(keywordvocab)) {
-                    continue;
+                Pair<StatusCode, ValueDataField> keywordPair = row.dataField(ValueDataFieldCall.get(Fields.KEYWORD));
+                if(hasValue(keywordPair, language)) {
+                    keyword = keywordPair.getRight().getActualValueFor(language);
                 }
-
-                keyword = getReferenceTitle(references, language, revision, rowRoot + Fields.KEYWORD);
-                if(!StringUtils.hasText(keywordvocab)) {
-                    continue;
-                }
-
-                keywordvocaburi = getReferenceTitle(references, language, revision, rowRoot + Fields.KEYWORDVOCABURI);
-
-                keyworduri = getReferenceTitle(references, language, revision, rowRoot + Fields.KEYWORDURI);
+            }
+            if(!StringUtils.hasText(keyword)) {
+                continue;
             }
 
-            // Keyword should always be non null at this point
             KeywordType kwt = fillTextType(subject.addNewKeyword(), keyword);
-            /*if(keyworduri != null) {
-                switch(keyworduri) {
-                    case "archive":
-                        kwt.setSource(BaseElementType.Source.ARCHIVE);
-                        break;
-                    case "producer":
-                        kwt.setSource(BaseElementType.Source.PRODUCER);
-                        break;
-                }
-            }*/
             if(keywordvocab != null) {
-                kwt.setVocab(keywordvocab);
+                kwt.setVocab(keywordvocab.getTitle().getValue());
             }
-            if(keywordvocaburi != null) {
+            if(StringUtils.hasText(keywordvocaburi)) {
                 kwt.setVocabURI(keywordvocaburi);
             }
         }
@@ -642,7 +626,6 @@ class DDIStudyDescription {
             String rowRoot = pathRoot + row.getRowId() + ".";
 
             String topic = null;
-            String topicuri = null;
             String topicvocab = null;
             String topicvocaburi = null;
 
@@ -659,20 +642,8 @@ class DDIStudyDescription {
 
             topicvocaburi = getReferenceTitle(references, language, revision, rowRoot + Fields.TOPICVOCABURI);
 
-            topicuri = getReferenceTitle(references, language, revision, rowRoot + Fields.TOPICURI);
-
             // Keyword should always be non null at this point
             TopcClasType tt = fillTextType(subject.addNewTopcClas(), topic);
-            /*if(topicuri != null) {
-                switch(topicuri) {
-                    case "archive":
-                        tt.setSource(BaseElementType.Source.ARCHIVE);
-                        break;
-                    case "producer":
-                        tt.setSource(BaseElementType.Source.PRODUCER);
-                        break;
-                }
-            }*/
             if(topicvocab != null) {
                 tt.setVocab(topicvocab);
             }
@@ -744,7 +715,6 @@ class DDIStudyDescription {
 
             String txt = null;
             String analysisunit = null;
-            String analysisunituri = null;
             String analysisunitvocab = null;
             String analysisunitvocaburi = null;
 
@@ -760,8 +730,6 @@ class DDIStudyDescription {
 
             analysisunitvocaburi = getReferenceTitle(references, language, revision, rowRoot + Fields.ANALYSISUNITVOCABURI);
 
-            analysisunituri = getReferenceTitle(references, language, revision, rowRoot + Fields.ANALYSISUNITURI);
-
             Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.ANALYSISUNITOTHER));
             if(hasValue(valueFieldPair, language)) {
                 txt = valueFieldPair.getRight().getActualValueFor(language);
@@ -770,16 +738,6 @@ class DDIStudyDescription {
             // Keyword should always be non null at this point
             AnlyUnitType t = sumDscr.addNewAnlyUnit();
             ConceptType c = fillTextType(t.addNewConcept(), analysisunit);
-            /*if(analysisunituri != null) {
-                switch(analysisunituri) {
-                    case "archive":
-                        c.setSource(BaseElementType.Source.ARCHIVE);
-                        break;
-                    case "producer":
-                        c.setSource(BaseElementType.Source.PRODUCER);
-                        break;
-                }
-            }*/
 
             if(analysisunitvocab != null) {
                 c.setVocab(analysisunitvocab);
@@ -944,7 +902,7 @@ class DDIStudyDescription {
             addMethodDataCollResInstru(dataCollType, containerPair.getRight(), revision, language, references);
         }
 
-        containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.INSTRUMENTS));
+        containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.COLLECTORS));
         if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
             addMethodDataCollDataCollector(dataCollType, containerPair.getRight(), revision, language, references);
         }
@@ -965,7 +923,6 @@ class DDIStudyDescription {
 
             String txt = null;
             String timemethod = null;
-            String timemethoduri = null;
             String timemethodvocab = null;
             String timemethodvocaburi = null;
 
@@ -981,8 +938,6 @@ class DDIStudyDescription {
 
             timemethodvocaburi = getReferenceTitle(references, language, revision, rowRoot + Fields.TIMEMETHODVOCABURI);
 
-            timemethoduri = getReferenceTitle(references, language, revision, rowRoot + Fields.TIMEMETHODURI);
-
             Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.TIMEMETHODOTHER));
             if(hasValue(valueFieldPair, language)) {
                 txt = valueFieldPair.getRight().getActualValueFor(language);
@@ -991,16 +946,6 @@ class DDIStudyDescription {
             // Keyword should always be non null at this point
             TimeMethType t = dataColl.addNewTimeMeth();
             ConceptType c = fillTextType(t.addNewConcept(), timemethod);
-            /*if(timemethoduri != null) {
-                switch(timemethoduri) {
-                    case "archive":
-                        c.setSource(BaseElementType.Source.ARCHIVE);
-                        break;
-                    case "producer":
-                        c.setSource(BaseElementType.Source.PRODUCER);
-                        break;
-                }
-            }*/
 
             if(timemethodvocab != null) {
                 c.setVocab(timemethodvocab);
@@ -1068,7 +1013,7 @@ class DDIStudyDescription {
                 } else {
                     String collector = (StringUtils.hasText(agency)) ? agency : "";
                     if(StringUtils.hasText(collector) && StringUtils.hasText(section)) {
-                        collector += " "+section;
+                        collector += ". "+section;
                     } else if(StringUtils.hasText(section)) {
                         collector = section;
                     } else {
@@ -1102,7 +1047,6 @@ class DDIStudyDescription {
 
             String txt = null;
             String sampproc = null;
-            String sampprocuri = null;
             String sampprocvocab = null;
             String sampprocvocaburi = null;
 
@@ -1117,8 +1061,6 @@ class DDIStudyDescription {
             }
 
             sampprocvocaburi = getReferenceTitle(references, language, revision, rowRoot + Fields.SAMPPROCVOCABURI);
-
-            sampprocuri = getReferenceTitle(references, language, revision, rowRoot + Fields.SAMPPROCURI);
 
             Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.SAMPPROCOTHER));
             if(hasValue(valueFieldPair, language)) {
@@ -1135,16 +1077,6 @@ class DDIStudyDescription {
             }
 
             ConceptType c = fillTextType(t.addNewConcept(), sampproc);
-            /*if(sampprocuri != null) {
-                switch(sampprocuri) {
-                    case "archive":
-                        c.setSource(BaseElementType.Source.ARCHIVE);
-                        break;
-                    case "producer":
-                        c.setSource(BaseElementType.Source.PRODUCER);
-                        break;
-                }
-            }*/
 
             if(sampprocvocab != null) {
                 c.setVocab(sampprocvocab);
@@ -1171,7 +1103,6 @@ class DDIStudyDescription {
 
             String txt = null;
             String collmode = null;
-            String collmodeuri = null;
             String collmodevocab = null;
             String collmodevocaburi = null;
 
@@ -1187,8 +1118,6 @@ class DDIStudyDescription {
 
             collmodevocaburi = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLMODEVOCABURI);
 
-            collmodeuri = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLMODEURI);
-
             Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.COLLMODEOTHER));
             if(hasValue(valueFieldPair, language)) {
                 txt = valueFieldPair.getRight().getActualValueFor(language);
@@ -1198,16 +1127,6 @@ class DDIStudyDescription {
             ConceptualTextType t = dataColl.addNewCollMode();
 
             ConceptType c = fillTextType(t.addNewConcept(), collmode);
-            /*if(collmodeuri != null) {
-                switch(collmodeuri) {
-                    case "archive":
-                        c.setSource(BaseElementType.Source.ARCHIVE);
-                        break;
-                    case "producer":
-                        c.setSource(BaseElementType.Source.PRODUCER);
-                        break;
-                }
-            }*/
 
             if(collmodevocab != null) {
                 c.setVocab(collmodevocab);
@@ -1234,7 +1153,6 @@ class DDIStudyDescription {
 
             String txt = null;
             String instrument = null;
-            String instrumenturi = null;
             String instrumentvocab = null;
             String instrumentvocaburi = null;
 
@@ -1250,8 +1168,6 @@ class DDIStudyDescription {
 
             instrumentvocaburi = getReferenceTitle(references, language, revision, rowRoot + Fields.INSTRUMENTVOCABURI);
 
-            instrumenturi = getReferenceTitle(references, language, revision, rowRoot + Fields.INSTRUMENTURI);
-
             Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.INSTRUMENTOTHER));
             if(hasValue(valueFieldPair, language)) {
                 txt = valueFieldPair.getRight().getActualValueFor(language);
@@ -1261,16 +1177,6 @@ class DDIStudyDescription {
             ResInstruType t = dataColl.addNewResInstru();
 
             ConceptType c = fillTextType(t.addNewConcept(), instrument);
-            /*if(instrumenturi != null) {
-                switch(instrumenturi) {
-                    case "archive":
-                        c.setSource(BaseElementType.Source.ARCHIVE);
-                        break;
-                    case "producer":
-                        c.setSource(BaseElementType.Source.PRODUCER);
-                        break;
-                }
-            }*/
 
             if(instrumentvocab != null) {
                 c.setVocab(instrumentvocab);

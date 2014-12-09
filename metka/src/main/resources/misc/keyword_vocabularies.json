@@ -2,55 +2,24 @@
 	"key": "keyword_vocabularies",
 	"data": [
 		{
-			"vocab": "Test 1",
-			"vocaburi": "URI for test 1 vocabulary",
-			"keywords": [
-				{
-					"keyword": "Keyword 1",
-					"keyworduri": "URI for keyword 1"
-				},
-				{
-					"keyword": "Keyword 2",
-					"keyworduri": "URI for keyword 2"
-				},
-				{
-					"keyword": "Keyword 3",
-					"keyworduri": "URI for keyword 3"
-				},
-				{
-					"keyword": "Keyword 4",
-					"keyworduri": "URI for keyword 4"
-				}
-			]
+			"codeListID": "1",
+            "codeListName": "YSA",
+			"codeListURN": "URI for test 1 vocabulary"
 		},
 		{
-			"vocab": "Test 2",
-			"vocaburi": "URI for test 2 vocabulary",
-			"keywords": [
-				{
-					"keyword": "Keyword 5",
-					"keyworduri": "URI for keyword 5"
-				},
-				{
-					"keyword": "Keyword 6",
-					"keyworduri": "URI for keyword 6"
-				},
-				{
-					"keyword": "Keyword 7",
-					"keyworduri": "URI for keyword 7"
-				},
-				{
-					"keyword": "Keyword 8",
-					"keyworduri": "URI for keyword 8"
-				}
-			]
+			"codeListID": "2",
+            "codeListName": "ELSST",
+			"codeListURN": "URI for test 2 vocabulary"
 		},
 		{
-			"vocab": "Other",
-			"vocaburi": "URI for Other",
-			"keywords": [
-				
-			]
+			"codeListID": "3",
+            "codeListName": "ONKI",
+			"codeListURN": "URI for test 3 vocabulary"
+		},
+		{
+			"codeListID": "4",
+            "codeListName": "ei sanastoa - koodit alustavia"
 		}
+
 	]
 }

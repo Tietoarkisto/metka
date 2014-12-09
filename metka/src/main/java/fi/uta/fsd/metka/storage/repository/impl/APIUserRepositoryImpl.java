@@ -89,7 +89,7 @@ public class APIUserRepositoryImpl implements APIUserRepository {
 
         // Let's create the secret for signatures. This is going to be a bit more complex than public key
         String secret = creationTime.toString()+publicKey+entity.getName()+entity.getApiUserId()+permissions;
-        secret = new String(Base64.encode(Sha2Crypt.sha512Crypt(publicKey.getBytes()).getBytes()));
+        secret = new String(Base64.encode(Sha2Crypt.sha512Crypt(secret.getBytes()).getBytes()));
         entity.setSecret(secret);
         return null;
     }
