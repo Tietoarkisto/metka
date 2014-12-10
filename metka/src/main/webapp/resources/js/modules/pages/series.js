@@ -108,7 +108,7 @@ define(function (require) {
                         'key.id',
                         {
                             key: 'seriesabbr',
-                            addQuotes: true
+                            exactValue: true
                         },
                         'seriesname'
                     ], function (data) {

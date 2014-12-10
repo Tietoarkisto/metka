@@ -14,35 +14,35 @@ define(function (require) {
                         {
                             key: 'producerrole',
                             rename: 'producers.producerrole',
-                            addQuotes: true
+                            exactValue: true
                         },
                         {
                             key:'datakind',
-                            addQuotes: true
+                            exactValue: true
                         },
                         {
                             key: 'anonymization',
-                            addQuotes: true
+                            exactValue: true
                         },
                         {
                             key: 'securityissues',
-                            addQuotes: true
+                            exactValue: true
                         },
                         {
                             key: 'termsofuse',
-                            addQuotes: true
+                            exactValue: true
                         },
                         {
                             key: 'newtermsofuse',
-                            addQuotes: true
+                            exactValue: true
                         },
                         {
                             key: 'agreementtype',
-                            addQuotes: true
+                            exactValue: true
                         },
                         {
                             key: 'depositortype',
-                            addQuotes: true
+                            exactValue: true
                         },
                         {
                             key: 'packageurn',
@@ -52,7 +52,7 @@ define(function (require) {
                         {
                             key: 'topic',
                             rename: 'topics.topic',
-                            addQuotes: true
+                            exactValue: true
                         },
                         {
                             key: 'country',
@@ -61,22 +61,22 @@ define(function (require) {
                         {
                             key: 'analysisunit',
                             rename: 'analysis.analysisunit',
-                            addQuotes: true
+                            exactValue: true
                         },
                         {
                             key: 'timemethod',
                             rename: 'timemethods.timemethod',
-                            addQuotes: true
+                            exactValue: true
                         },
                         {
                             key: 'sampproc',
                             rename: 'sampprocs.sampproc',
-                            addQuotes: true
+                            exactValue: true
                         },
                         {
                             key: 'collmode',
                             rename: 'collmodes.collmode',
-                            addQuotes: true
+                            exactValue: true
                         }
                     ];
 
@@ -101,7 +101,7 @@ define(function (require) {
                                 },
                                 "termsofuse": {
                                     "title": "Käyttöoikeus",
-                                    addQuotes: true
+                                    exactValue: true
                                 },
                                 "state": {
                                     "title": "Tila"
@@ -619,14 +619,13 @@ define(function (require) {
                                         },
                                         {
                                             key: 'series',
-                                            addQuotes: true,
-                                            useTitleAsValue: false
+                                            exactValue: true
                                         },
                                         {
                                             key: 'publication',
                                             useSelectionText: false,
                                             rename: 'publications.value',
-                                            addQuotes: true
+                                            exactValue: true
                                         },
                                         'aipcomplete',
                                         'termsofusechangedate',

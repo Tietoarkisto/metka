@@ -41,7 +41,8 @@ define(function (require) {
                             // set defaults
                             return $.extend({
                                 useSelectionText: true,
-                                addQuotes: false,
+                                exactValue: false,
+                                addWildcard: false,
                                 addParens: true
                             }, searchOptions);
                         }).forEach(function (searchOptions) {
@@ -55,9 +56,11 @@ define(function (require) {
                                         value: value
                                     })).text();
                                 }
-                                if (value && searchOptions.addQuotes) {
-                                    value = '"' + value + '"';
-                                }
+                            }
+                            if (value && searchOptions.exactValue) {
+                                value = '/' + value + (searchOptions.addWildcard?".*":"") + '/';
+                            } else if(value && searchOptions.addWildcard) {
+                                value = value+"*";
                             }
                             if (value && searchOptions.addParens) {
                                 value = '(' + value + ')';

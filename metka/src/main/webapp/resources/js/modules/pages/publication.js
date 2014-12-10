@@ -214,12 +214,13 @@ define(function (require) {
                                         },
                                         {
                                             key: 'publicationfirstsaved',
-                                            addQuotes: true
+                                            exactValue: true
                                         },
                                         {
                                             key:'savedAt',
                                             rename: 'state.saved.time',
-                                            addQuotes: true
+                                            exactValue: true,
+                                            addWildcard: true
                                         },
                                         'publicationyear',
                                         {
@@ -229,7 +230,7 @@ define(function (require) {
                                         {
                                             key: 'seriesname',
                                             rename: 'series.seriesname',
-                                            addQuotes: true
+                                            exactValue: true
                                         },
                                         {
                                             key: 'lastname',
@@ -243,11 +244,11 @@ define(function (require) {
                                         'publicationrelpubl',
                                         {
                                             key: 'publicationlanguage',
-                                            addQuotes: true
+                                            exactValue: true
                                         },
                                         {
                                             key: 'publicationpublic',
-                                            addQuotes: true
+                                            exactValue: true
                                         },
                                         {
                                             key:'savedBy',
