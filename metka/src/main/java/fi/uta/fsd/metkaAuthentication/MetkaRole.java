@@ -254,7 +254,8 @@ public final class MetkaRole implements Comparable<MetkaRole> {
                     .grant(Permission.CAN_EXPORT_REVISION)
                     .grant(Permission.CAN_REMOVE_STUDY_ERRORS)
                     .grant(Permission.CAN_EDIT_BINDER_PAGES)
-                    .grant(Permission.CAN_EDIT_STUDY_ERRORS);
+                    .grant(Permission.CAN_EDIT_STUDY_ERRORS)
+                    .grant(Permission.CAN_ADD_ORGANIZATIONS);
         }
 
         public static MetkaRoleBuilder getTranslator() {

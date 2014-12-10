@@ -28,7 +28,10 @@ define(function (require) {
                             key: 'securityissues',
                             addQuotes: true
                         },
-                        'termsofuse',
+                        {
+                            key: 'termsofuse',
+                            addQuotes: true
+                        },
                         {
                             key: 'newtermsofuse',
                             addQuotes: true

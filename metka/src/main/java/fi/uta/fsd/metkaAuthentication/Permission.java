@@ -41,7 +41,8 @@ public  enum Permission {
     CAN_VIEW_INDEX_INFO(Values.CAN_VIEW_INDEX_INFO),
     CAN_MANUALLY_INDEX_CONTENT(Values.CAN_MANUALLY_INDEX_CONTENT),
     CAN_VIEW_API_USERS(Values.CAN_VIEW_API_USERS),
-    CAN_EDIT_API_USERS(Values.CAN_EDIT_API_USERS);
+    CAN_EDIT_API_USERS(Values.CAN_EDIT_API_USERS),
+    CAN_ADD_ORGANIZATIONS(Values.CAN_ADD_ORGANIZATIONS);
 
     private final String permission;
 
@@ -113,5 +114,6 @@ public  enum Permission {
         public static final String CAN_MANUALLY_INDEX_CONTENT = "canManuallyIndexContent";
         public static final String CAN_VIEW_API_USERS = "canViewAPIUsers";
         public static final String CAN_EDIT_API_USERS = "canEditAPIUsers";
+        public static final String CAN_ADD_ORGANIZATIONS = "canAddOrganizations";
     }
 }
