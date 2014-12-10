@@ -11,6 +11,7 @@ import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.*;
+import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
@@ -20,11 +21,13 @@ import org.springframework.util.StringUtils;
 import java.util.Arrays;
 import java.util.List;
 
-import static fi.uta.fsd.metka.ddi.builder.DDIBuilder.*;
+class DDIWriteDataDescription extends DDIWriteSectionBase {
+    DDIWriteDataDescription(RevisionData revision, Language language, CodeBookType codeBook, Configuration configuration, RevisionRepository revisions, ReferenceService references) {
+        super(revision, language, codeBook, configuration, revisions, references);
+    }
 
-class DDIDataDescription {
-    static void addDataDescription(RevisionData revisionData, Language language, Configuration configuration, CodeBookType codeBookType, RevisionRepository revisions) {
-        Pair<StatusCode, ValueDataField> valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
+    void write() {
+        Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
         // This operation is so large that it's cleaner just to return than to wrap everything inside this one IF
         if(valueFieldPair.getLeft() != StatusCode.FIELD_FOUND || !valueFieldPair.getRight().hasValueFor(Language.DEFAULT)) {
             return;
@@ -34,16 +37,16 @@ class DDIDataDescription {
         Pair<ReturnResult, RevisionData> revisionDataPair = revisions.getLatestRevisionForIdAndType(
                 valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY_VARIABLES);
         if(revisionDataPair.getLeft() != ReturnResult.REVISION_FOUND) {
-            Logger.error(DDIDataDescription.class,
+            Logger.error(DDIWriteDataDescription.class,
                     "Couldn't find expected variables revision with id: " + valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger());
             return;
         }
         RevisionData variables = revisionDataPair.getRight();
 
         // Add data description
-        DataDscrType dataDscrType = codeBookType.addNewDataDscr();
+        DataDscrType dataDscrType = codeBook.addNewDataDscr();
 
-        setVariableGroups(language, revisions, variables, dataDscrType);
+        setVariableGroups(variables, dataDscrType);
 
         valueFieldPair = variables.dataField(ValueDataFieldCall.get(Fields.VARFILEID));
         String fileID = (valueFieldPair.getLeft() == StatusCode.FIELD_FOUND) ? valueFieldPair.getRight().getActualValueFor(Language.DEFAULT) : "";
@@ -56,7 +59,7 @@ class DDIDataDescription {
                 }
                 revisionDataPair = revisions.getLatestRevisionForIdAndType(reference.getReference().asInteger(), false, ConfigurationType.STUDY_VARIABLE);
                 if(revisionDataPair.getLeft() != ReturnResult.REVISION_FOUND) {
-                    Logger.error(DDIDataDescription.class, "Referenced study variable with id: " + reference.getReference().asInteger() + " could not be found with result " + revisionDataPair.getLeft());
+                    Logger.error(DDIWriteDataDescription.class, "Referenced study variable with id: " + reference.getReference().asInteger() + " could not be found with result " + revisionDataPair.getLeft());
                     continue;
                 }
                 RevisionData variable = revisionDataPair.getRight();
@@ -82,12 +85,12 @@ class DDIDataDescription {
                     continue;
                 }
                 VarType var = dataDscrType.addNewVar();
-                setVar(variable, language, var, fileID);
+                setVar(variable, var, fileID);
             }
         }
     }
 
-    private static void setVariableGroups(Language language, RevisionRepository revisions, RevisionData variables, DataDscrType dataDscrType) {
+    private void setVariableGroups(RevisionData variables, DataDscrType dataDscrType) {
         Pair<ReturnResult, RevisionData> revisionDataPair;Pair<StatusCode, ContainerDataField> containerPair = variables.dataField(ContainerDataFieldCall.get(Fields.VARGROUPS));
         ContainerDataField vargroups = containerPair.getRight();
         if(containerPair.getLeft() == StatusCode.FIELD_FOUND && vargroups.hasRowsFor(Language.DEFAULT)) {
@@ -111,17 +114,17 @@ class DDIDataDescription {
                             }
                             revisionDataPair = revisions.getLatestRevisionForIdAndType(reference.getReference().asInteger(), false, ConfigurationType.STUDY_VARIABLE);
                             if(revisionDataPair.getLeft() != ReturnResult.REVISION_FOUND) {
-                                Logger.error(DDIDataDescription.class, "Referenced study variable with id: " + reference.getReference().asInteger() + " could not be found with result " + revisionDataPair.getLeft());
+                                Logger.error(DDIWriteDataDescription.class, "Referenced study variable with id: " + reference.getReference().asInteger() + " could not be found with result " + revisionDataPair.getLeft());
                                 continue;
                             }
                             if(StringUtils.hasText(vars)) {
                                 vars += " ";
                             }
                             valueFieldPair = revisionDataPair.getRight().dataField(ValueDataFieldCall.get(Fields.VARNAME));
-                            if(!hasValue(valueFieldPair, language)) {
+                            if(!hasValue(valueFieldPair, Language.DEFAULT)) {
                                 vars += "-";
                             } else {
-                                vars += valueFieldPair.getRight().getActualValueFor(language);
+                                vars += valueFieldPair.getRight().getActualValueFor(Language.DEFAULT);
                             }
                         }
                         varGrpType.setVar(Arrays.asList(vars));
@@ -145,7 +148,7 @@ class DDIDataDescription {
         }
     }
 
-    private static void setVar(RevisionData variable, Language language, VarType var, String fileID) {
+    private void setVar(RevisionData variable, VarType var, String fileID) {
         Pair<StatusCode, ValueDataField> valueFieldPair = variable.dataField(ValueDataFieldCall.get(Fields.VARID));
         if(hasValue(valueFieldPair, Language.DEFAULT)) {
             var.setID(valueFieldPair.getRight().getActualValueFor(Language.DEFAULT));
@@ -173,20 +176,20 @@ class DDIDataDescription {
             fillTextType(var.addNewLabl(), valueFieldPair, language);
         }
 
-        setVarSecurities(variable, language, var);
+        setVarSecurities(variable, var);
 
-        setVarQstn(variable, language, var);
+        setVarQstn(variable, var);
 
-        setVarTexts(variable, language, var);
+        setVarTexts(variable, var);
 
-        setNotes(variable, language, var);
+        setNotes(variable, var);
 
         setStatistics(variable, var);
 
-        setCategories(variable, var, language);
+        setCategories(variable, var);
     }
 
-    private static void setCategories(RevisionData variable, VarType var, Language language) {
+    private void setCategories(RevisionData variable, VarType var) {
         Pair<StatusCode, ContainerDataField> categories = variable.dataField(ContainerDataFieldCall.get(Fields.CATEGORIES));
         if(categories.getLeft() == StatusCode.FIELD_FOUND && categories.getRight().hasRowsFor(Language.DEFAULT)) {
             for(DataRow row : categories.getRight().getRowsFor(Language.DEFAULT)) {
@@ -217,7 +220,7 @@ class DDIDataDescription {
         }
     }
 
-    private static void setStatistics(RevisionData variable, VarType var) {
+    private void setStatistics(RevisionData variable, VarType var) {
         Pair<StatusCode, ContainerDataField> statistics = variable.dataField(ContainerDataFieldCall.get(Fields.STATISTICS));
         if(statistics.getLeft() == StatusCode.FIELD_FOUND && statistics.getRight().hasRowsFor(Language.DEFAULT)) {
             for(DataRow row : statistics.getRight().getRowsFor(Language.DEFAULT)) {
@@ -254,14 +257,14 @@ class DDIDataDescription {
         }
     }
 
-    private static void setVarSecurities(RevisionData variable, Language language, VarType var) {
+    private void setVarSecurities(RevisionData variable, VarType var) {
         List<ValueDataField> fields = gatherFields(variable, Fields.VARSECURITIES, Fields.VARSECURITY, language, language);
         for(ValueDataField field : fields) {
             fillTextAndDateType(var.addNewSecurity(), field, language);
         }
     }
 
-    private static void setVarQstn(RevisionData variable, Language language, VarType var) {
+    private void setVarQstn(RevisionData variable, VarType var) {
         // TODO: Do we want to use single qstn type with multiple texts for each container or do we want to have one qstn type per set of texts so that each qstn contains only one preq etc.?
         QstnType qstn = var.addNewQstn();
 
@@ -286,14 +289,14 @@ class DDIDataDescription {
         }
     }
 
-    private static void setVarTexts(RevisionData variable, Language language, VarType var) {
+    private void setVarTexts(RevisionData variable, VarType var) {
         List<ValueDataField> fields = gatherFields(variable, Fields.VARTEXTS, Fields.VARTEXT, language, language);
         for(ValueDataField field : fields) {
             fillTextType(var.addNewTxt(), field, language);
         }
     }
 
-    private static void setNotes(RevisionData variable, Language language, VarType var) {
+    private void setNotes(RevisionData variable, VarType var) {
         List<ValueDataField> fields = gatherFields(variable, Fields.VARNOTES, Fields.VARNOTE, language, language);
         for(ValueDataField field : fields) {
             fillTextType(var.addNewNotes(), field, language);

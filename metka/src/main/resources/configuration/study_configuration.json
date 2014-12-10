@@ -568,6 +568,8 @@
 			"key": "series_select_ref",
 			"type": "REVISIONABLE",
 			"target": "SERIES",
+			"approvedOnly": true,
+			"ignoreRemoved": false,
 			"titlePath": "seriesname"
 		},
 		"publication_ref": {
@@ -919,7 +921,7 @@
 		},
 		"versiondate": {
 			"key": "versiondate",
-			"translatable": false,
+			"translatable": true,
 			"type": "DATE",
 			"subfield": true
 		},
@@ -940,7 +942,7 @@
 		},
 		"versionpro": {
 			"key": "versionpro",
-			"translatable": false,
+			"translatable": true,
 			"type": "STRING",
 			"subfield": true
 		},
@@ -1358,7 +1360,7 @@
 		},
 		"timeperiodtext": {
 			"key": "timeperiodtext",
-			"translatable": false,
+			"translatable": true,
 			"type": "STRING",
 			"subfield": true,
             "generalSearch": true,

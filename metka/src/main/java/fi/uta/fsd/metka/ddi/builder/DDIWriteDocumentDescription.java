@@ -17,6 +17,7 @@ import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.names.Lists;
+import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import fi.uta.fsd.metka.transfer.reference.ReferencePath;
 import fi.uta.fsd.metka.transfer.reference.ReferencePathRequest;
@@ -26,9 +27,7 @@ import org.joda.time.LocalDateTime;
 
 import java.util.*;
 
-import static fi.uta.fsd.metka.ddi.builder.DDIBuilder.*;
-
-class DDIDocumentDescription {
+class DDIWriteDocumentDescription extends DDIWriteSectionBase {
     private static final String BIBL_CIT_FORMAT = "MRDF";
 
     private static final Map<Language, String> DDI_TITLE_PREFIXES = new HashMap<>();
@@ -84,12 +83,16 @@ class DDIDocumentDescription {
         BIBL_CIT_POST.put(Language.SV, " [kodbok]. Finlands samhällsvetenskapliga dataarkiv [producent och distributör].");
     }
 
-    static void addDocumentDescription(RevisionData revisionData, Language language, Configuration configuration, CodeBookType codeBookType, ReferenceService references) {
+    DDIWriteDocumentDescription(RevisionData revision, Language language, CodeBookType codeBook, Configuration configuration, RevisionRepository revisions, ReferenceService references) {
+        super(revision, language, codeBook, configuration, revisions, references);
+    }
+
+    void write() {
         // Add document description
-        DocDscrType docDscrType = codeBookType.addNewDocDscr();
+        DocDscrType docDscrType = codeBook.addNewDocDscr();
 
         // Add citation information
-        addCitationType(revisionData, language, configuration, docDscrType);
+        addCitationType(docDscrType);
 
         // Collect references by hand
 	    Set<String> usedVocabs = new HashSet<>();
@@ -158,8 +161,7 @@ class DDIDocumentDescription {
                 singleValue = references.collectReferenceOptions(request);
                 if(singleValue.size() > 0) {
                     UsageType usage = type.addNewUsage();
-                    // TODO: How should this be handled?
-                    //fillTextType(usage.xgetSelector()., singleValue.get(0).getTitle().getValue());
+                    usage.setSelector(singleValue.get(0).getTitle().getValue());
                 }
             }
         }
@@ -167,16 +169,16 @@ class DDIDocumentDescription {
         addNotes(docDscrType);
     }
 
-    private static void addNotes(DocDscrType docDscrType) {
+    private void addNotes(DocDscrType docDscrType) {
         // Back to doc description
         // Add notes, repeatable, excel row #40 - #41
         for(Language l : Language.values()) {
             NotesType notesType = fillTextType(docDscrType.addNewNotes(), NOTES.get(l));
-            notesType.setXmlLang(DDIBuilder.getXmlLang(l));
+            notesType.setXmlLang(getXmlLang(l));
         }
     }
 
-    private static void addCitationType(RevisionData revisionData, Language language, Configuration configuration, DocDscrType docDscrType) {
+    private void addCitationType(DocDscrType docDscrType) {
         // Add citation
         CitationType citationType = docDscrType.addNewCitation();
         // Add title statement (?)
@@ -185,45 +187,45 @@ class DDIDocumentDescription {
         // Add titles
 
             // Add content of title field
-        addTitleField(revisionData, language, titlStmtType);
+        addTitleField(titlStmtType);
 
         // Add ID no
-        Pair<StatusCode, ValueDataField> valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.STUDYID));
+        Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.STUDYID));
         String agency = null;
         if(valueFieldPair.getLeft() == StatusCode.FIELD_FOUND && valueFieldPair.getRight().hasValueFor(Language.DEFAULT)) {
             agency = addIDNo(titlStmtType, valueFieldPair.getRight(), configuration.getRootSelectionList(Lists.ID_PREFIX_LIST));
         }
 
         // Add Producer information
-        addProducerInfo(revisionData, language, citationType, agency);
+        addProducerInfo(citationType, agency);
 
         // Add container version
-        Pair<StatusCode, ContainerDataField> containerPair = revisionData.dataField(ContainerDataFieldCall.get(Fields.DESCVERSIONS));
+        Pair<StatusCode, ContainerDataField> containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.DESCVERSIONS));
         if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(language)) {
-            addContainerVersion(language, citationType, containerPair.getRight());
+            addContainerVersion(citationType, containerPair.getRight());
         }
 
-        valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.TITLE));
+        valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.TITLE));
         if(hasValue(valueFieldPair, language)) {
             BiblCitType biblCitType = fillTextType(citationType.addNewBiblCit(), valueFieldPair.getRight().getActualValueFor(language)+BIBL_CIT_POST.get(language));
             biblCitType.setFormat(BIBL_CIT_FORMAT);
         }
 
         // Add holdings
-        addHoldingsInfo(revisionData, language, citationType);
+        addHoldingsInfo(citationType);
     }
 
-    private static void addHoldingsInfo(RevisionData revisionData, Language language, CitationType citationType) {
+    private void addHoldingsInfo(CitationType citationType) {
         HoldingsType holdingsType = fillTextType(citationType.addNewHoldings(), HOLDINGS.get(language));
         holdingsType.setLocation(HOLDINGS_LOCATION.get(language));
 
-        Pair<StatusCode, ValueDataField> valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.STUDYID));
+        Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.STUDYID));
         if(hasValue(valueFieldPair, Language.DEFAULT)) {
             holdingsType.setURI(HOLDINGS_URI_BASE.get(language)+valueFieldPair.getRight().getActualValueFor(Language.DEFAULT));
         }
     }
 
-    private static void addContainerVersion(Language language, CitationType citationType, ContainerDataField container) {
+    private void addContainerVersion(CitationType citationType, ContainerDataField container) {
         Pair<StatusCode, ValueDataField> valueFieldPair;List<DataRow> rows = container.getRowsFor(language);
         DataRow row = rows.get(rows.size()-1);
 
@@ -235,12 +237,12 @@ class DDIDocumentDescription {
             if(hasValue(valueFieldPair, language)) {
                 LocalDateTime versiondate = new LocalDateTime(valueFieldPair.getRight().getActualValueFor(language));
                 LocalDate localDate = versiondate.toLocalDate();
-                ver.setDate(DDIBuilder.DATE_TIME_FORMATTER.print(localDate));
+                ver.setDate(DATE_TIME_FORMATTER.print(localDate));
             }
         }
     }
 
-    private static void addProducerInfo(RevisionData revisionData, Language language, CitationType citationType, String agency) {
+    private void addProducerInfo(CitationType citationType, String agency) {
         // Add producer statement
         ProdStmtType prodStmtType = citationType.addNewProdStmt();
 
@@ -262,7 +264,7 @@ class DDIDocumentDescription {
         fillTextType(prodStmtType.addNewCopyright(), COPYRIGHT.get(language));
 
         // Add production date
-        Pair<StatusCode, ContainerDataField> containerPair = revisionData.dataField(ContainerDataFieldCall.get(Fields.DESCVERSIONS));
+        Pair<StatusCode, ContainerDataField> containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.DESCVERSIONS));
         if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(language)) {
             ContainerDataField container = containerPair.getRight();
             for (DataRow dataRow : container.getRowsFor(language)) {
@@ -273,7 +275,7 @@ class DDIDocumentDescription {
                 if(valueFieldPair.getLeft() == StatusCode.FIELD_FOUND && valueFieldPair.getRight().valueForEquals(language, "1.0")) {
                     LocalDate localDate = LocalDate.parse(valueFieldPair.getRight().getActualValueFor(language));
                     SimpleTextAndDateType stadt = prodStmtType.addNewProdDate();
-                    stadt.setDate(DDIBuilder.DATE_TIME_FORMATTER.print(localDate));
+                    stadt.setDate(DATE_TIME_FORMATTER.print(localDate));
                 }
             }
         }
@@ -283,7 +285,7 @@ class DDIDocumentDescription {
         fillTextType(stt.addNewAddress(), PRODPLAC_ADDRESS.get(language));
     }
 
-    private static String addIDNo(TitlStmtType titlStmtType, ValueDataField idField, SelectionList prefixList) {
+    private String addIDNo(TitlStmtType titlStmtType, ValueDataField idField, SelectionList prefixList) {
         if(prefixList != null) {
             for(Option option : prefixList.getOptions()) {
                 if(idField.getActualValueFor(Language.DEFAULT).indexOf(option.getValue()) == 0) {
@@ -297,7 +299,7 @@ class DDIDocumentDescription {
         return null;
     }
 
-    private static void addTitleField(RevisionData revision, Language language, TitlStmtType titlStmtType) {
+    private void addTitleField(TitlStmtType titlStmtType) {
         Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.TITLE));
         if(hasValue(valueFieldPair, language)) {
             fillTextType(titlStmtType.addNewTitl(), DDI_TITLE_PREFIXES.get(language)+valueFieldPair.getRight().getActualValueFor(language));

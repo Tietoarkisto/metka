@@ -9,18 +9,20 @@ import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.ValueDataField;
+import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
-import static fi.uta.fsd.metka.ddi.builder.DDIBuilder.fillTextType;
-import static fi.uta.fsd.metka.ddi.builder.DDIBuilder.hasValue;
+class DDIWriteFileDescription extends DDIWriteSectionBase {
+    DDIWriteFileDescription(RevisionData revision, Language language, CodeBookType codeBook, Configuration configuration, RevisionRepository revisions, ReferenceService references) {
+        super(revision, language, codeBook, configuration, revisions, references);
+    }
 
-class DDIFileDescription {
-    static void addfileDescription(RevisionData revisionData, Language language, Configuration configuration, CodeBookType codeBookType, RevisionRepository revisions) {
-        Pair<StatusCode, ValueDataField> valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
+    void write() {
+        Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
         // This operation is so large that it's cleaner just to return than to wrap everything inside this one IF
         if(!hasValue(valueFieldPair, Language.DEFAULT)) {
             return;
@@ -30,28 +32,28 @@ class DDIFileDescription {
         Pair<ReturnResult, RevisionData> revisionDataPair = revisions.getLatestRevisionForIdAndType(
                 valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY_VARIABLES);
         if(revisionDataPair.getLeft() != ReturnResult.REVISION_FOUND) {
-            Logger.error(DDIFileDescription.class, "Couldn't find expected variables revision with id: " + valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger());
+            Logger.error(DDIWriteFileDescription.class, "Couldn't find expected variables revision with id: " + valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger());
             return;
         }
         RevisionData variables = revisionDataPair.getRight();
 
         valueFieldPair = variables.dataField(ValueDataFieldCall.get(Fields.FILE));
         if(!hasValue(valueFieldPair, Language.DEFAULT)) {
-            Logger.error(DDIFileDescription.class, "Variables revision "+variables.toString()+" did not contain file reference although it should be present.");
+            Logger.error(DDIWriteFileDescription.class, "Variables revision "+variables.toString()+" did not contain file reference although it should be present.");
             return;
         }
         revisionDataPair = revisions.getLatestRevisionForIdAndType(
                 valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY_ATTACHMENT);
         if(revisionDataPair.getLeft() != ReturnResult.REVISION_FOUND) {
-            Logger.error(DDIFileDescription.class, "Couldn't find study attachment with id: " + valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger() +
+            Logger.error(DDIWriteFileDescription.class, "Couldn't find study attachment with id: " + valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger() +
                     " even though it's referenced from variables data " + variables.toString());
             return;
         }
         RevisionData attachment = revisionDataPair.getRight();
 
         // Get FileDscrType
-        FileDscrType fileDscrType = codeBookType.addNewFileDscr();
-        setFileDescription(language, attachment, fileDscrType);
+        FileDscrType fileDscrType = codeBook.addNewFileDscr();
+        setFileDescription(attachment, fileDscrType);
 
         // Get FileTxtType
         FileTxtType fileTxtType = fileDscrType.addNewFileTxt();
@@ -66,8 +68,8 @@ class DDIFileDescription {
         setDimensions(variables, fileTxtType);
     }
 
-    private static void setDimensions(RevisionData variables, FileTxtType fileTxtType) {
-        ;// Add dimensions
+    private void setDimensions(RevisionData variables, FileTxtType fileTxtType) {
+        // Add dimensions
         DimensnsType dimensnsType = fileTxtType.addNewDimensns();
         Pair<StatusCode, ValueDataField> valueFieldPair = variables.dataField(ValueDataFieldCall.get(Fields.CASEQUANTITY));
         if(hasValue(valueFieldPair, Language.DEFAULT)) {
@@ -82,7 +84,7 @@ class DDIFileDescription {
         }
     }
 
-    private static void setSoftware(RevisionData variables, FileTxtType fileTxtType) {
+    private void setSoftware(RevisionData variables, FileTxtType fileTxtType) {
         Pair<StatusCode, ValueDataField> valueFieldPair = variables.dataField(ValueDataFieldCall.get(Fields.SOFTWARE));
         if(hasValue(valueFieldPair, Language.DEFAULT)) {
             SoftwareType softwareType = fillTextType(fileTxtType.addNewSoftware(), valueFieldPair, Language.DEFAULT);
@@ -95,7 +97,7 @@ class DDIFileDescription {
         }
     }
 
-    private static void setFileNameAndID(RevisionData variables, RevisionData attachment, FileTxtType fileTxtType) {
+    private void setFileNameAndID(RevisionData variables, RevisionData attachment, FileTxtType fileTxtType) {
         Pair<StatusCode, ValueDataField> valueFieldPair = attachment.dataField(ValueDataFieldCall.get(Fields.FILE));
         if(hasValue(valueFieldPair, Language.DEFAULT)) {
             // Set file name
@@ -115,7 +117,7 @@ class DDIFileDescription {
         }
     }
 
-    private static void setFileDescription(Language language, RevisionData attachment, FileDscrType fileDscrType) {
+    private void setFileDescription(RevisionData attachment, FileDscrType fileDscrType) {
         Pair<StatusCode, ValueDataField> valueFieldPair = attachment.dataField(ValueDataFieldCall.get(Fields.FILEDESCRIPTION));
         if(hasValue(valueFieldPair, language)) {
             fillTextType(fileDscrType, valueFieldPair, language);

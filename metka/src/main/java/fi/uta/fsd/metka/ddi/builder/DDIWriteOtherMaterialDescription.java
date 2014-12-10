@@ -11,45 +11,48 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.ContainerDataField;
 import fi.uta.fsd.metka.model.data.container.DataRow;
 import fi.uta.fsd.metka.model.data.container.ValueDataField;
+import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.names.Fields;
+import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import org.apache.commons.lang3.tuple.Pair;
 
-import static fi.uta.fsd.metka.ddi.builder.DDIBuilder.fillTextType;
-import static fi.uta.fsd.metka.ddi.builder.DDIBuilder.hasValue;
+class DDIWriteOtherMaterialDescription extends DDIWriteSectionBase {
+    DDIWriteOtherMaterialDescription(RevisionData revision, Language language, CodeBookType codeBook, Configuration configuration, RevisionRepository revisions, ReferenceService references) {
+        super(revision, language, codeBook, configuration, revisions, references);
+    }
 
-class DDIOtherMaterialDescription {
-    static void addOtherMaterialDescription(RevisionData revisionData, Language language, Configuration configuration, CodeBookType codeBookType) {
-        Pair<StatusCode, ContainerDataField> containerPair = revisionData.dataField(ContainerDataFieldCall.get(Fields.OTHERMATERIALS));
-        // TODO: Check that other materials container should actually be translated container
+    void write() {
+        Pair<StatusCode, ContainerDataField> containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.OTHERMATERIALS));
+
         if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(language)) {
             for(DataRow row : containerPair.getRight().getRowsFor(language)) {
                 if(row.getRemoved()) {
                     continue;
                 }
-                OtherMatType otherMatType = codeBookType.addNewOtherMat();
+                OtherMatType otherMatType = codeBook.addNewOtherMat();
 
-                setURI(language, row, otherMatType);
-                addLabel(language, row, otherMatType);
-                setText(language, row, otherMatType);
+                setURI(row, otherMatType);
+                addLabel(row, otherMatType);
+                setText(row, otherMatType);
             }
         }
     }
 
-    private static void setURI(Language language, DataRow row, OtherMatType otherMatType) {
+    private void setURI(DataRow row, OtherMatType otherMatType) {
         Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.OTHERMATERIALURI));
         if(hasValue(valueFieldPair, language)) {
             otherMatType.setURI(valueFieldPair.getRight().getActualValueFor(language));
         }
     }
 
-    private static void addLabel(Language language, DataRow row, OtherMatType otherMatType) {
+    private void addLabel(DataRow row, OtherMatType otherMatType) {
         Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.OTHERMATERIALLABEL));
         if(hasValue(valueFieldPair, language)) {
             fillTextType(otherMatType.addNewLabl(), valueFieldPair, language);
         }
     }
 
-    private static void setText(Language language, DataRow row, OtherMatType otherMatType) {
+    private void setText(DataRow row, OtherMatType otherMatType) {
         Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.OTHERMATERIALTEXT));
         if(hasValue(valueFieldPair, language)) {
             fillTextType(otherMatType.addNewTxt(), valueFieldPair, language);

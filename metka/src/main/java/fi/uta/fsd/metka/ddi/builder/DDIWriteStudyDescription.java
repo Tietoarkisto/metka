@@ -24,9 +24,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.*;
 
-import static fi.uta.fsd.metka.ddi.builder.DDIBuilder.*;
-
-class DDIStudyDescription {
+class DDIWriteStudyDescription extends DDIWriteSectionBase {
     private static final Map<Language, String> ACCS_PLAC = new HashMap<>();
     private static final Map<Language, String> ACCS_PLAC_URI = new HashMap<>();
     private static final Map<String, Map<Language, String>> RESTRICTION = new HashMap<>();
@@ -121,49 +119,53 @@ class DDIStudyDescription {
         NATION.put(Language.SV, "Finland");
     }
 
-    static void addStudyDescription(RevisionData revision, Language language, Configuration configuration, CodeBookType codeBookType, RevisionRepository revisions, ReferenceService references) {
-        // Add study description to codebook
-        StdyDscrType stdyDscrType = codeBookType.addNewStdyDscr();
-
-        addCitationInfo(stdyDscrType, revision, language, configuration, revisions, references);
-
-        addStudyAuthorization(revision, stdyDscrType, references, language);
-
-        addStudyInfo(stdyDscrType, revision, language, configuration, references);
-
-        addMethod(stdyDscrType, revision, language, references);
-
-        addDataAccess(stdyDscrType, revision, configuration, language);
-
-        addOtherStudyMaterial(stdyDscrType, revision, language, revisions);
+    DDIWriteStudyDescription(RevisionData revision, Language language, CodeBookType codeBook, Configuration configuration, RevisionRepository revisions, ReferenceService references) {
+        super(revision, language, codeBook, configuration, revisions, references);
     }
 
-    private static void addCitationInfo(StdyDscrType stdyDscrType, RevisionData revisionData, Language language, Configuration configuration, RevisionRepository revisions, ReferenceService references) {
+    void write() {
+        // Add study description to codebook
+        StdyDscrType stdyDscrType = codeBook.addNewStdyDscr();
+
+        addCitationInfo(stdyDscrType);
+
+        addStudyAuthorization(stdyDscrType);
+
+        addStudyInfo(stdyDscrType);
+
+        addMethod(stdyDscrType);
+
+        addDataAccess(stdyDscrType);
+
+        addOtherStudyMaterial(stdyDscrType);
+    }
+
+    private void addCitationInfo(StdyDscrType stdyDscrType) {
         // Add citation
         CitationType citationType = stdyDscrType.addNewCitation();
 
-        addCitationTitle(revisionData, language, citationType, configuration);
+        addCitationTitle(citationType);
 
-        addCitationRspStatement(revisionData, citationType, references, language);
+        addCitationRspStatement(citationType);
 
-        addCitationProdStatement(revisionData, citationType, language, references, configuration);
+        addCitationProdStatement(citationType);
 
-        addCitationDistStatement(citationType, language);
+        addCitationDistStatement(citationType);
 
         // Add SerStmt
-        addCitationSerStatement(citationType, revisionData, language, revisions);
+        addCitationSerStatement(citationType);
 
         // Add VerStmt
-        addCitationVerStatement(citationType, revisionData, language);
+        addCitationVerStatement(citationType);
 
         // Add biblcit
-        Pair<StatusCode, ValueDataField> valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.BIBLCIT));
-        if(hasValue(valueFieldPair, Language.DEFAULT)) {
-            fillTextType(citationType.addNewBiblCit(), valueFieldPair, Language.DEFAULT);
+        Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.BIBLCIT));
+        if(hasValue(valueFieldPair, language)) {
+            fillTextType(citationType.addNewBiblCit(), valueFieldPair, language);
         }
     }
 
-    private static void addCitationProdStatement(RevisionData revision, CitationType citationType, Language language, ReferenceService references, Configuration configuration) {
+    private void addCitationProdStatement(CitationType citationType) {
         ProdStmtType prodStmtType = citationType.addNewProdStmt();
 
         Pair<StatusCode, ContainerDataField> containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.PRODUCERS));
@@ -175,9 +177,9 @@ class DDIStudyDescription {
                 }
                 String rowRoot = path+row.getRowId()+".";
 
-                String organisation = getReferenceTitle(references, language, revision, rowRoot + Fields.PRODUCERORGANISATION);
-                String agency = getReferenceTitle(references, language, revision, rowRoot + Fields.PRODUCERAGENCY);
-                String section = getReferenceTitle(references, language, revision, rowRoot + Fields.PRODUCERSECTION);
+                String organisation = getReferenceTitle(rowRoot + Fields.PRODUCERORGANISATION);
+                String agency = getReferenceTitle(rowRoot + Fields.PRODUCERAGENCY);
+                String section = getReferenceTitle(rowRoot + Fields.PRODUCERSECTION);
                 ProducerType d;
                 if(!StringUtils.hasText(agency) && !StringUtils.hasText(section)) {
                     if(!StringUtils.hasText(organisation)) {
@@ -194,9 +196,9 @@ class DDIStudyDescription {
                     d = fillTextType(prodStmtType.addNewProducer(), producer);
                 }
 
-                String abbr = getReferenceTitle(references, language, revision, rowRoot + Fields.PRODUCERSECTIONABBR);
-                abbr = (StringUtils.hasText(abbr)) ? abbr : getReferenceTitle(references, language, revision, rowRoot + Fields.PRODUCERAGENCYABBR);
-                abbr = (StringUtils.hasText(abbr)) ? abbr : getReferenceTitle(references, language, revision, rowRoot + Fields.PRODUCERORGANISATIONABBR);
+                String abbr = getReferenceTitle(rowRoot + Fields.PRODUCERSECTIONABBR);
+                abbr = (StringUtils.hasText(abbr)) ? abbr : getReferenceTitle(rowRoot + Fields.PRODUCERAGENCYABBR);
+                abbr = (StringUtils.hasText(abbr)) ? abbr : getReferenceTitle(rowRoot + Fields.PRODUCERORGANISATIONABBR);
 
                 d.setAbbr(abbr);
                 if(StringUtils.hasText(agency) || StringUtils.hasText(section)) {
@@ -221,14 +223,14 @@ class DDIStudyDescription {
         fillTextType(prodStmtType.addNewCopyright(), COPYRIGHT.get(language));
     }
 
-    private static void addCitationDistStatement(CitationType citationType, Language language) {
+    private void addCitationDistStatement(CitationType citationType) {
         DistStmtType distStmtType = citationType.addNewDistStmt();
         DistrbtrType d = fillTextType(distStmtType.addNewDistrbtr(), DISTRIBUTR.get(language));
         d.setAbbr(DISTRIBUTR_ABB.get(language));
         d.setURI(DISTRIBUTR_URI.get(language));
     }
 
-    private static void addCitationRspStatement(RevisionData revision, CitationType citationType, ReferenceService references, Language language) {
+    private void addCitationRspStatement(CitationType citationType) {
         RspStmtType rsp = citationType.addNewRspStmt();
         Pair<StatusCode, ContainerDataField> containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.AUTHORS));
         if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
@@ -255,9 +257,9 @@ class DDIStudyDescription {
                 }
                 AuthEntyType d = fillTextType(rsp.addNewAuthEnty(), pair, Language.DEFAULT);
 
-                String organisation = getReferenceTitle(references, language, revision, rowRoot + Fields.AUTHORORGANISATION);
-                String agency = getReferenceTitle(references, language, revision, rowRoot + Fields.AUTHORAGENCY);
-                String section = getReferenceTitle(references, language, revision, rowRoot + Fields.AUTHORSECTION);
+                String organisation = getReferenceTitle(rowRoot + Fields.AUTHORORGANISATION);
+                String agency = getReferenceTitle(rowRoot + Fields.AUTHORAGENCY);
+                String section = getReferenceTitle(rowRoot + Fields.AUTHORSECTION);
 
                 String affiliation = (StringUtils.hasText(organisation)) ? organisation : "";
                 affiliation += (StringUtils.hasText(affiliation) && StringUtils.hasText(agency)) ? ". " : "";
@@ -295,9 +297,9 @@ class DDIStudyDescription {
                     }
                     OthIdType d = fillTextType(rsp.addNewOthId(), pair, Language.DEFAULT);
 
-                    String organisation = getReferenceTitle(references, language, revision, rowRoot + Fields.AUTHORORGANISATION);
-                    String agency = getReferenceTitle(references, language, revision, rowRoot + Fields.AUTHORAGENCY);
-                    String section = getReferenceTitle(references, language, revision, rowRoot + Fields.AUTHORSECTION);
+                    String organisation = getReferenceTitle(rowRoot + Fields.AUTHORORGANISATION);
+                    String agency = getReferenceTitle(rowRoot + Fields.AUTHORAGENCY);
+                    String section = getReferenceTitle(rowRoot + Fields.AUTHORSECTION);
 
                     String affiliation = (StringUtils.hasText(organisation)) ? organisation : "";
                     affiliation += (StringUtils.hasText(affiliation) && StringUtils.hasText(agency)) ? ". " : "";
@@ -310,9 +312,9 @@ class DDIStudyDescription {
                     }
                 } else if(colltype.equals("2")) {
                     // We have an organisation collector
-                    String organisation = getReferenceTitle(references, language, revision, rowRoot + Fields.AUTHORORGANISATION);
-                    String agency = getReferenceTitle(references, language, revision, rowRoot + Fields.AUTHORAGENCY);
-                    String section = getReferenceTitle(references, language, revision, rowRoot + Fields.AUTHORSECTION);
+                    String organisation = getReferenceTitle(rowRoot + Fields.AUTHORORGANISATION);
+                    String agency = getReferenceTitle(rowRoot + Fields.AUTHORAGENCY);
+                    String section = getReferenceTitle(rowRoot + Fields.AUTHORSECTION);
                     OthIdType d;
                     if(!StringUtils.hasText(agency) && !StringUtils.hasText(section)) {
                         if(!StringUtils.hasText(organisation)) {
@@ -345,15 +347,13 @@ class DDIStudyDescription {
         }
     }
 
-    private static void addCitationSerStatement(CitationType citationType, RevisionData revision, Language language, RevisionRepository revisions) {
+    private void addCitationSerStatement(CitationType citationType) {
         // Add series statement, excel row #70
         Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.SERIES));
         if(hasValue(valueFieldPair, Language.DEFAULT)) {
             Pair<ReturnResult, RevisionData> revisionPair = revisions.getLatestRevisionForIdAndType(
                     valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), true, ConfigurationType.SERIES);
             if(revisionPair.getLeft() == ReturnResult.REVISION_FOUND) {
-                Logger.error(DDIStudyDescription.class, "Did not find referenced SERIES with id: "+valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger());
-                SerStmtType serStmtType = citationType.addNewSerStmt();
                 RevisionData series = revisionPair.getRight();
                 valueFieldPair = series.dataField(ValueDataFieldCall.get(Fields.SERIESABBR));
                 String seriesAbbr = null;
@@ -361,52 +361,57 @@ class DDIStudyDescription {
                     seriesAbbr = valueFieldPair.getRight().getActualValueFor(Language.DEFAULT);
                 }
                 if(seriesAbbr != null) {
+                    SerStmtType serStmtType = citationType.addNewSerStmt();
                     serStmtType.setURI(SERIES_URI_PREFIX.get(language)+seriesAbbr);
-                }
-                valueFieldPair = series.dataField(ValueDataFieldCall.get(Fields.SERIESNAME));
-                if(hasValue(valueFieldPair, language)) {
-                    SerNameType serName = fillTextType(serStmtType.addNewSerName(), valueFieldPair, language);
-                    if(seriesAbbr != null) {
-                        serName.setAbbr(seriesAbbr);
+                    valueFieldPair = series.dataField(ValueDataFieldCall.get(Fields.SERIESNAME));
+
+                    SerNameType serName;
+                    if(hasValue(valueFieldPair, language)) {
+                        serName = fillTextType(serStmtType.addNewSerName(), valueFieldPair, language);
+                    } else {
+                        serName = fillTextType(serStmtType.addNewSerName(), "");
+                    }
+                    serName.setAbbr(seriesAbbr);
+                    valueFieldPair = series.dataField(ValueDataFieldCall.get(Fields.SERIESDESC));
+                    if(hasValue(valueFieldPair, language)) {
+                        fillTextType(serStmtType.addNewSerInfo(), valueFieldPair, language);
                     }
                 }
-                valueFieldPair = series.dataField(ValueDataFieldCall.get(Fields.SERIESDESC));
-                if(hasValue(valueFieldPair, language)) {
-                    fillTextType(serStmtType.addNewSerInfo(), valueFieldPair, language);
-                }
+            } else {
+                Logger.error(DDIWriteStudyDescription.class, "Did not find referenced SERIES with id: "+valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger());
             }
         }
     }
 
-    private static void addCitationVerStatement(CitationType citationType, RevisionData revisionData, Language language) {
+    private void addCitationVerStatement(CitationType citationType) {
         VerStmtType verStmtType = citationType.addNewVerStmt();
 
         // Add version, repeatable
-        Pair<StatusCode, ContainerDataField> containerPair = revisionData.dataField(ContainerDataFieldCall.get(Fields.DATAVERSIONS));
-        if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(language)) {
-            for(DataRow row : containerPair.getRight().getRowsFor(language)) {
+        Pair<StatusCode, ContainerDataField> containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.DATAVERSIONS));
+        if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
+            for(DataRow row : containerPair.getRight().getRowsFor(Language.DEFAULT)) {
                 Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.DATAVERSION));
-                if(hasValue(valueFieldPair, language)) {
-                    fillTextAndDateType(verStmtType.addNewVersion(), valueFieldPair, language);
+                if(hasValue(valueFieldPair, Language.DEFAULT)) {
+                    fillTextAndDateType(verStmtType.addNewVersion(), valueFieldPair, Language.DEFAULT);
                 }
             }
         }
     }
 
-    private static void addCitationTitle(RevisionData revisionData, Language language, CitationType citationType, Configuration configuration) {
-        Pair<StatusCode, ValueDataField> valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.TITLE));
+    private void addCitationTitle(CitationType citationType) {
+        Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.TITLE));
         TitlStmtType titlStmtType = citationType.addNewTitlStmt();
         if(hasValue(valueFieldPair, language)) {
             // Add title of requested language
             fillTextType(titlStmtType.addNewTitl(), valueFieldPair, language);
         }
 
-        addAltTitles(revisionData, language, titlStmtType);
+        addAltTitles(titlStmtType);
 
-        addParTitles(revisionData, language, titlStmtType);
+        addParTitles(titlStmtType);
 
         String agency = "";
-        valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.STUDYID));
+        valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.STUDYID));
         if(hasValue(valueFieldPair, Language.DEFAULT)) {
             String id = valueFieldPair.getRight().getActualValueFor(Language.DEFAULT);
             // Get agency from study id
@@ -433,8 +438,8 @@ class DDIStudyDescription {
         }*/
     }
 
-    private static void addParTitles(RevisionData revisionData, Language language, TitlStmtType titlStmtType) {
-        Pair<StatusCode, ValueDataField> valueFieldPair = revisionData.dataField(ValueDataFieldCall.get(Fields.TITLE));
+    private void addParTitles(TitlStmtType titlStmtType) {
+        Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.TITLE));
         Set<String> usedLanguages = new HashSet<>();
         usedLanguages.add(getXmlLang(language));
         for(Language l : Language.values()) {
@@ -447,7 +452,7 @@ class DDIStudyDescription {
                 usedLanguages.add(getXmlLang(l));
             }
         }
-        Pair<StatusCode, ContainerDataField> containerPair = revisionData.dataField(ContainerDataFieldCall.get(Fields.PARTITLES));
+        Pair<StatusCode, ContainerDataField> containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.PARTITLES));
         if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
             for(DataRow row : containerPair.getRight().getRowsFor(Language.DEFAULT)) {
                 valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.PARTITLE));
@@ -471,9 +476,9 @@ class DDIStudyDescription {
         }
     }
 
-    private static void addAltTitles(RevisionData revisionData, Language language, TitlStmtType titlStmtType) {
+    private void addAltTitles(TitlStmtType titlStmtType) {
         Pair<StatusCode, ValueDataField> valueFieldPair;// Add alternative titles
-        Pair<StatusCode, ContainerDataField> containerPair = revisionData.dataField(ContainerDataFieldCall.get(Fields.ALTTITLES));
+        Pair<StatusCode, ContainerDataField> containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.ALTTITLES));
         // TODO: Do we translate alternate titles or do the alternate titles have translations?
         if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
             for(DataRow row : containerPair.getRight().getRowsFor(Language.DEFAULT)) {
@@ -485,7 +490,7 @@ class DDIStudyDescription {
         }
     }
 
-    private static void addStudyAuthorization(RevisionData revision, StdyDscrType stdyDscrType, ReferenceService references, Language language) {
+    private void addStudyAuthorization(StdyDscrType stdyDscrType) {
         Pair<StatusCode, ContainerDataField> containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.AUTHORS));
         String path = "authors.";
         if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
@@ -506,9 +511,9 @@ class DDIStudyDescription {
 
                 String rowRoot = path+row.getRowId()+".";
 
-                String organisation = getReferenceTitle(references, language, revision, rowRoot + Fields.AUTHORORGANISATION);
-                String agency = getReferenceTitle(references, language, revision, rowRoot + Fields.AUTHORAGENCY);
-                String section = getReferenceTitle(references, language, revision, rowRoot + Fields.AUTHORSECTION);
+                String organisation = getReferenceTitle(rowRoot + Fields.AUTHORORGANISATION);
+                String agency = getReferenceTitle(rowRoot + Fields.AUTHORAGENCY);
+                String section = getReferenceTitle(rowRoot + Fields.AUTHORSECTION);
                 AuthorizingAgencyType d;
                 if(!StringUtils.hasText(agency) && !StringUtils.hasText(section)) {
                     if(!StringUtils.hasText(organisation)) {
@@ -525,9 +530,9 @@ class DDIStudyDescription {
                     d = fillTextType(sa.addNewAuthorizingAgency(), authorizer);
                 }
 
-                String abbr = getReferenceTitle(references, language, revision, rowRoot + Fields.PRODUCERSECTIONABBR);
-                abbr = (StringUtils.hasText(abbr)) ? abbr : getReferenceTitle(references, language, revision, rowRoot + Fields.PRODUCERAGENCYABBR);
-                abbr = (StringUtils.hasText(abbr)) ? abbr : getReferenceTitle(references, language, revision, rowRoot + Fields.PRODUCERORGANISATIONABBR);
+                String abbr = getReferenceTitle(rowRoot + Fields.PRODUCERSECTIONABBR);
+                abbr = (StringUtils.hasText(abbr)) ? abbr : getReferenceTitle(rowRoot + Fields.PRODUCERAGENCYABBR);
+                abbr = (StringUtils.hasText(abbr)) ? abbr : getReferenceTitle(rowRoot + Fields.PRODUCERORGANISATIONABBR);
 
                 d.setAbbr(abbr);
                 if(StringUtils.hasText(agency) || StringUtils.hasText(section)) {
@@ -539,43 +544,36 @@ class DDIStudyDescription {
         }
     }
 
-    private static void addStudyInfo(StdyDscrType stdyDscrType, RevisionData revision, Language language, Configuration configuration, ReferenceService references) {
+    private void addStudyInfo(StdyDscrType stdyDscrType) {
         StdyInfoType stdyInfo = stdyDscrType.addNewStdyInfo();
 
-        addStudyInfoSubject(stdyInfo, revision, language, configuration, references);
+        addStudyInfoSubject(stdyInfo);
 
         Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField( ValueDataFieldCall.get(Fields.ABSTRACT));
         if(hasValue(valueFieldPair, language)) {
             fillTextType(stdyInfo.addNewAbstract(), valueFieldPair, language);
         }
 
-        addStudyInfoSumDesc(stdyInfo, revision, language, configuration, references);
+        addStudyInfoSumDesc(stdyInfo);
     }
 
-    private static void addStudyInfoSubject(StdyInfoType stdyInfo, RevisionData revision, Language language, Configuration configuration, ReferenceService references) {
+    private void addStudyInfoSubject(StdyInfoType stdyInfo) {
         SubjectType subject= stdyInfo.addNewSubject();
 
         // Add subject
         Pair<StatusCode, ContainerDataField> containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.KEYWORDS));
         if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
-            addStudyInfoSubjectKeywords(subject, containerPair.getRight(), revision, language, references, configuration);
+            addStudyInfoSubjectKeywords(subject, containerPair.getRight());
         }
 
         // Add topic
         containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.TOPICS));
         if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
-            addStudyInfoSubjectTopics(subject, containerPair.getRight(), revision, language, references);
+            addStudyInfoSubjectTopics(subject, containerPair.getRight());
         }
     }
 
-    private static String getReferenceTitle(ReferenceService references, Language language, RevisionData revision, String path) {
-        ReferenceOption option = references.getCurrentFieldOption(language, revision, path);
-        if(option != null) {
-            return option.getTitle().getValue();
-        } else return null;
-    }
-
-    private static void addStudyInfoSubjectKeywords(SubjectType subject, ContainerDataField container, RevisionData revision, Language language, ReferenceService references, Configuration configuration) {
+    private void addStudyInfoSubjectKeywords(SubjectType subject, ContainerDataField container) {
         // Let's hardcode the path since we know exactly what we are looking for.
         String pathRoot = "keywords.";
         for(DataRow row : container.getRowsFor(Language.DEFAULT)) {
@@ -588,7 +586,7 @@ class DDIStudyDescription {
             String keywordvocaburi = null;
 
             ReferenceOption keywordvocab = references.getCurrentFieldOption(language, revision, rowRoot + Fields.KEYWORDVOCAB);
-            keywordvocaburi = getReferenceTitle(references, language, revision, rowRoot + Fields.KEYWORDVOCABURI);
+            keywordvocaburi = getReferenceTitle(rowRoot + Fields.KEYWORDVOCABURI);
             SelectionList keywordvocab_list = configuration.getSelectionList(Lists.KEYWORDVOCAB_LIST);
 
             if(keywordvocab == null || keywordvocab_list.getFreeText().contains(keywordvocab.getValue())) {
@@ -616,7 +614,7 @@ class DDIStudyDescription {
         }
     }
 
-    private static void addStudyInfoSubjectTopics(SubjectType subject, ContainerDataField container, RevisionData revision, Language language, ReferenceService references) {
+    private void addStudyInfoSubjectTopics(SubjectType subject, ContainerDataField container) {
         // Let's hardcode the path since we know exactly what we are looking for.
         String pathRoot = "topics.";
         for(DataRow row : container.getRowsFor(Language.DEFAULT)) {
@@ -629,18 +627,18 @@ class DDIStudyDescription {
             String topicvocab = null;
             String topicvocaburi = null;
 
-            topicvocab = getReferenceTitle(references, language, revision, rowRoot + Fields.TOPICVOCAB);
+            topicvocab = getReferenceTitle(rowRoot + Fields.TOPICVOCAB);
             if(!StringUtils.hasText(topicvocab)) {
                 continue;
             }
 
-            topic = getReferenceTitle(references, language, revision, rowRoot + Fields.TOPIC);
+            topic = getReferenceTitle(rowRoot + Fields.TOPIC);
             if(!StringUtils.hasText(topic)) {
                 continue;
             }
 
 
-            topicvocaburi = getReferenceTitle(references, language, revision, rowRoot + Fields.TOPICVOCABURI);
+            topicvocaburi = getReferenceTitle(rowRoot + Fields.TOPICVOCABURI);
 
             // Keyword should always be non null at this point
             TopcClasType tt = fillTextType(subject.addNewTopcClas(), topic);
@@ -653,22 +651,22 @@ class DDIStudyDescription {
         }
     }
 
-    private static void addStudyInfoSumDesc(StdyInfoType stdyInfo, RevisionData revision, Language language, Configuration configuration, ReferenceService references) {
+    private void addStudyInfoSumDesc(StdyInfoType stdyInfo) {
         SumDscrType sumDscrType = stdyInfo.addNewSumDscr();
 
         Pair<StatusCode, ContainerDataField> containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.TIMEPERIODS));
         if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
-            addStudyInfoSumDescTimePrd(sumDscrType, containerPair.getRight(), language);
+            addStudyInfoSumDescTimePrd(sumDscrType, containerPair.getRight());
         }
 
         containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.COLLTIME));
         if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
-            addStudyInfoSumDescCollDate(sumDscrType, containerPair.getRight(), language);
+            addStudyInfoSumDescCollDate(sumDscrType, containerPair.getRight());
         }
 
         containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.COUNTRIES));
         if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
-            addStudyInfoSumDescNation(sumDscrType, containerPair.getRight(), revision, language, references);
+            addStudyInfoSumDescNation(sumDscrType, containerPair.getRight());
         }
 
         containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.GEOGCOVERS));
@@ -686,12 +684,12 @@ class DDIStudyDescription {
 
         containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.ANALYSIS));
         if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
-            addStudyInfoSumDescAnlyUnit(sumDscrType, containerPair.getRight(), revision, language, references);
+            addStudyInfoSumDescAnlyUnit(sumDscrType, containerPair.getRight());
         }
 
         containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.UNIVERSES));
         if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
-            addStudyInfoSumDescUniverse(language, sumDscrType, containerPair);
+            addStudyInfoSumDescUniverse(sumDscrType, containerPair);
         }
 
         Pair<StatusCode, ValueDataField> fieldPair = revision.dataField(ValueDataFieldCall.get(Fields.DATAKIND));
@@ -704,7 +702,7 @@ class DDIStudyDescription {
         }
     }
 
-    private static void addStudyInfoSumDescAnlyUnit(SumDscrType sumDscr, ContainerDataField container, RevisionData revision, Language language, ReferenceService references) {
+    private void addStudyInfoSumDescAnlyUnit(SumDscrType sumDscr, ContainerDataField container) {
         // Let's hardcode the path since we know exactly what we are looking for.
         String pathRoot = "analysis.";
         for(DataRow row : container.getRowsFor(Language.DEFAULT)) {
@@ -718,17 +716,17 @@ class DDIStudyDescription {
             String analysisunitvocab = null;
             String analysisunitvocaburi = null;
 
-            analysisunitvocab = getReferenceTitle(references, language, revision, rowRoot + Fields.ANALYSISUNITVOCAB);
+            analysisunitvocab = getReferenceTitle(rowRoot + Fields.ANALYSISUNITVOCAB);
             if(!StringUtils.hasText(analysisunitvocab)) {
                 continue;
             }
 
-            analysisunit = getReferenceTitle(references, language, revision, rowRoot + Fields.ANALYSISUNIT);
+            analysisunit = getReferenceTitle(rowRoot + Fields.ANALYSISUNIT);
             if(!StringUtils.hasText(analysisunit)) {
                 continue;
             }
 
-            analysisunitvocaburi = getReferenceTitle(references, language, revision, rowRoot + Fields.ANALYSISUNITVOCABURI);
+            analysisunitvocaburi = getReferenceTitle(rowRoot + Fields.ANALYSISUNITVOCABURI);
 
             Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.ANALYSISUNITOTHER));
             if(hasValue(valueFieldPair, language)) {
@@ -753,7 +751,7 @@ class DDIStudyDescription {
         }
     }
 
-    private static void addStudyInfoSumDescUniverse(Language language, SumDscrType sumDscrType, Pair<StatusCode, ContainerDataField> containerPair) {
+    private void addStudyInfoSumDescUniverse(SumDscrType sumDscrType, Pair<StatusCode, ContainerDataField> containerPair) {
         for(DataRow row : containerPair.getRight().getRowsFor(Language.DEFAULT)) {
             if (row.getRemoved()) {
                 continue;
@@ -776,7 +774,7 @@ class DDIStudyDescription {
         }
     }
 
-    private static void addStudyInfoSumDescTimePrd(SumDscrType sumDscr, ContainerDataField container, Language language) {
+    private void addStudyInfoSumDescTimePrd(SumDscrType sumDscr, ContainerDataField container) {
         for(DataRow row : container.getRowsFor(Language.DEFAULT)) {
             if(row.getRemoved()) {
                 continue;
@@ -811,7 +809,7 @@ class DDIStudyDescription {
         }
     }
 
-    private static void addStudyInfoSumDescCollDate(SumDscrType sumDscr, ContainerDataField container, Language language) {
+    private void addStudyInfoSumDescCollDate(SumDscrType sumDscr, ContainerDataField container) {
         for(DataRow row : container.getRowsFor(Language.DEFAULT)) {
             if(row.getRemoved()) {
                 continue;
@@ -846,73 +844,74 @@ class DDIStudyDescription {
         }
     }
 
-    private static void addStudyInfoSumDescNation(SumDscrType sumDscr, ContainerDataField container, RevisionData revision, Language language, ReferenceService references) {
+    private void addStudyInfoSumDescNation(SumDscrType sumDscr, ContainerDataField container) {
         String path = "countries.";
         for (DataRow row : container.getRowsFor(Language.DEFAULT)) {
             if (row.getRemoved()) {
                 continue;
             }
+            // TODO: Country is not a reference anymore
             String rowPath = path + row.getRowId() + ".";
-            String country = getReferenceTitle(references, language, revision, rowPath+Fields.COUNTRY);
+            String country = getReferenceTitle(rowPath+Fields.COUNTRY);
             if(!StringUtils.hasText(country)) {
                 continue;
             }
             NationType n = fillTextType(sumDscr.addNewNation(), country);
-            String abbr = getReferenceTitle(references, language, revision, rowPath+Fields.COUNTRYABBR);
+            String abbr = getReferenceTitle(rowPath+Fields.COUNTRYABBR);
             if(abbr != null) {
                 n.setAbbr(abbr);
             }
         }
     }
 
-    private static void addMethod(StdyDscrType stdyDscrType, RevisionData revision, Language language, ReferenceService references) {
+    private void addMethod(StdyDscrType stdyDscrType) {
         MethodType methodType = stdyDscrType.addNewMethod();
 
-        addMethodDataColl(methodType, revision, language, references);
+        addMethodDataColl(methodType);
 
         Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.DATAPROSESSING));
         if(hasValue(valueFieldPair, language)) {
             fillTextType(methodType.addNewNotes(), valueFieldPair, language);
         }
 
-        addMethodAnalyzeInfo(methodType, revision, language);
+        addMethodAnalyzeInfo(methodType);
     }
 
-    private static void addMethodDataColl(MethodType methodType, RevisionData revision, Language language, ReferenceService references) {
+    private void addMethodDataColl(MethodType methodType) {
         // Add data column
         DataCollType dataCollType = methodType.addNewDataColl();
 
         Pair<StatusCode, ContainerDataField> containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.TIMEMETHODS));
         if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
-            addMethodDataCollTimeMeth(dataCollType, containerPair.getRight(), revision, language, references);
+            addMethodDataCollTimeMeth(dataCollType, containerPair.getRight());
         }
 
         containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.SAMPPROCS));
         if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
-            addMethodDataCollSampProc(dataCollType, containerPair.getRight(), revision, language, references);
+            addMethodDataCollSampProc(dataCollType, containerPair.getRight());
         }
 
         containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.COLLMODES));
         if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
-            addMethodDataCollCollMode(dataCollType, containerPair.getRight(), revision, language, references);
+            addMethodDataCollCollMode(dataCollType, containerPair.getRight());
         }
 
         containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.INSTRUMENTS));
         if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
-            addMethodDataCollResInstru(dataCollType, containerPair.getRight(), revision, language, references);
+            addMethodDataCollResInstru(dataCollType, containerPair.getRight());
         }
 
         containerPair = revision.dataField(ContainerDataFieldCall.get(Fields.COLLECTORS));
         if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
-            addMethodDataCollDataCollector(dataCollType, containerPair.getRight(), revision, language, references);
+            addMethodDataCollDataCollector(dataCollType, containerPair.getRight());
         }
 
-        addMethodDataCollSources(dataCollType, revision, language);
+        addMethodDataCollSources(dataCollType);
 
-        addMethodDataCollWeight(dataCollType, revision, language);
+        addMethodDataCollWeight(dataCollType);
     }
 
-    private static void addMethodDataCollTimeMeth(DataCollType dataColl, ContainerDataField container, RevisionData revision, Language language, ReferenceService references) {
+    private void addMethodDataCollTimeMeth(DataCollType dataColl, ContainerDataField container) {
         // Let's hardcode the path since we know exactly what we are looking for.
         String pathRoot = "timemethods.";
         for(DataRow row : container.getRowsFor(Language.DEFAULT)) {
@@ -926,17 +925,17 @@ class DDIStudyDescription {
             String timemethodvocab = null;
             String timemethodvocaburi = null;
 
-            timemethodvocab = getReferenceTitle(references, language, revision, rowRoot + Fields.TIMEMETHODVOCAB);
+            timemethodvocab = getReferenceTitle(rowRoot + Fields.TIMEMETHODVOCAB);
             if(!StringUtils.hasText(timemethodvocab)) {
                 continue;
             }
 
-            timemethod = getReferenceTitle(references, language, revision, rowRoot + Fields.TIMEMETHOD);
+            timemethod = getReferenceTitle(rowRoot + Fields.TIMEMETHOD);
             if(!StringUtils.hasText(timemethod)) {
                 continue;
             }
 
-            timemethodvocaburi = getReferenceTitle(references, language, revision, rowRoot + Fields.TIMEMETHODVOCABURI);
+            timemethodvocaburi = getReferenceTitle(rowRoot + Fields.TIMEMETHODVOCABURI);
 
             Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.TIMEMETHODOTHER));
             if(hasValue(valueFieldPair, language)) {
@@ -961,7 +960,7 @@ class DDIStudyDescription {
         }
     }
 
-    private static void addMethodDataCollDataCollector(DataCollType dataColl, ContainerDataField container, RevisionData revision, Language language, ReferenceService references) {
+    private void addMethodDataCollDataCollector(DataCollType dataColl, ContainerDataField container) {
         // Let's hardcode the path since we know exactly what we are looking for.
         String pathRoot = "collectors.";
         for(DataRow row : container.getRowsFor(Language.DEFAULT)) {
@@ -986,9 +985,9 @@ class DDIStudyDescription {
                 }
                 DataCollectorType d = fillTextType(dataColl.addNewDataCollector(), pair, Language.DEFAULT);
 
-                String organisation = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORORGANISATION);
-                String agency = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORAGENCY);
-                String section = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORSECTION);
+                String organisation = getReferenceTitle(rowRoot + Fields.COLLECTORORGANISATION);
+                String agency = getReferenceTitle(rowRoot + Fields.COLLECTORAGENCY);
+                String section = getReferenceTitle(rowRoot + Fields.COLLECTORSECTION);
 
                 String affiliation = (StringUtils.hasText(organisation)) ? organisation : "";
                 affiliation += (StringUtils.hasText(affiliation) && StringUtils.hasText(agency)) ? ". " : "";
@@ -1001,9 +1000,9 @@ class DDIStudyDescription {
                 }
             } else if(colltype.equals("2")) {
                 // We have an organisation collector
-                String organisation = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORORGANISATION);
-                String agency = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORAGENCY);
-                String section = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORSECTION);
+                String organisation = getReferenceTitle(rowRoot + Fields.COLLECTORORGANISATION);
+                String agency = getReferenceTitle(rowRoot + Fields.COLLECTORAGENCY);
+                String section = getReferenceTitle(rowRoot + Fields.COLLECTORSECTION);
                 DataCollectorType d;
                 if(!StringUtils.hasText(agency) && !StringUtils.hasText(section)) {
                     if(!StringUtils.hasText(organisation)) {
@@ -1022,9 +1021,9 @@ class DDIStudyDescription {
                     d = fillTextType(dataColl.addNewDataCollector(), collector);
                 }
 
-                String abbr = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORSECTIONABBR);
-                abbr = (StringUtils.hasText(abbr)) ? abbr : getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORAGENCYABBR);
-                abbr = (StringUtils.hasText(abbr)) ? abbr : getReferenceTitle(references, language, revision, rowRoot + Fields.COLLECTORORGANISATIONABBR);
+                String abbr = getReferenceTitle(rowRoot + Fields.COLLECTORSECTIONABBR);
+                abbr = (StringUtils.hasText(abbr)) ? abbr : getReferenceTitle(rowRoot + Fields.COLLECTORAGENCYABBR);
+                abbr = (StringUtils.hasText(abbr)) ? abbr : getReferenceTitle(rowRoot + Fields.COLLECTORORGANISATIONABBR);
 
                 d.setAbbr(abbr);
                 if(StringUtils.hasText(agency) || StringUtils.hasText(section)) {
@@ -1036,7 +1035,7 @@ class DDIStudyDescription {
         }
     }
 
-    private static void addMethodDataCollSampProc(DataCollType dataColl, ContainerDataField container, RevisionData revision, Language language, ReferenceService references) {
+    private void addMethodDataCollSampProc(DataCollType dataColl, ContainerDataField container) {
         // Let's hardcode the path since we know exactly what we are looking for.
         String pathRoot = "sampprocs.";
         for(DataRow row : container.getRowsFor(Language.DEFAULT)) {
@@ -1050,17 +1049,17 @@ class DDIStudyDescription {
             String sampprocvocab = null;
             String sampprocvocaburi = null;
 
-            sampprocvocab = getReferenceTitle(references, language, revision, rowRoot + Fields.SAMPPROCVOCAB);
+            sampprocvocab = getReferenceTitle(rowRoot + Fields.SAMPPROCVOCAB);
             if(!StringUtils.hasText(sampprocvocab)) {
                 continue;
             }
 
-            sampproc = getReferenceTitle(references, language, revision, rowRoot + Fields.SAMPPROC);
+            sampproc = getReferenceTitle(rowRoot + Fields.SAMPPROC);
             if(!StringUtils.hasText(sampproc)) {
                 continue;
             }
 
-            sampprocvocaburi = getReferenceTitle(references, language, revision, rowRoot + Fields.SAMPPROCVOCABURI);
+            sampprocvocaburi = getReferenceTitle(rowRoot + Fields.SAMPPROCVOCABURI);
 
             Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.SAMPPROCOTHER));
             if(hasValue(valueFieldPair, language)) {
@@ -1092,7 +1091,7 @@ class DDIStudyDescription {
         }
     }
 
-    private static void addMethodDataCollCollMode(DataCollType dataColl, ContainerDataField container, RevisionData revision, Language language, ReferenceService references) {
+    private void addMethodDataCollCollMode(DataCollType dataColl, ContainerDataField container) {
         // Let's hardcode the path since we know exactly what we are looking for.
         String pathRoot = "collmodes.";
         for(DataRow row : container.getRowsFor(Language.DEFAULT)) {
@@ -1106,17 +1105,17 @@ class DDIStudyDescription {
             String collmodevocab = null;
             String collmodevocaburi = null;
 
-            collmodevocab = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLMODEVOCAB);
+            collmodevocab = getReferenceTitle(rowRoot + Fields.COLLMODEVOCAB);
             if(!StringUtils.hasText(collmodevocab)) {
                 continue;
             }
 
-            collmode = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLMODE);
+            collmode = getReferenceTitle(rowRoot + Fields.COLLMODE);
             if(!StringUtils.hasText(collmode)) {
                 continue;
             }
 
-            collmodevocaburi = getReferenceTitle(references, language, revision, rowRoot + Fields.COLLMODEVOCABURI);
+            collmodevocaburi = getReferenceTitle(rowRoot + Fields.COLLMODEVOCABURI);
 
             Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.COLLMODEOTHER));
             if(hasValue(valueFieldPair, language)) {
@@ -1142,7 +1141,7 @@ class DDIStudyDescription {
         }
     }
 
-    private static void addMethodDataCollResInstru(DataCollType dataColl, ContainerDataField container, RevisionData revision, Language language, ReferenceService references) {
+    private void addMethodDataCollResInstru(DataCollType dataColl, ContainerDataField container) {
         // Let's hardcode the path since we know exactly what we are looking for.
         String pathRoot = "instruments.";
         for(DataRow row : container.getRowsFor(Language.DEFAULT)) {
@@ -1156,17 +1155,17 @@ class DDIStudyDescription {
             String instrumentvocab = null;
             String instrumentvocaburi = null;
 
-            instrumentvocab = getReferenceTitle(references, language, revision, rowRoot + Fields.INSTRUMENTVOCAB);
+            instrumentvocab = getReferenceTitle(rowRoot + Fields.INSTRUMENTVOCAB);
             if(!StringUtils.hasText(instrumentvocab)) {
                 continue;
             }
 
-            instrument = getReferenceTitle(references, language, revision, rowRoot + Fields.INSTRUMENT);
+            instrument = getReferenceTitle(rowRoot + Fields.INSTRUMENT);
             if(!StringUtils.hasText(instrument)) {
                 continue;
             }
 
-            instrumentvocaburi = getReferenceTitle(references, language, revision, rowRoot + Fields.INSTRUMENTVOCABURI);
+            instrumentvocaburi = getReferenceTitle(rowRoot + Fields.INSTRUMENTVOCABURI);
 
             Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.INSTRUMENTOTHER));
             if(hasValue(valueFieldPair, language)) {
@@ -1192,7 +1191,7 @@ class DDIStudyDescription {
         }
     }
 
-    private static void addMethodDataCollSources(DataCollType dataCollType, RevisionData revision, Language language) {
+    private void addMethodDataCollSources(DataCollType dataCollType) {
         List<ValueDataField> fields = gatherFields(revision, Fields.DATASOURCES, Fields.DATASOURCE, language, language);
         SourcesType sources = dataCollType.addNewSources();
         for(ValueDataField field : fields) {
@@ -1200,7 +1199,7 @@ class DDIStudyDescription {
         }
     }
 
-    private static void addMethodDataCollWeight(DataCollType dataCollType, RevisionData revision, Language language) {
+    private void addMethodDataCollWeight(DataCollType dataCollType) {
         Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.WEIGHTYESNO));
         if(hasValue(valueFieldPair, Language.DEFAULT) && valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsBoolean()) {
             fillTextType(dataCollType.addNewWeight(), WEIGHT_NO.get(language));
@@ -1212,7 +1211,7 @@ class DDIStudyDescription {
         }
     }
 
-    private static void addMethodAnalyzeInfo(MethodType methodType, RevisionData revision, Language language) {
+    private void addMethodAnalyzeInfo(MethodType methodType) {
         AnlyInfoType anlyInfoType = methodType.addNewAnlyInfo();
 
         // Add response rate
@@ -1233,12 +1232,12 @@ class DDIStudyDescription {
         }
     }
 
-    private static void addDataAccess(StdyDscrType stdyDscrType, RevisionData revision, Configuration configuration, Language language) {
+    private void addDataAccess(StdyDscrType stdyDscrType) {
         DataAccsType dataAccs = stdyDscrType.addNewDataAccs();
 
-        addDataAccessSetAvail(dataAccs, revision, language);
+        addDataAccessSetAvail(dataAccs);
 
-        addDataAccessUseStatement(dataAccs, revision, configuration, language);
+        addDataAccessUseStatement(dataAccs);
 
         // Add notes
         Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.DATASETNOTES));
@@ -1247,7 +1246,7 @@ class DDIStudyDescription {
         }
     }
 
-    private static void addDataAccessSetAvail(DataAccsType dataAccs, RevisionData revision, Language language) {
+    private void addDataAccessSetAvail(DataAccsType dataAccs) {
         // Add set availability
         SetAvailType setAvail = dataAccs.addNewSetAvail();
 
@@ -1274,7 +1273,7 @@ class DDIStudyDescription {
         }
     }
 
-    private static void addDataAccessUseStatement(DataAccsType dataAccs, RevisionData revision, Configuration configuration, Language language) {
+    private void addDataAccessUseStatement(DataAccsType dataAccs) {
         // Add use statement
         UseStmtType useStmt = dataAccs.addNewUseStmt();
 
@@ -1300,7 +1299,7 @@ class DDIStudyDescription {
         fillTextType(useStmt.addNewDisclaimer(), DISCLAIMER.get(language));
     }
 
-    private static void addOtherStudyMaterial(StdyDscrType stdyDscrType, RevisionData revision, Language language, RevisionRepository revisions) {
+    private void addOtherStudyMaterial(StdyDscrType stdyDscrType) {
         OthrStdyMatType othr = stdyDscrType.addNewOthrStdyMat();
 
         // Add related materials
@@ -1317,7 +1316,7 @@ class DDIStudyDescription {
                 }
                 Pair<ReturnResult, RevisionData> revisionPair = revisions.getLatestRevisionForIdAndType(row.getReference().asInteger(), false, ConfigurationType.STUDY);
                 if(revisionPair.getLeft() != ReturnResult.REVISION_FOUND) {
-                    Logger.error(DDIStudyDescription.class, "Could not find referenced study with ID: "+row.getReference().getValue());
+                    Logger.error(DDIWriteStudyDescription.class, "Could not find referenced study with ID: "+row.getReference().getValue());
                     continue;
                 }
                 String studyID = "-";
@@ -1346,7 +1345,7 @@ class DDIStudyDescription {
                 }
                 Pair<ReturnResult, RevisionData> revisionPair = revisions.getLatestRevisionForIdAndType(row.getReference().asInteger(), false, ConfigurationType.PUBLICATION);
                 if (revisionPair.getLeft() != ReturnResult.REVISION_FOUND) {
-                    Logger.error(DDIStudyDescription.class, "Could not find referenced publication with ID: " + row.getReference().getValue());
+                    Logger.error(DDIWriteStudyDescription.class, "Could not find referenced publication with ID: " + row.getReference().getValue());
                     continue;
                 }
                 RevisionData publication = revisionPair.getRight();

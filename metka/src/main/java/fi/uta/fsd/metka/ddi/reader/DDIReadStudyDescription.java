@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class DDIStudyDescription extends DDISectionBase {
+class DDIReadStudyDescription extends DDIReadSectionBase {
     private static final Map<Language, String> WEIGHT_NO = new HashMap<>();
 
     static {
@@ -35,7 +35,7 @@ class DDIStudyDescription extends DDISectionBase {
 
     private final ReferenceService references;
 
-    DDIStudyDescription(RevisionData revision, Language language, CodeBookType codeBook, DateTimeUserPair info, Configuration configuration, ReferenceService references) {
+    DDIReadStudyDescription(RevisionData revision, Language language, CodeBookType codeBook, DateTimeUserPair info, Configuration configuration, ReferenceService references) {
         super(revision, language, codeBook, info, configuration);
         this.references = references;
     }

@@ -17,8 +17,8 @@ import org.springframework.util.StringUtils;
 
 import java.util.Map;
 
-class DDIOtherMaterialDescription extends DDISectionBase {
-    DDIOtherMaterialDescription(RevisionData revision, Language language, CodeBookType codeBook, DateTimeUserPair info, Configuration configuration) {
+class DDIReadOtherMaterialDescription extends DDIReadSectionBase {
+    DDIReadOtherMaterialDescription(RevisionData revision, Language language, CodeBookType codeBook, DateTimeUserPair info, Configuration configuration) {
         super(revision, language, codeBook, info, configuration);
     }
 

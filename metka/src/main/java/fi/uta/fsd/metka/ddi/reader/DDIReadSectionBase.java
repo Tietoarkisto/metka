@@ -25,14 +25,14 @@ import org.springframework.util.StringUtils;
 
 import java.util.Map;
 
-abstract class DDISectionBase {
+abstract class DDIReadSectionBase {
     protected final RevisionData revision;
     protected final Language language;
     protected final CodeBookType codeBook;
     protected final DateTimeUserPair info;
     protected final Configuration configuration;
 
-    protected DDISectionBase(RevisionData revision, Language language, CodeBookType codeBook, DateTimeUserPair info, Configuration configuration) {
+    protected DDIReadSectionBase(RevisionData revision, Language language, CodeBookType codeBook, DateTimeUserPair info, Configuration configuration) {
         this.revision = revision;
         this.language = language;
         this.codeBook = codeBook;

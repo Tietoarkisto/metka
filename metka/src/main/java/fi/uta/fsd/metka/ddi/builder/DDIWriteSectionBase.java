@@ -1,6 +1,5 @@
 package fi.uta.fsd.metka.ddi.builder;
 
-import codebook25.CodeBookDocument;
 import codebook25.CodeBookType;
 import codebook25.SimpleTextAndDateType;
 import fi.uta.fsd.metka.enums.Language;
@@ -15,57 +14,48 @@ import fi.uta.fsd.metka.model.data.container.ValueContainer;
 import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
-import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
-import org.apache.commons.lang3.tuple.ImmutablePair;
+import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
-public class DDIBuilder {
+abstract class DDIWriteSectionBase {
     private static final String YYYY_MM_DD_PATTERN = "yyyy-MM-dd";
-    static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(YYYY_MM_DD_PATTERN);
+    protected final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(YYYY_MM_DD_PATTERN);
 
-    @Autowired
-    private RevisionRepository revisions;
-    @Autowired
-    private ReferenceService references;
+    protected final RevisionData revision;
+    protected final Language language;
+    protected final CodeBookType codeBook;
+    protected final Configuration configuration;
+    protected final RevisionRepository revisions;
+    protected final ReferenceService references;
 
-    public Pair<ReturnResult, CodeBookDocument> buildDDIDocument(Language language, RevisionData revisionData, Configuration configuration) {
-        // Create the codebook xml document
-        CodeBookDocument codeBookDocument = CodeBookDocument.Factory.newInstance();
-
-        // Add content to codebook document
-        fillCodeBook(language, revisionData, configuration, codeBookDocument);
-
-        return new ImmutablePair<>(ReturnResult.OPERATION_SUCCESSFUL, codeBookDocument);
+    protected DDIWriteSectionBase(RevisionData revision, Language language, CodeBookType codeBook, Configuration configuration,
+                                  RevisionRepository revisions, ReferenceService references) {
+        this.revision = revision;
+        this.language = language;
+        this.codeBook = codeBook;
+        this.configuration = configuration;
+        this.revisions = revisions;
+        this.references = references;
     }
 
-    private void fillCodeBook(Language language, RevisionData revisionData, Configuration configuration, CodeBookDocument codeBookDocument) {
-        // Add new codebook
-        CodeBookType codeBookType = codeBookDocument.addNewCodeBook();
+    abstract void write();
 
-        DDIHeader.fillDDIHeader(codeBookType, language);
-
-        DDIDocumentDescription.addDocumentDescription(revisionData, language, configuration, codeBookType, references);
-        DDIStudyDescription.addStudyDescription(revisionData, language, configuration, codeBookType, revisions, references);
-        DDIFileDescription.addfileDescription(revisionData, language, configuration, codeBookType, revisions);
-        DDIDataDescription.addDataDescription(revisionData, language, configuration, codeBookType, revisions);
-        DDIOtherMaterialDescription.addOtherMaterialDescription(revisionData, language, configuration, codeBookType);
+    protected String getXmlLang() {
+        return getXmlLang(language);
     }
 
-    static String getXmlLang(Language language) {
+    protected String getXmlLang(Language language) {
         return (language == Language.DEFAULT) ? "fi" : language.toValue();
     }
 
-    static boolean hasValue(Pair<StatusCode, ValueDataField> pair, Language language) {
+    protected boolean hasValue(Pair<StatusCode, ValueDataField> pair, Language language) {
         return pair.getLeft() == StatusCode.FIELD_FOUND && pair.getRight().hasValueFor(language);
     }
 
@@ -78,7 +68,7 @@ public class DDIBuilder {
      * @param fieldLang
      * @return
      */
-    static List<ValueDataField> gatherFields(RevisionData revision, String container, String field, Language rowLang, Language fieldLang) {
+    protected List<ValueDataField> gatherFields(RevisionData revision, String container, String field, Language rowLang, Language fieldLang) {
         List<ValueDataField> fields = new ArrayList<>();
         Pair<StatusCode, ValueDataField> valueFieldPair;Pair<StatusCode, ContainerDataField> containerPair = revision.dataField(ContainerDataFieldCall.get(container));
         if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(rowLang)) {
@@ -103,7 +93,7 @@ public class DDIBuilder {
      * @param <T>
      * @return
      */
-    static <T extends SimpleTextAndDateType> T fillTextAndDateType(T stdt, Pair<StatusCode, ValueDataField> fieldPair, Language language) {
+    protected <T extends SimpleTextAndDateType> T fillTextAndDateType(T stdt, Pair<StatusCode, ValueDataField> fieldPair, Language language) {
         if(hasValue(fieldPair, language)) {
             return fillTextAndDateType(stdt, fieldPair.getRight(), language);
         } else {
@@ -119,10 +109,10 @@ public class DDIBuilder {
      * @param <T>
      * @return
      */
-    static <T extends SimpleTextAndDateType> T fillTextAndDateType(T stdt, ValueDataField field, Language language) {
+    protected <T extends SimpleTextAndDateType> T fillTextAndDateType(T stdt, ValueDataField field, Language language) {
         ValueContainer value = field.getValueFor(language);
         if(value != null) {
-            stdt.setDate(DDIBuilder.DATE_TIME_FORMATTER.print(value.getSaved().getTime()));
+            stdt.setDate(DATE_TIME_FORMATTER.print(value.getSaved().getTime()));
             return fillTextType(stdt, value.getActualValue());
         } else {
             return fillTextType(stdt, "");
@@ -138,7 +128,7 @@ public class DDIBuilder {
      * @param <T>
      * @return
      */
-    static <T extends XmlObject> T fillTextType(T att, Pair<StatusCode, ValueDataField> fieldPair, Language language) {
+    protected <T extends XmlObject> T fillTextType(T att, Pair<StatusCode, ValueDataField> fieldPair, Language language) {
         if(hasValue(fieldPair, language)) {
             return fillTextType(att, fieldPair.getRight(), language);
         } else {
@@ -154,15 +144,26 @@ public class DDIBuilder {
      * @param <T>
      * @return
      */
-    static <T extends XmlObject> T fillTextType(T att, ValueDataField field, Language language) {
+    protected <T extends XmlObject> T fillTextType(T att, ValueDataField field, Language language) {
         ValueContainer value = field.getValueFor(language);
         return fillTextType(att, value != null ? value.getActualValue() : "");
     }
 
-    static <T extends XmlObject> T fillTextType(T att, String value) {
+    protected <T extends XmlObject> T fillTextType(T att, String value) {
         XmlCursor xmlCursor = att.newCursor();
         xmlCursor.setTextValue(value);
         xmlCursor.dispose();
         return att;
+    }
+
+    protected String getReferenceTitle(String path) {
+        return getReferenceTitle(language, revision, path);
+    }
+
+    protected String getReferenceTitle(Language language, RevisionData revision, String path) {
+        ReferenceOption option = references.getCurrentFieldOption(language, revision, path);
+        if(option != null) {
+            return option.getTitle().getValue();
+        } else return null;
     }
 }

@@ -36,13 +36,13 @@ import java.util.Map;
  * If this is a problem then some cache system is needed where changed revisions are grouped together and updated at once.
  * However the current edit mechanism means that at least some new drafts can be created even then.
  */
-class DDIDataDescription extends DDISectionBase {
+class DDIReadDataDescription extends DDIReadSectionBase {
     private final RevisionRepository revisions;
     private final RevisionEditRepository edit;
     private final StudyVariableSearch variableSearch;
     private final String studyId;
 
-    DDIDataDescription(RevisionData revision, Language language, CodeBookType codeBook, DateTimeUserPair info, Configuration configuration
+    DDIReadDataDescription(RevisionData revision, Language language, CodeBookType codeBook, DateTimeUserPair info, Configuration configuration
             , RevisionRepository revisions, RevisionEditRepository edit, StudyVariableSearch variableSearch
             , String studyId) {
         super(revision, language, codeBook, info, configuration);
@@ -67,7 +67,7 @@ class DDIDataDescription extends DDISectionBase {
         Pair<ReturnResult, RevisionData> revisionPair = revisions.getLatestRevisionForIdAndType(
                 valuePair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY_VARIABLES);
         if(revisionPair.getLeft() != ReturnResult.REVISION_FOUND) {
-            Logger.error(DDIDataDescription.class,
+            Logger.error(DDIReadDataDescription.class,
                     "Couldn't find expected variables revision with id: " + valuePair.getRight().getValueFor(Language.DEFAULT).valueAsInteger());
             return revisionPair.getLeft();
         }
@@ -287,7 +287,7 @@ class DDIDataDescription extends DDISectionBase {
 
         Pair<ReturnResult, RevisionData> variablePair = variableSearch.findVariableWithId(revision.getKey().getId(), studyId+"_"+var.getName());
         if(variablePair.getLeft() != ReturnResult.REVISION_FOUND) {
-            Logger.info(DDIDataDescription.class, "Tried to import variable "+studyId+"_"+var.getName()+" that was not found for study "+revision.getKey().getId());
+            Logger.info(DDIReadDataDescription.class, "Tried to import variable "+studyId+"_"+var.getName()+" that was not found for study "+revision.getKey().getId());
             // We don't need to stop the import process for variable that we can't find.
             return ReturnResult.OPERATION_SUCCESSFUL;
         }

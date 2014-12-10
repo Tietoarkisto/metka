@@ -1,8 +1,8 @@
 package fi.uta.fsd.metka.mvc.services.impl;
 
 import codebook25.CodeBookDocument;
-import fi.uta.fsd.metka.ddi.builder.DDIBuilder;
-import fi.uta.fsd.metka.ddi.reader.DDIReader;
+import fi.uta.fsd.metka.ddi.DDIBuilderService;
+import fi.uta.fsd.metka.ddi.DDIReaderService;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.configuration.Configuration;
@@ -41,10 +41,10 @@ public class StudyServiceImpl implements StudyService {
     private ConfigurationRepository configurations;
 
     @Autowired
-    private DDIBuilder ddiBuilder;
+    private DDIBuilderService ddiBuilderService;
 
     @Autowired
-    private DDIReader ddiReader;
+    private DDIReaderService ddiReaderService;
 
     @Override public StudyVariablesStudiesResponse collectStudiesWithVariables() {
         Pair<ReturnResult, List<RevisionSearchResult>> result = search.getStudiesWithVariables();
@@ -105,7 +105,7 @@ public class StudyServiceImpl implements StudyService {
             if(configurationPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
                 return new ImmutablePair<>(configurationPair.getLeft(), null);
             }
-            Pair<ReturnResult, CodeBookDocument> cb = ddiBuilder.buildDDIDocument(language, revision, configurationPair.getRight());
+            Pair<ReturnResult, CodeBookDocument> cb = ddiBuilderService.buildDDIDocument(language, revision, configurationPair.getRight());
             return cb;
         }
     }
@@ -116,6 +116,6 @@ public class StudyServiceImpl implements StudyService {
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             return pair.getLeft();
         }
-        return ddiReader.readDDIDocument(path, pair.getRight());
+        return ddiReaderService.readDDIDocument(path, pair.getRight());
     }
 }
