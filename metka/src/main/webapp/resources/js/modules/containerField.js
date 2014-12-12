@@ -139,13 +139,11 @@ define(function (require) {
                         }
                         if (type === 'SELECTION') {
                             var list = require('./selectionList')(options, column);
-                            log(list, options, column);
                             if (!list) {
                                 $td.append(EMPTY);
                                 return;
                             }
                             if (list.type === 'REFERENCE') {
-                                log(options, column);
                                 require('./reference').optionsByPath(column, options, lang, setOptionText)(transferRow.fields, getPropertyNS(options, 'dataConf.references', list.reference));
                             } else {
                                 setOptionText(list.options);

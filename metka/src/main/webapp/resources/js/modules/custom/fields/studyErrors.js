@@ -202,6 +202,7 @@ define(function (require) {
                     "hidden": true
                 }
             },
+            // FIXME: Container implementation overwrites this value if underlying study is in read only state. This should stay open no matter the
             readOnly: !require("../../hasEveryPermission")(["canAddStudyErrors"]),
             create: function create(options) {
                 refreshData(options, this.children().first());

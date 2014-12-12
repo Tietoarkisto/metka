@@ -15,6 +15,7 @@ define(function (require) {
                 options.defaultLang = options.defaultLang || parentOptions.defaultLang;
                 options.fieldTitles = (parentOptions.fieldTitles || {});
                 options.dialogTitles = (parentOptions.dialogTitles || {});
+                options.ignoreTranslate = parentOptions.ignoreTranslate;
 
                 return childConstructor.call(this, options);
             };

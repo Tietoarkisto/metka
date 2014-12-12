@@ -10,6 +10,7 @@ define(function (require) {
                 },
                 $events: $({}),
                 defaultLang: "DEFAULT",
+                ignoreTranslate: true,
                 dataConf: {
                     fields: {
                         ddiPath: {

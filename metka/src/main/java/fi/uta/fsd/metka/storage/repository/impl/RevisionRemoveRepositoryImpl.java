@@ -74,6 +74,8 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
     }
 
     private RemoveResult removeDraft(RevisionData data) {
+        // TODO: Extend removal of study to all draft attachments and variables.
+
         if(!AuthenticationUtil.isHandler(data)) {
             Logger.error(RevisionRemoveRepositoryImpl.class, "User " + AuthenticationUtil.getUserName() + " tried to remove draft belonging to " + data.getHandler());
             return RemoveResult.WRONG_USER;
@@ -101,6 +103,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
     }
 
     private RemoveResult removeLogical(RevisionData data) {
+        // TODO: Extend removal of study to all attachments and variables. Since these can't be drafts without study being a draft all related drafts should have been removed in the study draft removal step.
         Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(data.getKey().getId(), false, data.getConfiguration().getType());
 
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {

@@ -108,10 +108,12 @@ define(function (require) {
 
                 options.$events.on('translationLangChanged', onTranslationLangChange);
 
-
-                onTranslationLangChange(undefined, $('input[name="translation-lang"]:checked').val() || (function r(options) {
-                    return options && (options.translatableCurrentLang || r(options.parent));
-                })(options) || options.defaultLang);
+                // FIXME: Modals without translatable content won't have any content when some other language is selected
+                if(!options.ignoreTranslate) {
+                    onTranslationLangChange(undefined, $('input[name="translation-lang"]:checked').val() || (function r(options) {
+                        return options && (options.translatableCurrentLang || r(options.parent));
+                    })(options) || options.defaultLang);
+                }
             }
 
             createInput(options.defaultLang);

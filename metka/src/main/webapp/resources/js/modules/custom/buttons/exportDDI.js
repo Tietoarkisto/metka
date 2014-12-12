@@ -3,12 +3,14 @@ define(function (require) {
 
     return function(options) {
         this.click( function() {
+            log(options);
             require('./../../modal')({
                 '&title': {
                     default: "Lataa DDI"
                 },
                 $events: $({}),
                 defaultLang: "DEFAULT",
+                ignoreTranslate: true,
                 dataConf: {
                     selectionLists: {
                         language_list: {
