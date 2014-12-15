@@ -191,7 +191,7 @@ public class RevisionServiceImpl implements RevisionService {
 
     @Override public RevisionOperationResponse restore(RevisionKey key) {
         RevisionOperationResponse response = new RevisionOperationResponse();
-        RemoveResult result = restore.restore(key);
+        RemoveResult result = restore.restore(key.getId());
         response.setResult(result.name());
 
         if(result == RemoveResult.SUCCESS_RESTORE) {

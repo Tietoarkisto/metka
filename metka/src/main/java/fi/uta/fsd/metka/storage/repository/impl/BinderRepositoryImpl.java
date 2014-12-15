@@ -93,6 +93,16 @@ public class BinderRepositoryImpl implements BinderRepository {
     }
 
     @Override
+    public void removeStudyBinderPages(Long study) {
+        List<BinderPageEntity> entities = em.createQuery("SELECT p FROM BinderPageEntity p WHERE p.study=:study ORDER BY p.pageId ASC", BinderPageEntity.class)
+                .setParameter("study", study)
+                .getResultList();
+        for(BinderPageEntity entity : entities) {
+            em.remove(entity);
+        }
+    }
+
+    @Override
     public Pair<ReturnResult, List<BinderPageListEntry>> listBinderPages() {
         List<BinderPageEntity> entities = em.createQuery("SELECT p FROM BinderPageEntity p ORDER BY p.binderId ASC", BinderPageEntity.class).getResultList();
         return formPageList(entities);

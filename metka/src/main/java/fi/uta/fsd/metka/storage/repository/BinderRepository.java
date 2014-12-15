@@ -12,6 +12,7 @@ import java.util.List;
 public interface BinderRepository {
     @Transactional(readOnly = false) public Pair<ReturnResult, BinderPageListEntry> saveBinderPage(SaveBinderPageRequest request);
     @Transactional(readOnly = false) public ReturnResult removePage(Long pageId);
+    @Transactional(readOnly = false) public void removeStudyBinderPages(Long study);
 
     public Pair<ReturnResult, List<BinderPageListEntry>> listStudyBinderPages(Long study);
     public Pair<ReturnResult, List<BinderPageListEntry>> listBinderPages();

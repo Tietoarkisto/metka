@@ -355,6 +355,14 @@
             ]
         },
         {
+        	"_comment": "Needs some work so history of a single variable can be shown and navigated smoothly.",
+            "title": "Revisiohistoria",
+            "type": "HISTORY",
+            "permissions": [
+                "canViewRevision"
+            ]
+        },
+        {
             "type": "CANCEL"
         }
     ]

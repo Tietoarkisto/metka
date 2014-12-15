@@ -45,6 +45,19 @@ public class StudyErrorsRepositoryImpl implements StudyErrorsRepository {
     }
 
     @Override
+    public void removeErrorsForStudy(Long studyId) {
+        List<StudyErrorEntity> errors = em.createQuery(
+                "SELECT e FROM StudyErrorEntity e WHERE e.studyErrorStudy=:studyId ORDER BY e.savedAt ASC",
+                StudyErrorEntity.class)
+                .setParameter("studyId", studyId)
+                .getResultList();
+
+        for(StudyErrorEntity error : errors) {
+            em.remove(error);
+        }
+    }
+
+    @Override
     public Pair<ReturnResult, StudyError> loadStudyError(Long id) {
         StudyErrorEntity error = em.find(StudyErrorEntity.class, id);
         if(error == null) {

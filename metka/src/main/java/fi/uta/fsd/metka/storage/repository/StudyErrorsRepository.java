@@ -13,5 +13,6 @@ public interface StudyErrorsRepository {
     public Pair<ReturnResult, StudyError> loadStudyError(Long id);
     @Transactional(readOnly = false) public ReturnResult updateStudyError(StudyError error);
     @Transactional(readOnly = false) public ReturnResult deleteStudyError(Long id);
+    @Transactional(readOnly = false) public void removeErrorsForStudy(Long studyId);
 
 }
