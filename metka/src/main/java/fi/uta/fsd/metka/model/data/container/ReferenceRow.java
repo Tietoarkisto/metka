@@ -80,7 +80,8 @@ public class ReferenceRow extends ContainerRow {
     @JsonIgnore
     public ReferenceRow copy() {
         ReferenceRow row = new ReferenceRow(getKey(), getRowId(), getReference());
-        row.setSaved(this.getSaved());
+        row.setSaved(getSaved());
+        row.setRemoved(getRemoved());
         return row;
     }
 

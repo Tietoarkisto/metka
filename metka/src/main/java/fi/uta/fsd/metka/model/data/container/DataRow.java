@@ -53,6 +53,7 @@ public class DataRow extends ContainerRow implements DataFieldContainer {
     public DataRow copy() {
         DataRow row = new DataRow(getKey(), getRowId());
         row.setSaved(getSaved());
+        row.setRemoved(getRemoved());
         for(DataField field : fields.values()) {
             row.fields.put(field.getKey(), field.copy());
         }
