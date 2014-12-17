@@ -834,8 +834,7 @@
 			"key": "organisationabbr_ref",
 			"type": "DEPENDENCY",
 			"target": "organisation",
-			"valuePath": "id",
-			"titlePath": "organizationabbr"
+			"valuePath": "organizationabbr"
 		},
 		"agency_ref": {
 			"key": "agency_ref",
@@ -848,8 +847,7 @@
 			"key": "agencyabbr_ref",
 			"type": "DEPENDENCY",
 			"target": "agency",
-			"valuePath": "id",
-			"titlePath": "agencyabbr"
+			"valuePath": "agencyabbr"
 		},
 		"section_ref": {
 			"key": "section_ref",
@@ -862,8 +860,7 @@
 			"key": "sectionabbr_ref",
 			"type": "DEPENDENCY",
 			"target": "section",
-			"valuePath": "id",
-			"titlePath": "sectionabbr"
+			"valuePath": "sectionabbr"
 		}
 	},
 	"displayId": "studyid",
@@ -1999,6 +1996,8 @@
         	"key": "organisationabbr",
         	"type": "REFERENCE",
         	"translatable": false,
+        	"editable": false,
+        	"writable": false,
         	"reference": "organisationabbr_ref",
         	"subfield": true
         },
@@ -2014,6 +2013,8 @@
         	"key": "agencyabbr",
         	"type": "REFERENCE",
         	"translatable": false,
+        	"editable": false,
+        	"writable": false,
         	"reference": "agencyabbr_ref",
         	"subfield": true
         },
@@ -2029,6 +2030,8 @@
         	"key": "sectionabbr",
         	"type": "REFERENCE",
         	"translatable": false,
+        	"editable": false,
+        	"writable": false,
         	"reference": "sectionabbr_ref",
         	"subfield": true
         },

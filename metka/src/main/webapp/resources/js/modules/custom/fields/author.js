@@ -6,13 +6,12 @@ define(function (require) {
 
         function initField($elem, key) {
             var curVal = require('./../../data')(options)(key).getByLang("DEFAULT");
-            $elem.toggle(curVal && curVal === '1');
+            $elem.toggle(!!curVal && curVal === '1');
 
             options.$events.on('data-changed-{key}-{lang}'.supplant({
                             key: key,
                             lang: "DEFAULT"
                         }), function(e, value) {
-                log(value, !!value && value === '1');
                 $elem.toggle(!!value && value === '1');
             });
         }
