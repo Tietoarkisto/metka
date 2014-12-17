@@ -17,7 +17,6 @@ define(function (require) {
         }
 
         options.modalTarget = require('./autoId')("M");
-        log(options);
         var $modal = $('<div class="modal fade" tabindex="-1" role="dialog" id="'+options.modalTarget+'">')
             .append($('<div class="modal-dialog">')
                 .on('refresh.metka', function () {

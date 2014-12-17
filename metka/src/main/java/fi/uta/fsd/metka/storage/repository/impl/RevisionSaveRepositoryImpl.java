@@ -268,6 +268,9 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
     private boolean fileIsVarFile(String path) {
         // Does the file name start with DAF
         String fileName = FilenameUtils.getBaseName(path).toUpperCase();
+        if(fileName.length() < 3) {
+            return false;
+        }
         if(!fileName.substring(0, 3).equals("DAF")) {
             return false;
         }

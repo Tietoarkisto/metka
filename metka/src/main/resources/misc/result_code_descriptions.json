@@ -1,0 +1,38 @@
+{
+	"key": "result_code_descriptions",
+	"_comment": "This file contains explanation texts for results of AJAX operations. 'key' is the returned result, 'title' tells what level of title should be used (how serious the situation is, current values are 'NOTICE' and 'ERROR' but more can be added) and 'text' contains the translation text for the result. A set of operation specific messages can be added to each result (e.g. remove) these are used if operation is specified. These use exactly the same objects but here 'key' describes the operation requested.",
+	"data": [{
+		"key": "OPERATION_SUCCESSFUL",
+		"title": "NOTICE",
+		"text": "Operaatio suoritettu onnistuneesti"
+	}, {
+		"key": "OPERATION_FAIL",
+		"title": "ERROR",
+		"text": "Operaatio epäonnistui"
+	}, {
+		"key": "APPROVE_FAILED_DURING_VALIDATION",
+		"title": "ERROR",
+		"text": "Hyväksymistä ei voitu suorittaa koska lomakkeella on virheitä"
+	}, {
+		"key": "RESTRICTION_VALIDATION_FAILURE",
+		"title": "ERROR",
+		"text": "Rajoitteet estivät toiminnon",
+		"operations": [{
+			"key": "remove",
+			"title": "ERROR",
+			"text": "Rajoitteet estivät poiston suorittamisen"
+		}]
+	}, {
+		"key": "NO_CHANGES_TO_SAVE",
+		"title": "NOTICE",
+		"text": "Lomakkeella ei ollut tallennettavia muutoksia"
+	}, {
+		"key": "",
+		"title": "",
+		"text": ""
+	}, {
+		"key": "",
+		"title": "",
+		"text": ""
+	}]
+}

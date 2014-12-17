@@ -27,7 +27,10 @@ define(function (require) {
                     require('./../../server')('options', {
                         data: JSON.stringify({
                             key: key,
-                            requests: rows.map(function (transferRow) {
+                            requests: rows.filter(function(transferRow) {
+                                // User should not see removed rows while grouping
+                                return !transferRow.removed;
+                            }).map(function (transferRow) {
                                 var fieldValues = {};
                                 fieldValues[key] = transferRow.value;
                                 return {

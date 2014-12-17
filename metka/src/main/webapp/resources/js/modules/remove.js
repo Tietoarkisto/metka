@@ -36,15 +36,16 @@ define(function (require) {
                                         }, options.success);
 
                                         success = success[response.result] || function (response) {
-                                            require('./modal')({
+                                            require('./resultViewer')(response.result, "remove");
+                                            /*require('./modal')({
                                                 title: MetkaJS.L10N.get('alert.error.title'),
-                                                body: response.result /*data.errors.map(function (error) {
+                                                body: response.result *//*data.errors.map(function (error) {
                                                  return MetkaJS.L10N.get(error.msg);
-                                                 })*/,
+                                                 })*//*,
                                                 buttons: [{
                                                     type: 'DISMISS'
                                                 }]
-                                            });
+                                            });*/
                                         };
 
                                         success(response);
