@@ -26,7 +26,7 @@ define(function (require) {
                     // Revision viewing
                     view: 'revision/view/{PAGE}/{id}/{no}',
                     viewAjax: 'revision/ajax/view/{PAGE}/{id}/{no}',
-                    conf: '/revision/ajax/configuration/{PAGE}',
+                    conf: 'revision/ajax/configuration/{PAGE}',
                     adjacent: 'revision/adjacent',
                     prev: 'prev/{PAGE}/{id}',
 
