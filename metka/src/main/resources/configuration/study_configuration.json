@@ -834,7 +834,8 @@
 			"key": "organisationabbr_ref",
 			"type": "DEPENDENCY",
 			"target": "organisation",
-			"valuePath": "organizationabbr"
+			"valuePath": "id",
+			"titlePath": "organizationabbr"
 		},
 		"agency_ref": {
 			"key": "agency_ref",
@@ -847,7 +848,8 @@
 			"key": "agencyabbr_ref",
 			"type": "DEPENDENCY",
 			"target": "agency",
-			"valuePath": "agencyabbr"
+			"valuePath": "id",
+			"titlePath": "agencyabbr"
 		},
 		"section_ref": {
 			"key": "section_ref",
@@ -860,7 +862,8 @@
 			"key": "sectionabbr_ref",
 			"type": "DEPENDENCY",
 			"target": "section",
-			"valuePath": "sectionabbr"
+			"valuePath": "id",
+			"titlePath": "sectionabbr"
 		}
 	},
 	"displayId": "studyid",
