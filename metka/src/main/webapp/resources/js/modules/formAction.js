@@ -36,10 +36,18 @@ define(function (require) {
                 require('./server')(url, {
                     data: JSON.stringify(options.data),
                     success: function (response) {
-                        require('./resultViewer')(response.result);
-                        /*var isExpectedResult = successConditions ? successConditions.some(function (condition) {
+
+                        var isExpectedResult = successConditions ? successConditions.some(function (condition) {
                             return condition === response.result;
                         }) : true;
+
+                        require('./resultViewer')(response.result, null, function() {
+                            if(isExpectedResult) {
+                                onSuccess.call(that, response);
+                            }
+                        });
+
+                        /*
                         var dismiss = {
                             type: 'DISMISS'
                         };
@@ -57,6 +65,7 @@ define(function (require) {
                              })*//*,
                             buttons: [dismiss]
                         });*/
+
                     }
                 });
             };
