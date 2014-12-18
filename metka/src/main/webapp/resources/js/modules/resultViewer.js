@@ -3,7 +3,7 @@ define(function (require) {
 
     var getPropertyNS = require('./utils/getPropertyNS');
 
-    return function(result, operation) {
+    return function(result, operation, callback) {
         var dismiss = {
             type: 'DISMISS'
         };
@@ -61,7 +61,15 @@ define(function (require) {
                 }]
             }),
             success: function (data) {
-                log("message", data);
+
+                if(callback) {
+                    dismiss.create = function () {
+                        this.click(function () {
+                            callback();
+                        });
+                    };
+                }
+
                 require('./modal')({
                     title: MetkaJS.L10N.get('alert.'+(getPropertyNS(data, 'responses.0.options.0.title.value') || "NOTICE").toLowerCase()+'.title'),
                     body: (getPropertyNS(data, 'responses.1.options.0.title.value') || result+(operation ? "."+operation : "")),
