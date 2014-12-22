@@ -68,10 +68,10 @@ define(function (require) {
                         }
                     }
                 }
-                var root = function r(key, dataFields, lang, reference, next) {
+                var root = function r(currentKey, dataFields, lang, reference, next) {
                     var path = {
                         reference: reference,
-                        value: dataFields && dataFields[key] ? require('./data').latestValue(dataFields[key], lang) : undefined,
+                        value: key !== currentKey && dataFields && dataFields[currentKey] ? require('./data').latestValue(dataFields[currentKey], lang) : undefined,
                         next: next
                     };
 
@@ -98,7 +98,7 @@ define(function (require) {
                 }(key, dataFields, lang, reference);
 
                 var cur = root;
-                while(cur.next) {
+                while (cur.next) {
                     if(!cur.value) {
                         callback([]);
                         return;
