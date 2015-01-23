@@ -123,7 +123,7 @@ public class RevisionRepositoryImpl implements RevisionRepository {
         }
         if(type != null && pair.getRight().getConfiguration().getType() != type) {
             // Requested revision isn't a study variables revision
-            Logger.info(RevisionRemoveRepositoryImpl.class, "Someone requested a revision of type " + type + " with id " + key.getRevisionableId() + " and no " + key.getRevisionNo() + ". " +
+            Logger.warning(RevisionRemoveRepositoryImpl.class, "Someone requested a revision of type " + type + " with id " + key.getRevisionableId() + " and no " + key.getRevisionNo() + ". " +
                     "These do not match a revision of type " + type + " but instead a " + pair.getRight().getConfiguration().getType());
             return new ImmutablePair<>(ReturnResult.REVISION_OF_INCORRECT_TYPE, null);
         }

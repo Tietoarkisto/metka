@@ -1,5 +1,6 @@
 package fi.uta.fsd.metkaSearch.indexers;
 
+import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.storage.repository.BinderRepository;
@@ -16,11 +17,8 @@ import fi.uta.fsd.metkaSearch.handlers.RevisionHandler;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.NumericRangeQuery;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class RevisionIndexer extends Indexer {
-    private static final Logger logger = LoggerFactory.getLogger(RevisionIndexer.class);
     public static RevisionIndexer build(DirectoryManager manager, DirectoryManager.DirectoryPath path, IndexerCommandRepository commands,
                                         RevisionRepository revisions, ConfigurationRepository configurations, ReferenceService references,
                                         StudyErrorsRepository studyErrors, BinderRepository binders) throws UnsupportedOperationException {
@@ -66,13 +64,13 @@ public class RevisionIndexer extends Indexer {
     }
 
     protected void handleCommand(IndexerCommand command) {
-        logger.info("Starting handling or revision command");
+        Logger.debug(RevisionIndexer.class, "Starting handling or revision command");
         // This is a safe type conversion since Indexers add command only accepts commands of correct type
         RevisionIndexerCommand rCom = (RevisionIndexerCommand) command;
 
         switch(rCom.getAction()) {
             case REMOVE:
-                logger.info("Performing REMOVE action on revision");
+                Logger.debug(RevisionIndexer.class, "Performing REMOVE action on revision");
                 // Create term for identification
                 if(rCom.getRevisionable() == null || rCom.getRevision() == null) {
                     break;
@@ -84,7 +82,7 @@ public class RevisionIndexer extends Indexer {
                 removeDocument(query);
                 break;
             case INDEX:
-                logger.info("Performing INDEX action on revision");
+                Logger.debug(RevisionIndexer.class, "Performing INDEX action on revision");
                 indexCommand(rCom);
                 break;
             case STOP:
@@ -99,10 +97,10 @@ public class RevisionIndexer extends Indexer {
      * @param command
      */
     private void indexCommand(RevisionIndexerCommand command) {
-        logger.info("Trying to build revision handler");
+        Logger.debug(RevisionIndexer.class, "Trying to build revision handler");
         RevisionHandler handler = HandlerFactory.buildRevisionHandler(this, revisions, configurations, references, studyErrors, binders);
         try {
-            logger.info("Trying to handle revision command");
+            Logger.debug(RevisionIndexer.class, "Trying to handle revision command");
             handler.handle(command);
         } catch(Exception e) {
             e.printStackTrace();

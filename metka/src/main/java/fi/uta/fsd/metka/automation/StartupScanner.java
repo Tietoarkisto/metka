@@ -2,6 +2,7 @@ package fi.uta.fsd.metka.automation;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
+import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
@@ -13,8 +14,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -23,7 +22,6 @@ import java.io.File;
 import java.util.Collection;
 
 public class StartupScanner {
-    private static Logger logger = LoggerFactory.getLogger(StartupScanner.class);
     @Autowired
     private ConfigurationRepository configRepo;
     @Autowired
@@ -39,7 +37,7 @@ public class StartupScanner {
      */
     @PostConstruct
     public void scanForConfigurations() {
-        logger.info("Scanning for configurations.");
+        Logger.debug(StartupScanner.class, "Scanning for configurations.");
         File confDir = new File(rootFolder+"configuration");
 
         Collection<File> files = FileUtils.listFiles(confDir, FileFilterUtils.suffixFileFilter(".json"), TrueFileFilter.TRUE);
@@ -47,7 +45,7 @@ public class StartupScanner {
         for (File file : files) {
             Pair<SerializationResults, Configuration> conf = json.deserializeDataConfiguration(file);
             if(conf.getLeft() != SerializationResults.DESERIALIZATION_SUCCESS) {
-                logger.error("Failed at deserializing "+file.getName());
+                Logger.error(StartupScanner.class, "Failed at deserializing "+file.getName());
                 continue;
             }
             Pair<ReturnResult, Configuration> existing = configRepo.findConfiguration(conf.getRight().getKey());
@@ -62,7 +60,7 @@ public class StartupScanner {
      */
     @PostConstruct
     public void scanForMiscJSON() {
-        logger.info("Scanning for miscellaneous json files.");
+        Logger.debug(StartupScanner.class, "Scanning for miscellaneous json files.");
         File miscDir = new File(rootFolder+"misc");
 
         Collection<File> files = FileUtils.listFiles(miscDir, FileFilterUtils.suffixFileFilter(".json"), TrueFileFilter.TRUE);
@@ -71,7 +69,7 @@ public class StartupScanner {
             Pair<SerializationResults, JsonNode> misc = json.deserializeToJsonTree(file);
 
             if(misc.getLeft() != SerializationResults.DESERIALIZATION_SUCCESS){
-                logger.error("Failed at deserializing "+file.getName());
+                Logger.error(StartupScanner.class, "Failed at deserializing "+file.getName());
                 continue;
             }
             JsonNode key = misc.getRight().get("key");
@@ -91,7 +89,7 @@ public class StartupScanner {
      */
     @PostConstruct
     public void scanForGUIConfigurations() {
-        logger.info("Scanning for gui configurations.");
+        Logger.debug(StartupScanner.class, "Scanning for gui configurations.");
         File guiDir = new File(rootFolder+"gui");
 
         Collection<File> files = FileUtils.listFiles(guiDir, FileFilterUtils.suffixFileFilter(".json"), TrueFileFilter.TRUE);
@@ -100,7 +98,7 @@ public class StartupScanner {
             Pair<SerializationResults, GUIConfiguration> gui = json.deserializeGUIConfiguration(file);
 
             if(gui.getLeft() != SerializationResults.DESERIALIZATION_SUCCESS) {
-                logger.error("Failed at deserializing "+file.getName());
+                Logger.error(StartupScanner.class, "Failed at deserializing "+file.getName());
                 continue;
             }
             Pair<ReturnResult, GUIConfiguration> existing = configRepo.findGUIConfiguration(gui.getRight().getKey());

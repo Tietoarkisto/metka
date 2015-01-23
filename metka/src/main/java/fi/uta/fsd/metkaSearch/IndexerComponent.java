@@ -1,5 +1,6 @@
 package fi.uta.fsd.metkaSearch;
 
+import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.data.RevisionData;
@@ -25,8 +26,6 @@ import fi.uta.fsd.metkaSearch.indexers.RevisionIndexer;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.lucene.index.IndexWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -43,7 +42,7 @@ import java.util.concurrent.*;
 
 @Service
 public class IndexerComponent {
-    private static final Logger logger = LoggerFactory.getLogger(IndexerComponent.class);
+
 
     @PersistenceContext(name = "entityManager")
     private EntityManager em;
@@ -72,9 +71,9 @@ public class IndexerComponent {
     // Pool for indexer threads.
     private ExecutorService threadPool = Executors.newCachedThreadPool();
 
-    private final Map<RevisionKey, Boolean> studyCommandBatch = new ConcurrentHashMap<>();
+    /*private final Map<RevisionKey, Boolean> studyCommandBatch = new ConcurrentHashMap<>();*/
 
-    private volatile boolean runningBatch = false;
+    /*private volatile boolean runningBatch = false;*/
 
     /**
      * Map of indexers.
@@ -100,20 +99,20 @@ public class IndexerComponent {
                         .formPath(false, IndexerConfigurationType.REVISION, lang, type.toValue());
                 try {
                     DirectoryInformation info = manager.getIndexDirectory(path, false);
-                    logger.info("Checking directory "+path+" for write lock.");
+                    Logger.debug(IndexerComponent.class, "Checking directory " + path + " for write lock.");
                     if(IndexWriter.isLocked(info.getDirectory())) {
-                        logger.info("Directory "+path+" contained lock. Attempting to clear lock with name "+IndexWriter.WRITE_LOCK_NAME+" from directory.");
+                        Logger.debug(IndexerComponent.class, "Directory "+path+" contained lock. Attempting to clear lock with name "+IndexWriter.WRITE_LOCK_NAME+" from directory.");
                         IndexWriter.unlock(info.getDirectory());
                         info.getDirectory().clearLock(IndexWriter.WRITE_LOCK_NAME);
                         if(IndexWriter.isLocked(info.getDirectory())) {
-                            logger.error("FAIL during lock clearing for path "+path+" attempting forced delete since we know that the lock should not be in use");
+                            Logger.debug(IndexerComponent.class, "FAIL during lock clearing for path " + path + " attempting forced delete since we know that the lock should not be in use");
                             info.getDirectory().deleteFile(IndexWriter.WRITE_LOCK_NAME);
                         } else {
-                            logger.error("SUCCESS during lock clearing for path "+path);
+                            Logger.debug(IndexerComponent.class, "SUCCESS during lock clearing for path " + path);
                         }
                     }
                 } catch(Exception e) {
-                    logger.error("Exception while clearing path "+path+" from write lock:", e);
+                    Logger.error(IndexerComponent.class, "Exception while clearing path " + path + " from write lock:", e);
                 }
             }
         }
@@ -148,31 +147,33 @@ public class IndexerComponent {
         threadPool.submit(new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
-                List<RevisionableEntity> entities = em.createQuery("SELECT e FROM RevisionableEntity e", RevisionableEntity.class).getResultList();
-                List<IndexerCommand> commands = new ArrayList<>();
-                for(RevisionableEntity entity : entities) {
-                    List<Integer> nos = revisions.getAllRevisionNumbers(entity.getId());
-                    for(Integer no : nos) {
-                        for(Language language : Language.values()) {
-                            commands.add(RevisionIndexerCommand.index(ConfigurationType.fromValue(entity.getType()), language, entity.getId(), no));
-                        }
-                    }
-                }
+                List<RevisionableEntity> entities = em.createQuery(
+                        "SELECT e FROM RevisionableEntity e WHERE e.type " +
+                                "IN ('"+ConfigurationType.PUBLICATION+"','"+ConfigurationType.SERIES+"','"+ConfigurationType.STUDY+"')", RevisionableEntity.class).getResultList();
                 for(ConfigurationType type : ConfigurationType.values()) {
-                    switch(type) {
-                        case STUDY_ATTACHMENT:
-                        case STUDY_VARIABLES:
-                        case STUDY_VARIABLE:
-                            continue;
-                    }
                     for(Language language : Language.values()) {
                         IndexerCommand command = RevisionIndexerCommand.stop(type, language);
                         manager.getIndexDirectory(command.getPath(), true).clearIndex();
                         addCommand(command);
                     }
                 }
-                for(IndexerCommand command : commands) {
-                    addCommand(command);
+                int current = 0;
+                long timeSpent = 0L;
+                for(RevisionableEntity entity : entities) {
+                    long startTime = System.currentTimeMillis();
+                    current++;
+                    List<Integer> nos = revisions.getAllRevisionNumbers(entity.getId());
+                    for(Integer no : nos) {
+                        for(Language language : Language.values()) {
+                            addCommand(RevisionIndexerCommand.index(ConfigurationType.fromValue(entity.getType()), language, entity.getId(), no));
+                        }
+                    }
+                    long endTime = System.currentTimeMillis();
+                    timeSpent += (endTime - startTime);
+                    if(current % 1000 == 0) {
+                        Logger.info(IndexerComponent.class,"1000 revision index commands added to the queue in "+timeSpent+"ms. Still "+(entities.size()-current)+" commands to add.");
+                        timeSpent = 0L;
+                    }
                 }
                 return true;
             }
@@ -283,21 +284,19 @@ public class IndexerComponent {
     public void addStudyIndexerCommand(Long id, boolean index) {
         Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(id, false, ConfigurationType.STUDY);
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
-            logger.error("Tried to add index command for study with id "+id+" but didn't find any revisions with result "+pair.getLeft());
+            Logger.error(IndexerComponent.class, "Tried to add index command for study with id " + id + " but didn't find any revisions with result " + pair.getLeft());
             return;
         }
-        try {
-            // Wait while the current batch is being handled
-            while(runningBatch) {
-                Thread.sleep(500);
+        for(Language lang : Language.values()) {
+            if (index) {
+                addCommand(RevisionIndexerCommand.index(ConfigurationType.STUDY, lang, pair.getRight().getKey()));
+            } else {
+                addCommand(RevisionIndexerCommand.remove(ConfigurationType.STUDY, lang, pair.getRight().getKey()));
             }
-            studyCommandBatch.put(pair.getRight().getKey(), index);
-        } catch(InterruptedException ie) {
-            // Well damn, let's not add the index command then
         }
     }
 
-    @Scheduled(fixedDelay = 1 * 60 *1000)
+    /*@Scheduled(fixedDelay = 1 * 60 *1000)
     private void executeStudyBatch() {
         runningBatch = true;
         for(RevisionKey key : studyCommandBatch.keySet()) {
@@ -311,7 +310,7 @@ public class IndexerComponent {
         }
         studyCommandBatch.clear();
         runningBatch = false;
-    }
+    }*/
 
     public Pair<ReturnResult, Integer> getOpenIndexCommands() {
         List<IndexerCommandEntity> entities = em

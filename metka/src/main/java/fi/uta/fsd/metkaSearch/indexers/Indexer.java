@@ -1,5 +1,6 @@
 package fi.uta.fsd.metkaSearch.indexers;
 
+import fi.uta.fsd.Logger;
 import fi.uta.fsd.metkaSearch.LuceneConfig;
 import fi.uta.fsd.metkaSearch.commands.indexer.IndexerCommand;
 import fi.uta.fsd.metkaSearch.directory.DirectoryInformation;
@@ -12,8 +13,6 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.Query;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.concurrent.Callable;
@@ -23,7 +22,6 @@ import java.util.concurrent.Callable;
  * Implements basic functionality common for all indexers but all specialized stuff needs to be handled elsewhere.
  */
 public abstract class Indexer implements Callable<IndexerStatusMessage>/*, IndexerCommandHandler*/ {
-    private static Logger logger = LoggerFactory.getLogger(Indexer.class);
 
     protected static void checkPathType(DirectoryManager.DirectoryPath path, IndexerConfigurationType type) throws UnsupportedOperationException {
         if(path.getType() != type) {
@@ -88,7 +86,11 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
 
         // DEBUG
         long timeHandlingCommands = 0L;
-
+        long previousTime = 0L;
+        long batch = 0L;
+        boolean firstBatch = true;
+        boolean first100Batch = true;
+        long batchIn10Minutes = 0L;
         while(status != IndexerStatusMessage.STOP && status != IndexerStatusMessage.RETURNED) {
             IndexerCommand command = null;
             try {
@@ -96,7 +98,7 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
                 command = commands.getNextCommand(indexer.getPath().getType(), indexer.getPath().toString());
                 if(command != null) {
                     long start = System.currentTimeMillis();
-                    logger.info("Started new command for: "+command.getPath());
+                    Logger.debug(Indexer.class, "Started new command for: " + command.getPath());
                     status = IndexerStatusMessage.PROCESSING;
 
                     // Reset idle loops since there's work
@@ -108,7 +110,7 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
                         setStatus(IndexerStatusMessage.STOP);
                     } else {
                         // Forward handling to implementation
-                        logger.info("Trying to handle command.");
+                        Logger.debug(Indexer.class, "Trying to handle command.");
                         handleCommand(command);
                         // Set indexChanged to true since command was handled
                         indexChanged = true;
@@ -121,15 +123,39 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
                     }
                     // DEBUG
                     long end = System.currentTimeMillis();
+                    previousTime = timeHandlingCommands;
                     timeHandlingCommands += end-start;
-                    logger.info("Took "+(end-start)+"ms to handle command");
+                    batch++;
+                    batchIn10Minutes++;
+                    if(batch%100 == 0 && first100Batch) {
+                        first100Batch = false;
+                        Logger.info(Indexer.class, "Took "+(end - start)+ "ms to handle first 100 commands. PATH: "+path.toString());
+                    }
+                    long interval = 1000 * 60;
+                    if(previousTime % interval > timeHandlingCommands % interval) {
+                        if(firstBatch) {
+                            firstBatch = false;
+                            Logger.info(Indexer.class, "Indexed "+batchIn10Minutes+" in first minute of current batch. PATH: "+path.toString());
+                        }
+                    }
+                    interval = 1000 * 60 * 10;
+                    if(previousTime % interval > timeHandlingCommands % interval) {
+                        Logger.info(Indexer.class, "Indexed "+batchIn10Minutes+" in previous 10 minutes of current batch. PATH: "+path.toString());
+                        batchIn10Minutes = 0L;
+                    }
+                    Logger.debug(Indexer.class, "Took " + (end - start) + "ms to handle command. PATH: "+path.toString());
                 } else {
                     if(status != IndexerStatusMessage.IDLING) {
                         idleLoops = 0;
                         // Previous loop was handling command, post DEBUG info
-                        logger.info("Queue clear. Spent "+timeHandlingCommands+"ms handling commands");
+                        Logger.debug(Indexer.class, "Queue clear. Spent " + timeHandlingCommands + "ms handling "+batch+" commands. PATH: "+path.toString());
                         status = IndexerStatusMessage.IDLING;
                         timeHandlingCommands = 0L;
+                        batch= 0L;
+                        firstBatch = true;
+                        first100Batch = true;
+                        previousTime = 0L;
+                        batchIn10Minutes = 0L;
                     }
                     if(indexChanged) idleLoops++;
                 }
@@ -156,13 +182,13 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
                 }
             } catch (InterruptedException ex) {
                 // Try to close the indexer
-                logger.info("Closing index writer on path "+getPath().toString()+" because of interruption");
+                Logger.warning(Indexer.class, "Closing index writer on path " + getPath().toString() + " because of interruption");
                 indexer.getIndexWriter().close();
                 //ex.printStackTrace();
                 throw new InterruptedException();
             } catch(Exception e) {
                 if(command != null) {
-                    logger.error("Exception while handling command: "+"("+command.getQueueId()+") "+command.getPath()+"/"+command.getAction());
+                    Logger.error(Indexer.class, "Exception while handling command: "+"("+command.getQueueId()+") "+command.getPath()+"/"+command.getAction());
                 }
                 Thread.currentThread().interrupt();
             }
@@ -182,7 +208,7 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
             indexWriter.deleteDocuments(term);
         } catch(IOException ioe) {
             ioe.printStackTrace();
-            logger.error("IOException while trying to delete documents with term " + term.toString());
+            Logger.error(Indexer.class, "IOException while trying to delete documents with term " + term.toString());
         }
     }
 
@@ -191,7 +217,7 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
             indexWriter.deleteDocuments(query);
         } catch(IOException ioe) {
             ioe.printStackTrace();
-            logger.error("IOException while trying to delete documents with query " + query.toString());
+            Logger.error(Indexer.class, "IOException while trying to delete documents with query " + query.toString());
         }
     }
 
@@ -200,18 +226,18 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
             indexWriter.addDocument(document, analyzer);
         } catch(IOException ioe) {
             ioe.printStackTrace();
-            logger.error("IOException while trying to add document to indexer with path "+path);
+            Logger.error(Indexer.class, "IOException while trying to add document to indexer with path "+path);
         }
     }
 
     private void flushIndex() {
-        logger.info("Preparing to flush index "+indexer.getPath().toString());
+        Logger.debug(Indexer.class, "Preparing to flush index " + indexer.getPath().toString());
         indexChanged = false;
         idleLoops = 0;
         commandBatch = 0;
         try {
             // Try to commit the writer
-            logger.info("Trying index writer commit.");
+            Logger.debug(Indexer.class, "Trying index writer commit.");
             indexWriter.commit();
 
             // Set indexer to dirty state so that searchers know to update their index
@@ -230,18 +256,18 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
                     indexWriter.close();
                 } catch(IOException ioe) {
                     ioe.printStackTrace();
-                    logger.error("IOException while trying to flush indexWriter for indexer in path "+indexer.getPath());
+                    Logger.error(Indexer.class, "IOException while trying to flush indexWriter for indexer in path "+indexer.getPath());
                 }
             } catch(IOException ioe) {
                 ioe.printStackTrace();
-                logger.error("IOException while trying to flush indexWriter for indexer in path "+indexer.getPath());
+                Logger.error(Indexer.class, "IOException while trying to flush indexWriter for indexer in path "+indexer.getPath());
             } finally {
                 // Interrupt current Thread since we can't continue indexing
                 Thread.currentThread().interrupt();
             }
         } catch(IOException ioe) {
             ioe.printStackTrace();
-            logger.error("IOException while trying to flush indexWriter for indexer in path "+indexer.getPath());
+            Logger.error(Indexer.class, "IOException while trying to flush indexWriter for indexer in path "+indexer.getPath());
         }
     }
 }

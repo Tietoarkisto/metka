@@ -1,5 +1,6 @@
 package fi.uta.fsd.metkaSearch.analyzer;
 
+import fi.uta.fsd.Logger;
 import fi.uta.fsd.metkaSearch.LuceneConfig;
 import fi.uta.fsd.metkaSearch.filter.FinnishTokenFilter;
 import fi.uta.fsd.metkaSearch.voikko.FinnishStopFilterFactory;
@@ -13,14 +14,11 @@ import org.apache.lucene.analysis.standard.StandardFilter;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.analysis.util.TokenFilterFactory;
 import org.puimula.libvoikko.Voikko;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.Reader;
 
 public class FinnishVoikkoAnalyzer extends Analyzer {
-    private static final Logger logger = LoggerFactory.getLogger(FinnishVoikkoAnalyzer.class);
 
     public static final Analyzer ANALYZER;
     static {
@@ -28,7 +26,7 @@ public class FinnishVoikkoAnalyzer extends Analyzer {
         try {
             temp = new FinnishVoikkoAnalyzer();
         } catch (IOException e) {
-            logger.error("Could not initialize ANALYZER. Initializing with whitespace analyzer instead", e);
+            Logger.error(FinnishVoikkoAnalyzer.class, "Could not initialize ANALYZER. Initializing with whitespace analyzer instead", e);
             temp = new WhitespaceAnalyzer(LuceneConfig.USED_VERSION);
         }
         ANALYZER = temp;
@@ -43,7 +41,7 @@ public class FinnishVoikkoAnalyzer extends Analyzer {
 
     public FinnishVoikkoAnalyzer(Voikko voikko) throws IOException {
         if(voikko == null) {
-            logger.info("Trying to create Voikko-object");
+            Logger.debug(FinnishVoikkoAnalyzer.class, "Trying to create Voikko-object");
             voikko = VoikkoFactory.create();
         }
         this.voikko = voikko;
@@ -58,7 +56,7 @@ public class FinnishVoikkoAnalyzer extends Analyzer {
         try {
             result = new FinnishTokenFilter(result, voikko);
         } catch(IOException ioe) {
-            logger.error("IOException while creating FinnishTokenFilter.", ioe);
+            Logger.error(FinnishVoikkoAnalyzer.class, "IOException while creating FinnishTokenFilter.", ioe);
         }
         //result = stopFilterFactory.create(result);
         TokenStreamComponents components = new TokenStreamComponents(source, result);

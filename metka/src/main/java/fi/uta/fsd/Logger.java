@@ -40,10 +40,10 @@ public final class Logger {
     }
 
     public static void debug(Class c, String message) {
-        getLogger(c).error(message);
+        getLogger(c).debug(message);
     }
 
     public static void debug(Class c, String message, Exception e) {
-        getLogger(c).error(message, e);
+        getLogger(c).debug(message, e);
     }
 }

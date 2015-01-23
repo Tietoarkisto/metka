@@ -4,13 +4,11 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.MessageProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import fi.uta.fsd.Logger;
 
 import java.io.IOException;
 
 class AmqpMessenger {
-        private static final Logger logger = LoggerFactory.getLogger(AmqpMessenger.class);
 
         private ConnectionFactory factory = null;
         private Connection connection = null;
@@ -34,7 +32,7 @@ class AmqpMessenger {
                 channel = connection.createChannel();
                 state = AMQPState.AMQP_READY;
             } catch(IOException ioe) {
-                logger.error("AMQP channel creation failed.", ioe);
+                Logger.error(AmqpMessenger.class, "AMQP channel creation failed.", ioe);
                 channel = null;
                 state = AMQPState.AMQP_CONNECTION_FAILED;
             }
@@ -50,12 +48,12 @@ class AmqpMessenger {
                 }
                 state = AMQPState.AMQP_STOPPED;
             } catch(IOException ioe) {
-                logger.error("IOException during AMQP cleanup.", ioe);
+                Logger.error(AmqpMessenger.class, "IOException during AMQP cleanup.", ioe);
             }
         }
 
         void logState() {
-            logger.info("AMQP Messenger is currently at state: "+state);
+            Logger.debug(AmqpMessenger.class, "AMQP Messenger is currently at state: "+state);
         }
 
         void write(String message) {
@@ -64,12 +62,12 @@ class AmqpMessenger {
                     // TODO: Move routing key to message
                     channel.basicPublish("metka.test", "metka.queue", MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes());
                 } catch(IOException ioe) {
-                    logger.error("AMQP message write failed.", ioe);
+                    Logger.error(AmqpMessenger.class, "AMQP message write failed.", ioe);
                     state = AMQPState.AMQP_CONNECTION_FAILED;
                     logState();
                 }
             } else {
-                logger.error("AMQP messenger is not in READY state, instead being in state: "+state);
+                Logger.error(AmqpMessenger.class, "AMQP messenger is not in READY state, instead being in state: "+state);
             }
         }
 
