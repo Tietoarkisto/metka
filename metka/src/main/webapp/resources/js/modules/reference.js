@@ -57,8 +57,11 @@ define(function (require) {
             return function (dataFields, reference) {
 
                 // TODO: This should always be called with reference, also reference fetching should be generalized somewhere
+                var target = getPropertyNS(options, 'dataConf.fields', key);
+                if (!dataFields && options.data) {
+                    dataFields = options.data.fields;
+                }
                 if(!reference) {
-                    var target = getPropertyNS(options, 'dataConf.fields', key);
                     if(target.type === "REFERENCE") {
                         reference = getPropertyNS(options, 'dataConf.references', target.reference);
                     } else if(target.type === "SELECTION") {
@@ -71,7 +74,7 @@ define(function (require) {
                 var root = function r(currentKey, dataFields, lang, reference, next) {
                     var path = {
                         reference: reference,
-                        value: key !== currentKey && dataFields && dataFields[currentKey] ? require('./data').latestValue(dataFields[currentKey], lang) : undefined,
+                        value: dataFields && dataFields[currentKey] ? require('./data').latestValue(dataFields[currentKey], lang) : undefined,
                         next: next
                     };
 
@@ -105,6 +108,10 @@ define(function (require) {
                     } else {
                         cur = cur.next;
                     }
+                }
+
+                if (target.type === 'SELECTION') {
+                    cur.value = null;
                 }
 
                 require('./server')('optionsByPath', {
