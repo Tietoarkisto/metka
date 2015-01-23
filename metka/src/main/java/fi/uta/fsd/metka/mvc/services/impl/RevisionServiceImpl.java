@@ -1,5 +1,6 @@
 package fi.uta.fsd.metka.mvc.services.impl;
 
+import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
@@ -21,8 +22,6 @@ import fi.uta.fsd.metkaSearch.IndexerComponent;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +33,6 @@ import java.util.List;
  */
 @Service
 public class RevisionServiceImpl implements RevisionService {
-    private static Logger logger = LoggerFactory.getLogger(RevisionService.class);
 
     @Autowired
     private RevisionCreationRepository create;

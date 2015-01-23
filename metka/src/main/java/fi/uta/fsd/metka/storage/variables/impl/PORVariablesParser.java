@@ -148,6 +148,8 @@ class PORVariablesParser implements VariablesParser {
         // Make VariablesHandler
         VariableParser parser = new VariableParser(info, language);
 
+        Logger.debug(PORVariablesParser.class, "Gathering entities for parsing");
+        long start = System.currentTimeMillis();
         List<Pair<RevisionData, PORUtil.PORVariableHolder>> listOfEntitiesAndHolders = new ArrayList<>();
         for(PORUtil.PORVariableHolder variable : variables) {
             RevisionData variableRevision = null;
@@ -162,7 +164,7 @@ class PORVariablesParser implements VariablesParser {
             }
             listOfEntitiesAndHolders.add(new ImmutablePair<>(variableRevision, variable));
         }
-
+        Logger.debug(PORVariablesParser.class, "Entities gathered. Took "+(System.currentTimeMillis()-start)+"ms");
 
         ContainerDataField variableGroups = variablesData.dataField(ContainerDataFieldCall.get(Fields.VARGROUPS)).getRight();
 
@@ -225,6 +227,9 @@ class PORVariablesParser implements VariablesParser {
         }
 
         Pair<StatusCode, ValueDataField> studyField = variablesData.dataField(ValueDataFieldCall.get("study"));
+        Logger.debug(PORVariablesParser.class, listOfEntitiesAndHolders.size()+" variables to parse.");
+        int counter = 0;
+        long timeSpent = 0L;
         for(Pair<RevisionData, PORUtil.PORVariableHolder> pair : listOfEntitiesAndHolders) {
             // Iterate through entity/holder pairs. There should always be a holder but missing entity indicates that this is a new variable.
             // After all variables are handled there should be one non removed revisionable per variable in the current por-file.
@@ -232,6 +237,9 @@ class PORVariablesParser implements VariablesParser {
             // unnecessary revisions are created. This is not required and so a new draft is provided per revisionable).
             // Variables entity should have an open draft revision that includes references to all variables as well as non grouped references for all variables that previously were
             // not in any groups.
+
+            start = System.currentTimeMillis();
+
 
             RevisionData variableData = pair.getLeft();
             PORUtil.PORVariableHolder variable = pair.getRight();
@@ -281,8 +289,13 @@ class PORVariablesParser implements VariablesParser {
                     Logger.error(PORVariablesParser.class, "Could not update revision data for "+variableData.toString()+" with result "+updateResult);
                 }
             }
+            counter++;
+            long end = System.currentTimeMillis()-start;
+            Logger.debug(PORVariablesParser.class, "Parsed variable in "+end+"ms. Still "+(listOfEntitiesAndHolders.size()-counter)+" variables to parse.");
+            timeSpent += end;
         }
 
+        Logger.debug(PORVariablesParser.class, "Parsed variables in "+timeSpent+"ms");
         return result;
     }
 }

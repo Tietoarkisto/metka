@@ -125,11 +125,12 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
                     long end = System.currentTimeMillis();
                     previousTime = timeHandlingCommands;
                     timeHandlingCommands += end-start;
+
                     batch++;
                     batchIn10Minutes++;
                     if(batch%100 == 0 && first100Batch) {
                         first100Batch = false;
-                        Logger.info(Indexer.class, "Took "+(end - start)+ "ms to handle first 100 commands. PATH: "+path.toString());
+                        Logger.info(Indexer.class, "Took "+timeHandlingCommands+ "ms to handle first 100 commands. PATH: "+path.toString());
                     }
                     long interval = 1000 * 60;
                     if(previousTime % interval > timeHandlingCommands % interval) {

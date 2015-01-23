@@ -1,5 +1,6 @@
 package fi.uta.fsd.metka.mvc.controller;
 
+import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.model.transfer.TransferData;
@@ -9,8 +10,6 @@ import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.revision.*;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping("revision")
 public class RevisionController {
-    private static final Logger logger = LoggerFactory.getLogger(RevisionController.class);
     @Autowired
     private RevisionService revisions;
 
@@ -79,7 +77,8 @@ public class RevisionController {
 
     @RequestMapping(value="ajax/save", method = RequestMethod.POST)
     public @ResponseBody RevisionOperationResponse save(@RequestBody TransferData transferData) {
-        return revisions.save(transferData);
+        RevisionOperationResponse response = revisions.save(transferData);
+        return response;
     }
 
     @RequestMapping(value="ajax/search", method = RequestMethod.POST)

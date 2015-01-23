@@ -1,6 +1,7 @@
 package fi.uta.fsd.metka.storage.repository.impl;
 
 
+import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.*;
 import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
@@ -38,8 +39,6 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -49,7 +48,6 @@ import java.util.*;
 
 @Repository
 public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
-    private static Logger logger = LoggerFactory.getLogger(RevisionSaveRepositoryImpl.class);
 
     @Autowired
     private ConfigurationRepository configurations;
@@ -67,24 +65,24 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
     public Pair<ReturnResult, TransferData> saveRevision(TransferData transferData) {
         Pair<ReturnResult, RevisionData> revisionPair = revisions.getRevisionDataOfType(transferData.getKey().getId(), transferData.getKey().getNo(), transferData.getConfiguration().getType());
         if(revisionPair.getLeft() != ReturnResult.REVISION_FOUND) {
-            logger.error("Couldn't find Revision "+transferData.getKey().toString()+" while saving.");
+            Logger.error(RevisionSaveRepositoryImpl.class, "Couldn't find Revision " + transferData.getKey().toString() + " while saving.");
             return new ImmutablePair<>(revisionPair.getLeft(), transferData);
         }
 
         RevisionData revision = revisionPair.getRight();
         if(revision.getState() != RevisionState.DRAFT) {
-            logger.warn("Revision "+revision.toString()+" was not in DRAFT state when tried to initiate save");
+            Logger.warning(RevisionSaveRepositoryImpl.class, "Revision " + revision.toString() + " was not in DRAFT state when tried to initiate save");
             return new ImmutablePair<>(ReturnResult.REVISION_NOT_A_DRAFT, transferData);
         }
 
         if(!AuthenticationUtil.isHandler(revision)) {
-            logger.warn("User "+AuthenticationUtil.getUserName()+" tried to save revision belonging to "+revision.getHandler());
+            Logger.warning(RevisionSaveRepositoryImpl.class, "User " + AuthenticationUtil.getUserName() + " tried to save revision belonging to " + revision.getHandler());
             return new ImmutablePair<>(ReturnResult.WRONG_USER, transferData);
         }
 
         Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(revision.getConfiguration());
         if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
-            logger.error("Couldn't find configuration "+revision.getConfiguration().toString()+" while saving "+revision.toString());
+            Logger.error(RevisionSaveRepositoryImpl.class, "Couldn't find configuration "+revision.getConfiguration().toString()+" while saving "+revision.toString());
             return new ImmutablePair<>(configPair.getLeft(), transferData);
         }
 
@@ -410,13 +408,13 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(id, false, null);
             if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
                 // Something is wrong
-                logger.error("Tried to force bidirectionality for a revisionable that is nonexistent");
+                Logger.error(RevisionSaveRepositoryImpl.class, "Tried to force bidirectionality for a revisionable that is nonexistent");
                 return;
             }
             RevisionData data = dataPair.getRight();
             Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(data.getConfiguration());
             if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
-                logger.error("Couldn't find configuration for revision "+data.toString()+" while checking bidirectional values.");
+                Logger.error(RevisionSaveRepositoryImpl.class, "Couldn't find configuration for revision "+data.toString()+" while checking bidirectional values.");
                 return;
             }
             Configuration config = configPair.getRight();
@@ -426,7 +424,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 Pair<StatusCode, ReferenceContainerDataField> fieldPair = data.dataField(ReferenceContainerDataFieldCall.set(pair.getLeft()));
                 // let's make sure we have a field
                 if(fieldPair.getRight() == null) {
-                    logger.error("Failed to create ReferenceContainerDataField while forcing bidirectionality with result "+fieldPair.getLeft());
+                    Logger.error(RevisionSaveRepositoryImpl.class, "Failed to create ReferenceContainerDataField while forcing bidirectionality with result "+fieldPair.getLeft());
                     continue;
                 }
                 ReferenceContainerDataField field = fieldPair.getRight();
@@ -648,7 +646,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                         for (String subkey : field.getSubfields()) {
                             Field subfield = configuration.getField(subkey);
                             if (subfield == null) {
-                                logger.error("Didn't find field " + subkey + " in configuration " + configuration.getKey().toString() + " even though " + field.getKey() + " has it as subfield.");
+                                Logger.error(RevisionSaveRepositoryImpl.class, "Didn't find field " + subkey + " in configuration " + configuration.getKey().toString() + " even though " + field.getKey() + " has it as subfield.");
                                 continue;
                             }
 
@@ -687,7 +685,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                             }
                         }
                     } else {
-                        logger.error("TransferField and Container with key "+field.getKey()+" have different number of rows for language "+language);
+                        Logger.error(RevisionSaveRepositoryImpl.class, "TransferField and Container with key "+field.getKey()+" have different number of rows for language "+language);
                     }
 
                 }
