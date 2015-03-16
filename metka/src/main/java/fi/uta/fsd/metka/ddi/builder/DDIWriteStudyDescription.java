@@ -25,99 +25,6 @@ import org.springframework.util.StringUtils;
 import java.util.*;
 
 class DDIWriteStudyDescription extends DDIWriteSectionBase {
-    private static final Map<Language, String> ACCS_PLAC = new HashMap<>();
-    private static final Map<Language, String> ACCS_PLAC_URI = new HashMap<>();
-    private static final Map<String, Map<Language, String>> RESTRICTION = new HashMap<>();
-    private static final Map<Language, String> CIT_REQ = new HashMap<>();
-    private static final Map<Language, String> DEPOS_REQ = new HashMap<>();
-    private static final Map<Language, String> DISCLAIMER = new HashMap<>();
-    private static final Map<Language, String> SERIES_URI_PREFIX = new HashMap<>();
-    private static final Map<Language, String> WEIGHT_NO = new HashMap<>();
-    private static final Map<Language, String> COPYRIGHT = new HashMap<>();
-    private static final Map<Language, String> DISTRIBUTR = new HashMap<>();
-    private static final Map<Language, String> DISTRIBUTR_ABB = new HashMap<>();
-    private static final Map<Language, String> DISTRIBUTR_URI = new HashMap<>();
-    private static final Map<Language, String> NATION = new HashMap<>();
-
-    static {
-        ACCS_PLAC.put(Language.DEFAULT, "Yhteiskuntatieteellinen tietoarkisto");
-        ACCS_PLAC.put(Language.EN, "Finnish Social Science Data Archive");
-        ACCS_PLAC.put(Language.SV, "Finlands samhällsvetenskapliga dataarkiv");
-
-        ACCS_PLAC_URI.put(Language.DEFAULT, "http://www.fsd.uta.fi");
-        ACCS_PLAC_URI.put(Language.EN, "http://www.fsd.uta.fi");
-        ACCS_PLAC_URI.put(Language.SV, "http://www.fsd.uta.fi");
-
-        Map<Language, String> tempMap = new HashMap<>();
-        RESTRICTION.put("1", tempMap);
-        tempMap.put(Language.DEFAULT, "Aineisto on kaikkien käytettävissä.");
-        tempMap.put(Language.EN, "The dataset is available for all users.");
-        tempMap.put(Language.SV, "??");
-
-        tempMap = new HashMap<>();
-        RESTRICTION.put("2", tempMap);
-        tempMap.put(Language.DEFAULT, "Aineisto on käytettävissä tutkimukseen, opetukseen ja opiskeluun.");
-        tempMap.put(Language.EN, "The dataset is available for research, teaching and study.");
-        tempMap.put(Language.SV, "??");
-
-        tempMap = new HashMap<>();
-        RESTRICTION.put("3", tempMap);
-        tempMap.put(Language.DEFAULT, "Aineisto on käytettävissä vain tutkimukseen ja ylempiin opinnäytteisiin (pro gradu, lisensiaattitutkimus ja väitöstutkimus).");
-        tempMap.put(Language.EN, "The dataset is available for research and for Master's, licentiate and doctoral theses.");
-        tempMap.put(Language.SV, "??");
-
-        tempMap = new HashMap<>();
-        RESTRICTION.put("4", tempMap);
-        tempMap.put(Language.DEFAULT, "Aineisto on käytettävissä vain luovuttajan luvalla.");
-        tempMap.put(Language.EN, "The dataset is available by the permission of the depositor only.");
-        tempMap.put(Language.SV, "??");
-
-        tempMap = new HashMap<>();
-        RESTRICTION.put("5", tempMap);
-        tempMap.put(Language.DEFAULT, "Aineisto on jatkokäytettävissä vasta määräajan jälkeen tietystä päivämäärästä alkaen.");
-        tempMap.put(Language.EN, "The dataset is available only after a specified time.");
-        tempMap.put(Language.SV, "??");
-
-        CIT_REQ.put(Language.DEFAULT, "Aineistoon ja sen tekijöihin tulee viitata asianmukaisesti kaikissa julkaisuissa ja esityksissä, joissa aineistoa käytetään. Tietoarkiston antaman malliviittaustiedon voi merkitä lähdeluetteloon sellaisenaan tai sitä voi muokata julkaisun käytäntöjen mukaisesti.");
-        CIT_REQ.put(Language.EN, "The data and its creators shall be cited in all publications and presentations for which the data have been used. The bibliographic citation may be in the form suggested by the archive or in the form required by the publication.");
-        CIT_REQ.put(Language.SV, "Publikationer och presentationer som helt eller delvis baseras på datamaterialet ska förses med vederbörlig hänvisning till primärforskarna och det berörda datamaterialet. Referensen kan vara i den stil som krävs av publikationen eller i den stil som rekommenderas av dataarkivet.");
-
-        DEPOS_REQ.put(Language.DEFAULT, "Tietoarkistoon on lähetettävä viitetiedot kaikista julkaisuista, joissa käyttäjä hyödyntää aineistoa.");
-        DEPOS_REQ.put(Language.EN, "The user shall notify the archive of all publications where she or he has used the data.");
-        DEPOS_REQ.put(Language.SV, "Referenser till alla publikationer där användaren har utnyttjat datamaterialet ska sändas till dataarkivet.");
-
-        DISCLAIMER.put(Language.DEFAULT, "Aineiston alkuperäiset tekijät ja tietoarkisto eivät ole vastuussa aineiston jatkokäytössä tuotetuista tuloksista ja tulkinnoista.");
-        DISCLAIMER.put(Language.EN, "The original data creators and the archive bear no responsibility for any results or interpretations arising from the reuse of the data.");
-        DISCLAIMER.put(Language.SV, "Varken primärforskarna (dvs. de ursprungliga rättsinnehavarna) eller dataarkivet är ansvariga för sådana analysresultat och tolkningar av datamaterialet som uppstått vid sekundäranalys.");
-
-        SERIES_URI_PREFIX.put(Language.DEFAULT, "http://www.fsd.uta.fi/fi/aineistot/luettelo/sarjat.html#");
-        SERIES_URI_PREFIX.put(Language.EN, "http://www.fsd.uta.fi/en/data/catalogue/series.html#");
-        SERIES_URI_PREFIX.put(Language.SV, "http://www.fsd.uta.fi/sv/data/serier.html#");
-
-        WEIGHT_NO.put(Language.DEFAULT, "Aineisto ei sisällä painomuuttujia.");
-        WEIGHT_NO.put(Language.EN, "There are no weight variables in the data.");
-        WEIGHT_NO.put(Language.SV, "Datamaterialet innehåller inga viktvariabler.");
-
-        COPYRIGHT.put(Language.DEFAULT, "FSD:n ja aineiston luovuttajan tekemän sopimuksen mukaisesti.");
-        COPYRIGHT.put(Language.EN, "According to the agreement between FSD and the depositor.");
-        COPYRIGHT.put(Language.SV, "I enlighet med avtalet mellan FSD och överlåtaren av datamaterialet.");
-
-        DISTRIBUTR.put(Language.DEFAULT, "Yhteiskuntatieteellinen tietoarkisto");
-        DISTRIBUTR.put(Language.EN, "Finnish Social Science Data Archive");
-        DISTRIBUTR.put(Language.SV, "Finlands samhällsvetenskapliga dataarkiv");
-
-        DISTRIBUTR_ABB.put(Language.DEFAULT, "FSD");
-        DISTRIBUTR_ABB.put(Language.EN, "FSD");
-        DISTRIBUTR_ABB.put(Language.SV, "FSD");
-
-        DISTRIBUTR_URI.put(Language.DEFAULT, "http://www.fsd.uta.fi");
-        DISTRIBUTR_URI.put(Language.EN, "http://www.fsd.uta.fi");
-        DISTRIBUTR_URI.put(Language.SV, "http://www.fsd.uta.fi");
-
-        NATION.put(Language.DEFAULT, "Suomi");
-        NATION.put(Language.EN, "Finland");
-        NATION.put(Language.SV, "Finland");
-    }
 
     DDIWriteStudyDescription(RevisionData revision, Language language, CodeBookType codeBook, Configuration configuration, RevisionRepository revisions, ReferenceService references) {
         super(revision, language, codeBook, configuration, revisions, references);
@@ -220,14 +127,14 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
         }
 
         // Add copyright
-        fillTextType(prodStmtType.addNewCopyright(), COPYRIGHT.get(language));
+        fillTextType(prodStmtType.addNewCopyright(), getDDIText(language, "COPYRIGHT_STDY"));
     }
 
     private void addCitationDistStatement(CitationType citationType) {
         DistStmtType distStmtType = citationType.addNewDistStmt();
-        DistrbtrType d = fillTextType(distStmtType.addNewDistrbtr(), DISTRIBUTR.get(language));
-        d.setAbbr(DISTRIBUTR_ABB.get(language));
-        d.setURI(DISTRIBUTR_URI.get(language));
+        DistrbtrType d = fillTextType(distStmtType.addNewDistrbtr(), getDDIText(language, "DISTRIBUTR"));
+        d.setAbbr(getDDIText(language, "DISTRIBUTR_ABB"));
+        d.setURI(getDDIText(language, "DISTRIBUTR_URI"));
     }
 
     private void addCitationRspStatement(CitationType citationType) {
@@ -362,7 +269,7 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
                 }
                 if(seriesAbbr != null) {
                     SerStmtType serStmtType = citationType.addNewSerStmt();
-                    serStmtType.setURI(SERIES_URI_PREFIX.get(language)+seriesAbbr);
+                    serStmtType.setURI(getDDIText(language, "SERIES_URI_PREFIX")+seriesAbbr);
                     valueFieldPair = series.dataField(ValueDataFieldCall.get(Fields.SERIESNAME));
 
                     SerNameType serName;
@@ -1202,7 +1109,7 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
     private void addMethodDataCollWeight(DataCollType dataCollType) {
         Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.WEIGHTYESNO));
         if(hasValue(valueFieldPair, Language.DEFAULT) && valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsBoolean()) {
-            fillTextType(dataCollType.addNewWeight(), WEIGHT_NO.get(language));
+            fillTextType(dataCollType.addNewWeight(), getDDIText(language, "WEIGHT_NO"));
         } else {
             valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.WEIGHT));
             if(hasValue(valueFieldPair, language)) {
@@ -1251,8 +1158,8 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
         SetAvailType setAvail = dataAccs.addNewSetAvail();
 
         // Add access place
-        AccsPlacType acc = fillTextType(setAvail.addNewAccsPlac(), ACCS_PLAC.get(language));
-        acc.setURI(ACCS_PLAC_URI.get(language));
+        AccsPlacType acc = fillTextType(setAvail.addNewAccsPlac(), getDDIText(language, "ACCS_PLAC"));
+        acc.setURI(getDDIText(language, "ACCS_PLAC_URI"));
 
         // Add original archive
         Pair<StatusCode, ValueDataField> valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.ORIGINALLOCATION));
@@ -1286,17 +1193,17 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
         // Add restrictions, excel row #164
         valueFieldPair = revision.dataField(ValueDataFieldCall.get(Fields.TERMSOFUSE));
         if(hasValue(valueFieldPair, Language.DEFAULT)) {
-            fillTextType(useStmt.addNewRestrctn(), RESTRICTION.get(valueFieldPair.getRight().getActualValueFor(Language.DEFAULT)).get(language));
+            fillTextType(useStmt.addNewRestrctn(), getDDIRestriction(language, valueFieldPair.getRight().getActualValueFor(Language.DEFAULT)));
         }
 
         // Add citation required
-        fillTextType(useStmt.addNewCitReq(), CIT_REQ.get(language));
+        fillTextType(useStmt.addNewCitReq(), getDDIText(language, "CIT_REQ"));
 
         // Add deposition required
-        fillTextType(useStmt.addNewDeposReq(), DEPOS_REQ.get(language));
+        fillTextType(useStmt.addNewDeposReq(), getDDIText(language, "DEPOS_REQ"));
 
         // Add disclaimer required
-        fillTextType(useStmt.addNewDisclaimer(), DISCLAIMER.get(language));
+        fillTextType(useStmt.addNewDisclaimer(), getDDIText(language, "DISCLAIMER"));
     }
 
     private void addOtherStudyMaterial(StdyDscrType stdyDscrType) {

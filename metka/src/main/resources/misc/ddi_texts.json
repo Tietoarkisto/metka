@@ -1,0 +1,198 @@
+{
+  "key": "ddi_texts",
+  "data": [
+    {
+      "key": "",
+      "&text": {
+        "default": "",
+        "en": "",
+        "sv": ""
+      }
+    }, {
+      "key": "BIBL_CIT_FORMAT",
+      "text": "MRDF"
+    }, {
+      "key": "DDI_TITLE_PREFIX",
+      "&text": {
+        "default": "DDI-kuvailu: ",
+        "en": "DDI-description: ",
+        "sv": "DDI-beskrivning: "
+      }
+    }, {
+      "key": "PRODUCER",
+      "&text": {
+        "default": "Yhteiskuntatieteellinen tietoarkisto",
+        "en": "Finnish Social Science Data Archive",
+        "sv": "Finlands samhällsvetenskapliga dataarkiv"
+      }
+    }, {
+      "key": "COPYRIGHT",
+      "&text": {
+        "default": "Yhteiskuntatieteellinen tietoarkisto",
+        "en": "Finnish Social Science Data Archive",
+        "sv": "Finlands samhällsvetenskapliga dataarkiv"
+      }
+    }, {
+      "key": "PRODPLAC",
+      "&text": {
+        "default": "Yhteiskuntatieteellinen tietoarkisto",
+        "en": "Finnish Social Science Data Archive",
+        "sv": "Finlands samhällsvetenskapliga dataarkiv"
+      }
+    }, {
+      "key": "PRODPLAC_ADDRESS",
+      "&text": {
+        "default": "Yhteiskuntatieteellinen tietoarkisto <br>33014 TAMPEREEN YLIOPISTO <br>+358 40 190 1432 <br>",
+        "en": "Finnish Social Science Data Archive (FSD) <br>FI-33014 University of Tampere <br>FINLAND <br>+358 40 190 1432 <br>",
+        "sv": "Finlands samhällsvetenskapliga dataarkiv (FSD) <br>FI-33014 Tammerfors universitet <br>+358 40 190 1432 <br>"
+      }
+    }, {
+      "key": "HOLDINGS",
+      "&text": {
+        "default": "Yhteiskuntatieteellinen tietoarkisto FSD",
+        "en": "Finnish Social Science Data Archive FSD",
+        "sv": "Finlands samhällsvetenskapliga dataarkiv FSD"
+      }
+    }, {
+      "key": "HOLDINGS_LOCATION",
+      "&text": {
+        "default": "Yhteiskuntatieteellinen tietoarkisto FSD",
+        "en": "Finnish Social Science Data Archive FSD",
+        "sv": "Finlands samhällsvetenskapliga dataarkiv FSD"
+      }
+    }, {
+      "key": "HOLDINGS_URI_BASE",
+      "&text": {
+        "default": "http://www.fsd.uta.fi/aineistot/luettelo/",
+        "en": "http://www.fsd.uta.fi/english/data/catalogue/",
+        "sv": "http://www.fsd.uta.fi/svenska/data/katalog/"
+      }
+    }, {
+      "key": "NOTES",
+      "&text": {
+        "default": "FSD:n aineistokuvailut (FSD metadata records), jonka tekijä on Suomen yhteiskuntatieteellinen tietoarkisto (Finnish Social Science Data Archive), on lisensoitu Creative Commons Nimeä 4.0 Kansainvälinen (CC BY 4.0) -lisenssillä.",
+        "en": "FSD:n aineistokuvailut (FSD metadata records) by Suomen yhteiskuntatieteellinen tietoarkisto (Finnish Social Science Data Archive) is licensed under a Creative Commons Attribution 4.0 International (CC BY 4.0) license.",
+        "sv": "FSD:n aineistokuvailut (FSD metadata records) av Suomen yhteiskuntatieteellinen tietoarkisto (Finlands samhällsvetenskapliga dataarkiv) är licensierad under en Creative Commons Erkännande 4.0 Internationell (CC BY 4.0) licens."
+      }
+    }, {
+      "key": "BIBL_CIT_POST",
+      "&text": {
+        "default": " [koodikirja]. Yhteiskuntatieteellinen tietoarkisto [tuottaja ja jakaja].",
+        "en": " [codebook]. Finnish Social Science Data Archive [producer and distributor].",
+        "sv": " [kodbok]. Finlands samhällsvetenskapliga dataarkiv [producent och distributör]."
+      }
+    }, {
+      "key": "ACCS_PLAC",
+      "&text": {
+        "default": "Yhteiskuntatieteellinen tietoarkisto",
+        "en": "Finnish Social Science Data Archive",
+        "sv": "Finlands samhällsvetenskapliga dataarkiv"
+      }
+    }, {
+      "key": "ACCS_PLAC_URI",
+      "text": "http://www.fsd.uta.fi"
+    }, {
+      "key": "CIT_REQ",
+      "&text": {
+        "default": "Aineistoon ja sen tekijöihin tulee viitata asianmukaisesti kaikissa julkaisuissa ja esityksissä, joissa aineistoa käytetään. Tietoarkiston antaman malliviittaustiedon voi merkitä lähdeluetteloon sellaisenaan tai sitä voi muokata julkaisun käytäntöjen mukaisesti.",
+        "en": "The data and its creators shall be cited in all publications and presentations for which the data have been used. The bibliographic citation may be in the form suggested by the archive or in the form required by the publication.",
+        "sv": "Publikationer och presentationer som helt eller delvis baseras på datamaterialet ska förses med vederbörlig hänvisning till primärforskarna och det berörda datamaterialet. Referensen kan vara i den stil som krävs av publikationen eller i den stil som rekommenderas av dataarkivet."
+      }
+    }, {
+      "key": "DEPOS_REQ",
+      "&text": {
+        "default": "Tietoarkistoon on lähetettävä viitetiedot kaikista julkaisuista, joissa käyttäjä hyödyntää aineistoa.",
+        "en": "The user shall notify the archive of all publications where she or he has used the data.",
+        "sv": "Referenser till alla publikationer där användaren har utnyttjat datamaterialet ska sändas till dataarkivet."
+      }
+    }, {
+      "key": "DISCLAIMER",
+      "&text": {
+        "default": "Aineiston alkuperäiset tekijät ja tietoarkisto eivät ole vastuussa aineiston jatkokäytössä tuotetuista tuloksista ja tulkinnoista.",
+        "en": "The original data creators and the archive bear no responsibility for any results or interpretations arising from the reuse of the data.",
+        "sv": "Varken primärforskarna (dvs. de ursprungliga rättsinnehavarna) eller dataarkivet är ansvariga för sådana analysresultat och tolkningar av datamaterialet som uppstått vid sekundäranalys."
+      }
+    }, {
+      "key": "SERIES_URI_PREFIX",
+      "&text": {
+        "default": "http://www.fsd.uta.fi/fi/aineistot/luettelo/sarjat.html#",
+        "en": "http://www.fsd.uta.fi/en/data/catalogue/series.html#",
+        "sv": "http://www.fsd.uta.fi/sv/data/serier.html#"
+      }
+    }, {
+      "key": "WEIGHT_NO",
+      "&text": {
+        "default": "Aineisto ei sisällä painomuuttujia.",
+        "en": "There are no weight variables in the data.",
+        "sv": "Datamaterialet innehåller inga viktvariabler."
+      }
+    }, {
+      "key": "COPYRIGHT_STDY",
+      "&text": {
+        "default": "FSD:n ja aineiston luovuttajan tekemän sopimuksen mukaisesti.",
+        "en": "According to the agreement between FSD and the depositor.",
+        "sv": "I enlighet med avtalet mellan FSD och överlåtaren av datamaterialet."
+      }
+    }, {
+      "key": "DISTRIBUTR",
+      "&text": {
+        "default": "Yhteiskuntatieteellinen tietoarkisto",
+        "en": "Finnish Social Science Data Archive",
+        "sv": "Finlands samhällsvetenskapliga dataarkiv"
+      }
+    }, {
+      "key": "DISTRIBUTR_ABB",
+      "text": "FSD"
+    }, {
+      "key": "DISTRIBUTR_URI",
+      "text": "http://www.fsd.uta.fi"
+    }, {
+      "key": "NATION",
+      "&text": {
+        "default": "Suomi",
+        "en": "Finland",
+        "sv": "Finland"
+      }
+    }, {
+      "key": "RESTRICTION",
+      "values": [
+        {
+          "value": "1",
+          "&text": {
+            "default": "Aineisto on kaikkien käytettävissä.",
+            "en": "The dataset is available for all users.",
+            "sv": "??"
+          }
+        }, {
+          "value": "2",
+          "&text": {
+            "default": "Aineisto on käytettävissä tutkimukseen, opetukseen ja opiskeluun.",
+            "en": "The dataset is available for research, teaching and study.",
+            "sv": "??"
+          }
+        }, {
+          "value": "3",
+          "&text": {
+            "default": "Aineisto on käytettävissä vain tutkimukseen ja ylempiin opinnäytteisiin (pro gradu, lisensiaattitutkimus ja väitöstutkimus).",
+            "en": "The dataset is available for research and for Master's, licentiate and doctoral theses.",
+            "sv": "??"
+          }
+        }, {
+          "value": "4",
+          "&text": {
+            "default": "Aineisto on käytettävissä vain luovuttajan luvalla.",
+            "en": "The dataset is available by the permission of the depositor only.",
+            "sv": "??"
+          }
+        }, {
+          "value": "5",
+          "&text": {
+            "default": "Aineisto on jatkokäytettävissä vasta määräajan jälkeen tietystä päivämäärästä alkaen.",
+            "en": "The dataset is available only after a specified time.",
+            "sv": "??"
+          }
+        }
+      ]
+    }
+  ]
+}

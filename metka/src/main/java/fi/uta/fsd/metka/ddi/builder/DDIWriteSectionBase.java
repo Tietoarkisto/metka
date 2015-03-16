@@ -3,10 +3,12 @@ package fi.uta.fsd.metka.ddi.builder;
 import codebook25.CodeBookType;
 import codebook25.SimpleTextAndDateType;
 import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.enums.ReferenceType;
 import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
+import fi.uta.fsd.metka.model.configuration.Reference;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.ContainerDataField;
 import fi.uta.fsd.metka.model.data.container.DataRow;
@@ -15,6 +17,8 @@ import fi.uta.fsd.metka.model.data.container.ValueDataField;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
+import fi.uta.fsd.metka.transfer.reference.ReferencePath;
+import fi.uta.fsd.metka.transfer.reference.ReferencePathRequest;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
@@ -156,6 +160,30 @@ abstract class DDIWriteSectionBase {
         return att;
     }
 
+    /*protected String getDDIText(String value) {
+        return getDDIText(Language.DEFAULT, value);
+    }*/
+
+    protected String getDDIText(Language language, String value) {
+        Reference reference = new Reference("", ReferenceType.JSON, "ddi_texts", "key");
+        reference.setTitlePath("text");
+        ReferencePath root = new ReferencePath(reference, value);
+        return getReferenceTitle(language, root);
+    }
+
+    /*protected String getDDIRestriction(String value) {
+        return getDDIRestriction(Language.DEFAULT, value);
+    }*/
+
+    protected String getDDIRestriction(Language language, String value) {
+        Reference rest_reference = new Reference("", ReferenceType.JSON, "ddi_texts", "key");
+        Reference rest_value_reference = new Reference("", ReferenceType.DEPENDENCY, "", "values.value");
+        rest_value_reference.setTitlePath("text");
+        ReferencePath root = new ReferencePath(rest_reference, "RESTRICTION");
+        root.setNext(new ReferencePath(rest_value_reference, value));
+        return getReferenceTitle(language, root);
+    }
+
     protected String getReferenceTitle(String path) {
         return getReferenceTitle(language, revision, path);
     }
@@ -165,5 +193,13 @@ abstract class DDIWriteSectionBase {
         if(option != null) {
             return option.getTitle().getValue();
         } else return null;
+    }
+
+    private String getReferenceTitle(Language language, ReferencePath root) {
+        ReferencePathRequest request = new ReferencePathRequest();
+        request.setRoot(root);
+        request.setLanguage(language);
+        ReferenceOption option = references.getCurrentFieldOption(request);
+        return option.getTitle().getValue();
     }
 }

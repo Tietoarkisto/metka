@@ -496,8 +496,16 @@
 		},
 		"dissemination_list": {
 			"key": "dissemination_list",
-			"type": "REFERENCE",
-			"reference": "dissemination_ref"
+			"type": "VALUE",
+		  	"options": [
+			  {
+				"value": "1",
+				"title": "Ailan kautta"
+			  }, {
+				"value": "2",
+				"title": "Muu tapa"
+			  }
+			]
 		},
 		"country_list": {
 			"key": "country_list",
