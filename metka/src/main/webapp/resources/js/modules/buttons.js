@@ -70,7 +70,7 @@ define(function (require) {
             }, [
                 'REVISION_FOUND',
                 'REVISION_CREATED'
-            ]));
+            ], "edit"));
         },
         HISTORY: function () {
             var metka = require('./../metka');

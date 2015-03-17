@@ -2,7 +2,7 @@ define(function (require) {
     'use strict';
 
     return function (url) {
-        return function (options, onSuccess, successConditions) {
+        return function (options, onSuccess, successConditions, operation) {
             return function () {
                 (function clearErrors(fields) {
                     $.each(fields, function (key, field) {
@@ -41,7 +41,7 @@ define(function (require) {
                             return condition === response.result;
                         }) : true;
 
-                        require('./resultViewer')(response.result, null, function() {
+                        require('./resultViewer')(response.result, operation, function() {
                             if(isExpectedResult) {
                                 onSuccess.call(that, response);
                             }

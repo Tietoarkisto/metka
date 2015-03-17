@@ -25,14 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 class DDIReadStudyDescription extends DDIReadSectionBase {
-    private static final Map<Language, String> WEIGHT_NO = new HashMap<>();
-
-    static {
-        WEIGHT_NO.put(Language.DEFAULT, "Aineisto ei sisällä painomuuttujia.");
-        WEIGHT_NO.put(Language.EN, "There are no weight variables in the data.");
-        WEIGHT_NO.put(Language.SV, "Datamaterialet innehåller inga viktvariabler.");
-    }
-
     private final ReferenceService references;
 
     DDIReadStudyDescription(RevisionData revision, Language language, CodeBookType codeBook, DateTimeUserPair info, Configuration configuration, ReferenceService references) {
@@ -937,13 +929,14 @@ class DDIReadStudyDescription extends DDIReadSectionBase {
             return ReturnResult.OPERATION_SUCCESSFUL;
         }
         SimpleTextType stt = dataColl.getWeightArray(0);
-        if(getText(stt).equals(WEIGHT_NO.get(language))) {
-            valueSet(Fields.WEIGHTYESNO, "true");
-            valueSet(Fields.WEIGHT, "");
-        } else {
-            valueSet(Fields.WEIGHTYESNO, "false");
-            valueSet(Fields.WEIGHT, getText(stt));
-        }
+
+        // NOTICE:
+        // Since we can only compare to the newest version of NO_WEIGHT text we can't be sure about the checkbox status.
+        // As this is the case it makes more sense to consistently just transfer the text and set the checkbox to false.
+        // The checkbox status should always be checked manually after DDI-import.
+        valueSet(Fields.WEIGHTYESNO, "false");
+        valueSet(Fields.WEIGHT, getText(stt));
+
         return ReturnResult.OPERATION_SUCCESSFUL;
     }
 

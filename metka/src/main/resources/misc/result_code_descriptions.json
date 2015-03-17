@@ -27,9 +27,48 @@
 		"title": "NOTICE",
 		"text": "Lomakkeella ei ollut tallennettavia muutoksia"
 	}, {
-		"key": "",
-		"title": "",
-		"text": ""
+		"key": "SAVE_SUCCESSFUL",
+		"title": "NOTICE",
+		"text": "Tallennus suoritettu onnistuneesti"
+	}, {
+		"key": "SAVE_SUCCESSFUL_WITH_ERRORS",
+		"title": "ERROR",
+		"text": "Tallennus suoritettu mutta tallennettavasta datasta löydettiin virheitä"
+	}, {
+		"key": "OPEN_DRAFT",
+		"title": "NOTICE",
+		"text": "Revisioitavalta objektilta löytyy avoin luonnos.",
+		"operations": [{
+			"key": "remove",
+			"title": "ERROR",
+			"text": "Loogista poistoa ei voitu suorittaa koska löydettiin avoin luonnos."
+		}]
+	}, {
+		"key": "REVISION_FOUND",
+		"title": "NOTICE",
+		"text": "Haluttu revisio löytyi",
+		"operations": [{
+			"key": "edit",
+			"title": "NOTICE",
+			"text": "Löydettiin valmis avoin luonnos, ei luotu uutta revisiota"
+		}]
+	}, {
+		"key": "REVISION_CREATED",
+		"title": "NOTICE",
+		"text": "Uusi revisio luotu",
+		"operations": [{
+			"key": "edit",
+			"title": "NOTICE",
+			"text": "Luotiin uusi avoin luonnos"
+		}]
+	}, {
+		"key": "NO_RESULTS",
+		"title": "NOTICE",
+		"text": "Haku ei palauttanut tuloksia"
+	}, {
+		"key": "PARAMETERS_MISSING",
+		"title": "ERROR",
+		"text": "Operaatiota ei voitu suorittaa koska suorittamiseen vaadittuja arvoja puuttui"
 	}, {
 		"key": "",
 		"title": "",
