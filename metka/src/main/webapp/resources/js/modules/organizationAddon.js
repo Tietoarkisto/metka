@@ -36,19 +36,14 @@ define(function (require) {
                                                 this
                                                     .text(MetkaJS.L10N.get('general.buttons.add'))
                                                     .click(function () {
-                                                        require('./server')('/settings/getJsonContent', {
-                                                            data: JSON.stringify({
-                                                                configKey: null,
-                                                                jsonKey: 'Organizations',
-                                                                title: 'Organizations',
-                                                                type: 'MISC'
-                                                            }),
+                                                        require('./server')('/study/getOrganizations', {
+                                                            type: 'GET',
                                                             success: function (response) {
                                                                 var organizations = JSON.parse(response);
                                                                 if (organizations && Array.isArray(organizations.data)) {
                                                                     onSave(organizations, $editor.data('jsoneditor').getValue(), dependencyValue);
 
-                                                                    require('./server')('/settings/uploadJson', {
+                                                                    require('./server')('/study/uploadOrganizations', {
                                                                         data: JSON.stringify({
                                                                             type: 'MISC',
                                                                             json: JSON.stringify(organizations)

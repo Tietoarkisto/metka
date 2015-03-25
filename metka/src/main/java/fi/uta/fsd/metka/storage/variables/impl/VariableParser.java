@@ -427,8 +427,6 @@ class VariableParser {
 
         // Get valid numerical data as base for calculating statistics
         List<PORUtil.PORVariableDataNumeric> data = variable.getValidNumericalData();
-        // amount of valid values is used multiple times so it makes sense to lift it as a separate value
-        Integer values = data.size();
 
         // This variable should have statistics, create if missing
         if(statistics == null) {
@@ -441,6 +439,8 @@ class VariableParser {
         // These variables are needed multiple times so define them separately here
         DataRow row;
         String type;
+        // amount of valid values is used multiple times so it makes sense to lift it as a separate value
+        Integer values = data.size();
 
         // Set vald
         type = "vald"; // Valid values statistic

@@ -38,9 +38,9 @@ define(function (require) {
                     });
 
                     var $body = $('<div class="modal-body">');
-                    if (options.content) {
+                    if (options.content && options.content.length > 0) {
                         require('./container').call($body, options);
-                    } else {
+                    } else if(options.body) {
                         $body.append(options.body);
                     }
 

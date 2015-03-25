@@ -896,7 +896,6 @@ define(function (require) {
                                 })()
                             }
                         });
-                        log(options);
                         var data = require('./../data')(options);
                         onLoad();
                     }

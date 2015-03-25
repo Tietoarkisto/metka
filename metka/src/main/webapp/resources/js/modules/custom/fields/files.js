@@ -207,30 +207,7 @@ define(function (require) {
                                                             "key": "fileoriginal"
                                                         }
                                                         // TODO: näytä huomautus, jos valinnan muutos ja tallennus aiheuttavat muutoksia muuttujiin
-                                                        /*,
-                                                         create: function () {
-                                                         var $select = this.find('select');
-                                                         var prev = $select.val();
-                                                         $select.change(function () {
-                                                         switch ($(this).val()) {
-                                                         case '1':
-                                                         var parsed = require('./../../data')(modalOptions)('parsed').getByLang(options.defaultLang);
-                                                         if (parsed && parsed.bool()) {
-                                                         require('./../../modal')({
-                                                         title: 'Poistetaanko muuttujat?'
-                                                         });
-                                                         return;
-                                                         }
-                                                         case '2':
-                                                         case '3':
-                                                         require('./../../modal')({
-                                                         title: 'Muuttujat parsitaan'
-                                                         });
 
-                                                         }
-                                                         var prev = $select.val();
-                                                         });
-                                                         }*/
                                                     }
                                                 ]
                                             },

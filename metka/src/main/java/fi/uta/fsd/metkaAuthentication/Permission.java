@@ -32,6 +32,7 @@ public  enum Permission {
     CAN_VIEW_STUDY_ERRORS(Values.CAN_VIEW_STUDY_ERRORS),
     CAN_EDIT_STUDY_ERRORS(Values.CAN_EDIT_STUDY_ERRORS),
     CAN_REMOVE_STUDY_ERRORS(Values.CAN_REMOVE_STUDY_ERRORS),
+    CAN_ADD_ORGANIZATIONS(Values.CAN_ADD_ORGANIZATIONS),
 
     // Program settings permissions
     CAN_VIEW_SETTINGS_PAGE(Values.CAN_VIEW_SETTINGS_PAGE),
@@ -41,8 +42,7 @@ public  enum Permission {
     CAN_VIEW_INDEX_INFO(Values.CAN_VIEW_INDEX_INFO),
     CAN_MANUALLY_INDEX_CONTENT(Values.CAN_MANUALLY_INDEX_CONTENT),
     CAN_VIEW_API_USERS(Values.CAN_VIEW_API_USERS),
-    CAN_EDIT_API_USERS(Values.CAN_EDIT_API_USERS),
-    CAN_ADD_ORGANIZATIONS(Values.CAN_ADD_ORGANIZATIONS);
+    CAN_EDIT_API_USERS(Values.CAN_EDIT_API_USERS);
 
     private final String permission;
 
@@ -104,6 +104,7 @@ public  enum Permission {
         public static final String CAN_VIEW_STUDY_ERRORS = "canViewStudyErrors";
         public static final String CAN_EDIT_STUDY_ERRORS = "canAddStudyErrors";
         public static final String CAN_REMOVE_STUDY_ERRORS = "canRemoveStudyErrors";
+        public static final String CAN_ADD_ORGANIZATIONS = "canAddOrganizations";
 
         // Program settings permissions
         public static final String CAN_VIEW_SETTINGS_PAGE = "canViewSettingsPage";
@@ -114,6 +115,5 @@ public  enum Permission {
         public static final String CAN_MANUALLY_INDEX_CONTENT = "canManuallyIndexContent";
         public static final String CAN_VIEW_API_USERS = "canViewAPIUsers";
         public static final String CAN_EDIT_API_USERS = "canEditAPIUsers";
-        public static final String CAN_ADD_ORGANIZATIONS = "canAddOrganizations";
     }
 }

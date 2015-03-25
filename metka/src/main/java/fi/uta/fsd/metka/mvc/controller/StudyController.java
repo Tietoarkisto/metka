@@ -1,16 +1,25 @@
 package fi.uta.fsd.metka.mvc.controller;
 
 import codebook25.CodeBookDocument;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
 import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.configuration.Configuration;
+import fi.uta.fsd.metka.model.guiconfiguration.GUIConfiguration;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.mvc.services.StudyErrorService;
 import fi.uta.fsd.metka.mvc.services.StudyService;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
+import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.transfer.revision.RevisionSearchResponse;
+import fi.uta.fsd.metka.transfer.settings.JSONListEntry;
+import fi.uta.fsd.metka.transfer.settings.UploadJsonRequest;
 import fi.uta.fsd.metka.transfer.study.*;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -26,6 +35,9 @@ public class StudyController {
 
     @Autowired
     private StudyErrorService errors;
+
+    @Autowired
+    private JSONUtil json;
 
     @RequestMapping(value = "attachmentHistory", method = RequestMethod.POST)
     public @ResponseBody RevisionSearchResponse collectAttachmentHistory(@RequestBody TransferData transferData) {
@@ -79,5 +91,48 @@ public class StudyController {
     @RequestMapping(value="updateError", method = RequestMethod.POST)
     public @ResponseBody ReturnResult updateStudyError(@RequestBody StudyError error) {
         return errors.insertOrUpdateStudyError(error);
+    }
+
+    @RequestMapping(value = "getOrganizations", method = RequestMethod.GET)
+    public @ResponseBody String getOrganizations() {
+        return service.getOrganizations();
+    }
+
+    /**
+     * Takes a string and a type and tries to read the string as json of the provided type.
+     * If the string can be deserialized then saves it to database and to file system while making a backup of the previous file.
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "uploadOrganizations", method = RequestMethod.POST)
+    public @ResponseBody ReturnResult uploadOrganizations(@RequestBody UploadJsonRequest request) {
+        if(request.getType() == null || !StringUtils.hasText(request.getJson())) {
+            return ReturnResult.PARAMETERS_MISSING;
+        }
+        switch(request.getType()) {
+            case MISC: {
+                Pair<SerializationResults, JsonNode> result = json.deserializeToJsonTree(request.getJson());
+                if(result.getLeft() != SerializationResults.DESERIALIZATION_SUCCESS) {
+                    return ReturnResult.OPERATION_FAIL;
+                }
+                JsonNode node = result.getRight().get("key");
+                if(node == null || node.getNodeType() != JsonNodeType.STRING || !StringUtils.hasText(node.textValue()) || !node.textValue().equals("Organizations")) {
+                    return ReturnResult.OPERATION_FAIL;
+                }
+                node = result.getRight().get("data");
+                if(node == null || node.getNodeType() != JsonNodeType.ARRAY || node.size() == 0) {
+                    return ReturnResult.OPERATION_FAIL;
+                }
+                ReturnResult r = service.uploadOrganizations(result.getRight());
+                if(r != ReturnResult.OPERATION_SUCCESSFUL) {
+                    return r;
+                }
+                break;
+            }
+            default:
+                return ReturnResult.INCORRECT_TYPE_FOR_OPERATION;
+        }
+
+        return ReturnResult.OPERATION_SUCCESSFUL;
     }
 }

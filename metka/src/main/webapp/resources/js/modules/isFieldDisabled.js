@@ -14,11 +14,6 @@ define(function (require) {
         }
 
         var editable = options.fieldOptions ? options.fieldOptions.editable : true;
-        return options.readOnly || (typeof editable !== 'undefined' ? !editable : false) || (function r(parent) {
-            if (parent) {
-                return parent.readOnly || r(parent.parent);
-            }
-            return false;
-        })(options.parent);
+        return (typeof editable !== 'undefined' ? !editable : false) || options.isReadOnly(options);
     };
 });

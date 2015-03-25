@@ -81,32 +81,6 @@ define(function (require) {
                                         }
                                     });
                                 }
-
-
-
-                                /*var isExpectedResult = successConditions ? successConditions.some(function (condition) {
-                                    return condition === response.result;
-                                }) : true;
-                                var dismiss = {
-                                    type: 'DISMISS'
-                                };
-                                if (isExpectedResult) {
-                                    dismiss.create = function () {
-                                        this.click(function () {
-                                            onSuccess.call(that, response);
-                                        });
-                                    };
-                                }
-                                require('./modal')({
-                                    title: MetkaJS.L10N.get(isExpectedResult ? 'alert.notice.title' : 'alert.error.title'),
-                                    body: response.result *//*data.errors.map(function (error) {
-                                     return MetkaJS.L10N.get(error.msg);
-                                     })*//*,
-                                    buttons: [dismiss]
-                                });*/
-
-
-
                             });
                         });
                     }

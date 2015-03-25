@@ -7,6 +7,7 @@ define(function (require) {
             return function (options) {
                 options = options || {};
                 options.parent = parentOptions;
+                options.isReadOnly = parentOptions.isReadOnly;
 
                 // use parent's values, if nothing else is available
                 options.$events = options.$events || parentOptions.$events;

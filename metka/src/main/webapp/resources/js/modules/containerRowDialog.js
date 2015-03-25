@@ -9,7 +9,7 @@ define(function (require) {
             return function (transferRow, onClose) {
                 // copy data, so if dialog is dismissed, original data won't change
                 var transferRowCopy = $.extend(true, {}, transferRow);
-                var modalOptions = $.extend(require('./isFieldDisabled')(options, lang) ? {
+                var modalOptions = $.extend((require('./isFieldDisabled')(options, lang) ? {
                     type: 'VIEW',
                     buttons: [{
                         type: 'DISMISS'
@@ -31,7 +31,7 @@ define(function (require) {
                             type: 'CANCEL'
                         }
                     ]
-                }, {
+                }), {
                     data: transferRowCopy,
                     containerKey: options.field.key,
                     dataConf: options.dataConf,

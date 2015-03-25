@@ -4,17 +4,10 @@ define(function (require) {
     var metka = require('./../metka');
     require('./topMenu');
 
-    var options = {
-        header: 'Metka',
-        content: [],
-        data: {},
-        dataConf: {},
-        $events: $({}),
-        defaultLang: 'DEFAULT'
-    };
-
     require('./uiLocalization');
     document.title = MetkaJS.L10N.get('page.title');
+
+    var options = require('./optionsBase')();
 
     require('./pageConfig')(options, function () {
         $('body')

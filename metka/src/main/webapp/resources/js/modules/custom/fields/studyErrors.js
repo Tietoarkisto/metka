@@ -203,13 +203,15 @@ define(function (require) {
                     "hidden": true
                 }
             },
-            // FIXME: Container implementation overwrites this value if underlying study is in read only state. This should stay open no matter the study state
-            readOnly: !require("../../hasEveryPermission")(["canAddStudyErrors"]),
             create: function create(options) {
                 refreshData(options, this.children().first());
             }
         };
 
+
+        options.isReadOnly = function() {
+            return !require("../../hasEveryPermission")(["canAddStudyErrors"])
+        };
         options.fieldOptions = ret.dataConf.fields.studyErrors;
 
         return ret;

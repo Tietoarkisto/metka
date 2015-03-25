@@ -1,6 +1,7 @@
 package fi.uta.fsd.metka.mvc.services.impl;
 
 import codebook25.CodeBookDocument;
+import com.fasterxml.jackson.databind.JsonNode;
 import fi.uta.fsd.metka.ddi.DDIBuilderService;
 import fi.uta.fsd.metka.ddi.DDIReaderService;
 import fi.uta.fsd.metka.enums.ConfigurationType;
@@ -12,10 +13,12 @@ import fi.uta.fsd.metka.mvc.services.StudyService;
 import fi.uta.fsd.metka.search.StudySearch;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
+import fi.uta.fsd.metka.storage.repository.MiscJSONRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.revision.RevisionSearchResponse;
 import fi.uta.fsd.metka.transfer.revision.RevisionSearchResult;
+import fi.uta.fsd.metka.transfer.settings.JSONListEntry;
 import fi.uta.fsd.metka.transfer.study.StudyErrorsResponse;
 import fi.uta.fsd.metka.transfer.study.StudyVariablesStudiesResponse;
 import fi.uta.fsd.metka.transfer.study.StudyVariablesStudyPair;
@@ -39,6 +42,9 @@ public class StudyServiceImpl implements StudyService {
 
     @Autowired
     private ConfigurationRepository configurations;
+
+    @Autowired
+    private MiscJSONRepository miscJSONRepository;
 
     @Autowired
     private DDIBuilderService ddiBuilderService;
@@ -117,5 +123,20 @@ public class StudyServiceImpl implements StudyService {
             return pair.getLeft();
         }
         return ddiReaderService.readDDIDocument(path, pair.getRight());
+    }
+
+    @Override
+    public String getOrganizations() {
+        Pair<ReturnResult, String> result =  miscJSONRepository.findStringByKey("Organizations");
+
+        return result == null || result.getRight() == null ? "" : result.getRight();
+    }
+
+    @Override
+    public ReturnResult uploadOrganizations(JsonNode misc) {
+        //backupAndCopy(file, "misc");
+
+        ReturnResult result = miscJSONRepository.insert(misc);
+        return result == ReturnResult.DATABASE_INSERT_SUCCESS ? ReturnResult.OPERATION_SUCCESSFUL : result;
     }
 }

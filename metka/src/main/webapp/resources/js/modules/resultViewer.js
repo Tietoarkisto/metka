@@ -61,7 +61,6 @@ define(function (require) {
                 }]
             }),
             success: function (data) {
-
                 if(callback) {
                     dismiss.create = function () {
                         this.click(function () {
@@ -69,7 +68,6 @@ define(function (require) {
                         });
                     };
                 }
-                log(data);
                 require('./modal')({
                     title: MetkaJS.L10N.get('alert.'+(getPropertyNS(data, 'responses.0.options.0.title.value') || "NOTICE").toLowerCase()+'.title'),
                     body: (getPropertyNS(data, 'responses.1.options.0.title.value') || result+(operation ? "."+operation : "")),
