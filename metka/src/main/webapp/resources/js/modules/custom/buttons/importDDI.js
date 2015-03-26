@@ -4,7 +4,7 @@ define(function (require) {
     return function(options) {
         this.click( function() {
             //require('./../../assignUrl')('ddiexport');
-            require('./../../modal')($.extend(true, require('./optionsBase')(), {
+            require('./../../modal')($.extend(true, require('./../../optionsBase')(), {
                 '&title': {
                     default: "Tuo DDI"
                 },

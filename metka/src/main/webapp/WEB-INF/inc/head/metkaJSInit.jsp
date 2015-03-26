@@ -22,17 +22,17 @@
 
     // This is used to test different users in client code
     // These values are never returned to server so they don't enable any shenanigans
-    <%--<c:if test="${not empty uUserName}">
+    <c:if test="${not empty uUserName}">
     MetkaJS.User.userName = "${uUserName}";
     </c:if>
 
     <c:if test="${not empty uDisplayName}">
     MetkaJS.User.displayName = "${uDisplayName}";
-    </c:if>--%>
+    </c:if>
 
     /* User */
-    MetkaJS.User.userName = "user";
-    MetkaJS.User.displayName = "Perus Pena";
+    /*MetkaJS.User.userName = "user";
+    MetkaJS.User.displayName = "Perus Pena";*/
 
     /* Admin */
     /*MetkaJS.User.userName = "admin";

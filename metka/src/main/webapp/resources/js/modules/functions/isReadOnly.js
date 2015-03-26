@@ -6,7 +6,7 @@ define(function(require) {
         if(!options) {
             return false;
         }
-
+        
         // If we have data and data has state and state has uiState check state
         // If need be we can move this back to it's own function so it's usable by other read only code as well
         if(options.data && options.data.state && options.data.state.uiState) {
