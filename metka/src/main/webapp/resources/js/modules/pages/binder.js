@@ -77,7 +77,7 @@ define(function (require) {
                                         var supplant = {
                                             binderId: transferRow.fields.binderId.values.DEFAULT.current
                                         };
-                                        require('./../modal')({
+                                        require('./../modal')($.extend(true, require('./../optionsBase')(), {
                                             title: 'Mapin {binderId} sisältö'.supplant(supplant),
                                             fieldTitles: fieldTitles,
                                             data: {},
@@ -134,7 +134,7 @@ define(function (require) {
                                             buttons: [{
                                                 type: 'DISMISS'
                                             }]
-                                        });
+                                        }));
                                         /*require('./../assignUrl')('view', {
                                             PAGE: 'STUDY',
                                             id: transferRow.fields.study.values.DEFAULT.current
@@ -256,7 +256,7 @@ define(function (require) {
                                     }]
                                 };
 
-                                require('./../modal')(containerOptions);
+                                require('./../modal')($.extend(true, require('./../optionsBase')(), containerOptions));
                             });
                     }
                 }

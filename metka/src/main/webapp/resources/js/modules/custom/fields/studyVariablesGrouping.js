@@ -225,7 +225,7 @@ define(function (require) {
                                                 ]
                                             }]
                                         };
-                                        require('./../../modal')({
+                                        require('./../../modal')($.extend(true, require('./../../optionsBase')(), {
                                             //title: 'Lisää ryhmä',
                                             type: "ADD",
                                             dialogTitle: {
@@ -269,7 +269,7 @@ define(function (require) {
                                             }, {
                                                 type: 'CANCEL'
                                             }]
-                                        });
+                                        }));
                                     });
                             }
                         }))));

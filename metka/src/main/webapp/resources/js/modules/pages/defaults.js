@@ -83,11 +83,11 @@ define(function (require) {
                                                             $button.trigger('refresh.metka');
                                                             history.replaceState(undefined, '', require('./../url')('view'));
                                                         } else {
-                                                            require('./../modal')({
+                                                            require('./../modal')($.extend(true, require('./../optionsBase')(), {
                                                                 title: MetkaJS.L10N.get('alert.error.title'),
                                                                 body: response.result,
                                                                 buttons: ["DISMISS"]
-                                                            });
+                                                            }));
                                                         }
                                                     }
                                                 });
@@ -104,11 +104,11 @@ define(function (require) {
                                                 if(response.result === "REVISION_FOUND") {
                                                     saveAs(new Blob([response.content], {type: "text/json;charset=utf-8"}), "id_"+response.id+"_revision_"+response.no+".json");
                                                 } else {
-                                                    require('./../modal')({
+                                                    require('./../modal')($.extend(true, require('./../optionsBase')(), {
                                                         title: MetkaJS.L10N.get('alert.error.title'),
                                                         body: response.result,
                                                         buttons: ["DISMISS"]
-                                                    });
+                                                    }));
                                                 }
                                             }
                                         });

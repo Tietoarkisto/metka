@@ -18,7 +18,6 @@ define(function (require) {
                     .on('refresh.metka', function () {
                         metka.id = options.data.key.id;
                         metka.no = options.data.key.no;
-                        options.readOnly = require('./isDataReadOnly')(options.data);
 
                         // (re-)render page
                         var $this = $(this)

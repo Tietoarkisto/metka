@@ -20,13 +20,23 @@
 
     MetkaJS.contextPath = "${contextPath}";
 
-    <c:if test="${not empty uUserName}">
+    // This is used to test different users in client code
+    // These values are never returned to server so they don't enable any shenanigans
+    <%--<c:if test="${not empty uUserName}">
     MetkaJS.User.userName = "${uUserName}";
     </c:if>
 
     <c:if test="${not empty uDisplayName}">
     MetkaJS.User.displayName = "${uDisplayName}";
-    </c:if>
+    </c:if>--%>
+
+    /* User */
+    MetkaJS.User.userName = "user";
+    MetkaJS.User.displayName = "Perus Pena";
+
+    /* Admin */
+    /*MetkaJS.User.userName = "admin";
+    MetkaJS.User.displayName = "Admin Pena";*/
 
     <c:if test="${not empty uRole}">
     MetkaJS.User.role = ${uRole};

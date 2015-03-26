@@ -4,7 +4,7 @@ define(function (require) {
     return function(options) {
         this.click( function() {
             //require('./../../assignUrl')('ddiexport');
-            require('./../../modal')({
+            require('./../../modal')($.extend(true, require('./optionsBase')(), {
                 '&title': {
                     default: "Tuo DDI"
                 },
@@ -63,7 +63,7 @@ define(function (require) {
                                         type: 'DISMISS'
                                     };
 
-                                    require('./../../modal')({
+                                    require('./../../modal')($.extend(true, require('./../../optionsBase')(), {
                                         title: MetkaJS.L10N.get(response === 'OPERATION_SUCCESSFUL' ? 'alert.notice.title' : 'alert.error.title'),
                                         body: response,
                                         buttons: [dismiss],
@@ -79,7 +79,7 @@ define(function (require) {
                                                 }
                                             }
                                         }
-                                    });
+                                    }));
                                 }
                             });
                         });
@@ -87,7 +87,7 @@ define(function (require) {
                 }, {
                     type: 'DISMISS'
                 }]
-            });
+            }));
         });
     };
 });

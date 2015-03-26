@@ -17,10 +17,8 @@ define(function (require) {
                     translatableCurrentLang: MetkaJS.User.role.defaultLanguage.toUpperCase(),
                     large: true
                 });
-                require('./isRelatedStudyDraftForCurrentUser')(modalOptions, function (isDraft) {
-                    modalOptions.isRelatedStudyDraftForCurrentUser = isDraft;
-                    var $modal = require('./modal')(modalOptions);
-                });
+
+                require('./modal')($.extend(true, require('./optionsBase')(), modalOptions));
             }
         });
     };

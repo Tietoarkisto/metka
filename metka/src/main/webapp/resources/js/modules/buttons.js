@@ -127,7 +127,7 @@ define(function (require) {
                                     });
                                 })())));
 
-                    require('./modal')({
+                    require('./modal')($.extend(true, require('./optionsBase')(), {
                         title: MetkaJS.L10N.get('general.revision.revisions'),
                         body: $table,
                         large: true,
@@ -150,14 +150,14 @@ define(function (require) {
                                                             return $('<th>')
                                                                 .text(entry);
                                                         }))));
-                                        require('./modal')({
+                                        require('./modal')($.extend(true, require('./optionsBase')(), {
                                             title: MetkaJS.L10N.get('general.revision.revisions'),
                                             body: $table,
                                             large: true,
                                             buttons: [{
                                                 type: 'DISMISS'
                                             }]
-                                        });
+                                        }));
 
                                         require('./server')('/revision/revisionCompare', {
                                             data: JSON.stringify({
@@ -199,7 +199,7 @@ define(function (require) {
                         }, {
                             type: 'DISMISS'
                         }]
-                    });
+                    }));
                     require('./server')('/revision/revisionHistory', {
                         data: JSON.stringify({
                             id: metka.id

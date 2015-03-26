@@ -30,7 +30,11 @@ define(function (require) {
                 }
             }
 
-            return require('./hasEveryPermission')(options.permissions);
+            if(!require('./hasEveryPermission')(options.permissions)) {
+                return false;
+            }
+
+            return true;
         }
 
         options = options || {};
@@ -41,9 +45,19 @@ define(function (require) {
             buttons[options.type].call($button, options);
         }
 
-        $button
-            .addClass('btn-' + (options.style || 'primary'))
-            .toggleClass('hiddenByButtonConfiguration', !isVisible());
+        $button.addClass('btn-' + (options.style || 'primary'));
+
+        if(!!options.isHandledByUser && options.isHandledByUser.length > 0) {
+            require('./isHandledByUser')(options, options.isHandledByUser, function(isHandledByUser) {
+                if(isHandledByUser) {
+                    $button.toggleClass('hiddenByButtonConfiguration', !isVisible());
+                } else {
+                    $button.toggleClass('hiddenByButtonConfiguration', true);
+                }
+            });
+        } else {
+            $button.toggleClass('hiddenByButtonConfiguration', !isVisible());
+        }
 
         $button
             .text(MetkaJS.L10N.localize(options, 'title'));

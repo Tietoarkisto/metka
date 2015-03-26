@@ -322,6 +322,7 @@
             },
             "type": "CUSTOM",
             "customHandler": "studyVariableSave",
+            "isHandledByUser": "study",
             "isHandler": true,
             "states": [
                 "DRAFT"
@@ -334,8 +335,8 @@
             "&title": {
                 "default": "Tee luonnos"
             },
-            "type": "CUSTOM",
-            "customHandler": "studyVariableEdit",
+            "type": "EDIT",
+            "isHandledByUser": "study",
             "states": [
                 "APPROVED"
             ],
@@ -345,8 +346,9 @@
         },
         {
             "title": "Palauta",
-            "type": "CUSTOM",
-            "customHandler": "studyVariableRestore",
+            "type": "RESTORE",
+            "_comment": "Does this need to be tied to some other state than DRAFT for target study?",
+            "isHandledByUser": "study",
             "states": [
                 "REMOVED"
             ],

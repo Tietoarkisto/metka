@@ -20,7 +20,6 @@ define(function (require) {
         var $modal = $('<div class="modal fade" tabindex="-1" role="dialog" id="'+options.modalTarget+'">')
             .append($('<div class="modal-dialog">')
                 .on('refresh.metka', function () {
-                    options.readOnly = require('./isDataReadOnly')(options.data, options.isRelatedStudyDraftForCurrentUser);
                     if (!options.buttons) {
                         options.buttons = [];
                     } else {

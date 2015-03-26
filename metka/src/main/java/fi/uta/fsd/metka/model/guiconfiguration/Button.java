@@ -14,6 +14,7 @@ import java.util.Set;
 public class Button {
     private TranslationObject title;
     private final Set<String> permissions = new HashSet<>();
+    private String isHandledByUser;
     private Boolean isHandler;
     private Boolean hasHandler;
     private final Set<VisibilityState> states = new HashSet<>();
@@ -30,6 +31,14 @@ public class Button {
 
     public Set<String> getPermissions() {
         return permissions;
+    }
+
+    public String getIsHandledByUser() {
+        return isHandledByUser;
+    }
+
+    public void setIsHandledByUser(String isHandledByUser) {
+        this.isHandledByUser = isHandledByUser;
     }
 
     public Boolean getIsHandler() {

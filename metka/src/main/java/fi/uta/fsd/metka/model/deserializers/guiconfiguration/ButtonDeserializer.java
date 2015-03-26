@@ -31,13 +31,19 @@ public class ButtonDeserializer extends ObjectDeserializer<Button> {
         }
         btn.setTitle(loc);
 
-        // Set handler
+        // Set referenceIsHandledByUser
+        JsonNode isHandledByUser = node.get("isHandledByUser");
+        if(isHandledByUser != null && isHandledByUser.getNodeType() == JsonNodeType.STRING) {
+            btn.setIsHandledByUser(isHandledByUser.textValue());
+        }
+
+        // Set isHandler
         JsonNode handler = node.get("isHandler");
         if(handler != null && handler.getNodeType() == JsonNodeType.BOOLEAN) {
             btn.setIsHandler(handler.booleanValue());
         }
 
-        // Set handler
+        // Set hasHandler
         handler = node.get("hasHandler");
         if(handler != null && handler.getNodeType() == JsonNodeType.BOOLEAN) {
             btn.setHasHandler(handler.booleanValue());

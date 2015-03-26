@@ -68,11 +68,11 @@ define(function (require) {
                         });
                     };
                 }
-                require('./modal')({
+                require('./modal')($.extend(true, require('./optionsBase')(), {
                     title: MetkaJS.L10N.get('alert.'+(getPropertyNS(data, 'responses.0.options.0.title.value') || "NOTICE").toLowerCase()+'.title'),
                     body: (getPropertyNS(data, 'responses.1.options.0.title.value') || result+(operation ? "."+operation : "")),
                     buttons: [dismiss]
-                });
+                }));
             },
             error: function(jqXHR, status, thrown) {
                 // TODO: Form exception dialog

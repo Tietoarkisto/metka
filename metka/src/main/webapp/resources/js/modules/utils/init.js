@@ -87,13 +87,13 @@ define(function (require) {
     $(document).ajaxError(function (e, request) {
         var $body = $('<div>').append(request.responseText);
         $body.find('style').remove();
-        require('./../modal')({
+        require('./../modal')($.extend(true, require('./../optionsBase')(), {
             title: MetkaJS.L10N.get('alert.error.title'),
             body: $body,
             buttons: [{
                 type: 'DISMISS'
             }]
-        });
+        }));
     });
 
     // JSON Editor default options

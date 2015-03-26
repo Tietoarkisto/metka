@@ -3,7 +3,7 @@ define(function (require) {
 
     return function(options) {
         this.click( function() {
-            require('./../../modal')({
+            require('./../../modal')($.extend(true, require('./../../optionsBase')(), {
                 '&title': {
                     default: "Lataa DDI"
                 },
@@ -89,7 +89,7 @@ define(function (require) {
                 }, {
                     type: 'DISMISS'
                 }]
-            });
+            }));
         });
     };
 });

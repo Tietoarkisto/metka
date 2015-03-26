@@ -303,11 +303,11 @@ define(function (require) {
                                                                 require('./../server')("/settings/uploadJson", {
                                                                     data: JSON.stringify(request),
                                                                     success: function (response) {
-                                                                        require('./../modal')({
+                                                                        require('./../modal')($.extend(true, require('./../optionsBase')(), {
                                                                             title: MetkaJS.L10N.get(response === "OPERATION_SUCCESSFUL" ? 'alert.notice.title' : 'alert.error.title'),
                                                                             body: response,
                                                                             buttons: ["DISMISS"]
-                                                                        });
+                                                                        }));
                                                                     }
                                                                 });
                                                             });
@@ -413,11 +413,11 @@ define(function (require) {
                                                                 require('./../server')("/settings/uploadJson", {
                                                                     data: JSON.stringify(request),
                                                                     success: function (response) {
-                                                                        require('./../modal')({
+                                                                        require('./../modal')($.extend(true, require('./../optionsBase')(), {
                                                                             title: MetkaJS.L10N.get(response === "OPERATION_SUCCESSFUL" ? 'alert.notice.title' : 'alert.error.title'),
                                                                             body: response,
                                                                             buttons: ["DISMISS"]
-                                                                        });
+                                                                        }));
                                                                     }
                                                                 });
                                                             });
@@ -521,11 +521,11 @@ define(function (require) {
                                                                 require('./../server')("/settings/uploadJson", {
                                                                     data: JSON.stringify(request),
                                                                     success: function (response) {
-                                                                        require('./../modal')({
+                                                                        require('./../modal')($.extend(true, require('./../optionsBase')(), {
                                                                             title: MetkaJS.L10N.get(response === "OPERATION_SUCCESSFUL" ? 'alert.notice.title' : 'alert.error.title'),
                                                                             body: response,
                                                                             buttons: ["DISMISS"]
-                                                                        });
+                                                                        }));
                                                                     }
                                                                 });
                                                             });
@@ -1005,11 +1005,11 @@ define(function (require) {
                                                                 json: JSON.stringify($editor.data('jsoneditor').getValue())
                                                             }),
                                                             success: function (response) {
-                                                                require('./../modal')({
+                                                                require('./../modal')($.extend(true, require('./../optionsBase')(), {
                                                                     title: MetkaJS.L10N.get(response === "OPERATION_SUCCESSFUL" ? 'alert.notice.title' : 'alert.error.title'),
                                                                     body: response,
                                                                     buttons: ["DISMISS"]
-                                                                });
+                                                                }));
                                                             }
                                                         });
                                                     });

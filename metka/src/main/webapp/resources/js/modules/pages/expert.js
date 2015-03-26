@@ -179,7 +179,7 @@ define(function (require) {
                                         ]
                                     }]
                                 };
-                                require('./../modal')({
+                                require('./../modal')($.extend(true, require('./../optionsBase')(), {
                                     //title: 'Tallenna haku',
                                     type: "ADD",
                                     dialogTitle: {
@@ -205,7 +205,7 @@ define(function (require) {
                                     }, {
                                         type: 'CANCEL'
                                     }]
-                                });
+                                }));
                             });
                     }
                 }

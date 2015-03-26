@@ -4,7 +4,7 @@ define(function (require) {
     return function (options) {
         return function () {
             var operationType = options.data.state.uiState === 'DRAFT' ? 'draft' : 'logical';
-            require('./modal')({
+            require('./modal')($.extend(true, require('./optionsBase')(), {
                 title: MetkaJS.L10N.get('confirmation.remove.revision.title'),
                 // TODO: simpler/unified way to supplement localization keys/texts
                 body: MetkaJS.L10N.get('confirmation.remove.revision.{operationType}.text'.supplant({
@@ -47,7 +47,7 @@ define(function (require) {
                 }, {
                     type: 'NO'
                 }]
-            });
+            }));
         };
     };
 });

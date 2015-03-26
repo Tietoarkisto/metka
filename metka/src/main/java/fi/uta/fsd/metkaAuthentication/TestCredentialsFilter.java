@@ -16,8 +16,8 @@ public class TestCredentialsFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         //setReaderAttributes(request);
-        setUserAttributes(request);
-        //setAdminAttributes(request);
+        //setUserAttributes(request);
+        setAdminAttributes(request);
 
         filterChain.doFilter(request, response);
     }
@@ -31,7 +31,7 @@ public class TestCredentialsFilter extends OncePerRequestFilter {
     }
 
     private void setUserAttributes(HttpServletRequest request) {
-        setRequestAttributes(request, "user", "Peus Pena", "metka:basic-user");
+        setRequestAttributes(request, "user", "Perus Pena", "metka:basic-user");
     }
 
     private void setTranslatorAttributes(HttpServletRequest request) {

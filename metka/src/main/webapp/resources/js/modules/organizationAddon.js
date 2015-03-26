@@ -27,7 +27,7 @@ define(function (require) {
                                     }).on('change', function() {
                                         $(this).find('.btn').addClass('btn-sm');
                                     });
-                                    require('./modal')({
+                                    require('./modal')($.extend(true, require('./optionsBase')(), {
                                         title: 'Lisää',
                                         large: true,
                                         body: $editor,
@@ -49,7 +49,7 @@ define(function (require) {
                                                                             json: JSON.stringify(organizations)
                                                                         }),
                                                                         success: function (response) {
-                                                                            require('./modal')({
+                                                                            require('./modal')($.extend(true, require('./optionsBase')(), {
                                                                                 title: MetkaJS.L10N.get(response === 'OPERATION_SUCCESSFUL' ? 'alert.notice.title' : 'alert.error.title'),
                                                                                 body: response,
                                                                                 buttons: [{
@@ -60,7 +60,7 @@ define(function (require) {
                                                                                         });
                                                                                     }
                                                                                 }]
-                                                                            });
+                                                                            }));
                                                                         }
                                                                     });
                                                                 }
@@ -71,7 +71,7 @@ define(function (require) {
                                         }, {
                                             type: 'CANCEL'
                                         }]
-                                    });
+                                    }));
                                 });
                         }
                     });

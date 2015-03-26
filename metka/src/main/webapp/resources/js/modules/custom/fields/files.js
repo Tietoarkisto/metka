@@ -281,8 +281,7 @@ define(function (require) {
                                                                     success: function (response) {
                                                                         if (response.result === 'VIEW_SUCCESSFUL') {
                                                                             $.extend(modalOptions.data, response.transferData);
-                                                                            modalOptions.readOnly = require('./../../isDataReadOnly')(modalOptions.data, modalOptions.isRelatedStudyDraftForCurrentUser);
-                                                                            modalOptions.type = modalOptions.readOnly ? 'VIEW' : 'MODIFY';
+                                                                            modalOptions.type = modalOptions.isReadOnly(modalOptions) ? 'VIEW' : 'MODIFY';
                                                                             $row.trigger('refresh.metka');
                                                                         }
                                                                     }
@@ -322,17 +321,16 @@ define(function (require) {
                                 ],
                                 buttons: [{
                                     "title": "Tallenna",
-                                    "isHandler": true,
                                     "states": [
                                         "DRAFT"
                                     ],
+                                    "isHandler": true,
                                     "permissions": [
                                         "canEditRevision"
                                     ],
                                     create: function (options) {
                                         options.preventDismiss = true;
                                         var $this = $(this);
-                                        $this.toggleClass('hiddenByCustomCode', !require('./../../root')(options).isRelatedStudyDraftForCurrentUser);
                                         this.click(require('./../../save')(modalOptions, function(response) {
                                             // TODO: Check that if result is SAVE_SUCCESSFUL_WITH_ERRORS then don't close the dialog and instead reload data from TransferData
                                             if(response.result === 'SAVE_SUCCESSFUL_WITH_ERRORS') {
@@ -346,9 +344,9 @@ define(function (require) {
                                         }));
                                     }
                                 }, {
-                                    "type": "CUSTOM",
+                                    "type": "EDIT",
                                     "title": "Tee luonnos",
-                                    "customHandler": "studyAttachmentEdit",
+                                    "isHandledByUser": "study",
                                     "permissions": [
                                         "canEditRevision"
                                     ],
@@ -362,11 +360,11 @@ define(function (require) {
                                         "APPROVED"
                                     ],
                                     "isHandler": true,
+                                    "isHandledByUser": "study",
                                     "permissions": [
                                         "canRemoveRevision"
                                     ],
                                     create: function (options) {
-                                        $(this).toggleClass('hiddenByCustomCode', !require('./../../root')(options).isRelatedStudyDraftForCurrentUser);
                                         this.click(require('./../../remove')($.extend({
                                             success: {
                                                 SUCCESS_LOGICAL: refreshPage,
@@ -384,22 +382,16 @@ define(function (require) {
                                     "permissions": [
                                         "canRestoreRevision"
                                     ],
+                                    "isHandledByUser": "study",
                                     request: {
                                         success: refreshPage
-                                    },
-                                    create: function(options) {
-                                        $(this).toggleClass('hiddenByCustomCode', !require('./../../root')(options).isRelatedStudyDraftForCurrentUser);
                                     }
                                 }, {
                                     type: 'CANCEL'
                                 }]
                             });
-                            require('../../isRelatedStudyDraftForCurrentUser')(modalOptions, function (isDraft) {
-                                modalOptions.isRelatedStudyDraftForCurrentUser = isDraft;
-                                modalOptions.readOnly = require('./../../isDataReadOnly')(response.transferData, isDraft);
-                                modalOptions.type = modalOptions.readOnly ? 'VIEW' : 'MODIFY';
-                                require('./../../modal')(modalOptions);
-                            });
+                            modalOptions.type = modalOptions.isReadOnly(modalOptions) ? 'VIEW' : 'MODIFY';
+                            require('./../../modal')($.extend(true, require('./../../optionsBase')(), modalOptions));
                         }
                     });
                 }

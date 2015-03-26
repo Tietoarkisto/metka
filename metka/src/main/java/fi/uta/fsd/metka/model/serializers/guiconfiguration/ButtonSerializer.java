@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import fi.uta.fsd.metka.enums.VisibilityState;
 import fi.uta.fsd.metka.model.guiconfiguration.Button;
 import fi.uta.fsd.metka.model.serializers.ObjectSerializer;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 
@@ -30,6 +31,13 @@ public class ButtonSerializer extends ObjectSerializer<Button> {
             jgen.writeObjectField("&title", value.getTitle());
         } else {
             jgen.writeNullField("&title");
+        }
+
+        // Write isHandledByUser
+        if(StringUtils.hasText(value.getIsHandledByUser())) {
+            jgen.writeStringField("isHandledByUser", value.getIsHandledByUser());
+        } else {
+            jgen.writeNullField("isHandledByUser");
         }
 
         // Write isHandler

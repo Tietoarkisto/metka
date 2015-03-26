@@ -53,8 +53,7 @@ define(function (require) {
                 if (!options.fieldOptions.translatable && require('./containerHasTranslatableSubfields')(options)) {
                     modalOptions.translatableCurrentLang = $('input[name="translation-lang"]:checked').val() || MetkaJS.User.role.defaultLanguage.toUpperCase();
                 }
-                var $modal = require('./modal')(modalOptions);
-
+                require('./modal')($.extend(true, require('./optionsBase')(), modalOptions));
             };
         }
     };
