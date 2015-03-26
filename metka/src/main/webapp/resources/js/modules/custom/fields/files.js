@@ -390,8 +390,10 @@ define(function (require) {
                                     type: 'CANCEL'
                                 }]
                             });
+                            // We need the isReadOnly function at this point so we need to add it before calling modal
+                            modalOptions = $.extend(true, require('./../../optionsBase')(), modalOptions);
                             modalOptions.type = modalOptions.isReadOnly(modalOptions) ? 'VIEW' : 'MODIFY';
-                            require('./../../modal')($.extend(true, require('./../../optionsBase')(), modalOptions));
+                            require('./../../modal')(modalOptions);
                         }
                     });
                 }
