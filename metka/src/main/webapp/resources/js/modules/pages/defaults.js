@@ -83,7 +83,7 @@ define(function (require) {
                                                             $button.trigger('refresh.metka');
                                                             history.replaceState(undefined, '', require('./../url')('view'));
                                                         } else {
-                                                            require('./../resultViewer')(response.result, operation);
+                                                            require('./../resultViewer')(response.result);
                                                         }
                                                     }
                                                 });

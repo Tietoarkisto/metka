@@ -303,7 +303,7 @@ define(function (require) {
                                                                 require('./../server')("/settings/uploadJson", {
                                                                     data: JSON.stringify(request),
                                                                     success: function (response) {
-                                                                        require('./../resultViewer')(response, operation);
+                                                                        require('./../resultViewer')(response);
                                                                     }
                                                                 });
                                                             });
@@ -409,7 +409,7 @@ define(function (require) {
                                                                 require('./../server')("/settings/uploadJson", {
                                                                     data: JSON.stringify(request),
                                                                     success: function (response) {
-                                                                        require('./../resultViewer')(response, operation);
+                                                                        require('./../resultViewer')(response);
                                                                     }
                                                                 });
                                                             });
@@ -513,7 +513,7 @@ define(function (require) {
                                                                 require('./../server')("/settings/uploadJson", {
                                                                     data: JSON.stringify(request),
                                                                     success: function (response) {
-                                                                        require('./../resultViewer')(response, operation);
+                                                                        require('./../resultViewer')(response);
                                                                     }
                                                                 });
                                                             });
@@ -993,7 +993,7 @@ define(function (require) {
                                                                 json: JSON.stringify($editor.data('jsoneditor').getValue())
                                                             }),
                                                             success: function (response) {
-                                                                require('./../resultViewer')(response, operation);
+                                                                require('./../resultViewer')(response);
                                                             }
                                                         });
                                                     });

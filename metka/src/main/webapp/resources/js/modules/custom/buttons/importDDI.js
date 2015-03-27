@@ -59,7 +59,7 @@ define(function (require) {
                                     transferData: options.parentData
                                 }),
                                 success: function (response) {
-                                    require('./../../resultViewer')(response, operation, function() {
+                                    require('./../../resultViewer')(response, null, function() {
                                         if (response === 'OPERATION_SUCCESSFUL') {
                                             var $metka = require('../../../metka');
                                             require('../../assignUrl')('view', {
