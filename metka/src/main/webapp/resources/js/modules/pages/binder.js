@@ -183,7 +183,7 @@ define(function (require) {
                     create: function () {
                         this
                             .click(function () {
-                                var containerOptions = {
+                                var containerOptions = $.extend(true, require('./../optionsBase')(), {
                                     title: 'Lisää aineisto mappiin',
                                     data: {},
                                     dataConf: {},
@@ -254,9 +254,9 @@ define(function (require) {
                                     }, {
                                         type: 'CANCEL'
                                     }]
-                                };
+                                });
 
-                                require('./../modal')($.extend(true, require('./../optionsBase')(), containerOptions));
+                                require('./../modal')(containerOptions);
                             });
                     }
                 }

@@ -4,7 +4,6 @@ define(function (require) {
     var getPropertyNS = require('./utils/getPropertyNS');
 
     return function (options, lang) {
-        //var fieldOptions = getPropertyNS(options, 'dataConf.fields', key) || {};
         switch(options.fieldOptions.type) {
             case 'REFERENCECONTAINER':
                 /*// FIXME: Merge shared code with containerRowDialog.

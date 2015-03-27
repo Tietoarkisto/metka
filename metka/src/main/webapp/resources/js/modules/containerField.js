@@ -191,6 +191,7 @@ define(function (require) {
         }
 
         function addRow($container, transferRow, columnList) {
+
             require('./data')(options).appendByLang(lang, transferRow);
             return appendRow($container, transferRow, columnList);
         }

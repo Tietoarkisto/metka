@@ -166,12 +166,10 @@ define(function (require) {
                                                 end: $('input[name="endGrp"]:checked').val()
                                             }),
                                             success: function (response) {
-                                                log(response);
                                                 if (response.result === 'OPERATION_SUCCESSFUL') {
                                                     $table
                                                         .append($('<tbody>')
                                                             .append(response.rows.map(function (row) {
-                                                                log(row);
                                                                 var parts = row.key.split('[');
                                                                 /*if (parts.length < 2) {
                                                                     return;

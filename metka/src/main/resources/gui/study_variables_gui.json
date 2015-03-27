@@ -207,7 +207,7 @@
     "buttons": [
         {
             "title": "Tallenna",
-            "type": "CUSTOM",
+            "type": "SAVE",
             "isHandledByUser": "study",
             "isHandler": true,
             "states": [
@@ -230,7 +230,7 @@
         },
         {
             "title": "Palauta",
-            "type": "CUSTOM",
+            "type": "RESTORE",
             "_comment": "Does this need to be tied to some other state than DRAFT for target study?",
             "isHandledByUser": "study",
             "states": [

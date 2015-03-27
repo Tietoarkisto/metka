@@ -199,7 +199,7 @@ define(function (require) {
                                     .addClass('btn-sm')
                                     .click(function () {
                                         // TODO this is mostly same as saving expert search queries. group shared code together
-                                        var containerOptions = {
+                                        var containerOptions = $.extend(true, require('./../../optionsBase')(), {
                                             data: {},
                                             dataConf: {},
                                             $events: $({}),
@@ -224,7 +224,7 @@ define(function (require) {
                                                     }
                                                 ]
                                             }]
-                                        };
+                                        });
                                         require('./../../modal')($.extend(true, require('./../../optionsBase')(), {
                                             //title: 'Lisää ryhmä',
                                             type: "ADD",

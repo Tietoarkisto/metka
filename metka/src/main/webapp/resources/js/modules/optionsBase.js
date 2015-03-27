@@ -5,7 +5,7 @@ define(function(require) {
         return {
             header: 'Metka',
             parent: parent,
-            isReadOnly: require('./functions/isReadOnly'),
+            isReadOnly: (parent && parent.isReadOnly ? parent.isReadOnly : require('./functions/isReadOnly')),
             content: [],
             body: null,
             data: {},

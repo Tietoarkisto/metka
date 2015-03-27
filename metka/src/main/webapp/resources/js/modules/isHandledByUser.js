@@ -25,7 +25,7 @@ define(function (require) {
         if(field.type === 'REFERENCE') {
             reference = getPropertyNS(dataConf, 'references', field.reference);
         } else if(field.type === 'SELECTION') {
-            var selectionList = getPropertyNS(dataConf, 'selectionLists', field.selectionList);
+            var selectionList = require('./selectionList')(options, key);
             if(!selectionList || selectionList.type !== 'REFERENCE') {
                 return false;
             }
@@ -34,8 +34,6 @@ define(function (require) {
         if(!reference || reference.type !== 'REVISIONABLE') {
             return false;
         }
-
-
 
         require('./server')('viewAjax', {
             PAGE: reference.target,
