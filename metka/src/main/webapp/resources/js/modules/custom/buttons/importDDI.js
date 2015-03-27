@@ -59,27 +59,16 @@ define(function (require) {
                                     transferData: options.parentData
                                 }),
                                 success: function (response) {
-                                    var dismiss = {
-                                        type: 'DISMISS'
-                                    };
-
-                                    require('./../../modal')($.extend(true, require('./../../optionsBase')(), {
-                                        title: MetkaJS.L10N.get(response === 'OPERATION_SUCCESSFUL' ? 'alert.notice.title' : 'alert.error.title'),
-                                        body: response,
-                                        buttons: [dismiss],
-                                        modalEvents: {
-                                            'hidden.bs.modal': function() {
-                                                if (response === 'OPERATION_SUCCESSFUL') {
-                                                    var $metka = require('../../../metka');
-                                                    require('../../assignUrl')('view', {
-                                                        PAGE: $metka.PAGE,
-                                                        id: $metka.id,
-                                                        no: $metka.no
-                                                    });
-                                                }
-                                            }
+                                    require('./../../resultViewer')(response, operation, function() {
+                                        if (response === 'OPERATION_SUCCESSFUL') {
+                                            var $metka = require('../../../metka');
+                                            require('../../assignUrl')('view', {
+                                                PAGE: $metka.PAGE,
+                                                id: $metka.id,
+                                                no: $metka.no
+                                            });
                                         }
-                                    }));
+                                    });
                                 }
                             });
                         });

@@ -83,11 +83,7 @@ define(function (require) {
                                                             $button.trigger('refresh.metka');
                                                             history.replaceState(undefined, '', require('./../url')('view'));
                                                         } else {
-                                                            require('./../modal')($.extend(true, require('./../optionsBase')(), {
-                                                                title: MetkaJS.L10N.get('alert.error.title'),
-                                                                body: response.result,
-                                                                buttons: ["DISMISS"]
-                                                            }));
+                                                            require('./../resultViewer')(response.result, operation);
                                                         }
                                                     }
                                                 });

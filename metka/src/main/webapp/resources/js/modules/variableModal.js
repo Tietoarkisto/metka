@@ -7,7 +7,6 @@ define(function (require) {
         }, requestOptions), {
             method: 'GET',
             success: function (data) {
-                log(data);
                 var modalOptions = $.extend(data.gui, {
                     title: 'Muokkaa muuttujaa',
                     data: data.transferData,

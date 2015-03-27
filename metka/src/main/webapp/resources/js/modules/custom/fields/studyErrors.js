@@ -169,6 +169,7 @@ define(function (require) {
                 },
                 showSaveInfo: false,
                 onRowChange: function (options, $tr, transferRow) {
+                    log("transferRow", transferRow);
                     var data = require('./../../map/transferRow/object')(transferRow, options.defaultLang);
                     data.studyId = MetkaJS.revisionId;
                     if(data.errortriggerdate) {
@@ -179,6 +180,7 @@ define(function (require) {
                     }
                     delete data.savedAt;
                     delete data.savedBy;
+                    log('data', data);
                     require('./../../server')('/study/updateError/', {
                         data: JSON.stringify(data),
                         success: function (response) {

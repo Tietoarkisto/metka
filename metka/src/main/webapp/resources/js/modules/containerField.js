@@ -230,6 +230,7 @@ define(function (require) {
                         var $trNew = tr(transferRow);
                         $tr.replaceWith($trNew);
                         if (options.field.onRowChange) {
+                            log("first", transferRow);
                             options.field.onRowChange(options, $trNew, transferRow);
                         }
                         $tbody.trigger('rowChanged', [$trNew, columns]);
@@ -349,8 +350,10 @@ define(function (require) {
                                 .click(function () {
                                     (options.field.onAdd || rowDialog('ADD', 'add'))
                                         .call(this, {}, function (transferRow) {
+                                            log('pre-second', transferRow);
                                             var $tr = addRow($tbody, transferRow, columns);
                                             if (options.field.onRowChange) {
+                                                log("second", transferRow);
                                                 options.field.onRowChange(options, $tr, transferRow);
                                             }
                                         });
