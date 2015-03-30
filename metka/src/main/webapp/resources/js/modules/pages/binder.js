@@ -39,6 +39,85 @@ define(function (require) {
     return function (options, onLoad) {
         var commonSearchBooleans = require('./../commonSearchBooleans');
 
+        function navigateToStudy(e, $tr, columns) {
+            $tr.children().eq(columns.indexOf('studyId')).wrapInner('<a href="{url}"></a>'.supplant({
+                url: require('./../url')('view', {
+                    PAGE: 'STUDY',
+                    id: $tr.data('transferRow').fields.study.values.DEFAULT.current,
+                    no: ''
+                })
+            }));
+        }
+
+        function openBinder(e, $tr, columns) {
+            log($tr.data('transferRow').fields.binderId.values.DEFAULT.current);
+            var transferRow = $tr.data('transferRow');
+            $tr.children().eq(columns.indexOf('binderId')).wrapInner('<a></a>').click(function() {
+                var supplant = {
+                    binderId: transferRow.fields.binderId.values.DEFAULT.current
+                };
+                require('./../modal')($.extend(true, require('./../optionsBase')(), {
+                    title: 'Mapin {binderId} sisältö'.supplant(supplant),
+                    fieldTitles: fieldTitles,
+                    data: {},
+                    dataConf: dataConf,
+                    $events: $({}),
+                    defaultLang: options.defaultLang,
+                    large: true,
+                    content: [{
+                        type: 'COLUMN',
+                        columns: 1,
+                        rows: [
+                            {
+                                "type": "ROW",
+                                "cells": [
+                                    {
+                                        "type": "CELL",
+                                        "title": "Sisältö",
+                                        "colspan": 1,
+                                        "readOnly": true,
+                                        "field": {
+                                            "displayType": "CONTAINER",
+                                            "showSaveInfo": true,
+                                            "columnFields": [
+                                                "studyId",
+                                                "studyTitle",
+                                                "description"
+                                            ],
+                                            onRemove: MetkaJS.User.role.permissions.canEditBinderPages ? function ($tr) {
+                                                require('./../server')('/binder/removePage/{pageId}', {
+                                                    pageId: $tr.data('transferRow').fields.pageId.values.DEFAULT.current
+                                                }, {
+                                                    method: 'GET'
+                                                });
+                                                $tr.remove();
+                                            } : false
+                                        },
+                                        create: function () {
+                                            var $containerField = $(this).children();
+                                            $containerField.find('table')
+                                                .removeClass('table-hover')
+                                                .children('tbody').off('click', 'tr');
+                                            $containerField.find('tbody').first().on('rowAppended', navigateToStudy);
+                                            require('./../server')('/binder/binderContent/{binderId}', supplant, {
+                                                method: 'GET',
+                                                success: function (data) {
+                                                    data.pages && data.pages.forEach(addContainerRow($containerField));
+                                                }
+                                            });
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }],
+                    buttons: [{
+                        type: 'DISMISS'
+                    }]
+                }));
+            });
+        }
+
         function addContainerRow($containerField) {
             return function binderToTransferRow(data) {
                 var transferRow = require('./../map/object/transferRow')(data, options.defaultLang);
@@ -74,86 +153,15 @@ define(function (require) {
                                         "description"
                                     ],
                                     onClick: function (transferRow) {
-                                        var supplant = {
-                                            binderId: transferRow.fields.binderId.values.DEFAULT.current
-                                        };
-                                        require('./../modal')($.extend(true, require('./../optionsBase')(), {
-                                            title: 'Mapin {binderId} sisältö'.supplant(supplant),
-                                            fieldTitles: fieldTitles,
-                                            data: {},
-                                            dataConf: dataConf,
-                                            $events: $({}),
-                                            defaultLang: options.defaultLang,
-                                            large: true,
-                                            content: [{
-                                                type: 'COLUMN',
-                                                columns: 1,
-                                                rows: [
-                                                    {
-                                                        "type": "ROW",
-                                                        "cells": [
-                                                            {
-                                                                "type": "CELL",
-                                                                "title": "Sisältö",
-                                                                "colspan": 1,
-                                                                "readOnly": true,
-                                                                "field": {
-                                                                    "displayType": "CONTAINER",
-                                                                    "showSaveInfo": true,
-                                                                    "columnFields": [
-                                                                        "studyId",
-                                                                        "studyTitle",
-                                                                        "description"
-                                                                    ],
-                                                                    onRemove: MetkaJS.User.role.permissions.canEditBinderPages ? function ($tr) {
-                                                                        require('./../server')('/binder/removePage/{pageId}', {
-                                                                            pageId: $tr.data('transferRow').fields.pageId.values.DEFAULT.current
-                                                                        }, {
-                                                                            method: 'GET'
-                                                                        });
-                                                                        $tr.remove();
-                                                                    } : false
-                                                                },
-                                                                create: function () {
-                                                                    var $containerField = $(this).children();
-                                                                    $containerField.find('table')
-                                                                        .removeClass('table-hover')
-                                                                        .children('tbody').off('click', 'tr');
-                                                                    require('./../server')('/binder/binderContent/{binderId}', supplant, {
-                                                                        method: 'GET',
-                                                                        success: function (data) {
-                                                                            data.pages && data.pages.forEach(addContainerRow($containerField));
-                                                                        }
-                                                                    });
-                                                                }
-                                                            }
-                                                        ]
-                                                    }
-                                                ]
-                                            }],
-                                            buttons: [{
-                                                type: 'DISMISS'
-                                            }]
-                                        }));
-                                        /*require('./../assignUrl')('view', {
-                                            PAGE: 'STUDY',
-                                            id: transferRow.fields.study.values.DEFAULT.current
-                                        });*/
+                                        // TODO: Open a dialog to modify binder page values
                                     }
                                 },
                                 create: function (options) {
                                     var $containerField = $(this).children().first();
                                     var $tbody = $containerField.find('tbody').first();
                                     $tbody
-                                        .on('rowAppended', function (e, $tr, columns) {
-                                            $tr.children().eq(columns.indexOf('studyId')).wrapInner('<a href="{url}"></a>'.supplant({
-                                                url: require('./../url')('view', {
-                                                    PAGE: 'STUDY',
-                                                    id: $tr.data('transferRow').fields.study.values.DEFAULT.current,
-                                                    no: ''
-                                                })
-                                            }));
-                                        })
+                                        .on('rowAppended', navigateToStudy)
+                                        .on('rowAppended', openBinder)
                                         .on('click', 'tr > td > a', function (event) {
                                             // prevent default row click action (open map dialog) from happening
                                             event.stopPropagation();

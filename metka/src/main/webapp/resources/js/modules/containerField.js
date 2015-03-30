@@ -227,7 +227,6 @@ define(function (require) {
                 } else {
                     (options.field.onClick || rowDialog('MODIFY', 'ok'))
                     .call(this, $tr.data('transferRow'), function (transferRow) {
-                        //return $tr.replaceWith(tr(transferRow));
                         var $trNew = tr(transferRow);
                         $tr.replaceWith($trNew);
                         if (options.field.onRowChange) {
