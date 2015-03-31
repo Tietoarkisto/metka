@@ -4,7 +4,7 @@ define(function (require) {
     return function(options) {
         this.click( function() {
             //require('./../../assignUrl')('ddiexport');
-            require('./../../modal')($.extend(true, require('./../../optionsBase')(), {
+            require('./../../modal')($.extend(true, require('./../../optionsBase')(options), {
                 '&title': {
                     default: "Tuo DDI"
                 },
@@ -47,16 +47,15 @@ define(function (require) {
                 buttons: [{
                     type: 'CUSTOM',
                     title: "Tuo",
-                    parentData: options.data,
                     create: function(options) {
                         this.click(function() {
-                            var $page = options.parentData.configuration.type;
-                            var $id = options.parentData.key.id;
-                            var $no = options.parentData.key.no;
+                            var $page = require('./../../root')(options).data.configuration.type;
+                            var $id = require('./../../root')(options).data.key.id;
+                            var $no = require('./../../root')(options).data.key.no;
                             require('./../../server')('/study/ddi/import', {
                                 data: JSON.stringify({
                                     path: require('./../../data')(options)("ddiPath").getByLang("DEFAULT"),
-                                    transferData: options.parentData
+                                    transferData: require('./../../root')(options).data
                                 }),
                                 success: function (response) {
                                     require('./../../resultViewer')(response, null, function() {

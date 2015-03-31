@@ -9,6 +9,8 @@ define(function (require) {
 
     var options = require('./optionsBase')();
 
+    var getPropertyNS = require('./utils/getPropertyNS');
+
     require('./pageConfig')(options, function () {
         $('body')
             .append($('<div class="wrapper">')
@@ -16,8 +18,8 @@ define(function (require) {
                     // Inner elements may refresh page by triggering 'refresh.metka' event.
                     // If event is not captured before it propagates here, page will be re-rendered.
                     .on('refresh.metka', function () {
-                        metka.id = options.data.key.id;
-                        metka.no = options.data.key.no;
+                        metka.id = getPropertyNS(options, 'data.key.id');
+                        metka.no = getPropertyNS(options, 'data.key.no');
 
                         // (re-)render page
                         var $this = $(this)

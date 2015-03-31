@@ -3,12 +3,11 @@ define(function (require) {
 
     return function (options, onLoad) {
 
-        var commonSearchBooleans = require('./../commonSearchBooleans');
 
         var $editor;
 
         $.extend(options, {
-            data: commonSearchBooleans.initialData({}),
+            data: {},
             dataConf: $.extend(true, {}, {
                 selectionLists: {
                     dataConfigType_list: {

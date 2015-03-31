@@ -4,7 +4,6 @@ define(function (require) {
     var addRow;
     var $query;
     return function (options, onLoad) {
-        var commonSearchBooleans = require('./../commonSearchBooleans');
 
         $.extend(options, {
             header: MetkaJS.L10N.get('topmenu.expert'),
@@ -210,7 +209,7 @@ define(function (require) {
                     }
                 }
             ],
-            data: commonSearchBooleans.initialData({}),
+            data: {},
             dataConf: {
                 fields: {
                     name: {

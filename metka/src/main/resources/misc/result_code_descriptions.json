@@ -70,8 +70,12 @@
 		"title": "ERROR",
 		"text": "Operaatiota ei voitu suorittaa koska suorittamiseen vaadittuja arvoja puuttui"
 	}, {
-		"key": "",
-		"title": "",
-		"text": ""
+		"key": "PAGE_UPDATED",
+		"title": "NOTICE",
+		"text": "Mapitus päivitetty"
+	}, {
+	  "key": "",
+	  "title": "",
+	  "text": ""
 	}]
 }

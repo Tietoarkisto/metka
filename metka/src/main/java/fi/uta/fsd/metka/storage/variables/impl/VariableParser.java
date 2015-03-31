@@ -486,7 +486,7 @@ class VariableParser {
         // Set stdev
         type = "stdev";
         // If there are no values or variable is continuous don't add deviation
-        if(values > 0) {
+        if(values > 1) {
             row = popOrCreateAndInsertRowTo(Language.DEFAULT, statistics, rows, Fields.STATISTICSTYPE, type, variableRevision.getChanges(), Language.DEFAULT);
             Double deviation = 0D;
             Integer denom = 0;
@@ -497,9 +497,11 @@ class VariableParser {
                     denom++;
                 }
             }
-            deviation = Math.sqrt(deviation/denom);
-            fieldPair = row.dataField(ValueDataFieldCall.set(Fields.STATISTICSVALUE, new Value(deviation.toString()), Language.DEFAULT).setInfo(info).setChangeMap(changeMap));
-            checkResultForUpdate(fieldPair, result);
+            if(denom > 1) {
+                deviation = Math.sqrt(deviation/(denom-1));
+                fieldPair = row.dataField(ValueDataFieldCall.set(Fields.STATISTICSVALUE, new Value(deviation.toString()), Language.DEFAULT).setInfo(info).setChangeMap(changeMap));
+                checkResultForUpdate(fieldPair, result);
+            }
         }
 
         result = resultCheck(result, removeObsoleteRowsFrom(Language.DEFAULT, rows, statistics, changeMap, info));

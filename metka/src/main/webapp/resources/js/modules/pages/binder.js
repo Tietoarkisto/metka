@@ -4,17 +4,30 @@ define(function (require) {
     var setContent;
     var dataConf = {
         fields: {
+            pages: {
+                type: 'CONTAINER',
+                subfields: [
+                    "studyId",
+                    "studyTitle",
+                    "binderId",
+                    "description"
+                ]
+            },
             studyId: {
-                type: 'STRING'
+                type: 'STRING',
+                subfield: true
             },
             studyTitle: {
-                type: 'STRING'
+                type: 'STRING',
+                subfield: true
             },
             binderId: {
-                type: 'INTEGER'
+                type: 'INTEGER',
+                subfield: true
             },
             description: {
-                type: 'STRING'
+                type: 'STRING',
+                subfield: true
             }
         }
     };
@@ -37,8 +50,6 @@ define(function (require) {
     };
 
     return function (options, onLoad) {
-        var commonSearchBooleans = require('./../commonSearchBooleans');
-
         function navigateToStudy(e, $tr, columns) {
             $tr.children().eq(columns.indexOf('studyId')).wrapInner('<a href="{url}"></a>'.supplant({
                 url: require('./../url')('view', {
@@ -50,7 +61,6 @@ define(function (require) {
         }
 
         function openBinder(e, $tr, columns) {
-            log($tr.data('transferRow').fields.binderId.values.DEFAULT.current);
             var transferRow = $tr.data('transferRow');
             $tr.children().eq(columns.indexOf('binderId')).wrapInner('<a></a>').click(function() {
                 var supplant = {
@@ -127,10 +137,16 @@ define(function (require) {
             };
         }
 
+        function reloadBinderData() {
+            require('./../server')('/binder/listBinderPages', {
+                method: 'GET',
+                success: setContent
+            });
+        }
+
         $.extend(options, {
             header: MetkaJS.L10N.get('type.BINDERS.title'),
             fieldTitles: fieldTitles,
-            data: commonSearchBooleans.initialData({}),
             dataConf: dataConf,
             content: [
                 {
@@ -145,15 +161,164 @@ define(function (require) {
                                 "colspan": 1,
                                 "readOnly": true,
                                 "field": {
-                                    "displayType": "CONTAINER",
+                                    "key": "pages",
+                                    //"displayType": "CONTAINER",
                                     "columnFields": [
+                                        "binderId",
                                         "studyId",
                                         "studyTitle",
-                                        "binderId",
                                         "description"
                                     ],
                                     onClick: function (transferRow) {
-                                        // TODO: Open a dialog to modify binder page values
+                                        require('./../modal')($.extend(true, require('./../optionsBase')(options), {
+                                            data: {
+                                                fields: transferRow.fields
+                                            },
+                                            fieldTitles: options.fieldTitles,
+                                            title: "Muokkaa mapitusta",
+                                            dataConf: {
+                                                fields: {
+                                                    binderId: {
+                                                        type: "INTEGER"
+                                                    },
+                                                    studyId: {
+                                                        type: "STRING"
+                                                    },
+                                                    studyTitle: {
+                                                        type: "STRING"
+                                                    },
+                                                    description: {
+                                                        type: "STRING"
+                                                    }
+                                                }
+                                            },
+                                            content: [
+                                                {
+                                                    type: "COLUMN",
+                                                    columns: 1,
+                                                    rows: [
+                                                        {
+                                                            type: "ROW",
+                                                            cells: [
+                                                                {
+                                                                    type: "CELL",
+                                                                    colspan: 1,
+                                                                    readOnly: true,
+                                                                    field: {
+                                                                        key: "binderId"
+                                                                    }
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }, {
+                                                    type: "COLUMN",
+                                                    columns: 1,
+                                                    rows: [
+                                                        {
+                                                            type: "ROW",
+                                                            cells: [
+                                                                {
+                                                                    type: "CELL",
+                                                                    colspan: 1,
+                                                                    readOnly: true,
+                                                                    field: {
+                                                                        key: "studyId"
+                                                                    }
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }, {
+                                                    type: "COLUMN",
+                                                    columns: 1,
+                                                    rows: [
+                                                        {
+                                                            type: "ROW",
+                                                            cells: [
+                                                                {
+                                                                    type: "CELL",
+                                                                    colspan: 1,
+                                                                    readOnly: true,
+                                                                    field: {
+                                                                        key: "studyTitle"
+                                                                    }
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }, {
+                                                    type: "COLUMN",
+                                                    columns: 1,
+                                                    rows: [
+                                                        {
+                                                            type: "ROW",
+                                                            cells: [
+                                                                {
+                                                                    type: "CELL",
+                                                                    colspan: 1,
+                                                                    field: {
+                                                                        key: "description",
+                                                                        multiline: true
+                                                                    }
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ],
+                                            buttons: [
+                                                {
+                                                    type: "CUSTOM",
+                                                    title: "Tallenna",
+                                                    permissions: [
+                                                        "canEditBinderPages"
+                                                    ],
+                                                    create: function(options) {
+                                                        this.click(function() {
+                                                            require('./../server')('/binder/saveBinderPage', {
+                                                                data: JSON.stringify({
+                                                                    pageId: require('./../data')(options)('pageId').getByLang(options.defaultLang),
+                                                                    binderId: require('./../data')(options)('binderId').getByLang(options.defaultLang),
+                                                                    studyId: require('./../data')(options)('studyId').getByLang(options.defaultLang),
+                                                                    description: require('./../data')(options)('description').getByLang(options.defaultLang)
+                                                                }),
+                                                                success: function(data) {
+                                                                    log(data);
+                                                                    require('./../resultViewer')(data.result, null, function() {
+                                                                        if (data.result === 'PAGE_UPDATED') {
+                                                                            require('./../assignUrl')('/binder');
+                                                                        }
+                                                                    });
+                                                                }
+                                                            });
+                                                            /*var $page = require('./../../root')(options).data.configuration.type;
+                                                            var $id = require('./../../root')(options).data.key.id;
+                                                            var $no = require('./../../root')(options).data.key.no;
+                                                            require('./../../server')('/study/ddi/import', {
+                                                                data: JSON.stringify({
+                                                                    path: require('./../../data')(options)("ddiPath").getByLang("DEFAULT"),
+                                                                    transferData: options.parentData
+                                                                }),
+                                                                success: function (response) {
+                                                                    require('./../../resultViewer')(response, null, function() {
+                                                                        if (response === 'OPERATION_SUCCESSFUL') {
+                                                                            var $metka = require('../../../metka');
+                                                                            require('../../assignUrl')('view', {
+                                                                                PAGE: $metka.PAGE,
+                                                                                id: $metka.id,
+                                                                                no: $metka.no
+                                                                            });
+                                                                        }
+                                                                    });
+                                                                }
+                                                            });*/
+                                                        });
+                                                    }
+                                                },
+                                                "CANCEL"
+                                            ]
+                                        }));
                                     }
                                 },
                                 create: function (options) {
@@ -170,10 +335,7 @@ define(function (require) {
                                     setContent = function (data) {
                                         data.pages && data.pages.forEach(addContainerRow($containerField));
                                     };
-                                    require('./../server')('/binder/listBinderPages', {
-                                        method: 'GET',
-                                        success: setContent
-                                    });
+                                    reloadBinderData();
                                 }
                             }
                         ]

@@ -3,7 +3,7 @@ define(function (require) {
 
     return function(options) {
         this.click( function() {
-            require('./../../modal')($.extend(true, require('./../../optionsBase')(), {
+            require('./../../modal')($.extend(true, require('./../../optionsBase')(options), {
                 '&title': {
                     default: "Lataa DDI"
                 },
@@ -66,11 +66,10 @@ define(function (require) {
                 buttons: [{
                     type: 'CUSTOM',
                     title: "Lataa",
-                    parentData: options.data,
                     create: function(options) {
                         this.click(function() {
-                            var $id = options.parentData.key.id;
-                            var $no = options.parentData.key.no;
+                            var $id = require('./../../root')(options).data.key.id;
+                            var $no = require('./../../root')(options).data.key.no;
                             var request = {
                                 id: $id,
                                 no: $no,
