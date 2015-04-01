@@ -1,0 +1,17 @@
+{
+	"key": "field_error_descriptions",
+	"_comment": "This file contains explanation texts for results of field validations. 'key' is the returned result, 'level' tells what level of error should be used (how serious the situation is, current values are 'WARNING' and 'ERROR' but this is not implemented at the moment) and 'text' contains the translation text for the result.",
+	"data": [{
+	  "key": "NOT_DATETIME",
+	  "level": "ERROR",
+	  "text": "Ei validi päiväys"
+	}, {
+	  "key": "NO_FILE",
+	  "level": "ERROR",
+	  "text": "Virheellinen tiedostopolku"
+	}, {
+	  "key": "",
+	  "level": "",
+	  "text": ""
+	}]
+}

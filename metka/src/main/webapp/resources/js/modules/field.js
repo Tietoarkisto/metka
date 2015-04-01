@@ -23,7 +23,10 @@ define(function (require) {
                     $container.addClass('has-error');
                     var $p = $('<p class="help-block">');
                     $container.append($p);
-                    $p.append(require('./dataValidationErrorText')(errors));
+                    //$p.append(require('./dataValidationErrorText')(errors));
+                    require('./dataValidationErrorText')(errors, function(text) {
+                        $p.append(text+"<br>");
+                    });
                     if(options.horizontal) {
                         $p.addClass('col-sm-offset-'+(2 * (getPropertyNS(options, 'parent.parent.columns') || 1) / (options.colspan || 1)));
                     }
