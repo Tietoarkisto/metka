@@ -21,12 +21,10 @@ define(function (require) {
                     approvedOnly: true,
                     ignoreRemoved: true
                 });
-                // copy data, so if dialog is dismissed, original data won't change
-                var transferRowCopy = $.extend(true, {}, transferRow);
 
-                var modalOptions = {
+                var modalOptions = $.extend(true, require('./optionsBase')(options), {
                     type: type.toUpperCase(),
-                    data: transferRowCopy,
+                    data:  $.extend(true, {}, transferRow),
                     dataConf: $.extend({}, {
                         fields: fields,
                         references: references,
@@ -88,7 +86,7 @@ define(function (require) {
                                 this
                                     .text(MetkaJS.L10N.get('general.buttons.' + button))
                                     .click(function () {
-                                        transferRow.value = transferRowCopy.fields[options.field.key+'_select'].values[lang].current;
+                                        transferRow.value = modalOptions.data.fields[options.field.key+'_select'].values[lang].current;
                                         onClose(transferRow);
                                     });
                             }
@@ -97,14 +95,14 @@ define(function (require) {
                             type: 'CANCEL'
                         }
                     ]
-                };
+                });
 
                 // if not translatable container and has translatable subfields, show language selector
                 if (!options.fieldOptions.translatable && require('./containerHasTranslatableSubfields')(options)) {
                     modalOptions.translatableCurrentLang = $('input[name="translation-lang"]:checked').val() || MetkaJS.User.role.defaultLanguage.toUpperCase();
                 }
 
-                require('./modal')($.extend(true, require('./optionsBase')(), modalOptions));
+                require('./modal')(modalOptions);
             };
         }
     };

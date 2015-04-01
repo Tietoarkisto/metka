@@ -349,6 +349,7 @@
 
     </dependencies>
     <build>
+        <finalName>metka</finalName>
        	<filters>
  			<filter>src/profile/filter-${env}.properties</filter>
  		</filters>
