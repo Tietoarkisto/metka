@@ -9,12 +9,12 @@
         <beans:property name="defaultLocale" value="fi_FI"/>
     </beans:bean>
 
-    <beans:bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+    <!--<beans:bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <beans:property name="basename" value="messages" />
         <beans:property name="defaultEncoding" value="UTF-8" />
         <beans:property name="cacheSeconds" value="60" />
         <beans:property name="useCodeAsDefaultMessage" value="true" />
-    </beans:bean>
+    </beans:bean>-->
 
     <beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <beans:property name="maxUploadSize" value="100000000000" />

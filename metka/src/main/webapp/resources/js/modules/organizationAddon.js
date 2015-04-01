@@ -49,18 +49,9 @@ define(function (require) {
                                                                             json: JSON.stringify(organizations)
                                                                         }),
                                                                         success: function (response) {
-                                                                            require('./modal')($.extend(true, require('./optionsBase')(), {
-                                                                                title: MetkaJS.L10N.get(response === 'OPERATION_SUCCESSFUL' ? 'alert.notice.title' : 'alert.error.title'),
-                                                                                body: response,
-                                                                                buttons: [{
-                                                                                    type: 'DISMISS',
-                                                                                    create: function () {
-                                                                                        this.click(function () {
-                                                                                            $button.trigger('refresh.metka');
-                                                                                        });
-                                                                                    }
-                                                                                }]
-                                                                            }));
+                                                                            require('./resultViewer')(response, null, function() {
+                                                                                $button.trigger('refresh.metka');
+                                                                            });
                                                                         }
                                                                     });
                                                                 }

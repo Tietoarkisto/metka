@@ -74,6 +74,14 @@
 		"title": "NOTICE",
 		"text": "Mapitus päivitetty"
 	}, {
+	  "key": "APPROVE_SUCCESSFUL",
+	  "title": "NOTICE",
+	  "text": "Revisio hyväksytty onnistuneesti"
+	}, {
+	  "key": "APPROVE_FAILED",
+	  "title": "ERROR",
+	  "text": "Revision hyväksyminen epäonnistui"
+	}, {
 	  "key": "",
 	  "title": "",
 	  "text": ""
