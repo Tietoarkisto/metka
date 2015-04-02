@@ -754,6 +754,7 @@
                                     "title": "Kuvailun versiot",
                                     "field": {
                                         "key": "descversions",
+                                        "displayType": "CUSTOM_JS",
                                         "columnFields": [
                                             "descversion",
                                             "versiondate",

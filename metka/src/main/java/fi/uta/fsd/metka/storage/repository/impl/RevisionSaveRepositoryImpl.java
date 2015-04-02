@@ -630,6 +630,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                             row.setSaved(info);
                             changes = true;
                             tr.setRowId(row.getRowId());
+                            tr.setUnapproved(row.getUnapproved());
                         }
                     } else {
                         // Old row, check the "removed" value.

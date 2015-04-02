@@ -1,7 +1,7 @@
 var dirs = [
-	['metka/src/main/webapp/resources', 'metka/target/metka-0.0.1-SNAPSHOT/resources'],
-	['metka/src/main/webapp/WEB-INF/inc', 'metka/target/metka-0.0.1-SNAPSHOT/WEB-INF/inc'],
-	['metka/src/main/webapp/WEB-INF/jsp', 'metka/target/metka-0.0.1-SNAPSHOT/WEB-INF/jsp']
+	['metka/src/main/webapp/resources', 'metka/target/metka/resources'],
+	['metka/src/main/webapp/WEB-INF/inc', 'metka/target/metka/WEB-INF/inc'],
+	['metka/src/main/webapp/WEB-INF/jsp', 'metka/target/metka/WEB-INF/jsp']
 ];
 
 var fs = require('fs-extra');

@@ -347,7 +347,10 @@ define(function (require) {
                                 .text(MetkaJS.L10N.get('general.table.add'))
                                 .click(function () {
                                     (options.field.onAdd || rowDialog('ADD', 'add'))
-                                        .call(this, {}, function (transferRow) {
+                                        .call(this, {
+                                            removed: false,
+                                            unapproved: true
+                                        }, function (transferRow) {
                                             var $tr = addRow($tbody, transferRow, columns);
                                             if (options.field.onRowChange) {
                                                 options.field.onRowChange(options, $tr, transferRow);
