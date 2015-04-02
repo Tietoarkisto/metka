@@ -42,7 +42,7 @@ public class ReferenceContainerDataField extends RowContainerDataField {
     /**
      * Searches through a list of references for a reference with given rowId
      * @param rowId Row id to be searched for amongst references
-     * @return SavedReference matching given value or null if none found
+     * @return ReferenceRow matching given value or null if none found
      */
     public Pair<StatusCode, ReferenceRow> getReferenceWithId(Integer rowId) {
 
@@ -62,7 +62,7 @@ public class ReferenceContainerDataField extends RowContainerDataField {
     /**
      * Searches through a list of references for a reference containing given value
      * @param value Reference value that is searched for
-     * @return SavedReference matching given value or null if none found
+     * @return ReferenceRow matching given value or null if none found
      */
     public Pair<StatusCode, ReferenceRow> getReferenceWithValue(String value) {
         for(ReferenceRow reference : references) {
@@ -82,7 +82,7 @@ public class ReferenceContainerDataField extends RowContainerDataField {
      * @param value Value that is searched for
      * @param changeMap Map where the container change containing this reference containers changes should reside
      * @param info DateTimeUserPair if new reference is needed. If this is null then new instance is used.
-     * @return Tuple of StatusCode and SavedReference. StatusCode tells if the returned row is a new insert or not
+     * @return Tuple of StatusCode and ReferenceRow. StatusCode tells if the returned row is a new insert or not
      */
     public Pair<StatusCode, ReferenceRow> getOrCreateReferenceWithValue(String value, Map<String, Change> changeMap, DateTimeUserPair info) {
         if(changeMap == null || !StringUtils.hasText(value)) {

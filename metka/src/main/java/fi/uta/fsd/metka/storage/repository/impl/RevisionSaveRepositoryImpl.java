@@ -799,7 +799,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                         tr.addError(FieldError.MISSING_VALUE);
                         returnPair.setRight(true);
                     } else if (tr.getRowId() == null) {
-                        // New row, insert new SavedReference
+                        // New row, insert new ReferenceRow
                         Pair<StatusCode, ReferenceRow> referencePair = container.getOrCreateReferenceWithValue(tr.getValue(), changeMap, info);
                         if (referencePair.getLeft() == StatusCode.NEW_ROW) {
                             changes = true;
@@ -810,7 +810,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                                         new ImmutablePair<>(field.getBidirectional(), true)));
                             }
                     } else {
-                        // Old row, the only thing that can change is "removed". The actual reference value on SavedReference is immutable
+                        // Old row, the only thing that can change is "removed". The actual reference value on ReferenceRow is immutable
                         // and is locked in when the row is created
                         Pair<StatusCode, ReferenceRow> referencePair = container.getReferenceWithId(tr.getRowId());
                         if (referencePair.getLeft() != StatusCode.FOUND_ROW) {

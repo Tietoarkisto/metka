@@ -728,6 +728,7 @@
                                     "title": "Datan versiot",
                                     "field": {
                                         "key": "dataversions",
+                                        "displayType": "CUSTOM_JS",
                                         "columnFields": [
                                             "dataversion",
                                             "versiondate",

@@ -26,6 +26,7 @@ public class TransferRow implements TransferFieldContainer {
     private final Map<String, TransferField> fields = new HashMap<>();
     private final List<FieldError> errors = new ArrayList<>();
     private Boolean removed;
+    private Boolean unapproved;
 
     @JsonCreator
     public TransferRow(@JsonProperty("key")String key) {
@@ -76,6 +77,14 @@ public class TransferRow implements TransferFieldContainer {
         this.removed = (removed == null ? false : removed);
     }
 
+    public Boolean getUnapproved() {
+        return unapproved;
+    }
+
+    public void setUnapproved(Boolean unapproved) {
+        this.unapproved = unapproved;
+    }
+
     @JsonIgnore
     public boolean hasField(String key) {
         return fields.containsKey(key) && fields.get(key) != null;
@@ -114,11 +123,12 @@ public class TransferRow implements TransferFieldContainer {
         transferRow.setRowId(row.getRowId());
         transferRow.setSaved(row.getSaved());
         transferRow.setRemoved(row.getRemoved());
+        transferRow.setUnapproved(row.getUnapproved());
 
         if(row instanceof DataRow) {
             return buildRowFromDataRow(transferRow, (DataRow)row);
         } else if(row instanceof ReferenceRow) {
-            return buildRowFromSavedReference(transferRow, (ReferenceRow)row);
+            return buildRowFromReferenceRow(transferRow, (ReferenceRow)row);
         }
         return null;
     }
@@ -133,7 +143,7 @@ public class TransferRow implements TransferFieldContainer {
         return transferRow;
     }
 
-    private static TransferRow buildRowFromSavedReference(TransferRow transferRow, ReferenceRow row) {
+    private static TransferRow buildRowFromReferenceRow(TransferRow transferRow, ReferenceRow row) {
         if(row.hasValue()) {
             transferRow.setValue(row.getActualValue());
         }

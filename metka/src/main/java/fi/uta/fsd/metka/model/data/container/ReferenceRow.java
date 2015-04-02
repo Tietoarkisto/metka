@@ -64,7 +64,7 @@ public class ReferenceRow extends ContainerRow {
     }
 
     /**
-     * Convenience method for returning the actual value in this SavedReference.
+     * Convenience method for returning the actual value in this ReferenceRow.
      * NOTICE: Returns null if hasValue returns false or if the actual value is null.
      *
      * @return String containing the actual value or null if value doesn't exist

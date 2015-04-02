@@ -50,6 +50,11 @@ define(function (require) {
                 if (!options.fieldOptions.translatable && require('./containerHasTranslatableSubfields')(options)) {
                     modalOptions.translatableCurrentLang = $('input[name="translation-lang"]:checked').val() || MetkaJS.User.role.defaultLanguage.toUpperCase();
                 }
+
+                if(options.prepareModal) {
+                    options.prepareModal(modalOptions);
+                }
+
                 require('./modal')(modalOptions);
                 //require('./modal')($.extend(true, {}, options, modalOptions));
             };
