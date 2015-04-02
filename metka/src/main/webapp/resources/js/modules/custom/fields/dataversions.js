@@ -7,7 +7,6 @@ define(function (require) {
         return {
             prepareModal: function(modalOptions) {
                 var oldIsReadOnly = modalOptions.isReadOnly;
-                log('prepare', modalOptions);
                 modalOptions.isReadOnly = function(options) {
                     if(!modalOptions.data.unapproved && !require('./../../hasEveryPermission')(['canRemoveStudyVersions'])) {
                         return true;
