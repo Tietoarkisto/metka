@@ -15,6 +15,8 @@ public class ReferenceOptionsRequest {
     private Language language;
     private final Map<String, String> fieldValues = new HashMap<>();
     private String container;
+    private Boolean returnFirst = false;
+
 
     public String getKey() {
         return key;
@@ -58,6 +60,14 @@ public class ReferenceOptionsRequest {
 
     public void setLanguage(Language language) {
         this.language = language;
+    }
+
+    public Boolean getReturnFirst() {
+        return returnFirst;
+    }
+
+    public void setReturnFirst(Boolean returnFirst) {
+        this.returnFirst = returnFirst;
     }
 
     @Override

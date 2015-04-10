@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import fi.uta.fsd.metka.enums.DisplayType;
+import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.deserializers.ObjectDeserializer;
 import fi.uta.fsd.metka.model.guiconfiguration.DialogTitle;
 import fi.uta.fsd.metka.model.guiconfiguration.FieldDescription;
@@ -27,7 +28,7 @@ public class FieldDescriptionDeserializer extends ObjectDeserializer<FieldDescri
             fd.setMultiline(multiline.booleanValue());
         }
 
-        // Set user groups
+        // Set column fields
         JsonNode columns = node.get("columnFields");
         if(columns != null && columns.getNodeType() == JsonNodeType.ARRAY) {
             for(JsonNode column : columns) {
@@ -47,6 +48,24 @@ public class FieldDescriptionDeserializer extends ObjectDeserializer<FieldDescri
         JsonNode showRef = node.get("showReferenceValue");
         if(showRef != null && showRef.getNodeType() == JsonNodeType.BOOLEAN) {
             fd.setShowReferenceValue(showRef.booleanValue());
+        }
+
+        // Set showReferenceSaveInfo
+        JsonNode showRefSaveInfo = node.get("showReferenceSaveInfo");
+        if(showRefSaveInfo != null && showRefSaveInfo.getNodeType() == JsonNodeType.BOOLEAN) {
+            fd.setShowReferenceSaveInfo(showRefSaveInfo.booleanValue());
+        }
+
+        // Set show reference approve info
+        JsonNode showRefApproveInfo = node.get("showReferenceApproveInfo");
+        if(showRefApproveInfo != null && showRefApproveInfo.getNodeType() == JsonNodeType.ARRAY) {
+            for(JsonNode lang : showRefApproveInfo) {
+                if(lang.getNodeType() == JsonNodeType.STRING) {
+                    if(Language.isLanguage(lang.textValue())) {
+                        fd.getShowReferenceApproveInfo().add(Language.fromValue(lang.textValue()));
+                    }
+                }
+            }
         }
 
         // Set displayType

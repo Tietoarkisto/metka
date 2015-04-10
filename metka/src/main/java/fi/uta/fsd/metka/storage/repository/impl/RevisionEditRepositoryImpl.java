@@ -84,6 +84,11 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
             RevisionData newData = new RevisionData(keyPair.getRight().toModelKey(), configPair.getRight().getKey());
             newData.setState(RevisionState.DRAFT);
             copyDataToNewRevision(data, newData);
+            // Move approve information to new revision, these are updated as needed when actual approval is required.
+            for(Language lang : data.getApproved().keySet()) {
+                newData.approveRevision(lang, data.approveInfoFor(lang));
+            }
+
             ReturnResult update = revisions.updateRevisionData(newData);
             if(update != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
                 return new ImmutablePair<>(update, data);

@@ -422,8 +422,9 @@ define(function (require) {
                     "readOnly": true,
                     "field": {
                         "key": "files",
-                        "showSaveInfo": true,
+                        "showSaveInfo": false,
                         "showReferenceKey": true,
+                        "showReferenceSaveInfo": true,
                         "columnFields": [
                             "filespath",
                             "fileslang"
@@ -462,6 +463,7 @@ define(function (require) {
                     "field": {
                         "key": "files",
                         "showReferenceKey": true,
+                        "showReferenceSaveInfo": true,
                         "columnFields": [
                             "filespath",
                             "filedescription",

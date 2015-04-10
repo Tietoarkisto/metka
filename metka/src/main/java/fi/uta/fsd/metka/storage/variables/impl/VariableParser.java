@@ -485,7 +485,7 @@ class VariableParser {
 
         // Set stdev
         type = "stdev";
-        // If there are no values or variable is continuous don't add deviation
+        // If there are no, or only one, value(s) or variable is continuous don't add deviation
         if(values > 1) {
             row = popOrCreateAndInsertRowTo(Language.DEFAULT, statistics, rows, Fields.STATISTICSTYPE, type, variableRevision.getChanges(), Language.DEFAULT);
             Double deviation = 0D;

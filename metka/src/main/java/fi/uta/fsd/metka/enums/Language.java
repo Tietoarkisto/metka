@@ -14,7 +14,7 @@ public enum Language {
         return value;
     }
     public static Language fromValue(String value) {
-        switch(value) {
+        switch(value.toLowerCase()) {
             // Let's just take care of 'fi' in here
             case "default":
             case "fi":
@@ -25,6 +25,18 @@ public enum Language {
                 return SV;
             default:
                 throw new UnsupportedOperationException(value + " is not a valid language");
+        }
+    }
+
+    public static boolean isLanguage(String value) {
+        switch (value.toLowerCase()) {
+            case "default":
+            case "fi":
+            case "en":
+            case "sv":
+                return true;
+            default:
+                return false;
         }
     }
 

@@ -27,7 +27,7 @@ public class StudyVariableSearchImpl implements StudyVariableSearch {
 
     @Override
     public Pair<ReturnResult, RevisionData> findVariableWithId(Long studyId, String variableId) {
-        List<StudyVariableEntity> entities = em.createQuery("SELECT e FROM StudyVariableEntity e WHERE e.studyVariableStudy=:studyId AND e.varId=:variableId")
+        List<StudyVariableEntity> entities = em.createQuery("SELECT e FROM StudyVariableEntity e WHERE e.studyVariableStudy=:studyId AND e.varId=:variableId", StudyVariableEntity.class)
                 .setParameter("studyId", studyId)
                 .setParameter("variableId", variableId)
                 .getResultList();

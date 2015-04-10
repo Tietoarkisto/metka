@@ -13,6 +13,7 @@ import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.container.DataField;
+import fi.uta.fsd.metka.model.general.ApproveInfo;
 import fi.uta.fsd.metka.model.general.ConfigurationKey;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.model.general.RevisionKey;
@@ -35,7 +36,7 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase, DataFi
     private final Map<String, DataField> fields = new HashMap<>();
     private RevisionState state;
     private String handler;
-    private final Map<Language, DateTimeUserPair> approved = new HashMap<>();
+    private final Map<Language, ApproveInfo> approved = new HashMap<>();
     private DateTimeUserPair saved;
 
     @JsonCreator
@@ -68,7 +69,7 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase, DataFi
         this.state = state;
     }
 
-    public Map<Language, DateTimeUserPair> getApproved() {
+    public Map<Language, ApproveInfo> getApproved() {
         return approved;
     }
 
@@ -121,14 +122,14 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase, DataFi
         return getChange(field.getKey());
     }
 
-    @JsonIgnore public boolean isApprovedFor(Language language) {
-        return approved.get(language) != null;
-    }
-    @JsonIgnore public DateTimeUserPair approveInfoFor(Language language) {
+    @JsonIgnore public ApproveInfo approveInfoFor(Language language) {
         return approved.get(language);
     }
+    @JsonIgnore public boolean isApprovedFor(Language language) {
+        return approveInfoFor(language) != null && approveInfoFor(language).getApproved() != null && approveInfoFor(language).getApproved().getTime() != null;
+    }
 
-    @JsonIgnore public void approveRevision(Language language, DateTimeUserPair info) {
+    @JsonIgnore public void approveRevision(Language language, ApproveInfo info) {
         approved.put(language, info);
     }
 

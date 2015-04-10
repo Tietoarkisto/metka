@@ -40,6 +40,7 @@ public class ReferenceCollector {
     @Autowired
     private ReferencePathHandler pathHandler;
 
+    // TODO: Remove this request type and only support the path request type
     public Pair<ReturnResult, List<ReferenceOption>> handleReferenceRequest(ReferenceOptionsRequest request) {
         List<ReferenceOption> options = new ArrayList<>();
         Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(ConfigurationType.fromValue(request.getConfType()), request.getConfVersion());
@@ -51,18 +52,18 @@ public class ReferenceCollector {
         Configuration configuration = configPair.getRight();
         ReferencePath root = formReferencePath(request.getKey(), request, configuration, null);
         if(root != null && root.getReference() == null) {
-            // Top value has no reference but has a provided value. This means that the whole stack will collapse to
+            // Top value has no reference but has a provided value. This means that the whole stack will collapse to returning the provided value
             ReferenceOption option = new ReferenceOption(root.getValue(), new ReferenceOptionTitle(ReferenceTitleType.LITERAL, root.getValue()));
             options.add(option);
             return new ImmutablePair<>(ReturnResult.OPERATION_SUCCESSFUL, options);
         }
 
-        return pathHandler.handleReferencePath(root, options, request.getLanguage());
+        return pathHandler.handleReferencePath(root, options, request.getLanguage(), request.getReturnFirst());
     }
 
     public Pair<ReturnResult, List<ReferenceOption>> handleReferenceRequest(ReferencePathRequest request) {
         List<ReferenceOption> options = new ArrayList<>();
-        return pathHandler.handleReferencePath(request.getRoot(), options, request.getLanguage());
+        return pathHandler.handleReferencePath(request.getRoot(), options, request.getLanguage(), request.getReturnFirst());
     }
 
     public Pair<ReturnResult, ReferenceRow> getReferenceRow(ReferenceRowRequest request) {

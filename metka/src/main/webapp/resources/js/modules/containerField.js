@@ -75,7 +75,8 @@ define(function (require) {
                         });
                         return $td;
                     }
-                    return $td.append((function () {
+
+                    /*return $td.append((function () {
                         var columnLang = $thead.children('tr').children().eq(i).data('lang') || lang;
 
                         function setText(text) {
@@ -152,7 +153,108 @@ define(function (require) {
                         }
                         log('not implemented', column, type);
                         return EMPTY;
-                    })());
+                    })());*/
+
+                    (function ($td) {
+                        var columnLang = $thead.children('tr').children().eq(i).data('lang') || lang;
+
+                        function setText(text) {
+                            $td.text(typeof text === 'undefined' ? EMPTY : text);
+                        }
+
+                        function setOptionText(listOptions) {
+                            setText(require('./selectInputOptionText')(listOptions.find(function (option) {
+                                return option.value === value;
+                            })));
+                        }
+                        var dataConf = getPropertyNS(options, 'dataConf.fields', column);
+                        var type = getPropertyNS(options, 'dataConf.fields', column, 'type');
+
+                        if (!type) {
+                            log('not implemented', column);
+                            $td.text(EMPTY);
+                            return;
+                        }
+
+                        var transferField = getPropertyNS(transferRow, 'fields', column);
+                        var value = (function () {
+                            if (!transferField) {
+                                return;
+                            }
+
+                            tableError.call($td, (transferField.errors || []).concat(getPropertyNS(transferField, 'values', columnLang, 'errors') || []));
+
+                            if (!transferField.type) {
+                                log('transferField type not set (column: {column})'.supplant({
+                                    column: column
+                                }));
+                                return;
+                            }
+
+                            if (transferField.type !== 'VALUE') {
+                                log('not implemented (type: {type}, column: {column})'.supplant({
+                                    type: transferField.type,
+                                    column: column
+                                }));
+                                return;
+                            }
+
+                            return require('./data').latestValue(transferField, columnLang);
+                        })();
+
+                        if(!value && type !== 'REFERENCE') {
+                            $td.text(EMPTY);
+                            return;
+                        }
+
+                        switch(type) {
+                            case 'REFERENCE': {
+                                var refKey = getPropertyNS(options, 'dataConf.fields', column, 'reference');
+                                var reference = getPropertyNS(options, 'dataConf.references', refKey);
+
+                                require('./reference').optionByPath(column, options, columnLang, setText)(transferRow.fields, reference);
+                                return;
+                            }
+                            case 'SELECTION': {
+                                var list = require('./selectionList')(options, column);
+                                if (!list) {
+                                    $td.text(EMPTY);
+                                    break;
+                                }
+                                if (list.type === 'REFERENCE') {
+                                    require('./reference').optionsByPath(column, options, lang, setOptionText)(transferRow.fields, getPropertyNS(options, 'dataConf.references', list.reference));
+                                } else {
+                                    setOptionText(list.options);
+                                }
+                                break;
+                            }
+                            case 'STRING': {
+                                $td.text(value);
+                                break;
+                            }
+                            case 'INTEGER':
+                            case 'REAL': {
+                                $td.text(value);
+                                break;
+                            }
+                            case 'RICHTEXT': {
+                                $td.html(value);
+                                break;
+                            }
+                            case 'DATE':
+                            case 'TIME':
+                            case 'DATETIME': {
+                                $td.text(moment(value).format(require('./dateFormats')[type]));
+                                break;
+                            }
+                            default: {
+                                log('not implemented', column, type);
+                                $td.text(EMPTY);
+                                break;
+                            }
+                        }
+                    })($td);
+                    return $td;
                 }));
 
             if (options.field.showSaveInfo) {
@@ -160,7 +262,60 @@ define(function (require) {
                     $('<td>')
                         .text(transferRow.saved ? moment(transferRow.saved.time).format(require('./dateFormats')['DATE']) : EMPTY),
                     $('<td>')
-                        .text(transferRow.saved ? transferRow.saved.user : EMPTY));
+                        .text(transferRow.saved ? transferRow.saved.user : EMPTY)
+                );
+            }
+
+            if(options.fieldOptions.type === 'REFERENCECONTAINER') {
+                if(options.field.showReferenceSaveInfo || (options.field.showReferenceApproveInfo && options.field.showReferenceApproveInfo.length > 0)) {
+                    var infoTDs = {
+                        saved: {},
+                        approved: {}
+                    };
+                    if(options.field.showReferenceSaveInfo) {
+                        infoTDs.saved.at = $('<td>').text(EMPTY);
+                        infoTDs.saved.by = $('<td>').text(EMPTY);
+                        $tr.append(infoTDs.saved.at, infoTDs.saved.by);
+                    }
+                    if(options.field.showReferenceApproveInfo && options.field.showReferenceApproveInfo.length > 0) {
+                        $.each(options.field.showReferenceApproveInfo, function(index, lang) {
+                            lang = lang.toUpperCase();
+                            infoTDs.approved[lang] = {};
+                            infoTDs.approved[lang].at = $('<td>').text(EMPTY);
+                            infoTDs.approved[lang].by = $('<td>').text(EMPTY);
+                            infoTDs.approved[lang].revision = $('<td>').text(EMPTY);
+                            $tr.append(infoTDs.approved[lang].at, infoTDs.approved[lang].by, infoTDs.approved[lang].revision);
+                        });
+                    }
+                    require('./server')('/references/referenceStatus/{value}', transferRow, {
+                        method: 'GET',
+                        success: function (response) {
+                            log(response);
+                            if(response.saved) {
+                                if(response.saved.time && infoTDs.saved.at) {
+                                    infoTDs.saved.at.text(moment(response.saved.time).format(require('./dateFormats')['DATE']))
+                                }
+                                if(response.saved.user && infoTDs.saved.by) {
+                                    infoTDs.saved.by.text(response.saved.user);
+                                }
+                            }
+                            $.each(response.approved, function(key, value) {
+                                key = key.toUpperCase();
+                                if(infoTDs.approved[key] && value) {
+                                    if(infoTDs.approved[key].at && value.approved.time) {
+                                        infoTDs.approved[key].at.text(moment(value.approved.time).format(require('./dateFormats')['DATE']))
+                                    }
+                                    if(infoTDs.approved[key].by && value.approved.user) {
+                                        infoTDs.approved[key].by.text(value.approved.user);
+                                    }
+                                    if(infoTDs.approved[key].revision && value.revision) {
+                                        infoTDs.approved[key].revision.text(value.revision);
+                                    }
+                                }
+                            })
+                        }
+                    });
+                }
             }
 
             if (rowCommands.length) {
@@ -282,6 +437,26 @@ define(function (require) {
                             .append(function () {
                                 if (options.field.showSaveInfo) {
                                     return [th(MetkaJS.L10N.get('general.saveInfo.savedAt')), th(MetkaJS.L10N.get('general.saveInfo.savedBy'))];
+                                }
+                            })
+                            .append(function () {
+                                if(options.fieldOptions.type === 'REFERENCECONTAINER') {
+                                    if(options.field.showReferenceSaveInfo) {
+                                        return [th(MetkaJS.L10N.get('general.refSaveInfo.savedAt')), th(MetkaJS.L10N.get('general.refSaveInfo.savedBy'))];
+                                    }
+                                }
+                            })
+                            .append(function () {
+                                if(options.fieldOptions.type === 'REFERENCECONTAINER') {
+                                    if(options.field.showReferenceApproveInfo && options.field.showReferenceApproveInfo.length > 0) {
+                                        var $appInfo = new Array();
+                                        $.each(options.field.showReferenceApproveInfo, function(index, lang) {
+                                            $appInfo.push((require('./langLabel')(th(MetkaJS.L10N.get('general.refApproveInfo.approvedAt')).data('lang', lang), lang)));
+                                            $appInfo.push((require('./langLabel')(th(MetkaJS.L10N.get('general.refApproveInfo.approvedBy')).data('lang', lang), lang)));
+                                            $appInfo.push((require('./langLabel')(th(MetkaJS.L10N.get('general.refApproveInfo.approvedRevision')).data('lang', lang), lang)));
+                                        });
+                                        return $appInfo;
+                                    }
                                 }
                             })
                             .append(function () {

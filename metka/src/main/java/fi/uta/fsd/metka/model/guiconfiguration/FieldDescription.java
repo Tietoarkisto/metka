@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.enums.DisplayType;
+import fi.uta.fsd.metka.enums.Language;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,8 @@ public class FieldDescription {
     private Boolean showReferenceValue;
     private Boolean displayHeader = true;
     private DialogTitle dialogTitle;
+    private Boolean showReferenceSaveInfo = false;
+    private final List<Language> showReferenceApproveInfo = new ArrayList<>();
 
     @JsonCreator
     public FieldDescription(@JsonProperty("key")String key) {
@@ -89,6 +92,18 @@ public class FieldDescription {
 
     public void setDialogTitle(DialogTitle dialogTitle) {
         this.dialogTitle = dialogTitle;
+    }
+
+    public Boolean getShowReferenceSaveInfo() {
+        return showReferenceSaveInfo == null ? false : showReferenceSaveInfo;
+    }
+
+    public void setShowReferenceSaveInfo(Boolean showReferenceSaveInfo) {
+        this.showReferenceSaveInfo = (showReferenceSaveInfo == null ? false : showReferenceSaveInfo);
+    }
+
+    public List<Language> getShowReferenceApproveInfo() {
+        return showReferenceApproveInfo;
     }
 
     @Override

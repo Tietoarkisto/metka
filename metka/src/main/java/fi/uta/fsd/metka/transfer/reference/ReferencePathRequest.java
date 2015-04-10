@@ -6,6 +6,7 @@ public class ReferencePathRequest {
     private String key;
     private String container;
     private Language language;
+    private Boolean returnFirst = false;
     private ReferencePath root;
 
     public String getKey() {
@@ -38,5 +39,13 @@ public class ReferencePathRequest {
 
     public void setLanguage(Language language) {
         this.language = language;
+    }
+
+    public Boolean getReturnFirst() {
+        return returnFirst == null ? false : returnFirst;
+    }
+
+    public void setReturnFirst(Boolean returnFirst) {
+        this.returnFirst = (returnFirst == null ? false : returnFirst);
     }
 }

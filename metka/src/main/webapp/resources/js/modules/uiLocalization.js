@@ -212,6 +212,27 @@ define(function (require) {
                 }
             },
 
+            "refSaveInfo": {
+                "&savedAt": {
+                    "default": "Päivämäärä (viittaus)"
+                },
+                "&savedBy": {
+                    "default": "Tallentaja (viittaus)"
+                }
+            },
+
+            "refApproveInfo": {
+                "&approvedAt": {
+                    "default": "Hyväksytty (viittaus)"
+                },
+                "&approvedBy": {
+                    "default": "Hyväksyjä (viittaus)"
+                },
+                "&approvedRevision": {
+                    "default": "Revisio (viittaus)"
+                }
+            },
+
             "selection": {
                 "&empty": {
                     "default": "-- Valitse --"

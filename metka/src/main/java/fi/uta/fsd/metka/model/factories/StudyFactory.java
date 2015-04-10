@@ -188,47 +188,55 @@ public class StudyFactory extends DataFactory {
             }
 
             // first collector, append with collector.get(language)
-            String coll = "";
+            String colls = "";
             containerPair = data.dataField(ContainerDataFieldCall.get(Fields.COLLECTORS));
             if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
-                DataRow row = containerPair.getRight().getRowsFor(Language.DEFAULT).get(0);
-                Pair<StatusCode, ValueDataField> typePair = row.dataField(ValueDataFieldCall.get(Fields.AUTHORTYPE));
-                // Need type to continue
-                if(typePair.getLeft() == StatusCode.FIELD_FOUND && typePair.getRight().valueForEquals(Language.DEFAULT, "1")) {
-                    // Person collector
-                    Pair<StatusCode, ValueDataField> collectorPair = row.dataField(ValueDataFieldCall.get(Fields.COLLECTOR));
-                    if(collectorPair.getLeft() == StatusCode.FIELD_FOUND && collectorPair.getRight().hasValueFor(Language.DEFAULT)) {
-                        coll = collectorPair.getRight().getActualValueFor(Language.DEFAULT);
-                    }
-                } else if(typePair.getLeft() == StatusCode.FIELD_FOUND && typePair.getRight().valueForEquals(Language.DEFAULT, "2")) {
-                    // Organisation collector
-                    ReferenceOption org = references.getCurrentFieldOption(l, data, "collectors."+row.getRowId()+"."+Fields.COLLECTORORGANISATION);
-                    ReferenceOption ag = references.getCurrentFieldOption(l, data, "collectors."+row.getRowId()+"."+Fields.COLLECTORAGENCY);
-                    ReferenceOption sec = references.getCurrentFieldOption(l, data, "collectors."+row.getRowId()+"."+Fields.COLLECTORSECTION);
+                for(DataRow row : containerPair.getRight().getRowsFor(Language.DEFAULT)) {
+                    String coll = "";
+                    Pair<StatusCode, ValueDataField> typePair = row.dataField(ValueDataFieldCall.get(Fields.AUTHORTYPE));
+                    // Need type to continue
+                    if(typePair.getLeft() == StatusCode.FIELD_FOUND && typePair.getRight().valueForEquals(Language.DEFAULT, "1")) {
+                        // Person collector
+                        Pair<StatusCode, ValueDataField> collectorPair = row.dataField(ValueDataFieldCall.get(Fields.COLLECTOR));
+                        if(collectorPair.getLeft() == StatusCode.FIELD_FOUND && collectorPair.getRight().hasValueFor(Language.DEFAULT)) {
+                            coll = collectorPair.getRight().getActualValueFor(Language.DEFAULT);
+                        }
+                    } else if(typePair.getLeft() == StatusCode.FIELD_FOUND && typePair.getRight().valueForEquals(Language.DEFAULT, "2")) {
+                        // Organisation collector
+                        ReferenceOption org = references.getCurrentFieldOption(l, data, "collectors."+row.getRowId()+"."+Fields.COLLECTORORGANISATION);
+                        ReferenceOption ag = references.getCurrentFieldOption(l, data, "collectors."+row.getRowId()+"."+Fields.COLLECTORAGENCY);
+                        ReferenceOption sec = references.getCurrentFieldOption(l, data, "collectors."+row.getRowId()+"."+Fields.COLLECTORSECTION);
 
-                    if(org != null && org.getTitle() != null && StringUtils.hasText(org.getTitle().getValue())) {
-                        coll += org.getTitle().getValue();
-                    }
-                    if(ag != null && ag.getTitle() != null && StringUtils.hasText(ag.getTitle().getValue())) {
-                        if(StringUtils.hasText(coll)) {
-                            coll += ". ";
+                        if(org != null && org.getTitle() != null && StringUtils.hasText(org.getTitle().getValue())) {
+                            coll += org.getTitle().getValue();
                         }
-                        coll += ag.getTitle().getValue();
-                    }
-                    if(sec != null && sec.getTitle() != null && StringUtils.hasText(sec.getTitle().getValue())) {
-                        if(StringUtils.hasText(coll)) {
-                            coll += ". ";
+                        if(ag != null && ag.getTitle() != null && StringUtils.hasText(ag.getTitle().getValue())) {
+                            if(StringUtils.hasText(coll)) {
+                                coll += ". ";
+                            }
+                            coll += ag.getTitle().getValue();
                         }
-                        coll += sec.getTitle().getValue();
+                        if(sec != null && sec.getTitle() != null && StringUtils.hasText(sec.getTitle().getValue())) {
+                            if(StringUtils.hasText(coll)) {
+                                coll += ". ";
+                            }
+                            coll += sec.getTitle().getValue();
+                        }
+                    }
+                    if(StringUtils.hasText(coll)) {
+                        if(StringUtils.hasText(colls)) {
+                            colls += " & ";
+                        }
+                        colls += coll;
                     }
                 }
             }
-            if(StringUtils.hasText(coll)) {
+            if(StringUtils.hasText(colls)) {
                 if(StringUtils.hasText(biblcit)) {
                     biblcit += ". ";
                 }
-                coll += " "+collector.get(l);
-                biblcit += coll;
+                colls += " "+collector.get(l);
+                biblcit += colls;
             }
 
             // producers separated with ampersand, append with producer.get(language)

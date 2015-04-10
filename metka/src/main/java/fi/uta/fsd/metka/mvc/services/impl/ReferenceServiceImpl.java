@@ -10,6 +10,7 @@ import fi.uta.fsd.metka.model.configuration.Reference;
 import fi.uta.fsd.metka.model.configuration.SelectionList;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.*;
+import fi.uta.fsd.metka.model.general.ApproveInfo;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.model.transfer.TransferRow;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
@@ -19,16 +20,14 @@ import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.transfer.reference.*;
+import org.apache.commons.codec.language.bm.Lang;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Contains communication pertaining to Reference objects
@@ -130,14 +129,26 @@ public class ReferenceServiceImpl implements ReferenceService {
     public ReferenceStatusResponse getReferenceStatus(Long id) {
         Pair<ReturnResult, RevisionableInfo> info = revisions.getRevisionableInfo(id);
         if(info.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
-            return new ReferenceStatusResponse(false, null);
-        } else {
-            if(info.getRight().getRemoved()) {
-                return new ReferenceStatusResponse(true, new DateTimeUserPair(info.getRight().getRemovedAt(), info.getRight().getRemovedBy()));
-            } else {
-                return new ReferenceStatusResponse(true, null);
+            return new ReferenceStatusResponse(false, null, null, null);
+        }
+        DateTimeUserPair removed = null;
+        DateTimeUserPair saved = null;
+        Map<Language, ApproveInfo> approved = null;
+
+        if(info.getRight().getRemoved()) {
+            removed = new DateTimeUserPair(info.getRight().getRemovedAt(), info.getRight().getRemovedBy());
+        }
+
+        if(info.getRight().getCurrent() != null) {
+            Pair<ReturnResult, RevisionData> revPair = revisions.getRevisionData(id, info.getRight().getCurrent());
+            if(revPair.getLeft() == ReturnResult.REVISION_FOUND) {
+                RevisionData rev = revPair.getRight();
+                saved = rev.getSaved();
+                approved = rev.getApproved();
             }
         }
+
+        return new ReferenceStatusResponse(true, removed, saved, approved);
     }
 
     private List<String> formDependencyStack(Field field, Configuration config) {

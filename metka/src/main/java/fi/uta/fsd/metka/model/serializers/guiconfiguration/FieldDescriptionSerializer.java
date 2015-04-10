@@ -2,6 +2,7 @@ package fi.uta.fsd.metka.model.serializers.guiconfiguration;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.guiconfiguration.FieldDescription;
 import fi.uta.fsd.metka.model.serializers.ObjectSerializer;
 
@@ -26,6 +27,12 @@ public class FieldDescriptionSerializer extends ObjectSerializer<FieldDescriptio
         jgen.writeObjectField("dialogTitle", value.getDialogTitle());
         jgen.writeBooleanField("showSaveInfo", value.getShowSaveInfo());
         jgen.writeBooleanField("showReferenceValue", value.getShowReferenceValue());
+        jgen.writeBooleanField("showReferenceSaveInfo", value.getShowReferenceSaveInfo());
         jgen.writeBooleanField("displayHeader", value.getDisplayHeader());
+        jgen.writeArrayFieldStart("showReferenceApproveInfo");
+        for(Language lang : value.getShowReferenceApproveInfo()) {
+            jgen.writeString(lang.toValue());
+        }
+        jgen.writeEndArray();
     }
 }

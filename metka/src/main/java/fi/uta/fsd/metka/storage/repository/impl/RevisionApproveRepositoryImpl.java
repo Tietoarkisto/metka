@@ -10,6 +10,7 @@ import fi.uta.fsd.metka.model.configuration.Operation;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.data.value.Value;
+import fi.uta.fsd.metka.model.general.ApproveInfo;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.model.transfer.TransferField;
@@ -103,7 +104,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             DateTimeUserPair info = DateTimeUserPair.build();
             Set<Language> changesIn = hasChanges(data, configPair.getRight());
             for(Language language : changesIn) {
-                data.getApproved().put(language, info);
+                data.approveRevision(language, new ApproveInfo(data.getKey().getNo(), info));
             }
 
             // Do final operations before saving data to
@@ -366,11 +367,11 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
     private void finalizeStudyApproval(RevisionData revision) {
         Pair<StatusCode, ValueDataField> aipcompletePair = revision.dataField(ValueDataFieldCall.get("aipcomplete"));
         for(Language language : Language.values()) {
-            if(revision.getApproved().containsKey(language) && revision.getApproved().get(language).getTime() != null) {
+            if(revision.isApprovedFor(language)) {
                 // We have approved value for this language, check if it's missing from aipcomplete
                 if(aipcompletePair.getLeft() != StatusCode.FIELD_FOUND || !aipcompletePair.getRight().hasValueFor(language)) {
                     aipcompletePair = revision.dataField(ValueDataFieldCall
-                            .set("aipcomplete", new Value(new LocalDate(revision.getApproved().get(language).getTime()).toString()), language)
+                            .set("aipcomplete", new Value(new LocalDate(revision.approveInfoFor(language).getApproved().getTime()).toString()), language)
                             .setInfo(DateTimeUserPair.build())
                             .setChangeMap(revision.getChanges()));
                 }

@@ -143,10 +143,14 @@ public class ValueDataField extends DataField {
     public DataField copy() {
         ValueDataField field = new ValueDataField(getKey());
         for(Language l : original.keySet()) {
-            field.original.put(l, original.get(l).copy());
+            if(original.get(l) != null) {
+                field.original.put(l, original.get(l).copy());
+            }
         }
         for(Language l : current.keySet()) {
-            field.current.put(l, current.get(l).copy());
+            if(current.get(l) != null) {
+                field.current.put(l, current.get(l).copy());
+            }
         }
 
         return field;

@@ -4,7 +4,7 @@ define(function (require) {
     var getPropertyNS = require('./utils/getPropertyNS');
 
     return {
-        options: function (key, options, lang, callback) {
+        /*options: function (key, options, lang, callback) {
             return function (dataFields, reference) {
                 require('./server')('options', {
                     data: JSON.stringify({
@@ -52,7 +52,7 @@ define(function (require) {
                     }
                 });
             };
-        },
+        },*/
         optionsByPath: function (key, options, lang, callback) {
             return function (dataFields, reference) {
 
@@ -120,7 +120,8 @@ define(function (require) {
                             key: key,
                             container: "",
                             language: MetkaJS.L10N.locale.toUpperCase(),
-                            root: root
+                            root: root,
+                            returnFirst: target.type === 'REFERENCE'
                         }]
                     }),
                     success: function (data) {
@@ -129,11 +130,11 @@ define(function (require) {
                 });
             };
         },
-        option: function request(key, options, lang, callback) {
+        /*option: function request(key, options, lang, callback) {
             return this.options(key, options, lang, function (options) {
                 callback(require('./selectInputOptionText')(options[0]));
             });
-        },
+        },*/
         optionByPath: function request(key, options, lang, callback) {
             return this.optionsByPath(key, options, lang, function (options) {
                 callback(require('./selectInputOptionText')(options[0]));
