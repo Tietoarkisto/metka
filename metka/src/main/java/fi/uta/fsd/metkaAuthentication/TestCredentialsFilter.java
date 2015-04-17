@@ -17,6 +17,7 @@ public class TestCredentialsFilter extends OncePerRequestFilter {
 
         //setReaderAttributes(request);
         //setUserAttributes(request);
+        //setTranslatorAttributes(request);
         setAdminAttributes(request);
 
         filterChain.doFilter(request, response);

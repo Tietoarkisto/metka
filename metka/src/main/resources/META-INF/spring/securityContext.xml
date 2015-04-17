@@ -19,6 +19,8 @@
         <expression-handler ref="metkaExpressionHandler" />
     </global-method-security>
 
+    <beans:bean id="loginListener" class="fi.uta.fsd.metkaAuthentication.LoginListener" />
+
     <beans:bean id="testFilter" class="fi.uta.fsd.metkaAuthentication.TestCredentialsFilter" />
 
     <beans:bean id="metkaAuthenticationProvider" class="org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider" >

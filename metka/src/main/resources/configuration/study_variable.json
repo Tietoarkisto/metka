@@ -210,6 +210,7 @@
             "key": "categories",
             "translatable": false,
             "type": "CONTAINER",
+            "editable": false,
             "subfields": [
                 "value",
                 "label",
@@ -255,6 +256,7 @@
         "statistics": {
             "key": "statistics",
             "translatable": false,
+            "editable": false,
             "type": "CONTAINER",
             "subfields": [
                 "statisticstype",

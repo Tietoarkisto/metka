@@ -569,6 +569,11 @@
 					"title": "Ryhmä"
 				}
 			]
+		},
+		"user_list": {
+			"key": "user_list",
+			"type": "REFERENCE",
+			"reference": "user_list_ref"
 		}
 	},
 	"references": {
@@ -872,6 +877,13 @@
 			"target": "section",
 			"valuePath": "id",
 			"titlePath": "sectionabbr"
+		},
+		"user_list_ref": {
+			"key": "user_list_ref",
+			"type": "JSON",
+			"target": "user-list",
+			"valuePath": "userName",
+			"titlePath": "displayName"
 		}
 	},
 	"displayId": "studyid",
@@ -1156,7 +1168,8 @@
 		"triggerpro": {
 			"key": "triggerpro",
 			"translatable": false,
-			"type": "STRING"
+			"type": "SELECTION",
+			"selectionList": "user_list"
 		},
 		"newtermsofuse": {
 			"key": "newtermsofuse",

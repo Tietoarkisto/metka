@@ -273,6 +273,38 @@
 			"translatable": false,
 			"type": "SELECTION",
 			"selectionList": "filepublication_list"
+		},
+		"no": {
+			"_comment": "For use in attachment history container",
+			"key": "no",
+			"type": "STRING",
+			"subfield": true,
+			"editable": false,
+			"writable": false
+		},
+		"date": {
+			"_comment": "For use in attachment history container",
+			"key": "date",
+			"type": "STRING",
+			"subfield": true,
+			"editable": false,
+			"writable": false
+		},
+		"user": {
+			"_comment": "For use in attachment history container",
+			"key": "user",
+			"type": "STRING",
+			"subfield": true,
+			"editable": false,
+			"writable": false
+		},
+		"state": {
+			"_comment": "For use in attachment history container",
+			"key": "state",
+			"type": "STRING",
+			"subfield": true,
+			"editable": false,
+			"writable": false
 		}
 	}
 }

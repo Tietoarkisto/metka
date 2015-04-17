@@ -340,7 +340,7 @@
             "states": [
                 "APPROVED"
             ],
-                "permissions": [
+            "permissions": [
                 "canEditRevision"
             ]
         },

@@ -76,85 +76,8 @@ define(function (require) {
                         return $td;
                     }
 
-                    /*return $td.append((function () {
-                        var columnLang = $thead.children('tr').children().eq(i).data('lang') || lang;
-
-                        function setText(text) {
-                            $td.append(typeof text === 'undefined' ? EMPTY : text);
-                        }
-                        function setOptionText(listOptions) {
-                            setText(require('./selectInputOptionText')(listOptions.find(function (option) {
-                                return option.value === value;
-                            })));
-                        }
-                        var dataConf = getPropertyNS(options, 'dataConf.fields', column);
-                        var type = getPropertyNS(options, 'dataConf.fields', column, 'type');
-
-                        if (!type) {
-                            log('not implemented', column);
-                            return EMPTY;
-                        }
-
-                        if (type === 'REFERENCE') {
-                            var refKey = getPropertyNS(options, 'dataConf.fields', column, 'reference');
-                            var reference = getPropertyNS(options, 'dataConf.references', refKey);
-
-                            require('./reference').optionByPath(column, options, columnLang, setText)(transferRow.fields, reference);
-                            return;
-                        }
-
-                        var transferField = getPropertyNS(transferRow, 'fields', column);
-                        var value = (function () {
-                            if (!transferField) {
-                                return;
-                            }
-
-                            tableError.call($td, (transferField.errors || []).concat(getPropertyNS(transferField, 'values', columnLang, 'errors') || []));
-
-                            if (!transferField.type) {
-                                log('transferField type not set (column: {column})'.supplant({
-                                    column: column
-                                }));
-                                return;
-                            }
-
-                            if (transferField.type !== 'VALUE') {
-                                log('not implemented (type: {type}, column: {column})'.supplant({
-                                    type: transferField.type,
-                                    column: column
-                                }));
-                                return;
-                            }
-
-                            return require('./data').latestValue(transferField, columnLang);
-                        })();
-
-                        if (type === 'STRING' || type === 'INTEGER' || type === 'REAL' || type === 'RICHTEXT') {
-                            return value || EMPTY;
-                        }
-                        if (['DATE', 'TIME', 'DATETIME'].indexOf(type) !== -1) {
-                            if (value) {
-                                return moment(value).format(require('./dateFormats')[type]);
-                            }
-                            return EMPTY;
-                        }
-                        if (type === 'SELECTION') {
-                            var list = require('./selectionList')(options, column);
-                            if (!list) {
-                                $td.append(EMPTY);
-                                return;
-                            }
-                            if (list.type === 'REFERENCE') {
-                                require('./reference').optionsByPath(column, options, lang, setOptionText)(transferRow.fields, getPropertyNS(options, 'dataConf.references', list.reference));
-                            } else {
-                                setOptionText(list.options);
-                            }
-                            return;
-                        }
-                        log('not implemented', column, type);
-                        return EMPTY;
-                    })());*/
-
+                    // This fetches the correct display text for each table cell. It would make sense to split and generalize this better but the amount of work makes it
+                    // not a priority at the moment.
                     (function ($td) {
                         var columnLang = $thead.children('tr').children().eq(i).data('lang') || lang;
 
@@ -290,7 +213,6 @@ define(function (require) {
                     require('./server')('/references/referenceStatus/{value}', transferRow, {
                         method: 'GET',
                         success: function (response) {
-                            log(response);
                             if(response.saved) {
                                 if(response.saved.time && infoTDs.saved.at) {
                                     infoTDs.saved.at.text(moment(response.saved.time).format(require('./dateFormats')['DATE']))
@@ -363,6 +285,10 @@ define(function (require) {
         var $thead = $('<thead>');
         var $tbody = $('<tbody>')
             .on('click', 'tr', function () {
+                if(options.fieldOptions.hasOwnProperty("editable") && !options.fieldOptions.editable) {
+                    log(options.fieldOptions);
+                    return;
+                }
                 var $tr = $(this);
 
                 // if reference container without custom onClick
@@ -497,9 +423,8 @@ define(function (require) {
                                     return th('');
                                 }
                             }));
-                    if (!options.field.hasOwnProperty('displayHeader') || options.field.displayHeader) {
-                        this.append($thead);
-                    }
+                    this.append($thead);
+                    $thead.toggleClass("containerHidden", !(!options.field.hasOwnProperty('displayHeader') || options.field.displayHeader));
                 })
                 .append(function () {
                     require('./data')(options).onChange(function () {
