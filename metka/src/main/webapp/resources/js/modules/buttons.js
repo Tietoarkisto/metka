@@ -6,7 +6,7 @@ define(function (require) {
             this
                 .click(require('./formAction')('approve')(options, function (response) {
                     $.extend(options.data, response.data);
-                    $(this).trigger('refresh.metka');
+                    options.$events.trigger('refresh.metka');
                 }, [
                     'APPROVE_SUCCESSFUL',
                     'APPROVE_FAILED_DURING_VALIDATION'
@@ -23,7 +23,7 @@ define(function (require) {
                         data: JSON.stringify(options.data.key),
                         success: function (response) {
                             $.extend(options.data, response.data);
-                            $this.trigger('refresh.metka');
+                            options.$events.trigger('refresh.metka');
                         }
                     });
                 });
@@ -65,7 +65,7 @@ define(function (require) {
         EDIT: function (options) {
             this.click(require('./formAction')('edit')(options, function (response) {
                 $.extend(options.data, response.data);
-                $(this).trigger('refresh.metka');
+                options.$events.trigger('refresh.metka');
                 history.replaceState(undefined, '', require('./url')('view'));
             }, [
                 'REVISION_FOUND',
@@ -261,7 +261,7 @@ define(function (require) {
                         data: JSON.stringify(options.data.key),
                         success: function (response) {
                             $.extend(options.data, response.data);
-                            $this.trigger('refresh.metka');
+                            options.$events.trigger('refresh.metka');
                         }
                     });
                 });
@@ -274,7 +274,7 @@ define(function (require) {
                         data: JSON.stringify(options.data.key),
                         success: function (response) {
                             $.extend(options.data, response.data);
-                            $this.trigger('refresh.metka');
+                            options.$events.trigger('refresh.metka');
                         }
                     }, options.request);
                     require('./server')('/revision/ajax/restore', request);
@@ -284,7 +284,7 @@ define(function (require) {
             this
                 .click(require('./save')(options, function (response) {
                     $.extend(options.data, response.data);
-                    $(this).trigger('refresh.metka');
+                    options.$events.trigger('refresh.metka');
                 }));
         },
         YES: function (options) {

@@ -54,7 +54,7 @@ define(function (require) {
             };
         },*/
         optionsByPath: function (key, options, lang, callback) {
-            return function (dataFields, reference) {
+            return function (dataFields, reference, rowValue) {
 
                 // TODO: This should always be called with reference, also reference fetching should be generalized somewhere
                 var target = getPropertyNS(options, 'dataConf.fields', key);
@@ -62,7 +62,7 @@ define(function (require) {
                     dataFields = options.data.fields;
                 }
                 if(!reference) {
-                    if(target.type === "REFERENCE") {
+                    if(target.type === "REFERENCE" || target.type === 'REFERENCECONTAINER') {
                         reference = getPropertyNS(options, 'dataConf.references', target.reference);
                     } else if(target.type === "SELECTION") {
                         var list = getPropertyNS(options, 'dataConf.selectionLists', target.selectionList);
@@ -71,17 +71,26 @@ define(function (require) {
                         }
                     }
                 }
+                log('key', key);
                 var root = function r(currentKey, dataFields, lang, reference, next) {
                     var path = {
                         reference: reference,
-                        value: dataFields && dataFields[currentKey] ? require('./data').latestValue(dataFields[currentKey], lang) : undefined,
+                        value: (function() {
+                            var target = getPropertyNS(options, 'dataConf.fields', currentKey);
+                            if(target.type === 'REFERENCECONTAINER') {
+                                return rowValue;
+                            } else {
+                                return dataFields && dataFields[currentKey] ? require('./data').latestValue(dataFields[currentKey], lang) : undefined;
+                            }
+                        })(),
                         next: next
                     };
 
                     if(reference && reference.type === "DEPENDENCY") {
+                        log('target', reference.target);
                         var target = getPropertyNS(options, 'dataConf.fields', reference.target);
                         var targetRef = null;
-                        if(target.type === "REFERENCE") {
+                        if(target.type === "REFERENCE" || target.type === 'REFERENCECONTAINER') {
                             targetRef = getPropertyNS(options, 'dataConf.references', target.reference);
                         } else if(target.type === "SELECTION") {
                             var list = getPropertyNS(options, 'dataConf.selectionLists', target.selectionList);

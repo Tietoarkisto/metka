@@ -48,6 +48,12 @@ define(function (require) {
 
             tableError.call($tr, transferRow.errors);
 
+            if(options.fieldOptions.type === 'REFERENCECONTAINER') {
+                if(options.field.showReferenceValue) {
+                    $tr.append($('<td>').text(transferRow.value));
+                }
+            }
+
             $tr
                 .data('transferRow', transferRow)
                 .append(columns.map(function (column, i) {
@@ -55,24 +61,10 @@ define(function (require) {
                         .toggleClass('hiddenByTranslationState', $thead.children('tr').children().eq(i).hasClass('hiddenByTranslationState'));
 
                     if (options.fieldOptions.type === 'REFERENCECONTAINER') {
-                        var fieldValues = {};
-                        fieldValues[key] = transferRow.value;
-                        require('./server')('options', {
-                            data: JSON.stringify({
-                                key: key,
-                                requests: [{
-                                    key: column,
-                                    container: key,
-                                    confType: options.dataConf.key.type,
-                                    confVersion: options.dataConf.key.version,
-                                    language: lang,
-                                    fieldValues: fieldValues
-                                }]
-                            }),
-                            success: function (data) {
-                                $td.text(data.responses.length && data.responses[0].options.length ? data.responses[0].options[0].title.value : EMPTY);
-                            }
-                        });
+                        require('./reference').optionByPath(column, options, options.defaultLang, function(value) {
+                            $td.text(!!value && value.length ? value : EMPTY);
+                        })(null, null, transferRow.value);
+
                         return $td;
                     }
 
@@ -213,6 +205,10 @@ define(function (require) {
                     require('./server')('/references/referenceStatus/{value}', transferRow, {
                         method: 'GET',
                         success: function (response) {
+                            if(response.result !== 'REVISION_FOUND') {
+                                require('./resultViewer')(response.result);
+                                return false;
+                            }
                             if(response.saved) {
                                 if(response.saved.time && infoTDs.saved.at) {
                                     infoTDs.saved.at.text(moment(response.saved.time).format(require('./dateFormats')['DATE']))
@@ -286,7 +282,6 @@ define(function (require) {
         var $tbody = $('<tbody>')
             .on('click', 'tr', function () {
                 if(options.fieldOptions.hasOwnProperty("editable") && !options.fieldOptions.editable) {
-                    log(options.fieldOptions);
                     return;
                 }
                 var $tr = $(this);
@@ -343,6 +338,13 @@ define(function (require) {
                 .me(function () {
                     $thead
                         .append($('<tr>')
+                            .append(function () {
+                                if(options.fieldOptions.type === 'REFERENCECONTAINER') {
+                                    if(options.field.showReferenceValue) {
+                                        return [th(MetkaJS.L10N.get('general.referenceValue'))];
+                                    }
+                                }
+                            })
                             .append(function () {
                                 var response = [];
                                 (options.field.columnFields || [])

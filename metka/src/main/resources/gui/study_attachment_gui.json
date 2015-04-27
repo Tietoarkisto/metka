@@ -20,8 +20,8 @@
 			"key": "user",
 			"title": "Tila"
 		},
-		"filecomment": {
-			"key": "filecomment",
+		"history_filecomment": {
+			"key": "history_filecomment",
 			"title": "Kommentti"
 		}
 	},
@@ -187,13 +187,11 @@
 							"readOnly": true,
 							"field": {
 								"displayType": "CUSTOM_JS",
-								"key": "custom_fileHistory",
+								"key": "custom_filehistory",
+								"showReferenceValue": true,
+								"showReferenceSaveInfo": true,
 								"columnFields": [
-									"no",
-									"state",
-									"filecomment",
-									"date",
-									"user"
+									"history_filecomment"
 								]
 							}
 						}

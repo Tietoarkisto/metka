@@ -83,7 +83,7 @@ showSaveInfo : At present applies only to components that are
     the information of the most recent change within that row).
     Default is false.
 
-showReferenceKey : At present applies only to REFERENCECONTAINER
+showReferenceValue : Applies only to REFERENCECONTAINER
     but could in theory be implemented for reference fields and select
     fields that use a reference as well (although again implementation
     is of no high priority). Displays the valuePath (or implied value in

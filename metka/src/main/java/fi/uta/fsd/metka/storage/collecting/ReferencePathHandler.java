@@ -73,6 +73,9 @@ public class ReferencePathHandler {
             case REVISIONABLE:
                 handleRevisionableStep(step, options, language, returnFirst);
                 break;
+            case REVISION:
+                handleRevisionStep(step, options, language, returnFirst);
+                break;
             case JSON:
                 handleJsonStep(step, options, language, returnFirst);
                 break;
@@ -90,7 +93,7 @@ public class ReferencePathHandler {
             return;
         }
         if(StringUtils.hasText(step.getValue()) && step.getNext() != null && step.getNext().getReference().getType() != ReferenceType.DEPENDENCY) {
-            Logger.error(ReferencePathHandler.class, "Malformed path. Cuurrent step has a value and there's a next step but next step is not DEPENDENCY");
+            Logger.error(ReferencePathHandler.class, "Malformed path. Current step has a value and there's a next step but next step is not DEPENDENCY");
             return;
         }
 
@@ -174,23 +177,7 @@ public class ReferencePathHandler {
             Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(Long.parseLong(step.getValue()),
                     step.getReference().getApprovedOnly(), ConfigurationType.fromValue(step.getReference().getTarget()));
             if(pair.getLeft() == ReturnResult.REVISION_FOUND) {
-                Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(pair.getRight().getConfiguration());
-                if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
-                    Logger.error(ReferencePathHandler.class, "Could not found configuration for "+pair.getRight().toString());
-                    return;
-                }
-                if(step.getNext() == null) {
-                    // Terminating step, gather option from revision data
-                    DataFieldPathParser parser = new DataFieldPathParser(pair.getRight().getFields(),
-                            step.getReference().getValuePathParts(), configPair.getRight(), language);
-                    //Map<String, DataField> fieldMap = parser.findRootObjectWithTerminatingValue(step.getValue());
-                    ReferenceOption option = parser.getOption(pair.getRight(), step.getReference());
-                    if(option != null) {
-                        options.add(option);
-                    }
-                } else {
-                    referencePathStep(pair.getRight().getFields(), step.getNext(), configPair.getRight(), options, language, returnFirst);
-                }
+                handleRevisionStep(pair.getRight(), step, options, language, returnFirst);
             }
         } else {
             List<RevisionableEntity> revisionables = em.createQuery("SELECT r FROM RevisionableEntity r WHERE r.type=:type", RevisionableEntity.class)
@@ -204,24 +191,85 @@ public class ReferencePathHandler {
                 Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(revisionable.getId(),
                     step.getReference().getApprovedOnly(), ConfigurationType.fromValue(step.getReference().getTarget()));
                 if(pair.getLeft() == ReturnResult.REVISION_FOUND) {
-                    // Terminating step, gather option from revision data
-                    Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(pair.getRight().getConfiguration());
-                    if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
-                        Logger.error(ReferencePathHandler.class, "Could not found configuration for "+pair.getRight().toString());
-                        continue;
-                    }
-                    DataFieldPathParser parser = new DataFieldPathParser(pair.getRight().getFields(),
-                            step.getReference().getValuePathParts(), configPair.getRight(), language);
-
-                    ReferenceOption option = parser.getOption(pair.getRight(), step.getReference());
-                    if(option != null) {
-                        options.add(option);
-                        if(returnFirst) {
-                            break;
-                        }
+                    handleRevisionStep(pair.getRight(), step, options, language, returnFirst);
+                    if(returnFirst && options.size() > 0) {
+                        break;
                     }
                 }
             }
+        }
+    }
+
+    private void handleRevisionStep(ReferencePath step, List<ReferenceOption> options, Language language, boolean returnFirst) {
+        if(StringUtils.hasText(step.getValue())) {
+            String[] splits = step.getValue().split("-");
+
+            if(splits == null || splits.length < 2) {
+                // We have only revisionable id, handle just like revisionable reference
+                Pair<ReturnResult, RevisionableInfo> infoPair = revisions.getRevisionableInfo(Long.parseLong(step.getValue()));
+                if(infoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND || (infoPair.getRight().getRemoved() && step.getReference().getIgnoreRemoved())) {
+                    return;
+                }
+                Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(Long.parseLong(step.getValue()),
+                        step.getReference().getApprovedOnly(), ConfigurationType.fromValue(step.getReference().getTarget()));
+                if(pair.getLeft() == ReturnResult.REVISION_FOUND) {
+                    handleRevisionStep(pair.getRight(), step, options, language, returnFirst);
+                }
+            } else {
+                // We have both revisionable id and revision number, handle accordingly
+                Pair<ReturnResult, RevisionableInfo> infoPair = revisions.getRevisionableInfo(Long.parseLong(splits[0]));
+                if(infoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND || (infoPair.getRight().getRemoved() && step.getReference().getIgnoreRemoved())) {
+                    return;
+                }
+                Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(Long.parseLong(splits[0]), Integer.parseInt(splits[1]));
+                if(pair.getLeft() == ReturnResult.REVISION_FOUND && pair.getRight().getConfiguration().getType() == ConfigurationType.fromValue(step.getReference().getTarget())) {
+                    handleRevisionStep(pair.getRight(), step, options, language, returnFirst);
+                }
+            }
+        } else {
+            // TODO: Possibly allow collecting all revision options in the future, for now we don't need this
+            return;
+            /*List<RevisionableEntity> revisionables = em.createQuery("SELECT r FROM RevisionableEntity r WHERE r.type=:type", RevisionableEntity.class)
+                    .setParameter("type", step.getReference().getTarget())
+                    .getResultList();
+            // Collect options
+            for(RevisionableEntity revisionable : revisionables) {
+                if(revisionable.getRemoved() && step.getReference().getIgnoreRemoved()) {
+                    continue;
+                }
+                Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(revisionable.getId(),
+                        step.getReference().getApprovedOnly(), ConfigurationType.fromValue(step.getReference().getTarget()));
+                if(pair.getLeft() == ReturnResult.REVISION_FOUND) {
+                    handleRevisionStep(pair.getRight(), step, options, language, returnFirst);
+                    if(returnFirst && options.size() > 0) {
+                        break;
+                    }
+                }
+            }*/
+        }
+    }
+
+    private void handleRevisionStep(RevisionData data, ReferencePath step, List<ReferenceOption> options, Language language, boolean returnFirst) {
+        if(returnFirst && options.size() > 0) {
+            // We already have something to return and only first was requested, get out
+            return;
+        }
+        Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(data.getConfiguration());
+        if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
+            Logger.error(ReferencePathHandler.class, "Could not find configuration for "+data.toString());
+            return;
+        }
+        if(step.getNext() == null) {
+            // Terminating step, gather option from revision data
+            DataFieldPathParser parser = new DataFieldPathParser(data.getFields(),
+                    step.getReference().getValuePathParts(), configPair.getRight(), language);
+            //Map<String, DataField> fieldMap = parser.findRootObjectWithTerminatingValue(step.getValue());
+            ReferenceOption option = parser.getOption(data, step.getReference());
+            if(option != null) {
+                options.add(option);
+            }
+        } else {
+            referencePathStep(data.getFields(), step.getNext(), configPair.getRight(), options, language, returnFirst);
         }
     }
 

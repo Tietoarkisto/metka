@@ -2,11 +2,11 @@ define(function (require) {
     'use strict';
 
     return function (options) {
-        options.field.displayType = "CONTAINER";
+        delete options.field.displayType;
 
         return {
             onClick: function (transferRow) {
-                var $row = $(this);
+                /*var $row = $(this);*/
                 require('./../../server')('viewAjax', {
                     PAGE: 'STUDY_ATTACHMENT',
                     no: transferRow.fields.no.values.DEFAULT.current,
@@ -17,7 +17,7 @@ define(function (require) {
                         if (response.result === 'VIEW_SUCCESSFUL') {
                             $.extend(options.data, response.transferData);
                             options.type = options.isReadOnly(options) ? 'VIEW' : 'MODIFY';
-                            $row.trigger('refresh.metka');
+                            options.$events.trigger('refresh.metka');
                         }
                     }
                 })
@@ -27,18 +27,12 @@ define(function (require) {
                 require('./../../server')('/study/attachmentHistory/', {
                     data: JSON.stringify(options.data),
                     success: function (data) {
-                        var objectToTransferRow = require('./../../map/object/transferRow');
+                        //var objectToTransferRow = require('./../../map/object/transferRow');
                         var revisions = data.rows.map(function (result) {
-
                             return {
-                                no: result.no,
-                                state: MetkaJS.L10N.get('search.result.state.{state}'.supplant(result)),
-                                filecomment: result.values["filecomment"],
-                                date: result.values["date"],
-                                user: result.values["user"]
+                                key: 'custom_fileHistory',
+                                value: result.id+"-"+result.no
                             };
-                        }).map(function (result) {
-                            return objectToTransferRow(result, "DEFAULT");
                         });
 
                         revisions && revisions.forEach(function (row) {

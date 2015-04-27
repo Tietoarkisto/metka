@@ -192,6 +192,17 @@
 			"type": "DEPENDENCY",
 			"target": "study",
 			"titlePath": "studyid"
+		},
+		"custom_filehistory_ref": {
+			"key": "custom_filehistory_ref",
+			"type": "REVISION",
+			"target": "STUDY_ATTACHMENT"
+		},
+		"history_filecomment_ref": {
+			"key": "history_filecomment_ref",
+			"type": "DEPENDENCY",
+			"target": "custom_filehistory",
+			"valuePath": "filecomment"
 		}
 	},
 	"fields": {
@@ -274,29 +285,23 @@
 			"type": "SELECTION",
 			"selectionList": "filepublication_list"
 		},
-		"no": {
-			"_comment": "For use in attachment history container",
-			"key": "no",
-			"type": "STRING",
-			"subfield": true,
+		"custom_filehistory": {
+			"key": "custom_filehistory",
+			"type": "REFERENCECONTAINER",
+			"reference": "custom_filehistory_ref",
+			"writable": false,
 			"editable": false,
-			"writable": false
+			"subfields": [
+				"history_filecomment"
+			]
 		},
-		"date": {
-			"_comment": "For use in attachment history container",
-			"key": "date",
-			"type": "STRING",
-			"subfield": true,
+		"history_filecomment": {
+			"key": "history_filecomment",
+			"type": "REFERENCE",
+			"writable": false,
 			"editable": false,
-			"writable": false
-		},
-		"user": {
-			"_comment": "For use in attachment history container",
-			"key": "user",
-			"type": "STRING",
-			"subfield": true,
-			"editable": false,
-			"writable": false
+			"reference": "history_filecomment_ref",
+			"subfield": true
 		},
 		"state": {
 			"_comment": "For use in attachment history container",

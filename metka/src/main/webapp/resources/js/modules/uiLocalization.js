@@ -203,6 +203,10 @@ define(function (require) {
                 }
             },
 
+            "&referenceValue": {
+                "default": "Referenssiarvo"
+            },
+
             "saveInfo": {
                 "&savedAt": {
                     "default": "Päivämäärä"

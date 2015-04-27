@@ -12,6 +12,7 @@ define(function (require) {
             };
             require('../../utils/setPropertyNS')(fields, field, 'values', lang, 'current', data[field]);
         });
+        log(data);
         return {
             fields: fields
         };

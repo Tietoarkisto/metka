@@ -129,8 +129,27 @@ public class ReferenceServiceImpl implements ReferenceService {
     public ReferenceStatusResponse getReferenceStatus(Long id) {
         Pair<ReturnResult, RevisionableInfo> info = revisions.getRevisionableInfo(id);
         if(info.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
-            return new ReferenceStatusResponse(false, null, null, null);
+            return new ReferenceStatusResponse(ReturnResult.REVISIONABLE_NOT_FOUND.name(), false, null, null, null);
         }
+
+        return getReferenceStatus(id, info.getRight().getCurrent(), info);
+    }
+
+    @Override
+    public ReferenceStatusResponse getReferenceStatus(Long id, Integer no) {
+        Pair<ReturnResult, RevisionableInfo> info = revisions.getRevisionableInfo(id);
+        if(info.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
+            return new ReferenceStatusResponse(ReturnResult.REVISIONABLE_NOT_FOUND.name(), false, null, null, null);
+        }
+
+        return getReferenceStatus(id, no, info);
+    }
+
+    private ReferenceStatusResponse getReferenceStatus(Long id, Integer no, Pair<ReturnResult, RevisionableInfo> info) {
+        if(id == null || no == null || info == null) {
+            return new ReferenceStatusResponse(ReturnResult.PARAMETERS_MISSING.name(), false, null, null, null);
+        }
+
         DateTimeUserPair removed = null;
         DateTimeUserPair saved = null;
         Map<Language, ApproveInfo> approved = null;
@@ -139,16 +158,12 @@ public class ReferenceServiceImpl implements ReferenceService {
             removed = new DateTimeUserPair(info.getRight().getRemovedAt(), info.getRight().getRemovedBy());
         }
 
-        if(info.getRight().getCurrent() != null) {
-            Pair<ReturnResult, RevisionData> revPair = revisions.getRevisionData(id, info.getRight().getCurrent());
-            if(revPair.getLeft() == ReturnResult.REVISION_FOUND) {
-                RevisionData rev = revPair.getRight();
-                saved = rev.getSaved();
-                approved = rev.getApproved();
-            }
+        Pair<ReturnResult, RevisionData> revPair = revisions.getRevisionData(id, no);
+        if(revPair.getLeft() == ReturnResult.REVISION_FOUND) {
+            return new ReferenceStatusResponse(ReturnResult.REVISION_FOUND.name(), true, removed, revPair.getRight().getSaved(), revPair.getRight().getApproved());
+        } else {
+            return new ReferenceStatusResponse(ReturnResult.REVISION_NOT_FOUND.name(), true, removed, null, null);
         }
-
-        return new ReferenceStatusResponse(true, removed, saved, approved);
     }
 
     private List<String> formDependencyStack(Field field, Configuration config) {

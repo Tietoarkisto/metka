@@ -1,10 +1,12 @@
 package fi.uta.fsd.metka.mvc.controller;
 
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
+import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.reference.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +20,7 @@ public class ReferenceController {
     @Autowired
     private ReferenceService service;
 
+    // TODO: Phase this out and move everything over to path based reference handling
     @RequestMapping(value = "collectOptionsGroup", method = {RequestMethod.POST},
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody ReferenceOptionsGroupResponse collectReferenceOptionsGroup(@RequestBody ReferenceOptionsGroupRequest requests) {
@@ -66,7 +69,27 @@ public class ReferenceController {
 
     // TODO: Refactor to RevisionController as "revisionableStatus"
     @RequestMapping(value = "referenceStatus/{id}", method = RequestMethod.GET)
-    public @ResponseBody ReferenceStatusResponse referenceStatus(@PathVariable Long id) {
-        return service.getReferenceStatus(id);
+    public @ResponseBody ReferenceStatusResponse referenceStatus(@PathVariable String id) {
+        // TODO: if this can be split then we want status for a specific revision, otherwise use the current method
+        // TODO: Also check if all given values are of their proper type and if not then return PARAMETERS_MISSING
+        if(!StringUtils.hasText(id)) {
+            return new ReferenceStatusResponse(ReturnResult.PARAMETERS_MISSING.name(), false, null, null, null);
+        }
+        String[] splits = id.split("-");
+        if(splits == null || splits.length < 2) {
+            // Use the old method
+            try {
+                return service.getReferenceStatus(Long.parseLong(id));
+            } catch (NumberFormatException nfe) {
+                return new ReferenceStatusResponse(ReturnResult.PARAMETERS_MISSING.name(), false, null, null, null);
+            }
+        } else {
+            // Use method for specific revision
+            try {
+                return service.getReferenceStatus(Long.parseLong(splits[0]), Integer.parseInt(splits[1]));
+            } catch (NumberFormatException nfe) {
+                return new ReferenceStatusResponse(ReturnResult.PARAMETERS_MISSING.name(), false, null, null, null);
+            }
+        }
     }
 }

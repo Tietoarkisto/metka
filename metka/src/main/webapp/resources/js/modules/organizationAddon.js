@@ -50,7 +50,7 @@ define(function (require) {
                                                                         }),
                                                                         success: function (response) {
                                                                             require('./resultViewer')(response, null, function() {
-                                                                                $button.trigger('refresh.metka');
+                                                                                options.$events.trigger('refresh.metka');
                                                                             });
                                                                         }
                                                                     });

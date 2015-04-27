@@ -11,6 +11,27 @@ define(function (require) {
         return {
             create: function (options) {
 
+                function partialRefresh() {
+                    require('./../../server')('viewAjax', {
+                        method: 'GET',
+                        success: function (response) {
+                            if (response.result === 'VIEW_SUCCESSFUL') {
+                                log('partial refresh', response);
+                                // on browser, overwrite these fields only, since there might be other unsaved fields on page
+                                ['files', 'variables'].forEach(function (field) {
+                                    log(field);
+                                    options.data.fields[field] = options.data.fields[field] || {};
+                                    $.extend(options.data.fields[field], response.transferData.fields[field]);
+                                });
+                                /*log('elem');
+                                $elem.trigger('refresh.metka');*/
+                                log('options');
+                                options.$events.trigger('refresh.metka');
+                            }
+                        }
+                    });
+                }
+
                 function view(requestOptions) {
                     require('./../../server')('viewAjax', $.extend({
                         PAGE: 'STUDY_ATTACHMENT'
@@ -31,21 +52,7 @@ define(function (require) {
                                 dialogTitle: options.field.dialogTitle,
                                 dialogTitles: options.dialogTitles
                             });
-                            modalOptions.$events.on('attachment.refresh', function() {
-                                require('./../../server')('viewAjax', {
-                                    method: 'GET',
-                                    success: function (response) {
-                                        if (response.result === 'VIEW_SUCCESSFUL') {
-                                            // on browser, overwrite these fields only, since there might be other unsaved fields on page
-                                            ['files', 'variables'].forEach(function (field) {
-                                                options.data.fields[field] = options.data.fields[field] || {};
-                                                $.extend(options.data.fields[field], response.transferData.fields[field]);
-                                            });
-                                            $elem.trigger('refresh.metka');
-                                        }
-                                    }
-                                });
-                            });
+                            modalOptions.$events.on('attachment.refresh', partialRefresh);
                             // We need the isReadOnly function at this point so we need to add it before calling modal
                             modalOptions = $.extend(true, require('./../../optionsBase')(), modalOptions);
                             modalOptions.type = modalOptions.isReadOnly(modalOptions) ? 'VIEW' : 'MODIFY';
@@ -53,7 +60,7 @@ define(function (require) {
                         }
                     });
                 }
-                var $elem = this;
+                /*var $elem = $(this);*/
                 var $filesContainer = $('<div>').appendTo(this);
                 var $removedFilesContainer = $('<div>').appendTo(this);
 
@@ -79,7 +86,7 @@ define(function (require) {
                     "field": {
                         "key": "files",
                         "showSaveInfo": false,
-                        "showReferenceKey": true,
+                        "showReferenceValue": true,
                         "showReferenceSaveInfo": true,
                         "columnFields": [
                             "filespath",
@@ -104,21 +111,21 @@ define(function (require) {
                             }),
                             success: function (response) {
                                 if (response.result === 'REVISION_CREATED') {
-                                    // FIXME: row was immediately created, but if dialog is dismissed, row won't be shown until page refresh
                                     view(response.data.key, addRow);
+                                    partialRefresh();
                                 }
                             }
                         });
                     };
                 }
                 addFileContainer($filesContainer, filesOptions);
-                addFileContainer($removedFilesContainer, {
+                /*addFileContainer($removedFilesContainer, {
                     "type": "CELL",
                     "title": "Poistetut tiedostot",
                     readOnly: true,
                     "field": {
                         "key": "files",
-                        "showReferenceKey": true,
+                        "showReferenceValue": true,
                         "showReferenceSaveInfo": true,
                         "columnFields": [
                             "filespath",
@@ -132,7 +139,7 @@ define(function (require) {
                             }, replaceTr);
                         }
                     }
-                });
+                });*/
 
                 require('./../../data')(options).onChange(function () {
                     $filesContainer.find('tbody').empty();

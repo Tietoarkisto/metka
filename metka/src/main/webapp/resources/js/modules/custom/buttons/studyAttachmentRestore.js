@@ -5,7 +5,7 @@ define(function (require) {
         options.type = "RESTORE";
 
         options.request = {
-            success: options.$events.trigger('attachment.refresh')
+            success: function() {options.$events.trigger('attachment.refresh')}
         };
     };
 });

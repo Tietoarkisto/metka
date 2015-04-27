@@ -142,7 +142,7 @@
                                         "key": "variables",
                                         "displayType": "CUSTOM_JS",
                                         "showSaveInfo": false,
-                                        "showReferenceKey": false,
+                                        "showReferenceValue": false,
                                         "displayHeader": false,
                                         "columnFields": [
                                             "varlabel"

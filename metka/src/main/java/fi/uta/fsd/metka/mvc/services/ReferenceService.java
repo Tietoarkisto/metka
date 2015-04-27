@@ -27,4 +27,7 @@ public interface ReferenceService {
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_VIEW_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "')")
     ReferenceStatusResponse getReferenceStatus(Long id);
+
+    @PreAuthorize("hasPermission('"+ Permission.Values.CAN_VIEW_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "')")
+    ReferenceStatusResponse getReferenceStatus(Long id, Integer no);
 }

@@ -80,7 +80,7 @@ define(function (require) {
                                                     success: function (response) {
                                                         if(response.result === "REVISION_FOUND") {
                                                             $.extend(options.data, response.data);
-                                                            $button.trigger('refresh.metka');
+                                                            options.$events.trigger('refresh.metka');
                                                             history.replaceState(undefined, '', require('./../url')('view'));
                                                         } else {
                                                             require('./../resultViewer')(response.result);
