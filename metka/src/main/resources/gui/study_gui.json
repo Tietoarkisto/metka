@@ -1877,6 +1877,8 @@
                                 "field": {
                                     "key": "files",
                                     "displayType": "CUSTOM_JS",
+                                    "showReferenceSaveInfo": true,
+                                    "showReferenceState": true,
                                     "dialogTitle": {
                                         "key": "files",
                                         "MODIFY": "Muokkaa liitetiedostoa",

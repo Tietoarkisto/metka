@@ -202,6 +202,10 @@ define(function (require) {
                             $tr.append(infoTDs.approved[lang].at, infoTDs.approved[lang].by, infoTDs.approved[lang].revision);
                         });
                     }
+                    if(options.field.showReferenceState) {
+                        infoTDs.state = $('<td>').text(EMPTY);
+                        $tr.append(infoTDs.state);
+                    }
                     require('./server')('/references/referenceStatus/{value}', transferRow, {
                         method: 'GET',
                         success: function (response) {
@@ -230,7 +234,14 @@ define(function (require) {
                                         infoTDs.approved[key].revision.text(value.revision);
                                     }
                                 }
-                            })
+                            });
+                            if(infoTDs.state) {
+                                if(response.state) {
+                                    infoTDs.state.text(MetkaJS.L10N.get('state.'+response.state));
+                                } else {
+                                    infoTDs.state.text(EMPTY);
+                                }
+                            }
                         }
                     });
                 }
@@ -384,6 +395,13 @@ define(function (require) {
                                             $appInfo.push((require('./langLabel')(th(MetkaJS.L10N.get('general.refApproveInfo.approvedRevision')).data('lang', lang), lang)));
                                         });
                                         return $appInfo;
+                                    }
+                                }
+                            })
+                            .append(function () {
+                                if(options.fieldOptions.type === 'REFERENCECONTAINER') {
+                                    if(options.field.showReferenceState) {
+                                        return [th(MetkaJS.L10N.get('general.refState'))];
                                     }
                                 }
                             })

@@ -22,17 +22,17 @@ public class RevisionController {
     private RevisionService revisions;
 
     @RequestMapping(value = "adjacent", method = RequestMethod.POST)
-    public @ResponseBody RevisionOperationResponse adjacentRevision(@RequestBody AdjacentRevisionRequest request) {
+    public @ResponseBody RevisionDataResponse adjacentRevision(@RequestBody AdjacentRevisionRequest request) {
         return revisions.adjacentRevision(request);
     }
 
     @RequestMapping(value="ajax/approve", method = RequestMethod.POST)
-    public @ResponseBody RevisionOperationResponse approve(@RequestBody TransferData transferData) {
+    public @ResponseBody RevisionDataResponse approve(@RequestBody TransferData transferData) {
         return revisions.approve(transferData);
     }
 
     @RequestMapping(value = "ajax/claim", method = RequestMethod.POST)
-    public @ResponseBody RevisionOperationResponse claim(@RequestBody RevisionKey key) {
+    public @ResponseBody RevisionDataResponse claim(@RequestBody RevisionKey key) {
         return revisions.claimRevision(key);
     }
 
@@ -42,10 +42,10 @@ public class RevisionController {
     }
 
     @RequestMapping(value="ajax/create", method = RequestMethod.POST)
-    public @ResponseBody RevisionOperationResponse create(@RequestBody RevisionCreateRequest request) {
-        RevisionOperationResponse response = revisions.create(request);
+    public @ResponseBody RevisionDataResponse create(@RequestBody RevisionCreateRequest request) {
+        RevisionDataResponse response = revisions.create(request);
         if(response.getResult().equals(ReturnResult.REVISION_CREATED.name())) {
-            RevisionOperationResponse claimResponse = revisions.claimRevision(response.getData().getKey());
+            RevisionDataResponse claimResponse = revisions.claimRevision(response.getData().getKey());
             if(claimResponse.getResult().equals(ReturnResult.REVISION_UPDATE_SUCCESSFUL.name())) {
                 claimResponse.setResult(response.getResult());
                 return claimResponse;
@@ -56,28 +56,28 @@ public class RevisionController {
     }
 
     @RequestMapping(value="ajax/edit", method = RequestMethod.POST)
-    public @ResponseBody RevisionOperationResponse edit(@RequestBody TransferData transferData) {
+    public @ResponseBody RevisionDataResponse edit(@RequestBody TransferData transferData) {
         return revisions.edit(transferData);
     }
 
     @RequestMapping(value = "ajax/release", method = RequestMethod.POST)
-    public @ResponseBody RevisionOperationResponse release(@RequestBody RevisionKey key) {
+    public @ResponseBody RevisionDataResponse release(@RequestBody RevisionKey key) {
         return revisions.releaseRevision(key);
     }
 
     @RequestMapping(value="ajax/remove", method = RequestMethod.POST)
-    public @ResponseBody RevisionOperationResponse remove(@RequestBody TransferData transferData) {
+    public @ResponseBody RevisionDataResponse remove(@RequestBody TransferData transferData) {
         return revisions.remove(transferData);
     }
 
     @RequestMapping(value="ajax/restore", method = RequestMethod.POST)
-    public @ResponseBody RevisionOperationResponse restore(@RequestBody RevisionKey key) {
+    public @ResponseBody RevisionDataResponse restore(@RequestBody RevisionKey key) {
         return revisions.restore(key);
     }
 
     @RequestMapping(value="ajax/save", method = RequestMethod.POST)
-    public @ResponseBody RevisionOperationResponse save(@RequestBody TransferData transferData) {
-        RevisionOperationResponse response = revisions.save(transferData);
+    public @ResponseBody RevisionDataResponse save(@RequestBody TransferData transferData) {
+        RevisionDataResponse response = revisions.save(transferData);
         return response;
     }
 

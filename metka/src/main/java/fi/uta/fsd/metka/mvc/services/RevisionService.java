@@ -17,36 +17,36 @@ public interface RevisionService {
     @Transactional(readOnly = true) RevisionDataResponse view(Long id, Integer no, ConfigurationType type);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_CREATE_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "')")
-    RevisionOperationResponse create(RevisionCreateRequest request);
+    RevisionDataResponse create(RevisionCreateRequest request);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_EDIT_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "')")
-    RevisionOperationResponse edit(TransferData transferData);
+    RevisionDataResponse edit(TransferData transferData);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_EDIT_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "') " +
             "and hasPermission(#transferData, '" + PermissionCheck.Values.IS_HANDLER + "')")
-    RevisionOperationResponse save(TransferData transferData);
+    RevisionDataResponse save(TransferData transferData);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_APPROVE_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "') " +
             "and hasPermission(#transferData, '" + PermissionCheck.Values.IS_HANDLER + "')")
-    RevisionOperationResponse approve(TransferData transferData);
+    RevisionDataResponse approve(TransferData transferData);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_REMOVE_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "') " +
             "and hasPermission(#transferData, '" + PermissionCheck.Values.IS_HANDLER + "')")
-    RevisionOperationResponse remove(TransferData transferData);
+    RevisionDataResponse remove(TransferData transferData);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_RESTORE_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "')")
-    RevisionOperationResponse restore(RevisionKey key);
+    RevisionDataResponse restore(RevisionKey key);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_PERFORM_SEARCH +"', '" + PermissionCheck.Values.PERMISSION + "')")
     @Transactional(readOnly = true) RevisionSearchResponse search(RevisionSearchRequest request);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_EDIT_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "') " +
             "and hasPermission(#key, '" + PermissionCheck.Values.CLAIM_REVISION + "')")
-    RevisionOperationResponse claimRevision(RevisionKey key);
+    RevisionDataResponse claimRevision(RevisionKey key);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_EDIT_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "') " +
             "and hasPermission(#key, '" + PermissionCheck.Values.RELEASE_REVISION + "')")
-    RevisionOperationResponse releaseRevision(RevisionKey key);
+    RevisionDataResponse releaseRevision(RevisionKey key);
 
     @Transactional(readOnly = true) RevisionSearchResponse collectRevisionHistory(RevisionHistoryRequest request);
 
@@ -54,7 +54,7 @@ public interface RevisionService {
 
     @Transactional(readOnly = true) ConfigurationResponse getConfiguration(ConfigurationType type);
 
-    @Transactional(readOnly = true) RevisionOperationResponse adjacentRevision(AdjacentRevisionRequest request);
+    @Transactional(readOnly = true) RevisionDataResponse adjacentRevision(AdjacentRevisionRequest request);
 
     @Transactional(readOnly = true) RevisionExportResponse exportRevision(TransferData transferData);
 }

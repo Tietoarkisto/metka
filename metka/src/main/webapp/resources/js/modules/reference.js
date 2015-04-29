@@ -71,7 +71,6 @@ define(function (require) {
                         }
                     }
                 }
-                log('key', key);
                 var root = function r(currentKey, dataFields, lang, reference, next) {
                     var path = {
                         reference: reference,
@@ -87,7 +86,6 @@ define(function (require) {
                     };
 
                     if(reference && reference.type === "DEPENDENCY") {
-                        log('target', reference.target);
                         var target = getPropertyNS(options, 'dataConf.fields', reference.target);
                         var targetRef = null;
                         if(target.type === "REFERENCE" || target.type === 'REFERENCECONTAINER') {

@@ -6,25 +6,25 @@ import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 
 public class RevisionDataResponse {
-    private ReturnResult result;
-    private TransferData transferData;
+    private String result;
+    private TransferData data;
     private Configuration configuration;
     private GUIConfiguration gui;
 
-    public ReturnResult getResult() {
+    public String getResult() {
         return result;
     }
 
-    public void setResult(ReturnResult result) {
+    public void setResult(String result) {
         this.result = result;
     }
 
-    public TransferData getTransferData() {
-        return transferData;
+    public TransferData getData() {
+        return data;
     }
 
-    public void setTransferData(TransferData transferData) {
-        this.transferData = transferData;
+    public void setData(TransferData data) {
+        this.data = data;
     }
 
     public Configuration getConfiguration() {

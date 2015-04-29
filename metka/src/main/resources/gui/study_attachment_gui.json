@@ -190,6 +190,7 @@
 								"key": "custom_filehistory",
 								"showReferenceValue": true,
 								"showReferenceSaveInfo": true,
+								"showReferenceState": true,
 								"columnFields": [
 									"history_filecomment"
 								]
@@ -213,7 +214,7 @@
 			],
 			"customHandler": "studyAttachmentSave"
 		}, {
-			"type": "EDIT",
+			"type": "CUSTOM",
 			"title": "Tee luonnos",
 			"isHandledByUser": "study",
 			"permissions": [
@@ -221,7 +222,8 @@
 			],
 			"states": [
 				"APPROVED"
-			]
+			],
+			"customHandler": "studyAttachmentEdit"
 		}, {
 			"type": "CUSTOM",
 			"title": "Poista",

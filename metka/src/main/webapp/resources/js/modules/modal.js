@@ -81,7 +81,10 @@ define(function (require) {
         var $modal = $('<div class="modal fade" tabindex="-1" role="dialog" id="'+options.modalTarget+'">');
         content = $('<div class="modal-dialog">');
         $modal.append(content);
-        $modal.on('hidden.bs.modal', function () {
+        $modal.modal({
+            backdrop: 'static'
+        }).on('hidden.bs.modal', function () {
+            var $this =$(this);
             $(this).remove();
 
             // workaround to keep scrolling enabled for nested modals
@@ -98,9 +101,6 @@ define(function (require) {
                 $body.addClass('modal-open');
                 bsModal.setScrollbar();
             }
-        })
-        .modal({
-            backdrop: 'static'
         });
 
 

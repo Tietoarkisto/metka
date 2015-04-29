@@ -290,7 +290,7 @@
 			"type": "REFERENCECONTAINER",
 			"reference": "custom_filehistory_ref",
 			"writable": false,
-			"editable": false,
+			"editable": true,
 			"subfields": [
 				"history_filecomment"
 			]
@@ -302,14 +302,6 @@
 			"editable": false,
 			"reference": "history_filecomment_ref",
 			"subfield": true
-		},
-		"state": {
-			"_comment": "For use in attachment history container",
-			"key": "state",
-			"type": "STRING",
-			"subfield": true,
-			"editable": false,
-			"writable": false
 		}
 	}
 }

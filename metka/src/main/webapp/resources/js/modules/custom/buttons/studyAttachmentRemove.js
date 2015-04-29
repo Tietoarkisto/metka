@@ -2,8 +2,9 @@ define(function (require) {
     'use strict';
 
     return function(options) {
+        options.preventDismiss = true;
+
         function closeAndRefresh() {
-            log('trying to trigger');
             options.$events.trigger('attachment.refresh');
             $('#'+options.modalTarget).modal('hide');
         }

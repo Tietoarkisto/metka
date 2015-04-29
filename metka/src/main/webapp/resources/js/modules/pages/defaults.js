@@ -14,12 +14,12 @@ define(function (require) {
         require('./../server')('viewAjax', {
             method: 'GET',
             success: function (data) {
-                if (!data || !data.transferData) {
+                if (!data || !data.data) {
                     require('./../assignUrl')('searchPage');
                 }
                 $.extend(options, data.gui);
                 options.dataConf = data.configuration;
-                options.data = data.transferData;
+                options.data = data.data;
                 history.replaceState(undefined, '', require('./../url')('view', options.data.key));
 
                 options.header = function ($header) {
@@ -125,7 +125,7 @@ define(function (require) {
                         value: options.data.key.no
                     });
 
-                    supplant.state = data.transferData.state.uiState ? ' - ' + MetkaJS.L10N.get('state.' + data.transferData.state.uiState) : '';
+                    supplant.state = data.data.state.uiState ? ' - ' + MetkaJS.L10N.get('state.' + data.data.state.uiState) : '';
 
                     supplant.localized = MetkaJS.L10N.get(header.localized.supplant(supplant));
                     $header.html(header.pattern.supplant(supplant));

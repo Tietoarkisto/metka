@@ -70,72 +70,91 @@ public class RevisionServiceImpl implements RevisionService {
     @Autowired
     private JSONUtil json;
 
+    private RevisionDataResponse getResponse(Pair<ReturnResult, TransferData> dataPair) {
+        RevisionDataResponse response = new RevisionDataResponse();
+        fillResponseData(response, dataPair);
+        return response;
+    }
+
+    private void fillResponseData(RevisionDataResponse response, Pair<ReturnResult, TransferData> dataPair) {
+        response.setResult(dataPair.getLeft().name());
+        response.setData(dataPair.getRight());
+    }
+
+    private void fillResponseData(String finalResult, RevisionDataResponse response, Pair<ReturnResult, RevisionData> dataPair) {
+        if(dataPair.getRight() == null) {
+            response.setResult(dataPair.getLeft().name());
+            return;
+        }
+        Pair<ReturnResult, RevisionableInfo> infoPair = revisions.getRevisionableInfo(dataPair.getRight().getKey().getId());
+        if(infoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
+            response.setResult(infoPair.getLeft().name());
+        }
+        response.setData(TransferData.buildFromRevisionData(dataPair.getRight(), infoPair.getRight()));
+        response.setResult(finalResult);
+    }
+
+    private void fillResponseConfiguration(String finalResult, RevisionDataResponse response, Pair<ReturnResult, RevisionData> dataPair) {
+        fillResponseData(finalResult, response, dataPair);
+
+        Pair<ReturnResult, Configuration> configurationPair = configurations.findConfiguration(dataPair.getRight().getConfiguration());
+        if(configurationPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
+            response.setResult(configurationPair.getLeft().name());
+            return;
+        }
+        response.setConfiguration(configurationPair.getRight());
+
+        response.setResult(finalResult);
+    }
+
+    private void fillResponseGUI(String finalResult, RevisionDataResponse response, Pair<ReturnResult, RevisionData> dataPair) {
+        fillResponseConfiguration(finalResult, response, dataPair);
+
+        Pair<ReturnResult, GUIConfiguration> guiPair = configurations.findLatestGUIConfiguration(dataPair.getRight().getConfiguration().getType());
+        if(guiPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
+            response.setResult(guiPair.getLeft().name());
+            return;
+        }
+        response.setGui(guiPair.getRight());
+
+        response.setResult(finalResult);
+    }
+
     @Override public RevisionDataResponse view(Long id, ConfigurationType type) {
         RevisionDataResponse response = new RevisionDataResponse();
         Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(id, false, type);
-        return fillResponse(response, dataPair);
+        fillResponseGUI(ReturnResult.VIEW_SUCCESSFUL.name(), response, dataPair);
+        return response;
     }
 
     @Override public RevisionDataResponse view(Long id, Integer no, ConfigurationType type) {
         RevisionDataResponse response = new RevisionDataResponse();
         Pair<ReturnResult, RevisionData> dataPair = revisions.getRevisionDataOfType(id, no, type);
-        return fillResponse(response, dataPair);
-    }
-
-    private RevisionDataResponse fillResponse(RevisionDataResponse response, Pair<ReturnResult, RevisionData> dataPair) {
-        if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
-            response.setResult(dataPair.getLeft());
-            return response;
-        }
-        Pair<ReturnResult, RevisionableInfo> infoPair = revisions.getRevisionableInfo(dataPair.getRight().getKey().getId());
-        if(infoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
-            response.setResult(infoPair.getLeft());
-        }
-        response.setTransferData(TransferData.buildFromRevisionData(dataPair.getRight(), infoPair.getRight()));
-
-        Pair<ReturnResult, Configuration> configurationPair = configurations.findConfiguration(dataPair.getRight().getConfiguration());
-        if(configurationPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
-            response.setResult(configurationPair.getLeft());
-            return response;
-        }
-        response.setConfiguration(configurationPair.getRight());
-
-        Pair<ReturnResult, GUIConfiguration> guiPair = configurations.findLatestGUIConfiguration(configurationPair.getRight().getKey().getType());
-        if(guiPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
-            response.setResult(guiPair.getLeft());
-            return response;
-        }
-        response.setGui(guiPair.getRight());
-        response.setResult(ReturnResult.VIEW_SUCCESSFUL);
+        fillResponseGUI(ReturnResult.VIEW_SUCCESSFUL.name(), response, dataPair);
         return response;
     }
 
-    @Override public RevisionOperationResponse create(RevisionCreateRequest request) {
+    @Override public RevisionDataResponse create(RevisionCreateRequest request) {
+        RevisionDataResponse response = new RevisionDataResponse();
         Pair<ReturnResult, RevisionData> operationResult = create.create(request);
+        fillResponseData(ReturnResult.REVISION_CREATED.name(), response, operationResult);
         if(operationResult.getLeft() == ReturnResult.REVISION_CREATED) {
-            TransferData data = TransferData.buildFromRevisionData(operationResult.getRight(), RevisionableInfo.FALSE);
-            addIndexCommand(data);
-            return getResponse(new ImmutablePair<>(operationResult.getLeft(), data));
-        } else {
-            return getResponse(new ImmutablePair<ReturnResult, TransferData>(operationResult.getLeft(), null));
+            addIndexCommand(response.getData());
         }
+        return response;
     }
 
-    @Override public RevisionOperationResponse edit(TransferData transferData) {
+    @Override public RevisionDataResponse edit(TransferData transferData) {
+        RevisionDataResponse response = new RevisionDataResponse();
         Pair<ReturnResult, RevisionData> operationResult = edit.edit(transferData);
+        fillResponseGUI(operationResult.getLeft().name(), response, operationResult);
         if(operationResult.getLeft() == ReturnResult.REVISION_CREATED) {
-            TransferData data = TransferData.buildFromRevisionData(operationResult.getRight(), RevisionableInfo.FALSE);
-            addIndexCommand(data);
-            return getResponse(new ImmutablePair<>(operationResult.getLeft(), data));
-        } else if (operationResult.getLeft() == ReturnResult.REVISION_FOUND) {
-            TransferData data = TransferData.buildFromRevisionData(operationResult.getRight(), RevisionableInfo.FALSE);
-            return getResponse(new ImmutablePair<>(operationResult.getLeft(), data));
-        } else {
-            return getResponse(new ImmutablePair<ReturnResult, TransferData>(operationResult.getLeft(), null));
+            addIndexCommand(response.getData());
         }
+        return response;
     }
 
-    @Override public RevisionOperationResponse save(TransferData transferData) {
+    @Override public RevisionDataResponse save(TransferData transferData) {
         Pair<ReturnResult, TransferData> operationResult = save.saveRevision(transferData);
         if(operationResult.getLeft() == ReturnResult.SAVE_SUCCESSFUL_WITH_ERRORS || operationResult.getLeft() == ReturnResult.SAVE_SUCCESSFUL) {
             addIndexCommand(operationResult.getRight());
@@ -143,20 +162,19 @@ public class RevisionServiceImpl implements RevisionService {
         return getResponse(operationResult);
     }
 
-    @Override public RevisionOperationResponse approve(TransferData transferData) {
+    @Override public RevisionDataResponse approve(TransferData transferData) {
         Pair<ReturnResult, TransferData> operationResult = save.saveRevision(transferData);
         if(operationResult.getLeft() == ReturnResult.SAVE_SUCCESSFUL_WITH_ERRORS) {
             addIndexCommand(operationResult.getRight());
-        }
-        if(operationResult.getLeft() == ReturnResult.SAVE_SUCCESSFUL || operationResult.getLeft() == ReturnResult.NO_CHANGES_TO_SAVE) {
+        } else if(operationResult.getLeft() == ReturnResult.SAVE_SUCCESSFUL || operationResult.getLeft() == ReturnResult.NO_CHANGES_TO_SAVE) {
             operationResult = approve.approve(operationResult.getRight());
             addIndexCommand(operationResult.getRight());
         }
         return getResponse(operationResult);
     }
 
-    @Override public RevisionOperationResponse remove(TransferData transferData) {
-        RevisionOperationResponse response = new RevisionOperationResponse();
+    @Override public RevisionDataResponse remove(TransferData transferData) {
+        RevisionDataResponse response = new RevisionDataResponse();
         RemoveResult result = remove.remove(transferData);
         response.setResult(result.name());
 
@@ -187,11 +205,10 @@ public class RevisionServiceImpl implements RevisionService {
         return response;
     }
 
-    @Override public RevisionOperationResponse restore(RevisionKey key) {
-        RevisionOperationResponse response = new RevisionOperationResponse();
+    @Override public RevisionDataResponse restore(RevisionKey key) {
+        RevisionDataResponse response = new RevisionDataResponse();
         RemoveResult result = restore.restore(key.getId());
         response.setResult(result.name());
-
         if(result == RemoveResult.SUCCESS_RESTORE) {
             List<Integer> nos = revisions.getAllRevisionNumbers(key.getId());
             for(Integer no : nos) {
@@ -202,15 +219,9 @@ public class RevisionServiceImpl implements RevisionService {
             }
         }
 
+        response.setResult(result.name());
         response.setData(TransferData.buildFromRevisionData(revisions.getLatestRevisionForIdAndType(key.getId(), false, null).getRight(), RevisionableInfo.FALSE));
 
-        return response;
-    }
-
-    private RevisionOperationResponse getResponse(Pair<ReturnResult, TransferData> pair) {
-        RevisionOperationResponse response = new RevisionOperationResponse();
-        response.setResult(pair.getLeft().name());
-        response.setData(pair.getRight());
         return response;
     }
 
@@ -229,7 +240,7 @@ public class RevisionServiceImpl implements RevisionService {
     }
 
     @Override
-    public RevisionOperationResponse claimRevision(RevisionKey key) {
+    public RevisionDataResponse claimRevision(RevisionKey key) {
         Pair<ReturnResult, TransferData> dataPair = handler.changeHandler(fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(key), false);
         if(dataPair.getLeft() == ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
             addIndexCommand(dataPair.getRight());
@@ -238,7 +249,7 @@ public class RevisionServiceImpl implements RevisionService {
     }
 
     @Override
-    public RevisionOperationResponse releaseRevision(RevisionKey key) {
+    public RevisionDataResponse releaseRevision(RevisionKey key) {
         Pair<ReturnResult, TransferData> dataPair = handler.changeHandler(fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(key), true);
         if(dataPair.getLeft() == ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
             addIndexCommand(dataPair.getRight());
@@ -273,10 +284,12 @@ public class RevisionServiceImpl implements RevisionService {
     }
 
     @Override
-    public RevisionOperationResponse adjacentRevision(AdjacentRevisionRequest request) {
+    public RevisionDataResponse adjacentRevision(AdjacentRevisionRequest request) {
+        RevisionDataResponse response = new RevisionDataResponse();
         Pair<ReturnResult, RevisionData> pair = revisions.getAdjacentRevision(request);
-        RevisionOperationResponse response = new RevisionOperationResponse();
-        response.setResult(pair.getLeft().name());
+        fillResponseData(ReturnResult.REVISION_FOUND.name(), response, pair);
+        return response;
+        /*response.setResult(pair.getLeft().name());
         if(pair.getLeft() == ReturnResult.REVISION_FOUND) {
             Pair<ReturnResult, RevisionableInfo> infoPair = revisions.getRevisionableInfo(pair.getRight().getKey().getId());
             if(infoPair.getLeft() == ReturnResult.REVISIONABLE_FOUND) {
@@ -285,7 +298,7 @@ public class RevisionServiceImpl implements RevisionService {
                 response.setResult(infoPair.getLeft().name());
             }
         }
-        return response;
+        return response;*/
     }
 
     @Override

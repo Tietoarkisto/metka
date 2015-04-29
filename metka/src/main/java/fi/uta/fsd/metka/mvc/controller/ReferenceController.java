@@ -73,7 +73,7 @@ public class ReferenceController {
         // TODO: if this can be split then we want status for a specific revision, otherwise use the current method
         // TODO: Also check if all given values are of their proper type and if not then return PARAMETERS_MISSING
         if(!StringUtils.hasText(id)) {
-            return new ReferenceStatusResponse(ReturnResult.PARAMETERS_MISSING.name(), false, null, null, null);
+            return ReferenceStatusResponse.returnResultResponse(ReturnResult.PARAMETERS_MISSING);
         }
         String[] splits = id.split("-");
         if(splits == null || splits.length < 2) {
@@ -81,14 +81,14 @@ public class ReferenceController {
             try {
                 return service.getReferenceStatus(Long.parseLong(id));
             } catch (NumberFormatException nfe) {
-                return new ReferenceStatusResponse(ReturnResult.PARAMETERS_MISSING.name(), false, null, null, null);
+                return ReferenceStatusResponse.returnResultResponse(ReturnResult.PARAMETERS_MISSING);
             }
         } else {
             // Use method for specific revision
             try {
                 return service.getReferenceStatus(Long.parseLong(splits[0]), Integer.parseInt(splits[1]));
             } catch (NumberFormatException nfe) {
-                return new ReferenceStatusResponse(ReturnResult.PARAMETERS_MISSING.name(), false, null, null, null);
+                return ReferenceStatusResponse.returnResultResponse(ReturnResult.PARAMETERS_MISSING);
             }
         }
     }

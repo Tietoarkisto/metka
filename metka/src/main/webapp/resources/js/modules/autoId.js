@@ -1,11 +1,12 @@
 define(function (require) {
     'use strict';
 
-    var i = 0;
+    var components = 0;
+    var modals = 0;
     return function (type) {
         if(type == "M") {
-            return "MODAL_"+(i++);
+            return "MODAL_"+(modals++);
         }
-        return 'METKA_UI_' + (i++);
+        return 'METKA_UI_' + (components++);
     };
 });

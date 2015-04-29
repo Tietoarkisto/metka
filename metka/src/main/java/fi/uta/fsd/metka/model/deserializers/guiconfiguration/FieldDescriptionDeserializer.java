@@ -68,6 +68,12 @@ public class FieldDescriptionDeserializer extends ObjectDeserializer<FieldDescri
             }
         }
 
+        // Set showReferenceState
+        JsonNode showRefState = node.get("showReferenceState");
+        if(showRefState != null && showRefState.getNodeType() == JsonNodeType.BOOLEAN) {
+            fd.setShowReferenceState(showRefState.booleanValue());
+        }
+
         // Set displayType
         JsonNode displayType = node.get("displayType");
         if(displayType != null && displayType.getNodeType() == JsonNodeType.STRING) {

@@ -78,7 +78,15 @@ public class TransferField {
     }
 
     @JsonIgnore public Value currentAsValueFor(Language language) {
-        return new Value(containsValueFor(language) ? getValueFor(language).getCurrent() : null);
+        return (containsValueFor(language) ? getValueFor(language).currentAsValue() : null);
+    }
+
+    @JsonIgnore public Value originalAsValueFor(Language language) {
+        return (containsValueFor(language) ? getValueFor(language).originalAsValue() : null);
+    }
+
+    @JsonIgnore public Value asValueFor(Language language) {
+        return (containsValueFor(language) ? getValueFor(language).asValue() : null);
     }
 
     public Map<Language, List<TransferRow>> getRows() {

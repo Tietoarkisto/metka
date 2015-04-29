@@ -5,22 +5,31 @@ define(function (require) {
         delete options.field.displayType;
 
         return {
-            onClick: function (transferRow) {
-                /*var $row = $(this);*/
-                require('./../../server')('viewAjax', {
-                    PAGE: 'STUDY_ATTACHMENT',
-                    no: transferRow.fields.no.values.DEFAULT.current,
-                    id: options.data.key.id
-                }, {
-                    method: 'GET',
-                    success: function (response) {
-                        if (response.result === 'VIEW_SUCCESSFUL') {
-                            $.extend(options.data, response.transferData);
-                            options.type = options.isReadOnly(options) ? 'VIEW' : 'MODIFY';
-                            options.$events.trigger('refresh.metka');
-                        }
+            field: {
+                onClick: function (transferRow) {
+                    if(!transferRow.value) {
+                        return;
                     }
-                })
+                    var split = transferRow.value.split("-");
+                    if(split.length < 2) {
+                        return;
+                    }
+                    require('./../../server')('viewAjax', {
+                        PAGE: 'STUDY_ATTACHMENT',
+                        no: split[1],
+                        id: split[0]
+                    }, {
+                        method: 'GET',
+                        success: function (response) {
+                            if (response.result === 'VIEW_SUCCESSFUL') {
+                                $.extend(options.data, response.data);
+                                $.extend(require('./../../root')(options).content, response.gui.content);
+                                options.type = options.isReadOnly(options) ? 'VIEW' : 'MODIFY';
+                                options.$events.trigger('refresh.metka');
+                            }
+                        }
+                    })
+                }
             },
             create: function () {
                 var $containerField = $(this).children();

@@ -225,6 +225,10 @@ define(function (require) {
                 }
             },
 
+            "&refState": {
+                "default": "Tila"
+            },
+
             "refApproveInfo": {
                 "&approvedAt": {
                     "default": "Hyväksytty (viittaus)"

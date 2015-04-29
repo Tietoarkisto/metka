@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import fi.uta.fsd.metka.enums.FieldError;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.data.container.ValueDataField;
+import fi.uta.fsd.metka.model.data.value.Value;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -53,6 +54,22 @@ public class TransferValue {
             return current;
         } else {
             return original;
+        }
+    }
+
+    @JsonIgnore public Value currentAsValue() {
+        return new Value(current);
+    }
+
+    @JsonIgnore public Value originalAsValue() {
+        return new Value(original);
+    }
+
+    @JsonIgnore public Value asValue() {
+        if(hasCurrent()) {
+            return currentAsValue();
+        } else {
+            return originalAsValue();
         }
     }
 

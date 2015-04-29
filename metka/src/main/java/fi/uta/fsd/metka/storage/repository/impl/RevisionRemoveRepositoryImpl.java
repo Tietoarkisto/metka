@@ -287,7 +287,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         if(field == null || !field.hasValueFor(Language.DEFAULT)) {
             return RemoveResult.ALLOW_REMOVAL;
         }
-        Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(field.currentAsValueFor(Language.DEFAULT).asInteger(), false, ConfigurationType.STUDY);
+        Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(field.asValueFor(Language.DEFAULT).asInteger(), false, ConfigurationType.STUDY);
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             return RemoveResult.ALLOW_REMOVAL;
         }

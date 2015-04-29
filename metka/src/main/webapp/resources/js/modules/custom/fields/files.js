@@ -16,16 +16,11 @@ define(function (require) {
                         method: 'GET',
                         success: function (response) {
                             if (response.result === 'VIEW_SUCCESSFUL') {
-                                log('partial refresh', response);
                                 // on browser, overwrite these fields only, since there might be other unsaved fields on page
                                 ['files', 'variables'].forEach(function (field) {
-                                    log(field);
                                     options.data.fields[field] = options.data.fields[field] || {};
-                                    $.extend(options.data.fields[field], response.transferData.fields[field]);
+                                    $.extend(options.data.fields[field], response.data.fields[field]);
                                 });
-                                /*log('elem');
-                                $elem.trigger('refresh.metka');*/
-                                log('options');
                                 options.$events.trigger('refresh.metka');
                             }
                         }
@@ -42,11 +37,13 @@ define(function (require) {
                             // TODO: check status
                             if (response.result === 'VIEW_SUCCESSFUL') {
                             }
-                            var modalOptions = $.extend(response.gui, {
+                            var modalOptions = $.extend({}, response.gui, {
                                 //title: 'Muokkaa tiedostoa',
-                                data: response.transferData,
+                                data: response.data,
                                 dataConf: response.configuration,
-                                $events: options.$events,
+                                //$events: options.$events,
+                                // TODO: Events need better management so that some events can be inherited and others can be overwritten
+                                $events: $({}),
                                 defaultLang: 'DEFAULT',
                                 large: true,
                                 dialogTitle: options.field.dialogTitle,
@@ -83,11 +80,9 @@ define(function (require) {
                     "type": "CELL",
                     "title": "Liitetyt tiedostot",
                     "readOnly": true,
-                    "field": {
+                    "field": $.extend(true, {}, options.field, {
+                        "displayType": null,
                         "key": "files",
-                        "showSaveInfo": false,
-                        "showReferenceValue": true,
-                        "showReferenceSaveInfo": true,
                         "columnFields": [
                             "filespath",
                             "fileslang"
@@ -98,7 +93,7 @@ define(function (require) {
                                 no: ''
                             }, replaceTr);
                         }
-                    }
+                    })
                 };
                 if (!require('./../../isFieldDisabled')(options, 'DEFAULT')) {
                     filesOptions.field.onAdd = function (originalEmptyData, addRow) {
@@ -119,14 +114,13 @@ define(function (require) {
                     };
                 }
                 addFileContainer($filesContainer, filesOptions);
-                /*addFileContainer($removedFilesContainer, {
+                addFileContainer($removedFilesContainer, {
                     "type": "CELL",
                     "title": "Poistetut tiedostot",
-                    readOnly: true,
-                    "field": {
+                    "readOnly": true,
+                    "field": $.extend(true, {}, options.field, {
                         "key": "files",
-                        "showReferenceValue": true,
-                        "showReferenceSaveInfo": true,
+                        "displayType": "REFERENCECONTAINER",
                         "columnFields": [
                             "filespath",
                             "filedescription",
@@ -138,8 +132,8 @@ define(function (require) {
                                 no: ''
                             }, replaceTr);
                         }
-                    }
-                });*/
+                    })
+                });
 
                 require('./../../data')(options).onChange(function () {
                     $filesContainer.find('tbody').empty();

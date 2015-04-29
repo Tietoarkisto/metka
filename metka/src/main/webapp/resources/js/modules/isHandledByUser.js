@@ -42,7 +42,7 @@ define(function (require) {
         }, {
             method: 'GET',
             success: function (response) {
-                callback(response.result === 'VIEW_SUCCESSFUL' && response.transferData.state.uiState === 'DRAFT' && MetkaJS.User.userName === response.transferData.state.handler);
+                callback(response.result === 'VIEW_SUCCESSFUL' && response.data.state.uiState === 'DRAFT' && MetkaJS.User.userName === response.data.state.handler);
             },
             error: function () {
                 callback(false);

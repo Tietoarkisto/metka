@@ -24,6 +24,7 @@ public class FieldDescription {
     private DialogTitle dialogTitle;
     private Boolean showReferenceSaveInfo = false;
     private final List<Language> showReferenceApproveInfo = new ArrayList<>();
+    private Boolean showReferenceState = false;
 
     @JsonCreator
     public FieldDescription(@JsonProperty("key")String key) {
@@ -104,6 +105,14 @@ public class FieldDescription {
 
     public List<Language> getShowReferenceApproveInfo() {
         return showReferenceApproveInfo;
+    }
+
+    public Boolean getShowReferenceState() {
+        return showReferenceState == null ? false : showReferenceState;
+    }
+
+    public void setShowReferenceState(Boolean showReferenceState) {
+        this.showReferenceState = (showReferenceState == null ? false : showReferenceState);
     }
 
     @Override

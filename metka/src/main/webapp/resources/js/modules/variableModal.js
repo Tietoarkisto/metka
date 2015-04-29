@@ -9,7 +9,7 @@ define(function (require) {
             success: function (data) {
                 var modalOptions = $.extend(data.gui, {
                     title: 'Muokkaa muuttujaa',
-                    data: data.transferData,
+                    data: data.data,
                     dataConf: data.configuration,
                     $events: $({}),
                     defaultLang: 'DEFAULT',
