@@ -135,9 +135,10 @@ public class RevisionServiceImpl implements RevisionService {
     }
 
     @Override public RevisionDataResponse create(RevisionCreateRequest request) {
-        RevisionDataResponse response = new RevisionDataResponse();
+        //RevisionDataResponse response = new RevisionDataResponse();
         Pair<ReturnResult, RevisionData> operationResult = create.create(request);
-        fillResponseData(ReturnResult.REVISION_CREATED.name(), response, operationResult);
+        //fillResponseData(ReturnResult.REVISION_CREATED.name(), response, operationResult);
+        RevisionDataResponse response = getResponse(new ImmutablePair<>(operationResult.getLeft(), TransferData.buildFromRevisionData(operationResult.getRight(), RevisionableInfo.FALSE)));
         if(operationResult.getLeft() == ReturnResult.REVISION_CREATED) {
             addIndexCommand(response.getData());
         }
