@@ -18,6 +18,8 @@ import static fi.uta.fsd.metka.storage.util.ConversionUtil.stringToLong;
  * Specification and documentation is found from uml/data/uml_json_data_value_data_field.graphml
  */
 public class Value {
+    public static final Value NULL = new Value(null);
+
     private final String value;
 
     @JsonCreator

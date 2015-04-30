@@ -916,7 +916,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                                   Configuration configuration, TransferField transferField, DataFieldContainer dataFields,
                                   Map<String, Change> changeMap, TransferFieldContainer transferFields) {
             Value value = transferField.currentAsValueFor(language);
-            FieldError typeError = value.typeCheck(field.getType());
+            FieldError typeError = value != null ? value.typeCheck(field.getType()) : null;
             if(typeError != null) {
                 // This should mean that there is actually a value but let's just check just in case
                 TransferValue tv = transferField.getValueFor(language);
