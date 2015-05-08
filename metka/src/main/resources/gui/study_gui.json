@@ -526,6 +526,7 @@
 								{
 									"type": "CELL",
 									"title": "Aineiston nimi",
+                                    "required": true,
 									"field": {
 										"key": "title"
 									}
@@ -545,6 +546,7 @@
                                     "type": "CELL",
                                     "title": "Aineistonumero",
                                     "readOnly": true,
+                                    "required": true,
                                     "field": {
                                         "key": "studyid"
                                     }
@@ -552,6 +554,7 @@
                                 {
                                     "type": "CELL",
                                     "title": "Aineiston laatu",
+                                    "required": true,
                                     "field": {
                                     	"displayType": "CUSTOM_JS",
                                         "key": "datakind"
@@ -560,6 +563,7 @@
                                 {
                                     "type": "CELL",
                                     "title": "Julkaisu",
+                                    "required": true,
                                     "field": {
                                         "key": "public"
                                     }
@@ -573,6 +577,7 @@
                                     "type": "CELL",
                                     "title": "Hankinta-aineistonumero",
                                     "readOnly": true,
+                                    "required": true,
                                     "field": {
                                         "key": "submissionid"
                                     }
@@ -587,6 +592,7 @@
                                 {
                                     "type": "CELL",
                                     "title": "Aineiston kuvailun julkaisu",
+                                    "required": true,
                                     "field": {
                                         "key": "descpublic"
                                     }
@@ -599,6 +605,7 @@
                                 {
                                     "type": "CELL",
                                     "title": "Datan saantipvm",
+                                    "required": true,
                                     "field": {
                                         "key": "dataarrivaldate"
                                     }
@@ -606,6 +613,7 @@
                                 {
                                     "type": "CELL",
                                     "title": "Tietosuoja",
+                                    "required": true,
                                     "field": {
                                         "key": "securityissues"
                                     }
@@ -613,6 +621,7 @@
                                 {
                                     "type": "CELL",
                                     "title": "Muuttujakuvailun julkaisu",
+                                    "required": true,
                                     "field": {
                                         "key": "varpublic"
                                     }
@@ -635,6 +644,7 @@
                                 {
                                     "type": "CELL",
                                     "title": "Aineiston luovutus",
+                                    "required": true,
                                     "field": {
                                         "key": "dissemination"
                                     }
@@ -653,6 +663,7 @@
                                 {
                                     "type": "CELL",
                                     "title": "Sarja",
+                                    "required": true,
                                     "field": {
                                         "key": "series"
                                     }
@@ -711,6 +722,7 @@
                                     },
                                     "extraDialogConfiguration": {
                                     	"note": {
+                                            "required": true,
                                     		"field": {
                                     			"key": "note",
                                     			"multiline": true
@@ -726,6 +738,7 @@
                                 {
                                     "type": "CELL",
                                     "title": "Datan versiot",
+                                    "required": true,
                                     "field": {
                                         "key": "dataversions",
                                         "displayType": "CUSTOM_JS",
@@ -741,6 +754,23 @@
                                             "ADD": "Lisää datan versiotieto",
                                             "MODIFY": "Muokkaa datan versiotietoa",
                                             "VIEW": "Datan versiotieto"
+                                        }
+                                    },
+                                    "extraDialogConfiguration": {
+                                        "dataversion": {
+                                            "required": true
+                                        },
+                                        "versionpro": {
+                                            "required": true
+                                        },
+                                        "versionlabeldata": {
+                                            "required": true
+                                        },
+                                        "versiondate": {
+                                            "required": true
+                                        },
+                                        "versiontext": {
+                                            "required": true
                                         }
                                     }
                                 }
@@ -767,6 +797,23 @@
                                             "ADD": "Lisää kuvailun versiotieto",
                                             "MODIFY": "Muokkaa kuvailun versiotietoa",
                                             "VIEW": "Kuvailun versiotieto"
+                                        }
+                                    },
+                                    "extraDialogConfiguration": {
+                                        "descversion": {
+                                            "required": true
+                                        },
+                                        "versiondate": {
+                                            "required": true
+                                        },
+                                        "versionlabeldesc": {
+                                            "required": true
+                                        },
+                                        "versionpro": {
+                                            "required": true
+                                        },
+                                        "versiontext": {
+                                            "required": true
                                         }
                                     }
                                 }
@@ -843,6 +890,7 @@
                                 {
                                     "type": "CELL",
                                     "title": "Ehto 1: käyttöoikeus",
+                                    "required": true,
                                     "field": {
                                         "key": "termsofuse"
                                     }
@@ -876,6 +924,7 @@
                                 {
                                     "type": "CELL",
                                     "title": "Luovuttajan tyyppi",
+                                    "required": true,
                                     "field": {
                                         "key": "depositortype"
                                     }
@@ -902,6 +951,7 @@
                                 {
                                     "type": "CELL",
                                     "title": "Arkistointisopimuksen tapa",
+                                    "required": true,
                                     "field": {
                                         "key": "agreementtype"
                                     }
@@ -1035,6 +1085,14 @@
 	                                            "MODIFY": "Muokkaa muunkielistä nimeä",
 	                                            "VIEW": "Aineiston muunkielinen nimi"
 	                                        }
+                                        },
+                                        "extraDialogConfiguration": {
+                                            "partitle": {
+                                                "required": true
+                                            },
+                                            "partitlelang": {
+                                                "required": true
+                                            }
                                         }
                                     }
                                 ]
@@ -1056,6 +1114,7 @@
                                         {
                                             "type": "CELL",
                                             "title": "Aineiston tekijät",
+                                            "required": true,
                                             "field": {
                                                 "key": "authors",
                                                 "columnFields": [
@@ -1221,6 +1280,7 @@
                                         {
                                             "type": "CELL",
                                             "title": "Viittaustiedot",
+                                            "required": true,
                                             "field": {
                                                 "key": "biblcit",
                                                 "multiline": true
@@ -1245,6 +1305,7 @@
                                     {
                                         "type": "CELL",
                                         "title": "Aineiston sisältöä kuvaavat asiasanat",
+                                        "required": true,
                                         "field": {
                                             "key": "keywords",
                                             "columnFields": [
@@ -1258,6 +1319,14 @@
 	                                            "MODIFY": "Muokkaa asiasanaa",
 	                                            "VIEW": "Aineiston sisällön asiasana"
 	                                        }
+                                        },
+                                        "extraDialogConfiguration": {
+                                            "keyword": {
+                                                "required": true
+                                            },
+                                            "keywordnovocab": {
+                                                "required": true
+                                            }
                                         }
                                     }
                                 ]
@@ -1280,6 +1349,14 @@
 	                                            "MODIFY": "Muokkaa tieteenalaa",
 	                                            "VIEW": "Aineiston tieteenala"
 	                                        }
+                                        },
+                                        "extraDialogConfiguration": {
+                                            "topicvocab": {
+                                                "required": true
+                                            },
+                                            "topic": {
+                                                "required": true
+                                            }
                                         }
                                     }
                                 ]
@@ -1300,6 +1377,7 @@
                                     {
                                         "type": "CELL",
                                         "title": "Tiivistelmä",
+                                        "required": true,
                                         "field": {
                                             "key": "abstract",
                                             "multiline": true
@@ -1358,6 +1436,14 @@
 	                                            "MODIFY": "Muokkaa maata",
 	                                            "VIEW": "Maa"
 	                                        }
+                                        },
+                                        "extraDialogConfiguration": {
+                                            "country": {
+                                                "required": true
+                                            },
+                                            "countryabbr": {
+                                                "required": true
+                                            }
                                         }
                                     }
                                 ]
@@ -1379,6 +1465,14 @@
 	                                            "MODIFY": "Muokkaa perusjoukkoa",
 	                                            "VIEW": "Perusjoukko"
 	                                        }
+                                        },
+                                        "extraDialogConfiguration": {
+                                            "universe": {
+                                                "required": true
+                                            },
+                                            "universeclusion": {
+                                                "required": true
+                                            }
                                         }
                                     }
                                 ]
@@ -1400,6 +1494,11 @@
 	                                            "MODIFY": "Muokkaa maantieteellistä aluetta",
 	                                            "VIEW": "Maantieteellinen alue"
 	                                        }
+                                        },
+                                        "extraDialogConfiguration": {
+                                            "geogcover": {
+                                                "required": true
+                                            }
                                         }
                                     }
                                 ]
@@ -1420,6 +1519,7 @@
                                     {
                                         "type": "CELL",
                                         "title": "Keräyksen ajankohdat",
+                                        "required": true,
                                         "field": {
                                             "key": "colltime",
                                             "columnFields": [
@@ -1433,6 +1533,17 @@
 	                                            "MODIFY": "Muokkaa keräyksen ajankohtaa",
 	                                            "VIEW": "Keräyksen ajankohta"
 	                                        }
+                                        },
+                                        "extraDialogConfiguration": {
+                                            "colldate": {
+                                                "required": true
+                                            },
+                                            "colldatetext": {
+                                                "required": true
+                                            },
+                                            "colldateevent": {
+                                                "required": true
+                                            }
                                         }
                                     }
                                 ]
@@ -1492,6 +1603,7 @@
                                     {
                                         "type": "CELL",
                                         "title": "Havaintoyksiköt (kvanti) tai aineistoyksikkötyypit (kvali)",
+                                        "required": true,
                                         "field": {
                                             "key": "analysis",
                                             "columnFields": [
@@ -1514,6 +1626,7 @@
                                     {
                                         "type": "CELL",
                                         "title": "Tutkimuksen aikaulottuvuudet",
+                                        "required": true,
                                         "field": {
                                             "key": "timemethods",
                                             "displayType": "CUSTOM_JS",
@@ -1537,6 +1650,7 @@
                                     {
                                         "type": "CELL",
                                         "title": "Aineiston keruumenetelmät (kvanti) tai aineistonkeruun tekniikat (kvali)",
+                                        "required": true,
                                         "field": {
                                             "key": "collmodes",
                                             "columnFields": [
@@ -1550,6 +1664,14 @@
 	                                            "MODIFY": "Muokkaa keruumenetelmää",
 	                                            "VIEW": "Aineiston keruumenetelmä"
 	                                        }
+                                        },
+                                        "extraDialogConfiguration": {
+                                            "collmodeother": {
+                                                "required": true
+                                            },
+                                            "collmode": {
+                                                "required": true
+                                            }
                                         }
                                     }
                                 ]
@@ -1559,6 +1681,7 @@
                                     {
                                         "type": "CELL",
                                         "title": "Keruuvälineet (kvanti) tai aineistonkeruun ohjeistukset (kvali)",
+                                        "required": true,
                                         "field": {
                                             "key": "instruments",
                                             "displayType": "CUSTOM_JS",
@@ -1582,6 +1705,7 @@
                                     {
                                         "type": "CELL",
                                         "title": "Otantamenetelmät tai aineiston valintatavat",
+                                        "required": true,
                                         "field": {
                                             "key": "sampprocs",
                                             "columnFields": [
@@ -1595,6 +1719,14 @@
 	                                            "MODIFY": "Muokkaa otantamenetelmää",
 	                                            "VIEW": "Otantamenetelmä"
 	                                        }
+                                        },
+                                        "extraDialogConfiguration": {
+                                            "sampproc": {
+                                                "required": true
+                                            },
+                                            "sampprocother": {
+                                                "required": true
+                                            }
                                         }
                                     }
                                 ]
@@ -1930,6 +2062,14 @@
 		                            	"MODIFY": "Muokkaa koodikirjan liitettä",
 		                            	"VIEW": "Koodikirjan liitteet"
 		                            }
+                                },
+                                "extraDialogConfiguration": {
+                                    "cbattachmentlocation": {
+                                        "required": true
+                                    },
+                                    "cbattachmenttitle": {
+                                        "required": true
+                                    }
                                 }
                             }
                         ]

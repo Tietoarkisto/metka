@@ -203,7 +203,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
             if(operation.getType() != OperationType.DELETE) {
                 continue;
             }
-            if(!validator.validate(data, operation.getTargets())) {
+            if(!validator.validate(data, operation.getTargets(), confPair.getRight())) {
                 result = false;
                 break;
             }

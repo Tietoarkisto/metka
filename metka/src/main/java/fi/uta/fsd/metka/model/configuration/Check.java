@@ -41,7 +41,7 @@ public class Check {
     public void initParents() {
         condition.setParent(this);
         for(Target t : restrictors) {
-            t.initParents();
+            t.initParents(parent);
         }
     }
 

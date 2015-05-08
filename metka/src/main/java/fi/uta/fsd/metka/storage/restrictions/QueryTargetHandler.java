@@ -1,10 +1,11 @@
 package fi.uta.fsd.metka.storage.restrictions;
 
+import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.model.configuration.Check;
 import fi.uta.fsd.metka.model.configuration.Condition;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Target;
-import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 import fi.uta.fsd.metkaSearch.SearcherComponent;
 import fi.uta.fsd.metkaSearch.commands.searcher.expert.ExpertRevisionSearchCommand;
 import fi.uta.fsd.metkaSearch.results.ListBasedResultList;
@@ -12,34 +13,31 @@ import fi.uta.fsd.metkaSearch.results.ResultList;
 import fi.uta.fsd.metkaSearch.results.SearchResult;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 class QueryTargetHandler {
-    private static final Logger logger = LoggerFactory.getLogger(QueryTargetHandler.class);
 
-    static boolean handle(Target target, RevisionData revision, RestrictionValidator validator, SearcherComponent searcher, Configuration configuration) {
-        ResultList<? extends SearchResult> result = performQuery(target.getContent(), searcher, revision, configuration);
+    static boolean handle(Target target, DataFieldContainer context, DataFieldValidator validator, Configuration configuration, SearcherComponent searcher) {
+        ResultList<? extends SearchResult> result = performQuery(target.getContent(), searcher, context, configuration);
         for(Check check : target.getChecks()) {
             // Check is enabled
-            if(validator.validate(revision, check.getRestrictors())) {
+            if(validator.validate(check.getRestrictors(), context, configuration)) {
                 if(!checkCondition(result, check.getCondition())) {
                     return false;
                 }
             }
         }
-        return true;
+        return validator.validate(target.getTargets(), context, configuration);
     }
 
-    private static ResultList<? extends SearchResult> performQuery(String query, SearcherComponent searcher, RevisionData revision, Configuration configuration) {
-        query = query.replace("{id}", revision.getKey().getId().toString());
+    private static ResultList<? extends SearchResult> performQuery(String query, SearcherComponent searcher, DataFieldContainer context, Configuration configuration) {
+        query = query.replace("{id}", context.getRevisionKey().getId().toString());
         try {
             return searcher.executeSearch(ExpertRevisionSearchCommand.build(query, configuration));
         } catch (QueryNodeException qne) {
-            logger.error("Exception while performing query: "+query);
+            Logger.error(QueryTargetHandler.class, "Exception while performing query: " + query);
             return new ListBasedResultList<>(ResultList.ResultType.REVISION);
         } catch (ParseException pe) {
-            logger.error("Exception while performing query: "+query);
+            Logger.error(QueryTargetHandler.class, "Exception while performing query: "+query);
             return new ListBasedResultList<>(ResultList.ResultType.REVISION);
         }
     }

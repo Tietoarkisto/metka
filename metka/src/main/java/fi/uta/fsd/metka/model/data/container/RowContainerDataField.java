@@ -2,7 +2,9 @@ package fi.uta.fsd.metka.model.data.container;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 
+import java.util.List;
 import java.util.Set;
 /**
  * Specification and documentation is found from uml/data/uml_json_data_row_container_data_field.graphml

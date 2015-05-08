@@ -49,19 +49,20 @@ public class Target {
         this.parent = parent;
     }
 
-    public void initParents() {
+    public void initParents(Target parent) {
+        setParent(parent);
         for(Target t : targets) {
-            if(t.parent == null) {
-                t.parent = this;
-                t.initParents();
-            }
+            t.parent = this;
+            t.initParents(this);
         }
         for(Check c : checks) {
-            if(c.getParent() == null) {
-                c.setParent(this);
-                c.initParents();
-            }
+            c.setParent(this);
+            c.initParents();
         }
+    }
+
+    public void initParents() {
+        initParents(null);
     }
 
     public Target copy() {

@@ -1,5 +1,6 @@
 package fi.uta.fsd.metka.storage.restrictions;
 
+import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.*;
 import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
@@ -8,25 +9,22 @@ import fi.uta.fsd.metka.model.configuration.*;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
+import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
-import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metkaSearch.SearcherComponent;
 import fi.uta.fsd.metkaSearch.commands.searcher.expert.ExpertRevisionSearchCommand;
 import fi.uta.fsd.metkaSearch.results.ResultList;
 import fi.uta.fsd.metkaSearch.results.RevisionResult;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 class FieldTargetHandler {
-    private static final Logger logger = LoggerFactory.getLogger(FieldTargetHandler.class);
-    static boolean handle(Target target, DataFieldContainer context, RevisionValidator revisionValidator, RestrictionValidator validator,
-                          RevisionData revision, Configuration configuration, RevisionRepository revisions, SearcherComponent searcher) {
+    static boolean handle(Target target, DataFieldContainer context, DataFieldValidator validator,
+                          Configuration configuration, SearcherComponent searcher, RevisionRepository revisions, ConfigurationRepository configurations) {
         Field field = configuration.getField(target.getContent());
         if(field == null) {
+            // Configuration error, no field with provided name
             return false;
         }
         if(field.getSubfield() && target.getParent() == null) {
@@ -48,127 +46,19 @@ class FieldTargetHandler {
         }
         for(Check check : target.getChecks()) {
             // Check is enabled
-            if(validator.validate(revision, check.getRestrictors())) {
-                if(!checkConditionForField(field, d, check.getCondition(), revision, configuration, searcher)) {
+            if(validator.validate(check.getRestrictors(), context, configuration)) {
+                if(!checkConditionForField(field, d, check.getCondition(), context, configuration, searcher)) {
                     return false;
                 }
             }
         }
 
-        if(d != null && !target.getTargets().isEmpty()) {
-            // This level is done and we have a field, we can check sub targets in cases where it makes sense
-            switch(field.getType()) {
-                case CONTAINER:
-                    return checkContainerSubTargets((ContainerDataField)d, target, revisionValidator);
-                case REFERENCECONTAINER:
-                    return checkReferenceContainerSubTargets(field, (ReferenceContainerDataField) d, target, configuration, revisions, validator);
-                case REFERENCE:
-                    return checkReferenceSubTargets(field, (ValueDataField) d, target, configuration, revisions, validator);
-                case SELECTION:
-                    SelectionList list = configuration.getRootSelectionList(field.getSelectionList());
-                    if(list == null) {
-                        logger.error("Could not find root list for "+field.getSelectionList());
-                    }
-                    if(list != null && list.getType() == SelectionListType.REFERENCE) {
-                        return checkSelectionReferenceSubTargets(field, list, (ValueDataField)d, target, configuration, revisions, validator);
-                    }
-                    break;
-            }
-        }
-
-        return true;
-    }
-
-    private static boolean checkContainerSubTargets(ContainerDataField d, Target t, RevisionValidator revisionValidator) {
-        // TODO: For now validates all languages, fix this when language support is added to validation
-        for(Language l : Language.values()) {
-            if(!d.hasRowsFor(l)) {
-                continue;
-            }
-            for(DataRow row : d.getRowsFor(l)) {
-                for(Target sub : t.getTargets()) {
-                    if(!revisionValidator.validateTarget(sub, row)) {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
-    private static boolean checkReferenceContainerSubTargets(Field field, ReferenceContainerDataField d, Target t,
-                                                             Configuration configuration, RevisionRepository revisions, RestrictionValidator validator) {
-        Reference reference = configuration.getReference(field.getReference());
-        if(reference == null) {
-            logger.error("Could not find reference "+field.getReference());
-            return false;
-        }
-        if(reference.getType() != ReferenceType.REVISIONABLE) {
-            // At the moment we are only parsing revisionable references, other references could be handled at some point but for now return true
-            return true;
-        }
-        if(d != null && !d.getReferences().isEmpty()) {
-            for(ReferenceRow row : d.getReferences()) {
-                if(!row.hasValue()) {
-                    logger.error("Reference with rowId "+row.getRowId()+" has no value.");
-                }
-                if(!checkReferenceSubTargets(row.getReference().asInteger(), reference, t, revisions, validator)) {
-                    logger.warn("Reference "+Long.parseLong(row.getActualValue())+" failed validation.");
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    private static boolean checkReferenceSubTargets(Field field, ValueDataField d, Target t,
-                                                    Configuration configuration, RevisionRepository revisions, RestrictionValidator validator) {
-        Reference reference = configuration.getReference(field.getReference());
-        return checkReferenceSubTargets(field, reference, d, t, revisions, validator);
-    }
-
-    private static boolean checkSelectionReferenceSubTargets(Field field, SelectionList list, ValueDataField d, Target t,
-                                                             Configuration configuration, RevisionRepository revisions, RestrictionValidator validator) {
-        Reference reference = configuration.getReference(list.getReference());
-        return checkReferenceSubTargets(field, reference, d, t, revisions, validator);
-    }
-
-
-    private static boolean checkReferenceSubTargets(Field field, Reference reference, ValueDataField d, Target t, RevisionRepository revisions, RestrictionValidator validator) {
-        if(reference == null) {
-            logger.error("Could not find reference "+field.getReference());
-            return false;
-        }
-        if(reference.getType() != ReferenceType.REVISIONABLE) {
-            // At the moment we are only parsing revisionable references, other references could be handled at some point but for now return true
-            return true;
-        }
-        // TODO: For now checks each language separately, fix this when implementing language support for validation
-        for(Language l : Language.values()) {
-            if(!d.hasValueFor(l)) {
-                continue;
-            }
-            if(!checkReferenceSubTargets(d.getValueFor(l).valueAsInteger(), reference, t, revisions, validator)) {
-                logger.warn("Reference "+Long.parseLong(d.getActualValueFor(l))+" failed validation for language "+l+".");
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private static boolean checkReferenceSubTargets(Long id, Reference reference, Target t, RevisionRepository revisions, RestrictionValidator validator) {
-        Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(id, false, ConfigurationType.fromValue(reference.getTarget()));
-        if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
-            // If we don't find the revision data then return true by default, existence should have been checked earlier if this is required
-            return true;
-        }
-
-        return validator.validate(pair.getRight(), t.getTargets());
+        return validator.validate(target.getTargets(), context, configuration);
     }
 
     // CONDITION HANDLERS
     // *************************
-    private static boolean checkConditionForField(Field field, DataField d, Condition condition, RevisionData revision,
+    private static boolean checkConditionForField(Field field, DataField d, Condition condition, DataFieldContainer context,
                                                   Configuration configuration, SearcherComponent searcher) {
         switch(field.getType()) {
             case CONTAINER:
@@ -176,12 +66,14 @@ class FieldTargetHandler {
             case REFERENCECONTAINER:
                 return checkConditionForReferenceContainerField((ReferenceContainerDataField) d, condition);
             default:
-                return checkConditionForValueField((ValueDataField) d, condition, configuration, revision, searcher);
+                return checkConditionForValueField((ValueDataField) d, condition, configuration, context, searcher);
         }
     }
 
     private static boolean checkConditionForContainerField(ContainerDataField d, Condition condition) {
         switch(condition.getType()) {
+            case TRUE:
+                return true;
             case IS_EMPTY:
                 return IsEmptyCheck.isEmpty(d, condition.getTarget());
             case NOT_EMPTY:
@@ -193,6 +85,8 @@ class FieldTargetHandler {
 
     private static boolean checkConditionForReferenceContainerField(ReferenceContainerDataField d, Condition condition) {
         switch(condition.getType()) {
+            case TRUE:
+                return true;
             case IS_EMPTY:
                 return IsEmptyCheck.isEmpty(d);
             case NOT_EMPTY:
@@ -203,20 +97,21 @@ class FieldTargetHandler {
     }
 
     /**
-     * Should be called only with non subfield value fields
-     * @param d            ValueDataField - Should not be a subfield and is handled with that assumption
+     * @param d            ValueDataField
      * @param condition    Condition to be checked
      * @return boolean telling if validation is successful
      */
     private static boolean checkConditionForValueField(ValueDataField d, Condition condition, Configuration configuration,
-                                                       RevisionData revision, SearcherComponent searcher) {
+                                                       DataFieldContainer context, SearcherComponent searcher) {
         switch(condition.getType()) {
+            case TRUE:
+                return true;
             case IS_EMPTY:
                 return IsEmptyCheck.isEmpty(d, condition.getTarget());
             case NOT_EMPTY:
                 return NotEmptyCheck.notEmpty(d, condition.getTarget());
             case UNIQUE:
-                return UniqueCheck.unique(d, condition.getParent().getParent(), revision, searcher, configuration);
+                return UniqueCheck.unique(d, condition.getParent().getParent(), context, searcher, configuration);
             case INCREASING:
                 return ChangeCheck.change(true, d, condition.getParent().getParent());
             case DECREASING:
@@ -224,24 +119,26 @@ class FieldTargetHandler {
             case EQUALS:
                 if(condition.getTarget() == null) {
                     // Condition must have a target for equality checking
-                    logger.error("Condition "+condition.toString()+" didn't have a target ");
+                    Logger.error(FieldTargetHandler.class, "Condition "+condition.toString()+" didn't have a target ");
                     return false;
                 }
                 return EqualsCheck.equals(d, condition.getTarget(), configuration);
             case NOT_EQUALS:
                 if(condition.getTarget() == null) {
                     // Condition must have a target for non equality checking
-                    logger.error("Condition "+condition.toString()+" didn't have a target ");
+                    Logger.error(FieldTargetHandler.class, "Condition "+condition.toString()+" didn't have a target ");
                     return false;
                 }
                 return EqualsCheck.notEquals(d, condition.getTarget(), configuration);
+            case FREE_TEXT:
+                return FreeTextCheck.freeText(d,configuration);
             default:
                 return true;
         }
     }
 
     private static class UniqueCheck {
-        private static boolean unique(ValueDataField d, Target t, RevisionData revision, SearcherComponent searcher, Configuration configuration) {
+        private static boolean unique(ValueDataField d, Target t, DataFieldContainer context, SearcherComponent searcher, Configuration configuration) {
             if(d == null) {
                 return false;
             }
@@ -258,17 +155,17 @@ class FieldTargetHandler {
                     try {
                         ExpertRevisionSearchCommand command =
                                 ExpertRevisionSearchCommand.build(
-                                        configuration.getKey().getType().toValue()+" lang:"+l.toValue()+" -key.id:" + revision.getKey().getId() + " +" + d.getKey() + ":\"" + d.getActualValueFor(l) + "\""
+                                        configuration.getKey().getType().toValue()+" lang:"+l.toValue()+" -key.id:" + context.getRevisionKey().getId() + " +" + d.getKey() + ":\"" + d.getActualValueFor(l) + "\""
                                         , configuration);
                         ResultList<RevisionResult> result = searcher.executeSearch(command);
                         if (!result.getResults().isEmpty()) {
                             allValuesUnique = false;
                         }
                     } catch (QueryNodeException e) {
-                        logger.error("QRE during expert search creation.", e);
+                        Logger.error(FieldTargetHandler.class, "QRE during expert search creation.", e);
                         allValuesUnique = false;
                     } catch(ParseException pe) {
-                        logger.error("ParseException during expert search creation.", pe);
+                        Logger.error(FieldTargetHandler.class, "ParseException during expert search creation.", pe);
                         allValuesUnique = false;
                     }
                 }
@@ -277,9 +174,8 @@ class FieldTargetHandler {
                 // value is subfield, check uniqueness inside container
                 // TODO: Implement
                 return true;
-            } else if((t.getParent() == null && d.getParent() instanceof DataRow)
-                    || (t.getParent() != null && d.getParent() instanceof RevisionData)) {
-                logger.error("Parent informations don't match between field and target.");
+            } else if(((t.getParent() == null) != (d.getParent() == null))) {
+                Logger.error(FieldTargetHandler.class, "Parent informations don't match between field and target.");
                 return false;
             }
             return false;
@@ -288,6 +184,10 @@ class FieldTargetHandler {
 
     private static class EqualsCheck {
         private static boolean equals(ValueDataField d, Target t, Configuration configuration) {
+            if(d == null) {
+                // Null value is by definition not equal to anything
+                return false;
+            }
             switch (t.getType()) {
                 case QUERY:
                     // Query equality is not defined for field at this time but could be
@@ -310,10 +210,6 @@ class FieldTargetHandler {
                     if (!StringUtils.hasText(t.getContent())) {
                         return false;
                     }
-                    // If field is null then return false, null value can't equal anything
-                    if (d == null) {
-                        return false;
-                    }
                     // TODO: When language support for restrictions is added then fix this.
                     // Checks values in all languages for equality, if one of them equals then the whole value equals
                     for (Language l : Language.values()) {
@@ -332,6 +228,10 @@ class FieldTargetHandler {
         }
 
         public static boolean notEquals(ValueDataField d, Target t, Configuration configuration) {
+            if(d == null) {
+                // Null is by definition not equal to everything
+                return true;
+            }
             switch (t.getType()) {
                 case QUERY:
                     // Query equality is not defined for field at this time but could be
@@ -353,10 +253,6 @@ class FieldTargetHandler {
                     // If target has an empty content then return false, empty values should be checked with IS_EMPTY
                     if (!StringUtils.hasText(t.getContent())) {
                         return false;
-                    }
-                    // If field is null then return true, null value is by definition not equal to anything
-                    if (d == null) {
-                        return true;
                     }
                     // TODO: When language support for restrictions is added then fix this.
                     // Checks values in all languages for equality, if one of them equals then the whole value equals and this check fails
@@ -380,14 +276,14 @@ class FieldTargetHandler {
         private static boolean notEmpty(ContainerDataField field, Target t) {
             if(t == null || t.getType() != TargetType.LANGUAGE) {
                 // Only language condition target is defined at the moment, any other type target is treated as null
-                return field != null && field.hasRows();
+                return field != null && field.hasValidRows();
             } else {
-                return field != null && field.hasRowsFor(Language.fromValue(t.getContent()));
+                return field != null && field.hasValidRowsFor(Language.fromValue(t.getContent()));
             }
         }
 
         private static boolean notEmpty(ReferenceContainerDataField field) {
-            return field != null && !field.getReferences().isEmpty();
+            return field != null && field.hasValidRows();
         }
 
         private static boolean notEmpty(ValueDataField field, Target t) {
@@ -415,14 +311,14 @@ class FieldTargetHandler {
         private static boolean isEmpty(ContainerDataField field, Target t) {
             if(t == null || t.getType() != TargetType.LANGUAGE) {
                 // Only language condition target is defined at the moment, any other type target is treated as null
-                return field == null || !field.hasRows();
+                return field == null || !field.hasValidRows();
             } else {
-                return field == null || !field.hasRowsFor(Language.fromValue(t.getContent()));
+                return field == null || !field.hasValidRowsFor(Language.fromValue(t.getContent()));
             }
         }
 
         private static boolean isEmpty(ReferenceContainerDataField field) {
-            return field == null || field.getReferences().isEmpty();
+            return field == null || !field.hasValidRows();
         }
 
         private static boolean isEmpty(ValueDataField field, Target t) {
@@ -451,6 +347,11 @@ class FieldTargetHandler {
      */
     private static class ChangeCheck {
         private static boolean change(boolean increase, ValueDataField d, Target t) {
+            if(d == null) {
+                // FIXME: Define functionality for null fields, for now this removes possible null pointer exceptions
+                return true;
+            }
+            // FIXME: This logic is not valid anymore
             if (t.getParent() == null && d.getParent() instanceof RevisionData) {
                 /*case INCREASING:
                 // TODO: Fetch previous revision (save or approve operations can only modify the latest revision so if we check
@@ -473,12 +374,37 @@ class FieldTargetHandler {
                 return true;
             } else if((t.getParent() == null && d.getParent() instanceof DataRow)
                     || (t.getParent() != null && d.getParent() instanceof RevisionData)) {
-                logger.error("Parent informations don't match between field and target.");
+                Logger.error(FieldTargetHandler.class, "Parent information does not match between field and target.");
                 return false;
             } else {
-                logger.error("Weird condition between field and taret in change checking.");
+                Logger.error(FieldTargetHandler.class, "Weird condition between field and target in change checking.");
                 return false;
             }
+        }
+    }
+
+    private static class FreeTextCheck {
+        private static boolean freeText(ValueDataField field, Configuration configuration) {
+            if(field == null) {
+                // Empty field can not be free text so that solves that
+                return false;
+            }
+            Field fieldConf = configuration.getField(field.getKey());
+            if(fieldConf.getType() != FieldType.SELECTION) {
+                // Not a selection, check returns false. We can't just return true when people make a mistake in the configuration
+                return false;
+            }
+            SelectionList list = configuration.getRootSelectionList(fieldConf.getSelectionList());
+            if(list == null) {
+                // Mistake in configuration, return false
+                return false;
+            }
+            if(list.getFreeText().size() == 0) {
+                // Field can't be in free text state if no free text values are defined
+                return false;
+            }
+            // Since selection values are always saved on DEFAULT language we can just check default language against free text values
+            return (list.getFreeText().contains(field.getActualValueFor(Language.DEFAULT)));
         }
     }
 }

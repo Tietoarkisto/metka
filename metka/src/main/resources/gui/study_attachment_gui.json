@@ -25,231 +25,195 @@
 			"title": "Kommentti"
 		}
 	},
-	"content": [
-		{
-			"type": "COLUMN",
-			"columns": 1,
-			"rows": [
-				{
-					"type": "ROW",
-					"cells": [
-						{
-							"type": "CELL",
-							"title": "Tiedoston polku",
-							"horizontal": true,
-							"field": {
-								"key": "file"
-							}
-						}
-					]
+	"content": [{
+		"type": "COLUMN",
+		"columns": 1,
+		"rows": [{
+			"type": "ROW",
+			"cells": [{
+				"type": "CELL",
+				"title": "Tiedoston polku",
+				"horizontal": true,
+				"required": true,
+				"field": {
+					"key": "file"
+				}
+			}]
+		}, {
+			"type": "ROW",
+			"cells": [{
+				"type": "CELL",
+				"title": "Virallinen selite",
+				"horizontal": true,
+				"field": {
+					"key": "filedescription",
+					"multiline": true
+				}
+			}]
+		}, {
+			"type": "ROW",
+			"cells": [{
+				"type": "CELL",
+				"title": "Epävirallinen selite",
+				"horizontal": true,
+				"field": {
+					"key": "filenotes",
+					"multiline": true
+				}
+			}]
+		}, {
+			"type": "ROW",
+			"cells": [{
+				"type": "CELL",
+				"title": "Kommentti",
+				"horizontal": true,
+				"field": {
+					"key": "filecomment",
+					"multiline": true
+				}
+			}]
+		}, {
+			"type": "ROW",
+			"cells": [{
+				"type": "CELL",
+				"title": "Tyyppi",
+				"horizontal": true,
+				"required": true,
+				"field": {
+					"key": "filecategory"
+				}
+			}]
+		}, {
+			"type": "ROW",
+			"cells": [{
+				"type": "CELL",
+				"title": "PAS",
+				"horizontal": true,
+				"required": true,
+				"field": {
+					"key": "fileaip"
+				}
+			}]
+		}, {
+			"type": "ROW",
+			"cells": [{
+				"type": "CELL",
+				"title": "Kieli",
+				"horizontal": true,
+				"required": true,
+				"field": {
+					"key": "filelanguage"
+				}
+			}]
+		}, {
+			"type": "ROW",
+			"cells": [{
+				"type": "CELL",
+				"title": "Alkuperäinen",
+				"horizontal": true,
+				"required": true,
+				"field": {
+					"key": "fileoriginal"
 				},
-				{
-					"type": "ROW",
-					"cells": [
-						{
-							"type": "CELL",
-							"title": "Virallinen selite",
-							"horizontal": true,
-							"field": {
-								"key": "filedescription",
-								"multiline": true
-							}
-						}
-					]
-				},
-				{
-					"type": "ROW",
-					"cells": [
-						{
-							"type": "CELL",
-							"title": "Epävirallinen selite",
-							"horizontal": true,
-							"field": {
-								"key": "filenotes",
-								"multiline": true
-							}
-						}
-					]
-				},
-				{
-					"type": "ROW",
-					"cells": [
-						{
-							"type": "CELL",
-							"title": "Kommentti",
-							"horizontal": true,
-							"field": {
-								"key": "filecomment",
-								"multiline": true
-							}
-						}
-					]
-				},
-				{
-					"type": "ROW",
-					"cells": [
-						{
-							"type": "CELL",
-							"title": "Tyyppi",
-							"horizontal": true,
-							"field": {
-								"key": "filecategory"
-							}
-						}
-					]
-				},
-				{
-					"type": "ROW",
-					"cells": [
-						{
-							"type": "CELL",
-							"title": "PAS",
-							"horizontal": true,
-							"field": {
-								"key": "fileaip"
-							}
-						}
-					]
-				},
-				{
-					"type": "ROW",
-					"cells": [
-						{
-							"type": "CELL",
-							"title": "Kieli",
-							"horizontal": true,
-							"field": {
-								"key": "filelanguage"
-							}
-						}
-					]
-				},
-				{
-					"type": "ROW",
-					"cells": [
-						{
-							"type": "CELL",
-							"title": "Alkuperäinen",
-							"horizontal": true,
-							"field": {
-								"key": "fileoriginal"
-							},
-							"_comment": "TODO: näytä huomautus, jos valinnan muutos ja tallennus aiheuttavat muutoksia muuttujiin"
-
-						}
-					]
-				},
-				{
-					"type": "ROW",
-					"cells": [
-						{
-							"type": "CELL",
-							"title": "WWW",
-							"horizontal": true,
-							"field": {
-								"key": "filepublication"
-							}
-						}
-					]
-				},
-				{
-					"type": "ROW",
-					"cells": [
-						{
-							"type": "CELL",
-							"title": "Ulosluovutus",
-							"horizontal": true,
-							"field": {
-								"key": "filedip"
-							}
-						}
-					]
-				},
-				{
-					"type": "ROW",
-					"cells": [
-						{
-							"type": "CELL",
-							"title": "Parsi muuttujat uudelleen tallennuksen yhteydessä",
-							"field": {
-								"displayType": "CUSTOM_JS",
-								"key": "parsed"
-							}
-						}
-					]
-				},
-				{
-					"type": "ROW",
-					"cells": [
-						{
-							"type": "CELL",
-							"title": "Tiedostohistoria",
-							"readOnly": true,
-							"field": {
-								"displayType": "CUSTOM_JS",
-								"key": "custom_filehistory",
-								"showReferenceValue": true,
-								"showReferenceSaveInfo": true,
-								"showReferenceState": true,
-								"columnFields": [
-									"history_filecomment"
-								]
-							}
-						}
+				"_comment": "TODO: näytä huomautus, jos valinnan muutos ja tallennus aiheuttavat muutoksia muuttujiin"
+			}]
+		}, {
+			"type": "ROW",
+			"cells": [{
+				"type": "CELL",
+				"title": "WWW",
+				"horizontal": true,
+				"required": true,
+				"field": {
+					"key": "filepublication"
+				}
+			}]
+		}, {
+			"type": "ROW",
+			"cells": [{
+				"type": "CELL",
+				"title": "Ulosluovutus",
+				"horizontal": true,
+				"field": {
+					"key": "filedip"
+				}
+			}]
+		}, {
+			"type": "ROW",
+			"cells": [{
+				"type": "CELL",
+				"title": "Parsi muuttujat uudelleen tallennuksen yhteydessä",
+				"field": {
+					"displayType": "CUSTOM_JS",
+					"key": "parsed"
+				}
+			}]
+		}, {
+			"type": "ROW",
+			"cells": [{
+				"type": "CELL",
+				"title": "Tiedostohistoria",
+				"readOnly": true,
+				"field": {
+					"displayType": "CUSTOM_JS",
+					"key": "custom_filehistory",
+					"showReferenceValue": true,
+					"showReferenceSaveInfo": true,
+					"showReferenceState": true,
+					"columnFields": [
+						"history_filecomment"
 					]
 				}
-			]
-		}
-	],
-	"buttons": [
-		{
-			"type": "CUSTOM",
-			"title": "Tallenna",
-			"states": [
-				"DRAFT"
-			],
-			"isHandler": true,
-			"permissions": [
-				"canEditRevision"
-			],
-			"customHandler": "studyAttachmentSave"
-		}, {
-			"type": "CUSTOM",
-			"title": "Tee luonnos",
-			"isHandledByUser": "study",
-			"permissions": [
-				"canEditRevision"
-			],
-			"states": [
-				"APPROVED"
-			],
-			"customHandler": "studyAttachmentEdit"
-		}, {
-			"type": "CUSTOM",
-			"title": "Poista",
-			"states": [
-				"DRAFT",
-				"APPROVED"
-			],
-			"isHandler": true,
-			"isHandledByUser": "study",
-			"permissions": [
-				"canRemoveRevision"
-			],
-			"customHandler": "studyAttachmentRemove"
-		}, {
-			"title": "Palauta",
-			"type": "CUSTOM",
-			"states": [
-				"REMOVED"
-			],
-			"permissions": [
-				"canRestoreRevision"
-			],
-			"isHandledByUser": "study",
-			"customHandler": "studyAttachmentRestore"
-		}, {
-			"type": "CANCEL"
-		}
-	]
+			}]
+		}]
+	}],
+	"buttons": [{
+		"type": "CUSTOM",
+		"title": "Tallenna",
+		"states": [
+			"DRAFT"
+		],
+		"isHandler": true,
+		"permissions": [
+			"canEditRevision"
+		],
+		"customHandler": "studyAttachmentSave"
+	}, {
+		"type": "CUSTOM",
+		"title": "Tee luonnos",
+		"isHandledByUser": "study",
+		"permissions": [
+			"canEditRevision"
+		],
+		"states": [
+			"APPROVED"
+		],
+		"customHandler": "studyAttachmentEdit"
+	}, {
+		"type": "CUSTOM",
+		"title": "Poista",
+		"states": [
+			"DRAFT",
+			"APPROVED"
+		],
+		"isHandler": true,
+		"isHandledByUser": "study",
+		"permissions": [
+			"canRemoveRevision"
+		],
+		"customHandler": "studyAttachmentRemove"
+	}, {
+		"title": "Palauta",
+		"type": "CUSTOM",
+		"states": [
+			"REMOVED"
+		],
+		"permissions": [
+			"canRestoreRevision"
+		],
+		"isHandledByUser": "study",
+		"customHandler": "studyAttachmentRestore"
+	}, {
+		"type": "CANCEL"
+	}]
 }

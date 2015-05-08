@@ -12,14 +12,13 @@ class NamedTargetHandler {
      * @param target    NAMED type Target
      * @return Boolean if the Target validates to true
      */
-    static boolean handle(Target target, Configuration configuration, DataFieldContainer context, RevisionValidator validator) {
+    static boolean handle(Target target, Configuration configuration, DataFieldContainer context, DataFieldValidator validator) {
         Target named = configuration.getNamedTargets().get(target.getContent());
         if(named == null) {
             return false;
         }
         named = named.copy();
-        named.setParent(target.getParent());
-        named.initParents();
-        return validator.validateTarget(named, context);
+        named.initParents(target.getParent());
+        return validator.validate(named, context, configuration);
     }
 }

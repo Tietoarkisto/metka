@@ -4,7 +4,12 @@
 	"data": [{
 		"key": "OPERATION_SUCCESSFUL",
 		"title": "NOTICE",
-		"text": "Operaatio suoritettu onnistuneesti"
+		"text": "Operaatio suoritettu onnistuneesti",
+		"operations": [{
+			"key": "approve",
+			"title": "NOTICE",
+			"text": "Revisio hyväksytty onnistuneesti"
+		}]
 	}, {
 		"key": "OPERATION_FAIL",
 		"title": "ERROR",
@@ -12,7 +17,7 @@
 	}, {
 		"key": "APPROVE_FAILED_DURING_VALIDATION",
 		"title": "ERROR",
-		"text": "Hyväksymistä ei voitu suorittaa koska lomakkeella on virheitä"
+		"text": "Rajoitteet estivät revision hyväksymisen"
 	}, {
 		"key": "RESTRICTION_VALIDATION_FAILURE",
 		"title": "ERROR",
@@ -21,6 +26,10 @@
 			"key": "remove",
 			"title": "ERROR",
 			"text": "Rajoitteet estivät poiston suorittamisen"
+		}, {
+			"key": "approve",
+			"title": "ERROR",
+			"text": "Rajoitteet estivät revision hyväksymisen"
 		}]
 	}, {
 		"key": "NO_CHANGES_TO_SAVE",
@@ -73,10 +82,6 @@
 		"key": "PAGE_UPDATED",
 		"title": "NOTICE",
 		"text": "Mapitus päivitetty"
-	}, {
-	  "key": "APPROVE_SUCCESSFUL",
-	  "title": "NOTICE",
-	  "text": "Revisio hyväksytty onnistuneesti"
 	}, {
 	  "key": "APPROVE_FAILED",
 	  "title": "ERROR",

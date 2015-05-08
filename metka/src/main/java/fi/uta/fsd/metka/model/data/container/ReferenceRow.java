@@ -34,9 +34,6 @@ public class ReferenceRow extends ContainerRow {
         return reference;
     }
 
-    @Override
-    public void initParents() {}
-
     /**
      * Convenience method for checking if this reference has an actual Value
      * @return If there is an actual Value returns true, otherwise false

@@ -34,7 +34,6 @@ public enum ReturnResult {
     SAVE_SUCCESSFUL_WITH_ERRORS,        // Save was successful (changed data was updated to database) but there were field errors
     SAVE_SUCCESSFUL,                    // Save was successful (changed data was updated to database) and there were no field errors
     TYPE_NOT_VALID_CONFIGURATION_TYPE,  // Given type was not one of defined Configuration types
-    APPROVE_SUCCESSFUL,                 // Approval of the requested revision was successful
     APPROVE_FAILED,                     // Approval of the requested revision failed, errors should be marked to their respective fields
     SEARCH_FAILED,                      // Performed search failed
     SEARCH_SUCCESS,                     // Search was performed successfully
@@ -57,5 +56,6 @@ public enum ReturnResult {
     PAGE_CREATED,                       // Binder page was created in response to save operation
     PAGE_UPDATED,                       // Binder page was updated
     PAGE_REMOVED,                       // Binder page was removed successfully
-    APPROVE_FAILED_DURING_VALIDATION, API_AUTHENTICATION_FAILED          // Authentication in API-method failed
+    RESTRICTION_VALIDATION_FAILURE,     // Restriction validation encountered a failed validation
+    API_AUTHENTICATION_FAILED          // Authentication in API-method failed
 }

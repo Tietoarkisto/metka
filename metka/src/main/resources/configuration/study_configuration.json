@@ -406,7 +406,7 @@
 			"type": "REFERENCE",
 			"reference": "analysisunit_ref",
 			"includeEmpty": true,
-			"freeText": ["Other", "Geographical"],
+			"freeText": ["7","Other", "Geographical"],
 			"freeTextKey": "analysisunitother"
 		},
 		"collmodevocab_list": {
@@ -963,7 +963,8 @@
 		"versionpro": {
 			"key": "versionpro",
 			"translatable": true,
-			"type": "STRING",
+			"type": "SELECTION",
+			"selectionList": "user_list",
 			"subfield": true
 		},
 		"versiontext": {
@@ -2177,80 +2178,743 @@
 			}]
 		}
 	},
-	"restrictions": [
-		{
-			"type": "APPROVE",
-			"targets": [{
-				"type": "FIELD",
-				"content": "title",
-				"checks": [
-					{
-						"condition": {
-							"type": "NOT_EMPTY",
-							"target": {
-								"type": "LANGUAGE",
-								"content": "fi"
-							}
-						}
-					}, {
-						"condition": {
-							"type": "NOT_EMPTY",
-							"target": {
-								"type": "LANGUAGE",
-								"content": "en"
-							}
+	"restrictions": [{
+		"type": "APPROVE",
+		"targets": [{
+			"type": "FIELD",
+			"content": "title",
+			"checks": [
+				{
+					"condition": {
+						"type": "NOT_EMPTY",
+						"target": {
+							"type": "LANGUAGE",
+							"content": "fi"
 						}
 					}
-				]
-			}, {
-				"type": "FIELD",
-				"content": "weightyesno",
-				"checks": [{
+				}, {
 					"condition": {
-						"type": "EQUALS",
+						"type": "NOT_EMPTY",
 						"target": {
-							"type": "VALUE",
-							"content": "true"
+							"type": "LANGUAGE",
+							"content": "en"
 						}
-					},
-					"restrictors": [{
-						"type": "NAMED",
-						"content": "quantitative"
-					}, {
-						"type": "FIELD",
-						"content": "weight",
-						"checks": [{
-							"condition": {
-								"type": "IS_EMPTY"
-							}
-						}]
+					}
+				}
+			]
+		}, {
+			"type": "FIELD",
+			"content": "agreementtype",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "depositortype",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "termsofuse",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "cbattachments",
+			"checks": [{
+				"condition": {
+					"type": "TRUE"
+				}
+			}],
+			"targets": [{
+				"type": "CHILDREN",
+				"targets": [{
+					"type": "FIELD",
+					"content": "cbattachmentlocation",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
+				}, {
+					"type": "FIELD",
+					"content": "cbattachmenttitle",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
 					}]
 				}]
-			}, {
-				"type": "FIELD",
-				"content": "weight",
-				"checks": [{
-					"condition": {
-						"type": "NOT_EMPTY"
-					},
-					"restrictors": [{
-						"type": "NAMED",
-						"content": "quantitative"
-					}, {
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "weightyesno",
+			"checks": [{
+				"condition": {
+					"type": "EQUALS",
+					"target": {
+						"type": "VALUE",
+						"content": "true"
+					}
+				},
+				"restrictors": [{
+					"type": "NAMED",
+					"content": "quantitative"
+				}, {
+					"type": "FIELD",
+					"content": "weight",
+					"checks": [{
+						"condition": {
+							"type": "IS_EMPTY"
+						}
+					}]
+				}]
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "weight",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				},
+				"restrictors": [{
+					"type": "NAMED",
+					"content": "quantitative"
+				}, {
+					"type": "FIELD",
+					"content": "weightyesno",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EQUALS",
+							"target": {
+								"type": "VALUE",
+								"content": "true"
+							}
+						}
+					}]
+				}]
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "analysis",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}],
+			"targets": [{
+				"type": "CHILDREN",
+				"targets": [{
+					"type": "FIELD",
+					"content": "analysisunit",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}],
+					"targets": [{
 						"type": "FIELD",
-						"content": "weightyesno",
+						"content": "analysisunitother",
 						"checks": [{
 							"condition": {
-								"type": "NOT_EQUALS",
-								"target": {
-									"type": "VALUE",
-									"content": "true"
-								}
-							}
+								"type": "NOT_EMPTY"
+							},
+							"restrictors": [{
+								"type": "FIELD",
+								"content": "analysisunit",
+								"checks": [{
+									"condition": {
+										"type": "FREE_TEXT"
+									}
+								}]
+							}]
 						}]
 					}]
 				}]
 			}]
-		}
-	]
+		}, {
+			"type": "FIELD",
+			"content": "instruments",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}],
+			"targets": [{
+				"type": "CHILDREN",
+				"targets": [{
+					"type": "FIELD",
+					"content": "instrument",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}],
+					"targets": [{
+						"type": "FIELD",
+						"content": "instrumentother",
+						"checks": [{
+							"condition": {
+								"type": "NOT_EMPTY"
+							},
+							"restrictors": [{
+								"type": "FIELD",
+								"content": "instrument",
+								"checks": [{
+									"condition": {
+										"type": "FREE_TEXT"
+									}
+								}]
+							}]
+						}]
+					}]
+				}]
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "sampprocs",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}],
+			"targets": [{
+				"type": "CHILDREN",
+				"targets": [{
+					"type": "FIELD",
+					"content": "sampproc",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}],
+					"targets": [{
+						"type": "FIELD",
+						"content": "sampprocother",
+						"checks": [{
+							"condition": {
+								"type": "NOT_EMPTY"
+							},
+							"restrictors": [{
+								"type": "FIELD",
+								"content": "sampproc",
+								"checks": [{
+									"condition": {
+										"type": "FREE_TEXT"
+									}
+								}]
+							}]
+						}]
+					}]
+				}]
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "keywords",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}],
+			"targets": [{
+				"type": "CHILDREN",
+				"targets": [{
+					"type": "FIELD",
+					"content": "keyword",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}],
+					"targets": [{
+						"type": "FIELD",
+						"content": "keywordnovocab",
+						"checks": [{
+							"condition": {
+								"type": "NOT_EMPTY"
+							},
+							"restrictors": [{
+								"type": "FIELD",
+								"content": "keyword",
+								"checks": [{
+									"condition": {
+										"type": "FREE_TEXT"
+									}
+								}]
+							}]
+						}]
+					}]
+				}]
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "topics",
+			"checks": [{
+				"condition": {
+					"type": "TRUE"
+				}
+			}],
+			"targets": [{
+				"type": "CHILDREN",
+				"targets": [{
+					"type": "FIELD",
+					"content": "topic",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
+				}, {
+					"type": "FIELD",
+					"content": "topicvocab",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
+				}]
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "countries",
+			"checks": [{
+				"condition": {
+					"type": "TRUE"
+				}
+			}],
+			"targets": [{
+				"type": "CHILDREN",
+				"targets": [{
+					"type": "FIELD",
+					"content": "country",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
+				}, {
+					"type": "FIELD",
+					"content": "countryabbr",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
+				}]
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "universes",
+			"checks": [{
+				"condition": {
+					"type": "TRUE"
+				}
+			}],
+			"targets": [{
+				"type": "CHILDREN",
+				"targets": [{
+					"type": "FIELD",
+					"content": "universe",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
+				}, {
+					"type": "FIELD",
+					"content": "universeclusion",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
+				}]
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "partitles",
+			"checks": [{
+				"condition": {
+					"type": "TRUE"
+				}
+			}],
+			"targets": [{
+				"type": "CHILDREN",
+				"targets": [{
+					"type": "FIELD",
+					"content": "partitle",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
+				}, {
+					"type": "FIELD",
+					"content": "partitlelang",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
+				}]
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "geogcovers",
+			"checks": [{
+				"condition": {
+					"type": "TRUE"
+				}
+			}],
+			"targets": [{
+				"type": "CHILDREN",
+				"targets": [{
+					"type": "FIELD",
+					"content": "geogcover",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
+				}]
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "abstract",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "collmodes",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}],
+			"targets": [{
+				"type": "CHILDREN",
+				"targets": [{
+					"type": "FIELD",
+					"content": "collmode",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}],
+					"targets": [{
+						"type": "FIELD",
+						"content": "collmodeother",
+						"checks": [{
+							"condition": {
+								"type": "NOT_EMPTY"
+							},
+							"restrictors": [{
+								"type": "FIELD",
+								"content": "collmode",
+								"checks": [{
+									"condition": {
+										"type": "FREE_TEXT"
+									}
+								}]
+							}]
+						}]
+					}]
+				}]
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "dataversions",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}],
+			"targets": [{
+				"type": "CHILDREN",
+				"targets": [{
+					"type": "FIELD",
+					"content": "dataversion",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
+				}, {
+					"type": "FIELD",
+					"content": "versionpro",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
+				}, {
+					"type": "FIELD",
+					"content": "versiondate",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
+				}, {
+					"type": "FIELD",
+					"content": "versionlabeldata",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}],
+					"targets": [{
+						"type": "FIELD",
+						"content": "versiontext",
+						"checks": [{
+							"condition": {
+								"type": "NOT_EMPTY"
+							},
+							"restrictors": [{
+								"type": "FIELD",
+								"content": "versionlabeldata",
+								"checks": [{
+									"condition": {
+										"type": "FREE_TEXT"
+									}
+								}]
+							}]
+						}]
+					}]
+				}]
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "descpublic",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "descversions",
+			"checks": [{
+				"condition": {
+					"type": "TRUE"
+				}
+			}],
+			"targets": [{
+				"type": "CHILDREN",
+				"targets": [{
+					"type": "FIELD",
+					"content": "descversion",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
+				}, {
+					"type": "FIELD",
+					"content": "versionpro",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
+				}, {
+					"type": "FIELD",
+					"content": "versiondate",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
+				}, {
+					"type": "FIELD",
+					"content": "versionlabeldesc",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}],
+					"targets": [{
+						"type": "FIELD",
+						"content": "versiontext",
+						"checks": [{
+							"condition": {
+								"type": "NOT_EMPTY"
+							},
+							"restrictors": [{
+								"type": "FIELD",
+								"content": "versionlabeldesc",
+								"checks": [{
+									"condition": {
+										"type": "FREE_TEXT"
+									}
+								}]
+							}]
+						}]
+					}]
+				}]
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "colltime",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}],
+			"targets": [{
+				"type": "CHILDREN",
+				"targets": [{
+					"type": "FIELD",
+					"content": "colldateevent",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
+				}, {
+					"type": "FIELD",
+					"content": "colldate",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						},
+						"restrictors": [{
+							"type": "FIELD",
+							"content": "colldatetext",
+							"checks": [{
+								"condition": {
+									"type": "IS_EMPTY"
+								}
+							}]
+						}]
+					}]
+				}, {
+					"type": "FIELD",
+					"content": "colldatetext",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						},
+						"restrictors": [{
+							"type": "FIELD",
+							"content": "colldate",
+							"checks": [{
+								"condition": {
+									"type": "IS_EMPTY"
+								}
+							}]
+						}]
+					}]
+				}]
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "dissemination",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "public",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "securityissues",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "series",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "studyid",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "submissionid",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "datakind",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "anonymization",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "varpublic",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "biblcit",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "notes",
+			"checks": [{
+				"condition": {
+					"type": "TRUE"
+				}
+			}],
+			"targets": [{
+				"type": "FIELD",
+				"content": "note",
+				"checks": [{
+					"condition": {
+						"type": "NOT_EMPTY"
+					}
+				}]
+			}]
+		}]
+	}]
 }

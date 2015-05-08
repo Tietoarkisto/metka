@@ -68,11 +68,61 @@ define(function (require) {
                         });
                     };
                 }
-                require('./modal')($.extend(true, require('./optionsBase')(), {
-                    title: MetkaJS.L10N.get('alert.'+(getPropertyNS(data, 'responses.0.options.0.title.value') || "NOTICE").toLowerCase()+'.title'),
-                    body: (getPropertyNS(data, 'responses.1.options.0.title.value') || result+(operation ? "."+operation : "")),
-                    buttons: [dismiss]
-                }));
+                var body = getPropertyNS(data, 'responses.1.options.0.title.value');
+                if(operation && !body) {
+                    require('./server')('optionsByPath', {
+                        data: JSON.stringify({
+                            requests: [{
+                                key: "resulttitle",
+                                container: "",
+                                language: MetkaJS.L10N.locale.toUpperCase(),
+                                root: {
+                                    reference: {
+                                        key: null,
+                                        type: "JSON",
+                                        target: "result_code_descriptions",
+                                        valuePath: "key",
+                                        titlePath: "title"
+                                    },
+                                    value: result
+                                }
+                            }, {
+                                key: "resulttext",
+                                container: "",
+                                language: MetkaJS.L10N.locale.toUpperCase(),
+                                root: {
+                                    reference: {
+                                        key: null,
+                                        type: "JSON",
+                                        target: "result_code_descriptions",
+                                        valuePath: "key",
+                                        titlePath: "text"
+                                    },
+                                    value: result
+                                }
+                            }]
+                        }),
+                        success: function (data) {
+                            var body = getPropertyNS(data, 'responses.1.options.0.title.value');
+                            if(!body) {
+                                body = result+(operation ? "."+operation : "");
+                            } else {
+                                body = result+(operation ? "."+operation : "")+"</br>"+body;
+                            }
+                            require('./modal')($.extend(true, require('./optionsBase')(), {
+                                title: MetkaJS.L10N.get('alert.'+(getPropertyNS(data, 'responses.0.options.0.title.value') || "NOTICE").toLowerCase()+'.title'),
+                                body: body,
+                                buttons: [dismiss]
+                            }));
+                        }
+                    });
+                } else {
+                    require('./modal')($.extend(true, require('./optionsBase')(), {
+                        title: MetkaJS.L10N.get('alert.'+(getPropertyNS(data, 'responses.0.options.0.title.value') || "NOTICE").toLowerCase()+'.title'),
+                        body: (body || result+(operation ? "."+operation : "")),
+                        buttons: [dismiss]
+                    }));
+                }
             },
             error: function(jqXHR, status, thrown) {
                 // TODO: Form exception dialog

@@ -20,7 +20,7 @@ public abstract class DataField {
 
     @JsonIgnore private DataFieldType type;
 
-    @JsonIgnore private DataFieldContainer parent;
+    @JsonIgnore private DataFieldContainer parent; // This is used during restriction validation
 
     public DataField(String key) {
         this.key = key;
@@ -78,7 +78,8 @@ public abstract class DataField {
         this.parent = parent;
     }
 
-    public abstract void initParents();
+    // There's no null version since DataFields are always under some DataFieldContainer
+    public abstract void initParents(DataFieldContainer parent);
 
     public static enum DataFieldType {
         VALUE(Types.VALUE),

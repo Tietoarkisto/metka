@@ -39,6 +39,8 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase, DataFi
     private final Map<Language, ApproveInfo> approved = new HashMap<>();
     private DateTimeUserPair saved;
 
+    @JsonIgnore private DataFieldContainer parent; // This is used for restrictions when validation jumps through reference barrier.
+
     @JsonCreator
     public RevisionData(@JsonProperty("key")RevisionKey key, @JsonProperty("configuration")ConfigurationKey configuration) {
         this.key = key;
@@ -90,6 +92,16 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase, DataFi
     }
 
     @Override
+    public DataFieldContainer getParent() {
+        return parent;
+    }
+
+    @Override
+    public void setParent(DataFieldContainer parent) {
+        this.parent = parent;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -133,11 +145,15 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase, DataFi
         approved.put(language, info);
     }
 
-    @JsonIgnore public void initParents() {
+    @JsonIgnore public void initParents(DataFieldContainer parent) {
+        setParent(parent);
         for(DataField field : fields.values()) {
-            field.setParent(this);
-            field.initParents();
+            field.initParents(this);
         }
+    }
+
+    @JsonIgnore public void initParents() {
+        initParents(null);
     }
 
     public RevisionData putChange(Change change) {
@@ -145,6 +161,14 @@ public class RevisionData implements Comparable<RevisionData>, ModelBase, DataFi
             changes.put(change.getKey(), change);
         }
         return this;
+    }
+
+    @JsonIgnore public RevisionKey getRevisionKey() {
+        return getKey();
+    }
+
+    @JsonIgnore public ConfigurationKey getConfigurationKey() {
+        return getConfiguration();
     }
 
     // *************************

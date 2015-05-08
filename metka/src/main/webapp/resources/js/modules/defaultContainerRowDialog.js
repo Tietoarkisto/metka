@@ -57,17 +57,20 @@ define(function (require) {
                         return {
                             type: 'ROW',
                             cells: [$.extend(
-                                true,
-                                {
+                                true
+                                , {
                                     type: 'CELL',
                                     translatable: options.fieldOptions.translatable ? false : dataConfig.translatable,
                                     //title: MetkaJS.L10N.get(fieldTitle(field)),
                                     //title: getTitle(field),
+
+                                }
+                                , options.extraDialogConfiguration && options.extraDialogConfiguration[fieldKey]
+                                , {
                                     field: {
                                         key: fieldKey
                                     }
-                                },
-                                options.extraDialogConfiguration && options.extraDialogConfiguration[fieldKey]
+                                }
                             )]
                         };
                     });

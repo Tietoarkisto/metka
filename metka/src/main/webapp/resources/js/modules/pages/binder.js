@@ -1,6 +1,8 @@
 define(function (require) {
     'use strict';
 
+    // FIXME: Unify row edit and add new functionality so that it's only implemented once.
+
     var setContent;
     var dataConf = {
         fields: {
@@ -413,6 +415,7 @@ define(function (require) {
                                                 .click(function () {
                                                     require('./../server')('/binder/saveBinderPage', {
                                                         data: JSON.stringify({
+                                                            pageId: null,
                                                             binderId: require('./../data')(containerOptions)('binderId').getByLang(options.defaultLang),
                                                             studyId: require('./../data')(containerOptions)('studyId').getByLang(options.defaultLang),
                                                             description: require('./../data')(containerOptions)('description').getByLang(options.defaultLang)

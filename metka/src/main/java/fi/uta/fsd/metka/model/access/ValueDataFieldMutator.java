@@ -79,7 +79,7 @@ final class ValueDataFieldMutator {
             info = DateTimeUserPair.build();
         }
 
-        //TODO: We should at some point make sure that the value is valid for field type eg. DATE field shouldn't contain TIME element
+        //NOTE: We should at some point make sure that the value is valid for field type eg. DATE field shouldn't contain TIME element
 
         // No previous field, create ValueDataField, set value and return
         StatusCode statusCode;

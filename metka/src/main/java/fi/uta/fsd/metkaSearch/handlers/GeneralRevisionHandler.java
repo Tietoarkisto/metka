@@ -226,7 +226,7 @@ class GeneralRevisionHandler implements RevisionHandler {
                     return;
                 }
                 ReferenceContainerDataField df = pair.getRight();
-                if(df.getReferences().size() == 0) {
+                if(!df.hasRows()) {
                     return;
                 }
                 indexStudyVariablesContainer(df, document, root+field.getIndexAs(), data);
@@ -236,7 +236,7 @@ class GeneralRevisionHandler implements RevisionHandler {
                     return;
                 }
                 ReferenceContainerDataField df = pair.getRight();
-                if(df.getReferences().size() == 0) {
+                if(!df.hasRows()) {
                     return;
                 }
                 indexStudyAttachmentContainer(df, document, root+field.getIndexAs(), data);
@@ -553,7 +553,7 @@ class GeneralRevisionHandler implements RevisionHandler {
         for(ReferenceRow reference : field.getReferences()) {
             Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(Long.parseLong(reference.getActualValue()), data.getState() == RevisionState.APPROVED, ConfigurationType.STUDY_ATTACHMENT);
             if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
-                Logger.error(GeneralRevisionHandler.class, "Didn't find revision for referenced study variable "+reference.getActualValue());
+                Logger.error(GeneralRevisionHandler.class, "Didn't find revision for referenced study attachment "+reference.getActualValue());
                 continue;
             }
             Pair<ReturnResult, Configuration> confPair = getConfiguration(pair.getRight().getConfiguration());

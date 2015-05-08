@@ -303,5 +303,65 @@
 			"reference": "history_filecomment_ref",
 			"subfield": true
 		}
-	}
+	},
+	"restrictions": [{
+		"type": "APPROVE",
+		"targets": [{
+			"type": "FIELD",
+			"content": "file",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "fileaip",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "filecategory",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "filelanguage",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "fileno",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "fileoriginal",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "filepublication",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}]
+		}]
+	}]
 }

@@ -10,6 +10,7 @@ import fi.uta.fsd.metka.model.data.change.ContainerChange;
 import fi.uta.fsd.metka.model.data.change.RowChange;
 import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
+import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.util.StringUtils;
@@ -31,20 +32,12 @@ public class ReferenceContainerDataField extends RowContainerDataField {
         return references;
     }
 
-    @Override
-    public void initParents() {
-        for(ReferenceRow reference : references) {
-            reference.setParent(this);
-            reference.initParents();
-        }
-    }
-
     /**
      * Searches through a list of references for a reference with given rowId
      * @param rowId Row id to be searched for amongst references
      * @return ReferenceRow matching given value or null if none found
      */
-    public Pair<StatusCode, ReferenceRow> getReferenceWithId(Integer rowId) {
+    @JsonIgnore public Pair<StatusCode, ReferenceRow> getReferenceWithId(Integer rowId) {
 
         if(rowId == null || rowId < 1) {
             // Row can not be found since no rowId given.
@@ -64,7 +57,7 @@ public class ReferenceContainerDataField extends RowContainerDataField {
      * @param value Reference value that is searched for
      * @return ReferenceRow matching given value or null if none found
      */
-    public Pair<StatusCode, ReferenceRow> getReferenceWithValue(String value) {
+    @JsonIgnore public Pair<StatusCode, ReferenceRow> getReferenceWithValue(String value) {
         for(ReferenceRow reference : references) {
             if(reference.valueEquals(value)) {
                 return new ImmutablePair<>(StatusCode.FOUND_ROW, reference);
@@ -84,7 +77,7 @@ public class ReferenceContainerDataField extends RowContainerDataField {
      * @param info DateTimeUserPair if new reference is needed. If this is null then new instance is used.
      * @return Tuple of StatusCode and ReferenceRow. StatusCode tells if the returned row is a new insert or not
      */
-    public Pair<StatusCode, ReferenceRow> getOrCreateReferenceWithValue(String value, Map<String, Change> changeMap, DateTimeUserPair info) {
+    @JsonIgnore public Pair<StatusCode, ReferenceRow> getOrCreateReferenceWithValue(String value, Map<String, Change> changeMap, DateTimeUserPair info) {
         if(changeMap == null || !StringUtils.hasText(value)) {
             return new ImmutablePair<>(StatusCode.INCORRECT_PARAMETERS, null);
         }
@@ -109,7 +102,7 @@ public class ReferenceContainerDataField extends RowContainerDataField {
         }
     }
 
-    public Pair<StatusCode, ReferenceRow> removeReference(Integer rowId, Map<String, Change> changeMap, DateTimeUserPair info) {
+    @JsonIgnore public Pair<StatusCode, ReferenceRow> removeReference(Integer rowId, Map<String, Change> changeMap, DateTimeUserPair info) {
         Pair<StatusCode, ReferenceRow> rowPair = getReferenceWithId(rowId);
         if(rowPair.getLeft() != StatusCode.FOUND_ROW) {
             return rowPair;
@@ -143,8 +136,21 @@ public class ReferenceContainerDataField extends RowContainerDataField {
         return new ImmutablePair<>(status, row);
     }
 
+    @JsonIgnore public boolean hasRows() {
+        return !references.isEmpty();
+    }
+
+    @JsonIgnore public boolean hasValidRows() {
+        for(ReferenceRow row : references) {
+            if(!row.getRemoved()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
-    public Set<Integer> getRowIdsFor(Language language) {
+    @JsonIgnore public Set<Integer> getRowIdsFor(Language language) {
         Set<Integer> ids = new HashSet<>();
         if(language == Language.DEFAULT) {
             for(ReferenceRow reference : references) {
@@ -152,6 +158,14 @@ public class ReferenceContainerDataField extends RowContainerDataField {
             }
         }
         return ids;
+    }
+
+    @Override
+    public void initParents(DataFieldContainer parent) {
+        setParent(parent);
+        for(ReferenceRow row : references) {
+            row.setRowContainer(this);
+        }
     }
 
     @Override

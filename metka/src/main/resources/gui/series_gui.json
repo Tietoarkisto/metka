@@ -3,172 +3,149 @@
 		"type": "SERIES",
 		"version": 1
 	},
-	"content": [
-        {
-            "type": "COLUMN",
-            "columns": 1,
-            "rows": [
-                {
-                    "type": "ROW",
-                    "cells": [
-                        {
-                            "type": "CELL",
-                            "title": "Lyhenne",
-                            "field": {
-                                "key": "seriesabbr"
-                            }
-                        }
-                    ]
-                },
-                {
-                    "type": "ROW",
-                    "cells": [
-                        {
-                            "type": "CELL",
-                            "title": "Nimi",
-                            "field": {
-                                "key": "seriesname"
-                            }
-                        }
-                    ]
-                },
-                {
-                    "type": "ROW",
-                    "cells": [
-                        {
-                            "type": "CELL",
-                            "title": "Kuvaus",
-                            "field": {
-                                "key": "seriesdesc",
-                                "multiline": true
-                            }
-                        }
-                    ]
-                },
-                {
-                    "type": "ROW",
-                    "cells": [
-                        {
-                            "type": "CELL",
-                            "title": "Huomiot",
-                            "field": {
-                                "key": "seriesnotes",
-                                "multiline": true
-                            }
-                        }
-                    ]
+	"content": [{
+        "type": "COLUMN",
+        "columns": 1,
+        "rows": [{
+            "type": "ROW",
+            "cells": [{
+                "type": "CELL",
+                "title": "Lyhenne",
+                "required": true,
+                "field": {
+                    "key": "seriesabbr"
                 }
-            ]
-        }
-	],
-    "buttons": [
-        {
-            "title": "Tallenna",
-            "type": "SAVE",
-            "isHandler": true,
-            "states": [
-                "DRAFT"
-            ],
-            "permissions": [
-                "canEditRevision"
-            ]
-        },
-        {
-            "title": "Hyväksy",
-            "type": "APPROVE",
-            "isHandler": true,
-            "states": [
-                "DRAFT"
-            ],
-            "permissions": [
-                "canApproveRevision"
-            ]
-        },
-        {
-            "title": "Tee luonnos",
-            "type": "EDIT",
-            "states": [
-                "APPROVED"
-            ],
-            "permissions": [
-                "canEditRevision"
-            ]
-        },
-        {
-            "title": "Poista",
-            "type": "REMOVE",
-            "states": [
-                "DRAFT",
-                "APPROVED"
-            ],
-            "isHandler": true,
-            "permissions": [
-                "canRemoveRevision"
-            ]
-        },
-        {
-            "title": "Palauta",
-            "type": "RESTORE",
-            "states": [
-                "REMOVED"
-            ],
-            "permissions": [
-                "canRestoreRevision"
-            ]
-        },
-        {
-            "title": "Aloita muokkaus",
-            "type": "CLAIM",
-            "hasHandler": false,
-            "states": [
-                "DRAFT"
-            ],
-            "permissions": [
-                "canEditRevision"
-            ]
-        },
-        {
-            "title": "Ota haltuun",
-            "type": "CLAIM",
-            "hasHandler": true,
-            "isHandler": false,
-            "states": [
-                "DRAFT"
-            ],
-            "permissions": [
-                "canEditRevision",
-                "canForceClaimRevision"
-            ]
-        },
-        {
-            "title": "Lopeta muokkaus",
-            "type": "RELEASE",
-            "isHandler": true,
-            "states": [
-                "DRAFT"
-            ],
-            "permissions": [
-                "canEditRevision"
-            ]
-        },
-        {
-            "title": "Vapauta luonnos",
-            "type": "RELEASE",
-            "isHandler": false,
-            "hasHandler": true,
-            "states": [
-                "DRAFT"
-            ],
-            "permissions": [
-                "canForceReleaseRevision"
-            ]
-        },
-        {
-            "title": "Revisiohistoria",
-            "type": "HISTORY",
-            "permissions": [
-                "canViewRevision"
-            ]
-        }
-    ]
+            }]
+        }, {
+            "type": "ROW",
+            "cells": [{
+                "type": "CELL",
+                "title": "Nimi",
+                "required": true,
+                "field": {
+                    "key": "seriesname"
+                }
+            }]
+        }, {
+            "type": "ROW",
+            "cells": [{
+                "type": "CELL",
+                "title": "Kuvaus",
+                "required": true,
+                "field": {
+                    "key": "seriesdesc",
+                    "multiline": true
+                }
+            }]
+        }, {
+            "type": "ROW",
+            "cells": [{
+                "type": "CELL",
+                "title": "Huomiot",
+                "field": {
+                    "key": "seriesnotes",
+                    "multiline": true
+                }
+            }]
+        }]
+    }],
+    "buttons": [{
+        "title": "Tallenna",
+        "type": "SAVE",
+        "isHandler": true,
+        "states": [
+            "DRAFT"
+        ],
+        "permissions": [
+            "canEditRevision"
+        ]
+    }, {
+        "title": "Hyväksy",
+        "type": "APPROVE",
+        "isHandler": true,
+        "states": [
+            "DRAFT"
+        ],
+        "permissions": [
+            "canApproveRevision"
+        ]
+    }, {
+        "title": "Tee luonnos",
+        "type": "EDIT",
+        "states": [
+            "APPROVED"
+        ],
+        "permissions": [
+            "canEditRevision"
+        ]
+    }, {
+        "title": "Poista",
+        "type": "REMOVE",
+        "states": [
+            "DRAFT",
+            "APPROVED"
+        ],
+        "isHandler": true,
+        "permissions": [
+            "canRemoveRevision"
+        ]
+    }, {
+        "title": "Palauta",
+        "type": "RESTORE",
+        "states": [
+            "REMOVED"
+        ],
+        "permissions": [
+            "canRestoreRevision"
+        ]
+    }, {
+        "title": "Aloita muokkaus",
+        "type": "CLAIM",
+        "hasHandler": false,
+        "states": [
+            "DRAFT"
+        ],
+        "permissions": [
+            "canEditRevision"
+        ]
+    }, {
+        "title": "Ota haltuun",
+        "type": "CLAIM",
+        "hasHandler": true,
+        "isHandler": false,
+        "states": [
+            "DRAFT"
+        ],
+        "permissions": [
+            "canEditRevision",
+            "canForceClaimRevision"
+        ]
+    }, {
+        "title": "Lopeta muokkaus",
+        "type": "RELEASE",
+        "isHandler": true,
+        "states": [
+            "DRAFT"
+        ],
+        "permissions": [
+            "canEditRevision"
+        ]
+    }, {
+        "title": "Vapauta luonnos",
+        "type": "RELEASE",
+        "isHandler": false,
+        "hasHandler": true,
+        "states": [
+            "DRAFT"
+        ],
+        "permissions": [
+            "canForceReleaseRevision"
+        ]
+    }, {
+        "title": "Revisiohistoria",
+        "type": "HISTORY",
+        "permissions": [
+            "canViewRevision"
+        ]
+    }]
 }

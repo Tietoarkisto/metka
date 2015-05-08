@@ -8,9 +8,9 @@ define(function (require) {
                     $.extend(options.data, response.data);
                     options.$events.trigger('refresh.metka');
                 }, [
-                    'APPROVE_SUCCESSFUL',
-                    'APPROVE_FAILED_DURING_VALIDATION'
-                ]));
+                    'OPERATION_SUCCESSFUL',
+                    'RESTRICTION_VALIDATION_FAILURE'
+                ], "approve"));
         },
         CANCEL: function (options) {
             options.title = MetkaJS.L10N.get('general.buttons.cancel');

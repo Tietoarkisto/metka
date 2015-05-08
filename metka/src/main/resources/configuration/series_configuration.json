@@ -3,95 +3,89 @@
 		"version": 1,
 		"type": "SERIES"
 	},
-	"restrictions": [
-		{
-			"type": "APPROVE",
-			"targets": [
-				{
-					"type": "FIELD",
-					"content": "seriesabbr",
-					"checks": [
-						{
-							"condition": {
-								"type":	"NOT_EMPTY"
-							}
-						},
-						{
-							"condition": {
-								"type": "UNIQUE"
-							}
-						}
-					]
+	"restrictions": [{
+		"type": "APPROVE",
+		"targets": [{
+			"type": "FIELD",
+			"content": "seriesabbr",
+			"checks": [{
+				"condition": {
+					"type":	"NOT_EMPTY"
 				}
-			]
-		},
-		{
-			"type": "DELETE",
-			"targets": [
-				{
-					"type": "QUERY",
-					"content": "STUDY series.value:{id}",
-					"checks": [
-						{
-							"condition": {
-								"type":	"IS_EMPTY"
-							}
-						}
-					]
-				}, {
-					"type": "QUERY",
-					"content": "STUDY lang:en series.value:{id}",
-					"checks": [
-						{
-							"condition": {
-								"type":	"IS_EMPTY"
-							}
-						}
-					]
-				}, {
-					"type": "QUERY",
-					"content": "STUDY lang:sv series.value:{id}",
-					"checks": [
-						{
-							"condition": {
-								"type":	"IS_EMPTY"
-							}
-						}
-					]
-				}, {
-					"type": "QUERY",
-					"content": "PUBLICATION series.value:{id}",
-					"checks": [
-						{
-							"condition": {
-								"type":	"IS_EMPTY"
-							}
-						}
-					]
-				}, {
-					"type": "QUERY",
-					"content": "PUBLICATION lang:en series.value:{id}",
-					"checks": [
-						{
-							"condition": {
-								"type":	"IS_EMPTY"
-							}
-						}
-					]
-				}, {
-					"type": "QUERY",
-					"content": "PUBLICATION lang:sv series.value:{id}",
-					"checks": [
-						{
-							"condition": {
-								"type":	"IS_EMPTY"
-							}
-						}
-					]
+			}, {
+				"condition": {
+					"type": "UNIQUE"
 				}
-			]
-		}
-	],
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "seriesname",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "seriesdesc",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}]
+		}]
+	}, {
+		"type": "DELETE",
+		"targets": [{
+			"type": "QUERY",
+			"content": "STUDY series.value:{id}",
+			"checks": [{
+				"condition": {
+					"type":	"IS_EMPTY"
+				}
+			}]
+		}, {
+			"type": "QUERY",
+			"content": "STUDY lang:en series.value:{id}",
+			"checks": [{
+				"condition": {
+					"type":	"IS_EMPTY"
+				}
+			}]
+		}, {
+			"type": "QUERY",
+			"content": "STUDY lang:sv series.value:{id}",
+			"checks": [{
+				"condition": {
+					"type":	"IS_EMPTY"
+				}
+			}]
+		}, {
+			"type": "QUERY",
+			"content": "PUBLICATION series.value:{id}",
+			"checks": [{
+				"condition": {
+					"type":	"IS_EMPTY"
+				}
+			}]
+		}, {
+			"type": "QUERY",
+			"content": "PUBLICATION lang:en series.value:{id}",
+			"checks": [{
+				"condition": {
+					"type":	"IS_EMPTY"
+				}
+			}]
+		}, {
+			"type": "QUERY",
+			"content": "PUBLICATION lang:sv series.value:{id}",
+			"checks": [{
+				"condition": {
+					"type":	"IS_EMPTY"
+				}
+			}]
+		}]
+	}],
 	"fields": {
 		"seriesabbr": {
 			"key": "seriesabbr",

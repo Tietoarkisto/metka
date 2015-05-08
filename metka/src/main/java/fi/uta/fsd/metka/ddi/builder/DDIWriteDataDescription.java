@@ -52,7 +52,7 @@ class DDIWriteDataDescription extends DDIWriteSectionBase {
         String fileID = (valueFieldPair.getLeft() == StatusCode.FIELD_FOUND) ? valueFieldPair.getRight().getActualValueFor(Language.DEFAULT) : "";
 
         Pair<StatusCode, ReferenceContainerDataField> referenceContainerPair = variables.dataField(ReferenceContainerDataFieldCall.get(Fields.VARIABLES));
-        if(referenceContainerPair.getLeft() == StatusCode.FIELD_FOUND && !referenceContainerPair.getRight().getReferences().isEmpty()) {
+        if(referenceContainerPair.getLeft() == StatusCode.FIELD_FOUND && referenceContainerPair.getRight().hasValidRows()) {
             for(ReferenceRow reference : referenceContainerPair.getRight().getReferences()) {
                 if(reference.getRemoved()) {
                      continue;
@@ -99,14 +99,13 @@ class DDIWriteDataDescription extends DDIWriteSectionBase {
                     continue;
                 }
                 Pair<StatusCode, ValueDataField> valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.VARGROUPTITLE));
-                // TODO: Should variable group title be translatable?
                 if(hasValue(valueFieldPair, Language.DEFAULT)) {
                     //VarGrpType varGrpType = fillTextType(dataDscrType.addNewVarGrp(), valueFieldPair, Language.DEFAULT);
                     VarGrpType varGrpType = dataDscrType.addNewVarGrp();
 
                     // TODO: do we want variable names or variable id:s?
                     Pair<StatusCode, ReferenceContainerDataField> referenceContainerPair = row.dataField(ReferenceContainerDataFieldCall.get(Fields.VARGROUPVARS));
-                    if(referenceContainerPair.getLeft() == StatusCode.FIELD_FOUND && !referenceContainerPair.getRight().getReferences().isEmpty()) {
+                    if(referenceContainerPair.getLeft() == StatusCode.FIELD_FOUND && referenceContainerPair.getRight().hasValidRows()) {
                         String vars = "";
                         for(ReferenceRow reference : referenceContainerPair.getRight().getReferences()) {
                             if(reference.getRemoved()) {
@@ -265,7 +264,6 @@ class DDIWriteDataDescription extends DDIWriteSectionBase {
     }
 
     private void setVarQstn(RevisionData variable, VarType var) {
-        // TODO: Do we want to use single qstn type with multiple texts for each container or do we want to have one qstn type per set of texts so that each qstn contains only one preq etc.?
         QstnType qstn = var.addNewQstn();
 
         List<ValueDataField> fields = gatherFields(variable, Fields.PREQTXTS, Fields.PREQTXT, language, language);

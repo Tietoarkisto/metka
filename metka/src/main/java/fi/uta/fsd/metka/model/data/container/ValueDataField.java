@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -78,11 +79,11 @@ public class ValueDataField extends DataField {
         return value;
     }
 
-    public boolean hasOriginalFor(Language language) {
+    @JsonIgnore public boolean hasOriginalFor(Language language) {
         return getOriginalFor(language) != null;
     }
 
-    public boolean hasCurrentFor(Language language) {
+    @JsonIgnore public boolean hasCurrentFor(Language language) {
         return getCurrentFor(language) != null;
     }
 
@@ -92,12 +93,18 @@ public class ValueDataField extends DataField {
      * @param language
      * @return
      */
-    public boolean hasValueFor(Language language) {
+    @JsonIgnore public boolean hasValueFor(Language language) {
         return getValueFor(language) != null && getValueFor(language).hasValue();
     }
 
-    @Override
-    public void initParents() {}
+    @JsonIgnore public boolean hasAnyValue() {
+        for(Language l : Language.values()) {
+            if(hasValueFor(l)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     @JsonIgnore
     public boolean originalForEquals(Language language, String compare) {
@@ -137,6 +144,11 @@ public class ValueDataField extends DataField {
     @JsonIgnore
     public boolean valueForEquals(Language language, String compare) {
         return hasValueFor(language) && getValueFor(language).valueEquals(compare);
+    }
+
+    @JsonIgnore
+    public void initParents(DataFieldContainer parent) {
+        setParent(parent);
     }
 
     @Override

@@ -29,71 +29,65 @@
         "langs": {
             "key": "langs",
             "type": "VALUE",
-            "options": [
-                {
-                    "&title": {
-                        "default": "Suomi"
-                    },
-                    "value": "fi"
-                },{
-                    "&title": {
-                        "default": "Englanti"
-                    },
-                    "value": "en"
-                },{
-                    "&title": {
-                        "default": "Ruotsi"
-                    },
-                    "value": "sv"
-                },{
-                    "&title": {
-                        "default": "Muu"
-                    },
-                    "value": "other"
-                }
-            ]
+            "options": [{
+                "&title": {
+                    "default": "Suomi"
+                },
+                "value": "fi"
+            },{
+                "&title": {
+                    "default": "Englanti"
+                },
+                "value": "en"
+            },{
+                "&title": {
+                    "default": "Ruotsi"
+                },
+                "value": "sv"
+            },{
+                "&title": {
+                    "default": "Muu"
+                },
+                "value": "other"
+            }]
         },
         "publicationannouncement_list": {
             "key": "publicationannouncement_list",
             "type": "VALUE",
-            "options": [
-                {
-                    "&title": {
-                        "default": "Ei tietoa"
-                    },
-                    "value": "0"
-                },{
-                    "&title": {
-                        "default": "Alkup. tutkija ilmoit."
-                    },
-                    "value": "1"
-                },{
-                    "&title": {
-                        "default": "Oma paikannus"
-                    },
-                    "value": "2"
-                },{
-                    "&title": {
-                        "default": "käyttäjä ilmoit."
-                    },
-                    "value": "3"
-                }
-            ]
+            "options": [{
+                "&title": {
+                    "default": "Ei tietoa"
+                },
+                "value": "0"
+            }, {
+                "&title": {
+                    "default": "Alkup. tutkija ilmoit."
+                },
+                "value": "1"
+            }, {
+                "&title": {
+                    "default": "Oma paikannus"
+                },
+                "value": "2"
+            }, {
+                "&title": {
+                    "default": "käyttäjä ilmoit."
+                },
+                "value": "3"
+            }]
         },
         "pidtype_list": {
             "key": "pidtype_list",
             "type": "LITERAL",
-            "options": [
-                {
-                    "value": "DOI"
-                },{
-                    "value": "URN"
-                },{
-                    "value": "PURL"
-                },{
-                    "value": "LSID"
-                }
-            ]
+            "options": [{
+                "value": "DOI"
+            }, {
+                "value": "URN"
+            }, {
+                "value": "PURL"
+            }, {
+                "value": "LSID"
+            }]
         }
     },
     "references": {
@@ -293,5 +287,73 @@
         	"writable": false,
         	"reference": "seriesname_ref"
         }
-    }
+    },
+    "restrictions": [{
+        "type": "APPROVE",
+        "targets": [{
+            "type": "FIELD",
+            "content": "publicationannouncement",
+            "checks": [{
+                "condition": {
+                    "type": "NOT_EMPTY"
+                }
+            }]
+        }, {
+            "type": "FIELD",
+            "content": "publicationfirstsaved",
+            "checks": [{
+                "condition": {
+                    "type": "NOT_EMPTY"
+                }
+            }]
+        }, {
+            "type": "FIELD",
+            "content": "publicationid",
+            "checks": [{
+                "condition": {
+                    "type": "NOT_EMPTY"
+                }
+            }]
+        }, {
+            "type": "FIELD",
+            "content": "publicationlanguage",
+            "checks": [{
+                "condition": {
+                    "type": "NOT_EMPTY"
+                }
+            }]
+        }, {
+            "type": "FIELD",
+            "content": "publicationpublic",
+            "checks": [{
+                "condition": {
+                    "type": "NOT_EMPTY"
+                }
+            }]
+        }, {
+            "type": "FIELD",
+            "content": "publicationrelpublic",
+            "checks": [{
+                "condition": {
+                    "type": "NOT_EMPTY"
+                }
+            }]
+        }, {
+            "type": "FIELD",
+            "content": "publicationtitle",
+            "checks": [{
+                "condition": {
+                    "type": "NOT_EMPTY"
+                }
+            }]
+        }, {
+            "type": "FIELD",
+            "content": "publicationyear",
+            "checks": [{
+                "condition": {
+                    "type": "NOT_EMPTY"
+                }
+            }]
+        }]
+    }]
 }

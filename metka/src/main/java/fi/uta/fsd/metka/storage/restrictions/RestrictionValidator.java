@@ -29,14 +29,15 @@ public class RestrictionValidator {
     @Autowired
     private RevisionRepository revisions;
 
-    public boolean validate(RevisionData revision, List<Target> targets) {
+    public boolean validate(RevisionData revision, List<Target> targets, Configuration configuration) {
         initParents(revision, targets);
-        Pair<ReturnResult, Configuration> pair = configurations.findConfiguration(revision.getConfiguration());
+        /*Pair<ReturnResult, Configuration> pair = configurations.findConfiguration(revision.getConfiguration());
         if(pair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
             throw new UnsupportedOperationException("Could not find configuration for "+revision.toString());
-        }
-        RevisionValidator validator = new RevisionValidator(revision, pair.getRight(), this, searcher, revisions);
-        return validator.validate(targets, revision);
+        }*/
+        //DataFieldValidator validator = new DataFieldValidator(revision, pair.getRight(), this, searcher, revisions);
+        DataFieldValidator validator = new DataFieldValidator(searcher, revisions, configurations);
+        return validator.validate(targets, revision, configuration);
     }
 
     /**

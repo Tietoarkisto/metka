@@ -1,20 +1,54 @@
 Restrictions are separated to different [Operations] (SAVE, APPROVE, DELETE).
 Restrictions should be placed into the configuration that is most relevant for the operation so for example SAVE restrictions for single variable are most natural in the STUDY_VARIABLE configuration but APPROVE restrictions are most natural in STUDY configuration because STUDY_VARIABLE is checked for approval during STUDY approval and not on its own process.
 
-If FIELD target points to a reference field then validation is continued as though the data on the other side of the reference was part of the currently processed revision data (only REVISIONABLE references and some parts of DEPENDENCY references are processed for now, for other cases condition automatically returns true if it targets a reference).
+If FIELD target points to a reference field then the data on the other end of the reference can be seen as part of the current data and moving down on the hierarchy using CHILDREN target moves the parsing to that reference. This basically means adding the content to the validated data for the duration of the validation and should make it possible to move back to the original document using PARENT target.
 
 Restrictions are parsed in the order they have been placed in the array and in the order they are encountered in depth. This means that if there are separate checks for a container and contents of that container, if the checks for container fail then the whole tree fails and no further checks are performed. Also if a check early in the array fails then rest of the array is not processed.
 
-Conditions that can't be checked for current target always return true. For example trying to check equality for QUERY result returns true automatically since the condition can not be performed.
-This means that checks that are not implemented yet don't stop the operation but can be configured in advance if it's known that those checks will be done in the future.
-
-If NAMED target doesn't find a target it automatically returns false since there was a clear problem somewhere in the configuration.
+Unfinished conditions always return true so that configuration can be written beforehand for conditions that should be valid in the future.
+However invalid configuration returns false since we should report erroneous configuration instead of passing it silently. So for example you can write an IS_EQUAL condition for QUERY since it's something that should be checkable in the future and so it won't block the validation now but writing FREE_TEXT condition for anything else than SELECTION field returns false automatically since it's a nonsensical condition or pointing NAMED target to nonexistent name will automatically return false since there was a clear problem somewhere in the configuration.
 
 If configuration doesn't contain the field named in FIELD type target then false is returned automatically since there's a problem somewhere in configuration.
 
-Only FIELD targets that can sensibly handle them should have subtargets, any other target type should never use them unless an actual need is found for example subtarget queries within queries. Target is an operation path informing the system in which order and to which content it should perform validation. All other target types terminate, meaning no further sub targets are processed.
+Movement in the hierarchy doesn't happen automatically but has to instead be initiated with PARENT and CHILDREN targets, otherwise the checking continues on the same level where the validation is currently.
 
-If field targets a reference and has sub targets but no reference can be found true is returned automatically for simplicity. This means that existence of reference can't be determined by sub targets and should always be determined with NOT_EMPTY condition on the actual referencing field.
+Restrictors and checks should be commutative in cases where all related restrictors are also checks so that it doesn't matter if the same validation is made as a restrictor or actual check.
+E.G. if we have fields A and B and B must be non empty if A is non empty and A must be NOT_EMPTY then it should not matter if we write the restrictions either as
+1) A must be NOT_EMPTY and B must be NOT_EMPTY if A is NOT_EMPTY (i.e. A is NOT_EMPTY is a restrictor for B must be NOT_EMPTY condition) or
+2) A must be NOT_EMPTY then B must be NOT_EMPTY (i.e. A has a check that it is NOT_EMPTY and a subtarget of B that has a check that it must be NOT_EMPTY)
+However if there is no requirement that A must be NOT_EMPTY then only case 1) provides the desired validation (since it doesn't place must be NOT_EMPTY condition on A but requires B to be NOT_EMPTY if A is NOT_EMPTY).
+
+Every target can have subtargets but PARENT and CHILDREN targets are only handled when they are sensible and otherwise return false, i.e. the validation will fail.
+Without PARENT and CHILDREN targets the validation will stay on the same hierarchical level but different checks are dependent on the previous checks being valid. E.G A is a container and B is a field in that container then if we want to make sure that A has rows and each row has non empty B we would write the following validation:
+A must be NOT_EMPTY
+	CHILDREN
+		B must be NOT_EMPTY
+This validation will fail if A has no rows or if any of the rows has an empty B
+In case of us not really caring about if A is empty or not then the check will be a little different. CHILDREN targets return true if there are no children to check since we have a different check for the existence of content. This simplifies the check somewhat since we don't need to make sure that there are actual rows:
+A is TRUE
+	CHILDREN
+		B must be NOT_EMPTY
+Third example, where B must be NOT_EMPTY if a third field C is not empty shows the use of PARENT to navigate upstream in hierarchy.
+A is TRUE
+	CHILDREN
+		B must be NOT_EMPTY
+		if PARENT
+			C is NOT_EMPTY
+And if the C is on the same row as B instead of same level with A we can leave the PARENT off and it functions as expected
+A is TRUE
+	CHILDREN
+		B must be NOT_EMPTY
+		if C is NOT_EMPTY
+Final obscure example where C is one of the fields on A but B must be not empty if all rows have not empty C (this is contrived but displays the hierarchical nature of the data and how we can navigate it):
+A is TRUE
+	CHILDREN
+		B must be NOT_EMPTY
+		if PARENT
+			A is TRUE
+				CHILDREN
+					C is NOT_EMPTY
+
+NAMED targets can easily lead to infinite regress but checks for this are not a priority at the moment so some configurations will lead to recursion errors without controlled fail.
 
 --
 
@@ -29,9 +63,10 @@ targets : [0..* Target] {ordered}
 - Each operation should have their own conditions keeping in mind if APPROVE operation is running then SAVE has to have successfully completed already
 
 --
+TODO: We should add targets for STATUS and other metadata type information to allow for checking those as well.
 
 Target (pseudo)
-type : [FIELD|NAMED|QUERY|VALUE|LANGUAGE]
+type : [FIELD|NAMED|QUERY|VALUE|LANGUAGE|PARENT|CHILDREN]
 content : String
 targets : [0..* Target]
 checks: [0..* Check]
@@ -39,16 +74,18 @@ checks: [0..* Check]
 Target
 * Type is either
 	- FIELD meaning field key. This should always be a key in the current document with current document being the document that has lead to this field 
-	  (if for example jumping from one REVISIONABLE to another through a reference)
+	  (if for example jumping from one REVISIONABLE to another through a reference then current document is the revision that was found through the reference. You can not jump back through the reference though so all restrictors etc. are related to the current document).
 	- NAMED means that the target is defined in named targets list on the configuration that this Target is located. 
 	  In practice this means that the named target should be fetched and used in place of NAMED type Target.
 	  Named Target is replaced 'as is' and so there should not be any targets or checks on it.
 	- VALUE is a simple value, it is used as an expression in some specific conditions. Terminates recursion and should not have checks or targets.
-	- QUERY is a lucene query the results of which are used for some specific conditions. Terminates recursion and should not have targets but can have checks (for example NOT_EMPTY)
-	  This needs some predefined variables, like {id} might be replaced with the current key.id of the revision.
+	- QUERY is a lucene query the results of which are used for some specific conditions.
+	  This has predefined variables where {id} is replaced with the current key.id of the revision. Others can be added as needed.
 	- LANGUAGE is a language code [default|fi|en|sv] that restricts a condition. Like VALUE it terminates recursion and should not have checks or targets.
+	- PARENT is a rather special target. The only function of it is to move parsing of following targets to a higher hierarchical level. PARENT target should not contain content or checks, only subtargets. This returns false if the context does not have a parent.
+	- CHILDREN is another special target. Like PARENT it should not contain content or checks but only subtargets. Use of CHILDREN is to move the target parsing down a hierarchical level. This returns true in the case of no children if the context is such that it can have children but if the context can not contain children then false is returned.
 * Content is a String, meaning of which is dependent on the type. For FIELDs it's the field key, for VALUEs it's the value, for QUERYs it's the lucene query to be executed, for NAMED it's the name of the named Target and for LANGUAGE it's the language code
-* Targets is an array of Target objects that need their conditions checked too. This is only processed if current Target is of type FIELD and can contain other FIELDS (like a container or REVISIONABLE reference).
+* Targets is an array of Target objects that need their conditions checked too. Without explicit move with PARENT or CHILDREN targets all further targets are assumed to be no the same hierarchical level as current target.
 * Checks is an array of Checks that should be performed on the current Target. These range from field UNIQUENESS checks to making sure that value increases between container rows.
 
 --
@@ -60,16 +97,18 @@ restrictors : [0..* Target]
 Check
 * Condition is a condition to be evaluated. If this check is enabled (restrictors all return true) and condition evaluates to true then true is returned for this check.
   Also if this check is not enabled (even a single restrictor returned false) then this check returns true.
-* Restrictors is an array of Targets that are parsed as normal (starting from the base of the original RevisionData) and all of which have to return true before this check to be evaluated.
-  If any of the restrictors return false this Check will return true automatically (think of it as enabling or disabling the check based on conditions)
+* Restrictors is an array of Targets that are parsed as normal and all of which have to return true before this check to be evaluated.
+  If any of the restrictors return false this Check will return true automatically (think of it as enabling or disabling the check based on conditions, i.e. if restrictors tell that the check is disabled then the validation is successful no matter what check was actually present). However this leads to the problem that validations that are stopped by restrictors should not cascade to subtargets, so how do we stop that from happening (true from check parsing is true from check parsing no matter how it was received). We should propably move the parsing to using enumerated messages instead of simple boolean values, this would make tweaking the behavior much easier.
 
 --
 
 Condition (pseudo)
-type : [NOT_EMPTY|IS_EMPTY|EQUALS|NOT_EQUALS|UNIQUE|INCREASING|DECREASING]
+type : [TRUE|NOT_EMPTY|IS_EMPTY|EQUALS|NOT_EQUALS|UNIQUE|INCREASING|DECREASING|FREE_TEXT]
 target : Target
 
 Condition type
+* True (Target FIELD|QUERY)
+	- Always returns true i.e. the check is valid. This is mainly used for hierarchy purposes where you want to make checks to subtargets but don't want to require anything from the container itself, e.g. you don't care wether there are rows in a container but if there are you want to check something of them.
 * Non empty (Target FIELD|QUERY)
 	- For non container fields this means that the field has to exist and there has to be non empty value
 	- For container fields this means the container must exist and there has to be rows (rows can still be basically empty in case of CONTAINER and need to be checked separately)
@@ -105,6 +144,12 @@ Condition type
 	- For top level fields value must decrease between revisions, never increase
 	- For fields in containers value must increase between non removed rows even through reordering rows
 	- Containers and queries are not valid targets
+* Free Text (Target FIELD)
+	- Unique for SELECTION type fields
+	- Returns true if the selected value is one of the free text conditions of the selection list
+	- If not free text or if field is not SELECTION returns false
+	- Does not need inverse since free text field is automatically emptied if selected value is not free text value
+	- This is a specific check to avoid the need of defining free text values in multiple places.
 
 Target is a target used by some (mainly EQUALS) condition types. Target on condition should never contain any checks or targets of its own. If it's a field then usually it has to be either a top level field or a field within the row currently handled.
 
@@ -160,3 +205,22 @@ restrictions: [
 }
 ]
 
+example of FREE_TEXT as a restrictor
+{
+	type: FIELD,
+	content: selection_field_free_text,
+	check: [{
+		condition: {
+			type: NOT_EMPTY
+		},
+		restrictors: [{
+			type: FIELD,
+			content: selection_field,
+			check: [{
+				condition: {
+					type: FREE_TEXT
+				}
+			}]
+		}]
+	}]
+}

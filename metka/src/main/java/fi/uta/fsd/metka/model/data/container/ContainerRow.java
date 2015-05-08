@@ -22,7 +22,7 @@ public abstract class ContainerRow {
     private DateTimeUserPair saved;
     private Boolean unapproved = false;
 
-    @JsonIgnore private RowContainerDataField parent;
+    @JsonIgnore private RowContainerDataField rowContainer;
 
     @JsonCreator
     public ContainerRow(@JsonProperty("key") String key, @JsonProperty("rowId") Integer rowId) {
@@ -62,15 +62,13 @@ public abstract class ContainerRow {
         this.unapproved = unapproved == null ? false : unapproved;
     }
 
-    public RowContainerDataField getParent() {
-        return parent;
+    public RowContainerDataField getRowContainer() {
+        return rowContainer;
     }
 
-    public void setParent(RowContainerDataField parent) {
-        this.parent = parent;
+    public void setRowContainer(RowContainerDataField rowContainer) {
+        this.rowContainer = rowContainer;
     }
-
-    public abstract void initParents();
 
     @Override
     public boolean equals(Object o) {

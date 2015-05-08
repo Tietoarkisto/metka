@@ -1,6 +1,7 @@
 package fi.uta.fsd.metka.model.data.container;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.access.DataFieldOperator;
@@ -11,7 +12,9 @@ import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.change.ContainerChange;
 import fi.uta.fsd.metka.model.data.change.RowChange;
+import fi.uta.fsd.metka.model.general.ConfigurationKey;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
+import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -23,6 +26,9 @@ import java.util.Map;
  * Specification and documentation is found from uml/data/uml_json_data_field.graphml
  */
 public class DataRow extends ContainerRow implements DataFieldContainer {
+
+    @JsonIgnore private DataFieldContainer parent; // This is used for navigation during restriction validation
+
     public static DataRow build(ContainerDataField container) {
         return new DataRow(container.getKey(), container.getNewRowId());
     }
@@ -38,16 +44,31 @@ public class DataRow extends ContainerRow implements DataFieldContainer {
         return fields;
     }
 
+    @Override
+    public DataFieldContainer getParent() {
+        return parent;
+    }
+
+    @Override
+    public void setParent(DataFieldContainer parent) {
+        this.parent = parent;
+    }
+
     public StatusCode restore(Map<String, Change> changeMap, Language language, DateTimeUserPair info) {
         return super.changeStatusFor(language, false, changeMap, info);
     }
 
     @Override
-    public void initParents() {
+    public void initParents(DataFieldContainer parent) {
+        setParent(parent);
         for(DataField field : fields.values()) {
-            field.setParent(this);
-            field.initParents();
+            field.initParents(this);
         }
+    }
+
+    @Override
+    public void initParents() {
+        initParents(null);
     }
 
     public DataRow copy() {
@@ -58,6 +79,16 @@ public class DataRow extends ContainerRow implements DataFieldContainer {
             row.fields.put(field.getKey(), field.copy());
         }
         return row;
+    }
+
+    @JsonIgnore
+    public RevisionKey getRevisionKey() {
+        return parent.getRevisionKey();
+    }
+
+    @JsonIgnore
+    public ConfigurationKey getConfigurationKey() {
+        return parent.getConfigurationKey();
     }
 
     public void normalize() {

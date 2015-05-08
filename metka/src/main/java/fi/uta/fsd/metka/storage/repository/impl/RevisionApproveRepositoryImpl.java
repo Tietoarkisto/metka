@@ -46,9 +46,6 @@ import java.util.Set;
 public class RevisionApproveRepositoryImpl implements RevisionApproveRepository {
     private static Logger logger = LoggerFactory.getLogger(RevisionApproveRepositoryImpl.class);
 
-    @PersistenceContext(name = "entityManager")
-    private EntityManager em;
-
     @Autowired
     private ConfigurationRepository configurations;
 
@@ -57,9 +54,6 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
 
     @Autowired
     private JSONUtil json;
-
-    @Autowired
-    private SearcherComponent searcher;
 
     @Autowired
     private RestrictionValidator validator;
@@ -85,13 +79,13 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
 
         // Do validation
         ReturnResult result = approveData(data, transferData);
-        if(result == ReturnResult.APPROVE_SUCCESSFUL) {
+        if(result == ReturnResult.OPERATION_SUCCESSFUL) {
             for(Operation operation : configPair.getRight().getRestrictions()) {
                 if(operation.getType() != OperationType.APPROVE) {
                     continue;
                 }
-                if(!validator.validate(data, operation.getTargets())) {
-                    result = ReturnResult.APPROVE_FAILED_DURING_VALIDATION;
+                if(!validator.validate(data, operation.getTargets(), configPair.getRight())) {
+                    result = ReturnResult.RESTRICTION_VALIDATION_FAILURE;
                     break;
                 }
             }
@@ -100,7 +94,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
         // If validation was successful then check all languages that should be approved (i.e. which languages have content
         // that has changed in this revision).
         // If revision has no changed content for given language then that language doesn't need updated approval information.
-        if(result == ReturnResult.APPROVE_SUCCESSFUL) {
+        if(result == ReturnResult.OPERATION_SUCCESSFUL) {
             DateTimeUserPair info = DateTimeUserPair.build();
             Set<Language> changesIn = hasChanges(data, configPair.getRight());
             for(Language language : changesIn) {
@@ -133,7 +127,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
                 return new ImmutablePair<>(updateResult, transferData);
             }
 
-            return new ImmutablePair<>(ReturnResult.APPROVE_SUCCESSFUL, TransferData.buildFromRevisionData(data, RevisionableInfo.FALSE));
+            return new ImmutablePair<>(ReturnResult.OPERATION_SUCCESSFUL, TransferData.buildFromRevisionData(data, RevisionableInfo.FALSE));
         } else {
             return new ImmutablePair<>(result, transferData);
         }
@@ -144,8 +138,8 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
     // Also TransferData is not needed in sub object approvals since it's never going to be returned to user.
     private ReturnResult approveData(RevisionData revision, TransferData transferData) {
         switch(revision.getConfiguration().getType()) {
-            case SERIES:
-                return approveSeries(revision, transferData);
+            /*case SERIES:
+                return approveSeries(revision, transferData);*/
             case STUDY:
                 return approveStudy(revision, transferData);
             case STUDY_ATTACHMENT:
@@ -155,7 +149,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             case STUDY_VARIABLE:
                 return approveStudyVariable(revision);
             default:
-                return ReturnResult.APPROVE_SUCCESSFUL;
+                return ReturnResult.OPERATION_SUCCESSFUL;
         }
     }
 
@@ -164,7 +158,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
         Pair<StatusCode, ValueDataField> pair = revision.dataField(ValueDataFieldCall.get("seriesabbr"));
         // If we can't find the whole seriesabbr field or if the field has no value then we're missing series abbreviation.
         // Add error and set result to APPROVE_FAILED
-        ReturnResult result = ReturnResult.APPROVE_SUCCESSFUL;
+        ReturnResult result = ReturnResult.OPERATION_SUCCESSFUL;
         if(pair.getLeft() != StatusCode.FIELD_FOUND || !pair.getRight().hasValueFor(Language.DEFAULT)) {
             TransferField tf = transferData.getField("seriesabbr");
             if(tf == null) {
@@ -176,44 +170,17 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             result = ReturnResult.APPROVE_FAILED;
         }
 
-        // Let's assume that we have not managed to change immutable value and instead just check that if value is set in this revision
-        // We know that if current result is APPROVE_SUCCESSFUL then we do have some kind of value to check.
-        if(result == ReturnResult.APPROVE_SUCCESSFUL) {
-            // This should be performed by RestrictionValidation although we don't get failure conditions yet
-            /*ResultList<BooleanResult> results =
-                    searcher
-                            .executeSearch(
-                                    SeriesAbbreviationUniquenessSearchCommand
-                                            .build(revision.getKey().getId(), pair.getRight().getActualValueFor(Language.DEFAULT)));
-            // Result list should contain exactly one result
-            if(!results.getResults().get(0).getResult()) {
-                TransferField tf = transferData.getField("seriesabbr");
-                if(tf == null) {
-                    // We should really have this field but let's be careful
-                    tf = new TransferField("seriesabbr", TransferFieldType.VALUE);
-                    transferData.addField(tf);
-                }
-                if(!tf.containsValueFor(Language.DEFAULT)) {
-                    TransferValue tv = TransferValue.buildFromValueDataFieldFor(Language.DEFAULT, pair.getRight());
-                    tf.addValueFor(Language.DEFAULT, tv);
-                }
-                tf.addErrorFor(Language.DEFAULT, FieldError.NOT_UNIQUE);
-                logger.warn("Series abbreviation is not unique, can't approve until it is changed to unique value");
-                result = ReturnResult.APPROVE_FAILED;
-            }*/
-        }
-
         return result;
     }
 
     private ReturnResult approveStudy(RevisionData revision, TransferData transferData) {
-        ReturnResult result = ReturnResult.APPROVE_SUCCESSFUL;
+        ReturnResult result = ReturnResult.OPERATION_SUCCESSFUL;
         // Try to approve sub revisions of study. Just get all relevant revisions and check if they are drafts, if so construct TransferData and call
         // approve recursively
 
         // Try to approve all study attachments linked to this study (this should move files from temporary location to their actual location)
         ReturnResult studyAttachmentCheckResult = checkStudyAttachments(revision, transferData);
-        if(studyAttachmentCheckResult != ReturnResult.APPROVE_SUCCESSFUL) {
+        if(studyAttachmentCheckResult != ReturnResult.OPERATION_SUCCESSFUL) {
             result = ReturnResult.APPROVE_FAILED;
             // For study attachment approval to fail there has to be a field and content.
             transferData.getField("files").addError(FieldError.APPROVE_FAILED);
@@ -222,15 +189,13 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
         // Try to approve study variables linked to this study, this should try to approve all study variables that are linked to it
         // If there are errors in study variables (either the collection or individual variables then just mark an error to study variables field in transferData
         ReturnResult variablesCheckResult = checkStudyVariables(revision, transferData);
-        if(variablesCheckResult != ReturnResult.APPROVE_SUCCESSFUL) {
+        if(variablesCheckResult != ReturnResult.OPERATION_SUCCESSFUL) {
             result = ReturnResult.APPROVE_FAILED;
             // We know that if study variables approval failed there has to be variables field in transfer data since it's added during checking
             // if it was missing before
             TransferField field = transferData.getField("variables");
             field.addErrorFor(Language.DEFAULT, FieldError.APPROVE_FAILED);
         }
-
-        // TODO: Check all required fields using restriction configuration
 
         // TODO: Check that all SELECTION values are still valid (e.g. that they can be found and that the values are not marked deprecated
         // TODO: Check that other references like series are still valid (e.g. they point to existing revisionables
@@ -239,66 +204,17 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
     }
 
     private ReturnResult approveStudyAttachment(RevisionData revision) {
-        if(checkTopFieldForValue(revision, "file", Language.DEFAULT) == ReturnResult.APPROVE_FAILED) {
-            return ReturnResult.APPROVE_FAILED;
-        }
-
+        // TODO: Move to IS_FILE restriction
         File file = new File(revision.dataField(ValueDataFieldCall.get("file")).getRight().getActualValueFor(Language.DEFAULT));
         if(!file.exists() || file.isDirectory()) {
             return ReturnResult.APPROVE_FAILED;
         }
 
-        if(checkTopFieldForValue(revision, "fileaip", Language.DEFAULT) == ReturnResult.APPROVE_FAILED) {
-            return ReturnResult.APPROVE_FAILED;
-        }
-
-        if(checkTopFieldForValue(revision, "filecategory", Language.DEFAULT) == ReturnResult.APPROVE_FAILED) {
-            return ReturnResult.APPROVE_FAILED;
-        }
-
-        if(checkTopFieldForValue(revision, "filedip", Language.DEFAULT) == ReturnResult.APPROVE_FAILED) {
-            return ReturnResult.APPROVE_FAILED;
-        }
-
-        if(checkTopFieldForValue(revision, "filelanguage", Language.DEFAULT) == ReturnResult.APPROVE_FAILED) {
-            return ReturnResult.APPROVE_FAILED;
-        }
-
-        if(checkTopFieldForValue(revision, "fileoriginal", Language.DEFAULT) == ReturnResult.APPROVE_FAILED) {
-            return ReturnResult.APPROVE_FAILED;
-        }
-
-        if(checkTopFieldForValue(revision, "filepublication", Language.DEFAULT) == ReturnResult.APPROVE_FAILED) {
-            return ReturnResult.APPROVE_FAILED;
-        }
-
-        return ReturnResult.APPROVE_SUCCESSFUL;
-    }
-
-    private ReturnResult checkTopFieldForValue(RevisionData revision, String key, Language language) {
-        if(checkFieldPairForValue(revision.dataField(ValueDataFieldCall.get(key)), Language.DEFAULT) == ReturnResult.APPROVE_FAILED) {
-            logger.error("There has to be a non empty value in "+key+" for study attachment to be approved.");
-            return ReturnResult.APPROVE_FAILED;
-        }
-        return ReturnResult.APPROVE_SUCCESSFUL;
-    }
-
-    /**
-     * Checks that given field pair contains a value (can be extended to check for valid value in selection).
-     * Returns APPROVE_FAILED if not valid.
-     * @param fieldPair Pair - StatusCode, ValueDataField
-     * @param language Language
-     * @return ReturnResult
-     */
-    private ReturnResult checkFieldPairForValue(Pair<StatusCode, ValueDataField> fieldPair, Language language) {
-        if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || !fieldPair.getRight().hasValueFor(language)) {
-            return ReturnResult.APPROVE_FAILED;
-        }
-        return ReturnResult.APPROVE_SUCCESSFUL;
+        return ReturnResult.OPERATION_SUCCESSFUL;
     }
 
     private ReturnResult approveStudyVariables(RevisionData revision) {
-        ReturnResult result = ReturnResult.APPROVE_SUCCESSFUL;
+        ReturnResult result = ReturnResult.OPERATION_SUCCESSFUL;
 
         // Loop through all variables and check if they need approval.
         // Try to approve every one but if even one fails then return APPROVE_FAILED since the process of study approval can't continue
@@ -308,7 +224,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             return result;
         }
         ReferenceContainerDataField variables = fieldPair.getRight();
-        if(variables.getReferences().size() == 0) {
+        if(!variables.hasRows()) {
             // Nothing to loop through
             return result;
         }
@@ -326,7 +242,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
                 continue;
             }
             Pair<ReturnResult, TransferData> approveResult = approve(TransferData.buildFromRevisionData(variable, RevisionableInfo.FALSE));
-            if(approveResult.getLeft() != ReturnResult.APPROVE_SUCCESSFUL) {
+            if(approveResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
                 logger.error("Tried to approve "+variable.toString()+" and failed with result "+approveResult.getLeft());
                 result = ReturnResult.APPROVE_FAILED;
                 // Continue to approve variables since, no need to mark errors on transfer data since this data will never be sent to client from here
@@ -338,7 +254,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
 
     private ReturnResult approveStudyVariable(RevisionData revision) {
         // There's really nothing to do here right now
-        return ReturnResult.APPROVE_SUCCESSFUL;
+        return ReturnResult.OPERATION_SUCCESSFUL;
     }
 
     /**
@@ -377,9 +293,6 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
                 }
             }
         }
-
-        // Formulate PIDs
-        // TODO: Generate all of the different PIDs, we don't really care if they have changed or not since during value setting unchanged value is not added in any case
     }
 
     /**
@@ -451,7 +364,6 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             logger.error("IOException when trying to move file from "+pathField.getActualValueFor(Language.DEFAULT)+" to "+destLoc, ioe);
         }
 
-        // TODO: Check if filedip value is correct for file data
         ValueDataField filedip = revision.dataField(ValueDataFieldCall.get("filedip")).getRight();
 
         if(!filedip.getActualValueFor(Language.DEFAULT).equals("2")) {
@@ -638,10 +550,10 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
     private ReturnResult checkStudyAttachments(RevisionData revision, TransferData transferData) {
         Pair<StatusCode, ReferenceContainerDataField> pair = revision.dataField(ReferenceContainerDataFieldCall.get("files"));
         if(pair.getLeft() != StatusCode.FIELD_FOUND || pair.getRight().getReferences().isEmpty()) {
-            return ReturnResult.APPROVE_SUCCESSFUL;
+            return ReturnResult.OPERATION_SUCCESSFUL;
         }
 
-        ReturnResult result = ReturnResult.APPROVE_SUCCESSFUL;
+        ReturnResult result = ReturnResult.OPERATION_SUCCESSFUL;
         TransferField tf = transferData.getField("files");
         for(ReferenceRow reference : pair.getRight().getReferences()) {
             Pair<ReturnResult, RevisionData> variablePair =
@@ -658,7 +570,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
                 continue;
             }
             Pair<ReturnResult, TransferData> approveResult = approve(TransferData.buildFromRevisionData(variable, RevisionableInfo.FALSE));
-            if(approveResult.getLeft() != ReturnResult.APPROVE_SUCCESSFUL) {
+            if(approveResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
                 logger.error("Tried to approve "+variable.toString()+" and failed with result "+approveResult.getLeft());
                 result = ReturnResult.APPROVE_FAILED;
                 // Let's mark the specific TransferRow with approval error.
@@ -690,19 +602,19 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
                     Long.parseLong(fieldPair.getRight().getActualValueFor(Language.DEFAULT)), false, ConfigurationType.STUDY_VARIABLES);
             if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
                 logger.error("Didn't find revision for study variables "+ fieldPair.getRight().getActualValueFor(Language.DEFAULT)+" even though it should have existed, not halting approval");
-                return ReturnResult.APPROVE_SUCCESSFUL;
+                return ReturnResult.OPERATION_SUCCESSFUL;
             }
             RevisionData variables = dataPair.getRight();
             if(variables.getState() != RevisionState.DRAFT) {
                 // No need for approval
-                return ReturnResult.APPROVE_SUCCESSFUL;
+                return ReturnResult.OPERATION_SUCCESSFUL;
             }
             Pair<ReturnResult, TransferData> approveResult = approve(TransferData.buildFromRevisionData(variables, RevisionableInfo.FALSE));
-            if(approveResult.getLeft() != ReturnResult.APPROVE_SUCCESSFUL) {
+            if(approveResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
                 logger.error("Tried to approve "+variables.toString()+" and failed with result "+approveResult.getLeft());
                 return ReturnResult.APPROVE_FAILED;
             }
         }
-        return ReturnResult.APPROVE_SUCCESSFUL;
+        return ReturnResult.OPERATION_SUCCESSFUL;
     }
 }

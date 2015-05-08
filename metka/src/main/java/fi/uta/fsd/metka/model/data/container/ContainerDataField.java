@@ -11,6 +11,7 @@ import fi.uta.fsd.metka.model.data.change.ContainerChange;
 import fi.uta.fsd.metka.model.data.change.RowChange;
 import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
+import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -42,6 +43,18 @@ public class ContainerDataField extends RowContainerDataField {
         return rows.get(language) != null && !rows.get(language).isEmpty();
     }
 
+    @JsonIgnore public boolean hasValidRowsFor(Language language) {
+        if(rows.get(language) == null) {
+            return false;
+        }
+        for(DataRow row : rows.get(language)) {
+            if(!row.getRemoved()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @JsonIgnore public boolean hasRows() {
         for(Language language : Language.values()) {
             if(hasRowsFor(language)) return true;
@@ -49,16 +62,11 @@ public class ContainerDataField extends RowContainerDataField {
         return false;
     }
 
-    @Override
-    public void initParents() {
-        for(Language l : Language.values()) {
-            if(getRowsFor(l) != null) {
-                for(DataRow row : getRowsFor(l)) {
-                    row.setParent(this);
-                    row.initParents();
-                }
-            }
+    @JsonIgnore public boolean hasValidRows() {
+        for(Language language : Language.values()) {
+            if(hasValidRowsFor(language)) return true;
         }
+        return false;
     }
 
     /**
@@ -272,6 +280,17 @@ public class ContainerDataField extends RowContainerDataField {
             ids.add(row.getRowId());
         }
         return ids;
+    }
+
+    @Override
+    public void initParents(DataFieldContainer parent) {
+        setParent(parent);
+        for(Language l : rows.keySet()) {
+            for(DataRow row : rows.get(l)) {
+                row.setRowContainer(this);
+                row.initParents(parent);
+            }
+        }
     }
 
     @Override
