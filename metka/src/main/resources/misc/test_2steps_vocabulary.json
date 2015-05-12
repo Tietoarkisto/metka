@@ -1,6 +1,6 @@
 {   "_comment" : "the structure of vocabulary in topic (CESSDA) there is not term other - and there is no need to text field",
     "_comment" : "The upper level terms are used as help to find the right narrower (lower level) terms, the user can't only choose the upper level term",
-    "key" : "Controlled Vocabulary for testing",
+    "key" : "2 step vocabulary for testing",
     "data" : 
         [ {
             "copyright" : "who has copyright",
@@ -38,7 +38,7 @@
                             "&termll" : {
                                 "default" : "Alatason termi 1",
                                 "en" : "Lower level term 1",
-                                "sv" : "Sn�vare term 1"
+                                "sv" : "Snävare term 1"
                             }
                         },
                         {

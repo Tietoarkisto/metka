@@ -5,7 +5,7 @@ define(function (require) {
         return function (options) {
             delete options.field.displayType;
             return {
-                create: function (options) {
+                postCreate: function (options) {
                     var dependencyValue;
                     if (dependencyKey) {
                         options.$events.on('data-changed-{key}-{lang}'.supplant({

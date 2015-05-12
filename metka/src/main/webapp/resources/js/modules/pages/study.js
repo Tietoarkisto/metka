@@ -578,7 +578,7 @@ define(function (require) {
 
                                                     }
                                                 },
-                                                create: function() {
+                                                preCreate: function() {
                                                     var $field = this.children().first();
                                                     require('./../server')('/study/studiesWithErrors', {
                                                         method: 'GET',

@@ -5,7 +5,7 @@ define(function (require) {
         delete options.field.displayType;
 
         return {
-            create: function (options) {
+            preCreate: function (options) {
                 var $elem = this;
 
                 $.extend(true, options,

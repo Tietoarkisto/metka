@@ -33,7 +33,7 @@ define(function (require) {
                 }
             },
             readOnly: true,
-            create: function create(options) {
+            postCreate: function(options) {
                 var $field = this.children().first();
                 require('./../../server')('/binder/listStudyBinderPages/{id}', {
                     method: 'GET',

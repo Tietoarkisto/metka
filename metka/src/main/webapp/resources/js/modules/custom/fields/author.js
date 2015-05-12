@@ -17,14 +17,13 @@ define(function (require) {
         }
 
         return {
-            create: function (options) {
+            preCreate: function (options) {
                 var $elem = this;
                 if(options.data.fields.authortype) {
                     initField($elem, "authortype");
                 } else if(options.data.fields.otherauthortype) {
                     initField($elem, "otherauthortype");
                 }
-
             }
         }
     };

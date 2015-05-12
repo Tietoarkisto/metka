@@ -434,7 +434,7 @@
 			"type": "REFERENCE",
 			"reference": "instrument_ref",
 			"includeEmpty": true,
-			"freeText": ["Other"],
+			"freeText": ["Other", "7"],
 			"freeTextKey": "instrumentother"
 		},
 		"sampprocvocab_list": {
@@ -470,6 +470,12 @@
 			"type": "REFERENCE",
 			"reference": "topicvocab_ref",
 			"includeEmpty": false
+		},
+		"topictop_list": {
+			"key": "topictop_list",
+			"type": "REFERENCE",
+			"reference": "topictop_ref",
+			"includeEmpty": true
 		},
 		"topic_list": {
 			"key": "topic_list",
@@ -768,7 +774,7 @@
 		"topicvocab_ref": {
 			"key": "topicvocab_ref",
 			"type": "JSON",
-			"target": "Controlled Vocabulary for testing",
+			"target": "2 step vocabulary for testing",
 			"valuePath": "codeListID"
 		},
 		"topicvocaburi_ref": {
@@ -777,12 +783,19 @@
 			"target": "topicvocab",
 			"valuePath": "codeListURN"
 		},
-		"topic_ref": {
-			"key": "topic_ref",
+		"topictop_ref": {
+			"key": "topictop_ref",
 			"type": "DEPENDENCY",
 			"target": "topicvocab",
 			"valuePath": "terms.id",
-            "titlePath": "term"
+			"titlePath": "term"
+		},
+		"topic_ref": {
+			"key": "topic_ref",
+			"type": "DEPENDENCY",
+			"target": "topictop",
+			"valuePath": "term_ll.id",
+            "titlePath": "term_ll"
 		},
 		"topicuri_ref": {
 			"key": "topicuri_ref",
@@ -1318,6 +1331,7 @@
 			"type": "CONTAINER",
 			"subfields": [
 				"topicvocab",
+				"topictop",
 				"topic",
 				"topicvocaburi",
 				"topicuri"
@@ -1337,6 +1351,14 @@
 			"reference": "topicvocaburi_ref",
 			"editable": false,
 			"writable": false,
+			"subfield": true
+		},
+		"topictop": {
+			"key": "topictop",
+			"translatable": false,
+			"type": "SELECTION",
+			"selectionList": "topictop_list",
+			"generalSearch": true,
 			"subfield": true
 		},
 		"topic": {
@@ -2176,6 +2198,58 @@
 					}
 				}
 			}]
+		},
+		"required_author_check": {
+			"type": "FIELD",
+			"content": "authortype",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}],
+			"targets": [{
+				"type": "FIELD",
+				"content": "author",
+				"checks": [{
+					"condition": {
+						"type": "NOT_EMPTY"
+					},
+					"restrictors": [{
+						"type": "FIELD",
+						"content": "authortype",
+						"checks": [{
+							"condition": {
+								"type": "EQUALS",
+								"target": {
+									"type": "VALUE",
+									"content": "1"
+								}
+							}
+						}]
+					}]
+				}]
+			}, {
+				"type": "FIELD",
+				"content": "organisation",
+				"checks": [{
+					"condition": {
+						"type": "NOT_EMPTY"
+					},
+					"restrictors": [{
+						"type": "FIELD",
+						"content": "authortype",
+						"checks": [{
+							"condition": {
+								"type": "EQUALS",
+								"target": {
+									"type": "VALUE",
+									"content": "2"
+								}
+							}
+						}]
+					}]
+				}]
+			}]
 		}
 	},
 	"restrictions": [{
@@ -2346,7 +2420,11 @@
 			"checks": [{
 				"condition": {
 					"type": "NOT_EMPTY"
-				}
+				},
+				"restrictors": [{
+					"type": "NAMED",
+					"content": "quantitative"
+				}]
 			}],
 			"targets": [{
 				"type": "CHILDREN",
@@ -2373,6 +2451,106 @@
 										"type": "FREE_TEXT"
 									}
 								}]
+							}]
+						}]
+					}]
+				}]
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "timemethods",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				},
+				"restrictors": [{
+					"type": "NAMED",
+					"content": "quantitative"
+				}]
+			}],
+			"targets": [{
+				"type": "CHILDREN",
+				"targets": [{
+					"type": "FIELD",
+					"content": "timemethod",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}],
+					"targets": [{
+						"type": "FIELD",
+						"content": "timemethodother",
+						"checks": [{
+							"condition": {
+								"type": "NOT_EMPTY"
+							},
+							"restrictors": [{
+								"type": "FIELD",
+								"content": "timemethod",
+								"checks": [{
+									"condition": {
+										"type": "FREE_TEXT"
+									}
+								}]
+							}]
+						}]
+					}]
+				}]
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "timeperiods",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				},
+				"restrictors": [{
+					"type": "NAMED",
+					"content": "quantitative"
+				}]
+			}],
+			"targets": [{
+				"type": "CHILDREN",
+				"targets": [{
+					"type": "FIELD",
+					"content": "timeperiodevent",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
+				}, {
+					"type": "FIELD",
+					"content": "timeperiod",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						},
+						"restrictors": [{
+							"type": "FIELD",
+							"content": "timeperiodtext",
+							"checks": [{
+								"condition": {
+									"type": "IS_EMPTY"
+								}
+							}]
+						}]
+					}]
+				}, {
+					"type": "FIELD",
+					"content": "timeperiodtext",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						},
+						"restrictors": [{
+							"type": "FIELD",
+							"content": "timeperiod",
+							"checks": [{
+								"condition": {
+									"type": "IS_EMPTY"
+								}
 							}]
 						}]
 					}]
@@ -2467,6 +2645,14 @@
 				"targets": [{
 					"type": "FIELD",
 					"content": "topic",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
+				}, {
+					"type": "FIELD",
+					"content": "topictop",
 					"checks": [{
 						"condition": {
 							"type": "NOT_EMPTY"
@@ -2914,6 +3100,127 @@
 						"type": "NOT_EMPTY"
 					}
 				}]
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "producers",
+			"checks": [{
+				"condition": {
+					"type": "TRUE"
+				}
+			}],
+			"targets": [{
+				"type": "FIELD",
+				"content": "organisation",
+				"checks": [{
+					"condition": {
+						"type": "NOT_EMPTY"
+					}
+				}]
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "otherauthors",
+			"checks": [{
+				"condition": {
+					"type": "TRUE"
+				}
+			}],
+			"targets": [{
+				"type": "FIELD",
+				"content": "otherauthortype",
+				"checks": [{
+					"condition": {
+						"type": "NOT_EMPTY"
+					}
+				}]
+			}, {
+				"type": "FIELD",
+				"content": "author",
+				"checks": [{
+					"condition": {
+						"type": "NOT_EMPTY"
+					},
+					"restrictors": [{
+						"type": "FIELD",
+						"content": "otherauthortype",
+						"checks": [{
+							"condition": {
+								"type": "EQUALS",
+								"target": {
+									"type": "VALUE",
+									"content": "1"
+								}
+							}
+						}]
+					}]
+				}]
+			}, {
+				"type": "FIELD",
+				"content": "organisation",
+				"checks": [{
+					"condition": {
+						"type": "NOT_EMPTY"
+					},
+					"restrictors": [{
+						"type": "FIELD",
+						"content": "otherauthortype",
+						"checks": [{
+							"condition": {
+								"type": "EQUALS",
+								"target": {
+									"type": "VALUE",
+									"content": "2"
+								}
+							}
+						}]
+					}]
+				}]
+			}, {
+				"type": "FIELD",
+				"content": "otherauthorgroup",
+				"checks": [{
+					"condition": {
+						"type": "NOT_EMPTY"
+					},
+					"restrictors": [{
+						"type": "FIELD",
+						"content": "otherauthortype",
+						"checks": [{
+							"condition": {
+								"type": "EQUALS",
+								"target": {
+									"type": "VALUE",
+									"content": "3"
+								}
+							}
+						}]
+					}]
+				}]
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "authors",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}],
+			"targets": [{
+				"type": "NAMED",
+				"content": "required_author_check"
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "collectors",
+			"checks": [{
+				"condition": {
+					"type": "NOT_EMPTY"
+				}
+			}],
+			"targets": [{
+				"type": "NAMED",
+				"content": "required_author_check"
 			}]
 		}]
 	}]

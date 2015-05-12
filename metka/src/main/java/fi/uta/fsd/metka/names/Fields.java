@@ -97,6 +97,7 @@ public final class Fields {
     public static final String KEYWORDURI = "keyworduri";
     public static final String TOPICS = "topics";
     public static final String TOPICVOCAB = "topicvocab";
+    public static final String TOPICTOP = "topictop";
     public static final String TOPIC = "topic";
     public static final String TOPICVOCABURI = "topicvocaburi";
     public static final String TOPICURI = "topicuri";

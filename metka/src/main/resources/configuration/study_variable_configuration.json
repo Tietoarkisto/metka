@@ -300,5 +300,41 @@
             "subfield": true
 
         }
-    }
+    },
+    "restrictions": [{
+        "type": "APPROVE",
+        "targets": [{
+            "type": "FIELD",
+            "content": "variables",
+            "checks": [{
+                "condition": {
+                    "type": "NOT_EMPTY"
+                }
+            }]
+        }, {
+            "type": "FIELD",
+            "content": "varid",
+            "checks": [{
+                "condition": {
+                    "type": "NOT_EMPTY"
+                }
+            }]
+        }, {
+            "type": "FIELD",
+            "content": "varlabel",
+            "checks": [{
+                "condition": {
+                    "type": "NOT_EMPTY"
+                }
+            }]
+        }, {
+            "type": "FIELD",
+            "content": "varname",
+            "checks": [{
+                "condition": {
+                    "type": "NOT_EMPTY"
+                }
+            }]
+        }]
+    }]
 }

@@ -61,6 +61,7 @@ define(function (require) {
 
         if (list.freeTextKey) {
             var $freeText = $('<div>');
+            // TODO: allow free text field configuration in the same way as extra dialog field configuration is done
             require('./inherit')(require('./field'))(options).call($freeText, {
                 horizontal: true,
                 //title: MetkaJS.L10N.localize(options.fieldTitles[list.freeTextKey], 'title'),

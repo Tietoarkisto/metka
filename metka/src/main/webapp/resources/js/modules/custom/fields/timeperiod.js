@@ -8,18 +8,16 @@ define(function (require) {
             preCreate: function (options) {
                 var $elem = this;
 
-                var curVal = require('./../../data')(options)("datakind").getByLang("DEFAULT");
-                $elem.toggle(curVal && curVal === '1');
-                options.required = (curVal && curVal === '1');
+                var curVal = require('./../../data')(options)("timeperiodtext").getByLang("DEFAULT");
+                options.required = !curVal;
 
                 options.$events.on('data-changed-{key}-{lang}'.supplant({
-                                key: "datakind",
+                                key: "timeperiodtext",
                                 lang: "DEFAULT"
                             }), function(e, value) {
-                    $elem.toggle(value && value === '1');
-                    options.required = (value && value === '1');
+                    options.required = !value;
                     options.$events.trigger('label-update-{key}-{lang}'.supplant({
-                        key: 'weight',
+                        key: 'timeperiod',
                         lang: 'DEFAULT'
                     }));
                 });

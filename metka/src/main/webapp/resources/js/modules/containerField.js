@@ -335,8 +335,10 @@ define(function (require) {
         var rowCommands = [];
         // TODO: Add clear container function
 
+        /*var $panelHeading = $('<div class="panel-heading">')
+            .text(MetkaJS.L10N.localize(options, 'title'));*/
         var $panelHeading = $('<div class="panel-heading">')
-            .text(MetkaJS.L10N.localize(options, 'title'));
+            .append(require('./label')(options, lang, 'panel-title'));
 
         if (options.fieldOptions.translatable) {
             require('./langLabel')($panelHeading, lang);

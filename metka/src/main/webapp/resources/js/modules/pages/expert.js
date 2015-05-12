@@ -44,7 +44,7 @@ define(function (require) {
                                         "key": "search",
                                         "multiline": true
                                     },
-                                    create: function () {
+                                    postCreate: function () {
                                         $query = this.find('textarea');
                                     }
                                 },
@@ -73,7 +73,7 @@ define(function (require) {
                                                 .change();
                                         }
                                     },
-                                    create: function (options) {
+                                    postCreate: function (options) {
                                         var $containerField = $(this).children();
                                         addRow = function (query) {
                                             $containerField.data('addRow')(require('./../map/savedExpertSearchQuery/transferRow')(query, options.defaultLang));

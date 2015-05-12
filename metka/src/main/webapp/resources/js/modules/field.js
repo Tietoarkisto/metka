@@ -119,6 +119,11 @@ define(function (require) {
                 }
             }
 
+            // All modifications to options should be here. At this point the actual input doesn't yet exist
+            if (options.preCreate) {
+                options.preCreate.call($elem, options);
+            }
+
             createInput(options.defaultLang);
             if (options.fieldOptions.translatable && (options.translatable !== false)) {
                 ['DEFAULT', 'EN', 'SV'].filter(function (lang) {
@@ -129,8 +134,10 @@ define(function (require) {
             addValidationErrorListener($elem, function () {
                 return require('./data')(options).errors();
             });
-            if (options.create) {
-                options.create.call($elem, options);
+
+            // All modifications to the actual inputs should be here, it's too late to modify the options except to add triggers
+            if (options.postCreate) {
+                options.postCreate.call($elem, options);
             }
         }
 

@@ -75,6 +75,9 @@ define(function (require) {
         }
 
         var content = null;
+        if(!options.$events) {
+            options.$events = $({});
+        }
 
         options.modalTarget = require('./autoId')("M");
         options.$events.on('refresh.metka', refreshMetka);

@@ -105,7 +105,7 @@ define(function (require) {
                                                 $tr.remove();
                                             } : false
                                         },
-                                        create: function () {
+                                        preCreate: function () {
                                             var $containerField = $(this).children();
                                             $containerField.find('table')
                                                 .removeClass('table-hover')
@@ -294,27 +294,6 @@ define(function (require) {
                                                                     });
                                                                 }
                                                             });
-                                                            /*var $page = require('./../../root')(options).data.configuration.type;
-                                                            var $id = require('./../../root')(options).data.key.id;
-                                                            var $no = require('./../../root')(options).data.key.no;
-                                                            require('./../../server')('/study/ddi/import', {
-                                                                data: JSON.stringify({
-                                                                    path: require('./../../data')(options)("ddiPath").getByLang("DEFAULT"),
-                                                                    transferData: options.parentData
-                                                                }),
-                                                                success: function (response) {
-                                                                    require('./../../resultViewer')(response, null, function() {
-                                                                        if (response === 'OPERATION_SUCCESSFUL') {
-                                                                            var $metka = require('../../../metka');
-                                                                            require('../../assignUrl')('view', {
-                                                                                PAGE: $metka.PAGE,
-                                                                                id: $metka.id,
-                                                                                no: $metka.no
-                                                                            });
-                                                                        }
-                                                                    });
-                                                                }
-                                                            });*/
                                                         });
                                                     }
                                                 },
@@ -323,7 +302,7 @@ define(function (require) {
                                         }));
                                     }
                                 },
-                                create: function (options) {
+                                postCreate: function (options) {
                                     var $containerField = $(this).children().first();
                                     var $tbody = $containerField.find('tbody').first();
                                     $tbody

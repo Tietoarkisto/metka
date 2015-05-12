@@ -24,6 +24,10 @@
             "key" : "analysisunit",
             "title" : "Havaintoyksikkö/Aineistoyks. kategoria"
         },
+        "analysisunitother": {
+            "key" : "analysisunitother",
+            "title" : "Muu"
+        },
         "analysisunituri": {
             "key" : "analysisunituri",
             "title" : "Tunniste/osoite"
@@ -87,6 +91,10 @@
         "collmode": {
             "key": "collmode",
             "title": "Keruumenetelmä/-tekniikka"
+        },
+        "collmodeother": {
+            "key": "collmodeother",
+            "title": "Muu keruumenetelmä"
         },
         "collmodeuri": {
             "key": "collmodeuri",
@@ -187,6 +195,10 @@
         "instrumentvocab": {
             "key": "instrumentvocab",
             "title": "Keruuväline - sanasto"
+        },
+        "instrumentother": {
+            "key": "instrumentother",
+            "title": "Muu keruuväline"
         },
         "instrumentvocaburi": {
             "key": "instrumentvocaburi",
@@ -344,6 +356,10 @@
             "key" : "sampproctext",
             "title" : "Otantamenetelmän kuvaus"
         },
+        "sampprocother": {
+            "key" : "sampproctext",
+            "title" : "Muu otantamenetelmä/valintatapa"
+        },
         "sampprocuri": {
             "key" : "sampprocuri",
             "title" : "Tunniste/osoite"
@@ -387,6 +403,10 @@
         "timemethod": {
             "key" : "timemethodvocab",
             "title" : "Aikaulottuvuus"
+        },
+        "timemethodother": {
+            "key" : "timemethodother",
+            "title" : "Muu aikaulottuvuus"
         },
         "timemethoduri": {
             "key" : "timemethoduri",
@@ -585,6 +605,7 @@
                                 {
                                     "type": "CELL",
                                     "title": "Anonymisointi",
+                                    "required": true,
                                     "field": {
                                         "key": "anonymization"
                                     }
@@ -1132,7 +1153,11 @@
 		                                        }
                                             },
                                             "extraDialogConfiguration": {
+                                                "authortype": {
+                                                    "required": true
+                                                },
                                             	"author": {
+                                                    "required": true,
                                             		"field": {
                                             			"key": "author",
                                             			"displayType": "CUSTOM_JS"
@@ -1184,13 +1209,18 @@
 		                                        }
                                             },
                                             "extraDialogConfiguration": {
+                                                "otherauthortype": {
+                                                    "required": true
+                                                },
                                             	"author": {
+                                                    "required": true,
                                             		"field": {
                                             			"key": "author",
                                             			"displayType": "CUSTOM_JS"
                                             		}
                                             	},
                                             	"otherauthorgroup": {
+                                                    "required": true,
                                             		"field": {
                                             			"key": "otherauthorgroup",
                                             			"displayType": "CUSTOM_JS"
@@ -1242,6 +1272,7 @@
                                             },
                                             "extraDialogConfiguration": {
                                                 "organisation": {
+                                                    "required": true,
                                                     "field": {
                                                         "key": "organisation",
                                                         "displayType": "CUSTOM_JS"
@@ -1340,6 +1371,7 @@
                                             "key": "topics",
                                             "columnFields": [
                                             	"topicvocaburi",
+                                                "topictop",
                                             	"topic",
                                             	"topicuri"
                                             ],
@@ -1352,6 +1384,9 @@
                                         },
                                         "extraDialogConfiguration": {
                                             "topicvocab": {
+                                                "required": true
+                                            },
+                                            "topictop": {
                                                 "required": true
                                             },
                                             "topic": {
@@ -1415,6 +1450,23 @@
 	                                            "MODIFY": "Muokkaa ajallista kattavuutta",
 	                                            "VIEW": "Aineiston ajallinen kattavuus"
 	                                        }
+                                        },
+                                        "extraDialogConfiguration": {
+                                            "timeperiodevent": {
+                                                "required": true
+                                            },
+                                            "timeperiod": {
+                                                "field": {
+                                                    "key": "timeperiod",
+                                                    "displayType": "CUSTOM_JS"
+                                                }
+                                            },
+                                            "timeperiodtext": {
+                                                "field": {
+                                                    "key": "timeperiodtext",
+                                                    "displayType": "CUSTOM_JS"
+                                                }
+                                            }
                                         }
                                     }
                                 ]
@@ -1536,10 +1588,18 @@
                                         },
                                         "extraDialogConfiguration": {
                                             "colldate": {
-                                                "required": true
+                                                "required": true,
+                                                "field": {
+                                                    "key": "colldate",
+                                                    "displayType": "CUSTOM_JS"
+                                                }
                                             },
                                             "colldatetext": {
-                                                "required": true
+                                                "required": true,
+                                                "field": {
+                                                    "key": "colldatetext",
+                                                    "displayType": "CUSTOM_JS"
+                                                }
                                             },
                                             "colldateevent": {
                                                 "required": true
@@ -1570,7 +1630,11 @@
 	                                        }
                                         },
                                         "extraDialogConfiguration": {
+                                            "authortype": {
+                                                "required": true
+                                            },
                                         	"author": {
+                                                "required": true,
                                         		"field": {
                                         			"key": "author",
                                         			"displayType": "CUSTOM_JS"
@@ -1617,6 +1681,11 @@
 	                                            "MODIFY": "Muokkaa havaintoyksikköä",
 	                                            "VIEW": "Havaintoyksikkö"
 	                                        }
+                                        },
+                                        "extraDialogConfiguration": {
+                                            "analysisunit": {
+                                                "required": true
+                                            }
                                         }
                                     }
                                 ]
@@ -1626,7 +1695,6 @@
                                     {
                                         "type": "CELL",
                                         "title": "Tutkimuksen aikaulottuvuudet",
-                                        "required": true,
                                         "field": {
                                             "key": "timemethods",
                                             "displayType": "CUSTOM_JS",
@@ -1641,6 +1709,14 @@
 	                                            "MODIFY": "Muokkaa aikaulottuvuutta",
 	                                            "VIEW": "Tutkimuksen aikaulottuvuus"
 	                                        }
+                                        },
+                                        "extraDialogConfiguration": {
+                                            "timemethod": {
+                                                "required": true
+                                            },
+                                            "timemethodother": {
+                                                "required": true
+                                            }
                                         }
                                     }
                                 ]
@@ -1681,7 +1757,6 @@
                                     {
                                         "type": "CELL",
                                         "title": "Keruuvälineet (kvanti) tai aineistonkeruun ohjeistukset (kvali)",
-                                        "required": true,
                                         "field": {
                                             "key": "instruments",
                                             "displayType": "CUSTOM_JS",
@@ -1696,6 +1771,14 @@
 	                                            "MODIFY": "Muokkaa keruuvälinettä",
 	                                            "VIEW": "Keruuväline"
 	                                        }
+                                        },
+                                        "extraDialogConfiguration": {
+                                            "instrument": {
+                                                "required": true
+                                            },
+                                            "instrumentother": {
+                                                "required": true
+                                            }
                                         }
                                     }
                                 ]

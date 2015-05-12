@@ -9,7 +9,7 @@ define(function (require) {
         filesContainerCreated = true;
 
         return {
-            create: function (options) {
+            postCreate: function (options) {
 
                 function partialRefresh() {
                     require('./../../server')('viewAjax', {

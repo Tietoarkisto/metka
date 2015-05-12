@@ -205,7 +205,7 @@ define(function (require) {
                     "hidden": true
                 }
             },
-            create: function create(options) {
+            postCreate: function(options) {
                 refreshData(options, this.children().first());
             }
         };

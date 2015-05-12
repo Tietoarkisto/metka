@@ -42,7 +42,7 @@ define(function (require) {
         });
 
         return {
-            create: function create(options) {
+            postCreate: function(options) {
                 var key = 'variables';
                 var column = 'varlabel';
 

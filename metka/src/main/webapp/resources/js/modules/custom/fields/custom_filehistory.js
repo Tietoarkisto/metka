@@ -31,7 +31,7 @@ define(function (require) {
                     })
                 }
             },
-            create: function () {
+            postCreate: function (options) {
                 var $containerField = $(this).children();
                 require('./../../server')('/study/attachmentHistory/', {
                     data: JSON.stringify(options.data),

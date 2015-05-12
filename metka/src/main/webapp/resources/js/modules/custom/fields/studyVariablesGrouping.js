@@ -2,7 +2,7 @@ define(function (require) {
     'use strict';
 
     return {
-        create: function create(options) {
+        postCreate: function(options) {
             function setButtonStates() {
                 $moveToGroup.prop('disabled', !transferFromVariables || !transferToGroups);
                 $moveToVariables.prop('disabled', !transferFromGroups || !transferToVariables);

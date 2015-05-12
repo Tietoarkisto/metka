@@ -16,8 +16,7 @@ define(function (require) {
         });
 
         this
-            .addClass('checkbox')
-            .append(require('./label')(options)
-                .prepend(require('./input').call($input, options)));
+            .append(require('./label')(options, lang))
+            .append(require('./input').call($input, options));
     };
 });

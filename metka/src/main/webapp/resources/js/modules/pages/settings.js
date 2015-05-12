@@ -14,7 +14,7 @@ define(function (require) {
                         key: "dataConfigType_list",
                         type: "VALUE",
                         includeEmpty: true,
-                        values: [
+                        options: [
 
                         ]
                     },
@@ -22,7 +22,7 @@ define(function (require) {
                         key: "guiConfigType_list",
                         type: "VALUE",
                         includeEmpty: true,
-                        values: [
+                        options: [
 
                         ]
                     },
@@ -30,7 +30,7 @@ define(function (require) {
                         key: "jsonKeys_list",
                         type: "VALUE",
                         includeEmpty: true,
-                        values: [
+                        options: [
 
                         ]
                     }
@@ -138,26 +138,12 @@ define(function (require) {
                                 {
                                     type: "ROW",
                                     cells: [
-                                        /*{
-                                            type: "CELL",
-                                            title: "Indekserit",
-                                            readOnly: true,
-                                            field: {
-                                                key: "indexers",
-
-                                                columnFields: [
-                                                    "indexPath",
-                                                    "indexIsRunning"
-                                                ]
-                                            }
-
-                                        }*/
                                         {
                                             type: "CELL",
                                             field: {
                                                 displayType: "CUSTOM_JS"
                                             },
-                                            create: function(options) {
+                                            postCreate: function(options) {
                                                 var $elem = $(this).children().first();
                                                 $elem.text("Indeksikomentoja jonossa: 0");
                                                 setInterval(function() {
@@ -229,16 +215,20 @@ define(function (require) {
                                                     field: {
                                                         key: "dataConfigTypes"
                                                     },
-                                                    create: function() {
-                                                        var $elem = this.find("select").first().attr("id", "dataConfigTypes");
+                                                    preCreate: function(options) {
+                                                        //var $elem = this.find("select").first().attr("id", "dataConfigTypes");
 
 
                                                         require('./../server')("/settings/getJsonList/DATA_CONF", {
                                                             type: "GET",
+                                                            async: false,
                                                             success: function (response) {
-                                                                $elem.append(response.map(function(entry) {
-                                                                    return $("<option>").data(entry).text(entry.title);
-                                                                }));
+                                                                response.map(function(entry) {
+                                                                    options.dataConf.selectionLists.dataConfigType_list.options.push({
+                                                                        value: JSON.stringify(entry),
+                                                                        title: entry.title
+                                                                    });
+                                                                });
                                                             }
                                                         });
                                                     }
@@ -248,14 +238,14 @@ define(function (require) {
                                                     contentType: "BUTTON",
                                                     button: {
                                                         title: "Lataa",
-                                                        create: function() {
+                                                        create: function(options) {
                                                             this.click(function() {
-                                                                var data = $("#dataConfigTypes").children(":selected").data();
+                                                                var data = require('./../data')(options)("dataConfigTypes").getByLang("DEFAULT");
                                                                 if(data) {
                                                                     require('./../server')("/settings/getJsonContent", {
-                                                                        data: JSON.stringify(data),
+                                                                        data: data,
                                                                         success: function (response) {
-                                                                            $("#dataConfigTextField").val(JSON.stringify(JSON.parse(response), null, 4));
+                                                                            require('./../data')(options)("dataConfigText").setByLang("DEFAULT", JSON.stringify(JSON.parse(response), null, 4));
                                                                         }
                                                                     });
                                                                 }
@@ -277,7 +267,7 @@ define(function (require) {
                                                         key: "dataConfigText",
                                                         multiline: true
                                                     },
-                                                    create: function() {
+                                                    postCreate: function() {
                                                         this.find("textarea").first().attr("id", "dataConfigTextField").prop("rows", 20);
                                                     }
 
@@ -335,7 +325,7 @@ define(function (require) {
                                                     field: {
                                                         key: "guiConfigTypes"
                                                     },
-                                                    create: function() {
+                                                    preCreate: function() {
                                                         var $elem = this.find("select").first().attr("id", "guiConfigTypes");
 
 
@@ -383,7 +373,7 @@ define(function (require) {
                                                         key: "guiConfigText",
                                                         multiline: true
                                                     },
-                                                    create: function() {
+                                                    postCreate: function() {
                                                         this.find("textarea").first().attr("id", "guiConfigTextField").prop("rows", 20);
                                                     }
 
@@ -441,7 +431,7 @@ define(function (require) {
                                                     field: {
                                                         key: "jsonKeys"
                                                     },
-                                                    create: function() {
+                                                    preCreate: function() {
                                                         var $elem = this.find("select").first().attr("id", "jsonKeys");
                                                         require('./../server')("/settings/getJsonList/MISC", {
                                                             type: "GET",
@@ -487,7 +477,7 @@ define(function (require) {
                                                         key: "jsonText",
                                                         multiline: true
                                                     },
-                                                    create: function() {
+                                                    postCreate: function() {
                                                         this.find("textarea").first().attr("id", "jsonTextField").prop("rows", 20);
                                                     }
 
@@ -550,7 +540,7 @@ define(function (require) {
                                             field: {
                                                 key: "dataConfigTypes"
                                             },
-                                            create: function() {
+                                            preCreate: function() {
                                                 var $elem = this.find("select").first().attr("id", "dataConfigEditorTypes");
                                                 require('./../server')("/settings/getJsonList/DATA_CONF", {
                                                     type: "GET",
@@ -969,7 +959,7 @@ define(function (require) {
                                                 key: "dataConfigEditor",
                                                 displayType: 'CUSTOM_JS'
                                             },
-                                            create: function() {
+                                            preCreate: function() {
                                                 $editor = this.children().first()
                                                     .addClass('metka-conf-editor');
                                             }

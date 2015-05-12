@@ -138,8 +138,6 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
     // Also TransferData is not needed in sub object approvals since it's never going to be returned to user.
     private ReturnResult approveData(RevisionData revision, TransferData transferData) {
         switch(revision.getConfiguration().getType()) {
-            /*case SERIES:
-                return approveSeries(revision, transferData);*/
             case STUDY:
                 return approveStudy(revision, transferData);
             case STUDY_ATTACHMENT:
@@ -151,26 +149,6 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             default:
                 return ReturnResult.OPERATION_SUCCESSFUL;
         }
-    }
-
-    private ReturnResult approveSeries(RevisionData revision, TransferData transferData) {
-        // Check that seriesabbr has been set in this revision and that it is unique amongst all series
-        Pair<StatusCode, ValueDataField> pair = revision.dataField(ValueDataFieldCall.get("seriesabbr"));
-        // If we can't find the whole seriesabbr field or if the field has no value then we're missing series abbreviation.
-        // Add error and set result to APPROVE_FAILED
-        ReturnResult result = ReturnResult.OPERATION_SUCCESSFUL;
-        if(pair.getLeft() != StatusCode.FIELD_FOUND || !pair.getRight().hasValueFor(Language.DEFAULT)) {
-            TransferField tf = transferData.getField("seriesabbr");
-            if(tf == null) {
-                tf = new TransferField("seriesabbr", TransferFieldType.VALUE);
-                transferData.getFields().put(tf.getKey(), tf);
-            }
-            tf.addErrorFor(Language.DEFAULT, FieldError.MISSING_VALUE);
-            logger.warn("Series is missing abbreviation, can't approve until it is set");
-            result = ReturnResult.APPROVE_FAILED;
-        }
-
-        return result;
     }
 
     private ReturnResult approveStudy(RevisionData revision, TransferData transferData) {
@@ -229,6 +207,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             return result;
         }
 
+        // TODO: Cascade these using operations
         for(ReferenceRow reference : variables.getReferences()) {
             // Just assume that each row is correctly formed
             Pair<ReturnResult, RevisionData> variablePair = revisions.getLatestRevisionForIdAndType(Long.parseLong(reference.getActualValue()), false, ConfigurationType.STUDY_VARIABLE);
@@ -546,7 +525,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
     }
 
 
-
+    // TODO: Cascade these using operations
     private ReturnResult checkStudyAttachments(RevisionData revision, TransferData transferData) {
         Pair<StatusCode, ReferenceContainerDataField> pair = revision.dataField(ReferenceContainerDataFieldCall.get("files"));
         if(pair.getLeft() != StatusCode.FIELD_FOUND || pair.getRight().getReferences().isEmpty()) {
@@ -584,6 +563,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
         return result;
     }
 
+    // TODO: Cascade these using operations
     private ReturnResult checkStudyVariables(RevisionData revision, TransferData transferData) {
         Pair<StatusCode, ValueDataField> fieldPair = revision.dataField(ValueDataFieldCall.get("variables"));
         if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {

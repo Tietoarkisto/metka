@@ -127,10 +127,20 @@ define(function (require) {
                     // textarea or input elements
 
                     require('./data')(options).onChange(function () {
-                        function setValue() {
+                        function setReferenceValue() {
                             require('./reference').optionByPath(key, options, lang, function (value) {
                                 $input.val(value);
                             })(options.data.fields, reference);
+                        }
+
+                        function setConcatValue() {
+                            $input.val(options.fieldOptions.concatenate.map(function (key) {
+                                return require('./data')(options)(key).getByLang(lang);
+                            }).join(''));
+                        }
+
+                        function setSimpleValue() {
+                            $input.val(require('./data')(options).getByLang(lang) || '');
                         }
 
                         if (type === 'REFERENCE') {
@@ -138,17 +148,21 @@ define(function (require) {
                             options.$events.on('data-changed-{key}-{lang}'.supplant({
                                 key: reference.target,
                                 lang: lang
-                            }), setValue);
-                            // TODO: setValue call is not necessary, if target is select input. select input triggers change event
-                            setValue();
+                            }), setReferenceValue);
+                            // TODO: setRefereneValue call is not necessary, if target is select input. select input triggers change event
+                            setReferenceValue();
+                        } else if(type === 'CONCAT') {
+                            options.$events.on('data-changed-{key}-{lang}'.supplant({
+                                key: options.fieldOptions.key,
+                                lang: lang
+                            }), setConcatValue);
+                            setConcatValue();
                         } else {
-                            $input.val(type === 'CONCAT'
-                                ?
-                                options.fieldOptions.concatenate.map(function (key) {
-                                    return require('./data')(options)(key).getByLang(lang);
-                                }).join('')
-                                :
-                                require('./data')(options).getByLang(lang) || '');
+                            options.$events.on('data-changed-{key}-{lang}'.supplant({
+                                key: options.fieldOptions.key,
+                                lang: lang
+                            }), setSimpleValue);
+                            setSimpleValue();
                         }
                     });
                 }
