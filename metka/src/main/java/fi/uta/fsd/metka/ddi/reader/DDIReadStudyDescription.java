@@ -458,16 +458,29 @@ class DDIReadStudyDescription extends DDIReadSectionBase {
 
             if(StringUtils.hasText(getText(t))) {
                 topicvocabPath = getReferencePath(Fields.TOPICVOCAB, option.getValue());
-                ReferencePath topicPath = getReferencePath(Fields.TOPIC, null);
-
-                topicvocabPath.setNext(topicPath);
-                topicPath.setPrev(topicvocabPath);
+                ReferencePath topictopPath = getReferencePath(Fields.TOPICTOP, null);
+                // We need to loop through all topictops to find the one containing the actual topic so that we can fill in both fields.
+                topicvocabPath.setNext(topictopPath);
+                topictopPath.setPrev(topicvocabPath);
                 request.setRoot(topicvocabPath);
 
-                List<ReferenceOption> options = references.collectReferenceOptions(request);
-                option = findOption(options, getText(t));
-                if(option != null) {
-                    valueSet(row.getRight(), Fields.TOPIC, option.getValue());
+                List<ReferenceOption> topOptions = references.collectReferenceOptions(request);
+                for(ReferenceOption topOption : topOptions) {
+                    topictopPath = getReferencePath(Fields.TOPICTOP, topOption.getValue());
+                    ReferencePath topicPath = getReferencePath(Fields.TOPIC, null);
+
+                    topicvocabPath.setNext(topictopPath);
+                    topictopPath.setPrev(topicvocabPath);
+                    topictopPath.setNext(topicPath);
+                    topicPath.setPrev(topictopPath);
+
+                    List<ReferenceOption> options = references.collectReferenceOptions(request);
+                    option = findOption(options, getText(t));
+                    if(option != null) {
+                        valueSet(row.getRight(), Fields.TOPICTOP, topOption.getValue());
+                        valueSet(row.getRight(), Fields.TOPIC, option.getValue());
+                        break;
+                    }
                 }
             }
 
@@ -756,7 +769,7 @@ class DDIReadStudyDescription extends DDIReadSectionBase {
             reference = configuration.getReference(configuration.getSelectionList(field.getSelectionList()).getReference());
         }
 
-        return reference != null ? new ReferencePath(reference, value) : null;
+        return reference != null ? new ReferencePath(reference.copy(), value) : null;
     }
 
     private ReferenceOption findOrganization(String title, String orgFieldKey) {

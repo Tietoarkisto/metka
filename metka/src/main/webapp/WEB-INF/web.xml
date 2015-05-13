@@ -17,6 +17,10 @@
         <param-value>classpath:/META-INF/spring/applicationContext.xml</param-value>
     </context-param>
 
+    <!--<session-config>
+        <session-timeout>1</session-timeout>
+    </session-config>-->
+
     <!-- Processes application requests -->
     <servlet>
         <servlet-name>global</servlet-name>

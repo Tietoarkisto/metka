@@ -114,4 +114,14 @@ public class Reference {
     public int hashCode() {
         return key.hashCode();
     }
+
+    @JsonIgnore
+    public Reference copy() {
+        Reference ref = new Reference(key, type, target, valuePath);
+        ref.setTitlePath(titlePath);
+        ref.setApprovedOnly(approvedOnly);
+        ref.setIgnoreRemoved(ignoreRemoved);
+
+        return ref;
+    }
 }

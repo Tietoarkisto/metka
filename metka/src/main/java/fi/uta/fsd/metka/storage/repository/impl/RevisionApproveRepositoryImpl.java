@@ -183,8 +183,13 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
 
     private ReturnResult approveStudyAttachment(RevisionData revision) {
         // TODO: Move to IS_FILE restriction
-        File file = new File(revision.dataField(ValueDataFieldCall.get("file")).getRight().getActualValueFor(Language.DEFAULT));
-        if(!file.exists() || file.isDirectory()) {
+        ValueDataField fileField = revision.dataField(ValueDataFieldCall.get("file")).getRight();
+        if(fileField != null) {
+            File file = new File(revision.dataField(ValueDataFieldCall.get("file")).getRight().getActualValueFor(Language.DEFAULT));
+            if(!file.exists() || file.isDirectory()) {
+                return ReturnResult.APPROVE_FAILED;
+            }
+        } else {
             return ReturnResult.APPROVE_FAILED;
         }
 

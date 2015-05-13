@@ -531,11 +531,17 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
             String rowRoot = pathRoot + row.getRowId() + ".";
 
             String topic = null;
+            String topictop = null;
             String topicvocab = null;
             String topicvocaburi = null;
 
             topicvocab = getReferenceTitle(rowRoot + Fields.TOPICVOCAB);
             if(!StringUtils.hasText(topicvocab)) {
+                continue;
+            }
+
+            topictop = getReferenceTitle(rowRoot + Fields.TOPICTOP);
+            if(!StringUtils.hasText(topictop)) {
                 continue;
             }
 

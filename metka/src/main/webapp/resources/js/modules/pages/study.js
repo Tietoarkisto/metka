@@ -752,9 +752,13 @@ define(function (require) {
                                         target: 'PUBLICATION',
                                         titlePath: 'publicationid'
                                     },
-                                    topic_ref: {
+                                    topictop_ref: {
                                         type: 'JSON',
                                         target: response.configuration.references.topicvocab_ref.target
+                                    },
+                                    topic_ref: {
+                                        type: 'JSON',
+                                        target: response.configuration.references.topictop_ref.target
                                     },
                                     analysisunit_ref: {
                                         type: 'JSON',

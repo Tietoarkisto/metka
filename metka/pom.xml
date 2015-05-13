@@ -273,13 +273,6 @@
             <version>4.1.4</version>
         </dependency>
 
-        <!-- Json in Java -->
-        <!--<dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20140107</version>
-        </dependency>-->
-
         <!-- Joda-Time -->
         <dependency>
             <groupId>joda-time</groupId>
@@ -328,19 +321,12 @@
             <version>3.6.1</version>
         </dependency>
 
-        <!-- JSLint -->
-        <!--<dependency>
-            <groupId>com.googlecode.jslint4java</groupId>
-            <artifactId>jslint4java-maven-plugin</artifactId>
-            <version>${jslint4java.version}</version>
-        </dependency>-->
-
+        <!-- DDI-codebook -->
         <dependency>
             <groupId>fi.uta.fsd.metka</groupId>
             <artifactId>codebook</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
-
         <dependency>
             <groupId>org.apache.xmlbeans</groupId>
             <artifactId>xmlbeans</artifactId>
@@ -400,40 +386,6 @@
                     <showDeprecation>true</showDeprecation>
                 </configuration>
             </plugin>
-            <!--<plugin>
-                <groupId>com.googlecode.jslint4java</groupId>
-                <artifactId>jslint4java-maven-plugin</artifactId>
-                <version>2.0.0</version>
-                <executions>
-                    <execution>
-                        <id>lint</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>lint</goal>
-                        </goals>
-                        <configuration>
-                            <outputFolder>${project.build.directory}/jslint/</outputFolder>
-                            <failOnError>false</failOnError>
-                            <options>
-                                <confusion>true</confusion>
-                                <browser>true</browser>
-                                <continue>true</continue>
-                                <passfail>false</passfail>
-                                <es5>true</es5>
-                                <indent>4</indent>
-                                <nomen>true</nomen>
-                                <plusplus>true</plusplus>
-                                <predef>$, alert, document, location, MetkaJS, sessionStorage, window</predef>
-                                <vars>true</vars>
-                                <white>true</white>
-                            </options>
-                            <excludes>
-                                <exclude>**/lib/**</exclude>
-                            </excludes>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>-->
         </plugins>
     </build>
 

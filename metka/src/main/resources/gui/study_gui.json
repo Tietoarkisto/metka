@@ -486,6 +486,10 @@
             "key": "topicvocab",
             "title": "Sanasto"
         },
+        "topictop": {
+            "key": "topictop",
+            "title": "Pääala"
+        },
         "topic": {
             "key": "topic",
             "title": "Tieteenala"
