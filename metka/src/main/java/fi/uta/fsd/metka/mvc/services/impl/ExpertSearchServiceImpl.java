@@ -19,6 +19,7 @@ import fi.uta.fsd.metkaSearch.commands.searcher.SearchCommand;
 import fi.uta.fsd.metkaSearch.commands.searcher.expert.ExpertRevisionSearchCommand;
 import fi.uta.fsd.metkaSearch.results.RevisionResult;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -43,11 +44,26 @@ public class ExpertSearchServiceImpl implements ExpertSearchService {
         ExpertSearchQueryResponse response = new ExpertSearchQueryResponse();
         response.setOperation(ExpertSearchOperation.QUERY);
         if(!StringUtils.hasText(request.getQuery())) {
+            response.setResult(ReturnResult.EMPTY_QUERY);
             return response;
         }
         SearchCommand<RevisionResult> command = null;
         try {
             command = ExpertRevisionSearchCommand.build(request.getQuery(), configurations);
+        } catch(QueryNodeException e) {
+            Logger.error(ExpertSearchServiceImpl.class, "Exception while forming search command.", e);
+            switch(e.getMessageObject().getKey()) {
+                case "EMPTY_QUERY":
+                    response.setResult(ReturnResult.EMPTY_QUERY);
+                    break;
+                case "MALFORMED_LANGUAGE":
+                    response.setResult(ReturnResult.MALFORMED_LANGUAGE);
+                    break;
+                case "INVALID_SYNTAX_CANNOT_PARSE":
+                    response.setResult(ReturnResult.MALFORMED_QUERY);
+                    break;
+            }
+            return response;
         } catch(Exception e) {
             Logger.error(ExpertSearchServiceImpl.class, "Exception while forming search command.", e);
             throw e;
@@ -102,6 +118,7 @@ public class ExpertSearchServiceImpl implements ExpertSearchService {
             }
             response.getResults().add(qr);
         }
+        response.setResult(ReturnResult.OPERATION_SUCCESSFUL);
         return response;
     }
 

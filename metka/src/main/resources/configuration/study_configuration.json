@@ -644,17 +644,29 @@
 			"target": "STUDY_ATTACHMENT",
 			"titlePath": "file"
 		},
-		"files_path_ref": {
-			"key": "files_path_ref",
+		"file_path_ref": {
+			"key": "file_path_ref",
 			"type": "DEPENDENCY",
 			"target": "files",
 			"valuePath": "file"
 		},
-		"files_lang_ref": {
-			"key": "files_lang_ref",
+		"file_language_ref": {
+			"key": "file_language_ref",
 			"type": "DEPENDENCY",
 			"target": "files",
 			"valuePath": "filelanguage"
+		},
+		"file_description_ref": {
+			"key": "file_description_ref",
+			"type": "DEPENDENCY",
+			"target": "files",
+			"valuePath": "filedescription"
+		},
+		"file_comment_ref": {
+			"key": "file_comment_ref",
+			"type": "DEPENDENCY",
+			"target": "files",
+			"valuePath": "filecomment"
 		},
 
 		"keywordvocab_ref": {
@@ -1928,23 +1940,41 @@
 			"type": "REFERENCECONTAINER",
 			"reference": "attachment_ref",
 			"subfields": [
-				"filespath",
-				"fileslang"
+				"filepath",
+				"filelanguage",
+				"filedescription",
+				"filecomment"
 			]
 		},
-		"filespath": {
-			"key": "filespath",
+		"filepath": {
+			"key": "filepath",
 			"translatable": false,
 			"type": "REFERENCE",
-			"reference": "files_path_ref",
+			"reference": "file_path_ref",
 			"subfield": true,
 			"writable": false
 		},
-		"fileslang": {
-			"key": "fileslang",
+		"filelanguage": {
+			"key": "filelanguage",
 			"translatable": false,
 			"type": "REFERENCE",
-			"reference": "files_lang_ref",
+			"reference": "file_language_ref",
+			"subfield": true,
+			"writable": false
+		},
+		"filedescription": {
+			"key": "filedescription",
+			"translatable": false,
+			"type": "REFERENCE",
+			"reference": "file_description_ref",
+			"subfield": true,
+			"writable": false
+		},
+		"filecomment": {
+			"key": "filecomment",
+			"translatable": false,
+			"type": "REFERENCE",
+			"reference": "file_comment_ref",
 			"subfield": true,
 			"writable": false
 		},
@@ -2835,6 +2865,14 @@
 						"condition": {
 							"type": "NOT_EMPTY"
 						}
+					}, {
+						"condition": {
+							"type": "REGEX",
+							"target": {
+								"type": "VALUE",
+								"content": "^(\\d*(\\.\\d)?)+\\d?$"
+							}
+						}
 					}]
 				}, {
 					"type": "FIELD",
@@ -2904,6 +2942,14 @@
 					"checks": [{
 						"condition": {
 							"type": "NOT_EMPTY"
+						}
+					}, {
+						"condition": {
+							"type": "REGEX",
+							"target": {
+								"type": "VALUE",
+								"content": "^(\\d*(\\.\\d)?)+\\d?$"
+							}
 						}
 					}]
 				}, {
@@ -3093,12 +3139,15 @@
 				}
 			}],
 			"targets": [{
-				"type": "FIELD",
-				"content": "note",
-				"checks": [{
-					"condition": {
-						"type": "NOT_EMPTY"
-					}
+				"type": "CHILDREN",
+				"targets": [{
+					"type": "FIELD",
+					"content": "note",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
 				}]
 			}]
 		}, {
@@ -3110,12 +3159,15 @@
 				}
 			}],
 			"targets": [{
-				"type": "FIELD",
-				"content": "organisation",
-				"checks": [{
-					"condition": {
-						"type": "NOT_EMPTY"
-					}
+				"type": "CHILDREN",
+				"targets": [{
+					"type": "FIELD",
+					"content": "organisation",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
 				}]
 			}]
 		}, {
@@ -3127,73 +3179,76 @@
 				}
 			}],
 			"targets": [{
-				"type": "FIELD",
-				"content": "otherauthortype",
-				"checks": [{
-					"condition": {
-						"type": "NOT_EMPTY"
-					}
-				}]
-			}, {
-				"type": "FIELD",
-				"content": "author",
-				"checks": [{
-					"condition": {
-						"type": "NOT_EMPTY"
-					},
-					"restrictors": [{
-						"type": "FIELD",
-						"content": "otherauthortype",
-						"checks": [{
-							"condition": {
-								"type": "EQUALS",
-								"target": {
-									"type": "VALUE",
-									"content": "1"
+				"type": "CHILDREN",
+				"targets": [{
+					"type": "FIELD",
+					"content": "otherauthortype",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
+				}, {
+					"type": "FIELD",
+					"content": "author",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						},
+						"restrictors": [{
+							"type": "FIELD",
+							"content": "otherauthortype",
+							"checks": [{
+								"condition": {
+									"type": "EQUALS",
+									"target": {
+										"type": "VALUE",
+										"content": "1"
+									}
 								}
-							}
+							}]
 						}]
 					}]
-				}]
-			}, {
-				"type": "FIELD",
-				"content": "organisation",
-				"checks": [{
-					"condition": {
-						"type": "NOT_EMPTY"
-					},
-					"restrictors": [{
-						"type": "FIELD",
-						"content": "otherauthortype",
-						"checks": [{
-							"condition": {
-								"type": "EQUALS",
-								"target": {
-									"type": "VALUE",
-									"content": "2"
+				}, {
+					"type": "FIELD",
+					"content": "organisation",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						},
+						"restrictors": [{
+							"type": "FIELD",
+							"content": "otherauthortype",
+							"checks": [{
+								"condition": {
+									"type": "EQUALS",
+									"target": {
+										"type": "VALUE",
+										"content": "2"
+									}
 								}
-							}
+							}]
 						}]
 					}]
-				}]
-			}, {
-				"type": "FIELD",
-				"content": "otherauthorgroup",
-				"checks": [{
-					"condition": {
-						"type": "NOT_EMPTY"
-					},
-					"restrictors": [{
-						"type": "FIELD",
-						"content": "otherauthortype",
-						"checks": [{
-							"condition": {
-								"type": "EQUALS",
-								"target": {
-									"type": "VALUE",
-									"content": "3"
+				}, {
+					"type": "FIELD",
+					"content": "otherauthorgroup",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						},
+						"restrictors": [{
+							"type": "FIELD",
+							"content": "otherauthortype",
+							"checks": [{
+								"condition": {
+									"type": "EQUALS",
+									"target": {
+										"type": "VALUE",
+										"content": "3"
+									}
 								}
-							}
+							}]
 						}]
 					}]
 				}]
@@ -3207,8 +3262,11 @@
 				}
 			}],
 			"targets": [{
-				"type": "NAMED",
-				"content": "required_author_check"
+				"type": "CHILDREN",
+				"targets": [{
+					"type": "NAMED",
+					"content": "required_author_check"
+				}]
 			}]
 		}, {
 			"type": "FIELD",
@@ -3219,8 +3277,11 @@
 				}
 			}],
 			"targets": [{
-				"type": "NAMED",
-				"content": "required_author_check"
+				"type": "CHILDREN",
+				"targets": [{
+					"type": "NAMED",
+					"content": "required_author_check"
+				}]
 			}]
 		}]
 	}]

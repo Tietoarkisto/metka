@@ -30,5 +30,5 @@ public abstract class SearchCommandBase<T extends SearchResult> implements Searc
     public abstract Query getQuery();
 
     @Override
-    public abstract ResultHandler<T> getResulHandler();
+    public abstract ResultHandler<T> getResultHandler();
 }

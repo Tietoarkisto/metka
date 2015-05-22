@@ -160,12 +160,12 @@
             "key": "filedescription",
             "title": "Virallinen selite"
         },
-        "fileslang": {
-            "key": "fileslang",
+        "filelanguage": {
+            "key": "filelanguage",
             "title": "Tiedoston kieli"
         },
-        "filespath": {
-            "key": "filespath",
+        "filepath": {
+            "key": "filepath",
             "title": "Tiedostopolku"
         },
         "firstname": {
@@ -1617,6 +1617,7 @@
                                     {
                                         "type": "CELL",
                                         "title": "Aineiston kerääjät",
+                                        "required": true,
                                         "field": {
                                             "key": "collectors",
                                             "columnFields": [

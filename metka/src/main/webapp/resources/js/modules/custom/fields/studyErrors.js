@@ -28,7 +28,7 @@ define(function (require) {
                 fields: {
                     studyErrors: {
                         type: "CONTAINER",
-                        //fixedOrder: true,
+                        fixedOrder: true,
                         removePermissions: [
                             "canRemoveStudyErrors"
                         ],

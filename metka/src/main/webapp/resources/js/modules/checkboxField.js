@@ -9,11 +9,9 @@ define(function (require) {
                 require('./data')(options).setByLang(lang, reverseBoolean !== $(this).prop('checked'));
             });
 
-        require('./data')(options).onChange(function () {
-            var value = require('./data')(options).getByLang(lang);
-            var boolValue = typeof value === 'string' ? value.bool() : !!value;
-            $input.prop('checked', reverseBoolean !== boolValue);
-        });
+        var value = require('./data')(options).getByLang(lang);
+        var boolValue = typeof value === 'string' ? value.bool() : !!value;
+        $input.prop('checked', reverseBoolean !== boolValue);
 
         this
             .append(require('./label')(options, lang))

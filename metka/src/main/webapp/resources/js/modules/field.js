@@ -15,23 +15,21 @@ define(function (require) {
         var $elem = this;
 
         function addValidationErrorListener($container, getErrors) {
-            require('./data')(options).onChange(function () {
-                $container.children('.help-block').remove();
-                var errors = getErrors();
-                // TODO: if saving, show warning/warning instead of error/danger
-                if (errors.length) {
-                    $container.addClass('has-error');
-                    var $p = $('<p class="help-block">');
-                    $container.append($p);
-                    //$p.append(require('./dataValidationErrorText')(errors));
-                    require('./dataValidationErrorText')(errors, function(text) {
-                        $p.append(text+"<br>");
-                    });
-                    if(options.horizontal) {
-                        $p.addClass('col-sm-offset-'+(2 * (getPropertyNS(options, 'parent.parent.columns') || 1) / (options.colspan || 1)));
-                    }
+            $container.children('.help-block').remove();
+            var errors = getErrors();
+            // TODO: if saving, show warning/warning instead of error/danger
+            if (errors.length) {
+                $container.addClass('has-error');
+                var $p = $('<p class="help-block">');
+                $container.append($p);
+                //$p.append(require('./dataValidationErrorText')(errors));
+                require('./dataValidationErrorText')(errors, function(text) {
+                    $p.append(text+"<br>");
+                });
+                if(options.horizontal) {
+                    $p.addClass('col-sm-offset-'+(2 * (getPropertyNS(options, 'parent.parent.columns') || 1) / (options.colspan || 1)));
                 }
-            });
+            }
         }
 
         function createInputWrapper(key) {

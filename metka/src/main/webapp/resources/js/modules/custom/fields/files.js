@@ -57,7 +57,7 @@ define(function (require) {
                         }
                     });
                 }
-                /*var $elem = $(this);*/
+
                 var $filesContainer = $('<div>').appendTo(this);
                 var $removedFilesContainer = $('<div>').appendTo(this);
 
@@ -84,8 +84,8 @@ define(function (require) {
                         "displayType": null,
                         "key": "files",
                         "columnFields": [
-                            "filespath",
-                            "fileslang"
+                            "filepath",
+                            "filelanguage"
                         ],
                         onClick: function (transferRow, replaceTr) {
                             view({
@@ -122,7 +122,7 @@ define(function (require) {
                         "key": "files",
                         "displayType": "REFERENCECONTAINER",
                         "columnFields": [
-                            "filespath",
+                            "filepath",
                             "filedescription",
                             "filecomment"
                         ],
@@ -135,29 +135,27 @@ define(function (require) {
                     })
                 });
 
-                require('./../../data')(options).onChange(function () {
-                    $filesContainer.find('tbody').empty();
-                    $removedFilesContainer.find('tbody').empty();
+                $filesContainer.find('tbody').empty();
+                $removedFilesContainer.find('tbody').empty();
 
-                    var rows = require('./../../data')(options).getByLang(options.defaultLang);
-                    if (rows) {
-                        var i = 0;
-                        (function processNextRow() {
-                            if (i < rows.length) {
-                                var transferRow = rows[i++];
-                                require('./../../server')('/references/referenceStatus/{value}', transferRow, {
-                                    method: 'GET',
-                                    success: function (response) {
-                                        if (response.exists) {
-                                            (!response.removed ? $filesContainer : $removedFilesContainer).find('.panel').parent().data('addRow')(transferRow);
-                                        }
-                                        processNextRow();
+                var rows = require('./../../data')(options).getByLang(options.defaultLang);
+                if (rows) {
+                    var i = 0;
+                    (function processNextRow() {
+                        if (i < rows.length) {
+                            var transferRow = rows[i++];
+                            require('./../../server')('/references/referenceStatus/{value}', transferRow, {
+                                method: 'GET',
+                                success: function (response) {
+                                    if (response.exists) {
+                                        (!response.removed ? $filesContainer : $removedFilesContainer).find('.panel').parent().data('addRow')(transferRow);
                                     }
-                                });
-                            }
-                        })(0);
-                    }
-                });
+                                    processNextRow();
+                                }
+                            });
+                        }
+                    })(0);
+                }
             }
         };
     };

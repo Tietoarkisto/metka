@@ -74,6 +74,9 @@ define(function (require) {
                 throw 'Illegal search request';
             })()),
             success: function (data) {
+                if(data.result !== 'OPERATION_SUCCESSFUL') {
+                    require('./resultViewer')(data.result);
+                }
                 var fieldOptions = $.extend(true, options, {
                     buttons: null,
                     dataConf: {

@@ -231,7 +231,7 @@ public class RevisionServiceImpl implements RevisionService {
 
         Pair<ReturnResult, List<RevisionSearchResult>> result = search.search(request);
         response.setResult(result.getLeft());
-        if(result.getLeft() == ReturnResult.SEARCH_SUCCESS) {
+        if(result.getLeft() == ReturnResult.OPERATION_SUCCESSFUL) {
             for(RevisionSearchResult searchResult : result.getRight()) {
                 response.getRows().add(searchResult);
             }
@@ -264,7 +264,7 @@ public class RevisionServiceImpl implements RevisionService {
 
         Pair<ReturnResult, List<RevisionSearchResult>> results = search.collectRevisionHistory(request);
         response.setResult(results.getLeft());
-        if(results.getLeft() == ReturnResult.SEARCH_SUCCESS) {
+        if(results.getLeft() == ReturnResult.OPERATION_SUCCESSFUL) {
             response.getRows().addAll(results.getRight());
         }
         return response;

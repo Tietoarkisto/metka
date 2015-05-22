@@ -36,7 +36,6 @@ public enum ReturnResult {
     TYPE_NOT_VALID_CONFIGURATION_TYPE,  // Given type was not one of defined Configuration types
     APPROVE_FAILED,                     // Approval of the requested revision failed, errors should be marked to their respective fields
     SEARCH_FAILED,                      // Performed search failed
-    SEARCH_SUCCESS,                     // Search was performed successfully
     VIEW_SUCCESSFUL,                    // Some data was requested for viewing, data was gathered successfully
     INCORRECT_TYPE_FOR_OPERATION,       // Operation was requested for a configuration type that is not handled by that operation
     ALL_PARAMETERS_FOUND,               // All required parameters were provided
@@ -52,10 +51,13 @@ public enum ReturnResult {
     WRONG_ROLES,                        // Role(s) the user has don't allow them to perform the requested operation
     REFERENCE_FOUND,                    // Requested reference information was found
     REFERENCE_MISSING,                  // Requested reference information was not found
+    EMPTY_QUERY,                        // Provided query was empty and so it could not be parsed
+    MALFORMED_LANGUAGE,                 // Provided query language parameter is malformed
     MALFORMED_QUERY,                    // Search query (usually expert search) was in some way invalid and could not be parsed to actual query
     PAGE_CREATED,                       // Binder page was created in response to save operation
     PAGE_UPDATED,                       // Binder page was updated
     PAGE_REMOVED,                       // Binder page was removed successfully
     RESTRICTION_VALIDATION_FAILURE,     // Restriction validation encountered a failed validation
-    API_AUTHENTICATION_FAILED          // Authentication in API-method failed
+    API_AUTHENTICATION_FAILED,          // Authentication in API-method failed
+    FILE_ALREADY_EXISTS                // Special failure condition when file move is tried to a location that already contains a file
 }

@@ -37,7 +37,7 @@ public class Condition {
     }
 
     public Condition copy() {
-        Condition condition = new Condition(type, target.copy());
+        Condition condition = new Condition(type, (target != null ? target.copy() : null));
         return condition;
     }
 }

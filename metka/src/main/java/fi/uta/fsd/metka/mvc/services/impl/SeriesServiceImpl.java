@@ -19,7 +19,7 @@ public class SeriesServiceImpl implements SeriesService {
     @Override public SeriesAbbreviationsResponse findAbbreviations() {
         SeriesAbbreviationsResponse response = new SeriesAbbreviationsResponse();
         List<String> list = search.findAbbreviations();
-        response.setResult(list.isEmpty() ? ReturnResult.NO_RESULTS : ReturnResult.SEARCH_SUCCESS);
+        response.setResult(list.isEmpty() ? ReturnResult.NO_RESULTS : ReturnResult.OPERATION_SUCCESSFUL);
         response.getAbbreviations().add(""); // Let's add an empty value as the first value
         for(String string : list) {
             response.getAbbreviations().add(string);
@@ -30,7 +30,7 @@ public class SeriesServiceImpl implements SeriesService {
     @Override public RevisionSearchResponse findNames() {
         RevisionSearchResponse response = new RevisionSearchResponse();
         List<RevisionSearchResult> results = search.findNames();
-        response.setResult(results.isEmpty() ? ReturnResult.NO_RESULTS : ReturnResult.SEARCH_SUCCESS);
+        response.setResult(results.isEmpty() ? ReturnResult.NO_RESULTS : ReturnResult.OPERATION_SUCCESSFUL);
         for(RevisionSearchResult result : results) {
             response.getRows().add(result);
         }

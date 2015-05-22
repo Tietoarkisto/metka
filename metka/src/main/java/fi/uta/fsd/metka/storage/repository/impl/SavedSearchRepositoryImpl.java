@@ -61,7 +61,7 @@ public class SavedSearchRepositoryImpl implements SavedSearchRepository {
     @Override
     public Pair<ReturnResult, SavedExpertSearchItem> getSavedExpertSearch(Long id) {
         SavedExpertSearchEntity entity = em.find(SavedExpertSearchEntity.class, id);
-        return new ImmutablePair<>(entity == null ? ReturnResult.NO_RESULTS : ReturnResult.SEARCH_SUCCESS, formSavedExpertSearchItem(entity));
+        return new ImmutablePair<>(entity == null ? ReturnResult.NO_RESULTS : ReturnResult.OPERATION_SUCCESSFUL, formSavedExpertSearchItem(entity));
     }
 
     private SavedExpertSearchItem formSavedExpertSearchItem(SavedExpertSearchEntity entity) {

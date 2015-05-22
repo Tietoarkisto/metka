@@ -57,8 +57,10 @@ define(function (require) {
                         node.transferRow.removed = true;
                         /*$dirItems($a).remove();
                         $a.remove();*/
-                        // FIXME: this won't trigger refresh anymore
-                        $a.trigger('refresh.metka');
+
+                        if(events) {
+                            events.refresh();
+                        }
                         return false;
                     });
                     $icon.click(function () {

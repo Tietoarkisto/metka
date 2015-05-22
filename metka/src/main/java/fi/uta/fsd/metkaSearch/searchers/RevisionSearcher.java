@@ -42,7 +42,7 @@ public class RevisionSearcher<T extends SearchResult> extends Searcher<T> {
 
     @Override
     public ResultList<T> call() throws Exception {
-        ResultHandler<T> handler = getCommand().getResulHandler();
+        ResultHandler<T> handler = getCommand().getResultHandler();
         if(!getIndexer().exists()) {
             return handler.handle(null, null);
         }

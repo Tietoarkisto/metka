@@ -18,7 +18,7 @@ define(function (require) {
             var isFieldDisabled = require('./../../isFieldDisabled')(options, options.defaultLang);
             var hasChanges;
 
-            require('./../../data')(options).onChange(function () {
+            function onDataChange() {
                 require('./../../preloader')($variables);
                 require('./../../preloader')($groups);
                 hasChanges = false;
@@ -111,6 +111,9 @@ define(function (require) {
                                     nodes.forEach(function (node) {
                                         node.transferRow.removed = true;
                                     });
+                                },
+                                refresh: function() {
+                                    options.$events.trigger('refresh.metka');
                                 }
                             });
 
@@ -126,6 +129,9 @@ define(function (require) {
                                 onChange: function (activeItems) {
                                     transferFromVariables = !!activeItems.length;
                                     setButtonStates();
+                                },
+                                refresh: function() {
+                                    options.$events.trigger('refresh.metka');
                                 }
                             });
 
@@ -142,7 +148,8 @@ define(function (require) {
                         }
                     });
                 }
-            });
+            }
+            onDataChange();
 
             var transferFromVariables;
             var transferToVariables;
@@ -182,7 +189,7 @@ define(function (require) {
             $pane.parent().parent().prev('.nav-tabs').find('a[data-target="#' + $pane.attr('id') + '"]')
                 .on('hide.bs.tab', function () {
                     if (hasChanges) {
-                        options.$events.trigger('dataChanged');
+                        onDataChange();
                     }
                 });
             if (!isFieldDisabled) {

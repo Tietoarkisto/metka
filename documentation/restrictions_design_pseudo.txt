@@ -103,7 +103,7 @@ Check
 --
 
 Condition (pseudo)
-type : [TRUE|NOT_EMPTY|IS_EMPTY|EQUALS|NOT_EQUALS|UNIQUE|INCREASING|DECREASING|FREE_TEXT]
+type : [TRUE|NOT_EMPTY|IS_EMPTY|EQUALS|NOT_EQUALS|UNIQUE|INCREASING|DECREASING|FREE_TEXT|REGEX]
 target : Target
 
 Condition type
@@ -150,8 +150,12 @@ Condition type
 	- If not free text or if field is not SELECTION returns false
 	- Does not need inverse since free text field is automatically emptied if selected value is not free text value
 	- This is a specific check to avoid the need of defining free text values in multiple places.
+* Regex (Target FIELD)
+	- Only applicaple for value fields
+	- Returns true if the value in currently handled field matches the regular expression provided in the VALUE target of this condition
+	- Regular expression must be provided in accompanying VALUE Target or in a FIELD Target in the target property
 
-Target is a target used by some (mainly EQUALS) condition types. Target on condition should never contain any checks or targets of its own. If it's a field then usually it has to be either a top level field or a field within the row currently handled.
+Target is a target used by some (like EQUALS) condition types. Target on condition should never contain any checks or targets of its own. If it's a field then usually it has to be either a top level field or a field within the row currently handled.
 
 ----
 

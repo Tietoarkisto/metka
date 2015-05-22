@@ -225,6 +225,7 @@
 		"file": {
 			"key": "file",
 			"immutable": true,
+			"editable": false,
 			"translatable": false,
             "generalSearch": true,
 			"type": "STRING"
@@ -333,14 +334,6 @@
 		}, {
 			"type": "FIELD",
 			"content": "filelanguage",
-			"checks": [{
-				"condition": {
-					"type": "NOT_EMPTY"
-				}
-			}]
-		}, {
-			"type": "FIELD",
-			"content": "fileno",
 			"checks": [{
 				"condition": {
 					"type": "NOT_EMPTY"

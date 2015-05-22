@@ -126,7 +126,7 @@ define(function (require) {
                 }
             }),
             success: function(response) {
-                if(response.result !== 'SEARCH_SUCCESS' || !response.rows.length || response.rows.length == 0) {
+                if(response.result !== 'OPERATION_SUCCESSFUL' || !response.rows.length || response.rows.length == 0) {
                     error();
                 } else {
                     require('./assignUrl')('view', {

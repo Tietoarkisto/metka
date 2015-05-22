@@ -449,15 +449,13 @@ define(function (require) {
                     $thead.toggleClass("containerHidden", !(!options.field.hasOwnProperty('displayHeader') || options.field.displayHeader));
                 })
                 .append(function () {
-                    require('./data')(options).onChange(function () {
-                        $tbody.empty();
-                        var rows = require('./data')(options).getByLang(lang);
-                        if (rows) {
-                            rows.forEach(function(transferRow) {
-                                appendRow($tbody, transferRow, columns)
-                            });
-                        }
-                    });
+                    $tbody.empty();
+                    var rows = require('./data')(options).getByLang(lang);
+                    if (rows) {
+                        rows.forEach(function(transferRow) {
+                            appendRow($tbody, transferRow, columns)
+                        });
+                    }
                     return $tbody;
                 }))
             .append(function () {

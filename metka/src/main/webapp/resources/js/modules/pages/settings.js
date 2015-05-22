@@ -14,25 +14,19 @@ define(function (require) {
                         key: "dataConfigType_list",
                         type: "VALUE",
                         includeEmpty: true,
-                        options: [
-
-                        ]
+                        options: []
                     },
                     guiConfigType_list: {
                         key: "guiConfigType_list",
                         type: "VALUE",
                         includeEmpty: true,
-                        options: [
-
-                        ]
+                        options: []
                     },
                     jsonKeys_list: {
                         key: "jsonKeys_list",
                         type: "VALUE",
                         includeEmpty: true,
-                        options: [
-
-                        ]
+                        options: []
                     }
                 },
                 references: {
@@ -195,330 +189,283 @@ define(function (require) {
                         "canUploadConfigurations",
                         "canUploadJson"
                     ],
-                    content: [
-                        {
-                            type: "SECTION",
-                            title: "Data konfiguraatiot",
-                            defaultState: "OPEN",
-                            content: [
-                                {
-                                    type: "COLUMN",
-                                    columns: 2,
-                                    rows: [
-                                        {
-                                            type: "ROW",
-                                            cells: [
-                                                {
-                                                    type: "CELL",
-                                                    title: "Tyypit",
-                                                    horizontal: true,
-                                                    field: {
-                                                        key: "dataConfigTypes"
-                                                    },
-                                                    preCreate: function(options) {
-                                                        //var $elem = this.find("select").first().attr("id", "dataConfigTypes");
-
-
-                                                        require('./../server')("/settings/getJsonList/DATA_CONF", {
-                                                            type: "GET",
-                                                            async: false,
-                                                            success: function (response) {
-                                                                response.map(function(entry) {
-                                                                    options.dataConf.selectionLists.dataConfigType_list.options.push({
-                                                                        value: JSON.stringify(entry),
-                                                                        title: entry.title
-                                                                    });
-                                                                });
-                                                            }
-                                                        });
-                                                    }
-                                                },
-                                                {
-                                                    type: "CELL",
-                                                    contentType: "BUTTON",
-                                                    button: {
-                                                        title: "Lataa",
-                                                        create: function(options) {
-                                                            this.click(function() {
-                                                                var data = require('./../data')(options)("dataConfigTypes").getByLang("DEFAULT");
-                                                                if(data) {
-                                                                    require('./../server')("/settings/getJsonContent", {
-                                                                        data: data,
-                                                                        success: function (response) {
-                                                                            require('./../data')(options)("dataConfigText").setByLang("DEFAULT", JSON.stringify(JSON.parse(response), null, 4));
-                                                                        }
-                                                                    });
-                                                                }
-                                                            });
+                    content: [{
+                        type: "SECTION",
+                        title: "Data konfiguraatiot",
+                        defaultState: "OPEN",
+                        content: [{
+                            type: "COLUMN",
+                            columns: 2,
+                            rows: [{
+                                type: "ROW",
+                                cells: [{
+                                    type: "CELL",
+                                    title: "Tyypit",
+                                    horizontal: true,
+                                    field: {
+                                        key: "dataConfigTypes"
+                                    },
+                                    preCreate: function(options) {
+                                        require('./../server')("/settings/getJsonList/DATA_CONF", {
+                                            type: "GET",
+                                            async: false,
+                                            success: function (response) {
+                                                response.map(function(entry) {
+                                                    options.dataConf.selectionLists.dataConfigType_list.options.push({
+                                                        value: JSON.stringify(entry),
+                                                        title: entry.title
+                                                    });
+                                                });
+                                            }
+                                        });
+                                    }
+                                }, {
+                                    type: "CELL",
+                                    contentType: "BUTTON",
+                                    button: {
+                                        title: "Lataa",
+                                        create: function(options) {
+                                            this.click(function() {
+                                                var data = require('./../data')(options)("dataConfigTypes").getByLang("DEFAULT");
+                                                if(data) {
+                                                    require('./../server')("/settings/getJsonContent", {
+                                                        data: data,
+                                                        success: function (response) {
+                                                            require('./../data')(options)("dataConfigText").setByLang("DEFAULT", JSON.stringify(JSON.parse(response), null, 4));
                                                         }
-                                                    }
+                                                    });
                                                 }
-                                            ]
-                                        },
-                                        {
-                                            type: "ROW",
-                                            cells: [
-                                                {
-                                                    type: "CELL",
-                                                    title: "Konfiguraatio",
-                                                    horizontal: true,
-                                                    colspan: 2,
-                                                    field: {
-                                                        key: "dataConfigText",
-                                                        multiline: true
-                                                    },
-                                                    postCreate: function() {
-                                                        this.find("textarea").first().attr("id", "dataConfigTextField").prop("rows", 20);
-                                                    }
-
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            type: "ROW",
-                                            cells: [
-                                                {
-                                                    type: "CELL",
-                                                    contentType: "BUTTON",
-                                                    colspan: 2,
-                                                    button: {
-                                                        title: "Tallenna",
-                                                        create: function() {
-                                                            this.click(function() {
-                                                                var request = {
-                                                                    type: "DATA_CONF",
-                                                                    json: $("#dataConfigTextField").val()
-                                                                };
-                                                                require('./../server')("/settings/uploadJson", {
-                                                                    data: JSON.stringify(request),
-                                                                    success: function (response) {
-                                                                        require('./../resultViewer')(response);
-                                                                    }
-                                                                });
-                                                            });
-                                                        }
-                                                    }
-
-                                                }
-                                            ]
+                                            });
                                         }
-                                    ]
-                                }
-                            ]
-                        },
-                        {
-                            type: "SECTION",
-                            title: "GUI konfiguraatiot",
-                            defaultState: "OPEN",
-                            content: [
-                                {
-                                    type: "COLUMN",
-                                    columns: 2,
-                                    rows: [
-                                        {
-                                            type: "ROW",
-                                            cells: [
-                                                {
-                                                    type: "CELL",
-                                                    title: "Tyypit",
-                                                    horizontal: true,
-                                                    field: {
-                                                        key: "guiConfigTypes"
-                                                    },
-                                                    preCreate: function() {
-                                                        var $elem = this.find("select").first().attr("id", "guiConfigTypes");
+                                    }
+                                }]
+                            }, {
+                                type: "ROW",
+                                cells: [{
+                                    type: "CELL",
+                                    title: "Konfiguraatio",
+                                    horizontal: true,
+                                    colspan: 2,
+                                    field: {
+                                        key: "dataConfigText",
+                                        multiline: true
+                                    },
+                                    postCreate: function() {
+                                        this.find("textarea").first().attr("id", "dataConfigTextField").prop("rows", 20);
+                                    }
 
-
-                                                        require('./../server')("/settings/getJsonList/GUI_CONF", {
-                                                            type: "GET",
-                                                            success: function (response) {
-                                                                $elem.append(response.map(function(entry) {
-                                                                    return $("<option>").data(entry).text(entry.title);
-                                                                }));
-                                                            }
-                                                        });
+                                }]
+                            }, {
+                                type: "ROW",
+                                cells: [{
+                                    type: "CELL",
+                                    contentType: "BUTTON",
+                                    colspan: 2,
+                                    button: {
+                                        title: "Tallenna",
+                                        create: function() {
+                                            this.click(function() {
+                                                var request = {
+                                                    type: "DATA_CONF",
+                                                    json: require('./../data')(options)("dataConfigText").getByLang("DEFAULT")
+                                                };
+                                                require('./../server')("/settings/uploadJson", {
+                                                    data: JSON.stringify(request),
+                                                    success: function (response) {
+                                                        require('./../resultViewer')(response);
                                                     }
-                                                },
-                                                {
-                                                    type: "CELL",
-                                                    contentType: "BUTTON",
-                                                    button: {
-                                                        title: "Lataa",
-                                                        create: function() {
-                                                            this.click(function() {
-                                                                var data = $("#guiConfigTypes").children(":selected").data();
-                                                                if(data) {
-                                                                    require('./../server')("/settings/getJsonContent", {
-                                                                        data: JSON.stringify(data),
-                                                                        success: function (response) {
-                                                                            $("#guiConfigTextField").val(JSON.stringify(JSON.parse(response), null, 4));
-                                                                        }
-                                                                    });
-                                                                }
-                                                            });
-                                                        }
-                                                    }
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            type: "ROW",
-                                            cells: [
-                                                {
-                                                    type: "CELL",
-                                                    title: "Konfiguraatio",
-                                                    horizontal: true,
-                                                    colspan: 2,
-                                                    field: {
-                                                        key: "guiConfigText",
-                                                        multiline: true
-                                                    },
-                                                    postCreate: function() {
-                                                        this.find("textarea").first().attr("id", "guiConfigTextField").prop("rows", 20);
-                                                    }
-
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            type: "ROW",
-                                            cells: [
-                                                {
-                                                    type: "CELL",
-                                                    contentType: "BUTTON",
-                                                    colspan: 2,
-                                                    button: {
-                                                        title: "Tallenna",
-                                                        create: function() {
-                                                            this.click(function() {
-                                                                var request = {
-                                                                    type: "GUI_CONF",
-                                                                    json: $("#guiConfigTextField").val()
-                                                                };
-                                                                require('./../server')("/settings/uploadJson", {
-                                                                    data: JSON.stringify(request),
-                                                                    success: function (response) {
-                                                                        require('./../resultViewer')(response);
-                                                                    }
-                                                                });
-                                                            });
-                                                        }
-                                                    }
-
-                                                }
-                                            ]
+                                                });
+                                            });
                                         }
-                                    ]
-                                }
-                            ]
-                        },
-                        {
-                            type: "SECTION",
-                            title: "JSON",
-                            defaultState: "OPEN",
-                            content: [
-                                {
-                                    type: "COLUMN",
-                                    columns: 2,
-                                    rows: [
-                                        {
-                                            type: "ROW",
-                                            cells: [
-                                                {
-                                                    type: "CELL",
-                                                    title: "Avaimet",
-                                                    horizontal: true,
-                                                    field: {
-                                                        key: "jsonKeys"
-                                                    },
-                                                    preCreate: function() {
-                                                        var $elem = this.find("select").first().attr("id", "jsonKeys");
-                                                        require('./../server')("/settings/getJsonList/MISC", {
-                                                            type: "GET",
-                                                            success: function (response) {
-                                                                $elem.append(response.map(function(entry) {
-                                                                    return $("<option>").data(entry).text(entry.title);
-                                                                }));
-                                                            }
-                                                        });
-                                                    }
-                                                },
-                                                {
-                                                    type: "CELL",
-                                                    contentType: "BUTTON",
-                                                    button: {
-                                                        title: "Lataa",
-                                                        create: function() {
-                                                            this.click(function() {
-                                                                var data = $("#jsonKeys").children(":selected").data();
-                                                                if(data) {
-                                                                    require('./../server')("/settings/getJsonContent", {
-                                                                        data: JSON.stringify(data),
-                                                                        success: function (response) {
-                                                                            $("#jsonTextField").val(JSON.stringify(JSON.parse(response), null, 4));
-                                                                        }
-                                                                    });
-                                                                }
-                                                            });
+                                    }
+                                }]
+                            }]
+                        }]
+                    }, {
+                        type: "SECTION",
+                        title: "GUI konfiguraatiot",
+                        defaultState: "OPEN",
+                        content: [{
+                            type: "COLUMN",
+                            columns: 2,
+                            rows: [{
+                                type: "ROW",
+                                cells: [{
+                                    type: "CELL",
+                                    title: "Tyypit",
+                                    horizontal: true,
+                                    field: {
+                                        key: "guiConfigTypes"
+                                    },
+                                    preCreate: function(options) {
+                                        require('./../server')("/settings/getJsonList/GUI_CONF", {
+                                            type: "GET",
+                                            async: false,
+                                            success: function (response) {
+                                                response.map(function(entry) {
+                                                    options.dataConf.selectionLists.guiConfigType_list.options.push({
+                                                        value: JSON.stringify(entry),
+                                                        title: entry.title
+                                                    });
+                                                });
+                                            }
+                                        });
+                                    }
+                                }, {
+                                    type: "CELL",
+                                    contentType: "BUTTON",
+                                    button: {
+                                        title: "Lataa",
+                                        create: function(options) {
+                                            this.click(function() {
+                                                var data = require('./../data')(options)("guiConfigTypes").getByLang("DEFAULT");
+                                                if(data) {
+                                                    require('./../server')("/settings/getJsonContent", {
+                                                        data: data,
+                                                        success: function (response) {
+                                                            require('./../data')(options)("guiConfigText").setByLang("DEFAULT", JSON.stringify(JSON.parse(response), null, 4));
                                                         }
-                                                    }
+                                                    });
                                                 }
-                                            ]
-                                        },
-                                        {
-                                            type: "ROW",
-                                            cells: [
-                                                {
-                                                    type: "CELL",
-                                                    title: "JSON",
-                                                    horizontal: true,
-                                                    colspan: 2,
-                                                    field: {
-                                                        key: "jsonText",
-                                                        multiline: true
-                                                    },
-                                                    postCreate: function() {
-                                                        this.find("textarea").first().attr("id", "jsonTextField").prop("rows", 20);
-                                                    }
-
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            type: "ROW",
-                                            cells: [
-                                                {
-                                                    type: "CELL",
-                                                    contentType: "BUTTON",
-                                                    colspan: 2,
-                                                    button: {
-                                                        title: "Tallenna",
-                                                        create: function() {
-                                                            this.click(function() {
-                                                                var request = {
-                                                                    type: "MISC",
-                                                                    json: $("#jsonTextField").val()
-                                                                };
-                                                                require('./../server')("/settings/uploadJson", {
-                                                                    data: JSON.stringify(request),
-                                                                    success: function (response) {
-                                                                        require('./../resultViewer')(response);
-                                                                    }
-                                                                });
-                                                            });
-                                                        }
-                                                    }
-
-                                                }
-                                            ]
+                                            });
                                         }
-                                    ]
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
+                                    }
+                                }]
+                            }, {
+                                type: "ROW",
+                                cells: [{
+                                    type: "CELL",
+                                    title: "Konfiguraatio",
+                                    horizontal: true,
+                                    colspan: 2,
+                                    field: {
+                                        key: "guiConfigText",
+                                        multiline: true
+                                    },
+                                    postCreate: function() {
+                                        this.find("textarea").first().attr("id", "guiConfigTextField").prop("rows", 20);
+                                    }
+                                }]
+                            }, {
+                                type: "ROW",
+                                cells: [{
+                                    type: "CELL",
+                                    contentType: "BUTTON",
+                                    colspan: 2,
+                                    button: {
+                                        title: "Tallenna",
+                                        create: function() {
+                                            this.click(function() {
+                                                var request = {
+                                                    type: "GUI_CONF",
+                                                    json: require('./../data')(options)("guiConfigText").getByLang("DEFAULT")
+                                                };
+                                                require('./../server')("/settings/uploadJson", {
+                                                    data: JSON.stringify(request),
+                                                    success: function (response) {
+                                                        require('./../resultViewer')(response);
+                                                    }
+                                                });
+                                            });
+                                        }
+                                    }
+                                }]
+                            }]
+                        }]
+                    }, {
+                        type: "SECTION",
+                        title: "JSON",
+                        defaultState: "OPEN",
+                        content: [{
+                            type: "COLUMN",
+                            columns: 2,
+                            rows: [{
+                                type: "ROW",
+                                cells: [{
+                                    type: "CELL",
+                                    title: "Avaimet",
+                                    horizontal: true,
+                                    field: {
+                                        key: "jsonKeys"
+                                    },
+                                    preCreate: function(options) {
+                                        require('./../server')("/settings/getJsonList/MISC", {
+                                            type: "GET",
+                                            async: false,
+                                            success: function (response) {
+                                                response.map(function(entry) {
+                                                    options.dataConf.selectionLists.jsonKeys_list.options.push({
+                                                        value: JSON.stringify(entry),
+                                                        title: entry.title
+                                                    });
+                                                });
+                                            }
+                                        });
+                                    }
+                                }, {
+                                    type: "CELL",
+                                    contentType: "BUTTON",
+                                    button: {
+                                        title: "Lataa",
+                                        create: function(options) {
+                                            this.click(function() {
+                                                var data = require('./../data')(options)("jsonKeys").getByLang("DEFAULT");
+                                                if(data) {
+                                                    require('./../server')("/settings/getJsonContent", {
+                                                        data: data,
+                                                        success: function (response) {
+                                                            require('./../data')(options)("jsonText").setByLang("DEFAULT", JSON.stringify(JSON.parse(response), null, 4));
+                                                        }
+                                                    });
+                                                }
+                                            });
+                                        }
+                                    }
+                                }]
+                            }, {
+                                type: "ROW",
+                                cells: [{
+                                    type: "CELL",
+                                    title: "JSON",
+                                    horizontal: true,
+                                    colspan: 2,
+                                    field: {
+                                        key: "jsonText",
+                                        multiline: true
+                                    },
+                                    postCreate: function() {
+                                        this.find("textarea").first().attr("id", "jsonTextField").prop("rows", 20);
+                                    }
+
+                                }]
+                            }, {
+                                type: "ROW",
+                                cells: [{
+                                    type: "CELL",
+                                    contentType: "BUTTON",
+                                    colspan: 2,
+                                    button: {
+                                        title: "Tallenna",
+                                        create: function() {
+                                            this.click(function() {
+                                                var request = {
+                                                    type: "MISC",
+                                                    json: require('./../data')(options)("jsonText").getByLang("DEFAULT")
+                                                };
+                                                require('./../server')("/settings/uploadJson", {
+                                                    data: JSON.stringify(request),
+                                                    success: function (response) {
+                                                        require('./../resultViewer')(response);
+                                                    }
+                                                });
+                                            });
+                                        }
+                                    }
+                                }]
+                            }]
+                        }]
+                    }]
+                }, {
                     type: "TAB",
                     title: "Konfiguraatioeditori",
                     permissions: [

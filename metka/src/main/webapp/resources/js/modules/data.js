@@ -95,13 +95,6 @@ define(function (require) {
 
                 //onModified();
             };
-            byFieldKey.onChange = function (callback) {
-                callback();
-                if (options.$events) {
-                    // TODO: välitä data tai errors callbackille, koska se lähes aina tarvitsee jotain
-                    options.$events.on('dataChanged', callback);
-                }
-            };
 
             return byFieldKey;
         }

@@ -41,5 +41,5 @@ public interface SearchCommand<T extends SearchResult> {
      * a sensible ResultList from them.
      * @return
      */
-    public ResultHandler<T> getResulHandler();
+    public ResultHandler<T> getResultHandler();
 }

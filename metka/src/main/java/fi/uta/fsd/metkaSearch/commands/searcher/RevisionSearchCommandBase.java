@@ -80,11 +80,6 @@ public abstract class RevisionSearchCommandBase<T extends SearchResult> extends 
         return analyzer;
     }
 
-    /*@Override
-    public ResultHandler<T> getResulHandler() {
-        return new BasicRevisionSearchResultHandler();
-    }*/
-
     protected static class BasicRevisionSearchResultHandler implements ResultHandler<RevisionResult> {
         public BasicRevisionSearchResultHandler() {}
 

@@ -35,12 +35,10 @@ define(function (require) {
                 this.data('DateTimePicker').disable();
             })
             .me(function () {
-                require('./data')(options).onChange(function () {
-                    var date = require('./data')(options).getByLang(lang);
-                    if (date) {
-                        this.data('DateTimePicker').setDate(date);
-                    }
-                }.bind(this));
+                var date = require('./data')(options).getByLang(lang);
+                if (date) {
+                    this.data('DateTimePicker').setDate(date);
+                }
             });
         function setValue(e) {
             require('./data')(options).setByLang(lang, moment(e.date).format(dataFormat));

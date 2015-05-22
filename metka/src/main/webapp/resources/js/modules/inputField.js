@@ -72,10 +72,9 @@ define(function (require) {
                     return $input;
                 }
             })();
-            require('./data')(options).onChange(function () {
-                $content
-                    .html(require('./data')(options).getByLang(lang) || '');
-            });
+
+            $content.html(require('./data')(options).getByLang(lang) || '');
+
         } else {
             var nodeType = (function () {
                 if (isSelection) {
@@ -126,45 +125,35 @@ define(function (require) {
                 } else {
                     // textarea or input elements
 
-                    require('./data')(options).onChange(function () {
-                        function setReferenceValue() {
+                    var changeTriggerKey = 'data-changed-{key}-{lang}'.supplant({
+                        key: options.fieldOptions.key,
+                        lang: lang
+                    });
+
+                    if (type === 'REFERENCE') {
+                        var reference = getPropertyNS(options, 'dataConf.references', options.fieldOptions.reference);
+                        changeTriggerKey = 'data-changed-{key}-{lang}'.supplant({
+                            key: reference.target,
+                            lang: lang
+                        });
+                        options.$events.on(changeTriggerKey, function() {
                             require('./reference').optionByPath(key, options, lang, function (value) {
                                 $input.val(value);
                             })(options.data.fields, reference);
-                        }
-
-                        function setConcatValue() {
+                        });
+                        // TODO: setRefereneValue call is not necessary, if target is select input. select input triggers change event
+                    } else if(type === 'CONCAT') {
+                        options.$events.on(changeTriggerKey, function() {
                             $input.val(options.fieldOptions.concatenate.map(function (key) {
                                 return require('./data')(options)(key).getByLang(lang);
                             }).join(''));
-                        }
-
-                        function setSimpleValue() {
+                        });
+                    } else {
+                        options.$events.on(changeTriggerKey, function() {
                             $input.val(require('./data')(options).getByLang(lang) || '');
-                        }
-
-                        if (type === 'REFERENCE') {
-                            var reference = getPropertyNS(options, 'dataConf.references', options.fieldOptions.reference);
-                            options.$events.on('data-changed-{key}-{lang}'.supplant({
-                                key: reference.target,
-                                lang: lang
-                            }), setReferenceValue);
-                            // TODO: setRefereneValue call is not necessary, if target is select input. select input triggers change event
-                            setReferenceValue();
-                        } else if(type === 'CONCAT') {
-                            options.$events.on('data-changed-{key}-{lang}'.supplant({
-                                key: options.fieldOptions.key,
-                                lang: lang
-                            }), setConcatValue);
-                            setConcatValue();
-                        } else {
-                            options.$events.on('data-changed-{key}-{lang}'.supplant({
-                                key: options.fieldOptions.key,
-                                lang: lang
-                            }), setSimpleValue);
-                            setSimpleValue();
-                        }
-                    });
+                        });
+                    }
+                    options.$events.trigger(changeTriggerKey);
                 }
             }
         }

@@ -82,7 +82,7 @@ public class StudyServiceImpl implements StudyService {
 
         Pair<ReturnResult, List<RevisionSearchResult>> results = search.collectAttachmentHistory(transferData.getKey().getId());
         response.setResult(results.getLeft());
-        if(results.getLeft() == ReturnResult.SEARCH_SUCCESS) {
+        if(results.getLeft() == ReturnResult.OPERATION_SUCCESSFUL) {
             response.getRows().addAll(results.getRight());
         }
         return response;

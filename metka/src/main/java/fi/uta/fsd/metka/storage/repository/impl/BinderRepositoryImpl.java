@@ -89,7 +89,7 @@ public class BinderRepositoryImpl implements BinderRepository {
             page.setDescription(entity.getDescription());
             pages.add(page);
         }
-        return new ImmutablePair<>(pages.isEmpty() ? ReturnResult.NO_RESULTS : ReturnResult.SEARCH_SUCCESS, pages);
+        return new ImmutablePair<>(pages.isEmpty() ? ReturnResult.NO_RESULTS : ReturnResult.OPERATION_SUCCESSFUL, pages);
     }
 
     @Override
@@ -125,7 +125,7 @@ public class BinderRepositoryImpl implements BinderRepository {
             }
             pages.add(formPageListEntry(pair.getRight(), entity));
         }
-        return new ImmutablePair<>(pages.isEmpty() ? ReturnResult.NO_RESULTS : ReturnResult.SEARCH_SUCCESS, pages);
+        return new ImmutablePair<>(pages.isEmpty() ? ReturnResult.NO_RESULTS : ReturnResult.OPERATION_SUCCESSFUL, pages);
     }
 
     private BinderPageListEntry formPageListEntry(RevisionData study, BinderPageEntity page) {

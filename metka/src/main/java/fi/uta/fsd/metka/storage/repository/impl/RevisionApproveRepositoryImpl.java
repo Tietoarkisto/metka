@@ -102,7 +102,10 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             }
 
             // Do final operations before saving data to
-            finalizeApproval(data, info);
+            result = finalizeApproval(data, info);
+            if(result != ReturnResult.OPERATION_SUCCESSFUL) {
+                return new ImmutablePair<>(result, transferData);
+            }
 
             data.setState(RevisionState.APPROVED);
             data.setHandler("");
@@ -246,16 +249,14 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
      * These operations should be such that they can not fail and that they can not affect any other data.
      * @param revision    RevisionData to be finalized
      */
-    private void finalizeApproval(RevisionData revision, DateTimeUserPair info) {
+    private ReturnResult finalizeApproval(RevisionData revision, DateTimeUserPair info) {
         switch(revision.getConfiguration().getType()) {
             case STUDY:
-                finalizeStudyApproval(revision);
-                break;
+                return finalizeStudyApproval(revision);
             case STUDY_ATTACHMENT:
-                finalizeStudyAttachmentApproval(revision, info);
-                break;
+                return finalizeStudyAttachmentApproval(revision, info);
             default:
-                break;
+                return ReturnResult.OPERATION_SUCCESSFUL;
         }
     }
 
@@ -264,7 +265,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
      * that approval time to aipcomplete for that language;
      * @param revision    RevisionData to be finalized
      */
-    private void finalizeStudyApproval(RevisionData revision) {
+    private ReturnResult finalizeStudyApproval(RevisionData revision) {
         Pair<StatusCode, ValueDataField> aipcompletePair = revision.dataField(ValueDataFieldCall.get("aipcomplete"));
         for(Language language : Language.values()) {
             if(revision.isApprovedFor(language)) {
@@ -277,6 +278,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
                 }
             }
         }
+        return ReturnResult.OPERATION_SUCCESSFUL;
     }
 
     /**
@@ -285,7 +287,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
      *
      * @param revision
      */
-    private void finalizeStudyAttachmentApproval(RevisionData revision, DateTimeUserPair info) {
+    private ReturnResult finalizeStudyAttachmentApproval(RevisionData revision, DateTimeUserPair info) {
         // From this point onwards we can assume that all relevant fields have values since we can't be here without approved values
         String pathFromRoot = "/";
 
@@ -294,7 +296,8 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
 
         if(fileDirectory.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
             logger.error("Could not find revisionable when fetching file root for study in attachment "+revision.toString());
-            return;
+
+            return fileDirectory.getLeft();
         }
 
         String pathRoot = fileDirectory.getRight();
@@ -304,7 +307,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
         String fileName = FilenameUtils.getName(pathField.getActualValueFor(Language.DEFAULT));
 
         // If path current differs from path original then we need to move the file
-        boolean requiresMove = !pathField.currentForEqualsOriginal(Language.DEFAULT);
+        boolean requiresMove = pathField.hasCurrentFor(Language.DEFAULT) && !pathField.currentForEqualsOriginal(Language.DEFAULT);
 
         String origValue = revision.dataField(ValueDataFieldCall.get("fileoriginal")).getRight().getActualValueFor(Language.DEFAULT);
         boolean origLocation = origValue.equals("1");
@@ -338,19 +341,10 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
                 requiresMove = true;
             }
         }
-        try {
-            // If we need to move the file then try to move the file
-            if(requiresMove) {
-                FileUtils.moveFileToDirectory(new File(pathField.getActualValueFor(Language.DEFAULT)), new File(destLoc), true);
-                revision.dataField(ValueDataFieldCall.set("file", new Value(destLoc+fileName), Language.DEFAULT).setInfo(info));
-            }
-        } catch(IOException ioe) {
-            logger.error("IOException when trying to move file from "+pathField.getActualValueFor(Language.DEFAULT)+" to "+destLoc, ioe);
-        }
 
         ValueDataField filedip = revision.dataField(ValueDataFieldCall.get("filedip")).getRight();
 
-        if(!filedip.getActualValueFor(Language.DEFAULT).equals("2")) {
+        if(filedip == null || !filedip.getActualValueFor(Language.DEFAULT).equals("2")) {
             // User has selected something else than 'No' as the filedip value, check if this is valid and correct if not
             boolean fixdip = false;
             if(origLocation) {
@@ -380,6 +374,19 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
                 revision.dataField(ValueDataFieldCall.set("filedip", new Value("2"), Language.DEFAULT).setInfo(info));
             }
         }
+
+        try {
+            // If we need to move the file then try to move the file
+            if(requiresMove) {
+                FileUtils.moveFileToDirectory(new File(pathField.getActualValueFor(Language.DEFAULT)), new File(destLoc), true);
+                revision.dataField(ValueDataFieldCall.set("file", new Value(destLoc+fileName), Language.DEFAULT).setInfo(info));
+            }
+        } catch(IOException ioe) {
+            logger.error("IOException when trying to move file from "+pathField.getActualValueFor(Language.DEFAULT)+" to "+destLoc, ioe);
+            return ReturnResult.FILE_ALREADY_EXISTS;
+        }
+
+        return ReturnResult.OPERATION_SUCCESSFUL;
     }
 
     /**

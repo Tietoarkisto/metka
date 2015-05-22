@@ -87,6 +87,18 @@
 	  "title": "ERROR",
 	  "text": "Revision hyväksyminen epäonnistui"
 	}, {
+	  "key": "EMPTY_QUERY",
+	  "title": "ERROR",
+	  "text": "Tyhjä hakulause, hakulausetta ei voida käsitellä"
+	}, {
+	  "key": "MALFORMED_LANGUAGE",
+	  "title": "ERROR",
+	  "text": "Hakulauseen kieliparametri on muotoiltu väärin, hakulausetta ei voida käsitellä"
+	}, {
+	  "key": "MALFORMED_QUERY",
+	  "title": "ERROR",
+	  "text": "Hakulauseessa on virheitä, hakulausetta ei voida käsitellä"
+	}, {
 	  "key": "",
 	  "title": "",
 	  "text": ""

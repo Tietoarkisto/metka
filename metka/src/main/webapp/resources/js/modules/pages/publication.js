@@ -281,16 +281,6 @@ define(function (require) {
                                     ],
                                     null,
                                     options),
-                                /*{
-                                 "&title": {
-                                 "default": "Tyhjennä"
-                                 },
-                                 create: function () {
-                                 this.click(function () {
-                                 log('TODO: tyhjennä lomake')
-                                 });
-                                 }
-                                 },*/
                                 {
                                     "&title": {
                                         "default": "Lisää uusi"

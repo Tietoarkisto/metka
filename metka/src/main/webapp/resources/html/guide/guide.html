@@ -990,6 +990,15 @@ DDI importin tekemisen ehdot:<br>
   <li>Aineiston, jolle import tehdään, täytyy
 olla muokattavana käyttäjällä<strong></strong>, kts <a href="K%C3%A4ytt%C3%B6ohjeiden%20sis%C3%A4llysluettelo.html#Revisioitavien%20objektien%20haltuunotto%20ja%20vapauttaminen">Revisioitavien objektien haltuunotto ja vapauttaminen</a>.</li>
 </ul>
+
+DDI import: Sisältöön liittyvät erityisehdot ja mitä tietoja tuodaan:<br>
+<ul>
+    <li>Kuvailu-välilehden tietojen tuontia varten välilehden tulee olla tyhjä.</li>
+    <li>DDI:stä tuodaan kuvailutietoja vain suomenkielelle.</li>
+    <li>Tekijöistä listataan ensin henkilötekijät ja sitten organisaatiotekijät.</li>
+    <li>Pudotusvalikkojen tiedot tuodaan yleensä tekstin perusteella koska DDI ei sisällä järjestelmän käyttämiä arvoja. Näissä tapauksissa käytetään aina ensimmäistä vastaantullutta sopivaa tekstiä.<br>Jos esimerkiksi kahdella organisaatiolla on sama nimi niin valitaan listalla ensin vastaan tuleva organisaatio.</li>
+</ul>
+
 Tee aineistolle DDI 2.5 import:<br>
 
 <ol>
@@ -1954,7 +1963,7 @@ liittyy. Se määrittelee datan tyypit sekä validointisäännöt sekä
 pudotusvalikkojen tietosisällön. </li>
   <li>GUI konfiguraatio miltä dataa järjestelmän lomakkeilla näytetään
 käyttäjille. Se kuvaa missä järjestyksessä data esitetään, miten se
-muotoillaan sekä datan käännöstiedot.</li>
+muotoillaan ja millä nimellä se käyttäjälle näytetään.</li>
   <li>JSON määrittelyt sisältävät esim. sanalistoja ja
 organisaatiolistoja, joita käytetään viittaamalla niihin data
 konfiguraation tiedostoissa.</li>
@@ -1997,46 +2006,37 @@ attribuutin arvoa yhdellä.</li>
 <h1>Muokkaa data konfiguraatiota JSON muodossa<br>
 </h1>
 
-<h2>Hae ja avaa data konfiguraatio JSON muodossa<br>
-</h2>
+JSON-muotoisen konfiguraation muokkaaminen on Admin ominaisuus jonka dokumentaatio löytyy mm. UML-kaavioista<br>
+Tällä käyttöliittymällä voit:<br>
+<ul>
+    <li>Listata järjestelmästä löytyvät data konfiguraatiot</li>
+    <li>Ladata katseltavaksi ja muokattavaksi tietyn konfiguraation</li>
+    <li>Muokata JSON-muotoista konfiguraatiota tekstikentän kautta</li>
+    <li>Tallentaa muuttuneen konfiguraation järjestelmään jonka jälkeen uusi konfiguraatio on heti käytössä</li>
+</ul>
 
-Hae ja avaa data konfiguraatio JSON muodossa:<br>
+<h1>Muokkaa GUI konfiguratiota</h1>
 
-<ol>
+JSON-muotoisen konfiguraation muokkaaminen on Admin ominaisuus jonka dokumentaatio löytyy mm. UML-kaavioista<br>
+Tällä käyttöliittymällä voit:<br>
+<ul>
+    <li>Listata järjestelmästä löytyvät käyttöliittymä (GUI) konfiguraatiot</li>
+    <li>Ladata katseltavaksi ja muokattavaksi tietyn konfiguraation</li>
+    <li>Muokata JSON-muotoista konfiguraatiota tekstikentän kautta</li>
+    <li>Tallentaa muuttuneen konfiguraation järjestelmään jonka jälkeen uusi konfiguraatio on heti käytössä</li>
+</ul>
 
-  <li>Valitse <strong>Asetukset</strong> &gt; <strong>Konfiguraatiotiedostot</strong>
-&gt; <strong>Data konfiguraatiot</strong>.</li>
-  <li>Valitse avattava data konfiguraatio <strong>Tyypit</strong>
-alasvetovalikosta.</li>
-  <li>Valitse <strong>Lataa</strong>.</li>
-  <li>Avaa <strong>&gt;</strong> painikkeiden avulla hierarkkisesta
-objektirakenteesta esiin haluttu kohta. <br>
-  </li>
-</ol>
+<h1>Muokkaa JSON määrittelyjä<br>
+</h1>
 
-<h2>Etsi tietoja data konfiguraatiosta<br>
-</h2>
-
-Etsi tietoja data konfiguraatiosta: <br>
-
-<ol>
-
-  <li>Hae ja avaa data konfiguraatio JSON muodossa.</li>
-  <li>Käytä selaimen etsi toimintoa.</li>
-</ol>
-
-<h2>Muokkaa data konfiguraatiota JSON muodossa</h2>
-
-Muokkaa data konfiguraatiota JSON muodossa: <br>
-
-<ol>
-
-  <li>Hae ja avaa data konfiguraatio JSON muodossa.</li>
-  <li>Tee tarvittavat muutokset suoraan kenttään <strong>Konfiguraatio</strong>
-tai liitä kenttään jossain muualla muokattu teksti.</li>
-  <li>Valitse <strong>Tallenna</strong>. Muutokset ovat välittömästi
-voimassa.</li>
-</ol>
+JSON-määrittelyn muokkaaminen on Admin ominaisuus jonka dokumentaatio löytyy mm. UML-kaavioista<br>
+Tällä käyttöliittymällä voit:<br>
+<ul>
+    <li>Listata järjestelmästä löytyvät JSON-määrittelyt</li>
+    <li>Ladata katseltavaksi ja muokattavaksi tietyn JSON-tiedoston</li>
+    <li>Muokata JSON-tiedostoa tekstikentän kautta</li>
+    <li>Tallentaa muuttuneen JSON-tiedoston järjestelmään jonka jälkeen uusi JSON-määrittely on heti käytössä</li>
+</ul>
 
 <h1>Muokkaa data konfiguraatiota konfiguraatioeditorissa</h1>
 
@@ -2106,89 +2106,6 @@ Poista JSON objekti data konfiguraatiosta konfiguraatioeditorissa:<br>
 valinta pois.</li>
   <li>Valitse uudelleen <strong>Properties</strong>, jotta
 alasvetovalikko sulkeutuu. </li>
-  <li>Valitse <strong>Tallenna</strong>. Muutokset ovat välittömästi
-voimassa.</li>
-</ol>
-
-<h1>Muokkaa GUI konfiguratiota</h1>
-
-<h2>Hae ja avaa GUI konfiguraatio JSON muodossa<br>
-</h2>
-
-Hae ja avaa GUI konfiguraatio JSON muodossa:<br>
-
-<ol>
-
-  <li>Valitse <strong>Asetukset</strong> &gt; <strong>Konfiguraatiotiedostot</strong>
-&gt; <span style="font-weight: bold;">GUI</span><strong> konfiguraatiot</strong>.</li>
-  <li>Valitse avattava GUI konfiguraatio <strong>Tyypit</strong>
-alasvetovalikosta.</li>
-  <li>Valitse <strong>Lataa</strong>.</li>
-</ol>
-
-<h2>Etsi tietoja GUI konfiguraatiosta<br>
-</h2>
-
-Etsi tietoja GUI konfiguraatiosta: <br>
-
-<ol>
-
-  <li>Hae ja avaa GUI konfiguraatio JSON muodossa.</li>
-  <li>Käytä selaimen etsi toimintoa.</li>
-</ol>
-
-<h2>Muokkaa GUI konfiguraatiota JSON muodossa</h2>
-
-Muokkaa GUI konfiguraatiota JSON muodossa: <br>
-
-<ol>
-
-  <li>Hae ja avaa GUI konfiguraatio JSON muodossa.</li>
-  <li>Tee tarvittavat muutokset suoraan kenttään <strong>Konfiguraatio</strong>
-tai liitä kenttään jossain muualla muokattu teksti.</li>
-  <li>Valitse <strong>Tallenna</strong>. Muutokset ovat välittömästi
-voimassa.</li>
-</ol>
-
-<h1>Muokkaa JSON määrittelyjä<br>
-</h1>
-
-<h2>Hae ja avaa JSON määrittely<br>
-</h2>
-
-Hae ja avaa JSON määrittely:<br>
-
-<ol>
-
-  <li>Valitse <strong>Asetukset</strong> &gt; <strong>Konfiguraatiotiedostot</strong>
-&gt; <strong>JSON</strong>.</li>
-  <li>Valitse avattava JSON määrittely <strong>Tyypit</strong>
-alasvetovalikosta.</li>
-  <li>Valitse <strong>Lataa</strong>.</li>
-</ol>
-
-<h2>Etsi tietoja JSON määrittelystä</h2>
-
-<h2>
-</h2>
-
-Etsi tietoja JSON määrittelystä: <br>
-
-<ol>
-
-  <li>Hae ja avaa JSON määrittely.</li>
-  <li>Käytä selaimen etsi toimintoa.</li>
-</ol>
-
-<h2>Muokkaa JSON määrittelyä</h2>
-
-Muokkaa JSON määrittelyä: <br>
-
-<ol>
-
-  <li>Hae ja avaa JSON määrittely.</li>
-  <li>Tee tarvittavat muutokset suoraan kenttään <strong>Konfiguraatio</strong>
-tai liitä kenttään jossain muualla muokattu teksti.</li>
   <li>Valitse <strong>Tallenna</strong>. Muutokset ovat välittömästi
 voimassa.</li>
 </ol>

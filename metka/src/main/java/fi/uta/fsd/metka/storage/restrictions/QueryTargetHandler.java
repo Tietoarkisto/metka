@@ -11,7 +11,6 @@ import fi.uta.fsd.metkaSearch.commands.searcher.expert.ExpertRevisionSearchComma
 import fi.uta.fsd.metkaSearch.results.ListBasedResultList;
 import fi.uta.fsd.metkaSearch.results.ResultList;
 import fi.uta.fsd.metkaSearch.results.SearchResult;
-import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 
 class QueryTargetHandler {
@@ -35,9 +34,6 @@ class QueryTargetHandler {
             return searcher.executeSearch(ExpertRevisionSearchCommand.build(query, configuration));
         } catch (QueryNodeException qne) {
             Logger.error(QueryTargetHandler.class, "Exception while performing query: " + query);
-            return new ListBasedResultList<>(ResultList.ResultType.REVISION);
-        } catch (ParseException pe) {
-            Logger.error(QueryTargetHandler.class, "Exception while performing query: "+query);
             return new ListBasedResultList<>(ResultList.ResultType.REVISION);
         }
     }

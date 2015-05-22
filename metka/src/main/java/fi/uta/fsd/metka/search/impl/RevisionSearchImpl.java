@@ -26,7 +26,6 @@ import fi.uta.fsd.metkaSearch.results.RevisionResult;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,7 +91,7 @@ public class RevisionSearchImpl implements RevisionSearch {
             }
         }
 
-        return new ImmutablePair<>(results.isEmpty() ? ReturnResult.NO_RESULTS : ReturnResult.SEARCH_SUCCESS, results);
+        return new ImmutablePair<>(results.isEmpty() ? ReturnResult.NO_RESULTS : ReturnResult.OPERATION_SUCCESSFUL, results);
     }
 
     @Override
@@ -259,13 +258,10 @@ public class RevisionSearchImpl implements RevisionSearch {
         try {
             ExpertRevisionSearchCommand command = ExpertRevisionSearchCommand.build(request, configPair.getRight());
             ResultList<RevisionResult> results = searcher.executeSearch(command);
-            return new ImmutablePair<>(ReturnResult.SEARCH_SUCCESS, collectResults(results, request));
+            return new ImmutablePair<>(ReturnResult.OPERATION_SUCCESSFUL, collectResults(results, request));
         } catch(QueryNodeException qne) {
             // Couldn't form query command
             logger.error("Exception while performing basic series search:", qne);
-            return new ImmutablePair<>(ReturnResult.SEARCH_FAILED, null);
-        } catch(ParseException pe) {
-            logger.error("Exception while performing basic series search:", pe);
             return new ImmutablePair<>(ReturnResult.SEARCH_FAILED, null);
         }
     }

@@ -17,10 +17,11 @@ import fi.uta.fsd.metkaSearch.results.RevisionResult;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.lucene.document.FieldType;
-import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
+import org.apache.lucene.queryparser.flexible.messages.MessageImpl;
 import org.apache.lucene.queryparser.flexible.standard.StandardQueryParser;
 import org.apache.lucene.queryparser.flexible.standard.config.NumericConfig;
+import org.apache.lucene.queryparser.flexible.standard.parser.ParseException;
 import org.apache.lucene.search.*;
 import org.apache.lucene.search.spans.SpanQuery;
 import org.springframework.util.StringUtils;
@@ -35,8 +36,10 @@ import static fi.uta.fsd.metka.enums.FieldType.INTEGER;
 import static fi.uta.fsd.metka.enums.FieldType.REAL;
 
 public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<RevisionResult> {
+    private final static String LANG_TOKE = "lang";
+
     public static ExpertRevisionSearchCommand build(RevisionSearchRequest request, Configuration configuration)
-            throws UnsupportedOperationException, QueryNodeException, ParseException {
+            throws UnsupportedOperationException, QueryNodeException {
         List<String> qrys = new ArrayList<>();
 
         qrys.add(((!request.isSearchApproved())?"+":"")+"state.approved:"+request.isSearchApproved());
@@ -63,7 +66,7 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
     }
 
     public static ExpertRevisionSearchCommand build(String qry, ConfigurationRepository configurations)
-            throws UnsupportedOperationException, QueryNodeException, ParseException {
+            throws UnsupportedOperationException, QueryNodeException {
         if(!StringUtils.hasText(qry)) {
             throw new UnsupportedOperationException("Query string was empty, can't form expert query");
         }
@@ -73,7 +76,7 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
     }
 
     public static ExpertRevisionSearchCommand build(String qry, Configuration configuration)
-            throws UnsupportedOperationException, QueryNodeException, ParseException {
+            throws UnsupportedOperationException, QueryNodeException {
         if(!StringUtils.hasText(qry)) {
             throw new UnsupportedOperationException("Query string was empty, can't form expert query");
         }
@@ -81,24 +84,39 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
         return new ExpertRevisionSearchCommand(pathPair.getLeft(), pathPair.getRight(), configuration);
     }
 
-    private static Pair<DirectoryManager.DirectoryPath, String> extractPath(String qry) {
+    private static Pair<DirectoryManager.DirectoryPath, String> extractPath(String qry) throws QueryNodeException {
+        qry = StringUtils.trimLeadingWhitespace(qry);
         String[] splits = qry.split("\\s", 2);
         IndexerConfigurationType iType = IndexerConfigurationType.REVISION;
         ConfigurationType cType;
         if(ConfigurationType.isValue(splits[0])) {
             cType = ConfigurationType.fromValue(splits[0]);
             qry = splits.length > 1 ? splits[1] : "";
+            qry = StringUtils.trimLeadingWhitespace(qry);
         } else {
             cType = ConfigurationType.STUDY;
         }
 
+        if(!StringUtils.hasText(qry)) {
+            throw new ParseException(new MessageImpl("EMPTY_QUERY"));
+        }
+
         splits = qry.split("\\s", 2);
         Language lang;
-        if(splits[0].split(":", 2)[0].equals("lang")) {
-            lang = Language.fromValue(splits[0].split(":", 2)[1]);
+        String[] langCheckSplits = splits[0].split(":", 2);
+        if(langCheckSplits[0].equals(LANG_TOKE)) {
+            if(langCheckSplits.length < 2 || !Language.isLanguage(langCheckSplits[1])) {
+                throw new ParseException(new MessageImpl("MALFORMED_LANGUAGE"));
+            }
+            lang = Language.fromValue(langCheckSplits[1]);
             qry = splits.length > 1 ? splits[1] : "";
+            qry = StringUtils.trimLeadingWhitespace(qry);
         } else {
             lang = Language.DEFAULT;
+        }
+
+        if(!StringUtils.hasText(qry)) {
+            throw new ParseException(new MessageImpl("EMPTY_QUERY"));
         }
 
         DirectoryManager.DirectoryPath path =  DirectoryManager.formPath(false, iType, lang, cType.toValue());
@@ -108,7 +126,7 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
     private Query query;
 
     private ExpertRevisionSearchCommand(DirectoryManager.DirectoryPath path, String qry, Configuration configuration)
-            throws QueryNodeException, ParseException {
+            throws QueryNodeException {
         super(path, ResultList.ResultType.REVISION);
 
         //addTextAnalyzer("seriesname");
@@ -117,6 +135,9 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
         /*StandardQueryParser parser = new StandardQueryParser(getAnalyzer());*/
         StandardQueryParser parser = new StandardQueryParser();
         parser.setAllowLeadingWildcard(true);
+        if(!StringUtils.hasText(qry)) {
+            throw new ParseException(new MessageImpl("EMPTY_QUERY"));
+        }
         query = parser.parse(qry, "general");
         if(configuration != null) {
             // If we're in config mode we need to parse the query twice, once to get all the fields in the query and second time with the actual numeric configs and analyzers
@@ -137,7 +158,7 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
     }
 
     @Override
-    public ResultHandler<RevisionResult> getResulHandler() {
+    public ResultHandler<RevisionResult> getResultHandler() {
         return new BasicRevisionSearchResultHandler();
     }
 

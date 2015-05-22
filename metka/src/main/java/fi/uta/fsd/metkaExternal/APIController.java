@@ -25,7 +25,6 @@ import fi.uta.fsd.metkaSearch.commands.searcher.expert.ExpertRevisionSearchComma
 import fi.uta.fsd.metkaSearch.results.ResultList;
 import fi.uta.fsd.metkaSearch.results.RevisionResult;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -152,7 +151,7 @@ public class APIController {
                 response.setResult(ReturnResult.NO_RESULTS);
                 return response;
             }
-            response.setResult(ReturnResult.SEARCH_SUCCESS);
+            response.setResult(ReturnResult.OPERATION_SUCCESSFUL);
             for(RevisionResult revResult : results.getResults()) {
                 Pair<ReturnResult, RevisionableInfo> infoPair = revisions.getRevisionableInfo(revResult.getId());
                 if(infoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
@@ -169,10 +168,6 @@ public class APIController {
             }
             return response;
         } catch(QueryNodeException qne) {
-            RevisionSearchResponse response = new RevisionSearchResponse();
-            response.setResult(ReturnResult.MALFORMED_QUERY);
-            return response;
-        } catch(ParseException pe) {
             RevisionSearchResponse response = new RevisionSearchResponse();
             response.setResult(ReturnResult.MALFORMED_QUERY);
             return response;

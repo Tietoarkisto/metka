@@ -15,9 +15,13 @@ import fi.uta.fsd.metkaSearch.SearcherComponent;
 import fi.uta.fsd.metkaSearch.commands.searcher.expert.ExpertRevisionSearchCommand;
 import fi.uta.fsd.metkaSearch.results.ResultList;
 import fi.uta.fsd.metkaSearch.results.RevisionResult;
-import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
+import org.apache.lucene.queryparser.flexible.standard.parser.ParseException;
 import org.springframework.util.StringUtils;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 class FieldTargetHandler {
     static boolean handle(Target target, DataFieldContainer context, DataFieldValidator validator,
@@ -132,6 +136,8 @@ class FieldTargetHandler {
                 return EqualsCheck.notEquals(d, condition.getTarget(), configuration);
             case FREE_TEXT:
                 return FreeTextCheck.freeText(d,configuration);
+            case REGEX:
+                return RegexCheck.regex(d, condition.getTarget());
             default:
                 return true;
         }
@@ -163,9 +169,6 @@ class FieldTargetHandler {
                         }
                     } catch (QueryNodeException e) {
                         Logger.error(FieldTargetHandler.class, "QRE during expert search creation.", e);
-                        allValuesUnique = false;
-                    } catch(ParseException pe) {
-                        Logger.error(FieldTargetHandler.class, "ParseException during expert search creation.", pe);
                         allValuesUnique = false;
                     }
                 }
@@ -405,6 +408,33 @@ class FieldTargetHandler {
             }
             // Since selection values are always saved on DEFAULT language we can just check default language against free text values
             return (list.getFreeText().contains(field.getActualValueFor(Language.DEFAULT)));
+        }
+    }
+
+    // TODO: At the moment functions only for default language. This and the whole language handling within restrictions needs reworking
+    private static class RegexCheck {
+        private static boolean regex(ValueDataField field, Target t) {
+            if(t == null || t.getType() != TargetType.VALUE || !StringUtils.hasText(t.getContent())) {
+                // Regular expression must be provided in a VALUE
+                return false;
+            }
+            Pattern p = null;
+            try {
+                p = Pattern.compile(t.getContent());
+            } catch (PatternSyntaxException e) {
+                // Pattern vas not valid regex
+                Logger.error(RegexCheck.class, "Given regex was not a valid pattern");
+                return false;
+            }
+
+            String match = "";
+            if(field != null) {
+                match = field.getActualValueFor(Language.DEFAULT);
+            }
+
+            Matcher m = p.matcher(match);
+
+            return m.matches();
         }
     }
 }
