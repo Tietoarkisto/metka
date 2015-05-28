@@ -17,8 +17,9 @@ public enum StatusCode {
     FOUND_ROW,                          // Used to indicate that old row was found with the request
     NEW_ROW,                            // Used to indicate that a new row was created with the request
     ROW_CHANGE,                         // Operation changed row in some way that modified changes map
+    ROW_REMOVED,                        // Row was removed from a row container
     FIELD_NOT_EDITABLE,                 // Field is not editable, it cannot be edited by user
     FIELD_NOT_MUTABLE,                  // Field is not immutable, value cannot change once given
     FIELD_NOT_WRITABLE,                 // Field is not writable, it should not be written to revision data
-    ROW_REMOVED, FIELD_NOT_TRANSLATABLE             // Field is not translatable but value was checked or tried to set for a non default language
+    FIELD_NOT_TRANSLATABLE             // Field is not translatable but value was checked or tried to set for a non default language
 }

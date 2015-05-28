@@ -1,8 +1,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
-<head>
-    <link rel="stylesheet" type="text/css" href="./../../lib/bootstrap/3.1.1/css/bootstrap.css">
-    <meta content="text/html; charset=UTF-8" http-equiv="content-type"><title>Käyttöohjeiden sisällysluettelo</title>
+<html><head>
+    
+  <link rel="stylesheet" type="text/css" href="./../../lib/bootstrap/3.1.1/css/bootstrap.css">
+
+    
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+  <title>Käyttöohjeiden sisällysluettelo</title>
+
 </head><body>
 <div class="container-fluid">
 <ol id="mozToc">
@@ -617,9 +621,7 @@ tukea UTF-8 formaattia, jotta tiedot näkyvät siinä oikein.</li>
 
 <img style="width: 1110px; height: 176px;" alt="Revisioitavien objektien muokkaus ja tallentaminen" title="Revisioitavien objektien muokkaus ja tallentaminen" src="Revisioitavien%20objektien%20muokkaus%20ja%20tallentaminen.jpg"><br>
 
-<br>
-
-Järjestelmä käsittelee revisioitavina objekteina <strong>Aineistot,
+<br>Yllä olevassa kuvassa nähdään esimerkki objektin revisioitumisesta. Järjestelmä käsittelee revisioitavina objekteina <strong>Aineistot,
 Julkaisut</strong> ja
 <strong>Sarjat. </strong>Objektin voi tallentaa, hyväksyä, muokata ja
 poistaa
@@ -629,9 +631,26 @@ revisioitava objekti tallentuu <var>Luonnos</var> tilaan. Ensimmäinen
 revisio saa revisionumeron 1. Jos <var>Luonnos</var> tallennetaan
 uudelleen, sen revisionumero pysyy samana. Kun käsittelijä valitsee <strong>Hyväksy</strong>,
 revisio siirtyy <var>Hyväksytty</var> tilaan ja sitä ei voi enää
-muuttaa. Jos käsittelijä valitsee hyväksytylle revisiolle <strong>Muokkaa</strong>,
+muuttaa.  Jos käsittelijä valitsee hyväksytylle revisiolle <strong>Muokkaa</strong>,
 järjestelmä luo objektista uuden revision, jolla on yhtä suurempi
 revisionumero ja uuden revision tilaksi tulee <var>Luonnos</var>. <br>
+<br>
+<img style="width: 1398px; height: 288px;" alt="Objektin kieliversioiden revisioituminen" src="Kielten%20revisioituminen.jpg"><br>
+<br>
+Yllä olevassa kuvassa nähdään esimerkki siitä miten objektin eri
+kieliversiot revisioituvat. Objektin revisiotiedot voi avata avaamalla
+objektin tiedot ja valitsemalla <strong>Lataa</strong>.
+Revisiotiedoissa on nähtävissä missä revisiossa kunkin kielisiä
+tekstejä on objektille viimeksi muutettu. Eri kieliset käännökset siis
+revisioituvat toisistaan riippumatta. Esimerkissä Revisio 1 sisältää
+suomenkieliset (DEFAULT) tiedot objektille. Sen jälkeen luodaan Revisio
+2 ja hyväksytään ruotsinkieliset (SV) versiot objektin tiedoista. Nyt
+viimeisin versio, jossa objektin suomenkieliset tiedot on hyväksytty,
+on Revisio 1. Tämän jälkeen esimerkissä objektin tiedot käännetään
+vielä englanniksi (EN) ja hyväksytään ne Revisiossa 3. Nyt
+revisiotiedoista nähdään, että edelleen viimeisin versio, jossa
+objektin suomenkieliset tiedot on hyväksytty, on Revisio 1 ja
+ruotsinkieliset tiedot on viimeksi hyväksytty Revisiossa 2.<br>
 
 <br>
 
@@ -696,9 +715,29 @@ voi ottaa sen haltuunsa valitsemalla objektille <strong>Ota haltuun</strong>.</l
 
 Kts. Lisätietoja toimintojen saatavuudesta käyttäjälle: <a href="#K%E4ytt%E4j%E4ryhm%E4t">Käyttäjäryhmien oikeudet</a>.<br>
 
+<h1>Revisioitavien objektien tietojen kääntäminen</h1><img style="width: 594px; height: 327px;" alt="Käännösnäkymä" src="K%C3%A4%C3%A4nn%C3%B6sn%C3%A4kym%C3%A4.jpg"><br>
+Objektien tiedot voidaan kääntää seuraaville kielille:<br>
+<ul>
+  <li>suomi (<span style="font-style: italic;">FI</span>)</li>
+  <li>englanti (<em>EN</em>)</li>
+  <li>ruotsi (<em>SV</em>)<br>
+  </li>
+</ul>
+Järjestelmän oletuskieli (<em>DEFAULT</em>) on suomi. Tietojen
+kääntäminen tapahtuu avaamalla objektin tiedot ja valitsemalla
+käännöskielen tunnus näkymän ylälaidasta (kts. kuva yllä).
+Käännösnäkymässä nähdään kaikki ne kentät, joiden sisältö voidaan
+kääntää. Kentät näytetään sekä oletuskielellä, että käännöskielellä.
+Lisäksi, jos alasvetovalikon johonkin arvoon liittyy käännettävissä
+oleva vapaatekstikenttä, myös tällainen alasvetovalikko näytetään
+käännösnäkymässä vaikka sen valintoja ei käännetäkään. Yllä olevassa
+kuvassa aineiston <strong>Havaintoyksikkö/Aineistoyks. kategoria</strong>
+on tällainen tieto, joka näytetään käännösnäkymässä vaikka sitä ei voi
+kääntää, sillä sen yhteen arvoon liittyy vapaa tekstikenttä <strong>Muu</strong>, joka on käännettävissä.<br>
 <h1>Käsittele aineistoja<br>
 
 </h1>
+
 <h2><a name="Tee_aineistohaku_ja_avaa_aineiston_"></a>Tee aineistohaku ja avaa aineiston tiedot<br>
 </h2>
 
@@ -794,7 +833,7 @@ revisionnumero on aina 1. Revisionnumero päivittyy aineiston tilasiirtymien muk
     <strong></strong></li>
   <li><strong>Aineistonumero</strong> on järjestelmän automaattisesti
 aineistolle generoima ID, jota käyttäjä ei voi muuttaa,<span style="">&nbsp;
-    </span>esim. &#8221;FSD010015&#8221;.</li>
+    </span>esim. ”FSD010015”.</li>
 </ul>
 
 Tallenna aineisto tilaan <em>LUONNOS</em> valitsemalla <strong>Tallenna</strong>. Olet nyt aineiston käsittelijä, kts. <a href="#Revisioitavien%20objektien%20haltuunotto%20ja%20vapauttaminen">Revisioitavien objektien haltuunotto ja vapauttaminen</a>. <br>
@@ -996,7 +1035,10 @@ DDI import: Sisältöön liittyvät erityisehdot ja mitä tietoja tuodaan:<br>
     <li>Kuvailu-välilehden tietojen tuontia varten välilehden tulee olla tyhjä.</li>
     <li>DDI:stä tuodaan kuvailutietoja vain suomenkielelle.</li>
     <li>Tekijöistä listataan ensin henkilötekijät ja sitten organisaatiotekijät.</li>
-    <li>Pudotusvalikkojen tiedot tuodaan yleensä tekstin perusteella koska DDI ei sisällä järjestelmän käyttämiä arvoja. Näissä tapauksissa käytetään aina ensimmäistä vastaantullutta sopivaa tekstiä.<br>Jos esimerkiksi kahdella organisaatiolla on sama nimi niin valitaan listalla ensin vastaan tuleva organisaatio.</li>
+    <li>Pudotusvalikkojen
+tiedot tuodaan yleensä tekstin perusteella koska DDI ei sisällä
+järjestelmän käyttämiä arvoja. Näissä tapauksissa käytetään aina
+ensimmäistä vastaantullutta sopivaa tekstiä.<br>Jos esimerkiksi kahdella organisaatiolla on sama nimi niin valitaan listalla ensin vastaan tuleva organisaatio.</li>
 </ul>
 
 Tee aineistolle DDI 2.5 import:<br>
@@ -2128,4 +2170,5 @@ Käyttöohjeet on kirjoitettu käyttäen KompoZer wysiwyg HTML editoria (<a href
 
 <br>
 </div>
+
 </body></html>

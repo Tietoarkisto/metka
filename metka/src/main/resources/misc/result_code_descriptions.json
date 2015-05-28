@@ -13,7 +13,12 @@
 	}, {
 		"key": "OPERATION_FAIL",
 		"title": "ERROR",
-		"text": "Operaatio epäonnistui"
+		"text": "Operaatio epäonnistui",
+		"operations": [{
+			"key": "approve",
+			"title": "ERROR",
+			"text": "Revision hyväksyminen epäonnistui"
+		}]
 	}, {
 		"key": "APPROVE_FAILED_DURING_VALIDATION",
 		"title": "ERROR",
@@ -42,7 +47,7 @@
 	}, {
 		"key": "SAVE_SUCCESSFUL_WITH_ERRORS",
 		"title": "ERROR",
-		"text": "Tallennus suoritettu mutta tallennettavasta datasta löydettiin virheitä"
+		"text": "Tallennus suoritettu mutta tallennettavasta datasta löydettiin virheitä tai dataan tehtiin automaattisia muutoksia"
 	}, {
 		"key": "OPEN_DRAFT",
 		"title": "NOTICE",
@@ -82,10 +87,6 @@
 		"key": "PAGE_UPDATED",
 		"title": "NOTICE",
 		"text": "Mapitus päivitetty"
-	}, {
-	  "key": "APPROVE_FAILED",
-	  "title": "ERROR",
-	  "text": "Revision hyväksyminen epäonnistui"
 	}, {
 	  "key": "EMPTY_QUERY",
 	  "title": "ERROR",

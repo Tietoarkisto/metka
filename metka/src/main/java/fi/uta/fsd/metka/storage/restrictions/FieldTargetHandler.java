@@ -412,6 +412,8 @@ class FieldTargetHandler {
     }
 
     // TODO: At the moment functions only for default language. This and the whole language handling within restrictions needs reworking
+    // TODO: Add support for FIELD targets that are values, i.e. read target from configuration.
+    // TODO: Target needs to be able to travel in context so that both references and fields in parent can be checked. The target traveling needs to be diversified away from just prevalidation.
     private static class RegexCheck {
         private static boolean regex(ValueDataField field, Target t) {
             if(t == null || t.getType() != TargetType.VALUE || !StringUtils.hasText(t.getContent())) {

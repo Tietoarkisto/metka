@@ -222,6 +222,13 @@
 			"translatable": false,
 			"editable": false
 		},
+		"newpath": {
+			"key": "newpath",
+			"writable": false,
+			"editable": true,
+			"translatable": false,
+			"type": "STRING"
+		},
 		"file": {
 			"key": "file",
 			"immutable": true,

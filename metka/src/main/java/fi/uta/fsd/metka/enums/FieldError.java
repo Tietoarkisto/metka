@@ -18,5 +18,10 @@ public enum FieldError {
     NOT_TIME,               // Valid time should be parsable from value
     // These are file path specific errors mainly related to study attachment file path and agreement file path
     NO_FILE,                // File either doesn't exist or is not a file or directory based on Java IO status
+    AUTOMATIC_CHANGE,       // Value was changed automatically due to implementation specifics
+    WRONG_LOCATION,
+    AUTOMATIC_CHANGE_FAILED_FILE_EXISTS, // We tried to move a file to a correct new location but there was already a file there
+    FILE_EXISTS,            // There already exists a file in a location where we try to insert a new file
+    MOVE_FAILED,            // We failed to move the new file to correct location
     IS_DIRECTORY           // File path points to a directory based on Java IO status. This is wrong when actual file is expected
 }

@@ -17,7 +17,9 @@ public final class Fields {
     public static final String OTHERMATERIALLABEL = "othermateriallabel";
     public static final String OTHERMATERIALTEXT = "othermaterialtext";
     public static final String VARIABLES = "variables";
+    public static final String NEWPATH = "newpath";
     public static final String FILE = "file";
+    public static final String FILEDIP = "filedip";
     public static final String FILEDESCRIPTION = "filedescription";
     public static final String VARFILEID = "varfileid";
     public static final String SOFTWARE = "software";

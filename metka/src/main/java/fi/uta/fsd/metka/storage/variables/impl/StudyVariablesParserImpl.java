@@ -8,8 +8,7 @@ import fi.uta.fsd.metka.enums.VariableDataType;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.DataField;
-import fi.uta.fsd.metka.model.data.container.ValueDataField;
+import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.model.transfer.TransferData;
@@ -60,6 +59,13 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
 
     static ParseResult checkResultForUpdate(Pair<StatusCode, ? extends DataField> fieldPair, ParseResult result) {
         if(fieldPair.getLeft() == StatusCode.FIELD_UPDATE || fieldPair.getLeft() == StatusCode.FIELD_INSERT) {
+            return resultCheck(result, ParseResult.REVISION_CHANGES);
+        }
+        return result;
+    }
+
+    static ParseResult checkRowResultForUpdate(Pair<StatusCode, ? extends ContainerRow> rowPair, ParseResult result) {
+        if(rowPair.getLeft() == StatusCode.ROW_CHANGE || rowPair.getLeft() == StatusCode.NEW_ROW || rowPair.getLeft() == StatusCode.ROW_REMOVED) {
             return resultCheck(result, ParseResult.REVISION_CHANGES);
         }
         return result;

@@ -112,7 +112,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             Pair<SerializationResults, String> string = json.serialize(data);
             if(string.getLeft() != SerializationResults.SERIALIZATION_SUCCESS) {
                 logger.error("Couldn't serialize data "+data.toString()+", halting approval process");
-                return new ImmutablePair<>(ReturnResult.APPROVE_FAILED, transferData);
+                return new ImmutablePair<>(ReturnResult.OPERATION_FAIL, transferData);
             }
 
             ReturnResult updateResult = revisions.updateRevisionData(data);
@@ -162,7 +162,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
         // Try to approve all study attachments linked to this study (this should move files from temporary location to their actual location)
         ReturnResult studyAttachmentCheckResult = checkStudyAttachments(revision, transferData);
         if(studyAttachmentCheckResult != ReturnResult.OPERATION_SUCCESSFUL) {
-            result = ReturnResult.APPROVE_FAILED;
+            result = ReturnResult.OPERATION_FAIL;
             // For study attachment approval to fail there has to be a field and content.
             transferData.getField("files").addError(FieldError.APPROVE_FAILED);
         }
@@ -171,7 +171,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
         // If there are errors in study variables (either the collection or individual variables then just mark an error to study variables field in transferData
         ReturnResult variablesCheckResult = checkStudyVariables(revision, transferData);
         if(variablesCheckResult != ReturnResult.OPERATION_SUCCESSFUL) {
-            result = ReturnResult.APPROVE_FAILED;
+            result = ReturnResult.OPERATION_FAIL;
             // We know that if study variables approval failed there has to be variables field in transfer data since it's added during checking
             // if it was missing before
             TransferField field = transferData.getField("variables");
@@ -190,10 +190,10 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
         if(fileField != null) {
             File file = new File(revision.dataField(ValueDataFieldCall.get("file")).getRight().getActualValueFor(Language.DEFAULT));
             if(!file.exists() || file.isDirectory()) {
-                return ReturnResult.APPROVE_FAILED;
+                return ReturnResult.OPERATION_FAIL;
             }
         } else {
-            return ReturnResult.APPROVE_FAILED;
+            return ReturnResult.OPERATION_FAIL;
         }
 
         return ReturnResult.OPERATION_SUCCESSFUL;
@@ -231,7 +231,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             Pair<ReturnResult, TransferData> approveResult = approve(TransferData.buildFromRevisionData(variable, RevisionableInfo.FALSE));
             if(approveResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
                 logger.error("Tried to approve "+variable.toString()+" and failed with result "+approveResult.getLeft());
-                result = ReturnResult.APPROVE_FAILED;
+                result = ReturnResult.OPERATION_FAIL;
                 // Continue to approve variables since, no need to mark errors on transfer data since this data will never be sent to client from here
             }
         }
@@ -253,8 +253,6 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
         switch(revision.getConfiguration().getType()) {
             case STUDY:
                 return finalizeStudyApproval(revision);
-            case STUDY_ATTACHMENT:
-                return finalizeStudyAttachmentApproval(revision, info);
             default:
                 return ReturnResult.OPERATION_SUCCESSFUL;
         }
@@ -278,114 +276,6 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
                 }
             }
         }
-        return ReturnResult.OPERATION_SUCCESSFUL;
-    }
-
-    /**
-     * Check that if the current file path differs from original file path (there has to be a file to approve study attachment)
-     * then calculate a correct long term path for the file and move it there (possibly replacing a previous file in the process).
-     *
-     * @param revision
-     */
-    private ReturnResult finalizeStudyAttachmentApproval(RevisionData revision, DateTimeUserPair info) {
-        // From this point onwards we can assume that all relevant fields have values since we can't be here without approved values
-        String pathFromRoot = "/";
-
-        Pair<ReturnResult, String> fileDirectory = revisions.getStudyFileDirectory(
-                Long.parseLong(revision.dataField(ValueDataFieldCall.get("study")).getRight().getActualValueFor(Language.DEFAULT)));
-
-        if(fileDirectory.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
-            logger.error("Could not find revisionable when fetching file root for study in attachment "+revision.toString());
-
-            return fileDirectory.getLeft();
-        }
-
-        String pathRoot = fileDirectory.getRight();
-
-        // Get path
-        ValueDataField pathField = revision.dataField(ValueDataFieldCall.get("file")).getRight();
-        String fileName = FilenameUtils.getName(pathField.getActualValueFor(Language.DEFAULT));
-
-        // If path current differs from path original then we need to move the file
-        boolean requiresMove = pathField.hasCurrentFor(Language.DEFAULT) && !pathField.currentForEqualsOriginal(Language.DEFAULT);
-
-        String origValue = revision.dataField(ValueDataFieldCall.get("fileoriginal")).getRight().getActualValueFor(Language.DEFAULT);
-        boolean origLocation = origValue.equals("1");
-
-        if(origLocation) pathFromRoot += "original";
-
-        boolean dataLocation = false;
-        if(!origLocation) {
-            String namePrefix = fileName.substring(0, 3).toUpperCase();
-            switch(namePrefix) {
-                default:
-                    dataLocation = false;
-                    break;
-                case "ARF":
-                case "SYF":
-                case "ANF":
-                case "DAF":
-                    dataLocation = true;
-                    break;
-
-            }
-
-            if(dataLocation) pathFromRoot += "data";
-        }
-
-        String destLoc = pathRoot+pathFromRoot+(pathFromRoot.length() > 1 ? "/" : "");
-
-        // If requiresMove is false check if pathFromRoot differs from current path and if so then
-        if(!requiresMove) {
-            if(!(destLoc+fileName).equals(pathField.getActualValueFor(Language.DEFAULT))) {
-                requiresMove = true;
-            }
-        }
-
-        ValueDataField filedip = revision.dataField(ValueDataFieldCall.get("filedip")).getRight();
-
-        if(filedip == null || !filedip.getActualValueFor(Language.DEFAULT).equals("2")) {
-            // User has selected something else than 'No' as the filedip value, check if this is valid and correct if not
-            boolean fixdip = false;
-            if(origLocation) {
-                fixdip = true;
-            }
-
-            if(!fixdip && FilenameUtils.getExtension(fileName).toUpperCase().equals("XML")) {
-                fixdip = true;
-            }
-
-            if(!fixdip && fileName.substring(0, 2).toUpperCase().equals("AR")) {
-                fixdip = true;
-            }
-
-            if(!fixdip) {
-                switch(fileName.substring(0, 3).toUpperCase()) {
-                    case "SYF":
-                    case "ANF":
-                        fixdip = true;
-                        break;
-                }
-            }
-
-            if(fixdip) {
-                // TODO: We need to inform the user that this value was changed automatically
-                // We need to fix filedip to 2 (i.e. 'No'), let's just assume that this succeeds
-                revision.dataField(ValueDataFieldCall.set("filedip", new Value("2"), Language.DEFAULT).setInfo(info));
-            }
-        }
-
-        try {
-            // If we need to move the file then try to move the file
-            if(requiresMove) {
-                FileUtils.moveFileToDirectory(new File(pathField.getActualValueFor(Language.DEFAULT)), new File(destLoc), true);
-                revision.dataField(ValueDataFieldCall.set("file", new Value(destLoc+fileName), Language.DEFAULT).setInfo(info));
-            }
-        } catch(IOException ioe) {
-            logger.error("IOException when trying to move file from "+pathField.getActualValueFor(Language.DEFAULT)+" to "+destLoc, ioe);
-            return ReturnResult.FILE_ALREADY_EXISTS;
-        }
-
         return ReturnResult.OPERATION_SUCCESSFUL;
     }
 
@@ -563,7 +453,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             Pair<ReturnResult, TransferData> approveResult = approve(TransferData.buildFromRevisionData(variable, RevisionableInfo.FALSE));
             if(approveResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
                 logger.error("Tried to approve "+variable.toString()+" and failed with result "+approveResult.getLeft());
-                result = ReturnResult.APPROVE_FAILED;
+                result = ReturnResult.OPERATION_FAIL;
                 // Let's mark the specific TransferRow with approval error.
                 // Missing rows should have been inserted during saving process before this phase so we can be confident that everything exists
                 // and since we are returning APPROVE_FAILED from here the TransferData provided to this method is the one that will be returned
@@ -604,7 +494,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
             Pair<ReturnResult, TransferData> approveResult = approve(TransferData.buildFromRevisionData(variables, RevisionableInfo.FALSE));
             if(approveResult.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
                 logger.error("Tried to approve "+variables.toString()+" and failed with result "+approveResult.getLeft());
-                return ReturnResult.APPROVE_FAILED;
+                return ReturnResult.OPERATION_FAIL;
             }
         }
         return ReturnResult.OPERATION_SUCCESSFUL;

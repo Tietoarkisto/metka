@@ -462,7 +462,7 @@
 			"type": "REFERENCE",
 			"reference": "timemethod_ref",
 			"includeEmpty": true,
-			"freeText": ["Other"],
+			"freeText": ["Other", "7"],
 			"freeTextKey": "timemethodother"
 		},
 		"topicvocab_list": {

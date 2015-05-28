@@ -34,7 +34,7 @@ public enum ReturnResult {
     SAVE_SUCCESSFUL_WITH_ERRORS,        // Save was successful (changed data was updated to database) but there were field errors
     SAVE_SUCCESSFUL,                    // Save was successful (changed data was updated to database) and there were no field errors
     TYPE_NOT_VALID_CONFIGURATION_TYPE,  // Given type was not one of defined Configuration types
-    APPROVE_FAILED,                     // Approval of the requested revision failed, errors should be marked to their respective fields
+    //APPROVE_FAILED,                     // Approval of the requested revision failed, errors should be marked to their respective fields
     SEARCH_FAILED,                      // Performed search failed
     VIEW_SUCCESSFUL,                    // Some data was requested for viewing, data was gathered successfully
     INCORRECT_TYPE_FOR_OPERATION,       // Operation was requested for a configuration type that is not handled by that operation

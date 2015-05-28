@@ -19,6 +19,7 @@ import org.springframework.util.StringUtils;
 import java.util.*;
 
 import static fi.uta.fsd.metka.storage.variables.impl.StudyVariablesParserImpl.checkResultForUpdate;
+import static fi.uta.fsd.metka.storage.variables.impl.StudyVariablesParserImpl.checkRowResultForUpdate;
 import static fi.uta.fsd.metka.storage.variables.impl.StudyVariablesParserImpl.resultCheck;
 
 /**
@@ -76,13 +77,13 @@ class VariableParser {
         Pair<StatusCode, ValueDataField> fieldPair = variableRevision.dataField(ValueDataFieldCall.set(Fields.VARLABEL, new Value(label), language).setInfo(info));
         result = checkResultForUpdate(fieldPair, result);
 
-        // TODO: Copy varlabel content to a row in qustnlits if there's not already rows in there
-        /*Pair<StatusCode, ContainerDataField> qstns = variableRevision.dataField(ContainerDataFieldCall.set("qstnlits"));
-        checkResultForUpdate(qstns, result);
+        Pair<StatusCode, ContainerDataField> qstns = variableRevision.dataField(ContainerDataFieldCall.set(Fields.QSTNLITS));
+        result = checkResultForUpdate(qstns, result);
 
-        if(!qstns.getRight().hasRowsFor(DEFAULT)) {
-            Pair<StatusCode, DataRow> row = qstns.getRight().insertNewDataRow(DEFAULT, variable);
-        }*/
+        if(!qstns.getRight().hasRowsFor(Language.DEFAULT)) {
+            Pair<StatusCode, DataRow> row = qstns.getRight().getOrCreateRowWithFieldValue(Language.DEFAULT, Fields.QSTNLIT, new Value(label), variableRevision.getChanges(), info);
+            checkRowResultForUpdate(row, result);
+        }
 
         // Set valuelabels CONTAINER
         ParseResult operationResult = setValueLabels(variableRevision, variable);
@@ -156,13 +157,13 @@ class VariableParser {
 
         Pair<StatusCode, ValueDataField> fieldPair = row.dataField(
                 ValueDataFieldCall.set(Fields.VALUE, new Value(label.getValue()), Language.DEFAULT).setInfo(info).setChangeMap(changeMap));
-        checkResultForUpdate(fieldPair, result);
+        result = checkResultForUpdate(fieldPair, result);
 
         fieldPair = row.dataField(ValueDataFieldCall.set(Fields.LABEL, new Value(label.getLabel()), language).setInfo(info).setChangeMap(changeMap));
-        checkResultForUpdate(fieldPair, result);
+        result = checkResultForUpdate(fieldPair, result);
 
         fieldPair = row.dataField(ValueDataFieldCall.set(Fields.MISSING, new Value(label.isMissing() ? "Y" : null), Language.DEFAULT).setInfo(info).setChangeMap(changeMap));
-        checkResultForUpdate(fieldPair, result);
+        result = checkResultForUpdate(fieldPair, result);
 
         return result;
     }
@@ -352,16 +353,16 @@ class VariableParser {
         }
         Pair<StatusCode, ValueDataField> fieldPair = row.dataField(
                 ValueDataFieldCall.set(Fields.VALUE, new Value(value), Language.DEFAULT).setInfo(info).setChangeMap(changeMap));
-        checkResultForUpdate(fieldPair, result);
+        result = checkResultForUpdate(fieldPair, result);
 
         fieldPair = row.dataField(ValueDataFieldCall.set(Fields.LABEL, new Value(label), language).setInfo(info).setChangeMap(changeMap));
-        checkResultForUpdate(fieldPair, result);
+        result = checkResultForUpdate(fieldPair, result);
 
         fieldPair = row.dataField(ValueDataFieldCall.set(Fields.STAT, new Value(stat.toString()), Language.DEFAULT).setInfo(info).setChangeMap(changeMap));
-        checkResultForUpdate(fieldPair, result);
+        result = checkResultForUpdate(fieldPair, result);
 
         fieldPair = row.dataField(ValueDataFieldCall.set(Fields.MISSING, new Value(missing ? "Y" : null), Language.DEFAULT).setInfo(info).setChangeMap(changeMap));
-        checkResultForUpdate(fieldPair, result);
+        result = checkResultForUpdate(fieldPair, result);
 
         return result;
     }
@@ -447,7 +448,7 @@ class VariableParser {
         row = popOrCreateAndInsertRowTo(Language.DEFAULT, statistics, rows, Fields.STATISTICSTYPE, type, variableRevision.getChanges(), Language.DEFAULT);
         Pair<StatusCode, ValueDataField> fieldPair = row.dataField(
                 ValueDataFieldCall.set(Fields.STATISTICSVALUE, new Value(values.toString()), Language.DEFAULT).setInfo(info).setChangeMap(changeMap));
-        checkResultForUpdate(fieldPair, result);
+        result = checkResultForUpdate(fieldPair, result);
 
         // Set min
         type = "min";
@@ -455,7 +456,7 @@ class VariableParser {
             row = popOrCreateAndInsertRowTo(Language.DEFAULT, statistics, rows, Fields.STATISTICSTYPE, type, variableRevision.getChanges(), Language.DEFAULT);
             String min = Collections.min(data, new PORUtil.PORNumericVariableDataComparator()).toString();
             fieldPair = row.dataField(ValueDataFieldCall.set(Fields.STATISTICSVALUE, new Value(min), Language.DEFAULT).setInfo(info).setChangeMap(changeMap));
-            checkResultForUpdate(fieldPair, result);
+            result = checkResultForUpdate(fieldPair, result);
         }
 
         // Set max
@@ -464,7 +465,7 @@ class VariableParser {
             row = popOrCreateAndInsertRowTo(Language.DEFAULT, statistics, rows, Fields.STATISTICSTYPE, type, variableRevision.getChanges(), Language.DEFAULT);
             String max = Collections.max(data, new PORUtil.PORNumericVariableDataComparator()).toString();
             fieldPair = row.dataField(ValueDataFieldCall.set(Fields.STATISTICSVALUE, new Value(max), Language.DEFAULT).setInfo(info).setChangeMap(changeMap));
-            checkResultForUpdate(fieldPair, result);
+            result = checkResultForUpdate(fieldPair, result);
         }
 
         // Set mean
@@ -479,8 +480,9 @@ class VariableParser {
                 denom++;
             }
             mean = mean / denom;
+            mean = Math.round(mean*1000) / 1000D;
             fieldPair = row.dataField(ValueDataFieldCall.set(Fields.STATISTICSVALUE, new Value(mean.toString()), Language.DEFAULT).setInfo(info).setChangeMap(changeMap));
-            checkResultForUpdate(fieldPair, result);
+            result = checkResultForUpdate(fieldPair, result);
         }
 
         // Set stdev
@@ -499,8 +501,9 @@ class VariableParser {
             }
             if(denom > 1) {
                 deviation = Math.sqrt(deviation/(denom-1));
+                deviation = Math.round(deviation*1000) / 1000D;
                 fieldPair = row.dataField(ValueDataFieldCall.set(Fields.STATISTICSVALUE, new Value(deviation.toString()), Language.DEFAULT).setInfo(info).setChangeMap(changeMap));
-                checkResultForUpdate(fieldPair, result);
+                result = checkResultForUpdate(fieldPair, result);
             }
         }
 

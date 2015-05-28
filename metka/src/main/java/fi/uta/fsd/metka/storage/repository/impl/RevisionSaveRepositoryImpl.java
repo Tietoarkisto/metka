@@ -34,6 +34,7 @@ import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.variables.StudyVariablesParser;
 import fi.uta.fsd.metka.storage.variables.enums.ParseResult;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.MutablePair;
@@ -44,6 +45,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 @Repository
@@ -110,7 +113,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 return new ImmutablePair<>((changesAndErrors.getRight() ? ReturnResult.SAVE_SUCCESSFUL_WITH_ERRORS : ReturnResult.SAVE_SUCCESSFUL), transferData);
             }
         } else {
-            return new ImmutablePair<>(ReturnResult.NO_CHANGES_TO_SAVE, transferData);
+            return new ImmutablePair<>((changesAndErrors.getRight() ? ReturnResult.SAVE_SUCCESSFUL_WITH_ERRORS : ReturnResult.NO_CHANGES_TO_SAVE), transferData);
         }
     }
 
@@ -123,7 +126,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
     private void finalizeSave(RevisionData revision, TransferData transferData, Configuration configuration, DateTimeUserPair info, MutablePair<Boolean, Boolean> changesAndErrors) {
         switch(revision.getConfiguration().getType()) {
             case STUDY_ATTACHMENT:
-                finalizeStudyAttachment(revision, transferData, changesAndErrors);
+                finalizeStudyAttachment(revision, transferData, changesAndErrors, info);
                 break;
             case STUDY:
                 finalizeStudy(revision, transferData, info, changesAndErrors);
@@ -183,68 +186,412 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         transferData.addField(TransferField.buildFromDataField(pair.getRight()));
     }
 
-    /**
-     * If this study attachment is not marked parsed and has a path then check if that path could be a por file that needs parsing.
-     * If so then parse that por file and mark this study attachment as parsed.
-     * @param attachment         RevisionData
-     * @param transferData     TransferData
-     */
-    private void finalizeStudyAttachment(RevisionData attachment, TransferData transferData, MutablePair<Boolean, Boolean> changesAndErrors) {
-        Pair<StatusCode, ValueDataField> fieldPair = attachment.dataField(ValueDataFieldCall.get("file"));
-        if (!hasFile(fieldPair, transferData, changesAndErrors)) return;
+    /* Attachment save
+        All field values that will be saved are saved automatically before this
+        so we don't need to handle that, this is only about doing the manual
+        adjustments and checks that can't be performed through configuration.
+        This can however change the values that are saved to database and in
+        certain cases is the only way to change those values (e.g. file path).
 
-        // Is attachment already parsed
-        if (attachmentAlreadyParsed(attachment)) return;
+        if filedip needs correction then
+            correct filedip
+            add error to notify user (this would be better as notification but those are not supported atm
 
-        if (hasAndIsOriginal(attachment)) return;
+        If newfile has value and newfile is file then
+            calculate correct store path
+            If filepath has value then
+                remove old file
+            copy new file to correct path
+            set path to filepath
+            if newfile is por-file then
+                mark the file for parsing
 
-        String path = fieldPair.getRight().getActualValueFor(Language.DEFAULT);
-        if (!fileIsVarFile(path)) {
-            // We can mark attachment as parsed since if it's not a var file we don't need to regard it again in the future
-            attachment.dataField(ValueDataFieldCall.set("parsed", new Value("true"), Language.DEFAULT));
-            return;
-        }
+        if filepath has value then
+            if file doesn't exist or is directory then
+                add error
 
-        // Get study linked to this attachment
-        Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(
-                attachment.dataField(ValueDataFieldCall.get("study")).getRight().getValueFor(Language.DEFAULT).valueAsInteger(),
-                false,
-                ConfigurationType.STUDY);
-        if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
-            return;
-        }
-        RevisionData study = dataPair.getRight();
+        if file needs parsing then
+            parse por-file
+    */
 
-        String fileName = FilenameUtils.getBaseName(path).toUpperCase();
-        String lastChar = fileName.substring(fileName.length()-1);
-        Language varLang;
-        if(lastChar.equals("E") || lastChar.equals("S")) {
-            varLang = lastChar.equals("E") ? Language.EN : Language.SV;
-            // We have a translation file. Require that default language is already attached
-            if(!hasVariablesFileFor(Language.DEFAULT, study)) {
-                return;
-            }
-            if(hasVariablesFileFor(varLang, study)) {
-                // If there already are variables attached for the language in the study check that it's the same attachment
-                if(!variablesFileForEqual(varLang, attachment.getKey().getId(), study)) {
-                    // TODO: Should we mark this as parsed since it shouldn't be used anymore?
-                    return;
-                }
-            }
-        } else {
-            varLang = Language.DEFAULT;
-            // We're parsing the default var file. If there already is a default file then check that it matches this
-            if(hasVariablesFileFor(Language.DEFAULT, study)) {
-                if(!variablesFileForEqual(Language.DEFAULT, attachment.getKey().getId(), study)) {
-                    // TODO: Should we mark this as parsed since it shouldn't be used anymore?
-                    return;
-                }
-            }
-        }
+    private void finalizeStudyAttachment(RevisionData revision, TransferData transfer, MutablePair<Boolean, Boolean> changesAndErrors, DateTimeUserPair info) {
+        // Lets check the filedip for need of correction and correct the value if necessary
+        checkDip(revision, transfer, changesAndErrors, info);
 
-        parseVariableFile(attachment, transferData, study, varLang);
+        // Lets check filepaths
+        checkFile(revision, transfer, changesAndErrors, info);
     }
 
+    private void checkDip(RevisionData revision, TransferData transfer, MutablePair<Boolean, Boolean> changesAndErrors, DateTimeUserPair info) {
+        // Check that filedip is correct
+        // If need be change filedip, mark it as changed and mark the whole data as containing errors (this would work better as warning or notice, but we don't have support for that yet)
+        ValueDataField filedip = revision.dataField(ValueDataFieldCall.get("filedip")).getRight();
+
+        if(filedip == null || !filedip.getActualValueFor(Language.DEFAULT).equals("2")) {
+            // User has selected something else than 'No' as the filedip value, check if this is valid and correct if not
+            boolean fixdip = false;
+
+            ValueDataField original = revision.dataField(ValueDataFieldCall.get("fileoriginal")).getRight();
+            boolean origLocation = original != null && original.hasValueFor(Language.DEFAULT) && original.getActualValueFor(Language.DEFAULT).equals("1");
+            if(origLocation) {
+                fixdip = true;
+            }
+
+            // Get path
+            ValueDataField pathField = revision.dataField(ValueDataFieldCall.get("file")).getRight();
+            String fileName = pathField != null ? FilenameUtils.getName(pathField.getActualValueFor(Language.DEFAULT)) : null;
+
+            if(!fixdip && fileName != null && FilenameUtils.getExtension(fileName).toUpperCase().equals("XML")) {
+                fixdip = true;
+            }
+
+            if(!fixdip && fileName != null && fileName.substring(0, 2).toUpperCase().equals("AR")) {
+                fixdip = true;
+            }
+
+            if(!fixdip && fileName != null) {
+                switch(fileName.substring(0, 3).toUpperCase()) {
+                    case "SYF":
+                    case "ANF":
+                        fixdip = true;
+                        break;
+                }
+            }
+
+            if(fixdip) {
+                // We need to fix filedip to 2 (i.e. 'No'), let's just assume that this succeeds
+                revision.dataField(ValueDataFieldCall.set(Fields.FILEDIP, new Value("2"), Language.DEFAULT).setInfo(info));
+
+                TransferField tf = transfer.getField(Fields.FILEDIP);
+                tf.addValueFor(Language.DEFAULT, TransferValue.buildFromValueDataFieldFor(Language.DEFAULT, revision.dataField(ValueDataFieldCall.get(Fields.FILEDIP)).getRight()));
+                tf.addError(FieldError.AUTOMATIC_CHANGE);
+                changesAndErrors.setLeft(true);
+                changesAndErrors.setRight(true);
+            }
+        }
+    }
+
+    private void checkFile(RevisionData revision, TransferData transfer, MutablePair<Boolean, Boolean> changesAndErrors, DateTimeUserPair info) {
+        // Get study linked to this attachment
+        ValueDataField linkedStudy = revision.dataField(ValueDataFieldCall.get("study")).getRight();
+        if(linkedStudy == null) {
+            // We have no linked study, no need to do anything else
+            Logger.error(RevisionSaveRepositoryImpl.class, "No linked study for " + revision.toString());
+            changesAndErrors.setRight(true);
+            return;
+        }
+
+        Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(
+                linkedStudy.getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY);
+        if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
+            Logger.error(RevisionSaveRepositoryImpl.class, "Could not find linked study "+linkedStudy.getActualValueFor(Language.DEFAULT)+" for "+revision.toString());
+            return;
+        }
+
+        RevisionData study = dataPair.getRight();
+
+        // Check file move and file update
+        boolean fileMoved = checkFileMove(revision, transfer, changesAndErrors, info);
+        boolean fileUpdate = checkFileUpdate(revision, transfer, changesAndErrors, info);
+
+        // Validate that the file in file-field still exists and is a valid file
+        // If not, then mark error to transfer data
+        Pair<StatusCode, ValueDataField> fieldPair = revision.dataField(ValueDataFieldCall.get("file"));
+        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+            if(!transfer.hasField(Fields.FILE)) {
+                transfer.addField(TransferField.buildFromDataField(fieldPair.getRight()));
+            }
+            TransferField tfFile = transfer.getField(Fields.FILE);
+
+            if(notFile(fieldPair.getRight().getActualValueFor(Language.DEFAULT), tfFile, changesAndErrors)) {
+                Logger.error(RevisionSaveRepositoryImpl.class, "Path in file-field is not a valid file");
+                // Lets set fileUpdate to false since no matter the case we can't perform the parse check
+                fileUpdate = false;
+                fileMoved = false;
+            }
+        }
+
+        // File has been updated, check if it needs parsing and parse as necessary
+        if(fileUpdate || fileMoved) {
+            // File was either moved or updated, check situations that can occur from either event
+
+            // TODO: If original has changed to 1 (i.e. file is original) and this is a variable file then we need to remove the variables relating to this file
+            //if (hasAndIsOriginal(attachment)) return;
+
+            // TODO: other things affecting variables
+
+            if(fileUpdate) {
+                // File was actually updated, check if parsing is required
+                boolean needsParsing = false;
+                Language varLang = null;
+
+                ValueDataField pathField = revision.dataField(ValueDataFieldCall.get("file")).getRight();
+                String fileName = pathField != null ? FilenameUtils.getName(pathField.getActualValueFor(Language.DEFAULT)) : null;
+
+                if(fileName != null) {
+                    // We need a file name for this section to make sense
+                    if(fileIsVarFile(fileName)) {
+                        String base = FilenameUtils.getBaseName(fileName).toUpperCase();
+                        String lastChar = base.substring(base.length()-1);
+                        if(lastChar.equals("E") || lastChar.equals("S")) {
+                            varLang = lastChar.equals("E") ? Language.EN : Language.SV;
+                            // We have a translation file. Require that default language is already attached
+                            if(hasVariablesFileFor(Language.DEFAULT, study)) {
+                                // If there already are variables attached for the language in the study check that it's the same attachment
+                                if(hasVariablesFileFor(varLang, study)) {
+                                    if(variablesFileForEqual(varLang, revision.getKey().getId(), study)) {
+                                        needsParsing = true;
+                                    }
+                                } else {
+                                    needsParsing = true;
+                                }
+                            }
+                        } else {
+                            varLang = Language.DEFAULT;
+                            // We're parsing the default var file. If there already is a default file then check that it matches this
+                            if(hasVariablesFileFor(Language.DEFAULT, study)) {
+                                if(variablesFileForEqual(Language.DEFAULT, revision.getKey().getId(), study)) {
+                                    needsParsing = true;
+                                }
+                            } else {
+                                needsParsing = true;
+                            }
+                        }
+                    }
+                }
+                if(needsParsing) {
+                    parseVariableFile(revision, study, varLang);
+                }
+            }
+        }
+    }
+
+    private boolean checkFileMove(RevisionData revision, TransferData transfer, MutablePair<Boolean, Boolean> changesAndErrors, DateTimeUserPair info) {
+        ValueDataField curFile = revision.dataField(ValueDataFieldCall.get(Fields.FILE)).getRight();
+        if(curFile != null && curFile.hasValueFor(Language.DEFAULT)) {
+            String path = curFile.getActualValueFor(Language.DEFAULT);
+            String destLoc = getAttachmentFilePath(revision, path);
+            if(path.equals(destLoc)) {
+                // No move necessary
+                return false;
+            }
+
+            if(!transfer.hasField(Fields.FILE)) {
+                transfer.addField(TransferField.buildFromDataField(curFile));
+            }
+            TransferField tfFile = transfer.getField(Fields.FILE);
+
+            // We need to move the file
+            File f = new File(path);
+            File d = new File(destLoc);
+            if(d.isFile()) {
+                tfFile.addError(FieldError.AUTOMATIC_CHANGE_FAILED_FILE_EXISTS);
+                changesAndErrors.setRight(true);
+                return false;
+            }
+            try {
+                Files.createDirectories(d.getParentFile().toPath());
+                Files.move(f.toPath(), d.toPath(), StandardCopyOption.ATOMIC_MOVE);
+            } catch(Exception e) {
+                Logger.error(RevisionSaveRepositoryImpl.class, "Could not move file " + path + " to new location " + destLoc, e);
+                changesAndErrors.setRight(true);
+                tfFile.addError(FieldError.WRONG_LOCATION);
+                return false;
+            }
+
+            revision.dataField(ValueDataFieldCall.set(Fields.FILE, new Value(destLoc), Language.DEFAULT).setInfo(info));
+            tfFile.getValueFor(Language.DEFAULT).setCurrent(destLoc);
+            tfFile.addError(FieldError.AUTOMATIC_CHANGE);
+            changesAndErrors.setLeft(true);
+            changesAndErrors.setRight(true);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkFileUpdate(RevisionData revision, TransferData transfer, MutablePair<Boolean, Boolean> changesAndErrors, DateTimeUserPair info) {
+        TransferField tf = transfer.getField(Fields.NEWPATH);
+        if (tf != null && tf.hasCurrentFor(Language.DEFAULT)) {
+            // We have a new file path, lets check that it's an actual file and handle it accordingly
+            String path = tf.getValueFor(Language.DEFAULT).getCurrent();
+            if (notFile(path, tf, changesAndErrors)) {
+                // If the file is not a valid file then mark an error and skip the rest of this block
+                changesAndErrors.setRight(true);
+                return false;
+            }
+
+            // Get old file location
+            ValueDataField oldFileField = revision.dataField(ValueDataFieldCall.get(Fields.FILE)).getRight();
+            DateTimeUserPair oldInfo = oldFileField != null && oldFileField.hasCurrentFor(Language.DEFAULT) ? oldFileField.getCurrentFor(Language.DEFAULT).getSaved() : null;
+            String oldPath = oldFileField != null && oldFileField.hasValueFor(Language.DEFAULT) ? oldFileField.getActualValueFor(Language.DEFAULT) : null;
+            boolean oldChanges = changesAndErrors.getLeft();
+
+            // Get new file destination
+            String destLoc = oldPath != null && FilenameUtils.getBaseName(path).equals(FilenameUtils.getBaseName(oldPath)) ? oldPath : getAttachmentFilePath(revision, path);
+
+            if (destLoc == null) {
+                tf.addError(FieldError.MOVE_FAILED);
+                changesAndErrors.setRight(true);
+                return false;
+            }
+
+            // Set file path to file-field
+            StatusCode result = revision.dataField(ValueDataFieldCall.set(Fields.FILE, new Value(destLoc), Language.DEFAULT).setInfo(info)).getLeft();
+            if (!(result == StatusCode.NO_CHANGE_IN_VALUE || result == StatusCode.FIELD_INSERT || result == StatusCode.FIELD_UPDATE)) {
+                Logger.error(RevisionSaveRepositoryImpl.class, "Could not update file path because " + result.name());
+                changesAndErrors.setRight(true);
+                tf.addError(FieldError.MOVE_FAILED);
+                return false;
+            } else {
+                changesAndErrors.setLeft(true);
+            }
+
+            // Back up the old file in case we need to revert back to it
+            if (oldPath != null) {
+                File oldFile = new File(oldPath);
+                if (oldFile.exists()) {
+                    File bck = new File(oldPath + ".bck");
+                    // If backup file already exists lets delete it so it doesn't block the new backup
+                    try {
+                        Files.deleteIfExists(bck.toPath());
+                        Files.move(oldFile.toPath(), bck.toPath(), StandardCopyOption.ATOMIC_MOVE);
+                    } catch (Exception e) {
+                        Logger.error(RevisionSaveRepositoryImpl.class, "Could not back up existing file " + oldPath + " to " + oldPath + ".bck reverting changes to file", e);
+                        revision.dataField(ValueDataFieldCall.set(Fields.FILE, new Value(oldPath), Language.DEFAULT).setInfo(oldInfo));
+                        tf.addError(FieldError.MOVE_FAILED);
+                        changesAndErrors.setLeft(oldChanges);
+                        changesAndErrors.setRight(true);
+                        return false;
+                    }
+                }
+            }
+
+            // Copy the new file to the correct location
+            File newFile = new File(path);
+            File destFile = new File(destLoc);
+            if(destFile.exists() && oldPath == null) {
+                // In this case there is already an existing file, let's mark FILE_EXISTS, and fail the operation
+                // We don't need to move the backup file back since we know there is no backup file
+                tf.addError(FieldError.FILE_EXISTS);
+                revision.dataField(ValueDataFieldCall.set(Fields.FILE, new Value(oldPath), Language.DEFAULT).setInfo(oldInfo));
+                changesAndErrors.setRight(true);
+                return false;
+            }
+
+            try {
+                Files.createDirectories(destFile.getParentFile().toPath());
+                // We can replace existing file since if there is for some reason an existing file then the backup has for some reason succeeded but as a copy instead
+                Files.copy(newFile.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } catch (Exception e) {
+                Logger.error(RevisionSaveRepositoryImpl.class, "Could not copy new file " + path + " to location " + destLoc + ", reverting changes", e);
+                // Set field back to old path
+                // Move backup back to old location
+                if (oldPath != null) {
+                    File oldFile = new File(oldPath);
+                    File bck = new File(oldPath + ".bck");
+                    if (bck.exists()) {
+                        try {
+                            Files.move(bck.toPath(), oldFile.toPath(), StandardCopyOption.ATOMIC_MOVE);
+                        } catch (Exception e2) {
+                            Logger.error(RevisionSaveRepositoryImpl.class, "Could not move backup " + oldPath + ".bck back to old location", e2);
+                        }
+                    }
+                }
+                // Revert old path info
+                StatusCode revresult = revision.dataField(ValueDataFieldCall.set(Fields.FILE, new Value(oldPath), Language.DEFAULT).setInfo(oldInfo)).getLeft();
+                tf.addError(FieldError.MOVE_FAILED);
+                changesAndErrors.setLeft(oldChanges);
+                changesAndErrors.setRight(true);
+                return false;
+            }
+
+            // Remove backup
+            if (oldPath != null) {
+                File bck = new File(oldPath + ".bck");
+                if (bck.exists()) {
+                    try {
+                        Files.deleteIfExists(bck.toPath());
+                    } catch (Exception e) {
+                        Logger.error(RevisionSaveRepositoryImpl.class, "Could not remove backup file, remove manually", e);
+                    }
+                }
+            }
+            // File has been updated at this point, all that remains is removing the backup
+            return true;
+        }
+
+        return false;
+    }
+
+    private String getAttachmentFilePath(RevisionData revision, String path) {
+        // We need to calculate the correct store path for the file
+        // If some required field does not have value then assume the most common result
+        String pathFromRoot = "/";
+
+        Pair<ReturnResult, String> fileDirectory = revisions.getStudyFileDirectory(
+                Long.parseLong(revision.dataField(ValueDataFieldCall.get("study")).getRight().getActualValueFor(Language.DEFAULT)));
+
+        if(fileDirectory.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
+            Logger.error(RevisionSaveRepositoryImpl.class, "Could not find revisionable when fetching file root for study in attachment " + revision.toString());
+
+            return null;
+        }
+
+        String pathRoot = fileDirectory.getRight();
+
+        String fileName = FilenameUtils.getName(path);
+
+        // If path current differs from path original then we need to move the file
+        ValueDataField origField = revision.dataField(ValueDataFieldCall.get("fileoriginal")).getRight();
+        boolean origLocation = (origField != null && origField.getActualValueFor(Language.DEFAULT).equals("1"));
+
+        if(origLocation) pathFromRoot += "original";
+
+        boolean dataLocation = false;
+        if(!origLocation) {
+            String namePrefix = fileName.substring(0, 3).toUpperCase();
+            switch(namePrefix) {
+                default:
+                    dataLocation = false;
+                    break;
+                case "ARF":
+                case "SYF":
+                case "ANF":
+                case "DAF":
+                    dataLocation = true;
+                    break;
+
+            }
+
+            if(dataLocation) pathFromRoot += "data";
+        }
+
+        String destLoc = pathRoot+pathFromRoot+(pathFromRoot.length() > 1 ? "/" : "");
+        destLoc += fileName;
+        return destLoc;
+    }
+
+    private boolean notFile(String path, TransferField tf, MutablePair<Boolean, Boolean> changesAndErrors) {
+        // Does the defined file path exist and does it point to a file
+        File file = new File(path);
+        // This should be true if we have text in RevisionData
+        if(tf != null) {
+            if(!file.exists()) {
+                tf.addError(FieldError.NO_FILE);
+                changesAndErrors.setRight(true);
+            } else if(file.isDirectory()) {
+                tf.addError(FieldError.IS_DIRECTORY);
+                changesAndErrors.setRight(true);
+            } else if(!file.isFile()) {
+                tf.addError(FieldError.NO_FILE);
+                changesAndErrors.setRight(true);
+            }
+        }
+
+        return !file.isFile();
+    }
+
+    // TODO: Check
     private boolean hasVariablesFileFor(Language language, RevisionData study) {
         Pair<StatusCode, ValueDataField> fieldPair = study.dataField(ValueDataFieldCall.get("variablefile"));
         if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || !fieldPair.getRight().hasValueFor(language)) {
@@ -254,6 +601,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         return true;
     }
 
+    // TODO: Check
     private boolean variablesFileForEqual(Language language, Long value, RevisionData study) {
         Pair<StatusCode, ValueDataField> fieldPair = study.dataField(ValueDataFieldCall.get("variablefile"));
         if(fieldPair.getLeft() != StatusCode.FIELD_FOUND) {
@@ -263,9 +611,9 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         return fieldPair.getRight().valueForEquals(language, value.toString());
     }
 
-    private boolean fileIsVarFile(String path) {
+    private boolean fileIsVarFile(String fileName) {
+        fileName = fileName.toUpperCase();
         // Does the file name start with DAF
-        String fileName = FilenameUtils.getBaseName(path).toUpperCase();
         if(fileName.length() < 3) {
             return false;
         }
@@ -274,42 +622,11 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         }
 
         // Does the file extension define a variable file (i.e. POR)
-        String extension = FilenameUtils.getExtension(path).toUpperCase();
+        String extension = FilenameUtils.getExtension(fileName);
         if(!extension.equals("POR")) {
             // For now the only option. If more variable file types are added then this needs to be changed to a switch case
             return false;
         }
-        return true;
-    }
-
-    private boolean hasFile(Pair<StatusCode, ValueDataField> fieldPair, TransferData transferData, MutablePair<Boolean, Boolean> changesAndErrors) {
-        // Does attachment have defined file path
-        if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || !fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
-            // We have no file path, no need to continue
-            return false;
-        }
-
-        // Does the defined file path exist and does it point to a file
-        File file = new File(fieldPair.getRight().getActualValueFor(Language.DEFAULT));
-        TransferField field = transferData.getField(Fields.FILE);
-        // This should be true if we have text in RevisionData
-        if(field != null) {
-            if(!file.exists()) {
-                field.addError(FieldError.NO_FILE);
-                changesAndErrors.setRight(true);
-            } else if(file.isDirectory()) {
-                field.addError(FieldError.IS_DIRECTORY);
-                changesAndErrors.setRight(true);
-            } else if(!file.isFile()) {
-                field.addError(FieldError.NO_FILE);
-                changesAndErrors.setRight(true);
-            }
-        }
-
-        if(!file.exists() || !file.isFile()) {
-            return false;
-        }
-
         return true;
     }
 
@@ -327,26 +644,9 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         return false;
     }
 
-    private boolean attachmentAlreadyParsed(RevisionData revision) {
-        Pair<StatusCode, ValueDataField> fieldPair = revision.dataField(ValueDataFieldCall.get("parsed"));
-        if(fieldPair.getLeft() != StatusCode.FIELD_FOUND) {
-            // What to do if we failed to find the field for some other reason than it was missing?
-            return false;
-        }
-
-        return fieldPair.getRight().hasValueFor(Language.DEFAULT) && fieldPair.getRight().getValueFor(Language.DEFAULT).valueAsBoolean();
-    }
-
-    private void parseVariableFile(RevisionData attachment, TransferData transferData, RevisionData study, Language language) {
+    private void parseVariableFile(RevisionData attachment, RevisionData study, Language language) {
         ParseResult result = parser.parse(attachment, VariableDataType.POR, study, language);
 
-        Pair<StatusCode, ValueDataField> fieldPair = attachment.dataField(ValueDataFieldCall.set("parsed", new Value("true"), Language.DEFAULT));
-        TransferField parsed = transferData.getField("parsed");
-        if(parsed == null) {
-            parsed = new TransferField("parsed", TransferFieldType.VALUE);
-            transferData.addField(parsed);
-        }
-        parsed.addValueFor(Language.DEFAULT, TransferValue.buildFromValueDataFieldFor(Language.DEFAULT, fieldPair.getRight()));
         if(result == ParseResult.REVISION_CHANGES) {
             revisions.updateRevisionData(study);
         }

@@ -70,7 +70,7 @@ final class ValueDataFieldMutator {
             if(pair.getRight().valueForEquals(language, value.getValue())) {
                 return new ImmutablePair<>(StatusCode.NO_CHANGE_IN_VALUE, pair.getRight());
             }
-            if(pair.getRight().hasValueFor(language) && value.isNull()) {
+            if(!pair.getRight().hasValueFor(language) && value.isNull()) {
                 return new ImmutablePair<>(StatusCode.NO_CHANGE_IN_VALUE, pair.getRight());
             }
         }

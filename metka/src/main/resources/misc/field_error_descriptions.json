@@ -10,6 +10,26 @@
 	  "level": "ERROR",
 	  "text": "Virheellinen tiedostopolku"
 	}, {
+	  "key": "AUTOMATIC_CHANGE",
+	  "level": "WARNING",
+	  "text": "Arvo muutettu automaattisesti"
+	}, {
+	  "key": "WRONG_LOCATION",
+	  "level": "ERROR",
+	  "text": "Tiedostolla on väärä sijainti"
+	}, {
+	  "key": "FILE_EXISTS",
+	  "level": "ERROR",
+	  "text": "Uutta tiedostoa ei voitu tuoda järjestelmään sillä samalla nimellä löytyi jo tiedosto"
+	}, {
+	  "key": "AUTOMATIC_CHANGE_FAILED_FILE_EXISTS",
+	  "level": "ERROR",
+	  "text": "Tiedoston sijaintia yritettiin muuttaa automaattisesti mutta uudesta sijainnista löytyi jo tiedosto"
+	}, {
+	  "key": "MOVE_FAILED",
+	  "level": "ERROR",
+	  "text": "Uuden tiedoston siirto oikealle paikalle epäonnistui"
+	}, {
 	  "key": "",
 	  "level": "",
 	  "text": ""

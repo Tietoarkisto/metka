@@ -32,6 +32,16 @@
 			"type": "ROW",
 			"cells": [{
 				"type": "CELL",
+				"title": "Uusi tiedosto",
+				"horizontal": true,
+				"field": {
+					"key": "newpath"
+				}
+			}]
+		}, {
+			"type": "ROW",
+			"cells": [{
+				"type": "CELL",
 				"title": "Tiedoston polku",
 				"horizontal": true,
 				"required": true,
