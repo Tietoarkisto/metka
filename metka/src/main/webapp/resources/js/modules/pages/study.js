@@ -758,7 +758,8 @@ define(function (require) {
                                     },
                                     topic_ref: {
                                         type: 'JSON',
-                                        target: response.configuration.references.topictop_ref.target
+                                        target: response.configuration.references.topicvocab_ref.target,
+                                        valuePath: 'terms.term_ll.id'
                                     },
                                     analysisunit_ref: {
                                         type: 'JSON',
