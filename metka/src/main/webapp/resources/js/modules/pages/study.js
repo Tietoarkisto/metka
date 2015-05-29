@@ -50,6 +50,10 @@ define(function (require) {
                         },
                         'abstract',
                         {
+                            key: 'topictop',
+                            rename: 'topics.topictop',
+                            exactValue: true
+                        },{
                             key: 'topic',
                             rename: 'topics.topic',
                             exactValue: true
@@ -425,6 +429,19 @@ define(function (require) {
                                                     "cells": [
                                                         {
                                                             "type": "CELL",
+                                                            "title": "Pääala",
+                                                            "horizontal": true,
+                                                            "colspan": 2,
+                                                            "field": {
+                                                                "key": "topictop"
+                                                            }
+                                                        }
+                                                    ]
+                                                },{
+                                                    "type": "ROW",
+                                                    "cells": [
+                                                        {
+                                                            "type": "CELL",
                                                             "title": "Tieteenala",
                                                             "horizontal": true,
                                                             "colspan": 2,
@@ -755,12 +772,12 @@ define(function (require) {
                                     topictop_ref: {
                                         type: 'JSON',
                                         target: response.configuration.references.topicvocab_ref.target
-                                    },
+                                    },/*
                                     topic_ref: {
                                         type: 'JSON',
                                         target: response.configuration.references.topicvocab_ref.target,
                                         valuePath: 'terms.term_ll.id'
-                                    },
+                                    },*/
                                     analysisunit_ref: {
                                         type: 'JSON',
                                         target: response.configuration.references.analysisunitvocab_ref.target

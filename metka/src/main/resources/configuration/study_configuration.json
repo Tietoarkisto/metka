@@ -807,7 +807,7 @@
 			"type": "DEPENDENCY",
 			"target": "topictop",
 			"valuePath": "term_ll.id",
-            "titlePath": "term_ll"
+            "titlePath": "termll"
 		},
 		"topicuri_ref": {
 			"key": "topicuri_ref",
