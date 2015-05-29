@@ -360,7 +360,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                     }
                 }
                 if(needsParsing) {
-                    parseVariableFile(revision, study, varLang);
+                    parseVariableFile(revision, study, varLang, info);
                 }
             }
         }
@@ -593,7 +593,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
 
     // TODO: Check
     private boolean hasVariablesFileFor(Language language, RevisionData study) {
-        Pair<StatusCode, ValueDataField> fieldPair = study.dataField(ValueDataFieldCall.get("variablefile"));
+        Pair<StatusCode, ValueDataField> fieldPair = study.dataField(ValueDataFieldCall.get(Fields.VARIABLEFILE));
         if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || !fieldPair.getRight().hasValueFor(language)) {
             return false;
         }
@@ -603,7 +603,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
 
     // TODO: Check
     private boolean variablesFileForEqual(Language language, Long value, RevisionData study) {
-        Pair<StatusCode, ValueDataField> fieldPair = study.dataField(ValueDataFieldCall.get("variablefile"));
+        Pair<StatusCode, ValueDataField> fieldPair = study.dataField(ValueDataFieldCall.get(Fields.VARIABLEFILE));
         if(fieldPair.getLeft() != StatusCode.FIELD_FOUND) {
             return false;
         }
@@ -644,8 +644,26 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         return false;
     }
 
-    private void parseVariableFile(RevisionData attachment, RevisionData study, Language language) {
-        ParseResult result = parser.parse(attachment, VariableDataType.POR, study, language);
+    private static ParseResult resultCheck(ParseResult result, ParseResult def) {
+        return result != ParseResult.REVISION_CHANGES ? def : result;
+    }
+
+    private void parseVariableFile(RevisionData attachment, RevisionData study, Language language, DateTimeUserPair info) {
+        ParseResult result = parser.parse(attachment, VariableDataType.POR, study, language, info);
+
+        // Check that study has a link to the variable file (we should not be in this method if there is a link to another attachment)
+        Pair<StatusCode, ValueDataField> fieldPair = study.dataField(ValueDataFieldCall.get(Fields.VARIABLEFILE));
+        if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || !fieldPair.getRight().hasValueFor(language)) {
+            StatusCode setResult = study.dataField(
+                    ValueDataFieldCall.set(Fields.VARIABLEFILE, new Value(attachment.getKey().getId().toString()), language).setInfo(info))
+                    .getLeft();
+            if(!(setResult == StatusCode.FIELD_UPDATE || setResult == StatusCode.FIELD_INSERT)) {
+                Logger.error(RevisionSaveRepositoryImpl.class, "Study update failed with result " + setResult);
+                result = resultCheck(result, ParseResult.NO_CHANGES);
+            } else {
+                result = resultCheck(result, ParseResult.REVISION_CHANGES);
+            }
+        }
 
         if(result == ParseResult.REVISION_CHANGES) {
             revisions.updateRevisionData(study);

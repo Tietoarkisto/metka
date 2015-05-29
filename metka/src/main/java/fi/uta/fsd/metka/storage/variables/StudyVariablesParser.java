@@ -3,6 +3,7 @@ package fi.uta.fsd.metka.storage.variables;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.enums.VariableDataType;
 import fi.uta.fsd.metka.model.data.RevisionData;
+import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.storage.variables.enums.ParseResult;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,5 +15,5 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface StudyVariablesParser {
 
-    public ParseResult parse(RevisionData attachment, VariableDataType type, RevisionData study, Language language);
+    public ParseResult parse(RevisionData attachment, VariableDataType type, RevisionData study, Language language, DateTimeUserPair info);
 }

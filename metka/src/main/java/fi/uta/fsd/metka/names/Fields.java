@@ -190,6 +190,7 @@ public final class Fields {
     public static final String STUDY = "study";
     public static final String FILES = "files";
     public static final String PUBLICATIONTITLE = "publicationtitle";
+    public static final String VARIABLEFILE = "variablefile";
 
 
     private Fields() {}

@@ -76,7 +76,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
     }
 
     @Override
-    public ParseResult parse(RevisionData attachment, VariableDataType type, RevisionData study, Language language) {
+    public ParseResult parse(RevisionData attachment, VariableDataType type, RevisionData study, Language language, DateTimeUserPair info) {
         // Sanity check
         if(type == null) {
             return ParseResult.NO_TYPE_GIVEN;
@@ -85,30 +85,18 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             return ParseResult.DID_NOT_FIND_STUDY;
         }
 
-        DateTimeUserPair info = DateTimeUserPair.build();
+        if(info == null) {
+            info = DateTimeUserPair.build();
+        }
 
         ParseResult result = ParseResult.NO_CHANGES;
 
         // **********************
         // StudyAttachment checks
         // **********************
-        // Check that study has attached variables file and get the file id,
-        // attaching the file should happen before this step so we can expect it to be present
-        // TODO: This is really something that could be done as part of finalizing the study attachment rather than here
-        Pair<StatusCode, ValueDataField> fieldPair = study.dataField(ValueDataFieldCall.get("variablefile"));
-        if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || !fieldPair.getRight().hasValueFor(language)) {
-            StatusCode setResult = study.dataField(
-                    ValueDataFieldCall.set("variablefile", new Value(attachment.getKey().getId().toString()), language).setInfo(info))
-                    .getLeft();
-            if(!(setResult == StatusCode.FIELD_UPDATE || setResult == StatusCode.FIELD_INSERT)) {
-                Logger.error(StudyVariablesParserImpl.class, "Study update failed with result " + setResult);
-                return ParseResult.NO_CHANGES;
-            }
-            result = resultCheck(result, ParseResult.REVISION_CHANGES);
-        }
 
         // Check for file path from attachment
-        fieldPair = attachment.dataField(ValueDataFieldCall.get("file"));
+        Pair<StatusCode, ValueDataField> fieldPair = attachment.dataField(ValueDataFieldCall.get("file"));
         if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || !fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
             Logger.error(StudyVariablesParserImpl.class, "Did not find path in "+attachment.toString()+" even though shouldn't arrive at this point without path.");
             return ParseResult.VARIABLES_FILE_HAD_NO_PATH;
