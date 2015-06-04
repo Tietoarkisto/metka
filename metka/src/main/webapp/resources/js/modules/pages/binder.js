@@ -398,7 +398,13 @@ define(function (require) {
                                                             studyId: require('./../data')(containerOptions)('studyId').getByLang(options.defaultLang),
                                                             description: require('./../data')(containerOptions)('description').getByLang(options.defaultLang)
                                                         }),
-                                                        success: setContent
+                                                        success: function(data) {
+                                                            require('./../resultViewer')(data.result, "binder", function() {
+                                                                if (data.result === 'PAGE_CREATED') {
+                                                                    setContent(data);
+                                                                }
+                                                            });
+                                                        }
                                                     });
                                                 });
                                         }

@@ -20,13 +20,18 @@ define(function (require) {
                         .text(require('./selectInputOptionText')(option));
                 }));
             }
+            setValue();
+        }
+
+        function setValue() {
             var value = require('./data')(options).getByLang(lang);
             if (typeof value !== 'undefined' && $input.children('option[value="' + value + '"]').length) {
                 $input.val(value);
             } else {
                 $input.children().first().prop('selected', true);
+                require('./data')(options).setByLang(lang, $input.val());
             }
-            $input.change();
+            /*$input.change();*/
         }
 
         var key = options.field.key;
@@ -54,6 +59,25 @@ define(function (require) {
                 getOptions();
             }
         } else {
+            // You can only empty the selection through trigger if it has a valid empty value
+            if(list.includeEmpty) {
+                options.$events.on('data-empty-{key}-{lang}'.supplant({
+                    key: options.field.key,
+                    lang: lang
+                }), function() {
+                    require('./data')(options).setByLang(lang, "");
+                })
+                options.$events.on('data-empty-{key}'.supplant({
+                    key: options.field.key
+                }), function() {
+                    require('./data')(options).setByLang(lang, "");
+                })
+            }
+            options.$events.on('data-changed-{key}-{lang}'.supplant({
+                key: options.field.key,
+                lang: lang
+            }), setValue);
+
             setOptions(list.options);
         }
 
@@ -72,7 +96,13 @@ define(function (require) {
 
             $field.append($freeText);
             var showFreeText = function () {
-                $freeText.toggle(list.freeText.indexOf(require('./data')(options).getByLang(lang)) !== -1);
+                var vis = list.freeText.indexOf(require('./data')(options).getByLang(lang)) !== -1;
+                if(!vis) {
+                    options.$events.trigger('data-empty-{key}'.supplant({
+                        key: list.freeTextKey
+                    }));
+                }
+                $freeText.toggle(vis);
             };
             showFreeText();
             $input.change(showFreeText);

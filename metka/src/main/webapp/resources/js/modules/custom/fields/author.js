@@ -19,6 +19,7 @@ define(function (require) {
         return {
             preCreate: function (options) {
                 var $elem = this;
+                // This is a bad way to do this but it works because custom fields are always run after other fields.
                 if(options.data.fields.authortype) {
                     initField($elem, "authortype");
                 } else if(options.data.fields.otherauthortype) {

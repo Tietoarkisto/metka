@@ -2,7 +2,7 @@ package fi.uta.fsd.metka.transfer.binder;
 
 public class SaveBinderPageRequest {
     private Long pageId;
-    private Long binderId;
+    private String binderId;
     private String studyId;
     private String description;
 
@@ -14,11 +14,11 @@ public class SaveBinderPageRequest {
         this.pageId = pageId;
     }
 
-    public Long getBinderId() {
+    public String getBinderId() {
         return binderId;
     }
 
-    public void setBinderId(Long binderId) {
+    public void setBinderId(String binderId) {
         this.binderId = binderId;
     }
 

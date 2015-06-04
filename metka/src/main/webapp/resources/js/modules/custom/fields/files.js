@@ -79,7 +79,6 @@ define(function (require) {
                 var filesOptions = {
                     "type": "CELL",
                     "title": "Liitetyt tiedostot",
-                    "readOnly": true,
                     "field": $.extend(true, {}, options.field, {
                         "displayType": null,
                         "key": "files",

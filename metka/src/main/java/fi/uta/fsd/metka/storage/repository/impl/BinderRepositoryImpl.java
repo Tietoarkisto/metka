@@ -12,6 +12,7 @@ import fi.uta.fsd.metka.storage.entity.BinderPageEntity;
 import fi.uta.fsd.metka.storage.repository.BinderRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.util.ConversionUtil;
 import fi.uta.fsd.metka.transfer.binder.BinderPageListEntry;
 import fi.uta.fsd.metka.transfer.binder.SaveBinderPageRequest;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
@@ -53,7 +54,11 @@ public class BinderRepositoryImpl implements BinderRepository {
         }
         if(page == null) {
             page = new BinderPageEntity();
-            page.setBinderId(request.getBinderId());
+            try {
+                page.setBinderId(ConversionUtil.stringToLong(request.getBinderId()));
+            } catch(NumberFormatException e) {
+                return new ImmutablePair<>(ReturnResult.INCORRECT_TYPE_FOR_OPERATION, null);
+            }
             page.setStudy(study.getKey().getId());
             em.persist(page);
             result = ReturnResult.PAGE_CREATED;

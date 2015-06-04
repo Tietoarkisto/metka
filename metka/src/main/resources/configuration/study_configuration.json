@@ -2131,7 +2131,7 @@
         	"translatable": false,
         	"fixedOrder": false,
         	"subfields": [
-        		"authortype",
+				"authortype",
         		"author",
         		"organisation",
         		"organisationabbr",

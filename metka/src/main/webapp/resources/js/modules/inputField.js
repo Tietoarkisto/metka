@@ -8,6 +8,10 @@ define(function (require) {
         var $label = require('./label')(options, lang)
             .attr('for', id);
 
+        function emptyField() {
+            require('./data')(options).setByLang(lang, "");
+        }
+
         var $field = (function () {
             if (options.horizontal) {
 
@@ -130,7 +134,19 @@ define(function (require) {
                         lang: lang
                     });
 
+                    // Empties language specific field
+                    var emptyTriggerLangKey = 'data-empty-{key}-{lang}'.supplant({
+                        key: options.fieldOptions.key,
+                        lang: lang
+                    });
+
+                    // Empties field of every language
+                    var emptyTriggerKey = 'data-empty-{key}'.supplant({
+                        key: options.fieldOptions.key
+                    });
+
                     if (type === 'REFERENCE') {
+                        // NOTE: You can't empty a reference field by using a trigger, these fields are filled automatically through references and are not saved in any case
                         var reference = getPropertyNS(options, 'dataConf.references', options.fieldOptions.reference);
                         changeTriggerKey = 'data-changed-{key}-{lang}'.supplant({
                             key: reference.target,
@@ -141,14 +157,18 @@ define(function (require) {
                                 $input.val(value);
                             })(options.data.fields, reference);
                         });
-                        // TODO: setRefereneValue call is not necessary, if target is select input. select input triggers change event
+                        // NOTE: setRefereneValue call is not necessary if target is select input so it could be omitted. select input triggers change event
                     } else if(type === 'CONCAT') {
+                        options.$events.on(emptyTriggerLangKey, emptyField);
+                        options.$events.on(emptyTriggerKey, emptyField());
                         options.$events.on(changeTriggerKey, function() {
                             $input.val(options.fieldOptions.concatenate.map(function (key) {
                                 return require('./data')(options)(key).getByLang(lang);
                             }).join(''));
                         });
                     } else {
+                        options.$events.on(emptyTriggerLangKey, emptyField);
+                        options.$events.on(emptyTriggerKey, emptyField);
                         options.$events.on(changeTriggerKey, function() {
                             $input.val(require('./data')(options).getByLang(lang) || '');
                         });

@@ -88,28 +88,50 @@
 		"title": "NOTICE",
 		"text": "Mapitus päivitetty"
 	}, {
-	  "key": "EMPTY_QUERY",
-	  "title": "ERROR",
-	  "text": "Tyhjä hakulause, hakulausetta ei voida käsitellä"
+		"key": "PAGE_CREATED",
+		"title": "NOTICE",
+		"text": "Mapitus lisätty"
 	}, {
-	  "key": "MALFORMED_LANGUAGE",
-	  "title": "ERROR",
-	  "text": "Hakulauseen kieliparametri on muotoiltu väärin, hakulausetta ei voida käsitellä"
+		"key": "EMPTY_QUERY",
+		"title": "ERROR",
+		"text": "Tyhjä hakulause, hakulausetta ei voida käsitellä"
 	}, {
-	  "key": "MALFORMED_QUERY",
-	  "title": "ERROR",
-	  "text": "Hakulauseessa on virheitä, hakulausetta ei voida käsitellä"
+		"key": "MALFORMED_LANGUAGE",
+		"title": "ERROR",
+		"text": "Hakulauseen kieliparametri on muotoiltu väärin, hakulausetta ei voida käsitellä"
 	}, {
-	  "key": "EMPTY_PATH",
-	  "title": "ERROR",
-	  "text": "Vaadittu polku on tyhjä, käsittelyä ei voida jatkaa"
+		"key": "MALFORMED_QUERY",
+		"title": "ERROR",
+		"text": "Hakulauseessa on virheitä, hakulausetta ei voida käsitellä"
 	}, {
-	  "key": "MALFORMED_PATH",
-	  "title": "ERROR",
-	  "text": "Vaadittu polku on viallinen tai puutteeliinen, käsittelyä ei voida jatkaa"
+		"key": "EMPTY_PATH",
+		"title": "ERROR",
+		"text": "Vaadittu polku on tyhjä, käsittelyä ei voida jatkaa"
 	}, {
-	  "key": "",
-	  "title": "",
-	  "text": ""
+		"key": "MALFORMED_PATH",
+		"title": "ERROR",
+		"text": "Vaadittu polku on viallinen tai puutteeliinen, käsittelyä ei voida jatkaa"
+	}, {
+		"key": "REVISIONABLE_NOT_FOUND",
+		"title": "ERROR",
+		"text": "Revisioitavaa objektia ei löydetty",
+		"operations": [{
+			"key": "binder",
+			"title": "ERROR",
+			"text": "Aineistoa ei löydetty"
+		}]
+	}, {
+		"key": "INCORRECT_TYPE_FOR_OPERATION",
+		"title": "ERROR",
+		"text": "Annettu arvo oli väärää tyyppiä",
+		"operations": [{
+			"key": "binder",
+			"title": "ERROR",
+			"text": "Mappinumeron tulee olla numero"
+		}]
+	}, {
+		"key": "",
+		"title": "",
+		"text": ""
 	}]
 }
