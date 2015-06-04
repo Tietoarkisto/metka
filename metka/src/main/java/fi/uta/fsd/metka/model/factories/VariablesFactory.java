@@ -28,7 +28,7 @@ public class VariablesFactory extends DataFactory {
 
     public Pair<ReturnResult, RevisionData> newStudyVariables(Long id, Integer no, Configuration configuration, String studyId, String fileId, String varfileid, String varfiletype) {
         if(configuration.getKey().getType() != ConfigurationType.STUDY_VARIABLES) {
-            Logger.error(VariablesFactory.class, "Called StudyVariablesFactory with type " + configuration.getKey().getType() + " configuration");
+            Logger.error(getClass(), "Called StudyVariablesFactory with type " + configuration.getKey().getType() + " configuration");
             return new ImmutablePair<>(ReturnResult.INCORRECT_TYPE_FOR_OPERATION, null);
         }
 
@@ -46,7 +46,7 @@ public class VariablesFactory extends DataFactory {
 
     public Pair<ReturnResult, RevisionData> newVariable(Long id, Integer no, Configuration configuration, String variablesId, String studyId, String varName, String varId) {
         if(configuration.getKey().getType() != ConfigurationType.STUDY_VARIABLE) {
-            Logger.error(VariablesFactory.class, "Called StudyVariablesFactory with type "+configuration.getKey().getType()+" configuration");
+            Logger.error(getClass(), "Called StudyVariablesFactory with type "+configuration.getKey().getType()+" configuration");
             return new ImmutablePair<>(ReturnResult.INCORRECT_TYPE_FOR_OPERATION, null);
         }
 
@@ -73,7 +73,7 @@ public class VariablesFactory extends DataFactory {
         }
         Pair<StatusCode, ContainerDataField> translationsPair = variable.dataField(ContainerDataFieldCall.set(Fields.TRANSLATIONS));
         if(!(translationsPair.getLeft() == StatusCode.FIELD_FOUND || translationsPair.getLeft() == StatusCode.FIELD_INSERT)) {
-            Logger.error(VariablesFactory.class, "Could not get translations container for setting study variable translations. Result: "+translationsPair.getLeft());
+            Logger.error(getClass(), "Could not get translations container for setting study variable translations. Result: "+translationsPair.getLeft());
             // Can't set translations since could not get translations container
             return;
         }

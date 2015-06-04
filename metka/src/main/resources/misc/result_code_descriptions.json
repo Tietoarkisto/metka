@@ -100,6 +100,14 @@
 	  "title": "ERROR",
 	  "text": "Hakulauseessa on virheitä, hakulausetta ei voida käsitellä"
 	}, {
+	  "key": "EMPTY_PATH",
+	  "title": "ERROR",
+	  "text": "Vaadittu polku on tyhjä, käsittelyä ei voida jatkaa"
+	}, {
+	  "key": "MALFORMED_PATH",
+	  "title": "ERROR",
+	  "text": "Vaadittu polku on viallinen tai puutteeliinen, käsittelyä ei voida jatkaa"
+	}, {
 	  "key": "",
 	  "title": "",
 	  "text": ""

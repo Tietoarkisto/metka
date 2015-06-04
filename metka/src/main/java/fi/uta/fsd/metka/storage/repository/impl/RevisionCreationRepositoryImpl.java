@@ -1,5 +1,6 @@
 package fi.uta.fsd.metka.storage.repository.impl;
 
+import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
@@ -29,8 +30,6 @@ import fi.uta.fsd.metka.transfer.revision.RevisionCreateRequest;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -39,7 +38,6 @@ import javax.persistence.PersistenceContext;
 
 @Repository
 public class RevisionCreationRepositoryImpl implements RevisionCreationRepository {
-    private static Logger logger = LoggerFactory.getLogger(RevisionCreationRepositoryImpl.class);
 
     @PersistenceContext(name = "entityManager")
     private EntityManager em;
@@ -69,16 +67,16 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
                 configPair = configurations.findLatestConfiguration(request.getType());
                 break;
             default:
-                logger.warn("Tried to create revisionable "+request.getType()+" which is not handled here but is instead created through some other means");
+                Logger.warning(getClass(), "Tried to create revisionable " + request.getType() + " which is not handled here but is instead created through some other means");
                 return new ImmutablePair<>(ReturnResult.INCORRECT_TYPE_FOR_OPERATION, null);
         }
         if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
-            logger.error("No configuration found for "+request.getType()+", halting new revisionable creation.");
+            Logger.error(getClass(), "No configuration found for "+request.getType()+", halting new revisionable creation.");
             return new ImmutablePair<>(configPair.getLeft(), null);
         }
         ReturnResult result = checkRequestParameters(request);
         if(result != ReturnResult.ALL_PARAMETERS_FOUND) {
-            logger.error("Some parameters missing, cannot continue revision creation");
+            Logger.error(getClass(), "Some parameters missing, cannot continue revision creation");
             return new ImmutablePair<>(result, null);
         }
         RevisionableEntity revisionable = createRevisionable(request);
@@ -89,16 +87,16 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
         RevisionEntity revision = new RevisionEntity(new RevisionKey(revisionable.getId(), 1));
         Pair<ReturnResult, RevisionData> dataPair = createRevisionData(revisionable, revision, configPair.getRight(), request);
         if(dataPair.getLeft() != ReturnResult.REVISION_CREATED) {
-            logger.error("Couldn't create revision because of: "+dataPair.getLeft());
-            logger.error("Removing revisionable "+revisionable.toString());
+            Logger.error(getClass(), "Couldn't create revision because of: "+dataPair.getLeft());
+            Logger.error(getClass(), "Removing revisionable "+revisionable.toString());
             em.remove(revisionable);
             return new ImmutablePair<>(dataPair.getLeft(), null);
         }
 
         Pair<SerializationResults, String> string = json.serialize(dataPair.getRight());
         if(string.getLeft() != SerializationResults.SERIALIZATION_SUCCESS) {
-            logger.error("Couldn't serialize revision "+dataPair.getRight().toString());
-            logger.error("Removing revisionable "+revisionable.toString());
+            Logger.error(getClass(), "Couldn't serialize revision "+dataPair.getRight().toString());
+            Logger.error(getClass(), "Removing revisionable "+revisionable.toString());
             em.remove(revisionable);
             return new ImmutablePair<>(ReturnResult.REVISION_NOT_CREATE, null);
         }
@@ -118,54 +116,54 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
         switch(request.getType()) {
             case STUDY:
                 if(!request.getParameters().containsKey("submissionid")) {
-                    logger.error("Creation of STUDY requires that submission id is provided in parameter 'submissionid'");
+                    Logger.error(getClass(), "Creation of STUDY requires that submission id is provided in parameter 'submissionid'");
                     return ReturnResult.PARAMETERS_MISSING;
                 }
                 if(!request.getParameters().containsKey("dataarrivaldate")) {
-                    logger.error("Creation of STUDY requires that arrival date for data is provided in parameter 'dataarrivaldate'");
+                    Logger.error(getClass(), "Creation of STUDY requires that arrival date for data is provided in parameter 'dataarrivaldate'");
                     return ReturnResult.PARAMETERS_MISSING;
                 }
                 break;
             case STUDY_ATTACHMENT:
                 // Check that some id is provided, assumes that this id points to a study
                 if(!request.getParameters().containsKey("study")) {
-                    logger.error("Creation of STUDY_ATTACHMENT requires that study.key.id is provided in parameter 'study'");
+                    Logger.error(getClass(), "Creation of STUDY_ATTACHMENT requires that study.key.id is provided in parameter 'study'");
                     return ReturnResult.PARAMETERS_MISSING;
                 }
                 break;
             case STUDY_VARIABLES:
                 if(!request.getParameters().containsKey("study")) {
-                    logger.error("Creation of STUDY_VARIABLES requires that study.key.id is provided in parameter 'study'");
+                    Logger.error(getClass(), "Creation of STUDY_VARIABLES requires that study.key.id is provided in parameter 'study'");
                     return ReturnResult.PARAMETERS_MISSING;
                 }
                 if(!request.getParameters().containsKey("fileid")) {
-                    logger.error("Creation of STUDY_VARIABLES requires that study attachment id is provided in parameter 'fileid'");
+                    Logger.error(getClass(), "Creation of STUDY_VARIABLES requires that study attachment id is provided in parameter 'fileid'");
                     return ReturnResult.PARAMETERS_MISSING;
                 }
                 if(!request.getParameters().containsKey("varfileid")) {
-                    logger.error("Creation of STUDY_VARIABLES requires that study attachment file name is provided in parameter 'varfileid'");
+                    Logger.error(getClass(), "Creation of STUDY_VARIABLES requires that study attachment file name is provided in parameter 'varfileid'");
                     return ReturnResult.PARAMETERS_MISSING;
                 }
                 if(!request.getParameters().containsKey("varfiletype")) {
-                    logger.error("Creation of STUDY_VARIABLES requires that study attachments file type is provided in parameter 'varfiletype'");
+                    Logger.error(getClass(), "Creation of STUDY_VARIABLES requires that study attachments file type is provided in parameter 'varfiletype'");
                     return ReturnResult.PARAMETERS_MISSING;
                 }
                 break;
             case STUDY_VARIABLE:
                 if(!request.getParameters().containsKey("study")) {
-                    logger.error("Creation of STUDY_VARIABLE requires that study.key.id is provided in parameter 'study'");
+                    Logger.error(getClass(), "Creation of STUDY_VARIABLE requires that study.key.id is provided in parameter 'study'");
                     return ReturnResult.PARAMETERS_MISSING;
                 }
                 if(!request.getParameters().containsKey("variablesid")) {
-                    logger.error("Creation of STUDY_VARIABLE requires that study variables id is provided in parameter 'variablesid'");
+                    Logger.error(getClass(), "Creation of STUDY_VARIABLE requires that study variables id is provided in parameter 'variablesid'");
                     return ReturnResult.PARAMETERS_MISSING;
                 }
                 if(!request.getParameters().containsKey("varname")) {
-                    logger.error("Creation of STUDY_VARIABLE requires that variables varname is provided in parameter 'varname'");
+                    Logger.error(getClass(), "Creation of STUDY_VARIABLE requires that variables varname is provided in parameter 'varname'");
                     return ReturnResult.PARAMETERS_MISSING;
                 }
                 if(!request.getParameters().containsKey("varid")) {
-                    logger.error("Creation of STUDY_VARIABLE requires that variables varid is provided in parameter 'varid'");
+                    Logger.error(getClass(), "Creation of STUDY_VARIABLE requires that variables varid is provided in parameter 'varid'");
                     return ReturnResult.PARAMETERS_MISSING;
                 }
                 break;
@@ -314,7 +312,7 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
         // Get the latest revision for study and, if it exists, get or create files reference container
         Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(revisionable.getStudyAttachmentStudy(), false, ConfigurationType.STUDY);
         if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
-            logger.error("Didn't find  latest revision for study with id "+revisionable.getStudyAttachmentStudy()+" with result "+dataPair.getLeft());
+            Logger.error(getClass(), "Didn't find  latest revision for study with id "+revisionable.getStudyAttachmentStudy()+" with result "+dataPair.getLeft());
             return;
         }
 
@@ -323,7 +321,7 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
         if(filesPair.getLeft() != StatusCode.FIELD_FOUND) {
             filesPair = studyRevision.dataField(ReferenceContainerDataFieldCall.set("files"));
             if(filesPair.getLeft() != StatusCode.FIELD_INSERT) {
-                logger.error("Couldn't create files reference container for study "+studyRevision.toString());
+                Logger.error(getClass(), "Couldn't create files reference container for study "+studyRevision.toString());
                 return;
             }
         }
@@ -336,7 +334,7 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
         if(referencePair.getLeft() == StatusCode.NEW_ROW) {
             ReturnResult updateResult = revisions.updateRevisionData(studyRevision);
             if(updateResult != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
-                logger.error("Could not update "+studyRevision.toString()+", received result "+updateResult);
+                Logger.error(getClass(), "Could not update "+studyRevision.toString()+", received result "+updateResult);
             }
         }
     }

@@ -37,7 +37,7 @@ class DDIWriteDataDescription extends DDIWriteSectionBase {
         Pair<ReturnResult, RevisionData> revisionDataPair = revisions.getLatestRevisionForIdAndType(
                 valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY_VARIABLES);
         if(revisionDataPair.getLeft() != ReturnResult.REVISION_FOUND) {
-            Logger.error(DDIWriteDataDescription.class,
+            Logger.error(getClass(),
                     "Couldn't find expected variables revision with id: " + valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger());
             return;
         }
@@ -59,7 +59,7 @@ class DDIWriteDataDescription extends DDIWriteSectionBase {
                 }
                 revisionDataPair = revisions.getLatestRevisionForIdAndType(reference.getReference().asInteger(), false, ConfigurationType.STUDY_VARIABLE);
                 if(revisionDataPair.getLeft() != ReturnResult.REVISION_FOUND) {
-                    Logger.error(DDIWriteDataDescription.class, "Referenced study variable with id: " + reference.getReference().asInteger() + " could not be found with result " + revisionDataPair.getLeft());
+                    Logger.error(getClass(), "Referenced study variable with id: " + reference.getReference().asInteger() + " could not be found with result " + revisionDataPair.getLeft());
                     continue;
                 }
                 RevisionData variable = revisionDataPair.getRight();
@@ -113,7 +113,7 @@ class DDIWriteDataDescription extends DDIWriteSectionBase {
                             }
                             revisionDataPair = revisions.getLatestRevisionForIdAndType(reference.getReference().asInteger(), false, ConfigurationType.STUDY_VARIABLE);
                             if(revisionDataPair.getLeft() != ReturnResult.REVISION_FOUND) {
-                                Logger.error(DDIWriteDataDescription.class, "Referenced study variable with id: " + reference.getReference().asInteger() + " could not be found with result " + revisionDataPair.getLeft());
+                                Logger.error(getClass(), "Referenced study variable with id: " + reference.getReference().asInteger() + " could not be found with result " + revisionDataPair.getLeft());
                                 continue;
                             }
                             if(StringUtils.hasText(vars)) {

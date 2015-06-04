@@ -55,36 +55,25 @@ class PORVariablesParser implements VariablesParser {
     private final Language language;
     private final List<RevisionData> variableRevisions;
 
-    PORVariablesParser(String path, RevisionData variablesData, DateTimeUserPair info, String studyId,
+    PORVariablesParser(String path, Language language, RevisionData variablesData, DateTimeUserPair info, String studyId,
                        RevisionRepository revisions, RevisionRemoveRepository remove, RevisionCreationRepository create, RevisionEditRepository edit) {
+        this.language = language;
+        this.remove = remove;
+        this.revisions = revisions;
+        this.create = create;
+        this.edit = edit;
+        this.variablesData = variablesData;
+        this.info = info;
+        this.studyId = studyId;
+
         PORReader reader = new PORReader();
         PORFile por;
         try {
             por = reader.parse(path);
         } catch(IOException ioe) {
             ioe.printStackTrace();
-            Logger.error(PORVariablesParser.class, "IOException while reading POR-file with path " + path);
+            Logger.error(getClass(), "IOException while reading POR-file with path " + path);
             throw new UnsupportedOperationException("Could not parse POR file");
-        }
-
-        this.remove = remove;
-        this.revisions = revisions;
-        this.create = create;
-        this.edit = edit;
-
-        // Get language
-        String baseName = FilenameUtils.getBaseName(path);
-        String lastChar = baseName.substring(baseName.length()-1);
-        switch(lastChar) {
-            case "e":
-                language = Language.EN;
-                break;
-            case "s":
-                language = Language.SV;
-                break;
-            default:
-                language = Language.DEFAULT;
-                break;
         }
 
         this.variableRevisions = revisions.getVariableRevisionsOfVariables(variablesData.getKey().getId());
@@ -115,14 +104,16 @@ class PORVariablesParser implements VariablesParser {
 
         sizeX = por.data.sizeX();
         sizeY = por.data.sizeY();
-        this.variablesData = variablesData;
-        this.info = info;
-        this.studyId = studyId;
     }
 
     public ParseResult parse() {
         ParseResult result = ParseResult.NO_CHANGES;
+        result = variablesBaseProperties(result);
+        result = variablesParsing(result);
+        return result;
+    }
 
+    private ParseResult variablesBaseProperties(ParseResult result) {
         // Insert data that is only relevant with default language file
         if(language == Language.DEFAULT) {
             // Set software field
@@ -144,11 +135,21 @@ class PORVariablesParser implements VariablesParser {
             fieldPair = variablesData.dataField(ValueDataFieldCall.set(Fields.CASEQUANTITY, new Value(sizeY + ""), Language.DEFAULT).setInfo(info));
             result = checkResultForUpdate(fieldPair, result);
         }
+        return result;
+    }
 
+    private ParseResult variablesParsing(ParseResult result) {
         // Make VariablesHandler
+        /*VariableParser parser = new VariableParser(info, language);
+        if(language == Language.DEFAULT) {
+            return variablesParsingDefault(result, parser);
+        } else {
+            return variablesParsingNonDefault(result, parser);
+        }*/
+
         VariableParser parser = new VariableParser(info, language);
 
-        Logger.debug(PORVariablesParser.class, "Gathering entities for parsing");
+        Logger.debug(getClass(), "Gathering entities for parsing");
         long start = System.currentTimeMillis();
         List<Pair<RevisionData, PORUtil.PORVariableHolder>> listOfEntitiesAndHolders = new ArrayList<>();
         for(PORUtil.PORVariableHolder variable : variables) {
@@ -164,7 +165,7 @@ class PORVariablesParser implements VariablesParser {
             }
             listOfEntitiesAndHolders.add(new ImmutablePair<>(variableRevision, variable));
         }
-        Logger.debug(PORVariablesParser.class, "Entities gathered. Took "+(System.currentTimeMillis()-start)+"ms");
+        Logger.debug(getClass(), "Entities gathered. Took "+(System.currentTimeMillis()-start)+"ms");
 
         ContainerDataField variableGroups = variablesData.dataField(ContainerDataFieldCall.get(Fields.VARGROUPS)).getRight();
 
@@ -222,12 +223,12 @@ class PORVariablesParser implements VariablesParser {
         }
 
         if(variablesContainer == null) {
-            Logger.error(PORVariablesParser.class, "Missing variables container even though it should be present or created");
+            Logger.error(getClass(), "Missing variables container even though it should be present or created");
             return resultCheck(result, ParseResult.NO_VARIABLES_CONTAINER);
         }
 
         Pair<StatusCode, ValueDataField> studyField = variablesData.dataField(ValueDataFieldCall.get("study"));
-        Logger.debug(PORVariablesParser.class, listOfEntitiesAndHolders.size()+" variables to parse.");
+        Logger.debug(getClass(), listOfEntitiesAndHolders.size()+" variables to parse.");
         int counter = 0;
         long timeSpent = 0L;
         for(Pair<RevisionData, PORUtil.PORVariableHolder> pair : listOfEntitiesAndHolders) {
@@ -256,7 +257,7 @@ class PORVariablesParser implements VariablesParser {
                 request.getParameters().put("varid", varId);
                 dataPair = create.create(request);
                 if(dataPair.getLeft() != ReturnResult.REVISION_CREATED) {
-                    Logger.error(PORVariablesParser.class, "Couldn't create new variable revisionable for study "+studyField.getRight().getActualValueFor(Language.DEFAULT)+" and variables "+variablesData.toString());
+                    Logger.error(getClass(), "Couldn't create new variable revisionable for study "+studyField.getRight().getActualValueFor(Language.DEFAULT)+" and variables "+variablesData.toString());
                     return resultCheck(result, ParseResult.COULD_NOT_CREATE_VARIABLES);
                 }
                 variableData = dataPair.getRight();
@@ -269,7 +270,7 @@ class PORVariablesParser implements VariablesParser {
             if(variableData.getState() != RevisionState.DRAFT) {
                 dataPair = edit.edit(TransferData.buildFromRevisionData(variableData, RevisionableInfo.FALSE));
                 if(dataPair.getLeft() != ReturnResult.REVISION_CREATED) {
-                    Logger.error(PORVariablesParser.class, "Couldn't create new DRAFT revision for "+variableData.getKey().toString());
+                    Logger.error(getClass(), "Couldn't create new DRAFT revision for "+variableData.getKey().toString());
                     return resultCheck(result, ParseResult.COULD_NOT_CREATE_VARIABLE_DRAFT);
                 }
                 variableData = dataPair.getRight();
@@ -286,16 +287,337 @@ class PORVariablesParser implements VariablesParser {
             if(mergeResult == ParseResult.REVISION_CHANGES) {
                 ReturnResult updateResult = revisions.updateRevisionData(variableData);
                 if(updateResult != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
-                    Logger.error(PORVariablesParser.class, "Could not update revision data for "+variableData.toString()+" with result "+updateResult);
+                    Logger.error(getClass(), "Could not update revision data for "+variableData.toString()+" with result "+updateResult);
                 }
             }
             counter++;
             long end = System.currentTimeMillis()-start;
-            Logger.debug(PORVariablesParser.class, "Parsed variable in "+end+"ms. Still "+(listOfEntitiesAndHolders.size()-counter)+" variables to parse.");
+            Logger.debug(getClass(), "Parsed variable in "+end+"ms. Still "+(listOfEntitiesAndHolders.size()-counter)+" variables to parse.");
             timeSpent += end;
         }
 
-        Logger.debug(PORVariablesParser.class, "Parsed variables in "+timeSpent+"ms");
+        Logger.debug(getClass(), "Parsed variables in "+timeSpent+"ms");
         return result;
+    }
+
+    /*
+    * Defult language variables parsing.
+    * This should keep the order of variables in the por-file
+    * It should not remove variables that don't contain a default language since those have been brought from separate translation-por
+    * It should remove variables that contain default language but are not present on the current por-file
+    */
+    /*private ParseResult variablesParsingDefault(ParseResult result, VariableParser parser) {
+        Logger.debug(getClass(), "Gathering entities for parsing in language "+language);
+        long start = System.currentTimeMillis();
+
+        // List variables included in this file and their revision counterparts.
+        // This tells us which variables are already present, which need to be created and which might need to be removed
+        Pair<StatusCode, ReferenceContainerDataField> variablesCont = variablesData.dataField(ReferenceContainerDataFieldCall.set(Fields.VARIABLES).setInfo(info));
+        List<ReferenceRow> variableRows = gatherAndClear(variablesCont.getRight());
+        List<Pair<RevisionData, PORUtil.PORVariableHolder>> listOfEntitiesAndHolders = new ArrayList<>();
+        for(PORUtil.PORVariableHolder variable : variables) {
+            RevisionData variableRevision = null;
+            for(Iterator<ReferenceRow> i = variableRows.iterator(); i.hasNext(); ) {
+                variableRevision = i.next();
+                Pair<StatusCode, ValueDataField> fieldPair = variableRevision.dataField(ValueDataFieldCall.get(Fields.VARID));
+                if(fieldPair.getRight().getActualValueFor(Language.DEFAULT).equals(studyId + "_" + parser.getVarName(variable))) {
+                    i.remove();
+                    break;
+                }
+                variableRevision = null;
+            }
+            listOfEntitiesAndHolders.add(new ImmutablePair<>(variableRevision, variable));
+        }
+        Logger.debug(getClass(), "Entities gathered. Took "+(System.currentTimeMillis()-start)+"ms");
+
+        // Perform removal of variables that have default language but are missing from the current por-file
+        ContainerDataField variableGroups = variablesData.dataField(ContainerDataFieldCall.get(Fields.VARGROUPS)).getRight();
+        for(RevisionData variableRevision : variableRevisions) {
+            // All remaining rows in variableEntities should be checked for removal since no variable was found for them in the current POR-file
+
+            // If removal of the revision returns SUCCESS_DRAFT this means that there's more revisions to remove and second call with new latest revision should clear out any remaining revisions.
+            if(remove.remove(TransferData.buildFromRevisionData(variableRevision, RevisionableInfo.FALSE)) == RemoveResult.SUCCESS_DRAFT) {
+                Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(variableRevision.getKey().getId(), false, ConfigurationType.STUDY_VARIABLE);
+                remove.remove(TransferData.buildFromRevisionData(dataPair.getRight(), RevisionableInfo.FALSE));
+            }
+            ReferenceContainerDataField variablesContainer = variablesData.dataField(ReferenceContainerDataFieldCall.get(Fields.VARIABLES)).getRight();
+            if(variablesContainer != null) {
+                // See that respective rows are removed from STUDY_VARIABLES
+                //    Remove from variables list
+                ReferenceRow reference = variablesContainer.getReferenceWithValue(variableRevision.getKey().getId().toString()).getRight();
+                if(reference != null) {
+                    StatusCode status = variablesContainer.removeReference(reference.getRowId(), variablesData.getChanges(), info).getLeft();
+                    if(status == StatusCode.ROW_CHANGE || status == StatusCode.ROW_REMOVED) {
+                        result = resultCheck(result, ParseResult.REVISION_CHANGES);
+                    }
+                }
+            }
+
+            // Remove
+            if(variableGroups != null) {
+                for(DataRow row : variableGroups.getRowsFor(Language.DEFAULT)) {
+                    variablesContainer = row.dataField(ReferenceContainerDataFieldCall.get(Fields.VARGROUPVARS)).getRight();
+                    if(variablesContainer != null) {
+                        // See that respective rows are removed from VARGROUPVARS
+                        //    Remove from variables list
+                        ReferenceRow reference = variablesContainer.getReferenceWithValue(variableRevision.getKey().getId().toString()).getRight();
+                        if(reference != null) {
+                            StatusCode status = variablesContainer.removeReference(reference.getRowId(), variablesData.getChanges(), info).getLeft();
+                            if(status == StatusCode.ROW_CHANGE || status == StatusCode.ROW_REMOVED) {
+                                result = resultCheck(result, ParseResult.REVISION_CHANGES);
+                            }
+                            // Since variable should always be only in one group at a time we can break out.
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        // listOfEntitiesAndHolders should contain all variables in the POR-file as well as their existing revisionables. No revisionable is provided if it's a new variable
+        ReferenceContainerDataField variablesContainer = variablesData.dataField(ReferenceContainerDataFieldCall.get(Fields.VARIABLES)).getRight();
+        if(listOfEntitiesAndHolders.size() > 0 && variablesContainer == null) {
+            Pair<StatusCode, ReferenceContainerDataField> containerPair = variablesData.dataField(ReferenceContainerDataFieldCall.set("variables"));
+            result = checkResultForUpdate(containerPair, result);
+            variablesContainer = containerPair.getRight();
+        }
+
+        if(variablesContainer == null) {
+            Logger.error(getClass(), "Missing variables container even though it should be present or created");
+            return resultCheck(result, ParseResult.NO_VARIABLES_CONTAINER);
+        }
+
+        Pair<StatusCode, ValueDataField> studyField = variablesData.dataField(ValueDataFieldCall.get("study"));
+        Logger.debug(getClass(), listOfEntitiesAndHolders.size()+" variables to parse.");
+        int counter = 0;
+        long timeSpent = 0L;
+        for(Pair<RevisionData, PORUtil.PORVariableHolder> pair : listOfEntitiesAndHolders) {
+            start = System.currentTimeMillis();
+
+            // Iterate through entity/holder pairs. There should always be a holder but missing entity indicates that this is a new variable.
+            // After all variables are handled there should be one non removed revisionable per variable in the current por-file.
+            // Each revisionable should have an open draft revision (this is a shortcut but it would require doing actual change checking for all variable content to guarantee that no
+            // unnecessary revisions are created. This is not required and so a new draft is provided per revisionable).
+            // Variables entity should have an open draft revision that includes references to all variables as well as non grouped references for all variables that previously were
+            // not in any groups.
+
+            RevisionData variableData = pair.getLeft();
+            PORUtil.PORVariableHolder variable = pair.getRight();
+            String varName = parser.getVarName(variable);
+            String varId = studyId + "_" + parser.getVarName(variable);
+
+            Pair<ReturnResult, RevisionData> dataPair;
+            if(variableData == null) {
+                RevisionCreateRequest request = new RevisionCreateRequest();
+                request.setType(ConfigurationType.STUDY_VARIABLE);
+                request.getParameters().put("study", studyField.getRight().getActualValueFor(Language.DEFAULT));
+                request.getParameters().put("variablesid", variablesData.getKey().getId().toString());
+                request.getParameters().put("varname", varName);
+                request.getParameters().put("varid", varId);
+                dataPair = create.create(request);
+                if(dataPair.getLeft() != ReturnResult.REVISION_CREATED) {
+                    Logger.error(getClass(), "Couldn't create new variable revisionable for study "+studyField.getRight().getActualValueFor(Language.DEFAULT)+" and variables "+variablesData.toString());
+                    return resultCheck(result, ParseResult.COULD_NOT_CREATE_VARIABLES);
+                }
+                variableData = dataPair.getRight();
+            }
+
+            // Add Saved reference if missing
+            variablesContainer.getOrCreateReferenceWithValue(variableData.getKey().getId().toString(), variablesData.getChanges(), info).getRight();
+            result = resultCheck(result, ParseResult.REVISION_CHANGES);
+
+            if(variableData.getState() != RevisionState.DRAFT) {
+                dataPair = edit.edit(TransferData.buildFromRevisionData(variableData, RevisionableInfo.FALSE));
+                if(dataPair.getLeft() != ReturnResult.REVISION_CREATED) {
+                    Logger.error(getClass(), "Couldn't create new DRAFT revision for "+variableData.getKey().toString());
+                    return resultCheck(result, ParseResult.COULD_NOT_CREATE_VARIABLE_DRAFT);
+                }
+                variableData = dataPair.getRight();
+            }
+
+            if(!AuthenticationUtil.isHandler(variableData)) {
+                variableData.setHandler(AuthenticationUtil.getUserName());
+                revisions.updateRevisionData(variableData);
+            }
+
+            // Merge variable to variable revision
+            ParseResult mergeResult = parser.mergeToData(variableData, variable);
+
+            if(mergeResult == ParseResult.REVISION_CHANGES) {
+                ReturnResult updateResult = revisions.updateRevisionData(variableData);
+                if(updateResult != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
+                    Logger.error(getClass(), "Could not update revision data for "+variableData.toString()+" with result "+updateResult);
+                }
+            }
+            counter++;
+            long end = System.currentTimeMillis()-start;
+            Logger.debug(getClass(), "Parsed variable in "+end+"ms. Still "+(listOfEntitiesAndHolders.size()-counter)+" variables to parse.");
+            timeSpent += end;
+        }
+
+        Logger.debug(getClass(), "Parsed variables in "+timeSpent+"ms");
+        return result;
+    }*/
+
+    /*
+    * Non default language variables parsing
+    * Should remove only variables that have no other languages attached and are missing from current por-file
+    * Variables that are not yet present (i.e. variables that are only in translation files) are added to the end of the list
+    */
+    /*private ParseResult variablesParsingNonDefault(ParseResult result, VariableParser parser) {
+        Logger.debug(getClass(), "Gathering entities for parsing");
+        long start = System.currentTimeMillis();
+        List<Pair<RevisionData, PORUtil.PORVariableHolder>> listOfEntitiesAndHolders = new ArrayList<>();
+        for(PORUtil.PORVariableHolder variable : variables) {
+            RevisionData variableRevision = null;
+            for(Iterator<RevisionData> i = variableRevisions.iterator(); i.hasNext(); ) {
+                variableRevision = i.next();
+                Pair<StatusCode, ValueDataField> fieldPair = variableRevision.dataField(ValueDataFieldCall.get(Fields.VARID));
+                if(fieldPair.getRight().getActualValueFor(Language.DEFAULT).equals(studyId + "_" + parser.getVarName(variable))) {
+                    i.remove();
+                    break;
+                }
+                variableRevision = null;
+            }
+            listOfEntitiesAndHolders.add(new ImmutablePair<>(variableRevision, variable));
+        }
+        Logger.debug(getClass(), "Entities gathered. Took "+(System.currentTimeMillis()-start)+"ms");
+
+        // Perform removal of variables that have only the current language in them but are missing from this file.
+        ContainerDataField variableGroups = variablesData.dataField(ContainerDataFieldCall.get(Fields.VARGROUPS)).getRight();
+        for(RevisionData variableRevision : variableRevisions) {
+            // All remaining rows in variableEntities should be removed since no variable was found for them in the current POR-file
+
+            // If removal of the revision returns SUCCESS_DRAFT this means that there's more revisions to remove and second call with new latest revision should clear out any remaining revisions.
+            if(remove.remove(TransferData.buildFromRevisionData(variableRevision, RevisionableInfo.FALSE)) == RemoveResult.SUCCESS_DRAFT) {
+                Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(variableRevision.getKey().getId(), false, ConfigurationType.STUDY_VARIABLE);
+                remove.remove(TransferData.buildFromRevisionData(dataPair.getRight(), RevisionableInfo.FALSE));
+            }
+            ReferenceContainerDataField variablesContainer = variablesData.dataField(ReferenceContainerDataFieldCall.get(Fields.VARIABLES)).getRight();
+            if(variablesContainer != null) {
+                // See that respective rows are removed from STUDY_VARIABLES
+                //    Remove from variables list
+                ReferenceRow reference = variablesContainer.getReferenceWithValue(variableRevision.getKey().getId().toString()).getRight();
+                if(reference != null) {
+                    StatusCode status = variablesContainer.removeReference(reference.getRowId(), variablesData.getChanges(), info).getLeft();
+                    if(status == StatusCode.ROW_CHANGE || status == StatusCode.ROW_REMOVED) {
+                        result = resultCheck(result, ParseResult.REVISION_CHANGES);
+                    }
+                }
+            }
+
+            // Remove
+            if(variableGroups != null) {
+                for(DataRow row : variableGroups.getRowsFor(Language.DEFAULT)) {
+                    variablesContainer = row.dataField(ReferenceContainerDataFieldCall.get(Fields.VARGROUPVARS)).getRight();
+                    if(variablesContainer != null) {
+                        // See that respective rows are removed from VARGROUPVARS
+                        //    Remove from variables list
+                        ReferenceRow reference = variablesContainer.getReferenceWithValue(variableRevision.getKey().getId().toString()).getRight();
+                        if(reference != null) {
+                            StatusCode status = variablesContainer.removeReference(reference.getRowId(), variablesData.getChanges(), info).getLeft();
+                            if(status == StatusCode.ROW_CHANGE || status == StatusCode.ROW_REMOVED) {
+                                result = resultCheck(result, ParseResult.REVISION_CHANGES);
+                            }
+                            // Since variable should always be only in one group at a time we can break out.
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        // listOfEntitiesAndHolders should contain all variables in the POR-file as well as their existing revisionables. No revisionable is provided if it's a new variable
+        ReferenceContainerDataField variablesContainer = variablesData.dataField(ReferenceContainerDataFieldCall.get(Fields.VARIABLES)).getRight();
+        if(listOfEntitiesAndHolders.size() > 0 && variablesContainer == null) {
+            Pair<StatusCode, ReferenceContainerDataField> containerPair = variablesData.dataField(ReferenceContainerDataFieldCall.set("variables"));
+            result = checkResultForUpdate(containerPair, result);
+            variablesContainer = containerPair.getRight();
+        }
+
+        if(variablesContainer == null) {
+            Logger.error(getClass(), "Missing variables container even though it should be present or created");
+            return resultCheck(result, ParseResult.NO_VARIABLES_CONTAINER);
+        }
+
+        Pair<StatusCode, ValueDataField> studyField = variablesData.dataField(ValueDataFieldCall.get("study"));
+        Logger.debug(getClass(), listOfEntitiesAndHolders.size()+" variables to parse.");
+        int counter = 0;
+        long timeSpent = 0L;
+        for(Pair<RevisionData, PORUtil.PORVariableHolder> pair : listOfEntitiesAndHolders) {
+            start = System.currentTimeMillis();
+
+            // Iterate through entity/holder pairs. There should always be a holder but missing entity indicates that this is a new variable.
+            // After all variables are handled there should be one non removed revisionable per variable in the current por-file.
+            // Each revisionable should have an open draft revision (this is a shortcut but it would require doing actual change checking for all variable content to guarantee that no
+            // unnecessary revisions are created. This is not required and so a new draft is provided per revisionable).
+            // Variables entity should have an open draft revision that includes references to all variables as well as non grouped references for all variables that previously were
+            // not in any groups.
+
+            RevisionData variableData = pair.getLeft();
+            PORUtil.PORVariableHolder variable = pair.getRight();
+            String varName = parser.getVarName(variable);
+            String varId = studyId + "_" + parser.getVarName(variable);
+
+            Pair<ReturnResult, RevisionData> dataPair;
+            if(variableData == null) {
+                RevisionCreateRequest request = new RevisionCreateRequest();
+                request.setType(ConfigurationType.STUDY_VARIABLE);
+                request.getParameters().put("study", studyField.getRight().getActualValueFor(Language.DEFAULT));
+                request.getParameters().put("variablesid", variablesData.getKey().getId().toString());
+                request.getParameters().put("varname", varName);
+                request.getParameters().put("varid", varId);
+                dataPair = create.create(request);
+                if(dataPair.getLeft() != ReturnResult.REVISION_CREATED) {
+                    Logger.error(getClass(), "Couldn't create new variable revisionable for study "+studyField.getRight().getActualValueFor(Language.DEFAULT)+" and variables "+variablesData.toString());
+                    return resultCheck(result, ParseResult.COULD_NOT_CREATE_VARIABLES);
+                }
+                variableData = dataPair.getRight();
+            }
+
+            // Add Saved reference if missing
+            variablesContainer.getOrCreateReferenceWithValue(variableData.getKey().getId().toString(), variablesData.getChanges(), info).getRight();
+            result = resultCheck(result, ParseResult.REVISION_CHANGES);
+
+            if(variableData.getState() != RevisionState.DRAFT) {
+                dataPair = edit.edit(TransferData.buildFromRevisionData(variableData, RevisionableInfo.FALSE));
+                if(dataPair.getLeft() != ReturnResult.REVISION_CREATED) {
+                    Logger.error(getClass(), "Couldn't create new DRAFT revision for "+variableData.getKey().toString());
+                    return resultCheck(result, ParseResult.COULD_NOT_CREATE_VARIABLE_DRAFT);
+                }
+                variableData = dataPair.getRight();
+            }
+
+            if(!AuthenticationUtil.isHandler(variableData)) {
+                variableData.setHandler(AuthenticationUtil.getUserName());
+                revisions.updateRevisionData(variableData);
+            }
+
+            // Merge variable to variable revision
+            ParseResult mergeResult = parser.mergeToData(variableData, variable);
+
+            if(mergeResult == ParseResult.REVISION_CHANGES) {
+                ReturnResult updateResult = revisions.updateRevisionData(variableData);
+                if(updateResult != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
+                    Logger.error(getClass(), "Could not update revision data for "+variableData.toString()+" with result "+updateResult);
+                }
+            }
+            counter++;
+            long end = System.currentTimeMillis()-start;
+            Logger.debug(getClass(), "Parsed variable in "+end+"ms. Still "+(listOfEntitiesAndHolders.size()-counter)+" variables to parse.");
+            timeSpent += end;
+        }
+
+        Logger.debug(getClass(), "Parsed variables in "+timeSpent+"ms");
+        return result;
+    }*/
+
+    private static List<ReferenceRow> gatherAndClear(ReferenceContainerDataField field) {
+        if(field.getReferences() == null) {
+            return new ArrayList<>();
+        }
+        List<ReferenceRow> rows = new ArrayList<>(field.getReferences());
+        field.getReferences().clear();
+        return rows;
     }
 }

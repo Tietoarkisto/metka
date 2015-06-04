@@ -13,6 +13,7 @@ import java.util.*;
 @JsonIgnoreProperties("_comment")
 public class Container {
     private static int MAX_COLUMNS = 4;
+    private String id;
     private TranslationObject title;
     private ContainerType type;
     private Boolean hidden = false;
@@ -34,6 +35,14 @@ public class Container {
     private final List<Container> content = new ArrayList<>();
     private final List<Container> rows = new ArrayList<>();
     private final List<Container> cells = new ArrayList<>();
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public ContainerType getType() {
         return type;

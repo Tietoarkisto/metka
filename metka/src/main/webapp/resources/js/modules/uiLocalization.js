@@ -250,6 +250,11 @@ define(function (require) {
             "table": {
                 "&add": {
                     "default": "Lisää"
+                },
+                "countries": {
+                    "&addFinland": {
+                        "default": "Lisää Suomi"
+                    }
                 }
             },
 

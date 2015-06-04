@@ -45,7 +45,7 @@ public class ReferenceCollector {
         List<ReferenceOption> options = new ArrayList<>();
         Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(ConfigurationType.fromValue(request.getConfType()), request.getConfVersion());
         if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
-            Logger.error(ReferenceCollector.class, "Reference request made for configuration ["+request.getConfType()+","+request.getConfVersion()+"] that could not be found with result "+configPair.getLeft());
+            Logger.error(getClass(), "Reference request made for configuration ["+request.getConfType()+","+request.getConfVersion()+"] that could not be found with result "+configPair.getLeft());
             return new ImmutablePair<>(configPair.getLeft(), options);
         }
 
@@ -78,7 +78,7 @@ public class ReferenceCollector {
 
         Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(dataPair.getRight().getConfiguration());
         if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
-            Logger.error(ReferenceCollector.class, "Configuration was not found for revision " + dataPair.getRight().toString() + " with result " + configPair.getLeft());
+            Logger.error(getClass(), "Configuration was not found for revision " + dataPair.getRight().toString() + " with result " + configPair.getLeft());
             return new ImmutablePair<>(configPair.getLeft(), null);
         }
 
@@ -116,13 +116,13 @@ public class ReferenceCollector {
         }
         Field field = configuration.getField(key);
         if(field == null) {
-            Logger.error(ReferenceCollector.class, "Field with key ["+key+"] was referenced but could not be found from configuration "+configuration.toString());
+            Logger.error(getClass(), "Field with key ["+key+"] was referenced but could not be found from configuration "+configuration.toString());
             return null;
         }
 
         Reference reference = getReference(field, configuration);
         if(reference == null && !StringUtils.hasText(request.getFieldValues().get(key))) {
-            Logger.error(ReferenceCollector.class, "Field "+field.toString()+" did not contain a reference or reference was not found from "+configuration.toString());
+            Logger.error(getClass(), "Field "+field.toString()+" did not contain a reference or reference was not found from "+configuration.toString());
             return null;
         }
 

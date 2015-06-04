@@ -1,5 +1,6 @@
 package fi.uta.fsd.metkaSearch.directory;
 
+import fi.uta.fsd.Logger;
 import fi.uta.fsd.metkaSearch.IndexWriterFactory;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
@@ -8,15 +9,12 @@ import org.apache.lucene.store.AlreadyClosedException;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.RAMDirectory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
 
 public class DirectoryInformation {
-    private static final Logger logger = LoggerFactory.getLogger(DirectoryInformation.class);
 
     /**
      * Functions as an identifier for DirectoryInformation.
@@ -97,7 +95,7 @@ public class DirectoryInformation {
             indexWriter.deleteAll();
             indexWriter.commit();
         } catch(IOException ioe) {
-            logger.error("IOException while trying to clear all documents from index "+directory.toString(), ioe);
+            Logger.error(getClass(), "IOException while trying to clear all documents from index "+directory.toString(), ioe);
         }
     }
 
@@ -116,7 +114,7 @@ public class DirectoryInformation {
         } catch(AlreadyClosedException ace) {
             indexWriter = IndexWriterFactory.createIndexWriter(directory);
         } catch(IOException ioe) {
-            logger.error("IOException while performing test commit on index in directory "+directory.toString(), ioe);
+            Logger.error(getClass(), "IOException while performing test commit on index in directory " + directory.toString(), ioe);
             return null;
         }
         return indexWriter;

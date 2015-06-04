@@ -68,24 +68,24 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
     public Pair<ReturnResult, TransferData> saveRevision(TransferData transferData) {
         Pair<ReturnResult, RevisionData> revisionPair = revisions.getRevisionDataOfType(transferData.getKey().getId(), transferData.getKey().getNo(), transferData.getConfiguration().getType());
         if(revisionPair.getLeft() != ReturnResult.REVISION_FOUND) {
-            Logger.error(RevisionSaveRepositoryImpl.class, "Couldn't find Revision " + transferData.getKey().toString() + " while saving.");
+            Logger.error(getClass(), "Couldn't find Revision " + transferData.getKey().toString() + " while saving.");
             return new ImmutablePair<>(revisionPair.getLeft(), transferData);
         }
 
         RevisionData revision = revisionPair.getRight();
         if(revision.getState() != RevisionState.DRAFT) {
-            Logger.warning(RevisionSaveRepositoryImpl.class, "Revision " + revision.toString() + " was not in DRAFT state when tried to initiate save");
+            Logger.warning(getClass(), "Revision " + revision.toString() + " was not in DRAFT state when tried to initiate save");
             return new ImmutablePair<>(ReturnResult.REVISION_NOT_A_DRAFT, transferData);
         }
 
         if(!AuthenticationUtil.isHandler(revision)) {
-            Logger.warning(RevisionSaveRepositoryImpl.class, "User " + AuthenticationUtil.getUserName() + " tried to save revision belonging to " + revision.getHandler());
+            Logger.warning(getClass(), "User " + AuthenticationUtil.getUserName() + " tried to save revision belonging to " + revision.getHandler());
             return new ImmutablePair<>(ReturnResult.WRONG_USER, transferData);
         }
 
         Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(revision.getConfiguration());
         if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
-            Logger.error(RevisionSaveRepositoryImpl.class, "Couldn't find configuration "+revision.getConfiguration().toString()+" while saving "+revision.toString());
+            Logger.error(getClass(), "Couldn't find configuration "+revision.getConfiguration().toString()+" while saving "+revision.toString());
             return new ImmutablePair<>(configPair.getLeft(), transferData);
         }
 
@@ -276,7 +276,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         ValueDataField linkedStudy = revision.dataField(ValueDataFieldCall.get("study")).getRight();
         if(linkedStudy == null) {
             // We have no linked study, no need to do anything else
-            Logger.error(RevisionSaveRepositoryImpl.class, "No linked study for " + revision.toString());
+            Logger.error(getClass(), "No linked study for " + revision.toString());
             changesAndErrors.setRight(true);
             return;
         }
@@ -284,7 +284,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(
                 linkedStudy.getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY);
         if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
-            Logger.error(RevisionSaveRepositoryImpl.class, "Could not find linked study "+linkedStudy.getActualValueFor(Language.DEFAULT)+" for "+revision.toString());
+            Logger.error(getClass(), "Could not find linked study "+linkedStudy.getActualValueFor(Language.DEFAULT)+" for "+revision.toString());
             return;
         }
 
@@ -304,7 +304,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             TransferField tfFile = transfer.getField(Fields.FILE);
 
             if(notFile(fieldPair.getRight().getActualValueFor(Language.DEFAULT), tfFile, changesAndErrors)) {
-                Logger.error(RevisionSaveRepositoryImpl.class, "Path in file-field is not a valid file");
+                Logger.error(getClass(), "Path in file-field is not a valid file");
                 // Lets set fileUpdate to false since no matter the case we can't perform the parse check
                 fileUpdate = false;
                 fileMoved = false;
@@ -393,7 +393,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 Files.createDirectories(d.getParentFile().toPath());
                 Files.move(f.toPath(), d.toPath(), StandardCopyOption.ATOMIC_MOVE);
             } catch(Exception e) {
-                Logger.error(RevisionSaveRepositoryImpl.class, "Could not move file " + path + " to new location " + destLoc, e);
+                Logger.error(getClass(), "Could not move file " + path + " to new location " + destLoc, e);
                 changesAndErrors.setRight(true);
                 tfFile.addError(FieldError.WRONG_LOCATION);
                 return false;
@@ -438,7 +438,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             // Set file path to file-field
             StatusCode result = revision.dataField(ValueDataFieldCall.set(Fields.FILE, new Value(destLoc), Language.DEFAULT).setInfo(info)).getLeft();
             if (!(result == StatusCode.NO_CHANGE_IN_VALUE || result == StatusCode.FIELD_INSERT || result == StatusCode.FIELD_UPDATE)) {
-                Logger.error(RevisionSaveRepositoryImpl.class, "Could not update file path because " + result.name());
+                Logger.error(getClass(), "Could not update file path because " + result.name());
                 changesAndErrors.setRight(true);
                 tf.addError(FieldError.MOVE_FAILED);
                 return false;
@@ -456,7 +456,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                         Files.deleteIfExists(bck.toPath());
                         Files.move(oldFile.toPath(), bck.toPath(), StandardCopyOption.ATOMIC_MOVE);
                     } catch (Exception e) {
-                        Logger.error(RevisionSaveRepositoryImpl.class, "Could not back up existing file " + oldPath + " to " + oldPath + ".bck reverting changes to file", e);
+                        Logger.error(getClass(), "Could not back up existing file " + oldPath + " to " + oldPath + ".bck reverting changes to file", e);
                         revision.dataField(ValueDataFieldCall.set(Fields.FILE, new Value(oldPath), Language.DEFAULT).setInfo(oldInfo));
                         tf.addError(FieldError.MOVE_FAILED);
                         changesAndErrors.setLeft(oldChanges);
@@ -483,7 +483,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 // We can replace existing file since if there is for some reason an existing file then the backup has for some reason succeeded but as a copy instead
                 Files.copy(newFile.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             } catch (Exception e) {
-                Logger.error(RevisionSaveRepositoryImpl.class, "Could not copy new file " + path + " to location " + destLoc + ", reverting changes", e);
+                Logger.error(getClass(), "Could not copy new file " + path + " to location " + destLoc + ", reverting changes", e);
                 // Set field back to old path
                 // Move backup back to old location
                 if (oldPath != null) {
@@ -493,7 +493,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                         try {
                             Files.move(bck.toPath(), oldFile.toPath(), StandardCopyOption.ATOMIC_MOVE);
                         } catch (Exception e2) {
-                            Logger.error(RevisionSaveRepositoryImpl.class, "Could not move backup " + oldPath + ".bck back to old location", e2);
+                            Logger.error(getClass(), "Could not move backup " + oldPath + ".bck back to old location", e2);
                         }
                     }
                 }
@@ -512,7 +512,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                     try {
                         Files.deleteIfExists(bck.toPath());
                     } catch (Exception e) {
-                        Logger.error(RevisionSaveRepositoryImpl.class, "Could not remove backup file, remove manually", e);
+                        Logger.error(getClass(), "Could not remove backup file, remove manually", e);
                     }
                 }
             }
@@ -532,7 +532,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 Long.parseLong(revision.dataField(ValueDataFieldCall.get("study")).getRight().getActualValueFor(Language.DEFAULT)));
 
         if(fileDirectory.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
-            Logger.error(RevisionSaveRepositoryImpl.class, "Could not find revisionable when fetching file root for study in attachment " + revision.toString());
+            Logger.error(getClass(), "Could not find revisionable when fetching file root for study in attachment " + revision.toString());
 
             return null;
         }
@@ -658,7 +658,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                     ValueDataFieldCall.set(Fields.VARIABLEFILE, new Value(attachment.getKey().getId().toString()), language).setInfo(info))
                     .getLeft();
             if(!(setResult == StatusCode.FIELD_UPDATE || setResult == StatusCode.FIELD_INSERT)) {
-                Logger.error(RevisionSaveRepositoryImpl.class, "Study update failed with result " + setResult);
+                Logger.error(getClass(), "Study update failed with result " + setResult);
                 result = resultCheck(result, ParseResult.NO_CHANGES);
             } else {
                 result = resultCheck(result, ParseResult.REVISION_CHANGES);
@@ -726,13 +726,13 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(id, false, null);
             if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
                 // Something is wrong
-                Logger.error(RevisionSaveRepositoryImpl.class, "Tried to force bidirectionality for a revisionable that is nonexistent");
+                Logger.error(getClass(), "Tried to force bidirectionality for a revisionable that is nonexistent");
                 return;
             }
             RevisionData data = dataPair.getRight();
             Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(data.getConfiguration());
             if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
-                Logger.error(RevisionSaveRepositoryImpl.class, "Couldn't find configuration for revision "+data.toString()+" while checking bidirectional values.");
+                Logger.error(getClass(), "Couldn't find configuration for revision "+data.toString()+" while checking bidirectional values.");
                 return;
             }
             Configuration config = configPair.getRight();
@@ -742,7 +742,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 Pair<StatusCode, ReferenceContainerDataField> fieldPair = data.dataField(ReferenceContainerDataFieldCall.set(pair.getLeft()));
                 // let's make sure we have a field
                 if(fieldPair.getRight() == null) {
-                    Logger.error(RevisionSaveRepositoryImpl.class, "Failed to create ReferenceContainerDataField while forcing bidirectionality with result "+fieldPair.getLeft());
+                    Logger.error(getClass(), "Failed to create ReferenceContainerDataField while forcing bidirectionality with result "+fieldPair.getLeft());
                     continue;
                 }
                 ReferenceContainerDataField field = fieldPair.getRight();
@@ -965,7 +965,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                         for (String subkey : field.getSubfields()) {
                             Field subfield = configuration.getField(subkey);
                             if (subfield == null) {
-                                Logger.error(RevisionSaveRepositoryImpl.class, "Didn't find field " + subkey + " in configuration " + configuration.getKey().toString() + " even though " + field.getKey() + " has it as subfield.");
+                                Logger.error(getClass(), "Didn't find field " + subkey + " in configuration " + configuration.getKey().toString() + " even though " + field.getKey() + " has it as subfield.");
                                 continue;
                             }
 
@@ -1004,7 +1004,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                             }
                         }
                     } else {
-                        Logger.error(RevisionSaveRepositoryImpl.class, "TransferField and Container with key "+field.getKey()+" have different number of rows for language "+language);
+                        Logger.error(getClass(), "TransferField and Container with key "+field.getKey()+" have different number of rows for language "+language);
                     }
 
                 }

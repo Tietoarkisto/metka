@@ -1,5 +1,6 @@
 package fi.uta.fsd.metka.model.factories;
 
+import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
@@ -10,8 +11,6 @@ import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class StudyAttachmentFactory extends DataFactory {
-    private static Logger logger = LoggerFactory.getLogger(StudyAttachmentFactory.class);
 
     /**
      * Construct a new RevisionData for STUDY_ATTACHMENT
@@ -33,7 +31,7 @@ public class StudyAttachmentFactory extends DataFactory {
      */
     public Pair<ReturnResult, RevisionData> newData(Long id, Integer no, Configuration configuration, String studyId) {
         if(configuration.getKey().getType() != ConfigurationType.STUDY_ATTACHMENT) {
-            logger.error("Called StudyAttachmentFactory with type "+configuration.getKey().getType()+" configuration");
+            Logger.error(getClass(), "Called StudyAttachmentFactory with type " + configuration.getKey().getType() + " configuration");
             return new ImmutablePair<>(ReturnResult.INCORRECT_TYPE_FOR_OPERATION, null);
         }
 

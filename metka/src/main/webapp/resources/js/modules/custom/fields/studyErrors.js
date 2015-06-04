@@ -85,7 +85,8 @@ define(function (require) {
                     errortriggerpro: {
                         // TODO: This should be changed to selection, but only after USER reference type has been implemented
                         key: 'errortriggerpro',
-                        type: 'STRING'
+                        type: 'SELECTION',
+                        selectionList: "errortriggerpro_list"
                     }
                 },
                 "selectionLists": {
@@ -124,6 +125,12 @@ define(function (require) {
                         "key": "errorlanguage_list",
                         "type": "REFERENCE",
                         "reference": "errorlanguage_ref"
+                    },
+                    "errortriggerpro_list": {
+                        "key": "errortriggerpro_list",
+                        "type": "REFERENCE",
+                        "reference": "errortriggerpro_ref",
+                        "includeEmpty": true
                     }
                 },
                 "references": {
@@ -147,6 +154,13 @@ define(function (require) {
                         "target": "errorpartsection",
                         "valuePath": "value",
                         "titlePath": "title"
+                    },
+                    "errortriggerpro_ref": {
+                        "key": "errortriggerpro_ref",
+                        "type": "JSON",
+                        "target": "user-list",
+                        "valuePath": "userName",
+                        "titlePath": "displayName"
                     }
                 }
             },

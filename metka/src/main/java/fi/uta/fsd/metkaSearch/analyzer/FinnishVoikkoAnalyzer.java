@@ -41,7 +41,7 @@ public class FinnishVoikkoAnalyzer extends Analyzer {
 
     public FinnishVoikkoAnalyzer(Voikko voikko) throws IOException {
         if(voikko == null) {
-            Logger.debug(FinnishVoikkoAnalyzer.class, "Trying to create Voikko-object");
+            Logger.debug(getClass(), "Trying to create Voikko-object");
             voikko = VoikkoFactory.create();
         }
         this.voikko = voikko;
@@ -56,7 +56,7 @@ public class FinnishVoikkoAnalyzer extends Analyzer {
         try {
             result = new FinnishTokenFilter(result, voikko);
         } catch(IOException ioe) {
-            Logger.error(FinnishVoikkoAnalyzer.class, "IOException while creating FinnishTokenFilter.", ioe);
+            Logger.error(getClass(), "IOException while creating FinnishTokenFilter.", ioe);
         }
         //result = stopFilterFactory.create(result);
         TokenStreamComponents components = new TokenStreamComponents(source, result);

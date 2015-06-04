@@ -72,7 +72,7 @@ public class RevisionRepositoryImpl implements RevisionRepository {
         Pair<ReturnResult, RevisionData> pair = getRevisionDataOfType((approvedOnly) ? entity.currentApprovedRevisionKey() : entity.latestRevisionKey(), type);
         if(pair.getLeft() == ReturnResult.REVISION_NOT_FOUND) {
             // Since we know that the revision should exist upgrade the error to NO_REVISION_FOR_REVISIONABLE
-            Logger.error(RevisionRemoveRepositoryImpl.class, "Revision that should exist " + ((approvedOnly) ? entity.currentApprovedRevisionKey() : entity.latestRevisionKey()) + " was not found for entity " + entity.toString());
+            Logger.error(getClass(), "Revision that should exist " + ((approvedOnly) ? entity.currentApprovedRevisionKey() : entity.latestRevisionKey()) + " was not found for entity " + entity.toString());
             return new ImmutablePair<>(ReturnResult.NO_REVISION_FOR_REVISIONABLE, null);
         }
         return pair;
@@ -118,12 +118,12 @@ public class RevisionRepositoryImpl implements RevisionRepository {
         Pair<ReturnResult, RevisionData> pair = getRevisionDataFromEntity(entity);
         // Sanity check
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
-            Logger.error(RevisionRemoveRepositoryImpl.class, "Couldn't get revision data from "+entity.toString());
+            Logger.error(getClass(), "Couldn't get revision data from "+entity.toString());
             return pair;
         }
         if(type != null && pair.getRight().getConfiguration().getType() != type) {
             // Requested revision isn't a study variables revision
-            Logger.warning(RevisionRemoveRepositoryImpl.class, "Someone requested a revision of type " + type + " with id " + key.getRevisionableId() + " and no " + key.getRevisionNo() + ". " +
+            Logger.warning(getClass(), "Someone requested a revision of type " + type + " with id " + key.getRevisionableId() + " and no " + key.getRevisionNo() + ". " +
                     "These do not match a revision of type " + type + " but instead a " + pair.getRight().getConfiguration().getType());
             return new ImmutablePair<>(ReturnResult.REVISION_OF_INCORRECT_TYPE, null);
         }
@@ -133,7 +133,7 @@ public class RevisionRepositoryImpl implements RevisionRepository {
     private Pair<ReturnResult, RevisionData> getRevisionDataFromEntity(RevisionEntity revision) {
         // Sanity check
         if(!StringUtils.hasText(revision.getData())) {
-            Logger.error(RevisionRemoveRepositoryImpl.class, revision.toString()+" was found with no data.");
+            Logger.error(getClass(), revision.toString()+" was found with no data.");
             return new ImmutablePair<>(ReturnResult.REVISION_CONTAINED_NO_DATA, null);
         }
         Pair<SerializationResults, RevisionData> pair = json.deserializeRevisionData(revision.getData());
@@ -162,7 +162,7 @@ public class RevisionRepositoryImpl implements RevisionRepository {
 
         Pair<SerializationResults, String> string = json.serialize(revision);
         if(string.getLeft() != SerializationResults.SERIALIZATION_SUCCESS) {
-            Logger.error(RevisionRemoveRepositoryImpl.class, "Failed at serializing "+revision.toString());
+            Logger.error(getClass(), "Failed at serializing "+revision.toString());
             return ReturnResult.REVISION_NOT_VALID;
         }
         RevisionEntity entity = em.find(RevisionEntity.class, RevisionKey.fromModelKey(revision.getKey()));
@@ -232,7 +232,7 @@ public class RevisionRepositoryImpl implements RevisionRepository {
             if(pair.getLeft() == ReturnResult.REVISION_FOUND) {
                 revisions.add(pair.getRight());
             } else {
-                Logger.error(RevisionRemoveRepositoryImpl.class, "Could not find revision for study variable with id "+entity.getId()+" with result "+pair.getLeft());
+                Logger.error(getClass(), "Could not find revision for study variable with id "+entity.getId()+" with result "+pair.getLeft());
             }
         }
         return revisions;

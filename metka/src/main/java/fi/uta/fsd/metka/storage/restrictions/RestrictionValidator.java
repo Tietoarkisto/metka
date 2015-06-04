@@ -5,11 +5,7 @@ import fi.uta.fsd.metka.model.configuration.Target;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
-import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metkaSearch.SearcherComponent;
-import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +15,6 @@ import java.util.List;
 
 @Component
 public class RestrictionValidator {
-    private static final Logger logger = LoggerFactory.getLogger(RestrictionValidator.class);
     @Autowired
     private SearcherComponent searcher;
 

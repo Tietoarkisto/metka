@@ -15,6 +15,7 @@ import fi.uta.fsd.metka.model.general.TranslationObject;
 import fi.uta.fsd.metka.model.guiconfiguration.Button;
 import fi.uta.fsd.metka.model.guiconfiguration.Container;
 import fi.uta.fsd.metka.model.guiconfiguration.FieldDescription;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -24,6 +25,10 @@ public class ContainerDeserializer extends ObjectDeserializer<Container> {
     @Override
     public Container doDeserialize(ObjectCodec oc, JsonNode node, JsonParser jp, DeserializationContext ctxt) throws IOException {
         Container con = new Container();
+
+        // set id
+        JsonNode id = node.get("id");
+        con.setId((id != null && StringUtils.hasText(id.textValue()) ? id.textValue() : null));
 
         // set type
         JsonNode type = node.get("type");

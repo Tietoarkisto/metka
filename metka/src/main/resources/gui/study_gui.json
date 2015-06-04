@@ -1482,6 +1482,7 @@
                                         "title": "Maat, jota koskevaa tietoa aineisto sisältää",
                                         "field": {
                                             "key": "countries",
+                                            "displayType": "CUSTOM_JS",
                                             "columnFields": [
                                             	"countryabbr",
                                             	"country"

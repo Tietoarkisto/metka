@@ -1,5 +1,6 @@
 package fi.uta.fsd.metka.search.impl;
 
+import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
@@ -12,8 +13,6 @@ import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.revision.RevisionSearchResult;
 import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -26,7 +25,6 @@ import java.util.List;
 
 @Repository("seriesSearch")
 public class SlowSeriesSearchImpl implements SeriesSearch {
-    private static Logger logger = LoggerFactory.getLogger(SlowSeriesSearchImpl.class);
 
     @PersistenceContext(name = "entityManager")
     private EntityManager em;
@@ -42,7 +40,7 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
         for(SeriesEntity entity : entities) {
             Pair<ReturnResult, RevisionData> pair = revisions.getRevisionDataOfType(entity.latestRevisionKey(), ConfigurationType.SERIES);
             if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
-                logger.error("Didn't find revision for series "+entity.toString());
+                Logger.error(getClass(), "Didn't find revision for series "+entity.toString());
                 continue;
             }
             RevisionData revision = pair.getRight();
@@ -64,7 +62,7 @@ public class SlowSeriesSearchImpl implements SeriesSearch {
         for(SeriesEntity entity : entities) {
             Pair<ReturnResult, RevisionData> pair = revisions.getRevisionDataOfType(entity.latestRevisionKey(), ConfigurationType.SERIES);
             if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
-                logger.error("Didn't find revision for series "+entity.toString());
+                Logger.error(getClass(), "Didn't find revision for series " + entity.toString());
                 continue;
             }
             RevisionSearchResult result = new RevisionSearchResult();

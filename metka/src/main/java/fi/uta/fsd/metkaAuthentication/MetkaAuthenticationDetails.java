@@ -53,7 +53,7 @@ public class MetkaAuthenticationDetails implements GrantedAuthoritiesContainer {
         for(String role : aRoles) {
             role = StringUtils.trimAllWhitespace(role);
             role = role.toUpperCase();
-            Logger.debug(MetkaAuthenticationDetails.class, "User " + userName + " has role " + role);
+            Logger.debug(getClass(), "User " + userName + " has role " + role);
             if (!role.startsWith("ROLE_")) {
                 role = "ROLE_" + roleFromShibbolethRole(role);
             }

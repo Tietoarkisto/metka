@@ -96,9 +96,9 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         // **********************
 
         // Check for file path from attachment
-        Pair<StatusCode, ValueDataField> fieldPair = attachment.dataField(ValueDataFieldCall.get("file"));
+        Pair<StatusCode, ValueDataField> fieldPair = attachment.dataField(ValueDataFieldCall.get(Fields.FILE));
         if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || !fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
-            Logger.error(StudyVariablesParserImpl.class, "Did not find path in "+attachment.toString()+" even though shouldn't arrive at this point without path.");
+            Logger.error(getClass(), "Did not find path in "+attachment.toString()+" even though shouldn't arrive at this point without path.");
             return ParseResult.VARIABLES_FILE_HAD_NO_PATH;
         }
 
@@ -106,8 +106,11 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         fieldPair = study.dataField(ValueDataFieldCall.get("variables"));
         Pair<ReturnResult, RevisionData> dataPair;
         if(fieldPair.getLeft() == StatusCode.FIELD_MISSING || !fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
-            // TODO: If we're coming here with something other than default language do we just want to return at this point since no other language should create the variables file?
-            String ext = FilenameUtils.getExtension(attachment.dataField(ValueDataFieldCall.get(Fields.FILE)).getRight().getActualValueFor(Language.DEFAULT)).toUpperCase();
+            if(language != Language.DEFAULT) {
+                // We should not be here, variables should first be created using DEFAULT language file before we get to other languages.
+                return ParseResult.NO_DEFAULT_VARIABLES;
+            }
+            String ext = FilenameUtils.getExtension(attachment.dataField(ValueDataFieldCall.get(Fields.FILE)).getRight().getActualValueFor(Language.DEFAULT).toUpperCase());
             RevisionCreateRequest request = new RevisionCreateRequest();
             request.setType(ConfigurationType.STUDY_VARIABLES);
             request.getParameters().put("study", study.getKey().getId().toString());
@@ -116,7 +119,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             request.getParameters().put("varfiletype", ext.equals("POR") ? "SPSS Portable" : ext);
             dataPair = create.create(request);
             if(dataPair.getLeft() != ReturnResult.REVISION_CREATED) {
-                Logger.error(StudyVariablesParserImpl.class, "Couldn't create new variables revisionable for study "+study.toString()+" and file "+attachment.toString());
+                Logger.error(getClass(), "Couldn't create new variables revisionable for study "+study.toString()+" and file "+attachment.toString());
                 return ParseResult.COULD_NOT_CREATE_VARIABLES;
             }
             fieldPair = study.dataField(
@@ -128,7 +131,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             dataPair = revisions.getLatestRevisionForIdAndType(
                     Long.parseLong(fieldPair.getRight().getActualValueFor(Language.DEFAULT)), false, ConfigurationType.STUDY_VARIABLES);
             if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
-                Logger.error(StudyVariablesParserImpl.class, "Couldn't find revision for study variables with id "+fieldPair.getRight().getActualValueFor(Language.DEFAULT)
+                Logger.error(getClass(), "Couldn't find revision for study variables with id "+fieldPair.getRight().getActualValueFor(Language.DEFAULT)
                         +" even though it's referenced from study "+study.toString());
                 return ParseResult.DID_NOT_FIND_VARIABLES;
             }
@@ -138,7 +141,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         if(variablesData.getState() != RevisionState.DRAFT) {
             dataPair = edit.edit(TransferData.buildFromRevisionData(variablesData, RevisionableInfo.FALSE));
             if(dataPair.getLeft() != ReturnResult.REVISION_CREATED) {
-                Logger.error(StudyVariablesParserImpl.class, "Couldn't create new DRAFT revision for "+variablesData.getKey().toString());
+                Logger.error(getClass(), "Couldn't create new DRAFT revision for "+variablesData.getKey().toString());
                 return resultCheck(result, ParseResult.COULD_NOT_CREATE_VARIABLES_DRAFT);
             }
             variablesData = dataPair.getRight();
@@ -160,6 +163,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                 String studyId = study.dataField(ValueDataFieldCall.get(Fields.STUDYID)).getRight().getActualValueFor(Language.DEFAULT);
                 parser = new PORVariablesParser(
                         attachment.dataField(ValueDataFieldCall.get("file")).getRight().getActualValueFor(Language.DEFAULT),
+                        language,
                         variablesData,
                         info,
                         studyId,
@@ -171,15 +175,15 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         }
         if(parser != null) {
             long start = System.currentTimeMillis();
-            Logger.debug(StudyVariablesParserImpl.class, "Starting variables parsing for study");
+            Logger.debug(getClass(), "Starting variables parsing for study");
             variablesResult = parser.parse();
             result = resultCheck(result, variablesResult);
-            Logger.debug(StudyVariablesParserImpl.class, "Variables parsing for study ended. Spent "+(System.currentTimeMillis()-start)+"ms");
+            Logger.debug(getClass(), "Variables parsing for study ended. Spent "+(System.currentTimeMillis()-start)+"ms");
         }
         if(variablesResult == ParseResult.REVISION_CHANGES) {
             ReturnResult updateResult = revisions.updateRevisionData(variablesData);
             if(updateResult != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
-                Logger.error(StudyVariablesParserImpl.class, "Could not update revision data for "+variablesData.toString()+" with result "+updateResult);
+                Logger.error(getClass(), "Could not update revision data for "+variablesData.toString()+" with result "+updateResult);
                 return resultCheck(result, ParseResult.VARIABLES_SERIALIZATION_FAILED);
             }
         }

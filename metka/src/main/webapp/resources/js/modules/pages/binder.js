@@ -286,7 +286,6 @@ define(function (require) {
                                                                     description: require('./../data')(options)('description').getByLang(options.defaultLang)
                                                                 }),
                                                                 success: function(data) {
-                                                                    log(data);
                                                                     require('./../resultViewer')(data.result, null, function() {
                                                                         if (data.result === 'PAGE_UPDATED') {
                                                                             require('./../assignUrl')('/binder');

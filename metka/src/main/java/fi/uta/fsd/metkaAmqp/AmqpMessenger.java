@@ -48,12 +48,12 @@ class AmqpMessenger {
                 }
                 state = AMQPState.AMQP_STOPPED;
             } catch(IOException ioe) {
-                Logger.error(AmqpMessenger.class, "IOException during AMQP cleanup.", ioe);
+                Logger.error(getClass(), "IOException during AMQP cleanup.", ioe);
             }
         }
 
         void logState() {
-            Logger.debug(AmqpMessenger.class, "AMQP Messenger is currently at state: "+state);
+            Logger.debug(getClass(), "AMQP Messenger is currently at state: "+state);
         }
 
         void write(String message) {
@@ -62,12 +62,12 @@ class AmqpMessenger {
                     // TODO: Move routing key to message
                     channel.basicPublish("metka.test", "metka.queue", MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes());
                 } catch(IOException ioe) {
-                    Logger.error(AmqpMessenger.class, "AMQP message write failed.", ioe);
+                    Logger.error(getClass(), "AMQP message write failed.", ioe);
                     state = AMQPState.AMQP_CONNECTION_FAILED;
                     logState();
                 }
             } else {
-                Logger.error(AmqpMessenger.class, "AMQP messenger is not in READY state, instead being in state: "+state);
+                Logger.error(getClass(), "AMQP messenger is not in READY state, instead being in state: "+state);
             }
         }
 

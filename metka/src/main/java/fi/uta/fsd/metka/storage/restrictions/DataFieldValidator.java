@@ -55,7 +55,7 @@ class DataFieldValidator {
                 return QueryTargetHandler.handle(target, context, this, configuration, searcher);
             default:
                 // This catches types that are invalid for this point of validation operation such as VALUE
-                Logger.error(DataFieldValidator.class, "Reached TargetType " + target.getType());
+                Logger.error(getClass(), "Reached TargetType " + target.getType());
                 return false;
 
 

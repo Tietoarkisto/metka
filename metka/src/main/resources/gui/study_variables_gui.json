@@ -143,7 +143,9 @@
                                         "displayType": "CUSTOM_JS",
                                         "showSaveInfo": false,
                                         "showReferenceValue": false,
-                                        "displayHeader": false,
+                                        "showReferenceSaveInfo": true,
+                                        "showReferenceState": true,
+                                        "displayHeader": true,
                                         "columnFields": [
                                             "varlabel"
                                         ]

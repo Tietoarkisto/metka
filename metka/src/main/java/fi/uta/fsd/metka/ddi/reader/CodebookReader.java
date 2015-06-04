@@ -47,7 +47,7 @@ public class CodebookReader {
 
     public ReturnResult read() {
         if(revision.getState() != RevisionState.DRAFT || !AuthenticationUtil.isHandler(revision)) {
-            Logger.warning(DDIReaderService.class, "User " + AuthenticationUtil.getUserName() + " tried to import DDI for study " + revision.getKey().toString() + " that either was not a draft or is handled by someone else.");
+            Logger.warning(getClass(), "User " + AuthenticationUtil.getUserName() + " tried to import DDI for study " + revision.getKey().toString() + " that either was not a draft or is handled by someone else.");
             return ReturnResult.OPERATION_FAIL;
         }
         CodeBookType codeBook = document.getCodeBook();

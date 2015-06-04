@@ -28,7 +28,7 @@ public class StudyErrorEntity {
     @Column(name = "ERROR_SCORE")
     private Integer errorscore;
 
-    @Column(name = "ERROR_TRIGGER_DATE")
+    @Column(name = "ERROR_TRIGGER_DATE", nullable = true)
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate errortriggerdate;
 

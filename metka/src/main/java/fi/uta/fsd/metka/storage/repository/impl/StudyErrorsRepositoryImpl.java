@@ -136,9 +136,7 @@ public class StudyErrorsRepositoryImpl implements StudyErrorsRepository {
         entity.setErrorlanguage(error.getErrorlanguage());
         entity.setErrorlabel(error.getErrorlabel());
         entity.setErrornotes(error.getErrornotes());
-        if(error.getErrortriggerdate() != null && StringUtils.hasText(error.getErrortriggerdate().toString())) {
-            entity.setErrortriggerdate(error.getErrortriggerdate());
-        }
+        entity.setErrortriggerdate(error.getErrortriggerdate());
         entity.setErrortriggerpro(error.getErrortriggerpro());
     }
 }

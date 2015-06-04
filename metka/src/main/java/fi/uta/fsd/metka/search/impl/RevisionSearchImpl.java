@@ -1,5 +1,6 @@
 package fi.uta.fsd.metka.search.impl;
 
+import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
@@ -27,8 +28,6 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -37,7 +36,6 @@ import java.util.*;
 
 @Repository
 public class RevisionSearchImpl implements RevisionSearch {
-    private static Logger logger = LoggerFactory.getLogger(RevisionSearchImpl.class);
 
     @Autowired
     private RevisionRepository revisions;
@@ -77,7 +75,7 @@ public class RevisionSearchImpl implements RevisionSearch {
         for(Integer no : nos) {
             Pair<ReturnResult, RevisionData> dataPair = this.revisions.getRevisionData(request.getId(), no);
             if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
-                logger.error("Could not find revision with [ID "+request.getId()+"|NO "+ no+"]");
+                Logger.error(getClass(), "Could not find revision with [ID " + request.getId() + "|NO " + no + "]");
                 continue;
             }
             RevisionData data = dataPair.getRight();
@@ -261,7 +259,7 @@ public class RevisionSearchImpl implements RevisionSearch {
             return new ImmutablePair<>(ReturnResult.OPERATION_SUCCESSFUL, collectResults(results, request));
         } catch(QueryNodeException qne) {
             // Couldn't form query command
-            logger.error("Exception while performing basic series search:", qne);
+            Logger.error(getClass(), "Exception while performing basic series search:", qne);
             return new ImmutablePair<>(ReturnResult.SEARCH_FAILED, null);
         }
     }
@@ -294,7 +292,7 @@ public class RevisionSearchImpl implements RevisionSearch {
         for(RevisionResult result : resultList.getResults()) {
             Pair<ReturnResult, RevisionableInfo> infoPair = revisions.getRevisionableInfo(result.getId());
             if(infoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
-                logger.error("Couldn't find info for revisionable "+result.getId());
+                Logger.error(getClass(), "Couldn't find info for revisionable "+result.getId());
                 continue;
             }
             RevisionableInfo info = infoPair.getRight();
@@ -305,7 +303,7 @@ public class RevisionSearchImpl implements RevisionSearch {
 
             Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(result.getId(), result.getNo().intValue());
             if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
-                logger.error("Failed to find revision for id: "+result.getId()+" and no: "+result.getNo());
+                Logger.error(getClass(), "Failed to find revision for id: "+result.getId()+" and no: "+result.getNo());
                 continue;
             }
             RevisionData data = pair.getRight();

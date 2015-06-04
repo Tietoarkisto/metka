@@ -59,16 +59,16 @@ public class ReferencePathHandler {
     // This is basically the first step which might lead to other steps or might cause options collecting depending on parameters
     private void referencePathStep(ReferencePath step, List<ReferenceOption> options, Language language, boolean returnFirst) {
         if(!StringUtils.hasText(step.getValue()) && step.getNext() != null) {
-            Logger.error(ReferencePathHandler.class, "Malformed path. Since current step does not have a selected value there should be no following steps.");
+            Logger.error(getClass(), "Malformed path. Since current step does not have a selected value there should be no following steps.");
             return;
         }
         if(StringUtils.hasText(step.getValue()) && step.getNext() != null && step.getNext().getReference().getType() != ReferenceType.DEPENDENCY) {
-            Logger.error(ReferencePathHandler.class, "Malformed path. Current step has a value and there's a next step but next step is not DEPENDENCY");
+            Logger.error(getClass(), "Malformed path. Current step has a value and there's a next step but next step is not DEPENDENCY");
             return;
         }
         switch(step.getReference().getType()) {
             case DEPENDENCY:
-                Logger.error(ReferencePathHandler.class, "First step reference was a DEPENDENCY. Can not proceed");
+                Logger.error(getClass(), "First step reference was a DEPENDENCY. Can not proceed");
                 return;
             case REVISIONABLE:
                 handleRevisionableStep(step, options, language, returnFirst);
@@ -85,15 +85,15 @@ public class ReferencePathHandler {
     private void referencePathStep(Map<String, DataField> fieldMap, ReferencePath step, Configuration configuration, List<ReferenceOption> options, Language language, boolean returnFirst) {
         // We should not arrive here if this is not a dependency step
         if(step.getReference().getType() != ReferenceType.DEPENDENCY) {
-            Logger.error(ReferencePathHandler.class, "Tried to parse DEPENDENCY step with a reference that is not a DEPENDENCY");
+            Logger.error(getClass(), "Tried to parse DEPENDENCY step with a reference that is not a DEPENDENCY");
             return;
         }
         if(!StringUtils.hasText(step.getValue()) && step.getNext() != null) {
-            Logger.error(ReferencePathHandler.class, "Malformed path. Since current step does not have a selected value there should be no following steps.");
+            Logger.error(getClass(), "Malformed path. Since current step does not have a selected value there should be no following steps.");
             return;
         }
         if(StringUtils.hasText(step.getValue()) && step.getNext() != null && step.getNext().getReference().getType() != ReferenceType.DEPENDENCY) {
-            Logger.error(ReferencePathHandler.class, "Malformed path. Current step has a value and there's a next step but next step is not DEPENDENCY");
+            Logger.error(getClass(), "Malformed path. Current step has a value and there's a next step but next step is not DEPENDENCY");
             return;
         }
 
@@ -127,15 +127,15 @@ public class ReferencePathHandler {
     private void referencePathStep(JsonNode node, ReferencePath step, List<ReferenceOption> options, Language language, boolean returnFirst) {
         // We should not arrive here if this is not a dependency step
         if(step.getReference().getType() != ReferenceType.DEPENDENCY) {
-            Logger.error(ReferencePathHandler.class, "Tried to parse DEPENDENCY step with a reference that is not a DEPENDENCY");
+            Logger.error(getClass(), "Tried to parse DEPENDENCY step with a reference that is not a DEPENDENCY");
             return;
         }
         if(!StringUtils.hasText(step.getValue()) && step.getNext() != null) {
-            Logger.error(ReferencePathHandler.class, "Malformed path. Since current step does not have a selected value there should be no following steps.");
+            Logger.error(getClass(), "Malformed path. Since current step does not have a selected value there should be no following steps.");
             return;
         }
         if(StringUtils.hasText(step.getValue()) && step.getNext() != null && step.getNext().getReference().getType() != ReferenceType.DEPENDENCY) {
-            Logger.error(ReferencePathHandler.class, "Malformed path. Cuurrent step has a value and there's a next step but next step is not DEPENDENCY");
+            Logger.error(getClass(), "Malformed path. Cuurrent step has a value and there's a next step but next step is not DEPENDENCY");
             return;
         }
 
@@ -256,7 +256,7 @@ public class ReferencePathHandler {
         }
         Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(data.getConfiguration());
         if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
-            Logger.error(ReferencePathHandler.class, "Could not find configuration for "+data.toString());
+            Logger.error(getClass(), "Could not find configuration for "+data.toString());
             return;
         }
         if(step.getNext() == null) {
@@ -277,7 +277,7 @@ public class ReferencePathHandler {
         Pair<ReturnResult, JsonNode> nodePair = references.getMiscJson(step.getReference().getTarget());
         if(nodePair.getLeft() != ReturnResult.MISC_JSON_FOUND) {
             // No misc json, can't continue
-            Logger.error(ReferencePathHandler.class, "No Misc JSON file found with key "+ step.getReference().getTarget());
+            Logger.error(getClass(), "No Misc JSON file found with key "+ step.getReference().getTarget());
             return;
         }
 

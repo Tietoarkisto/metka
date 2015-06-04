@@ -1,5 +1,6 @@
 package fi.uta.fsd.metka.model.factories;
 
+import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
@@ -10,11 +11,8 @@ import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PublicationFactory extends DataFactory {
-    private static Logger logger = LoggerFactory.getLogger(PublicationFactory.class);
 
     /**
      * Creates and returns a new SERIES draft revision
@@ -25,7 +23,7 @@ public class PublicationFactory extends DataFactory {
      */
     public Pair<ReturnResult, RevisionData> newData(Long id, Integer no, Configuration configuration, String publicationId) {
         if(configuration.getKey().getType() != ConfigurationType.PUBLICATION) {
-            logger.error("Called PublicationFactory with type "+configuration.getKey().getType()+" configuration");
+            Logger.error(getClass(), "Called PublicationFactory with type " + configuration.getKey().getType() + " configuration");
             return new ImmutablePair<>(ReturnResult.INCORRECT_TYPE_FOR_OPERATION, null);
         }
 

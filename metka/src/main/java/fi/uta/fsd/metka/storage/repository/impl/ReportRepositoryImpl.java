@@ -1,5 +1,6 @@
 package fi.uta.fsd.metka.storage.repository.impl;
 
+import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.enums.UIRevisionState;
@@ -15,8 +16,6 @@ import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.ReportRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.w3c.dom.Document;
@@ -37,7 +36,6 @@ import java.util.List;
 
 @Repository
 public class ReportRepositoryImpl implements ReportRepository {
-    private static Logger logger = LoggerFactory.getLogger(ReportRepositoryImpl.class);
 
     @PersistenceContext(name = "entityManager")
     private EntityManager em;
@@ -57,7 +55,7 @@ public class ReportRepositoryImpl implements ReportRepository {
         for(StudyEntity study : studies) {
             Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(study.getId(), false, ConfigurationType.STUDY);
             if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
-                logger.error("Did not find revision for study with id "+study.getId()+". Returned result was "+ dataPair.getLeft());
+                Logger.error(getClass(), "Did not find revision for study with id " + study.getId() + ". Returned result was " + dataPair.getLeft());
                 continue;
             }
 

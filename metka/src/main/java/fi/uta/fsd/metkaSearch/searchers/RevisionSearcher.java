@@ -46,12 +46,12 @@ public class RevisionSearcher<T extends SearchResult> extends Searcher<T> {
         if(!getIndexer().exists()) {
             return handler.handle(null, null);
         }
-        Logger.debug(RevisionSearcher.class, "RevisionSearcher is acquiring an IndexReader");
+        Logger.debug(getClass(), "RevisionSearcher is acquiring an IndexReader");
         IndexReader reader = getIndexer().getIndexReader();
         IndexSearcher searcher = new IndexSearcher(reader);
-        Logger.debug(RevisionSearcher.class, "RevisionSearcher is performing the following query: " + getCommand().getQuery().toString());
+        Logger.debug(getClass(), "RevisionSearcher is performing the following query: " + getCommand().getQuery().toString());
         // TODO: Tarvitaan parempi ratkaisu tulosten määrien rajaamiseen
-        TopDocs results = searcher.search(getCommand().getQuery(), 100);
+        TopDocs results = searcher.search(getCommand().getQuery(), Integer.MAX_VALUE);
         return handler.handle(searcher, results);
     }
 }

@@ -32,20 +32,20 @@ class DDIWriteFileDescription extends DDIWriteSectionBase {
         Pair<ReturnResult, RevisionData> revisionDataPair = revisions.getLatestRevisionForIdAndType(
                 valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY_VARIABLES);
         if(revisionDataPair.getLeft() != ReturnResult.REVISION_FOUND) {
-            Logger.error(DDIWriteFileDescription.class, "Couldn't find expected variables revision with id: " + valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger());
+            Logger.error(getClass(), "Couldn't find expected variables revision with id: " + valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger());
             return;
         }
         RevisionData variables = revisionDataPair.getRight();
 
         valueFieldPair = variables.dataField(ValueDataFieldCall.get(Fields.FILE));
         if(!hasValue(valueFieldPair, Language.DEFAULT)) {
-            Logger.error(DDIWriteFileDescription.class, "Variables revision "+variables.toString()+" did not contain file reference although it should be present.");
+            Logger.error(getClass(), "Variables revision "+variables.toString()+" did not contain file reference although it should be present.");
             return;
         }
         revisionDataPair = revisions.getLatestRevisionForIdAndType(
                 valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY_ATTACHMENT);
         if(revisionDataPair.getLeft() != ReturnResult.REVISION_FOUND) {
-            Logger.error(DDIWriteFileDescription.class, "Couldn't find study attachment with id: " + valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger() +
+            Logger.error(getClass(), "Couldn't find study attachment with id: " + valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger() +
                     " even though it's referenced from variables data " + variables.toString());
             return;
         }

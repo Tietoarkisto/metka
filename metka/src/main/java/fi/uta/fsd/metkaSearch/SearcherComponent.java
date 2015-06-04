@@ -1,13 +1,12 @@
 package fi.uta.fsd.metkaSearch;
 
+import fi.uta.fsd.Logger;
 import fi.uta.fsd.metkaSearch.commands.searcher.SearchCommand;
 import fi.uta.fsd.metkaSearch.directory.DirectoryManager;
 import fi.uta.fsd.metkaSearch.results.ResultList;
 import fi.uta.fsd.metkaSearch.results.SearchResult;
 import fi.uta.fsd.metkaSearch.searchers.RevisionSearcher;
 import fi.uta.fsd.metkaSearch.searchers.Searcher;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +15,6 @@ import java.util.concurrent.*;
 
 @Service
 public class SearcherComponent {
-    private static final Logger logger = LoggerFactory.getLogger(SearcherComponent.class);
 
     @Autowired
     private DirectoryManager manager;
@@ -37,7 +35,7 @@ public class SearcherComponent {
             Future<ResultList<T>> operation = indexerPool.submit(searcher);
             results = operation.get();
         } catch(Exception e) {
-            logger.error("Exception while executing search command.", e);
+            Logger.error(getClass(), "Exception while executing search command.", e);
         }
         return results;
     }

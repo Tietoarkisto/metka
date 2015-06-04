@@ -1,5 +1,6 @@
 package fi.uta.fsd.metkaAuthentication;
 
+import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.RevisionState;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.general.RevisionKey;
@@ -9,8 +10,6 @@ import fi.uta.fsd.metka.storage.repository.SavedSearchRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.transfer.expert.SavedExpertSearchItem;
 import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
@@ -19,7 +18,6 @@ import org.springframework.util.StringUtils;
 import java.io.Serializable;
 
 public class MetkaPermissionEvaluator implements PermissionEvaluator {
-    private static final Logger logger = LoggerFactory.getLogger(MetkaPermissionEvaluator.class);
 
     @Autowired
     private SavedSearchRepository savedSearches;
@@ -95,7 +93,7 @@ public class MetkaPermissionEvaluator implements PermissionEvaluator {
     private boolean claimReleaseCheck(RevisionKey key, PermissionCheck check) {
         Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(fi.uta.fsd.metka.storage.entity.key.RevisionKey.fromModelKey(key));
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
-            logger.warn("No revision found for key "+key.toString()+" while checking claim or release permission.");
+            Logger.warning(getClass(), "No revision found for key " + key.toString() + " while checking claim or release permission.");
             return false;
         }
 
@@ -122,7 +120,7 @@ public class MetkaPermissionEvaluator implements PermissionEvaluator {
     private boolean checkIsHandler(TransferData transferData) {
         Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(transferData.getKey().getId(), false, null);
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
-            logger.warn("No revision found for key "+transferData.getKey().toString()+" while checking handler permission.");
+            Logger.warning(getClass(), "No revision found for key " + transferData.getKey().toString() + " while checking handler permission.");
             return false;
         }
         RevisionData data = pair.getRight();

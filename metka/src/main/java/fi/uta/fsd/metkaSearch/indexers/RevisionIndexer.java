@@ -64,13 +64,13 @@ public class RevisionIndexer extends Indexer {
     }
 
     protected void handleCommand(IndexerCommand command) {
-        Logger.debug(RevisionIndexer.class, "Starting handling or revision command");
+        Logger.debug(getClass(), "Starting handling or revision command");
         // This is a safe type conversion since Indexers add command only accepts commands of correct type
         RevisionIndexerCommand rCom = (RevisionIndexerCommand) command;
 
         switch(rCom.getAction()) {
             case REMOVE:
-                Logger.debug(RevisionIndexer.class, "Performing REMOVE action on revision");
+                Logger.debug(getClass(), "Performing REMOVE action on revision");
                 // Create term for identification
                 if(rCom.getRevisionable() == null || rCom.getRevision() == null) {
                     break;
@@ -82,7 +82,7 @@ public class RevisionIndexer extends Indexer {
                 removeDocument(query);
                 break;
             case INDEX:
-                Logger.debug(RevisionIndexer.class, "Performing INDEX action on revision");
+                Logger.debug(getClass(), "Performing INDEX action on revision");
                 indexCommand(rCom);
                 break;
             case STOP:
@@ -97,10 +97,10 @@ public class RevisionIndexer extends Indexer {
      * @param command
      */
     private void indexCommand(RevisionIndexerCommand command) {
-        Logger.debug(RevisionIndexer.class, "Trying to build revision handler");
+        Logger.debug(getClass(), "Trying to build revision handler");
         RevisionHandler handler = HandlerFactory.buildRevisionHandler(this, revisions, configurations, references, studyErrors, binders);
         try {
-            Logger.debug(RevisionIndexer.class, "Trying to handle revision command");
+            Logger.debug(getClass(), "Trying to handle revision command");
             handler.handle(command);
         } catch(Exception e) {
             e.printStackTrace();

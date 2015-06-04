@@ -59,5 +59,7 @@ public enum ReturnResult {
     PAGE_REMOVED,                       // Binder page was removed successfully
     RESTRICTION_VALIDATION_FAILURE,     // Restriction validation encountered a failed validation
     API_AUTHENTICATION_FAILED,          // Authentication in API-method failed
+    EMPTY_PATH,                         // Required path was empty
+    MALFORMED_PATH,                     // Required path was malformed e.g. incomplete or didn't point to valid end
     FILE_ALREADY_EXISTS                // Special failure condition when file move is tried to a location that already contains a file
 }

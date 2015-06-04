@@ -99,20 +99,20 @@ public class IndexerComponent {
                         .formPath(false, IndexerConfigurationType.REVISION, lang, type.toValue());
                 try {
                     DirectoryInformation info = manager.getIndexDirectory(path, false);
-                    Logger.debug(IndexerComponent.class, "Checking directory " + path + " for write lock.");
+                    Logger.debug(getClass(), "Checking directory " + path + " for write lock.");
                     if(IndexWriter.isLocked(info.getDirectory())) {
-                        Logger.debug(IndexerComponent.class, "Directory "+path+" contained lock. Attempting to clear lock with name "+IndexWriter.WRITE_LOCK_NAME+" from directory.");
+                        Logger.debug(getClass(), "Directory "+path+" contained lock. Attempting to clear lock with name "+IndexWriter.WRITE_LOCK_NAME+" from directory.");
                         IndexWriter.unlock(info.getDirectory());
                         info.getDirectory().clearLock(IndexWriter.WRITE_LOCK_NAME);
                         if(IndexWriter.isLocked(info.getDirectory())) {
-                            Logger.debug(IndexerComponent.class, "FAIL during lock clearing for path " + path + " attempting forced delete since we know that the lock should not be in use");
+                            Logger.debug(getClass(), "FAIL during lock clearing for path " + path + " attempting forced delete since we know that the lock should not be in use");
                             info.getDirectory().deleteFile(IndexWriter.WRITE_LOCK_NAME);
                         } else {
-                            Logger.debug(IndexerComponent.class, "SUCCESS during lock clearing for path " + path);
+                            Logger.debug(getClass(), "SUCCESS during lock clearing for path " + path);
                         }
                     }
                 } catch(Exception e) {
-                    Logger.error(IndexerComponent.class, "Exception while clearing path " + path + " from write lock:", e);
+                    Logger.error(getClass(), "Exception while clearing path " + path + " from write lock:", e);
                 }
             }
         }
@@ -171,7 +171,7 @@ public class IndexerComponent {
                     long endTime = System.currentTimeMillis();
                     timeSpent += (endTime - startTime);
                     if(current % 1000 == 0) {
-                        Logger.info(IndexerComponent.class,"1000 revision index commands added to the queue in "+timeSpent+"ms. Still "+(entities.size()-current)+" commands to add.");
+                        Logger.info(getClass(),"1000 revision index commands added to the queue in "+timeSpent+"ms. Still "+(entities.size()-current)+" commands to add.");
                         timeSpent = 0L;
                     }
                 }
@@ -284,7 +284,7 @@ public class IndexerComponent {
     public void addStudyIndexerCommand(Long id, boolean index) {
         Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(id, false, ConfigurationType.STUDY);
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
-            Logger.error(IndexerComponent.class, "Tried to add index command for study with id " + id + " but didn't find any revisions with result " + pair.getLeft());
+            Logger.error(getClass(), "Tried to add index command for study with id " + id + " but didn't find any revisions with result " + pair.getLeft());
             return;
         }
         for(Language lang : Language.values()) {

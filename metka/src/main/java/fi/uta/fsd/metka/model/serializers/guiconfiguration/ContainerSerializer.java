@@ -6,12 +6,19 @@ import fi.uta.fsd.metka.enums.ContainerType;
 import fi.uta.fsd.metka.enums.ContentType;
 import fi.uta.fsd.metka.model.guiconfiguration.Container;
 import fi.uta.fsd.metka.model.serializers.ObjectSerializer;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 
 public class ContainerSerializer extends ObjectSerializer<Container> {
     @Override
     public void doSerialize(Container value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
+        if(StringUtils.hasText(value.getId())) {
+            jgen.writeStringField("id", value.getId());
+        } else {
+            jgen.writeNullField("id");
+        }
+
         jgen.writeStringField("type", value.getType().name());
 
         jgen.writeArrayFieldStart("permissions");

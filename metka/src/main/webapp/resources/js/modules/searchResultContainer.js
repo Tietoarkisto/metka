@@ -114,8 +114,14 @@ define(function (require) {
                     trOnClick(fieldOptions.data.fields.searchResults.rows.DEFAULT[0]);
                     return;
                 }
+                var $resultContainer;
+                if(options.resultContainer) {
+                    $resultContainer = $('#'+options.resultContainer);
+                } else {
+                    $resultContainer = $('.content');
+                }
 
-                $('.content').children('.searchResults').remove();
+                $resultContainer.children('.searchResults').remove();
 
                 fieldOptions.fieldOptions = getPropertyNS(fieldOptions, "dataConf.fields", "searchResults");
                 var $field = require('./field').call($('<div>'), fieldOptions)
@@ -136,7 +142,7 @@ define(function (require) {
                                     });
                                 }
                             }))));
-                $('.content').append($field);
+                $resultContainer.append($field);
             }
         });
     };

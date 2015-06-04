@@ -86,12 +86,12 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
 
     private RemoveResult removeDraft(RevisionData data) {
         if(!AuthenticationUtil.isHandler(data)) {
-            Logger.error(RevisionRemoveRepositoryImpl.class, "User " + AuthenticationUtil.getUserName() + " tried to remove draft belonging to " + data.getHandler());
+            Logger.error(getClass(), "User " + AuthenticationUtil.getUserName() + " tried to remove draft belonging to " + data.getHandler());
             return RemoveResult.WRONG_USER;
         }
         RevisionEntity revision = em.find(RevisionEntity.class, RevisionKey.fromModelKey(data.getKey()));
         if(revision == null) {
-            Logger.error(RevisionRemoveRepositoryImpl.class, "Draft revision with key "+data.getKey()+" was slated for removal but was not found from database.");
+            Logger.error(getClass(), "Draft revision with key "+data.getKey()+" was slated for removal but was not found from database.");
         } else {
             em.remove(revision);
         }
@@ -194,7 +194,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
 
         Pair<ReturnResult, Configuration> confPair = configurations.findConfiguration(pair.getRight().getConfiguration());
         if(confPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
-            Logger.error(RevisionRemoveRepositoryImpl.class, "Could not find configuration for data "+data.toString());
+            Logger.error(getClass(), "Could not find configuration for data "+data.toString());
             return RemoveResult.CONFIGURATION_NOT_FOUND;
         }
 

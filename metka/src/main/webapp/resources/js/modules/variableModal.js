@@ -1,7 +1,7 @@
 define(function (require) {
     'use strict';
 
-    return function (key, requestOptions, onSaveSuccess) {
+    return function (key, requestOptions, partialRefresh) {
         require('./server')('viewAjax', $.extend({
             PAGE: 'STUDY_VARIABLE'
         }, requestOptions), {
@@ -16,6 +16,8 @@ define(function (require) {
                     translatableCurrentLang: MetkaJS.User.role.defaultLanguage.toUpperCase(),
                     large: true
                 });
+
+                modalOptions.$events.on('attachment.refresh', partialRefresh);
 
                 require('./modal')($.extend(true, require('./optionsBase')(), modalOptions));
             }

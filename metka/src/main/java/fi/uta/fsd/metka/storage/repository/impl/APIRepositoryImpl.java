@@ -1,10 +1,9 @@
 package fi.uta.fsd.metka.storage.repository.impl;
 
+import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.storage.entity.APIUserEntity;
 import fi.uta.fsd.metka.storage.repository.APIRepository;
 import org.joda.time.LocalDateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -17,7 +16,6 @@ import java.util.List;
  */
 @Repository
 public class APIRepositoryImpl implements APIRepository {
-    private static Logger logger = LoggerFactory.getLogger(APIRepositoryImpl.class);
 
     @PersistenceContext(name = "entityManager")
     private EntityManager em;
@@ -33,7 +31,7 @@ public class APIRepositoryImpl implements APIRepository {
         }
 
         if(entities.size() > 1) {
-            logger.error("Found "+entities.size()+" API users with public key "+key);
+            Logger.error(getClass(), "Found " + entities.size() + " API users with public key " + key);
             return null;
         }
 
@@ -57,7 +55,7 @@ public class APIRepositoryImpl implements APIRepository {
         }
 
         if(entities.size() > 1) {
-            logger.error("Found "+entities.size()+" API users with public key "+key);
+            Logger.error(getClass(), "Found "+entities.size()+" API users with public key "+key);
         }
 
         for(APIUserEntity entity : entities) {

@@ -37,7 +37,7 @@ public class StartupScanner {
      */
     @PostConstruct
     public void scanForConfigurations() {
-        Logger.debug(StartupScanner.class, "Scanning for configurations.");
+        Logger.debug(getClass(), "Scanning for configurations.");
         File confDir = new File(rootFolder+"configuration");
 
         Collection<File> files = FileUtils.listFiles(confDir, FileFilterUtils.suffixFileFilter(".json"), TrueFileFilter.TRUE);
@@ -45,7 +45,7 @@ public class StartupScanner {
         for (File file : files) {
             Pair<SerializationResults, Configuration> conf = json.deserializeDataConfiguration(file);
             if(conf.getLeft() != SerializationResults.DESERIALIZATION_SUCCESS) {
-                Logger.error(StartupScanner.class, "Failed at deserializing "+file.getName());
+                Logger.error(getClass(), "Failed at deserializing "+file.getName());
                 continue;
             }
             Pair<ReturnResult, Configuration> existing = configRepo.findConfiguration(conf.getRight().getKey());
@@ -60,7 +60,7 @@ public class StartupScanner {
      */
     @PostConstruct
     public void scanForMiscJSON() {
-        Logger.debug(StartupScanner.class, "Scanning for miscellaneous json files.");
+        Logger.debug(getClass(), "Scanning for miscellaneous json files.");
         File miscDir = new File(rootFolder+"misc");
 
         Collection<File> files = FileUtils.listFiles(miscDir, FileFilterUtils.suffixFileFilter(".json"), TrueFileFilter.TRUE);
@@ -69,7 +69,7 @@ public class StartupScanner {
             Pair<SerializationResults, JsonNode> misc = json.deserializeToJsonTree(file);
 
             if(misc.getLeft() != SerializationResults.DESERIALIZATION_SUCCESS){
-                Logger.error(StartupScanner.class, "Failed at deserializing "+file.getName());
+                Logger.error(getClass(), "Failed at deserializing "+file.getName());
                 continue;
             }
             JsonNode key = misc.getRight().get("key");
@@ -89,7 +89,7 @@ public class StartupScanner {
      */
     @PostConstruct
     public void scanForGUIConfigurations() {
-        Logger.debug(StartupScanner.class, "Scanning for gui configurations.");
+        Logger.debug(getClass(), "Scanning for gui configurations.");
         File guiDir = new File(rootFolder+"gui");
 
         Collection<File> files = FileUtils.listFiles(guiDir, FileFilterUtils.suffixFileFilter(".json"), TrueFileFilter.TRUE);
@@ -98,7 +98,7 @@ public class StartupScanner {
             Pair<SerializationResults, GUIConfiguration> gui = json.deserializeGUIConfiguration(file);
 
             if(gui.getLeft() != SerializationResults.DESERIALIZATION_SUCCESS) {
-                Logger.error(StartupScanner.class, "Failed at deserializing "+file.getName());
+                Logger.error(getClass(), "Failed at deserializing "+file.getName());
                 continue;
             }
             Pair<ReturnResult, GUIConfiguration> existing = configRepo.findGUIConfiguration(gui.getRight().getKey());

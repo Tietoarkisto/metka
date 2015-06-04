@@ -1,14 +1,12 @@
 package fi.uta.fsd.metkaSearch;
 
+import fi.uta.fsd.Logger;
 import fi.uta.fsd.metkaSearch.analyzer.CaseInsensitiveWhitespaceAnalyzer;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class IndexWriterFactory {
-    private static final Logger logger = LoggerFactory.getLogger(IndexWriterFactory.class);
     private static final IndexWriterConfig writerAppendConfig;
 
     static {
@@ -24,7 +22,7 @@ public class IndexWriterFactory {
             IndexWriter writer = new IndexWriter(directory, clone);
             return writer;
         } catch(Exception e) {
-            logger.error("Exception while creating index writer: ", e);
+            Logger.error(IndexWriterFactory.class, "Exception while creating index writer: ", e);
             return null;
         }
     }

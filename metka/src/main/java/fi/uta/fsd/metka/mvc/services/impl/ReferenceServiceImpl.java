@@ -1,5 +1,6 @@
 package fi.uta.fsd.metka.mvc.services.impl;
 
+import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.*;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
@@ -17,10 +18,7 @@ import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.transfer.reference.*;
-import org.apache.commons.codec.language.bm.Lang;
 import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +29,6 @@ import java.util.*;
  */
 @Service
 public class ReferenceServiceImpl implements ReferenceService {
-    private static Logger logger = LoggerFactory.getLogger(ReferenceService.class);
 
     @Autowired
     private ReferenceCollector references;
@@ -56,7 +53,7 @@ public class ReferenceServiceImpl implements ReferenceService {
 
         Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(data.getConfiguration());
         if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
-            logger.error("Couldn't find configuration for "+data.toString());
+            Logger.error(getClass(), "Couldn't find configuration for " + data.toString());
             return null;
         }
         Configuration config = configPair.getRight();

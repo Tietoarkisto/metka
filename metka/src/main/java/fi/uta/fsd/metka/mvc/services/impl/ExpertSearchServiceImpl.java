@@ -51,7 +51,7 @@ public class ExpertSearchServiceImpl implements ExpertSearchService {
         try {
             command = ExpertRevisionSearchCommand.build(request.getQuery(), configurations);
         } catch(QueryNodeException e) {
-            Logger.error(ExpertSearchServiceImpl.class, "Exception while forming search command.", e);
+            Logger.error(getClass(), "Exception while forming search command.", e);
             switch(e.getMessageObject().getKey()) {
                 case "EMPTY_QUERY":
                     response.setResult(ReturnResult.EMPTY_QUERY);
@@ -65,7 +65,7 @@ public class ExpertSearchServiceImpl implements ExpertSearchService {
             }
             return response;
         } catch(Exception e) {
-            Logger.error(ExpertSearchServiceImpl.class, "Exception while forming search command.", e);
+            Logger.error(getClass(), "Exception while forming search command.", e);
             throw e;
         }
         List<RevisionResult> results = searcher.executeSearch(command).getResults();
@@ -73,12 +73,12 @@ public class ExpertSearchServiceImpl implements ExpertSearchService {
         for(RevisionResult result : results) {
             Pair<ReturnResult, RevisionableInfo> infoPair = revisions.getRevisionableInfo(result.getId());
             if(infoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
-                Logger.warning(ExpertSearchServiceImpl.class, "Revisionable was not found for id "+result.getId());
+                Logger.warning(getClass(), "Revisionable was not found for id "+result.getId());
                 continue;
             }
             Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(result.getId(), result.getNo().intValue());
             if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
-                Logger.warning(ExpertSearchServiceImpl.class, "Couldn't find a revision for search result "+result.toString());
+                Logger.warning(getClass(), "Couldn't find a revision for search result "+result.toString());
                 continue;
             }
             RevisionableInfo info = infoPair.getRight();

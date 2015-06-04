@@ -459,9 +459,18 @@ define(function (require) {
                     return $tbody;
                 }))
             .append(function () {
-                var buttons = (options.buttons || []);
-                if (options.field.onAdd || !require('./isFieldDisabled')(options, lang)) {
+                if(!options.buttons) {
+                    options.buttons = [];
+                }
+                var buttons = options.buttons;
+                if (!require('./isFieldDisabled')(options, lang) && !buttons.some(function(button) {
+                        if(button.buttonId) {
+                            return button.buttonId === options.field.key+"_add";
+                        }
+                        return false;
+                    })) {
                     buttons.push({
+                        buttonId: options.field.key+"_add",
                         create: function () {
                             this
                                 .text(MetkaJS.L10N.get('general.table.add'))
@@ -490,7 +499,7 @@ define(function (require) {
                     $button.addClass('btn-sm');
                 });
 
-                if (buttons.length) {
+                if (buttons.length && !require('./isFieldDisabled')(options, lang)) {
                     return $('<div class="panel-footer clearfix">')
                         .append($('<div class="pull-right">')
                             .append(buttons));

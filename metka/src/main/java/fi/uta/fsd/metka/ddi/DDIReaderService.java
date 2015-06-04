@@ -21,6 +21,7 @@ import org.apache.xmlbeans.XmlException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,9 +55,12 @@ public class DDIReaderService {
      * @throws Exception
      */
     public ReturnResult readDDIDocument(String path, RevisionData revision) {
+        if(!StringUtils.hasText(path)) {
+            return ReturnResult.EMPTY_PATH;
+        }
         File file = new File(path);
         if(!file.exists() || !file.isFile()) {
-            return ReturnResult.PARAMETERS_MISSING;
+            return ReturnResult.MALFORMED_PATH;
         }
         if(revision.getConfiguration().getType() != ConfigurationType.STUDY) {
             return ReturnResult.INCORRECT_TYPE_FOR_OPERATION;
@@ -86,10 +90,10 @@ public class DDIReaderService {
             CodebookReader reader = new CodebookReader(revisions, edit, references, document, revision, configPair.getRight(), variableSearch);
             return reader.read();
         } catch(IOException ioe) {
-            Logger.error(DDIReaderService.class, "IOException during DDI-xml parsing.", ioe);
+            Logger.error(getClass(), "IOException during DDI-xml parsing.", ioe);
             return ReturnResult.EXCEPTION;
         } catch(XmlException xe) {
-            Logger.error(DDIReaderService.class, "XmlException during DDI-xml parsing.", xe);
+            Logger.error(getClass(), "XmlException during DDI-xml parsing.", xe);
             return ReturnResult.EXCEPTION;
         }
     }

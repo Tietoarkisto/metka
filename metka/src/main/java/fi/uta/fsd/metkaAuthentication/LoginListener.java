@@ -35,11 +35,11 @@ public class LoginListener implements ApplicationListener<InteractiveAuthenticat
             userList = new ObjectNode(JsonNodeFactory.instance);
             ((ObjectNode)userList).set("key", new TextNode("user-list"));
             ((ObjectNode)userList).set("data", new ArrayNode(JsonNodeFactory.instance));
-            Logger.info(LoginListener.class, "No previous user-list");
+            Logger.info(getClass(), "No previous user-list");
             changes = true;
         } else {
             userList = miscPair.getRight();
-            Logger.info(LoginListener.class, "Previous user-list found");
+            Logger.info(getClass(), "Previous user-list found");
         }
 
         MetkaAuthenticationDetails details = AuthenticationUtil.getAuthenticationDetails();
@@ -67,9 +67,7 @@ public class LoginListener implements ApplicationListener<InteractiveAuthenticat
 
         if(changes) {
             misc.insert(userList);
-            Logger.info(LoginListener.class, "Updated user-list");
+            Logger.info(getClass(), "Updated user-list");
         }
-
-        //Logger.info(LoginListener.class, "User login ");
     }
 }

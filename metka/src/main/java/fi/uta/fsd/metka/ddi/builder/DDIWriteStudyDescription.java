@@ -285,7 +285,7 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
                     }
                 }
             } else {
-                Logger.error(DDIWriteStudyDescription.class, "Did not find referenced SERIES with id: "+valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger());
+                Logger.error(getClass(), "Did not find referenced SERIES with id: "+valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger());
             }
         }
     }
@@ -1229,7 +1229,7 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
                 }
                 Pair<ReturnResult, RevisionData> revisionPair = revisions.getLatestRevisionForIdAndType(row.getReference().asInteger(), false, ConfigurationType.STUDY);
                 if(revisionPair.getLeft() != ReturnResult.REVISION_FOUND) {
-                    Logger.error(DDIWriteStudyDescription.class, "Could not find referenced study with ID: "+row.getReference().getValue());
+                    Logger.error(getClass(), "Could not find referenced study with ID: "+row.getReference().getValue());
                     continue;
                 }
                 String studyID = "-";
@@ -1258,7 +1258,7 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
                 }
                 Pair<ReturnResult, RevisionData> revisionPair = revisions.getLatestRevisionForIdAndType(row.getReference().asInteger(), false, ConfigurationType.PUBLICATION);
                 if (revisionPair.getLeft() != ReturnResult.REVISION_FOUND) {
-                    Logger.error(DDIWriteStudyDescription.class, "Could not find referenced publication with ID: " + row.getReference().getValue());
+                    Logger.error(getClass(), "Could not find referenced publication with ID: " + row.getReference().getValue());
                     continue;
                 }
                 RevisionData publication = revisionPair.getRight();

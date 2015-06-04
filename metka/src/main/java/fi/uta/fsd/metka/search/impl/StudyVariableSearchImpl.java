@@ -35,7 +35,7 @@ public class StudyVariableSearchImpl implements StudyVariableSearch {
         if(entities.size() == 0) {
             return new ImmutablePair<>(ReturnResult.REVISION_NOT_FOUND, null);
         } else if(entities.size() > 1) {
-            Logger.error(StudyVariableSearchImpl.class, "More than one Study Variable found for study id " + studyId + " and variable id " + variableId);
+            Logger.error(getClass(), "More than one Study Variable found for study id " + studyId + " and variable id " + variableId);
             return new ImmutablePair<>(ReturnResult.DATABASE_DISCREPANCY, null);
         }
         StudyVariableEntity entity = entities.get(0);

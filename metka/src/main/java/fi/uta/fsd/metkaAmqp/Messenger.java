@@ -1,7 +1,5 @@
 package fi.uta.fsd.metkaAmqp;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +12,6 @@ import java.util.Map;
  */
 @Component
 public class Messenger {
-    private static final Logger logger = LoggerFactory.getLogger(Messenger.class);
 
     @Value("${rabbit.server}")
     private String RABBIT_SERVER_HOST;

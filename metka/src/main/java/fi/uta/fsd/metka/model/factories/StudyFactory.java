@@ -82,7 +82,7 @@ public class StudyFactory extends DataFactory {
      */
     public Pair<ReturnResult, RevisionData> newData(Long id, Integer no, Configuration configuration, String studyNumber, String submissionid, String arrivalDate) {
         if(configuration.getKey().getType() != ConfigurationType.STUDY) {
-            Logger.error(StudyFactory.class, "Called StudyFactory with type " + configuration.getKey().getType() + " configuration");
+            Logger.error(getClass(), "Called StudyFactory with type " + configuration.getKey().getType() + " configuration");
             return new ImmutablePair<>(ReturnResult.INCORRECT_TYPE_FOR_OPERATION, null);
         }
 
@@ -326,7 +326,7 @@ public class StudyFactory extends DataFactory {
         Pair<StatusCode, ContainerDataField> packagesPair = revision.dataField(ContainerDataFieldCall.set(Fields.PACKAGES));
         if(packagesPair.getRight() == null) {
             // Something bad happened
-            Logger.error(StudyFactory.class, "Failed to create packages container during URN creation with message "+packagesPair.getLeft());
+            Logger.error(getClass(), "Failed to create packages container during URN creation with message "+packagesPair.getLeft());
             return;
         }
         ContainerDataField packages = packagesPair.getRight();

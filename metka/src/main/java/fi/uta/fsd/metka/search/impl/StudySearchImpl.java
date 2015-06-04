@@ -1,5 +1,6 @@
 package fi.uta.fsd.metka.search.impl;
 
+import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
@@ -17,8 +18,6 @@ import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.transfer.revision.RevisionSearchResult;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -28,7 +27,6 @@ import java.util.*;
 
 @Repository
 public class StudySearchImpl implements StudySearch {
-    private static final Logger logger = LoggerFactory.getLogger(StudySearchImpl.class);
 
     @PersistenceContext(name = "entityManager")
     private EntityManager em;
@@ -89,7 +87,7 @@ public class StudySearchImpl implements StudySearch {
         for(RevisionEntity revision : revisions) {
             Pair<ReturnResult, RevisionData> dataPair = this.revisions.getRevisionData(revision.getKey());
             if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
-                logger.error("Could not find revision for study attachment with key "+revision.getKey().toString());
+                Logger.error(getClass(), "Could not find revision for study attachment with key " + revision.getKey().toString());
                 continue;
             }
             RevisionData data = dataPair.getRight();

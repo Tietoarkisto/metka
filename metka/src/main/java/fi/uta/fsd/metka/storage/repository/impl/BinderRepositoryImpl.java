@@ -18,8 +18,6 @@ import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -30,7 +28,6 @@ import java.util.List;
 
 @Repository
 public class BinderRepositoryImpl implements BinderRepository {
-    private static Logger logger = LoggerFactory.getLogger(BinderRepositoryImpl.class);
 
     @PersistenceContext(name = "entityManager")
     private EntityManager em;

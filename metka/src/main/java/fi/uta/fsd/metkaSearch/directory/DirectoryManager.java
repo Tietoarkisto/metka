@@ -2,10 +2,9 @@ package fi.uta.fsd.metkaSearch.directory;
 
 //import fi.uta.fsd.metkaAmqp.Logger;
 
+import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metkaSearch.enums.IndexerConfigurationType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class DirectoryManager {
-    private static final Logger logger = LoggerFactory.getLogger(DirectoryManager.class);
 
     private final Map<DirectoryPath, DirectoryInformation> indexDirectories = new ConcurrentHashMap<>();
 
@@ -51,7 +49,7 @@ public class DirectoryManager {
                 index = new DirectoryInformation(indexBaseDirectory, path, false);
             }
         } catch(IOException ioe) {
-            logger.error("IOException while creating DirectoryInformation.");
+            Logger.error(getClass(), "IOException while creating DirectoryInformation.");
             return null;
         }
 

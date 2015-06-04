@@ -40,7 +40,7 @@ define(function (require) {
                                                 });
                                             }
                                         },
-                                        preCreate: function (options) {
+                                        postCreate: function (options) {
                                             var $containerField = $(this).children().first();
                                             require('./../server')('/study/studiesWithVariables', {
                                                 method: 'GET',

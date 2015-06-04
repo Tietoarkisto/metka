@@ -85,7 +85,7 @@ public abstract class RevisionSearchCommandBase<T extends SearchResult> extends 
 
         @Override
         public ResultList<RevisionResult> handle(IndexSearcher searcher, TopDocs results) {
-            Logger.debug(BasicRevisionSearchResultHandler.class, "Handling results and transforming them to RevisionResult list");
+            Logger.debug(getClass(), "Handling results and transforming them to RevisionResult list");
             ResultList<RevisionResult> list = new ListBasedResultList<>(ResultList.ResultType.REVISION);
             if(searcher == null || results == null) {
                 return list;

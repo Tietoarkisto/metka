@@ -67,7 +67,7 @@ class DDIReadDataDescription extends DDIReadSectionBase {
         Pair<ReturnResult, RevisionData> revisionPair = revisions.getLatestRevisionForIdAndType(
                 valuePair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY_VARIABLES);
         if(revisionPair.getLeft() != ReturnResult.REVISION_FOUND) {
-            Logger.error(DDIReadDataDescription.class,
+            Logger.error(getClass(),
                     "Couldn't find expected variables revision with id: " + valuePair.getRight().getValueFor(Language.DEFAULT).valueAsInteger());
             return revisionPair.getLeft();
         }
@@ -287,7 +287,7 @@ class DDIReadDataDescription extends DDIReadSectionBase {
 
         Pair<ReturnResult, RevisionData> variablePair = variableSearch.findVariableWithId(revision.getKey().getId(), studyId+"_"+var.getName());
         if(variablePair.getLeft() != ReturnResult.REVISION_FOUND) {
-            Logger.warning(DDIReadDataDescription.class, "Tried to import variable "+studyId+"_"+var.getName()+" that was not found for study "+revision.getKey().getId());
+            Logger.warning(getClass(), "Tried to import variable "+studyId+"_"+var.getName()+" that was not found for study "+revision.getKey().getId());
             // We don't need to stop the import process for variable that we can't find.
             return ReturnResult.OPERATION_SUCCESSFUL;
         }
