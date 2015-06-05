@@ -16,6 +16,12 @@ define(function (require) {
                         includeEmpty: true,
                         options: []
                     },
+                    dataConfigEditorType_list: {
+                        key: "dataConfigEditorType_list",
+                        type: "VALUE",
+                        includeEmpty: true,
+                        options: []
+                    },
                     guiConfigType_list: {
                         key: "guiConfigType_list",
                         type: "VALUE",
@@ -52,6 +58,11 @@ define(function (require) {
                         key: "dataConfigTypes",
                         type: "SELECTION",
                         selectionList: "dataConfigType_list"
+                    },
+                    dataConfigEditorTypes: {
+                        key: "dataConfigEditorTypes",
+                        type: "SELECTION",
+                        selectionList: "dataConfigEditorType_list"
                     },
                     dataConfigText: {
                         key: "dataConfigText",
@@ -485,16 +496,19 @@ define(function (require) {
                                             title: "Tyypit",
                                             horizontal: true,
                                             field: {
-                                                key: "dataConfigTypes"
+                                                key: "dataConfigEditorTypes"
                                             },
-                                            preCreate: function() {
-                                                var $elem = this.find("select").first().attr("id", "dataConfigEditorTypes");
+                                            preCreate: function(options) {
                                                 require('./../server')("/settings/getJsonList/DATA_CONF", {
                                                     type: "GET",
+                                                    async: false,
                                                     success: function (response) {
-                                                        $elem.append(response.map(function(entry) {
-                                                            return $("<option>").data(entry).text(entry.title);
-                                                        }));
+                                                        response.map(function(entry) {
+                                                            options.dataConf.selectionLists.dataConfigEditorType_list.options.push({
+                                                                value: JSON.stringify(entry),
+                                                                title: entry.title
+                                                            });
+                                                        });
                                                     }
                                                 });
                                             }
@@ -506,11 +520,11 @@ define(function (require) {
                                                 title: "Lataa",
                                                 create: function() {
                                                     this.click(function() {
-                                                        var data = $("#dataConfigEditorTypes").children(":selected").data();
-                                                        if (data.configKey) {
+                                                        var data = require('./../data')(options)("dataConfigEditorTypes").getByLang("DEFAULT");
+                                                        if (data) {
                                                             require('./../preloader')($editor);
                                                             require('./../server')("/settings/getJsonContent", {
-                                                                data: JSON.stringify(data),
+                                                                data: data,
                                                                 success: function (response) {
                                                                     JSONEditor.defaults.editors.object.options.collapsed = true;
                                                                     var editor = $editor.empty().data('jsoneditor');
@@ -906,7 +920,7 @@ define(function (require) {
                                                 key: "dataConfigEditor",
                                                 displayType: 'CUSTOM_JS'
                                             },
-                                            preCreate: function() {
+                                            postCreate: function() {
                                                 $editor = this.children().first()
                                                     .addClass('metka-conf-editor');
                                             }
