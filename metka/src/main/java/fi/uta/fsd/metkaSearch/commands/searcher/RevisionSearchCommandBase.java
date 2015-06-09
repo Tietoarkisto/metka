@@ -37,25 +37,24 @@ public abstract class RevisionSearchCommandBase<T extends SearchResult> extends 
         if(path.getType() != IndexerConfigurationType.REVISION) {
             throw new UnsupportedOperationException("Given path is not for REVISION index");
         }
-        if(path.getAdditionalParameters() == null || path.getAdditionalParameters().length == 0 || path.getAdditionalParameters().length > 1) {
-            throw new UnsupportedOperationException("No ConfigurationType or too many additional parameters given");
-        }
-        if(ConfigurationType.fromValue(path.getAdditionalParameters()[0]) != type) {
-            throw new UnsupportedOperationException("Given ConfigurationType is not SERIES");
+        if(path.getAdditionalParameters().length > 0) {
+            throw new UnsupportedOperationException("Too many additional parameters");
         }
     }
 
-    private final ConfigurationType configurationType;
+    private Language language;
     private final Map<String, Analyzer> analyzers = new HashMap<>();
 
     protected RevisionSearchCommandBase(DirectoryManager.DirectoryPath path, ResultList.ResultType resultType) {
         super(path, resultType);
-
-        this.configurationType = ConfigurationType.fromValue(path.getAdditionalParameters()[0]);
     }
 
-    public ConfigurationType getConfigurationType() {
-        return configurationType;
+    protected void setLanguage(Language language) {
+        this.language = language;
+    }
+
+    public Language getLanguage() {
+        return language;
     }
 
     protected void addKeywordAnalyzer(String key) {
@@ -67,7 +66,7 @@ public abstract class RevisionSearchCommandBase<T extends SearchResult> extends 
     }
 
     protected void addTextAnalyzer(String key) {
-        if(getPath().getLanguage().equals(Language.DEFAULT.toValue())) {
+        if(language == Language.DEFAULT) {
             analyzers.put(key, FinnishVoikkoAnalyzer.ANALYZER);
         } else {
             // Add some other tokenizing analyzer if StandardAnalyzer is not enough
@@ -76,7 +75,7 @@ public abstract class RevisionSearchCommandBase<T extends SearchResult> extends 
     }
 
     protected Analyzer getAnalyzer() {
-        PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new WhitespaceAnalyzer(LuceneConfig.USED_VERSION), analyzers);
+        PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new CaseInsensitiveWhitespaceAnalyzer(), analyzers);
         return analyzer;
     }
 
@@ -96,6 +95,7 @@ public abstract class RevisionSearchCommandBase<T extends SearchResult> extends 
                     IndexableField field = document.getField("key.id");
                     Long id = null;
                     Long no = null;
+                    Language language = null;
                     if(field != null) {
                         id = field.numericValue().longValue();
                     }
@@ -103,9 +103,13 @@ public abstract class RevisionSearchCommandBase<T extends SearchResult> extends 
                     if(field != null) {
                         no = field.numericValue().longValue();
                     }
-                    list.addResult(new RevisionResult(id, no));
+                    field = document.getField("key.language");
+                    if(field != null) {
+                        language = Language.fromValue(field.stringValue());
+                    }
+                    list.addResult(new RevisionResult(id, no, language));
                 } catch(IOException ioe) {
-                    list.addResult(new RevisionResult(null, null));
+                    list.addResult(new RevisionResult(null, null, null));
                 }
             }
 

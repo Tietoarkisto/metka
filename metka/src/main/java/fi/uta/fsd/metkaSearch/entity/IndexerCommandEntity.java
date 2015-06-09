@@ -19,7 +19,6 @@ public class IndexerCommandEntity {
 
         entity.setPath(command.getPath());
         entity.setAction(command.getAction());
-        entity.setLanguage(command.getPath().getLanguage());
         entity.setParameters(command.toParameterString());
 
         return entity;
@@ -37,10 +36,6 @@ public class IndexerCommandEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "TYPE", updatable = false)
     private IndexerConfigurationType type;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "LANGUAGE", updatable = false)
-    private Language language;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "ACTION", updatable = false)
@@ -76,7 +71,6 @@ public class IndexerCommandEntity {
         boolean useRam = path.substring(0, 2).equals("ME");
         String[] parameters = path.substring(3).split("/");
         IndexerConfigurationType type = IndexerConfigurationType.valueOf(parameters[0]);
-        Language language = Language.fromValue(parameters[1]);
         String[] additionals;
         if(parameters.length > 2) {
             additionals = new String[parameters.length-2];
@@ -87,7 +81,7 @@ public class IndexerCommandEntity {
             additionals = new String[0];
         }
 
-        return DirectoryManager.formPath(useRam, type, language, additionals);
+        return DirectoryManager.formPath(useRam, type, additionals);
     }
 
     public void setPath(DirectoryManager.DirectoryPath path) {
@@ -145,14 +139,6 @@ public class IndexerCommandEntity {
 
     public void setPath(String path) {
         this.path = path;
-    }
-
-    public Language getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(Language language) {
-        this.language = language;
     }
 
     public Boolean getRepeated() {

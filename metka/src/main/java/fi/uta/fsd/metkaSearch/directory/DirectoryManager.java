@@ -28,11 +28,10 @@ public class DirectoryManager {
      *
      * @param useRam
      * @param type Must not be null
-     * @param language
      * @return
      */
-    public static DirectoryPath formPath(boolean useRam, IndexerConfigurationType type, Language language, String... additionalParameters) {
-        return new DirectoryPath(useRam, type, language, additionalParameters);
+    public static DirectoryPath formPath(boolean useRam, IndexerConfigurationType type, String... additionalParameters) {
+        return new DirectoryPath(useRam, type, additionalParameters);
     }
 
     /**
@@ -74,7 +73,6 @@ public class DirectoryManager {
         private final String path;
         private final boolean useRam;
         private final IndexerConfigurationType type;
-        private final Language language;
         private final String[] additionalParameters;
 
         /**
@@ -82,17 +80,14 @@ public class DirectoryManager {
          * Forms a directory path that follows the form {ME|FS}:{type}/{language}[/additionalParameters...]
          * @param useRam Should the index use RAMDirectory or FSDirectory. This forms the base of the path with ME denoting memory and FS denoting file system directory.
          * @param type Base type of the index. In most cases this will be REVISION or CONTAINER
-         * @param language Language key for the index. Indexes are segregated to different directories based on their language since different languages have different
-         *                 analysis requirements. Language can be null or empty in which case it's assigned the value 'default'
          * @param additionalParameters Array of additional parameters for the index location such as ConfigurationType
          */
-        public DirectoryPath(boolean useRam, IndexerConfigurationType type, Language language, String... additionalParameters) {
+        public DirectoryPath(boolean useRam, IndexerConfigurationType type, String... additionalParameters) {
             if(type == null) {
                 throw new UnsupportedOperationException("Must have type");
             }
             this.useRam = useRam;
             this.type = type;
-            this.language = language;
             this.additionalParameters = additionalParameters;
 
             StringBuilder pb = new StringBuilder();
@@ -102,13 +97,6 @@ public class DirectoryManager {
                 pb.append("FS:");
             }
             pb.append(type);
-            if(language != null) {
-                pb.append("/");
-                pb.append(language.toValue());
-            } else {
-                pb.append("/");
-                pb.append("default");
-            }
 
             for(String additional : additionalParameters) {
                 pb.append("/");
@@ -128,10 +116,6 @@ public class DirectoryManager {
 
         public IndexerConfigurationType getType() {
             return type;
-        }
-
-        public Language getLanguage() {
-            return language;
         }
 
         public String[] getAdditionalParameters() {

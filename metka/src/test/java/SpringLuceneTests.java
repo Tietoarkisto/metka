@@ -80,7 +80,7 @@ public class SpringLuceneTests {
 
     @Test
     public void seriesIndexTest() throws IOException {
-        DirectoryManager.DirectoryPath path = new DirectoryManager.DirectoryPath(false, IndexerConfigurationType.REVISION, Language.DEFAULT, ConfigurationType.SERIES.toValue());
+        DirectoryManager.DirectoryPath path = new DirectoryManager.DirectoryPath(false, IndexerConfigurationType.REVISION);
         List<SeriesEntity> seriesList = em.createQuery("SELECT s FROM SeriesEntity s", SeriesEntity.class).getResultList();
         for(SeriesEntity series : seriesList) {
             List<RevisionEntity> revisions = em.createQuery("SELECT r FROM RevisionEntity r WHERE r.key.revisionableId=:id", RevisionEntity.class)
@@ -102,7 +102,7 @@ public class SpringLuceneTests {
 
     @Test
     public void studyIndexTest() throws IOException {
-        DirectoryManager.DirectoryPath path = new DirectoryManager.DirectoryPath(false, IndexerConfigurationType.REVISION, Language.DEFAULT, ConfigurationType.STUDY.toValue());
+        DirectoryManager.DirectoryPath path = new DirectoryManager.DirectoryPath(false, IndexerConfigurationType.REVISION);
         List<StudyEntity> studyList = em.createQuery("SELECT s FROM StudyEntity s", StudyEntity.class).getResultList();
         long start = System.currentTimeMillis();
         for(StudyEntity study : studyList) {
@@ -128,7 +128,7 @@ public class SpringLuceneTests {
 
     @Test
     public void tempSearchTest() throws IOException, QueryNodeException {
-        DirectoryManager.DirectoryPath path = new DirectoryManager.DirectoryPath(false, IndexerConfigurationType.REVISION, Language.DEFAULT, ConfigurationType.STUDY.toValue());
+        DirectoryManager.DirectoryPath path = new DirectoryManager.DirectoryPath(false, IndexerConfigurationType.REVISION);
         DirectoryInformation dir = manager.getIndexDirectory(path, false);
         IndexReader reader = dir.getIndexReader();
         IndexSearcher searcher = new IndexSearcher(reader);
@@ -166,7 +166,7 @@ public class SpringLuceneTests {
     @Test
     public void analyzerTest() throws IOException, QueryNodeException {
         //indexer.startIndexer(DirectoryManager.formPath(true, IndexerConfigurationType.DUMMY, null));
-        DirectoryInformation di = manager.getIndexDirectory(DirectoryManager.formPath(true, IndexerConfigurationType.DUMMY, null), true);
+        DirectoryInformation di = manager.getIndexDirectory(DirectoryManager.formPath(true, IndexerConfigurationType.DUMMY), true);
         Map<String, Analyzer> analyzers = new HashMap<>();
         analyzers.put("analyzed1", new FinnishVoikkoAnalyzer());
         analyzers.put("analyzed2", new FinnishVoikkoAnalyzer());
@@ -208,7 +208,7 @@ public class SpringLuceneTests {
 
     @Test
     public void dateRangeTest() throws Exception {
-        TEST_INDEXER = manager.getIndexDirectory(DirectoryManager.formPath(true, IndexerConfigurationType.DUMMY, null), true);
+        TEST_INDEXER = manager.getIndexDirectory(DirectoryManager.formPath(true, IndexerConfigurationType.DUMMY), true);
         Map<String, Analyzer> analyzers = new HashMap<>();
         analyzers.put("date1", new FinnishVoikkoAnalyzer());
         analyzers.put("date2", new KeywordAnalyzer());
@@ -337,7 +337,7 @@ public class SpringLuceneTests {
 
     @Test
     public void numberRangeTest() throws Exception {
-        TEST_INDEXER = manager.getIndexDirectory(DirectoryManager.formPath(true, IndexerConfigurationType.DUMMY, null), true);
+        TEST_INDEXER = manager.getIndexDirectory(DirectoryManager.formPath(true, IndexerConfigurationType.DUMMY), true);
         Map<String, Analyzer> analyzers = new HashMap<>();
         analyzers.put("int1", new FinnishVoikkoAnalyzer());
         analyzers.put("int2", new KeywordAnalyzer());
@@ -450,7 +450,7 @@ public class SpringLuceneTests {
 
     @Test
     public void phraseTest() throws Exception {
-        TEST_INDEXER = manager.getIndexDirectory(DirectoryManager.formPath(true, IndexerConfigurationType.DUMMY, null), true);
+        TEST_INDEXER = manager.getIndexDirectory(DirectoryManager.formPath(true, IndexerConfigurationType.DUMMY), true);
         Map<String, Analyzer> analyzers = new HashMap<>();
         analyzers.put("phrase1", new FinnishVoikkoAnalyzer());
         analyzers.put("phrase2", new KeywordAnalyzer());

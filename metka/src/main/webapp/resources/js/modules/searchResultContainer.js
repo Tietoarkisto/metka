@@ -47,16 +47,19 @@ define(function (require) {
                             }, searchOptions);
                         }).forEach(function (searchOptions) {
                             var key = searchOptions.key;
-                            var value = data(searchOptions.key).getByLang(options.defaultLang) || '';
-                            if (require('./utils/getPropertyNS')(options, 'dataConf.fields', key, 'type') === 'SELECTION') {
-                                if (value && searchOptions.useSelectionText) {
-                                    value = $('select[data-metka-field-key="{key}"][data-metka-field-lang="{lang}"] option[value="{value}"]'.supplant({
-                                        key: key,
-                                        lang: options.defaultLang,
-                                        value: value
-                                    })).text();
+                            var value = searchOptions.value || (function() {
+                                var temp = data(searchOptions.key).getByLang(options.defaultLang) || '';
+                                if (require('./utils/getPropertyNS')(options, 'dataConf.fields', key, 'type') === 'SELECTION') {
+                                    if (temp && searchOptions.useSelectionText) {
+                                        temp = $('select[data-metka-field-key="{key}"][data-metka-field-lang="{lang}"] option[value="{value}"]'.supplant({
+                                            key: key,
+                                            lang: options.defaultLang,
+                                            value: temp
+                                        })).text();
+                                    }
                                 }
-                            }
+                                return temp;
+                            })();
                             if (value && searchOptions.exactValue) {
                                 value = '/' + value + (searchOptions.addWildcard?".*":"") + '/';
                             } else if(value && searchOptions.addWildcard) {

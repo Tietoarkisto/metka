@@ -501,6 +501,10 @@ define(function (require) {
                                             "readOnly": true,
                                             "contentType": "BUTTON",
                                             "button": require('./../searchButton')('searchAjax', [
+                                                    {
+                                                        key: 'key.configuration.type',
+                                                        value: "STUDY"
+                                                    },
                                                     'studyid',
                                                     {
                                                         key: 'author',

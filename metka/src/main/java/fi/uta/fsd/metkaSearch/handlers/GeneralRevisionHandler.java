@@ -52,9 +52,6 @@ class GeneralRevisionHandler implements RevisionHandler {
 
     private final Map<ConfigurationKey, Configuration> configCache = new HashMap<>();
 
-    // Requested language of the handler
-    private final Language language;
-
     // This attribute should only ever be set to true and it tells the handler if it should add the document to index or not.
     // If we don't find content that's exclusive for requested language (i.e. translated content) then there's no point in
     // adding the document to index since it's not actually translated at all.
@@ -70,8 +67,6 @@ class GeneralRevisionHandler implements RevisionHandler {
         this.references = references;
         this.studyErrors = studyErrors;
         this.binders = binders;
-
-        language = indexer.getPath().getLanguage();
     }
 
     private Pair<ReturnResult, Configuration> getConfiguration(ConfigurationKey key) {
@@ -95,14 +90,16 @@ class GeneralRevisionHandler implements RevisionHandler {
      * @return Tells if the command handling lead to additional documents being added to index
      */
     public boolean handle(RevisionIndexerCommand command) {
+        boolean result = false;
+
         if(command == null) {
-            return false;
+            return result;
         }
-        Logger.debug(getClass(), "Trying to get revision ID: " + command.getRevisionable() + " NO: " + command.getRevision());
-        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionDataOfType(command.getRevisionable(), command.getRevision(), command.getType());
+        Logger.debug(getClass(), "Trying to get revision ID: " + command.getId() + " NO: " + command.getNo());
+        Pair<ReturnResult, RevisionData> pair = revisions.getRevisionDataOfType(command.getId(), command.getNo(), null);
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             Logger.warning(getClass(), "Revision not found with result " + pair.getLeft());
-            return false;
+            return result;
         }
         RevisionData data = pair.getRight();
         Logger.debug(getClass(), "Trying to get configuration for "+data.getConfiguration().toString());
@@ -110,11 +107,10 @@ class GeneralRevisionHandler implements RevisionHandler {
         if(confPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
             // We can't really do the indexing without an actual config
             Logger.warning(getClass(), "Configuration not found with result "+confPair.getLeft());
-            return false;
+            return result;
         }
         Configuration config = confPair.getRight();
-        // Do some checking to see if the document actually needs to be indexed or not (don't know how at the moment)
-        // TODO: Actual checking, for now just removes any previous documents from the index
+        // TODO: For now just removes any previous documents from the index, optimization is possible in cases where no changes have been made
         BooleanQuery bQuery = new BooleanQuery();
         bQuery.add(NumericRangeQuery.newLongRange("key.id", 4, data.getKey().getId(), data.getKey().getId(), true, true), MUST);
         bQuery.add(NumericRangeQuery.newLongRange("key.no", 4, data.getKey().getNo().longValue(), data.getKey().getNo().longValue(), true, true), MUST);
@@ -125,88 +121,93 @@ class GeneralRevisionHandler implements RevisionHandler {
         if(removedInfoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
             // For some reason removed info check failed to find the entity. stop indexing
             Logger.warning(getClass(), "Revision info not found with reason "+removedInfoPair.getLeft());
-            return false;
+            return result;
         }
         RevisionableInfo info = removedInfoPair.getRight();
 
-        // Let's take language out of path since it's used so often.
-        Language language = command.getPath().getLanguage();
+        // Loop through languages, we index the documents once for each language
+        for(Language language : Language.values()) {
+            // Reset content for language
+            contentForLanguage = false;
+            // Document for this language
+            IndexerDocument document = new IndexerDocument(language);
 
-        // Create document. This handler only indexes one document per request so the document can be inside the handle method.
-        IndexerDocument document = new IndexerDocument(language);
+            // Do some default stuff
+            Logger.debug(getClass(), "Forming document for revision.");
+            document.indexIntegerField("key.id", data.getKey().getId(), true, false);
+            document.indexIntegerField("key.no", data.getKey().getNo().longValue(), true, false);
+            document.indexKeywordField("key.configuration.type", data.getConfiguration().getType().toValue(), YES);
+            document.indexIntegerField("key.configuration.version", data.getConfiguration().getVersion().longValue(), true, false);
+            document.indexKeywordField("key.language", language.toValue(), YES, true);
+            if(info.getRemoved()) {
+                document.indexKeywordField("state.removed", "true", YES);
+                document.indexKeywordField("state.removed.time", info.getRemovedAt().toString(), YES);
+                document.indexKeywordField("state.removed.user", info.getRemovedBy(), YES);
 
-        // Do some default stuff
-        Logger.debug(getClass(), "Forming document for revision.");
-        document.indexIntegerField("key.id", data.getKey().getId(), true, false);
-        document.indexIntegerField("key.no", data.getKey().getNo().longValue(), true, false);
-        document.indexKeywordField("key.configuration.type", data.getConfiguration().getType().toValue(), YES);
-        document.indexIntegerField("key.configuration.version", data.getConfiguration().getVersion().longValue(), true, false);
-        if(info.getRemoved()) {
-            document.indexKeywordField("state.removed", "true", YES);
-            document.indexKeywordField("state.removed.time", info.getRemovedAt().toString(), YES);
-            document.indexKeywordField("state.removed.user", info.getRemovedBy(), YES);
+                document.indexKeywordField("state.approved", "false", YES);
+                document.indexKeywordField("state.draft", "false", YES);
+            } else if(data.getState() == RevisionState.APPROVED) {
+                // Set state.approved field to true since this is an approved data, also set approval date and approved by values
+                document.indexKeywordField("state.approved", "true", YES);
 
-            document.indexKeywordField("state.approved", "false", YES);
-            document.indexKeywordField("state.draft", "false", YES);
-        } else if(data.getState() == RevisionState.APPROVED) {
-            // Set state.approved field to true since this is an approved data, also set approval date and approved by values
-            document.indexKeywordField("state.approved", "true", YES);
+                // Set state.draft field to false since this is an approved data
+                document.indexKeywordField("state.removed", "false", YES);
+                document.indexKeywordField("state.draft", "false", YES);
+            } else if(data.getState() == RevisionState.DRAFT) {
+                // Set state.draft field to true since this is a draft data, also set current handler
+                document.indexKeywordField("state.draft", "true", YES);
+                document.indexKeywordField("state.draft.handler", data.getHandler(), YES);
 
-            // Set state.draft field to false since this is an approved data
-            document.indexKeywordField("state.removed", "false", YES);
-            document.indexKeywordField("state.draft", "false", YES);
-        } else if(data.getState() == RevisionState.DRAFT) {
-            // Set state.draft field to true since this is a draft data, also set current handler
-            document.indexKeywordField("state.draft", "true", YES);
-            document.indexKeywordField("state.draft.handler", data.getHandler(), YES);
+                // Set state.approved field to false since this is a draft data
+                document.indexKeywordField("state.removed", "false", YES);
+                document.indexKeywordField("state.approved", "false", YES);
+            }
 
-            // Set state.approved field to false since this is a draft data
-            document.indexKeywordField("state.removed", "false", YES);
-            document.indexKeywordField("state.approved", "false", YES);
+            // There's approval date for the command language
+            if(data.isApprovedFor(language)) {
+                document.indexKeywordField("state.approved.time", data.approveInfoFor(language).getApproved().getTime().toString(), YES);
+                document.indexKeywordField("state.approved.user", data.approveInfoFor(language).getApproved().getUser(), YES);
+                document.indexIntegerField("state.approved.revision", data.approveInfoFor(language).getRevision().longValue(), true, false);
+            }
+
+            if(data.getSaved() != null) {
+                document.indexKeywordField("state.saved", "true", YES); // Specialized field that tells if the RevisionData has been saved by an user at least once
+                document.indexKeywordField("state.saved.time", data.getSaved().getTime().toString(), YES);
+                document.indexKeywordField("state.saved.user", data.getSaved().getUser(), YES);
+            } else {
+                document.indexKeywordField("state.saved", "false", YES);
+            }
+
+            // Index the actual fields
+            indexFields(data, document, "", new Step("", null), config, language);
+
+            finalizeIndexing(data, document, config, language);
+
+            if(contentForLanguage || language == Language.DEFAULT) {
+                Logger.debug(getClass(), "Adding document to index.");
+                PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(CaseInsensitiveWhitespaceAnalyzer.ANALYZER, document.getAnalyzers());
+                indexer.addDocument(document.getDocument(), analyzer);
+                result = true;
+            } else {
+                Logger.debug(getClass(), "Document was not added to index because content was not found for requested language ("+language+").");
+            }
         }
 
-        // There's approval date for the command language
-        if(data.isApprovedFor(language)) {
-            document.indexKeywordField("state.approved.time", data.approveInfoFor(language).getApproved().getTime().toString(), YES);
-            document.indexKeywordField("state.approved.user", data.approveInfoFor(language).getApproved().getUser(), YES);
-            document.indexIntegerField("state.approved.revision", data.approveInfoFor(language).getRevision().longValue(), true, false);
-        }
-
-        if(data.getSaved() != null) {
-            document.indexKeywordField("state.saved", "true", YES); // Specialized field that tells if the RevisionData has been saved by an user at least once
-            document.indexKeywordField("state.saved.time", data.getSaved().getTime().toString(), YES);
-            document.indexKeywordField("state.saved.user", data.getSaved().getUser(), YES);
-        } else {
-            document.indexKeywordField("state.saved", "false", YES);
-        }
-
-        indexFields(data, document, "", new Step("", null), config);
-
-        finalizeIndexing(data, document, config);
-
-        if(contentForLanguage || language == Language.DEFAULT) {
-            Logger.debug(getClass(), "Adding document to index.");
-            PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(CaseInsensitiveWhitespaceAnalyzer.ANALYZER, document.getAnalyzers());
-            indexer.addDocument(document.getDocument(), analyzer);
-            return true;
-        } else {
-            Logger.debug(getClass(), "Document was not added to index because content was not found for requested language ("+command.getPath().getLanguage()+").");
-            return false;
-        }
+        return result;
     }
 
-    private void indexFields(RevisionData data, IndexerDocument document, String root, Step path, Configuration config) {
+    private void indexFields(RevisionData data, IndexerDocument document, String root, Step path, Configuration config, Language language) {
         for(Field field : config.getFields().values()) {
             // Ignore subfields, they're indexed through container indexing
             if(field.getSubfield()) {
                 continue;
             }
-            indexField(field, data, document, root, path, config, data);
+            indexField(field, data, document, root, path, config, data, language);
         }
     }
 
     private void indexField(Field field, DataFieldContainer fieldContainer, IndexerDocument document,
-                               String root, Step path, Configuration config, RevisionData data) {
+                               String root, Step path, Configuration config, RevisionData data, Language language) {
         if(root == null) {
             root = "";
         }
@@ -229,7 +230,7 @@ class GeneralRevisionHandler implements RevisionHandler {
                 if(!df.hasRows()) {
                     return;
                 }
-                indexStudyVariablesContainer(df, document, root+field.getIndexAs(), data);
+                indexStudyVariablesContainer(df, document, root+field.getIndexAs(), data, language);
             } else if(field.getKey().equals("files") && field.getType() == FieldType.REFERENCECONTAINER && data.getConfiguration().getType() == ConfigurationType.STUDY) {
                 Pair<StatusCode, ReferenceContainerDataField> pair = fieldContainer.dataField(ReferenceContainerDataFieldCall.get(field.getKey()));
                 if(pair.getLeft() != StatusCode.FIELD_FOUND) {
@@ -239,13 +240,13 @@ class GeneralRevisionHandler implements RevisionHandler {
                 if(!df.hasRows()) {
                     return;
                 }
-                indexStudyAttachmentContainer(df, document, root+field.getIndexAs(), data);
+                indexStudyAttachmentContainer(df, document, root+field.getIndexAs(), data, language);
             } else {
                 // For now index table into the same document as the top content.
                 // This will create multiple values in similar field names. Search treats these automatically
                 // as OR matches, meaning you only have to search for one of the values to find the document.
                 if(field.getType() == FieldType.CONTAINER) {
-                    indexContainer(field, fieldContainer, document, root, path, config, data);
+                    indexContainer(field, fieldContainer, document, root, path, config, data, language);
                 } else if(field.getType() == FieldType.REFERENCECONTAINER) {
                     // Intelligent and complex solution would be to perform a recursive join during search splitting off a new reader each time REVISIONABLE
                     // reference is encountered. This way we could make arbitrarily deep queries through references.
@@ -253,23 +254,23 @@ class GeneralRevisionHandler implements RevisionHandler {
                     // resolve the references on the row. We can declare multiple reference fields for reference container in data configuration and just show
                     // the most useful of those on GUI with GUI configuration.
 
-                    indexReferenceContainer(field, fieldContainer, document, root, path, config, data);
+                    indexReferenceContainer(field, fieldContainer, document, root, path, config, data, language);
                 }
             }
         } else {
             // Try to index the field as a non container field
             if(field.getWritable()) {
-                indexNonContainerField(field, fieldContainer, document, root, path, config, data);
+                indexNonContainerField(field, fieldContainer, document, root, path, config, data, language);
             } else if(field.getType() == FieldType.REFERENCE) {
                 path = new Step(field.getKey(), path);
-                indexReferenceField(field, fieldContainer.dataField(ValueDataFieldCall.get(field.getKey())).getRight(), document, root, path, data);
+                indexReferenceField(field, fieldContainer.dataField(ValueDataFieldCall.get(field.getKey())).getRight(), document, root, path, data, language);
             }
 
         }
     }
 
     private void indexContainer(Field containerField, DataFieldContainer fieldContainer, IndexerDocument document, String root, Step path,
-                                Configuration config, RevisionData data) {
+                                Configuration config, RevisionData data, Language language) {
         // TODO: Get this from actual indexer configuration
         if(!containerField.getIndexed()) {
             // Field should not be indexed according to configuration, this also means that none of its subfields get indexed
@@ -297,13 +298,13 @@ class GeneralRevisionHandler implements RevisionHandler {
                     // For some reason non subfield was returned, ignore
                     continue;
                 }
-                indexField(field, row, document, root+containerField.getIndexAs(), rowPath, config, data);
+                indexField(field, row, document, root+containerField.getIndexAs(), rowPath, config, data, language);
             }
         }
     }
 
     private void indexReferenceContainer(Field containerField, DataFieldContainer fieldContainer, IndexerDocument document, String root, Step path,
-                                         Configuration config, RevisionData data) {
+                                         Configuration config, RevisionData data, Language language) {
         // TODO: Get this from actual indexer configuration
         if(!containerField.getIndexed()) {
             // Field should not be indexed according to configuration, this also means that none of its subfields get indexed
@@ -351,7 +352,8 @@ class GeneralRevisionHandler implements RevisionHandler {
         }
     }
 
-    private void indexNonContainerField(Field field, DataFieldContainer fieldContainer, IndexerDocument document, String root, Step path, Configuration config, RevisionData data) {
+    private void indexNonContainerField(Field field, DataFieldContainer fieldContainer, IndexerDocument document, String root, Step path,
+            Configuration config, RevisionData data, Language language) {
         if(!field.getWritable()) {
             // Value is not written in revision data, nothing to index
             return;
@@ -418,10 +420,10 @@ class GeneralRevisionHandler implements RevisionHandler {
                 }
                 break;
             case SELECTION:
-                indexSelectionField(field, saved, document, root, path, config, data);
+                indexSelectionField(field, saved, document, root, path, config, data, language);
                 break;
             case REFERENCE:
-                indexReferenceField(field, saved, document, root, path, data);
+                indexReferenceField(field, saved, document, root, path, data, language);
                 break;
             case CONTAINER:
             case REFERENCECONTAINER:
@@ -444,7 +446,8 @@ class GeneralRevisionHandler implements RevisionHandler {
      * @param document Where field should be indexed
      * @return Boolean telling if the indexing was successful. False should mean that the whole document is abandoned
      */
-    private void indexSelectionField(Field field, ValueDataField saved, IndexerDocument document, String root, Step path, Configuration config, RevisionData data) {
+    private void indexSelectionField(Field field, ValueDataField saved, IndexerDocument document, String root, Step path,
+            Configuration config, RevisionData data, Language language) {
         // If field is not translatable we are going to use DEFAULT as the indexing language, this needs to be detected in indexText methods too
         // We have to check this here instead of some more revisions method since we have to pass actual requested language on to other methods
         Language inputLang = field.getTranslatable() ? language : Language.DEFAULT;
@@ -476,7 +479,7 @@ class GeneralRevisionHandler implements RevisionHandler {
                 }
                 break;
             case REFERENCE:
-                indexReferenceField(field, saved, document, root, path, data);
+                indexReferenceField(field, saved, document, root, path, data, language);
                 return;
         }
 
@@ -494,14 +497,14 @@ class GeneralRevisionHandler implements RevisionHandler {
      * @param document Where field should be indexed
      * @return Boolean telling if the indexing was successful. False should mean that the whole document is abandoned
      */
-    private void indexReferenceField(Field field, ValueDataField saved, IndexerDocument document, String root, Step path, RevisionData data) {
+    private void indexReferenceField(Field field, ValueDataField saved, IndexerDocument document, String root, Step path, RevisionData data, Language language) {
         Language inputLang = field.getTranslatable() ? language : Language.DEFAULT;
         // TODO: Split this off in some better way, for now intercept during variables reference handling)
         boolean foundContent = false;
         if(field.getKey().equals("variables") && field.getType() == FieldType.REFERENCE && data.getConfiguration().getType() == ConfigurationType.STUDY) {
             // This is variables reference in study. Take some time and index variables to this document
             document.indexKeywordField(root + field.getIndexAs() + ".value", saved.getActualValueFor(Language.DEFAULT));
-            indexStudyVariables(saved, document, root+field.getIndexAs(), data);
+            indexStudyVariables(saved, document, root+field.getIndexAs(), data, language);
         } else {
             ReferenceOption option = references.getCurrentFieldOption(language, data, path.printPath());
             if(option != null) {
@@ -513,7 +516,7 @@ class GeneralRevisionHandler implements RevisionHandler {
         }
     }
 
-    private void indexStudyVariables(ValueDataField saved, IndexerDocument document, String root, RevisionData data) {
+    private void indexStudyVariables(ValueDataField saved, IndexerDocument document, String root, RevisionData data, Language language) {
         // There shouldn't be different study variables objects for different languages so we can assume that the value is always found
         // from DEFAULT language
         Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(
@@ -528,11 +531,11 @@ class GeneralRevisionHandler implements RevisionHandler {
             Logger.error(getClass(), "Didn't find configuration for "+pair.getRight().getConfiguration());
             return;
         }
-        indexFields(pair.getRight(), document, root, new Step("", null), confPair.getRight());
+        indexFields(pair.getRight(), document, root, new Step("", null), confPair.getRight(), language);
     }
 
     private void indexStudyVariablesContainer(ReferenceContainerDataField field, IndexerDocument document,
-                                                 String root, RevisionData data) {
+                                                 String root, RevisionData data, Language language) {
         for(ReferenceRow reference : field.getReferences()) {
             Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(Long.parseLong(reference.getActualValue()), data.getState() == RevisionState.APPROVED, ConfigurationType.STUDY_VARIABLE);
             if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
@@ -544,12 +547,12 @@ class GeneralRevisionHandler implements RevisionHandler {
                 Logger.error(getClass(), "Didn't find configuration for "+pair.getRight().getConfiguration());
                 continue;
             }
-            indexFields(pair.getRight(), document, root, new Step("", null), confPair.getRight());
+            indexFields(pair.getRight(), document, root, new Step("", null), confPair.getRight(), language);
         }
     }
 
     private void indexStudyAttachmentContainer(ReferenceContainerDataField field, IndexerDocument document,
-                                                 String root, RevisionData data) {
+                                                 String root, RevisionData data, Language language) {
         for(ReferenceRow reference : field.getReferences()) {
             Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(Long.parseLong(reference.getActualValue()), data.getState() == RevisionState.APPROVED, ConfigurationType.STUDY_ATTACHMENT);
             if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
@@ -561,27 +564,27 @@ class GeneralRevisionHandler implements RevisionHandler {
                 Logger.error(getClass(), "Didn't find configuration for "+pair.getRight().getConfiguration());
                 continue;
             }
-            indexFields(pair.getRight(), document, root, new Step("", null), confPair.getRight());
+            indexFields(pair.getRight(), document, root, new Step("", null), confPair.getRight(), language);
         }
     }
 
-    private void finalizeIndexing(RevisionData data, IndexerDocument document, Configuration config) {
+    private void finalizeIndexing(RevisionData data, IndexerDocument document, Configuration config, Language language) {
         switch(data.getConfiguration().getType()) {
             case STUDY:
-                finalizeStudyIndexing(data, document, config);
+                finalizeStudyIndexing(data, document, config, language);
                 break;
             default:
                 break;
         }
     }
 
-    private void finalizeStudyIndexing(RevisionData data, IndexerDocument document, Configuration config) {
-        indexStudyErrors(data, document);
+    private void finalizeStudyIndexing(RevisionData data, IndexerDocument document, Configuration config, Language language) {
+        indexStudyErrors(data, document, language);
 
-        indexStudyBinderPages(data, document);
+        indexStudyBinderPages(data, document, language);
     }
 
-    private void indexStudyErrors(RevisionData data, IndexerDocument document) {
+    private void indexStudyErrors(RevisionData data, IndexerDocument document, Language language) {
         List<StudyError> errors = studyErrors.listErrorsForStudy(data.getKey().getId());
         if(errors.isEmpty()) {
             return;
@@ -671,7 +674,7 @@ class GeneralRevisionHandler implements RevisionHandler {
         }
     }
 
-    private void indexStudyBinderPages(RevisionData data, IndexerDocument document) {
+    private void indexStudyBinderPages(RevisionData data, IndexerDocument document, Language language) {
         Pair<ReturnResult, List<BinderPageListEntry>> pages = binders.listStudyBinderPages(data.getKey().getId());
         if(pages.getLeft() == ReturnResult.NO_RESULTS) {
             return;

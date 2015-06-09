@@ -27,17 +27,9 @@ public class RevisionIndexer extends Indexer {
             throw new UnsupportedOperationException("Needs a directory manager");
         }
         // Check that additional parameters matches requirements
-        if(path.getAdditionalParameters() == null || path.getAdditionalParameters().length == 0) {
-            // There has to be one and only one additional parameter
-            throw new UnsupportedOperationException("Too few additional parameters");
-        }
-        if(path.getAdditionalParameters().length > 1) {
+        if(path.getAdditionalParameters().length > 0) {
             // There has to be one and only one additional parameter
             throw new UnsupportedOperationException("Too many additional parameters");
-        }
-        if(!ConfigurationType.isValue(path.getAdditionalParameters()[0])) {
-            // Additional parameter must be a String representation of one of the ConfigurationTypes
-            throw new UnsupportedOperationException("Additional parameter doesn't match any configuration type");
         }
         if(revisions == null || configurations == null) {
             throw new UnsupportedOperationException("Revision indexer needs access to revision and configuration repositories");
@@ -72,12 +64,12 @@ public class RevisionIndexer extends Indexer {
             case REMOVE:
                 Logger.debug(getClass(), "Performing REMOVE action on revision");
                 // Create term for identification
-                if(rCom.getRevisionable() == null || rCom.getRevision() == null) {
+                if(rCom.getId() == null || rCom.getNo() == null) {
                     break;
                 }
                 BooleanQuery query = new BooleanQuery();
-                query.add(NumericRangeQuery.newLongRange("key.id", 1, rCom.getRevisionable(), rCom.getRevisionable(), true, true), BooleanClause.Occur.MUST);
-                query.add(NumericRangeQuery.newIntRange("key.no", 1, rCom.getRevision(), rCom.getRevision(), true, true), BooleanClause.Occur.MUST);
+                query.add(NumericRangeQuery.newLongRange("key.id", 1, rCom.getId(), rCom.getId(), true, true), BooleanClause.Occur.MUST);
+                query.add(NumericRangeQuery.newIntRange("key.no", 1, rCom.getNo(), rCom.getNo(), true, true), BooleanClause.Occur.MUST);
 
                 removeDocument(query);
                 break;

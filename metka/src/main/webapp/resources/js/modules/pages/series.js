@@ -105,6 +105,10 @@ define(function (require) {
                 ],
                 buttons: [
                     require('./../searchButton')('searchAjax', [
+                        {
+                            key: 'key.configuration.type',
+                            value: "SERIES"
+                        },
                         'key.id',
                         {
                             key: 'seriesabbr',

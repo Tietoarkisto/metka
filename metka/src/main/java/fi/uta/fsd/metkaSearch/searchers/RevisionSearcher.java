@@ -26,11 +26,8 @@ public class RevisionSearcher<T extends SearchResult> extends Searcher<T> {
         if(command.getPath().getType() != IndexerConfigurationType.REVISION) {
             throw new UnsupportedOperationException("Path is not for a REVISION");
         }
-        if(command.getPath().getAdditionalParameters() == null || command.getPath().getAdditionalParameters().length == 0 || command.getPath().getAdditionalParameters().length > 1) {
-            throw new UnsupportedOperationException("There's too few or too many additional parameters");
-        }
-        if(!ConfigurationType.isValue(command.getPath().getAdditionalParameters()[0])) {
-            throw new UnsupportedOperationException("Additional parameter must be a ConfigurationType");
+        if(command.getPath().getAdditionalParameters().length > 0) {
+            throw new UnsupportedOperationException("There are too many additional parameters");
         }
         Logger.debug(RevisionSearcher.class, "Building new RevisionSearcher for path " + command.getPath().toString());
         return new RevisionSearcher<T>(manager, command);

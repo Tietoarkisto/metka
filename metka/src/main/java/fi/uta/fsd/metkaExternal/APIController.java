@@ -112,14 +112,9 @@ public class APIController {
         if(!ExternalUtil.authenticate(api, request.getAuthentication(), ExternalUtil.FLAG_SEARCH)) {
             return ReturnResult.API_AUTHENTICATION_FAILED;
         }
-        for(Language language : request.getTargets().keySet()) {
-            if(request.getTargets().get(language) == null || request.getTargets().get(language).isEmpty()) {
-                continue;
-            }
-            for(IndexTarget target : request.getTargets().get(language)) {
-                RevisionIndexerCommand command = RevisionIndexerCommand.index(target.getType(), language, target.getKey());
-                indexer.addCommand(command);
-            }
+        for(IndexTarget target : request.getTargets()) {
+            RevisionIndexerCommand command = RevisionIndexerCommand.index(target.getKey());
+            indexer.addCommand(command);
         }
         return ReturnResult.OPERATION_SUCCESSFUL;
     }

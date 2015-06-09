@@ -92,29 +92,25 @@ public class IndexerComponent {
         commandRepository.clearAllRequests();
         commandRepository.removeAllHandled();
 
-        // Clear locks
-        for(Language lang : Language.values()) {
-            for(ConfigurationType type : ConfigurationType.values()) {
-                DirectoryManager.DirectoryPath path = DirectoryManager
-                        .formPath(false, IndexerConfigurationType.REVISION, lang, type.toValue());
-                try {
-                    DirectoryInformation info = manager.getIndexDirectory(path, false);
-                    Logger.debug(getClass(), "Checking directory " + path + " for write lock.");
-                    if(IndexWriter.isLocked(info.getDirectory())) {
-                        Logger.debug(getClass(), "Directory "+path+" contained lock. Attempting to clear lock with name "+IndexWriter.WRITE_LOCK_NAME+" from directory.");
-                        IndexWriter.unlock(info.getDirectory());
-                        info.getDirectory().clearLock(IndexWriter.WRITE_LOCK_NAME);
-                        if(IndexWriter.isLocked(info.getDirectory())) {
-                            Logger.debug(getClass(), "FAIL during lock clearing for path " + path + " attempting forced delete since we know that the lock should not be in use");
-                            info.getDirectory().deleteFile(IndexWriter.WRITE_LOCK_NAME);
-                        } else {
-                            Logger.debug(getClass(), "SUCCESS during lock clearing for path " + path);
-                        }
-                    }
-                } catch(Exception e) {
-                    Logger.error(getClass(), "Exception while clearing path " + path + " from write lock:", e);
+        // Clear lock
+        DirectoryManager.DirectoryPath path = DirectoryManager
+                .formPath(false, IndexerConfigurationType.REVISION);
+        try {
+            DirectoryInformation info = manager.getIndexDirectory(path, false);
+            Logger.debug(getClass(), "Checking directory " + path + " for write lock.");
+            if(IndexWriter.isLocked(info.getDirectory())) {
+                Logger.debug(getClass(), "Directory "+path+" contained lock. Attempting to clear lock with name "+IndexWriter.WRITE_LOCK_NAME+" from directory.");
+                IndexWriter.unlock(info.getDirectory());
+                info.getDirectory().clearLock(IndexWriter.WRITE_LOCK_NAME);
+                if(IndexWriter.isLocked(info.getDirectory())) {
+                    Logger.debug(getClass(), "FAIL during lock clearing for path " + path + " attempting forced delete since we know that the lock should not be in use");
+                    info.getDirectory().deleteFile(IndexWriter.WRITE_LOCK_NAME);
+                } else {
+                    Logger.debug(getClass(), "SUCCESS during lock clearing for path " + path);
                 }
             }
+        } catch(Exception e) {
+            Logger.error(getClass(), "Exception while clearing path " + path + " from write lock:", e);
         }
     }
 
@@ -150,13 +146,10 @@ public class IndexerComponent {
                 List<RevisionableEntity> entities = em.createQuery(
                         "SELECT e FROM RevisionableEntity e WHERE e.type " +
                                 "IN ('"+ConfigurationType.PUBLICATION+"','"+ConfigurationType.SERIES+"','"+ConfigurationType.STUDY+"')", RevisionableEntity.class).getResultList();
-                for(ConfigurationType type : ConfigurationType.values()) {
-                    for(Language language : Language.values()) {
-                        IndexerCommand command = RevisionIndexerCommand.stop(type, language);
-                        manager.getIndexDirectory(command.getPath(), true).clearIndex();
-                        addCommand(command);
-                    }
-                }
+
+                IndexerCommand command = RevisionIndexerCommand.stop();
+                manager.getIndexDirectory(command.getPath(), true).clearIndex();
+                addCommand(command);
                 int current = 0;
                 long timeSpent = 0L;
                 for(RevisionableEntity entity : entities) {
@@ -164,9 +157,7 @@ public class IndexerComponent {
                     current++;
                     List<Integer> nos = revisions.getAllRevisionNumbers(entity.getId());
                     for(Integer no : nos) {
-                        for(Language language : Language.values()) {
-                            addCommand(RevisionIndexerCommand.index(ConfigurationType.fromValue(entity.getType()), language, entity.getId(), no));
-                        }
+                        addCommand(RevisionIndexerCommand.index(entity.getId(), no));
                     }
                     long endTime = System.currentTimeMillis();
                     timeSpent += (endTime - startTime);
@@ -181,18 +172,6 @@ public class IndexerComponent {
     }
 
     public synchronized void addCommand(IndexerCommand command) {
-        // TODO: make a better rule
-        if(command.getPath().getAdditionalParameters().length > 0) {
-            switch(command.getPath().getAdditionalParameters()[0]) {
-                case "STUDY":
-                case "SERIES":
-                case "PUBLICATION":
-                    // We allow these types
-                    break;
-                default:
-                    return;
-            }
-        }
         commandRepository.addIndexerCommand(command);
         if(handlers.containsKey(command.getPath())) {
             if(handlers.get(command.getPath()).isDone()) {
@@ -287,30 +266,12 @@ public class IndexerComponent {
             Logger.error(getClass(), "Tried to add index command for study with id " + id + " but didn't find any revisions with result " + pair.getLeft());
             return;
         }
-        for(Language lang : Language.values()) {
-            if (index) {
-                addCommand(RevisionIndexerCommand.index(ConfigurationType.STUDY, lang, pair.getRight().getKey()));
-            } else {
-                addCommand(RevisionIndexerCommand.remove(ConfigurationType.STUDY, lang, pair.getRight().getKey()));
-            }
+        if (index) {
+            addCommand(RevisionIndexerCommand.index(pair.getRight().getKey()));
+        } else {
+            addCommand(RevisionIndexerCommand.remove(pair.getRight().getKey()));
         }
     }
-
-    /*@Scheduled(fixedDelay = 1 * 60 *1000)
-    private void executeStudyBatch() {
-        runningBatch = true;
-        for(RevisionKey key : studyCommandBatch.keySet()) {
-            for(Language lang : Language.values()) {
-                if (studyCommandBatch.get(key)) {
-                    addCommand(RevisionIndexerCommand.index(ConfigurationType.STUDY, lang, key));
-                } else {
-                    addCommand(RevisionIndexerCommand.remove(ConfigurationType.STUDY, lang, key));
-                }
-            }
-        }
-        studyCommandBatch.clear();
-        runningBatch = false;
-    }*/
 
     public Pair<ReturnResult, Integer> getOpenIndexCommands() {
         List<IndexerCommandEntity> entities = em

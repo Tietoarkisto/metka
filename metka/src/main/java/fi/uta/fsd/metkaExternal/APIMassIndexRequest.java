@@ -2,14 +2,12 @@ package fi.uta.fsd.metkaExternal;
 
 import fi.uta.fsd.metka.enums.Language;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class APIMassIndexRequest extends APIRequest {
-    private final Map<Language, List<IndexTarget>> targets = new HashMap<>();
+    private final List<IndexTarget> targets = new ArrayList<>();
 
-    public Map<Language, List<IndexTarget>> getTargets() {
+    public List<IndexTarget> getTargets() {
         return targets;
     }
 }

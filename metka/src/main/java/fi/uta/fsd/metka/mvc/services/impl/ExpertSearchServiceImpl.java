@@ -97,21 +97,21 @@ public class ExpertSearchServiceImpl implements ExpertSearchService {
                 case STUDY: {
                     Pair<StatusCode, ValueDataField> field = revision.dataField(ValueDataFieldCall.get(Fields.TITLE));
                     if(field.getLeft() == StatusCode.FIELD_FOUND) {
-                        qr.setTitle(field.getRight().getActualValueFor(command.getPath().getLanguage()));
+                        qr.setTitle(field.getRight().getActualValueFor(result.getLanguage()));
                     }
                     break;
                 }
                 case SERIES: {
                     Pair<StatusCode, ValueDataField> field = revision.dataField(ValueDataFieldCall.get(Fields.SERIESNAME));
                     if(field.getLeft() == StatusCode.FIELD_FOUND) {
-                        qr.setTitle(field.getRight().getActualValueFor(command.getPath().getLanguage()));
+                        qr.setTitle(field.getRight().getActualValueFor(result.getLanguage()));
                     }
                     break;
                 }
                 case PUBLICATION: {
                     Pair<StatusCode, ValueDataField> field = revision.dataField(ValueDataFieldCall.get(Fields.PUBLICATIONTITLE));
                     if(field.getLeft() == StatusCode.FIELD_FOUND) {
-                        qr.setTitle(field.getRight().getActualValueFor(command.getPath().getLanguage()));
+                        qr.setTitle(field.getRight().getActualValueFor(result.getLanguage()));
                     }
                     break;
                 }

@@ -177,7 +177,7 @@ class DDIReadDataDescription extends DDIReadSectionBase {
         if(varGrp.getVar().size() > 0) {
             if(varGrp.getVar().size() == 1) {
                 if(varGrp.getVar().get(0) instanceof String) {
-                    splits = ((String)varGrp.getVar().get(0)).split(" ");
+                    splits = ((String)varGrp.getVar().get(0)).split("\\s");
                 }
             } else {
                 splits = new String[varGrp.getVar().size()];

@@ -86,7 +86,7 @@ class PORVariablesParser implements VariablesParser {
         PORUtil.PORAnswerMapper visitor = new PORUtil.PORAnswerMapper(variables);
         por.data.accept(visitor);
 
-        String[] software = por.getSoftware().split(" ");
+        String[] software = por.getSoftware().split("\\s");
         softwareVersion = software.length > 1 ? software[software.length-1] : "";
         if(software.length == 1) {
             softwareName = software[0];

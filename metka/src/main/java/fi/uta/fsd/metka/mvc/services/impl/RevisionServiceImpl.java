@@ -324,9 +324,7 @@ public class RevisionServiceImpl implements RevisionService {
     }
 
     private void addRemoveCommand(TransferData data) {
-        for(Language language : Language.values()) {
-            indexer.addCommand(RevisionIndexerCommand.remove(data.getConfiguration().getType(), language, data.getKey().getId(), data.getKey().getNo()));
-        }
+        indexer.addCommand(RevisionIndexerCommand.remove(data.getKey().getId(), data.getKey().getNo()));
         switch(data.getConfiguration().getType()) {
             case STUDY_ATTACHMENT:
             case STUDY_VARIABLE:
@@ -345,10 +343,7 @@ public class RevisionServiceImpl implements RevisionService {
 
     private void addIndexCommand(TransferData data) {
         // Separates calls to index sub components of study, should really be collected as a queue so that multiple study indexing requests are not made in a short period
-        // TODO: Make some way of indexing only changed languages instead of every one. For now add all languages. Indexing should also check to see that there is actual language specific data before adding to index
-        for(Language language : Language.values()) {
-            indexer.addCommand(RevisionIndexerCommand.index(data.getConfiguration().getType(), language, data.getKey().getId(), data.getKey().getNo()));
-        }
+        indexer.addCommand(RevisionIndexerCommand.index(data.getKey().getId(), data.getKey().getNo()));
         switch(data.getConfiguration().getType()) {
             case STUDY_ATTACHMENT:
             case STUDY_VARIABLE:
@@ -367,10 +362,7 @@ public class RevisionServiceImpl implements RevisionService {
 
     private void addIndexCommand(RevisionData data) {
         // Separates calls to index sub components of study, should really be collected as a queue so that multiple study indexing requests are not made in a short period
-        // TODO: Make some way of indexing only changed languages instead of every one. For now add all languages. Indexing should also check to see that there is actual language specific data before adding to index
-        for(Language language : Language.values()) {
-            indexer.addCommand(RevisionIndexerCommand.index(data.getConfiguration().getType(), language, data.getKey().getId(), data.getKey().getNo()));
-        }
+        indexer.addCommand(RevisionIndexerCommand.index(data.getKey().getId(), data.getKey().getNo()));
         switch(data.getConfiguration().getType()) {
             case STUDY_ATTACHMENT:
             case STUDY_VARIABLE:

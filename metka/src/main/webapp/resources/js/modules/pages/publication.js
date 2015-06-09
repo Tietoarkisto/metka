@@ -207,6 +207,10 @@ define(function (require) {
                             ],
                             buttons: [
                                 require('./../searchButton')('/revision/ajax/search', [
+                                        {
+                                            key: 'key.configuration.type',
+                                            value: "PUBLICATION"
+                                        },
                                         'publicationid',
                                         {
                                             key: 'studies',

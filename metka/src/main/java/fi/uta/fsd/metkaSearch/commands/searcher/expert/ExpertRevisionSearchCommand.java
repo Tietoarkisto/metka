@@ -51,17 +51,11 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
                 continue;
             }
             qrys.add("+"+key+":"+request.getByKey(key));
-            /*Field field = configuration.getField(key);
-            if(field != null && field.getExact()) {
-                qrys.add("+"+key+":\""+request.getByKey(key)+"\"");
-            } else {
-                qrys.add("+"+key+":("+request.getByKey(key)+")");
-            }*/
         }
 
         String qryStr = StringUtils.collectionToDelimitedString(qrys, " ");
 
-        DirectoryManager.DirectoryPath path = DirectoryManager.formPath(false, IndexerConfigurationType.REVISION, Language.DEFAULT, request.getType().toValue());
+        DirectoryManager.DirectoryPath path = DirectoryManager.formPath(false, IndexerConfigurationType.REVISION);
         return new ExpertRevisionSearchCommand(path, qryStr, configuration);
     }
 
@@ -70,9 +64,12 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
         if(!StringUtils.hasText(qry)) {
             throw new UnsupportedOperationException("Query string was empty, can't form expert query");
         }
-        Pair<DirectoryManager.DirectoryPath, String> pathPair = extractPath(qry);
-        Pair<ReturnResult, Configuration> pair = configurations.findLatestConfiguration(ConfigurationType.fromValue(pathPair.getLeft().getAdditionalParameters()[0]));
-        return new ExpertRevisionSearchCommand(pathPair.getLeft(), pathPair.getRight(), pair.getRight());
+        ConfigurationType type = extractConfType(qry);
+        Configuration conf = null;
+        if(type != null) {
+            conf = configurations.findLatestConfiguration(type).getRight();
+        }
+        return new ExpertRevisionSearchCommand(DirectoryManager.formPath(false, IndexerConfigurationType.REVISION), qry, conf);
     }
 
     public static ExpertRevisionSearchCommand build(String qry, Configuration configuration)
@@ -80,47 +77,37 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
         if(!StringUtils.hasText(qry)) {
             throw new UnsupportedOperationException("Query string was empty, can't form expert query");
         }
-        Pair<DirectoryManager.DirectoryPath, String> pathPair = extractPath(qry);
-        return new ExpertRevisionSearchCommand(pathPair.getLeft(), pathPair.getRight(), configuration);
+        return new ExpertRevisionSearchCommand(DirectoryManager.formPath(false, IndexerConfigurationType.REVISION), qry, configuration);
     }
 
-    private static Pair<DirectoryManager.DirectoryPath, String> extractPath(String qry) throws QueryNodeException {
-        qry = StringUtils.trimLeadingWhitespace(qry);
-        String[] splits = qry.split("\\s", 2);
-        IndexerConfigurationType iType = IndexerConfigurationType.REVISION;
-        ConfigurationType cType;
-        if(ConfigurationType.isValue(splits[0])) {
-            cType = ConfigurationType.fromValue(splits[0]);
-            qry = splits.length > 1 ? splits[1] : "";
-            qry = StringUtils.trimLeadingWhitespace(qry);
-        } else {
-            cType = ConfigurationType.STUDY;
-        }
-
+    private static ConfigurationType extractConfType(String qry) throws ParseException {
         if(!StringUtils.hasText(qry)) {
             throw new ParseException(new MessageImpl("EMPTY_QUERY"));
         }
 
-        splits = qry.split("\\s", 2);
-        Language lang;
-        String[] langCheckSplits = splits[0].split(":", 2);
-        if(langCheckSplits[0].equals(LANG_TOKE)) {
-            if(langCheckSplits.length < 2 || !Language.isLanguage(langCheckSplits[1])) {
-                throw new ParseException(new MessageImpl("MALFORMED_LANGUAGE"));
+        if(qry.contains("key.configuration.type:")) {
+            qry = qry.substring(qry.indexOf("key.configuration.type:")+"key.configuration.type:".length());
+            String[] split = qry.split("\\s");
+            if(split.length > 0) {
+                return ConfigurationType.fromValue(split[0]);
             }
-            lang = Language.fromValue(langCheckSplits[1]);
-            qry = splits.length > 1 ? splits[1] : "";
-            qry = StringUtils.trimLeadingWhitespace(qry);
-        } else {
-            lang = Language.DEFAULT;
         }
+        return null;
+    }
 
+    private static Language extractLanguage(String qry) throws ParseException {
         if(!StringUtils.hasText(qry)) {
             throw new ParseException(new MessageImpl("EMPTY_QUERY"));
         }
 
-        DirectoryManager.DirectoryPath path =  DirectoryManager.formPath(false, iType, lang, cType.toValue());
-        return new ImmutablePair<>(path, qry);
+        if(qry.contains("key.language:")) {
+            qry = qry.substring(qry.indexOf("key.language:")+"key.language:".length());
+            String[] split = qry.split("\\s");
+            if(split.length > 0) {
+                return Language.fromValue(split[0]);
+            }
+        }
+        return null;
     }
 
     private Query query;
@@ -128,8 +115,7 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
     private ExpertRevisionSearchCommand(DirectoryManager.DirectoryPath path, String qry, Configuration configuration)
             throws QueryNodeException {
         super(path, ResultList.ResultType.REVISION);
-
-        //addTextAnalyzer("seriesname");
+        setLanguage(extractLanguage(qry));
         Map<String, NumericConfig> nums = new HashMap<>();
 
         /*StandardQueryParser parser = new StandardQueryParser(getAnalyzer());*/
