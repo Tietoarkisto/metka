@@ -18,13 +18,17 @@ import fi.uta.fsd.metkaSearch.SearcherComponent;
 import fi.uta.fsd.metkaSearch.commands.searcher.SearchCommand;
 import fi.uta.fsd.metkaSearch.commands.searcher.expert.ExpertRevisionSearchCommand;
 import fi.uta.fsd.metkaSearch.results.RevisionResult;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.lucene.queryparser.flexible.core.QueryNodeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class ExpertSearchServiceImpl implements ExpertSearchService {
@@ -47,30 +51,23 @@ public class ExpertSearchServiceImpl implements ExpertSearchService {
             response.setResult(ReturnResult.EMPTY_QUERY);
             return response;
         }
-        SearchCommand<RevisionResult> command = null;
-        try {
-            command = ExpertRevisionSearchCommand.build(request.getQuery(), configurations);
-        } catch(QueryNodeException e) {
-            Logger.error(getClass(), "Exception while forming search command.", e);
-            switch(e.getMessageObject().getKey()) {
-                case "EMPTY_QUERY":
-                    response.setResult(ReturnResult.EMPTY_QUERY);
-                    break;
-                case "MALFORMED_LANGUAGE":
-                    response.setResult(ReturnResult.MALFORMED_LANGUAGE);
-                    break;
-                case "INVALID_SYNTAX_CANNOT_PARSE":
-                    response.setResult(ReturnResult.MALFORMED_QUERY);
-                    break;
-            }
-            return response;
-        } catch(Exception e) {
-            Logger.error(getClass(), "Exception while forming search command.", e);
-            throw e;
-        }
-        List<RevisionResult> results = searcher.executeSearch(command).getResults();
 
-        for(RevisionResult result : results) {
+        // Subquery support
+        // For now subqueries are denoted by enclosing them within SUB{ }SUB
+        // For now subqueries are really simple, only supporting key.id matching (or rather they will return a grouped key.id result to be used with a field)
+        // Later on more complex subqueries might be supported to allow for freely selected return parameters for example
+
+        // Subquery process is really simple
+        // The query is send to a recursive method that searches it for queries enclosed in S{ }S
+        // If it finds any it calls itself with that subquery
+        // This is continued for as long as there are subqueries
+        Query query = new Query(0, request.getQuery().length());
+        findQueries(request.getQuery(), query);
+
+        // After that the queries are performed in a depth first manner
+        Pair<ReturnResult, List<RevisionResult>> queryResults = performQuery(request.getQuery(), query);
+
+        for(RevisionResult result : queryResults.getRight()) {
             Pair<ReturnResult, RevisionableInfo> infoPair = revisions.getRevisionableInfo(result.getId());
             if(infoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
                 Logger.warning(getClass(), "Revisionable was not found for id "+result.getId());
@@ -122,6 +119,68 @@ public class ExpertSearchServiceImpl implements ExpertSearchService {
         return response;
     }
 
+    private Pair<ReturnResult, List<RevisionResult>> performQuery(String qryStr, Query query) {
+        // If subquery was found then the result provided by the reqursion is formed into a grouping and the whole subquery is replaced by it
+        // After replacing the subquery with the result grouping the query is then run and the results are returned
+        // This process continues untill all subqueries and the main query have been executed and the last result set is returned to the caller
+        if(!query.getQueries().isEmpty()) {
+            int difference = 0;
+            for(Query sq : query.getQueries()) {
+                String subq = qryStr.substring(sq.start+difference, sq.end+difference);
+                Pair<ReturnResult, List<RevisionResult>> queryResults = performQuery(subq, sq);
+                if(queryResults.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
+                    return queryResults;
+                }
+
+                String replc = "(";
+                for(RevisionResult rr : queryResults.getRight()) {
+                    if(replc.length() > 1) {
+                        replc += " ";
+                    }
+                    replc += rr.getId();
+                }
+                replc += ")";
+                String newQry = qryStr.substring(0, sq.start-2);
+                newQry += replc;
+                newQry += qryStr.substring(sq.end+2);
+                qryStr = newQry;
+
+                difference += replc.length() - (sq.end-sq.start);
+            }
+        }
+        return performSearch(qryStr);
+    }
+
+    private Pair<ReturnResult, List<RevisionResult>> performSearch(String qryStr) {
+        ReturnResult response;
+        SearchCommand<RevisionResult> command = null;
+        try {
+            command = ExpertRevisionSearchCommand.build(qryStr, configurations);
+        } catch(QueryNodeException e) {
+            Logger.error(getClass(), "Exception while forming search command.", e);
+            switch(e.getMessageObject().getKey()) {
+                case "EMPTY_QUERY":
+                    response = ReturnResult.EMPTY_QUERY;
+                    break;
+                case "MALFORMED_LANGUAGE":
+                    response = ReturnResult.MALFORMED_LANGUAGE;
+                    break;
+                case "INVALID_SYNTAX_CANNOT_PARSE":
+                    response = ReturnResult.MALFORMED_QUERY;
+                    break;
+                default:
+                    response = ReturnResult.OPERATION_FAIL;
+                    break;
+            }
+            return new ImmutablePair<>(response, null);
+        } catch(Exception e) {
+            Logger.error(getClass(), "Exception while forming search command.", e);
+            throw e;
+        }
+        List<RevisionResult> results = searcher.executeSearch(command).getResults();
+        return new ImmutablePair<>(ReturnResult.OPERATION_SUCCESSFUL, results);
+    }
+
     @Override public ExpertSearchListResponse listSavedSearcher() {
         ExpertSearchListResponse response = new ExpertSearchListResponse();
         List<SavedExpertSearchItem> items = savedSearch.listSavedSearches();
@@ -137,5 +196,78 @@ public class ExpertSearchServiceImpl implements ExpertSearchService {
 
     @Override public void removeExpertSearch(Long id) {
         savedSearch.removeExpertSearch(id);
+    }
+
+    private static String pStart = ":S\\{";
+    private static String pEnd = "}S(?=\\s|\\z)";
+
+    private void findQueries(String qry, Query query) {
+        Pattern p = Pattern.compile(pStart);
+
+        Matcher starts = p.matcher(qry);
+        p = Pattern.compile(pEnd);
+        Matcher ends = p.matcher(qry);
+        List<Integer> is = new ArrayList<Integer>();
+        List<Integer> ie = new ArrayList<Integer>();
+        while(starts.find()) {
+            is.add(starts.end());
+        }
+        while(ends.find()) {
+            ie.add(ends.start());
+        }
+
+        int depth = 0;
+        int rs = 0;
+        for(int i=0; i<qry.length(); i++) {
+            if(is.contains(i)) {
+                depth++;
+                if(depth == 1) {
+                    rs = i;
+                }
+            }
+            if(ie.contains(i)) {
+                depth--;
+                if(depth == 0) {
+                    Query subquery = new Query(rs, i);
+                    query.queries.add(subquery);
+                    findQueries(qry.substring(rs, i), subquery);
+                }
+            }
+        }
+    }
+
+    private static class Query {
+        private final int start;
+        private final int end;
+        private final List<Query> queries = new ArrayList<>();
+
+        public Query(int start, int end) {
+            this.start = start;
+            this.end = end;
+        }
+
+        public int getStart() {
+            return start;
+        }
+
+        public int getEnd() {
+            return end;
+        }
+
+        public List<Query> getQueries() {
+            return queries;
+        }
+
+        // Depug method
+        public void print(String text) {
+            System.out.print("Region ["+start+"|"+end+"]: ");
+            System.out.println(text);
+            if(queries.size() > 0) {
+                System.out.println("With subregions: ");
+            }
+            for(Query query : queries) {
+                query.print(text.substring(query.start, query.end));
+            }
+        }
     }
 }

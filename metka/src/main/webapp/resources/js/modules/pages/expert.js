@@ -152,11 +152,12 @@ define(function (require) {
                     create: function () {
                         this
                             .click(function () {
-                                var containerOptions = {
-                                    data: {},
-                                    dataConf: {},
-                                    $events: $({}),
-                                    defaultLang: options.defaultLang,
+                                var modalOptions = ($.extend(true, require('./../optionsBase')(), {
+                                    //title: 'Tallenna haku',
+                                    type: "ADD",
+                                    dialogTitle: {
+                                        "ADD": "Tallenna haku"
+                                    },
                                     content: [{
                                         type: 'COLUMN',
                                         columns: 1,
@@ -176,15 +177,7 @@ define(function (require) {
                                                 ]
                                             }
                                         ]
-                                    }]
-                                };
-                                require('./../modal')($.extend(true, require('./../optionsBase')(), {
-                                    //title: 'Tallenna haku',
-                                    type: "ADD",
-                                    dialogTitle: {
-                                        "ADD": "Tallenna haku"
-                                    },
-                                    body: require('./../container').call($('<div>'), containerOptions),
+                                    }],
                                     buttons: [{
                                         "&title": {
                                             "default": 'Tallenna'
@@ -195,7 +188,7 @@ define(function (require) {
                                                     require('./../server')('/expert/save', {
                                                         data: JSON.stringify({
                                                             query: require('./../data')(options)('search').getByLang(options.defaultLang),
-                                                            title: require('./../data')(containerOptions)('title').getByLang(options.defaultLang)
+                                                            title: require('./../data')(modalOptions)('title').getByLang(options.defaultLang)
                                                         }),
                                                         success: addRow
                                                     });
@@ -205,6 +198,8 @@ define(function (require) {
                                         type: 'CANCEL'
                                     }]
                                 }));
+
+                                require('./../modal')(modalOptions);
                             });
                     }
                 }
