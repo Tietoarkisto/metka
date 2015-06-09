@@ -62,6 +62,7 @@ class VariableParser {
      * @param variableRevision Variable revision where data is inserted
      * @param variable PORVariableHolder containing singe variable data to be parsed
      */
+    // TODO: Should data in translation languages be put to their respective language rows?
     ParseResult mergeToData(RevisionData variableRevision, PORUtil.PORVariableHolder variable) {
         // Sanity check
         if(variableRevision == null || variable == null) {
@@ -74,7 +75,7 @@ class VariableParser {
         String label = !StringUtils.hasText(variable.asVariable().label)
                 ? missingLabel.get(language)
                 : variable.asVariable().label;
-        Pair<StatusCode, ValueDataField> fieldPair = variableRevision.dataField(ValueDataFieldCall.set(Fields.VARLABEL, new Value(label), language).setInfo(info));
+        Pair<StatusCode, ValueDataField> fieldPair = variableRevision.dataField(ValueDataFieldCall.set(Fields.VARLABEL, new Value(label), Language.DEFAULT).setInfo(info));
         result = checkResultForUpdate(fieldPair, result);
 
         Pair<StatusCode, ContainerDataField> qstns = variableRevision.dataField(ContainerDataFieldCall.set(Fields.QSTNLITS));
@@ -97,13 +98,6 @@ class VariableParser {
         // Set statistics CONTAINER
         operationResult = setStatistics(variableRevision, variable);
         result = resultCheck(result, operationResult);
-
-        if(result == ParseResult.REVISION_CHANGES) {
-            // We can do this as a set operation since container field set returns the existing container if one is present and doesn't do anything else in that case
-            Pair<StatusCode, ContainerDataField> containerPair = variableRevision.dataField(ContainerDataFieldCall.set(Fields.TRANSLATIONS, variableRevision));
-            ContainerDataField container = containerPair.getRight();
-            Pair<StatusCode, DataRow> pair = container.getOrCreateRowWithFieldValue(Language.DEFAULT, Fields.TRANSLATION, new Value(language.toValue()), variableRevision.getChanges(), info);
-        }
 
         return result;
     }
@@ -150,7 +144,7 @@ class VariableParser {
         ParseResult result = ParseResult.NO_CHANGES;
 
         // We know that this row is needed and so we can set it to not removed state no matter if it was removed previously or not
-        StatusCode restoreResult = row.restore(changeMap, language, info);
+        StatusCode restoreResult = row.restore(changeMap, Language.DEFAULT, info);
         if(restoreResult == StatusCode.ROW_CHANGE) {
             result = ParseResult.REVISION_CHANGES;
         }
@@ -159,7 +153,7 @@ class VariableParser {
                 ValueDataFieldCall.set(Fields.VALUE, new Value(label.getValue()), Language.DEFAULT).setInfo(info).setChangeMap(changeMap));
         result = checkResultForUpdate(fieldPair, result);
 
-        fieldPair = row.dataField(ValueDataFieldCall.set(Fields.LABEL, new Value(label.getLabel()), language).setInfo(info).setChangeMap(changeMap));
+        fieldPair = row.dataField(ValueDataFieldCall.set(Fields.LABEL, new Value(label.getLabel()), Language.DEFAULT).setInfo(info).setChangeMap(changeMap));
         result = checkResultForUpdate(fieldPair, result);
 
         fieldPair = row.dataField(ValueDataFieldCall.set(Fields.MISSING, new Value(label.isMissing() ? "Y" : null), Language.DEFAULT).setInfo(info).setChangeMap(changeMap));
@@ -355,7 +349,7 @@ class VariableParser {
                 ValueDataFieldCall.set(Fields.VALUE, new Value(value), Language.DEFAULT).setInfo(info).setChangeMap(changeMap));
         result = checkResultForUpdate(fieldPair, result);
 
-        fieldPair = row.dataField(ValueDataFieldCall.set(Fields.LABEL, new Value(label), language).setInfo(info).setChangeMap(changeMap));
+        fieldPair = row.dataField(ValueDataFieldCall.set(Fields.LABEL, new Value(label), Language.DEFAULT).setInfo(info).setChangeMap(changeMap));
         result = checkResultForUpdate(fieldPair, result);
 
         fieldPair = row.dataField(ValueDataFieldCall.set(Fields.STAT, new Value(stat.toString()), Language.DEFAULT).setInfo(info).setChangeMap(changeMap));

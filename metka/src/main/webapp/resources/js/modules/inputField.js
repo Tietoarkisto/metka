@@ -145,8 +145,10 @@ define(function (require) {
                         key: options.fieldOptions.key
                     });
 
+                    // Each input type can be emptied using triggers, although you have to be careful with reference fields, especially dependencies
+                    options.$events.on(emptyTriggerLangKey, emptyField);
+                    options.$events.on(emptyTriggerKey, emptyField);
                     if (type === 'REFERENCE') {
-                        // NOTE: You can't empty a reference field by using a trigger, these fields are filled automatically through references and are not saved in any case
                         var reference = getPropertyNS(options, 'dataConf.references', options.fieldOptions.reference);
                         changeTriggerKey = 'data-changed-{key}-{lang}'.supplant({
                             key: reference.target,
@@ -157,18 +159,14 @@ define(function (require) {
                                 $input.val(value);
                             })(options.data.fields, reference);
                         });
-                        // NOTE: setRefereneValue call is not necessary if target is select input so it could be omitted. select input triggers change event
                     } else if(type === 'CONCAT') {
-                        options.$events.on(emptyTriggerLangKey, emptyField);
-                        options.$events.on(emptyTriggerKey, emptyField());
+
                         options.$events.on(changeTriggerKey, function() {
                             $input.val(options.fieldOptions.concatenate.map(function (key) {
                                 return require('./data')(options)(key).getByLang(lang);
                             }).join(''));
                         });
                     } else {
-                        options.$events.on(emptyTriggerLangKey, emptyField);
-                        options.$events.on(emptyTriggerKey, emptyField);
                         options.$events.on(changeTriggerKey, function() {
                             $input.val(require('./data')(options).getByLang(lang) || '');
                         });

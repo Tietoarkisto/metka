@@ -11,6 +11,7 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.ReferenceContainerDataField;
 import fi.uta.fsd.metka.model.data.container.ReferenceRow;
 import fi.uta.fsd.metka.model.data.container.ValueDataField;
+import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.entity.impl.StudyEntity;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.ReportRepository;
@@ -62,30 +63,30 @@ public class ReportRepositoryImpl implements ReportRepository {
             RevisionData revision = dataPair.getRight();
             GeneralStudyReportObject reportStudy = new GeneralStudyReportObject();
             // StudyId
-            Pair<StatusCode, ValueDataField> field = revision.dataField(ValueDataFieldCall.get("studyid"));
+            Pair<StatusCode, ValueDataField> field = revision.dataField(ValueDataFieldCall.get(Fields.STUDYID));
             reportStudy.studyId = (field.getLeft() != StatusCode.FIELD_FOUND ? "" : field.getRight().getActualValueFor(Language.DEFAULT));
 
             // State including removed
             reportStudy.state = (study.getRemoved() ? UIRevisionState.REMOVED : UIRevisionState.fromRevisionState(revision.getState())).name();
 
             // Title
-            field = revision.dataField(ValueDataFieldCall.get("title"));
+            field = revision.dataField(ValueDataFieldCall.get(Fields.TITLE));
             reportStudy.title = (field.getLeft() != StatusCode.FIELD_FOUND ? "" : field.getRight().getActualValueFor(Language.DEFAULT));
 
             // Terms of use value (it's easy to fetch the title if required)
-            field = revision.dataField(ValueDataFieldCall.get("termsofuse"));
+            field = revision.dataField(ValueDataFieldCall.get(Fields.TERMSOFUSE));
             reportStudy.termsofuse = (field.getLeft() != StatusCode.FIELD_FOUND ? "" : field.getRight().getActualValueFor(Language.DEFAULT));
 
             // Relpubl from publications referenced in study
 
-            Pair<StatusCode, ReferenceContainerDataField> references = revision.dataField(ReferenceContainerDataFieldCall.get("publications"));
+            Pair<StatusCode, ReferenceContainerDataField> references = revision.dataField(ReferenceContainerDataFieldCall.get(Fields.PUBLICATIONS));
             if(references.getLeft() == StatusCode.FIELD_FOUND && !references.getRight().getReferences().isEmpty()) {
                 for(ReferenceRow reference : references.getRight().getReferences()) {
                     dataPair = revisions.getLatestRevisionForIdAndType(Long.parseLong(reference.getActualValue()), false, ConfigurationType.PUBLICATION);
                     if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
                         continue;
                     }
-                    field = dataPair.getRight().dataField(ValueDataFieldCall.get("publicationrelpubl"));
+                    field = dataPair.getRight().dataField(ValueDataFieldCall.get(Fields.PUBLICATIONRELPUBL));
                     if(field.getLeft() != StatusCode.FIELD_FOUND || !field.getRight().hasValueFor(Language.DEFAULT)) {
                         continue;
                     }
@@ -94,11 +95,11 @@ public class ReportRepositoryImpl implements ReportRepository {
             }
 
             // Varquantity
-            field = revision.dataField(ValueDataFieldCall.get("variables"));
+            field = revision.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
             if(field.getLeft() == StatusCode.FIELD_FOUND && field.getRight().hasValueFor(Language.DEFAULT)) {
                 dataPair = revisions.getLatestRevisionForIdAndType(field.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY_VARIABLES);
                 if(dataPair.getLeft() == ReturnResult.REVISION_FOUND) {
-                    field = dataPair.getRight().dataField(ValueDataFieldCall.get("varquantity"));
+                    field = dataPair.getRight().dataField(ValueDataFieldCall.get(Fields.VARQUANTITY));
                     if(field.getLeft() == StatusCode.FIELD_FOUND) {
                         reportStudy.varquantity = field.getRight().getActualValueFor(Language.DEFAULT);
                     }

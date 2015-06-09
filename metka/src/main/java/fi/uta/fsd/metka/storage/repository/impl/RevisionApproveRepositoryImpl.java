@@ -16,6 +16,7 @@ import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.model.transfer.TransferField;
 import fi.uta.fsd.metka.model.transfer.TransferValue;
+import fi.uta.fsd.metka.names.Fields;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionApproveRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
@@ -161,12 +162,13 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
 
         // Try to approve study variables linked to this study, this should try to approve all study variables that are linked to it
         // If there are errors in study variables (either the collection or individual variables then just mark an error to study variables field in transferData
+        // TODO: Variables need to be approved for every language
         ReturnResult variablesCheckResult = checkStudyVariables(revision, transferData);
         if(variablesCheckResult != ReturnResult.OPERATION_SUCCESSFUL) {
             result = ReturnResult.OPERATION_FAIL;
             // We know that if study variables approval failed there has to be variables field in transfer data since it's added during checking
             // if it was missing before
-            TransferField field = transferData.getField("variables");
+            TransferField field = transferData.getField(Fields.VARIABLES);
             field.addErrorFor(Language.DEFAULT, FieldError.APPROVE_FAILED);
         }
 
@@ -178,9 +180,9 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
 
     private ReturnResult approveStudyAttachment(RevisionData revision) {
         // TODO: Move to IS_FILE restriction
-        ValueDataField fileField = revision.dataField(ValueDataFieldCall.get("file")).getRight();
+        ValueDataField fileField = revision.dataField(ValueDataFieldCall.get(Fields.FILE)).getRight();
         if(fileField != null) {
-            File file = new File(revision.dataField(ValueDataFieldCall.get("file")).getRight().getActualValueFor(Language.DEFAULT));
+            File file = new File(revision.dataField(ValueDataFieldCall.get(Fields.FILE)).getRight().getActualValueFor(Language.DEFAULT));
             if(!file.exists() || file.isDirectory()) {
                 return ReturnResult.OPERATION_FAIL;
             }
@@ -196,7 +198,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
 
         // Loop through all variables and check if they need approval.
         // Try to approve every one but if even one fails then return APPROVE_FAILED since the process of study approval can't continue
-        Pair<StatusCode, ReferenceContainerDataField> fieldPair = revision.dataField(ReferenceContainerDataFieldCall.get("variables"));
+        Pair<StatusCode, ReferenceContainerDataField> fieldPair = revision.dataField(ReferenceContainerDataFieldCall.get(Fields.VARIABLES));
         if(fieldPair.getLeft() != StatusCode.FIELD_FOUND) {
             // Nothing to loop through
             return result;
@@ -459,13 +461,13 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
 
     // TODO: Cascade these using operations
     private ReturnResult checkStudyVariables(RevisionData revision, TransferData transferData) {
-        Pair<StatusCode, ValueDataField> fieldPair = revision.dataField(ValueDataFieldCall.get("variables"));
+        Pair<StatusCode, ValueDataField> fieldPair = revision.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
         if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
             // Check that transferData actually has the field with this value (it should).
             // If the field or value is missing then add them
-            TransferField field = transferData.getField("variables");
+            TransferField field = transferData.getField(Fields.VARIABLES);
             if(field == null) {
-                field = new TransferField("variables", TransferFieldType.VALUE);
+                field = new TransferField(Fields.VARIABLES, TransferFieldType.VALUE);
                 TransferValue transferValue = TransferValue.buildFromValueDataFieldFor(Language.DEFAULT, fieldPair.getRight());
                 field.addValueFor(Language.DEFAULT, transferValue);
                 transferData.getFields().put(field.getKey(), field);

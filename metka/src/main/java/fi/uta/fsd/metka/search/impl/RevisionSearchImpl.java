@@ -148,7 +148,7 @@ public class RevisionSearchImpl implements RevisionSearch {
     private void gatherChanges(String root, Map<String, Change> changeMap, DataFieldContainer container, Map<String, MutablePair<String, String>> changes, DataFieldContainer originalFields) {
         for(String key : changeMap.keySet()) {
             Change change = changeMap.get(key);
-            if(change instanceof ContainerChange) {
+            if(change.getType() == DataField.DataFieldType.CONTAINER) {
                 gatherContainerChanges(root, (ContainerChange)change, container, changes, originalFields);
             } else {
                 gatherValueChanges(root, change, container, changes, originalFields);

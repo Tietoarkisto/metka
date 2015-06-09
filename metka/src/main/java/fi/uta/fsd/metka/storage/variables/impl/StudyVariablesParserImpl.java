@@ -37,11 +37,6 @@ import javax.persistence.PersistenceContext;
 // TODO: This class is a mess, clean it up
 @Repository
 public class StudyVariablesParserImpl implements StudyVariablesParser {
-
-    // Should only be used for custom queries
-    @PersistenceContext(name = "entityManager")
-    private EntityManager em;
-
     @Autowired
     private RevisionRepository revisions;
 
@@ -51,6 +46,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
     @Autowired
     private RevisionCreationRepository create;
 
+    // This should possibly be used instead of directly updating revision data if parser returns revision changed
     @Autowired
     private RevisionSaveRepository save;
 
@@ -75,6 +71,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         return result != ParseResult.REVISION_CHANGES ? def : result;
     }
 
+
     @Override
     public ParseResult parse(RevisionData attachment, VariableDataType type, RevisionData study, Language language, DateTimeUserPair info) {
         // Sanity check
@@ -85,10 +82,10 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             return ParseResult.DID_NOT_FIND_STUDY;
         }
 
+        // Prepare
         if(info == null) {
             info = DateTimeUserPair.build();
         }
-
         ParseResult result = ParseResult.NO_CHANGES;
 
         // **********************
@@ -101,37 +98,34 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
             Logger.error(getClass(), "Did not find path in "+attachment.toString()+" even though shouldn't arrive at this point without path.");
             return ParseResult.VARIABLES_FILE_HAD_NO_PATH;
         }
+        String fileName = fieldPair.getRight().getActualValueFor(Language.DEFAULT);
 
         // Get or create study variables
-        fieldPair = study.dataField(ValueDataFieldCall.get("variables"));
+        fieldPair = study.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
         Pair<ReturnResult, RevisionData> dataPair;
-        if(fieldPair.getLeft() == StatusCode.FIELD_MISSING || !fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
-            if(language != Language.DEFAULT) {
-                // We should not be here, variables should first be created using DEFAULT language file before we get to other languages.
-                return ParseResult.NO_DEFAULT_VARIABLES;
-            }
-            String ext = FilenameUtils.getExtension(attachment.dataField(ValueDataFieldCall.get(Fields.FILE)).getRight().getActualValueFor(Language.DEFAULT).toUpperCase());
+
+        if(fieldPair.getLeft() == StatusCode.FIELD_MISSING || !fieldPair.getRight().hasValueFor(language)) {
             RevisionCreateRequest request = new RevisionCreateRequest();
             request.setType(ConfigurationType.STUDY_VARIABLES);
-            request.getParameters().put("study", study.getKey().getId().toString());
-            request.getParameters().put("fileid", attachment.getKey().getId().toString());
-            request.getParameters().put("varfileid", FilenameUtils.getBaseName(attachment.dataField(ValueDataFieldCall.get(Fields.FILE)).getRight().getActualValueFor(Language.DEFAULT)));
-            request.getParameters().put("varfiletype", ext.equals("POR") ? "SPSS Portable" : ext);
+            request.getParameters().put(Fields.STUDY, study.getKey().getId().toString());
+            request.getParameters().put(Fields.FILEID, attachment.getKey().getId().toString());
+            request.getParameters().put(Fields.VARFILEID, FilenameUtils.getBaseName(fileName));
+            request.getParameters().put(Fields.LANGUAGE, language.toValue());
+            String ext = FilenameUtils.getExtension(fileName.toUpperCase());
+            request.getParameters().put(Fields.VARFILETYPE, ext.equals("POR") ? "SPSS Portable" : ext);
             dataPair = create.create(request);
+
             if(dataPair.getLeft() != ReturnResult.REVISION_CREATED) {
                 Logger.error(getClass(), "Couldn't create new variables revisionable for study "+study.toString()+" and file "+attachment.toString());
                 return ParseResult.COULD_NOT_CREATE_VARIABLES;
             }
-            fieldPair = study.dataField(
-                    ValueDataFieldCall
-                            .set("variables", new Value(dataPair.getRight().getKey().getId().toString()), Language.DEFAULT)
-                            .setInfo(info));
+
+            fieldPair = study.dataField(ValueDataFieldCall.set(Fields.VARIABLES, new Value(dataPair.getRight().getKey().getId().toString()), Language.DEFAULT).setInfo(info));
             result = ParseResult.REVISION_CHANGES;
         } else {
-            dataPair = revisions.getLatestRevisionForIdAndType(
-                    Long.parseLong(fieldPair.getRight().getActualValueFor(Language.DEFAULT)), false, ConfigurationType.STUDY_VARIABLES);
+            dataPair = revisions.getLatestRevisionForIdAndType(Long.parseLong(fieldPair.getRight().getActualValueFor(language)), false, ConfigurationType.STUDY_VARIABLES);
             if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
-                Logger.error(getClass(), "Couldn't find revision for study variables with id "+fieldPair.getRight().getActualValueFor(Language.DEFAULT)
+                Logger.error(getClass(), "Couldn't find revision for study variables with id "+fieldPair.getRight().getActualValueFor(language)
                         +" even though it's referenced from study "+study.toString());
                 return ParseResult.DID_NOT_FIND_VARIABLES;
             }
@@ -162,7 +156,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                 // Read POR file
                 String studyId = study.dataField(ValueDataFieldCall.get(Fields.STUDYID)).getRight().getActualValueFor(Language.DEFAULT);
                 parser = new PORVariablesParser(
-                        attachment.dataField(ValueDataFieldCall.get("file")).getRight().getActualValueFor(Language.DEFAULT),
+                        attachment.dataField(ValueDataFieldCall.get(Fields.FILE)).getRight().getActualValueFor(Language.DEFAULT),
                         language,
                         variablesData,
                         info,
@@ -174,7 +168,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                 break;
         }
         if(parser != null) {
-            long start = System.currentTimeMillis();
+            long start = System.currentTimeMillis(); // Debug times
             Logger.debug(getClass(), "Starting variables parsing for study");
             variablesResult = parser.parse();
             result = resultCheck(result, variablesResult);
@@ -187,10 +181,6 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                 return resultCheck(result, ParseResult.VARIABLES_SERIALIZATION_FAILED);
             }
         }
-
         return result;
     }
-
-
-
 }

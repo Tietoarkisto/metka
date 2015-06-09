@@ -206,13 +206,6 @@
 		}
 	},
 	"fields": {
-		"parsed": {
-			"_comment": "This informs the system that variable file has been parsed and there is no need to parse it again on save, setting this to false and saving the attachment will force a new parse on variable file",
-			"key": "parsed",
-			"translatable": false,
-			"type": "BOOLEAN",
-			"editable": true
-		},
 		"study": {
 			"_comment": "This is filled automatically for each study attachment when initial revision is created.",
 			"key": "study",

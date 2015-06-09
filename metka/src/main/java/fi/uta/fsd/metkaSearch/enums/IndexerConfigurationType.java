@@ -8,9 +8,9 @@ package fi.uta.fsd.metkaSearch.enums;
  */
 public enum IndexerConfigurationType {
     DUMMY, // Used for testing, no set content
-    REVISION, // Used to index top level information about a revision
-    CONTAINER, // Used to index container information from revision
-    REFERENCECONTAINER, // Used to index reference container information from revision
-    JSON
+    REVISION // Used to index top level information about a revision
+    //CONTAINER, // Used to index container information from revision
+    //REFERENCECONTAINER, // Used to index reference container information from revision
+    //JSON
     // ...
 }

@@ -122,6 +122,13 @@
             						"field": {
             							"key": "casequantity"
             						}
+            					},
+            					{
+            						"type": "CELL",
+            						"title": "Kieli",
+            						"field": {
+            							"key": "language"
+            						}
             					}
             				]
             			}

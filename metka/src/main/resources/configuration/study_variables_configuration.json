@@ -36,6 +36,13 @@
             "type": "DEPENDENCY",
             "target": "variables",
             "valuePath": "varlabel"
+        },
+        "language_ref": {
+            "key": "language_ref",
+            "type": "JSON",
+            "target": "language_descriptions",
+            "valuePath": "language",
+            "titlePath": "text"
         }
     },
     "fields": {
@@ -47,7 +54,16 @@
             "type": "REFERENCE",
             "reference": "study_ref"
         },
+        "language": {
+            "key": "language",
+            "translatable": false,
+            "immutable": true,
+            "editable": false,
+            "type": "REFERENCE",
+            "reference": "language_ref"
+        },
         "file": {
+            "_comment": "This is a reference to the language specific variable file",
             "key": "file",
             "translatable": false,
             "immutable": true,

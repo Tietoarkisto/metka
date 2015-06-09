@@ -32,8 +32,6 @@ public final class Fields {
     public static final String VARGROUPTEXTS = "vargrouptexts";
     public static final String VARGROUPTEXT = "vargrouptext";
     public static final String VARID = "varid";
-    public static final String TRANSLATIONS = "translations";
-    public static final String TRANSLATION = "translation";
     public static final String VARINTERVAL = "varinterval";
     public static final String VARLABEL = "varlabel";
     public static final String VARSECURITIES = "varsecurities";
@@ -191,6 +189,12 @@ public final class Fields {
     public static final String FILES = "files";
     public static final String PUBLICATIONTITLE = "publicationtitle";
     public static final String VARIABLEFILE = "variablefile";
+    public static final String VARFILENO = "varfileno";
+    public static final String FILEID = "fileid";
+    public static final String LANGUAGE = "language";
+    public static final String VARIABLESID = "variablesid";
+    public static final String SUBMISSIONID = "submissionid";
+    public static final String DATAARRIVALDATE = "dataarrivaldate";
 
 
     private Fields() {}

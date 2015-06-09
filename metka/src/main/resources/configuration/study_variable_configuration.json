@@ -57,12 +57,20 @@
             "reference": "study_ref"
         },
         "variables": {
+            "_comment": "This is a reference to the language specific variables revisionable that contains this variable. This language and the language of the referenced study variables must be the same",
             "key": "variables",
             "translatable": false,
             "immutable": true,
             "editable": false,
             "type": "REFERENCE",
             "reference": "variables_ref"
+        },
+        "language": {
+            "key": "language",
+            "translatable": false,
+            "immutable": true,
+            "editable": false,
+            "type": "STRING"
         },
         "varname": {
             "key": "varname",
@@ -279,26 +287,6 @@
             "immutable": true,
             "type": "REAL",
             "subfield": true
-        },
-        "translations": {
-            "_comment": "This container should contain a list of language codes represented in this variable from translatable fields. So for example if varlabel contains english text this container should have a row with value en",
-            "key": "translations",
-            "type": "CONTAINER",
-            "translatable": false,
-            "editable": false,
-            "subfields": [
-                "translation"
-            ]
-        },
-        "translation": {
-            "_comment": "This should contain a single language code that is represented in this variable.",
-            "key": "translation",
-            "type": "STRING",
-            "immutable": true,
-            "translatable": false,
-            "editable": false,
-            "subfield": true
-
         }
     },
     "restrictions": [{

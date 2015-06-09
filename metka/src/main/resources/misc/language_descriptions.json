@@ -1,0 +1,16 @@
+{
+    "key": "language_descriptions",
+    "data": [{
+        "language": "default",
+        "code": "DEFAULT",
+        "text": "Suomi"
+    }, {
+        "language": "en",
+        "code": "EN",
+        "text": "Englanti"
+    }, {
+        "language": "sv",
+        "code": "SV",
+        "text": "Ruotsi"
+    }]
+}

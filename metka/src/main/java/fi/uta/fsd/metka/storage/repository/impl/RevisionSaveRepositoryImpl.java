@@ -130,11 +130,6 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 break;
             case STUDY:
                 finalizeStudy(revision, transferData, info, changesAndErrors);
-
-                break;
-            case STUDY_VARIABLE:
-                VariablesFactory fac = new VariablesFactory();
-                fac.checkVariableTranslations(revision, info);
                 break;
             case PUBLICATION:
                 finalizePublication(revision, transferData);
@@ -215,60 +210,11 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
     */
 
     private void finalizeStudyAttachment(RevisionData revision, TransferData transfer, MutablePair<Boolean, Boolean> changesAndErrors, DateTimeUserPair info) {
-        // Lets check the filedip for need of correction and correct the value if necessary
-        checkDip(revision, transfer, changesAndErrors, info);
-
         // Lets check filepaths
         checkFile(revision, transfer, changesAndErrors, info);
-    }
 
-    private void checkDip(RevisionData revision, TransferData transfer, MutablePair<Boolean, Boolean> changesAndErrors, DateTimeUserPair info) {
-        // Check that filedip is correct
-        // If need be change filedip, mark it as changed and mark the whole data as containing errors (this would work better as warning or notice, but we don't have support for that yet)
-        ValueDataField filedip = revision.dataField(ValueDataFieldCall.get("filedip")).getRight();
-
-        if(filedip == null || !filedip.getActualValueFor(Language.DEFAULT).equals("2")) {
-            // User has selected something else than 'No' as the filedip value, check if this is valid and correct if not
-            boolean fixdip = false;
-
-            ValueDataField original = revision.dataField(ValueDataFieldCall.get("fileoriginal")).getRight();
-            boolean origLocation = original != null && original.hasValueFor(Language.DEFAULT) && original.getActualValueFor(Language.DEFAULT).equals("1");
-            if(origLocation) {
-                fixdip = true;
-            }
-
-            // Get path
-            ValueDataField pathField = revision.dataField(ValueDataFieldCall.get("file")).getRight();
-            String fileName = pathField != null ? FilenameUtils.getName(pathField.getActualValueFor(Language.DEFAULT)) : null;
-
-            if(!fixdip && fileName != null && FilenameUtils.getExtension(fileName).toUpperCase().equals("XML")) {
-                fixdip = true;
-            }
-
-            if(!fixdip && fileName != null && fileName.substring(0, 2).toUpperCase().equals("AR")) {
-                fixdip = true;
-            }
-
-            if(!fixdip && fileName != null) {
-                switch(fileName.substring(0, 3).toUpperCase()) {
-                    case "SYF":
-                    case "ANF":
-                        fixdip = true;
-                        break;
-                }
-            }
-
-            if(fixdip) {
-                // We need to fix filedip to 2 (i.e. 'No'), let's just assume that this succeeds
-                revision.dataField(ValueDataFieldCall.set(Fields.FILEDIP, new Value("2"), Language.DEFAULT).setInfo(info));
-
-                TransferField tf = transfer.getField(Fields.FILEDIP);
-                tf.addValueFor(Language.DEFAULT, TransferValue.buildFromValueDataFieldFor(Language.DEFAULT, revision.dataField(ValueDataFieldCall.get(Fields.FILEDIP)).getRight()));
-                tf.addError(FieldError.AUTOMATIC_CHANGE);
-                changesAndErrors.setLeft(true);
-                changesAndErrors.setRight(true);
-            }
-        }
+        // Lets check the filedip for need of correction and correct the value if necessary
+        checkDip(revision, transfer, changesAndErrors, info);
     }
 
     private void checkFile(RevisionData revision, TransferData transfer, MutablePair<Boolean, Boolean> changesAndErrors, DateTimeUserPair info) {
@@ -311,15 +257,12 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             }
         }
 
-        // File has been updated, check if it needs parsing and parse as necessary
+        // TODO: Check for things that could cause variables to be removed
+        //if (hasAndIsOriginal(attachment)) return;
+
+        // File has been updated and variables are not removed so update them instead
         if(fileUpdate || fileMoved) {
             // File was either moved or updated, check situations that can occur from either event
-
-            // TODO: If original has changed to 1 (i.e. file is original) and this is a variable file then we need to remove the variables relating to this file
-            //if (hasAndIsOriginal(attachment)) return;
-
-            // TODO: other things affecting variables
-
             if(fileUpdate) {
                 // File was actually updated, check if parsing is required
                 boolean needsParsing = false;
@@ -333,29 +276,14 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                     if(fileIsVarFile(fileName)) {
                         String base = FilenameUtils.getBaseName(fileName).toUpperCase();
                         String lastChar = base.substring(base.length()-1);
-                        if(lastChar.equals("E") || lastChar.equals("S")) {
-                            varLang = lastChar.equals("E") ? Language.EN : Language.SV;
-                            // We have a translation file. Require that default language is already attached
-                            if(hasVariablesFileFor(Language.DEFAULT, study)) {
-                                // If there already are variables attached for the language in the study check that it's the same attachment
-                                if(hasVariablesFileFor(varLang, study)) {
-                                    if(variablesFileForEqual(varLang, revision.getKey().getId(), study)) {
-                                        needsParsing = true;
-                                    }
-                                } else {
-                                    needsParsing = true;
-                                }
-                            }
-                        } else {
-                            varLang = Language.DEFAULT;
-                            // We're parsing the default var file. If there already is a default file then check that it matches this
-                            if(hasVariablesFileFor(Language.DEFAULT, study)) {
-                                if(variablesFileForEqual(Language.DEFAULT, revision.getKey().getId(), study)) {
-                                    needsParsing = true;
-                                }
-                            } else {
+                        varLang = lastChar.equals("E") ? Language.EN : (lastChar.equals("S") ? Language.SV : Language.DEFAULT);
+                        // We're parsing the default var file. If there already is a default file then check that it matches this
+                        if(hasVariablesFileFor(varLang, study)) {
+                            if(variablesFileForEqual(varLang, revision.getKey().getId(), study)) {
                                 needsParsing = true;
                             }
+                        } else {
+                            needsParsing = true;
                         }
                     }
                 }
@@ -521,6 +449,55 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         }
 
         return false;
+    }
+
+    private void checkDip(RevisionData revision, TransferData transfer, MutablePair<Boolean, Boolean> changesAndErrors, DateTimeUserPair info) {
+        // Check that filedip is correct
+        // If need be change filedip, mark it as changed and mark the whole data as containing errors (this would work better as warning or notice, but we don't have support for that yet)
+        ValueDataField filedip = revision.dataField(ValueDataFieldCall.get("filedip")).getRight();
+
+        if(filedip == null || !filedip.getActualValueFor(Language.DEFAULT).equals("2")) {
+            // User has selected something else than 'No' as the filedip value, check if this is valid and correct if not
+            boolean fixdip = false;
+
+            ValueDataField original = revision.dataField(ValueDataFieldCall.get("fileoriginal")).getRight();
+            boolean origLocation = original != null && original.hasValueFor(Language.DEFAULT) && original.getActualValueFor(Language.DEFAULT).equals("1");
+            if(origLocation) {
+                fixdip = true;
+            }
+
+            // Get path
+            ValueDataField pathField = revision.dataField(ValueDataFieldCall.get("file")).getRight();
+            String fileName = pathField != null && pathField.hasValueFor(Language.DEFAULT) ? FilenameUtils.getName(pathField.getActualValueFor(Language.DEFAULT)) : null;
+
+            if(!fixdip && fileName != null && FilenameUtils.getExtension(fileName).toUpperCase().equals("XML")) {
+                fixdip = true;
+            }
+
+            if(!fixdip && fileName != null && fileName.substring(0, 2).toUpperCase().equals("AR")) {
+                fixdip = true;
+            }
+
+            if(!fixdip && fileName != null) {
+                switch(fileName.substring(0, 3).toUpperCase()) {
+                    case "SYF":
+                    case "ANF":
+                        fixdip = true;
+                        break;
+                }
+            }
+
+            if(fixdip) {
+                // We need to fix filedip to 2 (i.e. 'No'), let's just assume that this succeeds
+                revision.dataField(ValueDataFieldCall.set(Fields.FILEDIP, new Value("2"), Language.DEFAULT).setInfo(info));
+
+                TransferField tf = transfer.getField(Fields.FILEDIP);
+                tf.addValueFor(Language.DEFAULT, TransferValue.buildFromValueDataFieldFor(Language.DEFAULT, revision.dataField(ValueDataFieldCall.get(Fields.FILEDIP)).getRight()));
+                tf.addError(FieldError.AUTOMATIC_CHANGE);
+                changesAndErrors.setLeft(true);
+                changesAndErrors.setRight(true);
+            }
+        }
     }
 
     private String getAttachmentFilePath(RevisionData revision, String path) {

@@ -1920,17 +1920,18 @@
 			"exact": false
 		},
 		"variables": {
+			"_comment": "Contains reference to the variables revision of a given language. These only exist when there is a variable file for that language",
 			"key": "variables",
 			"type": "REFERENCE",
-			"translatable": false,
+			"translatable": true,
 			"editable": false,
 			"reference": "variables_ref"
 		},
 		"variablefile": {
-			"_comment": "This is translated since user can provide translations to variables in variable files.",
+			"_comment": "Each language contains a reference to the variable file with that language.",
 			"key": "variablefile",
 			"type": "REFERENCE",
-			"translatable": true,
+			"translatable": false,
 			"editable": false,
 			"reference": "variable_file_ref"
 		},

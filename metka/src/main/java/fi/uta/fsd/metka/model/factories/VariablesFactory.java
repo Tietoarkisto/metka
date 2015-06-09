@@ -26,7 +26,8 @@ import org.joda.time.LocalDateTime;
  */
 public class VariablesFactory extends DataFactory {
 
-    public Pair<ReturnResult, RevisionData> newStudyVariables(Long id, Integer no, Configuration configuration, String studyId, String fileId, String varfileid, String varfiletype) {
+    public Pair<ReturnResult, RevisionData> newStudyVariables(Long id, Integer no, Configuration configuration, String studyId, String fileId, String varfileid,
+            String varfiletype, String language) {
         if(configuration.getKey().getType() != ConfigurationType.STUDY_VARIABLES) {
             Logger.error(getClass(), "Called StudyVariablesFactory with type " + configuration.getKey().getType() + " configuration");
             return new ImmutablePair<>(ReturnResult.INCORRECT_TYPE_FOR_OPERATION, null);
@@ -35,16 +36,17 @@ public class VariablesFactory extends DataFactory {
         DateTimeUserPair info = DateTimeUserPair.build(new LocalDateTime());
 
         RevisionData data = createDraftRevision(id, no, configuration.getKey());
-        data.dataField(ValueDataFieldCall.set("study", new Value(studyId), Language.DEFAULT).setInfo(info));
-        data.dataField(ValueDataFieldCall.set("file", new Value(fileId), Language.DEFAULT).setInfo(info));
-        data.dataField(ValueDataFieldCall.set("varfileid", new Value(varfileid), Language.DEFAULT).setInfo(info));
-        data.dataField(ValueDataFieldCall.set("varfiletype", new Value(varfiletype), Language.DEFAULT).setInfo(info));
-        data.dataField(ValueDataFieldCall.set("varfileno", new Value("F1"), Language.DEFAULT).setInfo(info));
+        data.dataField(ValueDataFieldCall.set(Fields.STUDY, new Value(studyId), Language.DEFAULT).setInfo(info));
+        data.dataField(ValueDataFieldCall.set(Fields.FILE, new Value(fileId), Language.DEFAULT).setInfo(info));
+        data.dataField(ValueDataFieldCall.set(Fields.LANGUAGE, new Value(language), Language.DEFAULT).setInfo(info));
+        data.dataField(ValueDataFieldCall.set(Fields.VARFILEID, new Value(varfileid), Language.DEFAULT).setInfo(info));
+        data.dataField(ValueDataFieldCall.set(Fields.VARFILETYPE, new Value(varfiletype), Language.DEFAULT).setInfo(info));
+        data.dataField(ValueDataFieldCall.set(Fields.VARFILENO, new Value("F1"), Language.DEFAULT).setInfo(info));
 
         return new ImmutablePair<>(ReturnResult.REVISION_CREATED, data);
     }
 
-    public Pair<ReturnResult, RevisionData> newVariable(Long id, Integer no, Configuration configuration, String variablesId, String studyId, String varName, String varId) {
+    public Pair<ReturnResult, RevisionData> newVariable(Long id, Integer no, Configuration configuration, String variablesId, String studyId, String varName, String varId, String language) {
         if(configuration.getKey().getType() != ConfigurationType.STUDY_VARIABLE) {
             Logger.error(getClass(), "Called StudyVariablesFactory with type "+configuration.getKey().getType()+" configuration");
             return new ImmutablePair<>(ReturnResult.INCORRECT_TYPE_FOR_OPERATION, null);
@@ -53,97 +55,14 @@ public class VariablesFactory extends DataFactory {
         DateTimeUserPair info = DateTimeUserPair.build(new LocalDateTime());
 
         RevisionData data = createDraftRevision(id, no, configuration.getKey());
-        data.dataField(ValueDataFieldCall.set("variables", new Value(variablesId), Language.DEFAULT).setInfo(info));
-        data.dataField(ValueDataFieldCall.set("study", new Value(studyId), Language.DEFAULT).setInfo(info));
+        data.dataField(ValueDataFieldCall.set(Fields.VARIABLES, new Value(variablesId), Language.DEFAULT).setInfo(info));
+        data.dataField(ValueDataFieldCall.set(Fields.LANGUAGE, new Value(language), Language.DEFAULT).setInfo(info));
+        data.dataField(ValueDataFieldCall.set(Fields.STUDY, new Value(studyId), Language.DEFAULT).setInfo(info));
         // Set varid field
-        data.dataField(ValueDataFieldCall.set("varname", new Value(varName), Language.DEFAULT).setInfo(info));
-        data.dataField(ValueDataFieldCall.set("varid", new Value(varId), Language.DEFAULT).setInfo(info));
+        data.dataField(ValueDataFieldCall.set(Fields.VARNAME, new Value(varName), Language.DEFAULT).setInfo(info));
+        data.dataField(ValueDataFieldCall.set(Fields.VARID, new Value(varId), Language.DEFAULT).setInfo(info));
 
         return new ImmutablePair<>(ReturnResult.REVISION_CREATED, data);
-    }
-
-    /**
-     * This checks all translatable fields in study variable for content of all languages and updates the TRANSLATIONS container to match with current data.
-     * This does not save the given revision data so if no save happens after this then all of the information is lost
-     * @param variable
-     */
-    public void checkVariableTranslations(RevisionData variable, DateTimeUserPair info) {
-        if(variable.getConfiguration().getType() != ConfigurationType.STUDY_VARIABLE) {
-            return;
-        }
-        Pair<StatusCode, ContainerDataField> translationsPair = variable.dataField(ContainerDataFieldCall.set(Fields.TRANSLATIONS));
-        if(!(translationsPair.getLeft() == StatusCode.FIELD_FOUND || translationsPair.getLeft() == StatusCode.FIELD_INSERT)) {
-            Logger.error(getClass(), "Could not get translations container for setting study variable translations. Result: "+translationsPair.getLeft());
-            // Can't set translations since could not get translations container
-            return;
-        }
-        ContainerDataField translations = translationsPair.getRight();
-        for(Language l : Language.values()) {
-            checkVariableForLanguage(translations, variable, l, info);
-        }
-    }
-
-    private void checkVariableForLanguage(ContainerDataField translations, RevisionData variable, Language l, DateTimeUserPair info) {
-        boolean hasContent = doesValueHaveTranslation(variable, Fields.VARLABEL, l);
-        if(!hasContent) {
-            hasContent = doesContainerHaveTranslation(variable, Fields.QSTNLITS, l);
-        }
-        if(!hasContent) {
-            hasContent = doesContainerHaveTranslation(variable, Fields.PREQTXTS, l);
-        }
-        if(!hasContent) {
-            hasContent = doesContainerHaveTranslation(variable, Fields.POSTQTXTS, l);
-        }
-        if(!hasContent) {
-            hasContent = doesContainerHaveTranslation(variable, Fields.IVUINSTRS, l);
-        }
-        if(!hasContent) {
-            hasContent = doesContainerHaveTranslation(variable, Fields.VARNOTES, l);
-        }
-        if(!hasContent) {
-            hasContent = doesContainerHaveTranslation(variable, Fields.VARTEXTS, l);
-        }
-        if(!hasContent) {
-            hasContent = doesContainerHaveTranslation(variable, Fields.VARSECURITIES, l);
-        }
-        if(!hasContent) {
-            Pair<StatusCode, ContainerDataField> container = variable.dataField(ContainerDataFieldCall.get(Fields.VALUELABELS));
-            if(container.getLeft() == StatusCode.FIELD_FOUND && container.getRight().hasRowsFor(Language.DEFAULT)) {
-                for(DataRow row : container.getRight().getRowsFor(Language.DEFAULT)) {
-                    if(row.getRemoved()) {
-                        continue;
-                    }
-                    hasContent = doesValueHaveTranslation(row, Fields.LABEL, l);
-                    if(hasContent) {
-                        break;
-                    }
-                }
-            }
-        }
-        if(!hasContent) {
-            Pair<StatusCode, ContainerDataField> container = variable.dataField(ContainerDataFieldCall.get(Fields.CATEGORIES));
-            if(container.getLeft() == StatusCode.FIELD_FOUND && container.getRight().hasRowsFor(Language.DEFAULT)) {
-                for(DataRow row : container.getRight().getRowsFor(Language.DEFAULT)) {
-                    if(row.getRemoved()) {
-                        continue;
-                    }
-                    hasContent = doesValueHaveTranslation(row, Fields.LABEL, l);
-                    if(hasContent) {
-                        break;
-                    }
-                }
-            }
-        }
-        if(hasContent) {
-            // Let's just assume that this succeeds, if it doesn't then we can't really do much about it.
-            translations.getOrCreateRowWithFieldValue(Language.DEFAULT, Fields.TRANSLATION, new Value(l.toValue()), variable.getChanges(), info);
-        } else {
-            // If we find a row then remove it.
-            Pair<StatusCode, DataRow> row = translations.getRowWithFieldValue(Language.DEFAULT, Fields.TRANSLATION, new Value(l.toValue()));
-            if(row.getLeft() == StatusCode.FOUND_ROW) {
-                translations.removeRow(row.getRight().getRowId(), variable.getChanges(), info);
-            }
-        }
     }
 
     private boolean doesContainerHaveTranslation(DataFieldContainer revision, String key, Language l) {

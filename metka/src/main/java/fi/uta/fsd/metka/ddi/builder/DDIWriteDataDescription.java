@@ -33,9 +33,9 @@ class DDIWriteDataDescription extends DDIWriteSectionBase {
             return;
         }
 
-        // Get variables data since it contains most of the information needed for this. Some additional data is also needed from the actual file but very little.
+        // Get variables data for given language
         Pair<ReturnResult, RevisionData> revisionDataPair = revisions.getLatestRevisionForIdAndType(
-                valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY_VARIABLES);
+                valueFieldPair.getRight().getValueFor(language).valueAsInteger(), false, ConfigurationType.STUDY_VARIABLES);
         if(revisionDataPair.getLeft() != ReturnResult.REVISION_FOUND) {
             Logger.error(getClass(),
                     "Couldn't find expected variables revision with id: " + valueFieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger());
@@ -63,27 +63,7 @@ class DDIWriteDataDescription extends DDIWriteSectionBase {
                     continue;
                 }
                 RevisionData variable = revisionDataPair.getRight();
-                Pair<StatusCode, ContainerDataField> containerPair = variable.dataField(ContainerDataFieldCall.get(Fields.TRANSLATIONS));
-                if(containerPair.getLeft() != StatusCode.FIELD_FOUND || !containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
-                    continue;
-                }
-                boolean translated = false;
-                for(DataRow row : containerPair.getRight().getRowsFor(Language.DEFAULT)) {
-                    if(row.getRemoved()) {
-                        continue;
-                    }
-                    valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.TRANSLATION));
-                    if(valueFieldPair.getLeft() != StatusCode.FIELD_FOUND || !valueFieldPair.getRight().hasValueFor(Language.DEFAULT)) {
-                        continue;
-                    }
-                    if(valueFieldPair.getRight().getActualValueFor(Language.DEFAULT).equals(language.toValue())) {
-                        translated = true;
-                        break;
-                    }
-                }
-                if(!translated) {
-                    continue;
-                }
+
                 VarType var = dataDscrType.addNewVar();
                 setVar(variable, var, fileID);
             }
@@ -130,14 +110,14 @@ class DDIWriteDataDescription extends DDIWriteSectionBase {
                     }
 
                     containerPair = row.dataField(ContainerDataFieldCall.get(Fields.VARGROUPTEXTS));
-                    if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(language)) {
-                        for(DataRow vartextrow : containerPair.getRight().getRowsFor(language)) {
+                    if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
+                        for(DataRow vartextrow : containerPair.getRight().getRowsFor(Language.DEFAULT)) {
                             if(vartextrow.getRemoved()) {
                                 continue;
                             }
                             valueFieldPair = vartextrow.dataField(ValueDataFieldCall.get(Fields.VARGROUPTEXT));
-                            if(hasValue(valueFieldPair, language)) {
-                                fillTextType(varGrpType.addNewTxt(), valueFieldPair, language);
+                            if(hasValue(valueFieldPair, Language.DEFAULT)) {
+                                fillTextType(varGrpType.addNewTxt(), valueFieldPair, Language.DEFAULT);
                             }
 
                         }
@@ -171,8 +151,8 @@ class DDIWriteDataDescription extends DDIWriteSectionBase {
         }
 
         valueFieldPair = variable.dataField(ValueDataFieldCall.get(Fields.VARLABEL));
-        if(hasValue(valueFieldPair, language)) {
-            fillTextType(var.addNewLabl(), valueFieldPair, language);
+        if(hasValue(valueFieldPair, Language.DEFAULT)) {
+            fillTextType(var.addNewLabl(), valueFieldPair, Language.DEFAULT);
         }
 
         setVarSecurities(variable, var);
@@ -201,8 +181,8 @@ class DDIWriteDataDescription extends DDIWriteSectionBase {
                     fillTextType(catgry.addNewCatValu(), valueFieldPair, Language.DEFAULT);
 
                     valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.LABEL));
-                    if(hasValue(valueFieldPair, language)) {
-                        fillTextType(catgry.addNewLabl(), valueFieldPair, language);
+                    if(hasValue(valueFieldPair, Language.DEFAULT)) {
+                        fillTextType(catgry.addNewLabl(), valueFieldPair, Language.DEFAULT);
                     }
 
                     valueFieldPair = row.dataField(ValueDataFieldCall.get(Fields.STAT));
@@ -257,47 +237,47 @@ class DDIWriteDataDescription extends DDIWriteSectionBase {
     }
 
     private void setVarSecurities(RevisionData variable, VarType var) {
-        List<ValueDataField> fields = gatherFields(variable, Fields.VARSECURITIES, Fields.VARSECURITY, language, language);
+        List<ValueDataField> fields = gatherFields(variable, Fields.VARSECURITIES, Fields.VARSECURITY);
         for(ValueDataField field : fields) {
-            fillTextAndDateType(var.addNewSecurity(), field, language);
+            fillTextAndDateType(var.addNewSecurity(), field, Language.DEFAULT);
         }
     }
 
     private void setVarQstn(RevisionData variable, VarType var) {
         QstnType qstn = var.addNewQstn();
 
-        List<ValueDataField> fields = gatherFields(variable, Fields.PREQTXTS, Fields.PREQTXT, language, language);
+        List<ValueDataField> fields = gatherFields(variable, Fields.PREQTXTS, Fields.PREQTXT);
         for(ValueDataField field : fields) {
-            fillTextType(qstn.addNewPreQTxt(), field, language);
+            fillTextType(qstn.addNewPreQTxt(), field, Language.DEFAULT);
         }
 
-        fields = gatherFields(variable, Fields.QSTNLITS, Fields.QSTNLIT, language, language);
+        fields = gatherFields(variable, Fields.QSTNLITS, Fields.QSTNLIT);
         for(ValueDataField field : fields) {
-            fillTextType(qstn.addNewQstnLit(), field, language);
+            fillTextType(qstn.addNewQstnLit(), field, Language.DEFAULT);
         }
 
-        fields = gatherFields(variable, Fields.POSTQTXTS, Fields.POSTQTXT, language, language);
+        fields = gatherFields(variable, Fields.POSTQTXTS, Fields.POSTQTXT);
         for(ValueDataField field : fields) {
-            fillTextType(qstn.addNewPostQTxt(), field, language);
+            fillTextType(qstn.addNewPostQTxt(), field, Language.DEFAULT);
         }
 
-        fields = gatherFields(variable, Fields.IVUINSTRS, Fields.IVUINSTR, language, language);
+        fields = gatherFields(variable, Fields.IVUINSTRS, Fields.IVUINSTR);
         for(ValueDataField field : fields) {
-            fillTextType(qstn.addNewIvuInstr(), field, language);
+            fillTextType(qstn.addNewIvuInstr(), field, Language.DEFAULT);
         }
     }
 
     private void setVarTexts(RevisionData variable, VarType var) {
-        List<ValueDataField> fields = gatherFields(variable, Fields.VARTEXTS, Fields.VARTEXT, language, language);
+        List<ValueDataField> fields = gatherFields(variable, Fields.VARTEXTS, Fields.VARTEXT);
         for(ValueDataField field : fields) {
-            fillTextType(var.addNewTxt(), field, language);
+            fillTextType(var.addNewTxt(), field, Language.DEFAULT);
         }
     }
 
     private void setNotes(RevisionData variable, VarType var) {
-        List<ValueDataField> fields = gatherFields(variable, Fields.VARNOTES, Fields.VARNOTE, language, language);
+        List<ValueDataField> fields = gatherFields(variable, Fields.VARNOTES, Fields.VARNOTE);
         for(ValueDataField field : fields) {
-            fillTextType(var.addNewNotes(), field, language);
+            fillTextType(var.addNewNotes(), field, Language.DEFAULT);
         }
     }
 }

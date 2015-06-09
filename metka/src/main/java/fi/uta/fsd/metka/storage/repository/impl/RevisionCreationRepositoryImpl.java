@@ -115,54 +115,62 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
     private ReturnResult checkRequestParameters(RevisionCreateRequest request) {
         switch(request.getType()) {
             case STUDY:
-                if(!request.getParameters().containsKey("submissionid")) {
+                if(!request.getParameters().containsKey(Fields.SUBMISSIONID)) {
                     Logger.error(getClass(), "Creation of STUDY requires that submission id is provided in parameter 'submissionid'");
                     return ReturnResult.PARAMETERS_MISSING;
                 }
-                if(!request.getParameters().containsKey("dataarrivaldate")) {
+                if(!request.getParameters().containsKey(Fields.DATAARRIVALDATE)) {
                     Logger.error(getClass(), "Creation of STUDY requires that arrival date for data is provided in parameter 'dataarrivaldate'");
                     return ReturnResult.PARAMETERS_MISSING;
                 }
                 break;
             case STUDY_ATTACHMENT:
                 // Check that some id is provided, assumes that this id points to a study
-                if(!request.getParameters().containsKey("study")) {
+                if(!request.getParameters().containsKey(Fields.STUDY)) {
                     Logger.error(getClass(), "Creation of STUDY_ATTACHMENT requires that study.key.id is provided in parameter 'study'");
                     return ReturnResult.PARAMETERS_MISSING;
                 }
                 break;
             case STUDY_VARIABLES:
-                if(!request.getParameters().containsKey("study")) {
+                if(!request.getParameters().containsKey(Fields.STUDY)) {
                     Logger.error(getClass(), "Creation of STUDY_VARIABLES requires that study.key.id is provided in parameter 'study'");
                     return ReturnResult.PARAMETERS_MISSING;
                 }
-                if(!request.getParameters().containsKey("fileid")) {
+                if(!request.getParameters().containsKey(Fields.LANGUAGE)) {
+                    Logger.error(getClass(), "Creation of STUDY_VARIABLES requires that language is provided in parameter 'language'");
+                    return ReturnResult.PARAMETERS_MISSING;
+                }
+                if(!request.getParameters().containsKey(Fields.FILEID)) {
                     Logger.error(getClass(), "Creation of STUDY_VARIABLES requires that study attachment id is provided in parameter 'fileid'");
                     return ReturnResult.PARAMETERS_MISSING;
                 }
-                if(!request.getParameters().containsKey("varfileid")) {
+                if(!request.getParameters().containsKey(Fields.VARFILEID)) {
                     Logger.error(getClass(), "Creation of STUDY_VARIABLES requires that study attachment file name is provided in parameter 'varfileid'");
                     return ReturnResult.PARAMETERS_MISSING;
                 }
-                if(!request.getParameters().containsKey("varfiletype")) {
+                if(!request.getParameters().containsKey(Fields.VARFILETYPE)) {
                     Logger.error(getClass(), "Creation of STUDY_VARIABLES requires that study attachments file type is provided in parameter 'varfiletype'");
                     return ReturnResult.PARAMETERS_MISSING;
                 }
                 break;
             case STUDY_VARIABLE:
-                if(!request.getParameters().containsKey("study")) {
+                if(!request.getParameters().containsKey(Fields.STUDY)) {
                     Logger.error(getClass(), "Creation of STUDY_VARIABLE requires that study.key.id is provided in parameter 'study'");
                     return ReturnResult.PARAMETERS_MISSING;
                 }
-                if(!request.getParameters().containsKey("variablesid")) {
+                if(!request.getParameters().containsKey(Fields.VARIABLESID)) {
                     Logger.error(getClass(), "Creation of STUDY_VARIABLE requires that study variables id is provided in parameter 'variablesid'");
                     return ReturnResult.PARAMETERS_MISSING;
                 }
-                if(!request.getParameters().containsKey("varname")) {
+                if(!request.getParameters().containsKey(Fields.LANGUAGE)) {
+                    Logger.error(getClass(), "Creation of STUDY_VARIABLE requires that study language is provided in parameter 'language'");
+                    return ReturnResult.PARAMETERS_MISSING;
+                }
+                if(!request.getParameters().containsKey(Fields.VARNAME)) {
                     Logger.error(getClass(), "Creation of STUDY_VARIABLE requires that variables varname is provided in parameter 'varname'");
                     return ReturnResult.PARAMETERS_MISSING;
                 }
-                if(!request.getParameters().containsKey("varid")) {
+                if(!request.getParameters().containsKey(Fields.VARID)) {
                     Logger.error(getClass(), "Creation of STUDY_VARIABLE requires that variables varid is provided in parameter 'varid'");
                     return ReturnResult.PARAMETERS_MISSING;
                 }
@@ -194,19 +202,19 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
                 break;
             case STUDY_ATTACHMENT:
                 StudyAttachmentEntity sae = new StudyAttachmentEntity();
-                sae.setStudyAttachmentStudy(Long.parseLong(request.getParameters().get("study")));
+                sae.setStudyAttachmentStudy(Long.parseLong(request.getParameters().get(Fields.STUDY)));
                 revisionable = sae;
                 break;
             case STUDY_VARIABLES:
                 StudyVariablesEntity svs = new StudyVariablesEntity();
-                svs.setStudyVariablesStudy(Long.parseLong(request.getParameters().get("study")));
+                svs.setStudyVariablesStudy(Long.parseLong(request.getParameters().get(Fields.STUDY)));
                 revisionable = svs;
                 break;
             case STUDY_VARIABLE:
                 StudyVariableEntity sv = new StudyVariableEntity();
-                sv.setStudyVariableStudy(Long.parseLong(request.getParameters().get("study")));
-                sv.setStudyVariablesId(Long.parseLong(request.getParameters().get("variablesid")));
-                sv.setVarId(request.getParameters().get("varid"));
+                sv.setStudyVariableStudy(Long.parseLong(request.getParameters().get(Fields.STUDY)));
+                sv.setStudyVariablesId(Long.parseLong(request.getParameters().get(Fields.VARIABLESID)));
+                sv.setVarId(request.getParameters().get(Fields.VARID));
                 revisionable = sv;
                 break;
             default:
@@ -237,31 +245,34 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
                 StudyFactory factory = new StudyFactory();
                 data = factory.newData(revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo(), configuration,
                         sequences.getNewSequenceValue(ConfigurationType.STUDY.toValue(), 10000L).getSequence().toString(),
-                        request.getParameters().get("submissionid"), request.getParameters().get("dataarrivaldate"));
+                        request.getParameters().get(Fields.SUBMISSIONID), request.getParameters().get(Fields.DATAARRIVALDATE));
                 break;
             }
             case STUDY_ATTACHMENT: {
                 StudyAttachmentFactory factory = new StudyAttachmentFactory();
                 data = factory.newData(revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo(), configuration,
-                        request.getParameters().get("study"));
+                        request.getParameters().get(Fields.STUDY));
                 break;
             }
             case STUDY_VARIABLES: {
                 VariablesFactory factory = new VariablesFactory();
                 data = factory.newStudyVariables(revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo(), configuration,
-                        request.getParameters().get("study"), request.getParameters().get("fileid"),
-                        request.getParameters().get("varfileid"), request.getParameters().get("varfiletype"));
+                        request.getParameters().get(Fields.STUDY), request.getParameters().get(Fields.FILEID),
+                        request.getParameters().get(Fields.VARFILEID), request.getParameters().get(Fields.VARFILETYPE),
+                        request.getParameters().get(Fields.LANGUAGE));
                 break;
             }
             case STUDY_VARIABLE: {
                 VariablesFactory factory = new VariablesFactory();
                 data = factory.newVariable(revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo(), configuration,
-                        request.getParameters().get("variablesid"), request.getParameters().get("study"), request.getParameters().get("varname"), request.getParameters().get("varid"));
+                        request.getParameters().get(Fields.VARIABLESID), request.getParameters().get(Fields.STUDY), request.getParameters().get(Fields.VARNAME),
+                        request.getParameters().get(Fields.VARID), request.getParameters().get(Fields.LANGUAGE));
                 break;
             }
             case PUBLICATION: {
                 PublicationFactory factory = new PublicationFactory();
-                data = factory.newData(revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo(), configuration, ((PublicationEntity)revisionable).getPublicationId().toString());
+                data = factory.newData(revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo(), configuration,
+                        ((PublicationEntity)revisionable).getPublicationId().toString());
                 break;
             }
             default:
@@ -317,9 +328,9 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
         }
 
         RevisionData studyRevision = dataPair.getRight();
-        Pair<StatusCode, ReferenceContainerDataField> filesPair = studyRevision.dataField(ReferenceContainerDataFieldCall.get("files"));
+        Pair<StatusCode, ReferenceContainerDataField> filesPair = studyRevision.dataField(ReferenceContainerDataFieldCall.get(Fields.FILES));
         if(filesPair.getLeft() != StatusCode.FIELD_FOUND) {
-            filesPair = studyRevision.dataField(ReferenceContainerDataFieldCall.set("files"));
+            filesPair = studyRevision.dataField(ReferenceContainerDataFieldCall.set(Fields.FILES));
             if(filesPair.getLeft() != StatusCode.FIELD_INSERT) {
                 Logger.error(getClass(), "Couldn't create files reference container for study "+studyRevision.toString());
                 return;

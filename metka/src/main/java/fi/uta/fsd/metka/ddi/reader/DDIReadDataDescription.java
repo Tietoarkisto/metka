@@ -59,7 +59,7 @@ class DDIReadDataDescription extends DDIReadSectionBase {
 
         Pair<StatusCode, ValueDataField> valuePair = revision.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
         // This operation is so large that it's cleaner just to return than to wrap everything inside this one IF
-        if(valuePair.getLeft() != StatusCode.FIELD_FOUND || !valuePair.getRight().hasValueFor(Language.DEFAULT)) {
+        if(valuePair.getLeft() != StatusCode.FIELD_FOUND || !valuePair.getRight().hasValueFor(language)) {
             return ReturnResult.OPERATION_SUCCESSFUL;
         }
 
@@ -113,8 +113,8 @@ class DDIReadDataDescription extends DDIReadSectionBase {
         ContainerDataField vargroups = containerPair.getRight().getLeft();
         Map<String, Change> changeMap = containerPair.getRight().getRight();
 
-        // On DEFAULT language clear the vargroups container, on other languages just perform merge operations
-        if(language == Language.DEFAULT && vargroups.hasRowsFor(Language.DEFAULT)) {
+        // Each language is a separate VARIABLES revisionable, clear the vargroups
+        if(vargroups.hasRowsFor(Language.DEFAULT)) {
             for(DataRow row : vargroups.getRowsFor(Language.DEFAULT)) {
                 vargroups.removeRow(row.getRowId(), variables.getChanges(), info);
             }
@@ -130,75 +130,38 @@ class DDIReadDataDescription extends DDIReadSectionBase {
             }
             DataRow vargroup = null;
             RowChange vargroupChange = null;
-            if(language != Language.DEFAULT) {
-                // Try to find the correct group for non default language, if no group is found or language is default then new group is formed later in the code
-                String[] splits = getVarNames(varGrp);
-                // If there are no listed variables in this group we simply can not find it so skip to the next one
-                if(splits == null || splits.length == 0) {
-                    continue;
-                }
-                for(String varName : splits) {
-                    Pair<ReturnResult, RevisionData> variable = variableSearch.findVariableWithId(variablesStudy, studyId+"_"+varName);
-                    if(variable.getLeft() != ReturnResult.REVISION_FOUND) {
-                        continue;
-                    }
-                    if(!vargroups.hasRowsFor(Language.DEFAULT)) {
-                        continue;
-                    }
-                    for(DataRow row : vargroups.getRowsFor(Language.DEFAULT)) {
-                        if(row.getRemoved()) {
-                            continue;
-                        }
-                        Pair<StatusCode, ReferenceContainerDataField> varsPair = row.dataField(ReferenceContainerDataFieldCall.get(Fields.VARGROUPVARS));
-                        if(varsPair.getLeft() != StatusCode.FIELD_FOUND) {
-                            continue;
-                        }
-                        Pair<StatusCode, ReferenceRow> varRef = varsPair.getRight().getReferenceWithValue(variable.getRight().getKey().getId().toString());
-                        if(varRef.getLeft() == StatusCode.FOUND_ROW) {
-                            vargroup = row;
-                            break;
-                        }
-                    }
-                    if(vargroup != null) {
-                        break;
-                    }
-                }
+
+            // Create new group and add the variables to it
+            Pair<StatusCode, DataRow> rowPair = vargroups.insertNewDataRow(Language.DEFAULT, changeMap);
+            if(rowPair.getLeft() != StatusCode.NEW_ROW) {
+                continue;
             }
-            if(vargroup == null) {
-                // Either we're in default language or we have a group that's not in default language,
-                // Create new group and add the variables to it
 
-                Pair<StatusCode, DataRow> rowPair = vargroups.insertNewDataRow(Language.DEFAULT, changeMap);
-                if(rowPair.getLeft() != StatusCode.NEW_ROW) {
+            vargroup = rowPair.getRight();
+
+            if(StringUtils.hasText(getText(varGrp))) {
+                valueSet(vargroup, Fields.VARGROUPTITLE, getText(varGrp), Language.DEFAULT, variables.getChanges());
+            }
+
+            vargroupChange = ((ContainerChange)changeMap.get(Fields.VARGROUPS)).get(vargroup.getRowId());
+            if(vargroupChange == null) {
+                vargroupChange = new RowChange(vargroup.getRowId());
+                ((ContainerChange)changeMap.get(Fields.VARGROUPS)).put(vargroupChange);
+            }
+
+            String[] splits = getVarNames(varGrp);
+            if(splits.length > 0) {
+                Pair<ReturnResult, ReferenceContainerDataField> pair = getReferenceContainer(vargroup, Fields.VARGROUPVARS, variables.getChanges());
+                if(pair.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
                     continue;
                 }
 
-                vargroup = rowPair.getRight();
-
-                if(StringUtils.hasText(getText(varGrp))) {
-                    valueSet(vargroup, Fields.VARGROUPTITLE, getText(varGrp), Language.DEFAULT, variables.getChanges());
-                }
-
-                vargroupChange = ((ContainerChange)changeMap.get(Fields.VARGROUPS)).get(vargroup.getRowId());
-                if(vargroupChange == null) {
-                    vargroupChange = new RowChange(vargroup.getRowId());
-                    ((ContainerChange)changeMap.get(Fields.VARGROUPS)).put(vargroupChange);
-                }
-
-                String[] splits = getVarNames(varGrp);
-                if(splits.length > 0) {
-                    Pair<ReturnResult, ReferenceContainerDataField> pair = getReferenceContainer(vargroup, Fields.VARGROUPVARS, variables.getChanges());
-                    if(pair.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
+                for(String name : splits) {
+                    Pair<ReturnResult, RevisionData> varPair = variableSearch.findVariableWithId(variablesStudy, studyId+"_"+name);
+                    if(varPair.getLeft() != ReturnResult.REVISION_FOUND) {
                         continue;
                     }
-
-                    for(String name : splits) {
-                        Pair<ReturnResult, RevisionData> varPair = variableSearch.findVariableWithId(variablesStudy, studyId+"_"+name);
-                        if(varPair.getLeft() != ReturnResult.REVISION_FOUND) {
-                            continue;
-                        }
-                        pair.getRight().getOrCreateReferenceWithValue(varPair.getRight().getKey().getId().toString(), vargroupChange.getChanges(), info);
-                    }
+                    pair.getRight().getOrCreateReferenceWithValue(varPair.getRight().getKey().getId().toString(), vargroupChange.getChanges(), info);
                 }
             }
 
@@ -245,13 +208,13 @@ class DDIReadDataDescription extends DDIReadSectionBase {
                     vargroupsChange.put(change);
                 }
 
-                for(DataRow txtRow : vartexts.getRowsFor(language)) {
+                for(DataRow txtRow : vartexts.getRowsFor(Language.DEFAULT)) {
                     if(!txtRow.getRemoved()) {
                         vartexts.removeRow(txtRow.getRowId(), change.getChanges(), info);
                     }
                 }
                 for(TxtType txt : varGrp.getTxtArray()) {
-                    Pair<StatusCode, DataRow> rowPair = vartexts.insertNewDataRow(language, vartextsChange);
+                    Pair<StatusCode, DataRow> rowPair = vartexts.insertNewDataRow(Language.DEFAULT, vartextsChange);
                     if(rowPair.getLeft() != StatusCode.NEW_ROW) {
                         continue;
                     }
@@ -260,7 +223,7 @@ class DDIReadDataDescription extends DDIReadSectionBase {
                         txtRowChange = new RowChange(rowPair.getRight().getRowId());
                         ((ContainerChange)vartextsChange.get(Fields.VARTEXTS)).put(txtRowChange);
                     }
-                    valueSet(rowPair.getRight(), Fields.VARTEXT, getText(txt), language, txtRowChange.getChanges());
+                    valueSet(rowPair.getRight(), Fields.VARTEXT, getText(txt), Language.DEFAULT, txtRowChange.getChanges());
                 }
             }
         }
@@ -331,7 +294,7 @@ class DDIReadDataDescription extends DDIReadSectionBase {
 
         ReturnResult result;
 
-        valueSet(variable, Fields.VARLABEL, hasContent(var.getLablArray()) ? getText(var.getLablArray(0)) : "", language, variable.getChanges());
+        valueSet(variable, Fields.VARLABEL, hasContent(var.getLablArray()) ? getText(var.getLablArray(0)) : "", Language.DEFAULT, variable.getChanges());
 
         result = readVarQstn(var, variable);
         if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
@@ -345,19 +308,16 @@ class DDIReadDataDescription extends DDIReadSectionBase {
         result = fillSingleValueContainer(variable, variable.getChanges(), Fields.VARNOTES, Fields.VARNOTE, var.getNotesArray());
         if(result != ReturnResult.OPERATION_SUCCESSFUL) {return result;}
 
-        VariablesFactory fac = new VariablesFactory();
-        fac.checkVariableTranslations(variable, info);
-
         revisions.updateRevisionData(variable);
         return ReturnResult.OPERATION_SUCCESSFUL;
     }
 
     private void clearTable(DataFieldContainer data, Map<String, Change> changeMap, String key) {
         Pair<StatusCode, ContainerDataField> pair = data.dataField(ContainerDataFieldCall.get(key));
-        if(pair.getLeft() != StatusCode.FIELD_FOUND || !pair.getRight().hasRowsFor(language)) {
+        if(pair.getLeft() != StatusCode.FIELD_FOUND || !pair.getRight().hasRowsFor(Language.DEFAULT)) {
             return;
         }
-        for(Integer rowId : pair.getRight().getRowIdsFor(language)) {
+        for(Integer rowId : pair.getRight().getRowIdsFor(Language.DEFAULT)) {
             Pair<StatusCode, DataRow> rowPair = pair.getRight().getRowWithId(rowId);
             if(rowPair.getLeft() != StatusCode.FOUND_ROW) {
                 continue;

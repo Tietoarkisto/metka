@@ -64,6 +64,17 @@ abstract class DDIWriteSectionBase {
     }
 
     /**
+     * Gather a list of fields of default language from rows of given language in container
+     * @param revision
+     * @param container
+     * @param field
+     * @return
+     */
+    protected List<ValueDataField> gatherFields(RevisionData revision, String container, String field) {
+        return gatherFields(revision, container, field, Language.DEFAULT, Language.DEFAULT);
+    }
+
+    /**
      * Gather a list of fields of given language from rows of given language in container
      * @param revision
      * @param container
