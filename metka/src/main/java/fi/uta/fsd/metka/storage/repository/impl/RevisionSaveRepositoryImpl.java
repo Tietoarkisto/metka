@@ -629,6 +629,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         ParseResult result = parser.parse(attachment, VariableDataType.POR, study, language, info);
 
         // Check that study has a link to the variable file (we should not be in this method if there is a link to another attachment)
+        // TODO: This is not the right way to link the different languages since all languages are really present on all translations. Instead we need a container
         Pair<StatusCode, ValueDataField> fieldPair = study.dataField(ValueDataFieldCall.get(Fields.VARIABLEFILE));
         if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || !fieldPair.getRight().hasValueFor(language)) {
             StatusCode setResult = study.dataField(

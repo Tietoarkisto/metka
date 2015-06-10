@@ -75,7 +75,7 @@ public abstract class RevisionSearchCommandBase<T extends SearchResult> extends 
     }
 
     protected Analyzer getAnalyzer() {
-        PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new CaseInsensitiveWhitespaceAnalyzer(), analyzers);
+        PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(CaseInsensitiveWhitespaceAnalyzer.ANALYZER, analyzers);
         return analyzer;
     }
 

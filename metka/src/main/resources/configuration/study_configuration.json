@@ -632,6 +632,12 @@
 			"type": "REVISIONABLE",
 			"target": "STUDY_VARIABLES"
 		},
+		"variablelanguage_ref": {
+			"key": "variablelanguage_ref",
+			"type": "DEPENDENCY",
+			"target": "variables",
+			"valuePath": "language"
+		},
 		"variable_file_ref": {
 			"key": "variable_file_ref",
 			"type": "REVISIONABLE",
@@ -1926,6 +1932,13 @@
 			"translatable": true,
 			"editable": false,
 			"reference": "variables_ref"
+		},
+		"variablelanguage": {
+			"key": "variablelanguage",
+			"indexName": "variableslanguage",
+			"type": "REFERENCE",
+			"writable": false,
+			"reference": "variablelanguage_ref"
 		},
 		"variablefile": {
 			"_comment": "Each language contains a reference to the variable file with that language.",

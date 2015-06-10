@@ -121,6 +121,7 @@ public class ExpertRevisionSearchCommand extends RevisionSearchCommandBase<Revis
         /*StandardQueryParser parser = new StandardQueryParser(getAnalyzer());*/
         StandardQueryParser parser = new StandardQueryParser();
         parser.setAllowLeadingWildcard(true);
+        parser.setAnalyzer(getAnalyzer());
         if(!StringUtils.hasText(qry)) {
             throw new ParseException(new MessageImpl("EMPTY_QUERY"));
         }

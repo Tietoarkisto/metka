@@ -67,6 +67,12 @@ public class ExpertSearchServiceImpl implements ExpertSearchService {
         // After that the queries are performed in a depth first manner
         Pair<ReturnResult, List<RevisionResult>> queryResults = performQuery(request.getQuery(), query);
 
+        if(queryResults.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
+            Logger.error(ExpertSearchServiceImpl.class, "Search failed with the result "+queryResults.getLeft()+". Query was: "+request.getQuery());
+            response.setResult(queryResults.getLeft());
+            return response;
+        }
+
         for(RevisionResult result : queryResults.getRight()) {
             Pair<ReturnResult, RevisionableInfo> infoPair = revisions.getRevisionableInfo(result.getId());
             if(infoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND) {
@@ -131,6 +137,9 @@ public class ExpertSearchServiceImpl implements ExpertSearchService {
                 if(queryResults.getLeft() != ReturnResult.OPERATION_SUCCESSFUL) {
                     return queryResults;
                 }
+                if(queryResults.getRight().isEmpty()) {
+                    return new ImmutablePair<>(ReturnResult.EMPTY_SUBQUERY, null);
+                }
 
                 String replc = "(";
                 for(RevisionResult rr : queryResults.getRight()) {
@@ -140,12 +149,12 @@ public class ExpertSearchServiceImpl implements ExpertSearchService {
                     replc += rr.getId();
                 }
                 replc += ")";
-                String newQry = qryStr.substring(0, sq.start-2);
+                String newQry = qryStr.substring(0, sq.start+difference-2);
                 newQry += replc;
-                newQry += qryStr.substring(sq.end+2);
+                newQry += qryStr.substring(sq.end+difference+2);
                 qryStr = newQry;
 
-                difference += replc.length() - (sq.end-sq.start);
+                difference += (replc.length()-4) - (sq.end-sq.start);
             }
         }
         return performSearch(qryStr);

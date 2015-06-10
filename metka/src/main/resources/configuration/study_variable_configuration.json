@@ -44,6 +44,13 @@
             "type": "REVISIONABLE",
             "target": "STUDY_VARIABLES",
             "titlePath": "id"
+        },
+        "language_ref": {
+            "key": "language_ref",
+            "type": "JSON",
+            "target": "language_descriptions",
+            "valuePath": "language",
+            "titlePath": "text"
         }
     },
     "displayId": "varid",
@@ -70,7 +77,8 @@
             "translatable": false,
             "immutable": true,
             "editable": false,
-            "type": "STRING"
+            "type": "REFERENCE",
+            "reference": "language_ref"
         },
         "varname": {
             "key": "varname",
@@ -88,7 +96,7 @@
         },
         "varlabel": {
             "key": "varlabel",
-            "translatable": true,
+            "translatable": false,
             "type": "STRING",
             "generalSearch": true,
             "editable": false
@@ -100,7 +108,7 @@
         },
         "qstnlits": {
             "key": "qstnlits",
-            "translatable": true,
+            "translatable": false,
             "type": "CONTAINER",
             "subfields": [
                 "qstnlit"
@@ -116,7 +124,7 @@
         },
         "preqtxts": {
             "key": "preqtxts",
-            "translatable": true,
+            "translatable": false,
             "type": "CONTAINER",
             "subfields": [
                 "preqtxt"
@@ -131,7 +139,7 @@
         },
         "postqtxts": {
             "key": "postqtxts",
-            "translatable": true,
+            "translatable": false,
             "type": "CONTAINER",
             "subfields": [
                 "postqtxt"
@@ -146,7 +154,7 @@
         },
         "ivuinstrs": {
             "key": "ivuinstrs",
-            "translatable": true,
+            "translatable": false,
             "type": "CONTAINER",
             "subfields": [
                 "ivuinstr"
@@ -161,7 +169,7 @@
         },
         "varnotes": {
             "key": "varnotes",
-            "translatable": true,
+            "translatable": false,
             "type": "CONTAINER",
             "subfields": [
                 "varnote"
@@ -176,7 +184,7 @@
         },
         "vartexts": {
             "key": "vartexts",
-            "translatable": true,
+            "translatable": false,
             "type": "CONTAINER",
             "subfields": [
                 "vartext"
@@ -191,7 +199,7 @@
         },
         "varsecurities": {
             "key": "varsecurities",
-            "translatable": true,
+            "translatable": false,
             "type": "CONTAINER",
             "subfields": [
                 "varsecurity"
@@ -237,7 +245,7 @@
         },
         "label": {
             "key": "label",
-            "translatable": true,
+            "translatable": false,
             "editable": false,
             "immutable": true,
             "type": "STRING",

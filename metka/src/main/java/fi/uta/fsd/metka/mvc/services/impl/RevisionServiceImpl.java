@@ -325,7 +325,7 @@ public class RevisionServiceImpl implements RevisionService {
 
     private void addRemoveCommand(TransferData data) {
         indexer.addCommand(RevisionIndexerCommand.remove(data.getKey().getId(), data.getKey().getNo()));
-        switch(data.getConfiguration().getType()) {
+        /*switch(data.getConfiguration().getType()) {
             case STUDY_ATTACHMENT:
             case STUDY_VARIABLE:
             case STUDY_VARIABLES: {
@@ -337,14 +337,14 @@ public class RevisionServiceImpl implements RevisionService {
             default:
 
                 break;
-        }
+        }*/
     }
 
 
     private void addIndexCommand(TransferData data) {
         // Separates calls to index sub components of study, should really be collected as a queue so that multiple study indexing requests are not made in a short period
         indexer.addCommand(RevisionIndexerCommand.index(data.getKey().getId(), data.getKey().getNo()));
-        switch(data.getConfiguration().getType()) {
+        /*switch(data.getConfiguration().getType()) {
             case STUDY_ATTACHMENT:
             case STUDY_VARIABLE:
             case STUDY_VARIABLES: {
@@ -357,13 +357,13 @@ public class RevisionServiceImpl implements RevisionService {
             default:
 
                 break;
-        }
+        }*/
     }
 
     private void addIndexCommand(RevisionData data) {
         // Separates calls to index sub components of study, should really be collected as a queue so that multiple study indexing requests are not made in a short period
         indexer.addCommand(RevisionIndexerCommand.index(data.getKey().getId(), data.getKey().getNo()));
-        switch(data.getConfiguration().getType()) {
+        /*switch(data.getConfiguration().getType()) {
             case STUDY_ATTACHMENT:
             case STUDY_VARIABLE:
             case STUDY_VARIABLES: {
@@ -374,6 +374,6 @@ public class RevisionServiceImpl implements RevisionService {
             default:
 
                 break;
-        }
+        }*/
     }
 }

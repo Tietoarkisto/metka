@@ -102,6 +102,22 @@ define(function (require) {
                     "default": "Muuttujahaku"
                 }
             },
+            "STUDY_VARIABLE": {
+                "&title": {
+                    "default": "Muuttuja"
+                },
+                "&search": {
+                    "default": "Muuttujahaku"
+                }
+            },
+            "STUDY_ATTACHMENT": {
+                "&title": {
+                    "default": "Liite"
+                },
+                "&search": {
+                    "default": "Liitehaku"
+                }
+            },
             "PUBLICATION": {
                 "&title": {
                     "default": "Julkaisu"

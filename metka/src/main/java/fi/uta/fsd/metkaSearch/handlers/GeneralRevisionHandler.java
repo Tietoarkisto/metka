@@ -23,6 +23,7 @@ import fi.uta.fsd.metka.transfer.reference.ReferenceOption;
 import fi.uta.fsd.metka.transfer.reference.ReferencePath;
 import fi.uta.fsd.metka.transfer.reference.ReferencePathRequest;
 import fi.uta.fsd.metka.transfer.study.StudyError;
+import fi.uta.fsd.metkaSearch.analyzer.CaseInsensitiveKeywordAnalyzer;
 import fi.uta.fsd.metkaSearch.analyzer.CaseInsensitiveWhitespaceAnalyzer;
 import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
 import fi.uta.fsd.metkaSearch.indexers.Indexer;
@@ -219,7 +220,7 @@ class GeneralRevisionHandler implements RevisionHandler {
             // TODO: Create commands to index the field
 
             // TODO: Make something better for this, for now intercept variables indexing here
-            if(field.getKey().equals("variables") && field.getType() == FieldType.REFERENCECONTAINER
+            if(false && field.getKey().equals("variables") && field.getType() == FieldType.REFERENCECONTAINER
                     && data.getConfiguration().getType() == ConfigurationType.STUDY_VARIABLES) {
                 // TODO: Index individual variables
                 Pair<StatusCode, ReferenceContainerDataField> pair = fieldContainer.dataField(ReferenceContainerDataFieldCall.get(field.getKey()));
@@ -230,8 +231,8 @@ class GeneralRevisionHandler implements RevisionHandler {
                 if(!df.hasRows()) {
                     return;
                 }
-                indexStudyVariablesContainer(df, document, root+field.getIndexAs(), data, language);
-            } else if(field.getKey().equals("files") && field.getType() == FieldType.REFERENCECONTAINER && data.getConfiguration().getType() == ConfigurationType.STUDY) {
+                indexStudyVariablesContainer(df, document, root + field.getIndexAs(), data, language);
+            } else if(false && field.getKey().equals("files") && field.getType() == FieldType.REFERENCECONTAINER && data.getConfiguration().getType() == ConfigurationType.STUDY) {
                 Pair<StatusCode, ReferenceContainerDataField> pair = fieldContainer.dataField(ReferenceContainerDataFieldCall.get(field.getKey()));
                 if(pair.getLeft() != StatusCode.FIELD_FOUND) {
                     return;
@@ -501,7 +502,7 @@ class GeneralRevisionHandler implements RevisionHandler {
         Language inputLang = field.getTranslatable() ? language : Language.DEFAULT;
         // TODO: Split this off in some better way, for now intercept during variables reference handling)
         boolean foundContent = false;
-        if(field.getKey().equals("variables") && field.getType() == FieldType.REFERENCE && data.getConfiguration().getType() == ConfigurationType.STUDY) {
+        if(false && field.getKey().equals("variables") && field.getType() == FieldType.REFERENCE && data.getConfiguration().getType() == ConfigurationType.STUDY) {
             // This is variables reference in study. Take some time and index variables to this document
             document.indexKeywordField(root + field.getIndexAs() + ".value", saved.getActualValueFor(Language.DEFAULT));
             indexStudyVariables(saved, document, root+field.getIndexAs(), data, language);

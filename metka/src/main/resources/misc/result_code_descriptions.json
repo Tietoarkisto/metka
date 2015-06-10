@@ -130,6 +130,10 @@
 			"text": "Mappinumeron tulee olla numero"
 		}]
 	}, {
+		"key": "EMPTY_SUBQUERY",
+		"title": "NOTICE",
+		"text": "Alikysely ei palauttanut tuloksia. Pääkyselyä ei voida käsitellä jos alikyselyistä ei saada tulosjoukkoa"
+	}, {
 		"key": "",
 		"title": "",
 		"text": ""

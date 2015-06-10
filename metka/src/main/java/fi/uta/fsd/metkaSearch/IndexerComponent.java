@@ -143,9 +143,11 @@ public class IndexerComponent {
         threadPool.submit(new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
-                List<RevisionableEntity> entities = em.createQuery(
+                /*List<RevisionableEntity> entities = em.createQuery(
                         "SELECT e FROM RevisionableEntity e WHERE e.type " +
-                                "IN ('"+ConfigurationType.PUBLICATION+"','"+ConfigurationType.SERIES+"','"+ConfigurationType.STUDY+"')", RevisionableEntity.class).getResultList();
+                                "IN ('"+ConfigurationType.PUBLICATION+"','"+ConfigurationType.SERIES+"','"+ConfigurationType.STUDY+"')", RevisionableEntity.class).getResultList();*/
+
+                List<RevisionableEntity> entities = em.createQuery("SELECT e FROM RevisionableEntity e", RevisionableEntity.class).getResultList();
 
                 IndexerCommand command = RevisionIndexerCommand.stop();
                 manager.getIndexDirectory(command.getPath(), true).clearIndex();
