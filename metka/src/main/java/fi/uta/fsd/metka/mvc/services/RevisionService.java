@@ -32,7 +32,7 @@ public interface RevisionService {
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_REMOVE_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "') " +
             "and hasPermission(#transferData, '" + PermissionCheck.Values.IS_HANDLER + "')")
-    RevisionDataResponse remove(TransferData transferData);
+    RevisionDataResponse remove(TransferData transferData, Boolean draft);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_RESTORE_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "')")
     RevisionDataResponse restore(RevisionKey key);

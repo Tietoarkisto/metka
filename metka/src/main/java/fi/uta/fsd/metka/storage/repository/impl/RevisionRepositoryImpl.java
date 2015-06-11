@@ -15,6 +15,10 @@ import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.transfer.revision.AdjacentRevisionRequest;
+import fi.uta.fsd.metkaSearch.IndexerComponent;
+import fi.uta.fsd.metkaSearch.commands.indexer.IndexerCommand;
+import fi.uta.fsd.metkaSearch.commands.indexer.RevisionIndexerCommand;
+import fi.uta.fsd.metkaSearch.entity.IndexerCommandRepository;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +42,12 @@ public class RevisionRepositoryImpl implements RevisionRepository {
 
     @Value("${dir.file}")
     private String fileRoot;
+
+    @Autowired
+    private IndexerCommandRepository commandRepository;
+
+    @Autowired
+    private IndexerComponent indexer;
 
     @Override
     public Pair<ReturnResult, RevisionableInfo> getRevisionableInfo(Long id) {
@@ -256,5 +266,29 @@ public class RevisionRepositoryImpl implements RevisionRepository {
             return new ImmutablePair<>(ReturnResult.NO_RESULTS, null);
         }
         return getLatestRevisionForIdAndType(list.get(0).getId(), false, request.getCurrent().getConfiguration().getType());
+    }
+
+    @Override
+    public void indexRevision(RevisionKey key) {
+        indexRevision(key.toModelKey());
+    }
+
+    @Override
+    public void indexRevision(fi.uta.fsd.metka.model.general.RevisionKey key) {
+        IndexerCommand command = RevisionIndexerCommand.index(key);
+        commandRepository.addIndexerCommand(command);
+        indexer.commandAdded(command);
+    }
+
+    @Override
+    public void removeRevision(RevisionKey key) {
+        removeRevision(key.toModelKey());
+    }
+
+    @Override
+    public void removeRevision(fi.uta.fsd.metka.model.general.RevisionKey key) {
+        IndexerCommand command = RevisionIndexerCommand.remove(key);
+        commandRepository.addIndexerCommand(command);
+        indexer.commandAdded(command);
     }
 }

@@ -151,7 +151,8 @@ public class IndexerComponent {
 
                 IndexerCommand command = RevisionIndexerCommand.stop();
                 manager.getIndexDirectory(command.getPath(), true).clearIndex();
-                addCommand(command);
+                commandRepository.addIndexerCommand(command);
+                commandAdded(command);
                 int current = 0;
                 long timeSpent = 0L;
                 for(RevisionableEntity entity : entities) {
@@ -159,7 +160,9 @@ public class IndexerComponent {
                     current++;
                     List<Integer> nos = revisions.getAllRevisionNumbers(entity.getId());
                     for(Integer no : nos) {
-                        addCommand(RevisionIndexerCommand.index(entity.getId(), no));
+                        command = RevisionIndexerCommand.index(entity.getId(), no);
+                        commandRepository.addIndexerCommand(command);
+                        commandAdded(command);
                     }
                     long endTime = System.currentTimeMillis();
                     timeSpent += (endTime - startTime);
@@ -173,8 +176,18 @@ public class IndexerComponent {
         });
     }
 
-    public synchronized void addCommand(IndexerCommand command) {
+    /*public synchronized void addCommand(IndexerCommand command) {
         commandRepository.addIndexerCommand(command);
+        if(handlers.containsKey(command.getPath())) {
+            if(handlers.get(command.getPath()).isDone()) {
+                startIndexer(command.getPath());
+            }
+        } else {
+            startIndexer(command.getPath());
+        }
+    }*/
+
+    public synchronized void commandAdded(IndexerCommand command) {
         if(handlers.containsKey(command.getPath())) {
             if(handlers.get(command.getPath()).isDone()) {
                 startIndexer(command.getPath());
@@ -260,19 +273,6 @@ public class IndexerComponent {
                 break;
         }
         return indexer;
-    }
-
-    public void addStudyIndexerCommand(Long id, boolean index) {
-        Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(id, false, ConfigurationType.STUDY);
-        if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
-            Logger.error(getClass(), "Tried to add index command for study with id " + id + " but didn't find any revisions with result " + pair.getLeft());
-            return;
-        }
-        if (index) {
-            addCommand(RevisionIndexerCommand.index(pair.getRight().getKey()));
-        } else {
-            addCommand(RevisionIndexerCommand.remove(pair.getRight().getKey()));
-        }
     }
 
     public Pair<ReturnResult, Integer> getOpenIndexCommands() {

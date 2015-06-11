@@ -246,5 +246,18 @@
                 }
             }]
         }]
+    }],
+    "cascade": [{
+        "type": "APPROVE",
+        "targets": [{
+            "type": "FIELD",
+            "content": "variables"
+        }]
+    }, {
+        "type": "DELETE",
+        "targets": [{
+            "type": "FIELD",
+            "content": "variables"
+        }]
     }]
 }

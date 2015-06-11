@@ -134,6 +134,15 @@
 		"title": "NOTICE",
 		"text": "Alikysely ei palauttanut tuloksia. Pääkyselyä ei voida käsitellä jos alikyselyistä ei saada tulosjoukkoa"
 	}, {
+		"key": "CASCADE_FAILURE",
+		"title": "ERROR",
+		"text": "Toiminto yritettiin ketjuttaa mutta kaikkia operaatioita ei suoritettu onnistuneesti",
+		"operations": [{
+			"key": "approve",
+			"title": "ERROR",
+			"text": "Vain osa alilomakkeista hyväksyttiin onnistuneesti joten päälomaketta ei hyväksytty."
+		}]
+	}, {
 		"key": "",
 		"title": "",
 		"text": ""

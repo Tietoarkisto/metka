@@ -14,18 +14,6 @@ class DataFieldValidator {
     private final SearcherComponent searcher;
     private final RevisionRepository revisions;
     private final ConfigurationRepository configurations;
-    /*private final DataFieldContainer datafields;
-    private final RestrictionValidator validator;
-
-    private final Configuration configuration;
-
-
-    DataFieldValidator(DataFieldContainer datafields, Configuration configuration, RestrictionValidator validator) {
-        this.datafields = datafields;
-        this.configuration = configuration;
-        this.validator = validator;
-
-    }*/
 
     DataFieldValidator(SearcherComponent searcher, RevisionRepository revisions, ConfigurationRepository configurations) {
         this.searcher = searcher;
@@ -53,17 +41,14 @@ class DataFieldValidator {
                 return ParentTargetHandler.handle(this, target, context, configuration, configurations);
             case QUERY:
                 return QueryTargetHandler.handle(target, context, this, configuration, searcher);
-            default:
-                // This catches types that are invalid for this point of validation operation such as VALUE
-                Logger.error(getClass(), "Reached TargetType " + target.getType());
-                return false;
-
-
-
             case FIELD:
                 return FieldTargetHandler.handle(target, context, this, configuration, searcher, revisions, configurations);
             case CHILDREN:
                 return ChildrenTargetHandler.handle(this, target, context, configuration, revisions, configurations);
+            default:
+                // This catches types that are invalid for this point of validation operation such as VALUE
+                Logger.error(getClass(), "Reached TargetType " + target.getType());
+                return false;
 
         }
     }

@@ -76,7 +76,7 @@ public class APIController {
             return new APIStudyCreateResponse(ReturnResult.PARAMETERS_MISSING, null);
         }
 
-        indexer.addStudyIndexerCommand(result.getRight().getKey().getId(), true);
+        revisions.indexRevision(result.getRight().getKey());
 
         return new APIStudyCreateResponse(ReturnResult.REVISION_CREATED, pair.getRight().getActualValueFor(Language.DEFAULT));
     }
@@ -113,8 +113,7 @@ public class APIController {
             return ReturnResult.API_AUTHENTICATION_FAILED;
         }
         for(IndexTarget target : request.getTargets()) {
-            RevisionIndexerCommand command = RevisionIndexerCommand.index(target.getKey());
-            indexer.addCommand(command);
+            revisions.indexRevision(target.getKey());
         }
         return ReturnResult.OPERATION_SUCCESSFUL;
     }

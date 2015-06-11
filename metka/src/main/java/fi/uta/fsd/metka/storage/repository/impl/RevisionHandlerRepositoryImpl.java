@@ -64,6 +64,8 @@ public class RevisionHandlerRepositoryImpl implements RevisionHandlerRepository 
             return new ImmutablePair<>(info.getLeft(), null);
         }
 
+        revisions.indexRevision(data.getKey());
+
         return new ImmutablePair<>(ReturnResult.REVISION_UPDATE_SUCCESSFUL, TransferData.buildFromRevisionData(data, info.getRight()));
     }
 

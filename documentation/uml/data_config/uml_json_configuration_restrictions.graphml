@@ -18,7 +18,7 @@
       <data key="d4"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="91.0" width="156.0" x="326.5" y="-233.0"/>
+          <y:Geometry height="146.0" width="156.0" x="326.5" y="-348.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="34.265625" modelName="custom" textColor="#000000" visible="true" width="141.2998046875" x="7.35009765625" y="3.0">&lt;&lt;enumeration&gt;&gt;
@@ -32,7 +32,11 @@ OperationType<y:LabelModel>
           <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="" use3DEffect="true">
             <y:AttributeLabel>SAVE
 APPROVE
-DELETE</y:AttributeLabel>
+DELETE
+RESTORE
+CLAIM
+RELEASE
+ALL</y:AttributeLabel>
             <y:MethodLabel/>
           </y:UML>
         </y:UMLClassNode>
@@ -100,7 +104,7 @@ CHILDREN</y:AttributeLabel>
       <data key="d4"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="77.0" width="156.0" x="80.0" y="-233.0"/>
+          <y:Geometry height="77.0" width="156.0" x="80.0" y="-348.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.1328125" modelName="custom" textColor="#000000" visible="true" width="77.2138671875" x="39.39306640625" y="3.0">Operation<y:LabelModel>
@@ -191,11 +195,45 @@ CHILDREN</y:AttributeLabel>
         </y:UMLClassNode>
       </data>
     </node>
+    <node id="n7">
+      <data key="d4"/>
+      <data key="d5"/>
+      <data key="d6">
+        <y:UMLNoteNode>
+          <y:Geometry height="330.0" width="307.0" x="553.5" y="-348.0"/>
+          <y:Fill color="#FFCC00" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1.0"/>
+          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="325.28125" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="290.787109375" x="4.0" y="4.0">Restrictions happen before both cascade and
+the operation and if they fail then neither the
+cascade and actual operation happen.
+Cascades happen before the actual operation
+but after restrictions. If some of the cascades
+fail then the main operation fails but they don't
+affect other cascades in the stack.
+This allows for controlling wether you want an
+all or nothing operation or a partial operation.
+If you have a bunch of smaller forms tied to a
+bigger form and some operations happen only
+through the bigger form, then you can either
+put all the restrictions on that bigger form and
+cascade the operation or put form specific
+restrictions on that forms configuration but
+still cascade. On the former case the operation
+won't cascade unless each smaller form is valid
+but if they are then the operation happens to
+all the smaller forms and the bigger form. On
+the latter case the operation happens to as
+many of the smaller forms as possible but even
+if only one of them fails then the bigger form
+doesn't run the operation.</y:NodeLabel>
+        </y:UMLNoteNode>
+      </data>
+    </node>
     <edge id="e0" source="n3" target="n0">
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="12.147873279999999" sy="-12.33243648000007" tx="0.10359935999986192" ty="-19.33243648000007"/>
+          <y:Path sx="12.147873279999999" sy="-12.33243648000007" tx="19.0" ty="-46.83243648000007"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="diamond" target="none"/>
           <y:BendStyle smoothed="false"/>

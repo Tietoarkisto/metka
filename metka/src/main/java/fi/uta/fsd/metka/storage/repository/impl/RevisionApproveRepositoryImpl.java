@@ -17,6 +17,8 @@ import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.model.transfer.TransferField;
 import fi.uta.fsd.metka.model.transfer.TransferValue;
 import fi.uta.fsd.metka.names.Fields;
+import fi.uta.fsd.metka.storage.cascade.CascadeInstruction;
+import fi.uta.fsd.metka.storage.cascade.Cascader;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionApproveRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
@@ -51,6 +53,9 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
     @Autowired
     private RestrictionValidator validator;
 
+    @Autowired
+    private Cascader cascader;
+
     @Override
     public Pair<ReturnResult, TransferData> approve(TransferData transferData) {
         Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(transferData.getKey().getId(),
@@ -61,7 +66,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
         }
         RevisionData data = dataPair.getRight();
         if(data.getState() != RevisionState.DRAFT) {
-            Logger.error(getClass(), "Can't approve revision "+data.getKey().toString()+" since it is not in DRAFT state");
+            Logger.info(getClass(), "Can't approve revision "+data.getKey().toString()+" since it is not in DRAFT state");
             return new ImmutablePair<>(ReturnResult.REVISION_NOT_A_DRAFT, transferData);
         }
         Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(data.getConfiguration());
@@ -71,18 +76,41 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
         }
 
         // Do validation
-        ReturnResult result = approveData(data, transferData);
-        if(result == ReturnResult.OPERATION_SUCCESSFUL) {
-            for(Operation operation : configPair.getRight().getRestrictions()) {
-                if(operation.getType() != OperationType.APPROVE) {
-                    continue;
-                }
-                if(!validator.validate(data, operation.getTargets(), configPair.getRight())) {
-                    result = ReturnResult.RESTRICTION_VALIDATION_FAILURE;
-                    break;
-                }
+        ReturnResult result = ReturnResult.OPERATION_SUCCESSFUL;
+        for(Operation operation : configPair.getRight().getRestrictions()) {
+            if(!(operation.getType() == OperationType.APPROVE || operation.getType() == OperationType.ALL)) {
+                continue;
+            }
+            if(!validator.validate(data, operation.getTargets(), configPair.getRight())) {
+                result = ReturnResult.RESTRICTION_VALIDATION_FAILURE;
+                break;
             }
         }
+        // If validation fails then halt the whole process
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {
+            return new ImmutablePair<>(result, transferData);
+        }
+
+        // Do cascade
+        for(Operation operation : configPair.getRight().getCascade()) {
+            if(!(operation.getType() == OperationType.APPROVE || operation.getType() == OperationType.ALL)) {
+                continue;
+            }
+            if(!cascader.cascade(CascadeInstruction.build(OperationType.APPROVE), data, operation.getTargets(), configPair.getRight())) {
+                result = ReturnResult.CASCADE_FAILURE;
+                break;
+            }
+        }
+        // If cascade fails then don't approve this revision
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {
+            return new ImmutablePair<>(result, transferData);
+        }
+
+        // Do approve
+        result = approveData(data, transferData);
+
+        // TODO: Check that all SELECTION values are still valid (e.g. that they can be found and that the values are not marked deprecated
+        // TODO: Check that other references like series are still valid (e.g. they point to existing revisionables
 
         // If validation was successful then check all languages that should be approved (i.e. which languages have content
         // that has changed in this revision).
@@ -94,7 +122,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
                 data.approveRevision(language, new ApproveInfo(data.getKey().getNo(), info));
             }
 
-            // Do final operations before saving data to
+            // Do final operations before saving data to database
             result = finalizeApproval(data, info);
             if(result != ReturnResult.OPERATION_SUCCESSFUL) {
                 return new ImmutablePair<>(result, transferData);
@@ -123,6 +151,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
                 return new ImmutablePair<>(updateResult, transferData);
             }
 
+            revisions.indexRevision(data.getKey());
             return new ImmutablePair<>(ReturnResult.OPERATION_SUCCESSFUL, TransferData.buildFromRevisionData(data, RevisionableInfo.FALSE));
         } else {
             return new ImmutablePair<>(result, transferData);
@@ -140,8 +169,6 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
                 return approveStudyAttachment(revision);
             case STUDY_VARIABLES:
                 return approveStudyVariables(revision);
-            case STUDY_VARIABLE:
-                return approveStudyVariable(revision);
             default:
                 return ReturnResult.OPERATION_SUCCESSFUL;
         }
@@ -153,42 +180,29 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
         // approve recursively
 
         // Try to approve all study attachments linked to this study (this should move files from temporary location to their actual location)
-        ReturnResult studyAttachmentCheckResult = checkStudyAttachments(revision, transferData);
+        /*ReturnResult studyAttachmentCheckResult = checkStudyAttachments(revision, transferData);
         if(studyAttachmentCheckResult != ReturnResult.OPERATION_SUCCESSFUL) {
             result = ReturnResult.OPERATION_FAIL;
             // For study attachment approval to fail there has to be a field and content.
             transferData.getField("files").addError(FieldError.APPROVE_FAILED);
-        }
+        }*/
 
         // Try to approve study variables linked to this study, this should try to approve all study variables that are linked to it
         // If there are errors in study variables (either the collection or individual variables then just mark an error to study variables field in transferData
-        // TODO: Variables need to be approved for every language
-        ReturnResult variablesCheckResult = checkStudyVariables(revision, transferData);
+        /*ReturnResult variablesCheckResult = checkStudyVariables(revision, transferData);
         if(variablesCheckResult != ReturnResult.OPERATION_SUCCESSFUL) {
             result = ReturnResult.OPERATION_FAIL;
             // We know that if study variables approval failed there has to be variables field in transfer data since it's added during checking
             // if it was missing before
             TransferField field = transferData.getField(Fields.VARIABLES);
             field.addErrorFor(Language.DEFAULT, FieldError.APPROVE_FAILED);
-        }
-
-        // TODO: Check that all SELECTION values are still valid (e.g. that they can be found and that the values are not marked deprecated
-        // TODO: Check that other references like series are still valid (e.g. they point to existing revisionables
+        }*/
 
         return result;
     }
 
     private ReturnResult approveStudyAttachment(RevisionData revision) {
-        // TODO: Move to IS_FILE restriction
-        ValueDataField fileField = revision.dataField(ValueDataFieldCall.get(Fields.FILE)).getRight();
-        if(fileField != null) {
-            File file = new File(revision.dataField(ValueDataFieldCall.get(Fields.FILE)).getRight().getActualValueFor(Language.DEFAULT));
-            if(!file.exists() || file.isDirectory()) {
-                return ReturnResult.OPERATION_FAIL;
-            }
-        } else {
-            return ReturnResult.OPERATION_FAIL;
-        }
+        // File status has been checked during save, we don't need to do it again here.
 
         return ReturnResult.OPERATION_SUCCESSFUL;
     }
@@ -196,7 +210,7 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
     private ReturnResult approveStudyVariables(RevisionData revision) {
         ReturnResult result = ReturnResult.OPERATION_SUCCESSFUL;
 
-        // Loop through all variables and check if they need approval.
+        /*// Loop through all variables and check if they need approval.
         // Try to approve every one but if even one fails then return APPROVE_FAILED since the process of study approval can't continue
         Pair<StatusCode, ReferenceContainerDataField> fieldPair = revision.dataField(ReferenceContainerDataFieldCall.get(Fields.VARIABLES));
         if(fieldPair.getLeft() != StatusCode.FIELD_FOUND) {
@@ -228,14 +242,9 @@ public class RevisionApproveRepositoryImpl implements RevisionApproveRepository 
                 result = ReturnResult.OPERATION_FAIL;
                 // Continue to approve variables since, no need to mark errors on transfer data since this data will never be sent to client from here
             }
-        }
+        }*/
 
         return result;
-    }
-
-    private ReturnResult approveStudyVariable(RevisionData revision) {
-        // There's really nothing to do here right now
-        return ReturnResult.OPERATION_SUCCESSFUL;
     }
 
     /**

@@ -58,6 +58,7 @@ public enum ReturnResult {
     PAGE_UPDATED,                       // Binder page was updated
     PAGE_REMOVED,                       // Binder page was removed successfully
     RESTRICTION_VALIDATION_FAILURE,     // Restriction validation encountered a failed validation
+    CASCADE_FAILURE,                    // Operation was cascaded but one of more of the cascades fail and so the root operation fails
     API_AUTHENTICATION_FAILED,          // Authentication in API-method failed
     EMPTY_PATH,                         // Required path was empty
     MALFORMED_PATH,                     // Required path was malformed e.g. incomplete or didn't point to valid end

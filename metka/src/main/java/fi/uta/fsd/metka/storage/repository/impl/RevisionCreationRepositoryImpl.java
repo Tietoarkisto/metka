@@ -27,6 +27,7 @@ import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.transfer.revision.RevisionCreateRequest;
+import fi.uta.fsd.metkaSearch.entity.IndexerCommandRepository;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDate;
@@ -108,6 +109,8 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
 
         revisionable.setLatestRevisionNo(revision.getKey().getRevisionNo());
         em.merge(revisionable);
+
+        revisions.indexRevision(revision.getKey());
 
         return new ImmutablePair<>(ReturnResult.REVISION_CREATED, dataPair.getRight());
     }

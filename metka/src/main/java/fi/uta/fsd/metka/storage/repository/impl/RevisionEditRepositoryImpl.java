@@ -109,6 +109,11 @@ public class RevisionEditRepositoryImpl implements RevisionEditRepository {
             }
             data = dataPair.getRight();
         }
+
+        if(result == ReturnResult.REVISION_CREATED) {
+            revisions.indexRevision(data.getKey());
+        }
+
         return new ImmutablePair<>(result, data);
     }
 

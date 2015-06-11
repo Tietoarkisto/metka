@@ -79,54 +79,6 @@ public class SpringLuceneTests {
     }
 
     @Test
-    public void seriesIndexTest() throws IOException {
-        DirectoryManager.DirectoryPath path = new DirectoryManager.DirectoryPath(false, IndexerConfigurationType.REVISION);
-        List<SeriesEntity> seriesList = em.createQuery("SELECT s FROM SeriesEntity s", SeriesEntity.class).getResultList();
-        for(SeriesEntity series : seriesList) {
-            List<RevisionEntity> revisions = em.createQuery("SELECT r FROM RevisionEntity r WHERE r.key.revisionableId=:id", RevisionEntity.class)
-                    .setParameter("id", series.getId())
-                    .getResultList();
-            for(RevisionEntity revision : revisions) {
-                indexer.addCommand(RevisionIndexerCommand.index(path, revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo()));
-            }
-        }
-        indexer.addCommand(RevisionIndexerCommand.stop(path));
-        try {
-            while(indexer.hasRunningIndexers()) {
-                Thread.sleep(1000);
-            }
-        } catch(InterruptedException iex) {
-            iex.printStackTrace();
-        }
-    }
-
-    @Test
-    public void studyIndexTest() throws IOException {
-        DirectoryManager.DirectoryPath path = new DirectoryManager.DirectoryPath(false, IndexerConfigurationType.REVISION);
-        List<StudyEntity> studyList = em.createQuery("SELECT s FROM StudyEntity s", StudyEntity.class).getResultList();
-        long start = System.currentTimeMillis();
-        for(StudyEntity study : studyList) {
-            //if(study.getId() != 19) {
-                List<RevisionEntity> revisions = em.createQuery("SELECT r FROM RevisionEntity r WHERE r.key.revisionableId=:id", RevisionEntity.class)
-                        .setParameter("id", study.getId())
-                        .getResultList();
-                for(RevisionEntity revision : revisions) {
-                    indexer.addCommand(RevisionIndexerCommand.index(path, revision.getKey().getRevisionableId(), revision.getKey().getRevisionNo()));
-                }
-            //}
-        }
-        indexer.addCommand(RevisionIndexerCommand.stop(path));
-        try {
-            while(indexer.hasRunningIndexers()) {
-                Thread.sleep(1000);
-            }
-        } catch(InterruptedException iex) {
-            iex.printStackTrace();
-        }
-        System.err.println("indexing "+studyList.size()+" studies with large (but varied) variable counts took "+ (System.currentTimeMillis()-start)/1000 + "s");
-    }
-
-    @Test
     public void tempSearchTest() throws IOException, QueryNodeException {
         DirectoryManager.DirectoryPath path = new DirectoryManager.DirectoryPath(false, IndexerConfigurationType.REVISION);
         DirectoryInformation dir = manager.getIndexDirectory(path, false);

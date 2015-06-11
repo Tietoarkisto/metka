@@ -7,4 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface RevisionRemoveRepository {
     public RemoveResult remove(TransferData transferData);
+    public RemoveResult removeDraft(TransferData transferData);
+    public RemoveResult removeLogical(TransferData transferData);
 }

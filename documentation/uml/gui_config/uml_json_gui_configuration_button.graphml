@@ -44,7 +44,7 @@
       <data key="d4"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="257.88807339449556" width="188.0" x="443.2058613659535" y="729.0360957739447"/>
+          <y:Geometry height="286.60685202044976" width="188.0" x="443.2058613659535" y="729.0360957739447"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="34.265625" modelName="custom" textColor="#000000" visible="true" width="141.2998046875" x="23.35009765625" y="3.0">&lt;&lt;enumeration&gt;&gt;
@@ -60,6 +60,8 @@ ButtonType<y:LabelModel>
 SAVE
 APPROVE
 REMOVE
+REMOVE_DRAFT
+REMOVE_LOGIC
 HISTORY
 CLAIM
 RELEASE
@@ -126,10 +128,10 @@ default. Later code can still modify the visibility further.
       <data key="d4"/>
       <data key="d6">
         <y:UMLNoteNode>
-          <y:Geometry height="1164.0504587155965" width="328.148623853211" x="443.20586136595347" y="997.6425177922931"/>
+          <y:Geometry height="1307.6443518453675" width="328.148623853211" x="443.20586136595347" y="1023.582059777026"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="1163.40625" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="325.697265625" x="4.0" y="3.9999999999997726">Defines what this button is supposed to do. This is
+          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="1303.09375" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="325.697265625" x="4.0" y="4.000000000000227">Defines what this button is supposed to do. This is
 a list of operations the UI knows how to perform and
 which are global to the whole revision being viewed.
 All types should only appear once per configuration.
@@ -156,7 +158,17 @@ APPROVE : Sends the currently viewed revisio to
 REMOVE : Sends a removal request for the currently
     being viewed revision. Depending on other factors
     this will be either a logical removal or an actual
-    removal.
+    removal. Should be used only when there's no
+    ambiguity since this can lead to unpredictable
+    results with cascade.
+
+REMOVE_DRAFT : Tries to perform draft removal to
+    given revision. If the revision is not draft then no
+    action is taken.
+
+REMOVE_LOGICAL : Tries to perform logival removal
+   to given revision. If there's an open draft then no
+    action is taken.
 
 HISTORY : Displays revision history for the currently
     being viewed revisionable. This should function
@@ -236,7 +248,7 @@ REMOVED : A logical removal has to have been done
       <data key="d4"/>
       <data key="d6">
         <y:UMLNoteNode>
-          <y:Geometry height="707.7190069332593" width="328.148623853211" x="94.16666666666714" y="920.0738532110063"/>
+          <y:Geometry height="707.7190069332593" width="328.148623853211" x="94.16666666666714" y="917.2946165697849"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="702.4375" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="329.79296875" x="4.0" y="4.0">title : Text that is shown on the button to the user.
@@ -296,10 +308,10 @@ customHandler : Defines the name of the js-file
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="-15.294193733750422" sy="-19.48090055633088" tx="61.56572693679868" ty="-89.00988623853254"/>
+          <y:Path sx="-15.294193733750422" sy="-19.48090055633088" tx="70.3227645882447" ty="-103.36927555150965"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="diamond" target="none"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="40.861328125" x="69.1858113171254" y="1.9999703537537243">+type<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="40.861328125" x="69.1903279186879" y="1.9999703537537243">+type<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
           </y:EdgeLabel>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
@@ -333,7 +345,7 @@ customHandler : Defines the name of the js-file
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="-70.07431192660545" ty="157.04885602671354"/>
+          <y:Path sx="0.0" sy="0.0" tx="-70.07431192660545" ty="176.42194804313314"/>
           <y:LineStyle color="#000000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="none"/>
           <y:BendStyle smoothed="false"/>

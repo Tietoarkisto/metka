@@ -3298,5 +3298,24 @@
 				}]
 			}]
 		}]
+	}],
+	"cascade": [{
+		"type": "APPROVE",
+		"targets": [{
+			"type": "FIELD",
+			"content": "variables"
+		}, {
+			"type": "FIELD",
+			"content": "files"
+		}]
+	}, {
+		"type": "DELETE",
+		"targets": [{
+			"type": "FIELD",
+			"content": "variables"
+		}, {
+			"type": "FIELD",
+			"content": "files"
+		}]
 	}]
 }

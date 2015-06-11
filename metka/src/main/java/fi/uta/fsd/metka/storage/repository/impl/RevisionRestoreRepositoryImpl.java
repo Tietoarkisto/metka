@@ -22,6 +22,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 
 /**
  * Restores removed revisionables back to usage.
@@ -54,6 +55,14 @@ public class RevisionRestoreRepositoryImpl implements RevisionRestoreRepository 
             propagateStudyRestore(entity);
         } else if(entity.getType().equals(ConfigurationType.STUDY_VARIABLES.toValue())) {
             propagateStudyVariablesRestore(entity);
+        }
+
+        List<Integer> nos = revisions.getAllRevisionNumbers(id);
+        for(Integer no : nos) {
+            Pair<ReturnResult, RevisionData> revPair = revisions.getRevisionData(id, no);
+            if(revPair.getLeft() == ReturnResult.REVISION_FOUND) {
+                revisions.indexRevision(revPair.getRight().getKey());
+            }
         }
 
         return RemoveResult.SUCCESS_RESTORE;

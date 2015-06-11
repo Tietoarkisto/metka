@@ -100,4 +100,9 @@ public interface RevisionRepository {
     public List<RevisionData> getVariableRevisionsOfVariables(Long id);
 
     Pair<ReturnResult,RevisionData> getAdjacentRevision(AdjacentRevisionRequest request);
+
+    void indexRevision(RevisionKey key);
+    void indexRevision(fi.uta.fsd.metka.model.general.RevisionKey key);
+    void removeRevision(RevisionKey key);
+    void removeRevision(fi.uta.fsd.metka.model.general.RevisionKey key);
 }
