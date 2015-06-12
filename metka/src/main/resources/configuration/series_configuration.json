@@ -35,7 +35,7 @@
 			}]
 		}]
 	}, {
-		"type": "DELETE",
+		"type": "REMOVE_LOGICAL",
 		"targets": [{
 			"type": "QUERY",
 			"content": "STUDY series.value:{id}",

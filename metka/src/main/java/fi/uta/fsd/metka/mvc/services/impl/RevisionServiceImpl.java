@@ -138,21 +138,21 @@ public class RevisionServiceImpl implements RevisionService {
 
     @Override public RevisionDataResponse edit(TransferData transferData) {
         RevisionDataResponse response = new RevisionDataResponse();
-        Pair<ReturnResult, RevisionData> operationResult = edit.edit(transferData);
+        Pair<ReturnResult, RevisionData> operationResult = edit.edit(transferData, null);
         fillResponseGUI(operationResult.getLeft().name(), response, operationResult);
         return response;
     }
 
     @Override public RevisionDataResponse save(TransferData transferData) {
-        Pair<ReturnResult, TransferData> operationResult = save.saveRevision(transferData);
+        Pair<ReturnResult, TransferData> operationResult = save.saveRevision(transferData, null);
 
         return getResponse(operationResult);
     }
 
     @Override public RevisionDataResponse approve(TransferData transferData) {
-        Pair<ReturnResult, TransferData> operationResult = save.saveRevision(transferData);
-        if(operationResult.getLeft() == ReturnResult.SAVE_SUCCESSFUL || operationResult.getLeft() == ReturnResult.NO_CHANGES_TO_SAVE) {
-            operationResult = approve.approve(operationResult.getRight());
+        Pair<ReturnResult, TransferData> operationResult = save.saveRevision(transferData, null);
+        if(operationResult.getLeft() == ReturnResult.OPERATION_SUCCESSFUL || operationResult.getLeft() == ReturnResult.NO_CHANGES) {
+            operationResult = approve.approve(operationResult.getRight(), null);
         }
         return getResponse(operationResult);
     }
@@ -161,11 +161,11 @@ public class RevisionServiceImpl implements RevisionService {
         RevisionDataResponse response = new RevisionDataResponse();
         RemoveResult result;
         if(draft == null) {
-            result = remove.remove(transferData);
+            result = remove.remove(transferData, null);
         } else if(draft) {
-            result = remove.removeDraft(transferData);
+            result = remove.removeDraft(transferData, null);
         } else {
-            result = remove.removeLogical(transferData);
+            result = remove.removeLogical(transferData, null);
         }
         response.setResult(result.name());
 

@@ -123,8 +123,8 @@ class FieldTargetCascader {
         }
 
         // References can't be translatable, get default language value
-        if(d.hasCurrentFor(Language.DEFAULT) && d.getCurrentFor(Language.DEFAULT).hasValue()) {
-            return cascadeReference(instruction, d.getCurrentFor(Language.DEFAULT).getValue(), configuration.getReference(field.getReference()), repositories);
+        if(d.hasValueFor(Language.DEFAULT) && d.getValueFor(Language.DEFAULT).hasValue()) {
+            return cascadeReference(instruction, d.getValueFor(Language.DEFAULT).getValue(), configuration.getReference(field.getReference()), repositories);
         }
 
         return true;
@@ -164,22 +164,26 @@ class FieldTargetCascader {
                 // Cascading save doesn't really make any sense at the moment since the user can only edit one form at a time
                 return true;
             } case APPROVE: {
-                ReturnResult result = repositories.getApprove().approve(transferData).getLeft();
-                return result == ReturnResult.OPERATION_SUCCESSFUL || result == ReturnResult.REVISION_NOT_A_DRAFT;
-            } case DELETE: {
+                ReturnResult result = repositories.getApprove().approve(transferData, instruction.getInfo()).getLeft();
+                return result == ReturnResult.OPERATION_SUCCESSFUL || result == ReturnResult.REVISION_NOT_A_DRAFT || result == ReturnResult.NO_CHANGES;
+            } case REMOVE: {
                 RemoveResult result;
                 if(instruction.getDraft() == null) {
-                    result = repositories.getRemove().remove(transferData);
+                    result = repositories.getRemove().remove(transferData, instruction.getInfo());
                 } else if(instruction.getDraft()) {
-                    result = repositories.getRemove().removeDraft(transferData);
+                    result = repositories.getRemove().removeDraft(transferData, instruction.getInfo());
                 } else {
-                    result = repositories.getRemove().removeLogical(transferData);
+                    result = repositories.getRemove().removeLogical(transferData, instruction.getInfo());
                 }
 
-                if(result == RemoveResult.SUCCESS_LOGICAL || result == RemoveResult.ALREADY_REMOVED || result == RemoveResult.FINAL_REVISION || result == RemoveResult.SUCCESS_DRAFT) {
-                    return true;
-                }
-                return false;
+                return result == RemoveResult.SUCCESS_LOGICAL
+                        || result == RemoveResult.ALREADY_REMOVED
+                        || result == RemoveResult.FINAL_REVISION
+                        || result == RemoveResult.SUCCESS_DRAFT
+                        || result == RemoveResult.NOT_DRAFT;
+            } case EDIT: {
+                ReturnResult result = repositories.getEdit().edit(transferData, instruction.getInfo()).getLeft();
+                return result == ReturnResult.REVISION_FOUND || result == ReturnResult.REVISION_CREATED;
             }
         }
 

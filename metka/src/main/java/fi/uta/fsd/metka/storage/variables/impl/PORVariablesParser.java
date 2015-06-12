@@ -168,9 +168,9 @@ class PORVariablesParser implements VariablesParser {
             // All remaining rows in variableEntities should be removed since no variable was found for them in the current POR-file
 
             // If removal of the revision returns SUCCESS_DRAFT this means that there's more revisions to remove and second call with new latest revision should clear out any remaining revisions.
-            if(remove.remove(TransferData.buildFromRevisionData(variableRevision, RevisionableInfo.FALSE)) == RemoveResult.SUCCESS_DRAFT) {
+            if(remove.remove(TransferData.buildFromRevisionData(variableRevision, RevisionableInfo.FALSE), info) == RemoveResult.SUCCESS_DRAFT) {
                 Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(variableRevision.getKey().getId(), false, ConfigurationType.STUDY_VARIABLE);
-                remove.remove(TransferData.buildFromRevisionData(dataPair.getRight(), RevisionableInfo.FALSE));
+                remove.remove(TransferData.buildFromRevisionData(dataPair.getRight(), RevisionableInfo.FALSE), info);
             }
 
             // Remove from variables container
@@ -259,7 +259,7 @@ class PORVariablesParser implements VariablesParser {
             }
 
             if(variableData.getState() != RevisionState.DRAFT) {
-                dataPair = edit.edit(TransferData.buildFromRevisionData(variableData, RevisionableInfo.FALSE));
+                dataPair = edit.edit(TransferData.buildFromRevisionData(variableData, RevisionableInfo.FALSE), info);
                 if(dataPair.getLeft() != ReturnResult.REVISION_CREATED) {
                     Logger.error(getClass(), "Couldn't create new DRAFT revision for "+variableData.getKey().toString());
                     return resultCheck(result, ParseResult.COULD_NOT_CREATE_VARIABLE_DRAFT);

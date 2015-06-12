@@ -133,7 +133,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
 
         RevisionData variablesData = dataPair.getRight();
         if(variablesData.getState() != RevisionState.DRAFT) {
-            dataPair = edit.edit(TransferData.buildFromRevisionData(variablesData, RevisionableInfo.FALSE));
+            dataPair = edit.edit(TransferData.buildFromRevisionData(variablesData, RevisionableInfo.FALSE), info);
             if(dataPair.getLeft() != ReturnResult.REVISION_CREATED) {
                 Logger.error(getClass(), "Couldn't create new DRAFT revision for "+variablesData.getKey().toString());
                 return resultCheck(result, ParseResult.COULD_NOT_CREATE_VARIABLES_DRAFT);

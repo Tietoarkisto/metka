@@ -187,74 +187,9 @@
 			"exact": false
         }
     },
-    "restrictions": [{
-        "type": "APPROVE",
-        "targets": [{
-            "type": "FIELD",
-            "content": "study",
-            "checks": [{
-                "condition": {
-                    "type": "NOT_EMPTY"
-                }
-            }]
-        }, {
-            "type": "FIELD",
-            "content": "casequantity",
-            "checks": [{
-                "condition": {
-                    "type": "NOT_EMPTY"
-                }
-            }]
-        }, {
-            "type": "FIELD",
-            "content": "varquantity",
-            "checks": [{
-                "condition": {
-                    "type": "NOT_EMPTY"
-                }
-            }]
-        }, {
-            "type": "FIELD",
-            "content": "variables",
-            "checks": [{
-                "condition": {
-                    "type": "NOT_EMPTY"
-                }
-            }]
-        }, {
-            "type": "FIELD",
-            "content": "varfileid",
-            "checks": [{
-                "condition": {
-                    "type": "NOT_EMPTY"
-                }
-            }]
-        }, {
-            "type": "FIELD",
-            "content": "varfileno",
-            "checks": [{
-                "condition": {
-                    "type": "NOT_EMPTY"
-                }
-            }]
-        }, {
-            "type": "FIELD",
-            "content": "varfiletype",
-            "checks": [{
-                "condition": {
-                    "type": "NOT_EMPTY"
-                }
-            }]
-        }]
-    }],
+    "restrictions": [],
     "cascade": [{
-        "type": "APPROVE",
-        "targets": [{
-            "type": "FIELD",
-            "content": "variables"
-        }]
-    }, {
-        "type": "DELETE",
+        "type": "ALL",
         "targets": [{
             "type": "FIELD",
             "content": "variables"

@@ -86,7 +86,7 @@ class DDIReadDataDescription extends DDIReadSectionBase {
 
     private ReturnResult readVariableGroups(DataDscrType dataDscr, RevisionData variables) {
         if(variables.getState() != RevisionState.DRAFT) {
-            Pair<ReturnResult, RevisionData> pair = edit.edit(TransferData.buildFromRevisionData(variables, RevisionableInfo.FALSE));
+            Pair<ReturnResult, RevisionData> pair = edit.edit(TransferData.buildFromRevisionData(variables, RevisionableInfo.FALSE), info);
             if(pair.getLeft() == ReturnResult.REVISION_FOUND) {
                 if(!AuthenticationUtil.isHandler(pair.getRight())) {
                     return ReturnResult.USER_NOT_HANDLER;
@@ -258,7 +258,7 @@ class DDIReadDataDescription extends DDIReadSectionBase {
         RevisionData variable = variablePair.getRight();
 
         if(variable.getState() != RevisionState.DRAFT) {
-            Pair<ReturnResult, RevisionData> pair = edit.edit(TransferData.buildFromRevisionData(variable, RevisionableInfo.FALSE));
+            Pair<ReturnResult, RevisionData> pair = edit.edit(TransferData.buildFromRevisionData(variable, RevisionableInfo.FALSE), info);
             if(pair.getLeft() == ReturnResult.REVISION_FOUND) {
                 if(!AuthenticationUtil.isHandler(pair.getRight())) {
                     return ReturnResult.USER_NOT_HANDLER;

@@ -7,10 +7,7 @@ import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
-import fi.uta.fsd.metka.model.configuration.Configuration;
-import fi.uta.fsd.metka.model.configuration.Field;
-import fi.uta.fsd.metka.model.configuration.Reference;
-import fi.uta.fsd.metka.model.configuration.SelectionList;
+import fi.uta.fsd.metka.model.configuration.*;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.container.*;
@@ -27,10 +24,13 @@ import fi.uta.fsd.metka.model.transfer.TransferRow;
 import fi.uta.fsd.metka.model.transfer.TransferValue;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.names.Fields;
+import fi.uta.fsd.metka.storage.cascade.CascadeInstruction;
+import fi.uta.fsd.metka.storage.cascade.Cascader;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionSaveRepository;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.restrictions.RestrictionValidator;
 import fi.uta.fsd.metka.storage.variables.StudyVariablesParser;
 import fi.uta.fsd.metka.storage.variables.enums.ParseResult;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
@@ -64,8 +64,17 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
     @Autowired
     private ReferenceService references;
 
+    @Autowired
+    private RestrictionValidator validator;
+
+    @Autowired
+    private Cascader cascader;
+
     @Override
-    public Pair<ReturnResult, TransferData> saveRevision(TransferData transferData) {
+    public Pair<ReturnResult, TransferData> saveRevision(TransferData transferData, DateTimeUserPair info) {
+        if(info == null) {
+            info = DateTimeUserPair.build();
+        }
         Pair<ReturnResult, RevisionData> revisionPair = revisions.getRevisionDataOfType(transferData.getKey().getId(), transferData.getKey().getNo(), transferData.getConfiguration().getType());
         if(revisionPair.getLeft() != ReturnResult.REVISION_FOUND) {
             Logger.error(getClass(), "Couldn't find Revision " + transferData.getKey().toString() + " while saving.");
@@ -91,8 +100,37 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
 
         Configuration configuration = configPair.getRight();
 
-        // Create DateTime object for updating values
-        DateTimeUserPair info = DateTimeUserPair.build();
+        // Do validation
+        ReturnResult result = ReturnResult.OPERATION_SUCCESSFUL;
+        for(Operation operation : configPair.getRight().getRestrictions()) {
+            if(!(operation.getType() == OperationType.SAVE || operation.getType() == OperationType.ALL)) {
+                continue;
+            }
+            /*if(!validator.validate(transferData, operation.getTargets(), configPair.getRight())) {
+                result = ReturnResult.RESTRICTION_VALIDATION_FAILURE;
+                break;
+            }*/
+        }
+        // If validation fails then halt the whole process
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {
+            return new ImmutablePair<>(result, transferData);
+        }
+
+        // NOTICE: Cascade is not really a valid SAVE operation since the user modifies only one form at a time.
+        // When some practical use for SAVE cascade is thought of then it can be added here
+        /*for(Operation operation : configPair.getRight().getCascade()) {
+            if(!(operation.getType() == OperationType.APPROVE || operation.getType() == OperationType.ALL)) {
+                continue;
+            }
+            if(!cascader.cascade(CascadeInstruction.build(OperationType.APPROVE, info), transferData, operation.getTargets(), configPair.getRight())) {
+                result = ReturnResult.CASCADE_FAILURE;
+                break;
+            }
+        }
+        // If cascade fails then don't approve this revision
+        if(result != ReturnResult.OPERATION_SUCCESSFUL) {
+            return new ImmutablePair<>(result, transferData);
+        }*/
 
         // Do actual change checking for field values
         SaveHandler handler = new SaveHandler(info, revision.getKey());
@@ -104,17 +142,17 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
             // Set revision save info
             revision.setSaved(info);
 
-            ReturnResult result = revisions.updateRevisionData(revision);
+            result = revisions.updateRevisionData(revision);
             if(result != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
                 return new ImmutablePair<>(result, transferData);
             } else {
                 // Set transfer object save info since database values have changed
                 transferData.getState().setSaved(info);
                 revisions.indexRevision(revision.getKey());
-                return new ImmutablePair<>((changesAndErrors.getRight() ? ReturnResult.SAVE_SUCCESSFUL_WITH_ERRORS : ReturnResult.SAVE_SUCCESSFUL), transferData);
+                return new ImmutablePair<>((changesAndErrors.getRight() ? ReturnResult.OPERATION_SUCCESSFUL_WITH_ERRORS : ReturnResult.OPERATION_SUCCESSFUL), transferData);
             }
         } else {
-            return new ImmutablePair<>((changesAndErrors.getRight() ? ReturnResult.SAVE_SUCCESSFUL_WITH_ERRORS : ReturnResult.NO_CHANGES_TO_SAVE), transferData);
+            return new ImmutablePair<>((changesAndErrors.getRight() ? ReturnResult.OPERATION_SUCCESSFUL_WITH_ERRORS : ReturnResult.NO_CHANGES), transferData);
         }
     }
 
@@ -696,13 +734,13 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 revisionablePairs.get(pair.getLeft()).add(pair.getRight());
             }
             for(Long id : revisionablePairs.keySet()) {
-                checkBidirectionality(id, revisionablePairs.get(id), info);
+                checkBidirectionality(id, revisionablePairs.get(id));
             }
 
             return result;
         }
 
-        private void checkBidirectionality(Long id, List<Pair<String, Boolean>> pairs, DateTimeUserPair info) {
+        private void checkBidirectionality(Long id, List<Pair<String, Boolean>> pairs) {
             Pair<ReturnResult, RevisionData> dataPair = revisions.getLatestRevisionForIdAndType(id, false, null);
             if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
                 // Something is wrong
@@ -744,7 +782,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 }
             }
             if(changes) {
-                doTypeSpecificBidirectionality(data, pairs, info);
+                doTypeSpecificBidirectionality(data, pairs);
 
                 revisions.updateRevisionData(data);
             }
@@ -754,9 +792,8 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
          * Do things that are part of bidirectionality on a type specific level.
          * @param data     RevisionData
          * @param pairs    Pair
-         * @param info     DateTimeUserPair
          */
-        private void doTypeSpecificBidirectionality(RevisionData data, List<Pair<String, Boolean>> pairs, DateTimeUserPair info) {
+        private void doTypeSpecificBidirectionality(RevisionData data, List<Pair<String, Boolean>> pairs) {
             switch(data.getConfiguration().getType()) {
                 default:
                     return;

@@ -5,11 +5,17 @@ define(function (require) {
         APPROVE: function (options) {
             this
                 .click(require('./formAction')('approve')(options, function (response) {
-                    $.extend(options.data, response.data);
-                    options.$events.trigger('refresh.metka');
+
+                    if(response.result === 'NO_CHANGES') {
+                        require('./assignUrl')('view', {no: ''});
+                    } else {
+                        $.extend(options.data, response.data);
+                        options.$events.trigger('refresh.metka');
+                    }
                 }, [
                     'OPERATION_SUCCESSFUL',
-                    'RESTRICTION_VALIDATION_FAILURE'
+                    'RESTRICTION_VALIDATION_FAILURE',
+                    'NO_CHANGES'
                 ], "approve"));
         },
         CANCEL: function (options) {

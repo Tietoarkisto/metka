@@ -3297,19 +3297,182 @@
 					"content": "required_author_check"
 				}]
 			}]
+		}, {
+			"type": "FIELD",
+			"content": "files",
+			"checks": [{
+				"condition": {
+					"type": "TRUE"
+				}
+			}],
+			"targets": [{
+				"type": "CHILDREN",
+				"targets": [{
+					"type": "FIELD",
+					"content": "file",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
+				}, {
+					"type": "FIELD",
+					"content": "fileaip",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
+				}, {
+					"type": "FIELD",
+					"content": "filecategory",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
+				}, {
+					"type": "FIELD",
+					"content": "filelanguage",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
+				}, {
+					"type": "FIELD",
+					"content": "fileoriginal",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
+				}, {
+					"type": "FIELD",
+					"content": "filepublication",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
+				}]
+			}]
+		}, {
+			"type": "FIELD",
+			"content": "variables",
+			"checks": [{
+				"condition": {
+					"type": "TRUE"
+				}
+			}],
+			"targets": [{
+				"type": "CHILDREN",
+				"targets": [{
+					"type": "FIELD",
+					"content": "study",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
+				}, {
+					"type": "FIELD",
+					"content": "casequantity",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
+				}, {
+					"type": "FIELD",
+					"content": "varquantity",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
+				}, {
+					"type": "FIELD",
+					"content": "variables",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
+				}, {
+					"type": "FIELD",
+					"content": "varfileid",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
+				}, {
+					"type": "FIELD",
+					"content": "varfileno",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
+				}, {
+					"type": "FIELD",
+					"content": "varfiletype",
+					"checks": [{
+						"condition": {
+							"type": "NOT_EMPTY"
+						}
+					}]
+				}, {
+					"type": "FIELD",
+					"content": "variables",
+					"checks": [{
+						"condition": {
+							"type": "TRUE"
+						}
+					}],
+					"targets": [{
+						"type": "CHILDREN",
+						"targets": [{
+							"type": "FIELD",
+							"content": "variables",
+							"checks": [{
+								"condition": {
+									"type": "NOT_EMPTY"
+								}
+							}]
+						}, {
+							"type": "FIELD",
+							"content": "varid",
+							"checks": [{
+								"condition": {
+									"type": "NOT_EMPTY"
+								}
+							}]
+						}, {
+							"type": "FIELD",
+							"content": "varlabel",
+							"checks": [{
+								"condition": {
+									"type": "NOT_EMPTY"
+								}
+							}]
+						}, {
+							"type": "FIELD",
+							"content": "varname",
+							"checks": [{
+								"condition": {
+									"type": "NOT_EMPTY"
+								}
+							}]
+						}]
+					}]
+				}]
+			}]
 		}]
 	}],
 	"cascade": [{
-		"type": "APPROVE",
-		"targets": [{
-			"type": "FIELD",
-			"content": "variables"
-		}, {
-			"type": "FIELD",
-			"content": "files"
-		}]
-	}, {
-		"type": "DELETE",
+		"type": "ALL",
 		"targets": [{
 			"type": "FIELD",
 			"content": "variables"

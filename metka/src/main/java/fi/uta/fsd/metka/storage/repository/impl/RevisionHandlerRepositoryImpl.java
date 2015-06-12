@@ -38,6 +38,7 @@ public class RevisionHandlerRepositoryImpl implements RevisionHandlerRepository 
         RevisionData data = pair.getRight();
         boolean update = false;
         if(clear) {
+
             if(data.getHandler() != null) {
                 data.setHandler(null);
                 update = true;

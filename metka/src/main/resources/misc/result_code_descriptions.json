@@ -9,6 +9,19 @@
 			"key": "approve",
 			"title": "NOTICE",
 			"text": "Revisio hyväksytty onnistuneesti"
+		}, {
+			"key": "save",
+			"title": "NOTICE",
+			"text": "Tallennus suoritettu onnistuneesti"
+		}]
+	}, {
+		"key": "OPERATION_SUCCESSFUL_WITH_ERRORS",
+		"title": "ERROR",
+		"text": "Operaation suorituksen aikana tapahtui virheitä jotka eivät estäneet operaation suoritusta",
+		"operations": [{
+			"key": "save",
+			"title": "ERROR",
+			"text": "Tallennus suoritettu mutta tallennettavasta datasta löydettiin virheitä tai dataan tehtiin automaattisia muutoksia"
 		}]
 	}, {
 		"key": "OPERATION_FAIL",
@@ -19,10 +32,6 @@
 			"title": "ERROR",
 			"text": "Revision hyväksyminen epäonnistui"
 		}]
-	}, {
-		"key": "APPROVE_FAILED_DURING_VALIDATION",
-		"title": "ERROR",
-		"text": "Rajoitteet estivät revision hyväksymisen"
 	}, {
 		"key": "RESTRICTION_VALIDATION_FAILURE",
 		"title": "ERROR",
@@ -37,17 +46,18 @@
 			"text": "Rajoitteet estivät revision hyväksymisen"
 		}]
 	}, {
-		"key": "NO_CHANGES_TO_SAVE",
+		"key": "NO_CHANGES",
 		"title": "NOTICE",
-		"text": "Lomakkeella ei ollut tallennettavia muutoksia"
-	}, {
-		"key": "SAVE_SUCCESSFUL",
-		"title": "NOTICE",
-		"text": "Tallennus suoritettu onnistuneesti"
-	}, {
-		"key": "SAVE_SUCCESSFUL_WITH_ERRORS",
-		"title": "ERROR",
-		"text": "Tallennus suoritettu mutta tallennettavasta datasta löydettiin virheitä tai dataan tehtiin automaattisia muutoksia"
+		"text": "Ei muutoksia",
+		"operations": [{
+			"key": "approve",
+			"title": "NOTICE",
+			"text": "Lomakkeella ei ollut muutoksia hyväksyttäväksi, luonnos poistettiin"
+		}, {
+			"key": "save",
+			"title": "NOTICE",
+			"text": "Lomakkeella ei ollut tallennettavia muutoksia"
+		}]
 	}, {
 		"key": "OPEN_DRAFT",
 		"title": "NOTICE",

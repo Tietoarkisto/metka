@@ -30,11 +30,8 @@ public enum ReturnResult {
     MISC_JSON_FOUND,                    // Requested miscellaneous json file was found
     REVISION_UPDATE_SUCCESSFUL,         // RevisionData was serialized and merged successfully
     REVISION_NOT_A_DRAFT,               // Revision was not in a draft state when draft was expected or parent was not a draft when child requested edit
-    NO_CHANGES_TO_SAVE,                 // Save was requested but there were no changes to save
-    SAVE_SUCCESSFUL_WITH_ERRORS,        // Save was successful (changed data was updated to database) but there were field errors
-    SAVE_SUCCESSFUL,                    // Save was successful (changed data was updated to database) and there were no field errors
+    OPERATION_SUCCESSFUL_WITH_ERRORS,   // Operation was successful (changed data was updated to database) but there were field errors
     TYPE_NOT_VALID_CONFIGURATION_TYPE,  // Given type was not one of defined Configuration types
-    //APPROVE_FAILED,                     // Approval of the requested revision failed, errors should be marked to their respective fields
     SEARCH_FAILED,                      // Performed search failed
     VIEW_SUCCESSFUL,                    // Some data was requested for viewing, data was gathered successfully
     INCORRECT_TYPE_FOR_OPERATION,       // Operation was requested for a configuration type that is not handled by that operation
@@ -54,7 +51,7 @@ public enum ReturnResult {
     EMPTY_QUERY,                        // Provided query was empty and so it could not be parsed
     MALFORMED_LANGUAGE,                 // Provided query language parameter is malformed
     MALFORMED_QUERY,                    // Search query (usually expert search) was in some way invalid and could not be parsed to actual query
-    PAGE_CREATED,                       // Binder page was created in response to save operation
+    PAGE_CREATED,                       // Binder page was created
     PAGE_UPDATED,                       // Binder page was updated
     PAGE_REMOVED,                       // Binder page was removed successfully
     RESTRICTION_VALIDATION_FAILURE,     // Restriction validation encountered a failed validation
@@ -63,5 +60,6 @@ public enum ReturnResult {
     EMPTY_PATH,                         // Required path was empty
     MALFORMED_PATH,                     // Required path was malformed e.g. incomplete or didn't point to valid end
     EMPTY_SUBQUERY,                     // If subquery returns an empty list then the whole query is aborted. The Main query won't compile if subquery is empty
+    NO_CHANGES,
     FILE_ALREADY_EXISTS                // Special failure condition when file move is tried to a location that already contains a file
 }

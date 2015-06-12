@@ -873,7 +873,13 @@ define(function (require) {
                                                                                                 "enum": [
                                                                                                     "SAVE",
                                                                                                     "APPROVE",
-                                                                                                    "DELETE"
+                                                                                                    "REMOVE",
+                                                                                                    "REMOVE_DRAFT",
+                                                                                                    "REMOVE_LOGICAL",
+                                                                                                    "RESTORE",
+                                                                                                    "CLAIM",
+                                                                                                    "RELEASE",
+                                                                                                    "ALL"
                                                                                                 ]
                                                                                             },
                                                                                             "targets": {

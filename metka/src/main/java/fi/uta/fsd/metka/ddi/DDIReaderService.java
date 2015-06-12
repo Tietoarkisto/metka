@@ -72,7 +72,7 @@ public class DDIReaderService {
         }
 
         if(revision.getState() != RevisionState.DRAFT) {
-            Pair<ReturnResult, RevisionData> pair = edit.edit(TransferData.buildFromRevisionData(revision, RevisionableInfo.FALSE));
+            Pair<ReturnResult, RevisionData> pair = edit.edit(TransferData.buildFromRevisionData(revision, RevisionableInfo.FALSE), null);
             if(pair.getLeft() == ReturnResult.REVISION_FOUND) {
                 if(!AuthenticationUtil.isHandler(pair.getRight())) {
                     return ReturnResult.USER_NOT_HANDLER;

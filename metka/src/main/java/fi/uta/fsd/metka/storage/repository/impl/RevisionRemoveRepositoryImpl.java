@@ -11,9 +11,12 @@ import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.model.data.container.ReferenceContainerDataField;
 import fi.uta.fsd.metka.model.data.container.ReferenceRow;
 import fi.uta.fsd.metka.model.data.container.ValueDataField;
+import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.model.transfer.TransferField;
 import fi.uta.fsd.metka.names.Fields;
+import fi.uta.fsd.metka.storage.cascade.CascadeInstruction;
+import fi.uta.fsd.metka.storage.cascade.Cascader;
 import fi.uta.fsd.metka.storage.entity.RevisionEntity;
 import fi.uta.fsd.metka.storage.entity.RevisionableEntity;
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
@@ -22,6 +25,7 @@ import fi.uta.fsd.metka.storage.repository.enums.RemoveResult;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.restrictions.RestrictionValidator;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,24 +61,33 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
     private RestrictionValidator validator;
 
     @Autowired
+    private Cascader cascader;
+
+    @Autowired
     private StudyErrorsRepository errors;
 
     @Autowired
     private BinderRepository binders;
 
     @Override
-    public RemoveResult remove(TransferData transferData) {
+    public RemoveResult remove(TransferData transferData, DateTimeUserPair info) {
+        if(info == null) {
+            info = DateTimeUserPair.build();
+        }
         if(transferData.getState().getUiState() == UIRevisionState.DRAFT) {
-            return removeDraft(transferData);
+            return removeDraft(transferData, info);
         } else if(transferData.getState().getUiState() == UIRevisionState.APPROVED) {
-            return removeLogical(transferData);
+            return removeLogical(transferData, info);
         } else {
             return RemoveResult.ALREADY_REMOVED;
         }
     }
 
     @Override
-    public RemoveResult removeDraft(TransferData transferData) {
+    public RemoveResult removeDraft(TransferData transferData, DateTimeUserPair info) {
+        if(info == null) {
+            info = DateTimeUserPair.build();
+        }
         Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(RevisionKey.fromModelKey(transferData.getKey()));
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             return RemoveResult.NOT_FOUND;
@@ -87,24 +100,26 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
 
         RevisionData data = pair.getRight();
 
+        if(data.getState() != RevisionState.DRAFT) {
+            return RemoveResult.NOT_DRAFT;
+        }
+
         if(!AuthenticationUtil.isHandler(data)) {
             Logger.error(getClass(), "User " + AuthenticationUtil.getUserName() + " tried to remove draft belonging to " + data.getHandler());
             return RemoveResult.WRONG_USER;
         }
+
+        result = validateAndCascade(data, info, true);
+        if(result != RemoveResult.ALLOW_REMOVAL) {
+            return result;
+        }
+
         RevisionEntity revision = em.find(RevisionEntity.class, RevisionKey.fromModelKey(data.getKey()));
         if(revision == null) {
             Logger.error(getClass(), "Draft revision with key "+data.getKey()+" was slated for removal but was not found from database.");
         } else {
             em.remove(revision);
         }
-
-        // TODO: Cascade removal
-
-        /*if(data.getConfiguration().getType() == ConfigurationType.STUDY) {
-            propagateStudyDraftRemoval(data);
-        } else if(data.getConfiguration().getType() == ConfigurationType.STUDY_VARIABLES) {
-            propagateStudyVariablesDraftRemoval(data);
-        }*/
 
         List<RevisionEntity> entities = em.createQuery("SELECT r FROM RevisionEntity r WHERE r.key.revisionableId=:id", RevisionEntity.class)
                 .setParameter("id", data.getKey().getId())
@@ -124,7 +139,10 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
     }
 
     @Override
-    public RemoveResult removeLogical(TransferData transferData) {
+    public RemoveResult removeLogical(TransferData transferData, DateTimeUserPair info) {
+        if(info == null) {
+            info = DateTimeUserPair.build();
+        }
         Pair<ReturnResult, RevisionData> pair = revisions.getRevisionData(RevisionKey.fromModelKey(transferData.getKey()));
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             return RemoveResult.NOT_FOUND;
@@ -137,6 +155,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
 
         pair = revisions.getLatestRevisionForIdAndType(transferData.getKey().getId(), false, transferData.getConfiguration().getType());
 
+        // NOTICE: These could be moved to restrictions quite easily
         if(pair.getLeft() != ReturnResult.REVISION_FOUND) {
             // This should never happen since we found the revision data provided for this method
             return RemoveResult.NOT_FOUND;
@@ -147,27 +166,15 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
 
         RevisionData data = pair.getRight();
 
-        Pair<ReturnResult, Configuration> confPair = configurations.findConfiguration(data.getConfiguration());
-        if(confPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
-            Logger.error(getClass(), "Could not find configuration for data "+data.toString());
-            return RemoveResult.CONFIGURATION_NOT_FOUND;
-        }
-
-        for(Operation operation : confPair.getRight().getRestrictions()) {
-            if(operation.getType() != OperationType.DELETE) {
-                continue;
-            }
-            if(!validator.validate(data, operation.getTargets(), confPair.getRight())) {
-                return RemoveResult.RESTRICTION_VALIDATION_FAILURE;
-            }
+        result = validateAndCascade(data, info, false);
+        if(result != RemoveResult.ALLOW_REMOVAL) {
+            return result;
         }
 
         RevisionableEntity entity = em.find(RevisionableEntity.class, data.getKey().getId());
         entity.setRemoved(true);
-        entity.setRemovalDate(new LocalDateTime());
-        entity.setRemovedBy(AuthenticationUtil.getUserName());
-
-        // TODO: Cascade removal
+        entity.setRemovalDate(info.getTime());
+        entity.setRemovedBy(info.getUser());
 
         /*if(data.getConfiguration().getType() == ConfigurationType.STUDY) {
             propagateStudyLogicalRemoval(data);
@@ -202,6 +209,50 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         // It might be handy to do some processing of data configurations when they are saved and to form a reference web from them.
         // This would allow for automatic clean operations at certain key points like this. Basically collecting the foreign keys
         // and enabling cascade effects.
+    }
+
+    private RemoveResult validateAndCascade(RevisionData data, DateTimeUserPair info, Boolean draft) {
+        Pair<ReturnResult, Configuration> confPair = configurations.findConfiguration(data.getConfiguration());
+        if(confPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
+            Logger.error(getClass(), "Could not find configuration for data "+data.toString());
+            return RemoveResult.CONFIGURATION_NOT_FOUND;
+        }
+
+        // Do validation
+        ReturnResult rr = ReturnResult.OPERATION_SUCCESSFUL;
+        for(Operation operation : confPair.getRight().getRestrictions()) {
+            if(!(operation.getType() == OperationType.REMOVE
+                    || operation.getType() == (draft?OperationType.REMOVE_DRAFT:OperationType.REMOVE_LOGICAL)
+                    || operation.getType() == OperationType.ALL)) {
+                continue;
+            }
+            if(!validator.validate(data, operation.getTargets(), confPair.getRight())) {
+                rr = ReturnResult.RESTRICTION_VALIDATION_FAILURE;
+                break;
+            }
+        }
+        // If validation fails then halt the whole process
+        if(rr != ReturnResult.OPERATION_SUCCESSFUL) {
+            return RemoveResult.RESTRICTION_VALIDATION_FAILURE;
+        }
+
+        // Do cascade
+        for(Operation operation : confPair.getRight().getCascade()) {
+            if(!(operation.getType() == OperationType.REMOVE
+                    || operation.getType() == (draft?OperationType.REMOVE_DRAFT:OperationType.REMOVE_LOGICAL)
+                    || operation.getType() == OperationType.ALL)) {
+                continue;
+            }
+            if(!cascader.cascade(CascadeInstruction.build(OperationType.REMOVE, info, draft), data, operation.getTargets(), confPair.getRight())) {
+                rr = ReturnResult.CASCADE_FAILURE;
+            }
+        }
+        // If cascade fails then don't approve this revision
+        if(rr != ReturnResult.OPERATION_SUCCESSFUL) {
+            return RemoveResult.CASCADE_FAILURE;
+        }
+
+        return RemoveResult.ALLOW_REMOVAL;
     }
 
     private RemoveResult allowRemoval(TransferData transferData) {
