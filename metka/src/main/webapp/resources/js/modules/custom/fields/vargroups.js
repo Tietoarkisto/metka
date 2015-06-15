@@ -30,7 +30,7 @@ define(function (require) {
                             "VIEW": "Muuttujaryhmän teksti"
                         }
                     },
-                    "extraDialogConfiguration" : {
+                    "subfieldConfiguration" : {
                         "vargrouptext": {
                             "field": {
                                 "multiline": true

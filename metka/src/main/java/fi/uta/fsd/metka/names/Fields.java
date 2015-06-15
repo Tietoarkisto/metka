@@ -188,13 +188,15 @@ public final class Fields {
     public static final String STUDY = "study";
     public static final String FILES = "files";
     public static final String PUBLICATIONTITLE = "publicationtitle";
-    public static final String VARIABLEFILE = "variablefile";
     public static final String VARFILENO = "varfileno";
     public static final String FILEID = "fileid";
     public static final String LANGUAGE = "language";
     public static final String VARIABLESID = "variablesid";
     public static final String SUBMISSIONID = "submissionid";
     public static final String DATAARRIVALDATE = "dataarrivaldate";
+    public static final String STUDYVARIABLES = "studyvariables";
+    public static final String VARIABLESLANGUAGE = "variableslanguage";
+    public static final String VARIABLESFILE = "variablesfile";
 
 
     private Fields() {}

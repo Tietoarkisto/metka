@@ -60,12 +60,10 @@ define(function (require) {
                                 true
                                 , {
                                     type: 'CELL',
-                                    translatable: options.fieldOptions.translatable ? false : dataConfig.translatable,
-                                    //title: MetkaJS.L10N.get(fieldTitle(field)),
-                                    //title: getTitle(field),
+                                    translatable: options.fieldOptions.translatable ? false : dataConfig.translatable
 
                                 }
-                                , options.extraDialogConfiguration && options.extraDialogConfiguration[fieldKey]
+                                , options.subfieldConfiguration && options.subfieldConfiguration[fieldKey]
                                 , {
                                     field: {
                                         key: fieldKey

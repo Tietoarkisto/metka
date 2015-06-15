@@ -187,6 +187,11 @@
 			"type": "REVISIONABLE",
 			"target": "STUDY"
 		},
+		"variables_ref": {
+			"key": "variables_ref",
+			"type": "REVISIONABLE",
+			"target": "STUDY_VARIABLES"
+		},
 		"studyid_ref": {
 			"key": "studyid_ref",
 			"type": "DEPENDENCY",
@@ -211,6 +216,15 @@
 			"key": "study",
 			"type": "REFERENCE",
 			"reference": "target_study_ref",
+			"immutable": false,
+			"translatable": false,
+			"editable": false
+		},
+		"variables": {
+			"_comment": "This is filled automatically for study attachment when variables are created based on the file",
+			"key": "variables",
+			"type": "REFERENCE",
+			"reference": "variables_ref",
 			"immutable": false,
 			"translatable": false,
 			"editable": false
@@ -305,5 +319,12 @@
 			"subfield": true
 		}
 	},
-	"restrictions": []
+	"restrictions": [],
+	"cascade": [{
+		"type": "REMOVE_LOGICAL",
+		"targets": [{
+			"type": "FIELD",
+			"content": "variables"
+		}]
+	}]
 }

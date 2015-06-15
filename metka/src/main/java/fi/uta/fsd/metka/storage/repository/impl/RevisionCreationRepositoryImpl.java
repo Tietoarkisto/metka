@@ -27,7 +27,6 @@ import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
 import fi.uta.fsd.metka.storage.repository.enums.SerializationResults;
 import fi.uta.fsd.metka.storage.util.JSONUtil;
 import fi.uta.fsd.metka.transfer.revision.RevisionCreateRequest;
-import fi.uta.fsd.metkaSearch.entity.IndexerCommandRepository;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDate;
@@ -345,7 +344,7 @@ public class RevisionCreationRepositoryImpl implements RevisionCreationRepositor
         Pair<StatusCode, ReferenceRow> referencePair = files.getOrCreateReferenceWithValue(revisionable.getId().toString(), studyRevision.getChanges(), DateTimeUserPair.build());
 
         // If new row was inserted then we now have a change in study revision, update revision to database
-        if(referencePair.getLeft() == StatusCode.NEW_ROW) {
+        if(referencePair.getLeft() == StatusCode.ROW_INSERT) {
             ReturnResult updateResult = revisions.updateRevisionData(studyRevision);
             if(updateResult != ReturnResult.REVISION_UPDATE_SUCCESSFUL) {
                 Logger.error(getClass(), "Could not update "+studyRevision.toString()+", received result "+updateResult);

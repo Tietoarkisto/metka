@@ -20,7 +20,6 @@ import fi.uta.fsd.metka.transfer.reference.ReferencePathRequest;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.util.StringUtils;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -104,7 +103,7 @@ class DDIReadStudyDescription extends DDIReadSectionBase {
             Pair<ContainerDataField, Map<String, Change>> container = containerResult.getRight();
             for(AbstractTextType tt : titlStmt.getAltTitlArray()) {
                 Pair<StatusCode, DataRow> row = container.getLeft().insertNewDataRow(language, container.getRight());
-                if(row.getLeft() != StatusCode.NEW_ROW) {
+                if(row.getLeft() != StatusCode.ROW_INSERT) {
                     continue;
                 }
                 valueSet(row.getRight(), Fields.ALTTITLE, getText(tt));
@@ -122,7 +121,7 @@ class DDIReadStudyDescription extends DDIReadSectionBase {
             Pair<ContainerDataField, Map<String, Change>> container = containerResult.getRight();
             for(SimpleTextType stt : titlStmt.getParTitlArray()) {
                 Pair<StatusCode, DataRow> row = container.getLeft().insertNewDataRow(language, container.getRight());
-                if(row.getLeft() != StatusCode.NEW_ROW) {
+                if(row.getLeft() != StatusCode.ROW_INSERT) {
                     continue;
                 }
                 valueSet(row.getRight(), Fields.PARTITLE, getText(stt));
@@ -160,7 +159,7 @@ class DDIReadStudyDescription extends DDIReadSectionBase {
             }
 
             Pair<StatusCode, DataRow> row = container.insertNewDataRow(Language.DEFAULT, change);
-            if(row.getLeft() != StatusCode.NEW_ROW) {
+            if(row.getLeft() != StatusCode.ROW_INSERT) {
                 continue;
             }
 
@@ -228,7 +227,7 @@ class DDIReadStudyDescription extends DDIReadSectionBase {
             }
 
             Pair<StatusCode, DataRow> row = container.insertNewDataRow(Language.DEFAULT, change);
-            if(row.getLeft() != StatusCode.NEW_ROW) {
+            if(row.getLeft() != StatusCode.ROW_INSERT) {
                 continue;
             }
 
@@ -300,7 +299,7 @@ class DDIReadStudyDescription extends DDIReadSectionBase {
             }
 
             Pair<StatusCode, DataRow> row = container.insertNewDataRow(Language.DEFAULT, change);
-            if(row.getLeft() != StatusCode.NEW_ROW) {
+            if(row.getLeft() != StatusCode.ROW_INSERT) {
                 continue;
             }
 
@@ -398,7 +397,7 @@ class DDIReadStudyDescription extends DDIReadSectionBase {
                 continue;
             }
             Pair<StatusCode, DataRow> row = container.insertNewDataRow(Language.DEFAULT, change);
-            if(row.getLeft() != StatusCode.NEW_ROW) {
+            if(row.getLeft() != StatusCode.ROW_INSERT) {
                 continue;
             }
 
@@ -446,7 +445,7 @@ class DDIReadStudyDescription extends DDIReadSectionBase {
                 continue;
             }
             Pair<StatusCode, DataRow> row = container.insertNewDataRow(Language.DEFAULT, change);
-            if(row.getLeft() != StatusCode.NEW_ROW) {
+            if(row.getLeft() != StatusCode.ROW_INSERT) {
                 continue;
             }
 
@@ -522,7 +521,7 @@ class DDIReadStudyDescription extends DDIReadSectionBase {
             Pair<ContainerDataField, Map<String, Change>> container = containerResult.getRight();
             for(AbstractTextType tt : sumDscr.getGeogCoverArray()) {
                 Pair<StatusCode, DataRow> row = container.getLeft().insertNewDataRow(language, container.getRight());
-                if(row.getLeft() != StatusCode.NEW_ROW) {
+                if(row.getLeft() != StatusCode.ROW_INSERT) {
                     continue;
                 }
                 valueSet(row.getRight(), Fields.GEOGCOVER, getText(tt));
@@ -544,7 +543,7 @@ class DDIReadStudyDescription extends DDIReadSectionBase {
             Pair<ContainerDataField, Map<String, Change>> container = containerResult.getRight();
             for(TimePrdType t : sumDscr.getTimePrdArray()) {
                 Pair<StatusCode, DataRow> row = container.getLeft().insertNewDataRow(language, container.getRight());
-                if(row.getLeft() != StatusCode.NEW_ROW) {
+                if(row.getLeft() != StatusCode.ROW_INSERT) {
                     continue;
                 }
                 valueSet(row.getRight(), Fields.TIMEPERIODTEXT, getText(t));
@@ -567,7 +566,7 @@ class DDIReadStudyDescription extends DDIReadSectionBase {
         Map<String, Change> change = containerPair.getRight().getRight();
         for(CollDateType coll : sumDscr.getCollDateArray()) {
             Pair<StatusCode, DataRow> row = container.insertNewDataRow(language, change);
-            if (row.getLeft() != StatusCode.NEW_ROW) {
+            if (row.getLeft() != StatusCode.ROW_INSERT) {
                 continue;
             }
 
@@ -600,7 +599,7 @@ class DDIReadStudyDescription extends DDIReadSectionBase {
                 continue;
             }
             Pair<StatusCode, DataRow> row = container.insertNewDataRow(language, change);
-            if(row.getLeft() != StatusCode.NEW_ROW) {
+            if(row.getLeft() != StatusCode.ROW_INSERT) {
                 continue;
             }
 
@@ -627,7 +626,7 @@ class DDIReadStudyDescription extends DDIReadSectionBase {
                 continue;
             }
             Pair<StatusCode, DataRow> row = container.insertNewDataRow(language, change);
-            if(row.getLeft() != StatusCode.NEW_ROW) {
+            if(row.getLeft() != StatusCode.ROW_INSERT) {
                 continue;
             }
 
@@ -714,7 +713,7 @@ class DDIReadStudyDescription extends DDIReadSectionBase {
             }
 
             Pair<StatusCode, DataRow> row = container.insertNewDataRow(Language.DEFAULT, change);
-            if(row.getLeft() != StatusCode.NEW_ROW) {
+            if(row.getLeft() != StatusCode.ROW_INSERT) {
                 continue;
             }
 
@@ -842,7 +841,7 @@ class DDIReadStudyDescription extends DDIReadSectionBase {
             }
 
             Pair<StatusCode, DataRow> row = container.insertNewDataRow(Language.DEFAULT, change);
-            if(row.getLeft() != StatusCode.NEW_ROW) {
+            if(row.getLeft() != StatusCode.ROW_INSERT) {
                 continue;
             }
 
@@ -928,7 +927,7 @@ class DDIReadStudyDescription extends DDIReadSectionBase {
         Pair<ContainerDataField, Map<String, Change>> container = containerResult.getRight();
         for(SimpleTextType stt : sources.getDataSrcArray()) {
             Pair<StatusCode, DataRow> row = container.getLeft().insertNewDataRow(language, container.getRight());
-            if(row.getLeft() != StatusCode.NEW_ROW) {
+            if(row.getLeft() != StatusCode.ROW_INSERT) {
                 continue;
             }
             valueSet(row.getRight(), Fields.DATASOURCE, getText(stt));
@@ -971,7 +970,7 @@ class DDIReadStudyDescription extends DDIReadSectionBase {
             Pair<ContainerDataField, Map<String, Change>> container = containerResult.getRight();
             for(DataApprType appr : anlyInfo.getDataApprArray()) {
                 Pair<StatusCode, DataRow> row = container.getLeft().insertNewDataRow(language, container.getRight());
-                if(row.getLeft() != StatusCode.NEW_ROW) {
+                if(row.getLeft() != StatusCode.ROW_INSERT) {
                     continue;
                 }
                 valueSet(row.getRight(), Fields.APPRAISAL, getText(appr));
@@ -1028,7 +1027,7 @@ class DDIReadStudyDescription extends DDIReadSectionBase {
             Pair<ContainerDataField, Map<String, Change>> container = containerResult.getRight();
             for(RelMatType relMat : othr.getRelMatArray()) {
                 Pair<StatusCode, DataRow> row = container.getLeft().insertNewDataRow(language, container.getRight());
-                if(row.getLeft() != StatusCode.NEW_ROW) {
+                if(row.getLeft() != StatusCode.ROW_INSERT) {
                     continue;
                 }
                 valueSet(row.getRight(), Fields.RELATEDMATERIAL, getText(relMat));
@@ -1043,7 +1042,7 @@ class DDIReadStudyDescription extends DDIReadSectionBase {
             Pair<ContainerDataField, Map<String, Change>> container = containerResult.getRight();
             for(OthRefsType othRef : othr.getOthRefsArray()) {
                 Pair<StatusCode, DataRow> row = container.getLeft().insertNewDataRow(language, container.getRight());
-                if(row.getLeft() != StatusCode.NEW_ROW) {
+                if(row.getLeft() != StatusCode.ROW_INSERT) {
                     continue;
                 }
                 valueSet(row.getRight(), Fields.PUBLICATIONCOMMENT, getText(othRef));

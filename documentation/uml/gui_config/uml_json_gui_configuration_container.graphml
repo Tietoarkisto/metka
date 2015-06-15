@@ -41,7 +41,7 @@
 +cells : Container [0..*] {ordered}
 +required : Boolean
 +colspan : Integer
-+extraDialogConfiguration : Container
++subfieldConfiguration : Container
 ................................... [0..*]{ordered}
 +hideButtons : Boolean = false
 +permissions : Permission [0..*]
@@ -205,8 +205,8 @@ rows : Is present only on COLUMN container. Contains all rows within
 cells : Is present only on ROW container. Contains all cells within given
     ROW container, never contains anything else than CELL containers.
 
-extraDialogConfiguration : Map of Containers that contain overrides for
-    container dialog content. All containers in this map are forced to
+subfieldConfiguration : Map of Containers that contain overrides for
+    subfield content. All containers in this map are forced to
     type CELL before parsing so all non CELL specific data is lost.
     Extra configurations are found based on field name when dialog
     is constructed and so should be used for container subfields only.

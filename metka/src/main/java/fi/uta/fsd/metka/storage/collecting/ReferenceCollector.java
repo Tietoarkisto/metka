@@ -103,7 +103,7 @@ public class ReferenceCollector {
         }
 
         Pair<StatusCode, ReferenceRow> rowPair = fieldPair.getRight().getReferenceWithValue(request.getReference());
-        if(rowPair.getLeft() != StatusCode.FOUND_ROW) {
+        if(rowPair.getLeft() != StatusCode.ROW_FOUND) {
             return new ImmutablePair<>(ReturnResult.REFERENCE_MISSING, null);
         }
 

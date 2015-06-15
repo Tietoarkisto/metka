@@ -506,9 +506,21 @@
             "key": "subsection",
             "title": "Osio"
         },
-        "language": {
-            "key": "language",
+        "studyvariables": {
+            "key": "studybariables",
+            "title": "Aineistomuuttujat"
+        },
+        "variables": {
+            "key": "variables",
+            "title": "Muuttujat"
+        },
+        "variableslanguage": {
+            "key": "variableslanguage",
             "title": "Kieli"
+        },
+        "variablesfile": {
+            "key": "variablesfile",
+            "title": "Muuttujatiedosto"
         },
         "summary": {
             "key": "summary",
@@ -535,1117 +547,637 @@
 			}
     	}
     },
-	"content": [
-		{
-			"type": "TAB",
-			"title": "Perustiedot",
-			"content": [
-				{
-					"type": "COLUMN",
-					"columns": 1,
-					"rows": [
-						{
-							"type": "ROW",
-							"cells": [
-								{
-									"type": "CELL",
-									"title": "Aineiston nimi",
-                                    "required": true,
-									"field": {
-										"key": "title"
-									}
-								}
-							]
-						}
-					]
-				},
-                {
-                    "type": "COLUMN",
-                    "columns": 3,
-                    "rows": [
-                        {
-                            "type": "ROW",
-                            "cells": [
-                                {
-                                    "type": "CELL",
-                                    "title": "Aineistonumero",
-                                    "readOnly": true,
-                                    "required": true,
-                                    "field": {
-                                        "key": "studyid"
-                                    }
-                                },
-                                {
-                                    "type": "CELL",
-                                    "title": "Aineiston laatu",
-                                    "required": true,
-                                    "field": {
-                                    	"displayType": "CUSTOM_JS",
-                                        "key": "datakind"
-                                    }
-                                },
-                                {
-                                    "type": "CELL",
-                                    "title": "Julkaisu",
-                                    "required": true,
-                                    "field": {
-                                        "key": "public"
-                                    }
-                                }
-                            ]
-                        },
-                        {
-                            "type": "ROW",
-                            "cells": [
-                                {
-                                    "type": "CELL",
-                                    "title": "Hankinta-aineistonumero",
-                                    "readOnly": true,
-                                    "required": true,
-                                    "field": {
-                                        "key": "submissionid"
-                                    }
-                                },
-                                {
-                                    "type": "CELL",
-                                    "title": "Anonymisointi",
-                                    "required": true,
-                                    "field": {
-                                        "key": "anonymization"
-                                    }
-                                },
-                                {
-                                    "type": "CELL",
-                                    "title": "Aineiston kuvailun julkaisu",
-                                    "required": true,
-                                    "field": {
-                                        "key": "descpublic"
-                                    }
-                                }
-                            ]
-                        },
-                        {
-                            "type": "ROW",
-                            "cells": [
-                                {
-                                    "type": "CELL",
-                                    "title": "Datan saantipvm",
-                                    "required": true,
-                                    "field": {
-                                        "key": "dataarrivaldate"
-                                    }
-                                },
-                                {
-                                    "type": "CELL",
-                                    "title": "Tietosuoja",
-                                    "required": true,
-                                    "field": {
-                                        "key": "securityissues"
-                                    }
-                                },
-                                {
-                                    "type": "CELL",
-                                    "title": "Muuttujakuvailun julkaisu",
-                                    "required": true,
-                                    "field": {
-                                        "key": "varpublic"
-                                    }
-                                }
-                            ]
-                        },
-                        {
-                            "type": "ROW",
-                            "cells": [
-                                {
-                                    "type": "CELL",
-                                    "title": "Valmis pvm",
-                                    "field": {
-                                        "key": "aipcomplete"
-                                    }
-                                },
-                                {
-                                    "type": "EMPTYCELL"
-                                },
-                                {
-                                    "type": "CELL",
-                                    "title": "Aineiston luovutus",
-                                    "required": true,
-                                    "field": {
-                                        "key": "dissemination"
-                                    }
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "type": "COLUMN",
-                    "columns": 2,
-                    "rows": [
-                        {
-                            "type": "ROW",
-                            "cells": [
-                                {
-                                    "type": "CELL",
-                                    "title": "Sarja",
-                                    "required": true,
-                                    "field": {
-                                        "key": "series"
-                                    }
-                                },
-                                {
-                                	"type": "EMPTYCELL"
-                                }
-                            ]
-                        },
-                        {
-                            "type": "ROW",
-                            "cells": [
-                                {
-                                    "type": "CELL",
-                                    "title": "Alkuperäinen sijainti",
-                                    "field": {
-                                        "key": "originallocation",
-                                        "multiline": true
-                                    }
-                                },
-                                {
-                                    "type": "CELL",
-                                    "title": "Huomautuksia prosessiin",
-                                    "field": {
-                                        "key": "processingnotes",
-                                        "multiline": true
-                                    }
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "type": "COLUMN",
-                    "columns": 1,
-                    "rows": [
-                        {
-                            "type": "ROW",
-                            "cells": [
-                                {
-                                    "type": "CELL",
-                                    "title": "Huomautukset",
-                                    "field": {
-                                        "key": "notes",
-                                        "showSaveInfo": true,
-                                        "columnFields": [
-                                            "note"
-                                        ],
-                                        "dialogTitle": {
-                                        	"key": "notes",
-                                    		"MODIFY": {
-                                    			"default": "Muokkaa huomautusta"
-                                    		},
-                                    		"VIEW": "Huomautus"
-                                        }
-                                    },
-                                    "extraDialogConfiguration": {
-                                    	"note": {
-                                            "required": true,
-                                    		"field": {
-                                    			"key": "note",
-                                    			"multiline": true
-                                    		}
-                                    	}
-                                    }
-                                }
-                            ]
-                        },
-                        {
-                            "type": "ROW",
-                            "cells": [
-                                {
-                                    "type": "CELL",
-                                    "title": "Datan versiot",
-                                    "required": true,
-                                    "field": {
-                                        "key": "dataversions",
-                                        "displayType": "CUSTOM_JS",
-                                        "columnFields": [
-                                            "dataversion",
-                                            "versiondate",
-                                            "versionpro",
-                                            "versionlabeldata",
-                                            "versiontext"
-                                        ],
-                                        "dialogTitle": {
-                                            "key": "dataversions",
-                                            "ADD": "Lisää datan versiotieto",
-                                            "MODIFY": "Muokkaa datan versiotietoa",
-                                            "VIEW": "Datan versiotieto"
-                                        }
-                                    },
-                                    "extraDialogConfiguration": {
-                                        "dataversion": {
-                                            "required": true
-                                        },
-                                        "versionpro": {
-                                            "required": true
-                                        },
-                                        "versionlabeldata": {
-                                            "required": true
-                                        },
-                                        "versiondate": {
-                                            "required": true
-                                        },
-                                        "versiontext": {
-                                            "required": true
-                                        }
-                                    }
-                                }
-                            ]
-                        },
-                        {
-                            "type": "ROW",
-                            "cells": [
-                                {
-                                    "type": "CELL",
-                                    "title": "Kuvailun versiot",
-                                    "field": {
-                                        "key": "descversions",
-                                        "displayType": "CUSTOM_JS",
-                                        "columnFields": [
-                                            "descversion",
-                                            "versiondate",
-                                            "versionpro",
-                                            "versionlabeldesc",
-                                            "versiontext"
-                                        ],
-                                        "dialogTitle": {
-                                            "key": "descversions",
-                                            "ADD": "Lisää kuvailun versiotieto",
-                                            "MODIFY": "Muokkaa kuvailun versiotietoa",
-                                            "VIEW": "Kuvailun versiotieto"
-                                        }
-                                    },
-                                    "extraDialogConfiguration": {
-                                        "descversion": {
-                                            "required": true
-                                        },
-                                        "versiondate": {
-                                            "required": true
-                                        },
-                                        "versionlabeldesc": {
-                                            "required": true
-                                        },
-                                        "versionpro": {
-                                            "required": true
-                                        },
-                                        "versiontext": {
-                                            "required": true
-                                        }
-                                    }
-                                }
-                            ]
-                        },
-                        {
-                            "type": "ROW",
-                            "cells": [
-                                {
-                                    "type": "CELL",
-                                    "title": "Liittyvät julkaisut",
-                                    "field": {
-                                        "key": "publications",
-                                        "columnFields": [
-                                            "publicationid",
-                                            "publicationtitle"
-                                        ],
-			                            "dialogTitle": {
-			                            	"key": "publications",
-			                            	"ADD": "Lisää julkaisu"
-			                            }
-                                    }
-                                }
-                            ]
-                        },
-                        {
-                            "type": "ROW",
-                            "cells": [
-                                {
-                                    "type": "CELL",
-                                    "title": "Liittyvät aineistot",
-                                    "field": {
-                                        "key": "relatedstudies",
-                                        "columnFields": [
-                                            "relatedstudyid",
-                                            "relatedstudytitle"
-                                        ],
-			                            "dialogTitle": {
-			                            	"key": "relatedstudies",
-			                            	"ADD": "Lisää aineisto"
-			                            }
-                                    }
-                                }
-                            ]
-                        },
-                        {
-                            "type": "ROW",
-                            "cells": [
-                                {
-                                    "type": "CELL",
-                                    "title": "Liittyvät mapit",
-                                    "field": {
-                                        "displayType": "CUSTOM_JS",
-                                        "key": "studyRelatedBinders"
-                                    }
-                                }
-                            ]
-                        }
-                    ]
-                }
-			]
-		},
-        {
-            "type": "TAB",
-            "title": "Arkistointisopimus",
-            "content": [
-                {
-                    "type": "COLUMN",
-                    "columns": 3,
-                    "rows": [
-                        {
-                            "type": "ROW",
-                            "cells": [
-                                {
-                                    "type": "CELL",
-                                    "title": "Ehto 1: käyttöoikeus",
-                                    "required": true,
-                                    "field": {
-                                        "key": "termsofuse"
-                                    }
-                                },
-                                {
-                                    "type": "CELL",
-                                    "title": "Arkistointisopimuksen pvm",
-                                    "field": {
-                                        "key": "agreementdate"
-                                    }
-                                },
-                                {
-                                    "type": "CELL",
-                                    "title": "Jos heräte, ilmoituspvm",
-                                    "field": {
-                                        "key": "triggerdate"
-                                    }
-                                }
-                            ]
-                        },
-                        {
-                            "type": "ROW",
-                            "cells": [
-                                {
-                                    "type": "CELL",
-                                    "title": "Käyttöehdon muutospvm",
-                                    "field": {
-                                        "key": "termsofusechangedate"
-                                    }
-                                },
-                                {
-                                    "type": "CELL",
-                                    "title": "Luovuttajan tyyppi",
-                                    "required": true,
-                                    "field": {
-                                        "key": "depositortype"
-                                    }
-                                },
-                                {
-                                    "type": "CELL",
-                                    "title": "Herätteen saaja",
-                                    "field": {
-                                        "key": "triggerpro"
-                                    }
-                                }
-                            ]
-                        },
-                        {
-                            "type": "ROW",
-                            "cells": [
-                                {
-                                    "type": "CELL",
-                                    "title": "Käyttöehto muutospvm jälkeen",
-                                    "field": {
-                                        "key": "newtermsofuse"
-                                    }
-                                },
-                                {
-                                    "type": "CELL",
-                                    "title": "Arkistointisopimuksen tapa",
-                                    "required": true,
-                                    "field": {
-                                        "key": "agreementtype"
-                                    }
-                                },
-                                {
-                                    "type": "CELL",
-                                    "title": "Herätteen selite",
-                                    "field": {
-                                        "key": "triggerlabel"
-                                    }
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "type": "COLUMN",
-                    "columns": 1,
-                    "rows": [
-                        {
-                            "type": "ROW",
-                            "cells": [
-                                {
-                                    "type": "CELL",
-                                    "title": "Arkistointisopimustiedosto",
-                                    "field": {
-                                        "key": "agreement"
-                                    }
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "type": "COLUMN",
-                    "columns": 2,
-                    "rows": [
-                        {
-                            "type": "ROW",
-                            "cells": [
-                                {
-                                    "type": "CELL",
-                                    "title": "Lisätiedot koskien arkistointisopimusta",
-                                    "field": {
-                                        "key": "agreementnotes",
-                                        "multiline": true
-                                    }
-                                },
-                                {
-                                    "type": "CELL",
-                                    "title": "Menettely, jos luvanantajaa ei tavoiteta tai hän ei itse voi antaa lupaa",
-                                    "field": {
-                                        "key": "permission",
-                                        "multiline": true
-                                    }
-                                }
-                            ]
-                        },
-                        {
-                            "type": "ROW",
-                            "cells": [
-                                {
-                                    "type": "CELL",
-                                    "title": "Erityisehdot",
-                                    "field": {
-                                        "key": "specialtermsofuse",
-                                        "multiline": true
-                                    }
-                                },
-                                {
-                                    "type": "CELL",
-                                    "title": "Muuta kommentoitavaa",
-                                    "field": {
-                                        "key": "agreementfsdnotes",
-                                        "multiline": true
-                                    }
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "type": "TAB",
-            "title": "Kuvailu",
-            "content": [
-                {
-                    "type": "SECTION",
-                    "title": "Muut nimet",
-                    "content": [{
-                        "type": "COLUMN",
-                        "columns": 1,
-                        "rows": [
+	"content": [{
+        "type": "TAB",
+        "title": "Perustiedot",
+        "content": [
+            {
+                "type": "COLUMN",
+                "columns": 1,
+                "rows": [
+                    {
+                        "type": "ROW",
+                        "cells": [
                             {
-                                "type": "ROW",
-                                "cells": [
-                                    {
-                                        "type": "CELL",
-                                        "title": "Rinnakkaiset nimet",
-                                        "field": {
-                                            "key": "alttitles",
-                                            "columnFields": [
-                                                "alttitle"
-                                            ],
-	                                        "dialogTitle": {
-	                                            "key": "alttitles",
-	                                            "ADD": "Lisää rinnakkainen nimi",
-	                                            "MODIFY": "Muokkaa rinnakkaista nimeä",
-	                                            "VIEW": "Rinnakkainen nimi"
-	                                        }
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "ROW",
-                                "cells": [
-                                    {
-                                        "type": "CELL",
-                                        "title": "Aineiston muunkieliset nimet",
-                                        "field": {
-                                            "key": "partitles",
-                                            "columnFields": [
-                                            	"partitle",
-                                            	"partitlelang"
-                                            ],
-	                                        "dialogTitle": {
-	                                            "key": "partitles",
-	                                            "ADD": "Lisää muunkielinen nimi",
-	                                            "MODIFY": "Muokkaa muunkielistä nimeä",
-	                                            "VIEW": "Aineiston muunkielinen nimi"
-	                                        }
-                                        },
-                                        "extraDialogConfiguration": {
-                                            "partitle": {
-                                                "required": true
-                                            },
-                                            "partitlelang": {
-                                                "required": true
-                                            }
-                                        }
-                                    }
-                                ]
+                                "type": "CELL",
+                                "title": "Aineiston nimi",
+                                "required": true,
+                                "field": {
+                                    "key": "title"
+                                }
                             }
                         ]
-                    }]
-                },
-                {
-                    "type": "SECTION",
-                    "title": "Tekijät ja tuottajat",
-                    "content": [
-                        {
-                            "type": "COLUMN",
-                            "columns": 1,
-                            "rows": [
-                                {
-                                    "type": "ROW",
-                                    "cells": [
-                                        {
-                                            "type": "CELL",
-                                            "title": "Aineiston tekijät",
-                                            "required": true,
-                                            "field": {
-                                                "key": "authors",
-                                                "columnFields": [
-                                                	"authortype",
-                                                	"author",
-                                                	"organisation",
-                                                	"agency",
-                                                	"section"
-                                                ],
-		                                        "dialogTitle": {
-		                                            "key": "authors",
-		                                            "ADD": "Lisää aineiston tekijä",
-		                                            "MODIFY": "Muokkaa aineiston tekijää",
-		                                            "VIEW": "Aineiston tekijä"
-		                                        }
-                                            },
-                                            "extraDialogConfiguration": {
-                                                "authortype": {
-                                                    "required": true
-                                                },
-                                            	"author": {
-                                                    "required": true,
-                                            		"field": {
-                                            			"key": "author",
-                                            			"displayType": "CUSTOM_JS"
-                                            		}
-                                            	},
-                                                "organisation": {
-                                                    "field": {
-                                                        "key": "organisation",
-                                                        "displayType": "CUSTOM_JS"
-                                                    }
-                                                },
-                                                "agency": {
-                                                    "field": {
-                                                        "key": "agency",
-                                                        "displayType": "CUSTOM_JS"
-                                                    }
-                                                },
-                                                "section": {
-                                                    "field": {
-                                                        "key": "section",
-                                                        "displayType": "CUSTOM_JS"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    ]
-                                },
-                                {
-                                    "type": "ROW",
-                                    "cells": [
-                                        {
-                                            "type": "CELL",
-                                            "title": "Aineiston muut tekijät",
-                                            "field": {
-                                                "key": "otherauthors",
-                                                "columnFields": [
-                                                	"otherauthortype",
-                                                	"author",
-                                                	"otherauthorgroup",
-                                                	"organisation",
-                                                	"agency",
-                                                	"section"
-                                                ],
-		                                        "dialogTitle": {
-		                                            "key": "otherauthors",
-		                                            "ADD": "Lisää muu tekijä",
-		                                            "MODIFY": "Muokkaa muuta tekijää",
-		                                            "VIEW": "Aineiston muu tekijä"
-		                                        }
-                                            },
-                                            "extraDialogConfiguration": {
-                                                "otherauthortype": {
-                                                    "required": true
-                                                },
-                                            	"author": {
-                                                    "required": true,
-                                            		"field": {
-                                            			"key": "author",
-                                            			"displayType": "CUSTOM_JS"
-                                            		}
-                                            	},
-                                            	"otherauthorgroup": {
-                                                    "required": true,
-                                            		"field": {
-                                            			"key": "otherauthorgroup",
-                                            			"displayType": "CUSTOM_JS"
-                                            		}
-                                            	},
-                                                "organisation": {
-                                                    "field": {
-                                                        "key": "organisation",
-                                                        "displayType": "CUSTOM_JS"
-                                                    }
-                                                },
-                                                "agency": {
-                                                    "field": {
-                                                        "key": "agency",
-                                                        "displayType": "CUSTOM_JS"
-                                                    }
-                                                },
-                                                "section": {
-                                                    "field": {
-                                                        "key": "section",
-                                                        "displayType": "CUSTOM_JS"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    ]
-                                },
-                                {
-                                    "type": "ROW",
-                                    "cells": [
-                                        {
-                                            "type": "CELL",
-                                            "title": "Aineiston tuottaneet tahot",
-                                            "field": {
-                                                "key": "producers",
-                                                "columnFields": [
-                                                	"organisation",
-									        		"agency",
-									        		"section",
-									        		"producerrole",
-									        		"projectnr"
-                                                ],
-		                                        "dialogTitle": {
-		                                            "key": "producers",
-		                                            "ADD": "Lisää tuottaja",
-		                                            "MODIFY": "Muokkaa tuottajaa",
-		                                            "VIEW": "Aineiston tuottaja"
-		                                        }
-                                            },
-                                            "extraDialogConfiguration": {
-                                                "organisation": {
-                                                    "required": true,
-                                                    "field": {
-                                                        "key": "organisation",
-                                                        "displayType": "CUSTOM_JS"
-                                                    }
-                                                },
-                                                "agency": {
-                                                    "field": {
-                                                        "key": "agency",
-                                                        "displayType": "CUSTOM_JS"
-                                                    }
-                                                },
-                                                "section": {
-                                                    "field": {
-                                                        "key": "section",
-                                                        "displayType": "CUSTOM_JS"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    ]
-                                }
-                            ]
-                        }]
-                },
-                {
-                    "type": "SECTION",
-                    "title": "Viittaustiedot",
-                    "content": [
-                        {
-                            "type": "COLUMN",
-                            "columns": 1,
-                            "rows": [
-                                {
-                                    "type": "ROW",
-                                    "cells": [
-                                        {
-                                            "type": "CELL",
-                                            "title": "Viittaustiedot",
-                                            "required": true,
-                                            "field": {
-                                                "key": "biblcit",
-                                                "multiline": true
-                                            }
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "type": "SECTION",
-                    "title": "Asiasanat ja tieteenalat",
-                    "content": [
-                        {
-                            "type": "COLUMN",
-                            "columns": 1,
-                            "rows": [{
-                                "type": "ROW",
-                                "cells": [
-                                    {
-                                        "type": "CELL",
-                                        "title": "Aineiston sisältöä kuvaavat asiasanat",
-                                        "required": true,
-                                        "field": {
-                                            "key": "keywords",
-                                            "columnFields": [
-                                            	"keywordvocaburi",
-                                            	"keyword",
-                                            	"keyworduri"
-                                            ],
-	                                        "dialogTitle": {
-	                                            "key": "keywords",
-	                                            "ADD": "Lisää asiasana",
-	                                            "MODIFY": "Muokkaa asiasanaa",
-	                                            "VIEW": "Aineiston sisällön asiasana"
-	                                        }
-                                        },
-                                        "extraDialogConfiguration": {
-                                            "keyword": {
-                                                "required": true
-                                            },
-                                            "keywordnovocab": {
-                                                "required": true
-                                            }
-                                        }
-                                    }
-                                ]
-                            }, {
-                                "type": "ROW",
-                                "cells": [
-                                    {
-                                        "type": "CELL",
-                                        "title": "Tieteenalat, jolle aineisto kuuluu",
-                                        "field": {
-                                            "key": "topics",
-                                            "columnFields": [
-                                            	"topicvocaburi",
-                                                "topictop",
-                                            	"topic",
-                                            	"topicuri"
-                                            ],
-	                                        "dialogTitle": {
-	                                            "key": "topics",
-	                                            "ADD": "Lisää tieteenala",
-	                                            "MODIFY": "Muokkaa tieteenalaa",
-	                                            "VIEW": "Aineiston tieteenala"
-	                                        }
-                                        },
-                                        "extraDialogConfiguration": {
-                                            "topicvocab": {
-                                                "required": true
-                                            },
-                                            "topictop": {
-                                                "required": true
-                                            },
-                                            "topic": {
-                                                "required": true
-                                            }
-                                        }
-                                    }
-                                ]
-                            }]
-                        }
-                    ]
-                },
-                {
-                    "type": "SECTION",
-                    "title": "Abstrakti",
-                    "content": [{
-                        "type": "COLUMN",
-                        "columns": 1,
-                        "rows": [
+                    }
+                ]
+            },
+            {
+                "type": "COLUMN",
+                "columns": 3,
+                "rows": [
+                    {
+                        "type": "ROW",
+                        "cells": [
                             {
-                                "type": "ROW",
-                                "cells": [
-                                    {
-                                        "type": "CELL",
-                                        "title": "Tiivistelmä",
+                                "type": "CELL",
+                                "title": "Aineistonumero",
+                                "readOnly": true,
+                                "required": true,
+                                "field": {
+                                    "key": "studyid"
+                                }
+                            },
+                            {
+                                "type": "CELL",
+                                "title": "Aineiston laatu",
+                                "required": true,
+                                "field": {
+                                    "displayType": "CUSTOM_JS",
+                                    "key": "datakind"
+                                }
+                            },
+                            {
+                                "type": "CELL",
+                                "title": "Julkaisu",
+                                "required": true,
+                                "field": {
+                                    "key": "public"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "type": "ROW",
+                        "cells": [
+                            {
+                                "type": "CELL",
+                                "title": "Hankinta-aineistonumero",
+                                "readOnly": true,
+                                "required": true,
+                                "field": {
+                                    "key": "submissionid"
+                                }
+                            },
+                            {
+                                "type": "CELL",
+                                "title": "Anonymisointi",
+                                "required": true,
+                                "field": {
+                                    "key": "anonymization"
+                                }
+                            },
+                            {
+                                "type": "CELL",
+                                "title": "Aineiston kuvailun julkaisu",
+                                "required": true,
+                                "field": {
+                                    "key": "descpublic"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "type": "ROW",
+                        "cells": [
+                            {
+                                "type": "CELL",
+                                "title": "Datan saantipvm",
+                                "required": true,
+                                "field": {
+                                    "key": "dataarrivaldate"
+                                }
+                            },
+                            {
+                                "type": "CELL",
+                                "title": "Tietosuoja",
+                                "required": true,
+                                "field": {
+                                    "key": "securityissues"
+                                }
+                            },
+                            {
+                                "type": "CELL",
+                                "title": "Muuttujakuvailun julkaisu",
+                                "required": true,
+                                "field": {
+                                    "key": "varpublic"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "type": "ROW",
+                        "cells": [
+                            {
+                                "type": "CELL",
+                                "title": "Valmis pvm",
+                                "field": {
+                                    "key": "aipcomplete"
+                                }
+                            },
+                            {
+                                "type": "EMPTYCELL"
+                            },
+                            {
+                                "type": "CELL",
+                                "title": "Aineiston luovutus",
+                                "required": true,
+                                "field": {
+                                    "key": "dissemination"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "COLUMN",
+                "columns": 2,
+                "rows": [
+                    {
+                        "type": "ROW",
+                        "cells": [
+                            {
+                                "type": "CELL",
+                                "title": "Sarja",
+                                "required": true,
+                                "field": {
+                                    "key": "series"
+                                }
+                            },
+                            {
+                                "type": "EMPTYCELL"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "ROW",
+                        "cells": [
+                            {
+                                "type": "CELL",
+                                "title": "Alkuperäinen sijainti",
+                                "field": {
+                                    "key": "originallocation",
+                                    "multiline": true
+                                }
+                            },
+                            {
+                                "type": "CELL",
+                                "title": "Huomautuksia prosessiin",
+                                "field": {
+                                    "key": "processingnotes",
+                                    "multiline": true
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "COLUMN",
+                "columns": 1,
+                "rows": [
+                    {
+                        "type": "ROW",
+                        "cells": [
+                            {
+                                "type": "CELL",
+                                "title": "Huomautukset",
+                                "field": {
+                                    "key": "notes",
+                                    "showSaveInfo": true,
+                                    "columnFields": [
+                                        "note"
+                                    ],
+                                    "dialogTitle": {
+                                        "key": "notes",
+                                        "MODIFY": {
+                                            "default": "Muokkaa huomautusta"
+                                        },
+                                        "VIEW": "Huomautus"
+                                    }
+                                },
+                                "subfieldConfiguration": {
+                                    "note": {
                                         "required": true,
                                         "field": {
-                                            "key": "abstract",
+                                            "key": "note",
                                             "multiline": true
                                         }
                                     }
-                                ]
+                                }
                             }
                         ]
-                    }]
-                },
-                {
-                    "type": "SECTION",
-                    "title": "Kattavuus",
-                    "content": [
+                    },
+                    {
+                        "type": "ROW",
+                        "cells": [
+                            {
+                                "type": "CELL",
+                                "title": "Datan versiot",
+                                "required": true,
+                                "field": {
+                                    "key": "dataversions",
+                                    "displayType": "CUSTOM_JS",
+                                    "columnFields": [
+                                        "dataversion",
+                                        "versiondate",
+                                        "versionpro",
+                                        "versionlabeldata",
+                                        "versiontext"
+                                    ],
+                                    "dialogTitle": {
+                                        "key": "dataversions",
+                                        "ADD": "Lisää datan versiotieto",
+                                        "MODIFY": "Muokkaa datan versiotietoa",
+                                        "VIEW": "Datan versiotieto"
+                                    }
+                                },
+                                "subfieldConfiguration": {
+                                    "dataversion": {
+                                        "required": true
+                                    },
+                                    "versionpro": {
+                                        "required": true
+                                    },
+                                    "versionlabeldata": {
+                                        "required": true
+                                    },
+                                    "versiondate": {
+                                        "required": true
+                                    },
+                                    "versiontext": {
+                                        "required": true
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "type": "ROW",
+                        "cells": [
+                            {
+                                "type": "CELL",
+                                "title": "Kuvailun versiot",
+                                "field": {
+                                    "key": "descversions",
+                                    "displayType": "CUSTOM_JS",
+                                    "columnFields": [
+                                        "descversion",
+                                        "versiondate",
+                                        "versionpro",
+                                        "versionlabeldesc",
+                                        "versiontext"
+                                    ],
+                                    "dialogTitle": {
+                                        "key": "descversions",
+                                        "ADD": "Lisää kuvailun versiotieto",
+                                        "MODIFY": "Muokkaa kuvailun versiotietoa",
+                                        "VIEW": "Kuvailun versiotieto"
+                                    }
+                                },
+                                "subfieldConfiguration": {
+                                    "descversion": {
+                                        "required": true
+                                    },
+                                    "versiondate": {
+                                        "required": true
+                                    },
+                                    "versionlabeldesc": {
+                                        "required": true
+                                    },
+                                    "versionpro": {
+                                        "required": true
+                                    },
+                                    "versiontext": {
+                                        "required": true
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "type": "ROW",
+                        "cells": [
+                            {
+                                "type": "CELL",
+                                "title": "Liittyvät julkaisut",
+                                "field": {
+                                    "key": "publications",
+                                    "columnFields": [
+                                        "publicationid",
+                                        "publicationtitle"
+                                    ],
+                                    "dialogTitle": {
+                                        "key": "publications",
+                                        "ADD": "Lisää julkaisu"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "type": "ROW",
+                        "cells": [
+                            {
+                                "type": "CELL",
+                                "title": "Liittyvät aineistot",
+                                "field": {
+                                    "key": "relatedstudies",
+                                    "columnFields": [
+                                        "relatedstudyid",
+                                        "relatedstudytitle"
+                                    ],
+                                    "dialogTitle": {
+                                        "key": "relatedstudies",
+                                        "ADD": "Lisää aineisto"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "type": "ROW",
+                        "cells": [
+                            {
+                                "type": "CELL",
+                                "title": "Liittyvät mapit",
+                                "field": {
+                                    "displayType": "CUSTOM_JS",
+                                    "key": "studyRelatedBinders"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "type": "TAB",
+        "title": "Arkistointisopimus",
+        "content": [
+            {
+                "type": "COLUMN",
+                "columns": 3,
+                "rows": [
+                    {
+                        "type": "ROW",
+                        "cells": [
+                            {
+                                "type": "CELL",
+                                "title": "Ehto 1: käyttöoikeus",
+                                "required": true,
+                                "field": {
+                                    "key": "termsofuse"
+                                }
+                            },
+                            {
+                                "type": "CELL",
+                                "title": "Arkistointisopimuksen pvm",
+                                "field": {
+                                    "key": "agreementdate"
+                                }
+                            },
+                            {
+                                "type": "CELL",
+                                "title": "Jos heräte, ilmoituspvm",
+                                "field": {
+                                    "key": "triggerdate"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "type": "ROW",
+                        "cells": [
+                            {
+                                "type": "CELL",
+                                "title": "Käyttöehdon muutospvm",
+                                "field": {
+                                    "key": "termsofusechangedate"
+                                }
+                            },
+                            {
+                                "type": "CELL",
+                                "title": "Luovuttajan tyyppi",
+                                "required": true,
+                                "field": {
+                                    "key": "depositortype"
+                                }
+                            },
+                            {
+                                "type": "CELL",
+                                "title": "Herätteen saaja",
+                                "field": {
+                                    "key": "triggerpro"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "type": "ROW",
+                        "cells": [
+                            {
+                                "type": "CELL",
+                                "title": "Käyttöehto muutospvm jälkeen",
+                                "field": {
+                                    "key": "newtermsofuse"
+                                }
+                            },
+                            {
+                                "type": "CELL",
+                                "title": "Arkistointisopimuksen tapa",
+                                "required": true,
+                                "field": {
+                                    "key": "agreementtype"
+                                }
+                            },
+                            {
+                                "type": "CELL",
+                                "title": "Herätteen selite",
+                                "field": {
+                                    "key": "triggerlabel"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "COLUMN",
+                "columns": 1,
+                "rows": [
+                    {
+                        "type": "ROW",
+                        "cells": [
+                            {
+                                "type": "CELL",
+                                "title": "Arkistointisopimustiedosto",
+                                "field": {
+                                    "key": "agreement"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "COLUMN",
+                "columns": 2,
+                "rows": [
+                    {
+                        "type": "ROW",
+                        "cells": [
+                            {
+                                "type": "CELL",
+                                "title": "Lisätiedot koskien arkistointisopimusta",
+                                "field": {
+                                    "key": "agreementnotes",
+                                    "multiline": true
+                                }
+                            },
+                            {
+                                "type": "CELL",
+                                "title": "Menettely, jos luvanantajaa ei tavoiteta tai hän ei itse voi antaa lupaa",
+                                "field": {
+                                    "key": "permission",
+                                    "multiline": true
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "type": "ROW",
+                        "cells": [
+                            {
+                                "type": "CELL",
+                                "title": "Erityisehdot",
+                                "field": {
+                                    "key": "specialtermsofuse",
+                                    "multiline": true
+                                }
+                            },
+                            {
+                                "type": "CELL",
+                                "title": "Muuta kommentoitavaa",
+                                "field": {
+                                    "key": "agreementfsdnotes",
+                                    "multiline": true
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "type": "TAB",
+        "title": "Kuvailu",
+        "content": [
+            {
+                "type": "SECTION",
+                "title": "Muut nimet",
+                "content": [{
+                    "type": "COLUMN",
+                    "columns": 1,
+                    "rows": [
                         {
-                            "type": "COLUMN",
-                            "columns": 1,
-                            "rows": [{
-                                "type": "ROW",
-                                "cells": [
-                                    {
-                                        "type": "CELL",
-                                        "title": "Aineiston ajallinen kattavuus",
-                                        "field": {
-                                            "key": "timeperiods",
-                                            "displayType": "CUSTOM_JS",
-                                            "columnFields": [
-                                            	"timeperiod",
-                                            	"timeperiodtext",
-                                            	"timeperiodevent"
-                                            ],
-	                                        "dialogTitle": {
-	                                            "key": "timeperiods",
-	                                            "ADD": "Lisää ajallinen kattavuus",
-	                                            "MODIFY": "Muokkaa ajallista kattavuutta",
-	                                            "VIEW": "Aineiston ajallinen kattavuus"
-	                                        }
-                                        },
-                                        "extraDialogConfiguration": {
-                                            "timeperiodevent": {
-                                                "required": true
-                                            },
-                                            "timeperiod": {
-                                                "field": {
-                                                    "key": "timeperiod",
-                                                    "displayType": "CUSTOM_JS"
-                                                }
-                                            },
-                                            "timeperiodtext": {
-                                                "field": {
-                                                    "key": "timeperiodtext",
-                                                    "displayType": "CUSTOM_JS"
-                                                }
-                                            }
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Rinnakkaiset nimet",
+                                    "field": {
+                                        "key": "alttitles",
+                                        "columnFields": [
+                                            "alttitle"
+                                        ],
+                                        "dialogTitle": {
+                                            "key": "alttitles",
+                                            "ADD": "Lisää rinnakkainen nimi",
+                                            "MODIFY": "Muokkaa rinnakkaista nimeä",
+                                            "VIEW": "Rinnakkainen nimi"
                                         }
                                     }
-                                ]
-                            }, {
-                                "type": "ROW",
-                                "cells": [
-                                    {
-                                        "type": "CELL",
-                                        "title": "Maat, jota koskevaa tietoa aineisto sisältää",
-                                        "field": {
-                                            "key": "countries",
-                                            "displayType": "CUSTOM_JS",
-                                            "columnFields": [
-                                            	"countryabbr",
-                                            	"country"
-                                            ],
-	                                        "dialogTitle": {
-	                                            "key": "countries",
-	                                            "ADD": "Lisää maa",
-	                                            "MODIFY": "Muokkaa maata",
-	                                            "VIEW": "Maa"
-	                                        }
+                                }
+                            ]
+                        },
+                        {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Aineiston muunkieliset nimet",
+                                    "field": {
+                                        "key": "partitles",
+                                        "columnFields": [
+                                            "partitle",
+                                            "partitlelang"
+                                        ],
+                                        "dialogTitle": {
+                                            "key": "partitles",
+                                            "ADD": "Lisää muunkielinen nimi",
+                                            "MODIFY": "Muokkaa muunkielistä nimeä",
+                                            "VIEW": "Aineiston muunkielinen nimi"
+                                        }
+                                    },
+                                    "subfieldConfiguration": {
+                                        "partitle": {
+                                            "required": true
                                         },
-                                        "extraDialogConfiguration": {
-                                            "country": {
-                                                "required": true
-                                            },
-                                            "countryabbr": {
-                                                "required": true
-                                            }
+                                        "partitlelang": {
+                                            "required": true
                                         }
                                     }
-                                ]
-                            }, {
-                                "type": "ROW",
-                                "cells": [
-                                    {
-                                        "type": "CELL",
-                                        "title": "Aineiston perusjoukot/otos (kvanti) tai aineiston kohdejoukot (kvali)",
-                                        "field": {
-                                            "key": "universes",
-                                            "columnFields": [
-                                            	"universe",
-                                            	"universeclusion"
-                                            ],
-	                                        "dialogTitle": {
-	                                            "key": "universes",
-	                                            "ADD": "Lisää perusjoukko",
-	                                            "MODIFY": "Muokkaa perusjoukkoa",
-	                                            "VIEW": "Perusjoukko"
-	                                        }
-                                        },
-                                        "extraDialogConfiguration": {
-                                            "universe": {
-                                                "required": true
-                                            },
-                                            "universeclusion": {
-                                                "required": true
-                                            }
-                                        }
-                                    }
-                                ]
-                            }, {
-                                "type": "ROW",
-                                "cells": [
-                                    {
-                                        "type": "CELL",
-                                        "title": "Maantieteelliset alueet, jotka aineisto kattaa",
-                                        "field": {
-                                            "key": "geogcovers",
-                                            "displayHeader": false,
-                                            "columnFields": [
-                                            	"geogcover"
-                                            ],
-	                                        "dialogTitle": {
-	                                            "key": "geogcovers",
-	                                            "ADD": "Lisää maantieteellinen alue",
-	                                            "MODIFY": "Muokkaa maantieteellistä aluetta",
-	                                            "VIEW": "Maantieteellinen alue"
-	                                        }
-                                        },
-                                        "extraDialogConfiguration": {
-                                            "geogcover": {
-                                                "required": true
-                                            }
-                                        }
-                                    }
-                                ]
-                            }]
+                                }
+                            ]
                         }
                     ]
-                },
-                {
-                    "type": "SECTION",
-                    "title": "Aineistonkeruu",
-                    "content": [
-                        {
-                            "type": "COLUMN",
-                            "columns": 1,
-                            "rows": [{
+                }]
+            },
+            {
+                "type": "SECTION",
+                "title": "Tekijät ja tuottajat",
+                "content": [
+                    {
+                        "type": "COLUMN",
+                        "columns": 1,
+                        "rows": [
+                            {
                                 "type": "ROW",
                                 "cells": [
                                     {
                                         "type": "CELL",
-                                        "title": "Keräyksen ajankohdat",
+                                        "title": "Aineiston tekijät",
                                         "required": true,
                                         "field": {
-                                            "key": "colltime",
+                                            "key": "authors",
                                             "columnFields": [
-                                            	"colldate",
-                                            	"colldatetext",
-                                            	"colldateevent"
+                                                "authortype",
+                                                "author",
+                                                "organisation",
+                                                "agency",
+                                                "section"
                                             ],
-	                                        "dialogTitle": {
-	                                            "key": "colltime",
-	                                            "ADD": "Lisää keräyksen ajankohta",
-	                                            "MODIFY": "Muokkaa keräyksen ajankohtaa",
-	                                            "VIEW": "Keräyksen ajankohta"
-	                                        }
-                                        },
-                                        "extraDialogConfiguration": {
-                                            "colldate": {
-                                                "required": true,
-                                                "field": {
-                                                    "key": "colldate",
-                                                    "displayType": "CUSTOM_JS"
-                                                }
-                                            },
-                                            "colldatetext": {
-                                                "required": true,
-                                                "field": {
-                                                    "key": "colldatetext",
-                                                    "displayType": "CUSTOM_JS"
-                                                }
-                                            },
-                                            "colldateevent": {
-                                                "required": true
+                                            "dialogTitle": {
+                                                "key": "authors",
+                                                "ADD": "Lisää aineiston tekijä",
+                                                "MODIFY": "Muokkaa aineiston tekijää",
+                                                "VIEW": "Aineiston tekijä"
                                             }
-                                        }
-                                    }
-                                ]
-                            }, {
-                                "type": "ROW",
-                                "cells": [
-                                    {
-                                        "type": "CELL",
-                                        "title": "Aineiston kerääjät",
-                                        "required": true,
-                                        "field": {
-                                            "key": "collectors",
-                                            "columnFields": [
-                                            	"authortype",
-                                            	"author",
-                                            	"organisation",
-                                            	"agency",
-                                            	"section"
-                                            ],
-	                                        "dialogTitle": {
-	                                            "key": "collectors",
-	                                            "ADD": "Lisää aineiston kerääjä",
-	                                            "MODIFY": "Muokkaa aineiston kerääjää",
-	                                            "VIEW": "Aineiston kerääjä"
-	                                        }
                                         },
-                                        "extraDialogConfiguration": {
+                                        "subfieldConfiguration": {
                                             "authortype": {
                                                 "required": true
                                             },
-                                        	"author": {
+                                            "author": {
                                                 "required": true,
-                                        		"field": {
-                                        			"key": "author",
-                                        			"displayType": "CUSTOM_JS"
-                                        		}
-                                        	},
+                                                "field": {
+                                                    "key": "author",
+                                                    "displayType": "CUSTOM_JS"
+                                                }
+                                            },
                                             "organisation": {
                                                 "field": {
                                                     "key": "organisation",
@@ -1667,403 +1199,225 @@
                                         }
                                     }
                                 ]
-                            }, {
+                            },
+                            {
                                 "type": "ROW",
                                 "cells": [
                                     {
                                         "type": "CELL",
-                                        "title": "Havaintoyksiköt (kvanti) tai aineistoyksikkötyypit (kvali)",
+                                        "title": "Aineiston muut tekijät",
+                                        "field": {
+                                            "key": "otherauthors",
+                                            "columnFields": [
+                                                "otherauthortype",
+                                                "author",
+                                                "otherauthorgroup",
+                                                "organisation",
+                                                "agency",
+                                                "section"
+                                            ],
+                                            "dialogTitle": {
+                                                "key": "otherauthors",
+                                                "ADD": "Lisää muu tekijä",
+                                                "MODIFY": "Muokkaa muuta tekijää",
+                                                "VIEW": "Aineiston muu tekijä"
+                                            }
+                                        },
+                                        "subfieldConfiguration": {
+                                            "otherauthortype": {
+                                                "required": true
+                                            },
+                                            "author": {
+                                                "required": true,
+                                                "field": {
+                                                    "key": "author",
+                                                    "displayType": "CUSTOM_JS"
+                                                }
+                                            },
+                                            "otherauthorgroup": {
+                                                "required": true,
+                                                "field": {
+                                                    "key": "otherauthorgroup",
+                                                    "displayType": "CUSTOM_JS"
+                                                }
+                                            },
+                                            "organisation": {
+                                                "field": {
+                                                    "key": "organisation",
+                                                    "displayType": "CUSTOM_JS"
+                                                }
+                                            },
+                                            "agency": {
+                                                "field": {
+                                                    "key": "agency",
+                                                    "displayType": "CUSTOM_JS"
+                                                }
+                                            },
+                                            "section": {
+                                                "field": {
+                                                    "key": "section",
+                                                    "displayType": "CUSTOM_JS"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "ROW",
+                                "cells": [
+                                    {
+                                        "type": "CELL",
+                                        "title": "Aineiston tuottaneet tahot",
+                                        "field": {
+                                            "key": "producers",
+                                            "columnFields": [
+                                                "organisation",
+                                                "agency",
+                                                "section",
+                                                "producerrole",
+                                                "projectnr"
+                                            ],
+                                            "dialogTitle": {
+                                                "key": "producers",
+                                                "ADD": "Lisää tuottaja",
+                                                "MODIFY": "Muokkaa tuottajaa",
+                                                "VIEW": "Aineiston tuottaja"
+                                            }
+                                        },
+                                        "subfieldConfiguration": {
+                                            "organisation": {
+                                                "required": true,
+                                                "field": {
+                                                    "key": "organisation",
+                                                    "displayType": "CUSTOM_JS"
+                                                }
+                                            },
+                                            "agency": {
+                                                "field": {
+                                                    "key": "agency",
+                                                    "displayType": "CUSTOM_JS"
+                                                }
+                                            },
+                                            "section": {
+                                                "field": {
+                                                    "key": "section",
+                                                    "displayType": "CUSTOM_JS"
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }]
+            },
+            {
+                "type": "SECTION",
+                "title": "Viittaustiedot",
+                "content": [
+                    {
+                        "type": "COLUMN",
+                        "columns": 1,
+                        "rows": [
+                            {
+                                "type": "ROW",
+                                "cells": [
+                                    {
+                                        "type": "CELL",
+                                        "title": "Viittaustiedot",
                                         "required": true,
                                         "field": {
-                                            "key": "analysis",
-                                            "columnFields": [
-                                            	"analysisunitvocaburi",
-                                            	"analysisunit",
-                                            	"analysisunituri"
-                                            ],
-	                                        "dialogTitle": {
-	                                            "key": "analysis",
-	                                            "ADD": "Lisää havaintoyksikkö",
-	                                            "MODIFY": "Muokkaa havaintoyksikköä",
-	                                            "VIEW": "Havaintoyksikkö"
-	                                        }
-                                        },
-                                        "extraDialogConfiguration": {
-                                            "analysisunit": {
-                                                "required": true
-                                            }
+                                            "key": "biblcit",
+                                            "multiline": true
                                         }
                                     }
                                 ]
-                            }, {
-                                "type": "ROW",
-                                "cells": [
-                                    {
-                                        "type": "CELL",
-                                        "title": "Tutkimuksen aikaulottuvuudet",
-                                        "field": {
-                                            "key": "timemethods",
-                                            "displayType": "CUSTOM_JS",
-                                            "columnFields": [
-                                            	"timemethodvocaburi",
-                                            	"timemethod",
-                                            	"timemethoduri"
-                                            ],
-	                                        "dialogTitle": {
-	                                            "key": "timemethods",
-	                                            "ADD": "Lisää aikaulottuvuus",
-	                                            "MODIFY": "Muokkaa aikaulottuvuutta",
-	                                            "VIEW": "Tutkimuksen aikaulottuvuus"
-	                                        }
-                                        },
-                                        "extraDialogConfiguration": {
-                                            "timemethod": {
-                                                "required": true
-                                            },
-                                            "timemethodother": {
-                                                "required": true
-                                            }
-                                        }
-                                    }
-                                ]
-                            }, {
-                                "type": "ROW",
-                                "cells": [
-                                    {
-                                        "type": "CELL",
-                                        "title": "Aineiston keruumenetelmät (kvanti) tai aineistonkeruun tekniikat (kvali)",
-                                        "required": true,
-                                        "field": {
-                                            "key": "collmodes",
-                                            "columnFields": [
-                                            	"collmodevocaburi",
-                                            	"collmode",
-                                            	"collmodeuri"
-                                            ],
-	                                        "dialogTitle": {
-	                                            "key": "collmodes",
-	                                            "ADD": "Lisää keruumenetelmä",
-	                                            "MODIFY": "Muokkaa keruumenetelmää",
-	                                            "VIEW": "Aineiston keruumenetelmä"
-	                                        }
-                                        },
-                                        "extraDialogConfiguration": {
-                                            "collmodeother": {
-                                                "required": true
-                                            },
-                                            "collmode": {
-                                                "required": true
-                                            }
-                                        }
-                                    }
-                                ]
-                            }, {
-                                "type": "ROW",
-                                "cells": [
-                                    {
-                                        "type": "CELL",
-                                        "title": "Keruuvälineet (kvanti) tai aineistonkeruun ohjeistukset (kvali)",
-                                        "field": {
-                                            "key": "instruments",
-                                            "displayType": "CUSTOM_JS",
-                                            "columnFields": [
-                                            	"instrumentvocaburi",
-                                            	"instrument",
-                                            	"instrumenturi"
-                                            ],
-	                                        "dialogTitle": {
-	                                            "key": "instruments",
-	                                            "ADD": "Lisää keruuväline",
-	                                            "MODIFY": "Muokkaa keruuvälinettä",
-	                                            "VIEW": "Keruuväline"
-	                                        }
-                                        },
-                                        "extraDialogConfiguration": {
-                                            "instrument": {
-                                                "required": true
-                                            },
-                                            "instrumentother": {
-                                                "required": true
-                                            }
-                                        }
-                                    }
-                                ]
-                            }, {
-                                "type": "ROW",
-                                "cells": [
-                                    {
-                                        "type": "CELL",
-                                        "title": "Otantamenetelmät tai aineiston valintatavat",
-                                        "required": true,
-                                        "field": {
-                                            "key": "sampprocs",
-                                            "columnFields": [
-                                            	"sampprocvocaburi",
-                                            	"sampproc",
-                                            	"sampprocuri"
-                                            ],
-	                                        "dialogTitle": {
-	                                            "key": "sampprocs",
-	                                            "ADD": "Lisää otantamenetelmä",
-	                                            "MODIFY": "Muokkaa otantamenetelmää",
-	                                            "VIEW": "Otantamenetelmä"
-	                                        }
-                                        },
-                                        "extraDialogConfiguration": {
-                                            "sampproc": {
-                                                "required": true
-                                            },
-                                            "sampprocother": {
-                                                "required": true
-                                            }
-                                        }
-                                    }
-                                ]
-                            }, {
-                                "type": "ROW",
-                                "cells": [
-                                    {
-                                        "type": "CELL",
-                                        "title": "Vastausprosentti",
-                                        "field": {
-                                            "key": "resprate"
-                                        }
-                                    }
-                                ]
-                            }, {
-                                "type": "ROW",
-                                "cells": [
-                                    {
-                                        "type": "CELL",
-                                        "title": "Lähdeaineistot",
-                                        "field": {
-                                            "key": "datasources",
-                                            "displayHeader": false,
-                                            "columnFields": [
-                                            	"datasource"
-                                            ],
-	                                        "dialogTitle": {
-	                                            "key": "datasources",
-	                                            "ADD": "Lisää lähdeaineisto",
-	                                            "MODIFY": "Muokkaa lähdeaineistoa",
-	                                            "VIEW": "Lähdeaineisto"
-	                                        }
-                                        },
-                                        "extraDialogConfiguration": {
-                                        	"datasource": {
-                                        		"field": {
-                                        			"key": "datasource",
-                                        			"multiline": true
-                                        		}
-                                        	}
-                                        }
-                                    }
-                                ]
-                            }]
-                        }
-                    ]
-                },
-                {
-                    "type": "SECTION",
-                    "title": "Aineiston käyttö",
-                    "content": [
-                        {
-                            "type": "COLUMN",
-                            "columns": 2,
-                            "rows": [{
-                                "type": "ROW",
-                                "cells": [
-                                    {
-                                        "type": "CELL",
-                                        "title": "ei painokertoimia",
-                                        "field": {
-                                            "key": "weightyesno",
-                                            "displayType": "CUSTOM_JS"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "SECTION",
+                "title": "Asiasanat ja tieteenalat",
+                "content": [
+                    {
+                        "type": "COLUMN",
+                        "columns": 1,
+                        "rows": [{
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Aineiston sisältöä kuvaavat asiasanat",
+                                    "required": true,
+                                    "field": {
+                                        "key": "keywords",
+                                        "columnFields": [
+                                            "keywordvocaburi",
+                                            "keyword",
+                                            "keyworduri"
+                                        ],
+                                        "dialogTitle": {
+                                            "key": "keywords",
+                                            "ADD": "Lisää asiasana",
+                                            "MODIFY": "Muokkaa asiasanaa",
+                                            "VIEW": "Aineiston sisällön asiasana"
                                         }
                                     },
-                                    {
-                                    	"type": "EMPTYCELL"
+                                    "subfieldConfiguration": {
+                                        "keyword": {
+                                            "required": true
+                                        },
+                                        "keywordnovocab": {
+                                            "required": true
+                                        }
                                     }
-                                ]
-                            }, {
-                                "type": "ROW",
-                                "cells": [
-                                    {
-                                        "type": "CELL",
-                                        "title": "Painokertoimet",
-                                        "field": {
-                                        	"displayType": "CUSTOM_JS",
-                                            "key": "weight",
-                                        	"multiline": true
+                                }
+                            ]
+                        }, {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Tieteenalat, jolle aineisto kuuluu",
+                                    "field": {
+                                        "key": "topics",
+                                        "columnFields": [
+                                            "topicvocaburi",
+                                            "topictop",
+                                            "topic",
+                                            "topicuri"
+                                        ],
+                                        "dialogTitle": {
+                                            "key": "topics",
+                                            "ADD": "Lisää tieteenala",
+                                            "MODIFY": "Muokkaa tieteenalaa",
+                                            "VIEW": "Aineiston tieteenala"
                                         }
                                     },
-                                    {
-                                        "type": "CELL",
-                                        "title": "Sisällöllinen muokkaus",
-                                        "field": {
-                                            "key": "dataprosessing",
-                                            "displayType": "CUSTOM_JS",
-                                        	"multiline": true
-                                        }
-                                    }
-                                ]
-                            }, {
-                                "type": "ROW",
-                                "cells": [
-                                    {
-                                        "type": "CELL",
-                                        "title": "Tiedostot",
-                                        "field": {
-                                            "key": "collsize",
-                                        	"multiline": true
-                                        }
-                                    },
-                                    {
-                                        "type": "CELL",
-                                        "title": "Täydellisyys",
-                                        "field": {
-                                            "key": "complete",
-                                        	"multiline": true
-                                        }
-                                    }
-                                ]
-                            }, {
-                                "type": "ROW",
-                                "cells": [
-                                    {
-                                        "type": "CELL",
-                                        "title": "Huomioitavaa",
-                                        "field": {
-                                            "key": "datasetnotes",
-                                        	"multiline": true
-                                        }
-                                    }
-                                ]
-                            }, {
-                                "type": "ROW",
-                                "cells": [
-                                    {
-                                        "type": "CELL",
-                                        "colspan": 2,
-                                        "title": "Arvioinnit",
-                                        "displayHeader": false,
-                                        "field": {
-                                            "key": "appraisals",
-                                            "columnFields": [
-                                            	"appraisal"
-                                            ],
-	                                        "dialogTitle": {
-	                                            "key": "appraisals",
-	                                            "ADD": "Lisää arviointi",
-	                                            "MODIFY": "Muokkaa arviointia",
-	                                            "VIEW": "Arviointi"
-	                                        }
-                                        }
-                                    }
-                                ]
-                            }]
-                        }
-                    ]
-                },
-                {
-                    "type": "SECTION",
-                    "title": "Muut materiaalit",
-                    "content": [
-                        {
-                            "type": "COLUMN",
-                            "columns": 1,
-                            "rows": [{
-                                "type": "ROW",
-                                "cells": [
-                                    {
-                                        "type": "CELL",
-                                        "title": "Käytön ja kuvailun oheismateriaalit",
-                                        "field": {
-                                            "key": "relatedmaterials",
-                                            "displayHeader": false,
-                                            "columnFields": [
-                                            	"relatedmaterial"
-                                            ],
-	                                        "dialogTitle": {
-	                                            "key": "relatedmaterials",
-	                                            "ADD": "Lisää oheismateriaali",
-	                                            "MODIFY": "Muokkaa oheismateriaalia",
-	                                            "VIEW": "Oheismateriaali"
-	                                        }
+                                    "subfieldConfiguration": {
+                                        "topicvocab": {
+                                            "required": true
                                         },
-                                        "extraDialogConfiguration": {
-                                        	"relatedmaterial": {
-                                        		"field": {
-                                        			"key": "relatedmaterial",
-                                        			"multiline": true
-                                        		}
-                                        	}
-                                        }
-                                    }
-                                ]
-                            }, {
-                                "type": "ROW",
-                                "cells": [
-                                    {
-                                        "type": "CELL",
-                                        "title": "Linkit tietoarkiston ulkopuoliseen materiaaliin",
-                                        "field": {
-                                            "key": "othermaterials",
-                                            "columnFields": [
-                                            	"othermateriallabel",
-                                            	"othermaterialtext",
-                                            	"othermaterialuri"
-                                            ],
-	                                        "dialogTitle": {
-	                                            "key": "othermaterials",
-	                                            "ADD": "Lisää ulkopuolinen materiaali",
-	                                            "MODIFY": "Muokkaa ulkopuolista materiaalia",
-	                                            "VIEW": "Tietoarkiston ulkopuolinen materiaali"
-	                                        }
-                                        }
-                                    }
-                                ]
-                            }, {
-                                "type": "ROW",
-                                "cells": [
-                                    {
-                                        "type": "CELL",
-                                        "title": "Julkaisuihin liittyviä huomioita",
-                                        "field": {
-                                            "key": "publicationcomments",
-                                            "displayHeader": false,
-                                            "columnFields": [
-                                         		"publicationcomment"
-                                            ],
-	                                        "dialogTitle": {
-	                                            "key": "publicationcomments",
-	                                            "ADD": "Lisää julkaisun huomio",
-	                                            "MODIFY": "Muokkaa julkaisun huomiota",
-	                                            "VIEW": "Julkaisun huomio"
-	                                        }
+                                        "topictop": {
+                                            "required": true
                                         },
-	                                    "extraDialogConfiguration": {
-	                                    	"publicationcomment": {
-	                                    		"field": {
-	                                    			"key": "publicationcomment",
-	                                    			"multiline": true
-	                                    		}
-	                                    	}
-	                                    }
+                                        "topic": {
+                                            "required": true
+                                        }
                                     }
-                                ]
-                            }]
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-
-            "type": "TAB",
-            "title": "Muuttujat",
-            "content": [
-                {
+                                }
+                            ]
+                        }]
+                    }
+                ]
+            },
+            {
+                "type": "SECTION",
+                "title": "Abstrakti",
+                "content": [{
                     "type": "COLUMN",
                     "columns": 1,
                     "rows": [
@@ -2072,108 +1426,655 @@
                             "cells": [
                                 {
                                     "type": "CELL",
+                                    "title": "Tiivistelmä",
+                                    "required": true,
                                     "field": {
-                                        "displayType": "LINK",
-                                        "key": "variables"
+                                        "key": "abstract",
+                                        "multiline": true
                                     }
                                 }
                             ]
                         }
                     ]
-                }
-            ]
-        },
-        {
-            "type": "TAB",
-            "title": "Tiedostojen hallinta",
-            "content": [{
-                "type": "COLUMN",
-                "columns": 1,
-                "rows": [
+                }]
+            },
+            {
+                "type": "SECTION",
+                "title": "Kattavuus",
+                "content": [
                     {
-                        "type": "ROW",
-                        "cells": [
-                            {
-                                "type": "CELL",
-                                "field": {
-                                    "key": "files",
-                                    "displayType": "CUSTOM_JS",
-                                    "showReferenceSaveInfo": true,
-                                    "showReferenceState": true,
-                                    "dialogTitle": {
-                                        "key": "files",
-                                        "MODIFY": "Muokkaa liitetiedostoa",
-                                        "VIEW": "Aineiston liitetiedosto"
-                                    }
-                                }
-                            }
-                        ]
-                    },
-                    {
-                    	"type": "ROW",
-                    	"cells": [
-                    		{
-                    			"type": "CELL",
-                    			"title": "Tiedostoihin liittyvät huomautukset",
-                    			"field": {
-                    				"key": "allfilesnotes",
-                    				"multiline": true
-                    			}
-                    		}
-                    	]
-                    }
-                ]
-            }]
-        },
-        {
-            "type": "TAB",
-            "title": "Koodikirja",
-            "content": [{
-                "type": "COLUMN",
-                "columns": 1,
-                "rows": [
-                    {
-                        "type": "ROW",
-                        "cells": [
-                            {
-                                "type": "CELL",
-                                "title": "Koodikirjan liitteet",
-                                "field": {
-                                    "key": "cbattachments",
-                                    "showSaveInfo": true,
-                                    "columnFields": [
-                                    	"cbattachmentlocation",
-                                    	"cbattachmenttitle"
-                                    ],
-		                            "dialogTitle": {
-		                            	"key": "cbattachments",
-		                            	"ADD": "Lisää koodikirjan liite",
-		                            	"MODIFY": "Muokkaa koodikirjan liitettä",
-		                            	"VIEW": "Koodikirjan liitteet"
-		                            }
-                                },
-                                "extraDialogConfiguration": {
-                                    "cbattachmentlocation": {
-                                        "required": true
+                        "type": "COLUMN",
+                        "columns": 1,
+                        "rows": [{
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Aineiston ajallinen kattavuus",
+                                    "field": {
+                                        "key": "timeperiods",
+                                        "displayType": "CUSTOM_JS",
+                                        "columnFields": [
+                                            "timeperiod",
+                                            "timeperiodtext",
+                                            "timeperiodevent"
+                                        ],
+                                        "dialogTitle": {
+                                            "key": "timeperiods",
+                                            "ADD": "Lisää ajallinen kattavuus",
+                                            "MODIFY": "Muokkaa ajallista kattavuutta",
+                                            "VIEW": "Aineiston ajallinen kattavuus"
+                                        }
                                     },
-                                    "cbattachmenttitle": {
-                                        "required": true
+                                    "subfieldConfiguration": {
+                                        "timeperiodevent": {
+                                            "required": true
+                                        },
+                                        "timeperiod": {
+                                            "field": {
+                                                "key": "timeperiod",
+                                                "displayType": "CUSTOM_JS"
+                                            }
+                                        },
+                                        "timeperiodtext": {
+                                            "field": {
+                                                "key": "timeperiodtext",
+                                                "displayType": "CUSTOM_JS"
+                                            }
+                                        }
                                     }
                                 }
-                            }
-                        ]
+                            ]
+                        }, {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Maat, jota koskevaa tietoa aineisto sisältää",
+                                    "field": {
+                                        "key": "countries",
+                                        "displayType": "CUSTOM_JS",
+                                        "columnFields": [
+                                            "countryabbr",
+                                            "country"
+                                        ],
+                                        "dialogTitle": {
+                                            "key": "countries",
+                                            "ADD": "Lisää maa",
+                                            "MODIFY": "Muokkaa maata",
+                                            "VIEW": "Maa"
+                                        }
+                                    },
+                                    "subfieldConfiguration": {
+                                        "country": {
+                                            "required": true
+                                        },
+                                        "countryabbr": {
+                                            "required": true
+                                        }
+                                    }
+                                }
+                            ]
+                        }, {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Aineiston perusjoukot/otos (kvanti) tai aineiston kohdejoukot (kvali)",
+                                    "field": {
+                                        "key": "universes",
+                                        "columnFields": [
+                                            "universe",
+                                            "universeclusion"
+                                        ],
+                                        "dialogTitle": {
+                                            "key": "universes",
+                                            "ADD": "Lisää perusjoukko",
+                                            "MODIFY": "Muokkaa perusjoukkoa",
+                                            "VIEW": "Perusjoukko"
+                                        }
+                                    },
+                                    "subfieldConfiguration": {
+                                        "universe": {
+                                            "required": true
+                                        },
+                                        "universeclusion": {
+                                            "required": true
+                                        }
+                                    }
+                                }
+                            ]
+                        }, {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Maantieteelliset alueet, jotka aineisto kattaa",
+                                    "field": {
+                                        "key": "geogcovers",
+                                        "displayHeader": false,
+                                        "columnFields": [
+                                            "geogcover"
+                                        ],
+                                        "dialogTitle": {
+                                            "key": "geogcovers",
+                                            "ADD": "Lisää maantieteellinen alue",
+                                            "MODIFY": "Muokkaa maantieteellistä aluetta",
+                                            "VIEW": "Maantieteellinen alue"
+                                        }
+                                    },
+                                    "subfieldConfiguration": {
+                                        "geogcover": {
+                                            "required": true
+                                        }
+                                    }
+                                }
+                            ]
+                        }]
                     }
                 ]
-            }]
-        },
-        {
-            "type": "TAB",
-            "title": "Virheet",
-            "permissions": [
-            	"canViewStudyErrors"
-            ],
-            "hidePageButtons": true,
-            "content": [{
+            },
+            {
+                "type": "SECTION",
+                "title": "Aineistonkeruu",
+                "content": [
+                    {
+                        "type": "COLUMN",
+                        "columns": 1,
+                        "rows": [{
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Keräyksen ajankohdat",
+                                    "required": true,
+                                    "field": {
+                                        "key": "colltime",
+                                        "columnFields": [
+                                            "colldate",
+                                            "colldatetext",
+                                            "colldateevent"
+                                        ],
+                                        "dialogTitle": {
+                                            "key": "colltime",
+                                            "ADD": "Lisää keräyksen ajankohta",
+                                            "MODIFY": "Muokkaa keräyksen ajankohtaa",
+                                            "VIEW": "Keräyksen ajankohta"
+                                        }
+                                    },
+                                    "subfieldConfiguration": {
+                                        "colldate": {
+                                            "required": true,
+                                            "field": {
+                                                "key": "colldate",
+                                                "displayType": "CUSTOM_JS"
+                                            }
+                                        },
+                                        "colldatetext": {
+                                            "required": true,
+                                            "field": {
+                                                "key": "colldatetext",
+                                                "displayType": "CUSTOM_JS"
+                                            }
+                                        },
+                                        "colldateevent": {
+                                            "required": true
+                                        }
+                                    }
+                                }
+                            ]
+                        }, {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Aineiston kerääjät",
+                                    "required": true,
+                                    "field": {
+                                        "key": "collectors",
+                                        "columnFields": [
+                                            "authortype",
+                                            "author",
+                                            "organisation",
+                                            "agency",
+                                            "section"
+                                        ],
+                                        "dialogTitle": {
+                                            "key": "collectors",
+                                            "ADD": "Lisää aineiston kerääjä",
+                                            "MODIFY": "Muokkaa aineiston kerääjää",
+                                            "VIEW": "Aineiston kerääjä"
+                                        }
+                                    },
+                                    "subfieldConfiguration": {
+                                        "authortype": {
+                                            "required": true
+                                        },
+                                        "author": {
+                                            "required": true,
+                                            "field": {
+                                                "key": "author",
+                                                "displayType": "CUSTOM_JS"
+                                            }
+                                        },
+                                        "organisation": {
+                                            "field": {
+                                                "key": "organisation",
+                                                "displayType": "CUSTOM_JS"
+                                            }
+                                        },
+                                        "agency": {
+                                            "field": {
+                                                "key": "agency",
+                                                "displayType": "CUSTOM_JS"
+                                            }
+                                        },
+                                        "section": {
+                                            "field": {
+                                                "key": "section",
+                                                "displayType": "CUSTOM_JS"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }, {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Havaintoyksiköt (kvanti) tai aineistoyksikkötyypit (kvali)",
+                                    "required": true,
+                                    "field": {
+                                        "key": "analysis",
+                                        "columnFields": [
+                                            "analysisunitvocaburi",
+                                            "analysisunit",
+                                            "analysisunituri"
+                                        ],
+                                        "dialogTitle": {
+                                            "key": "analysis",
+                                            "ADD": "Lisää havaintoyksikkö",
+                                            "MODIFY": "Muokkaa havaintoyksikköä",
+                                            "VIEW": "Havaintoyksikkö"
+                                        }
+                                    },
+                                    "subfieldConfiguration": {
+                                        "analysisunit": {
+                                            "required": true
+                                        }
+                                    }
+                                }
+                            ]
+                        }, {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Tutkimuksen aikaulottuvuudet",
+                                    "field": {
+                                        "key": "timemethods",
+                                        "displayType": "CUSTOM_JS",
+                                        "columnFields": [
+                                            "timemethodvocaburi",
+                                            "timemethod",
+                                            "timemethoduri"
+                                        ],
+                                        "dialogTitle": {
+                                            "key": "timemethods",
+                                            "ADD": "Lisää aikaulottuvuus",
+                                            "MODIFY": "Muokkaa aikaulottuvuutta",
+                                            "VIEW": "Tutkimuksen aikaulottuvuus"
+                                        }
+                                    },
+                                    "subfieldConfiguration": {
+                                        "timemethod": {
+                                            "required": true
+                                        },
+                                        "timemethodother": {
+                                            "required": true
+                                        }
+                                    }
+                                }
+                            ]
+                        }, {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Aineiston keruumenetelmät (kvanti) tai aineistonkeruun tekniikat (kvali)",
+                                    "required": true,
+                                    "field": {
+                                        "key": "collmodes",
+                                        "columnFields": [
+                                            "collmodevocaburi",
+                                            "collmode",
+                                            "collmodeuri"
+                                        ],
+                                        "dialogTitle": {
+                                            "key": "collmodes",
+                                            "ADD": "Lisää keruumenetelmä",
+                                            "MODIFY": "Muokkaa keruumenetelmää",
+                                            "VIEW": "Aineiston keruumenetelmä"
+                                        }
+                                    },
+                                    "subfieldConfiguration": {
+                                        "collmodeother": {
+                                            "required": true
+                                        },
+                                        "collmode": {
+                                            "required": true
+                                        }
+                                    }
+                                }
+                            ]
+                        }, {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Keruuvälineet (kvanti) tai aineistonkeruun ohjeistukset (kvali)",
+                                    "field": {
+                                        "key": "instruments",
+                                        "displayType": "CUSTOM_JS",
+                                        "columnFields": [
+                                            "instrumentvocaburi",
+                                            "instrument",
+                                            "instrumenturi"
+                                        ],
+                                        "dialogTitle": {
+                                            "key": "instruments",
+                                            "ADD": "Lisää keruuväline",
+                                            "MODIFY": "Muokkaa keruuvälinettä",
+                                            "VIEW": "Keruuväline"
+                                        }
+                                    },
+                                    "subfieldConfiguration": {
+                                        "instrument": {
+                                            "required": true
+                                        },
+                                        "instrumentother": {
+                                            "required": true
+                                        }
+                                    }
+                                }
+                            ]
+                        }, {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Otantamenetelmät tai aineiston valintatavat",
+                                    "required": true,
+                                    "field": {
+                                        "key": "sampprocs",
+                                        "columnFields": [
+                                            "sampprocvocaburi",
+                                            "sampproc",
+                                            "sampprocuri"
+                                        ],
+                                        "dialogTitle": {
+                                            "key": "sampprocs",
+                                            "ADD": "Lisää otantamenetelmä",
+                                            "MODIFY": "Muokkaa otantamenetelmää",
+                                            "VIEW": "Otantamenetelmä"
+                                        }
+                                    },
+                                    "subfieldConfiguration": {
+                                        "sampproc": {
+                                            "required": true
+                                        },
+                                        "sampprocother": {
+                                            "required": true
+                                        }
+                                    }
+                                }
+                            ]
+                        }, {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Vastausprosentti",
+                                    "field": {
+                                        "key": "resprate"
+                                    }
+                                }
+                            ]
+                        }, {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Lähdeaineistot",
+                                    "field": {
+                                        "key": "datasources",
+                                        "displayHeader": false,
+                                        "columnFields": [
+                                            "datasource"
+                                        ],
+                                        "dialogTitle": {
+                                            "key": "datasources",
+                                            "ADD": "Lisää lähdeaineisto",
+                                            "MODIFY": "Muokkaa lähdeaineistoa",
+                                            "VIEW": "Lähdeaineisto"
+                                        }
+                                    },
+                                    "subfieldConfiguration": {
+                                        "datasource": {
+                                            "field": {
+                                                "key": "datasource",
+                                                "multiline": true
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }]
+                    }
+                ]
+            },
+            {
+                "type": "SECTION",
+                "title": "Aineiston käyttö",
+                "content": [
+                    {
+                        "type": "COLUMN",
+                        "columns": 2,
+                        "rows": [{
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "ei painokertoimia",
+                                    "field": {
+                                        "key": "weightyesno",
+                                        "displayType": "CUSTOM_JS"
+                                    }
+                                },
+                                {
+                                    "type": "EMPTYCELL"
+                                }
+                            ]
+                        }, {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Painokertoimet",
+                                    "field": {
+                                        "displayType": "CUSTOM_JS",
+                                        "key": "weight",
+                                        "multiline": true
+                                    }
+                                },
+                                {
+                                    "type": "CELL",
+                                    "title": "Sisällöllinen muokkaus",
+                                    "field": {
+                                        "key": "dataprosessing",
+                                        "displayType": "CUSTOM_JS",
+                                        "multiline": true
+                                    }
+                                }
+                            ]
+                        }, {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Tiedostot",
+                                    "field": {
+                                        "key": "collsize",
+                                        "multiline": true
+                                    }
+                                },
+                                {
+                                    "type": "CELL",
+                                    "title": "Täydellisyys",
+                                    "field": {
+                                        "key": "complete",
+                                        "multiline": true
+                                    }
+                                }
+                            ]
+                        }, {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Huomioitavaa",
+                                    "field": {
+                                        "key": "datasetnotes",
+                                        "multiline": true
+                                    }
+                                }
+                            ]
+                        }, {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "colspan": 2,
+                                    "title": "Arvioinnit",
+                                    "displayHeader": false,
+                                    "field": {
+                                        "key": "appraisals",
+                                        "columnFields": [
+                                            "appraisal"
+                                        ],
+                                        "dialogTitle": {
+                                            "key": "appraisals",
+                                            "ADD": "Lisää arviointi",
+                                            "MODIFY": "Muokkaa arviointia",
+                                            "VIEW": "Arviointi"
+                                        }
+                                    }
+                                }
+                            ]
+                        }]
+                    }
+                ]
+            },
+            {
+                "type": "SECTION",
+                "title": "Muut materiaalit",
+                "content": [
+                    {
+                        "type": "COLUMN",
+                        "columns": 1,
+                        "rows": [{
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Käytön ja kuvailun oheismateriaalit",
+                                    "field": {
+                                        "key": "relatedmaterials",
+                                        "displayHeader": false,
+                                        "columnFields": [
+                                            "relatedmaterial"
+                                        ],
+                                        "dialogTitle": {
+                                            "key": "relatedmaterials",
+                                            "ADD": "Lisää oheismateriaali",
+                                            "MODIFY": "Muokkaa oheismateriaalia",
+                                            "VIEW": "Oheismateriaali"
+                                        }
+                                    },
+                                    "subfieldConfiguration": {
+                                        "relatedmaterial": {
+                                            "field": {
+                                                "key": "relatedmaterial",
+                                                "multiline": true
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }, {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Linkit tietoarkiston ulkopuoliseen materiaaliin",
+                                    "field": {
+                                        "key": "othermaterials",
+                                        "columnFields": [
+                                            "othermateriallabel",
+                                            "othermaterialtext",
+                                            "othermaterialuri"
+                                        ],
+                                        "dialogTitle": {
+                                            "key": "othermaterials",
+                                            "ADD": "Lisää ulkopuolinen materiaali",
+                                            "MODIFY": "Muokkaa ulkopuolista materiaalia",
+                                            "VIEW": "Tietoarkiston ulkopuolinen materiaali"
+                                        }
+                                    }
+                                }
+                            ]
+                        }, {
+                            "type": "ROW",
+                            "cells": [
+                                {
+                                    "type": "CELL",
+                                    "title": "Julkaisuihin liittyviä huomioita",
+                                    "field": {
+                                        "key": "publicationcomments",
+                                        "displayHeader": false,
+                                        "columnFields": [
+                                            "publicationcomment"
+                                        ],
+                                        "dialogTitle": {
+                                            "key": "publicationcomments",
+                                            "ADD": "Lisää julkaisun huomio",
+                                            "MODIFY": "Muokkaa julkaisun huomiota",
+                                            "VIEW": "Julkaisun huomio"
+                                        }
+                                    },
+                                    "subfieldConfiguration": {
+                                        "publicationcomment": {
+                                            "field": {
+                                                "key": "publicationcomment",
+                                                "multiline": true
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+
+        "type": "TAB",
+        "title": "Muuttujat",
+        "content": [
+            {
                 "type": "COLUMN",
                 "columns": 1,
                 "rows": [
@@ -2182,173 +2083,263 @@
                         "cells": [
                             {
                                 "type": "CELL",
-                                "title": "Virheet",
+                                "readOnly": true,
                                 "field": {
-                                    "displayType": "CUSTOM_JS",
-                                    "key": "studyErrors"
+                                    "key": "studyvariables",
+                                    "columnFields": [
+                                        "variableslanguage",
+                                        "variables",
+                                        "variablesfile"
+                                    ]
+                                },
+                                "subfieldConfiguration": {
+                                    "variables": {
+                                        "field": {
+                                            "displayType": "LINK",
+                                            "key": "variables"
+                                        }
+                                    }
                                 }
                             }
                         ]
                     }
                 ]
+            }
+        ]
+    }, {
+        "type": "TAB",
+        "title": "Tiedostojen hallinta",
+        "content": [{
+            "type": "COLUMN",
+            "columns": 1,
+            "rows": [{
+                "type": "ROW",
+                "cells": [{
+                    "type": "CELL",
+                    "field": {
+                        "key": "files",
+                        "displayType": "CUSTOM_JS",
+                        "showReferenceSaveInfo": true,
+                        "showReferenceState": true,
+                        "dialogTitle": {
+                            "key": "files",
+                            "MODIFY": "Muokkaa liitetiedostoa",
+                            "VIEW": "Aineiston liitetiedosto"
+                        }
+                    }
+                }]
+            }, {
+                "type": "ROW",
+                "cells": [{
+                    "type": "CELL",
+                    "title": "Tiedostoihin liittyvät huomautukset",
+                    "field": {
+                        "key": "allfilesnotes",
+                        "multiline": true
+                    }
+                }]
             }]
-        },
-        {
-            "type": "TAB",
-            "title": "Tunnisteet",
-            "content": [{
-            	"type": "COLUMN",
-            	"columns": 1,
-            	"rows": [{
-            		"type": "ROW",
-            		"cells": [{
-            			"type": "CELL",
-                        "title": "Tunnisteet",
-                        "readOnly": true,
-            			"field": {
-            				"key": "packages",
-            				"columnFields": [
-            					"package",
-            					"packageversion",
-            					"packageurn"
-            				]
-            			}
-            		}]
-            	}]
-        	}]
-        }
-	],
-    "buttons": [
-        {
-            "title": "Tallenna",
-            "type": "SAVE",
-            "isHandler": true,
-            "states": [
-                "DRAFT"
-            ],
-            "permissions": [
-                "canEditRevision"
-            ]
-        },
-        {
-            "title": "Hyväksy",
-            "type": "APPROVE",
-            "isHandler": true,
-            "states": [
-                "DRAFT"
-            ],
-            "permissions": [
-                "canApproveRevision"
-            ]
-        },
-        {
-            "title": "Tee luonnos",
-            "type": "EDIT",
-            "states": [
-                "APPROVED"
-            ],
-            "permissions": [
-                "canEditRevision"
-            ]
-        },
-        {
-            "title": "Poista",
-            "type": "REMOVE",
-            "states": [
-                "DRAFT",
-                "APPROVED"
-            ],
-            "isHandler": true,
-            "permissions": [
-                "canRemoveRevision"
-            ]
-        },
-        {
-            "title": "Palauta",
-            "type": "RESTORE",
-            "states": [
-                "REMOVED"
-            ],
-            "permissions": [
-                "canRestoreRevision"
-            ]
-        },
-        {
-            "title": "Aloita muokkaus",
-            "type": "CLAIM",
-            "hasHandler": false,
-            "states": [
-                "DRAFT"
-            ],
-            "permissions": [
-                "canEditRevision"
-            ]
-        },
-        {
-            "title": "Ota haltuun",
-            "type": "CLAIM",
-            "hasHandler": true,
-            "isHandler": false,
-            "states": [
-                "DRAFT"
-            ],
-            "permissions": [
-                "canEditRevision",
-                "canForceClaimRevision"
-            ]
-        },
-        {
-            "title": "Lopeta muokkaus",
-            "type": "RELEASE",
-            "isHandler": true,
-            "states": [
-                "DRAFT"
-            ],
-            "permissions": [
-                "canEditRevision"
-            ]
-        },
-        {
-            "title": "Vapauta luonnos",
-            "type": "RELEASE",
-            "isHandler": false,
-            "hasHandler": true,
-            "states": [
-                "DRAFT"
-            ],
-            "permissions": [
-                "canForceReleaseRevision"
-            ]
-        },
-        {
-            "title": "Revisiohistoria",
-            "type": "HISTORY",
-            "permissions": [
-                "canViewRevision"
-            ]
-        },
-        {
-            "title": "Export DDI",
-            "type": "CUSTOM",
-            "customHandler": "exportDDI",
-            "permissions": [
-                "canViewRevision",
-                "canExportRevision"
-            ]
-        },
-        {
-            "title": "Import DDI",
-            "type": "CUSTOM",
-            "customHandler": "importDDI",
-            "hasHandler": true,
-            "isHandler": true,
-            "permissions": [
-                "canViewRevision",
-                "canImportRevision"
-            ],
-            "states": [
-            	"DRAFT"
-            ]
-        }
-    ]
+        }]
+    }, {
+        "type": "TAB",
+        "title": "Koodikirja",
+        "content": [{
+            "type": "COLUMN",
+            "columns": 1,
+            "rows": [{
+                "type": "ROW",
+                "cells": [{
+                    "type": "CELL",
+                    "title": "Koodikirjan liitteet",
+                    "field": {
+                        "key": "cbattachments",
+                        "showSaveInfo": true,
+                        "columnFields": [
+                            "cbattachmentlocation",
+                            "cbattachmenttitle"
+                        ],
+                        "dialogTitle": {
+                            "key": "cbattachments",
+                            "ADD": "Lisää koodikirjan liite",
+                            "MODIFY": "Muokkaa koodikirjan liitettä",
+                            "VIEW": "Koodikirjan liitteet"
+                        }
+                    },
+                    "subfieldConfiguration": {
+                        "cbattachmentlocation": {
+                            "required": true
+                        },
+                        "cbattachmenttitle": {
+                            "required": true
+                        }
+                    }
+                }]
+            }]
+        }]
+    }, {
+        "type": "TAB",
+        "title": "Virheet",
+        "permissions": [
+            "canViewStudyErrors"
+        ],
+        "hidePageButtons": true,
+        "content": [{
+            "type": "COLUMN",
+            "columns": 1,
+            "rows": [{
+                "type": "ROW",
+                "cells": [{
+                    "type": "CELL",
+                    "title": "Virheet",
+                    "field": {
+                        "displayType": "CUSTOM_JS",
+                        "key": "studyErrors"
+                    }
+                }]
+            }]
+        }]
+    }, {
+        "type": "TAB",
+        "title": "Tunnisteet",
+        "content": [{
+            "type": "COLUMN",
+            "columns": 1,
+            "rows": [{
+                "type": "ROW",
+                "cells": [{
+                    "type": "CELL",
+                    "title": "Tunnisteet",
+                    "readOnly": true,
+                    "field": {
+                        "key": "packages",
+                        "columnFields": [
+                            "package",
+                            "packageversion",
+                            "packageurn"
+                        ]
+                    }
+                }]
+            }]
+        }]
+    }],
+    "buttons": [{
+        "title": "Tallenna",
+        "type": "SAVE",
+        "isHandler": true,
+        "states": [
+            "DRAFT"
+        ],
+        "permissions": [
+            "canEditRevision"
+        ]
+    }, {
+        "title": "Hyväksy",
+        "type": "APPROVE",
+        "isHandler": true,
+        "states": [
+            "DRAFT"
+        ],
+        "permissions": [
+            "canApproveRevision"
+        ]
+    }, {
+        "title": "Tee luonnos",
+        "type": "EDIT",
+        "states": [
+            "APPROVED"
+        ],
+        "permissions": [
+            "canEditRevision"
+        ]
+    }, {
+        "title": "Poista",
+        "type": "REMOVE",
+        "states": [
+            "DRAFT",
+            "APPROVED"
+        ],
+        "isHandler": true,
+        "permissions": [
+            "canRemoveRevision"
+        ]
+    }, {
+        "title": "Palauta",
+        "type": "RESTORE",
+        "states": [
+            "REMOVED"
+        ],
+        "permissions": [
+            "canRestoreRevision"
+        ]
+    }, {
+        "title": "Aloita muokkaus",
+        "type": "CLAIM",
+        "hasHandler": false,
+        "states": [
+            "DRAFT"
+        ],
+        "permissions": [
+            "canEditRevision"
+        ]
+    }, {
+        "title": "Ota haltuun",
+        "type": "CLAIM",
+        "hasHandler": true,
+        "isHandler": false,
+        "states": [
+            "DRAFT"
+        ],
+        "permissions": [
+            "canEditRevision",
+            "canForceClaimRevision"
+        ]
+    }, {
+        "title": "Lopeta muokkaus",
+        "type": "RELEASE",
+        "isHandler": true,
+        "states": [
+            "DRAFT"
+        ],
+        "permissions": [
+            "canEditRevision"
+        ]
+    }, {
+        "title": "Vapauta luonnos",
+        "type": "RELEASE",
+        "isHandler": false,
+        "hasHandler": true,
+        "states": [
+            "DRAFT"
+        ],
+        "permissions": [
+            "canForceReleaseRevision"
+        ]
+    }, {
+        "title": "Revisiohistoria",
+        "type": "HISTORY",
+        "permissions": [
+            "canViewRevision"
+        ]
+    }, {
+        "title": "Export DDI",
+        "type": "CUSTOM",
+        "customHandler": "exportDDI",
+        "permissions": [
+            "canViewRevision",
+            "canExportRevision"
+        ]
+    }, {
+        "title": "Import DDI",
+        "type": "CUSTOM",
+        "customHandler": "importDDI",
+        "hasHandler": true,
+        "isHandler": true,
+        "permissions": [
+            "canViewRevision",
+            "canImportRevision"
+        ],
+        "states": [
+            "DRAFT"
+        ]
+    }]
 }

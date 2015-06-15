@@ -632,14 +632,15 @@
 			"type": "REVISIONABLE",
 			"target": "STUDY_VARIABLES"
 		},
-		"variablelanguage_ref": {
-			"key": "variablelanguage_ref",
-			"type": "DEPENDENCY",
-			"target": "variables",
-			"valuePath": "language"
+		"variables_language_ref": {
+			"key": "variables_language_ref",
+			"type": "JSON",
+			"target": "language_descriptions",
+			"valuePath": "language",
+			"titlePath": "text"
 		},
-		"variable_file_ref": {
-			"key": "variable_file_ref",
+		"variables_file_ref": {
+			"key": "variables_file_ref",
 			"type": "REVISIONABLE",
 			"target": "STUDY_ATTACHMENT",
 			"titlePath": "file"
@@ -1925,28 +1926,42 @@
 			"subfield": true,
 			"exact": false
 		},
+		"studyvariables": {
+			"key": "studyvariables",
+			"type": "CONTAINER",
+			"translatable": false,
+			"editable": false,
+			"subfields": [
+				"variableslanguage",
+				"variables",
+				"variablesfile"
+			]
+		},
 		"variables": {
 			"_comment": "Contains reference to the variables revision of a given language. These only exist when there is a variable file for that language",
 			"key": "variables",
 			"type": "REFERENCE",
-			"translatable": true,
+			"translatable": false,
 			"editable": false,
+			"subfield": true,
 			"reference": "variables_ref"
 		},
-		"variablelanguage": {
-			"key": "variablelanguage",
-			"indexName": "variableslanguage",
+		"variableslanguage": {
+			"key": "variableslanguage",
 			"type": "REFERENCE",
-			"writable": false,
-			"reference": "variablelanguage_ref"
+			"reference": "variables_language_ref",
+			"editable": false,
+			"translatable": false,
+			"subfield": true
 		},
-		"variablefile": {
+		"variablesfile": {
 			"_comment": "Each language contains a reference to the variable file with that language.",
-			"key": "variablefile",
+			"key": "variablesfile",
 			"type": "REFERENCE",
 			"translatable": false,
 			"editable": false,
-			"reference": "variable_file_ref"
+			"subfield": true,
+			"reference": "variables_file_ref"
 		},
 		"files": {
 			"key": "files",
@@ -3359,7 +3374,7 @@
 			}]
 		}, {
 			"type": "FIELD",
-			"content": "variables",
+			"content": "studyvariables",
 			"checks": [{
 				"condition": {
 					"type": "TRUE"
@@ -3368,62 +3383,6 @@
 			"targets": [{
 				"type": "CHILDREN",
 				"targets": [{
-					"type": "FIELD",
-					"content": "study",
-					"checks": [{
-						"condition": {
-							"type": "NOT_EMPTY"
-						}
-					}]
-				}, {
-					"type": "FIELD",
-					"content": "casequantity",
-					"checks": [{
-						"condition": {
-							"type": "NOT_EMPTY"
-						}
-					}]
-				}, {
-					"type": "FIELD",
-					"content": "varquantity",
-					"checks": [{
-						"condition": {
-							"type": "NOT_EMPTY"
-						}
-					}]
-				}, {
-					"type": "FIELD",
-					"content": "variables",
-					"checks": [{
-						"condition": {
-							"type": "NOT_EMPTY"
-						}
-					}]
-				}, {
-					"type": "FIELD",
-					"content": "varfileid",
-					"checks": [{
-						"condition": {
-							"type": "NOT_EMPTY"
-						}
-					}]
-				}, {
-					"type": "FIELD",
-					"content": "varfileno",
-					"checks": [{
-						"condition": {
-							"type": "NOT_EMPTY"
-						}
-					}]
-				}, {
-					"type": "FIELD",
-					"content": "varfiletype",
-					"checks": [{
-						"condition": {
-							"type": "NOT_EMPTY"
-						}
-					}]
-				}, {
 					"type": "FIELD",
 					"content": "variables",
 					"checks": [{
@@ -3435,35 +3394,95 @@
 						"type": "CHILDREN",
 						"targets": [{
 							"type": "FIELD",
+							"content": "study",
+							"checks": [{
+								"condition": {
+									"type": "NOT_EMPTY"
+								}
+							}]
+						}, {
+							"type": "FIELD",
+							"content": "casequantity",
+							"checks": [{
+								"condition": {
+									"type": "NOT_EMPTY"
+								}
+							}]
+						}, {
+							"type": "FIELD",
+							"content": "varquantity",
+							"checks": [{
+								"condition": {
+									"type": "NOT_EMPTY"
+								}
+							}]
+						}, {
+							"type": "FIELD",
+							"content": "varfileid",
+							"checks": [{
+								"condition": {
+									"type": "NOT_EMPTY"
+								}
+							}]
+						}, {
+							"type": "FIELD",
+							"content": "varfileno",
+							"checks": [{
+								"condition": {
+									"type": "NOT_EMPTY"
+								}
+							}]
+						}, {
+							"type": "FIELD",
+							"content": "varfiletype",
+							"checks": [{
+								"condition": {
+									"type": "NOT_EMPTY"
+								}
+							}]
+						}, {
+							"type": "FIELD",
 							"content": "variables",
 							"checks": [{
 								"condition": {
-									"type": "NOT_EMPTY"
+									"type": "TRUE"
 								}
-							}]
-						}, {
-							"type": "FIELD",
-							"content": "varid",
-							"checks": [{
-								"condition": {
-									"type": "NOT_EMPTY"
-								}
-							}]
-						}, {
-							"type": "FIELD",
-							"content": "varlabel",
-							"checks": [{
-								"condition": {
-									"type": "NOT_EMPTY"
-								}
-							}]
-						}, {
-							"type": "FIELD",
-							"content": "varname",
-							"checks": [{
-								"condition": {
-									"type": "NOT_EMPTY"
-								}
+							}],
+							"targets": [{
+								"type": "CHILDREN",
+								"targets": [{
+									"type": "FIELD",
+									"content": "variables",
+									"checks": [{
+										"condition": {
+											"type": "NOT_EMPTY"
+										}
+									}]
+								}, {
+									"type": "FIELD",
+									"content": "varid",
+									"checks": [{
+										"condition": {
+											"type": "NOT_EMPTY"
+										}
+									}]
+								}, {
+									"type": "FIELD",
+									"content": "varlabel",
+									"checks": [{
+										"condition": {
+											"type": "NOT_EMPTY"
+										}
+									}]
+								}, {
+									"type": "FIELD",
+									"content": "varname",
+									"checks": [{
+										"condition": {
+											"type": "NOT_EMPTY"
+										}
+									}]
+								}]
 							}]
 						}]
 					}]
@@ -3475,7 +3494,14 @@
 		"type": "ALL",
 		"targets": [{
 			"type": "FIELD",
-			"content": "variables"
+			"content": "studyvariables",
+			"targets": [{
+				"type": "CHILDREN",
+				"targets": [{
+					"type": "FIELD",
+					"content": "variables"
+				}]
+			}]
 		}, {
 			"type": "FIELD",
 			"content": "files"

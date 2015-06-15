@@ -33,7 +33,7 @@ import static fi.uta.fsd.metka.storage.variables.impl.StudyVariablesParserImpl.r
  */
 class VariableParser {
     private final DateTimeUserPair info;
-    private final Language language;
+    private final Language varLang;
 
     private static final Map<Language, String> missingLabel = new HashMap<>();
     static {
@@ -42,9 +42,9 @@ class VariableParser {
         missingLabel.put(Language.SV, "[Variable is missing LABEL]");
     }
 
-    VariableParser(DateTimeUserPair info, Language language) {
+    VariableParser(DateTimeUserPair info, Language varLang) {
         this.info = info;
-        this.language = language;
+        this.varLang = varLang;
     }
 
     String getVarName(PORUtil.PORVariableHolder variable) {
@@ -73,9 +73,12 @@ class VariableParser {
 
         // Set varlabel field
         String label = !StringUtils.hasText(variable.asVariable().label)
-                ? missingLabel.get(language)
+                ? missingLabel.get(varLang)
                 : variable.asVariable().label;
         Pair<StatusCode, ValueDataField> fieldPair = variableRevision.dataField(ValueDataFieldCall.set(Fields.VARLABEL, new Value(label), Language.DEFAULT).setInfo(info));
+        result = checkResultForUpdate(fieldPair, result);
+
+        fieldPair = variableRevision.dataField(ValueDataFieldCall.set(Fields.LANGUAGE, new Value(varLang.toValue()), Language.DEFAULT).setInfo(info));
         result = checkResultForUpdate(fieldPair, result);
 
         Pair<StatusCode, ContainerDataField> qstns = variableRevision.dataField(ContainerDataFieldCall.set(Fields.QSTNLITS));

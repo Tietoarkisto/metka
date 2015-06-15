@@ -5,6 +5,7 @@ import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.enums.RevisionState;
 import fi.uta.fsd.metka.enums.VariableDataType;
+import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.data.RevisionData;
@@ -24,9 +25,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 
 /**
@@ -61,7 +59,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
     }
 
     static ParseResult checkRowResultForUpdate(Pair<StatusCode, ? extends ContainerRow> rowPair, ParseResult result) {
-        if(rowPair.getLeft() == StatusCode.ROW_CHANGE || rowPair.getLeft() == StatusCode.NEW_ROW || rowPair.getLeft() == StatusCode.ROW_REMOVED) {
+        if(rowPair.getLeft() == StatusCode.ROW_CHANGE || rowPair.getLeft() == StatusCode.ROW_INSERT || rowPair.getLeft() == StatusCode.ROW_REMOVED) {
             return resultCheck(result, ParseResult.REVISION_CHANGES);
         }
         return result;
@@ -73,7 +71,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
 
 
     @Override
-    public ParseResult parse(RevisionData attachment, VariableDataType type, RevisionData study, Language language, DateTimeUserPair info) {
+    public ParseResult parse(RevisionData attachment, VariableDataType type, RevisionData study, Language varLang, DateTimeUserPair info) {
         // Sanity check
         if(type == null) {
             return ParseResult.NO_TYPE_GIVEN;
@@ -101,16 +99,24 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
         String fileName = fieldPair.getRight().getActualValueFor(Language.DEFAULT);
 
         // Get or create study variables
-        fieldPair = study.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
+        Pair<StatusCode, ContainerDataField> conPair = study.dataField(ContainerDataFieldCall.set(Fields.STUDYVARIABLES));
+        if(conPair.getLeft() == StatusCode.FIELD_INSERT) {
+            result = ParseResult.REVISION_CHANGES;
+        }
+        Pair<StatusCode, DataRow> rowPair = conPair.getRight().getOrCreateRowWithFieldValue(Language.DEFAULT, Fields.VARIABLESLANGUAGE, new Value(varLang.toValue()), study.getChanges(), info);
+        if(rowPair.getLeft() == StatusCode.ROW_INSERT) {
+            result = ParseResult.REVISION_CHANGES;
+        }
+        fieldPair = rowPair.getRight().dataField(ValueDataFieldCall.get(Fields.VARIABLES));
         Pair<ReturnResult, RevisionData> dataPair;
 
-        if(fieldPair.getLeft() == StatusCode.FIELD_MISSING || !fieldPair.getRight().hasValueFor(language)) {
+        if(fieldPair.getLeft() == StatusCode.FIELD_MISSING || !fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
             RevisionCreateRequest request = new RevisionCreateRequest();
             request.setType(ConfigurationType.STUDY_VARIABLES);
             request.getParameters().put(Fields.STUDY, study.getKey().getId().toString());
             request.getParameters().put(Fields.FILEID, attachment.getKey().getId().toString());
             request.getParameters().put(Fields.VARFILEID, FilenameUtils.getBaseName(fileName));
-            request.getParameters().put(Fields.LANGUAGE, language.toValue());
+            request.getParameters().put(Fields.LANGUAGE, varLang.toValue());
             String ext = FilenameUtils.getExtension(fileName.toUpperCase());
             request.getParameters().put(Fields.VARFILETYPE, ext.equals("POR") ? "SPSS Portable" : ext);
             dataPair = create.create(request);
@@ -120,12 +126,13 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                 return ParseResult.COULD_NOT_CREATE_VARIABLES;
             }
 
-            fieldPair = study.dataField(ValueDataFieldCall.set(Fields.VARIABLES, new Value(dataPair.getRight().getKey().getId().toString()), Language.DEFAULT).setInfo(info));
+            rowPair.getRight().dataField(
+                    ValueDataFieldCall.set(Fields.VARIABLES, new Value(dataPair.getRight().getKey().getId().toString()), Language.DEFAULT).setInfo(info).setChangeMap(study.getChanges()));
             result = ParseResult.REVISION_CHANGES;
         } else {
-            dataPair = revisions.getLatestRevisionForIdAndType(Long.parseLong(fieldPair.getRight().getActualValueFor(language)), false, ConfigurationType.STUDY_VARIABLES);
+            dataPair = revisions.getLatestRevisionForIdAndType(Long.parseLong(fieldPair.getRight().getActualValueFor(Language.DEFAULT)), false, ConfigurationType.STUDY_VARIABLES);
             if(dataPair.getLeft() != ReturnResult.REVISION_FOUND) {
-                Logger.error(getClass(), "Couldn't find revision for study variables with id "+fieldPair.getRight().getActualValueFor(language)
+                Logger.error(getClass(), "Couldn't find revision for study variables with id "+fieldPair.getRight().getActualValueFor(Language.DEFAULT)
                         +" even though it's referenced from study "+study.toString());
                 return ParseResult.DID_NOT_FIND_VARIABLES;
             }
@@ -157,7 +164,7 @@ public class StudyVariablesParserImpl implements StudyVariablesParser {
                 String studyId = study.dataField(ValueDataFieldCall.get(Fields.STUDYID)).getRight().getActualValueFor(Language.DEFAULT);
                 parser = new PORVariablesParser(
                         attachment.dataField(ValueDataFieldCall.get(Fields.FILE)).getRight().getActualValueFor(Language.DEFAULT),
-                        language,
+                        varLang,
                         variablesData,
                         info,
                         studyId,

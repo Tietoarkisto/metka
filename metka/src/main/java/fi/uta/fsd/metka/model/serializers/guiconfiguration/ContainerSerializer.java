@@ -97,9 +97,9 @@ public class ContainerSerializer extends ObjectSerializer<Container> {
                 } else if(value.getContentType() == ContentType.BUTTON) {
                     jgen.writeObjectField("button", value.getButton());
                 }
-                jgen.writeObjectFieldStart("extraDialogConfiguration");
-                for(String key : value.getExtraDialogConfiguration().keySet()) {
-                    jgen.writeObjectField(key, value.getExtraDialogConfiguration().get(key));
+                jgen.writeObjectFieldStart("subfieldConfiguration");
+                for(String key : value.getSubfieldConfiguration().keySet()) {
+                    jgen.writeObjectField(key, value.getSubfieldConfiguration().get(key));
                 }
                 jgen.writeEndObject();
             }

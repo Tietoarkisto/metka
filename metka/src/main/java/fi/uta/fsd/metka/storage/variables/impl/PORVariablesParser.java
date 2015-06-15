@@ -53,12 +53,12 @@ class PORVariablesParser implements VariablesParser {
     private final int sizeX;
     private final int sizeY;
     private final List<PORUtil.PORVariableHolder> variables;
-    private final Language language;
+    private final Language varLang;
     private final List<RevisionData> variableRevisions;
 
-    PORVariablesParser(String path, Language language, RevisionData variablesData, DateTimeUserPair info, String studyId,
+    PORVariablesParser(String path, Language varLang, RevisionData variablesData, DateTimeUserPair info, String studyId,
                        RevisionRepository revisions, RevisionRemoveRepository remove, RevisionCreationRepository create, RevisionEditRepository edit) {
-        this.language = language;
+        this.varLang = varLang;
         this.remove = remove;
         this.revisions = revisions;
         this.create = create;
@@ -139,7 +139,7 @@ class PORVariablesParser implements VariablesParser {
 
     // All languages are handled in exactly the same way
     private ParseResult variablesParsing(ParseResult result) {
-        VariableParser parser = new VariableParser(info, language);
+        VariableParser parser = new VariableParser(info, varLang);
 
         Logger.debug(getClass(), "Gathering entities for parsing");
         long start = System.currentTimeMillis(); // Debug timer
@@ -249,7 +249,7 @@ class PORVariablesParser implements VariablesParser {
                 request.getParameters().put(Fields.VARIABLESID, variablesData.getKey().getId().toString());
                 request.getParameters().put(Fields.VARNAME, varName);
                 request.getParameters().put(Fields.VARID, varId);
-                request.getParameters().put(Fields.LANGUAGE, language.toValue());
+                request.getParameters().put(Fields.LANGUAGE, varLang.toValue());
                 dataPair = create.create(request);
                 if(dataPair.getLeft() != ReturnResult.REVISION_CREATED) {
                     Logger.error(getClass(), "Couldn't create new variable revisionable for study "+studyField.getRight().getActualValueFor(Language.DEFAULT)+" and variables "+variablesData.toString());

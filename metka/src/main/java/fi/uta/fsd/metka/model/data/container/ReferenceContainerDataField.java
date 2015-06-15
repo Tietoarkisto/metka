@@ -45,7 +45,7 @@ public class ReferenceContainerDataField extends RowContainerDataField {
         }
         for(ReferenceRow reference : references) {
             if(reference.getRowId().equals(rowId)) {
-                return new ImmutablePair<>(StatusCode.FOUND_ROW, reference);
+                return new ImmutablePair<>(StatusCode.ROW_FOUND, reference);
             }
         }
         // Given rowId was not found from this container
@@ -60,7 +60,7 @@ public class ReferenceContainerDataField extends RowContainerDataField {
     @JsonIgnore public Pair<StatusCode, ReferenceRow> getReferenceWithValue(String value) {
         for(ReferenceRow reference : references) {
             if(reference.valueEquals(value)) {
-                return new ImmutablePair<>(StatusCode.FOUND_ROW, reference);
+                return new ImmutablePair<>(StatusCode.ROW_FOUND, reference);
             }
         }
         return new ImmutablePair<>(StatusCode.NO_ROW_WITH_VALUE, null);
@@ -82,7 +82,7 @@ public class ReferenceContainerDataField extends RowContainerDataField {
             return new ImmutablePair<>(StatusCode.INCORRECT_PARAMETERS, null);
         }
         Pair<StatusCode, ReferenceRow> pair = getReferenceWithValue(value);
-        if(pair.getLeft() == StatusCode.FOUND_ROW) {
+        if(pair.getLeft() == StatusCode.ROW_FOUND) {
             return pair;
         } else {
             if(info == null) {
@@ -98,13 +98,13 @@ public class ReferenceContainerDataField extends RowContainerDataField {
                 changeMap.put(change.getKey(), change);
             }
             change.put(new RowChange(reference.getRowId()));
-            return new ImmutablePair<>(StatusCode.NEW_ROW, reference);
+            return new ImmutablePair<>(StatusCode.ROW_INSERT, reference);
         }
     }
 
     @JsonIgnore public Pair<StatusCode, ReferenceRow> removeReference(Integer rowId, Map<String, Change> changeMap, DateTimeUserPair info) {
         Pair<StatusCode, ReferenceRow> rowPair = getReferenceWithId(rowId);
-        if(rowPair.getLeft() != StatusCode.FOUND_ROW) {
+        if(rowPair.getLeft() != StatusCode.ROW_FOUND) {
             return rowPair;
         }
         ReferenceRow row = rowPair.getRight();

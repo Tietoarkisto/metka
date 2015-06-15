@@ -214,7 +214,7 @@ define(function (require) {
                     });
                 }
             },
-            extraDialogConfiguration: {
+            subfieldConfiguration: {
                 "id": {
                     "hidden": true
                 }

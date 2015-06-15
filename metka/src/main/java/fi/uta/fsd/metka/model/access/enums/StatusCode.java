@@ -14,8 +14,8 @@ public enum StatusCode {
     INCORRECT_PARAMETERS,               // Some of the parameters provided to the method were not sufficient or were in some way incorrect
     NO_ROW_WITH_ID,                     // Used to indicate that no row with given row id was found
     NO_ROW_WITH_VALUE,                  // Used to indicate that no row with given value was found
-    FOUND_ROW,                          // Used to indicate that old row was found with the request
-    NEW_ROW,                            // Used to indicate that a new row was created with the request
+    ROW_FOUND,                          // Used to indicate that old row was found with the request
+    ROW_INSERT,                         // Used to indicate that a new row was created with the request
     ROW_CHANGE,                         // Operation changed row in some way that modified changes map
     ROW_REMOVED,                        // Row was removed from a row container
     FIELD_NOT_EDITABLE,                 // Field is not editable, it cannot be edited by user

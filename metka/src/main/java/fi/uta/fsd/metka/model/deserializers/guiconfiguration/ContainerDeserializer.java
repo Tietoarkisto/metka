@@ -163,7 +163,7 @@ public class ContainerDeserializer extends ObjectDeserializer<Container> {
 
 
             // Set extra dialog config
-            JsonNode dialog = node.get("extraDialogConfiguration");
+            JsonNode dialog = node.get("subfieldConfiguration");
             if(dialog != null && dialog.getNodeType() == JsonNodeType.OBJECT) {
                 for(Iterator<String> i = dialog.fieldNames(); i.hasNext(); ){
                     String key = i.next();
@@ -172,7 +172,7 @@ public class ContainerDeserializer extends ObjectDeserializer<Container> {
                         ObjectNode o = (ObjectNode)field;
                         o.set("type", new TextNode("CELL"));
                         Container c = oc.treeToValue(o, Container.class);
-                        con.getExtraDialogConfiguration().put(key, c);
+                        con.getSubfieldConfiguration().put(key, c);
                     }
                 }
             }

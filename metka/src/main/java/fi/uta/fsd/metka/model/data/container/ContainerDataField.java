@@ -75,7 +75,7 @@ public class ContainerDataField extends RowContainerDataField {
      * @param row
      */
     @JsonIgnore public void addRow(Language language, DataRow row) {
-        if(getRowWithId(row.getRowId()).getLeft() == StatusCode.FOUND_ROW) {
+        if(getRowWithId(row.getRowId()).getLeft() == StatusCode.ROW_FOUND) {
             // Can't add second row with same id. Possibly should inform user but this should never happen anyway
             return;
         }
@@ -107,7 +107,7 @@ public class ContainerDataField extends RowContainerDataField {
         change.put(new RowChange(row.getRowId()));
         change.setChangeIn(language);
         addRow(language, row);
-        return new ImmutablePair<>(StatusCode.NEW_ROW, row);
+        return new ImmutablePair<>(StatusCode.ROW_INSERT, row);
     }
 
     public Pair<StatusCode, DataRow> getRowWithIdFrom(Language language, Integer rowId) {
@@ -116,7 +116,7 @@ public class ContainerDataField extends RowContainerDataField {
         }
         for(DataRow row : getRowsFor(language)) {
             if(row.getRowId().equals(rowId)) {
-                return new ImmutablePair<>(StatusCode.FOUND_ROW, row);
+                return new ImmutablePair<>(StatusCode.ROW_FOUND, row);
             }
         }
         return new ImmutablePair<>(StatusCode.NO_ROW_WITH_ID, null);
@@ -137,7 +137,7 @@ public class ContainerDataField extends RowContainerDataField {
         }
         for(Language language : Language.values()) {
             Pair<StatusCode, DataRow> rowPair = getRowWithIdFrom(language, rowId);
-            if(rowPair.getLeft() == StatusCode.FOUND_ROW) {
+            if(rowPair.getLeft() == StatusCode.ROW_FOUND) {
                 return rowPair;
             }
         }
@@ -152,7 +152,7 @@ public class ContainerDataField extends RowContainerDataField {
         }
         for(Language language : Language.values()) {
             Pair<StatusCode, DataRow> rowPair = getRowWithIdFrom(language, rowId);
-            if(rowPair.getLeft() == StatusCode.FOUND_ROW) {
+            if(rowPair.getLeft() == StatusCode.ROW_FOUND) {
                 return new ImmutablePair<>(rowPair.getLeft(), language);
             }
         }
@@ -184,7 +184,7 @@ public class ContainerDataField extends RowContainerDataField {
             }
             ValueDataField field = pair.getRight();
             if(field.valueForEquals(language, value.getValue())) {
-                return new ImmutablePair<>(StatusCode.FOUND_ROW, row);
+                return new ImmutablePair<>(StatusCode.ROW_FOUND, row);
             }
         }
         return new ImmutablePair<>(StatusCode.NO_ROW_WITH_VALUE, null);
@@ -211,7 +211,7 @@ public class ContainerDataField extends RowContainerDataField {
         }
 
         Pair<StatusCode, DataRow> pair = getRowWithFieldValue(language, key, value);
-        if(pair.getLeft() == StatusCode.FOUND_ROW) {
+        if(pair.getLeft() == StatusCode.ROW_FOUND) {
             return pair;
         } else {
             if(info == null) {
@@ -229,13 +229,13 @@ public class ContainerDataField extends RowContainerDataField {
             change.put(rowChange);
 
             row.dataField(ValueDataFieldCall.set(key, value, language).setInfo(info).setChangeMap(changeMap));
-            return new ImmutablePair<>(StatusCode.NEW_ROW, row);
+            return new ImmutablePair<>(StatusCode.ROW_INSERT, row);
         }
     }
 
     public Pair<StatusCode, DataRow> removeRow(Integer rowId, Map<String, Change> changeMap, DateTimeUserPair info) {
         Pair<StatusCode, DataRow> rowPair = getRowWithId(rowId);
-        if(rowPair.getLeft() != StatusCode.FOUND_ROW) {
+        if(rowPair.getLeft() != StatusCode.ROW_FOUND) {
             return rowPair;
         }
         DataRow row = rowPair.getRight();

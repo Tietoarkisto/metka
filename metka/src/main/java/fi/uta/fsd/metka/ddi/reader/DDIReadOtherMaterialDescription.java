@@ -37,7 +37,7 @@ class DDIReadOtherMaterialDescription extends DDIReadSectionBase {
         Pair<ContainerDataField, Map<String, Change>> container = containerResult.getRight();
         for(OtherMatType other : codeBook.getOtherMatArray()) {
             Pair<StatusCode, DataRow> row = container.getLeft().insertNewDataRow(language, container.getRight());
-            if(row.getLeft() != StatusCode.NEW_ROW) {
+            if(row.getLeft() != StatusCode.ROW_INSERT) {
                 continue;
             }
             if(StringUtils.hasText(other.getURI())) {

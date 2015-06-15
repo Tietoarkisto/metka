@@ -17,7 +17,7 @@ define(function (require) {
                         success: function (response) {
                             if (response.result === 'VIEW_SUCCESSFUL') {
                                 // on browser, overwrite these fields only, since there might be other unsaved fields on page
-                                ['files', 'variables'].forEach(function (field) {
+                                ['files', 'studyvariables'].forEach(function (field) {
                                     options.data.fields[field] = options.data.fields[field] || {};
                                     $.extend(options.data.fields[field], response.data.fields[field]);
                                 });

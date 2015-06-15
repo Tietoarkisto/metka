@@ -73,6 +73,12 @@ define(function (require) {
                     (function ($td) {
                         var columnLang = $thead.children('tr').children().eq(i).data('lang') || lang;
 
+                        var columnOptions = $.extend(
+                            true
+                            , {}
+                            , getPropertyNS(options, 'dataConf.fields', column)
+                            , options.subfieldConfiguration && options.subfieldConfiguration[column] ? options.subfieldConfiguration[column].field : {});
+
                         function setText(text) {
                             $td.text(typeof text === 'undefined' ? EMPTY : text);
                         }
@@ -83,7 +89,8 @@ define(function (require) {
                             })));
                         }
                         var dataConf = getPropertyNS(options, 'dataConf.fields', column);
-                        var type = getPropertyNS(options, 'dataConf.fields', column, 'type');
+                        var type = columnOptions && columnOptions.displayType ? columnOptions.displayType : columnOptions.type;
+                        //var type = getPropertyNS(options, 'dataConf.fields', column, 'type');
 
                         if (!type) {
                             log('not implemented', column);
@@ -160,6 +167,16 @@ define(function (require) {
                             case 'TIME':
                             case 'DATETIME': {
                                 $td.text(moment(value).format(require('./dateFormats')[type]));
+                                break;
+                            }
+                            case 'LINK': {
+                                require('./inherit')(function(options) {
+                                    require('./linkField')($td, options, "DEFAULT");
+                                })(options)({
+                                    fieldOptions: getPropertyNS(options, 'dataConf.fields', column),
+                                    field: columnOptions,
+                                    data: $.extend({}, options.data, {fields: transferRow.fields})
+                                });
                                 break;
                             }
                             default: {

@@ -13,7 +13,7 @@ define(function (require) {
                     dataConf: data.configuration,
                     $events: $({}),
                     defaultLang: 'DEFAULT',
-                    translatableCurrentLang: MetkaJS.User.role.defaultLanguage.toUpperCase(),
+                    //translatableCurrentLang: MetkaJS.User.role.defaultLanguage.toUpperCase(),
                     large: true
                 });
 

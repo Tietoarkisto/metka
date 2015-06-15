@@ -2,15 +2,13 @@ package fi.uta.fsd.metka.storage.repository.impl;
 
 import fi.uta.fsd.Logger;
 import fi.uta.fsd.metka.enums.*;
-import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
-import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
+import fi.uta.fsd.metka.model.access.calls.*;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Operation;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.container.ReferenceContainerDataField;
-import fi.uta.fsd.metka.model.data.container.ReferenceRow;
-import fi.uta.fsd.metka.model.data.container.ValueDataField;
+import fi.uta.fsd.metka.model.data.container.*;
+import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.model.transfer.TransferData;
 import fi.uta.fsd.metka.model.transfer.TransferField;
@@ -127,7 +125,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
 
         if(entities.isEmpty()) {
             em.remove(em.find(RevisionableEntity.class, data.getKey().getId()));
-            finalizeFinalRevisionRemoval(data);
+            finalizeFinalRevisionRemoval(data, info);
             result = RemoveResult.FINAL_REVISION;
         } else {
             RevisionableEntity entity = em.find(RevisionableEntity.class, data.getKey().getId());
@@ -189,7 +187,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         return result;
     }
 
-    private void finalizeFinalRevisionRemoval(RevisionData data) {
+    private void finalizeFinalRevisionRemoval(RevisionData data, DateTimeUserPair info) {
         switch(data.getConfiguration().getType()) {
             case STUDY: {
                 // Study attachments, variables and variable revisions should have already been removed earlier during removal propagation.
@@ -198,6 +196,39 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
                 // Remove study errors and binder pages linking to this study
                 errors.removeErrorsForStudy(data.getKey().getId());
                 binders.removeStudyBinderPages(data.getKey().getId());
+            }
+            case STUDY_VARIABLES: {
+                Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get(Fields.STUDY));
+                if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+                    Pair<ReturnResult, RevisionData> revPair = revisions.getLatestRevisionForIdAndType(fieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false,
+                            ConfigurationType.STUDY);
+                    if(revPair.getLeft() == ReturnResult.REVISION_FOUND) {
+                        RevisionData study = revPair.getRight();
+                        Pair<StatusCode, ContainerDataField> conPair = study.dataField(ContainerDataFieldCall.get(Fields.STUDYVARIABLES));
+                        if(conPair.getLeft() == StatusCode.FIELD_FOUND) {
+                            String varLang = data.dataField(ValueDataFieldCall.get(Fields.LANGUAGE)).getRight().getActualValueFor(Language.DEFAULT);
+                            Pair<StatusCode, DataRow> rowPair = conPair.getRight().getRowWithFieldValue(Language.DEFAULT, Fields.VARIABLESLANGUAGE, new Value(varLang));
+                            if(rowPair.getLeft() == StatusCode.ROW_FOUND) {
+                                conPair.getRight().removeRow(rowPair.getRight().getRowId(), study.getChanges(), info);
+                                revisions.updateRevisionData(study);
+                            }
+                        }
+                    }
+                }
+
+                fieldPair = data.dataField(ValueDataFieldCall.get(Fields.FILE));
+                if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+                    Pair<ReturnResult, RevisionData> revPair = revisions.getLatestRevisionForIdAndType(fieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false,
+                            ConfigurationType.STUDY_ATTACHMENT);
+                    if(revPair.getLeft() == ReturnResult.REVISION_FOUND) {
+                        RevisionData attachment = revPair.getRight();
+                        fieldPair = attachment.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
+                        if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+                            attachment.dataField(ValueDataFieldCall.set(Fields.VARIABLES, new Value(""), Language.DEFAULT).setInfo(info));
+                            revisions.updateRevisionData(attachment);
+                        }
+                    }
+                }
             }
             default: {
                 break;

@@ -33,339 +33,299 @@
             "title" : "Lisätiedot"
         }
     },
-    "content": [
-        {
-            "type": "COLUMN",
-            "columns": 1,
-            "rows": [
-                {
-                    "type": "ROW",
-                    "cells": [
-                        {
-                            "type": "CELL",
-                            "title": "Nimi",
-                            "horizontal": true,
-                            "field": {
-                                "key": "varname"
-                            }
-                        }
-                    ]
+    "content": [{
+        "type": "COLUMN",
+        "columns": 1,
+        "rows": [{
+            "type": "ROW",
+            "cells": [{
+                "type": "CELL",
+                "title": "Kieli",
+                "horizontal": true,
+                "field": {
+                    "key": "language"
+                }
+            }]
+        }, {
+            "type": "ROW",
+            "cells": [{
+                "type": "CELL",
+                "title": "Nimi",
+                "horizontal": true,
+                "field": {
+                    "key": "varname"
+                }
+            }]
+        }, {
+            "type": "ROW",
+            "cells": [{
+                "type": "CELL",
+                "title": "Selite",
+                "horizontal": true,
+                "field": {
+                    "key": "varlabel"
+                }
+            }]
+        }, {
+            "type": "ROW",
+            "cells": [{
+                "type": "CELL",
+                "title": "Kysymystekstit",
+                "field": {
+                    "key": "qstnlits",
+                    "displayHeader": false,
+                    "columnFields": [
+                        "qstnlit"
+                    ],
+                    "dialogTitle": {
+                        "key": "qstnlits",
+                        "ADD": "Lisää kysymysteksti",
+                        "MODIFY": "Muokkaa kysymystekstiä",
+                        "VIEW": "Kysymysteksti"
+                    }
                 },
-                {
-                    "type": "ROW",
-                    "cells": [
-                        {
-                            "type": "CELL",
-                            "title": "Selite",
-                            "horizontal": true,
-                            "field": {
-                                "key": "varlabel"
-                            }
+                "subfieldConfiguration": {
+                    "qstnlit": {
+                        "field": {
+                            "key": "qstnlit",
+                            "multiline": true
                         }
-                    ]
+                    }
+                }
+            }]
+        }]
+    }, {
+        "type": "COLUMN",
+        "columns": 2,
+        "rows": [{
+            "type": "ROW",
+            "cells": [{
+                "type": "CELL",
+                "title": "Esitekstit",
+                "field": {
+                    "key": "preqtxts",
+                    "displayHeader": false,
+                    "columnFields": [
+                        "preqtxt"
+                    ],
+                    "dialogTitle": {
+                        "key": "preqtxts",
+                        "ADD": "Lisää esiteksti",
+                        "MODIFY": "Muokkaa esitekstiä",
+                        "VIEW": "Esiteksti"
+                    }
                 },
-                {
-                    "type": "ROW",
-                    "cells": [
-                        {
-                            "type": "CELL",
-                            "title": "Kysymystekstit",
-                            "field": {
-                                "key": "qstnlits",
-                                "displayHeader": false,
-                                "columnFields": [
-                                    "qstnlit"
-                                ],
-                                "dialogTitle": {
-                                    "key": "qstnlits",
-                                    "ADD": "Lisää kysymysteksti",
-                                    "MODIFY": "Muokkaa kysymystekstiä",
-                                    "VIEW": "Kysymysteksti"
-                                }
-                            },
-                            "extraDialogConfiguration": {
-                            	"qstnlit": {
-                            		"field": {
-                            			"key": "qstnlit",
-                            			"multiline": true
-                            		}
-                            	}
-                            }
+                "subfieldConfiguration": {
+                    "preqtxt": {
+                        "field": {
+                            "key": "preqtxt",
+                            "multiline": true
                         }
-                    ]
+                    }
+                }
+            }, {
+                "type": "CELL",
+                "title": "Jälkitekstit",
+                "field": {
+                    "key": "postqtxts",
+                    "displayHeader": false,
+                    "columnFields": [
+                        "postqtxt"
+                    ],
+                    "dialogTitle": {
+                        "key": "postqtxts",
+                        "ADD": "Lisää jälkiteksti",
+                        "MODIFY": "Muokkaa jälkitekstiä",
+                        "VIEW": "Jälkiteksti"
+                    }
                 },
-                {
-                    "type": "ROW",
-                    "cells": [
-                        {
-                            "type": "CELL",
-                            "title": "Esitekstit",
-                            "field": {
-                                "key": "preqtxts",
-                                "displayHeader": false,
-                                "columnFields": [
-                                    "preqtxt"
-                                ],
-                                "dialogTitle": {
-                                    "key": "preqtxts",
-                                    "ADD": "Lisää esiteksti",
-                                    "MODIFY": "Muokkaa esitekstiä",
-                                    "VIEW": "Esiteksti"
-                                }
-                            },
-                            "extraDialogConfiguration": {
-                            	"preqtxt": {
-                            		"field": {
-                            			"key": "preqtxt",
-                            			"multiline": true
-                            		}
-                            	}
-                            }
+                "subfieldConfiguration": {
+                    "postqtxt": {
+                        "field": {
+                            "key": "postqtxt",
+                            "multiline": true
                         }
-                    ]
+                    }
+                }
+            }]
+        }, {
+            "type": "ROW",
+            "cells": [{
+                "type": "CELL",
+                "title": "Haastattelijan ohjeet",
+                "field": {
+                    "key": "ivuinstrs",
+                    "displayHeader": false,
+                    "columnFields": [
+                        "ivuinstr"
+                    ],
+                    "dialogTitle": {
+                        "key": "ivuinstrs",
+                        "ADD": "Lisää haastattelijan ohje",
+                        "MODIFY": "Muokkaa haastattelijan ohjetta",
+                        "VIEW": "Haastattelijan ohje"
+                    }
                 },
-                {
-                    "type": "ROW",
-                    "cells": [
-                        {
-                            "type": "CELL",
-                            "title": "Jälkitekstit",
-                            "field": {
-                                "key": "postqtxts",
-                                "displayHeader": false,
-                                "columnFields": [
-                                    "postqtxt"
-                                ],
-                                "dialogTitle": {
-                                    "key": "postqtxts",
-                                    "ADD": "Lisää jälkiteksti",
-                                    "MODIFY": "Muokkaa jälkitekstiä",
-                                    "VIEW": "Jälkiteksti"
-                                }
-                            },
-                            "extraDialogConfiguration": {
-                            	"postqtxt": {
-                            		"field": {
-                            			"key": "postqtxt",
-                            			"multiline": true
-                            		}
-                            	}
-                            }
+                "subfieldConfiguration": {
+                    "ivuinstr": {
+                        "field": {
+                            "key": "ivuinstr",
+                            "multiline": true
                         }
-                    ]
+                    }
+                }
+            }, {
+                "type": "CELL",
+                "title": "Huomiot",
+                "field": {
+                    "key": "varnotes",
+                    "displayHeader": false,
+                    "columnFields": [
+                        "varnote"
+                    ],
+                    "dialogTitle": {
+                        "key": "varnotes",
+                        "ADD": "Lisää huomio",
+                        "MODIFY": "Muokkaa huomiota",
+                        "VIEW": "Huomio"
+                    }
                 },
-                {
-                    "type": "ROW",
-                    "cells": [
-                        {
-                            "type": "CELL",
-                            "title": "Haastattelijan ohjeet",
-                            "field": {
-                                "key": "ivuinstrs",
-                                "displayHeader": false,
-                                "columnFields": [
-                                    "ivuinstr"
-                                ],
-                                "dialogTitle": {
-                                    "key": "ivuinstrs",
-                                    "ADD": "Lisää haastattelijan ohje",
-                                    "MODIFY": "Muokkaa haastattelijan ohjetta",
-                                    "VIEW": "Haastattelijan ohje"
-                                }
-                            },
-                            "extraDialogConfiguration": {
-                            	"ivuinstr": {
-                            		"field": {
-                            			"key": "ivuinstr",
-                            			"multiline": true
-                            		}
-                            	}
-                            }
+                "subfieldConfiguration": {
+                    "varnote": {
+                        "field": {
+                            "key": "varnote",
+                            "multiline": true
                         }
-                    ]
+                    }
+                }
+            }]
+        }, {
+            "type": "ROW",
+            "cells": [{
+                "type": "CELL",
+                "title": "Lisätiedot",
+                "field": {
+                    "key": "vartexts",
+                    "displayHeader": false,
+                    "columnFields": [
+                        "vartext"
+                    ],
+                    "dialogTitle": {
+                        "key": "vartexts",
+                        "ADD": "Lisää lisätieto",
+                        "MODIFY": "Muokkaa lisätietoa",
+                        "VIEW": "Lisätieto"
+                    }
                 },
-                {
-                    "type": "ROW",
-                    "cells": [
-                        {
-                            "type": "CELL",
-                            "title": "Huomiot",
-                            "field": {
-                                "key": "varnotes",
-                                "displayHeader": false,
-                                "columnFields": [
-                                    "varnote"
-                                ],
-                                "dialogTitle": {
-                                    "key": "varnotes",
-                                    "ADD": "Lisää huomio",
-                                    "MODIFY": "Muokkaa huomiota",
-                                    "VIEW": "Huomio"
-                                }
-                            },
-                            "extraDialogConfiguration": {
-                            	"varnote": {
-                            		"field": {
-                            			"key": "varnote",
-                            			"multiline": true
-                            		}
-                            	}
-                            }
+                "subfieldConfiguration": {
+                    "vartext": {
+                        "field": {
+                            "key": "vartext",
+                            "multiline": true
                         }
-                    ]
+                    }
+                }
+            }, {
+                "type": "CELL",
+                "title": "Tietosuoja-asiat",
+                "field": {
+                    "key": "varsecurities",
+                    "displayHeader": false,
+                    "columnFields": [
+                        "varsecurity"
+                    ],
+                    "dialogTitle": {
+                        "key": "varsecurities",
+                        "ADD": "Lisää tietosuoja-asia",
+                        "MODIFY": "Muokkaa tietosuoja-asiaa",
+                        "VIEW": "Tietosuoja-asia"
+                    }
                 },
-                {
-                    "type": "ROW",
-                    "cells": [
-                        {
-                            "type": "CELL",
-                            "title": "Lisätiedot",
-                            "field": {
-                                "key": "vartexts",
-                                "displayHeader": false,
-                                "columnFields": [
-                                    "vartext"
-                                ],
-                                "dialogTitle": {
-                                    "key": "vartexts",
-                                    "ADD": "Lisää lisätieto",
-                                    "MODIFY": "Muokkaa lisätietoa",
-                                    "VIEW": "Lisätieto"
-                                }
-                            },
-                            "extraDialogConfiguration": {
-                            	"vartext": {
-                            		"field": {
-                            			"key": "vartext",
-                            			"multiline": true
-                            		}
-                            	}
-                            }
+                "subfieldConfiguration": {
+                    "varsecurity": {
+                        "field": {
+                            "key": "varsecurity",
+                            "multiline": true
                         }
-                    ]
-                },
-                {
-                    "type": "ROW",
-                    "cells": [
-                        {
-                            "type": "CELL",
-                            "title": "Tietosuoja-asiat",
-                            "field": {
-                                "key": "varsecurities",
-                                "displayHeader": false,
-                                "columnFields": [
-                                    "varsecurity"
-                                ],
-                                "dialogTitle": {
-                                    "key": "varsecurities",
-                                    "ADD": "Lisää tietosuoja-asia",
-                                    "MODIFY": "Muokkaa tietosuoja-asiaa",
-                                    "VIEW": "Tietosuoja-asia"
-                                }
-                            },
-                            "extraDialogConfiguration": {
-                            	"varsecurity": {
-                            		"field": {
-                            			"key": "varsecurity",
-                            			"multiline": true
-                            		}
-                            	}
-                            }
-                        }
-                    ]
-                },
-                {
-                    "type": "ROW",
-                    "cells": [
-                        {
-                            "type": "CELL",
-                            "title": "Arvojen selitteet",
-                            "readOnly": true,
-                            "field": {
-                                "displayHeader": false,
-                                "key": "categories",
-                                "columnFields": [
-                                    "value",
-                                    "label",
-                                    "stat",
-                                    "missing"
-                                ]
-                            }
-                        }
-                    ]
-                },
-                {
-                    "type": "ROW",
-                    "cells": [
-                        {
-                            "type": "CELL",
-                            "title": "Statistiikka",
-                            "readOnly": true,
-                            "field": {
-                                "key": "statistics",
-                                "displayHeader": false,
-                                "columnFields": [
-                                    "statisticstype",
-                                    "statisticsvalue"
-                                ]
-                            }
-                        }
+                    }
+                }
+            }]
+        }, {
+            "type": "ROW",
+            "cells": [{
+                "type": "CELL",
+                "title": "Arvojen selitteet",
+                "readOnly": true,
+                "field": {
+                    "displayHeader": false,
+                    "key": "categories",
+                    "columnFields": [
+                        "value",
+                        "label",
+                        "stat",
+                        "missing"
                     ]
                 }
-            ]
-        }
-    ],
-    "buttons": [
-        {
-            "&title": {
-                "default": "Tallenna"
-            },
-            "type": "CUSTOM",
-            "customHandler": "studyVariableSave",
-            "isHandledByUser": "study",
-            "isHandler": true,
-            "states": [
-                "DRAFT"
-            ],
-            "permissions": [
-                "canEditRevision"
-            ]
+            }, {
+                "type": "CELL",
+                "title": "Statistiikka",
+                "readOnly": true,
+                "field": {
+                    "key": "statistics",
+                    "displayHeader": false,
+                    "columnFields": [
+                        "statisticstype",
+                        "statisticsvalue"
+                    ]
+                }
+            }]
+        }]
+    }],
+    "buttons": [{
+        "&title": {
+            "default": "Tallenna"
         },
-        {
-            "&title": {
-                "default": "Tee luonnos"
-            },
-            "type": "EDIT",
-            "isHandledByUser": "study",
-            "states": [
-                "APPROVED"
-            ],
-            "permissions": [
-                "canEditRevision"
-            ]
+        "type": "CUSTOM",
+        "customHandler": "studyVariableSave",
+        "isHandledByUser": "study",
+        "isHandler": true,
+        "states": [
+            "DRAFT"
+        ],
+        "permissions": [
+            "canEditRevision"
+        ]
+    }, {
+        "&title": {
+            "default": "Tee luonnos"
         },
-        {
-            "title": "Palauta",
-            "type": "RESTORE",
-            "_comment": "Does this need to be tied to some other state than DRAFT for target study?",
-            "isHandledByUser": "study",
-            "states": [
-                "REMOVED"
-            ],
-            "permissions": [
-                "canRestoreRevision"
-            ]
-        },
-        {
-        	"_comment": "Needs some work so history of a single variable can be shown and navigated smoothly.",
-            "title": "Revisiohistoria",
-            "type": "HISTORY",
-            "permissions": [
-                "canViewRevision"
-            ]
-        },
-        {
-            "type": "CANCEL"
-        }
-    ]
+        "type": "EDIT",
+        "isHandledByUser": "study",
+        "states": [
+            "APPROVED"
+        ],
+        "permissions": [
+            "canEditRevision"
+        ]
+    }, {
+        "title": "Palauta",
+        "type": "RESTORE",
+        "_comment": "Does this need to be tied to some other state than DRAFT for target study?",
+        "isHandledByUser": "study",
+        "states": [
+            "REMOVED"
+        ],
+        "permissions": [
+            "canRestoreRevision"
+        ]
+    }, {
+        "_comment": "Needs some work so history of a single variable can be shown and navigated smoothly.",
+        "title": "Revisiohistoria",
+        "type": "HISTORY",
+        "permissions": [
+            "canViewRevision"
+        ]
+    }, {
+        "type": "CANCEL"
+    }]
 }

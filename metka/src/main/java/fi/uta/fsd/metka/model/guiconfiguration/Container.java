@@ -23,7 +23,7 @@ public class Container {
     private Integer columns = 1;
     private Boolean required = false;
     private Integer colspan = 1;
-    private final Map<String, Container> extraDialogConfiguration = new HashMap<>();
+    private final Map<String, Container> subfieldConfiguration = new HashMap<>();
     private Boolean hidePageButtons = false;
 
     private final Set<String> permissions = new HashSet<>();
@@ -140,8 +140,8 @@ public class Container {
         return cells;
     }
 
-    public Map<String, Container> getExtraDialogConfiguration() {
-        return extraDialogConfiguration;
+    public Map<String, Container> getSubfieldConfiguration() {
+        return subfieldConfiguration;
     }
 
     public Boolean getHidePageButtons() {

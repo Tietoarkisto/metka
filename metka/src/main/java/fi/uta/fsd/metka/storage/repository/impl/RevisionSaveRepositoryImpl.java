@@ -13,7 +13,6 @@ import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.data.value.Value;
 import fi.uta.fsd.metka.model.factories.StudyFactory;
-import fi.uta.fsd.metka.model.factories.VariablesFactory;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.model.general.RevisionKey;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
@@ -24,7 +23,6 @@ import fi.uta.fsd.metka.model.transfer.TransferRow;
 import fi.uta.fsd.metka.model.transfer.TransferValue;
 import fi.uta.fsd.metka.mvc.services.ReferenceService;
 import fi.uta.fsd.metka.names.Fields;
-import fi.uta.fsd.metka.storage.cascade.CascadeInstruction;
 import fi.uta.fsd.metka.storage.cascade.Cascader;
 import fi.uta.fsd.metka.storage.repository.ConfigurationRepository;
 import fi.uta.fsd.metka.storage.repository.RevisionRepository;
@@ -34,7 +32,6 @@ import fi.uta.fsd.metka.storage.restrictions.RestrictionValidator;
 import fi.uta.fsd.metka.storage.variables.StudyVariablesParser;
 import fi.uta.fsd.metka.storage.variables.enums.ParseResult;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.MutablePair;
@@ -316,7 +313,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                         String base = FilenameUtils.getBaseName(fileName).toUpperCase();
                         String lastChar = base.substring(base.length()-1);
                         varLang = lastChar.equals("E") ? Language.EN : (lastChar.equals("S") ? Language.SV : Language.DEFAULT);
-                        // We're parsing the default var file. If there already is a default file then check that it matches this
+                        // If there already is a varfile for this language then check that it matches current varfile
                         if(hasVariablesFileFor(varLang, study)) {
                             if(variablesFileForEqual(varLang, revision.getKey().getId(), study)) {
                                 needsParsing = true;
@@ -327,7 +324,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                     }
                 }
                 if(needsParsing) {
-                    parseVariableFile(revision, study, varLang, info);
+                    parseVariableFile(revision, study, varLang, info, changesAndErrors);
                 }
             }
         }
@@ -607,24 +604,38 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         return !file.isFile();
     }
 
-    // TODO: Check
-    private boolean hasVariablesFileFor(Language language, RevisionData study) {
-        Pair<StatusCode, ValueDataField> fieldPair = study.dataField(ValueDataFieldCall.get(Fields.VARIABLEFILE));
-        if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || !fieldPair.getRight().hasValueFor(language)) {
+    private boolean hasVariablesFileFor(Language varLang, RevisionData study) {
+        Pair<StatusCode, ContainerDataField> conPair = study.dataField(ContainerDataFieldCall.get(Fields.STUDYVARIABLES));
+        if(conPair.getLeft() != StatusCode.FIELD_FOUND) {
             return false;
         }
 
-        return true;
+        Pair<StatusCode, DataRow> rowPair = conPair.getRight().getRowWithFieldValue(Language.DEFAULT, Fields.VARIABLESLANGUAGE, new Value(varLang.toValue()));
+        if(rowPair.getLeft() != StatusCode.ROW_FOUND) {
+            return false;
+        }
+
+        Pair<StatusCode, ValueDataField> fieldPair = rowPair.getRight().dataField(ValueDataFieldCall.get(Fields.VARIABLESFILE));
+        return fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT);
     }
 
-    // TODO: Check
-    private boolean variablesFileForEqual(Language language, Long value, RevisionData study) {
-        Pair<StatusCode, ValueDataField> fieldPair = study.dataField(ValueDataFieldCall.get(Fields.VARIABLEFILE));
+    private boolean variablesFileForEqual(Language varLang, Long fileId, RevisionData study) {
+        Pair<StatusCode, ContainerDataField> conPair = study.dataField(ContainerDataFieldCall.get(Fields.STUDYVARIABLES));
+        if(conPair.getLeft() != StatusCode.FIELD_FOUND) {
+            return false;
+        }
+
+        Pair<StatusCode, DataRow> rowPair = conPair.getRight().getRowWithFieldValue(Language.DEFAULT, Fields.VARIABLESLANGUAGE, new Value(varLang.toValue()));
+        if(rowPair.getLeft() != StatusCode.ROW_FOUND) {
+            return false;
+        }
+
+        Pair<StatusCode, ValueDataField> fieldPair = rowPair.getRight().dataField(ValueDataFieldCall.get(Fields.VARIABLESFILE));
         if(fieldPair.getLeft() != StatusCode.FIELD_FOUND) {
             return false;
         }
 
-        return fieldPair.getRight().valueForEquals(language, value.toString());
+        return fieldPair.getRight().valueForEquals(Language.DEFAULT, fileId.toString());
     }
 
     private boolean fileIsVarFile(String fileName) {
@@ -664,22 +675,43 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         return result != ParseResult.REVISION_CHANGES ? def : result;
     }
 
-    private void parseVariableFile(RevisionData attachment, RevisionData study, Language language, DateTimeUserPair info) {
-        ParseResult result = parser.parse(attachment, VariableDataType.POR, study, language, info);
+    private void parseVariableFile(RevisionData attachment, RevisionData study, Language varLang, DateTimeUserPair info, MutablePair<Boolean, Boolean> changesAndErrors) {
+        ParseResult result = parser.parse(attachment, VariableDataType.POR, study, varLang, info);
 
         // Check that study has a link to the variable file (we should not be in this method if there is a link to another attachment)
-        // TODO: This is not the right way to link the different languages since all languages are really present on all translations. Instead we need a container.
-        // Also REFERENCE fields can't be translatable anyway so forcing them to be is not correct
-        Pair<StatusCode, ValueDataField> fieldPair = study.dataField(ValueDataFieldCall.get(Fields.VARIABLEFILE));
-        if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || !fieldPair.getRight().hasValueFor(language)) {
-            StatusCode setResult = study.dataField(
-                    ValueDataFieldCall.set(Fields.VARIABLEFILE, new Value(attachment.getKey().getId().toString()), language).setInfo(info))
-                    .getLeft();
-            if(!(setResult == StatusCode.FIELD_UPDATE || setResult == StatusCode.FIELD_INSERT)) {
-                Logger.error(getClass(), "Study update failed with result " + setResult);
-                result = resultCheck(result, ParseResult.NO_CHANGES);
-            } else {
-                result = resultCheck(result, ParseResult.REVISION_CHANGES);
+        if(!hasVariablesFileFor(varLang, study)) {
+            Pair<StatusCode, ContainerDataField> conPair = study.dataField(ContainerDataFieldCall.set(Fields.STUDYVARIABLES));
+            if(conPair.getLeft() == StatusCode.FIELD_INSERT) {
+                result = ParseResult.REVISION_CHANGES;
+            }
+
+            Pair<StatusCode, DataRow> rowPair = conPair.getRight().getOrCreateRowWithFieldValue(Language.DEFAULT, Fields.VARIABLESLANGUAGE, new Value(varLang.toValue()), study.getChanges(), info);
+            if(rowPair.getLeft() == StatusCode.ROW_INSERT) {
+                result = ParseResult.REVISION_CHANGES;
+            }
+
+            Pair<StatusCode, ValueDataField> fieldPair = rowPair.getRight().dataField(ValueDataFieldCall.get(Fields.VARIABLESFILE));
+            if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || !fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+                StatusCode setResult = rowPair.getRight().dataField(
+                        ValueDataFieldCall.set(Fields.VARIABLESFILE, new Value(attachment.getKey().getId().toString()), Language.DEFAULT).setInfo(info).setChangeMap(study.getChanges()))
+                        .getLeft();
+                if(!(setResult == StatusCode.FIELD_UPDATE || setResult == StatusCode.FIELD_INSERT)) {
+                    Logger.error(getClass(), "Study update failed with result " + setResult);
+                    result = resultCheck(result, ParseResult.NO_CHANGES);
+                } else {
+                    result = resultCheck(result, ParseResult.REVISION_CHANGES);
+                }
+            }
+
+            fieldPair = rowPair.getRight().dataField(ValueDataFieldCall.get(Fields.VARIABLES));
+            String varsId = fieldPair.getRight().getActualValueFor(Language.DEFAULT);
+            // If this is missing then something else has gone really wrong
+
+            // Let's first check if we need to update the value at all
+            fieldPair = attachment.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
+            if(fieldPair.getLeft() != StatusCode.FIELD_FOUND || !fieldPair.getRight().hasValueFor(Language.DEFAULT) || !fieldPair.getRight().valueForEquals(Language.DEFAULT, varsId)) {
+                attachment.dataField(ValueDataFieldCall.set(Fields.VARIABLES, new Value(varsId), Language.DEFAULT).setInfo(info));
+                changesAndErrors.setLeft(true);
             }
         }
 
@@ -767,13 +799,13 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 if(pair.getRight()) {
                     // Make sure we have the reference
                     Pair<StatusCode, ReferenceRow> rowPair = field.getOrCreateReferenceWithValue(key.getId().toString(), data.getChanges(), info);
-                    if(rowPair.getLeft() == StatusCode.NEW_ROW) {
+                    if(rowPair.getLeft() == StatusCode.ROW_INSERT) {
                         changes = true;
                     }
                 } else {
                     // Remove the reference if it exists
                     Pair<StatusCode, ReferenceRow> rowPair = field.getReferenceWithValue(key.getId().toString());
-                    if(rowPair.getLeft() == StatusCode.FOUND_ROW) {
+                    if(rowPair.getLeft() == StatusCode.ROW_FOUND) {
                         rowPair = field.removeReference(rowPair.getRight().getRowId(), data.getChanges(), info);
                     }
                     if(rowPair.getLeft() == StatusCode.ROW_CHANGE || rowPair.getLeft() == StatusCode.ROW_REMOVED) {
@@ -960,7 +992,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                     if (tr.getRowId() == null && tr.getFields().size() > 0) {
                         // New row that has some fields in it. Create row in preparation for saving
                         Pair<StatusCode, DataRow> rowPair = container.insertNewDataRow(language, changeMap);
-                        if (rowPair.getLeft() == StatusCode.NEW_ROW) {
+                        if (rowPair.getLeft() == StatusCode.ROW_INSERT) {
                             row = rowPair.getRight();
                             row.setSaved(info);
                             changes = true;
@@ -970,7 +1002,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                     } else {
                         // Old row, check the "removed" value.
                         Pair<StatusCode, DataRow> rowPair = container.getRowWithId(tr.getRowId());
-                        if (rowPair.getLeft() != StatusCode.FOUND_ROW) {
+                        if (rowPair.getLeft() != StatusCode.ROW_FOUND) {
                             tr.addError(FieldError.ROW_NOT_FOUND);
                             returnPair.setRight(true);
                             continue;
@@ -1137,7 +1169,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                     } else if (tr.getRowId() == null) {
                         // New row, insert new ReferenceRow
                         Pair<StatusCode, ReferenceRow> referencePair = container.getOrCreateReferenceWithValue(tr.getValue(), changeMap, info);
-                        if (referencePair.getLeft() == StatusCode.NEW_ROW) {
+                        if (referencePair.getLeft() == StatusCode.ROW_INSERT) {
                             changes = true;
                             tr.setRowId(referencePair.getRight().getRowId());
                         }
@@ -1149,7 +1181,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                         // Old row, the only thing that can change is "removed". The actual reference value on ReferenceRow is immutable
                         // and is locked in when the row is created
                         Pair<StatusCode, ReferenceRow> referencePair = container.getReferenceWithId(tr.getRowId());
-                        if (referencePair.getLeft() != StatusCode.FOUND_ROW) {
+                        if (referencePair.getLeft() != StatusCode.ROW_FOUND) {
                             tr.addError(FieldError.ROW_NOT_FOUND);
                             returnPair.setRight(true);
                             continue;

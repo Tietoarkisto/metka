@@ -6,7 +6,6 @@ import fi.uta.fsd.metka.enums.ConfigurationType;
 import fi.uta.fsd.metka.enums.Language;
 import fi.uta.fsd.metka.enums.RevisionState;
 import fi.uta.fsd.metka.model.access.calls.ContainerDataFieldCall;
-import fi.uta.fsd.metka.model.access.calls.ReferenceContainerDataFieldCall;
 import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
@@ -15,7 +14,6 @@ import fi.uta.fsd.metka.model.data.change.Change;
 import fi.uta.fsd.metka.model.data.change.ContainerChange;
 import fi.uta.fsd.metka.model.data.change.RowChange;
 import fi.uta.fsd.metka.model.data.container.*;
-import fi.uta.fsd.metka.model.factories.VariablesFactory;
 import fi.uta.fsd.metka.model.general.DateTimeUserPair;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 import fi.uta.fsd.metka.model.transfer.TransferData;
@@ -133,7 +131,7 @@ class DDIReadDataDescription extends DDIReadSectionBase {
 
             // Create new group and add the variables to it
             Pair<StatusCode, DataRow> rowPair = vargroups.insertNewDataRow(Language.DEFAULT, changeMap);
-            if(rowPair.getLeft() != StatusCode.NEW_ROW) {
+            if(rowPair.getLeft() != StatusCode.ROW_INSERT) {
                 continue;
             }
 
@@ -215,7 +213,7 @@ class DDIReadDataDescription extends DDIReadSectionBase {
                 }
                 for(TxtType txt : varGrp.getTxtArray()) {
                     Pair<StatusCode, DataRow> rowPair = vartexts.insertNewDataRow(Language.DEFAULT, vartextsChange);
-                    if(rowPair.getLeft() != StatusCode.NEW_ROW) {
+                    if(rowPair.getLeft() != StatusCode.ROW_INSERT) {
                         continue;
                     }
                     RowChange txtRowChange = ((ContainerChange)vartextsChange.get(Fields.VARTEXTS)).get(rowPair.getRight().getRowId());
@@ -319,7 +317,7 @@ class DDIReadDataDescription extends DDIReadSectionBase {
         }
         for(Integer rowId : pair.getRight().getRowIdsFor(Language.DEFAULT)) {
             Pair<StatusCode, DataRow> rowPair = pair.getRight().getRowWithId(rowId);
-            if(rowPair.getLeft() != StatusCode.FOUND_ROW) {
+            if(rowPair.getLeft() != StatusCode.ROW_FOUND) {
                 continue;
             }
             DataRow row = rowPair.getRight();
