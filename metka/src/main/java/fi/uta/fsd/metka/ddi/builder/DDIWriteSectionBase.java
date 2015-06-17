@@ -200,7 +200,7 @@ abstract class DDIWriteSectionBase {
     }
 
     protected String getReferenceTitle(Language language, RevisionData revision, String path) {
-        ReferenceOption option = references.getCurrentFieldOption(language, revision, path);
+        ReferenceOption option = references.getCurrentFieldOption(language, revision, configuration, path);
         if(option != null) {
             return option.getTitle().getValue();
         } else return null;

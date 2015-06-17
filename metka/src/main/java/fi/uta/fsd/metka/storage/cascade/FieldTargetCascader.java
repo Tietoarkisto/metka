@@ -154,7 +154,7 @@ class FieldTargetCascader {
         }
 
         if(data == null) {
-            return false;
+            return true;
         }
 
         TransferData transferData = TransferData.buildFromRevisionData(data, RevisionableInfo.FALSE);
@@ -178,9 +178,16 @@ class FieldTargetCascader {
 
                 return result == RemoveResult.SUCCESS_LOGICAL
                         || result == RemoveResult.ALREADY_REMOVED
-                        || result == RemoveResult.FINAL_REVISION
+                        || result == RemoveResult.SUCCESS_REVISIONABLE
                         || result == RemoveResult.SUCCESS_DRAFT
                         || result == RemoveResult.NOT_DRAFT;
+            } case REMOVE_REVISIONABLE: {
+                // Cascade results don't matter for REMOVE_REVISIONABLE so we can just return true no matter the result
+                RevisionableInfo revInfo = repositories.getRevisions().getRevisionableInfo(transferData.getKey().getId()).getRight();
+                if(instruction.getDraft() && revInfo != null && revInfo.getApproved() == null) {
+                    repositories.getRemove().removeDraft(transferData, instruction.getInfo());
+                }
+                return true;
             } case EDIT: {
                 ReturnResult result = repositories.getEdit().edit(transferData, instruction.getInfo()).getLeft();
                 return result == ReturnResult.REVISION_FOUND || result == ReturnResult.REVISION_CREATED;

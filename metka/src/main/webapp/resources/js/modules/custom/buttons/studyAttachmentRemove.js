@@ -12,7 +12,7 @@ define(function (require) {
             success: {
                 SUCCESS_LOGICAL: closeAndRefresh,
                 SUCCESS_DRAFT: closeAndRefresh,
-                FINAL_REVISION: closeAndRefresh
+                SUCCESS_REVISIONABLE: closeAndRefresh
             }
         }, options)));
     };

@@ -91,7 +91,7 @@ public class CodebookReader {
 
         // Form biblcit
         StudyFactory fac = new StudyFactory();
-        result = fac.formUrnAndBiblCit(revision, info, references, new MutablePair<Boolean, Boolean>());
+        result = fac.formUrnAndBiblCit(revision, info, references, configuration, new MutablePair<Boolean, Boolean>());
 
         if(result != ReturnResult.OPERATION_SUCCESSFUL) {
             return result;

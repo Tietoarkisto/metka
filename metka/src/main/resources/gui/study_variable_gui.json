@@ -296,6 +296,17 @@
             "canEditRevision"
         ]
     }, {
+        "title": "Poista",
+        "type": "REMOVE",
+        "isHandledByUser": "study",
+        "isHandler": true,
+        "states": [
+            "DRAFT"
+        ],
+        "permissions": [
+            "canRemoveRevision"
+        ]
+    }, {
         "&title": {
             "default": "Tee luonnos"
         },

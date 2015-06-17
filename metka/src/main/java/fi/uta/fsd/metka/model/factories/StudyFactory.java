@@ -106,7 +106,7 @@ public class StudyFactory extends DataFactory {
         return new ImmutablePair<>(ReturnResult.REVISION_CREATED, data);
     }
 
-    public ReturnResult formUrnAndBiblCit(RevisionData data, DateTimeUserPair info, ReferenceService references, MutablePair<Boolean, Boolean> changesAndErrors) {
+    public ReturnResult formUrnAndBiblCit(RevisionData data, DateTimeUserPair info, ReferenceService references, Configuration configuration, MutablePair<Boolean, Boolean> changesAndErrors) {
         // Form urns here so that they are correct when needed for biblcit
         formUrns(data, info, changesAndErrors);
 
@@ -203,9 +203,9 @@ public class StudyFactory extends DataFactory {
                         }
                     } else if(typePair.getLeft() == StatusCode.FIELD_FOUND && typePair.getRight().valueForEquals(Language.DEFAULT, "2")) {
                         // Organisation collector
-                        ReferenceOption org = references.getCurrentFieldOption(l, data, "collectors."+row.getRowId()+"."+Fields.COLLECTORORGANISATION);
-                        ReferenceOption ag = references.getCurrentFieldOption(l, data, "collectors."+row.getRowId()+"."+Fields.COLLECTORAGENCY);
-                        ReferenceOption sec = references.getCurrentFieldOption(l, data, "collectors."+row.getRowId()+"."+Fields.COLLECTORSECTION);
+                        ReferenceOption org = references.getCurrentFieldOption(l, data, configuration, "collectors."+row.getRowId()+"."+Fields.COLLECTORORGANISATION);
+                        ReferenceOption ag = references.getCurrentFieldOption(l, data, configuration, "collectors."+row.getRowId()+"."+Fields.COLLECTORAGENCY);
+                        ReferenceOption sec = references.getCurrentFieldOption(l, data, configuration, "collectors."+row.getRowId()+"."+Fields.COLLECTORSECTION);
 
                         if(org != null && org.getTitle() != null && StringUtils.hasText(org.getTitle().getValue())) {
                             coll += org.getTitle().getValue();
@@ -245,9 +245,9 @@ public class StudyFactory extends DataFactory {
             if(containerPair.getLeft() == StatusCode.FIELD_FOUND && containerPair.getRight().hasRowsFor(Language.DEFAULT)) {
                 for(DataRow row : containerPair.getRight().getRowsFor(Language.DEFAULT)) {
                     String prod = "";
-                    ReferenceOption org = references.getCurrentFieldOption(l, data, "producers."+row.getRowId()+"."+Fields.PRODUCERORGANISATION);
-                    ReferenceOption ag = references.getCurrentFieldOption(l, data, "producers."+row.getRowId()+"."+Fields.PRODUCERAGENCY);
-                    ReferenceOption sec = references.getCurrentFieldOption(l, data, "producers."+row.getRowId()+"."+Fields.PRODUCERSECTION);
+                    ReferenceOption org = references.getCurrentFieldOption(l, data, configuration, "producers."+row.getRowId()+"."+Fields.PRODUCERORGANISATION);
+                    ReferenceOption ag = references.getCurrentFieldOption(l, data, configuration, "producers."+row.getRowId()+"."+Fields.PRODUCERAGENCY);
+                    ReferenceOption sec = references.getCurrentFieldOption(l, data, configuration, "producers."+row.getRowId()+"."+Fields.PRODUCERSECTION);
 
                     if(org != null && org.getTitle() != null && StringUtils.hasText(org.getTitle().getValue())) {
                         prod += org.getTitle().getValue();

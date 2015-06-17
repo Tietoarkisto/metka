@@ -2,12 +2,16 @@ package fi.uta.fsd.metka.storage.entity;
 
 import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.enums.RevisionState;
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.*;
+import org.hibernate.annotations.Cache;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "REVISION")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class RevisionEntity {
     @EmbeddedId
     private RevisionKey key;

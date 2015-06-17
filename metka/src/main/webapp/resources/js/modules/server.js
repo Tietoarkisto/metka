@@ -1,6 +1,46 @@
 define(function (require) {
     'use strict';
 
+    var CACHE_SIZE = 25;
+
+    var callCache = [];
+    var callQueue = [];
+
+    function initCallCache() {
+        for(var i=0; i<CACHE_SIZE; i++) {
+            callCache[i] = null;
+        }
+    }
+
+    function checkQueue() {
+        for(var i = 0; i < CACHE_SIZE; i++) {
+            if(callCache[i] == null) {
+                var call = callQueue.shift();
+                if(!!call) {
+                    cacheCall(i, call);
+                    callCache[i]();
+                }
+                return;
+            }
+        }
+    }
+
+    function cacheCall(index, call) {
+        var oldSuccess = call.success;
+        call.success = function(data) {
+            if(oldSuccess) {
+                oldSuccess(data);
+            }
+            callCache[index] = null;
+            checkQueue();
+        };
+        callCache[index] = function() {
+            $.ajax(call);
+        }
+    }
+
+    initCallCache();
+
     /**
      * Combines `url` module and jQuery AJAX with default options.
      *
@@ -21,7 +61,7 @@ define(function (require) {
                 throw 'illegal number of arguments';
         }
 
-        $.ajax($.extend({
+        callQueue.push($.extend({
             type: 'POST',
             cache: false,
             headers: {
@@ -32,5 +72,17 @@ define(function (require) {
             url: url,
             jsonp: false
         }, options));
+        checkQueue();
+        /*$.ajax($.extend({
+            type: 'POST',
+            cache: false,
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            dataType: 'json',
+            url: url,
+            jsonp: false
+        }, options));*/
     };
 });

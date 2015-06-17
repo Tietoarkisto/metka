@@ -18,7 +18,7 @@
       <data key="d4"/>
       <data key="d6">
         <y:UMLClassNode>
-          <y:Geometry height="146.0" width="156.0" x="326.5" y="-348.0"/>
+          <y:Geometry height="188.0" width="156.0" x="326.5" y="-348.0"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="34.265625" modelName="custom" textColor="#000000" visible="true" width="141.2998046875" x="7.35009765625" y="3.0">&lt;&lt;enumeration&gt;&gt;
@@ -32,7 +32,10 @@ OperationType<y:LabelModel>
           <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="" use3DEffect="true">
             <y:AttributeLabel>SAVE
 APPROVE
-DELETE
+REMOVE
+REMOVE_LOGICAL
+REMOVE_DRAFT
+REMOVE_REVISIONABLE
 RESTORE
 CLAIM
 RELEASE
@@ -246,11 +249,60 @@ RELEASE - After</y:NodeLabel>
         </y:UMLNoteNode>
       </data>
     </node>
+    <node id="n9">
+      <data key="d4"/>
+      <data key="d6">
+        <y:UMLNoteNode>
+          <y:Geometry height="552.0" width="307.0" x="553.5" y="141.0"/>
+          <y:Fill color="#FFCC00" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1.0"/>
+          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="548.78125" modelName="internal" modelPosition="tl" textColor="#000000" visible="true" width="303.5078125" x="4.0" y="4.0">OPERATIONS:
+Most operations should be quite self explanatory
+but because of the multiple different operations,
+remove might need some explaining.
+All remove operations are run before the main
+operation (both validation and cascade) and if
+they fail then the main operation is not run at
+all.
+REMOVE : Catch all operation, these are run
+    during both remove operations but the actual
+    operation will still be draft or logical and it
+    won't change midway, meaning if you start
+    with a draft removal then all the subsequent
+    operations are also draft.
+
+REMOVE_LOGICAL : These are run only during
+    logical remove operations and cascades will
+    happen as a logical remove, meaning if
+    cascade encounters an open draft then it will
+    fail.
+
+REMOVE_DRAFT : These are run only during draft
+    removal operations and cascades will happen
+    as a draft remove. If cascade doesn't find an
+    open draft then no actual removal will happen
+    but the operation will still cascade further.
+
+REMOVE_REVISIONABLE : These are run during
+    draft removal but only if the draft being
+    removed is the only revision linked to the
+    revisionable, i.e. it's the initial revision and not
+    approve has yet taken place.
+    Cascades will happen as revisionable removal,
+    meaning that if it encounters a revisionable
+    with an approved revision, then that cascade
+    branch will stop and no removal happens there
+    but the main operation will not stop. Further
+    cascade will only happen if revisionable will be
+    removed.</y:NodeLabel>
+        </y:UMLNoteNode>
+      </data>
+    </node>
     <edge id="e0" source="n3" target="n0">
       <data key="d8"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="12.147873279999999" sy="-12.33243648000007" tx="19.0" ty="-46.83243648000007"/>
+          <y:Path sx="12.147873279999999" sy="-12.33243648000007" tx="26.0" ty="-67.83243648000007"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="diamond" target="none"/>
           <y:BendStyle smoothed="false"/>

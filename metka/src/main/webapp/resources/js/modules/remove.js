@@ -30,7 +30,7 @@ define(function (require) {
                                             SUCCESS_DRAFT: function () {
                                                 require('./assignUrl')('view', {no: ''});
                                             },
-                                            FINAL_REVISION: function () {
+                                            SUCCESS_REVISIONABLE: function () {
                                                 require('./assignUrl')('searchPage');
                                             }
                                         }, options.success);

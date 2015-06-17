@@ -151,6 +151,10 @@
 			"key": "approve",
 			"title": "ERROR",
 			"text": "Vain osa alilomakkeista hyväksyttiin onnistuneesti joten päälomaketta ei hyväksytty."
+		}, {
+			"key": "remove",
+			"title": "ERROR",
+			"text": "Vain osa alilomakkeista poistettiin onnistuneesti joten päälomaketta ei poistettu."
 		}]
 	}, {
 		"key": "",

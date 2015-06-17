@@ -82,7 +82,11 @@
 					"multiline": true
 				}
 			}]
-		}, {
+		}]
+	}, {
+		"type": "COLUMN",
+		"columns": 2,
+		"rows": [{
 			"type": "ROW",
 			"cells": [{
 				"type": "CELL",
@@ -92,10 +96,7 @@
 				"field": {
 					"key": "filecategory"
 				}
-			}]
-		}, {
-			"type": "ROW",
-			"cells": [{
+			}, {
 				"type": "CELL",
 				"title": "PAS",
 				"horizontal": true,
@@ -114,10 +115,7 @@
 				"field": {
 					"key": "filelanguage"
 				}
-			}]
-		}, {
-			"type": "ROW",
-			"cells": [{
+			}, {
 				"type": "CELL",
 				"title": "Alkuperäinen",
 				"horizontal": true,
@@ -137,10 +135,7 @@
 				"field": {
 					"key": "filepublication"
 				}
-			}]
-		}, {
-			"type": "ROW",
-			"cells": [{
+			}, {
 				"type": "CELL",
 				"title": "Ulosluovutus",
 				"horizontal": true,
@@ -152,18 +147,9 @@
 			"type": "ROW",
 			"cells": [{
 				"type": "CELL",
-				"title": "Parsi muuttujat uudelleen tallennuksen yhteydessä",
-				"field": {
-					"displayType": "CUSTOM_JS",
-					"key": "parsed"
-				}
-			}]
-		}, {
-			"type": "ROW",
-			"cells": [{
-				"type": "CELL",
 				"title": "Tiedostohistoria",
 				"readOnly": true,
+				"colspan": 2,
 				"field": {
 					"displayType": "CUSTOM_JS",
 					"key": "custom_filehistory",

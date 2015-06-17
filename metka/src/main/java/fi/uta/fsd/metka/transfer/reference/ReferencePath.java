@@ -1,7 +1,7 @@
 package fi.uta.fsd.metka.transfer.reference;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
+import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Reference;
 
 public class ReferencePath {
@@ -9,6 +9,7 @@ public class ReferencePath {
     private final String value;
     private ReferencePath prev = null;
     private ReferencePath next = null;
+    @JsonIgnore private Configuration configuration; // This is here to speed up processing
 
     @JsonCreator
     public ReferencePath(@JsonProperty("reference") Reference reference, @JsonProperty("value") String value) {
@@ -38,5 +39,13 @@ public class ReferencePath {
 
     public String getValue() {
         return value;
+    }
+
+    public Configuration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(Configuration configuration) {
+        this.configuration = configuration;
     }
 }

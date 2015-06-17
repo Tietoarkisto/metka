@@ -48,22 +48,31 @@ public class ReferenceServiceImpl implements ReferenceService {
      * @param path
      * @return
      */
-    @Override public ReferenceOption getCurrentFieldOption(Language language, RevisionData data, String path) {
+    // TODO: We should try to move away from this
+    @Override public ReferenceOption getCurrentFieldOption(Language language, RevisionData data, Configuration configuration, String path) {
         // TODO: Gather dependencies, form request and return single result
+        Long start;
+        if(configuration == null) {
+            start = System.currentTimeMillis();
+            Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(data.getConfiguration());
+            if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
+                Logger.error(getClass(), "Couldn't find configuration for " + data.toString());
+                return null;
+            }
+            configuration = configPair.getRight();
 
-        Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(data.getConfiguration());
-        if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
-            Logger.error(getClass(), "Couldn't find configuration for " + data.toString());
-            return null;
+            Logger.debug(getClass(), "Getting configuration "+data.getConfiguration()+" took "+(System.currentTimeMillis()-start)+"ms");
         }
-        Configuration config = configPair.getRight();
+
+        start = System.currentTimeMillis();
+
         String[] splits = path.split("\\.");
         if(splits.length == 0) {
             splits = new String[1];
             splits[0] = path;
         }
         // Check that the final path element points to a field that can be a reference with a value, deal with reference containers separately with a different call
-        Field field = config.getField(splits[splits.length-1]);
+        Field field = configuration.getField(splits[splits.length-1]);
         if(field == null) {
             return null;
         }
@@ -71,7 +80,7 @@ public class ReferenceServiceImpl implements ReferenceService {
             return null;
         }
         if(field.getType() == FieldType.SELECTION) {
-            SelectionList list = config.getRootSelectionList(field.getSelectionList());
+            SelectionList list = configuration.getRootSelectionList(field.getSelectionList());
             if(list.getType() != SelectionListType.REFERENCE) {
                 return null;
             }
@@ -79,13 +88,17 @@ public class ReferenceServiceImpl implements ReferenceService {
 
         ReferenceOptionsRequest request = null;
 
-        List<String> dependencyStack = formDependencyStack(field, config);
+        List<String> dependencyStack = formDependencyStack(field, configuration);
 
         // Let's form a request that we can use to fetch a reference option
-        request = formReferenceOptionsRequest(language, splits, dependencyStack, data, config);
+        request = formReferenceOptionsRequest(language, splits, dependencyStack, data, configuration);
+
+        Logger.debug(getClass(), "Forming request took "+(System.currentTimeMillis()-start)+"ms");
+        start = System.currentTimeMillis();
 
         // Perform the request
         List<ReferenceOption> options = references.handleReferenceRequest(request).getRight();
+        Logger.debug(getClass(), "Handling request took "+(System.currentTimeMillis()-start)+"ms");
 
         // Return first option or null if no options were found
         return options.isEmpty() ? null : options.get(0);
@@ -224,6 +237,7 @@ public class ReferenceServiceImpl implements ReferenceService {
         request.setConfType(data.getConfiguration().getType().toValue());
         request.setConfVersion(data.getConfiguration().getVersion());
         request.setKey(path[path.length-1]);
+        request.setConfiguration(config);
         List<String> pathList = new ArrayList<>();
         Collections.addAll(pathList, path);
         parsePath(request, pathList, stack, data.getFields(), config);

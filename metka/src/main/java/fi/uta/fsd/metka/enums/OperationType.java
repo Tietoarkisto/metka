@@ -6,6 +6,7 @@ public enum OperationType {
     REMOVE,
     REMOVE_DRAFT,
     REMOVE_LOGICAL,
+    REMOVE_REVISIONABLE,
     RESTORE,
     CLAIM,
     RELEASE,

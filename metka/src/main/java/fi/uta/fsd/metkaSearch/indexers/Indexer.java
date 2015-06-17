@@ -149,7 +149,7 @@ public abstract class Indexer implements Callable<IndexerStatusMessage>/*, Index
                     if(status != IndexerStatusMessage.IDLING) {
                         idleLoops = 0;
                         // Previous loop was handling command, post DEBUG info
-                        Logger.debug(getClass(), "Queue clear. Spent " + timeHandlingCommands + "ms handling "+batch+" commands. PATH: "+path.toString());
+                        Logger.info(getClass(), "Queue clear. Spent " + timeHandlingCommands + "ms handling "+batch+" commands. PATH: "+path.toString());
                         status = IndexerStatusMessage.IDLING;
                         timeHandlingCommands = 0L;
                         batch= 0L;

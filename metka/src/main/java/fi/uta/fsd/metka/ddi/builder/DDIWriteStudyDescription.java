@@ -492,7 +492,7 @@ class DDIWriteStudyDescription extends DDIWriteSectionBase {
             String keyword = null;
             String keywordvocaburi = null;
 
-            ReferenceOption keywordvocab = references.getCurrentFieldOption(language, revision, rowRoot + Fields.KEYWORDVOCAB);
+            ReferenceOption keywordvocab = references.getCurrentFieldOption(language, revision, configuration, rowRoot + Fields.KEYWORDVOCAB);
             keywordvocaburi = getReferenceTitle(rowRoot + Fields.KEYWORDVOCABURI);
             SelectionList keywordvocab_list = configuration.getSelectionList(Lists.KEYWORDVOCAB_LIST);
 

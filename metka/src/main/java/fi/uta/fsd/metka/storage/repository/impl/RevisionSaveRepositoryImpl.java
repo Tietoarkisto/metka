@@ -165,7 +165,7 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
                 finalizeStudyAttachment(revision, transferData, changesAndErrors, info);
                 break;
             case STUDY:
-                finalizeStudy(revision, transferData, info, changesAndErrors);
+                finalizeStudy(revision, configuration, transferData, info, changesAndErrors);
                 break;
             case PUBLICATION:
                 finalizePublication(revision, transferData);
@@ -175,11 +175,11 @@ public class RevisionSaveRepositoryImpl implements RevisionSaveRepository {
         }
     }
 
-    private void finalizeStudy(RevisionData revision, TransferData transferData, DateTimeUserPair info, MutablePair<Boolean, Boolean> changesAndErrors) {
+    private void finalizeStudy(RevisionData revision, Configuration configuration, TransferData transferData, DateTimeUserPair info, MutablePair<Boolean, Boolean> changesAndErrors) {
         StudyFactory fac = new StudyFactory();
 
         // Form packages and biblcit
-        ReturnResult result = fac.formUrnAndBiblCit(revision, info, references, changesAndErrors);
+        ReturnResult result = fac.formUrnAndBiblCit(revision, info, references, configuration, changesAndErrors);
 
         TransferField f = transferData.getField(Fields.BIBLCIT);
         Pair<StatusCode, ValueDataField> pair = revision.dataField(ValueDataFieldCall.get(Fields.BIBLCIT));

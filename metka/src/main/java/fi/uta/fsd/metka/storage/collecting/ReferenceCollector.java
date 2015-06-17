@@ -43,22 +43,47 @@ public class ReferenceCollector {
     // TODO: Remove this request type and only support the path request type
     public Pair<ReturnResult, List<ReferenceOption>> handleReferenceRequest(ReferenceOptionsRequest request) {
         List<ReferenceOption> options = new ArrayList<>();
-        Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(ConfigurationType.fromValue(request.getConfType()), request.getConfVersion());
-        if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
-            Logger.error(getClass(), "Reference request made for configuration ["+request.getConfType()+","+request.getConfVersion()+"] that could not be found with result "+configPair.getLeft());
-            return new ImmutablePair<>(configPair.getLeft(), options);
+
+        Configuration configuration;
+        Long start;
+        if(request.getConfiguration() == null) {
+            start = System.currentTimeMillis();
+            Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(ConfigurationType.fromValue(request.getConfType()), request.getConfVersion());
+            if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
+                Logger.error(getClass(), "Reference request made for configuration ["+request.getConfType()+","+request.getConfVersion()+"] that could not be found with result "+configPair.getLeft());
+                return new ImmutablePair<>(configPair.getLeft(), options);
+            }
+
+            configuration = configPair.getRight();
+
+            Logger.debug(getClass(), "Getting configuration "+configuration.getKey()+" took "+(System.currentTimeMillis()-start)+"ms");
+        } else {
+            configuration = request.getConfiguration();
         }
 
-        Configuration configuration = configPair.getRight();
+        start = System.currentTimeMillis();
+
         ReferencePath root = formReferencePath(request.getKey(), request, configuration, null);
-        if(root != null && root.getReference() == null) {
+        if(root == null) {
+            return new ImmutablePair<ReturnResult, List<ReferenceOption>>(ReturnResult.NO_RESULTS, new ArrayList<ReferenceOption>());
+        }
+        if(root.getReference() == null) {
             // Top value has no reference but has a provided value. This means that the whole stack will collapse to returning the provided value
             ReferenceOption option = new ReferenceOption(root.getValue(), new ReferenceOptionTitle(ReferenceTitleType.LITERAL, root.getValue()));
             options.add(option);
             return new ImmutablePair<>(ReturnResult.OPERATION_SUCCESSFUL, options);
         }
 
-        return pathHandler.handleReferencePath(root, options, request.getLanguage(), request.getReturnFirst());
+        Logger.debug(getClass(), "Forming reference path took "+(System.currentTimeMillis()-start)+"ms");
+        start = System.currentTimeMillis();
+
+        root.setConfiguration(configuration);
+
+        Pair<ReturnResult, List<ReferenceOption>> result = pathHandler.handleReferencePath(root, options, request.getLanguage(), request.getReturnFirst());
+
+        Logger.debug(getClass(), "Handling reference path took "+(System.currentTimeMillis()-start)+"ms");
+
+        return result;
     }
 
     public Pair<ReturnResult, List<ReferenceOption>> handleReferenceRequest(ReferencePathRequest request) {

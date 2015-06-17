@@ -227,6 +227,18 @@
             ]
         },
         {
+            "title": "Poista",
+            "type": "REMOVE",
+            "isHandledByUser": "study",
+            "isHandler": true,
+            "states": [
+                "DRAFT"
+            ],
+            "permissions": [
+                "canRemoveRevision"
+            ]
+        },
+        {
             "type": "EDIT",
             "title": "Tee luonnos",
             "isHandledByUser": "study",

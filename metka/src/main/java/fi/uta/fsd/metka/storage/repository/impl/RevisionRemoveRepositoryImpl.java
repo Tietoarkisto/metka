@@ -21,11 +21,10 @@ import fi.uta.fsd.metka.storage.entity.key.RevisionKey;
 import fi.uta.fsd.metka.storage.repository.*;
 import fi.uta.fsd.metka.storage.repository.enums.RemoveResult;
 import fi.uta.fsd.metka.storage.repository.enums.ReturnResult;
+import fi.uta.fsd.metka.storage.response.RevisionableInfo;
 import fi.uta.fsd.metka.storage.restrictions.RestrictionValidator;
 import fi.uta.fsd.metkaAuthentication.AuthenticationUtil;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -39,7 +38,7 @@ import java.util.List;
  * Valid results are:
  *      SUCCESS_DRAFT - Draft was removed successfully, user should be moved to latest approved revision
  *      SUCCESS_LOGICAL - Logical removal was performed successfully, new up to date data should be loaded for the revision
- *      FINAL_REVISION - Draft was removed but no further revisions existed for the revisionable so the revisionable was removed also.
+ *      SUCCESS_REVISIONABLE - Draft was removed but no further revisions existed for the revisionable so the revisionable was removed also.
  * All other return values are errors
  * TODO: Should cascaded removals halt the original remove if they fail?
  */
@@ -107,7 +106,9 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
             return RemoveResult.WRONG_USER;
         }
 
-        result = validateAndCascade(data, info, true);
+        RevisionableInfo revInfo = revisions.getRevisionableInfo(data.getKey().getId()).getRight();
+
+        result = validateAndCascade(data, info, true, revInfo);
         if(result != RemoveResult.ALLOW_REMOVAL) {
             return result;
         }
@@ -119,14 +120,12 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
             em.remove(revision);
         }
 
-        List<RevisionEntity> entities = em.createQuery("SELECT r FROM RevisionEntity r WHERE r.key.revisionableId=:id", RevisionEntity.class)
-                .setParameter("id", data.getKey().getId())
-                .getResultList();
 
-        if(entities.isEmpty()) {
+
+        if(revInfo != null && revInfo.getApproved() == null) {
             em.remove(em.find(RevisionableEntity.class, data.getKey().getId()));
             finalizeFinalRevisionRemoval(data, info);
-            result = RemoveResult.FINAL_REVISION;
+            result = RemoveResult.SUCCESS_REVISIONABLE;
         } else {
             RevisionableEntity entity = em.find(RevisionableEntity.class, data.getKey().getId());
             entity.setLatestRevisionNo(entity.getCurApprovedNo());
@@ -164,7 +163,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
 
         RevisionData data = pair.getRight();
 
-        result = validateAndCascade(data, info, false);
+        result = validateAndCascade(data, info, false, null);
         if(result != RemoveResult.ALLOW_REMOVAL) {
             return result;
         }
@@ -182,12 +181,20 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
 
         // TODO: What do we do about study errors and binder pages in this case?
 
+        finalizeLogicalRemoval(data, info);
+
         result = RemoveResult.SUCCESS_LOGICAL;
         addRemoveIndexCommand(transferData, result);
         return result;
     }
 
     private void finalizeFinalRevisionRemoval(RevisionData data, DateTimeUserPair info) {
+        // TODO: Generalize this with configuration analysis
+        // Since we don't have a mapping object for references we need to do this by type for now.
+        // It might be handy to do some processing of data configurations when they are saved and to form a reference web from them.
+        // This would allow for automatic clean operations at certain key points like this. Basically collecting the foreign keys
+        // and enabling cascade effects.
+
         switch(data.getConfiguration().getType()) {
             case STUDY: {
                 // Study attachments, variables and variable revisions should have already been removed earlier during removal propagation.
@@ -196,6 +203,26 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
                 // Remove study errors and binder pages linking to this study
                 errors.removeErrorsForStudy(data.getKey().getId());
                 binders.removeStudyBinderPages(data.getKey().getId());
+                break;
+            }
+            case STUDY_ATTACHMENT: {
+                Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get(Fields.STUDY));
+                if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+                    Pair<ReturnResult, RevisionData> revPair = revisions.getLatestRevisionForIdAndType(fieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false,
+                            ConfigurationType.STUDY);
+                    if(revPair.getLeft() == ReturnResult.REVISION_FOUND) {
+                        RevisionData study = revPair.getRight();
+                        Pair<StatusCode, ReferenceContainerDataField> conPair = study.dataField(ReferenceContainerDataFieldCall.get(Fields.FILES));
+                        if(conPair.getLeft() == StatusCode.FIELD_FOUND) {
+                            Pair<StatusCode, ReferenceRow> rowPair = conPair.getRight().getReferenceWithValue(data.getKey().getId() + "");
+                            if(rowPair.getLeft() == StatusCode.ROW_FOUND && !rowPair.getRight().getRemoved()) {
+                                conPair.getRight().removeReference(rowPair.getRight().getRowId(), study.getChanges(), info);
+                                revisions.updateRevisionData(study);
+                            }
+                        }
+                    }
+                }
+                break;
             }
             case STUDY_VARIABLES: {
                 Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get(Fields.STUDY));
@@ -206,11 +233,14 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
                         RevisionData study = revPair.getRight();
                         Pair<StatusCode, ContainerDataField> conPair = study.dataField(ContainerDataFieldCall.get(Fields.STUDYVARIABLES));
                         if(conPair.getLeft() == StatusCode.FIELD_FOUND) {
-                            String varLang = data.dataField(ValueDataFieldCall.get(Fields.LANGUAGE)).getRight().getActualValueFor(Language.DEFAULT);
-                            Pair<StatusCode, DataRow> rowPair = conPair.getRight().getRowWithFieldValue(Language.DEFAULT, Fields.VARIABLESLANGUAGE, new Value(varLang));
-                            if(rowPair.getLeft() == StatusCode.ROW_FOUND) {
-                                conPair.getRight().removeRow(rowPair.getRight().getRowId(), study.getChanges(), info);
-                                revisions.updateRevisionData(study);
+                            fieldPair = data.dataField(ValueDataFieldCall.get(Fields.LANGUAGE));
+                            if(fieldPair.getLeft() == StatusCode.FIELD_FOUND) {
+                                String varLang = fieldPair.getRight().getActualValueFor(Language.DEFAULT);
+                                Pair<StatusCode, DataRow> rowPair = conPair.getRight().getRowWithFieldValue(Language.DEFAULT, Fields.VARIABLESLANGUAGE, new Value(varLang));
+                                if(rowPair.getLeft() == StatusCode.ROW_FOUND) {
+                                    conPair.getRight().removeRow(rowPair.getRight().getRowId(), study.getChanges(), info);
+                                    revisions.updateRevisionData(study);
+                                }
                             }
                         }
                     }
@@ -229,20 +259,53 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
                         }
                     }
                 }
+                break;
             }
             default: {
                 break;
             }
         }
+    }
 
-        // TODO: remove references to this object.
+    private void finalizeLogicalRemoval(RevisionData data, DateTimeUserPair info) {
+        // TODO: Generalize this with configuration analysis
         // Since we don't have a mapping object for references we need to do this by type for now.
         // It might be handy to do some processing of data configurations when they are saved and to form a reference web from them.
         // This would allow for automatic clean operations at certain key points like this. Basically collecting the foreign keys
         // and enabling cascade effects.
+
+        switch(data.getConfiguration().getType()) {
+
+            case STUDY_VARIABLES: {
+                Pair<StatusCode, ValueDataField> fieldPair = data.dataField(ValueDataFieldCall.get(Fields.STUDY));
+                if(fieldPair.getLeft() == StatusCode.FIELD_FOUND && fieldPair.getRight().hasValueFor(Language.DEFAULT)) {
+                    Pair<ReturnResult, RevisionData> revPair = revisions.getLatestRevisionForIdAndType(fieldPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false,
+                            ConfigurationType.STUDY);
+                    if(revPair.getLeft() == ReturnResult.REVISION_FOUND) {
+                        RevisionData study = revPair.getRight();
+                        Pair<StatusCode, ContainerDataField> conPair = study.dataField(ContainerDataFieldCall.get(Fields.STUDYVARIABLES));
+                        if(conPair.getLeft() == StatusCode.FIELD_FOUND) {
+                            fieldPair = data.dataField(ValueDataFieldCall.get(Fields.LANGUAGE));
+                            if(fieldPair.getLeft() == StatusCode.FIELD_FOUND) {
+                                String varLang = fieldPair.getRight().getActualValueFor(Language.DEFAULT);
+                                Pair<StatusCode, DataRow> rowPair = conPair.getRight().getRowWithFieldValue(Language.DEFAULT, Fields.VARIABLESLANGUAGE, new Value(varLang));
+                                if(rowPair.getLeft() == StatusCode.ROW_FOUND) {
+                                    conPair.getRight().removeRow(rowPair.getRight().getRowId(), study.getChanges(), info);
+                                    revisions.updateRevisionData(study);
+                                }
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+            default: {
+                break;
+            }
+        }
     }
 
-    private RemoveResult validateAndCascade(RevisionData data, DateTimeUserPair info, Boolean draft) {
+    private RemoveResult validateAndCascade(RevisionData data, DateTimeUserPair info, Boolean draft, RevisionableInfo revInfo) {
         Pair<ReturnResult, Configuration> confPair = configurations.findConfiguration(data.getConfiguration());
         if(confPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
             Logger.error(getClass(), "Could not find configuration for data "+data.toString());
@@ -254,6 +317,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
         for(Operation operation : confPair.getRight().getRestrictions()) {
             if(!(operation.getType() == OperationType.REMOVE
                     || operation.getType() == (draft?OperationType.REMOVE_DRAFT:OperationType.REMOVE_LOGICAL)
+                    || (draft && revInfo != null && revInfo.getApproved() == null && operation.getType() == OperationType.REMOVE_REVISIONABLE)
                     || operation.getType() == OperationType.ALL)) {
                 continue;
             }
@@ -278,6 +342,19 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
                 rr = ReturnResult.CASCADE_FAILURE;
             }
         }
+
+        // Do REMOVE_REVISIONABLE cascade, results don't matter
+        if(draft && revInfo != null && revInfo.getApproved() == null) {
+            for(Operation operation : confPair.getRight().getCascade()) {
+                if(operation.getType() != OperationType.REMOVE_REVISIONABLE) {
+                    continue;
+                }
+                if(!cascader.cascade(CascadeInstruction.build(OperationType.REMOVE_REVISIONABLE, info, true), data, operation.getTargets(), confPair.getRight())) {
+                    rr = ReturnResult.CASCADE_FAILURE;
+                }
+            }
+        }
+
         // If cascade fails then don't approve this revision
         if(rr != ReturnResult.OPERATION_SUCCESSFUL) {
             return RemoveResult.CASCADE_FAILURE;
@@ -315,7 +392,7 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
 
     private void addRemoveIndexCommand(TransferData transferData, RemoveResult result) {
         switch(result) {
-            case FINAL_REVISION:
+            case SUCCESS_REVISIONABLE:
                 // TODO: In case of study we should check that references pointing to this study will get removed from revisions (from which point is the question).
             case SUCCESS_DRAFT:
                 // One remove operation should be enough for both of these since there should only be one affected document
@@ -336,90 +413,4 @@ public class RevisionRemoveRepositoryImpl implements RevisionRemoveRepository {
                 break;
         }
     }
-
-    /*private void propagateStudyDraftRemoval(RevisionData data) {
-        Pair<StatusCode, ValueDataField> variablesPair = data.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
-        if(variablesPair.getLeft() == StatusCode.FIELD_FOUND && variablesPair.getRight().hasValueFor(Language.DEFAULT)) {
-            // Variables found
-            Pair<ReturnResult, RevisionData> variables = revisions.getLatestRevisionForIdAndType(variablesPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY_VARIABLES);
-            if(variables.getLeft() == ReturnResult.REVISION_FOUND && variables.getRight().getState() == RevisionState.DRAFT) {
-                // Variables were found and were in draft state, just call removeDraft on them and it should propagate after that.
-                removeDraft(variables.getRight());
-            } else if(variables.getLeft() == ReturnResult.REVISION_FOUND) {
-                // Variables were found but were not in draft state, trigger just the propagation to variable entities.
-                propagateStudyVariablesDraftRemoval(variables.getRight());
-            }
-        }
-        Pair<StatusCode, ReferenceContainerDataField> attachmentsPair = data.dataField(ReferenceContainerDataFieldCall.get(Fields.FILES));
-        if(attachmentsPair.getLeft() == StatusCode.FIELD_FOUND && !attachmentsPair.getRight().getReferences().isEmpty()) {
-            // Attachments found
-            for(ReferenceRow row : attachmentsPair.getRight().getReferences()) {
-                Pair<ReturnResult, RevisionData> attachment = revisions.getLatestRevisionForIdAndType(row.getReference().asInteger(), false, ConfigurationType.STUDY_ATTACHMENT);
-                if(attachment.getLeft() == ReturnResult.REVISION_FOUND && attachment.getRight().getState() == RevisionState.DRAFT) {
-                    // Attachment found and is in draft state, just call removeDraft
-                    removeDraft(attachment.getRight());
-                }
-            }
-
-        }
-    }
-
-    private void propagateStudyVariablesDraftRemoval(RevisionData data) {
-        Pair<StatusCode, ReferenceContainerDataField> variablesPair = data.dataField(ReferenceContainerDataFieldCall.get(Fields.VARIABLES));
-        if(variablesPair.getLeft() == StatusCode.FIELD_FOUND && !variablesPair.getRight().getReferences().isEmpty()) {
-            // Attachments found
-            for(ReferenceRow row : variablesPair.getRight().getReferences()) {
-                Pair<ReturnResult, RevisionData> variable = revisions.getLatestRevisionForIdAndType(row.getReference().asInteger(), false, ConfigurationType.STUDY_VARIABLE);
-                if(variable.getLeft() == ReturnResult.REVISION_FOUND && variable.getRight().getState() == RevisionState.DRAFT) {
-                    // Attachment found and is in draft state, just call removeDraft
-                    removeDraft(variable.getRight());
-                }
-            }
-
-        }
-    }*/
-
-
-
-    /*private void propagateStudyLogicalRemoval(RevisionData data) {
-        Pair<StatusCode, ValueDataField> variablesPair = data.dataField(ValueDataFieldCall.get(Fields.VARIABLES));
-        if(variablesPair.getLeft() == StatusCode.FIELD_FOUND && variablesPair.getRight().hasValueFor(Language.DEFAULT)) {
-            // Variables found
-            Pair<ReturnResult, RevisionData> variables = revisions.getLatestRevisionForIdAndType(variablesPair.getRight().getValueFor(Language.DEFAULT).valueAsInteger(), false, ConfigurationType.STUDY_VARIABLES);
-            if(variables.getLeft() == ReturnResult.REVISION_FOUND && variables.getRight().getState() == RevisionState.APPROVED) {
-                // Variables were found and were in draft state, just call removeDraft on them and it should propagate after that.
-                removeLogical(variables.getRight());
-            } else if(variables.getLeft() == ReturnResult.REVISION_FOUND) {
-                // Variables were found but were not in draft state, trigger just the propagation to variable entities.
-                propagateStudyVariablesDraftRemoval(variables.getRight());
-            }
-        }
-        Pair<StatusCode, ReferenceContainerDataField> attachmentsPair = data.dataField(ReferenceContainerDataFieldCall.get(Fields.FILES));
-        if(attachmentsPair.getLeft() == StatusCode.FIELD_FOUND && !attachmentsPair.getRight().getReferences().isEmpty()) {
-            // Attachments found
-            for(ReferenceRow row : attachmentsPair.getRight().getReferences()) {
-                Pair<ReturnResult, RevisionData> attachment = revisions.getLatestRevisionForIdAndType(row.getReference().asInteger(), false, ConfigurationType.STUDY_ATTACHMENT);
-                if(attachment.getLeft() == ReturnResult.REVISION_FOUND && attachment.getRight().getState() == RevisionState.APPROVED) {
-                    // Attachment found and is in draft state, just call removeDraft
-                    removeLogical(attachment.getRight());
-                }
-            }
-
-        }
-    }
-
-    private void propagateStudyVariablesLogicalRemoval(RevisionData data) {
-        Pair<StatusCode, ReferenceContainerDataField> variablesPair = data.dataField(ReferenceContainerDataFieldCall.get(Fields.VARIABLES));
-        if(variablesPair.getLeft() == StatusCode.FIELD_FOUND && !variablesPair.getRight().getReferences().isEmpty()) {
-            // Attachments found
-            for(ReferenceRow row : variablesPair.getRight().getReferences()) {
-                Pair<ReturnResult, RevisionData> variable = revisions.getLatestRevisionForIdAndType(row.getReference().asInteger(), false, ConfigurationType.STUDY_VARIABLE);
-                if(variable.getLeft() == ReturnResult.REVISION_FOUND && variable.getRight().getState() == RevisionState.APPROVED) {
-                    // Attachment found and is in draft state, just call removeDraft
-                    removeLogical(variable.getRight());
-                }
-            }
-
-        }
-    }*/
 }

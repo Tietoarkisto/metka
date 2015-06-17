@@ -170,14 +170,19 @@ public class ReferencePathHandler {
 
     private void handleRevisionableStep(ReferencePath step, List<ReferenceOption> options, Language language, boolean returnFirst) {
         if(StringUtils.hasText(step.getValue())) {
+            Long start = System.currentTimeMillis();
             Pair<ReturnResult, RevisionableInfo> infoPair = revisions.getRevisionableInfo(Long.parseLong(step.getValue()));
             if(infoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND || (infoPair.getRight().getRemoved() && step.getReference().getIgnoreRemoved())) {
                 return;
             }
             Pair<ReturnResult, RevisionData> pair = revisions.getLatestRevisionForIdAndType(Long.parseLong(step.getValue()),
                     step.getReference().getApprovedOnly(), ConfigurationType.fromValue(step.getReference().getTarget()));
+            Logger.debug(getClass(), "Got info and revision in "+(System.currentTimeMillis()-start)+"ms");
+
             if(pair.getLeft() == ReturnResult.REVISION_FOUND) {
+                start = System.currentTimeMillis();
                 handleRevisionStep(pair.getRight(), step, options, language, returnFirst);
+                Logger.debug(getClass(), "Handling step took "+(System.currentTimeMillis()-start)+"ms");
             }
         } else {
             List<RevisionableEntity> revisionables = em.createQuery("SELECT r FROM RevisionableEntity r WHERE r.type=:type", RevisionableEntity.class)
@@ -204,7 +209,7 @@ public class ReferencePathHandler {
         if(StringUtils.hasText(step.getValue())) {
             String[] splits = step.getValue().split("-");
 
-            if(splits == null || splits.length < 2) {
+            if(splits.length < 2) {
                 // We have only revisionable id, handle just like revisionable reference
                 Pair<ReturnResult, RevisionableInfo> infoPair = revisions.getRevisionableInfo(Long.parseLong(step.getValue()));
                 if(infoPair.getLeft() != ReturnResult.REVISIONABLE_FOUND || (infoPair.getRight().getRemoved() && step.getReference().getIgnoreRemoved())) {
@@ -254,22 +259,29 @@ public class ReferencePathHandler {
             // We already have something to return and only first was requested, get out
             return;
         }
-        Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(data.getConfiguration());
-        if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
-            Logger.error(getClass(), "Could not find configuration for "+data.toString());
-            return;
+        Configuration configuration;
+        if(step.getConfiguration() != null) {
+            configuration = step.getConfiguration();
+        } else {
+            Pair<ReturnResult, Configuration> configPair = configurations.findConfiguration(data.getConfiguration());
+            if(configPair.getLeft() != ReturnResult.CONFIGURATION_FOUND) {
+                Logger.error(getClass(), "Could not find configuration for "+data.toString());
+                return;
+            }
+            configuration = configPair.getRight();
         }
+
         if(step.getNext() == null) {
             // Terminating step, gather option from revision data
             DataFieldPathParser parser = new DataFieldPathParser(data.getFields(),
-                    step.getReference().getValuePathParts(), configPair.getRight(), language);
+                    step.getReference().getValuePathParts(), configuration, language);
             //Map<String, DataField> fieldMap = parser.findRootObjectWithTerminatingValue(step.getValue());
             ReferenceOption option = parser.getOption(data, step.getReference());
             if(option != null) {
                 options.add(option);
             }
         } else {
-            referencePathStep(data.getFields(), step.getNext(), configPair.getRight(), options, language, returnFirst);
+            referencePathStep(data.getFields(), step.getNext(), configuration, options, language, returnFirst);
         }
     }
 

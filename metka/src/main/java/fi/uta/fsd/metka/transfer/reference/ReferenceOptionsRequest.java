@@ -1,6 +1,8 @@
 package fi.uta.fsd.metka.transfer.reference;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.configuration.Configuration;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +18,7 @@ public class ReferenceOptionsRequest {
     private final Map<String, String> fieldValues = new HashMap<>();
     private String container;
     private Boolean returnFirst = false;
+    @JsonIgnore private Configuration configuration; // This is here to speed up processing
 
 
     public String getKey() {
@@ -68,6 +71,14 @@ public class ReferenceOptionsRequest {
 
     public void setReturnFirst(Boolean returnFirst) {
         this.returnFirst = returnFirst;
+    }
+
+    public Configuration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(Configuration configuration) {
+        this.configuration = configuration;
     }
 
     @Override

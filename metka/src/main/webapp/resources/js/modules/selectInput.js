@@ -25,7 +25,7 @@ define(function (require) {
 
         function setValue() {
             var value = require('./data')(options).getByLang(lang);
-            if (typeof value !== 'undefined' && $input.children('option[value="' + value + '"]').length) {
+            if (typeof value !== 'undefined' && $input.children("option[value='" + value + "']").length) {
                 $input.val(value);
             } else {
                 $input.children().first().prop('selected', true);

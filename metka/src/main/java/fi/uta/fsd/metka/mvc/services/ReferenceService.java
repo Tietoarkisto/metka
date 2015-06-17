@@ -1,6 +1,7 @@
 package fi.uta.fsd.metka.mvc.services;
 
 import fi.uta.fsd.metka.enums.Language;
+import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
 import fi.uta.fsd.metka.transfer.reference.ReferencePathRequest;
 import fi.uta.fsd.metka.transfer.reference.*;
@@ -13,7 +14,7 @@ import java.util.List;
 
 @Transactional(readOnly = true)
 public interface ReferenceService {
-    ReferenceOption getCurrentFieldOption(Language language, RevisionData data, String path);
+    ReferenceOption getCurrentFieldOption(Language language, RevisionData data, Configuration configuration, String path);
     ReferenceOption getCurrentFieldOption(ReferencePathRequest request);
 
     @PreAuthorize("hasPermission('"+ Permission.Values.CAN_VIEW_REVISION +"', '" + PermissionCheck.Values.PERMISSION + "')")
