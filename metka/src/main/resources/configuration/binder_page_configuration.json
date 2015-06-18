@@ -1,0 +1,26 @@
+{
+  "key": {
+    "version": 1,
+    "type": "BINDER_PAGE"
+  },
+  "fields": {
+    "binderid": {
+      "key": "binderid",
+      "type": "INTEGER",
+      "translatable": false
+    },
+    "description": {
+      "key": "description",
+      "type": "STRING",
+      "translatable": false,
+      "exact": false
+    },
+    "studyid": {
+      "key": "studyid",
+      "type": "STRING",
+      "immutable": true,
+      "translatable": false
+    }
+  },
+  "restrictions": []
+}

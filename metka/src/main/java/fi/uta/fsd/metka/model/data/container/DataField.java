@@ -46,20 +46,17 @@ import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 public abstract class DataField {
     private final String key;
 
-    @JsonIgnore private DataFieldType type;
+    @JsonIgnore private final DataFieldType type;
 
     @JsonIgnore private DataFieldContainer parent; // This is used during restriction validation
 
-    public DataField(String key) {
+    public DataField(DataFieldType type, String key) {
+        this.type = type;
         this.key = key;
     }
 
     public DataFieldType getType() {
         return type;
-    }
-
-    public void setType(DataFieldType type) {
-        this.type = type;
     }
 
     public String getKey() {

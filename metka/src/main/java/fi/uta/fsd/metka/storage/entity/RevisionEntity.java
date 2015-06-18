@@ -39,7 +39,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "REVISION")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+/*@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)*/
 public class RevisionEntity {
     @EmbeddedId
     private RevisionKey key;

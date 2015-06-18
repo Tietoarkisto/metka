@@ -41,8 +41,8 @@ public abstract class RowContainerDataField extends DataField {
 
     private Integer rowIdSeq;
 
-    public RowContainerDataField(String key, Integer rowIdSeq) {
-        super(key);
+    public RowContainerDataField(DataFieldType type, String key, Integer rowIdSeq) {
+        super(type, key);
         this.rowIdSeq = rowIdSeq;
     }
 

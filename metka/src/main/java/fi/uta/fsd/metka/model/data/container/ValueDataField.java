@@ -55,7 +55,7 @@ public class ValueDataField extends DataField {
     @JsonCreator
     public ValueDataField(@JsonProperty("key") String key) {
         // Let's just assume that polymorphism works and that the given type is a correct type
-        super(key);
+        super(DataFieldType.VALUE, key);
     }
 
     public Map<Language, ValueContainer> getOriginal() {

@@ -34,6 +34,7 @@ import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.configuration.Field;
 import fi.uta.fsd.metka.model.data.change.Change;
+import fi.uta.fsd.metka.model.data.change.ValueChange;
 import fi.uta.fsd.metka.model.data.container.DataField;
 import fi.uta.fsd.metka.model.data.container.ValueContainer;
 import fi.uta.fsd.metka.model.data.container.ValueDataField;
@@ -127,7 +128,7 @@ final class ValueDataFieldMutator {
         }
 
         if(changeMap.get(key) == null) {
-            changeMap.put(key, new Change(key));
+            changeMap.put(key, new ValueChange(key));
         }
         changeMap.get(key).setChangeIn(language);
         return new ImmutablePair<>(statusCode, pair.getRight());

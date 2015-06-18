@@ -56,7 +56,7 @@ public class ContainerDataField extends RowContainerDataField {
 
     @JsonCreator
     public ContainerDataField(@JsonProperty("key") String key, @JsonProperty("rowIdSeq") Integer rowIdSeq) {
-        super(key, rowIdSeq);
+        super(DataFieldType.CONTAINER, key, rowIdSeq);
     }
 
     public Map<Language, List<DataRow>> getRows() {

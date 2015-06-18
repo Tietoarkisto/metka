@@ -36,9 +36,7 @@ import fi.uta.fsd.metka.model.access.calls.ValueDataFieldCall;
 import fi.uta.fsd.metka.model.access.enums.StatusCode;
 import fi.uta.fsd.metka.model.configuration.Configuration;
 import fi.uta.fsd.metka.model.data.RevisionData;
-import fi.uta.fsd.metka.model.data.change.Change;
-import fi.uta.fsd.metka.model.data.change.ContainerChange;
-import fi.uta.fsd.metka.model.data.change.RowChange;
+import fi.uta.fsd.metka.model.data.change.*;
 import fi.uta.fsd.metka.model.data.container.*;
 import fi.uta.fsd.metka.model.interfaces.DataFieldContainer;
 import fi.uta.fsd.metka.names.Fields;
@@ -176,10 +174,10 @@ public class RevisionSearchImpl implements RevisionSearch {
     private void gatherChanges(String root, Map<String, Change> changeMap, DataFieldContainer container, Map<String, MutablePair<String, String>> changes, DataFieldContainer originalFields) {
         for(String key : changeMap.keySet()) {
             Change change = changeMap.get(key);
-            if(change.getType() == DataField.DataFieldType.CONTAINER) {
+            if(change.getType() == Change.ChangeType.CONTAINER) {
                 gatherContainerChanges(root, (ContainerChange)change, container, changes, originalFields);
             } else {
-                gatherValueChanges(root, change, container, changes, originalFields);
+                gatherValueChanges(root, (ValueChange)change, container, changes, originalFields);
             }
         }
     }
@@ -201,18 +199,26 @@ public class RevisionSearchImpl implements RevisionSearch {
                     }
                     DataRow origRow = (originalContainer != null) ? originalContainer.getRowWithId(row.getRowId()).getRight() : null;
                     String rowKey = langKey + rowChange.getRowId();
-                    if(changes.containsKey(rowKey)) {
-                        if(row.getRemoved()) {
-                            changes.get(rowKey).setRight(" ");
-                        } else {
-                            changes.get(rowKey).setRight(row.getRowId().toString());
+                    if((origRow == null || origRow.getRemoved()) && row.getRemoved()) {
+                        // If we don't have original row and the current row is removed then nothing of note has happened
+                        if(changes.containsKey(rowKey)) {
+                            // There's no difference between original row and current row
+                            // TODO: Clear possible changes related to anything inside this row since those didn't exist either in the origina
+                            // This can be done by adding a 'clear' attribute to gatherChanges that tells that all possible changes from then onwards should be removed
+                            changes.remove(rowKey);
+                        }
+                        continue;
+                    } else if((origRow != null && !origRow.getRemoved()) && !row.getRemoved()) {
+                        if(changes.containsKey(rowKey)) {
+                            // There's no difference between original row and current row
+                            changes.remove(rowKey);
                         }
                     } else {
-                        if(!row.getRemoved() && origRow == null) {
-                            changes.put(rowKey, new MutablePair<>(" ", row.getRowId().toString()));
-                        }
+                        changes.put(rowKey, new MutablePair<>(origRow != null && !origRow.getRemoved() ? origRow.getRowId().toString() : " ", !row.getRemoved() ? row.getRowId().toString() : " "));
                     }
-                    gatherChanges(rowKey, rowChange.getChanges(), row, changes, origRow);
+                    if(!row.getRemoved()) {
+                        gatherChanges(rowKey, rowChange.getChanges(), row, changes, origRow);
+                    }
                 }
             }
         } else {
@@ -221,33 +227,41 @@ public class RevisionSearchImpl implements RevisionSearch {
                 // We have no field matching the change
                 return;
             }
+            ReferenceContainerDataField originalContainer = originalFields.dataField(ReferenceContainerDataFieldCall.get(change.getKey())).getRight();
             if(StringUtils.hasText(root)) {
                 root = root+".";
             }
             root = root + change.getKey()+".";
             for(RowChange rowChange : change.getRows().values()) {
-                String rowKey = root + rowChange.getRowId();
-                ReferenceRow refRow = referenceContainerPair.getRight().getReferenceWithId(rowChange.getRowId()).getRight();
-                if(refRow == null) {
+                ReferenceRow row = referenceContainerPair.getRight().getReferenceWithId(rowChange.getRowId()).getRight();
+                if(row == null) {
                     continue;
                 }
-                if(changes.containsKey(rowKey)) {
-                    if(refRow.getRemoved()) {
-                        changes.get(rowKey).setRight(" ");
-                    } else {
-                        changes.get(rowKey).setRight(refRow.getActualValue());
+                ReferenceRow origRow = (originalContainer != null) ? originalContainer.getReferenceWithId(row.getRowId()).getRight() : null;
+
+                String rowKey = root + rowChange.getRowId();
+
+                if((origRow == null || origRow.getRemoved()) && row.getRemoved()) {
+                    // If we don't have original row and the current row is removed then nothing of note has happened
+                    if(changes.containsKey(rowKey)) {
+                        // There's no difference between original row and current row
+                        changes.remove(rowKey);
+                    }
+                    continue;
+                } else if((origRow != null && !origRow.getRemoved()) && !row.getRemoved()) {
+                    if(changes.containsKey(rowKey)) {
+                        // There's no difference between original row and current row
+                        changes.remove(rowKey);
                     }
                 } else {
-                    if(!refRow.getRemoved() && refRow.getUnapproved()) {
-                        changes.put(rowKey, new MutablePair<>(" ", refRow.getActualValue()));
-                    }
+                    changes.put(rowKey, new MutablePair<>(origRow != null && !origRow.getRemoved() ? origRow.getRowId().toString() : " ", !row.getRemoved() ? row.getRowId().toString() : " "));
                 }
             }
         }
     }
 
     // Should terminate
-    private void gatherValueChanges(String root, Change change, DataFieldContainer container, Map<String, MutablePair<String, String>> changes, DataFieldContainer originalFields) {
+    private void gatherValueChanges(String root, ValueChange change, DataFieldContainer container, Map<String, MutablePair<String, String>> changes, DataFieldContainer originalFields) {
         Pair<StatusCode, ValueDataField> pair = container.dataField(ValueDataFieldCall.get(change.getKey()));
         if(pair.getLeft() != StatusCode.FIELD_FOUND) {
             return;

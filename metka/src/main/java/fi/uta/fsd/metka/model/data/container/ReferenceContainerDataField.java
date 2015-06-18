@@ -53,7 +53,7 @@ public class ReferenceContainerDataField extends RowContainerDataField {
 
     @JsonCreator
     public ReferenceContainerDataField(@JsonProperty("key") String key, @JsonProperty("rowIdSeq") Integer rowIdSeq) {
-        super(key, rowIdSeq);
+        super(DataFieldType.REFERENCECONTAINER, key, rowIdSeq);
     }
 
     public List<ReferenceRow> getReferences() {

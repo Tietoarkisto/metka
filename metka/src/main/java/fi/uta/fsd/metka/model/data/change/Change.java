@@ -44,17 +44,18 @@ import java.util.Set;
         property = "type",
         visible = true)
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = Change.class, name = DataField.DataFieldType.Types.VALUE),
-        @JsonSubTypes.Type(value = ContainerChange.class, name = DataField.DataFieldType.Types.CONTAINER)
+        @JsonSubTypes.Type(value = ValueChange.class, name = Change.ChangeType.Types.VALUE),
+        @JsonSubTypes.Type(value = ContainerChange.class, name = Change.ChangeType.Types.CONTAINER)
 })
-public class Change {
-    @JsonIgnore private DataField.DataFieldType type;
-
+public abstract class Change {
     private final String key;
+
+    @JsonIgnore private final ChangeType type;
+
     private final Set<Language> changeIn = new HashSet<>();
 
-    @JsonCreator
-    public Change(@JsonProperty("key") String key) {
+    public Change(ChangeType type, String key) {
+        this.type = type;
         this.key = key;
     }
 
@@ -62,12 +63,8 @@ public class Change {
         return key;
     }
 
-    public DataField.DataFieldType getType() {
+    public ChangeType getType() {
         return type;
-    }
-
-    public void setType(DataField.DataFieldType type) {
-        this.type = type;
     }
 
     public Set<Language> getChangeIn() {
