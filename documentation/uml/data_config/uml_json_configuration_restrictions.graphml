@@ -288,8 +288,8 @@ REMOVE_REVISIONABLE : These are run during
     removed is the only revision linked to the
     revisionable, i.e. it's the initial revision and not
     approve has yet taken place.
-    Cascades will happen as revisionable removal,
-    meaning that if it encounters a revisionable
+    Cascades will happen as draft removal with
+    the caveat that if it encounters a revisionable
     with an approved revision, then that cascade
     branch will stop and no removal happens there
     but the main operation will not stop. Further
